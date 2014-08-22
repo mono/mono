@@ -404,10 +404,6 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Byte" /> array containing the data downloaded from the resource
-   specified by <paramref name="address" />.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -426,6 +422,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the resource as a <see cref="T:System.Byte" /> array from the URI specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the downloaded resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI from which to download data. </param>
       </Docs>
@@ -446,7 +446,6 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebClient.DownloadData(System.String)" /> method downloads the resource with the URI specified by the <paramref name="address" /> parameter. This method blocks while downloading the resource. To download a resource and continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.DownloadDataAsync" /> methods. </para>
@@ -458,6 +457,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the resource as a <see cref="T:System.Byte" /> array from the URI specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the downloaded resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI represented by the <see cref="T:System.Uri" />  object, from which to download data.</param>
       </Docs>
@@ -571,7 +574,6 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />  object will complete after the data resource has been downloaded.</para>
@@ -587,6 +589,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the resource as a <see cref="T:System.Byte" /> array from the URI specified as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the downloaded resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to download. </param>
       </Docs>
@@ -613,7 +620,6 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />  object will complete after the data resource has been downloaded.</para>
@@ -626,6 +632,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the resource as a <see cref="T:System.Byte" /> array from the URI specified as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the downloaded resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to download.</param>
       </Docs>
@@ -833,7 +844,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task" />  object will complete after the data resource has been downloaded.</para>
@@ -850,6 +860,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the specified resource to a local file as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to download.</param>
         <param name="fileName">
@@ -879,7 +894,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task" />  object will complete after the data resource has been downloaded.</para>
@@ -896,6 +910,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the specified resource to a local file as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to download.</param>
         <param name="fileName">
@@ -993,7 +1012,6 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method retrieves the specified resource. After it downloads the resource, the method uses the encoding specified in the <see cref="P:System.Net.WebClient.Encoding" /> property to convert the resource to a <see cref="T:System.String" />. This method blocks while downloading the resource. To download a resource and continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.DownloadStringAsync" /> methods. </para>
@@ -1007,6 +1025,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the requested resource as a <see cref="T:System.String" />. The resource to download is specified as a <see cref="T:System.String" /> containing the URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the requested resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the URI to download.</param>
       </Docs>
@@ -1026,7 +1048,6 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method retrieves the specified resource. After it downloads the resource, the method uses the encoding specified in the <see cref="P:System.Net.WebClient.Encoding" /> property to convert the resource to a <see cref="T:System.String" />. This method blocks while downloading the resource. To download a resource and continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.DownloadStringAsync" /> methods. </para>
@@ -1040,6 +1061,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the requested resource as a <see cref="T:System.String" />. The resource to download is specified as a <see cref="T:System.Uri" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the requested resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> object containing the URI to download.</param>
       </Docs>
@@ -1153,7 +1178,6 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the data resource has been downloaded.  The resource is downloaded asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -1167,6 +1191,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the resource as a <see cref="T:System.String" /> from the URI specified as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the downloaded resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to download.</param>
       </Docs>
@@ -1193,7 +1222,6 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the data resource has been downloaded. The resource is downloaded asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -1207,6 +1235,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads the resource as a <see cref="T:System.String" /> from the URI specified as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the downloaded resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to download.</param>
       </Docs>
@@ -1250,7 +1283,6 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method copies the existing <see cref="P:System.Net.WebClient.Headers" />, <see cref="P:System.Net.WebClient.Credentials" />, and method to the newly created <see cref="T:System.Net.WebRequest" /> object.</para>
@@ -1260,6 +1292,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Net.WebRequest" /> object for the specified resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Net.WebRequest" /> object for the specified resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> that identifies the resource to request.</param>
       </Docs>
@@ -1279,7 +1315,6 @@
         <Parameter Name="request" Type="System.Net.WebRequest" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The object returned by this method is obtained by calling the <see cref="M:System.Net.WebRequest.GetResponse" /> method on the specified <see cref="T:System.Net.WebRequest" /> object. </para>
@@ -1289,6 +1324,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Net.WebResponse" /> for the specified <see cref="T:System.Net.WebRequest" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> containing the response for the specified <see cref="T:System.Net.WebRequest" />.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.WebRequest" /> that is used to obtain the response. </param>
       </Docs>
@@ -1309,7 +1348,6 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The object returned by this method is obtained by calling the <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" /> method on the specified <see cref="T:System.Net.WebRequest" /> object. </para>
@@ -1319,6 +1357,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Net.WebResponse" /> for the specified <see cref="T:System.Net.WebRequest" /> using the specified <see cref="T:System.IAsyncResult" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> containing the response for the specified <see cref="T:System.Net.WebRequest" />.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.WebRequest" /> that is used to obtain the response.</param>
         <param name="result">
@@ -1749,10 +1791,6 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" /> used to read data from
-   a resource.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -1774,6 +1812,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a readable stream for the data downloaded from a resource with the URI specified as a <see cref="T:System.String" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> used to read data from a resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI specified as a <see cref="T:System.String" /> from which to download data. </param>
       </Docs>
@@ -1794,7 +1836,6 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebClient.OpenRead(System.String)" /> method creates a <see cref="T:System.IO.Stream" /> instance used to read the contents of the resource specified by the <paramref name="address" /> parameter. This method blocks while opening the stream. To continue executing while waiting for the stream, use one of the <see cref="Overload:System.Net.WebClient.OpenReadAsync" /> methods.</para>
@@ -1809,6 +1850,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a readable stream for the data downloaded from a resource with the URI specified as a <see cref="T:System.Uri" /></para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> used to read data from a resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI specified as a <see cref="T:System.Uri" /> from which to download data. </param>
       </Docs>
@@ -1928,7 +1973,6 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a readable stream to the data resource has been opened. This method does not block the calling thread while the stream is opening.</para>
@@ -1947,6 +1991,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a readable stream containing the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.IO.Stream" /> used to read data from a resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to retrieve.</param>
       </Docs>
@@ -1973,7 +2022,6 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a readable stream to the data resource has been opened. This method does not block the calling thread while the stream is opening.</para>
@@ -1992,6 +2040,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a readable stream containing the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.IO.Stream" /> used to read data from a resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to retrieve.</param>
       </Docs>
@@ -2013,9 +2066,6 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -2034,6 +2084,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a stream for writing data to the specified resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data. </param>
       </Docs>
@@ -2054,7 +2108,6 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebClient.OpenWrite(System.String)" /> method returns a writable stream that is used to send data to a resource. This method blocks while opening the stream. To continue executing while waiting for the stream, use one of the <see cref="Overload:System.Net.WebClient.OpenWriteAsync" /> methods.</para>
@@ -2068,6 +2121,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a stream for writing data to the specified resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
       </Docs>
@@ -2090,9 +2147,6 @@
         <Parameter Name="method" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -2111,6 +2165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a stream for writing data to the specified resource, using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data. </param>
         <param name="method">
@@ -2134,7 +2192,6 @@
         <Parameter Name="method" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebClient.OpenWrite(System.String)" /> method returns a writable stream that is used to send data to a resource. This method blocks while opening the stream. To continue executing while waiting for the stream, use one of the <see cref="Overload:System.Net.WebClient.OpenWriteAsync" /> methods.</para>
@@ -2147,6 +2204,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a stream for writing data to the specified resource, by using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
         <param name="method">
@@ -2299,7 +2360,6 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a writable stream to the data resource has been opened. This method does not block the calling thread while the stream is opening.</para>
@@ -2316,6 +2376,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a stream for writing data to the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
       </Docs>
@@ -2334,7 +2399,6 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a writable stream to the data resource has been opened. This method does not block the calling thread while the stream is opening.</para>
@@ -2351,6 +2415,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a stream for writing data to the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
       </Docs>
@@ -2370,7 +2439,6 @@
         <Parameter Name="method" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a writable stream to the data resource has been opened. This method does not block the calling thread while the stream is opening.</para>
@@ -2388,6 +2456,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a stream for writing data to the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
         <param name="method">
@@ -2417,7 +2490,6 @@
         <Parameter Name="method" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a writable stream to the data resource has been opened. This method does not block the calling thread while the stream is opening.</para>
@@ -2435,6 +2507,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a stream for writing data to the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.IO.Stream" /> used to write data to the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
         <param name="method">
@@ -2545,11 +2622,6 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Byte" /> array containing
-   the body of the response, if any, from the server hosting the
-   resource.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -2574,6 +2646,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads a data buffer to a resource identified by a URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data. </param>
         <param name="data">
@@ -2597,7 +2673,6 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebClient.UploadData(System.String,System.Byte[])" /> method sends a data buffer to a resource. </para>
@@ -2612,6 +2687,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads a data buffer to a resource identified by a URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data. </param>
         <param name="data">
@@ -2637,11 +2716,6 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Byte" /> array containing the body of
-   the response, if any, from the server hosting the
-   resource.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -2666,6 +2740,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads a data buffer to the specified resource, using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data. </param>
         <param name="method">
@@ -2692,7 +2770,6 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebClient.UploadData(System.String,System.Byte[])" /> method sends a data buffer to a resource using the HTTP method specified in the <paramref name="method" /> parameter, and returns any response from the server. This method blocks while uploading the data. To continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.UploadDataAsync" /> methods.</para>
@@ -2707,6 +2784,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads a data buffer to the specified resource, using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data. </param>
         <param name="method">
@@ -2872,7 +2953,6 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a data buffer has been uploaded to the resource. </para>
@@ -2888,6 +2968,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads a data buffer that contains a <see cref="T:System.Byte" /> array to the URI specified as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the body of the response received from the resource when the data buffer was uploaded.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
         <param name="data">
@@ -2909,7 +2994,6 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a data buffer has been uploaded to the resource. </para>
@@ -2925,6 +3009,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads a data buffer that contains a <see cref="T:System.Byte" /> array to the URI specified as an asynchronous operation using a task object.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the body of the response received from the resource when the data buffer was uploaded.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
         <param name="data">
@@ -2947,7 +3036,6 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a data buffer has been uploaded to the resource. </para>
@@ -2962,6 +3050,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads a data buffer that contains a <see cref="T:System.Byte" /> array to the URI specified as an asynchronous operation using a task object.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the body of the response received from the resource when the data buffer was uploaded.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
         <param name="method">
@@ -2994,7 +3087,6 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the a data buffer has been uploaded to the resource. </para>
@@ -3009,6 +3101,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads a data buffer that contains a <see cref="T:System.Byte" /> array to the URI specified as an asynchronous operation using a task object.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the body of the response received from the resource when the data buffer was uploaded.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the data.</param>
         <param name="method">
@@ -3035,10 +3132,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Byte" /> array containing the body of the response, if any, from the server hosting the
-   resource.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -3067,6 +3160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified local file to a resource with the specified URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the file. For example, ftp://localhost/samplefile.txt.</param>
         <param name="fileName">
@@ -3090,7 +3187,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebClient.UploadFile(System.String,System.String)" /> method sends a local file to a resource. This method uses the STOR command to upload an FTP resource. For an HTTP resource, the POST method is used.</para>
@@ -3105,6 +3201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified local file to a resource with the specified URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the file. For example, ftp://localhost/samplefile.txt.</param>
         <param name="fileName">
@@ -3130,10 +3230,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Byte" /> array containing the body of
-   the response, if any, from the server hosting the resource.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -3161,6 +3257,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified local file to the specified resource, using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the file.</param>
         <param name="method">
@@ -3187,7 +3287,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When address specifies an HTTP resource, the <see cref="M:System.Net.WebClient.UploadFile(System.String,System.String)" /> method sends a local file to a resource using the HTTP method specified in the <paramref name="method" /> parameter and returns any response from the server. This method blocks while uploading the file. To continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.UploadFileAsync" /> methods.</para>
@@ -3201,6 +3300,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified local file to the specified resource, using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the file.</param>
         <param name="method">
@@ -3368,7 +3471,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the file has been uploaded to the resource. The file is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -3383,6 +3485,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified local file to a resource as an asynchronous operation using a task object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the body of the response received from the resource when the file was uploaded.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the file. For HTTP resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page.</param>
         <param name="fileName">
@@ -3404,7 +3511,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the file has been uploaded to the resource. The file is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -3419,6 +3525,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified local file to a resource as an asynchronous operation using a task object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the body of the response received from the resource when the file was uploaded.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the file. For HTTP resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page.</param>
         <param name="fileName">
@@ -3441,7 +3552,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the file has been uploaded to the resource. The file is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -3456,6 +3566,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified local file to a resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the body of the response received from the resource when the file was uploaded.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the file. For HTTP resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page.</param>
         <param name="method">
@@ -3488,7 +3603,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the file has been uploaded to the resource. The file is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -3503,6 +3617,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified local file to a resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the body of the response received from the resource when the file was uploaded.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the file. For HTTP resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page.</param>
         <param name="method">
@@ -3593,7 +3712,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Before uploading the string, this method converts it to a <see cref="T:System.Byte" /> array using the encoding specified in the <see cref="P:System.Net.WebClient.Encoding" /> property. This method blocks while the string is transmitted. To send a string and continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.UploadStringAsync" /> methods.</para>
@@ -3607,6 +3725,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified string to the specified resource, using the POST method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the string. For Http resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page. </param>
         <param name="data">
@@ -3629,7 +3751,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Before uploading the string, this method converts it to a <see cref="T:System.Byte" /> array using the encoding specified in the <see cref="P:System.Net.WebClient.Encoding" /> property. This method blocks while the string is transmitted. To send a string and continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.UploadStringAsync" /> methods.</para>
@@ -3643,6 +3764,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified string to the specified resource, using the POST method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the string. For Http resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page. </param>
         <param name="data">
@@ -3666,7 +3791,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Before uploading the string, this method converts it to a <see cref="T:System.Byte" /> array using the encoding specified in the <see cref="P:System.Net.WebClient.Encoding" /> property. This method blocks while the string is transmitted. To send a string and continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.UploadStringAsync" /> methods. </para>
@@ -3679,6 +3803,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified string to the specified resource, using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the string. This URI must identify a resource that can accept a request sent with the <paramref name="method" /> method. </param>
         <param name="method">
@@ -3704,7 +3832,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Before uploading the string, this method converts it to a <see cref="T:System.Byte" /> array using the encoding specified in the <see cref="P:System.Net.WebClient.Encoding" /> property. This method blocks while the string is transmitted. To send a string and continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.UploadStringAsync" /> methods. </para>
@@ -3717,6 +3844,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified string to the specified resource, using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the string. This URI must identify a resource that can accept a request sent with the <paramref name="method" /> method. </param>
         <param name="method">
@@ -3882,7 +4013,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the string has been uploaded to the resource. The string is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -3897,6 +4027,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified string to the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.String" /> containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the string. For HTTP resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page.</param>
         <param name="data">
@@ -3918,7 +4053,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the string has been uploaded to the resource. The string is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -3933,6 +4067,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified string to the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.String" /> containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the string. For HTTP resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page.</param>
         <param name="data">
@@ -3955,7 +4094,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the string has been uploaded to the resource. The string is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -3970,6 +4108,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified string to the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.String" /> containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the string. For HTTP resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page.</param>
         <param name="method">
@@ -4002,7 +4145,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the string has been uploaded to the resource. The string is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -4017,6 +4159,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified string to the specified resource as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.String" /> containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the string. For HTTP resources, this URI must identify a resource that can accept a request sent with the POST method, such as a script or ASP page.</param>
         <param name="method">
@@ -4043,10 +4190,6 @@
         <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Byte" /> array containing the body of the response, if any, from the server hosting the
-   resource.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -4074,6 +4217,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified name/value collection to the resource identified by the specified URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the collection. </param>
         <param name="data">
@@ -4097,7 +4244,6 @@
         <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebClient.UploadValues(System.String,System.Collections.Specialized.NameValueCollection)" /> method sends a <see cref="T:System.Collections.Specialized.NameValueCollection" /> to a server. This method blocks while uploading the data. To continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.UploadValuesAsync" /> methods.</para>
@@ -4113,6 +4259,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified name/value collection to the resource identified by the specified URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the collection. </param>
         <param name="data">
@@ -4138,10 +4288,6 @@
         <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Byte" /> array containing the body of the response, if any, from the server hosting the
-   resource.</para>
-        </returns>
         <exception cref="T:System.Net.WebException">
           <para>The absolute URI is not valid.</para>
           <para> -or-</para>
@@ -4168,6 +4314,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified name/value collection to the resource identified by the specified URI, using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the collection. </param>
         <param name="method">
@@ -4194,7 +4344,6 @@
         <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebClient.UploadValues(System.String,System.Collections.Specialized.NameValueCollection)" /> method sends a <see cref="T:System.Collections.Specialized.NameValueCollection" /> to a resource using the method specified in the <paramref name="method" /> parameter and returns any response from the server. This method blocks while uploading the data. To continue executing while waiting for the server's response, use one of the <see cref="Overload:System.Net.WebClient.UploadValuesAsync" /> methods.</para>
@@ -4209,6 +4358,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified name/value collection to the resource identified by the specified URI, using the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array containing the body of the response from the resource.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the collection. </param>
         <param name="method">
@@ -4379,7 +4532,6 @@
         <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the name/value collection has been uploaded to the resource. The name/value collection is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -4396,6 +4548,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified name/value collection to the resource identified by the specified URI as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the collection.</param>
         <param name="data">
@@ -4417,7 +4574,6 @@
         <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the name/value collection has been uploaded to the resource. The name/value collection is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -4434,6 +4590,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified name/value collection to the resource identified by the specified URI as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the collection.</param>
         <param name="data">
@@ -4456,7 +4617,6 @@
         <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the name/value collection has been uploaded to the resource. The name/value collection is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -4473,6 +4633,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified name/value collection to the resource identified by the specified URI as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the collection.</param>
         <param name="method">
@@ -4505,7 +4670,6 @@
         <Parameter Name="data" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the name/value collection has been uploaded to the resource. The name/value collection is sent asynchronously using thread resources that are automatically allocated from the thread pool.</para>
@@ -4522,6 +4686,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uploads the specified name/value collection to the resource identified by the specified URI as an asynchronous operation using a task object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="T:System.Byte" /> array containing the response sent by the server.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the resource to receive the collection.</param>
         <param name="method">

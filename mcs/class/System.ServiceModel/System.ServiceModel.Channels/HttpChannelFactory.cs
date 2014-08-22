@@ -52,11 +52,7 @@ namespace System.ServiceModel.Channels
 					MessageEncoder = CreateEncoder<TChannel> (mbe);
 					continue;
 				}
-#if NET_2_1
-				var cbe = be as HttpCookieContainerBindingElement;
-				if (cbe != null)
-					cookie_manager = cbe.GetProperty<IHttpCookieContainerManager> (ctx);
-#elif NET_4_0
+#if NET_2_1 || NET_4_0
 				var tbe = be as HttpTransportBindingElement;
 				if (tbe != null)
 					cookie_manager = tbe.GetProperty<IHttpCookieContainerManager> (ctx);

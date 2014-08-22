@@ -57,7 +57,15 @@ class XX {
 		s = (object)1 + null;
 		if (s != "1")
 			return 12;
-	
+
+		s = (string)null + (object)null;
+		if (s.Length != 0)
+			return 13;
+
+		s = (object)null + (string)null;
+		if (s.Length != 0)
+			return 14;
+
 		System.Console.WriteLine ("test ok");
 		return 0;
 	}

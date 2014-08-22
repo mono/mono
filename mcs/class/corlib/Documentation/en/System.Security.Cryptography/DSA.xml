@@ -66,12 +66,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DSA'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the default cryptographic object used to perform the asymmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object used to perform the asymmetric algorithm.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -90,7 +93,6 @@
         <Parameter Name="algName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DSA'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For <see cref="T:System.Security.Cryptography.DSA" />, use the name System.Security.Cryptography.DSA.</para>
@@ -99,6 +101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the specified cryptographic object used to perform the asymmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object used to perform the asymmetric algorithm.</para>
+        </returns>
         <param name="algName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.DSA" /> to use. </param>
       </Docs>
@@ -119,12 +125,15 @@
         <Parameter Name="rgbHash" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>An array of 40 bytes containing the DSA signature of the specified hash.</returns>
         <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the instance doesn't have a private key or if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are).</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates the <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digital signature for the specified data.</para>
+        </returns>
         <param name="rgbHash">
           <attribution license="cc4" from="Microsoft" modified="false" />The data to be signed. </param>
       </Docs>
@@ -145,12 +154,15 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>a DSAParameters structure contaning each parameters of the key.</returns>
         <remarks>You are responsable to zeroize the private key (<see cref="T:System.Security.Cryptography.DSAParameters" />.<see cref="M:System.Security.Cryptography.DSAParameters.X" />) if you export it from the instance.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, exports the <see cref="T:System.Security.Cryptography.DSAParameters" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters for <see cref="T:System.Security.Cryptography.DSA" />.</para>
+        </returns>
         <param name="includePrivateParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include private parameters; otherwise, false. </param>
       </Docs>
@@ -221,12 +233,15 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>An XML string containing the representation of the DSA key.</returns>
         <remarks>The schema definition for DSA keys is detailled in section 4.4.2.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns an XML string representation of the current <see cref="T:System.Security.Cryptography.DSA" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML string encoding of the current <see cref="T:System.Security.Cryptography.DSA" /> object.</para>
+        </returns>
         <param name="includePrivateParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include private parameters; otherwise, false. </param>
       </Docs>
@@ -248,12 +263,15 @@
         <Parameter Name="rgbSignature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>True if the signature can be verified, false otherwise.</returns>
         <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are) or if the signature length isn't 40 bytes long (as all DSA signatures are).</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, verifies the <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="rgbSignature" /> matches the signature computed using the specified hash algorithm and key on <paramref name="rgbHash" />; otherwise, false.</para>
+        </returns>
         <param name="rgbHash">
           <attribution license="cc4" from="Microsoft" modified="false" />The hash of the data signed with <paramref name="rgbSignature" />. </param>
         <param name="rgbSignature">

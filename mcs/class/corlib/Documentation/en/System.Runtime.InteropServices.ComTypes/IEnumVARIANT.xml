@@ -42,7 +42,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -52,6 +51,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new enumerator that contains the same enumeration state as the current one.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Runtime.InteropServices.ComTypes.IEnumVARIANT" />  reference to the newly created enumerator.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Next">
@@ -71,7 +74,6 @@
         <Parameter Name="pceltFetched" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -81,6 +83,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a specified number of items in the enumeration sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>S_OK if the <paramref name="pceltFetched" /> parameter equals the <paramref name="celt" /> parameter; otherwise, S_FALSE.</para>
+        </returns>
         <param name="celt">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of elements to return in <paramref name="rgelt" />. </param>
         <param name="rgVar">
@@ -102,7 +108,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -112,6 +117,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resets the enumeration sequence to the beginning.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HRESULT with the value S_OK.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Skip">
@@ -129,7 +138,6 @@
         <Parameter Name="celt" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -139,6 +147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Skips a specified number of items in the enumeration sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>S_OK if the number of elements skipped equals <paramref name="celt" /> parameter; otherwise, S_FALSE.</para>
+        </returns>
         <param name="celt">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of elements to skip in the enumeration. </param>
       </Docs>

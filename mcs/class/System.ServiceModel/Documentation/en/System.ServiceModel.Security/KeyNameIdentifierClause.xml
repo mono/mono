@@ -72,12 +72,15 @@
       </Parameters>
       <Docs>
         <param name="clause">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether a <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> matches the current instance of this class. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a match; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Matches">
@@ -94,12 +97,15 @@
         <Parameter Name="keyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether the specified key name matches the current instance's key name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a match; otherwise, false. </para>
+        </returns>
         <param name="keyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The security key name clause.</param>
       </Docs>
@@ -116,12 +122,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.String" /> that represents the current Object. (Inherited from <see cref="T:System.Object" />)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current Object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

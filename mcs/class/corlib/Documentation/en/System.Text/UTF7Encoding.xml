@@ -120,7 +120,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -130,6 +129,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified object is equal to the current <see cref="T:System.Text.UTF7Encoding" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is a <see cref="T:System.Text.UTF7Encoding" /> object and is equal to the current <see cref="T:System.Text.UTF7Encoding" /> object; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to the current <see cref="T:System.Text.UTF7Encoding" /> object.</param>
       </Docs>
@@ -154,7 +157,6 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -164,6 +166,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of bytes produced by encoding the characters in the specified <see cref="T:System.String" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> object containing the set of characters to encode. </param>
       </Docs>
@@ -192,7 +198,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -202,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of bytes produced by encoding a set of characters starting at the specified character pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first character to encode. </param>
         <param name="count">
@@ -226,7 +235,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To calculate the exact array size required by <see cref="M:System.Text.UTF7Encoding.GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)" /> to store the resulting bytes, the application uses <see cref="M:System.Text.UTF7Encoding.GetByteCount(System.Char[],System.Int32,System.Int32)" />. To calculate the maximum array size, the application should use <see cref="M:System.Text.UTF7Encoding.GetMaxByteCount(System.Int32)" />. The <see cref="M:System.Text.UTF7Encoding.GetByteCount(System.Char[],System.Int32,System.Int32)" /> method generally allows allocation of less memory, while the <see cref="M:System.Text.UTF7Encoding.GetMaxByteCount(System.Int32)" /> method generally executes faster.</para>
@@ -235,6 +243,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of bytes produced by encoding a set of characters from the specified character array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the set of characters to encode. </param>
         <param name="index">
@@ -269,7 +281,6 @@
         <Parameter Name="byteCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -284,6 +295,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a set of characters starting at the specified character pointer into a sequence of bytes that are stored starting at the specified byte pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written at the location indicated by <paramref name="bytes" />.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first character to encode. </param>
         <param name="charCount">
@@ -314,7 +329,6 @@
         <Parameter Name="byteIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To calculate the exact array size required by <see cref="M:System.Text.UTF7Encoding.GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)" /> to store the resulting bytes, the application uses <see cref="M:System.Text.UTF7Encoding.GetByteCount(System.Char[],System.Int32,System.Int32)" />. To calculate the maximum array size, the application should use <see cref="M:System.Text.UTF7Encoding.GetMaxByteCount(System.Int32)" />. The <see cref="M:System.Text.UTF7Encoding.GetByteCount(System.Char[],System.Int32,System.Int32)" /> method generally allows allocation of less memory, while the <see cref="M:System.Text.UTF7Encoding.GetMaxByteCount(System.Int32)" /> method generally executes faster.</para>
@@ -328,6 +342,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a set of characters from the specified character array into the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written into <paramref name="bytes" />.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the set of characters to encode. </param>
         <param name="charIndex">
@@ -364,7 +382,6 @@
         <Parameter Name="byteIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -379,6 +396,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a set of characters from the specified <see cref="T:System.String" /> into the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written into <paramref name="bytes" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the set of characters to encode. </param>
         <param name="charIndex">
@@ -415,7 +436,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -425,6 +445,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of characters produced by decoding a sequence of bytes starting at the specified byte pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode. </param>
         <param name="count">
@@ -449,7 +473,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To calculate the exact array size required by <see cref="M:System.Text.UTF7Encoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> to store the resulting characters, use <see cref="M:System.Text.UTF7Encoding.GetCharCount(System.Byte[],System.Int32,System.Int32)" />. To calculate the maximum array size, the application should use <see cref="M:System.Text.UTF7Encoding.GetMaxCharCount(System.Int32)" />. The <see cref="M:System.Text.UTF7Encoding.GetCharCount(System.Byte[],System.Int32,System.Int32)" /> method generally allows allocation of less memory, while the <see cref="M:System.Text.UTF7Encoding.GetMaxCharCount(System.Int32)" /> method generally executes faster.</para>
@@ -458,6 +481,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of characters produced by decoding a sequence of bytes from the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="index">
@@ -492,7 +519,6 @@
         <Parameter Name="charCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -507,6 +533,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a sequence of bytes starting at the specified byte pointer into a set of characters that are stored starting at the specified character pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written at the location indicated by <paramref name="chars" />.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode. </param>
         <param name="byteCount">
@@ -537,7 +567,6 @@
         <Parameter Name="charIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To calculate the exact array size required by <see cref="M:System.Text.UTF7Encoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> to store the resulting characters, use <see cref="M:System.Text.UTF7Encoding.GetCharCount(System.Byte[],System.Int32,System.Int32)" />. To calculate the maximum array size, the application should use <see cref="M:System.Text.UTF7Encoding.GetMaxCharCount(System.Int32)" />. The <see cref="M:System.Text.UTF7Encoding.GetCharCount(System.Byte[],System.Int32,System.Int32)" /> method generally allows allocation of less memory, while the <see cref="M:System.Text.UTF7Encoding.GetMaxCharCount(System.Int32)" /> method generally executes faster.</para>
@@ -551,6 +580,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a sequence of bytes from the specified byte array into the specified character array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written into <paramref name="chars" />.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="byteIndex">
@@ -577,7 +610,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> method converts sequential blocks of bytes into sequential blocks of characters, in a manner similar to the <see cref="M:System.Text.UTF7Encoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> method of this class. However, a <see cref="T:System.Text.Decoder" /> maintains state information between calls so it can correctly decode byte sequences that span blocks. The <see cref="T:System.Text.Decoder" /> also preserves trailing bytes at the end of data blocks and uses the trailing bytes in the next decoding operation. Therefore, <see cref="M:System.Text.UTF7Encoding.GetDecoder" /> and <see cref="M:System.Text.UTF7Encoding.GetEncoder" /> are useful for network transmission and file operations, because those operations often deal with blocks of data instead of a complete data stream.</para>
@@ -586,6 +618,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a decoder that converts a UTF-7 encoded sequence of bytes into a sequence of Unicode characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Text.Decoder" /> that converts a UTF-7 encoded sequence of bytes into a sequence of Unicode characters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEncoder">
@@ -602,7 +638,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> method converts sequential blocks of bytes into sequential blocks of characters, in a manner similar to the <see cref="M:System.Text.UTF7Encoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> method. However, a <see cref="T:System.Text.Decoder" /> maintains state information between calls so it can correctly decode byte sequences that span blocks. The <see cref="T:System.Text.Decoder" /> also preserves trailing bytes at the end of data blocks and uses the trailing bytes in the next decoding operation. Therefore, <see cref="M:System.Text.UTF7Encoding.GetDecoder" /> and <see cref="M:System.Text.UTF7Encoding.GetEncoder" /> are useful for network transmission and file operations, because those operations often deal with blocks of data instead of a complete data stream.</para>
@@ -611,6 +646,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains an encoder that converts a sequence of Unicode characters into a UTF-7 encoded sequence of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Text.Encoder" /> that converts a sequence of Unicode characters into a UTF-7 encoded sequence of bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -631,7 +670,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -641,6 +679,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the current <see cref="T:System.Text.UTF7Encoding" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMaxByteCount">
@@ -659,7 +701,6 @@
         <Parameter Name="charCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To calculate the exact array size required by <see cref="M:System.Text.UTF7Encoding.GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)" /> to store the resulting bytes, the application uses <see cref="M:System.Text.UTF7Encoding.GetByteCount(System.Char[],System.Int32,System.Int32)" />. To calculate the maximum array size, the application should use <see cref="M:System.Text.UTF7Encoding.GetMaxByteCount(System.Int32)" />. The <see cref="M:System.Text.UTF7Encoding.GetByteCount(System.Char[],System.Int32,System.Int32)" /> method generally allows allocation of less memory, while the <see cref="M:System.Text.UTF7Encoding.GetMaxByteCount(System.Int32)" /> method generally executes faster.</para>
@@ -676,6 +717,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the maximum number of bytes produced by encoding the specified number of characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum number of bytes produced by encoding the specified number of characters.</para>
+        </returns>
         <param name="charCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to encode. </param>
       </Docs>
@@ -696,7 +741,6 @@
         <Parameter Name="byteCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To calculate the exact array size required by <see cref="M:System.Text.UTF7Encoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> to store the resulting characters, the application uses <see cref="M:System.Text.UTF7Encoding.GetCharCount(System.Byte[],System.Int32,System.Int32)" />. To calculate the maximum array size, the application should use <see cref="M:System.Text.UTF7Encoding.GetMaxCharCount(System.Int32)" />. The <see cref="M:System.Text.UTF7Encoding.GetCharCount(System.Byte[],System.Int32,System.Int32)" /> method generally allows allocation of less memory, while the <see cref="M:System.Text.UTF7Encoding.GetMaxCharCount(System.Int32)" /> method generally executes faster.</para>
@@ -713,6 +757,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the maximum number of characters produced by decoding the specified number of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum number of characters produced by decoding the specified number of bytes.</para>
+        </returns>
         <param name="byteCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
       </Docs>
@@ -739,7 +787,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -753,6 +800,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a range of bytes from a byte array into a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the results of decoding the specified sequence of bytes.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="index">

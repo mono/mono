@@ -673,10 +673,6 @@
         <Parameter Name="value" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.DateTime" /> instance set to the sum of the date and time of the
-   current instance and the time interval represented by <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -688,6 +684,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.DateTime" /> that adds the value of the specified <see cref="T:System.TimeSpan" /> to the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by this instance and the time interval represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A positive or negative time interval. </param>
       </Docs>
@@ -710,11 +710,6 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
-   by the current instance and the number of days represented by
-<paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -726,6 +721,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.DateTime" /> that adds the specified number of days to the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by this instance and the number of days represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional days. The <paramref name="value" /> parameter can be negative or positive. </param>
       </Docs>
@@ -749,11 +748,6 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
-   by the current instance and the number of hours represented by
-<paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -766,6 +760,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.DateTime" /> that adds the specified number of hours to the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by this instance and the number of hours represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional hours. The <paramref name="value" /> parameter can be negative or positive. </param>
       </Docs>
@@ -789,11 +787,6 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
-   by the current instance and the number of milliseconds represented by
-<paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -805,6 +798,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.DateTime" /> that adds the specified number of milliseconds to the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by this instance and the number of milliseconds represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional milliseconds. The <paramref name="value" /> parameter can be negative or positive. Note that this value is rounded to the nearest integer.</param>
       </Docs>
@@ -828,11 +825,6 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
-   by the current instance and the number of minutes represented by
-<paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -844,6 +836,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.DateTime" /> that adds the specified number of minutes to the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by this instance and the number of minutes represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional minutes. The <paramref name="value" /> parameter can be negative or positive. </param>
       </Docs>
@@ -867,10 +863,6 @@
         <Parameter Name="months" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
-   by the current instance and <paramref name="months" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</para>
           <para>-or-</para>
@@ -885,6 +877,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.DateTime" /> that adds the specified number of months to the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by this instance and <paramref name="months" />.</para>
+        </returns>
         <param name="months">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of months. The <paramref name="months" /> parameter can be negative or positive. </param>
       </Docs>
@@ -907,11 +903,6 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
-   by the current instance and the number of seconds represented by
-<paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -923,6 +914,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.DateTime" /> that adds the specified number of seconds to the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by this instance and the number of seconds represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional seconds. The <paramref name="value" /> parameter can be negative or positive. </param>
       </Docs>
@@ -946,10 +941,6 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
-   by the current instance and the time represented by <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -959,6 +950,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.DateTime" /> that adds the specified number of ticks to the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by this instance and the time represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of 100-nanosecond ticks. The <paramref name="value" /> parameter can be positive or negative. </param>
       </Docs>
@@ -981,11 +976,6 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> instance set to the sum of the date and time represented
-   by the current instance and the number of years represented by
-<paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting <see cref="T:System.DateTime" /> is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1007,6 +997,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.DateTime" /> that adds the specified number of years to the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by this instance and the number of years represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of years. The <paramref name="value" /> parameter can be negative or positive. </param>
       </Docs>
@@ -1030,36 +1024,6 @@
         <Parameter Name="t2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the two specified instances of <see cref="T:System.DateTime" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value Type</term>
-              <description>Condition</description>
-            </listheader>
-            <item>
-              <term> Any
-         negative
-         number</term>
-              <description>
-                <paramref name="t1" /> &lt; <paramref name="t2" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>
-                <paramref name="t1" /> == <paramref name="t2" />.</description>
-            </item>
-            <item>
-              <term> Any
-      positive
-      number</term>
-              <description>
-                <paramref name="t1" /> &gt;
-<paramref name="t2" />
-.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Before comparing <see cref="T:System.DateTime" /> objects, ensure that the objects represent times in the same time zone.</para>
@@ -1068,6 +1032,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two instances of <see cref="T:System.DateTime" /> and returns an integer that indicates whether the first instance is earlier than, the same as, or later than the second instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of <paramref name="t1" /> and <paramref name="t2" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value Type </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="t1" /> is earlier than <paramref name="t2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="t1" /> is the same as <paramref name="t2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="t1" /> is later than <paramref name="t2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="t2">
@@ -1090,27 +1097,6 @@
         <Parameter Name="value" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>Current instance &gt; <paramref name="value" />.</description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1121,6 +1107,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the value of this instance to a specified <see cref="T:System.DateTime" /> value and returns an integer that indicates whether this instance is earlier than, the same as, or later than the specified <see cref="T:System.DateTime" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and the <paramref name="value" /> parameter.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is earlier than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is the same as <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is later than <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current instance. </param>
       </Docs>
@@ -1142,28 +1168,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>Current instance &gt; <paramref name="value" />, or value is a
-   null reference.</description>
-            </item>
-          </list>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="value" /> is not a <see cref="T:System.DateTime" /> and is not a null reference.</exception>
         <remarks>
@@ -1175,6 +1179,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the value of this instance to a specified object that contains a specified <see cref="T:System.DateTime" /> value, and returns an integer that indicates whether this instance is earlier than, the same as, or later than the specified <see cref="T:System.DateTime" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is earlier than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is the same as <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is later than <paramref name="value" />, or <paramref name="value" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A boxed object to compare, or null. </param>
       </Docs>
@@ -1315,11 +1359,6 @@
         <Parameter Name="month" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> set to the number of days in the specified month for the
-   specified year. If the specified month is February, the return value is 28 or 29
-   depending upon whether the specified year is a leap year.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="month" /> is less than 1 or greater than 12.</exception>
         <remarks>
@@ -1330,6 +1369,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of days in the specified month and year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in <paramref name="month" /> for the specified <paramref name="year" />.</para>
+          <para>For example, if <paramref name="month" /> equals 2 for February, the return value is 28 or 29 depending upon whether <paramref name="year" /> is a leap year.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />The year. </param>
         <param name="month">
@@ -1352,10 +1396,6 @@
         <Parameter Name="value" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="value" /> is equal to the current instance; otherwise, <see langword="false" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1366,6 +1406,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the value of this instance is equal to the value of the specified <see cref="T:System.DateTime" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter equals the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to this instance. </param>
       </Docs>
@@ -1387,13 +1431,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="value" /> is a specified
-<see cref="T:System.DateTime" /> 
-instance is equal to the current instance; otherwise,
-<see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current instance and <paramref name="value" /> are equal if their <see cref="P:System.DateTime.Ticks" /> property values are equal. Their <see cref="P:System.DateTime.Kind" /> property values are not considered in the test for equality.</para>
@@ -1402,6 +1439,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is an instance of <see cref="T:System.DateTime" /> and equals the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to this instance. </param>
       </Docs>
@@ -1425,12 +1466,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="t2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the two
-<see cref="T:System.DateTime" /> values are
-   equal; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1440,6 +1475,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether two <see cref="T:System.DateTime" /> instances  have the same date and time value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two values are equal; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="t2">
@@ -1462,7 +1501,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="dateData" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1495,6 +1533,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes a 64-bit binary value and recreates an original serialized <see cref="T:System.DateTime" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the <see cref="T:System.DateTime" /> object that was serialized by the <see cref="M:System.DateTime.ToBinary" /> method.</para>
+        </returns>
         <param name="dateData">
           <attribution license="cc4" from="Microsoft" modified="false" />A 64-bit signed integer that encodes the <see cref="P:System.DateTime.Kind" /> property in a 2-bit field and the <see cref="P:System.DateTime.Ticks" /> property in a 62-bit field. </param>
       </Docs>
@@ -1515,7 +1557,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="fileTime" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A Windows file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed since 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC). Windows uses a file time to record when an application creates, accesses, or writes to a file. </para>
@@ -1526,6 +1567,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified Windows file time to an equivalent local time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the local time equivalent of the date and time represented by the <paramref name="fileTime" /> parameter.</para>
+        </returns>
         <param name="fileTime">
           <attribution license="cc4" from="Microsoft" modified="false" />A Windows file time expressed in ticks. </param>
       </Docs>
@@ -1546,7 +1591,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="fileTime" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A Windows file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed since 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC). Windows uses a file time to record when an application creates, accesses, or writes to a file. </para>
@@ -1557,6 +1601,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified Windows file time to an equivalent UTC time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the UTC time equivalent of the date and time represented by the <paramref name="fileTime" /> parameter.</para>
+        </returns>
         <param name="fileTime">
           <attribution license="cc4" from="Microsoft" modified="false" />A Windows file time expressed in ticks. </param>
       </Docs>
@@ -1577,7 +1625,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="d" /> parameter is a double-precision floating-point number that represents a date as the number of days before or after the base date, midnight, 30 December 1899. The sign and integral part of <paramref name="d" /> encode the date as a positive or negative day displacement from 30 December 1899, and the absolute value of the fractional part of <paramref name="d" /> encodes the time of day as a fraction of a day displacement from midnight. <paramref name="d" /> must be a value between negative 657435.0 through positive 2958465.99999999.</para>
@@ -1588,6 +1635,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> equivalent to the specified OLE Automation Date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the same date and time as <paramref name="d" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />An OLE Automation Date value. </param>
       </Docs>
@@ -1606,7 +1657,6 @@ instance is equal to the current instance; otherwise,
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The string array returned by the <see cref="M:System.DateTime.GetDateTimeFormats" /> method is equivalent to combining the string arrays returned by separate calls to the <see cref="M:System.DateTime.GetDateTimeFormats(System.Char)" /> method with the "d", "D", "f", "F", "g", "G", "m", "o", "r", "s", "t", "T", "u", "U", and "y" standard format strings. For more information about standard format specifiers, see <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard Date and Time Format Strings</a></format>.</para>
@@ -1619,6 +1669,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to all the string representations supported by the standard date and time format specifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array where each element is the representation of the value of this instance formatted with one of the standard date and time format specifiers.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetDateTimeFormats">
@@ -1637,7 +1691,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="format" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="format" /> parameter can be any of the standard date and time format specifiers. These include d, D, f, F, g, G, M (or m), O (or o), R (or r), s, t, T, u, U, and Y (or y). For more information, see <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard Date and Time Format Strings</a></format>.</para>
@@ -1650,6 +1703,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to all the string representations supported by the specified standard date and time format specifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array where each element is the representation of the value of this instance formatted with the <paramref name="format" /> standard date and time format specifier.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A standard date and time format string (see Remarks). </param>
       </Docs>
@@ -1670,7 +1727,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The string array returned by the <see cref="M:System.DateTime.GetDateTimeFormats(System.IFormatProvider)" /> method is equivalent to combining the string arrays returned by separate calls to the <see cref="M:System.DateTime.GetDateTimeFormats(System.Char,System.IFormatProvider)" /> method with the "d", "D", "f", "F", "g", "G", "m", "o", "r", "s", "t", "T", "u", "U", and "y" standard format strings. For more information about standard format specifiers, see <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard Date and Time Format Strings</a></format>.</para>
@@ -1683,6 +1739,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to all the string representations supported by the standard date and time format specifiers and the specified culture-specific formatting information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array where each element is the representation of the value of this instance formatted with one of the standard date and time format specifiers.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information about this instance. </param>
       </Docs>
@@ -1704,7 +1764,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The format parameter can be any of the standard date and time format specifiers. These include d, D, f, F, g, G, M (or m), O (or o), R (or r), s, t, T, u, U, and Y (or y). For more information, see <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard Date and Time Format Strings</a></format>.</para>
@@ -1717,6 +1776,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to all the string representations supported by the specified standard date and time format specifier and culture-specific formatting information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array where each element is the representation of the value of this instance formatted with one of the standard date and time format specifiers.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time format string (see Remarks). </param>
         <param name="provider">
@@ -1738,10 +1801,6 @@ instance is equal to the current instance; otherwise,
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code
-   for this instance.</para>
-        </returns>
         <remarks>
           <para> The algorithm used to
       generate the hash code is unspecified.</para>
@@ -1754,6 +1813,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1771,12 +1834,15 @@ instance is equal to the current instance; otherwise,
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.TypeCode" /> for value type <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerated constant, <see cref="F:System.TypeCode.DateTime" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Hour">
@@ -1823,7 +1889,6 @@ instance is equal to the current instance; otherwise,
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1835,6 +1900,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether this instance of <see cref="T:System.DateTime" /> is within the daylight saving time range for the current time zone.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of the <see cref="P:System.DateTime.Kind" /> property is <see cref="F:System.DateTimeKind.Local" /> or <see cref="F:System.DateTimeKind.Unspecified" /> and the value of this instance of <see cref="T:System.DateTime" /> is within the daylight saving time range for the local time zone; false if <see cref="P:System.DateTime.Kind" /> is <see cref="F:System.DateTimeKind.Utc" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsLeapYear">
@@ -1854,11 +1923,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the specified year is a leap
-   year; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1870,6 +1934,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an indication whether the specified year is a leap year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="year" /> is a leap year; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A 4-digit year. </param>
       </Docs>
@@ -2130,10 +2198,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="t" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> instance that is the sum of the values of <paramref name="d" /> and
-<paramref name="t" /> .</para>
-        </returns>
         <remarks>
           <para>The returned value is equivalent to
    <see langword="DateTime" />( <paramref name="d" />.Ticks + <paramref name="t" />.Ticks ).</para>
@@ -2144,6 +2208,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified time interval to a specified date and time, yielding a new date and time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is the sum of the values of <paramref name="d" /> and <paramref name="t" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time value to add. </param>
         <param name="t">
@@ -2169,13 +2237,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="d2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="d1" />.Ticks value is equal to the 
-<paramref name="d2" />.Ticks value; otherwise, 
-<see langword="false" />. </para>
-        </returns>
         <altmember cref="M:System.DateTime.Equals(System.Object)" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2185,6 +2246,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified instances of <see cref="T:System.DateTime" /> are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d1" /> and <paramref name="d2" /> represent the same date and time; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="d2">
@@ -2210,12 +2275,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="t2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="t1" />.Ticks value is greater than the 
-<paramref name="t2" />.Ticks value; otherwise, <see langword="false" />.</para>
-        </returns>
         <altmember cref="M:System.DateTime.Compare(System.DateTime,System.DateTime)" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2225,6 +2284,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one specified <see cref="T:System.DateTime" /> is later than another specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="t1" /> is later than <paramref name="t2" />; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="t2">
@@ -2250,12 +2313,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="t2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="t1" />.Ticks value is greater than or equal to 
-<paramref name="t2" />.Ticks value; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTime.op_GreaterThanOrEqual(System.DateTime,System.DateTime)" /> operator determines the relationship between two <see cref="T:System.DateTime" /> values by comparing their number of ticks. Before comparing <see cref="T:System.DateTime" /> objects, make sure that the objects represent times in the same time zone. You can do this by comparing the values of their <see cref="P:System.DateTime.Kind" /> property. </para>
@@ -2264,6 +2321,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one specified <see cref="T:System.DateTime" /> represents a date and time that is the same as or later than another specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="t1" /> is the same as or later than <paramref name="t2" />; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="t2">
@@ -2289,13 +2350,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="d2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="d1" />.Ticks value is not equal to 
-<paramref name="d2" />.Ticks value; otherwise, <see langword="false" />.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTime.op_Inequality(System.DateTime,System.DateTime)" /> operator determines whether two <see cref="T:System.DateTime" /> values are not equal by comparing their number of ticks. Before comparing <see cref="T:System.DateTime" /> objects, make sure that the objects represent times in the same time zone. You can do this by comparing the values of their <see cref="P:System.DateTime.Kind" /> property. </para>
@@ -2304,6 +2358,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified instances of <see cref="T:System.DateTime" /> are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d1" /> and <paramref name="d2" /> do not represent the same date and time; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="d2">
@@ -2329,12 +2387,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="t2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="t1" />.Ticks value is less than 
-<paramref name="t2" />.Ticks value; otherwise, <see langword="false" />.</para>
-        </returns>
         <altmember cref="M:System.DateTime.Compare(System.DateTime,System.DateTime)" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2344,6 +2396,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one specified <see cref="T:System.DateTime" /> is earlier than another specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="t1" /> is earlier than <paramref name="t2" />; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="t2">
@@ -2369,12 +2425,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="t2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="t1" />.Ticks value is less than or equal to 
-<paramref name="t2" />.Ticks value; otherwise, <see langword="false" />.</para>
-        </returns>
         <altmember cref="M:System.DateTime.Compare(System.DateTime,System.DateTime)" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2384,6 +2434,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one specified <see cref="T:System.DateTime" /> represents a date and time that is the same as or earlier than another specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="t1" /> is the same as or later than <paramref name="t2" />; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="t2">
@@ -2409,10 +2463,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="d2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> that is the time interval between <paramref name="d1" /> and
-<paramref name="d2" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting date and time is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2425,6 +2475,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts a specified date and time from another specified date and time and returns a time interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The time interval between <paramref name="d1" /> and <paramref name="d2" />; that is, <paramref name="d1" /> minus <paramref name="d2" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time value to subtract from (the minuend). </param>
         <param name="d2">
@@ -2450,11 +2504,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="t" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.DateTime" /> whose value is the value of <paramref name="d" /> minus the value
-   of <paramref name="t" />
-   .</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting date and time is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2464,6 +2513,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts a specified time interval from a specified date and time and returns a new date and time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the value of <paramref name="d" /> minus the value of <paramref name="t" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time value to subtract from. </param>
         <param name="t">
@@ -2488,9 +2541,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The <see cref="T:System.DateTime" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -2505,6 +2555,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a date and time to its <see cref="T:System.DateTime" /> equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time contained in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert. </param>
       </Docs>
@@ -2528,9 +2582,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.DateTime" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -2545,6 +2596,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a date and time to its <see cref="T:System.DateTime" /> equivalent by using culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time contained in <paramref name="s" /> as specified by <paramref name="provider" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert. </param>
         <param name="provider">
@@ -2571,14 +2626,12 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="styles" Type="System.Globalization.DateTimeStyles" />
       </Parameters>
       <Docs>
-        <param name="styles">To be added.</param>
-        <returns>
-          <para>The <see cref="T:System.DateTime" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
           <paramref name="s" /> does not contain a valid string representation of a time or date and time.</exception>
+        <param name="styles">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that indicates the style elements that can be present in <paramref name="s" /> for the parse operation to succeed, and that defines how to interpret the parsed date in relation to the current time zone or the current date. A typical value to specify is <see cref="F:System.Globalization.DateTimeStyles.None" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2589,6 +2642,10 @@ instance is equal to the current instance; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a date and time to its <see cref="T:System.DateTime" /> equivalent by using culture-specific format information and formatting style.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time contained in <paramref name="s" />, as specified by <paramref name="provider" /> and <paramref name="styles" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert. </param>
         <param name="provider">
@@ -2617,10 +2674,6 @@ instance is equal to the current instance; otherwise,
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> equivalent to the date and time contained in
-<paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />or <paramref name="format" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -2676,6 +2729,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a date and time to its <see cref="T:System.DateTime" /> equivalent using the specified format and culture-specific format information. The format of the string representation must match the specified format exactly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time contained in <paramref name="s" />, as specified by <paramref name="format" /> and <paramref name="provider" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert. </param>
         <param name="format">
@@ -2705,10 +2762,6 @@ public class DateTimeTest {
         <Parameter Name="style" Type="System.Globalization.DateTimeStyles" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> equivalent to the date and time contained in
-<paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />or <paramref name="format" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -2879,6 +2932,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a date and time to its <see cref="T:System.DateTime" /> equivalent using the specified format, culture-specific format information, and style. The format of the string representation must match the specified format exactly or an exception is thrown.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time contained in <paramref name="s" />, as specified by <paramref name="format" />, <paramref name="provider" />, and <paramref name="style" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string containing a date and time to convert. </param>
         <param name="format">
@@ -2910,10 +2967,6 @@ public class DateTimeTest {
         <Parameter Name="style" Type="System.Globalization.DateTimeStyles" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> equivalent to the date and time contained in
-<paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />or <paramref name="formats" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -3082,6 +3135,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a date and time to its <see cref="T:System.DateTime" /> equivalent using the specified array of formats, culture-specific format information, and style. The format of the string representation must match at least one of the specified formats exactly or an exception is thrown.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time contained in <paramref name="s" />, as specified by <paramref name="formats" />, <paramref name="provider" />, and <paramref name="style" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert. </param>
         <param name="formats">
@@ -3137,7 +3194,6 @@ public class DateTimeTest {
         <Parameter Name="kind" Type="System.DateTimeKind" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3151,6 +3207,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.DateTime" /> object that has the same number of ticks as the specified <see cref="T:System.DateTime" />, but is designated as either local time, Coordinated Universal Time (UTC), or neither, as indicated by the specified <see cref="T:System.DateTimeKind" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that has the same number of ticks as the object represented by the <paramref name="value" /> parameter and the <see cref="T:System.DateTimeKind" /> value specified by the <paramref name="kind" /> parameter. </para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time. </param>
         <param name="kind">
@@ -3174,11 +3234,6 @@ public class DateTimeTest {
         <Parameter Name="value" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> interval equal to
-   the date and time represented by the current instance minus the date and time
-   represented by the specified <see cref="T:System.DateTime" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the date and time of the current instance is earlier than <paramref name="value" />, the method returns a <see cref="T:System.TimeSpan" /> object that represents a negative time span. That is, the value of all of its non-zero properties (such as <see cref="P:System.TimeSpan.Days" /> or <see cref="P:System.TimeSpan.Ticks" />) is negative.</para>
@@ -3191,6 +3246,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts the specified date and time from this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A time interval that is equal to the date and time represented by this instance minus the date and time represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time value to subtract. </param>
       </Docs>
@@ -3213,10 +3272,6 @@ public class DateTimeTest {
         <Parameter Name="value" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.DateTime" /> instance equal to the date and time represented by the
-   current instance minus the time interval of the specified <see cref="T:System.TimeSpan" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The resulting date and time is less than <see cref="F:System.DateTime.MinValue" /> or greater than <see cref="F:System.DateTime.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3262,6 +3317,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts the specified duration from this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equal to the date and time represented by this instance minus the time interval represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The time interval to subtract. </param>
       </Docs>
@@ -3283,12 +3342,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3309,12 +3371,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3335,12 +3400,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3361,12 +3429,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the current <see cref="T:System.DateTime" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3387,12 +3458,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3413,12 +3487,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3439,12 +3516,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3465,12 +3545,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3491,12 +3574,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3517,12 +3603,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3543,12 +3632,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3571,12 +3663,15 @@ public class DateTimeTest {
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current <see cref="T:System.DateTime" /> object to an object of a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the type specified by the <paramref name="type" /> parameter, with a value equivalent to the current <see cref="T:System.DateTime" /> object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3597,12 +3692,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3623,12 +3721,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3649,12 +3750,15 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value for this member is not used.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IFormatProvider" /> interface. (This parameter is not used; specify null.)</param>
       </Docs>
@@ -3764,7 +3868,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3797,6 +3900,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serializes the current <see cref="T:System.DateTime" /> object to a 64-bit binary value that subsequently can be used to recreate the <see cref="T:System.DateTime" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit signed integer that encodes the <see cref="P:System.DateTime.Kind" /> and <see cref="P:System.DateTime.Ticks" /> properties. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Today">
@@ -3844,7 +3951,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A Windows file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed since 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC). Windows uses a file time to record when an application creates, accesses, or writes to a file. </para>
@@ -3854,6 +3960,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to a Windows file time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current <see cref="T:System.DateTime" /> object expressed as a Windows file time.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToFileTimeUtc">
@@ -3870,7 +3980,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A Windows file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed since 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC). Windows uses a file time to record when an application creates, accesses, or writes to a file. </para>
@@ -3880,6 +3989,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to a Windows file time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current <see cref="T:System.DateTime" /> object expressed as a Windows file time.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToLocalTime">
@@ -3897,14 +4010,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An instance of <see cref="T:System.DateTime" /> equivalent of the time value in the
-   current instance, adjusted to the local time zone and daylight saving time. If
-   the result is too large or too small to be represented as a <see cref="T:System.DateTime" /> , this
-   method returns a <see cref="T:System.DateTime" /> set to <see cref="F:System.DateTime.MaxValue" /> or <see cref="F:System.DateTime.MinValue" />
-   
-   .</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The local time is equal to the Coordinated Universal Time (UTC) time plus the UTC offset. For more information about the UTC offset, see <see cref="M:System.TimeZone.GetUtcOffset(System.DateTime)" />. The conversion also takes into account the daylight saving time rule that applies to the time represented by the current <see cref="T:System.DateTime" /> object. </para>
@@ -3963,6 +4068,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to local time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose <see cref="P:System.DateTime.Kind" /> property is <see cref="F:System.DateTimeKind.Local" />, and whose value is the local time equivalent to the value of the current <see cref="T:System.DateTime" /> object, or <see cref="F:System.DateTime.MaxValue" /> if the converted value is too large to be represented by a <see cref="T:System.DateTime" /> object, or <see cref="F:System.DateTime.MinValue" /> if the converted value is too small to be represented as a <see cref="T:System.DateTime" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -3981,12 +4090,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the same value as a <see cref="T:System.String" /> returned by
-<see cref="M:System.DateTime.ToString" /> ("D", 
-<see langword="null" />
-).</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of the current <see cref="T:System.DateTime" /> object is formatted using the pattern defined by the <see cref="P:System.Globalization.DateTimeFormatInfo.LongDatePattern" /> property associated with the current thread culture. The return value is identical to the value returned by specifying the "D" <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">standard DateTime format string</a></format> with the <see cref="M:System.DateTime.ToString(System.String)" /> method. </para>
@@ -3999,6 +4102,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to its equivalent long date string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the long date string representation of the current <see cref="T:System.DateTime" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -4017,12 +4124,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the same value as a <see cref="T:System.String" /> returned by
-<see cref="M:System.DateTime.ToString" /> ("T", 
-<see langword="null" /> 
-).</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of the current <see cref="T:System.DateTime" /> object is formatted using the pattern defined by the <see cref="P:System.Globalization.DateTimeFormatInfo.LongTimePattern" /> property associated with the current thread culture. The return value is identical to the value returned by specifying the "T" <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">standard date and time format string</a></format> with the <see cref="M:System.DateTime.ToString(System.String)" /> method. </para>
@@ -4035,6 +4136,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to its equivalent long time string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the long time string representation of the current <see cref="T:System.DateTime" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -4052,7 +4157,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An OLE Automation date is implemented as a floating-point number whose integral component is the number of days before or after midnight, 30 December 1899, and whose fractional component represents the time on that day divided by 24. For example, midnight, 31 December 1899 is represented by 1.0; 6 A.M., 1 January 1900 is represented by 2.25; midnight, 29 December 1899 is represented by -1.0; and 6 A.M., 29 December 1899 is represented by -1.25.</para>
@@ -4064,6 +4168,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to the equivalent OLE Automation date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number that contains an OLE Automation date equivalent to the value of this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToShortDateString">
@@ -4081,12 +4189,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the same value as a <see cref="T:System.String" /> returned by
-<see cref="M:System.DateTime.ToString" /> ("d", 
-<see langword="null" />
-).</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of the current <see cref="T:System.DateTime" /> object is formatted using the pattern defined by the <see cref="P:System.Globalization.DateTimeFormatInfo.ShortDatePattern" /> property associated with the current thread culture. The return value is identical to the value returned by specifying the "d" <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">standard DateTime format string</a></format> with the <see cref="M:System.DateTime.ToString(System.String)" /> method.</para>
@@ -4099,6 +4201,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to its equivalent short date string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the short date string representation of the current <see cref="T:System.DateTime" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -4117,12 +4223,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the same value as a <see cref="T:System.String" /> returned by
-<see cref="M:System.DateTime.ToString" /> ("t", 
-<see langword="null" /> 
-).</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of the current <see cref="T:System.DateTime" /> object is formatted using the pattern defined by the <see cref="P:System.Globalization.DateTimeFormatInfo.ShortTimePattern" /> property associated with the current thread culture. The return value is identical to the value returned by specifying the "t" <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">standard DateTime format string</a></format> with the <see cref="M:System.DateTime.ToString(System.String)" /> method.</para>
@@ -4135,6 +4235,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to its equivalent short time string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the short time string representation of the current <see cref="T:System.DateTime" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -4153,11 +4257,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
-   the general format specifier, ("G"). The string takes
-   into account the current system culture.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of the current <see cref="T:System.DateTime" /> object is formatted using the general date and time format specifier ('G'). To format it using a specific date and time format specifier, call the <see cref="M:System.DateTime.ToString(System.String)" /> method. To format it using the general date and time format specifier ('G') for a specific culture, call the <see cref="M:System.DateTime.ToString(System.IFormatProvider)" /> method. To format it using a specific date and time format specifier and the conventions of a specific culture, call the <see cref="M:System.DateTime.ToString(System.String,System.IFormatProvider)" /> method. </para>
@@ -4167,6 +4266,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the value of the current <see cref="T:System.DateTime" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -4187,12 +4290,6 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
-   the general format specifier, ("G"). The string takes into account the
-   formatting information in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance supplied by
-<paramref name="provider" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of the current <see cref="T:System.DateTime" /> object is formatted using the general date and time format specifier ('G'), which formats output using the short date pattern and the long time pattern. </para>
@@ -4214,6 +4311,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to its equivalent string representation using the specified culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of value of the current <see cref="T:System.DateTime" /> object as specified by <paramref name="provider" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information. </param>
       </Docs>
@@ -4236,11 +4337,6 @@ public class DateTimeTest {
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the current system
-   culture.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <para>The length of the <paramref name="format" /> string is 1, and it is not one of the format specifier characters defined for <see cref="T:System.Globalization.DateTimeFormatInfo" />.</para>
           <para>-or-</para>
@@ -4255,6 +4351,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to its equivalent string representation using the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of value of the current <see cref="T:System.DateTime" /> object as specified by <paramref name="format" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom date and time format string (see Remarks). </param>
       </Docs>
@@ -4278,11 +4378,6 @@ public class DateTimeTest {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the information in
-   the <see cref="T:System.Globalization.DateTimeFormatInfo" /> supplied by <paramref name="provider" />.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <para>The length of the <paramref name="format" /> string is 1, and it is not one of the format specifier characters defined for <see cref="T:System.Globalization.DateTimeFormatInfo" />.</para>
           <para>-or-</para>
@@ -4309,6 +4404,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to its equivalent string representation using the specified format and culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of value of the current <see cref="T:System.DateTime" /> object as specified by <paramref name="format" /> and <paramref name="provider" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom date and time format string. </param>
         <param name="provider">
@@ -4331,12 +4430,6 @@ public class DateTimeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The UTC <see cref="T:System.DateTime" /> equivalent of the current <see cref="T:System.DateTime" /> value. If the
-   result is too large or too small to be represented as a <see cref="T:System.DateTime" />, the current
-   function returns a <see cref="T:System.DateTime" /> set to <see cref="F:System.DateTime.MaxValue" /> or <see cref="F:System.DateTime.MinValue" />
-   .</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The Coordinated Universal Time (UTC) is equal to the local time minus the UTC offset. For more information about the UTC offset, see <see cref="M:System.TimeZone.GetUtcOffset(System.DateTime)" />. The conversion also takes into account the daylight saving time rule that applies to the time represented by the current <see cref="T:System.DateTime" /> object. </para>
@@ -4395,6 +4488,10 @@ public class DateTimeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTime" /> object to Coordinated Universal Time (UTC).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose <see cref="P:System.DateTime.Kind" /> property is <see cref="F:System.DateTimeKind.Utc" />, and whose value is the UTC equivalent to the value of the current <see cref="T:System.DateTime" /> object, or <see cref="F:System.DateTime.MaxValue" /> if the converted value is too large to be represented by a <see cref="T:System.DateTime" /> object, or <see cref="F:System.DateTime.MinValue" /> if the converted value is too small to be represented by a <see cref="T:System.DateTime" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

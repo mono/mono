@@ -53,6 +53,7 @@
 
 MonoGCBridgeCallbacks bridge_callbacks;
 static SgenBridgeProcessor bridge_processor;
+static SgenBridgeProcessor compare_to_bridge_processor;
 
 gboolean bridge_processing_in_progress = FALSE;
 
@@ -81,14 +82,28 @@ mono_gc_register_bridge_callbacks (MonoGCBridgeCallbacks *callbacks)
 		sgen_old_bridge_init (&bridge_processor);
 }
 
+static gboolean
+init_bridge_processor (SgenBridgeProcessor *processor, const char *name)
+{
+	if (!strcmp ("old", name)) {
+		memset (processor, 0, sizeof (SgenBridgeProcessor));
+		sgen_old_bridge_init (processor);
+	} else if (!strcmp ("new", name)) {
+		memset (processor, 0, sizeof (SgenBridgeProcessor));
+		sgen_new_bridge_init (processor);
+	} else if (!strcmp ("tarjan", name)) {
+		memset (processor, 0, sizeof (SgenBridgeProcessor));
+		sgen_tarjan_bridge_init (processor);
+	} else {
+		return FALSE;
+	}
+	return TRUE;
+}
+
 void
 sgen_set_bridge_implementation (const char *name)
 {
-	if (!strcmp ("old", name))
-		sgen_old_bridge_init (&bridge_processor);
-	else if (!strcmp ("new", name))
-		sgen_new_bridge_init (&bridge_processor);
-	else
+	if (!init_bridge_processor (&bridge_processor, name))
 		g_warning ("Invalid value for bridge implementation, valid values are: 'new' and 'old'.");
 }
 
@@ -106,23 +121,136 @@ sgen_need_bridge_processing (void)
 	return bridge_callbacks.cross_references != NULL;
 }
 
+static gboolean
+compare_bridge_processors (void)
+{
+	return compare_to_bridge_processor.reset_data != NULL;
+}
+
 /* Dispatch wrappers */
 void
 sgen_bridge_reset_data (void)
 {
 	bridge_processor.reset_data ();
+	if (compare_bridge_processors ())
+		compare_to_bridge_processor.reset_data ();
 }
 
 void
 sgen_bridge_processing_stw_step (void)
 {
+	/*
+	 * bridge_processing_in_progress must be set with the world
+	 * stopped.  If not there would be race conditions.
+	 */
+	bridge_processing_in_progress = TRUE;
+
 	bridge_processor.processing_stw_step ();
+	if (compare_bridge_processors ())
+		compare_to_bridge_processor.processing_stw_step ();
+}
+
+static mono_bool
+is_bridge_object_alive (MonoObject *obj, void *data)
+{
+	SgenHashTable *table = data;
+	unsigned char *value = sgen_hash_table_lookup (table, obj);
+	if (!value)
+		return TRUE;
+	return *value;
+}
+
+static void
+null_weak_links_to_dead_objects (SgenBridgeProcessor *processor, int generation)
+{
+	int i, j;
+	int num_sccs = processor->num_sccs;
+	MonoGCBridgeSCC **api_sccs = processor->api_sccs;
+	SgenHashTable alive_hash = SGEN_HASH_TABLE_INIT (INTERNAL_MEM_BRIDGE_ALIVE_HASH_TABLE, INTERNAL_MEM_BRIDGE_ALIVE_HASH_TABLE_ENTRY, 1, mono_aligned_addr_hash, NULL);
+
+	for (i = 0; i < num_sccs; ++i) {
+		unsigned char alive = api_sccs [i]->is_alive ? 1 : 0;
+		for (j = 0; j < api_sccs [i]->num_objs; ++j) {
+			/* Build hash table for nulling weak links. */
+			sgen_hash_table_replace (&alive_hash, api_sccs [i]->objs [j], &alive, NULL);
+
+			/* Release for finalization those objects we no longer care. */
+			if (!api_sccs [i]->is_alive)
+				sgen_mark_bridge_object (api_sccs [i]->objs [j]);
+		}
+	}
+
+	/* Null weak links to dead objects. */
+	sgen_null_links_with_predicate (GENERATION_NURSERY, is_bridge_object_alive, &alive_hash);
+	if (generation == GENERATION_OLD)
+		sgen_null_links_with_predicate (GENERATION_OLD, is_bridge_object_alive, &alive_hash);
+
+	sgen_hash_table_clean (&alive_hash);
+}
+
+static void
+free_callback_data (SgenBridgeProcessor *processor)
+{
+	int i;
+	int num_sccs = processor->num_sccs;
+	int num_xrefs = processor->num_xrefs;
+	MonoGCBridgeSCC **api_sccs = processor->api_sccs;
+	MonoGCBridgeXRef *api_xrefs = processor->api_xrefs;
+
+	for (i = 0; i < num_sccs; ++i) {
+		sgen_free_internal_dynamic (api_sccs [i],
+				sizeof (MonoGCBridgeSCC) + sizeof (MonoObject*) * api_sccs [i]->num_objs,
+				INTERNAL_MEM_BRIDGE_DATA);
+	}
+	sgen_free_internal_dynamic (api_sccs, sizeof (MonoGCBridgeSCC*) * num_sccs, INTERNAL_MEM_BRIDGE_DATA);
+
+	sgen_free_internal_dynamic (api_xrefs, sizeof (MonoGCBridgeXRef) * num_xrefs, INTERNAL_MEM_BRIDGE_DATA);
+
+	processor->num_sccs = 0;
+	processor->api_sccs = NULL;
+	processor->num_xrefs = 0;
+	processor->api_xrefs = NULL;
 }
 
 void
 sgen_bridge_processing_finish (int generation)
 {
-	bridge_processor.processing_finish (generation);
+	unsigned long step_8;
+	SGEN_TV_DECLARE (atv);
+	SGEN_TV_DECLARE (btv);
+
+	bridge_processor.processing_build_callback_data (generation);
+	if (compare_bridge_processors ())
+		compare_to_bridge_processor.processing_build_callback_data (generation);
+
+	if (bridge_processor.num_sccs == 0) {
+		g_assert (bridge_processor.num_xrefs == 0);
+		goto after_callback;
+	}
+
+	bridge_callbacks.cross_references (bridge_processor.num_sccs, bridge_processor.api_sccs,
+			bridge_processor.num_xrefs, bridge_processor.api_xrefs);
+
+	if (compare_bridge_processors ())
+		sgen_compare_bridge_processor_results (&bridge_processor, &compare_to_bridge_processor);
+
+	SGEN_TV_GETTIME (btv);
+
+	null_weak_links_to_dead_objects (&bridge_processor, generation);
+
+	free_callback_data (&bridge_processor);
+	if (compare_bridge_processors ())
+		free_callback_data (&compare_to_bridge_processor);
+
+	SGEN_TV_GETTIME (atv);
+	step_8 = SGEN_TV_ELAPSED (btv, atv);
+
+ after_callback:
+	bridge_processor.processing_after_callback (generation);
+	if (compare_bridge_processors ())
+		compare_to_bridge_processor.processing_after_callback (generation);
+
+	bridge_processing_in_progress = FALSE;
 }
 
 MonoGCBridgeObjectKind
@@ -135,18 +263,26 @@ void
 sgen_bridge_register_finalized_object (MonoObject *obj)
 {
 	bridge_processor.register_finalized_object (obj);
+	if (compare_bridge_processors ())
+		compare_to_bridge_processor.register_finalized_object (obj);
 }
 
 void
 sgen_bridge_describe_pointer (MonoObject *obj)
 {
-	bridge_processor.describe_pointer (obj);
+	if (bridge_processor.describe_pointer)
+		bridge_processor.describe_pointer (obj);
 }
 
-void
-sgen_enable_bridge_accounting (void)
+static void
+set_dump_prefix (const char *prefix)
 {
-	bridge_processor.enable_accounting ();
+	if (!bridge_processor.set_dump_prefix) {
+		fprintf (stderr, "Warning: Bridge implementation does not support dumping - ignoring.\n");
+		return;
+	}
+
+	bridge_processor.set_dump_prefix (prefix);
 }
 
 /* Test support code */
@@ -265,8 +401,8 @@ bridge_test_cross_reference2 (int num_sccs, MonoGCBridgeSCC **sccs, int num_xref
 		sccs [i]->is_alive = TRUE;
 }
 
-void
-sgen_register_test_bridge_callbacks (const char *bridge_class_name)
+static void
+register_test_bridge_callbacks (const char *bridge_class_name)
 {
 	MonoGCBridgeCallbacks callbacks;
 	callbacks.bridge_version = SGEN_BRIDGE_VERSION;
@@ -275,6 +411,42 @@ sgen_register_test_bridge_callbacks (const char *bridge_class_name)
 	callbacks.cross_references = bridge_class_name[0] == '2' ? bridge_test_cross_reference2 : bridge_test_cross_reference;
 	mono_gc_register_bridge_callbacks (&callbacks);
 	bridge_class = bridge_class_name + (bridge_class_name[0] == '2' ? 1 : 0);
+}
+
+gboolean
+sgen_bridge_handle_gc_debug (const char *opt)
+{
+	if (g_str_has_prefix (opt, "bridge=")) {
+		opt = strchr (opt, '=') + 1;
+		register_test_bridge_callbacks (g_strdup (opt));
+	} else if (!strcmp (opt, "enable-bridge-accounting")) {
+		bridge_processor.enable_accounting ();
+	} else if (g_str_has_prefix (opt, "bridge-dump=")) {
+		char *prefix = strchr (opt, '=') + 1;
+		set_dump_prefix (prefix);
+	} else if (g_str_has_prefix (opt, "bridge-compare-to=")) {
+		const char *name = strchr (opt, '=') + 1;
+		if (init_bridge_processor (&compare_to_bridge_processor, name)) {
+			if (compare_to_bridge_processor.reset_data == bridge_processor.reset_data) {
+				g_warning ("Cannot compare bridge implementation to itself - ignoring.");
+				memset (&compare_to_bridge_processor, 0, sizeof (SgenBridgeProcessor));
+			}
+		} else {
+			g_warning ("Invalid bridge implementation to compare against - ignoring.");
+		}
+	} else {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+void
+sgen_bridge_print_gc_debug_usage (void)
+{
+	fprintf (stderr, "  bridge=<class-name>\n");
+	fprintf (stderr, "  enable-bridge-accounting\n");
+	fprintf (stderr, "  bridge-dump=<filename-prefix>\n");
+	fprintf (stderr, "  bridge-compare-to=<implementation>\n");
 }
 
 #endif

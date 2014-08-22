@@ -176,31 +176,6 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Condition</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance is <see langword="false" /> and
-<paramref name="value" /> is <see langword="true" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />
-.</description>
-            </item>
-            <item>
-              <term> Any
-      positive number</term>
-              <description>Current instance is <see langword="true" /> and
-<paramref name="value" /> is <see langword="false" />.</description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -213,6 +188,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified <see cref="T:System.Boolean" /> object and returns an integer that indicates their relationship to one another.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is false and <paramref name="value" /> is true. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance and <paramref name="value" /> are equal (either both are true or both are false). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is true and <paramref name="value" /> is false. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> object to compare to this instance. </param>
       </Docs>
@@ -234,32 +249,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="obj" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Condition</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance is <see langword="false" /> and
-<paramref name="obj" /> is <see langword="true" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="obj" />
-.</description>
-            </item>
-            <item>
-              <term> Any
-      positive number</term>
-              <description>Current instance is <see langword="true" /> and
-<paramref name="obj" /> is <see langword="false" />, or <paramref name="obj" /> is a null 
-   reference.</description>
-            </item>
-          </list>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="obj" /> is not a <see cref="T:System.Boolean" /> and is not a null reference.</exception>
         <remarks>
@@ -272,6 +261,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified object and returns an integer that indicates their relationship to one another.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative order of this instance and <paramref name="obj" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is false and <paramref name="obj" /> is true. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance and <paramref name="obj" /> are equal (either both are true or both are false). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is true and <paramref name="obj" /> is false.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="obj" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance, or null. </param>
       </Docs>
@@ -292,14 +324,6 @@
         <Parameter Name="obj" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> has the same value as
-   the current instance; otherwise,  <see langword="false" />.</para>
-          <para>
-            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IEquatable&lt;Boolean&gt;" /> interface.</block>
-          </para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -309,6 +333,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified <see cref="T:System.Boolean" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> has the same value as this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value to compare to this instance.</param>
       </Docs>
@@ -330,14 +358,8 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> is a <see cref="T:System.Boolean" /> with the same value as
-   the current instance. If <paramref name="obj" /> is a null reference or is not an instance
-   of <see cref="T:System.Boolean" />,
-   returns <see langword="false" />.</para>
-        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" />.</para>
@@ -346,6 +368,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is a <see cref="T:System.Boolean" /> and has the same value as this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance. </param>
       </Docs>
@@ -393,10 +419,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> value containing a hash code for the current
-   instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Boolean" /> class implements true as the integer, one, and false as the integer, zero. However, a particular programming language might represent true and false with other values.</para>
@@ -405,6 +427,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Boolean" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -422,12 +448,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>Returns TypeCode.Boolean from <see cref="T:System.TypeCode" /> enumeration.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.TypeCode" /> for value type <see cref="T:System.Boolean" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerated constant, <see cref="F:System.TypeCode.Boolean" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Parse">
@@ -447,11 +476,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="value" /> is equivalent to
-<see cref="F:System.Boolean.TrueString" />; otherwise, <see langword="false" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="value" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -481,6 +505,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a logical value to its <see cref="T:System.Boolean" /> equivalent, or throws an exception if the string is not equal to the value of <see cref="F:System.Boolean.TrueString" /> or <see cref="F:System.Boolean.FalseString" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is equal to the value of the <see cref="F:System.Boolean.TrueString" /> field; false if <paramref name="value" /> is equal to the value of the <see cref="F:System.Boolean.FalseString" /> field.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string containing the value to convert. </param>
       </Docs>
@@ -502,7 +530,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface.</para>
@@ -511,6 +538,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToBoolean(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true or false.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -531,7 +562,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToByte(System.Boolean)" /> method. </para>
@@ -540,6 +570,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToByte(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if the value of this instance is true; otherwise, 0. </para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -560,12 +594,15 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -586,12 +623,15 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -612,7 +652,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToDecimal(System.Boolean)" /> method.</para>
@@ -621,6 +660,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToDecimal(System.IFormatProvider)" />..</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -641,7 +684,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToDouble(System.Boolean)" /> method.</para>
@@ -650,6 +692,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToDouble(System.IFormatProvider)" />..</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -670,7 +716,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt16(System.Boolean)" /> method.</para>
@@ -679,6 +724,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt16(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -699,7 +748,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt32(System.Boolean)" /> method.</para>
@@ -708,6 +756,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt32(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -728,7 +780,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt64(System.Boolean)" /> method.</para>
@@ -737,6 +788,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt64(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -757,7 +812,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToSByte(System.Boolean)" /> method.</para>
@@ -766,6 +820,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToSByte(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -786,7 +844,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToSingle(System.Boolean)" /> method.</para>
@@ -795,6 +852,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToSingle(System.IFormatProvider)" />..</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -817,7 +878,6 @@ public class BoolParse {
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ChangeType(System.Object,System.Type,System.IFormatProvider)" /> method.</para>
@@ -826,6 +886,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToType(System.Type,System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type, with a value that is equivalent to the value of this Boolean object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> implementation that supplies culture-specific information about the format of the returned value.</param>
       </Docs>
@@ -846,7 +910,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt16(System.Boolean)" /> method.</para>
@@ -855,6 +918,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt16(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -875,7 +942,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt32(System.Boolean)" /> method.</para>
@@ -884,6 +950,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt32(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -904,7 +974,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Boolean" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt64(System.Boolean)" /> method.</para>
@@ -913,6 +982,10 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt64(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if this instance is true; otherwise, 0.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -932,11 +1005,6 @@ public class BoolParse {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>
-            <see cref="F:System.Boolean.FalseString" /> if the value of the current instance is
-<see langword="false" />; otherwise, <see cref="F:System.Boolean.TrueString" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns the constants "True" or "False". Note that XML is case-sensitive, and that the XML specification recognizes "true" and "false" as the valid set of Boolean values. If the <see cref="T:System.String" /> object returned by the <see cref="M:System.Boolean.ToString" /> method is to be written to an XML file, its <see cref="M:System.String.ToLower" /> method should be called first to convert it to lowercase.  </para>
@@ -945,6 +1013,11 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to its equivalent string representation (either "True" or "False").</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Boolean.TrueString" /> if the value of this instance is true, or <see cref="F:System.Boolean.FalseString" /> if the value of this instance is false.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -965,13 +1038,6 @@ public class BoolParse {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see cref="F:System.Boolean.TrueString" /> if the
-   value of this instance is <see langword="true" />, or
-<see cref="F:System.Boolean.FalseString" /> if the value of this instance is 
-<see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="provider" /> parameter is reserved. It does not participate in the execution of this method. This means that the <see cref="M:System.Boolean.ToString(System.IFormatProvider)" /> method, unlike most methods with a <paramref name="provider" /> parameter, does not reflect culture-specific settings. </para>
@@ -982,6 +1048,11 @@ public class BoolParse {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to its equivalent string representation (either "True" or "False").</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Boolean.TrueString" /> if the value of this instance is true, or <see cref="F:System.Boolean.FalseString" /> if the value of this instance is false.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />(Reserved) An <see cref="T:System.IFormatProvider" /> object. </param>
       </Docs>

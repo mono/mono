@@ -1,9 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.IO.IsolatedStorage" FullName="System.IO.IsolatedStorage" FullNameSP="System.IO.IsolatedStorage" Maintainer="Mono">
   <Docs>
     <summary>
-        To be added.
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.IO.IsolatedStorage" /> namespace contains types that allow the creation and use of isolated stores. With these stores, you can read and write data that less trusted code cannot access and prevent the exposure of sensitive information that can be saved elsewhere on the file system. Data is stored in compartments that are isolated by the current user and by the assembly in which the code exists. Additionally, data can be isolated by domain. Roaming profiles can be used in conjunction with isolated storage so isolated stores will travel with the user's profile. The <see cref="T:System.IO.IsolatedStorage.IsolatedStorageScope" /> enumeration indicates different types of isolation. For more information about when to use isolated storage, see <format type="text/html"><a href="aff939d7-9e49-46f2-a8cd-938d3020e94e">Isolated Storage</a></format>.</para>
     </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IO.IsolatedStorage.IsolatedStorageFile" /> class provides most of the necessary functionality for isolated storage. Use this class to obtain, delete and manage isolated storage. The <see cref="T:System.IO.IsolatedStorage.IsolatedStorageFileStream" /> class handles reading and writing files to a store. This is similar to reading and writing in standard File I/O classes. For more information about I/O, see the <see cref="N:System.IO" /> namespace.</para>
+      <para>For examples using isolated storage, see <format type="text/html"><a href="aff939d7-9e49-46f2-a8cd-938d3020e94e.">Isolated Storage</a></format></para>
     </remarks>
   </Docs>
 </Namespace>

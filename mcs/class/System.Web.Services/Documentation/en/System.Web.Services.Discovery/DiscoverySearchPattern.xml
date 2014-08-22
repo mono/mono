@@ -52,7 +52,6 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DiscoveryReference'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A class derived from <see cref="T:System.Web.Services.Discovery.DiscoverySearchPattern" /> implements the <see cref="M:System.Web.Services.Discovery.DiscoverySearchPattern.GetDiscoveryReference(System.String)" /> method by returning its associated concrete class derived from <see cref="T:System.Web.Services.Discovery.DiscoveryReference" />. </para>
@@ -62,6 +61,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> object for a given file name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file name.</para>
+        </returns>
         <param name="filename">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a discovery file or a file that appears in a dynamically generated discovery document. For example, an .asmx or .xsd file.</param>
       </Docs>

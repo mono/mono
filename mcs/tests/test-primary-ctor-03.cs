@@ -4,7 +4,7 @@ class D(string arg) : Base (arg)
 
 abstract class Base (object obj)
 {
-	public string Prop { get { return obj.ToString (); } }
+	public string Prop { get; } = obj.ToString ();
 }
 
 class X

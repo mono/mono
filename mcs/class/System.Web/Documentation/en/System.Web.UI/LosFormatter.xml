@@ -97,7 +97,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the <see cref="M:System.Web.UI.LosFormatter.Deserialize(System.IO.Stream)" /> method is used to transform the view-state value contained in a <see cref="T:System.IO.Stream" /> object to a LOS-formatted object.</para>
@@ -109,6 +108,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Transforms the view-state value contained in a <see cref="T:System.IO.Stream" /> object to a limited object serialization (LOS)-formatted object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A LOS-formatted object.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the view-state value to transform. </param>
       </Docs>
@@ -127,7 +130,6 @@
         <Parameter Name="input" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the <see cref="M:System.Web.UI.LosFormatter.Deserialize(System.IO.Stream)" /> method is used to transform the view-state value contained in a <see cref="T:System.IO.TextReader" /> object to a LOS-formatted object.</para>
@@ -139,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Transforms the view-state value contained in a <see cref="T:System.IO.TextReader" /> object to a limited object serialization (LOS)-formatted object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A LOS-formatted object.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> that contains the view-state value to transform. </param>
       </Docs>
@@ -157,7 +163,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the <see cref="M:System.Web.UI.LosFormatter.Deserialize(System.IO.Stream)" /> method is used to transform the specified view-state value to a LOS-formatted object.</para>
@@ -169,6 +174,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Transforms the specified view-state value to a limited object serialization (LOS)-formatted object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A LOS-formatted object.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The view-state value to transform. </param>
       </Docs>

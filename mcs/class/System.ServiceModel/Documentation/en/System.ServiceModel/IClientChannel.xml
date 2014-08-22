@@ -68,7 +68,6 @@
       <Docs>
         <param name="callback">To be added.</param>
         <param name="state">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method to cause any interactive channel initialization (for example, CardSpace card selection) to occur. This happens automatically if the channel is used without explicitly calling <see cref="M:System.ServiceModel.ICommunicationObject.Open" />, so for many applications this call is optional.</para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An asynchronous call to begin using a user interface to obtain credential information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> to use to call back when processing has completed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DidInteractiveInitialization">

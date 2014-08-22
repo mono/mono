@@ -43,12 +43,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolNamespace []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the child members of the current namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The child members of the current namespace.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetVariables">
@@ -65,12 +68,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolVariable []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all the variables defined at global scope within the current namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The variables defined at global scope within the current namespace.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">

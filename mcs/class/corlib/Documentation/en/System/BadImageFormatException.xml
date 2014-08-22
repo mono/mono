@@ -362,7 +362,8 @@ public class BadImageExample {
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full name of the file with the invalid image. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
@@ -547,10 +548,6 @@ public class BadImageExample {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" />
-representation of the current exception.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The string representation returned by this method includes the name of the exception, the value of the <see cref="P:System.BadImageFormatException.Message" /> property, the result of calling ToString on the inner exception, the value of the <see cref="P:System.BadImageFormatException.FileName" /> property, and the result of calling <see cref="P:System.Environment.StackTrace" />. If any of these members is a null reference (Nothing in Visual Basic), its value is not included in the returned string.</para>
@@ -559,6 +556,10 @@ representation of the current exception.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the fully qualified name of this exception and possibly the error message, the name of the inner exception, and the stack trace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified name of this exception and possibly the error message, the name of the inner exception, and the stack trace.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

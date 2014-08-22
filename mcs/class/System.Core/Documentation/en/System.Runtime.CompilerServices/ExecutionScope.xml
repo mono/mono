@@ -34,12 +34,15 @@
         <Parameter Name="locals" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate that can be used to execute a dynamically generated method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Delegate" /> that can execute a dynamically generated method.</para>
+        </returns>
         <param name="indexLambda">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the object that stores information about associated lambda expression of the dynamic method.</param>
         <param name="locals">
@@ -57,12 +60,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an array to store the hoisted local variables.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array to store hoisted local variables.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Globals">
@@ -96,12 +102,15 @@
         <Parameter Name="locals" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Frees a specified expression tree of external parameter references by replacing the parameter with its current value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An expression tree that does not contain external parameter references.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />An expression tree to free of external parameter references.</param>
         <param name="locals">

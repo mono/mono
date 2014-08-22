@@ -372,12 +372,15 @@
         <Parameter Name="format" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Bitmap'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the section of this <see cref="T:System.Drawing.Bitmap" /> defined by <see cref="T:System.Drawing.Rectangle" /> structure and with a specified <see cref="T:System.Drawing.Imaging.PixelFormat" /> enumeration.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Drawing.Bitmap" /> that this method creates.</para>
+        </returns>
         <param name="rect">
           <attribution license="cc4" from="Microsoft" modified="false" />Defines the portion of this <see cref="T:System.Drawing.Bitmap" /> to copy. Coordinates are relative to this <see cref="T:System.Drawing.Bitmap" />. </param>
         <param name="format">
@@ -399,12 +402,15 @@
         <Parameter Name="format" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Bitmap'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the section of this <see cref="T:System.Drawing.Bitmap" /> defined with a specified <see cref="T:System.Drawing.Imaging.PixelFormat" /> enumeration.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Bitmap" /> that this method creates.</para>
+        </returns>
         <param name="rect">
           <attribution license="cc4" from="Microsoft" modified="false" />Defines the portion of this <see cref="T:System.Drawing.Bitmap" /> to copy. </param>
         <param name="format">
@@ -425,12 +431,15 @@
         <Parameter Name="hicon" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Bitmap'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Bitmap" /> from a Windows handle to an icon.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Bitmap" /> that this method creates.</para>
+        </returns>
         <param name="hicon">
           <attribution license="cc4" from="Microsoft" modified="false" />A handle to an icon. </param>
       </Docs>
@@ -450,7 +459,6 @@
         <Parameter Name="bitmapName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Bitmap'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -460,6 +468,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Bitmap" /> from the specified Windows resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Bitmap" /> that this method creates.</para>
+        </returns>
         <param name="hinstance">
           <attribution license="cc4" from="Microsoft" modified="false" />A handle to an instance of the executable file that contains the resource. </param>
         <param name="bitmapName">
@@ -478,7 +490,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IntPtr'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You are responsible for calling the ndptecgdi <unmanagedCodeEntityReference>DeleteObject</unmanagedCodeEntityReference> method to free the memory used by the ndptecgdi bitmap object. For more information about GDI bitmaps, see <see cref="http://go.microsoft.com/fwlink/?LinkId=205685">Bitmaps</see> in the Windows GDI documentation.</para>
@@ -487,6 +498,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a ndptecgdi bitmap object from this <see cref="T:System.Drawing.Bitmap" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle to the ndptecgdi bitmap object that this method creates.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -508,7 +523,6 @@
         <Parameter Name="background" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IntPtr'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You are responsible for calling the ndptecgdi <unmanagedCodeEntityReference>DeleteObject</unmanagedCodeEntityReference> method to free the memory used by the ndptecgdi bitmap object. For more information about GDI bitmaps, see <see cref="http://go.microsoft.com/fwlink/?LinkId=205685">Bitmaps</see> in the Windows GDI documentation.</para>
@@ -517,6 +531,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a ndptecgdi bitmap object from this <see cref="T:System.Drawing.Bitmap" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle to the ndptecgdi bitmap object that this method creates.</para>
+        </returns>
         <param name="background">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Color" /> structure that specifies the background color. This parameter is ignored if the bitmap is totally opaque. </param>
       </Docs>
@@ -538,7 +556,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IntPtr'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initially, an icon created from the handle will have the same size as the original bitmap.</para>
@@ -547,6 +564,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the handle to an icon.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows handle to an icon with the same image as the <see cref="T:System.Drawing.Bitmap" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -569,12 +590,15 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Color'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the color of the specified pixel in this <see cref="T:System.Drawing.Bitmap" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Color" /> structure that represents the color of the specified pixel.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the pixel to retrieve. </param>
         <param name="y">
@@ -597,7 +621,6 @@
         <Parameter Name="format" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Imaging.BitmapData'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="Overload:System.Drawing.Bitmap.LockBits" /> method to lock an existing bitmap in system memory so that it can be changed programmatically. You can change the color of an image with the <see cref="M:System.Drawing.Bitmap.SetPixel(System.Int32,System.Int32,System.Drawing.Color)" /> method, although the <see cref="Overload:System.Drawing.Bitmap.LockBits" /> method offers better performance for large-scale changes. </para>
@@ -608,6 +631,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Locks a <see cref="T:System.Drawing.Bitmap" /> into system memory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Imaging.BitmapData" /> that contains information about this lock operation.</para>
+        </returns>
         <param name="rect">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> structure that specifies the portion of the <see cref="T:System.Drawing.Bitmap" /> to lock. </param>
         <param name="flags">
@@ -636,7 +663,6 @@
         <Parameter Name="bitmapData" Type="System.Drawing.Imaging.BitmapData" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="Overload:System.Drawing.Bitmap.LockBits" /> method to lock an existing bitmap in system memory so that it can be changed programmatically. You can change the color of an image with the <see cref="M:System.Drawing.Bitmap.SetPixel(System.Int32,System.Int32,System.Drawing.Color)" /> method, although the <see cref="Overload:System.Drawing.Bitmap.LockBits" /> method offers better performance for large-scale changes. </para>
@@ -647,6 +673,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Locks a <see cref="T:System.Drawing.Bitmap" /> into system memory </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Imaging.BitmapData" /> that contains information about the lock operation.</para>
+        </returns>
         <param name="rect">
           <attribution license="cc4" from="Microsoft" modified="false" />A rectangle structure that specifies the portion of the <see cref="T:System.Drawing.Bitmap" /> to lock.</param>
         <param name="flags">
@@ -674,6 +704,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Makes the default transparent color transparent for this <see cref="T:System.Drawing.Bitmap" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -726,6 +760,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color of the specified pixel in this <see cref="T:System.Drawing.Bitmap" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the pixel to set. </param>
         <param name="y">

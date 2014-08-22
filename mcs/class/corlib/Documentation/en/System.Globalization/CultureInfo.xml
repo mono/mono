@@ -425,7 +425,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The clone is writable even if the original <see cref="T:System.Globalization.CultureInfo" /> is read-only. Therefore, the properties of the clone can be modified.</para>
@@ -436,6 +435,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the current <see cref="T:System.Globalization.CultureInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CompareInfo">
@@ -479,7 +482,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a list of predefined culture names, see the <see cref="http://go.microsoft.com/fwlink/?LinkId=200048">National Language Support (NLS) API Reference</see> at the Go Global Developer Center.</para>
@@ -491,6 +493,15 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Globalization.CultureInfo" /> that represents the specific culture that is associated with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.CultureInfo" /> object that represents:</para>
+          <para>The invariant culture, if <paramref name="name" /> is an empty string ("").</para>
+          <para>-or- </para>
+          <para>The specific culture associated with <paramref name="name" />, if <paramref name="name" /> is a neutral culture.</para>
+          <para>-or- </para>
+          <para>The culture specified by <paramref name="name" />, if <paramref name="name" /> is already a specific culture.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />A predefined <see cref="T:System.Globalization.CultureInfo" /> name or the name of an existing <see cref="T:System.Globalization.CultureInfo" /> object. <paramref name="name" /> is not case-sensitive.</param>
       </Docs>
@@ -755,7 +766,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" />.</para>
@@ -765,6 +775,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object is the same culture as the current <see cref="T:System.Globalization.CultureInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is the same culture as the current <see cref="T:System.Globalization.CultureInfo" />; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.Globalization.CultureInfo" />. </param>
       </Docs>
@@ -787,7 +801,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Languages such as Arabic, Hebrew, Urdu, and Syriac are based on bidirectional text. Windows applications, which have a graphical user interface, support bidirectional languages. However, console applications, which employ the text user interface of the operating system console, do not provide bidirectional support. Therefore, if you localize a console application to Arabic or Hebrew, your application displays unreadable text on the console screen. </para>
@@ -1727,6 +1740,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an alternate user interface culture suitable for console applications when the default graphic user interface culture is unsuitable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An alternate culture that is used to read and display text on the console.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCultureInfo">
@@ -1744,7 +1761,6 @@
         <Parameter Name="culture" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1755,6 +1771,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a cached, read-only instance of a culture by using the specified culture identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Globalization.CultureInfo" /> object.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />A locale identifier (LCID).</param>
       </Docs>
@@ -1774,7 +1794,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1787,6 +1806,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a cached, read-only instance of a culture using the specified culture name. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Globalization.CultureInfo" /> object.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a culture. <paramref name="name" /> is not case-sensitive.</param>
       </Docs>
@@ -1807,7 +1830,6 @@
         <Parameter Name="altName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1819,6 +1841,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a cached, read-only instance of a culture. Parameters specify a culture that is initialized with the <see cref="T:System.Globalization.TextInfo" /> and <see cref="T:System.Globalization.CompareInfo" /> objects specified by another culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Globalization.CultureInfo" /> object.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a culture. <paramref name="name" /> is not case-sensitive.</param>
         <param name="altName">
@@ -1840,7 +1866,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1855,6 +1880,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deprecated. Retrieves a read-only <see cref="T:System.Globalization.CultureInfo" /> object having linguistic characteristics that are identified by the specified RFC 4646 language tag.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Globalization.CultureInfo" /> object.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a language as specified by the RFC 4646 standard.</param>
       </Docs>
@@ -1875,7 +1904,6 @@
         <Parameter Name="types" Type="System.Globalization.CultureTypes" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes)" /> method is most commonly called with the <paramref name="types" /> parameter set to the following values:  </para>
@@ -1902,6 +1930,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the list of supported cultures filtered by the specified <see cref="T:System.Globalization.CultureTypes" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the cultures specified by the <paramref name="types" /> parameter. The array of cultures is unsorted.</para>
+        </returns>
         <param name="types">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that filter the cultures to retrieve. </param>
       </Docs>
@@ -1922,7 +1954,6 @@
         <Parameter Name="formatType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1933,6 +1964,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an object that defines how to format the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Globalization.CultureInfo.NumberFormat" /> property, which is a <see cref="T:System.Globalization.NumberFormatInfo" /> containing the default number format information for the current <see cref="T:System.Globalization.CultureInfo" />, if <paramref name="formatType" /> is the <see cref="T:System.Type" /> object for the <see cref="T:System.Globalization.NumberFormatInfo" /> class.</para>
+          <para>-or- </para>
+          <para>The value of the <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> property, which is a <see cref="T:System.Globalization.DateTimeFormatInfo" /> containing the default date and time format information for the current <see cref="T:System.Globalization.CultureInfo" />, if <paramref name="formatType" /> is the <see cref="T:System.Type" /> object for the <see cref="T:System.Globalization.DateTimeFormatInfo" /> class.</para>
+          <para>-or- </para>
+          <para>null, if <paramref name="formatType" /> is any other object.</para>
+        </returns>
         <param name="formatType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> for which to get a formatting object. This method only supports the <see cref="T:System.Globalization.NumberFormatInfo" /> and <see cref="T:System.Globalization.DateTimeFormatInfo" /> types. </param>
       </Docs>
@@ -1951,7 +1990,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.GetHashCode" />.</para>
@@ -1961,6 +1999,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serves as a hash function for the current <see cref="T:System.Globalization.CultureInfo" />, suitable for hashing algorithms and data structures, such as a hash table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IetfLanguageTag">
@@ -2304,7 +2346,6 @@
         <Parameter Name="ci" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This wrapper prevents any modifications to <paramref name="ci" />, or the objects returned by the <paramref name="ci" />.<see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> and <paramref name="ci" />.<see cref="P:System.Globalization.CultureInfo.NumberFormat" /> properties.</para>
@@ -2313,6 +2354,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a read-only wrapper around the specified <see cref="T:System.Globalization.CultureInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Globalization.CultureInfo" /> wrapper around <paramref name="ci" />.</para>
+        </returns>
         <param name="ci">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> to wrap. </param>
       </Docs>
@@ -2409,7 +2454,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.ToString" />. It returns a normalized version of the culture name that is passed to the <see cref="M:System.Globalization.CultureInfo.#ctor(System.String)" /> or <see cref="M:System.Globalization.CultureInfo.#ctor(System.String,System.Boolean)" /> constructor or to the <see cref="M:System.Globalization.CultureInfo.CreateSpecificCulture(System.String)" /> or <see cref="M:System.Globalization.CultureInfo.GetCultureInfo(System.String)" /> method. It normalizes the result string by converting characters in languagecode2 to lowercase and converting characters in country/regioncode2 to uppercase if necessary. </para>
@@ -2419,6 +2463,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string containing the name of the current <see cref="T:System.Globalization.CultureInfo" /> in the format languagecode2-country/regioncode2.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the name of the current <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TwoLetterISOLanguageName">

@@ -210,7 +210,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -220,6 +219,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the URI of the current channel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the URI of the channel.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -235,7 +238,6 @@
         <Parameter Name="objectUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -245,6 +247,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of all the URLs for the object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> instance.</para>
+        </returns>
         <param name="objectUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the object for which URLs are required.</param>
       </Docs>

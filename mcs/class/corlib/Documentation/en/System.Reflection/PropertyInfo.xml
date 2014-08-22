@@ -192,12 +192,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
@@ -217,13 +220,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects that reflect the public 
-<see langword="Get" />, <see langword="Set" />, and other 
-   accessors of
-   the property reflected by the current instance, if found; otherwise, returns
-   an array with zero elements.</para>
-        </returns>
         <remarks>
           <para>This method is equivalent to <see cref="M:System.Reflection.PropertyInfo.GetAccessors" />(<see langword="false" />).</para>
         </remarks>
@@ -231,6 +227,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array whose elements reflect the public get, set, and other accessors of the property reflected by the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects that reflect the public get, set, and other accessors of the property reflected by the current instance, if found; otherwise, this method returns an array with zero (0) elements.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -251,17 +251,6 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects whose elements reflect the
-<see langword="Get" />, <see langword="Set" />, and other accessors of the property 
-   reflected by the current instance. If <paramref name="nonPublic" /> is
-<see langword="true" />, this array contains public and non-public 
-   accessors. If
-<paramref name="nonPublic" /> is <see langword="false" />, this array contains only public accessors. 
-   If no
-   accessors with the specified visibility are found, returns
-   an array with zero elements.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -271,6 +260,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array whose elements reflect the public and, if specified, non-public get, set, and other accessors of the property reflected by the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects whose elements reflect the get, set, and other accessors of the property reflected by the current instance. If <paramref name="nonPublic" /> is true, this array contains public and non-public get, set, and other accessors. If <paramref name="nonPublic" /> is false, this array contains only public get, set, and other accessors. If no accessors with the specified visibility are found, this method returns an array with zero (0) elements.</para>
+        </returns>
         <param name="nonPublic">
           <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether non-public methods should be returned in the MethodInfo array. true if non-public methods are to be included; otherwise, false. </param>
       </Docs>
@@ -289,7 +282,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -306,6 +298,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a literal value associated with the property by a compiler. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the literal value associated with the property. If the literal value is a class type with an element value of zero, the return value is null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGetMethod">
@@ -323,12 +319,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the public
-<see langword="Get" /> accessor for the property reflected by the current 
-   instance. Returns <see langword="null" /> if no public <see langword="Get" />
-   accessor exists.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that provides an implementation for the abstract GetGetMethod method with the <paramref name="nonPublic" /> parameter set to false.</para>
@@ -338,6 +328,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public get accessor for this property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodInfo object representing the public get accessor for this property, or null if the get accessor is non-public or does not exist.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -358,17 +352,6 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>If <paramref name="nonPublic" /> is <see langword="true" />, returns
-   a <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the
-<see langword="Get" /> 
-accessor for the property reflected by the current instance if that accessor
-exists. If
-<paramref name="nonPublic " />is <see langword="false" /> and the <see langword="Get" /> accessor is non-public, or <paramref name="nonPublic" /> 
-is <see langword="true" /> but no <see langword="Get" /> accessor exists for the property reflected by
-the current instance, returns <see langword="null" />
-.</para>
-        </returns>
         <exception cref="T:System.MethodAccessException">
           <paramref name="nonPublic" /> is <see langword="true" />, the <see langword="Get" /> accessor for the property reflected by the current instance is non-public, and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
@@ -381,6 +364,10 @@ the current instance, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the public or non-public get accessor for this property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodInfo object representing the get accessor for this property, if <paramref name="nonPublic" /> is true. Returns null if <paramref name="nonPublic" /> is false and the get accessor is non-public, or if <paramref name="nonPublic" /> is true but no get accessors exist.</para>
+        </returns>
         <param name="nonPublic">
           <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether a non-public get accessor should be returned. true if a non-public accessor is to be returned; otherwise, false. </param>
       </Docs>
@@ -398,12 +385,15 @@ the current instance, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIndexParameters">
@@ -421,13 +411,6 @@ the current instance, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> An array
-      of <see cref="T:System.Reflection.ParameterInfo" /> objects that reflect the indexers
-      of the property reflected by the current instance. If no indexers exist for
-      the property reflected by the current instance,
-      returns an array with zero elements.</para>
-        </returns>
         <exception cref="T:System.MethodAccessException">The property reflected by the current instance is visible, but its <see langword="Get" /> and <see langword="Set" /> accessors are not, and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" />.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
         <remarks>
@@ -439,6 +422,10 @@ the current instance, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns an array of all the index parameters for the property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type ParameterInfo containing the parameters for the indexes. If the property is not indexed, the array has 0 (zero) elements.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -474,7 +461,6 @@ the current instance, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -484,6 +470,10 @@ the current instance, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of types representing the optional custom modifiers of the property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that identify the optional custom modifiers of the current property, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsImplicitlyDereferenced" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRawConstantValue">
@@ -499,7 +489,6 @@ the current instance, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -514,6 +503,10 @@ the current instance, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a literal value associated with the property by a compiler. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the literal value associated with the property. If the literal value is a class type with an element value of zero, the return value is null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRequiredCustomModifiers">
@@ -529,7 +522,6 @@ the current instance, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -539,6 +531,10 @@ the current instance, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of types representing the required custom modifiers of the property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that identify the required custom modifiers of the current property, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsImplicitlyDereferenced" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSetMethod">
@@ -556,12 +552,6 @@ the current instance, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> instance that reflects the public
-<see langword="Set" /> accessor for the property reflected by the current 
-   instance. Returns <see langword="null" /> if no public <see langword="Set" />
-   accessor exists.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that provides an implementation for the abstract GetSetMethod method with the <paramref name="nonPublic" /> parameter set to false.</para>
@@ -571,6 +561,10 @@ the current instance, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public set accessor for this property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The MethodInfo object representing the Set method for this property if the set accessor is public, or null if the set accessor is not public.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -591,15 +585,6 @@ the current instance, returns <see langword="null" />
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>If <paramref name="nonPublic" /> is <see langword="true" />, returns a <see cref="T:System.Reflection.MethodInfo" />
-instance that reflects the <see langword="Set" /> accessor
-for the property reflected by the current instance if that accessor exists. If
-<paramref name="nonPublic " />is <see langword="false" /> and the <see langword="Set" /> accessor is non-public, or <paramref name="nonPublic" /> 
-is <see langword="true" />
-but no <see langword="Set" /> accessor exists for the property
-reflected by the current instance, returns <see langword="null" /> .</para>
-        </returns>
         <exception cref="T:System.MethodAccessException">
           <paramref name="nonPublic" /> is <see langword="true" />, the <see langword="Set" /> accessor for the property reflected by the current instance is non-public, and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
@@ -611,6 +596,46 @@ reflected by the current instance, returns <see langword="null" /> .</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the set accessor for this property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the Set method for this property. </para>
+              </term>
+              <description>
+                <para>The set accessor is public.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="nonPublic" /> is true and the set accessor is non-public. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>null </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="nonPublic" /> is true, but the property is read-only.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="nonPublic" /> is false and the set accessor is non-public.</para>
+                <para>-or- </para>
+                <para>There is no set accessor. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="nonPublic">
           <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the accessor should be returned if it is non-public. true if a non-public accessor is to be returned; otherwise, false. </param>
       </Docs>
@@ -651,12 +676,15 @@ reflected by the current instance, returns <see langword="null" /> .</para>
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the property value of a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property value of the specified object.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object whose property value will be returned.</param>
       </Docs>
@@ -684,10 +712,6 @@ reflected by the current instance, returns <see langword="null" /> .</para>
         <Parameter Name="index" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that contains the property value for <paramref name="obj" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="index " />does not contain the exact type of arguments needed.</para>
@@ -698,6 +722,8 @@ reflected by the current instance, returns <see langword="null" /> .</para>
         <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
         <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To determine whether a property is indexed, use the <see cref="M:System.Reflection.PropertyInfo.GetIndexParameters" /> method. If the resulting array has 0 (zero) elements, the property is not indexed.</para>
@@ -717,6 +743,10 @@ Console.WriteLine("CurrCult: " +
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the property value of a specified object with optional index values for indexed properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property value of the specified object.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object whose property value will be returned. </param>
         <param name="index">
@@ -745,14 +775,6 @@ Console.WriteLine("CurrCult: " +
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="index">To be added.</param>
-        <param name="culture">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that
-   contains the property value for <paramref name="obj" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="index " /> does not contain the exact type of arguments needed.</para>
@@ -763,6 +785,14 @@ Console.WriteLine("CurrCult: " +
         <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
         <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the following enumeration members that specify the invocation attribute: InvokeMethod, CreateInstance, Static, GetField, SetField, GetProperty, and SetProperty. You must specify a suitable invocation attribute. For example, to invoke a static member, set the Static flag. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that enables the binding, coercion of argument types, invocation of members, and retrieval of <see cref="T:System.Reflection.MemberInfo" /> objects through reflection. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The culture for which the resource is to be localized. If the resource is not localized for this culture, the <see cref="P:System.Globalization.CultureInfo.Parent" /> property will be called successively in search of a match. If this value is null, the culture-specific information is obtained from the <see cref="P:System.Globalization.CultureInfo.CurrentUICulture" /> property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To determine whether a property is indexed, use the <see cref="M:System.Reflection.PropertyInfo.GetIndexParameters" /> method. If the resulting array has 0 (zero) elements, the property is not indexed.</para>
@@ -781,6 +811,10 @@ Console.WriteLine("CurrCult: " +
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the property value of a specified object that has the specified binding, index, and culture-specific information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property value of the specified object.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object whose property value will be returned. </param>
         <param name="invokeAttr">
@@ -861,12 +895,15 @@ Console.WriteLine("CurrCult: " +
         <Parameter Name="right" Type="System.Reflection.PropertyInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.PropertyInfo" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -888,12 +925,15 @@ Console.WriteLine("CurrCult: " +
         <Parameter Name="right" Type="System.Reflection.PropertyInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.PropertyInfo" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1006,8 +1046,6 @@ Console.WriteLine("CurrCult: " +
         <Parameter Name="index" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="index">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="index " /> does not contain the exact type of arguments needed.</para>
@@ -1018,6 +1056,10 @@ Console.WriteLine("CurrCult: " +
         <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
         <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new property value. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If this <see cref="T:System.Reflection.PropertyInfo" /> object is a value type and <paramref name="value" /> is null, then the property will be set to the default value for that type.</para>
@@ -1064,12 +1106,13 @@ Console.WriteLine("CurrCult: " +
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">The <paramref name="index " /> array does not contain the exact type of arguments needed. <para>The <see langword="Set" /> accessor of the property reflected by the current instance is not found.</para></exception>
         <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
         <exception cref="T:System.MethodAccessException">The <see langword="Set" /> accessor of the property reflected by the current instance is non-public and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
         <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new property value. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If this <see cref="T:System.Reflection.PropertyInfo" /> object is a value type and <paramref name="value" /> is null, then the property will be set to the default value for that type.</para>
@@ -1141,12 +1184,15 @@ Console.WriteLine("CurrCult: " +
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Type" /> object representing the <see cref="T:System.Reflection.PropertyInfo" /> type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Reflection.PropertyInfo" /> type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._PropertyInfo.GetTypeInfo">

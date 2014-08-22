@@ -218,12 +218,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Threading.CancellationTokenSource" /> that will be in the canceled state when any of the source tokens in the specified array are in the canceled state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CancellationTokenSource" /> that is linked to the source tokens.</para>
+        </returns>
         <param name="tokens">
           <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the cancellation token instances to observe.</param>
       </Docs>
@@ -243,12 +246,15 @@
         <Parameter Name="token2" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Threading.CancellationTokenSource" /> that will be in the canceled state when any of the source tokens are in the canceled state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CancellationTokenSource" /> that is linked to the source tokens.</para>
+        </returns>
         <param name="token1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first cancellation token to observe.</param>
         <param name="token2">

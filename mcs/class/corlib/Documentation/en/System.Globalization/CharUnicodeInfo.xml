@@ -59,7 +59,6 @@
         <Parameter Name="ch" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -70,6 +69,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the decimal digit value of the specified numeric character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decimal digit value of the specified numeric character.</para>
+          <para>-or- </para>
+          <para>-1, if the specified character is not a decimal digit.</para>
+        </returns>
         <param name="ch">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character for which to get the decimal digit value. </param>
       </Docs>
@@ -90,7 +95,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -101,6 +105,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the decimal digit value of the numeric character at the specified index of the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decimal digit value of the numeric character at the specified index of the specified string.</para>
+          <para>-or- </para>
+          <para>-1, if the character at the specified index of the specified string is not a decimal digit.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the Unicode character for which to get the decimal digit value. </param>
         <param name="index">
@@ -122,7 +132,6 @@
         <Parameter Name="ch" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -133,6 +142,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the digit value of the specified numeric character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digit value of the specified numeric character.</para>
+          <para>-or- </para>
+          <para>-1, if the specified character is not a digit.</para>
+        </returns>
         <param name="ch">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character for which to get the digit value. </param>
       </Docs>
@@ -153,7 +168,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -164,6 +178,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the digit value of the numeric character at the specified index of the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digit value of the numeric character at the specified index of the specified string.</para>
+          <para>-or- </para>
+          <para>-1, if the character at the specified index of the specified string is not a digit.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the Unicode character for which to get the digit value. </param>
         <param name="index">
@@ -185,7 +205,6 @@
         <Parameter Name="ch" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -197,6 +216,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the numeric value associated with the specified character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The numeric value associated with the specified character.</para>
+          <para>-or- </para>
+          <para>-1, if the specified character is not a numeric character.</para>
+        </returns>
         <param name="ch">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character for which to get the numeric value. </param>
       </Docs>
@@ -217,7 +242,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -229,6 +253,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the numeric value associated with the character at the specified index of the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The numeric value associated with the character at the specified index of the specified string.</para>
+          <para>-or- </para>
+          <para>-1, if the character at the specified index of the specified string is not a numeric character.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the Unicode character for which to get the numeric value. </param>
         <param name="index">
@@ -250,7 +280,6 @@
         <Parameter Name="ch" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -263,6 +292,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the Unicode category of the specified character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.UnicodeCategory" /> value indicating the category of the specified character.</para>
+        </returns>
         <param name="ch">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character for which to get the Unicode category. </param>
       </Docs>
@@ -283,7 +316,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -296,6 +328,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the Unicode category of the character at the specified index of the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.UnicodeCategory" /> value indicating the category of the character at the specified index of the specified string.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the Unicode character for which to get the Unicode category. </param>
         <param name="index">

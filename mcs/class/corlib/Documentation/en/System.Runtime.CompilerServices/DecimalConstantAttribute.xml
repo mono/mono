@@ -96,10 +96,6 @@
         <Parameter Name="low" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="sign">To be added.</param>
-        <param name="hi">To be added.</param>
-        <param name="mid">To be added.</param>
-        <param name="low">To be added.</param>
         <remarks>
           <para>
             <block subset="none" type="note">For representations of <see cref="T:System.Decimal" /> whose values can have scales exceeding 255, the constructor <see cref="T:System.Runtime.CompilerServices.DecimalConstantAttribute.System.DecimalConstantAttribute" /><see langword="(System.String)" />  must be used instead.</block>
@@ -107,6 +103,14 @@
         </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="scale" /> &gt; 28.</exception>
+        <param name="sign">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of 0 indicates a positive value, and a value of 1 indicates a negative value. </param>
+        <param name="hi">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />. </param>
+        <param name="mid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The middle 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />. </param>
+        <param name="low">
+          <attribution license="cc4" from="Microsoft" modified="false" />The low 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.DecimalConstantAttribute" /> class with the specified unsigned integer values.</para>

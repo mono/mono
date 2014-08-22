@@ -55,7 +55,6 @@
         <Parameter Name="parameters" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Of the classes derived from <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" />, only <see cref="T:System.Web.Services.Protocols.UrlParameterWriter" /> modifies the HTTP request URL.</para>
@@ -64,6 +63,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, modifies the outgoing HTTP request's Uniform Request Locator (URL).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> object that contains the modified, outgoing HTTP request's Uniform Request Locator (URL).</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />The HTTP request's original Uniform Resource Locator (URL).</param>
         <param name="parameters">

@@ -64,7 +64,6 @@
         <Parameter Name="onRemoveCallback" Type="System.Web.Caching.CacheItemRemovedCallback" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calls to this method will fail if an item with the same <paramref name="key" /> parameter is already stored in the Cache. To overwrite an existing Cache item using the same <paramref name="key" /> parameter, use the <see cref="M:System.Web.Caching.Cache.Insert(System.String,System.Object)" /> method.</para>
@@ -75,6 +74,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified item to the <see cref="T:System.Web.Caching.Cache" /> object with dependencies, expiration and priority policies, and a delegate you can use to notify your application when the inserted item is removed from the Cache.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the item that was added if the item was previously stored in the cache; otherwise, null.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The cache key used to reference the item. </param>
         <param name="value">
@@ -127,12 +130,15 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the specified item from the <see cref="T:System.Web.Caching.Cache" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The retrieved cache item, or null if the key is not found.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the cache item to retrieve.</param>
       </Docs>
@@ -149,7 +155,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Collections.IDictionaryEnumerator" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Items can be added to or removed from the cache while this method is enumerating through the items.</para>
@@ -158,6 +163,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a dictionary enumerator used to iterate through the key settings and their values contained in the cache.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator to iterate through the <see cref="T:System.Web.Caching.Cache" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -385,12 +394,15 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified item from the application's <see cref="T:System.Web.Caching.Cache" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item removed from the Cache. If the value in the key parameter is not found, returns null.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> identifier for the cache item to remove.</param>
       </Docs>
@@ -411,12 +423,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that can iterate through the <see cref="T:System.Web.Caching.Cache" /> object collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can iterate through the <see cref="T:System.Web.Caching.Cache" /> object collection.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

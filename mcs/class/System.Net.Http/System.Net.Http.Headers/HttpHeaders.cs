@@ -372,12 +372,12 @@ namespace System.Net.Http.Headers
 				SetValue (name, value);
 		}
 
-		internal void AddOrRemove<T> (string name, T value) where T : class
+		internal void AddOrRemove<T> (string name, T value, Func<object, string> converter = null) where T : class
 		{
 			if (value == null)
 				Remove (name);
 			else
-				SetValue (name, value);
+				SetValue (name, value, converter);
 		}
 
 		internal void AddOrRemove<T> (string name, T? value) where T : struct

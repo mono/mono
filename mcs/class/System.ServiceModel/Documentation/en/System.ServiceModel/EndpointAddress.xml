@@ -232,12 +232,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a specified object is equivalent to the current endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is equivalent to the current address; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to be compared to the current endpoint address.</param>
       </Docs>
@@ -254,7 +257,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -264,6 +266,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a unique hash code for the current endpoint address. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique hash code for the current endpoint address.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetReaderAtExtensions">
@@ -278,7 +284,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The reader provides access to the information that is not contained in the model of the endpoint reference defined by WS-Addressing.</para>
@@ -287,6 +292,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the XML dictionary reader that provides access to the extensions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlDictionaryReader" /> that provides access to the extensions.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetReaderAtMetadata">
@@ -301,12 +310,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the XML dictionary reader that provides access to the metadata for an endpoint.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlDictionaryReader" /> that provides access to the metadata for an endpoint.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -433,12 +445,15 @@
         <Parameter Name="address2" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether specified endpoint addresses are not equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the endpoint addresses are equivalent; otherwise, false.</para>
+        </returns>
         <param name="address1">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ServiceModel.EndpointAddress" /> objects being compared.</param>
         <param name="address2">
@@ -460,12 +475,15 @@
         <Parameter Name="address2" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether specified endpoint addresses are not equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the endpoint addresses are not equivalent; otherwise, false.</para>
+        </returns>
         <param name="address1">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ServiceModel.EndpointAddress" /> objects being compared.</param>
         <param name="address2">
@@ -486,12 +504,15 @@
         <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an endpoint address from a specified XML dictionary reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> read from the XML dictionary reader.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReader" /> from which the endpoint address is obtained.</param>
       </Docs>
@@ -511,12 +532,15 @@
         <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an endpoint address for a specified address version from a specified XML dictionary reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> read from the XML dictionary reader.</para>
+        </returns>
         <param name="addressingVersion">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.AddressingVersion" /> of the current endpoint address.</param>
         <param name="reader">
@@ -538,12 +562,15 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an endpoint address for a specified address version from a specified XML reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> read from the XML reader.</para>
+        </returns>
         <param name="addressingVersion">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.AddressingVersion" /> of the current endpoint address.</param>
         <param name="reader">
@@ -566,12 +593,15 @@
         <Parameter Name="ns" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an endpoint address with a specified qualified name from a specified XML dictionary reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> with the qualified name read from the XML dictionary reader.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReader" /> from which the endpoint address is obtained.</param>
         <param name="localName">
@@ -597,12 +627,15 @@
         <Parameter Name="ns" Type="System.Xml.XmlDictionaryString" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an endpoint address for a specified address version with a specified qualified name from a specified XML dictionary reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> with the qualified name read from the XML reader.</para>
+        </returns>
         <param name="addressingVersion">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.AddressingVersion" /> of the current endpoint address.</param>
         <param name="reader">
@@ -630,12 +663,15 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an endpoint address for a specified address version with a specified qualified name from a specified XML reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> with the qualified name read from the XML reader.</para>
+        </returns>
         <param name="addressingVersion">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.AddressingVersion" /> of the current endpoint address.</param>
         <param name="reader">
@@ -658,12 +694,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a canonical string representation of the URI that is contained in the endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URI that identifies the endpoint.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Uri">

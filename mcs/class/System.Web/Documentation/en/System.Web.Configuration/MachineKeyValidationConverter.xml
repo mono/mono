@@ -51,7 +51,6 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -75,6 +74,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a string to the equivalent <see cref="T:System.Web.Configuration.MachineKeyValidation" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The equivalent <see cref="T:System.Web.Configuration.MachineKeyValidation" /> value.</para>
+        </returns>
         <param name="ctx">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="ci">
@@ -99,13 +102,16 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a <see cref="T:System.Web.Configuration.MachineKeyValidation" /> value to the string representation of that value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing a <see cref="T:System.Web.Configuration.MachineKeyValidation" /> value.</para>
+        </returns>
         <param name="ctx">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="ci">

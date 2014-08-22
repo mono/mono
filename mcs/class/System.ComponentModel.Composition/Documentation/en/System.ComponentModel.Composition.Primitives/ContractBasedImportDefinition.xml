@@ -51,15 +51,25 @@
         <Parameter Name="requiredCreationPolicy" Type="System.ComponentModel.Composition.CreationPolicy" />
       </Parameters>
       <Docs>
-        <param name="contractName">To be added.</param>
-        <param name="requiredTypeIdentity">To be added.</param>
-        <param name="requiredMetadata">To be added.</param>
-        <param name="cardinality">To be added.</param>
-        <param name="isRecomposable">To be added.</param>
-        <param name="isPrerequisite">To be added.</param>
-        <param name="requiredCreationPolicy">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ContractBasedImportDefinition" /> class with the specified contract name, required type identity, required metadata, cardinality, and creation policy, and indicates whether the import definition is recomposable or a prerequisite.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> object required by the import definition.</param>
+        <param name="requiredTypeIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type identity of the export type expected. Use the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetTypeIdentity(System.Type)" /> method to generate a type identity for a given type. If no specific type is required, use null.</param>
+        <param name="requiredMetadata">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of key/value pairs that contain the metadata names and types required by the import definition; or null to set the <see cref="P:System.ComponentModel.Composition.Primitives.ContractBasedImportDefinition.RequiredMetadata" /> property to an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection.</param>
+        <param name="cardinality">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates the cardinality of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects required by the import definition.</param>
+        <param name="isRecomposable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the import definition can be satisfied multiple times throughout the lifetime of a <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" />; otherwise, false.</param>
+        <param name="isPrerequisite">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the import definition is required to be satisfied before a <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> can start producing exported objects; otherwise, false.</param>
+        <param name="requiredCreationPolicy">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that indicates that the importer requires a specific creation policy for the exports used to satisfy this import. If no specific creation policy is needed, the default is <see cref="F:System.ComponentModel.Composition.CreationPolicy.Any" />.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -80,16 +90,27 @@
         <Parameter Name="metadata" Type="System.Collections.Generic.IDictionary&lt;System.String,System.Object&gt;" />
       </Parameters>
       <Docs>
-        <param name="contractName">To be added.</param>
-        <param name="requiredTypeIdentity">To be added.</param>
-        <param name="requiredMetadata">To be added.</param>
-        <param name="cardinality">To be added.</param>
-        <param name="isRecomposable">To be added.</param>
-        <param name="isPrerequisite">To be added.</param>
-        <param name="requiredCreationPolicy">To be added.</param>
-        <param name="metadata">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ContractBasedImportDefinition" /> class with the specified contract name, required type identity, required and optional metadata, cardinality, and creation policy, and indicates whether the import definition is recomposable or a prerequisite.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> object required by the import definition.</param>
+        <param name="requiredTypeIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type identity of the export type expected. Use the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetTypeIdentity(System.Type)" /> method to generate a type identity for a given type. If no specific type is required, use null.</param>
+        <param name="requiredMetadata">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of key/value pairs that contain the metadata names and types required by the import definition; or null to set the <see cref="P:System.ComponentModel.Composition.Primitives.ContractBasedImportDefinition.RequiredMetadata" /> property to an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection.</param>
+        <param name="cardinality">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates the cardinality of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects required by the import definition.</param>
+        <param name="isRecomposable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the import definition can be satisfied multiple times throughout the lifetime of a <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" />; otherwise, false.</param>
+        <param name="isPrerequisite">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the import definition is required to be satisfied before a <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> can start producing exported objects; otherwise, false.</param>
+        <param name="requiredCreationPolicy">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that indicates that the importer requires a specific creation policy for the exports used to satisfy this import. If no specific creation policy is needed, the default is <see cref="F:System.ComponentModel.Composition.CreationPolicy.Any" />.</param>
+        <param name="metadata">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata associated with this import.</param>
       </Docs>
     </Member>
     <Member MemberName="Constraint">
@@ -125,12 +146,15 @@
         <Parameter Name="exportDefinition" Type="System.ComponentModel.Composition.Primitives.ExportDefinition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the constraint represented by this object is satisfied by the export represented by the given export definition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the constraint is satisfied; otherwise, false.</para>
+        </returns>
         <param name="exportDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The export definition to test.</param>
       </Docs>
@@ -208,8 +232,11 @@
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.String" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -93,7 +93,6 @@
         <Parameter Name="relativePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -104,6 +103,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Combines a base path with a relative path to return a complete path to a virtual resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complete path to a virtual resource.</para>
+        </returns>
         <param name="basePath">
           <attribution license="cc4" from="Microsoft" modified="false" />The base path for the application.</param>
         <param name="relativePath">
@@ -123,7 +126,6 @@
         <Parameter Name="virtualDir" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -137,6 +139,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether a directory exists in the virtual file system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the directory exists in the virtual file system; otherwise, false.</para>
+        </returns>
         <param name="virtualDir">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual directory.</param>
       </Docs>
@@ -154,7 +160,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -164,6 +169,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether a file exists in the virtual file system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the file exists in the virtual file system; otherwise, false.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual file.</param>
       </Docs>
@@ -183,7 +192,6 @@
         <Parameter Name="utcStart" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -193,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a cache dependency based on the specified virtual paths.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Caching.CacheDependency" /> object for the specified virtual resources.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the primary virtual resource.</param>
         <param name="virtualPathDependencies">
@@ -214,7 +226,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -224,6 +235,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a cache key to use for the specified virtual path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cache key for the specified virtual resource.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual resource.</param>
       </Docs>
@@ -241,7 +256,6 @@
         <Parameter Name="virtualDir" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -255,6 +269,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a virtual directory from the virtual file system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A descendent of the <see cref="T:System.Web.Hosting.VirtualDirectory" /> class that represents a directory in the virtual file system.</para>
+        </returns>
         <param name="virtualDir">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual directory.</param>
       </Docs>
@@ -272,7 +290,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -282,6 +299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a virtual file from the virtual file system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A descendent of the <see cref="T:System.Web.Hosting.VirtualFile" /> class that represents a file in the virtual file system.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual file.</param>
       </Docs>
@@ -300,7 +321,6 @@
         <Parameter Name="virtualPathDependencies" Type="System.Collections.IEnumerable" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -310,6 +330,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash of the specified virtual paths.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash of the specified virtual paths.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the primary virtual resource.</param>
         <param name="virtualPathDependencies">
@@ -349,7 +373,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -359,6 +382,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gives the <see cref="T:System.Web.Hosting.VirtualPathProvider" /> object an infinite lifetime by preventing a lease from being created.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -374,7 +401,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -384,6 +410,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a stream from a virtual file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.IO.Stream" /> object for the specified virtual file or resource.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual file.</param>
       </Docs>

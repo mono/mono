@@ -82,11 +82,22 @@
         <Parameter Name="packageGraphFilePaths" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="namespaceName">To be added.</param>
-        <param name="packageGraphFilePaths">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method overload is equivalent to calling the <see cref="M:System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeMetadata.ResolveNamespace(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})" /> method overload and specifying null for the <paramref name="windowsSdkFilePath" /> parameter. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locates the Windows Metadata files for the specified namespace, given the specified locations to search. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable list of strings that represent the Windows Metadata files that define <paramref name="namespaceName" />. </para>
+        </returns>
+        <param name="namespaceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to resolve. </param>
+        <param name="packageGraphFilePaths">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application paths to search for Windows Metadata files, or null to search only for Windows Metadata files from the operating system installation. </param>
       </Docs>
     </Member>
     <Member MemberName="ResolveNamespace">
@@ -105,12 +116,24 @@
         <Parameter Name="packageGraphFilePaths" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="namespaceName">To be added.</param>
-        <param name="windowsSdkFilePath">To be added.</param>
-        <param name="packageGraphFilePaths">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The path you specify for <paramref name="windowsSdkFilePath" /> is searched only for namespaces that begin with Windows. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locates the Windows Metadata files for the specified namespace, given the specified locations to search. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable list of strings that represent the Windows Metadata files that define <paramref name="namespaceName" />. </para>
+        </returns>
+        <param name="namespaceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to resolve. </param>
+        <param name="windowsSdkFilePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to search for Windows Metadata files provided by the SDK, or null to search for Windows Metadata files from the operating system installation. </param>
+        <param name="packageGraphFilePaths">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application paths to search for Windows Metadata files. </param>
       </Docs>
     </Member>
   </Members>

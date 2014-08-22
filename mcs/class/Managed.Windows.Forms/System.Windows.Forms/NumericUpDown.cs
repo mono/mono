@@ -109,7 +109,7 @@ namespace System.Windows.Forms {
 			hexadecimal = false;
 			increment = 1M;
 			maximum = 100M;
-			minimum = 0.0M;
+			minimum = 0M;
 			thousands_separator = false;
 
 			Text = "0";

@@ -92,7 +92,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -102,6 +101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, loads the site map information from persistent storage and builds it in memory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The root <see cref="T:System.Web.SiteMapNode" /> of the site map navigation structure.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -140,7 +143,6 @@
         <Parameter Name="rawUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -151,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Web.SiteMapNode" /> object that represents the page at the specified URL.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> that represents the page identified by <paramref name="rawURL" />; otherwise, null, if no corresponding site map node is found.</para>
+        </returns>
         <param name="rawUrl">
           <attribution license="cc4" from="Microsoft" modified="false" />A URL that identifies the page for which to retrieve a <see cref="T:System.Web.SiteMapNode" />. </param>
       </Docs>
@@ -168,7 +174,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -181,6 +186,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Web.SiteMapNode" /> object based on a specified key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> that represents the page identified by <paramref name="key" />; otherwise, null, if security trimming is enabled and the site map node cannot be shown to the current user or the site map node is not found in the site map node collection by <paramref name="key" />. </para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />A lookup key with which a <see cref="T:System.Web.SiteMapNode" /> is created.</param>
       </Docs>
@@ -198,7 +207,6 @@
         <Parameter Name="node" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -209,6 +217,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the child site map nodes of a specific <see cref="T:System.Web.SiteMapNode" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Web.SiteMapNodeCollection" /> that contains the child site map nodes of <paramref name="node" />. If security trimming is enabled, the collection contains only site map nodes that the user is permitted to see.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> for which to retrieve all child site map nodes. </param>
       </Docs>
@@ -226,7 +238,6 @@
         <Parameter Name="node" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -238,6 +249,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the parent site map node of a specific <see cref="T:System.Web.SiteMapNode" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> that represents the parent of the specified <see cref="T:System.Web.SiteMapNode" />; otherwise, null, if no parent site map node exists or the user is not permitted to see the parent site map node.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> for which to retrieve the parent site map node. </param>
       </Docs>

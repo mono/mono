@@ -62,7 +62,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Expressions.LambdaExpression.Compile" /> method can be used to convert a <see cref="T:System.Linq.Expressions.LambdaExpression" /> expression tree into the delegate that it represents.</para>
@@ -71,6 +70,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a delegate that represents the lambda expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Delegate" /> that contains the compiled version of the lambda expression.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Compile">
@@ -87,12 +90,15 @@
         <Parameter Name="debugInfoGenerator" Type="System.Runtime.CompilerServices.DebugInfoGenerator" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a delegate that represents the lambda expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate containing the compiled version of the lambda.</para>
+        </returns>
         <param name="debugInfoGenerator">
           <attribution license="cc4" from="Microsoft" modified="false" />Debugging information generator used by the compiler to mark sequence points and annotate local variables.</param>
       </Docs>

@@ -179,7 +179,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>With XML as follows, Attribute("B") would return "456".</para>
@@ -189,6 +188,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds an attribute by name in an XML element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value associated with the named attribute, or null if no attribute with <paramref name="name" /> exists.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute for which to search. </param>
       </Docs>
@@ -261,7 +264,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -271,6 +273,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns an identical copy of the current <see cref="T:System.Security.SecurityElement" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current <see cref="T:System.Security.SecurityElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Equal">
@@ -289,7 +295,6 @@
         <Parameter Name="other" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If there are child elements, comparison extends recursively to them.</para>
@@ -299,6 +304,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two XML element objects for equality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the tag, attribute names and values, child elements, and text fields in the current XML element are identical to their counterparts in the <paramref name="other" /> parameter; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />An XML element object to which to compare the current XML element object. </param>
       </Docs>
@@ -319,7 +328,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to replace invalid characters in a string before using the string in a <see cref="T:System.Security.SecurityElement" />. If invalid characters are used in a <see cref="T:System.Security.SecurityElement" /> without being escaped, an <see cref="T:System.ArgumentException" /> is thrown.</para>
@@ -381,6 +389,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces invalid XML characters in a string with their valid XML equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The input string with invalid characters replaced.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string within which to escape invalid characters. </param>
       </Docs>
@@ -400,7 +412,6 @@
         <Parameter Name="xml" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -411,6 +422,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security element from an XML-encoded string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.SecurityElement" /> created from the XML.</para>
+        </returns>
         <param name="xml">
           <attribution license="cc4" from="Microsoft" modified="false" />The XML-encoded string from which to create the security element.</param>
       </Docs>
@@ -431,7 +446,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to test an attribute before adding it to a security element.</para>
@@ -440,6 +454,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a string is a valid attribute name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="name" /> parameter is a valid XML attribute name; otherwise, false.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The attribute name to test for validity. </param>
       </Docs>
@@ -460,7 +478,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to test an attribute before adding it to a security element.</para>
@@ -469,6 +486,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a string is a valid attribute value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a valid XML attribute value; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The attribute value to test for validity. </param>
       </Docs>
@@ -489,7 +510,6 @@
         <Parameter Name="tag" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This can be used to test a <see cref="P:System.Security.SecurityElement.Tag" /> before setting it.</para>
@@ -498,6 +518,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a string is a valid tag.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="tag" /> parameter is a valid XML tag; otherwise, false.</para>
+        </returns>
         <param name="tag">
           <attribution license="cc4" from="Microsoft" modified="false" />The tag to test for validity. </param>
       </Docs>
@@ -518,7 +542,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to test <see cref="P:System.Security.SecurityElement.Text" /> before setting it.</para>
@@ -527,6 +550,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a string is valid as text within an XML element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="text" /> parameter is a valid XML text element; otherwise, false.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to test for validity. </param>
       </Docs>
@@ -547,7 +574,6 @@
         <Parameter Name="tag" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>With XML as follows, SearchForChildByTag("second") would return the child element &lt;second&gt;.</para>
@@ -558,6 +584,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds a child by its tag name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first child XML element with the specified tag value, or null if no child element with <paramref name="tag" /> exists.</para>
+        </returns>
         <param name="tag">
           <attribution license="cc4" from="Microsoft" modified="false" />The tag for which to search in child elements. </param>
       </Docs>
@@ -578,7 +608,6 @@
         <Parameter Name="tag" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is equivalent to the following:</para>
@@ -591,6 +620,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds a child by its tag name and returns the contained text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text contents of the first child element with the specified tag value.</para>
+        </returns>
         <param name="tag">
           <attribution license="cc4" from="Microsoft" modified="false" />The tag for which to search in child elements. </param>
       </Docs>
@@ -662,9 +695,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful in debugging to see the XML representation of the element.</para>
@@ -673,6 +703,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a string representation of an XML element and its constituent attributes, child elements, and text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML element and its contents.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

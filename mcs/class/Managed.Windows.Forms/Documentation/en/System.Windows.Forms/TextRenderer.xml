@@ -390,7 +390,6 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -400,6 +399,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the size, in pixels, of the specified text when drawn with the specified font.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn on a single line with the specified <paramref name="font" />. You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For example, the default behavior of the <see cref="T:System.Windows.Forms.TextRenderer" /> is to add padding to the bounding rectangle of the drawn text to accommodate overhanging glyphs. If you need to draw a line of text without these extra spaces you should use the versions of <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> and <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> that take a <see cref="T:System.Drawing.Size" /> and <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For an example, see <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" />.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
         <param name="font">
@@ -424,7 +427,6 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> method requires that the text is drawn on a single line. </para>
@@ -433,6 +435,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the size, in pixels, of the specified text drawn with the specified font in the specified device context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn in a single line with the specified <paramref name="font" /> in the specified device context.</para>
+        </returns>
         <param name="dc">
           <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to measure the text.</param>
         <param name="text">
@@ -456,7 +462,6 @@
         <Parameter Name="proposedSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.String,System.Drawing.Font,System.Drawing.Size)" /> method uses the <paramref name="proposedSize" /> parameter to indicate the relationship of height to width when determining the text size. When measuring text on a single line, if the <paramref name="proposedSize" /> parameter represents a <see cref="T:System.Drawing.Size" /> with a height dimension greater than <see cref="F:System.Int32.MaxValue" />, the returned <see cref="T:System.Drawing.Size" /> will be adjusted to reflect the actual height of the text.</para>
@@ -465,6 +470,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the size, in pixels, of the specified text when drawn with the specified font, using the specified size to create an initial bounding rectangle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn with the specified <paramref name="font" />.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
         <param name="font">
@@ -489,7 +498,6 @@
         <Parameter Name="proposedSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size)" /> method uses the <paramref name="proposedSize" /> parameter to indicate the relationship of height to width when determining the text size. When measuring text on a single line, if the <paramref name="proposedSize" /> parameter represents a <see cref="T:System.Drawing.Size" /> with a height dimension greater than <see cref="F:System.Int32.MaxValue" />, the returned <see cref="T:System.Drawing.Size" /> will be adjusted to reflect the actual height of the text.</para>
@@ -498,6 +506,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the size, in pixels, of the specified text when drawn with the specified font in the specified device context, using the specified size to create an initial bounding rectangle for the text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn with the specified <paramref name="font" />.</para>
+        </returns>
         <param name="dc">
           <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to measure the text.</param>
         <param name="text">
@@ -521,7 +533,6 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -536,6 +547,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the size, in pixels, of the specified text when drawn with the specified font and formatting instructions, using the specified size to create the initial bounding rectangle for the text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn with the specified <paramref name="font" /> and format.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
         <param name="font">
@@ -566,7 +581,6 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" /> method uses the <paramref name="proposedSize" /> and <paramref name="flags" /> parameters to indicate the relationship of height to width when determining the text size. When measuring text on a single line, if the <paramref name="proposedSize" /> parameter represents a <see cref="T:System.Drawing.Size" /> with a height dimension greater than <see cref="F:System.Int32.MaxValue" />, the returned <see cref="T:System.Drawing.Size" /> will be adjusted to reflect the actual height of the text.</para>
@@ -576,6 +590,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the size, in pixels, of the specified text when drawn with the specified device context, font, and formatting instructions, using the specified size to create the initial bounding rectangle for the text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn with the specified <paramref name="font" /> and format.</para>
+        </returns>
         <param name="dc">
           <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to measure the text.</param>
         <param name="text">

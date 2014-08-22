@@ -53,7 +53,6 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The object returned by the <see cref="M:System.Web.Services.Protocols.ValueCollectionParameterReader.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method is the <see cref="P:System.Web.Services.Protocols.LogicalMethodInfo.InParameters" /> property of the <paramref name="methodinfo" /> parameter. The <see cref="P:System.Web.Services.Protocols.LogicalMethodInfo.InParameters" /> property value is an array of type <see cref="T:System.Reflection.ParameterInfo" />.</para>
@@ -63,6 +62,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an initializer for the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> representing the Web method.</para>
+        </returns>
         <param name="methodInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the Web method for which the initializer is obtained.</param>
       </Docs>
@@ -108,12 +111,15 @@
         <Parameter Name="paramInfo" Type="System.Reflection.ParameterInfo" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a particular parameter type is supported by the <see cref="T:System.Web.Services.Protocols.ValueCollectionParameterReader" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a method's parameter definitions are supported by the reader; otherwise, false.</para>
+        </returns>
         <param name="paramInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.ParameterInfo" /> that specifies the parameter to check.</param>
       </Docs>
@@ -132,12 +138,15 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a method definition's parameter definitions are supported by the <see cref="T:System.Web.Services.Protocols.ValueCollectionParameterReader" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a method's parameter definitions are supported by the reader; otherwise, false.</para>
+        </returns>
         <param name="methodInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the method to check.</param>
       </Docs>
@@ -156,7 +165,6 @@
         <Parameter Name="collection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object[]" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Services.Protocols.ValueCollectionParameterReader.Read(System.Collections.Specialized.NameValueCollection)" /> method is called by the <see cref="M:System.Web.Services.Protocols.ValueCollectionParameterReader.Read(System.Collections.Specialized.NameValueCollection)" /> method defined in the two classes derived from <see cref="T:System.Web.Services.Protocols.ValueCollectionParameterReader" />, <see cref="T:System.Web.Services.Protocols.UrlParameterReader" /> and <see cref="T:System.Web.Services.Protocols.HtmlFormParameterReader" />. Those two classes' <see cref="M:System.Web.Services.Protocols.ValueCollectionParameterReader.Read(System.Collections.Specialized.NameValueCollection)" /> methods take an <see cref="T:System.Web.HttpRequest" /> parameter.</para>
@@ -165,6 +173,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Translates a collection of name/value pairs into an array of objects representing method parameter values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Object" /> objects representing method parameter values.</para>
+        </returns>
         <param name="collection">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.NameValueCollection" /> object that specifies the collection of name/value pairs containing method parameter names and values.</param>
       </Docs>

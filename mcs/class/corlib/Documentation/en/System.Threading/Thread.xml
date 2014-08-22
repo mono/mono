@@ -307,7 +307,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -320,6 +319,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allocates an unnamed data slot on all the threads. For better performance, use fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The allocated named data slot on all threads.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AllocateNamedDataSlot">
@@ -338,7 +341,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -355,6 +357,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allocates a named data slot on all threads. For better performance, use fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The allocated named data slot on all threads.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the data slot to be allocated. </param>
       </Docs>
@@ -754,7 +760,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -764,6 +769,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Threading.ApartmentState" /> value indicating the apartment state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Threading.ApartmentState" /> values indicating the apartment state of the managed thread. The default is <see cref="F:System.Threading.ApartmentState.Unknown" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCompressedStack">
@@ -785,7 +794,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is no longer supported.</para>
@@ -794,6 +802,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Threading.CompressedStack" /> object that can be used to capture the stack for the current thread. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetData">
@@ -812,7 +824,6 @@
         <Parameter Name="slot" Type="System.LocalDataStoreSlot" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -828,6 +839,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value from the specified slot on the current thread, within the current thread's current domain. For better performance, use fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The retrieved value.</para>
+        </returns>
         <param name="slot">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.LocalDataStoreSlot" /> from which to get the value. </param>
       </Docs>
@@ -847,14 +862,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.AppDomain" /> object that represents the current application domain.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the current domain in which the current thread is running.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.AppDomain" /> representing the current application domain of the running thread.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
@@ -873,12 +889,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a unique application domain identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer uniquely identifying the application domain.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -899,7 +918,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -909,6 +927,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code for the current thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash code value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNamedDataSlot">
@@ -927,7 +949,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -940,6 +961,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Looks up a named data slot. For better performance, use fields that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute instead.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.LocalDataStoreSlot" /> allocated for this thread.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the local data slot. </param>
       </Docs>
@@ -1103,12 +1128,6 @@ if this thread has been started, and has not terminated; otherwise,
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " />if the thread has terminated; <see langword="false " /> if the
-   thread has not terminated after <paramref name="millisecondsTimeout" />
-   has elapsed.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="millisecondsTimeout" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> .</exception>
         <exception cref="T:System.Threading.ThreadStateException">The caller attempted to join a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state. </exception>
         <remarks>
@@ -1121,6 +1140,10 @@ if this thread has been started, and has not terminated; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the calling thread until a thread terminates or the specified time elapses, while continuing to perform standard COM and SendMessage pumping.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the thread has terminated; false if the thread has not terminated after the amount of time specified by the <paramref name="millisecondsTimeout" /> parameter has elapsed.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait for the thread to terminate. </param>
       </Docs>
@@ -1143,13 +1166,6 @@ if this thread has been started, and has not terminated; otherwise,
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " />if the thread has terminated;
-<see langword="false " /> if the thread has not terminated after the amount 
-   of time specified by <paramref name="timeout" />
-   has elapsed.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="timeout" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds, or is greater than <see cref="F:System.Int32.MaxValue" qualify="true" /> milliseconds.</exception>
         <exception cref="T:System.Threading.ThreadStateException">The caller attempted to join a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state. </exception>
         <remarks>
@@ -1162,6 +1178,10 @@ if this thread has been started, and has not terminated; otherwise,
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the calling thread until a thread terminates or the specified time elapses, while continuing to perform standard COM and SendMessage pumping.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the thread terminated; false if the thread has not terminated after the amount of time specified by the <paramref name="timeout" /> parameter has elapsed.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> set to the amount of time to wait for the thread to terminate. </param>
       </Docs>
@@ -1885,7 +1905,6 @@ class ThreadTest{
         <Parameter Name="state" Type="System.Threading.ApartmentState" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1899,6 +1918,10 @@ class ThreadTest{
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the apartment state of a thread before it is started.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the apartment state is set; otherwise, false.</para>
+        </returns>
         <param name="state">
           <attribution license="cc4" from="Microsoft" modified="false" />The new apartment state.</param>
       </Docs>
@@ -2736,7 +2759,6 @@ class ThreadTest{
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If this method succeeds, the rest of the thread's current time slice is yielded. The operating system schedules the calling thread for another time slice, according to its priority and the status of other threads that are available to run. </para>
@@ -2747,6 +2769,10 @@ class ThreadTest{
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Causes the calling thread to yield execution to another thread that is ready to run on the current processor. The operating system selects the thread to yield to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operating system switched execution to another thread; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

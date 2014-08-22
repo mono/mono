@@ -42,7 +42,6 @@
         <Parameter Name="scope" Type="System.Security.Cryptography.DataProtectionScope" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -55,6 +54,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encrypts the data in a specified byte array and returns a byte array that contains the encrypted data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array representing the encrypted data.</para>
+        </returns>
         <param name="userData">
           <attribution license="cc4" from="Microsoft" modified="false" />A byte array that contains data to encrypt. </param>
         <param name="optionalEntropy">
@@ -80,7 +83,6 @@
         <Parameter Name="scope" Type="System.Security.Cryptography.DataProtectionScope" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -93,6 +95,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decrypts the data in a specified byte array and returns a byte array that contains the decrypted data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array representing the decrypted data.</para>
+        </returns>
         <param name="encryptedData">
           <attribution license="cc4" from="Microsoft" modified="false" />A byte array containing data encrypted using the <see cref="M:System.Security.Cryptography.ProtectedData.Protect(System.Byte[],System.Byte[],System.Security.Cryptography.DataProtectionScope)" /> method. </param>
         <param name="optionalEntropy">

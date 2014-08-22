@@ -206,7 +206,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calling this method forces initialization for the current thread, as is the case with accessing <see cref="P:System.Threading.ThreadLocal`1.Value" /> directly.</para>
@@ -215,6 +214,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a string representation of this instance for the current thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of calling <see cref="M:System.Object.ToString" /> on the <see cref="P:System.Threading.ThreadLocal`1.Value" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">

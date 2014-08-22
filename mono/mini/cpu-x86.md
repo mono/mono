@@ -149,7 +149,7 @@ call_membase: dest:a src1:b len:16 nacl:18 clob:c
 iconst: dest:i len:5
 r4const: dest:f len:15
 r8const: dest:f len:16
-store_membase_imm: dest:b len:10
+store_membase_imm: dest:b len:11
 store_membase_reg: dest:b src1:i len:7
 storei1_membase_imm: dest:b len:10
 storei1_membase_reg: dest:b src1:y len:7
@@ -301,12 +301,11 @@ bigmul: len:2 dest:l src1:a src2:i
 bigmul_un: len:2 dest:l src1:a src2:i
 sext_i1: dest:i src1:y len:3
 sext_i2: dest:i src1:y len:3
-tls_get: dest:i len:20
+tls_get: dest:i len:32
 tls_get_reg: dest:i src1:i len:20
 tls_set: src1:i len:20
 tls_set_reg: src1:i src2:i len:20
 atomic_add_i4: src1:b src2:i dest:i len:16
-atomic_add_new_i4: src1:b src2:i dest:i len:16
 atomic_exchange_i4: src1:b src2:i dest:a len:24
 atomic_cas_i4: src1:b src2:i src3:a dest:a len:24
 memory_barrier: len:16

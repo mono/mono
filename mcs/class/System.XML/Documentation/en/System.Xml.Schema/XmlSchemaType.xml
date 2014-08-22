@@ -457,13 +457,16 @@
         <Parameter Name="typeCode" Type="System.Xml.Schema.XmlTypeCode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.Schema.XmlSchemaComplexType" /> that represents the built-in complex type of the complex type specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaComplexType" /> that represents the built-in complex type.</para>
+        </returns>
         <param name="typeCode">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Xml.Schema.XmlTypeCode" /> values representing the complex type.</param>
       </Docs>
@@ -483,13 +486,16 @@
         <Parameter Name="qualifiedName" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.Schema.XmlSchemaComplexType" /> that represents the built-in complex type of the complex type specified by qualified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaComplexType" /> that represents the built-in complex type.</para>
+        </returns>
         <param name="qualifiedName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> of the complex type.</param>
       </Docs>
@@ -509,7 +515,6 @@
         <Parameter Name="typeCode" Type="System.Xml.Schema.XmlTypeCode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -519,6 +524,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> that represents the built-in simple type of the specified simple type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> that represents the built-in simple type.</para>
+        </returns>
         <param name="typeCode">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Xml.Schema.XmlTypeCode" /> values representing the simple type.</param>
       </Docs>
@@ -538,7 +547,6 @@
         <Parameter Name="qualifiedName" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -548,6 +556,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> that represents the built-in simple type of the simple type that is specified by the qualified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> that represents the built-in simple type.</para>
+        </returns>
         <param name="qualifiedName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> of the simple type.</param>
       </Docs>
@@ -569,13 +581,16 @@
         <Parameter Name="except" Type="System.Xml.Schema.XmlSchemaDerivationMethod" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating if the derived schema type specified is derived from the base schema type specified</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the derived type is derived from the base type; otherwise, false.</para>
+        </returns>
         <param name="derivedType">
           <attribution license="cc4" from="Microsoft" modified="false" />The derived <see cref="T:System.Xml.Schema.XmlSchemaType" /> to test.</param>
         <param name="baseType">

@@ -153,7 +153,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DirectoryInfo'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Any and all directories specified in <paramref name="path" /> are created, unless some part of <paramref name="path" /> is invalid. The <paramref name="path" /> parameter specifies a directory path, not a file path. If the subdirectory already exists, this method does nothing.</para>
@@ -166,6 +165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a subdirectory or subdirectories on the specified path. The specified path can be relative to this instance of the <see cref="T:System.IO.DirectoryInfo" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The last directory specified in <paramref name="path" />.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified path. This cannot be a different disk volume or Universal Naming Convention (UNC) name. </param>
       </Docs>
@@ -186,7 +189,6 @@
         <Parameter Name="directorySecurity" Type="System.Security.AccessControl.DirectorySecurity" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -200,6 +202,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a subdirectory or subdirectories on the specified path with the specified security. The specified path can be relative to this instance of the <see cref="T:System.IO.DirectoryInfo" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The last directory specified in <paramref name="path" />.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified path. This cannot be a different disk volume or Universal Naming Convention (UNC) name.</param>
         <param name="directorySecurity">
@@ -271,7 +277,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" /> and <see cref="M:System.IO.DirectoryInfo.GetDirectories" /> methods differ as follows: </para>
@@ -328,6 +333,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of directory information in the current directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of directories in the current directory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EnumerateDirectories">
@@ -344,7 +353,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -432,6 +440,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of directory information that matches a specified search pattern.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of directories that matches <paramref name="searchPattern" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
@@ -451,7 +463,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -539,6 +550,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of directory information that matches a specified search pattern and search subdirectory option. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of directories that matches <paramref name="searchPattern" /> and <paramref name="searchOption" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
         <param name="searchOption">
@@ -557,7 +572,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> and <see cref="M:System.IO.DirectoryInfo.GetFiles" /> methods differ as follows: </para>
@@ -619,6 +633,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file information in the current directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of the files in the current directory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFiles">
@@ -635,7 +653,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -728,6 +745,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file information that matches a search pattern.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of files that matches <paramref name="searchPattern" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
@@ -747,7 +768,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -840,6 +860,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file information that matches a specified search pattern and search subdirectory option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of files that matches <paramref name="searchPattern" /> and <paramref name="searchOption" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
         <param name="searchOption">
@@ -858,7 +882,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" /> and <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" /> methods differ as follows: </para>
@@ -915,6 +938,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file system information in the current directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of file system information in the current directory. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFileSystemInfos">
@@ -931,7 +958,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1019,6 +1045,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file system information that matches a specified search pattern.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of file system information objects that matches <paramref name="searchPattern" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
@@ -1038,7 +1068,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1126,6 +1155,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file system information that matches a specified search pattern and search subdirectory option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of file system information objects that matches <paramref name="searchPattern" /> and <paramref name="searchOption" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
         <param name="searchOption">
@@ -1169,7 +1202,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1181,6 +1213,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the access control list (ACL) entries for the directory described by the current <see cref="T:System.IO.DirectoryInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the access control rules for the directory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetAccessControl">
@@ -1198,7 +1234,6 @@
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1209,6 +1244,72 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the specified type of access control list (ACL) entries for the directory described by the current <see cref="T:System.IO.DirectoryInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the access control rules for the file described by the <paramref name="path" /> parameter.</para>
+          <para>Exceptions</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Exception type</para>
+                </term>
+                <description>
+                  <para>Condition</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.SystemException" /> </para>
+              </term>
+              <description>
+                <para>The directory could not be found or modified.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.UnauthorizedAccessException" /> </para>
+              </term>
+              <description>
+                <para>The current process does not have access to open the directory.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.IO.IOException" /> </para>
+              </term>
+              <description>
+                <para>An I/O error occurred while opening the directory.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.PlatformNotSupportedException" /> </para>
+              </term>
+              <description>
+                <para>The current operating system is not Microsoft Windows 2000 or later.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.UnauthorizedAccessException" /> </para>
+              </term>
+              <description>
+                <para>The directory is read-only.</para>
+                <para>-or- </para>
+                <para>This operation is not supported on the current platform.</para>
+                <para>-or- </para>
+                <para>The caller does not have the required permission.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="includeSections">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlSections" /> values that specifies the type of access control list (ACL) information to receive.</param>
       </Docs>
@@ -1227,7 +1328,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DirectoryInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If there are no subdirectories, this method returns an empty array. This method is not recursive.</para>
@@ -1274,6 +1374,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the subdirectories of the current directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.IO.DirectoryInfo" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetDirectories">
@@ -1292,7 +1396,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DirectoryInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1369,6 +1472,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of directories in the current <see cref="T:System.IO.DirectoryInfo" /> matching the given search criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type DirectoryInfo matching <paramref name="searchPattern" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
@@ -1389,7 +1496,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1468,6 +1574,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of directories in the current <see cref="T:System.IO.DirectoryInfo" /> matching the given search criteria and using a value to determine whether to search subdirectories.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type DirectoryInfo matching <paramref name="searchPattern" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
         <param name="searchOption">
@@ -1488,7 +1598,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'FileInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> and <see cref="M:System.IO.DirectoryInfo.GetFiles" /> methods differ as follows: </para>
@@ -1551,6 +1660,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a file list from the current directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.IO.FileInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFiles">
@@ -1569,7 +1682,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FileInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1699,6 +1811,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a file list from the current directory matching the given search pattern.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.IO.FileInfo" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
@@ -1719,7 +1835,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1834,6 +1949,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a file list from the current directory matching the given search pattern and using a value to determine whether to search subdirectories.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.IO.FileInfo" />.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
         <param name="searchOption">
@@ -1854,7 +1973,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'FileSystemInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If there are no files or directories in the <see cref="T:System.IO.DirectoryInfo" />, this method returns an empty array. This method is not recursive.</para>
@@ -1902,6 +2020,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of strongly typed <see cref="T:System.IO.FileSystemInfo" /> entries representing all the files and subdirectories in a directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strongly typed <see cref="T:System.IO.FileSystemInfo" /> entries.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFileSystemInfos">
@@ -1920,7 +2042,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FileSystemInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -2001,6 +2122,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of strongly typed <see cref="T:System.IO.FileSystemInfo" /> objects representing the files and subdirectories that match the specified search criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strongly typed FileSystemInfo objects matching the search criteria.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories and files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
@@ -2020,7 +2145,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -2098,6 +2222,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of <see cref="T:System.IO.FileSystemInfo" /> objects that represent the files and subdirectories matching the specified search criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of file system entries that match the search criteria.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories and filesa.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
         <param name="searchOption">
@@ -2270,12 +2398,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the original path that was passed by the user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the original path that was passed by the user.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

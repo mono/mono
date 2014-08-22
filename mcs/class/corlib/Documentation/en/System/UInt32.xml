@@ -73,30 +73,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>
-                <para>Current instance &gt; <paramref name="value" />, or
-<paramref name="value" /> is a null reference.</para>
-              </description>
-            </item>
-          </list>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="value" /> is not a <see cref="T:System.UInt32" /> and is not a null reference.</exception>
         <remarks>
@@ -108,6 +84,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified object and returns an indication of their relative values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="value" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare, or null. </param>
       </Docs>
@@ -128,27 +147,6 @@
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>Current instance &gt; <paramref name="value" />.</description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -161,6 +159,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified 32-bit unsigned integer and returns an indication of their relative values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An unsigned integer to compare. </param>
       </Docs>
@@ -182,12 +220,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> represents the same
-   type and value as the current instance. If <paramref name="obj" /> is a null reference or
-   is not an instance of <see cref="T:System.UInt32" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method
@@ -198,6 +230,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an instance of <see cref="T:System.UInt32" /> and equals the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance. </param>
       </Docs>
@@ -218,10 +254,6 @@
         <Parameter Name="obj" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> represents the same value as the current instance; otherwise, <see langword="false" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -231,6 +263,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified <see cref="T:System.UInt32" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> has the same value as this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />A value to compare to this instance.</param>
       </Docs>
@@ -250,9 +286,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para>The algorithm used to
       generate the hash code is unspecified.</para>
@@ -265,6 +298,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -282,12 +319,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.TypeCode" /> for value type <see cref="T:System.UInt32" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerated constant, <see cref="F:System.TypeCode.UInt32" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MaxValue">
@@ -366,9 +406,6 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.UInt32" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -443,6 +480,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number to its 32-bit unsigned integer equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit unsigned integer equivalent to the number contained in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing the number to convert. </param>
       </Docs>
@@ -471,11 +512,6 @@ public class UInt32ParseClass {
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
-        <returns>
-          <para>The <see cref="T:System.UInt32" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -484,6 +520,10 @@ public class UInt32ParseClass {
           <para>
             <paramref name="s" /> represents a number greater than <see cref="F:System.UInt32.MaxValue" /> or less than <see cref="F:System.UInt32.MinValue" />.</para>
         </exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representing the number to convert. The string is interpreted by using the style specified by the <paramref name="style" /> parameter.</param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that specify the permitted format of <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space, the positive or negative sign symbol, the group separator symbol, or the decimal point symbol) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. <paramref name="style" /> must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. The <paramref name="style" /> parameter makes this method overload useful when <paramref name="s" /> contains the string representation of a hexadecimal value, when the number system (decimal or hexadecimal) represented by <paramref name="s" /> is known only at run time, or when you want to disallow white space or a sign symbol in <paramref name="s" />.</para>
@@ -733,6 +773,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified style to its 32-bit unsigned integer equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit unsigned integer equivalent to the number specified in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing the number to convert. The string is interpreted by using the style specified by the <paramref name="style" /> parameter.</param>
         <param name="style">
@@ -763,9 +807,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.UInt32" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -832,6 +873,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified culture-specific format to its 32-bit unsigned integer equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit unsigned integer equivalent to the number specified in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the number to convert. </param>
         <param name="provider">
@@ -863,9 +908,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.UInt32" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1101,6 +1143,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified style and culture-specific format to its 32-bit unsigned integer equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit unsigned integer equivalent to the number specified in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing the number to convert. The string is interpreted by using the style specified by the <paramref name="style" /> parameter.</param>
         <param name="style">
@@ -1126,7 +1172,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToBoolean(System.UInt32)" /> method.</para>
@@ -1135,6 +1180,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToBoolean(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of the current instance is not zero; otherwise, false.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1155,7 +1204,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToByte(System.UInt32)" /> method.</para>
@@ -1164,6 +1212,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToByte(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Byte" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1184,7 +1236,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToChar(System.UInt32)" /> method.</para>
@@ -1193,6 +1244,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToChar(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Char" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1213,12 +1268,15 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1239,7 +1297,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToDecimal(System.UInt32)" /> method.</para>
@@ -1248,6 +1305,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToDecimal(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Decimal" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1268,7 +1329,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToDouble(System.UInt32)" /> method.</para>
@@ -1277,6 +1337,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToDouble(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Double" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1297,7 +1361,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt16(System.UInt32)" /> method.</para>
@@ -1306,6 +1369,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt16(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.Int16" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1326,7 +1393,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt32(System.UInt32)" /> method.</para>
@@ -1335,6 +1401,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt32(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.Int32" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1355,7 +1425,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt64(System.UInt32)" /> method.</para>
@@ -1364,6 +1433,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt64(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.Int64" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1384,7 +1457,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToSByte(System.UInt32)" /> method.</para>
@@ -1393,6 +1465,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToSByte(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.SByte" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1413,7 +1489,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToSingle(System.UInt32)" /> method.</para>
@@ -1422,6 +1497,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToSingle(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Single" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1444,7 +1523,6 @@ public class UInt32ParseClass {
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the static (Shared in Visual Basic) <see cref="M:System.Convert.ChangeType(System.Object,System.Type,System.IFormatProvider)" /> method.</para>
@@ -1453,6 +1531,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToType(System.Type,System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to <paramref name="type" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> implementation that supplies culture-specific information about the format of the returned value.</param>
       </Docs>
@@ -1473,7 +1555,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt16(System.UInt32)" /> method.</para>
@@ -1482,6 +1563,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt16(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt16" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1502,7 +1587,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface.</para>
@@ -1511,6 +1595,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt32(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, unchanged.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1531,7 +1619,6 @@ public class UInt32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.UInt32" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt64(System.UInt32)" /> method.</para>
@@ -1540,6 +1627,10 @@ public class UInt32ParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt64(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt64" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -1559,11 +1650,6 @@ public class UInt32ParseClass {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" />
-representation of the current instance formatted using the general format
-specifier, ("G"). The string takes into account the current system culture.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.UInt32.ToString" /> method formats a <see cref="T:System.UInt32" /> value in the default ("G", or general) format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of the current culture. If you want to specify a different format or culture, use the other overloads of the <see cref="M:System.UInt32.ToString(System.String)" /> method, as follows: </para>
@@ -1627,6 +1713,10 @@ specifier, ("G"). The string takes into account the current system culture.</par
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance, consisting of a sequence of digits ranging from 0 to 9, without a sign or leading zeroes.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1647,12 +1737,6 @@ specifier, ("G"). The string takes into account the current system culture.</par
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
-   the general format specifier, ("G"). The string takes into account the
-   formatting information in the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by
-<paramref name="provider" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.UInt32.ToString(System.IFormatProvider)" /> method formats a <see cref="T:System.UInt32" /> value in the default ("G", or general) format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of a specified culture. If you want to specify a different format or the current culture, use the other overloads of the <see cref="M:System.UInt32.ToString(System.String)" /> method, as follows:</para>
@@ -1717,6 +1801,10 @@ specifier, ("G"). The string takes into account the current system culture.</par
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation using the specified culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance, which consists of a sequence of digits ranging from 0 to 9, without a sign or leading zeros.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information. </param>
       </Docs>
@@ -1739,10 +1827,6 @@ specifier, ("G"). The string takes into account the current system culture.</par
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the current system culture.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
         <example>
@@ -1845,6 +1929,10 @@ public class UInt32ToStringExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation using the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
       </Docs>
@@ -1868,11 +1956,6 @@ public class UInt32ToStringExample {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the formatting
-   information in the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
         <remarks>
@@ -1961,6 +2044,10 @@ public class UInt32ToStringExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation using the specified format and culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" /> and <paramref name="provider" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
         <param name="provider">

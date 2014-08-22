@@ -49,9 +49,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the specified <see cref="T:System.Object" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="obj " /> is <see langword="null" />.</exception>
         <remarks>
@@ -62,6 +59,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code for the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the specified object.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which a hash code is to be returned. </param>
       </Docs>

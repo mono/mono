@@ -203,7 +203,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>A copy of the <see cref="T:System.Collections.Queue" /> as a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A shallow copy of a collection copies only the elements of the collection, whether they are reference types or value types, but it does not copy the objects that the references refer to. The references in the new collection point to the same objects that the references in the original collection point to.</para>
@@ -214,6 +213,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the <see cref="T:System.Collections.Queue" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -232,7 +235,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>Returns true if found and false if not found.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method determines equality by calling <see cref="M:System.Object.Equals(System.Object)" />.</para>
@@ -243,6 +245,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an element is in the <see cref="T:System.Collections.Queue" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is found in the <see cref="T:System.Collections.Queue" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.Queue" />. The value can be null. </param>
       </Docs>
@@ -320,7 +326,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The first <see cref="T:System.Object" /> in the <see cref="T:System.Collections.Queue" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is similar to the <see cref="M:System.Collections.Queue.Peek" /> method, but <see cref="M:System.Collections.Queue.Peek" /> does not modify the <see cref="T:System.Collections.Queue" />.</para>
@@ -331,6 +336,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes and returns the object at the beginning of the <see cref="T:System.Collections.Queue" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that is removed from the beginning of the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Enqueue">
@@ -377,7 +386,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The foreach statement of the C# language (for each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
@@ -394,6 +402,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the <see cref="T:System.Collections.Queue" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsSynchronized">
@@ -435,7 +447,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is similar to the <see cref="M:System.Collections.Queue.Dequeue" /> method, but <see cref="M:System.Collections.Queue.Peek" /> does not modify the <see cref="T:System.Collections.Queue" />.</para>
@@ -446,6 +457,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the object at the beginning of the <see cref="T:System.Collections.Queue" /> without removing it.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object at the beginning of the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Synchronized">
@@ -464,7 +479,6 @@
         <Parameter Name="queue" Type="System.Collections.Queue" />
       </Parameters>
       <Docs>
-        <returns>The thread-safe version of the <see cref="T:System.Collections.Queue" /> passed in.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To guarantee the thread safety of the <see cref="T:System.Collections.Queue" />, all operations must be done through this wrapper only.</para>
@@ -474,6 +488,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Collections.Queue" /> wrapper that is synchronized (thread safe).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Queue" /> wrapper that is synchronized (thread safe).</para>
+        </returns>
         <param name="queue">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Queue" /> to synchronize. </param>
       </Docs>
@@ -517,7 +535,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>Returns a <see cref="T:System.Array" /> with the same items as the <see cref="T:System.Collections.Queue" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Collections.Queue" /> is not modified. The order of the elements in the new array is the same as the order of the elements from the beginning of the <see cref="T:System.Collections.Queue" /> to its end.</para>
@@ -527,6 +544,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the <see cref="T:System.Collections.Queue" /> elements to a new array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new array containing elements copied from the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TrimToSize">

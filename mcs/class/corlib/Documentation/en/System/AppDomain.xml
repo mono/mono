@@ -178,7 +178,6 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -188,6 +187,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the assembly display name after policy has been applied.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the assembly display name after policy has been applied.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly display name, in the form provided by the <see cref="P:System.Reflection.Assembly.FullName" /> property.</param>
       </Docs>
@@ -354,7 +357,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create objects remotely without having to load the type locally.</para>
@@ -365,6 +367,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of a specified COM type. Parameters specify the name of a file that contains an assembly containing the type and the name of the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance specified by <paramref name="typeName" />. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file containing an assembly that defines the requested type. </param>
         <param name="typeName">
@@ -390,7 +396,6 @@
         <Parameter Name="hashAlgorithm" Type="System.Configuration.Assemblies.AssemblyHashAlgorithm" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create objects remotely without having to load the type locally.</para>
@@ -401,6 +406,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of a specified COM type. Parameters specify the name of a file that contains an assembly containing the type and the name of the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance specified by <paramref name="typeName" />. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file containing an assembly that defines the requested type. </param>
         <param name="typeName">
@@ -428,10 +437,6 @@
         <Parameter Name="friendlyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.AppDomain" /> representing the newly created application domain.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="friendlyName" /> is <see langword="null" /> .</exception>
         <remarks>
@@ -443,6 +448,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new application domain with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created application domain.</para>
+        </returns>
         <param name="friendlyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The friendly name of the domain. </param>
       </Docs>
@@ -465,7 +474,6 @@
         <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overload uses the <see cref="T:System.AppDomainSetup" /> information from the default application domain.</para>
@@ -478,6 +486,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new application domain with the given name using the supplied evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created application domain.</para>
+        </returns>
         <param name="friendlyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The friendly name of the domain. This friendly name can be displayed in user interfaces to identify the domain. For more information, see <see cref="P:System.AppDomain.FriendlyName" />. </param>
         <param name="securityInfo">
@@ -502,7 +514,6 @@
         <Parameter Name="info" Type="System.AppDomainSetup" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="info" /> is not supplied, this method overload uses the <see cref="T:System.AppDomainSetup" /> information from the default application domain.</para>
@@ -515,6 +526,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new application domain using the specified name, evidence, and application domain setup information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created application domain.</para>
+        </returns>
         <param name="friendlyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The friendly name of the domain. This friendly name can be displayed in user interfaces to identify the domain. For more information, see <see cref="P:System.AppDomain.FriendlyName" />. </param>
         <param name="securityInfo">
@@ -548,7 +563,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must set the <see cref="P:System.AppDomainSetup.ApplicationBase" /> property of the <see cref="T:System.AppDomainSetup" /> object that you supply for <paramref name="info" />. Otherwise, an exception is thrown. </para>
@@ -559,6 +573,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new application domain using the specified name, evidence, application domain setup information, default permission set, and array of fully trusted assemblies.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created application domain.</para>
+        </returns>
         <param name="friendlyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The friendly name of the domain. This friendly name can be displayed in user interfaces to identify the domain. For more information, see the description of <see cref="P:System.AppDomain.FriendlyName" />.</param>
         <param name="securityInfo">
@@ -591,7 +609,6 @@
         <Parameter Name="shadowCopyFiles" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="securityInfo" /> is not supplied, the evidence from the current application domain is used.</para>
@@ -604,6 +621,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new application domain with the given name, using evidence, application base path, relative search path, and a parameter that specifies whether a shadow copy of an assembly is to be loaded into the application domain.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created application domain.</para>
+        </returns>
         <param name="friendlyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The friendly name of the domain. This friendly name can be displayed in user interfaces to identify the domain. For more information, see <see cref="P:System.AppDomain.FriendlyName" />. </param>
         <param name="securityInfo">
@@ -637,7 +658,6 @@
         <Parameter Name="adInitArgs" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -652,6 +672,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new application domain with the given name, using evidence, application base path, relative search path, and a parameter that specifies whether a shadow copy of an assembly is to be loaded into the application domain. Specifies a callback method that is invoked when the application domain is initialized, and an array of string arguments to pass the callback method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created application domain.</para>
+        </returns>
         <param name="friendlyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The friendly name of the domain. This friendly name can be displayed in user interfaces to identify the domain. For more information, see <see cref="P:System.AppDomain.FriendlyName" />. </param>
         <param name="securityInfo">
@@ -685,7 +709,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method calls the default constructor for <paramref name="typeName" />.</para>
@@ -696,6 +719,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance specified by <paramref name="typeName" />. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -720,7 +747,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method calls the default constructor for <paramref name="typeName" />.</para>
@@ -732,6 +758,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly. A parameter specifies an array of activation attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance specified by <paramref name="typeName" />. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -761,7 +791,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See <see cref="T:System.Reflection.AssemblyName" /> for the format of <paramref name="assemblyName" />.</para>
@@ -772,6 +801,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly. Parameters specify a binder, binding flags, constructor arguments, culture-specific information used to interpret arguments, and optional activation attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance specified by <paramref name="typeName" />. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -819,7 +852,6 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See <see cref="T:System.Reflection.AssemblyName" /> for the format of <paramref name="assemblyName" />.</para>
@@ -830,6 +862,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly. Parameters specify a binder, binding flags, constructor arguments, culture-specific information used to interpret arguments, activation attributes, and authorization to create the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance specified by <paramref name="typeName" />. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -867,7 +903,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that combines <see cref="M:System.AppDomain.CreateInstance(System.String,System.String)" /> and <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" />. This method calls the default constructor for <paramref name="typeName" />.</para>
@@ -880,6 +915,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type. Parameters specify the assembly where the type is defined, and the name of the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the object specified by <paramref name="typeName" />.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -904,7 +943,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that combines <see cref="M:System.AppDomain.CreateInstance(System.String,System.String)" /> and <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" />. This method calls the default constructor for <paramref name="typeName" />.</para>
@@ -918,6 +956,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type. Parameters specify the assembly where the type is defined, the name of the type, and an array of activation attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the object specified by <paramref name="typeName" />.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -947,7 +989,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that combines <see cref="M:System.AppDomain.CreateInstance(System.String,System.String)" /> and <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" />. </para>
@@ -961,6 +1002,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly, specifying whether the case of the type name is ignored; the binding attributes and the binder that are used to select the type to be created; the arguments of the constructor; the culture; and the activation attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the object specified by <paramref name="typeName" />.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -1008,7 +1053,6 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that combines <see cref="M:System.AppDomain.CreateInstance(System.String,System.String)" /> and <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" />. </para>
@@ -1022,6 +1066,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type. Parameters specify the name of the type, and how it is found and created.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the object specified by <paramref name="typeName" />.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -1059,7 +1107,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default constructor for <paramref name="typeName" /> is invoked.</para>
@@ -1078,6 +1125,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance, or null if <paramref name="typeName" /> is not found. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, including the path, of a file that contains an assembly that defines the requested type. The assembly is loaded using the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" />  method.</param>
         <param name="typeName">
@@ -1102,7 +1153,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default constructor for <paramref name="typeName" /> is invoked.</para>
@@ -1122,6 +1172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance, or null if <paramref name="typeName" /> is not found. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, including the path, of a file that contains an assembly that defines the requested type. The assembly is loaded using the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" />  method. </param>
         <param name="typeName">
@@ -1151,7 +1205,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see the <see cref="M:System.Activator.CreateInstanceFrom(System.String,System.String)" /> method.</para>
@@ -1170,6 +1223,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance, or null if <paramref name="typeName" /> is not found. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, including the path, of a file that contains an assembly that defines the requested type. The assembly is loaded using the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" />  method.</param>
         <param name="typeName">
@@ -1217,7 +1274,6 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about this method, see the <see cref="M:System.Activator.CreateInstanceFrom(System.String,System.String)" /> method.</para>
@@ -1236,6 +1292,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance, or null if <paramref name="typeName" /> is not found. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, including the path, of a file that contains an assembly that defines the requested type. The assembly is loaded using the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" />  method.</param>
         <param name="typeName">
@@ -1273,7 +1333,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that combines <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String)" /> and <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" />. This method calls the default constructor for <paramref name="typeName" />.</para>
@@ -1283,6 +1342,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested object, or null if <paramref name="typeName" /> is not found.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The file name and path of the assembly that defines the requested type. </param>
         <param name="typeName">
@@ -1307,7 +1370,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that combines <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String)" /> and <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" />. This method calls the default constructor for <paramref name="typeName" />.</para>
@@ -1318,6 +1380,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested object, or null if <paramref name="typeName" /> is not found.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The file name and path of the assembly that defines the requested type. </param>
         <param name="typeName">
@@ -1347,7 +1413,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that combines <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String)" /> and <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" />. </para>
@@ -1358,6 +1423,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly file, specifying whether the case of the type name is ignored; the binding attributes and the binder that are used to select the type to be created; the arguments of the constructor; the culture; and the activation attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested object, or null if <paramref name="typeName" /> is not found.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The file name and path of the assembly that defines the requested type. </param>
         <param name="typeName">
@@ -1405,7 +1474,6 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that combines <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String)" /> and <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" />.</para>
@@ -1416,6 +1484,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type defined in the specified assembly file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested object, or null if <paramref name="typeName" /> is not found.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The file name and path of the assembly that defines the requested type. </param>
         <param name="typeName">
@@ -1474,7 +1546,6 @@
         <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should only be used to define a dynamic assembly in the current application domain. For more information, see the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName)" /> method overload. </para>
@@ -1486,6 +1557,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a dynamic assembly with the specified name and access mode.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and access mode.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -1509,12 +1584,26 @@
         <Parameter Name="assemblyAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt;" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="assemblyAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload to specify attributes that do not work correctly unless they are applied when a dynamic assembly is created. For example, security attributes such as <see cref="T:System.Security.SecurityTransparentAttribute" /> and <see cref="T:System.Security.SecurityCriticalAttribute" /> do not work correctly if they are added after a dynamic assembly has been created. </para>
+          <para>This method should be used only to define a dynamic assembly in the current application domain. For more information about this restriction, see the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName)" /> method overload. </para>
+          <para>This method overload is introduced in the net_v35_long. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a dynamic assembly with the specified name, access mode, and custom attributes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mode for the dynamic assembly. </param>
+        <param name="assemblyAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable list of attributes to be applied to the assembly, or null if there are no attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="DefineDynamicAssembly">
@@ -1540,7 +1629,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Only fully trusted callers can supply their <paramref name="evidence" /> when defining a dynamic <see cref="T:System.Reflection.Assembly" />. The runtime will map the <see cref="T:System.Security.Policy.Evidence" /> through the security policy to determine the granted permissions. Partially trusted callers must supply a null <paramref name="evidence" />. If <paramref name="evidence" /> is null, the runtime copies the permission sets, that is, the current grant and deny sets, from the caller's <see cref="T:System.Reflection.Assembly" /> to the dynamic <see cref="T:System.Reflection.Assembly" /> being defined and marks policy as resolved.</para>
@@ -1554,6 +1642,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a dynamic assembly using the specified name, access mode, and evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -1580,7 +1672,6 @@
         <Parameter Name="dir" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should only be used to define a dynamic assembly in the current application domain. For more information, see the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName)" /> method overload.</para>
@@ -1592,6 +1683,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a dynamic assembly using the specified name, access mode, and storage directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -1617,13 +1712,27 @@
         <Parameter Name="securityContextSource" Type="System.Security.SecurityContextSource" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="assemblyAttributes">To be added.</param>
-        <param name="securityContextSource">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload to specify attributes that do not work correctly unless they are applied when a dynamic assembly is created. For example, security attributes such as <see cref="T:System.Security.SecurityTransparentAttribute" /> and <see cref="T:System.Security.SecurityCriticalAttribute" /> do not work correctly if they are added after a dynamic assembly has been created. </para>
+          <para>This method should be used only to define a dynamic assembly in the current application domain. For more information about this restriction, see the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName)" /> method overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a dynamic assembly with the specified name, access mode, and custom attributes, and using the specified source for its security context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mode for the dynamic assembly. </param>
+        <param name="assemblyAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable list of attributes to be applied to the assembly, or null if there are no attributes.</param>
+        <param name="securityContextSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the security context.</param>
       </Docs>
     </Member>
     <Member MemberName="DefineDynamicAssembly">
@@ -1650,7 +1759,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Only fully trusted callers can supply their <paramref name="evidence" /> when defining a dynamic <see cref="T:System.Reflection.Assembly" />. The runtime will map the <see cref="T:System.Security.Policy.Evidence" /> through the security policy to determine the granted permissions. Partially trusted callers must supply a null <paramref name="evidence" />. If <paramref name="evidence" /> is null, the runtime copies the permission sets, that is, the current grant and deny sets, from the caller's <see cref="T:System.Reflection.Assembly" /> to the dynamic <see cref="T:System.Reflection.Assembly" /> being defined and marks policy as resolved.</para>
@@ -1664,6 +1772,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a dynamic assembly using the specified name, access mode, storage directory, and evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -1699,7 +1811,6 @@
         <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The permission requests specified for <paramref name="requiredPermissions" />, <paramref name="optionalPermissions" />, and <paramref name="refusedPermissions" /> are not used unless the dynamic assembly has been saved and reloaded into memory. To specify permission requests for a transient assembly that is never saved to disk, use an overload of the <see cref="Overload:System.AppDomain.DefineDynamicAssembly" /> method that specifies evidence as well as requested permissions, and supply an <see cref="T:System.Security.Policy.Evidence" /> object.</para>
@@ -1715,6 +1826,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a dynamic assembly using the specified name, access mode, and permission requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -1745,14 +1860,29 @@
         <Parameter Name="assemblyAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt;" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="dir">To be added.</param>
-        <param name="isSynchronized">To be added.</param>
-        <param name="assemblyAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload to specify attributes that do not work correctly unless they are applied when a dynamic assembly is created. For example, security attributes such as <see cref="T:System.Security.SecurityTransparentAttribute" /> and <see cref="T:System.Security.SecurityCriticalAttribute" /> do not work correctly if they are added after a dynamic assembly has been created. </para>
+          <para>If <paramref name="isSynchronized" /> is true, the following methods of the resulting <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> will be synchronized: <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineDynamicModule" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineResource" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.AddResourceFile" />, <see cref="M:System.Reflection.Emit.AssemblyBuilder.GetDynamicModule(System.String)" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.SetEntryPoint" />, and <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.Save" />. If two of these methods are called on different threads, one will block until the other is completed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a dynamic assembly using the specified name, access mode, storage directory, and synchronization option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mode in which the dynamic assembly will be accessed. </param>
+        <param name="dir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the directory where the dynamic assembly will be saved. If <paramref name="dir" /> is null, the current directory is used. </param>
+        <param name="isSynchronized">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to synchronize the creation of modules, types, and members in the dynamic assembly; otherwise, false. </param>
+        <param name="assemblyAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable list of attributes to be applied to the assembly, or null if there are no attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="DefineDynamicAssembly">
@@ -1781,7 +1911,6 @@
         <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The permission requests specified for <paramref name="requiredPermissions" />, <paramref name="optionalPermissions" />, and <paramref name="refusedPermissions" /> are used only if <paramref name="evidence" /> is also supplied, or if the dynamic assembly is saved and reloaded into memory.</para>
@@ -1799,6 +1928,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a dynamic assembly using the specified name, access mode, evidence, and permission requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -1839,7 +1972,6 @@
         <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The permission requests specified for <paramref name="requiredPermissions" />, <paramref name="optionalPermissions" />, and <paramref name="refusedPermissions" /> are not used unless the dynamic assembly has been saved and reloaded into memory. To specify permission requests for a transient assembly that is never saved to disk, use an overload of the <see cref="Overload:System.AppDomain.DefineDynamicAssembly" /> method that specifies evidence as well as requested permissions, and supply an <see cref="T:System.Security.Policy.Evidence" /> object.</para>
@@ -1855,6 +1987,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a dynamic assembly using the specified name, access mode, storage directory, and permission requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -1896,7 +2032,6 @@
         <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The permission requests specified for <paramref name="requiredPermissions" />, <paramref name="optionalPermissions" />, and <paramref name="refusedPermissions" /> are used only if <paramref name="evidence" /> is also supplied, or if the dynamic assembly is saved and reloaded into memory.</para>
@@ -1914,6 +2049,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a dynamic assembly using the specified name, access mode, storage directory, evidence, and permission requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -1958,7 +2097,6 @@
         <Parameter Name="isSynchronized" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The permission requests specified for <paramref name="requiredPermissions" />, <paramref name="optionalPermissions" />, and <paramref name="refusedPermissions" /> are used only if <paramref name="evidence" /> is also supplied, or if the dynamic assembly is saved and reloaded into memory.</para>
@@ -1976,6 +2114,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a dynamic assembly using the specified name, access mode, storage directory, evidence, permission requests, and synchronization option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -2022,18 +2164,47 @@
         <Parameter Name="assemblyAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt;" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="dir">To be added.</param>
-        <param name="evidence">To be added.</param>
-        <param name="requiredPermissions">To be added.</param>
-        <param name="optionalPermissions">To be added.</param>
-        <param name="refusedPermissions">To be added.</param>
-        <param name="isSynchronized">To be added.</param>
-        <param name="assemblyAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload to specify attributes that do not work correctly unless they are applied when a dynamic assembly is created. For example, security attributes such as <see cref="T:System.Security.SecurityTransparentAttribute" /> and <see cref="T:System.Security.SecurityCriticalAttribute" /> do not work correctly if they are added after a dynamic assembly has been created. </para>
+          <para>The permission requests specified for the <paramref name="requiredPermissions" />, <paramref name="optionalPermissions" />, and <paramref name="refusedPermissions" /> parameters are used only if the <paramref name="evidence" /> parameter is also supplied, or if the dynamic assembly is saved and reloaded into memory.</para>
+          <block subset="none" type="note">
+            <para>When you develop code that emits dynamic assemblies, we recommend that you include the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.SkipVerification" /> flag in the <paramref name="refusedPermissions" /> parameter. The inclusion of this flag ensures that the Microsoft intermediate language (MSIL) will be verified. This technique will detect the unintentional generation of unverifiable code, which otherwise is very difficult to detect. A limitation of this technique is that it also causes <see cref="T:System.Security.SecurityException" /> to be thrown when it is used with code that demands full trust.</para>
+          </block>
+          <para>Only fully trusted callers can supply evidence when defining a dynamic <see cref="T:System.Reflection.Assembly" />. The runtime maps the <see cref="T:System.Security.Policy.Evidence" /> through the security policy to determine the granted permissions. Partially trusted callers must supply null for the <paramref name="evidence" /> parameter. If <paramref name="evidence" /> is null, the runtime copies the permission sets (that is, the current grant and deny sets) from the caller's assembly to the dynamic assembly that is being defined, and marks the policy as resolved. </para>
+          <para>If the dynamic assembly is saved to disk, subsequent loads will get grants based on policies that are associated with the location where the dynamic assembly was saved.</para>
+          <para>If <paramref name="isSynchronized" /> is true, the following methods of the resulting <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> will be synchronized: <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineDynamicModule" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineResource" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.AddResourceFile" />, <see cref="M:System.Reflection.Emit.AssemblyBuilder.GetDynamicModule(System.String)" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.SetEntryPoint" />, and <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.Save" />. If two of these methods are called on different threads, one will block until the other is completed.</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0, 1.1, and 2.0, the declarative security attributes applied to a dynamic assembly by using the <paramref name="requiredPermissions" />, <paramref name="optionalPermissions" />, and <paramref name="refusedPermissions" /> parameters are stored in the old XML metadata format. For more information about these attributes, see <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+          <para>This method overload is introduced in the net_v35_long. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a dynamic assembly with the specified name, access mode, storage directory, evidence, permission requests, synchronization option, and custom attributes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic assembly with the specified name and features.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mode in which the dynamic assembly will be accessed. </param>
+        <param name="dir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the directory where the dynamic assembly will be saved. If <paramref name="dir" /> is null, the current directory is used. </param>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence that is supplied for the dynamic assembly. The evidence is used unaltered as the final set of evidence used for policy resolution. </param>
+        <param name="requiredPermissions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The required permissions request. </param>
+        <param name="optionalPermissions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The optional permissions request. </param>
+        <param name="refusedPermissions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The refused permissions request. </param>
+        <param name="isSynchronized">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to synchronize the creation of modules, types, and members in the dynamic assembly; otherwise, false. </param>
+        <param name="assemblyAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable list of attributes to be applied to the assembly, or null if there are no attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="DoCallBack">
@@ -2183,7 +2354,6 @@
         <Parameter Name="assemblyFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The assembly begins executing at the entry point specified in the .NET Framework header.</para>
@@ -2195,6 +2365,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly contained in the specified file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the assembly to execute. </param>
       </Docs>
@@ -2221,7 +2395,6 @@
         <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The assembly begins executing at the entry point specified in the .NET Framework header.</para>
@@ -2232,6 +2405,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly contained in the specified file, using the specified evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the assembly to execute. </param>
         <param name="assemblySecurity">
@@ -2253,7 +2430,6 @@
         <Parameter Name="args" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The assembly begins executing at the entry point specified in the .NET Framework header.</para>
@@ -2264,6 +2440,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly contained in the specified file, using the specified arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that is returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the assembly to execute.</param>
         <param name="args">
@@ -2293,7 +2473,6 @@
         <Parameter Name="args" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The assembly begins executing at the entry point specified in the .NET Framework header.</para>
@@ -2304,6 +2483,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly contained in the specified file, using the specified evidence and arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the assembly to execute. </param>
         <param name="assemblySecurity">
@@ -2329,7 +2512,6 @@
         <Parameter Name="hashAlgorithm" Type="System.Configuration.Assemblies.AssemblyHashAlgorithm" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The assembly begins executing at the entry point specified in the .NET Framework header.</para>
@@ -2340,6 +2522,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly contained in the specified file, using the specified arguments, hash value, and hash algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that is returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the assembly to execute.</param>
         <param name="args">
@@ -2375,7 +2561,6 @@
         <Parameter Name="hashAlgorithm" Type="System.Configuration.Assemblies.AssemblyHashAlgorithm" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The assembly begins executing at the entry point specified in the .NET Framework header.</para>
@@ -2386,6 +2571,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly contained in the specified file, using the specified evidence, arguments, hash value, and hash algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the assembly to execute. </param>
         <param name="assemblySecurity">
@@ -2413,7 +2602,6 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2426,6 +2614,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes an assembly given its display name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
       </Docs>
@@ -2451,7 +2643,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.AppDomain.ExecuteAssemblyByName" /> method provides similar functionality to the <see cref="Overload:System.AppDomain.ExecuteAssembly" /> method, but specifies the assembly by display name or <see cref="T:System.Reflection.AssemblyName" /> rather than by file location. Therefore, <see cref="Overload:System.AppDomain.ExecuteAssemblyByName" /> loads assemblies with the <see cref="Overload:System.Reflection.Assembly.Load" /> method rather than with the <see cref="Overload:System.Reflection.Assembly.LoadFile" /> method. </para>
@@ -2462,6 +2653,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly given an <see cref="T:System.Reflection.AssemblyName" />, using the specified arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that is returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Reflection.AssemblyName" /> object representing the name of the assembly.</param>
         <param name="args">
@@ -2489,7 +2684,6 @@
         <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2504,6 +2698,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes an assembly given its display name, using the specified evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="assemblySecurity">
@@ -2531,7 +2729,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.AppDomain.ExecuteAssemblyByName" /> method provides similar functionality to the <see cref="Overload:System.AppDomain.ExecuteAssembly" /> method, but specifies the assembly by display name or <see cref="T:System.Reflection.AssemblyName" /> rather than by file location. Therefore, <see cref="Overload:System.AppDomain.ExecuteAssemblyByName" /> loads assemblies with the <see cref="Overload:System.Reflection.Assembly.Load" /> method rather than with the <see cref="Overload:System.Reflection.Assembly.LoadFile" /> method. </para>
@@ -2542,6 +2739,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly given its display name, using the specified arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value that is returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="args">
@@ -2576,7 +2777,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2591,6 +2791,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly given an <see cref="T:System.Reflection.AssemblyName" />, using the specified evidence and arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Reflection.AssemblyName" /> object representing the name of the assembly. </param>
         <param name="assemblySecurity">
@@ -2627,7 +2831,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2642,6 +2845,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the assembly given its display name, using the specified evidence and arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="assemblySecurity">
@@ -2693,12 +2900,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the assemblies that have been loaded into the execution context of this application domain.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of assemblies in this application domain.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCurrentThreadId">
@@ -2720,7 +2930,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="P:System.Threading.Thread.ManagedThreadId" /> property, which is stable even when the .NET Framework is hosted by an environment that supports fibers (that is, lightweight threads).</para>
@@ -2729,6 +2938,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the current thread identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer that is the identifier of the current thread.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetData">
@@ -2747,7 +2960,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to retrieve the value of an entry in an internal cache of name-data pairs that describe properties of this instance of <see cref="T:System.AppDomain" />.</para>
@@ -2890,6 +3102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value stored in the current application domain for the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="name" /> property, or null if the property does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a predefined application domain property, or the name of an application domain property you have defined.</param>
       </Docs>
@@ -2908,12 +3124,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -2956,12 +3175,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gives the <see cref="T:System.AppDomain" /> an infinite lifetime by preventing a lease from being created.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsCompatibilitySwitchSet">
@@ -2978,7 +3200,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method tests whether the current application domain reverses breaking changes that were introduced in the net_v40_long. The following table provides examples of compatibility switches that can be set to restore the behavior of earlier versions of the .NET Framework.</para>
@@ -3032,6 +3253,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a nullable Boolean value that indicates whether any compatibility switches are set, and if so, whether the specified compatibility switch is set.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A null reference (Nothing in Visual Basic) if no compatibility switches are set; otherwise, a Boolean value that indicates whether the compatibility switch that is specified by <paramref name="value" /> is set.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The compatibility switch to test.</param>
       </Docs>
@@ -3049,7 +3274,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3059,6 +3283,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the application domain is the default application domain for the process.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current <see cref="T:System.AppDomain" /> object represents the default application domain for the process; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsFinalizingForUnload">
@@ -3075,7 +3303,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The finalization method for an object provides you an opportunity to perform any necessary cleanup operations before the object is garbage collected. After finalization, the object is accessible but in an invalid state and therefore unusable. Eventually, garbage collection completes and reclaims the object.</para>
@@ -3093,6 +3320,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether this application domain is unloading, and the objects it contains are being finalized by the common language runtime.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this application domain is unloading and the common language runtime has started invoking finalizers; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsFullyTrusted">
@@ -3157,7 +3388,6 @@
         <Parameter Name="rawAssembly" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Beginning with the net_v40_long, the trust level of an assembly that is loaded by using this method is the same as the trust level of the application domain. </para>
@@ -3168,6 +3398,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the <see cref="T:System.Reflection.Assembly" /> with a common object file format (COFF) based image containing an emitted <see cref="T:System.Reflection.Assembly" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="rawAssembly">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type byte that is a COFF-based image containing an emitted assembly. </param>
       </Docs>
@@ -3188,7 +3422,6 @@
         <Parameter Name="assemblyRef" Type="System.Reflection.AssemblyName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should be used only to load an assembly into the current application domain. This method is provided as a convenience for interoperability callers who cannot call the static <see cref="M:System.Reflection.Assembly.Load(System.String)" /> method. To load assemblies into other application domains, use a method such as <see cref="M:System.AppDomain.CreateInstanceAndUnwrap(System.String,System.String)" />.</para>
@@ -3205,6 +3438,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads an <see cref="T:System.Reflection.Assembly" /> given its <see cref="T:System.Reflection.AssemblyName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="assemblyRef">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that describes the assembly to load. </param>
       </Docs>
@@ -3225,7 +3462,6 @@
         <Parameter Name="assemblyString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should be used only to load an assembly into the current application domain. This method is provided as a convenience for interoperability callers who cannot call the static <see cref="M:System.Reflection.Assembly.Load(System.String)" /> method. To load assemblies into other application domains, use a method such as <see cref="M:System.AppDomain.CreateInstanceAndUnwrap(System.String,System.String)" />.</para>
@@ -3235,6 +3471,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads an <see cref="T:System.Reflection.Assembly" /> given its display name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="assemblyString">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
       </Docs>
@@ -3256,7 +3496,6 @@
         <Parameter Name="rawSymbolStore" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Beginning with the net_v40_long, the trust level of an assembly that is loaded by using this method is the same as the trust level of the application domain. </para>
@@ -3267,6 +3506,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the <see cref="T:System.Reflection.Assembly" /> with a common object file format (COFF) based image containing an emitted <see cref="T:System.Reflection.Assembly" />. The raw bytes representing the symbols for the <see cref="T:System.Reflection.Assembly" /> are also loaded.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="rawAssembly">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type byte that is a COFF-based image containing an emitted assembly. </param>
         <param name="rawSymbolStore">
@@ -3295,7 +3538,6 @@
         <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should be used only to load an assembly into the current application domain. This method is provided as a convenience for interoperability callers who cannot call the static <see cref="M:System.Reflection.Assembly.Load(System.String)" /> method. To load assemblies into other application domains, use a method such as <see cref="M:System.AppDomain.CreateInstanceAndUnwrap(System.String,System.String)" />.</para>
@@ -3305,6 +3547,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads an <see cref="T:System.Reflection.Assembly" /> given its <see cref="T:System.Reflection.AssemblyName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="assemblyRef">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that describes the assembly to load. </param>
         <param name="assemblySecurity">
@@ -3333,7 +3579,6 @@
         <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should be used only to load an assembly into the current application domain. This method is provided as a convenience for interoperability callers who cannot call the static <see cref="M:System.Reflection.Assembly.Load(System.String)" /> method. To load assemblies into other application domains, use a method such as <see cref="M:System.AppDomain.CreateInstanceAndUnwrap(System.String,System.String)" />.</para>
@@ -3343,6 +3588,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads an <see cref="T:System.Reflection.Assembly" /> given its display name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="assemblyString">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="assemblySecurity">
@@ -3372,7 +3621,6 @@
         <Parameter Name="securityEvidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Beginning with the net_v40_long, the trust level of an assembly that is loaded by using this method is the same as the trust level of the application domain. </para>
@@ -3383,6 +3631,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the <see cref="T:System.Reflection.Assembly" /> with a common object file format (COFF) based image containing an emitted <see cref="T:System.Reflection.Assembly" />. The raw bytes representing the symbols for the <see cref="T:System.Reflection.Assembly" /> are also loaded.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="rawAssembly">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type byte that is a COFF-based image containing an emitted assembly. </param>
         <param name="rawSymbolStore">
@@ -3596,7 +3848,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3606,6 +3857,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the assemblies that have been loaded into the reflection-only context of the application domain.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.Assembly" /> objects that represent the assemblies loaded into the reflection-only context of the application domain.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RelativeSearchPath">
@@ -4127,11 +4382,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing
- information about the current <see cref="T:System.AppDomain" />
- instance.</para>
-        </returns>
         <remarks>
           <para> The string returned by this method includes the friendly name of the
  application domain.
@@ -4146,6 +4396,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a string representation that includes the friendly name of the application domain and any context policies.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string formed by concatenating the literal string "Name:", the friendly name of the application domain, and either string representations of the context policies or the string "There are no context policies." </para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

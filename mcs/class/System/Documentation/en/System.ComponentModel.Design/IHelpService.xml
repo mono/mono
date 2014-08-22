@@ -97,12 +97,15 @@
         <Parameter Name="contextType" Type="System.ComponentModel.Design.HelpContextType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IHelpService'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a local <see cref="T:System.ComponentModel.Design.IHelpService" /> to manage subcontexts.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ComponentModel.Design.IHelpService" />.</para>
+        </returns>
         <param name="contextType">
           <attribution license="cc4" from="Microsoft" modified="false" />The priority type of the subcontext to add. </param>
       </Docs>

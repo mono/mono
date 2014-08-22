@@ -83,7 +83,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -95,6 +94,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes the callback method in a provider control that gets an interface instance to return to consumers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that is an instance of the interface a provider returns to consumers to establish a connection. </para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The control acting as the provider in a Web Parts connection.</param>
       </Docs>
@@ -112,7 +115,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -123,6 +125,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an optional collection of secondary interfaces that can be supported by a provider connection point.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> of additional interfaces provided by the control acting as a provider.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The control acting as the provider in a Web Parts connection.</param>
       </Docs>

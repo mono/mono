@@ -304,7 +304,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -317,6 +316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by clients to begin an asynchronous operation to authenticate the client, and optionally the server, in a client-server connection. This method does not block.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
         <param name="asyncCallback">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the authentication is complete.</param>
         <param name="asyncState">
@@ -346,7 +349,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -358,6 +360,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by clients to begin an asynchronous operation to authenticate the client, and optionally the server, in a client-server connection. The authentication process uses the specified credentials. This method does not block.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
         <param name="credential">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.NetworkCredential" /> that is used to establish the identity of the client.</param>
         <param name="targetName">
@@ -393,7 +399,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -406,6 +411,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by clients to begin an asynchronous operation to authenticate the client, and optionally the server, in a client-server connection. The authentication process uses the specified credentials and authentication options. This method does not block.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
         <param name="credential">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.NetworkCredential" /> that is used to establish the identity of the client.</param>
         <param name="targetName">
@@ -441,7 +450,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -454,6 +462,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by servers to begin an asynchronous operation to authenticate the client, and optionally the server, in a client-server connection. This method does not block.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
         <param name="asyncCallback">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the authentication is complete.</param>
         <param name="asyncState">
@@ -484,7 +496,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -497,6 +508,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by servers to begin an asynchronous operation to authenticate the client, and optionally the server, in a client-server connection. The authentication process uses the specified server credentials and authentication options. This method does not block.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
         <param name="credential">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.NetworkCredential" /> that is used to establish the identity of the client.</param>
         <param name="requiredProtectionLevel">
@@ -533,7 +548,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -547,6 +561,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous read operation that reads data from the stream and stores it in the specified array. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that receives the bytes read from the stream.</param>
         <param name="offset">
@@ -583,7 +601,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -597,6 +614,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous write operation that writes <see cref="T:System.Byte" />s from the specified buffer to the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that supplies the bytes to be written to the stream.</param>
         <param name="offset">
@@ -835,7 +856,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -847,6 +867,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous read operation that was started with a call to <see cref="M:System.Net.Security.NegotiateStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Int32" /> value that specifies the number of bytes read from the underlying stream.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance returned by a call to <see cref="M:System.Net.Security.NegotiateStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> </param>
       </Docs>
@@ -1161,7 +1185,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1173,6 +1196,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads data from this stream and stores it in the specified array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Int32" /> value that specifies the number of bytes read from the underlying stream. When there is no more data to be read, returns 0.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that receives the bytes read from the stream.</param>
         <param name="offset">
@@ -1256,7 +1283,6 @@
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1266,6 +1292,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Throws <see cref="T:System.NotSupportedException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />This value is ignored.</param>
         <param name="origin">

@@ -87,7 +87,6 @@
       </Parameters>
       <Docs>
         <param name="remoteAddress">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method calls <see cref="M:System.ServiceModel.Channels.ChannelFactoryBase`1.OnCreateChannel(System.ServiceModel.EndpointAddress,System.Uri)" /> when invoked. This method cannot be overridden by a derived class. </para>
@@ -97,6 +96,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a particular type of channel with a specified endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" /> with the specified <paramref name="address" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateChannel">
@@ -115,7 +118,6 @@
       </Parameters>
       <Docs>
         <param name="remoteAddress">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method calls <see cref="M:System.ServiceModel.Channels.ChannelFactoryBase`1.OnCreateChannel(System.ServiceModel.EndpointAddress,System.Uri)" /> when invoked.</para>
@@ -124,6 +126,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a particular type of channel with specified transport and endpoint addresses.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" /> with the specified remote and transport addresses.</para>
+        </returns>
         <param name="via">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the transport address to which messages are sent on the output channel.</param>
       </Docs>
@@ -166,12 +172,15 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to close all the channels associated with the channel factory within a specified interval of time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on-close operation. </para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the on-close operation has to complete before timing out.</param>
         <param name="callback">
@@ -223,7 +232,6 @@
       </Parameters>
       <Docs>
         <param name="remoteAddress">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called by <see cref="Overload:System.ServiceModel.Channels.ChannelFactoryBase`1.CreateChannel" /> when invoked.</para>
@@ -232,6 +240,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented in a derived class, provides an extensibility point when creating channels.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" /> with the specified addresses.</para>
+        </returns>
         <param name="via">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the transport address to which messages are sent on the output channel.</param>
       </Docs>

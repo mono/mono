@@ -160,7 +160,7 @@ namespace MonoTests.System.Net.Http
 		 * The .NET runtime hits the "#9" assertion.
 		 * The test succeeds with Mono.
 		 */
-		[Category ("NotWorking")]
+		[Category ("NotDotNet")]
 		public void CopyToAsync ()
 		{
 			var ms = new MemoryStream ();
@@ -307,6 +307,16 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (new MediaTypeHeaderValue ("multipart/*"), headers.ContentType);
 			Assert.AreEqual (new DateTimeOffset (DateTime.Today), headers.Expires);
 			Assert.AreEqual (new DateTimeOffset (DateTime.Today), headers.LastModified);
+		}
+
+		[Test]
+		public void Headers_ToString ()
+		{
+			var sc = new StreamContent (new MemoryStream ());
+			var headers = sc.Headers;
+			headers.ContentMD5 = new byte[] { 3, 5 };
+
+			Assert.AreEqual ("Content-MD5: AwU=\r\n", headers.ToString (), "#1");
 		}
 
 		[Test]

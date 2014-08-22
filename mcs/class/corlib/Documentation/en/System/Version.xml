@@ -204,8 +204,6 @@ Version is 6.1.2.4</para>
         <Parameter Name="minor" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="major">To be added.</param>
-        <param name="minor">To be added.</param>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="major" /> or <paramref name="minor" /> is less than zero. </exception>
@@ -226,6 +224,10 @@ public class Vers {
           <para>
 Version is 6.1</para>
         </example>
+        <param name="major">
+          <attribution license="cc4" from="Microsoft" modified="false" />The major version number. </param>
+        <param name="minor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minor version number. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Version" /> class using the specified major and minor values.</para>
@@ -254,9 +256,6 @@ Version is 6.1</para>
         <Parameter Name="build" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="major">To be added.</param>
-        <param name="minor">To be added.</param>
-        <param name="build">To be added.</param>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="major" />, <paramref name="minor" />, or <paramref name="build" /> is less than zero. </exception>
@@ -277,6 +276,12 @@ public class Vers {
           <para>
 Version is 6.1.2</para>
         </example>
+        <param name="major">
+          <attribution license="cc4" from="Microsoft" modified="false" />The major version number. </param>
+        <param name="minor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minor version number. </param>
+        <param name="build">
+          <attribution license="cc4" from="Microsoft" modified="false" />The build number. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Version" /> class using the specified major, minor, and build values.</para>
@@ -308,10 +313,6 @@ Version is 6.1.2</para>
         <Parameter Name="revision" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="major">To be added.</param>
-        <param name="minor">To be added.</param>
-        <param name="build">To be added.</param>
-        <param name="revision">To be added.</param>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="major" />, <paramref name="minor" />, <paramref name="build" />, or <paramref name="revision" /> is less than zero. </exception>
@@ -332,6 +333,14 @@ public class Vers {
           <para>
 Version is 6.1.2.4</para>
         </example>
+        <param name="major">
+          <attribution license="cc4" from="Microsoft" modified="false" />The major version number. </param>
+        <param name="minor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minor version number. </param>
+        <param name="build">
+          <attribution license="cc4" from="Microsoft" modified="false" />The build number. </param>
+        <param name="revision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The revision number. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Version" /> class with the specified major, minor, build, and revision numbers.</para>
@@ -407,10 +416,6 @@ class VersionBuildExample {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Object" />
-whose values are equal to the property values of the current instance.</para>
-        </returns>
         <example>
           <para>The following example clones the version number and
       writes the result to the console.</para>
@@ -445,6 +450,10 @@ class VersionCloneExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.Version" /> object whose value is the same as the current <see cref="T:System.Version" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Object" /> whose values are a copy of the current <see cref="T:System.Version" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -465,33 +474,6 @@ class VersionCloneExample {
         <Parameter Name="version" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="version" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description> Current instance &lt; <paramref name="version" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance ==
-   <paramref name="version" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>
-                <para> Current instance &gt;
-      <paramref name="version" />, or <paramref name="version" /> is a null
-         reference.</para>
-              </description>
-            </item>
-          </list>
-          <list type="table" />
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="version" /> is not a <see cref="T:System.Version" /> and is not a null reference</exception>
         <example>
@@ -559,6 +541,49 @@ class VersionTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the current <see cref="T:System.Version" /> object to a specified object and returns an indication of their relative values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of the two objects, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.Version" /> object is a version before <paramref name="version" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.Version" /> object is the same version as <paramref name="version" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.Version" /> object is a version subsequent to <paramref name="version" />.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="version" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare, or null. </param>
       </Docs>
@@ -579,33 +604,6 @@ class VersionTest {
         <Parameter Name="value" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="version" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description> Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance ==
-   <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>
-                <para> Current instance &gt;
-      <paramref name="value" />, or <paramref name="value" /> is a null
-         reference.</para>
-              </description>
-            </item>
-          </list>
-          <list type="table" />
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -633,6 +631,49 @@ class VersionTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the current <see cref="T:System.Version" /> object to a specified <see cref="T:System.Version" /> object and returns an indication of their relative values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of the two objects, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.Version" /> object is a version before <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.Version" /> object is the same version as <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.Version" /> object is a version subsequent to <paramref name="value" />. </para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="value" /> is null.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Version" /> object to compare to the current <see cref="T:System.Version" /> object, or null.</param>
       </Docs>
@@ -654,13 +695,6 @@ class VersionTest {
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" />
-indicates <paramref name="obj" /> is
-the same type as the current instance and has equal <see cref="P:System.Version.Major" />, <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties as the current
-instance. If <paramref name="obj" /> is a null reference or is not an instance of <see cref="T:System.Version" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method
@@ -690,10 +724,16 @@ class VersionEqualsExample {
             <para>It is False that version 6.1.2.4 is equal to 6.1.</para>
           </c>
         </example>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current <see cref="T:System.Version" /> object, or null. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the current <see cref="T:System.Version" /> object is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current <see cref="T:System.Version" /> object and <paramref name="obj" /> are both <see cref="T:System.Version" /> objects, and every component of the current <see cref="T:System.Version" /> object matches the corresponding component of <paramref name="obj" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current <see cref="T:System.Version" /> object, or null. </param>
       </Docs>
@@ -714,11 +754,6 @@ class VersionEqualsExample {
         <Parameter Name="obj" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" />
-indicates <paramref name="obj" /> has equal <see cref="P:System.Version.Major" />, <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties as the current
-instance. If <paramref name="obj" /> is a null reference, returns <see langword="false" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -728,6 +763,10 @@ instance. If <paramref name="obj" /> is a null reference, returns <see langword=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the current <see cref="T:System.Version" /> object and a specified <see cref="T:System.Version" /> object represent the same value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if every component of the current <see cref="T:System.Version" /> object matches the corresponding component of the <paramref name="obj" /> parameter; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Version" /> object to compare to the current <see cref="T:System.Version" /> object, or null.</param>
       </Docs>
@@ -747,10 +786,6 @@ instance. If <paramref name="obj" /> is a null reference, returns <see langword=
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> 
-containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para>The algorithm used to generate the hash code is
       unspecified.</para>
@@ -763,6 +798,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code for the current <see cref="T:System.Version" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -926,12 +965,6 @@ class VersionMinorExample {
         <Parameter Name="v2" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where
-<see langword="true" /> 
-indicates <paramref name="v1" /> and <paramref name="v2" /> have equal <see cref="P:System.Version.Major" />, <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties, or both <paramref name="v1" /> and
-<paramref name="v2" /> are <see langword="null" />; otherwise <see langword="false" />.</para>
-        </returns>
         <remarks>
           <para>The parts of the version number are compared 
       independently starting with the <see cref="P:System.Version.Major" /> property and then the <see cref="P:System.Version.Minor" />, <see cref="P:System.Version.Build" />, and <see cref="P:System.Version.Revision" /> properties, in order. This method returns
@@ -941,6 +974,10 @@ indicates <paramref name="v1" /> and <paramref name="v2" /> have equal <see cref
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified <see cref="T:System.Version" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="v1" /> equals <paramref name="v2" />; otherwise, false.</para>
+        </returns>
         <param name="v1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Version" /> object. </param>
         <param name="v2">
@@ -966,11 +1003,6 @@ indicates <paramref name="v1" /> and <paramref name="v2" /> have equal <see cref
         <Parameter Name="v2" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="v1 " />is greater
-   than <paramref name="v2" />; otherwise <see langword="false" />. If <paramref name="v1" /> is
-<see langword="null" />, <see langword="false" /> is returned.</para>
-        </returns>
         <remarks>
           <para>The parts of the version number are compared independently starting with the 
    <see cref="P:System.Version.Major" /> 
@@ -984,6 +1016,10 @@ indicates <paramref name="v1" /> and <paramref name="v2" /> have equal <see cref
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the first specified <see cref="T:System.Version" /> object is greater than the second specified <see cref="T:System.Version" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="v1" /> is greater than <paramref name="v2" />; otherwise, false.</para>
+        </returns>
         <param name="v1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Version" /> object. </param>
         <param name="v2">
@@ -1009,12 +1045,6 @@ indicates <paramref name="v1" /> and <paramref name="v2" /> have equal <see cref
         <Parameter Name="v2" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="v1 " />is greater
-   than or equal to <paramref name="v2" />; otherwise <see langword="false" />. If <paramref name="v1" />
-   is <see langword="null" />, <see langword="false" /> is returned.</para>
-          <see langword="" />
-        </returns>
         <remarks>
           <para>The parts of the version number are compared independently starting with the 
    <see cref="P:System.Version.Major" /> 
@@ -1028,6 +1058,10 @@ indicates <paramref name="v1" /> and <paramref name="v2" /> have equal <see cref
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the first specified <see cref="T:System.Version" /> object is greater than or equal to the second specified <see cref="T:System.Version" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="v1" /> is greater than or equal to <paramref name="v2" />; otherwise, false.</para>
+        </returns>
         <param name="v1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Version" /> object. </param>
         <param name="v2">
@@ -1053,16 +1087,6 @@ indicates <paramref name="v1" /> and <paramref name="v2" /> have equal <see cref
         <Parameter Name="v2" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" />
-where <see langword="true" /> indicates <paramref name="v1" /> and <paramref name="v2" /> have at least
-one unequal property; otherwise
-<see langword="false" />. If 
-<paramref name="v1" /> and <paramref name="v2" /> are 
-both <see langword="null" />, returns false; if one is
-<see langword="null" /> 
-but not the other, returns <see langword="true" />.</para>
-        </returns>
         <remarks>
           <para>The parts of the version number are compared independently starting with the 
    <see cref="P:System.Version.Major" /> 
@@ -1074,6 +1098,10 @@ but not the other, returns <see langword="true" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified <see cref="T:System.Version" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="v1" /> does not equal <paramref name="v2" />; otherwise, false.</para>
+        </returns>
         <param name="v1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Version" /> object. </param>
         <param name="v2">
@@ -1099,11 +1127,6 @@ but not the other, returns <see langword="true" />.</para>
         <Parameter Name="v2" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="v1 " />is less than
-<paramref name="v2" />; otherwise <see langword="false" />. If <paramref name="v2" /> is <see langword="null" />, 
-<see langword="false" /> is returned.</para>
-        </returns>
         <remarks>
           <para>The parts of the version number are compared independently starting with the 
    <see cref="P:System.Version.Major" /> 
@@ -1117,6 +1140,10 @@ but not the other, returns <see langword="true" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the first specified <see cref="T:System.Version" /> object is less than the second specified <see cref="T:System.Version" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="v1" /> is less than <paramref name="v2" />; otherwise, false.</para>
+        </returns>
         <param name="v1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Version" /> object. </param>
         <param name="v2">
@@ -1142,12 +1169,6 @@ but not the other, returns <see langword="true" />.</para>
         <Parameter Name="v2" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="v1 " />is less than or
-   equal to <paramref name="v2" />; otherwise <see langword="false" />. If <paramref name="v2" /> is
-<see langword="null" />, <see langword="false" /> is returned.</para>
-          <see langword="" />
-        </returns>
         <remarks>
           <para>The parts of the version number are compared independently starting with the 
    <see cref="P:System.Version.Major" /> 
@@ -1161,6 +1182,10 @@ but not the other, returns <see langword="true" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the first specified <see cref="T:System.Version" /> object is less than or equal to the second <see cref="T:System.Version" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="v1" /> is less than or equal to <paramref name="v2" />; otherwise, false.</para>
+        </returns>
         <param name="v1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Version" /> object. </param>
         <param name="v2">
@@ -1182,7 +1207,6 @@ but not the other, returns <see langword="true" />.</para>
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="input" /> parameter must have the following format:</para>
@@ -1197,6 +1221,10 @@ but not the other, returns <see langword="true" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a version number to an equivalent <see cref="T:System.Version" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the version number specified in the <paramref name="input" /> parameter.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a version number to convert.</param>
       </Docs>
@@ -1262,12 +1290,17 @@ class VersionRevisionExample {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.Version" /> object to its equivalent <see cref="T:System.String" /> representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.String" /> representation of the values of the major, minor, build, and revision components of the current <see cref="T:System.Version" /> object, as depicted in the following format. Each component is separated by a period character ('.'). Square brackets ('[' and ']') indicate a component that will not appear in the return value if the component is not defined: </para>
+          <para>major.minor[.build[.revision]] </para>
+          <para>For example, if you create a <see cref="T:System.Version" /> object using the constructor Version(1,1), the returned string is "1.1". If you create a <see cref="T:System.Version" /> object using the constructor Version(1,3,4,2), the returned string is "1.3.4.2".</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -1286,12 +1319,68 @@ class VersionRevisionExample {
         <Parameter Name="fieldCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.Version" /> object to its equivalent <see cref="T:System.String" /> representation. A specified count indicates the number of components to return.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.String" /> representation of the values of the major, minor, build, and revision components of the current <see cref="T:System.Version" /> object, each separated by a period character ('.'). The <paramref name="fieldCount" /> parameter determines how many components are returned.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>fieldCount </para>
+                </term>
+                <description>
+                  <para>Return Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>An empty string (""). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>major </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>major.minor </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para>major.minor.build </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para>major.minor.build.revision </para>
+              </description>
+            </item>
+          </list>
+          <para>For example, if you create <see cref="T:System.Version" /> object using the constructor Version(1,3,5), ToString(2) returns "1.3" and ToString(4) throws an exception.</para>
+        </returns>
         <param name="fieldCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of components to return. The <paramref name="fieldCount" /> ranges from 0 to 4. </param>
       </Docs>

@@ -226,9 +226,6 @@ class TestClass {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that is a copy of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The clone has the same <see cref="T:System.Type" />, target, method, and invocation list as the original delegate.</para>
@@ -238,6 +235,10 @@ class TestClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the delegate.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -269,11 +270,6 @@ class TestClass {
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new delegate, or <see langword="null" /> if <paramref name="delegates" /> is <see langword="null" /> or has only
-<see langword="null" /> 
-elements.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>The non-<see langword="null" /> delegates in <paramref name="delegates" /> are not of the same type.</para>
         </exception>
@@ -291,6 +287,10 @@ elements.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Concatenates the invocation lists of an array of delegates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new delegate with an invocation list that concatenates the invocation lists of the delegates in the <paramref name="delegates" /> array. Returns null if <paramref name="delegates" /> is null, if <paramref name="delegates" /> contains zero elements, or if every entry in <paramref name="delegates" /> is null.</para>
+        </returns>
         <param name="delegates">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of delegates to combine. </param>
       </Docs>
@@ -314,42 +314,6 @@ elements.</para>
         <Parameter Name="b" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A delegate, or <see langword="null" /> .</para>
-          <para>The following table describes the value returned
-   when <paramref name="a" /> or <paramref name="b" /> is
-<see langword="null" />
-.</para>
-          <list type="table">
-            <listheader>
-              <term>a</term>
-              <description>b</description>
-              <description>Return Value</description>
-            </listheader>
-            <item>
-              <term> null</term>
-              <description>null</description>
-              <description>null</description>
-            </item>
-            <item>
-              <term> null</term>
-              <description>non-null</description>
-              <description>
-                <paramref name="b" />
-              </description>
-            </item>
-            <item>
-              <term> non-null</term>
-              <description>null</description>
-              <description>
-                <paramref name="a" />
-              </description>
-            </item>
-          </list>
-          <para>When <paramref name="a" /> and <paramref name="b" /> are non-null, this method
-returns a new delegate with the concatenated invocation lists of <paramref name="a" /> and
-<paramref name="b" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="a" /> and <paramref name="b" /> are not <see langword="null" /> and not of the same type.</para>
@@ -367,6 +331,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Concatenates the invocation lists of two delegates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new delegate with an invocation list that concatenates the invocation lists of <paramref name="a" /> and <paramref name="b" /> in that order. Returns <paramref name="a" /> if <paramref name="b" /> is null, returns <paramref name="b" /> if <paramref name="a" /> is a null reference, and returns a null reference if both <paramref name="a" /> and <paramref name="b" /> are null references.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate whose invocation list comes first. </param>
         <param name="b">
@@ -390,7 +358,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="d" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method applies only if the current delegate is multicast (combinable).</para>
@@ -401,6 +368,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Concatenates the invocation lists of the specified multicast (combinable) delegate and the current multicast (combinable) delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new multicast (combinable) delegate with an invocation list that concatenates the invocation list of the current multicast (combinable) delegate and the invocation list of <paramref name="d" />, or the current multicast (combinable) delegate if <paramref name="d" /> is null.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The multicast (combinable) delegate whose invocation list to append to the end of the invocation list of the current multicast (combinable) delegate. </param>
       </Docs>
@@ -423,9 +394,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="method" Type="System.Reflection.MethodInfo" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Delegate" /> of type <paramref name="type" /> that invokes <paramref name="method." /></para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="type" /> or <paramref name="method" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -468,6 +436,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type to represent the specified static method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type to represent the specified static method.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of delegate to create. </param>
         <param name="method">
@@ -493,7 +465,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="method" Type="System.Reflection.MethodInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -562,6 +533,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type that represents the specified static or instance method, with the specified first argument.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type that represents the specified static or instance method. </para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of delegate to create. </param>
         <param name="firstArgument">
@@ -589,10 +564,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="method" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Delegate" /> of type
-<paramref name="type" /> that invokes <paramref name="method" /> on <paramref name="target" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="type, target, or method" /> is <see langword="null" />.</para>
@@ -624,6 +595,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type that represents the specified instance method to invoke on the specified class instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type that represents the specified instance method to invoke on the specified class instance.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of delegate to create. </param>
         <param name="target">
@@ -651,7 +626,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="throwOnBindFailure" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -678,6 +652,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type to represent the specified static method, with the specified behavior on failure to bind.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type to represent the specified static method.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of delegate to create. </param>
         <param name="method">
@@ -705,9 +683,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="method" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Delegate" /> of type <paramref name="type" /> that invokes <paramref name="method." /></para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="type, target, or method" /> is <see langword="null" />.</para>
@@ -739,6 +714,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type that represents the specified static method of the specified class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type that represents the specified static method of the specified class.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of delegate to create. </param>
         <param name="target">
@@ -767,7 +746,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="throwOnBindFailure" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -836,6 +814,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type that represents the specified static or instance method, with the specified first argument and the specified behavior on failure to bind.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type that represents the specified static or instance method, or null if <paramref name="throwOnBindFailure" /> is false and the delegate cannot be bound to <paramref name="method" />. </para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the type of delegate to create. </param>
         <param name="firstArgument">
@@ -865,7 +847,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates delegates for instance methods only. An instance method is a method that is associated with an instance of a class; a static method is a method that is associated with the class itself.</para>
@@ -879,6 +860,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type that represents the specified instance method to invoke on the specified class instance with the specified case-sensitivity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type that represents the specified instance method to invoke on the specified class instance.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of delegate to create. </param>
         <param name="target">
@@ -907,7 +892,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates delegates for static methods only. An instance method is a method that is associated with an instance of a class; a static method is a method that is associated with the class itself.</para>
@@ -921,6 +905,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type that represents the specified static method of the specified class, with the specified case-sensitivity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type that represents the specified static method of the specified class.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of delegate to create. </param>
         <param name="target">
@@ -950,7 +938,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="throwOnBindFailure" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -964,6 +951,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type that represents the specified instance method to invoke on the specified class instance, with the specified case-sensitivity and the specified behavior on failure to bind.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type that represents the specified instance method to invoke on the specified class instance.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of delegate to create. </param>
         <param name="target">
@@ -995,7 +986,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="throwOnBindFailure" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates delegates for static methods only. An instance method is a method that is associated with an instance of a class; a static method is a method that is associated with the class itself.</para>
@@ -1008,6 +998,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a delegate of the specified type that represents the specified static method of the specified class, with the specified case-sensitivity and the specified behavior on failure to bind.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type that represents the specified static method of the specified class.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of delegate to create. </param>
         <param name="target">
@@ -1043,10 +1037,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Object" /> returned by the
-   last method in the invocation list of the current instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>The type of one or more elements in <paramref name="args" /> is invalid as a parameter to the methods implemented by the current instance.</para>
         </exception>
@@ -1072,6 +1062,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Dynamically invokes (late-bound) the method represented by the current delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned by the method represented by the delegate.</para>
+        </returns>
         <param name="args">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of objects that are the arguments to pass to the method represented by the current delegate.</param>
       </Docs>
@@ -1094,7 +1088,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method implements the <see cref="M:System.Delegate.DynamicInvoke(System.Object[])" /> method.</para>
@@ -1103,6 +1096,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Dynamically invokes (late-bound) the method represented by the current delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned by the method represented by the delegate.</para>
+        </returns>
         <param name="args">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of objects that are the arguments to pass to the method represented by the current delegate.</param>
       </Docs>
@@ -1124,11 +1121,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> is equal to the
-   current instance, otherwise <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the two delegates are not of the same type, they are not considered equal.</para>
@@ -1153,6 +1145,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object and the current delegate are of the same type and share the same targets, methods, and invocation list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> and the current delegate have the same targets, methods, and invocation list; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current delegate. </param>
       </Docs>
@@ -1173,9 +1169,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value of this method must not be persisted for two reasons. First, the hash function of a class might be altered to generate a better distribution, rendering any values from the old hash function useless. Second, the default implementation of this class does not guarantee that the same value will be returned by different instances.</para>
@@ -1184,6 +1177,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code for the delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the delegate.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1202,9 +1199,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An ordered set of <see cref="T:System.Delegate" /> instances whose invocation lists collectively match those of the current delegate.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Each delegate in the array represents exactly one method.</para>
@@ -1214,6 +1208,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the invocation list of the delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of delegates representing the invocation list of the current delegate.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1231,7 +1229,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method applies only if the current delegate represents a static method.</para>
@@ -1240,6 +1237,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the static method represented by the current delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> describing the static method represented by the current delegate.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -1320,12 +1321,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="d2" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="d1" />.Equals(<paramref name="d2" />) returns <see langword="true" />; 
-   otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two delegates of the same type with the same targets, methods, and invocation lists are considered equal.</para>
@@ -1351,6 +1346,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified delegates are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d1" /> is equal to <paramref name="d2" />; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first delegate to compare. </param>
         <param name="d2">
@@ -1376,12 +1375,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="d2" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="d1" />.Equals(<paramref name="d2" />) returns 
-<see langword="false" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two delegates are considered not equal if they are of different types, or have different methods, different targets, or different invocation lists.</para>
@@ -1407,6 +1400,10 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified delegates are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d1" /> is not equal to <paramref name="d2" />; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first delegate to compare. </param>
         <param name="d2">
@@ -1432,49 +1429,6 @@ returns a new delegate with the concatenated invocation lists of <paramref name=
         <Parameter Name="value" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns a new delegate, <paramref name="source" />, or <see langword="null" /> . </para>
-          <para>If <paramref name="source" /> and <paramref name="value" /> are not <see langword="null" /> , are not equal, and the
-invocation list of <paramref name="value" /> is contained in the invocation list of source,
-returns a new delegate with the invocation list of <paramref name="value" /> removed from
-the invocation list of <paramref name="source" />.</para>
-          <para>If the invocation lists of <paramref name="source" /> and <paramref name="value" /> are equal,
-returns <see langword="null" />
-.</para>
-          <para>If the invocation list of <paramref name="value" /> is not found in the invocation list
-of <paramref name="source" />, returns <paramref name="source" />.</para>
-          <para>The following table describes the value returned when <paramref name="source" /> or
-<paramref name="value" /> is 
-<see langword="null" /> .</para>
-          <list type="table">
-            <listheader>
-              <term>
-                <paramref name="source" />
-              </term>
-              <description>
-                <paramref name="value" />
-              </description>
-              <description>Return value</description>
-            </listheader>
-            <item>
-              <term> null</term>
-              <description>null</description>
-              <description>null</description>
-            </item>
-            <item>
-              <term> null</term>
-              <description>non-null</description>
-              <description>null</description>
-            </item>
-            <item>
-              <term> non-null</term>
-              <description>null</description>
-              <description>
-                <paramref name="source" />
-              </description>
-            </item>
-          </list>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /> method.</para>
           <code lang="C#">using System;
@@ -1623,6 +1577,10 @@ class TestClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the last occurrence of the invocation list of a delegate from the invocation list of another delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new delegate with an invocation list formed by taking the invocation list of <paramref name="source" /> and removing the last occurrence of the invocation list of <paramref name="value" />, if the invocation list of <paramref name="value" /> is found within the invocation list of <paramref name="source" />. Returns <paramref name="source" /> if <paramref name="value" /> is null or if the invocation list of <paramref name="value" /> is not found within the invocation list of <paramref name="source" />. Returns a null reference if the invocation list of <paramref name="value" /> is equal to the invocation list of <paramref name="source" /> or if <paramref name="source" /> is a null reference.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate from which to remove the invocation list of <paramref name="value" />. </param>
         <param name="value">
@@ -1648,42 +1606,6 @@ class TestClass {
         <Parameter Name="value" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns a new delegate, <paramref name="source" />, or <see langword="null" />.</para>
-          <para>If <paramref name="source" /> and <paramref name="value" /> are not <see langword="null" /> , are not equal, and the invocation list of <paramref name="value" /> is contained in the invocation list of source, returns a new delegate with all matching occurrences of the invocation list of <paramref name="value" /> removed from the invocation list of <paramref name="source" />.
-    </para>
-          <para>If the invocation lists of <paramref name="source" /> and <paramref name="value" /> are equal, or if <paramref name="source" /> contains only a succession of invocation lists equal to <paramref name="value" />, returns <see langword="null" />.</para>
-          <para>If the invocation list of <paramref name="value" /> is not found in the invocation list of <paramref name="source" />, returns <paramref name="source" />.</para>
-          <para>The following table describes the value returned when <paramref name="source" /> or <paramref name="value" /> is <see langword="null" /> .</para>
-          <list type="table">
-            <listheader>
-              <term>
-                <paramref name="source" />
-              </term>
-              <description>
-                <paramref name="value" />
-              </description>
-              <description>Return value</description>
-            </listheader>
-            <item>
-              <term> null</term>
-              <description>null</description>
-              <description>null</description>
-            </item>
-            <item>
-              <term> null</term>
-              <description>non-null</description>
-              <description>null</description>
-            </item>
-            <item>
-              <term> non-null</term>
-              <description>null</description>
-              <description>
-                <paramref name="source" />
-              </description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the invocation list of <paramref name="value" /> matches a contiguous set of elements in the invocation list of <paramref name="source" />, then the invocation list of <paramref name="value" /> is said to occur within the invocation list of <paramref name="source" />. If the invocation list of <paramref name="value" /> occurs more than once in the invocation list of <paramref name="source" />, all occurrences are removed.</para>
@@ -1692,6 +1614,10 @@ class TestClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes all occurrences of the invocation list of a delegate from the invocation list of another delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new delegate with an invocation list formed by taking the invocation list of <paramref name="source" /> and removing all occurrences of the invocation list of <paramref name="value" />, if the invocation list of <paramref name="value" /> is found within the invocation list of <paramref name="source" />. Returns <paramref name="source" /> if <paramref name="value" /> is null or if the invocation list of <paramref name="value" /> is not found within the invocation list of <paramref name="source" />. Returns a null reference if the invocation list of <paramref name="value" /> is equal to the invocation list of <paramref name="source" />, if <paramref name="source" /> contains only a series of invocation lists that are equal to the invocation list of <paramref name="value" />, or if <paramref name="source" /> is a null reference.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate from which to remove the invocation list of <paramref name="value" />. </param>
         <param name="value">
@@ -1715,7 +1641,6 @@ class TestClass {
         <Parameter Name="d" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the invocation list of <paramref name="value" /> matches a contiguous set of elements in the current delegate's invocation list, then the invocation list of <paramref name="value" /> is said to occur within the current delegate's invocation list. If the invocation list of <paramref name="value" /> occurs more than once in the current delegate's invocation list, the last occurrence is removed.</para>
@@ -1724,6 +1649,10 @@ class TestClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the invocation list of a delegate from the invocation list of another delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new delegate with an invocation list formed by taking the invocation list of the current delegate and removing the invocation list of <paramref name="value" />, if the invocation list of <paramref name="value" /> is found within the current delegate's invocation list. Returns the current delegate if <paramref name="value" /> is null or if the invocation list of <paramref name="value" /> is not found within the current delegate's invocation list. Returns null if the invocation list of <paramref name="value" /> is equal to the current delegate's invocation list.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate that supplies the invocation list to remove from the invocation list of the current delegate. </param>
       </Docs>

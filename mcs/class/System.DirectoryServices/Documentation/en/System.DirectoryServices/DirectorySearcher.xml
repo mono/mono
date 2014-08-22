@@ -499,7 +499,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If more than one entry is found during the search, only the first entry is returned. If no entries are found to match the search criteria, a null reference (Nothing in Visual Basic) is returned.</para>
@@ -508,6 +507,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the search and returns only the first entry that is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DirectoryServices.SearchResult" /> object that contains the first entry that is found during the search.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FindAll">
@@ -518,7 +521,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Due to implementation restrictions, the <see cref="T:System.DirectoryServices.SearchResultCollection" /> class cannot release all of its unmanaged resources when it is garbage collected. To prevent a memory leak, you must call the <see cref="M:System.DirectoryServices.SearchResultCollection.Dispose" /> method when the <see cref="T:System.DirectoryServices.SearchResultCollection" /> object is no longer needed.</para>
@@ -527,6 +529,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the search and returns a collection of the entries that are found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DirectoryServices.SearchResultCollection" /> object that contains the results of the search.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CacheResults">

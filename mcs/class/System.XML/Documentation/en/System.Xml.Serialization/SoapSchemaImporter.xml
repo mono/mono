@@ -188,7 +188,6 @@
         <Parameter Name="baseTypeCanBeIndirect" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlTypeMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.SoapSchemaImporter.ImportDerivedTypeMapping(System.Xml.XmlQualifiedName,System.Type,System.Boolean)" /> method of the <see cref="T:System.Xml.Serialization.SoapSchemaImporter" /> class is used by the <format type="text/html"><a href="b9210348-8bc2-4367-8c91-d1a04b403e88">Web Services Description Language Tool (Wsdl.exe)</a></format> while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe.</para>
@@ -198,6 +197,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for the type of a SOAP-encoded element part defined in a WSDL document where a base type is specified. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework type mapping information for a derived type corresponding to a WSDL message part.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> that specifies the name of an element's type for which a .NET Framework type is being generated.</param>
         <param name="baseType">
@@ -224,7 +227,6 @@
         <Parameter Name="member" Type="System.Xml.Serialization.SoapSchemaMember" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlMembersMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.SoapSchemaImporter.ImportMembersMapping(System.String,System.String,System.Xml.Serialization.SoapSchemaMember)" /> method of the <see cref="T:System.Xml.Serialization.SoapSchemaImporter" /> class is used by the Wsdl.exe tool while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe.</para>
@@ -234,6 +236,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for a single SOAP-encoded element part defined in a WSDL document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework type mapping for a single element part of a WSDL message definition.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The message name.</param>
         <param name="ns">
@@ -260,7 +266,6 @@
         <Parameter Name="members" Type="System.Xml.Serialization.SoapSchemaMember[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlMembersMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.SoapSchemaImporter.ImportMembersMapping(System.String,System.String,System.Xml.Serialization.SoapSchemaMember[])" /> method of the <see cref="T:System.Xml.Serialization.SoapSchemaImporter" /> class is used by the Wsdl.exe tool while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe.</para>
@@ -270,6 +275,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for the element parts of a SOAP-encoded message defined in a WSDL document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework type mappings for the element parts of a WSDL message definition.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The message name.</param>
         <param name="ns">
@@ -297,7 +306,6 @@
         <Parameter Name="hasWrapperElement" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlMembersMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.SoapSchemaImporter.ImportMembersMapping(System.String,System.String,System.Xml.Serialization.SoapSchemaMember[],System.Boolean)" /> method of the <see cref="T:System.Xml.Serialization.SoapSchemaImporter" /> class is used by the Wsdl.exe tool while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe.</para>
@@ -307,6 +315,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for the element parts of a SOAP-encoded message defined in a WSDL document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework type mappings for the element parts of a WSDL message definition.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The message name.</param>
         <param name="ns">
@@ -338,7 +350,6 @@
         <Parameter Name="baseTypeCanBeIndirect" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlMembersMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.SoapSchemaImporter.ImportMembersMapping(System.String,System.String,System.Xml.Serialization.SoapSchemaMember[],System.Boolean,System.Type,System.Boolean)" /> method of the <see cref="T:System.Xml.Serialization.SoapSchemaImporter" /> class is used by the Wsdl.exe tool while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe.</para>
@@ -348,6 +359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for the element parts of a SOAP-encoded message defined in a WSDL document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework type mappings for the element parts of a WSDL message definition.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The message name.</param>
         <param name="ns">

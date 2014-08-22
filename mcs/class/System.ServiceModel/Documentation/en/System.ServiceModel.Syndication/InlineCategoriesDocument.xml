@@ -45,9 +45,13 @@
         <Parameter Name="categories" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Syndication.SyndicationCategory&gt;" />
       </Parameters>
       <Docs>
-        <param name="categories">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" /> class.  </para>
+        </summary>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of syndication categories.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -63,11 +67,17 @@
         <Parameter Name="scheme" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categories">To be added.</param>
-        <param name="isFixed">To be added.</param>
-        <param name="scheme">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" /> class. </para>
+        </summary>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of syndication categories.</param>
+        <param name="isFixed">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether syndication categories can be added to the <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" />.</param>
+        <param name="scheme">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scheme of the <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Categories">
@@ -101,12 +111,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns a new  <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsFixed">

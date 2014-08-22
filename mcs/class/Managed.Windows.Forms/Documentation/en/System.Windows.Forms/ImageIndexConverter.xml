@@ -55,7 +55,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This type converter only can convert a 32-bit signed integer object to and from a string.</para>
@@ -65,6 +64,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified value object to a 32-bit signed integer object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted <paramref name="value" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="culture">
@@ -90,7 +93,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of this method can only convert an index value represented as an <see cref="T:System.Int32" /> to a <see cref="T:System.String" />.</para>
@@ -99,6 +101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified object to the specified destination type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted <paramref name="value" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context, which can be used to extract additional information about the environment this type converter is being invoked from. This parameter or properties of this parameter can be null. </param>
         <param name="culture">
@@ -123,7 +129,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of index values for image lists associated with the <see cref="P:System.ComponentModel.ITypeDescriptorContext.Instance" /> property of the <paramref name="context" /> parameter. If an <see cref="T:System.Windows.Forms.ImageList" /> is not found, then the parent of the component will be searched for such a list.</para>
@@ -133,6 +138,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of standard index values for the image list associated with the specified format context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> that holds a standard set of valid index values. If no image list is found, this collection will contain a single object with a value of -1.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context, which can be used to extract additional information about the environment this type converter is being invoked from. This parameter or properties of this parameter can be null. </param>
       </Docs>
@@ -151,7 +160,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the list returned by the <see cref="Overload:System.Windows.Forms.ImageIndexConverter.GetStandardValues" /> method is exclusive, then no other values are valid. This is typical of an enumerated data type. If the list is not exclusive, then there are other valid values besides the list of standard values that <see cref="Overload:System.Windows.Forms.ImageIndexConverter.GetStandardValues" /> provides.</para>
@@ -162,6 +170,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the list of standard values returned from the <see cref="Overload:System.Windows.Forms.ImageIndexConverter.GetStandardValues" /> method is an exclusive list. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="Overload:System.Windows.Forms.ImageIndexConverter.GetStandardValues" /> method returns an exclusive list of valid values; otherwise, false. This implementation always returns false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A formatter context. </param>
       </Docs>
@@ -180,7 +192,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, <see cref="M:System.Windows.Forms.ImageIndexConverter.GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext)" /> always returns true since this object supports a standard set of index values for images that can be picked from a list.</para>
@@ -189,6 +200,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the type converter supports a standard set of values that can be picked from a list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="Overload:System.Windows.Forms.ImageIndexConverter.GetStandardValues" /> method returns a standard set of values; otherwise, false. Always returns true.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context, which can be used to extract additional information about the environment this type converter is being invoked from. This parameter or properties of this parameter can be null. </param>
       </Docs>

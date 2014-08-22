@@ -356,8 +356,6 @@ namespace System.Net
 
 			byte [] buffer = new byte [1024];
 			MemoryStream ms = new MemoryStream ();
-			bool gotStatus = false;
-			WebHeaderCollection headers = null;
 
 			while (true) {
 				int n = stream.Read (buffer, 0, 1024);
@@ -369,7 +367,8 @@ namespace System.Net
 				ms.Write (buffer, 0, n);
 				int start = 0;
 				string str = null;
-				headers = new WebHeaderCollection ();
+				bool gotStatus = false;
+				WebHeaderCollection headers = new WebHeaderCollection ();
 				while (ReadLine (ms.GetBuffer (), ref start, (int) ms.Length, ref str)) {
 					if (str == null) {
 						int contentLen = 0;
@@ -399,13 +398,22 @@ namespace System.Net
 						continue;
 					}
 
-					int spaceidx = str.IndexOf (' ');
-					if (spaceidx == -1) {
+					string[] parts = str.Split (' ');
+					if (parts.Length < 2) {
 						HandleError (WebExceptionStatus.ServerProtocolViolation, null, "ReadHeaders2");
 						return null;
 					}
 
-					status = (int) UInt32.Parse (str.Substring (spaceidx + 1, 3));
+					if (String.Compare (parts [0], "HTTP/1.1", true) == 0)
+						Data.ProxyVersion = HttpVersion.Version11;
+					else if (String.Compare (parts [0], "HTTP/1.0", true) == 0)
+						Data.ProxyVersion = HttpVersion.Version10;
+					else {
+						HandleError (WebExceptionStatus.ServerProtocolViolation, null, "ReadHeaders2");
+						return null;
+					}
+
+					status = (int)UInt32.Parse (parts [1]);
 					gotStatus = true;
 				}
 			}
@@ -841,6 +849,8 @@ namespace System.Net
 				string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
 				string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
 				bool keepAlive = (Data.Version == HttpVersion.Version11 && this.keepAlive);
+				if (Data.ProxyVersion != null && Data.ProxyVersion != HttpVersion.Version11)
+					keepAlive = false;
 				if (cncHeader != null) {
 					cncHeader = cncHeader.ToLower ();
 					keepAlive = (this.keepAlive && cncHeader.IndexOf ("keep-alive", StringComparison.Ordinal) != -1);

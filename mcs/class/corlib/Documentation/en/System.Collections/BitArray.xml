@@ -215,7 +215,6 @@
         <Parameter Name="value" Type="System.Collections.BitArray" />
       </Parameters>
       <Docs>
-        <returns>A BitAray whose bit values are the bitwise <c>And</c> of the BItArray instance and the argument BitArray.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The bitwise AND operation returns true if both operands are true, and returns false if one or both operands are false.</para>
@@ -225,6 +224,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the bitwise AND operation on the elements in the current <see cref="T:System.Collections.BitArray" /> against the corresponding elements in the specified <see cref="T:System.Collections.BitArray" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current instance containing the result of the bitwise AND operation on the elements in the current <see cref="T:System.Collections.BitArray" /> against the corresponding elements in the specified <see cref="T:System.Collections.BitArray" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.BitArray" /> with which to perform the bitwise AND operation. </param>
       </Docs>
@@ -243,10 +246,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that is a copy of the current
-   instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A shallow copy of a collection copies only the elements of the collection, whether they are reference types or value types, but it does not copy the objects that the references refer to. The references in the new collection point to the same objects that the references in the original collection point to.</para>
@@ -257,6 +256,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the <see cref="T:System.Collections.BitArray" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the <see cref="T:System.Collections.BitArray" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -337,7 +340,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>Returns the value of the specified element.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is an O(1) operation.</para>
@@ -346,6 +348,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the bit at a specific position in the <see cref="T:System.Collections.BitArray" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the bit at position <paramref name="index" />.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the value to get. </param>
       </Docs>
@@ -364,9 +370,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An <see cref="T:System.Collections.IEnumerator" /> for the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The foreach statement of the C# language (for each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
@@ -383,6 +386,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the <see cref="T:System.Collections.BitArray" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the entire <see cref="T:System.Collections.BitArray" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -520,7 +527,6 @@ The value of this property is always <c>false</c>.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>A BitAray whose bit values are the negation of the BItArray instance.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.BitArray.Count" />.</para>
@@ -529,6 +535,10 @@ The value of this property is always <c>false</c>.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inverts all the bit values in the current <see cref="T:System.Collections.BitArray" />, so that elements set to true are changed to false, and elements set to false are changed to true.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current instance with inverted bit values.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Or">
@@ -547,7 +557,6 @@ The value of this property is always <c>false</c>.
         <Parameter Name="value" Type="System.Collections.BitArray" />
       </Parameters>
       <Docs>
-        <returns>A BitAray whose bit values are the bitwise <c>Or</c> of the BItArray instance and the argument BitArray.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The bitwise OR operation returns true if one or both operands are true, and returns false if both operands are false.</para>
@@ -557,6 +566,10 @@ The value of this property is always <c>false</c>.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the bitwise OR operation on the elements in the current <see cref="T:System.Collections.BitArray" /> against the corresponding elements in the specified <see cref="T:System.Collections.BitArray" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current instance containing the result of the bitwise OR operation on the elements in the current <see cref="T:System.Collections.BitArray" /> against the corresponding elements in the specified <see cref="T:System.Collections.BitArray" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.BitArray" /> with which to perform the bitwise OR operation. </param>
       </Docs>
@@ -664,7 +677,6 @@ The value of this property is always <c>false</c>.
         <Parameter Name="value" Type="System.Collections.BitArray" />
       </Parameters>
       <Docs>
-        <returns>A BitAray whose bit values are the bitwise <c>Xor</c> of the BItArray instance and the argument BitArray.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The bitwise exclusive OR operation returns true if exactly one operand is true, and returns false if both operands have the same Boolean value.</para>
@@ -674,6 +686,10 @@ The value of this property is always <c>false</c>.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the bitwise exclusive OR operation on the elements in the current <see cref="T:System.Collections.BitArray" /> against the corresponding elements in the specified <see cref="T:System.Collections.BitArray" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current instance containing the result of the bitwise exclusive OR operation on the elements in the current <see cref="T:System.Collections.BitArray" /> against the corresponding elements in the specified <see cref="T:System.Collections.BitArray" />. </para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.BitArray" /> with which to perform the bitwise exclusive OR operation. </param>
       </Docs>

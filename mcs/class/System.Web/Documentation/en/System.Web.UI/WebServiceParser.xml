@@ -52,12 +52,15 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Type" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the compiled type for a given input file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> as specified by the <see cref="T:System.Web.HttpContext" />.</para>
+        </returns>
         <param name="inputFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to be compiled. </param>
         <param name="context">

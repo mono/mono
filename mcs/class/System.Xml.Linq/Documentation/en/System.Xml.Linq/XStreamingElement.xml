@@ -403,7 +403,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note that when debugging a program that uses <see cref="T:System.Xml.Linq.XStreamingElement" />, displaying the value of an object causes its <see cref="Overload:System.Xml.Linq.XStreamingElement.ToString" /> method to be called. This causes the XML to be serialized. If the semantics of your streaming element query are such that the streaming element can only be streamed once, this may cause undesirable behavior in your debugging experience.</para>
@@ -412,6 +411,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the formatted (indented) XML for this streaming element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the indented XML.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -428,7 +431,6 @@
         <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note that when debugging a program that uses <see cref="T:System.Xml.Linq.XStreamingElement" />, displaying the value of an object causes its <see cref="Overload:System.Xml.Linq.XStreamingElement.ToString" /> method to be called. This causes the XML to be serialized. If the semantics of your streaming element query are such that the streaming element can only be streamed once, this may cause undesirable behavior in your debugging experience.</para>
@@ -437,6 +439,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the XML for this streaming element, optionally disabling formatting.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the XML.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> that specifies formatting behavior.</param>
       </Docs>

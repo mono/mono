@@ -311,7 +311,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>While similar to the <see cref="M:System.Web.UI.Page.MapPath(System.String)" /> method, this method maps the path from the .ascx file's location, not the .aspx file's location. You can use this method to obtain a path to a directory of images or other resources associated with your <see cref="T:System.Web.UI.UserControl" /> object.</para>
@@ -320,6 +319,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Assigns a virtual file path, either absolute or relative, to a physical file path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path to the file.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual file path to map. </param>
       </Docs>
@@ -419,7 +422,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In general, you do not need to call this method. However, if you store custom information in view state, you can override this method to do so.</para>
@@ -428,6 +430,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves any user control view-state changes that have occurred since the last page postback.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the user control's current view state. If there is no view state associated with the control, it returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -507,7 +513,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.UserControl.System.Web.UI.IAttributeAccessor.GetAttribute(System.String)" /> method to get the value of control attributes that are not exposed as properties on the control.</para>
@@ -516,6 +521,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified user control attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified user control attribute.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to get the value of.</param>
       </Docs>

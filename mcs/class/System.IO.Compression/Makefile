@@ -3,8 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.IO.Compression.dll
-LIB_MCS_FLAGS = /r:System
-
-NO_TEST = yes
+LIB_MCS_FLAGS = /r:System /r:System.Core /unsafe
+TEST_MCS_FLAGS = /r:System /r:System.Core
 
 include ../../build/library.make

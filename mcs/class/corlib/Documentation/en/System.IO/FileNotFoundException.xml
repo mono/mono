@@ -213,7 +213,8 @@ class FileNotFoundExample {
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full name of the file with the invalid image. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The constructor initializes the <see cref="P:System.IO.FileNotFoundException.Message" /> property of the new instance using <paramref name="message" /> and the <see cref="P:System.IO.FileNotFoundException.FileName" /> property using <paramref name="fileName" />.</para>
@@ -246,7 +247,8 @@ class FileNotFoundExample {
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="innerException">To be added.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
@@ -423,10 +425,6 @@ class FileNotFoundExample {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see langword="String" />
-representation of the current Exception. </para>
-        </returns>
         <example>
           <para>The following example causes a <see cref="T:System.IO.FileNotFoundException" /> exception and displays the result
    of calling <see langword="ToString" /> on that Exception.</para>
@@ -464,6 +462,10 @@ File name: "/Eccma/examples/FileTest.cs"
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the fully qualified name of this exception and possibly the error message, the name of the inner exception, and the stack trace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fully qualified name of this exception and possibly the error message, the name of the inner exception, and the stack trace.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

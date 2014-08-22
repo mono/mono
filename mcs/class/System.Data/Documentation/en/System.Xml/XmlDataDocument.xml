@@ -82,7 +82,6 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlNode'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Cloning the XmlDataDocument also clones the <see cref="T:System.Data.DataSet" /> schema.</para>
@@ -94,6 +93,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplicate of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned node.</para>
+        </returns>
         <param name="deep">
           <attribution license="cc4" from="Microsoft" modified="false" />true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
       </Docs>
@@ -114,7 +117,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlElement'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note to Inheritors If you overload this function, it cannot be used for extensibility. Instead, you can return an element created by the base class, in this case, XmlDataDocument. See the following example.</para>
@@ -131,6 +133,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an element with the specified <see cref="P:System.Xml.XmlNode.Prefix" />, <see cref="P:System.Xml.XmlDocument.LocalName" /> , and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Xml.XmlElement" />.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the new element. If String.Empty or null, there is no prefix. </param>
         <param name="localName">
@@ -153,7 +159,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlEntityReference'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -163,6 +168,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlEntityReference" /> with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlEntityReference" /> with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the entity reference.</param>
       </Docs>
@@ -181,7 +190,6 @@
         <Parameter Name="node" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XPath.XPathNavigator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The XPathNavigator provides read-only, random access to data. Because it is optimized for XSLT transformations, it provides performance benefits when used as an input mechanism to the <see cref="M:System.Xml.Xsl.XslTransform.Transform(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.XsltArgumentList,System.Xml.XmlResolver)" /> method.</para>
@@ -190,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this document. The XPathNavigator is positioned on the node specified in the <paramref name="node" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XPathNavigator used to navigate the document.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNode" /> you want the navigator initially positioned on. </param>
       </Docs>
@@ -230,7 +242,6 @@
         <Parameter Name="elemId" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlElement'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not supported by the <see cref="T:System.Xml.XmlDataDocument" /> class.</para>
@@ -239,6 +250,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Xml.XmlElement" /> with the specified ID. This method is not supported by the <see cref="T:System.Xml.XmlDataDocument" /> class. Calling this method throws an exception.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> with the specified ID.</para>
+        </returns>
         <param name="elemId">
           <attribution license="cc4" from="Microsoft" modified="false" />The attribute ID to match.</param>
       </Docs>
@@ -257,12 +272,15 @@
         <Parameter Name="r" Type="System.Data.DataRow" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlElement'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Xml.XmlElement" /> associated with the specified <see cref="T:System.Data.DataRow" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlElement containing a representation of the specified DataRow.</para>
+        </returns>
         <param name="r">
           <attribution license="cc4" from="Microsoft" modified="false" />The DataRow whose associated XmlElement you want to retrieve. </param>
       </Docs>
@@ -281,12 +299,15 @@
         <Parameter Name="e" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Data.DataRow'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Data.DataRow" /> associated with the specified <see cref="T:System.Xml.XmlElement" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DataRow containing a representation of the XmlElement; null if there is no DataRow associated with the XmlElement.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The XmlElement whose associated DataRow you want to retrieve. </param>
       </Docs>

@@ -211,7 +211,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -221,6 +220,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new instance of the <see cref="T:System.Web.UI.WebControls.ButtonField" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the  <see cref="T:System.Web.UI.WebControls.ButtonField" /> class.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -385,7 +388,6 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -395,6 +397,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Formats the specified field value for a cell in the <see cref="T:System.Web.UI.WebControls.ButtonField" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The field value converted to the format specified by the <see cref="P:System.Web.UI.WebControls.ButtonField.DataTextFormatString" /> property.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -445,7 +451,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -456,6 +461,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes the current <see cref="T:System.Web.UI.WebControls.ButtonField" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false, which indicates the control does not need to rebind to the data.</para>
+        </returns>
         <param name="sortingEnabled">
           <attribution license="cc4" from="Microsoft" modified="false" />true to enable sorting; otherwise, false. </param>
         <param name="control">

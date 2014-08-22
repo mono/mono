@@ -59,9 +59,16 @@
         <Parameter Name="authorizationPolicies" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;" />
       </Parameters>
       <Docs>
-        <param name="authorizationPolicies">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the default policy-chaining engine.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> class with the collection of policies object.</para>
+        </summary>
+        <param name="authorizationPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" />  of type <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> that contains the authorization policies.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -99,10 +106,15 @@
         <Parameter Name="authorizationPolicies" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;" />
       </Parameters>
       <Docs>
-        <param name="authorizationContext">To be added.</param>
-        <param name="authorizationPolicies">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> class with the specified authorization parameters and collection of policies.</para>
+        </summary>
+        <param name="authorizationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IdentityModel.Policy.AuthorizationContext" /> that contains authorization settings.</param>
+        <param name="authorizationPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" />  of type <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> that contains the authorization policies.</param>
       </Docs>
     </Member>
     <Member MemberName="Anonymous">

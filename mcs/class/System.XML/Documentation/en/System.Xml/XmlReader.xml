@@ -496,7 +496,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="input" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -508,6 +507,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance using the specified stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object used to read the data contained in the stream.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML data.</param>
       </Docs>
@@ -527,7 +530,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="input" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -539,6 +541,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance with the specified <see cref="T:System.IO.TextReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read the XML data.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextReader" /> from which to read the XML data. Because a <see cref="T:System.IO.TextReader" /> returns a stream of Unicode characters, the encoding specified in the XML declaration is not used by the <see cref="T:System.Xml.XmlReader" /> to decode the data stream.</param>
       </Docs>
@@ -558,7 +564,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="inputUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -570,6 +575,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance with specified URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read the XML data.</para>
+        </returns>
         <param name="inputUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI for the file containing the XML data. The <see cref="T:System.Xml.XmlUrlResolver" /> class is used to convert the path to a canonical data representation.</param>
       </Docs>
@@ -590,7 +599,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -607,6 +615,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance with the specified stream and <see cref="T:System.Xml.XmlReaderSettings" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read the XML data.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML data.</param>
         <param name="settings">
@@ -629,7 +641,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -646,6 +657,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance using the specified <see cref="T:System.IO.TextReader" /> and <see cref="T:System.Xml.XmlReaderSettings" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read XML data.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextReader" /> from which to read the XML data. Because a <see cref="T:System.IO.TextReader" /> returns a stream of Unicode characters, the encoding specified in the XML declaration is not used by the <see cref="T:System.Xml.XmlReader" /> to decode the data stream</param>
         <param name="settings">
@@ -668,7 +683,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -682,6 +696,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance with the specified URI and <see cref="T:System.Xml.XmlReaderSettings" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read XML data.</para>
+        </returns>
         <param name="inputUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI for the file containing the XML data. The <see cref="T:System.Xml.XmlResolver" /> object on the <see cref="T:System.Xml.XmlReaderSettings" /> object is used to convert the path to a canonical data representation. If <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> is null, a new <see cref="T:System.Xml.XmlUrlResolver" /> object is used.</param>
         <param name="settings">
@@ -704,7 +722,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="settings" Type="System.Xml.XmlReaderSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -727,6 +744,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance with the specified <see cref="T:System.Xml.XmlReader" /> and <see cref="T:System.Xml.XmlReaderSettings" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object that is wrapped around the specified <see cref="T:System.Xml.XmlReader" /> object.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> object that you wish to use as the underlying reader.</param>
         <param name="settings">
@@ -750,7 +771,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="baseUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -767,6 +787,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance using the specified stream, base URI, and <see cref="T:System.Xml.XmlReaderSettings" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read XML data.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML data. </param>
         <param name="settings">
@@ -792,7 +816,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="inputContext" Type="System.Xml.XmlParserContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -809,6 +832,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance using the specified stream, <see cref="T:System.Xml.XmlReaderSettings" />, and <see cref="T:System.Xml.XmlParserContext" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read XML data.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML data. </param>
         <param name="settings">
@@ -834,7 +861,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="baseUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -851,6 +877,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance using the specified <see cref="T:System.IO.TextReader" />, <see cref="T:System.Xml.XmlReaderSettings" />, and base URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read XML data.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextReader" /> from which to read the XML data. Because a <see cref="T:System.IO.TextReader" /> returns a stream of Unicode characters, the encoding specified in the XML declaration is not used by the <see cref="T:System.Xml.XmlReader" /> to decode the data stream.</param>
         <param name="settings">
@@ -876,7 +906,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="inputContext" Type="System.Xml.XmlParserContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -893,6 +922,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance using the specified <see cref="T:System.IO.TextReader" />, <see cref="T:System.Xml.XmlReaderSettings" />, and <see cref="T:System.Xml.XmlParserContext" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read XML data.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextReader" /> from which to read the XML data. Because a <see cref="T:System.IO.TextReader" /> returns a stream of Unicode characters, the encoding specified in the XML declaration is not used by the <see cref="T:System.Xml.XmlReader" /> to decode the data stream.</param>
         <param name="settings">
@@ -918,7 +951,6 @@ equal to <see langword="false" />.</para>
         <Parameter Name="inputContext" Type="System.Xml.XmlParserContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -932,6 +964,10 @@ equal to <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlReader" /> instance using the specified URI, <see cref="T:System.Xml.XmlReaderSettings" />, and <see cref="T:System.Xml.XmlParserContext" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object to read XML data.</para>
+        </returns>
         <param name="inputUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI for the file containing the XML data. The <see cref="T:System.Xml.XmlResolver" /> object on the <see cref="T:System.Xml.XmlReaderSettings" /> object is used to convert the path to a canonical data representation. If <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> is null, a new <see cref="T:System.Xml.XmlUrlResolver" /> object is used.</param>
         <param name="settings">
@@ -1079,10 +1115,6 @@ containing the depth of the current node in the XML document. </para>
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" />
-containing the value of the specified attribute.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors"> This method does not move the
@@ -1103,6 +1135,10 @@ containing the value of the specified attribute.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the value of the attribute with the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. This method does not move the reader.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the attribute. The index is zero-based. (The first attribute has index 0.)</param>
       </Docs>
@@ -1125,11 +1161,6 @@ containing the value of the specified attribute.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" />
-containing the value of the specified attribute, or <see langword="null" /> if the
-attribute is not found.</para>
-        </returns>
         <example>
           <para>For an example demonstrating this method, see <see cref="M:System.Xml.XmlTextReader.GetAttribute(System.Int32)" />(<see cref="T:System.String" />, <see cref="T:System.String" />).</para>
         </example>
@@ -1142,6 +1173,10 @@ attribute is not found.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the value of the attribute with the specified <see cref="P:System.Xml.XmlReader.Name" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. If the attribute is not found or the value is String.Empty, null is returned.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute.</param>
       </Docs>
@@ -1165,11 +1200,6 @@ attribute is not found.</para>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" />
-containing the value of the specified attribute, or <see langword="null" /> if the
-attribute is not found.</para>
-        </returns>
         <example>
           <para>For an example demonstrating this method, see <see cref="M:System.Xml.XmlTextReader.GetAttribute(System.Int32)" />(<see cref="T:System.String" />, <see cref="T:System.String" />).</para>
         </example>
@@ -1189,6 +1219,10 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the value of the attribute with the specified <see cref="P:System.Xml.XmlReader.LocalName" /> and <see cref="P:System.Xml.XmlReader.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. If the attribute is not found or the value is String.Empty, null is returned. This method does not move the reader.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
         <param name="namespaceURI">
@@ -1208,7 +1242,6 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -1217,6 +1250,10 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously gets the value of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasAttributes">
@@ -1469,10 +1506,6 @@ explicitly set. </para>
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the name
-   is valid; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses the <see cref="http://go.microsoft.com/fwlink/?LinkId=49863">W3C XML 1.0 Recommendation</see> to determine whether the name is valid.</para>
@@ -1481,6 +1514,10 @@ explicitly set. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the string argument is a valid XML name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the name is valid; otherwise, false.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The name to validate.</param>
       </Docs>
@@ -1503,10 +1540,6 @@ explicitly set. </para>
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates
-   the name is valid; otherwise <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses the <see cref="http://go.microsoft.com/fwlink/?LinkId=49863">W3C XML 1.0 Recommendation</see> to determine whether the name token is valid.</para>
@@ -1515,6 +1548,10 @@ explicitly set. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether or not the string argument is a valid XML name token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if it is a valid name token; otherwise false.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The name token to validate.</param>
       </Docs>
@@ -1535,12 +1572,6 @@ explicitly set. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the node is an
-<see langword="Element" /> 
-node; <see langword="false" />
-otherwise.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1550,6 +1581,10 @@ otherwise.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calls <see cref="M:System.Xml.XmlReader.MoveToContent" /> and tests if the current content node is a start tag or empty element tag.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.Xml.XmlReader.MoveToContent" /> finds a start tag or empty element tag; false if a node type other than XmlNodeType.Element was found.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1570,12 +1605,6 @@ otherwise.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" />
-where <see langword="true" /> indicates the node is an
-<see langword="Element" /> node with the specified name; <see langword="false" /> 
-otherwise.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1585,6 +1614,10 @@ otherwise.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calls <see cref="M:System.Xml.XmlReader.MoveToContent" /> and tests if the current content node is a start tag or empty element tag and if the <see cref="P:System.Xml.XmlReader.Name" /> property of the element found matches the given argument.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the resulting node is an element and the Name property matches the specified string. false if a node type other than XmlNodeType.Element was found or if the element Name property does not match the specified string.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string matched against the Name property of the element found.</param>
       </Docs>
@@ -1608,12 +1641,6 @@ otherwise.</para>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the node
-   is an <see langword="Element" /> node with the specified local name and namespace
-   URI; <see langword="false" />
-   otherwise.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1623,6 +1650,10 @@ otherwise.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calls <see cref="M:System.Xml.XmlReader.MoveToContent" /> and tests if the current content node is a start tag or empty element tag and if the <see cref="P:System.Xml.XmlReader.LocalName" /> and <see cref="P:System.Xml.XmlReader.NamespaceURI" /> properties of the element found match the given strings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the resulting node is an element. false if a node type other than XmlNodeType.Element was found or if the LocalName and NamespaceURI properties of the element do not match the specified strings.</para>
+        </returns>
         <param name="localname">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to match against the LocalName property of the element found.</param>
         <param name="ns">
@@ -1810,10 +1841,6 @@ have a name (like <see langword="Text" />, <see langword="Comment" /> , and so o
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" qualify="true" /> containing the
-   namespace URI to which the prefix maps. If <paramref name="prefix" /> is not in <see cref="P:System.Xml.XmlReader.NameTable" /> or no matching namespace is found, <see langword="null" /> is returned.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In the following XML string, if the reader is positioned on the href attribute, the prefix a is resolved by calling reader.LookupNamespace("a"). The returned string is urn:456.</para>
@@ -1827,6 +1854,10 @@ have a name (like <see langword="Text" />, <see langword="Comment" /> , and so o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, resolves a namespace prefix in the current element's scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace URI to which the prefix maps or null if no matching prefix is found.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix whose namespace URI you want to resolve. To match the default namespace, pass an empty string. </param>
       </Docs>
@@ -1889,12 +1920,6 @@ have a name (like <see langword="Text" />, <see langword="Comment" /> , and so o
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" />
-where <see langword="true" /> indicates the attribute was found; otherwise,
-<see langword="false" />. If <see langword="false" />, the reader's position does 
-not change.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>After calling MoveToAttribute, the <see cref="P:System.Xml.XmlReader.Name" />, <see cref="P:System.Xml.XmlReader.NamespaceURI" />, and <see cref="P:System.Xml.XmlReader.Prefix" /> properties reflect the properties of that attribute.</para>
@@ -1903,6 +1928,10 @@ not change.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves to the attribute with the specified <see cref="P:System.Xml.XmlReader.Name" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is found; otherwise, false. If false, the reader's position does not change.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute.</param>
       </Docs>
@@ -1926,12 +1955,6 @@ not change.</para>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" />
-where <see langword="true" /> indicates the attribute was found; otherwise,
-<see langword="false" />. If <see langword="false" />, the position of the current 
-instance does not change.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>After calling MoveToAttribute, the <see cref="P:System.Xml.XmlReader.Name" />, <see cref="P:System.Xml.XmlReader.NamespaceURI" />, and <see cref="P:System.Xml.XmlReader.Prefix" /> properties reflect the properties of that attribute.</para>
@@ -1940,6 +1963,10 @@ instance does not change.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves to the attribute with the specified <see cref="P:System.Xml.XmlReader.LocalName" /> and <see cref="P:System.Xml.XmlReader.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is found; otherwise, false. If false, the reader's position does not change.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
         <param name="ns">
@@ -1962,12 +1989,6 @@ instance does not change.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> The <see cref="T:System.Xml.XmlNodeType" /><see langword=" " />of the content
-   node, or <see cref="F:System.Xml.XmlNodeType.None" /> if the
-   position
-   of the reader has reached the end of the input stream.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1978,6 +1999,10 @@ instance does not change.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether the current node is a content (non-white space text, CDATA, Element, EndElement, EntityReference, or EndEntity) node. If the node is not a content node, the reader skips ahead to the next content node or end of file. It skips over nodes of the following type: ProcessingInstruction, DocumentType, Comment, Whitespace, or SignificantWhitespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.XmlReader.NodeType" /> of the current node found by the method or XmlNodeType.None if the reader has reached the end of the input stream.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1993,7 +2018,6 @@ instance does not change.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.MoveToContent" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -2002,6 +2026,10 @@ instance does not change.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously checks whether the current node is a content node. If the node is not a content node, the reader skips ahead to the next content node or end of file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.XmlReader.NodeType" /> of the current node found by the method or XmlNodeType.None if the reader has reached the end of the input stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToElement">
@@ -2019,11 +2047,6 @@ instance does not change.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the position of the reader was moved; <see langword="false" /> indicates the reader was not positioned on an <see langword="Attribute" /> node and
-   therefore the position of the reader was not
-   moved.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to return to an element after navigating through its attributes. This method moves the reader to one of the following node types: Element, DocumentType, or XmlDeclaration.</para>
@@ -2032,6 +2055,10 @@ instance does not change.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves to the element that contains the current attribute node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reader is positioned on an attribute (the reader moves to the element that owns the attribute); false if the reader is not positioned on an attribute (the position of the reader does not change).</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2050,11 +2077,6 @@ instance does not change.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" />
-where <see langword="true" /> indicates the current node contains at least one attribute; otherwise,
-<see langword="false" />.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors"> If <see cref="P:System.Xml.XmlReader.AttributeCount" /> is non-zero,
@@ -2072,6 +2094,10 @@ where <see langword="true" /> indicates the current node contains at least one a
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves to the first attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute exists (the reader moves to the first attribute); otherwise, false (the position of the reader does not change).</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2090,9 +2116,6 @@ where <see langword="true" /> indicates the current node contains at least one a
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the position of the reader moved to the next attribute; <see langword="false" /> if there were no more attributes.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the current node is an element node, this method is equivalent to <see cref="M:System.Xml.XmlReader.MoveToFirstAttribute" />. If MoveToNextAttribute returns true, the reader moves to the next attribute; otherwise, the position of the reader does not change.</para>
@@ -2101,6 +2124,10 @@ where <see langword="true" /> indicates the current node contains at least one a
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves to the next attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a next attribute; false if there are no more attributes.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2388,11 +2415,6 @@ containing the namespace prefix associated with the current node. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" />
-where <see langword="true" /> indicates the node was read successfully, and
-<see langword="false" /> indicates there were no more nodes to read.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2404,6 +2426,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, reads the next node from the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the next node was read successfully; false if there are no more nodes to read.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2419,7 +2445,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.Read" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -2428,6 +2453,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the next node from the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the next node was read successfully; false if there are no more nodes to read.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadAttributeValue">
@@ -2445,12 +2474,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the attribute value was parsed, and
-<see langword="false" /> indicates the reader was not 
-   positioned on an attribute node or all the attribute values have been read.</para>
-          <see langword="" />
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method after calling <see cref="M:System.Xml.XmlReader.MoveToAttribute(System.String)" /> to read through the text or entity reference nodes that make up the attribute value. The <see cref="P:System.Xml.XmlReader.Depth" /> of the attribute value nodes is one plus the depth of the attribute node; it increments and decrements by one when you step into and out of general entity references.</para>
@@ -2459,6 +2482,12 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, parses the attribute value into one or more Text, EntityReference, or EndEntity nodes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are nodes to return.</para>
+          <para>false if the reader is not positioned on an attribute node when the initial call is made or if all the attribute values have been read.</para>
+          <para>An empty attribute, such as, misc="", returns true with a single node with a value of String.Empty.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2478,7 +2507,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceResolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2583,6 +2611,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content as an object of the type specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The concatenated text content or attribute value converted to the requested type.</para>
+        </returns>
         <param name="returnType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the value to be returned.</param>
         <param name="namespaceResolver">
@@ -2604,7 +2636,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceResolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadContentAs(System.Type,System.Xml.IXmlNamespaceResolver)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -2613,6 +2644,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the content as an object of the type specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The concatenated text content or attribute value converted to the requested type.</para>
+        </returns>
         <param name="returnType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the value to be returned.</param>
         <param name="namespaceResolver">
@@ -2636,7 +2671,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2664,6 +2698,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content and returns the Base64 decoded binary bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -2688,7 +2726,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -2697,6 +2734,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the content and returns the Base64 decoded binary bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -2722,7 +2763,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2750,6 +2790,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content and returns the BinHex decoded binary bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -2774,7 +2818,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -2783,6 +2826,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the content and returns the BinHex decoded binary bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -2804,7 +2851,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2900,6 +2946,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as a Boolean.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as a <see cref="T:System.Boolean" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsDateTime">
@@ -2915,7 +2965,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3014,6 +3063,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as a <see cref="T:System.DateTime" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as a <see cref="T:System.DateTime" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsDateTimeOffset">
@@ -3028,12 +3081,15 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as a <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as a <see cref="T:System.DateTimeOffset" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsDecimal">
@@ -3049,7 +3105,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3145,6 +3200,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as a <see cref="T:System.Decimal" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content at the current position as a <see cref="T:System.Decimal" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsDouble">
@@ -3160,7 +3219,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3256,6 +3314,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as a double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as a double-precision floating-point number.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsFloat">
@@ -3271,7 +3333,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3367,6 +3428,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as a single-precision floating point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content at the current position as a single-precision floating point number.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsInt">
@@ -3382,7 +3447,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3478,6 +3542,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as a 32-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as a 32-bit signed integer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsLong">
@@ -3493,7 +3561,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3589,6 +3656,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as a 64-bit signed integer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsObject">
@@ -3604,7 +3675,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3705,6 +3775,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as an <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as the most appropriate common language runtime (CLR) object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsObjectAsync">
@@ -3719,7 +3793,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadContentAsObject" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -3728,6 +3801,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the text content at the current position as an <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as the most appropriate common language runtime (CLR) object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsString">
@@ -3743,7 +3820,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3840,6 +3916,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text content at the current position as a <see cref="T:System.String" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as a <see cref="T:System.String" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContentAsStringAsync">
@@ -3854,7 +3934,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadContentAsString" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -3863,6 +3942,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the text content at the current position as a <see cref="T:System.String" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content as a <see cref="T:System.String" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAs">
@@ -3881,7 +3964,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceResolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3893,6 +3975,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the element content as the requested type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content converted to the requested typed object.</para>
+        </returns>
         <param name="returnType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the value to be returned.</param>
         <param name="namespaceResolver">
@@ -3917,7 +4003,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3928,6 +4013,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the element content as the requested type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content converted to the requested typed object.</para>
+        </returns>
         <param name="returnType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the value to be returned.</param>
         <param name="namespaceResolver">
@@ -3953,7 +4042,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceResolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadElementContentAs(System.Type,System.Xml.IXmlNamespaceResolver)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -3962,6 +4050,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the element content as the requested type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content converted to the requested typed object.</para>
+        </returns>
         <param name="returnType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the value to be returned.</param>
         <param name="namespaceResolver">
@@ -3985,7 +4077,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4001,6 +4092,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the element and decodes the Base64 content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -4025,7 +4120,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadElementContentAsBase64(System.Byte[],System.Int32,System.Int32)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -4034,6 +4128,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the element and decodes the Base64 content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -4059,7 +4157,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4074,6 +4171,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the element and decodes the BinHex content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -4098,7 +4199,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadElementContentAsBinHex(System.Byte[],System.Int32,System.Int32)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -4107,6 +4207,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the element and decodes the BinHex content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -4128,7 +4232,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4140,6 +4243,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the current element and returns the contents as a <see cref="T:System.Boolean" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a <see cref="T:System.Boolean" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsBoolean">
@@ -4158,7 +4265,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4170,6 +4276,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the current element and returns the contents as a <see cref="T:System.Boolean" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a <see cref="T:System.Boolean" /> object.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -4189,7 +4299,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4204,6 +4313,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the current element and returns the contents as a <see cref="T:System.DateTime" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a <see cref="T:System.DateTime" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsDateTime">
@@ -4222,7 +4335,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4237,6 +4349,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the current element and returns the contents as a <see cref="T:System.DateTime" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element contents as a <see cref="T:System.DateTime" /> object.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -4256,7 +4372,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4268,6 +4383,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the current element and returns the contents as a <see cref="T:System.Decimal" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a <see cref="T:System.Decimal" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsDecimal">
@@ -4286,7 +4405,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4298,6 +4416,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the current element and returns the contents as a <see cref="T:System.Decimal" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a <see cref="T:System.Decimal" /> object.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -4317,7 +4439,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4329,6 +4450,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the current element and returns the contents as a double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a double-precision floating-point number.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsDouble">
@@ -4347,7 +4472,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4359,6 +4483,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the current element and returns the contents as a double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a double-precision floating-point number.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -4378,7 +4506,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4390,6 +4517,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the current element and returns the contents as single-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a single-precision floating point number.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsFloat">
@@ -4408,7 +4539,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4420,6 +4550,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the current element and returns the contents as a single-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a single-precision floating point number.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -4439,7 +4573,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4451,6 +4584,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the current element and returns the contents as a 32-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a 32-bit signed integer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsInt">
@@ -4469,7 +4606,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4481,6 +4617,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the current element and returns the contents as a 32-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a 32-bit signed integer.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -4500,7 +4640,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4512,6 +4651,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the current element and returns the contents as a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a 64-bit signed integer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsLong">
@@ -4530,7 +4673,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4542,6 +4684,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the current element and returns the contents as a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a 64-bit signed integer.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -4561,7 +4707,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4573,6 +4718,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the current element and returns the contents as an <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A boxed common language runtime (CLR) object of the most appropriate type. The <see cref="P:System.Xml.XmlReader.ValueType" /> property determines the appropriate CLR type. If the content is typed as a list type, this method returns an array of boxed objects of the appropriate type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsObject">
@@ -4591,7 +4740,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4602,6 +4750,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the current element and returns the contents as an <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A boxed common language runtime (CLR) object of the most appropriate type. The <see cref="P:System.Xml.XmlReader.ValueType" /> property determines the appropriate CLR type. If the content is typed as a list type, this method returns an array of boxed objects of the appropriate type.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -4620,7 +4772,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadElementContentAsObject" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -4629,6 +4780,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the current element and returns the contents as an <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A boxed common language runtime (CLR) object of the most appropriate type. The <see cref="P:System.Xml.XmlReader.ValueType" /> property determines the appropriate CLR type. If the content is typed as a list type, this method returns an array of boxed objects of the appropriate type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsString">
@@ -4644,7 +4799,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4656,6 +4810,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the current element and returns the contents as a <see cref="T:System.String" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a <see cref="T:System.String" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementContentAsString">
@@ -4674,7 +4832,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4685,6 +4842,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the specified local name and namespace URI matches that of the current element, then reads the current element and returns the contents as a <see cref="T:System.String" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a <see cref="T:System.String" /> object.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -4703,7 +4864,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadElementContentAsString" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -4712,6 +4872,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the current element and returns the contents as a <see cref="T:System.String" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element content as a <see cref="T:System.String" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadElementString">
@@ -4729,9 +4893,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" qualify="true" /> containing the contents of the element.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">The node is not an <see langword="Element" /> node, the element does not contain a simple text value, or an error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4744,6 +4905,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a text-only element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text contained in the element that was read. An empty string if the element is empty (&lt;item&gt;&lt;/item&gt; or &lt;item/&gt;).</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -4764,9 +4929,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the contents of the element.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">The node is not an <see langword="Element" /> node, the <see cref="P:System.Xml.XmlReader.Name" /> property of the <see langword="Element" /> node does not equal <paramref name="name" />, the element does not contain a simple text value, or an error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4779,6 +4941,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the <see cref="P:System.Xml.XmlReader.Name" /> property of the element found matches the given string before reading a text-only element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text contained in the element that was read. An empty string if the element is empty (&lt;item&gt;&lt;/item&gt; or &lt;item/&gt;).</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name to check.</param>
       </Docs>
@@ -4802,9 +4968,6 @@ where <see langword="true" /> indicates the node was read successfully, and
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the contents of the element.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">The node is not an <see langword="Element" /> node, the <see cref="P:System.Xml.XmlReader.LocalName" /> property of the <see langword="Element" /> node does not equal <paramref name="localname" />, or the <see cref="P:System.Xml.XmlReader.NamespaceURI" /> property of the <see langword="Element" /> node does not equal <paramref name="ns" />, the element does not contain a simple text value, or an error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4817,6 +4980,10 @@ where <see langword="true" /> indicates the node was read successfully, and
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the <see cref="P:System.Xml.XmlReader.LocalName" /> and <see cref="P:System.Xml.XmlReader.NamespaceURI" /> properties of the element found matches the given strings before reading a text-only element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text contained in the element that was read. An empty string if the element is empty (&lt;item&gt;&lt;/item&gt; or &lt;item/&gt;).</para>
+        </returns>
         <param name="localname">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name to check.</param>
         <param name="ns">
@@ -4888,11 +5055,6 @@ where <see langword="true" /> indicates the node was read successfully, and
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" />
-containing the XML content, or <see cref="F:System.String.Empty" qualify="true" /> if the current node is neither an element nor
-attribute, or has no child nodes.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">The XML was not well-formed, or an error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4966,6 +5128,11 @@ attribute, or has no child nodes.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, reads all the content, including markup, as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All the XML content, including markup, in the current node. If the current node has no children, an empty string is returned.</para>
+          <para>If the current node is neither an element nor attribute, an empty string is returned.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -4981,7 +5148,6 @@ attribute, or has no child nodes.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadInnerXml" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -4990,6 +5156,10 @@ attribute, or has no child nodes.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads all the content, including markup, as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All the XML content, including markup, in the current node. If the current node has no children, an empty string is returned.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadOuterXml">
@@ -5007,11 +5177,6 @@ attribute, or has no child nodes.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" />
-containing the XML content, or <see cref="F:System.String.Empty" qualify="true" /> if the current node is neither an element nor
-attribute.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">The XML was not well-formed, or an error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5081,6 +5246,10 @@ attribute.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, reads the content, including markup, representing this node and all its children.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the reader is positioned on an element or an attribute node, this method returns all the XML content, including markup, of the current node and all its children; otherwise, it returns an empty string.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -5096,7 +5265,6 @@ attribute.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadOuterXml" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -5105,6 +5273,10 @@ attribute.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the content, including markup, representing this node and all its children.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the reader is positioned on an element or an attribute node, this method returns all the XML content, including markup, of the current node and all its children; otherwise, it returns an empty string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadStartElement">
@@ -5253,12 +5425,6 @@ attribute.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" />
-containing the contents of the <see langword="Element" /> or <see langword="Text" />
-node, or <see cref="F:System.String.Empty" qualify="true" /> if the reader is positioned on any other type of
-node.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5272,6 +5438,10 @@ node.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, reads the contents of an element or text node as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the element or an empty string.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -5288,7 +5458,6 @@ node.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5303,6 +5472,10 @@ node.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new XmlReader instance that can be used to read the current node, and all its descendants.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new XmlReader instance set to ReadState.Initial. A call to the <see cref="M:System.Xml.XmlReader.Read" /> method positions the new XmlReader on the node that was current before the call to ReadSubtree method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadToDescendant">
@@ -5320,13 +5493,17 @@ node.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Advances the <see cref="T:System.Xml.XmlReader" /> to the next descendant element with the specified qualified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a matching descendant element is found; otherwise false. If a matching child element is not found, the <see cref="T:System.Xml.XmlReader" /> is positioned on the end tag (<see cref="P:System.Xml.XmlReader.NodeType" /> is XmlNodeType.EndElement) of the element.</para>
+          <para>If the <see cref="T:System.Xml.XmlReader" /> is not positioned on an element when <see cref="M:System.Xml.XmlReader.ReadToDescendant(System.String)" /> was called, this method returns false and the position of the <see cref="T:System.Xml.XmlReader" /> is not changed.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the element you wish to move to.</param>
       </Docs>
@@ -5347,13 +5524,17 @@ node.</para>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Advances the <see cref="T:System.Xml.XmlReader" /> to the next descendant element with the specified local name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a matching descendant element is found; otherwise false. If a matching child element is not found, the <see cref="T:System.Xml.XmlReader" /> is positioned on the end tag (<see cref="P:System.Xml.XmlReader.NodeType" /> is XmlNodeType.EndElement) of the element.</para>
+          <para>If the <see cref="T:System.Xml.XmlReader" /> is not positioned on an element when <see cref="M:System.Xml.XmlReader.ReadToDescendant(System.String,System.String)" /> was called, this method returns false and the position of the <see cref="T:System.Xml.XmlReader" /> is not changed.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element you wish to move to.</param>
         <param name="namespaceURI">
@@ -5375,7 +5556,6 @@ node.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5397,6 +5577,10 @@ reader.ReadToFollowing("item");
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads until an element with the specified qualified name is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a matching element is found; otherwise false and the <see cref="T:System.Xml.XmlReader" /> is in an end of file state.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the element.</param>
       </Docs>
@@ -5417,7 +5601,6 @@ reader.ReadToFollowing("item");
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5439,6 +5622,10 @@ reader.ReadToFollowing("item", "urn:1");
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads until an element with the specified local name and namespace URI is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a matching element is found; otherwise false and the <see cref="T:System.Xml.XmlReader" /> is in an end of file state.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -5460,7 +5647,6 @@ reader.ReadToFollowing("item", "urn:1");
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5472,6 +5658,10 @@ reader.ReadToFollowing("item", "urn:1");
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Advances the XmlReader to the next sibling element with the specified qualified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a matching sibling element is found; otherwise false. If a matching sibling element is not found, the XmlReader is positioned on the end tag (<see cref="P:System.Xml.XmlReader.NodeType" /> is XmlNodeType.EndElement) of the parent element.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the sibling element you wish to move to.</param>
       </Docs>
@@ -5492,7 +5682,6 @@ reader.ReadToFollowing("item", "urn:1");
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5504,6 +5693,10 @@ reader.ReadToFollowing("item", "urn:1");
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Advances the XmlReader to the next sibling element with the specified local name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a matching sibling element is found; otherwise, false. If a matching sibling element is not found, the XmlReader is positioned on the end tag (<see cref="P:System.Xml.XmlReader.NodeType" /> is XmlNodeType.EndElement) of the parent element.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the sibling element you wish to move to.</param>
         <param name="namespaceURI">
@@ -5527,7 +5720,6 @@ reader.ReadToFollowing("item", "urn:1");
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5543,6 +5735,10 @@ reader.ReadToFollowing("item", "urn:1");
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads large streams of text embedded in an XML document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters read into the buffer. The value zero is returned when there is no more text content.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of characters that serves as the buffer to which the text contents are written. This value cannot be null.</param>
         <param name="index">
@@ -5567,7 +5763,6 @@ reader.ReadToFollowing("item", "urn:1");
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.ReadValueChunk(System.Char[],System.Int32,System.Int32)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -5576,6 +5771,10 @@ reader.ReadToFollowing("item", "urn:1");
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads large streams of text embedded in an XML document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters read into the buffer. The value zero is returned when there is no more text content.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of characters that serves as the buffer to which the text contents are written. This value cannot be null.</param>
         <param name="index">
@@ -5802,7 +6001,6 @@ reader.ReadToFollowing("item", "urn:1");
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlReader.Skip" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to true.</para>
@@ -5811,6 +6009,10 @@ reader.ReadToFollowing("item", "urn:1");
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously skips the children of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">

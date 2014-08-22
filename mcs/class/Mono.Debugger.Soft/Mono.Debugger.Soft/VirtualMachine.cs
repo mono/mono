@@ -121,12 +121,13 @@ namespace Mono.Debugger.Soft
 
 		public void Resume () {
 			try {
+				InvalidateThreadAndFrameCaches ();
 				conn.VM_Resume ();
 			} catch (CommandException ex) {
 				if (ex.ErrorCode == ErrorCode.NOT_SUSPENDED)
 					throw new VMNotSuspendedException ();
-				else
-					throw;
+
+				throw;
 			}
 	    }
 
@@ -151,12 +152,44 @@ namespace Mono.Debugger.Soft
 			conn.ForceDisconnect ();
 		}
 
+		HashSet<ThreadMirror> threadsToInvalidate = new HashSet<ThreadMirror> ();
+		ThreadMirror[] threadCache;
+		object threadCacheLocker = new object ();
+
+		void InvalidateThreadAndFrameCaches () {
+			lock (threadsToInvalidate) {
+				foreach (var thread in threadsToInvalidate)
+					thread.InvalidateFrames ();
+				threadsToInvalidate.Clear ();
+			}
+			lock (threadCacheLocker) {
+				threadCache = null;
+			}
+		}
+
+		internal void InvalidateThreadCache () {
+			lock (threadCacheLocker) {
+				threadCache = null;
+			}
+		}
+
+		internal void AddThreadToInvalidateList (ThreadMirror threadMirror)
+		{
+			lock (threadsToInvalidate) {
+				threadsToInvalidate.Add (threadMirror);
+			}
+		}
+
 		public IList<ThreadMirror> GetThreads () {
-			long[] ids = vm.conn.VM_GetThreads ();
-			ThreadMirror[] res = new ThreadMirror [ids.Length];
-			for (int i = 0; i < ids.Length; ++i)
-				res [i] = GetThread (ids [i]);
-			return res;
+			lock (threadCacheLocker) {
+				if (threadCache == null) {
+					long[] ids = vm.conn.VM_GetThreads ();
+					threadCache = new ThreadMirror [ids.Length];
+					for (int i = 0; i < ids.Length; ++i)
+						threadCache [i] = GetThread (ids [i]);
+				}
+				return threadCache;
+			}
 		}
 
 		// Same as the mirrorOf methods in JDI
@@ -442,6 +475,13 @@ namespace Mono.Debugger.Soft
 			}
 	    }
 
+		internal void InvalidateAssemblyCaches () {
+			lock (domains_lock) {
+				foreach (var d in domains.Values)
+					d.InvalidateAssembliesCache ();
+			}
+		}
+
 		Dictionary <long, TypeMirror> types;
 		object types_lock = new object ();
 
@@ -560,6 +600,10 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal Value DecodeValue (ValueImpl v) {
+			return DecodeValue (v, null);
+		}
+
+		internal Value DecodeValue (ValueImpl v, Dictionary<int, Value> parent_vtypes) {
 			if (v.Value != null)
 				return new PrimitiveValue (this, v.Value);
 
@@ -575,12 +619,21 @@ namespace Mono.Debugger.Soft
 			case ElementType.Object:
 				return GetObject (v.Objid);
 			case ElementType.ValueType:
+				if (parent_vtypes == null)
+					parent_vtypes = new Dictionary<int, Value> ();
+				StructMirror vtype;
 				if (v.IsEnum)
-					return new EnumMirror (this, GetType (v.Klass), DecodeValues (v.Fields));
+					vtype = new EnumMirror (this, GetType (v.Klass), (Value[])null);
 				else
-					return new StructMirror (this, GetType (v.Klass), DecodeValues (v.Fields));
+					vtype = new StructMirror (this, GetType (v.Klass), (Value[])null);
+				parent_vtypes [parent_vtypes.Count] = vtype;
+				vtype.SetFields (DecodeValues (v.Fields, parent_vtypes));
+				parent_vtypes.Remove (parent_vtypes.Count - 1);
+				return vtype;
 			case (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL:
 				return new PrimitiveValue (this, null);
+			case (ElementType)ValueTypeId.VALUE_TYPE_ID_PARENT_VTYPE:
+				return parent_vtypes [v.Index];
 			default:
 				throw new NotImplementedException ("" + v.Type);
 			}
@@ -590,6 +643,13 @@ namespace Mono.Debugger.Soft
 			Value[] res = new Value [values.Length];
 			for (int i = 0; i < values.Length; ++i)
 				res [i] = DecodeValue (values [i]);
+			return res;
+		}
+
+		internal Value[] DecodeValues (ValueImpl[] values, Dictionary<int, Value> parent_vtypes) {
+			Value[] res = new Value [values.Length];
+			for (int i = 0; i < values.Length; ++i)
+				res [i] = DecodeValue (values [i], parent_vtypes);
 			return res;
 		}
 
@@ -648,15 +708,19 @@ namespace Mono.Debugger.Soft
 					vm.notify_vm_event (EventType.VMDeath, suspend_policy, req_id, thread_id, null, ei.ExitCode);
 					break;
 				case EventType.ThreadStart:
+					vm.InvalidateThreadCache ();
 					l.Add (new ThreadStartEvent (vm, req_id, id));
 					break;
 				case EventType.ThreadDeath:
+					vm.InvalidateThreadCache ();
 					l.Add (new ThreadDeathEvent (vm, req_id, id));
 					break;
 				case EventType.AssemblyLoad:
+					vm.InvalidateAssemblyCaches ();
 					l.Add (new AssemblyLoadEvent (vm, req_id, thread_id, id));
 					break;
 				case EventType.AssemblyUnload:
+					vm.InvalidateAssemblyCaches ();
 					l.Add (new AssemblyUnloadEvent (vm, req_id, thread_id, id));
 					break;
 				case EventType.TypeLoad:
@@ -688,8 +752,6 @@ namespace Mono.Debugger.Soft
 					break;
 				case EventType.UserLog:
 					l.Add (new UserLogEvent (vm, req_id, thread_id, ei.Level, ei.Category, ei.Message));
-					break;
-				default:
 					break;
 				}
 			}

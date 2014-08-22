@@ -81,6 +81,7 @@ public struct AStruct {
 	public string s;
 	public byte k;
 	public IntPtr j;
+	public int l;
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public int foo (int val) {
@@ -105,6 +106,11 @@ public struct AStruct {
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public IntPtr invoke_return_intptr () {
 		return j;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void invoke_mutate () {
+		l = 5;
 	}
 }
 
@@ -137,6 +143,18 @@ public struct NestedStruct {
 }
 
 public struct NestedInner {
+}
+
+public interface IRecStruct {
+	void foo (object o);
+}
+
+struct RecStruct : IRecStruct {
+	public object o;
+
+	public void foo (object o) {
+		this.o = o;
+	}
 }
 
 interface ITest
@@ -617,6 +635,7 @@ public class Tests : TestsBase, ITest2
 		t.vtypes1 (s, arr);
 		vtypes2 (s);
 		vtypes3 (s);
+		vtypes4 ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -635,6 +654,17 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void vtypes3 (AStruct s) {
 		AStruct.static_foo (5);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void vtypes4_2 (IRecStruct o) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void vtypes4 () {
+		IRecStruct s = new RecStruct ();
+		s.foo (s);
+		vtypes4_2 (s);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -927,6 +957,11 @@ public class Tests : TestsBase, ITest2
 
 	public int invoke_iface () {
 		return 42;
+	}
+
+	public void invoke_out (out int foo, out int[] arr) {
+		foo = 5;
+		arr = new int [10];
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

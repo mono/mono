@@ -323,7 +323,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful if you are familiar with OLE development using the unmanaged WebBrowser ActiveX control and you want to extend the functionality of the Windows Forms <see cref="T:System.Windows.Forms.WebBrowser" /> control, which is a managed wrapper for the ActiveX control. You can use this extensibility, for example, to customize the browser shortcut menu and shortcut keys or to provide a custom security configuration for hosted documents.</para>
@@ -336,6 +335,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a reference to the unmanaged WebBrowser ActiveX control site, which you can extend to customize the managed <see cref="T:System.Windows.Forms.WebBrowser" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.WebBrowser.WebBrowserSite" /> that represents the WebBrowser ActiveX control site.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultSize">
@@ -760,7 +763,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Windows.Forms.WebBrowser" /> control maintains a history list of all the Web pages visited during a browsing session. You can use the <see cref="M:System.Windows.Forms.WebBrowser.GoBack" /> method to implement a <ui>Back</ui> button similar to the one in Internet Explorer, which will allow your users to return to a previous page in the navigation history.</para>
@@ -770,6 +772,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Navigates the <see cref="T:System.Windows.Forms.WebBrowser" /> control to the previous page in the navigation history, if one is available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the navigation succeeds; false if a previous page in the navigation history is not available.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GoForward">
@@ -783,7 +789,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Windows.Forms.WebBrowser" /> control maintains a history list of all the Web pages visited during a browsing session. You can use the <see cref="M:System.Windows.Forms.WebBrowser.GoForward" /> method to implement a <ui>Forward</ui> button similar to the one in Internet Explorer, allowing your users to return to the next page in the navigation history after navigating backward.</para>
@@ -793,6 +798,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Navigates the <see cref="T:System.Windows.Forms.WebBrowser" /> control to the next page in the navigation history, if one is available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the navigation succeeds; false if a subsequent page in the navigation history is not available.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GoHome">

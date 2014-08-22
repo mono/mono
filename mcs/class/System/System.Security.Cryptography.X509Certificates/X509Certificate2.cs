@@ -428,7 +428,19 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private MX.X509Certificate ImportPkcs12 (byte[] rawData, string password)
 		{
-			MX.PKCS12 pfx = (password == null) ? new MX.PKCS12 (rawData) : new MX.PKCS12 (rawData, password);
+			MX.PKCS12 pfx = null;
+			if (string.IsNullOrEmpty (password)) {
+				try {
+					// Support both unencrypted PKCS#12..
+					pfx = new MX.PKCS12 (rawData, (string)null);
+				} catch {
+					// ..and PKCS#12 encrypted with an empty password
+					pfx = new MX.PKCS12 (rawData, string.Empty);
+				}
+			} else {
+				pfx = new MX.PKCS12 (rawData, password);
+			}
+
 			if (pfx.Certificates.Count == 0) {
 				// no certificate was found
 				return null;

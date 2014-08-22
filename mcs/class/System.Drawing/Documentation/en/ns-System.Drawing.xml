@@ -1,6 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Drawing">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Drawing" /> namespace provides access to GDI+ basic graphics functionality. More advanced functionality is provided in the <see cref="N:System.Drawing.Drawing2D" />, <see cref="N:System.Drawing.Imaging" />, and <see cref="N:System.Drawing.Text" /> namespaces.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Drawing.Graphics" /> class provides methods for drawing to the display device. Classes such as <see cref="T:System.Drawing.Rectangle" /> and <see cref="T:System.Drawing.Point" /> encapsulate GDI+ primitives. The <see cref="T:System.Drawing.Pen" /> class is used to draw lines and curves, while classes derived from the abstract class <see cref="T:System.Drawing.Brush" /> are used to fill the interiors of shapes.</para>
+      <block subset="none" type="note">
+        <para>Classes within the <see cref="N:System.Drawing" /> namespace are not supported for use within a Windows or ASP.NET service. Attempting to use these classes from within one of these application types may produce unexpected problems, such as diminished service performance and run-time exceptions. For a supported alternative, see Windows Imaging Components.</para>
+      </block>
+    </remarks>
   </Docs>
 </Namespace>

@@ -305,7 +305,6 @@
         <Parameter Name="service" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be overridden by a derived class.</para>
@@ -314,6 +313,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that represents a service provided by the <see cref="T:System.ComponentModel.Component" /> or by its <see cref="T:System.ComponentModel.Container" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents a service provided by the <see cref="T:System.ComponentModel.Component" />, or null if the <see cref="T:System.ComponentModel.Component" /> does not provide the specified service.</para>
+        </returns>
         <param name="service">
           <attribution license="cc4" from="Microsoft" modified="false" />A service provided by the <see cref="T:System.ComponentModel.Component" />. </param>
       </Docs>
@@ -368,7 +371,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.ComponentModel.Component" /> may or may not have a name. If a <see cref="T:System.ComponentModel.Component" /> is given a name, the name is unique among other <see cref="T:System.ComponentModel.Component" /> objects within its <see cref="T:System.ComponentModel.IContainer" />.</para>
@@ -378,6 +380,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.String" /> containing the name of the <see cref="T:System.ComponentModel.Component" />, if any. This method should not be overridden.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the <see cref="T:System.ComponentModel.Component" />, if any, or null if the <see cref="T:System.ComponentModel.Component" /> is unnamed.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

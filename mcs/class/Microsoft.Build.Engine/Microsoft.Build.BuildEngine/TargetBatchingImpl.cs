@@ -36,7 +36,6 @@ using System.Xml;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.BuildEngine {
-
 	internal class TargetBatchingImpl : BatchingImplBase
 	{
 		string		inputs;
@@ -58,17 +57,6 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			executeOnErrors = false;
 			try {
-				string reason;
-				if (!BuildTargetNeeded (out reason)) {
-					LogTargetStarted (target);
-					LogTargetSkipped (target, reason);
-					LogTargetFinished (target, true);
-					return true;
-				}
-
-				if (!String.IsNullOrEmpty (reason))
-					target.Engine.LogMessage (MessageImportance.Low, reason);
-
 				Init ();
 
 				ParseTargetAttributes (target);
@@ -104,24 +92,29 @@ namespace Microsoft.Build.BuildEngine {
 			executeOnErrors = false;
 
 			LogTargetStarted (target);
+
 			if (bucket != null)
 				project.PushBatch (bucket, commonItemsByName);
+
 			try {
+				TaskExecutionMode taskExecutionMode;
 				string reason;
 				if (!BuildTargetNeeded (out reason)) {
 					LogTargetSkipped (target, reason);
-					return true;
-				}
+					taskExecutionMode = TaskExecutionMode.SkipAndSetOutput;
+				} else {
+					taskExecutionMode = TaskExecutionMode.Complete;
 
-				if (!String.IsNullOrEmpty (reason))
-					target.Engine.LogMessage (MessageImportance.Low, reason);
+					if (!String.IsNullOrEmpty (reason))
+						target.Engine.LogMessage (MessageImportance.Low, reason);
+				}
 
 				for (int i = 0; i < target.BuildTasks.Count; i ++) {
 					//FIXME: parsing attributes repeatedly
 					IBuildTask bt = target.BuildTasks [i];
 
 					TaskBatchingImpl batchingImpl = new TaskBatchingImpl (project);
-					bool task_result = batchingImpl.Build (bt, out executeOnErrors);
+					bool task_result = batchingImpl.Build (bt, taskExecutionMode, out executeOnErrors);
 					if (task_result)
 						continue;
 
@@ -138,6 +131,7 @@ namespace Microsoft.Build.BuildEngine {
 			} finally {
 				if (bucket != null)
 					project.PopBatch ();
+
 				LogTargetFinished (target, target_result);
 			}
 

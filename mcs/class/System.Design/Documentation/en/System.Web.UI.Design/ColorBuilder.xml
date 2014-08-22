@@ -34,7 +34,6 @@
         <Parameter Name="initialColor" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned string, if other than null, indicates a color in a valid HTML color format. Valid formats include named colors and color codes in RGB format (#RRGGBB).</para>
@@ -43,6 +42,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a color editor to build an HTML color property value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color value, represented as a string in an HTML color format, or null if the builder service could not be retrieved.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> whose site is to be used to access design-time services. </param>
         <param name="owner">

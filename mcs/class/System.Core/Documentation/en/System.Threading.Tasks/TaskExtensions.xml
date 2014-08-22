@@ -32,10 +32,20 @@
         <Parameter Name="task" Type="System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <param name="task">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is often useful to be able to return a Task from a <see cref="T:System.Threading.Tasks.Task`1" />, where the inner Task represents work done as part of the outer <see cref="T:System.Threading.Tasks.Task`1" />. However, doing so results in a Task&lt;Task&gt; (C#) or Task (Of Task) (Visual Basic), which, if not dealt with carefully, could produce unexpected behavior. Unwrap solves this problem by creating a proxy Task that represents the entire asynchronous operation of such a task.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a proxy <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation of a <see cref="M:System.Threading.Tasks.TaskScheduler.TryExecuteTaskInline(System.Threading.Tasks.Task,System.Boolean)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Task that represents the asynchronous operation of the provided System.Threading.Tasks.Task(Of Task).</para>
+        </returns>
+        <param name="task">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Task&lt;Task&gt; (C#) or Task (Of Task) (Visual Basic) to unwrap.</param>
       </Docs>
     </Member>
     <Member MemberName="Unwrap&lt;TResult&gt;">
@@ -55,11 +65,22 @@
         <Parameter Name="task" Type="System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="task">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is often useful to be able to return a <see cref="T:System.Threading.Tasks.Task" /> from a <see cref="T:System.Threading.Tasks.Task" />, where the inner <see cref="T:System.Threading.Tasks.Task" /> represents work done as part of the outer <see cref="T:System.Threading.Tasks.Task" />. However, doing so results in a Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic), which, if not dealt with carefully, could produce unexpected behavior. Unwrap solves this problem by creating a proxy <see cref="T:System.Threading.Tasks.Task`1" /> that represents the entire asynchronous operation of such a Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a proxy <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation of a Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation of the provided Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic).</para>
+        </returns>
+        <param name="task">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic) to unwrap.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the task's result.</typeparam>
       </Docs>
     </Member>
   </Members>

@@ -152,7 +152,6 @@
         <Parameter Name="connectionGroupName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Connection groups associate a set of requests with a particular connection or set of connections. This method removes and closes all connections that belong to the specified connection group.</para>
@@ -161,6 +160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified connection group from this <see cref="T:System.Net.ServicePoint" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Boolean" /> value that indicates whether the connection group was closed.</para>
+        </returns>
         <param name="connectionGroupName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the connection group that contains the connections to close and remove from this service point. </param>
       </Docs>
@@ -327,9 +330,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.ServicePoint.GetHashCode" /> method returns a hash code of this instance. This value can be used as a key in hash tables.</para>
@@ -338,6 +338,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash value for a <see cref="T:System.Net.ServicePoint" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
       <AssemblyInfo>

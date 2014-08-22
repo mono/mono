@@ -119,7 +119,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two code groups are equivalent if they have the same <see cref="P:System.Runtime.Serialization.StreamingContext.Context" /> and <see cref="P:System.Runtime.Serialization.StreamingContext.State" />.</para>
@@ -128,6 +127,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two <see cref="T:System.Runtime.Serialization.StreamingContext" /> instances contain the same values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is an instance of <see cref="T:System.Runtime.Serialization.StreamingContext" /> and equals the value of the current instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current instance. </param>
       </Docs>
@@ -146,12 +149,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code of this object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Serialization.StreamingContextStates" /> value that contains the source or destination of the serialization for this <see cref="T:System.Runtime.Serialization.StreamingContext" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="State">

@@ -139,12 +139,15 @@
         <Parameter Name="config" Type="System.Configuration.Configuration" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the configuration setting of a section from the specified configuration file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Configuration.BindingsSection" /> with the settings retrieved from the specified file.</para>
+        </returns>
         <param name="config">
           <attribution license="cc4" from="Microsoft" modified="false" />A configuration file.</param>
       </Docs>

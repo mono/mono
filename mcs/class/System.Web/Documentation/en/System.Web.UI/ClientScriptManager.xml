@@ -45,7 +45,6 @@
         <Parameter Name="context" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -65,6 +64,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a reference to a client function that, when invoked, initiates a client call back to a server event. The client function for this overloaded method includes a specified control, argument, client script, and context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of a client function that invokes the client callback. </para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server <see cref="T:System.Web.UI.Control" /> that handles the client callback. The control must implement the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface and provide a <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> method. </param>
         <param name="argument">
@@ -92,7 +95,6 @@
         <Parameter Name="useAsync" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -103,6 +105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a reference to a client function that, when invoked, initiates a client call back to server events. The client function for this overloaded method includes a specified control, argument, client script, context, and Boolean value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of a client function that invokes the client callback. </para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server <see cref="T:System.Web.UI.Control" /> that handles the client callback. The control must implement the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface and provide a <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> method. </param>
         <param name="argument">
@@ -133,7 +139,6 @@
         <Parameter Name="useAsync" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -145,6 +150,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a reference to a client function that, when invoked, initiates a client call back to server events. The client function for this overloaded method includes a specified target, argument, client script, context, error handler, and Boolean value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of a client function that invokes the client callback. </para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a server <see cref="T:System.Web.UI.Control" /> that handles the client callback. The control must implement the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface and provide a <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> method.</param>
         <param name="argument">
@@ -177,7 +186,6 @@
         <Parameter Name="useAsync" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -188,6 +196,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a reference to a client function that, when invoked, initiates a client call back to server events. The client function for this overloaded method includes a specified control, argument, client script, context, error handler, and Boolean value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of a client function that invokes the client callback. </para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server <see cref="T:System.Web.UI.Control" /> that handles the client callback. The control must implement the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface and provide a <see cref="M:System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent(System.String)" /> method. </param>
         <param name="argument">
@@ -216,7 +228,6 @@
         <Parameter Name="argument" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -226,6 +237,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a reference, with javascript: appended to the beginning of it, that can be used in a client event to post back to the server for the specified control and with the specified event arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing a JavaScript call to the postback function that includes the target control's ID and event arguments.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server control to process the postback.</param>
         <param name="argument">
@@ -247,7 +262,6 @@
         <Parameter Name="registerForEventValidation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -257,6 +271,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a reference, with javascript: appended to the beginning of it, that can be used in a client event to post back to the server for the specified control with the specified event arguments and Boolean indication whether to register the post back for event validation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing a JavaScript call to the postback function that includes the target control's ID and event arguments.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server control to process the postback.</param>
         <param name="argument">
@@ -278,7 +296,6 @@
         <Parameter Name="options" Type="System.Web.UI.PostBackOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -289,6 +306,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that can be used in a client event to cause postback to the server. The reference string is defined by the specified <see cref="T:System.Web.UI.PostBackOptions" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that, when treated as script on the client, initiates the client postback.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.PostBackOptions" /> that defines the postback.</param>
       </Docs>
@@ -307,7 +328,6 @@
         <Parameter Name="argument" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -318,6 +338,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that can be used in a client event to cause postback to the server. The reference string is defined by the specified control that handles the postback and a string argument of additional event information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that, when treated as script on the client, initiates the postback.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server <see cref="T:System.Web.UI.Control" /> that processes the postback on the server.</param>
         <param name="argument">
@@ -338,7 +362,6 @@
         <Parameter Name="registerForEventValidation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -350,6 +373,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that can be used in a client event to cause postback to the server. The reference string is defined by the specified <see cref="T:System.Web.UI.PostBackOptions" /> object. Optionally, registers the event reference for validation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that, when treated as script on the client, initiates the client postback.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.PostBackOptions" /> that defines the postback.</param>
         <param name="registerForEventValidation">
@@ -371,7 +398,6 @@
         <Parameter Name="registerForEventValidation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -383,6 +409,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string to use in a client event to cause postback to the server. The reference string is defined by the specified control that handles the postback and a string argument of additional event information. Optionally, registers the event reference for validation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that, when treated as script on the client, initiates the postback.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server <see cref="T:System.Web.UI.Control" /> that processes the postback on the server.</param>
         <param name="argument">
@@ -405,7 +435,6 @@
         <Parameter Name="resourceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -417,6 +446,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a URL reference to a resource in an assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URL reference to the resource.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the resource. </param>
         <param name="resourceName">
@@ -436,7 +469,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -448,6 +480,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the client script block is registered with the <see cref="T:System.Web.UI.Page" /> object using the specified key. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the client script block is registered; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key of the client script block to search for.</param>
       </Docs>
@@ -466,7 +502,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -477,6 +512,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the client script block is registered with the <see cref="T:System.Web.UI.Page" /> object using a key and type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the client script block is registered; otherwise, false.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the client script block to search for.  </param>
         <param name="key">
@@ -496,7 +535,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method before calling the <see cref="Overload:System.Web.UI.ClientScriptManager.RegisterClientScriptInclude" /> method to avoid registering duplicate scripts. This is particularly important if the script requires a large amount of server resources to create.</para>
@@ -507,6 +545,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the client script include is registered with the <see cref="T:System.Web.UI.Page" /> object using the specified key. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the client script include is registered; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key of the client script include to search for. </param>
       </Docs>
@@ -525,7 +567,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method before calling the <see cref="Overload:System.Web.UI.ClientScriptManager.RegisterClientScriptInclude" /> method to avoid registering duplicate client script includes. This is particularly important if the script requires a large amount of server resources to create.</para>
@@ -535,6 +576,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the client script include is registered with the <see cref="T:System.Web.UI.Page" /> object using a key and type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the client script include is registered; otherwise, false.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the client script include to search for. </param>
         <param name="key">
@@ -554,7 +599,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method before calling the <see cref="M:System.Web.UI.ClientScriptManager.RegisterOnSubmitStatement(System.Type,System.String,System.String)" /> method to avoid registering duplicate OnSubmit statements. This is particularly important if the statement requires a large amount of server resources to create.</para>
@@ -565,6 +609,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the OnSubmit statement is registered with the <see cref="T:System.Web.UI.Page" /> object using the specified key. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the OnSubmit statement is registered; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key of the OnSubmit statement to search for.</param>
       </Docs>
@@ -583,7 +631,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method before calling the <see cref="M:System.Web.UI.ClientScriptManager.RegisterOnSubmitStatement(System.Type,System.String,System.String)" /> method to avoid registering duplicate statements. This is particularly important if the statement requires a large amount of server resources to create.</para>
@@ -593,6 +640,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the OnSubmit statement is registered with the <see cref="T:System.Web.UI.Page" /> object using the specified key and type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the OnSubmit statement is registered; otherwise, false.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the OnSubmit statement to search for. </param>
         <param name="key">
@@ -612,7 +663,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method before calling the <see cref="Overload:System.Web.UI.ClientScriptManager.RegisterStartupScript" /> method to avoid registering duplicate scripts. This is particularly important if the script requires a large amount of server resources to create.</para>
@@ -623,6 +673,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the startup script is registered with the <see cref="T:System.Web.UI.Page" /> object using the specified key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the startup script is registered; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key of the startup script to search for.</param>
       </Docs>
@@ -641,7 +695,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method before calling the <see cref="Overload:System.Web.UI.ClientScriptManager.RegisterStartupScript" /> method to avoid registering duplicate scripts. This is particularly important if the script requires a large amount of server resources to create.</para>
@@ -651,6 +704,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the startup script is registered with the <see cref="T:System.Web.UI.Page" /> object using the specified key and type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the startup script is registered; otherwise, false.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the startup script to search for. </param>
         <param name="key">

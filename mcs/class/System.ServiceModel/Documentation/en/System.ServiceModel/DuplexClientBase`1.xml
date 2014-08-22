@@ -349,12 +349,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a channel to the service associated with the callback object passed to the constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel to the service of the type of the service contract interface.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InnerDuplexChannel">

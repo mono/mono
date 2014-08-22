@@ -295,7 +295,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation is does not block. It returns an instance of <see cref="T:System.Threading.Tasks.Task`1" /> to represent the asynchronous operation. When the operation completes, <see cref="P:System.Threading.Tasks.Task`1.Result" /> contains the response message.</para>
@@ -304,6 +303,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of  <see cref="T:System.Net.Http.HttpResponseMessage" /> based on the information provided in the <see cref="T:System.Net.Http.HttpRequestMessage" /> as an operation that will not block.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The HTTP request message.</param>
         <param name="cancellationToken">

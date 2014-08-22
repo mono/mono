@@ -1,9 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.Messaging" FullName="System.Runtime.Remoting.Messaging" FullNameSP="System.Runtime.Remoting.Messaging" Maintainer="Mono">
   <Docs>
     <summary>
-        To be added.
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.Messaging" /> namespace contains classes used to create and transmit messages. The remoting infrastructure uses messages to communicate with remote objects. Messages are used to transmit remote method calls, to activate remote objects, and to communicate information. A message object carries a set of named properties, including action identifiers, envoy information, and parameters. Some of the most important classes of the <see cref="N:System.Runtime.Remoting.Messaging" /> namespace are the <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> class, the <see cref="T:System.Runtime.Remoting.Messaging.RemotingSurrogateSelector" /> class, and the <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> class.</para>
     </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> class stores and returns the results of an asynchronous method call. <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> instances contain the return value, call status, the delegate used for the call, and the other information about the asynchronous method call.</para>
+      <para>The <see cref="T:System.Runtime.Remoting.Messaging.RemotingSurrogateSelector" /> class can be used to control serialization of objects that extend <see cref="T:System.MarshalByRefObject" />. A <see cref="T:System.Runtime.Remoting.Messaging.RemotingSurrogateSelector" /> selects the surrogate used in serialization and deserialization of such objects. A surrogate is an object that can control serialization or deserialization of an object.</para>
+      <para>The <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> class holds information returned after a remote method call. A <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> holds the return value and any out or ref parameters that resulted from the remote method call.</para>
     </remarks>
   </Docs>
 </Namespace>

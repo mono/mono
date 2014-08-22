@@ -60,7 +60,6 @@
       </Parameters>
       <Docs>
         <param name="url">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.PageHandlerFactory.GetHandler(System.Web.HttpContext,System.String,System.String,System.String)" /> method is called by the ASP.NET run time and returns either a valid instance of the <see cref="T:System.Web.IHttpHandler" /> interface or null.</para>
@@ -69,6 +68,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an instance of the <see cref="T:System.Web.IHttpHandler" /> interface to process the requested resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Web.IHttpHandler" /> that processes the request; otherwise, null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Web.HttpContext" /> class that provides references to intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests. </param>
         <param name="requestType">

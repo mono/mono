@@ -65,7 +65,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The Parse method is capable of parsing strings in various formats. The recognizable string formats are composed out of the following format patterns.</para>
@@ -177,6 +176,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.String" /> into a <see cref="T:System.DateTime" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> object obtained from <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The String to convert. </param>
       </Docs>
@@ -197,12 +200,15 @@
         <Parameter Name="value" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified <see cref="T:System.DateTime" /> object as a <see cref="T:System.String" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> representation of <paramref name="value" /> in the format "yyyy-MM-dd'T'HH:mm:ss.fffffffzzz".</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> object to convert. </param>
       </Docs>

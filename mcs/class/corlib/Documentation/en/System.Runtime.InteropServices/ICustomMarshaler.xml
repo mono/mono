@@ -278,12 +278,15 @@ library UserLib {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the size of the native data to be marshaled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size, in bytes, of the native data.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MarshalManagedToNative">
@@ -302,12 +305,15 @@ library UserLib {
         <Parameter Name="ManagedObj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IntPtr'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the managed data to unmanaged data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pointer to the COM view of the managed object.</para>
+        </returns>
         <param name="ManagedObj">
           <attribution license="cc4" from="Microsoft" modified="false" />The managed object to be converted. </param>
       </Docs>
@@ -328,12 +334,15 @@ library UserLib {
         <Parameter Name="pNativeData" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the unmanaged data to managed data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the managed view of the COM data.</para>
+        </returns>
         <param name="pNativeData">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the unmanaged data to be wrapped. </param>
       </Docs>

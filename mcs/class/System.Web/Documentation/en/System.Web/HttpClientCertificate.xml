@@ -140,12 +140,15 @@
         <Parameter Name="field" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns individual client certificate fields by name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the item specified by <paramref name="field" />.</para>
+        </returns>
         <param name="field">
           <attribution license="cc4" from="Microsoft" modified="false" />The item in the collection to retrieve. </param>
       </Docs>

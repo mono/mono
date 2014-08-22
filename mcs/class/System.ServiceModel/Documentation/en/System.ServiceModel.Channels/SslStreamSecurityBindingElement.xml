@@ -194,8 +194,6 @@ namespace ServiceNamespace
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a channel factory, which is used to create a channel that processes outgoing messages for this binding.</para>
@@ -204,8 +202,14 @@ namespace ServiceNamespace
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel factory of a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.serviceModel.Channels.IChannelFactory" /> object that represents the channel factory of type <paramref name="TChannel" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.serviceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of channel factory.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
@@ -230,8 +234,6 @@ namespace ServiceNamespace
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a channel listener, which is used to create a channel that processes incoming messages for this binding.</para>
@@ -240,8 +242,14 @@ namespace ServiceNamespace
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel listener of a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.serviceModel.Channels.IChannelListener" /> object that represents a channel listener of type <paramref name="TChannel" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.serviceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of channel listener.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BuildClientStreamUpgradeProvider">
@@ -258,7 +266,6 @@ namespace ServiceNamespace
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called when opening the client channel factory and provides a custom implementation of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> abstract class.</para>
@@ -268,6 +275,10 @@ namespace ServiceNamespace
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance on the client of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> based on the channel context provided.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />. </para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the entire channel stack.</param>
       </Docs>
@@ -286,7 +297,6 @@ namespace ServiceNamespace
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called when opening the service and provides a custom implementation of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> abstract class.</para>
@@ -296,6 +306,10 @@ namespace ServiceNamespace
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance on the server of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> based on the channel context provided.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the entire channel stack.</param>
       </Docs>
@@ -317,8 +331,6 @@ namespace ServiceNamespace
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You should call this method before trying to create a channel factory.</para>
@@ -327,8 +339,14 @@ namespace ServiceNamespace
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether a channel factory of the specified type can be built.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a channel factory of the specified type can be built; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of channel factory.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CanBuildChannelListener&lt;TChannel&gt;">
@@ -353,8 +371,6 @@ namespace ServiceNamespace
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You should call this method before trying to create a channel listener.</para>
@@ -363,8 +379,14 @@ namespace ServiceNamespace
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether a channel listener of the specified type can be built.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a channel listener of the specified type can be built; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.serviceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of channel listener.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -379,12 +401,15 @@ namespace ServiceNamespace
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance that is a copy of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> instance that is a copy of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetProperty&lt;T&gt;">
@@ -408,8 +433,6 @@ namespace ServiceNamespace
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method gets the specified object from the base class or from one of that class's ancestors. The object returned is usually a collection of properties, for example, an object that implements <see cref="T:System.ServiceModel.Channels.ISecurityCapabilities" />.</para>
@@ -418,8 +441,14 @@ namespace ServiceNamespace
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a specified object from the <see cref="T:System.ServiceModel.Channels.BindingContext" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The  object of type <paramref name="T" />from the <see cref="T:System.ServiceModel.Channels.BindingContext" />, or null if the object is not found.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to get.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetTransportTokenAssertion">
@@ -434,7 +463,6 @@ namespace ServiceNamespace
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is used to generate WSDL for the associated service.</para>
@@ -443,6 +471,10 @@ namespace ServiceNamespace
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Xml.XmlElement" /> that represents the transport token used in the security binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> that represents the transport token used in the security binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IdentityVerifier">

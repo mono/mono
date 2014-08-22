@@ -129,12 +129,15 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies whether the specified <see cref="T:System.Xml.XmlReader" /> contains a valid RSS 2.0 syndication feed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that specifies whether the <see cref="T:System.Xml.XmlReader" /> contains a valid RSS 2.0 syndication feed.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
       </Docs>
@@ -151,12 +154,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FeedType">
@@ -260,7 +266,6 @@
         <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance is not added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> associated with the <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> instance.</para>
@@ -269,6 +274,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a syndication item from <see cref="T:System.Xml.XmlReader" /> instance using the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
         <param name="feed">
@@ -356,7 +365,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Override this method to return your own schema.</para>
@@ -365,6 +373,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implements the <see cref="M:System.Xml.Serialization.IXmlSerializable.GetSchema" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.ReadXml">
@@ -483,11 +495,20 @@
         <Parameter Name="feedBaseUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="items">To be added.</param>
-        <param name="feedBaseUri">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override this method to change the way a collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instances to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instances to write.</param>
+        <param name="feedBaseUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base URI for the feed.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">

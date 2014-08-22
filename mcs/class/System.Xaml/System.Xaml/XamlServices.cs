@@ -71,13 +71,11 @@ namespace System.Xaml
 			return sw.ToString ();
 		}
 
-#if !NET_2_1
 		public static void Save (string fileName, object instance)
 		{
 			using (var xw = XmlWriter.Create (fileName, new XmlWriterSettings () { OmitXmlDeclaration = true, Indent = true }))
 				Save (xw, instance);
 		}
-#endif
 
 		public static void Save (Stream stream, object instance)
 		{

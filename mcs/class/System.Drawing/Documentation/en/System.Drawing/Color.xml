@@ -1030,7 +1030,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This structure only does comparisons with other <see cref="T:System.Drawing.Color" /> structures. To compare colors based solely on their ARGB values, you should use the <see cref="M:System.Drawing.Color.ToArgb" /> method. This is because the <see cref="M:System.Drawing.Color.Equals(System.Object)" /> and <see cref="M:System.Drawing.Color.op_Equality(System.Drawing.Color,System.Drawing.Color)" /> members determine equivalency using more than just the ARGB value of the colors. For example, <see cref="P:System.Drawing.Color.Black" /> and FromArgb(0,0,0) are not considered equal, since <see cref="P:System.Drawing.Color.Black" /> is a named color and FromArgb(0,0,0) is not.</para>
@@ -1039,6 +1038,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether the specified object is a <see cref="T:System.Drawing.Color" /> structure and is equivalent to this <see cref="T:System.Drawing.Color" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is a <see cref="T:System.Drawing.Color" /> structure equivalent to this <see cref="T:System.Drawing.Color" /> structure; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test. </param>
       </Docs>
@@ -1123,7 +1126,6 @@
         <Parameter Name="argb" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Color'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The byte-ordering of the 32-bit ARGB value is AARRGGBB. The most significant byte (MSB), represented by AA, is the alpha component value. The second, third, and fourth bytes, represented by RR, GG, and BB, respectively, are the color components red, green, and blue, respectively.</para>
@@ -1132,6 +1134,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Color" /> structure from a 32-bit ARGB value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> structure that this method creates.</para>
+        </returns>
         <param name="argb">
           <attribution license="cc4" from="Microsoft" modified="false" />A value specifying the 32-bit ARGB value. </param>
       </Docs>
@@ -1151,7 +1157,6 @@
         <Parameter Name="baseColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Color'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To create an opaque color, set <paramref name="alpha" /> to 255. To create a semitransparent color, set <paramref name="alpha" /> to any value from 1 through 254.</para>
@@ -1160,6 +1165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Color" /> structure from the specified <see cref="T:System.Drawing.Color" /> structure, but with the new specified alpha value. Although this method allows a 32-bit value to be passed for the alpha value, the value is limited to 8 bits.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> that this method creates.</para>
+        </returns>
         <param name="alpha">
           <attribution license="cc4" from="Microsoft" modified="false" />The alpha value for the new <see cref="T:System.Drawing.Color" />. Valid values are 0 through 255. </param>
         <param name="baseColor">
@@ -1182,12 +1191,15 @@
         <Parameter Name="blue" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Color'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Color" /> structure from the specified 8-bit color values (red, green, and blue). The alpha value is implicitly 255 (fully opaque). Although this method allows a 32-bit value to be passed for each color component, the value of each component is limited to 8 bits.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> that this method creates.</para>
+        </returns>
         <param name="red">
           <attribution license="cc4" from="Microsoft" modified="false" />The red component value for the new <see cref="T:System.Drawing.Color" />. Valid values are 0 through 255. </param>
         <param name="green">
@@ -1213,7 +1225,6 @@
         <Parameter Name="blue" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Color'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To create an opaque color, set <paramref name="alpha" /> to 255. To create a semitransparent color, set <paramref name="alpha" /> to any value from 1 through 254.</para>
@@ -1222,6 +1233,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Color" /> structure from the four ARGB component (alpha, red, green, and blue) values. Although this method allows a 32-bit value to be passed for each component, the value of each component is limited to 8 bits.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> that this method creates.</para>
+        </returns>
         <param name="alpha">
           <attribution license="cc4" from="Microsoft" modified="false" />The alpha component. Valid values are 0 through 255. </param>
         <param name="red">
@@ -1246,7 +1261,6 @@
         <Parameter Name="color" Type="System.Drawing.KnownColor" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Color'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A predefined color is also called a known color and is represented by an element of the <see cref="T:System.Drawing.KnownColor" /> enumeration.</para>
@@ -1255,6 +1269,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Color" /> structure from the specified predefined color.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> that this method creates.</para>
+        </returns>
         <param name="color">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of the <see cref="T:System.Drawing.KnownColor" /> enumeration. </param>
       </Docs>
@@ -1273,7 +1291,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Color'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A predefined color is also called a known color and is represented by an element of the <see cref="T:System.Drawing.KnownColor" /> enumeration. If the <paramref name="name" /> parameter is not the valid name of a predefined color, the <see cref="M:System.Drawing.Color.FromName(System.String)" /> method creates a <see cref="T:System.Drawing.Color" /> structure that has an ARGB value of 0 (that is, all ARGB components are 0).</para>
@@ -1282,6 +1299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Color" /> structure from the specified name of a predefined color.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> that this method creates.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that is the name of a predefined color. Valid names are the same as the names of the elements of the <see cref="T:System.Drawing.KnownColor" /> enumeration. </param>
       </Docs>
@@ -1364,12 +1385,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the hue-saturation-brightness (HSB) brightness value for this <see cref="T:System.Drawing.Color" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The brightness of this <see cref="T:System.Drawing.Color" />. The brightness ranges from 0.0 through 1.0, where 0.0 represents black and 1.0 represents white.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1384,12 +1408,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code for this <see cref="T:System.Drawing.Color" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer value that specifies the hash code for this <see cref="T:System.Drawing.Color" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1404,12 +1431,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the hue-saturation-brightness (HSB) hue value, in degrees, for this <see cref="T:System.Drawing.Color" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hue, in degrees, of this <see cref="T:System.Drawing.Color" />. The hue is measured in degrees, ranging from 0.0 through 360.0, in HSB color space.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1424,12 +1454,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the hue-saturation-brightness (HSB) saturation value for this <see cref="T:System.Drawing.Color" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The saturation of this <see cref="T:System.Drawing.Color" />. The saturation ranges from 0.0 through 1.0, where 0.0 is grayscale and 1.0 is the most saturated.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2698,7 +2731,6 @@
         <Parameter Name="right" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method compares more than the ARGB values of the <see cref="T:System.Drawing.Color" /> structures. It also does a comparison of some state flags. If you want to compare just the ARGB values of two <see cref="T:System.Drawing.Color" /> structures, compare them using the <see cref="M:System.Drawing.Color.ToArgb" /> method.</para>
@@ -2707,6 +2739,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two specified <see cref="T:System.Drawing.Color" /> structures are equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Drawing.Color" /> structures are equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> that is to the left of the equality operator. </param>
         <param name="right">
@@ -2728,7 +2764,6 @@
         <Parameter Name="right" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method compares more than the ARGB values of the <see cref="T:System.Drawing.Color" /> structures. It also does a comparison of some state flags. If you want to compare just the ARGB values of two <see cref="T:System.Drawing.Color" /> structures, use the <see cref="M:System.Drawing.Color.ToArgb" /> method.</para>
@@ -2737,6 +2772,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two specified <see cref="T:System.Drawing.Color" /> structures are different.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Drawing.Color" /> structures are different; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> that is to the left of the inequality operator. </param>
         <param name="right">
@@ -3505,7 +3544,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The byte-ordering of the 32-bit ARGB value is AARRGGBB. The most significant byte (MSB), represented by AA, is the alpha component value. The second, third, and fourth bytes, represented by RR, GG, and BB, respectively, are the color components red, green, and blue, respectively </para>
@@ -3514,6 +3552,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the 32-bit ARGB value of this <see cref="T:System.Drawing.Color" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 32-bit ARGB value of this <see cref="T:System.Drawing.Color" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3528,7 +3570,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'KnownColor'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A predefined color is also called a known color and is represented by an element of the <see cref="T:System.Drawing.KnownColor" /> enumeration. When the <see cref="M:System.Drawing.Color.ToKnownColor" /> method is applied to a <see cref="T:System.Drawing.Color" /> structure that is created by using the <see cref="Overload:System.Drawing.Color.FromArgb" /> method, <see cref="M:System.Drawing.Color.ToKnownColor" /> returns 0, even if the ARGB value matches the ARGB value of a predefined color. <see cref="M:System.Drawing.Color.ToKnownColor" /> also returns 0 when it is applied to a <see cref="T:System.Drawing.Color" /> structure that is created by using the <see cref="M:System.Drawing.Color.FromName(System.String)" /> method with a string name that is not valid.</para>
@@ -3537,6 +3578,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Drawing.KnownColor" /> value of this <see cref="T:System.Drawing.Color" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An element of the <see cref="T:System.Drawing.KnownColor" /> enumeration, if the <see cref="T:System.Drawing.Color" /> is created from a predefined color by using either the <see cref="M:System.Drawing.Color.FromName(System.String)" /> method or the <see cref="M:System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor)" /> method; otherwise, 0.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3573,7 +3618,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A predefined color is also called a known color and is represented by an element of the <see cref="T:System.Drawing.KnownColor" /> enumeration. When the <see cref="M:System.Drawing.Color.ToString" /> method is applied to a <see cref="T:System.Drawing.Color" /> structure that is created by using the <see cref="Overload:System.Drawing.Color.FromArgb" /> method, <see cref="M:System.Drawing.Color.ToString" /> returns a string that consists of the ARGB component names and their values, even if the ARGB value matches the ARGB value of a predefined color.</para>
@@ -3582,6 +3626,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts this <see cref="T:System.Drawing.Color" /> structure to a human-readable string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that is the name of this <see cref="T:System.Drawing.Color" />, if the <see cref="T:System.Drawing.Color" /> is created from a predefined color by using either the <see cref="M:System.Drawing.Color.FromName(System.String)" /> method or the <see cref="M:System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor)" /> method; otherwise, a string that consists of the ARGB component names and their values.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

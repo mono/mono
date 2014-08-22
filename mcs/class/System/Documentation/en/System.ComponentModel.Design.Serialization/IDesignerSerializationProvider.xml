@@ -42,7 +42,6 @@
         <Parameter Name="serializerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The serialization manager calls this method when it is trying to locate a serializer for an object type. If this serialization provider can provide a serializer of the correct type, this provider returns it. Otherwise, it returns null.</para>
@@ -51,6 +50,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a serializer using the specified attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a serializer of the type requested, or null if the request cannot be satisfied.</para>
+        </returns>
         <param name="manager">
           <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager requesting the serializer. </param>
         <param name="currentSerializer">

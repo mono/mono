@@ -78,12 +78,15 @@
         <Parameter Name="p" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Translates a <see cref="T:System.Drawing.Point" /> in the adorner window to screen coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformed <see cref="T:System.Drawing.Point" /> value, in screen coordinates.</para>
+        </returns>
         <param name="p">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> value to transform.</param>
       </Docs>
@@ -99,12 +102,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the location of the adorner window in screen coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location, from the upper-left corner of the adorner window, in screen coordinates.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="BeginDrag">
@@ -141,7 +147,6 @@
         <Parameter Name="c" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The adorner window is a transparent window that resides on top of the designer's frame. This window is used by the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" /> to intercept all messages. It also serves as a unified canvas on which to paint a <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</para>
@@ -150,6 +155,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the bounding <see cref="T:System.Drawing.Rectangle" /> of a <see cref="T:System.Windows.Forms.Control" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bounding <see cref="T:System.Drawing.Rectangle" /> of a <see cref="T:System.Windows.Forms.Control" /> translated to the adorner window coordinates.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> to translate.</param>
       </Docs>
@@ -167,12 +176,15 @@
         <Parameter Name="c" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the location of a <see cref="T:System.Windows.Forms.Control" /> translated to adorner window coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Point" /> value indicating the location of <paramref name="c" /> in adorner window coordinates.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> to translate.</param>
       </Docs>
@@ -253,12 +265,15 @@
         <Parameter Name="behavior" Type="System.Windows.Forms.Design.Behavior.Behavior" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> immediately after the given <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> in the behavior stack.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> immediately after <paramref name="behavior" /> in the behavior stack, or null if there is no following behavior.</para>
+        </returns>
         <param name="behavior">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> preceding the <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> to be returned.</param>
       </Docs>
@@ -348,12 +363,15 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a point in a handle's coordinate system to the adorner window coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Point" /> in the adorner window coordinates.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />An adorner window's handle.</param>
         <param name="pt">
@@ -373,7 +391,6 @@
         <Parameter Name="behavior" Type="System.Windows.Forms.Design.Behavior.Behavior" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the current <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> from the behavior stack internally maintained by the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" />.</para>
@@ -382,6 +399,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes and returns the <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> at the top of the stack.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> that was removed from the stack.</para>
+        </returns>
         <param name="behavior">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.Behavior" /> to remove from the stack.</param>
       </Docs>
@@ -449,12 +470,15 @@
         <Parameter Name="p" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Translates a point in screen coordinates into the adorner window coordinates of the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformed <see cref="T:System.Drawing.Point" /> value, in adorner window coordinates.</para>
+        </returns>
         <param name="p">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> value to transform.</param>
       </Docs>

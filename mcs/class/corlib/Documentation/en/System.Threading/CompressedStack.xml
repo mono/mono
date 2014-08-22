@@ -42,7 +42,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -53,6 +52,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Captures the compressed stack from the current thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CompressedStack" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateCopy">
@@ -73,7 +76,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -83,6 +85,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the current compressed stack.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CompressedStack" /> object representing the current compressed stack.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCompressedStack">
@@ -104,7 +110,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If security is enabled, the current compressed stack is returned. If security is disabled, <see cref="M:System.Threading.CompressedStack.GetCompressedStack" /> returns an empty <see cref="T:System.Threading.CompressedStack" /> object.</para>
@@ -119,6 +124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the compressed stack for the current thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CompressedStack" /> for the current thread.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>

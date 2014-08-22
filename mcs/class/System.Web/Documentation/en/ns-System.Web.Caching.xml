@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.Caching" FullName="System.Web.Caching" FullNameSP="System.Web.Caching" Maintainer="Mono">
   <Docs>
     <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.Caching" /> namespace provides classes for caching frequently used data on the server. </para>
     </summary>
     <remarks>
-      <para>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This namespace includes the <see cref="T:System.Web.Caching.Cache" /> class, a dictionary that enables you to store data objects such as hash tables and data sets. It also provides expiration functionality for those objects, and methods that enable you to add and remove the objects. You can add the objects to the cache with a dependency on other files or cache entries. In that case, the <see cref="T:System.Web.Caching.Cache" /> object can invoke a callback method to notify your application when an object is removed from the cache.</para>
     </remarks>
   </Docs>
 </Namespace>

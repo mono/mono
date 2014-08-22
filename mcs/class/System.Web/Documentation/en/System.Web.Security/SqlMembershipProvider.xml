@@ -84,7 +84,6 @@
       <Docs>
         <param name="oldPwd">To be added.</param>
         <param name="newPwd">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -99,6 +98,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Modifies a user's password.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the password was updated successfully. false if the supplied old password is invalid, the user is locked out, or the user does not exist in the database.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user to update the password for. </param>
       </Docs>
@@ -121,7 +124,6 @@
       <Docs>
         <param name="newPwdQuestion">To be added.</param>
         <param name="newPwdAnswer">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -136,6 +138,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates the password question and answer for a user in the SQL Server membership database.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the update was successful; otherwise, false. A value of false is also returned if the <paramref name="password" /> is incorrect, the user is locked out, or the user does not exist in the database.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user to change the password question and answer for. </param>
         <param name="password">
@@ -190,7 +196,6 @@
         <Parameter Name="deleteAllRelatedData" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -204,6 +209,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes a user's membership information from the SQL Server membership database.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user was deleted; otherwise, false. A value of false is also returned if the user does not exist in the database.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to delete.</param>
         <param name="deleteAllRelatedData">
@@ -318,7 +327,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -333,6 +341,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a random password that is at least 14 characters long.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A random password that is at least 14 characters long.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -370,7 +382,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -383,6 +394,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of users currently accessing the application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of users currently accessing the application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -400,7 +415,6 @@
       </Parameters>
       <Docs>
         <param name="answer">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -414,6 +428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the password for the specified user name from the SQL Server membership database.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The password for the specified user name.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user to retrieve the password for. </param>
       </Docs>
@@ -432,7 +450,6 @@
         <Parameter Name="userIsOnline" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -443,6 +460,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the information from the data source for the membership user associated with the specified unique identifier and updates the last activity date/time stamp for the user, if specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object representing the user associated with the specified unique identifier. If no user is found in the database for the specified <paramref name="providerUserKey" /> value, null is returned.</para>
+        </returns>
         <param name="providerUserKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the user.</param>
         <param name="userIsOnline">
@@ -463,7 +484,6 @@
         <Parameter Name="userIsOnline" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -475,6 +495,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns information from the SQL Server membership database for a user and provides an option to update the last activity date/time stamp for the user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object representing the specified user. If no user is found in the database for the specified <paramref name="username" /> value, null is returned.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to get information for. </param>
         <param name="userIsOnline">
@@ -494,7 +518,6 @@
         <Parameter Name="email" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -506,6 +529,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the user name associated with the specified e-mail address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user name associated with the specified e-mail address. If no match is found, this method returns null.</para>
+        </returns>
         <param name="email">
           <attribution license="cc4" from="Microsoft" modified="false" />The e-mail address to search for. </param>
       </Docs>
@@ -742,7 +769,6 @@
       </Parameters>
       <Docs>
         <param name="answer">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -759,6 +785,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resets a user's password to a new, automatically generated password.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new password for the specified user.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user to reset the password for. </param>
       </Docs>
@@ -776,7 +806,6 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -787,6 +816,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the user's locked-out status so that the membership user can be validated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the membership user was successfully unlocked; otherwise, false. A value of false is also returned if the user does not exist in the database.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the membership user to clear the locked-out status for.</param>
       </Docs>
@@ -833,7 +866,6 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -846,6 +878,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies that the specified user name and password exist in the SQL Server membership database.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified username and password are valid; otherwise, false. A value of false is also returned if the user does not exist in the database.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to validate. </param>
         <param name="password">

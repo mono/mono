@@ -40,6 +40,8 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.COMException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.ComMemberType))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.ComSourceInterfacesAttribute))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.ComTypes.IStream))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.ComTypes.STATSTG))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.CriticalHandle))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.CurrencyWrapper))]
 //[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.CustomQueryInterfaceMode))]
@@ -76,4 +78,3 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.UnmanagedType))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.VarEnum))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.VariantWrapper))]
-

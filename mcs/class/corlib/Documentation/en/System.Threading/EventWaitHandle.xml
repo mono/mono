@@ -164,7 +164,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -175,6 +174,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> object that represents the access control security for the named system event represented by the current <see cref="T:System.Threading.EventWaitHandle" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> object that represents the access control security for the named system event.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OpenExisting">
@@ -192,7 +195,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -205,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified named synchronization event, if it already exists.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An  object that represents the named system event.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the system synchronization event to open.</param>
       </Docs>
@@ -225,7 +231,6 @@
         <Parameter Name="rights" Type="System.Security.AccessControl.EventWaitHandleRights" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -237,6 +242,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified named synchronization event, if it already exists, with the desired security access.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the named system event.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the system synchronization event to open.</param>
         <param name="rights">
@@ -256,13 +265,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the state of the event to nonsignaled, causing threads to block.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation succeeds; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Set">
@@ -278,7 +290,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -292,6 +303,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the state of the event to signaled, allowing one or more waiting threads to proceed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation succeeds; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SetAccessControl">

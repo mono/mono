@@ -470,7 +470,6 @@
         <Parameter Name="output" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -625,6 +624,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the specified stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="output">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream to which you want to write. The <see cref="T:System.Xml.XmlWriter" /> writes XML 1.0 text syntax and appends it to the specified stream.</param>
       </Docs>
@@ -644,7 +647,6 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -798,6 +800,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the specified <see cref="T:System.IO.TextWriter" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="output">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which you want to write. The <see cref="T:System.Xml.XmlWriter" /> writes XML 1.0 text syntax and appends it to the specified <see cref="T:System.IO.TextWriter" />.</param>
       </Docs>
@@ -817,7 +823,6 @@
         <Parameter Name="outputFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -971,6 +976,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the specified filename.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="outputFileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to which you want to write. The <see cref="T:System.Xml.XmlWriter" /> creates a file at the specified path and writes to it in XML 1.0 text syntax. The <paramref name="outputFileName" /> must be a file system path.</param>
       </Docs>
@@ -990,7 +999,6 @@
         <Parameter Name="output" Type="System.Text.StringBuilder" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1144,6 +1152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the specified <see cref="T:System.Text.StringBuilder" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="output">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.StringBuilder" /> to which to write to. Content written by the <see cref="T:System.Xml.XmlWriter" /> is appended to the <see cref="T:System.Text.StringBuilder" />.</param>
       </Docs>
@@ -1163,7 +1175,6 @@
         <Parameter Name="output" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1318,6 +1329,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the specified <see cref="T:System.Xml.XmlWriter" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object that is wrapped around the specified <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="output">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> object that you want to use as the underlying writer.</param>
       </Docs>
@@ -1338,7 +1353,6 @@
         <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1348,6 +1362,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the stream and <see cref="T:System.Xml.XmlWriterSettings" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="output">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream to which you want to write. The <see cref="T:System.Xml.XmlWriter" /> writes XML 1.0 text syntax and appends it to the specified stream.</param>
         <param name="settings">
@@ -1370,13 +1388,16 @@
         <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the <see cref="T:System.IO.TextWriter" /> and <see cref="T:System.Xml.XmlWriterSettings" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="output">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which you want to write. The <see cref="T:System.Xml.XmlWriter" /> writes XML 1.0 text syntax and appends it to the specified <see cref="T:System.IO.TextWriter" />.</param>
         <param name="settings">
@@ -1399,13 +1420,16 @@
         <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the filename and <see cref="T:System.Xml.XmlWriterSettings" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="outputFileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to which you want to write. The <see cref="T:System.Xml.XmlWriter" /> creates a file at the specified path and writes to it in XML 1.0 text syntax. The <paramref name="outputFileName" /> must be a file system path.</param>
         <param name="settings">
@@ -1428,13 +1452,16 @@
         <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the <see cref="T:System.Text.StringBuilder" /> and <see cref="T:System.Xml.XmlWriterSettings" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="output">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.StringBuilder" /> to which to write to. Content written by the <see cref="T:System.Xml.XmlWriter" /> is appended to the <see cref="T:System.Text.StringBuilder" />.</param>
         <param name="settings">
@@ -1457,7 +1484,6 @@
         <Parameter Name="settings" Type="System.Xml.XmlWriterSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1467,6 +1493,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlWriter" /> instance using the specified <see cref="T:System.Xml.XmlWriter" /> and <see cref="T:System.Xml.XmlWriterSettings" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object that is wrapped around the specified <see cref="T:System.Xml.XmlWriter" /> object.</para>
+        </returns>
         <param name="output">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> object that you want to use as the underlying writer.</param>
         <param name="settings">
@@ -1556,7 +1586,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.Flush" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -1565,6 +1594,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously flushes whatever is in the buffer to the underlying streams and also flushes the underlying stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous Flush operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LookupPrefix">
@@ -1584,11 +1617,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the corresponding prefix, or <see cref="F:System.String.Empty" qualify="true" /> if
-   the prefix is not found and <paramref name="ns" /> is the default namespace, or
-<see langword="null" /> if no matching namespace URI is found in the current scope.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors"> As described above. </block>
@@ -1605,6 +1633,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the closest prefix defined in the current namespace scope for the namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching prefix or null if no matching namespace URI is found in the current scope.</para>
+        </returns>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI whose prefix you want to find.</param>
       </Docs>
@@ -1711,7 +1743,6 @@
         <Parameter Name="defattr" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteAttributes(System.Xml.XmlReader,System.Boolean)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -1720,6 +1751,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out all the attributes found at the current position in the <see cref="T:System.Xml.XmlReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteAttributes operation.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The XmlReader from which to copy the attributes.</param>
         <param name="defattr">
@@ -1744,10 +1779,11 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>WriteAttributeString does the following: </para>
@@ -1794,11 +1830,13 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI to associate with the attribute.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method writes out the attribute with a user defined namespace prefix and associates it with the given namespace. If <paramref name="localName" /> is "xmlns" then this method also treats this as a namespace declaration. In this case, the <paramref name="ns" /> argument can be null.</para>
@@ -1849,12 +1887,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" /> .</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method writes out the attribute with a user defined namespace prefix and associates it with the given namespace. If the prefix is "xmlns" then this method also treats this as a namespace declaration and associates the declared prefix with the namespace URI provided in the given attribute value. In this case the <paramref name="ns" /> argument can be null.</para>
@@ -1904,7 +1945,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteAttributeString(System.String,System.String,System.String,System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -1913,6 +1953,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out the attribute with the specified prefix, local name, namespace URI, and value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteAttributeString operation.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix of the attribute.</param>
         <param name="localName">
@@ -1982,7 +2026,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteBase64(System.Byte[],System.Int32,System.Int32)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -1991,6 +2034,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously encodes the specified binary bytes as Base64 and writes out the resulting text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteBase64 operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />Byte array to encode.</param>
         <param name="index">
@@ -2057,7 +2104,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteBinHex(System.Byte[],System.Int32,System.Int32)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2066,6 +2112,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously encodes the specified binary bytes as BinHex and writes out the resulting text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteBinHex operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />Byte array to encode.</param>
         <param name="index">
@@ -2121,7 +2171,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteCData(System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2130,6 +2179,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out a &lt;![CDATA[...]]&gt; block containing the specified text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteCData operation.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to place inside the CDATA block.</param>
       </Docs>
@@ -2181,7 +2234,6 @@
         <Parameter Name="ch" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteCharEntity(System.Char)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2190,6 +2242,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously forces the generation of a character entity for the specified Unicode character value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteCharEntity operation.</para>
+        </returns>
         <param name="ch">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character for which to generate a character entity.</param>
       </Docs>
@@ -2254,7 +2310,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteChars(System.Char[],System.Int32,System.Int32)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2263,6 +2318,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes text one buffer at a time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteChars operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />Character array containing the text to write.</param>
         <param name="index">
@@ -2319,7 +2378,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteComment(System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2328,6 +2386,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out a comment &lt;!--...--&gt; containing the specified text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteComment operation.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />Text to place inside the comment.</param>
       </Docs>
@@ -2399,7 +2461,6 @@
         <Parameter Name="subset" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteDocType(System.String,System.String,System.String,System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2408,6 +2469,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes the DOCTYPE declaration with the specified name and optional attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteDocType operation.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the DOCTYPE. This must be non-empty.</param>
         <param name="pubid">
@@ -2436,8 +2501,9 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the element.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For the asynchronous version of this method, see <see cref="M:System.Xml.XmlWriter.WriteElementStringAsync(System.String,System.String)" />.</para>
@@ -2472,8 +2538,9 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the element.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For the asynchronous version of this method, see <see cref="M:System.Xml.XmlWriter.WriteElementStringAsync(System.String,System.String,System.String)" />.</para>
@@ -2545,7 +2612,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteElementString(System.String,System.String,System.String,System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2554,6 +2620,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes an element with the specified prefix, local name, namespace URI, and value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteElementString operation.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the element.</param>
         <param name="localName">
@@ -2608,7 +2678,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteEndAttribute" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2617,6 +2686,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously closes the previous <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String)" /> call.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteEndAttribute operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WriteEndDocument">
@@ -2661,7 +2734,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteEndDocument" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2670,6 +2742,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously closes any open elements or attributes and puts the writer back in the Start state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteEndDocument operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WriteEndElement">
@@ -2715,7 +2791,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteEndElement" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2724,6 +2799,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously closes one element and pops the corresponding namespace scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteEndElement operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WriteEntityRef">
@@ -2772,7 +2851,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteEntityRef(System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2781,6 +2859,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out an entity reference as &amp;name;.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteEntityRef operation.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the entity reference.</param>
       </Docs>
@@ -2825,7 +2907,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteFullEndElement" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2834,6 +2915,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously closes one element and pops the corresponding namespace scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteFullEndElement operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WriteName">
@@ -2886,7 +2971,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteName(System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2895,6 +2979,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out the specified name, ensuring it is a valid name according to the W3C XML 1.0 recommendation (http://www.w3.org/TR/1998/REC-xml-19980210#NT-Name).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteName operation.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name to write.</param>
       </Docs>
@@ -2948,7 +3036,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteNmToken(System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -2957,6 +3044,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out the specified name, ensuring it is a valid NmToken according to the W3C XML 1.0 recommendation (http://www.w3.org/TR/1998/REC-xml-19980210#NT-Name).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteNmToken operation.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name to write.</param>
       </Docs>
@@ -3290,7 +3381,6 @@ while (!reader.EOF){
         <Parameter Name="defattr" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteNode(System.Xml.XmlReader,System.Boolean)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -3299,6 +3389,10 @@ while (!reader.EOF){
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously copies everything from the reader to the writer and moves the reader to the start of the next sibling.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteNode operation.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
         <param name="defattr">
@@ -3320,7 +3414,6 @@ while (!reader.EOF){
         <Parameter Name="defattr" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteNode(System.Xml.XPath.XPathNavigator,System.Boolean)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -3329,6 +3422,10 @@ while (!reader.EOF){
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously copies everything from the <see cref="T:System.Xml.XPath.XPathNavigator" /> object to the writer. The position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> remains unchanged.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteNode operation.</para>
+        </returns>
         <param name="navigator">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNavigator" /> to copy from.</param>
         <param name="defattr">
@@ -3353,7 +3450,6 @@ while (!reader.EOF){
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para> The text would result in a non-well formed XML document.</para>
           <para> - or -</para>
@@ -3363,6 +3459,8 @@ while (!reader.EOF){
           <para>This method is being used to create an XML declaration after <see cref="M:System.Xml.XmlWriter.WriteStartDocument" /> has already been called. </para>
         </exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to include in the processing instruction.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to write the XML declaration (rather than <see cref="M:System.Xml.XmlWriter.WriteStartDocument" />). This could result in the encoding attribute being incorrectly written. For example, the following C# code would result in an invalid XML document because the default encoding is UTF-8.</para>
@@ -3400,7 +3498,6 @@ writer.Close();</code>
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteProcessingInstruction(System.String,System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -3409,6 +3506,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out a processing instruction with a space between the name and text as follows: &lt;?name text?&gt;.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteProcessingInstruction operation.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the processing instruction.</param>
         <param name="text">
@@ -3433,7 +3534,6 @@ writer.Close();</code>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="localName" /> is <see langword="null" />, is <see cref="F:System.String.Empty" qualify="true" />, or is not a valid XML name.</para>
@@ -3441,6 +3541,8 @@ writer.Close();</code>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="localName" /> is not a valid XML name.</exception>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI for the name.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="ns" /> maps to the current default namespace, no prefix is generated.</para>
@@ -3476,7 +3578,6 @@ writer.Close();</code>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteQualifiedName(System.String,System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -3485,6 +3586,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out the namespace-qualified name. This method looks up the prefix that is in scope for the given namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteQualifiedName operation.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name to write.</param>
         <param name="ns">
@@ -3586,7 +3691,6 @@ writer.Close();</code>
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteRaw(System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -3595,6 +3699,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes raw markup manually from a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteRaw operation.</para>
+        </returns>
         <param name="data">
           <attribution license="cc4" from="Microsoft" modified="false" />String containing the text to write.</param>
       </Docs>
@@ -3615,7 +3723,6 @@ writer.Close();</code>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteRaw(System.Char[],System.Int32,System.Int32)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -3624,6 +3731,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes raw markup manually from a character buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteRaw operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />Character array containing the text to write.</param>
         <param name="index">
@@ -3679,8 +3790,9 @@ writer.Close();</code>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added.</param>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a more advanced version of <see cref="M:System.Xml.XmlWriter.WriteAttributeString(System.String,System.String,System.String)" /> that allows you to write an attribute value using multiple write methods, such as <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" />, <see cref="M:System.Xml.XmlWriter.WriteQualifiedName(System.String,System.String)" />, and so on.</para>
@@ -3716,9 +3828,11 @@ writer.Close();</code>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="ns">To be added.</param>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not one of the following:<see cref="F:System.Xml.WriteState.Attribute" qualify="true" /> or <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI for the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method enables you to write a value using multiple Write methods.</para>
@@ -3753,7 +3867,6 @@ writer.Close();</code>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String,System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -3762,6 +3875,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes the start of an attribute with the specified prefix, local name, and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteStartAttribute operation.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix of the attribute.</param>
         <param name="localName">
@@ -3846,7 +3963,6 @@ writer.Close();</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteStartDocument" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -3855,6 +3971,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes the XML declaration with the version "1.0".</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteStartDocument operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WriteStartDocumentAsync">
@@ -3871,7 +3991,6 @@ writer.Close();</code>
         <Parameter Name="standalone" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteStartDocument(System.Boolean)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -3880,6 +3999,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes the XML declaration with the version "1.0" and the standalone attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteStartDocument operation.</para>
+        </returns>
         <param name="standalone">
           <attribution license="cc4" from="Microsoft" modified="false" />If true, it writes "standalone=yes"; if false, it writes "standalone=no".</param>
       </Docs>
@@ -4011,7 +4134,6 @@ writer.Close();</code>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteStartElement(System.String,System.String,System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -4020,6 +4142,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes the specified start tag and associates it with the given namespace and prefix.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteStartElement operation.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix of the element.</param>
         <param name="localName">
@@ -4133,7 +4259,6 @@ writer.Close();</code>
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -4142,6 +4267,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes the given text content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteString operation.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to write.</param>
       </Docs>
@@ -4164,9 +4293,10 @@ writer.Close();</code>
         <Parameter Name="highChar" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="highChar">To be added.</param>
         <exception cref="T:System.ArgumentException">An invalid surrogate character pair was passed.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="highChar">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high surrogate. This must be a value between 0xD800 and 0xDBFF.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is only applicable on systems that use UTF-16 encoding.</para>
@@ -4201,7 +4331,6 @@ writer.Close();</code>
         <Parameter Name="highChar" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteSurrogateCharEntity(System.Char,System.Char)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -4210,6 +4339,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously generates and writes the surrogate character entity for the surrogate character pair.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteSurrogateCharEntity operation.</para>
+        </returns>
         <param name="lowChar">
           <attribution license="cc4" from="Microsoft" modified="false" />The low surrogate. This must be a value between 0xDC00 and 0xDFFF.</param>
         <param name="highChar">
@@ -4576,7 +4709,6 @@ writer.Close();</code>
         <Parameter Name="ws" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the asynchronous version of <see cref="M:System.Xml.XmlWriter.WriteWhitespace(System.String)" />, with the same functionality. To use this method, you must set the <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true.</para>
@@ -4585,6 +4717,10 @@ writer.Close();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes out the given white space.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task that represents the asynchronous WriteWhitespace operation.</para>
+        </returns>
         <param name="ws">
           <attribution license="cc4" from="Microsoft" modified="false" />The string of white space characters.</param>
       </Docs>

@@ -623,7 +623,6 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the location specified in the <paramref name="pt" /> parameter is outside the client area of the control, the first character of the string closest to the point specified in <paramref name="pt" /> is returned. You can use this method to determine which characters are located near a specific point within the control. You can then use this value to perform operations on the text at that location.</para>
@@ -635,6 +634,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the character that is closest to the specified location within the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The character at the specified location.</para>
+        </returns>
         <param name="pt">
           <attribution license="cc4" from="Microsoft" modified="false" />The location from which to seek the nearest character.</param>
       </Docs>
@@ -652,7 +655,6 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns the character index that is closest to the position specified in the <paramref name="pt" /> parameter. The character index is a zero-based index of text in the control, including spaces. You can use this method to determine where in the text the user has the mouse over by passing the mouse coordinates to this method. This can be useful if you want to perform tasks when the mouse pointer hovers over a word in the text of the control.</para>
@@ -661,6 +663,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the index of the character nearest to the specified location.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based character index at the specified location.</para>
+        </returns>
         <param name="pt">
           <attribution license="cc4" from="Microsoft" modified="false" />The location to search.</param>
       </Docs>
@@ -678,7 +684,6 @@
         <Parameter Name="lineNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="lineNum" /> parameter is negative, <see cref="M:System.Windows.Forms.ToolStripTextBox.GetFirstCharIndexFromLine(System.Int32)" /> returns 0. If the <paramref name="lineNum" /> parameter exceeds the number of lines in the control, <see cref="M:System.Windows.Forms.ToolStripTextBox.GetFirstCharIndexFromLine(System.Int32)" /> returns the first character index for the last line in the control.</para>
@@ -689,6 +694,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the index of the first character of a given line.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based character index in the specified line.</para>
+        </returns>
         <param name="lineNumber">
           <attribution license="cc4" from="Microsoft" modified="false" />The line for which to get the index of its first character.</param>
       </Docs>
@@ -704,12 +713,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the index of the first character of the current line.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based character index in the current line.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLineFromCharIndex">
@@ -725,7 +737,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method enables you to determine the line number based on the character index specified in the <paramref name="index" /> parameter of the method. The first line of text in the control returns the value zero. The <see cref="M:System.Windows.Forms.ToolStripTextBox.GetLineFromCharIndex(System.Int32)" /> method returns the physical line number where the indexed character is located within the control. For example, if a portion of the first logical line of text in the control wraps to the next line, the <see cref="M:System.Windows.Forms.ToolStripTextBox.GetLineFromCharIndex(System.Int32)" /> method returns 1 if the character at the specified character index has wrapped to the second physical line. If <see cref="P:System.Windows.Forms.ToolStripTextBox.WordWrap" /> is set to false, no portion of the line wraps to the next, and the method returns 0 for the specified character index. You can use this method to determine which line a specific character index is located within. For example, after calling the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to search for text, you can obtain the character index to where the search results are found. You can call this method with the character index returned by the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to determine which line the word was found.</para>
@@ -737,6 +748,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the line number from the specified character position within the text of the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based line number in which the character index is located.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The character index position to search.</param>
       </Docs>
@@ -754,7 +769,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method enables you to determine where in the control a specific character index is located. You can use this method for such tasks as displaying shortcut menu items or help information for a word in the control. For example, if you wanted to display a menu of options to the user when the user right clicks on a word in the control, you can use this method to determine the position of the word to properly display a <see cref="T:System.Windows.Forms.ContextMenuStrip" /> control.</para>
@@ -763,6 +777,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the location within the control at the specified character index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location of the specified character.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the character for which to retrieve the location.</param>
       </Docs>

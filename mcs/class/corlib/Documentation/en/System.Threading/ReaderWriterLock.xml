@@ -257,7 +257,6 @@
         <Parameter Name="seqNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use <see cref="P:System.Threading.ReaderWriterLock.WriterSeqNum" /> and AnyWritersSince to improve application performance. For example, a thread might cache the information it obtains while holding a reader lock. After releasing and later reacquiring the lock, the thread can use AnyWritersSince to determine whether other threads have written to the resource in the interim; if not, the cached information can be used. This technique is useful where reading the information protected by the lock is expensive; for example, running a database query.</para>
@@ -267,6 +266,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the writer lock has been granted to any thread since the sequence number was obtained.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the writer lock has been granted to any thread since the sequence number was obtained; otherwise, false.</para>
+        </returns>
         <param name="seqNum">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence number. </param>
       </Docs>
@@ -375,7 +378,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'LockCookie'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -385,6 +387,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases the lock, regardless of the number of times the thread acquired the lock.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.LockCookie" /> value representing the released lock.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReleaseReaderLock">
@@ -490,7 +496,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'LockCookie'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When a thread calls UpgradeToWriterLock the reader lock is released, regardless of the lock count, and the thread goes to the end of the queue for the writer lock. Thus, other threads might write to the resource before the thread that requested the upgrade is granted the writer lock.</para>
@@ -505,6 +510,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Upgrades a reader lock to the writer lock, using an Int32 value for the time-out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.LockCookie" /> value.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The time-out in milliseconds. </param>
       </Docs>
@@ -525,7 +534,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'LockCookie'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When a thread calls UpgradeToWriterLock the reader lock is released, regardless of the lock count, and the thread goes to the end of the queue for the writer lock. Thus, other threads might write to the resource before the thread that requested the upgrade is granted the writer lock.</para>
@@ -540,6 +548,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Upgrades a reader lock to the writer lock, using a TimeSpan value for the time-out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.LockCookie" /> value.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The TimeSpan specifying the time-out period. </param>
       </Docs>

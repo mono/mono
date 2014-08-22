@@ -76,7 +76,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>After an enumerator is created or after a <see cref="M:System.Collections.Specialized.StringEnumerator.Reset" /> is called, an enumerator is positioned before the first element of the collection, and the first call to <see cref="M:System.Collections.Specialized.StringEnumerator.MoveNext" /> moves the enumerator over the first element of the collection.</para>
@@ -87,6 +86,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Advances the enumerator to the next element of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Reset">

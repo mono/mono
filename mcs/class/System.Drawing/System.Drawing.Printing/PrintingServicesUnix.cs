@@ -245,8 +245,12 @@ namespace System.Drawing.Printing
 				options = new NameValueCollection();
 				paper_names = new NameValueCollection();
 				paper_sources = new NameValueCollection();
-				LoadPrinterOptions(printer_dest.options, printer_dest.num_options, ppd_handle, options, paper_names, paper_sources);
-			
+				string defsize;
+				string defsource;
+				LoadPrinterOptions (printer_dest.options, printer_dest.num_options, ppd_handle, options,
+					paper_names, out defsize,
+					paper_sources, out defsource);
+
 				if (settings.paper_sizes == null)
 					settings.paper_sizes = new PrinterSettings.PaperSizeCollection (new PaperSize [] {});
 				else
@@ -256,18 +260,16 @@ namespace System.Drawing.Printing
 					settings.paper_sources = new PrinterSettings.PaperSourceCollection (new PaperSource [] {});
 				else
 					settings.paper_sources.Clear();
-			
-				string defsource = options["InputSlot"];
-				string defsize = options["PageSize"];
-			
+
 				settings.DefaultPageSettings.PaperSource = LoadPrinterPaperSources (settings, defsource, paper_sources);
 				settings.DefaultPageSettings.PaperSize = LoadPrinterPaperSizes (ppd_handle, settings, defsize, paper_names);
-			
+				LoadPrinterResolutionsAndDefault (printer, settings, ppd_handle);
+
 				ppd = (PPD_FILE) Marshal.PtrToStructure (ppd_handle, typeof (PPD_FILE));
 				settings.landscape_angle = ppd.landscape;
 				settings.supports_color = (ppd.color_device == 0) ? false : true;
 				settings.can_duplex = options["Duplex"] != null;
-			
+
 				ClosePrinter (ref ppd_handle);
 			
 				((SysPrn.Printer)installed_printers[printer]).Settings = settings;
@@ -278,18 +280,21 @@ namespace System.Drawing.Printing
 		}
 		
 		/// <summary>
-		/// Loads the global options of a printer plus the paper types and trays supported.
+		/// Loads the global options of a printer plus the paper types and trays supported,
+		/// and sets the default paper size and source tray.
 		/// </summary>
 		/// <param name="options">The options field of a printer's CUPS_DESTS structure</param>
 		/// <param name="numOptions">The number of options of the printer</param>
 		/// <param name="ppd">A ppd handle for the printer, returned by ppdOpen</param>
 		/// <param name="list">The list of options</param>
 		/// <param name="paper_names">A list of types of paper (PageSize)</param>
+		/// <param name="defsize">The default paper size, set by LoadOptionList</param>
 		/// <param name="paper_sources">A list of trays(InputSlot) </param>
+		/// <param name="defsource">The default source tray, set by LoadOptionList</param>
 		private static void LoadPrinterOptions(IntPtr options, int numOptions, IntPtr ppd, 
 										 NameValueCollection list, 
-										 NameValueCollection paper_names,
-										 NameValueCollection paper_sources)
+										 NameValueCollection paper_names, out string defsize,
+										 NameValueCollection paper_sources, out string defsource)
 		{
 			CUPS_OPTIONS cups_options;
 			string option_name, option_value;
@@ -310,8 +315,8 @@ namespace System.Drawing.Printing
 				options = (IntPtr) ((long)options + cups_size);
 			}
 			
-			LoadOptionList (ppd, "PageSize", paper_names);
-			LoadOptionList (ppd, "InputSlot", paper_sources);
+			LoadOptionList (ppd, "PageSize", paper_names, out defsize);
+			LoadOptionList (ppd, "InputSlot", paper_sources, out defsource);
 		}
 		
 		/// <summary>
@@ -344,16 +349,19 @@ namespace System.Drawing.Printing
 
 		/// <summary>
 		/// Loads a printer's options (selection of paper sizes, paper sources, etc)
+		/// and sets the default option from the selected list.
 		/// </summary>
 		/// <param name="ppd">Printer ppd file handle</param>
 		/// <param name="option_name">Name of the option group to load</param>
 		/// <param name="list">List of loaded options</param>
-		private static void LoadOptionList(IntPtr ppd, string option_name, NameValueCollection list) {
+		/// <param name="defoption">The default option from the loaded options list</param>
+		private static void LoadOptionList (IntPtr ppd, string option_name, NameValueCollection list, out string defoption) {
 
 			IntPtr ptr = IntPtr.Zero;
 			PPD_OPTION ppd_option;
 			PPD_CHOICE choice;
 			int choice_size = Marshal.SizeOf(typeof(PPD_CHOICE)); 
+			defoption = null;
 			
 			ptr = ppdFindOption (ppd, option_name);
 			if (ptr != IntPtr.Zero)
@@ -362,7 +370,7 @@ namespace System.Drawing.Printing
 				#if PrintDebug
 				Console.WriteLine (" OPTION  key:{0} def:{1} text: {2}", ppd_option.keyword, ppd_option.defchoice, ppd_option.text);
 				#endif
-
+				defoption = ppd_option.defchoice;
 				ptr = ppd_option.choices;
 				for (int c = 0; c < ppd_option.num_choices; c++) {
 					choice = (PPD_CHOICE) Marshal.PtrToStructure (ptr, typeof (PPD_CHOICE));
@@ -383,8 +391,47 @@ namespace System.Drawing.Printing
 		/// <param name="settings">PrinterSettings object to fill</param>
 		internal override void LoadPrinterResolutions (string printer, PrinterSettings settings)
 		{
-			settings.PrinterResolutions.Clear ();
-			LoadDefaultResolutions (settings.PrinterResolutions);
+			IntPtr ppd_handle = OpenPrinter (printer);
+			if (ppd_handle == IntPtr.Zero)
+				return;
+
+			LoadPrinterResolutionsAndDefault (printer, settings, ppd_handle);
+
+			ClosePrinter (ref ppd_handle);
+		}
+
+		/// <summary>
+		/// Create a PrinterResolution from a string Resolution that is set in the PPD option.
+		/// An example of Resolution is "600x600dpi" or "600dpi". Returns null if malformed or "Unknown".
+		/// </summary>
+		private PrinterResolution ParseResolution (string resolution)
+		{
+			if (String.IsNullOrEmpty (resolution))
+				return null;
+
+			int dpiIndex = resolution.IndexOf ("dpi");
+			if (dpiIndex == -1)
+			{
+				// Resolution is "Unknown" or unparsable
+				return null;
+			}
+			resolution = resolution.Substring (0, dpiIndex);
+
+			int x_resolution, y_resolution;
+			try {
+				if (resolution.Contains ("x")) {
+					string[] resolutions = resolution.Split (new[] {'x'});
+					x_resolution = Convert.ToInt32 (resolutions [0]);
+					y_resolution = Convert.ToInt32 (resolutions [1]);
+				} else {
+					x_resolution = Convert.ToInt32 (resolution);
+					y_resolution = x_resolution;
+				}
+			} catch (Exception) {
+				return null;
+			}
+
+			return new PrinterResolution (x_resolution, y_resolution, PrinterResolutionKind.Custom);
 		}
 
 		/// <summary>
@@ -403,7 +450,7 @@ namespace System.Drawing.Printing
 			PPD_SIZE size;
 			PaperSize ps;
 
-			PaperSize defsize = null;
+			PaperSize defsize = new PaperSize ("A4", 827, 1169, GetPaperKind (827, 1169), true);
 			ppd = (PPD_FILE) Marshal.PtrToStructure (ppd_handle, typeof (PPD_FILE));
 			ptr = ppd.sizes;
 			float w, h;
@@ -412,10 +459,11 @@ namespace System.Drawing.Printing
 				real_name = paper_names[size.name];
 				w = size.width * 100 / 72;
 				h = size.length * 100 / 72;
-				ps = new PaperSize (real_name, (int) w, (int) h, GetPaperKind ((int) w, (int) h), def_size == real_name);
-				if (def_size == real_name)
+				PaperKind kind = GetPaperKind ((int) w, (int) h);
+				ps = new PaperSize (real_name, (int) w, (int) h, kind, def_size == kind.ToString ());
+				ps.SetKind (kind);
+				if (def_size == ps.Kind.ToString ())
 					defsize = ps;
-				ps.SetKind (GetPaperKind ((int) w, (int) h));
 				settings.paper_sizes.Add (ps);
 				ptr = (IntPtr) ((long)ptr + Marshal.SizeOf (size));
 			}
@@ -438,6 +486,12 @@ namespace System.Drawing.Printing
 			foreach(string source in paper_sources) {
 				switch (source)
 				{
+					case "Auto":
+						kind = PaperSourceKind.AutomaticFeed;
+						break;
+					case "Standard":
+						kind = PaperSourceKind.AutomaticFeed;
+						break;
 					case "Tray":
 						kind = PaperSourceKind.AutomaticFeed;
 						break;
@@ -459,6 +513,36 @@ namespace System.Drawing.Printing
 			if (defsource == null && settings.paper_sources.Count > 0)
 				return settings.paper_sources[0];
 			return defsource;
+		}
+
+		/// <summary>
+		/// Sets the available resolutions and default resolution from a
+		/// printer's PPD file into settings.
+		/// </summary>
+		private void LoadPrinterResolutionsAndDefault (string printer,
+			PrinterSettings settings, IntPtr ppd_handle)
+		{
+			if (settings.printer_resolutions == null)
+				settings.printer_resolutions = new PrinterSettings.PrinterResolutionCollection (new PrinterResolution [] {});
+			else
+				settings.printer_resolutions.Clear ();
+
+			var printer_resolutions = new NameValueCollection ();
+			string defresolution;
+			LoadOptionList (ppd_handle, "Resolution", printer_resolutions, out defresolution);
+			foreach (var resolution in printer_resolutions.Keys) {
+				var new_resolution = ParseResolution (resolution.ToString ());
+				settings.PrinterResolutions.Add (new_resolution);
+			}
+
+			var default_resolution = ParseResolution (defresolution);
+
+			if (default_resolution == null)
+				default_resolution = ParseResolution ("300dpi");
+			if (printer_resolutions.Count == 0)
+				settings.PrinterResolutions.Add (default_resolution);
+
+			settings.DefaultPageSettings.PrinterResolution = default_resolution;
 		}
 
 		/// <summary>

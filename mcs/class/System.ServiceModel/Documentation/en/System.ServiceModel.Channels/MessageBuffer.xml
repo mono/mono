@@ -120,7 +120,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calling this method creates an identical copy of the original <see cref="T:System.ServiceModel.Channels.Message" /> instance you previously provided to the <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> method of a <see cref="T:System.ServiceModel.Channels.Message" /> instance. You can then save the message to a durable storage.</para>
@@ -129,6 +128,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a copy of the original message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An identical copy of the original <see cref="T:System.ServiceModel.Channels.Message" /> instance you previously provided to the <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> method of a <see cref="T:System.ServiceModel.Channels.Message" /> instance. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateNavigator">
@@ -143,7 +146,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method if you want to manipulate just a portion of the message copy.</para>
@@ -152,6 +154,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object. This method cannot be inherited.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateNavigator">
@@ -169,7 +175,6 @@
       </Parameters>
       <Docs>
         <param name="node_quota">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method if you want to manipulate just a portion of the message copy.</para>
@@ -178,6 +183,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object, with the navigator positioned on the node specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateNavigator">
@@ -194,7 +203,6 @@
         <Parameter Name="space" Type="System.Xml.XmlSpace" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method if you want to manipulate just a portion of the message copy.</para>
@@ -203,6 +211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object, with the specified xml:space scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object.</para>
+        </returns>
         <param name="space">
           <attribution license="cc4" from="Microsoft" modified="false" />A valid <see cref="T:System.Xml.XmlSpace" /> space.</param>
       </Docs>
@@ -223,7 +235,6 @@
       </Parameters>
       <Docs>
         <param name="node_quota">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method if you want to manipulate just a portion of the message copy.</para>
@@ -232,6 +243,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object, with the navigator positioned on the specified node and xml:space scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object.</para>
+        </returns>
         <param name="space">
           <attribution license="cc4" from="Microsoft" modified="false" />A valid <see cref="T:System.Xml.XmlSpace" /> space.</param>
       </Docs>

@@ -754,7 +754,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to confirm focus can shift before performing the click action for an item on the <see cref="T:System.Windows.Forms.BindingNavigator" /> control.</para>
@@ -763,6 +762,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Causes form validation to occur and returns whether validation was successful.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if validation was successful and focus can shift to the <see cref="T:System.Windows.Forms.BindingNavigator" />; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

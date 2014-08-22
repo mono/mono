@@ -167,10 +167,6 @@
         <Parameter Name="socketAddress" Type="System.Net.SocketAddress" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.IPEndPoint" /> instance containing the address
-   information from the specified <see cref="T:System.Net.SocketAddress" /> instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method
@@ -182,6 +178,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an endpoint from a socket address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.EndPoint" /> instance using the specified socket address.</para>
+        </returns>
         <param name="socketAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.SocketAddress" /> to use for the endpoint. </param>
       </Docs>
@@ -243,9 +243,6 @@ and <see cref="P:System.Net.IPEndPoint.Port" /> properties contain the same valu
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.IPEndPoint.GetHashCode" /> method returns a hash code of the IP endpoint instance. This value can be used as a key in hash tables.</para>
@@ -254,6 +251,10 @@ and <see cref="P:System.Net.IPEndPoint.Port" /> properties contain the same valu
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash value for a <see cref="T:System.Net.IPEndPoint" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -351,12 +352,15 @@ inclusive.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serializes endpoint information into a <see cref="T:System.Net.SocketAddress" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.SocketAddress" /> instance containing the socket address for the endpoint.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -374,11 +378,6 @@ inclusive.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" />
-containing the IP address, in dotted-quad notation, followed by a colon and the port number for the
-specified endpoint, for example, 127.0.0.1:80.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method overrides <see cref="M:System.Object.ToString" />.</block>
@@ -388,6 +387,10 @@ specified endpoint, for example, 127.0.0.1:80.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the IP address and port number of the specified endpoint.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the IP address and the port number of the specified endpoint (for example, 192.168.1.2:80).</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

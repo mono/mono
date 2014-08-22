@@ -111,12 +111,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a binding element from the settings in this configuration element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.TransportBindingElement" /> whose properties are copied from the settings in this configuration element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InitializeFrom">

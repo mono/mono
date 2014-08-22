@@ -51,10 +51,17 @@
         <Parameter Name="nodes" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.Expression&gt;" />
       </Parameters>
       <Docs>
-        <param name="nodes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dispatches the list of expressions to one of the more specialized visit methods in this class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression list, if any one of the elements were modified; otherwise, returns the original expression list.</para>
+        </returns>
+        <param name="nodes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expressions to visit.</param>
       </Docs>
     </Member>
     <Member MemberName="Visit">
@@ -71,12 +78,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Dispatches the expression to one of the more specialized visit methods in this class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -99,12 +109,21 @@
         <Parameter Name="elementVisitor" Type="System.Func&lt;T,T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="nodes">To be added.</param>
-        <param name="elementVisitor">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visits all nodes in the collection using a specified element visitor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified node list, if any of the elements were modified; otherwise, returns the original node list.</para>
+        </returns>
+        <param name="nodes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The nodes to visit.</param>
+        <param name="elementVisitor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate that visits a single element, optionally replacing it with a new element.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the nodes.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="VisitAndConvert&lt;T&gt;">
@@ -129,12 +148,21 @@
         <Parameter Name="callerName" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="nodes">To be added.</param>
-        <param name="callerName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visits an expression, casting the result back to the original expression type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
+        <param name="nodes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
+        <param name="callerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the calling method; used to report to report a better error message.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the expression.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="VisitAndConvert&lt;T&gt;">
@@ -181,12 +209,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.BinaryExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.BinaryExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -205,12 +236,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.BlockExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.BlockExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -229,12 +263,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.CatchBlock" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.CatchBlock" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -253,12 +290,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.ConditionalExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.ConditionalExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -277,12 +317,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.ConstantExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the <see cref="T:System.Linq.Expressions.ConstantExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -301,12 +344,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.DebugInfoExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the <see cref="T:System.Linq.Expressions.DebugInfoExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -325,12 +371,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.DefaultExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the <see cref="T:System.Linq.Expressions.DefaultExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -349,12 +398,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.DynamicExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.DynamicExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -373,12 +425,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.ElementInit" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.ElementInit" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -397,7 +452,6 @@
         <Parameter Name="node" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This can be overridden to visit or rewrite specific extension nodes.</para>
@@ -407,6 +461,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the extension expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -425,12 +483,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.GotoExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.GotoExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -449,12 +510,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.IndexExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.IndexExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -473,12 +537,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.InvocationExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.InvocationExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -497,12 +564,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.LabelExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.LabelExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -521,12 +591,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.LabelTarget" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the <see cref="T:System.Linq.Expressions.LabelTarget" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -548,11 +621,19 @@
         <Parameter Name="node" Type="System.Linq.Expressions.Expression&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="node">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visits the children of the <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="VisitListInit">
@@ -569,12 +650,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.ListInitExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.ListInitExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -593,12 +677,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.LoopExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.LoopExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -617,12 +704,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.MemberExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.MemberExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -641,12 +731,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.MemberAssignment" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.MemberAssignment" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -665,12 +758,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.MemberBinding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.MemberBinding" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -689,12 +785,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.MemberInitExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.MemberInitExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -713,12 +812,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.MemberListBinding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.MemberListBinding" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -737,12 +839,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.MemberMemberBinding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.MemberMemberBinding" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -761,12 +866,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.MethodCallExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.MethodCallExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -785,12 +893,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.NewExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.NewExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -809,12 +920,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.NewArrayExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.NewArrayExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -833,12 +947,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.ParameterExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the <see cref="T:System.Linq.Expressions.ParameterExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -857,12 +974,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.RuntimeVariablesExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.RuntimeVariablesExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -881,12 +1001,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.SwitchExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.SwitchExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -905,12 +1028,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.SwitchCase" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.SwitchCase" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -929,12 +1055,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.TryExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.TryExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -953,12 +1082,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.TypeBinaryExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.TypeBinaryExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>
@@ -977,12 +1109,15 @@
         <Parameter Name="node" Type="System.Linq.Expressions.UnaryExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Visits the children of the <see cref="T:System.Linq.Expressions.UnaryExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
       </Docs>

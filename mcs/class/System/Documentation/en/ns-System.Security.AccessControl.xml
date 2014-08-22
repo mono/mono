@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Security.AccessControl">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Security.AccessControl" /> namespace provides programming elements that control access to and audit security-related actions on securable objects.</para>
+    </summary>
   </Docs>
 </Namespace>

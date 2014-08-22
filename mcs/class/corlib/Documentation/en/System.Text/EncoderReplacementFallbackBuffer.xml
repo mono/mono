@@ -62,7 +62,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -72,6 +71,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Prepares the replacement fallback buffer to use the current replacement string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the replacement string is not empty; false if the replacement string is empty.</para>
+        </returns>
         <param name="charUnknown">
           <attribution license="cc4" from="Microsoft" modified="false" />An input character. This parameter is ignored in this operation unless an exception is thrown.</param>
         <param name="index">
@@ -95,7 +98,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -105,6 +107,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a replacement string can be used when an input surrogate pair cannot be encoded, or whether the surrogate pair can be ignored. Parameters specify the surrogate pair and the index position of the pair in the input.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the replacement string is not empty; false if the replacement string is empty.</para>
+        </returns>
         <param name="charUnknownHigh">
           <attribution license="cc4" from="Microsoft" modified="false" />The high surrogate of the input pair.</param>
         <param name="charUnknownLow">
@@ -126,7 +132,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -136,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the next character in the replacement fallback buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next Unicode character in the replacement fallback buffer that the application can encode.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MovePrevious">
@@ -151,13 +160,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Causes the next call to the <see cref="M:System.Text.EncoderReplacementFallbackBuffer.GetNextChar" /> method to access the character position in the replacement fallback buffer prior to the current character position. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="M:System.Text.EncoderReplacementFallbackBuffer.MovePrevious" /> operation was successful; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Remaining">

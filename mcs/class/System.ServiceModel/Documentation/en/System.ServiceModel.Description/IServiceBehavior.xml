@@ -65,11 +65,23 @@
       </Parameters>
       <Docs>
         <param name="description">To be added.</param>
-        <param name="serviceHostBase">To be added.</param>
-        <param name="endpoints">To be added.</param>
         <param name="parameters">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)" /> method to add custom data objects to the <paramref name="parameters" /> collection that binding elements can use to acquire extra information to enable them to support the contract.</para>
+          <para>This method is called once for each listen URI. For example, if a service has four endpoints, and two of them have the same listen URI, then this method gets called three times. The reason is that the <paramref name="bindingParameters" /> target each channel stack and there is one channel stack for each listen URI. Because each call receives those endpoints at that listen URI, two calls each get a single <see cref="T:System.ServiceModel.Description.ServiceEndpoint" />, and one call gets a collection of two <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects.</para>
+          <block subset="none" type="note">
+            <para>All of the <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> methods pass <see cref="T:System.ServiceModel.Description.ServiceDescription" /> and <see cref="T:System.ServiceModel.ServiceHostBase" /> objects as a parameters. The <see cref="T:System.ServiceModel.Description.ServiceDescription" /> parameter is for examination and insertion of customizations only; if you otherwise modify these objects the execution behavior is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the ability to pass custom data to binding elements to support the contract implementation.</para>
+        </summary>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host of the service.</param>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service endpoints.</param>
       </Docs>
     </Member>
     <Member MemberName="ApplyDispatchBehavior">

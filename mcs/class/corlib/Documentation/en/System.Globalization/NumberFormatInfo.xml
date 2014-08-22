@@ -684,10 +684,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that is a copy of the current
-   instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The clone is writable even if the original <see cref="T:System.Globalization.NumberFormatInfo" /> object is read-only. Therefore, the properties of the clone can be modified with user-defined patterns.</para>
@@ -697,6 +693,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the <see cref="T:System.Globalization.NumberFormatInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object copied from the original <see cref="T:System.Globalization.NumberFormatInfo" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1293,9 +1293,6 @@ containing the currency symbol.</para>
         <Parameter Name="formatType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance, if <paramref name="formatType" /> is of type <see cref="T:System.Globalization.NumberFormatInfo" />; otherwise, a null reference.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The Format(String, IFormatProvider) methods supported by the base data types invoke this method when the current <see cref="T:System.Globalization.NumberFormatInfo" /> is passed as the <see cref="T:System.IFormatProvider" /> parameter. This method implements <see cref="M:System.IFormatProvider.GetFormat(System.Type)" />.</para>
@@ -1304,6 +1301,10 @@ containing the currency symbol.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an object of the specified type that provides a number formatting service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current <see cref="T:System.Globalization.NumberFormatInfo" />, if <paramref name="formatType" /> is the same as the type of the current <see cref="T:System.Globalization.NumberFormatInfo" />; otherwise, null.</para>
+        </returns>
         <param name="formatType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the required formatting service. </param>
       </Docs>
@@ -1325,7 +1326,6 @@ containing the currency symbol.</para>
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses the <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method of <paramref name="formatProvider" /> using <see cref="T:System.Globalization.NumberFormatInfo" /> as the Type parameter. If <paramref name="formatProvider" /> is null or if <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> returns null, this method returns <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" />.</para>
@@ -1344,6 +1344,10 @@ containing the currency symbol.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Globalization.NumberFormatInfo" /> associated with the specified <see cref="T:System.IFormatProvider" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.NumberFormatInfo" /> associated with the specified <see cref="T:System.IFormatProvider" />.</para>
+        </returns>
         <param name="formatProvider">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IFormatProvider" /> used to get the <see cref="T:System.Globalization.NumberFormatInfo" />.</param>
       </Docs>
@@ -2388,10 +2392,6 @@ class Test {
         <Parameter Name="nfi" Type="System.Globalization.NumberFormatInfo" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that is a copy of the current instance,
-   and cannot be altered.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="nfi" /> is a null reference.</exception>
         <remarks>
@@ -2403,6 +2403,10 @@ class Test {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a read-only <see cref="T:System.Globalization.NumberFormatInfo" /> wrapper.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Globalization.NumberFormatInfo" /> wrapper around <paramref name="nfi" />.</para>
+        </returns>
         <param name="nfi">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.NumberFormatInfo" /> to wrap. </param>
       </Docs>

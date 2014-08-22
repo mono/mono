@@ -457,7 +457,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method provides a way to override the configuration information of an application that creates a new application domain. The configuration file information in <paramref name="value" /> overrides the configuration file information for the application. For example, when the Example.exe application creates a new application domain, it can override the configuration information originally obtained from Example.exe.config file.</para>
@@ -471,6 +470,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the XML configuration information set by the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method, which overrides the application's XML configuration information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the XML configuration information that was set by the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method, or null if the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method has not been called.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LicenseFile">
@@ -585,9 +588,64 @@
         <Parameter Name="switches" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="switches">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Major versions of the .NET Framework sometimes introduce breaking changes from the previous version. For example, the net_v40_long introduces a small number of breaking changes from the net_v35_long. Use the <see cref="M:System.AppDomainSetup.SetCompatibilitySwitches(System.Collections.Generic.IEnumerable{System.String})" /> method to specify that one or more of these breaking changes should be rolled back for the application domain, to make the behavior compatible with the previous version of the .NET Framework.</para>
+          <para>Each time you call this method, it replaces the existing switch settings. To erase the settings, specify null for the <paramref name="switches" /> parameter.</para>
+          <para>The set of string values you provide for <paramref name="switches" /> can be a simple string array, because arrays implement the <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+          <para>The following table provides examples of compatibility switches that can be set to restore the behavior of earlier versions of the .NET Framework.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Switch</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>"NetFx40_LegacySecurityPolicy"</para>
+              </term>
+              <description>
+                <para>Code access security (CAS) for the net_v35_short is enabled in this application domain. See <format type="text/html"><a href="07132b9c-4a72-4710-99d7-e702405e02d4">&lt;NetFx40_LegacySecurityPolicy&gt; Element</a></format>. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"NetFx40_Legacy20SortingBehavior"</para>
+              </term>
+              <description>
+                <para>String sorting defaults for the net_v35_short are enabled in this application domain. Successfully restoring legacy sorting behavior also requires the sort00001000.dll dynamic link library to be available on the local system.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"NetFx40_Legacy40SortingBehavior"</para>
+              </term>
+              <description>
+                <para>String sorting defaults for the net_v40_short and Unicode 5.0 are enabled in this application domain. Successfully restoring legacy sorting behavior also requires the sort00060101.dll dynamic link library to be available on the local system.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"NetFx40_TimeSpanLegacyFormatMode"</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.TimeSpan" /> formatting behavior for the net_v35_short is enabled in this application domain.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified switches, making the application domain compatible with previous versions of the .NET Framework for the specified issues.</para>
+        </summary>
+        <param name="switches">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable set of string values that specify compatibility switches, or null to erase the existing compatibility switches.</param>
       </Docs>
     </Member>
     <Member MemberName="SetConfigurationBytes">

@@ -62,12 +62,15 @@
         <Parameter Name="a" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether the specified assembly is loaded in the global assembly cache.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the assembly is loaded in the global assembly cache; otherwise, false.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly to test. </param>
       </Docs>
@@ -86,12 +89,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the directory where the common language runtime is installed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the path to the directory where the common language runtime is installed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSystemVersion">
@@ -113,12 +119,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the version number of the common language runtime that is running the current process.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the version number of the common language runtime.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SystemConfigurationFile">

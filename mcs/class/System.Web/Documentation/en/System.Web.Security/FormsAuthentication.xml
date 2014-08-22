@@ -66,7 +66,6 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The Authenticate method verifies user credentials that are stored in the <format type="text/html"><a href="e5a001f8-fdbe-4c88-80ca-bfe36df23479">credentials</a></format> section of the application configuration file. Alternatively, you can use ASP.NET membership to store user credentials and call the <see cref="M:System.Web.Security.MembershipProvider.ValidateUser(System.String,System.String)" /> to verify the credentials. For more information, see <format type="text/html"><a href="824c3a24-f0af-427c-a652-0d2d1e9397cd">Managing Users By Using ASP.NET Membership</a></format>.</para>
@@ -76,6 +75,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Validates a user name and password against credentials stored in the configuration file for an application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user name and password are valid; otherwise, false.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The user name.</param>
         <param name="password">
@@ -176,12 +179,15 @@
         <Parameter Name="encryptedTicket" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>This will return a <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> or if the ticket fails to validate (due to tampering) it will throw an <see cref="T:System.ArgumentException" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> object based on the encrypted forms-authentication ticket passed to the method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> object. If the <paramref name="encryptedTicket" /> parameter is not a valid ticket, null is returned.</para>
+        </returns>
         <param name="encryptedTicket">
           <attribution license="cc4" from="Microsoft" modified="false" />The encrypted authentication ticket. </param>
       </Docs>
@@ -249,13 +255,6 @@
         <Parameter Name="ticket" Type="System.Web.Security.FormsAuthenticationTicket" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-A string representing the ticket. </para>
-          <para>
-The ticket might be just a string representation of the ticket, a string representation with a checksum or string representation with a checksum and encryption.  Depending on the settings.
-</para>
-        </returns>
         <remarks>
           <para>The actual method to encrypt the data depends on the setting in the "mode" attribute in the &lt;authentication&gt; section in the &lt;system.web&gt; section of the application configuration.
 </para>
@@ -290,6 +289,10 @@ The possible values are:
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a string containing an encrypted forms-authentication ticket suitable for use in an HTTP cookie.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing an encrypted forms-authentication ticket.</para>
+        </returns>
         <param name="ticket">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> object with which to create the encrypted forms-authentication ticket. </param>
       </Docs>
@@ -353,7 +356,6 @@ The possible values are:
         <Parameter Name="createPersistentCookie" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.HttpCookie" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The path of the cookie is determined by the <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" /> property.</para>
@@ -362,6 +364,10 @@ The possible values are:
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an authentication cookie for a given user name. This does not set the cookie as part of the outgoing response, so that an application can have more control over how the cookie is issued.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.HttpCookie" /> that contains encrypted forms-authentication ticket information. The default value for the <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" /> property is used.</para>
+        </returns>
         <param name="userName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the authenticated user. </param>
         <param name="createPersistentCookie">
@@ -384,12 +390,15 @@ The possible values are:
         <Parameter Name="strCookiePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.HttpCookie" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an authentication cookie for a given user name. This does not set the cookie as part of the outgoing response.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.HttpCookie" /> that contains encrypted forms-authentication ticket information.</para>
+        </returns>
         <param name="userName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the authenticated user. </param>
         <param name="createPersistentCookie">
@@ -413,7 +422,6 @@ The possible values are:
         <Parameter Name="createPersistentCookie" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method when you want to perform the redirect in your application code instead of using the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean)" /> method.</para>
@@ -428,6 +436,10 @@ The possible values are:
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the redirect URL for the original request that caused the redirect to the login page.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the redirect URL.</para>
+        </returns>
         <param name="userName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the authenticated user. </param>
         <param name="createPersistentCookie">
@@ -449,7 +461,6 @@ The possible values are:
         <Parameter Name="passwordFormat" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>A string that contains the hashed password.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(System.String,System.String)" /> method creates a hashed password value that can be used when storing forms-authentication credentials in the configuration file for an application.</para>
@@ -459,6 +470,10 @@ The possible values are:
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a hash password suitable for storing in a configuration file based on the specified password and hash algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hashed password.</para>
+        </returns>
         <param name="password">
           <attribution license="cc4" from="Microsoft" modified="false" />The password to hash. </param>
         <param name="passwordFormat">
@@ -645,7 +660,6 @@ The possible values are:
         <Parameter Name="tOld" Type="System.Web.Security.FormsAuthenticationTicket" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FormsAuthenticationTicket'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Security.FormsAuthentication.RenewTicketIfOld(System.Web.Security.FormsAuthenticationTicket)" /> method updates the expiration date and time of the supplied <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> if the current date and time minus the <see cref="P:System.Web.Security.FormsAuthenticationTicket.IssueDate" /> value is greater than the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> value minus the current date and time.</para>
@@ -655,6 +669,10 @@ The possible values are:
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Conditionally updates the issue date and time and expiration date and time for a <see cref="T:System.Web.Security.FormsAuthenticationTicket" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The updated <see cref="T:System.Web.Security.FormsAuthenticationTicket" />.</para>
+        </returns>
         <param name="tOld">
           <attribution license="cc4" from="Microsoft" modified="false" />The forms-authentication ticket to update.</param>
       </Docs>

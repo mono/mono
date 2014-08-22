@@ -113,7 +113,6 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -124,6 +123,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a dialog box with a message and buttons to solicit a yes/no response.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user clicked <ui>Yes</ui>; false if the user clicked <ui>No</ui> or closed the dialog box.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display to the user.</param>
       </Docs>
@@ -209,12 +212,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests the object for equality against the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are equal; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test.</param>
       </Docs>
@@ -297,8 +303,12 @@
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para />
+          <para>System.Int32</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GotFocus">
@@ -552,7 +562,6 @@
         <Parameter Name="right" Type="System.Windows.Forms.HtmlWindow" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The equality operator tests the IUnknown pointers of the underlying COM objects wrapped by the supplied <see cref="T:System.Windows.Forms.HtmlWindow" /> classes.</para>
@@ -561,6 +570,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests the two <see cref="T:System.Windows.Forms.HtmlWindow" /> objects for equality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both parameters are null, or if both elements have the same underlying COM interface; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Windows.Forms.HtmlWindow" /> object.</param>
         <param name="right">
@@ -581,12 +594,15 @@
         <Parameter Name="right" Type="System.Windows.Forms.HtmlWindow" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests two HtmlWindow objects for inequality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one but not both of the objects is null, or the underlying COM pointers do not match; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Windows.Forms.HtmlWindow" /> object.</param>
         <param name="right">
@@ -609,7 +625,6 @@
         <Parameter Name="replaceEntry" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="target" /> parameter can name a window that was created as the result of a previous call to <see cref="M:System.Windows.Forms.HtmlWindow.Open(System.String,System.String,System.String,System.Boolean)" />. The parameter may also point to a window opened by clicking on a hyperlink (A element) or a FORM element that uses the TARGET attribute to open its URL in a new window. The following HTML code will open a new window named orderWindow when the user clicks it:</para>
@@ -623,6 +638,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a file in the named window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.HtmlWindow" /> representing the new window, or the previously created window named by the <paramref name="target" /> parameter.</para>
+        </returns>
         <param name="urlString">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uniform Resource Locator that describes the location of the file to load.</param>
         <param name="target">
@@ -649,7 +668,6 @@
         <Parameter Name="replaceEntry" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="target" /> parameter can name a window that was created as the result of a previous call to <see cref="M:System.Windows.Forms.HtmlWindow.Open(System.Uri,System.String,System.String,System.Boolean)" />. The parameter may also point to a window opened by clicking on a hyperlink (A element) or a FORM element that uses the TARGET attribute to open its URL in a new window. The following HTML code will open a new window named orderWindow when the user clicks it:</para>
@@ -663,6 +681,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a file in the named window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.HtmlWindow" /> representing the new window, or the previously created window named by the <paramref name="target" /> parameter.</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uniform Resource Locator that describes the location of the file to load.</param>
         <param name="target">
@@ -705,7 +727,6 @@
         <Parameter Name="windowOptions" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the file referenced by <paramref name="url" /> is an HTML file, text file, or other file type that can be hosted inside of Internet Explorer, it will be displayed in a new window. If the file cannot be displayed inside of Internet Explorer, then the window will open only long enough for Internet Explorer to download the resource; it will close immediately afterwards.</para>
@@ -716,6 +737,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a file in a new window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.HtmlWindow" /> representing the new window. </para>
+        </returns>
         <param name="urlString">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uniform Resource Locator that describes the location of the file to load.</param>
         <param name="windowOptions">
@@ -736,7 +761,6 @@
         <Parameter Name="windowOptions" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the file referenced by <paramref name="url" /> is an HTML file, text file, or other file type that can be hosted inside of Internet Explorer, it will be displayed in a new window. If the file cannot be displayed inside of Internet Explorer, then the window will open only long enough for Internet Explorer to download the resource; it will close immediately afterwards.</para>
@@ -747,6 +771,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a file in a new window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.HtmlWindow" /> representing the new window. </para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uniform Resource Locator that describes the location of the file to load.</param>
         <param name="windowOptions">
@@ -809,7 +837,6 @@
         <Parameter Name="defaultInputValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -820,6 +847,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Shows a dialog box that displays a message and a text box to the user. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> representing the text entered by the user.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to display to the user.</param>
         <param name="defaultInputValue">

@@ -61,7 +61,6 @@
         <Parameter Name="docContext" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="docContext" /> parameter is required so that functions which require a node set can be supplied the current context node.</para>
@@ -70,6 +69,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the method to invoke the function with the given arguments in the given context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the return value of the function.</para>
+        </returns>
         <param name="xsltContext">
           <attribution license="cc4" from="Microsoft" modified="false" />The XSLT context for the function call. </param>
         <param name="args">

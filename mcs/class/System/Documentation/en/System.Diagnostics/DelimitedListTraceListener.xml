@@ -257,7 +257,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A custom attribute is an attribute that is not inherited from the base class that can be used to set a property for the class. The custom attribute for <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> is used to set the <see cref="P:System.Diagnostics.DelimitedListTraceListener.Delimiter" /> property. The following configuration file example shows the use of the delimiter attribute to set the <see cref="P:System.Diagnostics.DelimitedListTraceListener.Delimiter" /> property:</para>
@@ -280,6 +279,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the custom configuration file attribute supported by the delimited trace listener.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array that contains the single value "delimiter".</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TraceData">

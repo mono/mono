@@ -1,6 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Data.Common">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Data.Common" /> namespace contains classes shared by the .NET Framework data providers.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A .NET Framework data provider describes a collection of classes used to access a data source, such as a database, in the managed space. Supported providers include the .NET Framework Data Provider for ODBC, the .NET Framework Data Provider for OLEDB, the .NET Framework Data Provider for Oracle, and the .NET Framework Data Provider for SQL Server. The classes in <see cref="N:System.Data.Common" /> are intended to give developers a way to write ADO.NET code that will work against all .NET Framework data providers.</para>
+      <para>For conceptual information about how to use this namespace when programming with the.NET Framework, see <format type="text/html"><a href="6db08c56-eafe-4d2f-986b-6e4d8522cb9e">Writing Provider Independent Code with ADO.NET</a></format>.</para>
+    </remarks>
   </Docs>
 </Namespace>

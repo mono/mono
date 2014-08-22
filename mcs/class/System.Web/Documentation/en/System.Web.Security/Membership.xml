@@ -99,7 +99,6 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -114,6 +113,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new user to the data store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object for the newly created user.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user name for the new user. </param>
         <param name="password">
@@ -135,7 +138,6 @@
         <Parameter Name="email" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -149,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new user with a specified e-mail address to the data store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object for the newly created user.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user name for the new user. </param>
         <param name="password">
@@ -236,7 +242,6 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -246,6 +251,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deletes a user and any related user data from the database.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user was deleted; otherwise, false.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to delete. </param>
       </Docs>
@@ -264,7 +273,6 @@
         <Parameter Name="deleteAllRelatedData" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -275,6 +283,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deletes a user from the database.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user was deleted; otherwise, false.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to delete.</param>
         <param name="deleteAllRelatedData">
@@ -339,7 +351,6 @@
         <Parameter Name="emailToMatch" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -351,6 +362,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of membership users where the e-mail address contains the specified e-mail address to match.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUserCollection" /> that contains all users that match the <paramref name="emailToMatch" /> parameter.</para>
+          <para>Leading and trailing spaces are trimmed from the <paramref name="emailToMatch" /> parameter value.</para>
+        </returns>
         <param name="emailToMatch">
           <attribution license="cc4" from="Microsoft" modified="false" />The e-mail address to search for.</param>
       </Docs>
@@ -395,7 +411,6 @@
       </Parameters>
       <Docs>
         <param name="nameToMatch">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -408,6 +423,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of membership users where the user name contains the specified user name to match.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUserCollection" /> that contains all users that match the <paramref name="usernameToMatch" /> parameter.</para>
+          <para>Leading and trailing spaces are trimmed from the <paramref name="usernameToMatch" /> parameter value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -450,7 +470,6 @@
         <Parameter Name="numberOfNonAlphanumericCharacters" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -464,6 +483,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a random password of the specified length.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A random password of the specified length.</para>
+        </returns>
         <param name="length">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of characters in the generated password. The length must be between 1 and 128 characters. </param>
         <param name="numberOfNonAlphanumericCharacters">
@@ -481,7 +504,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -492,6 +514,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of all the users in the database.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUserCollection" /> of <see cref="T:System.Web.Security.MembershipUser" /> objects representing all of the users in the database.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -529,7 +555,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -540,6 +565,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the number of users currently accessing an application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of users currently accessing an application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -553,7 +582,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -565,6 +593,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the information from the data source and updates the last-activity date/time stamp for the current logged-on membership user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object representing the current logged-on user.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -580,7 +612,6 @@
         <Parameter Name="userIsOnline" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -591,6 +622,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the information from the data source for the current logged-on membership user. Updates the last-activity date/time stamp for the current logged-on membership user, if specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object representing the current logged-on user.</para>
+        </returns>
         <param name="userIsOnline">
           <attribution license="cc4" from="Microsoft" modified="false" />If true, updates the last-activity date/time stamp for the specified user. </param>
       </Docs>
@@ -608,7 +643,6 @@
         <Parameter Name="providerUserKey" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -619,6 +653,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the information from the data source for the membership user associated with the specified unique identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object representing the user associated with the specified unique identifier.</para>
+        </returns>
         <param name="providerUserKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique user identifier from the membership data source for the user.</param>
       </Docs>
@@ -636,7 +674,6 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -647,6 +684,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the information from the data source for the specified membership user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object representing the specified user. If the <paramref name="username" /> parameter does not correspond to an existing user, this method returns null.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to retrieve.</param>
       </Docs>
@@ -665,7 +706,6 @@
         <Parameter Name="userIsOnline" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -675,6 +715,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the information from the data source for the membership user associated with the specified unique identifier. Updates the last-activity date/time stamp for the user, if specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object representing the user associated with the specified unique identifier.</para>
+        </returns>
         <param name="providerUserKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique user identifier from the membership data source for the user.</param>
         <param name="userIsOnline">
@@ -695,7 +739,6 @@
         <Parameter Name="userIsOnline" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -707,6 +750,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the information from the data source for the specified membership user. Updates the last-activity date/time stamp for the user, if specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object representing the specified user. If the <paramref name="username" /> parameter does not correspond to an existing user, this method returns null.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to retrieve. </param>
         <param name="userIsOnline">
@@ -727,7 +774,6 @@
       </Parameters>
       <Docs>
         <param name="email">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -739,6 +785,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a user name where the e-mail address for the user matches the specified e-mail address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user name where the e-mail address for the user matches the specified e-mail address. If no match is found, null is returned.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1045,7 +1095,6 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1056,6 +1105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies that the supplied user name and password are valid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the supplied user name and password are valid; otherwise, false.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to be validated. </param>
         <param name="password">

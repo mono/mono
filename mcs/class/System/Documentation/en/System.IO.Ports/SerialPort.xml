@@ -816,7 +816,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -828,6 +827,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of serial port names for the current computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of serial port names for the current computer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Handshake">
@@ -1139,7 +1142,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1151,6 +1153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a number of bytes from the <see cref="T:System.IO.Ports.SerialPort" /> input buffer and writes those bytes into a byte array at the specified offset.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes read.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array to write the input to. </param>
         <param name="offset">
@@ -1176,7 +1182,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1189,6 +1194,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a number of characters from the <see cref="T:System.IO.Ports.SerialPort" /> input buffer and writes them into an array of characters at a given offset.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters read.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array to write the input to. </param>
         <param name="offset">
@@ -1246,7 +1255,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1260,6 +1268,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Synchronously reads one byte from the <see cref="T:System.IO.Ports.SerialPort" /> input buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The byte, cast to an <see cref="T:System.Int32" />, or -1 if the end of the stream has been read.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadChar">
@@ -1275,7 +1287,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1289,6 +1300,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Synchronously reads one character from the <see cref="T:System.IO.Ports.SerialPort" /> input buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The character that was read.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadExisting">
@@ -1304,7 +1319,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1318,6 +1332,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads all immediately available bytes, based on the encoding, in both the stream and the input buffer of the <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the stream and the input buffer of the <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadLine">
@@ -1333,7 +1351,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1348,6 +1365,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads up to the <see cref="P:System.IO.Ports.SerialPort.NewLine" /> value in the input buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the input buffer up to the first occurrence of a <see cref="P:System.IO.Ports.SerialPort.NewLine" /> value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadTimeout">
@@ -1404,7 +1425,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1418,6 +1438,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a string up to the specified <paramref name="value" /> in the input buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the input buffer up to the specified <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A value that indicates where the read operation stops. </param>
       </Docs>

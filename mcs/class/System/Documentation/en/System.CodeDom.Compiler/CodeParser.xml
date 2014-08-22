@@ -68,12 +68,15 @@
         <Parameter Name="codeStream" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CodeDom.CodeCompileUnit'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the specified text stream into a <see cref="T:System.CodeDom.CodeCompileUnit" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeCompileUnit" /> containing the code model produced from parsing the code.</para>
+        </returns>
         <param name="codeStream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> that is used to read the code to be parsed. </param>
       </Docs>

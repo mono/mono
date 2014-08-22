@@ -65,7 +65,6 @@
         <Parameter Name="string2" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>By default, the comparison is performed by using <see cref="F:System.Globalization.CompareOptions.None" />. If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
@@ -77,6 +76,48 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two strings. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="string1" /> is less than <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="string1" /> is greater than <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="string1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
         <param name="string2">
@@ -101,7 +142,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
@@ -113,6 +153,48 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two strings using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="string1" /> is less than <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="string1" /> is greater than <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="string1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
         <param name="string2">
@@ -140,7 +222,6 @@
         <Parameter Name="offset2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
@@ -152,6 +233,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the end section of a string with the end section of another string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is less than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is greater than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="string1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
         <param name="offset1">
@@ -182,7 +303,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
@@ -194,6 +314,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the end section of a string with the end section of another string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is less than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is greater than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="string1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
         <param name="offset1">
@@ -227,7 +387,6 @@
         <Parameter Name="length2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
@@ -239,6 +398,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares a section of one string with a section of another string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is less than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is greater than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="string1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
         <param name="offset1">
@@ -275,7 +474,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a security decision depends on a string comparison or a case change, you should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior is consistent regardless of the culture settings of the operating system.</para>
@@ -287,6 +485,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares a section of one string with a section of another string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer indicating the lexical relationship between the two comparands.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Condition </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>zero </para>
+              </term>
+              <description>
+                <para>The two strings are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>less than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is less than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>greater than zero </para>
+              </term>
+              <description>
+                <para>The specified section of <paramref name="string1" /> is greater than the specified section of <paramref name="string2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="string1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first string to compare. </param>
         <param name="offset1">
@@ -319,7 +557,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two <see cref="T:System.Globalization.CompareInfo" /> objects are equal if their <see cref="P:System.Globalization.CompareInfo.LCID" /> and <see cref="P:System.Globalization.CompareInfo.Name" /> properties are equal.</para>
@@ -330,6 +567,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object is equal to the current <see cref="T:System.Globalization.CompareInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is equal to the current <see cref="T:System.Globalization.CompareInfo" />; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.Globalization.CompareInfo" />. </param>
       </Docs>
@@ -366,12 +607,15 @@
         <Parameter Name="culture" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompareInfo'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Globalization.CompareInfo" /> object that is associated with the culture with the specified identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Globalization.CompareInfo" /> object associated with the culture with the specified identifier and using string comparison methods in the current <see cref="T:System.Reflection.Assembly" />.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer representing the culture identifier. </param>
       </Docs>
@@ -392,12 +636,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompareInfo'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Globalization.CompareInfo" /> object that is associated with the culture with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Globalization.CompareInfo" /> object associated with the culture with the specified identifier and using string comparison methods in the current <see cref="T:System.Reflection.Assembly" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing the culture name. </param>
       </Docs>
@@ -419,7 +666,6 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompareInfo'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -432,6 +678,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Globalization.CompareInfo" /> object that is associated with the specified culture and that uses string comparison methods in the specified <see cref="T:System.Reflection.Assembly" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Globalization.CompareInfo" /> object associated with the culture with the specified identifier and using string comparison methods in the current <see cref="T:System.Reflection.Assembly" />.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer representing the culture identifier. </param>
         <param name="assembly">
@@ -455,7 +705,6 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompareInfo'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -467,6 +716,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Globalization.CompareInfo" /> object that is associated with the specified culture and that uses string comparison methods in the specified <see cref="T:System.Reflection.Assembly" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Globalization.CompareInfo" /> object associated with the culture with the specified identifier and using string comparison methods in the current <see cref="T:System.Reflection.Assembly" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing the culture name. </param>
         <param name="assembly">
@@ -487,7 +740,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.GetHashCode" />.</para>
@@ -497,6 +749,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serves as a hash function for the current <see cref="T:System.Globalization.CompareInfo" /> for hashing algorithms and data structures, such as a hash table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Globalization.CompareInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSortKey">
@@ -515,7 +771,6 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SortKey'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Each character in a string is given several categories of sort weights, including script, alphabetic, case, and diacritic weights. A sort key is the repository of these weights for a particular string. For example, a sort key might contain a string of alphabetic weights, followed by a string of case weights, and so on. The <see cref="Overload:System.Globalization.CompareInfo.GetSortKey" /> method is equivalent to the Windows API method LCMapString with the LCMAP_SORTKEY flag.</para>
@@ -524,6 +779,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the sort key for the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.SortKey" /> object that contains the sort key for the specified string.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string for which a <see cref="T:System.Globalization.SortKey" /> object is obtained. </param>
       </Docs>
@@ -545,7 +804,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SortKey'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Each character in a string is given several categories of sort weights, including script, alphabetic, case, and diacritic weights. A sort key is the repository of these weights for a particular string. For example, a sort key might contain a string of alphabetic weights, followed by a string of case weights, and so on. The <see cref="Overload:System.Globalization.CompareInfo.GetSortKey" /> method is equivalent to the Windows API method LCMapString with the LCMAP_SORTKEY flag.</para>
@@ -554,6 +812,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Globalization.SortKey" /> object for the specified string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.SortKey" /> object that contains the sort key for the specified string.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string for which a <see cref="T:System.Globalization.SortKey" /> object is obtained. </param>
         <param name="options">
@@ -577,7 +839,6 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method searches the source string from the beginning of the string to the end of the string.</para>
@@ -590,6 +851,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the first occurrence within the entire source string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within <paramref name="source" />; otherwise, -1. Returns 0 (zero) if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -613,7 +878,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at the beginning of the string and ending at the end of the string.</para>
@@ -626,6 +890,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the entire source string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within <paramref name="source" />; otherwise, -1. Returns 0 (zero) if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -650,7 +918,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at the beginning of the string and ending at the end of the string.</para>
@@ -664,6 +931,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the first occurrence within the entire source string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within <paramref name="source" />, using the specified comparison options; otherwise, -1. Returns 0 (zero) if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -690,7 +961,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at the end of the string.</para>
@@ -703,6 +973,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the first occurrence within the section of the source string that extends from the specified index to the end of the string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from <paramref name="startIndex" /> to the end of <paramref name="source" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -729,7 +1003,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at the beginning of the string and ending at the end of the string.</para>
@@ -743,6 +1016,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the entire source string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within <paramref name="source" />, using the specified comparison options; otherwise, -1. Returns 0 (zero) if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -769,7 +1046,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at the end of the string.</para>
@@ -782,6 +1058,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the section of the source string that extends from the specified index to the end of the string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from <paramref name="startIndex" /> to the end of <paramref name="source" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -809,7 +1089,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at the end of the string.</para>
@@ -823,6 +1102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the first occurrence within the section of the source string that extends from the specified index to the end of the string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from <paramref name="startIndex" /> to the end of <paramref name="source" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -852,7 +1135,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> + <paramref name="count" /> - 1.</para>
@@ -865,6 +1147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the first occurrence within the section of the source string that starts at the specified index and contains the specified number of elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that starts at <paramref name="startIndex" /> and contains the number of elements specified by <paramref name="count" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -894,7 +1180,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at the end of the string.</para>
@@ -908,6 +1193,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the section of the source string that extends from the specified index to the end of the string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from <paramref name="startIndex" /> to the end of <paramref name="source" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -937,7 +1226,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> + <paramref name="count" /> - 1.</para>
@@ -950,6 +1238,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the section of the source string that starts at the specified index and contains the specified number of elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that starts at <paramref name="startIndex" /> and contains the number of elements specified by <paramref name="count" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -980,7 +1272,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> + <paramref name="count" /> - 1.</para>
@@ -994,6 +1285,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the first occurrence within the section of the source string that starts at the specified index and contains the specified number of elements using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that starts at <paramref name="startIndex" /> and contains the number of elements specified by <paramref name="count" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1026,7 +1321,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched forward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> + <paramref name="count" /> - 1.</para>
@@ -1040,6 +1334,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the first occurrence within the section of the source string that starts at the specified index and contains the specified number of elements using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that starts at <paramref name="startIndex" /> and contains the number of elements specified by <paramref name="count" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1069,7 +1367,6 @@
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Every string starts and ends with an empty substring (""); therefore, if <paramref name="prefix" /> is an empty string, this method returns true.</para>
@@ -1081,6 +1378,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified source string starts with the specified prefix.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the length of <paramref name="prefix" /> is less than or equal to the length of <paramref name="source" /> and <paramref name="source" /> starts with <paramref name="prefix" />; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search in. </param>
         <param name="prefix">
@@ -1105,7 +1406,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Every string starts and ends with an empty substring (""); therefore, if <paramref name="prefix" /> is an empty string, this method returns true.</para>
@@ -1118,6 +1418,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified source string starts with the specified prefix using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the length of <paramref name="prefix" /> is less than or equal to the length of <paramref name="source" /> and <paramref name="source" /> starts with <paramref name="prefix" />; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search in. </param>
         <param name="prefix">
@@ -1146,7 +1450,6 @@
         <Parameter Name="ch" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1156,6 +1459,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified Unicode character is sortable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="ch" /> parameter is sortable; otherwise, false.</para>
+        </returns>
         <param name="ch">
           <attribution license="cc4" from="Microsoft" modified="false" />A Unicode character.</param>
       </Docs>
@@ -1180,7 +1487,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1190,6 +1496,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified Unicode string is sortable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="str" /> parameter is not an empty string ("") and all the Unicode characters in <paramref name="str" /> are sortable; otherwise, false.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />A string of zero or more Unicode characters.</param>
       </Docs>
@@ -1211,7 +1521,6 @@
         <Parameter Name="suffix" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Every string starts and ends with an empty substring (""); therefore, if <paramref name="suffix" /> is an empty string, this method returns true.</para>
@@ -1223,6 +1532,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified source string ends with the specified suffix.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the length of <paramref name="suffix" /> is less than or equal to the length of <paramref name="source" /> and <paramref name="source" /> ends with <paramref name="suffix" />; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search in. </param>
         <param name="suffix">
@@ -1247,7 +1560,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Every string starts and ends with an empty substring (""); therefore, if <paramref name="suffix" /> is an empty string, this method returns true.</para>
@@ -1260,6 +1572,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified source string ends with the specified suffix using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the length of <paramref name="suffix" /> is less than or equal to the length of <paramref name="source" /> and <paramref name="source" /> ends with <paramref name="suffix" />; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search in. </param>
         <param name="suffix">
@@ -1285,7 +1601,6 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at the end of the string and ending at the beginning of the string.</para>
@@ -1298,6 +1613,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the last occurrence within the entire source string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within <paramref name="source" />; otherwise, -1.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1321,7 +1640,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at the end of the string and ending at the beginning of the string.</para>
@@ -1334,6 +1652,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the entire source string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within <paramref name="source" />; otherwise, -1.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1358,7 +1680,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at the end of the string and ending at the beginning of the string.</para>
@@ -1372,6 +1693,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the last occurrence within the entire source string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within <paramref name="source" />, using the specified comparison options; otherwise, -1.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1398,7 +1723,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at the beginning of the string.</para>
@@ -1411,6 +1735,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the last occurrence within the section of the source string that extends from the beginning of the string to the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from the beginning of <paramref name="source" /> to <paramref name="startIndex" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1437,7 +1765,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at the end of the string and ending at the beginning of the string.</para>
@@ -1451,6 +1778,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the entire source string using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within <paramref name="source" />, using the specified comparison options; otherwise, -1.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1477,7 +1808,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at the beginning of the string.</para>
@@ -1490,6 +1820,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the section of the source string that extends from the beginning of the string to the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from the beginning of <paramref name="source" /> to <paramref name="startIndex" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1517,7 +1851,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at the beginning of the string.</para>
@@ -1531,6 +1864,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the last occurrence within the section of the source string that extends from the beginning of the string to the specified index using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from the beginning of <paramref name="source" /> to <paramref name="startIndex" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1560,7 +1897,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> - <paramref name="count" /> + 1.</para>
@@ -1573,6 +1909,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the last occurrence within the section of the source string that contains the specified number of elements and ends at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that contains the number of elements specified by <paramref name="count" /> and that ends at <paramref name="startIndex" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1602,7 +1942,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at the beginning of the string.</para>
@@ -1616,6 +1955,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the section of the source string that extends from the beginning of the string to the specified index using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that extends from the beginning of <paramref name="source" /> to <paramref name="startIndex" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1645,7 +1988,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> - <paramref name="count" /> + 1.</para>
@@ -1658,6 +2000,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the section of the source string that contains the specified number of elements and ends at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that contains the number of elements specified by <paramref name="count" /> and that ends at <paramref name="startIndex" />; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1688,7 +2034,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> - <paramref name="count" /> + 1.</para>
@@ -1702,6 +2047,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified character and returns the zero-based index of the last occurrence within the section of the source string that contains the specified number of elements and ends at the specified index using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that contains the number of elements specified by <paramref name="count" /> and that ends at <paramref name="startIndex" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1734,7 +2083,6 @@
         <Parameter Name="options" Type="System.Globalization.CompareOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source string is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> - <paramref name="count" /> + 1.</para>
@@ -1748,6 +2096,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified substring and returns the zero-based index of the last occurrence within the section of the source string that contains the specified number of elements and ends at the specified index using the specified <see cref="T:System.Globalization.CompareOptions" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" />, if found, within the section of <paramref name="source" /> that contains the number of elements specified by <paramref name="count" /> and that ends at <paramref name="startIndex" />, using the specified comparison options; otherwise, -1. Returns <paramref name="startIndex" /> if <paramref name="value" /> is an ignorable character. </para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
         <param name="value">
@@ -1851,7 +2203,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides the <see cref="M:System.Object.ToString" /> method. It returns a string that consists of the class name and the value of the instance <see cref="P:System.Globalization.CompareInfo.Name" /> property, separated by a hyphen. </para>
@@ -1860,6 +2211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current <see cref="T:System.Globalization.CompareInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Globalization.CompareInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

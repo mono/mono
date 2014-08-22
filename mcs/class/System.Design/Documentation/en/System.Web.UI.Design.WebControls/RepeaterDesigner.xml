@@ -113,12 +113,15 @@
       </Parameters>
       <Docs>
         <param name="minimum_rows">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns design-time sample data based on the <see cref="M:System.Web.UI.Design.WebControls.RepeaterDesigner.GetResolvedSelectedDataSource" /> method and using the specified number of rows.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> object containing sample data for use at design time.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -138,12 +141,15 @@
       <Docs>
         <param name="selected_data_source">To be added.</param>
         <param name="minimum_rows">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns design-time sample data based on the provided data and using the specified number of rows.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> object containing sample data for use at design time.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,12 +164,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the HTML markup to be used for the design-time representation of the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Design-time HTML markup.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -222,7 +231,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.WebControls.RepeaterDesigner.GetResolvedSelectedDataSource" /> method uses the <see cref="M:System.Web.UI.Design.WebControls.RepeaterDesigner.GetSelectedDataSource" /> method to construct a data source from the object that is specified by the <see cref="P:System.Web.UI.Design.WebControls.RepeaterDesigner.DataSource" /> and <see cref="P:System.Web.UI.Design.WebControls.RepeaterDesigner.DataMember" /> properties.</para>
@@ -231,6 +239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the selected data member from the selected data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> that contains a collection of values used to supply design-time data. The default value is null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -245,7 +257,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.WebControls.RepeaterDesigner.GetSelectedDataSource" /> method uses the <see cref="M:System.Web.UI.Design.DesignTimeData.GetSelectedDataSource(System.ComponentModel.IComponent,System.String)" /> method to construct a data source from the object that is specified by the <see cref="P:System.Web.UI.Design.WebControls.RepeaterDesigner.DataSource" /> property.</para>
@@ -254,6 +265,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the selected data source component from the container of the associated <see cref="T:System.Web.UI.WebControls.Repeater" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The selected data source; null if a data source is not found or if a data source with the selected name does not exist.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -30,7 +30,6 @@
       </Parameters>
       <Docs>
         <param name="serializationState">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -40,6 +39,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes an object state graph from its serialized string form.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the state of an ASP.NET server control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,7 +58,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -65,6 +67,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serializes ASP.NET Web server control state to string form.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents a Web server control's view state. </para>
+        </returns>
         <param name="state">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that represents the view state of the Web server control to serialize to string form.</param>
       </Docs>

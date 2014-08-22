@@ -116,12 +116,15 @@
       </Parameters>
       <Docs>
         <param name="result">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if a specified <see cref="T:System.DirectoryServices.SearchResult" /> object is in this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified property belongs to this collection; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -134,12 +137,15 @@
         <Parameter Name="result" Type="System.DirectoryServices.SearchResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the index of the first occurrence of the specified <see cref="T:System.DirectoryServices.SearchResult" /> object in this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first matching object. Returns -1 if no member of this collection is identical to the <see cref="T:System.DirectoryServices.SearchResult" /> object.</para>
+        </returns>
         <param name="result">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DirectoryServices.SearchResult" /> object to search for in this collection.</param>
       </Docs>
@@ -152,12 +158,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that you can use to iterate through this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that you can use to iterate through this collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">

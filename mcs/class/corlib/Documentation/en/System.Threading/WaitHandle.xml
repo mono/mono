@@ -278,7 +278,6 @@
         <Parameter Name="toWaitOn" Type="System.Threading.WaitHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -288,6 +287,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Signals one <see cref="T:System.Threading.WaitHandle" /> and waits on another.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both the signal and the wait complete successfully; if the wait does not complete, the method does not return.</para>
+        </returns>
         <param name="toSignal">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to signal.</param>
         <param name="toWaitOn">
@@ -312,7 +315,6 @@
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -329,6 +331,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Signals one <see cref="T:System.Threading.WaitHandle" /> and waits on another, specifying a time-out interval as a 32-bit signed integer and specifying whether to exit the synchronization domain for the context before entering the wait.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both the signal and the wait completed successfully, or false if the signal completed but the wait timed out.</para>
+        </returns>
         <param name="toSignal">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to signal.</param>
         <param name="toWaitOn">
@@ -357,7 +363,6 @@
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -375,6 +380,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Signals one <see cref="T:System.Threading.WaitHandle" /> and waits on another, specifying the time-out interval as a <see cref="T:System.TimeSpan" /> and specifying whether to exit the synchronization domain for the context before entering the wait.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both the signal and the wait completed successfully, or false if the signal completed but the wait timed out.</para>
+        </returns>
         <param name="toSignal">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to signal.</param>
         <param name="toWaitOn">
@@ -424,13 +433,6 @@
         <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns <see langword="true" /> when
-   every element in <paramref name="waitHandles" /> has received a
-   signal. If the current
-   thread receives a request to abort before the signals are received, this method
-   returns <see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="waitHandles " />is <see langword="null" /> or one or more elements in the <paramref name="waitHandles " /> array is <see langword="null" />.</exception>
         <exception cref="T:System.DuplicateWaitObjectException">
@@ -450,6 +452,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for all the elements in the specified array to receive a signal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true when every element in <paramref name="waitHandles" /> has received a signal; otherwise the method never returns.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. This array cannot contain multiple references to the same object. </param>
       </Docs>
@@ -471,7 +477,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="millisecondsTimeout" /> is zero, the method does not block. It tests the state of the wait handles and returns immediately. </para>
@@ -485,6 +490,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for all the elements in the specified array to receive a signal, using an <see cref="T:System.Int32" /> value to specify the time interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true when every element in <paramref name="waitHandles" /> has received a signal; otherwise, false.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. This array cannot contain multiple references to the same object (duplicates). </param>
         <param name="millisecondsTimeout">
@@ -507,7 +516,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="timeout" /> is zero, the method does not block. It tests the state of the wait handles and returns immediately. </para>
@@ -522,6 +530,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for all the elements in the specified array to receive a signal, using a <see cref="T:System.TimeSpan" /> value to specify the time interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true when every element in <paramref name="waitHandles" /> has received a signal; otherwise, false.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. This array cannot contain multiple references to the same object. </param>
         <param name="timeout">
@@ -546,7 +558,6 @@
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="millisecondsTimeout" /> is zero, the method does not block. It tests the state of the wait handles and returns immediately. </para>
@@ -567,6 +578,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for all the elements in the specified array to receive a signal, using an <see cref="T:System.Int32" /> value to specify the time interval and specifying whether to exit the synchronization domain before the wait.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true when every element in <paramref name="waitHandles" /> has received a signal; otherwise, false.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. This array cannot contain multiple references to the same object (duplicates). </param>
         <param name="millisecondsTimeout">
@@ -593,7 +608,6 @@
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="timeout" /> is zero, the method does not block. It tests the state of the wait handles and returns immediately. </para>
@@ -615,6 +629,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for all the elements in the specified array to receive a signal, using a <see cref="T:System.TimeSpan" /> value to specify the time interval, and specifying whether to exit the synchronization domain before the wait.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true when every element in <paramref name="waitHandles" /> has received a signal; otherwise false.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. This array cannot contain multiple references to the same object. </param>
         <param name="timeout">
@@ -645,10 +663,6 @@
         <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns a <see cref="T:System.Int32" /> set to the index of
-   the element in <paramref name="waitHandles" /> that received a signal.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="waitHandles " />is <see langword="null" /> or one or more elements in the <paramref name="waitHandles " /> array is <see langword="null" />.</exception>
         <exception cref="T:System.DuplicateWaitObjectException">
@@ -669,6 +683,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for any of the elements in the specified array to receive a signal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array index of the object that satisfied the wait.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. </param>
       </Docs>
@@ -695,7 +713,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="millisecondsTimeout" /> is zero, the method does not block. It tests the state of the wait handles and returns immediately. </para>
@@ -707,6 +724,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for any of the elements in the specified array to receive a signal, using a 32-bit signed integer to specify the time interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array index of the object that satisfied the wait, or <see cref="F:System.Threading.WaitHandle.WaitTimeout" /> if no object satisfied the wait and a time interval equivalent to <paramref name="millisecondsTimeout" /> has passed.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. </param>
         <param name="millisecondsTimeout">
@@ -734,7 +755,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="timeout" /> is zero, the method does not block. It tests the state of the wait handles and returns immediately. </para>
@@ -747,6 +767,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for any of the elements in the specified array to receive a signal, using a <see cref="T:System.TimeSpan" /> to specify the time interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array index of the object that satisfied the wait, or <see cref="F:System.Threading.WaitHandle.WaitTimeout" /> if no object satisfied the wait and a time interval equivalent to <paramref name="timeout" /> has passed.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. </param>
         <param name="timeout">
@@ -776,7 +800,6 @@
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="millisecondsTimeout" /> is zero, the method does not block. It tests the state of the wait handles and returns immediately. </para>
@@ -798,6 +821,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for any of the elements in the specified array to receive a signal, using a 32-bit signed integer to specify the time interval, and specifying whether to exit the synchronization domain before the wait.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array index of the object that satisfied the wait, or <see cref="F:System.Threading.WaitHandle.WaitTimeout" /> if no object satisfied the wait and a time interval equivalent to <paramref name="millisecondsTimeout" /> has passed.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. </param>
         <param name="millisecondsTimeout">
@@ -829,7 +856,6 @@
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="timeout" /> is zero, the method does not block. It tests the state of the wait handles and returns immediately. </para>
@@ -852,6 +878,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for any of the elements in the specified array to receive a signal, using a <see cref="T:System.TimeSpan" /> to specify the time interval and specifying whether to exit the synchronization domain before the wait.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array index of the object that satisfied the wait, or <see cref="F:System.Threading.WaitHandle.WaitTimeout" /> if no object satisfied the wait and a time interval equivalent to <paramref name="timeout" /> has passed.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />A WaitHandle array containing the objects for which the current instance will wait. </param>
         <param name="timeout">
@@ -875,11 +905,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>Returns <see langword="true" />
-when the
-current instance receives a signal.</para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException">The current instance has already been disposed.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -893,6 +918,10 @@ current instance receives a signal.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the current thread until the current <see cref="T:System.Threading.WaitHandle" /> receives a signal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance receives a signal. If the current instance is never signaled, <see cref="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" /> never returns.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -911,7 +940,6 @@ current instance receives a signal.</para>
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="millisecondsTimeout" /> is zero, the method does not block. It tests the state of the wait handle and returns immediately. </para>
@@ -923,6 +951,10 @@ current instance receives a signal.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the current thread until the current <see cref="T:System.Threading.WaitHandle" /> receives a signal, using a 32-bit signed integer to specify the time interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance receives a signal; otherwise, false.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely. </param>
       </Docs>
@@ -942,7 +974,6 @@ current instance receives a signal.</para>
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="timeout" /> is zero, the method does not block. It tests the state of the wait handle and returns immediately. </para>
@@ -955,6 +986,10 @@ current instance receives a signal.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the current thread until the current instance receives a signal, using a <see cref="T:System.TimeSpan" /> to specify the time interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance receives a signal; otherwise, false.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> that represents the number of milliseconds to wait, or a <see cref="T:System.TimeSpan" /> that represents -1 milliseconds to wait indefinitely. </param>
       </Docs>
@@ -976,7 +1011,6 @@ current instance receives a signal.</para>
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="millisecondsTimeout" /> is zero, the method does not block. It tests the state of the wait handle and returns immediately. </para>
@@ -995,6 +1029,10 @@ current instance receives a signal.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the current thread until the current <see cref="T:System.Threading.WaitHandle" /> receives a signal, using a 32-bit signed integer to specify the time interval and specifying whether to exit the synchronization domain before the wait.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance receives a signal; otherwise, false.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely. </param>
         <param name="exitContext">
@@ -1018,7 +1056,6 @@ current instance receives a signal.</para>
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="timeout" /> is zero, the method does not block. It tests the state of the wait handle and returns immediately. </para>
@@ -1038,6 +1075,10 @@ current instance receives a signal.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the current thread until the current instance receives a signal, using a <see cref="T:System.TimeSpan" /> to specify the time interval and specifying whether to exit the synchronization domain before the wait.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance receives a signal; otherwise, false.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> that represents the number of milliseconds to wait, or a <see cref="T:System.TimeSpan" /> that represents -1 milliseconds to wait indefinitely. </param>
         <param name="exitContext">

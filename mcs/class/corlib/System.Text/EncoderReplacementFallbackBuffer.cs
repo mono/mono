@@ -69,7 +69,7 @@ namespace System.Text
 		private bool Fallback (int index)
 		{
 			if (fallback_assigned && Remaining != 0)
-				throw new ArgumentException ("Reentrant Fallback method invocation occured. It might be because either this FallbackBuffer is incorrectly shared by multiple threads, invoked inside Encoding recursively, or Reset invocation is forgotten.");
+				throw new ArgumentException ("Reentrant Fallback method invocation occurred. It might be because either this FallbackBuffer is incorrectly shared by multiple threads, invoked inside Encoding recursively, or Reset invocation is forgotten.");
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index");
 			fallback_assigned = true;

@@ -126,12 +126,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISurrogateSelector'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the next selector on the chain of selectors.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next <see cref="T:System.Runtime.Serialization.ISurrogateSelector" /> on the chain of selectors.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSurrogate">

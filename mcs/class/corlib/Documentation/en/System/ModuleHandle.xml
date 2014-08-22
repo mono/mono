@@ -68,13 +68,16 @@
         <Parameter Name="handle" Type="System.ModuleHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Boolean" /> value indicating whether the specified <see cref="T:System.ModuleHandle" /> structure is equal to the current <see cref="T:System.ModuleHandle" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="handle" /> is equal to the current <see cref="T:System.ModuleHandle" /> structure; otherwise false.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ModuleHandle" /> structure to be compared with the current <see cref="T:System.ModuleHandle" />.</param>
       </Docs>
@@ -99,13 +102,16 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Boolean" /> value indicating whether the specified object is a <see cref="T:System.ModuleHandle" /> structure, and equal to the current <see cref="T:System.ModuleHandle" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is a <see cref="T:System.ModuleHandle" /> structure, and is equal to the current <see cref="T:System.ModuleHandle" /> structure; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to be compared with the current <see cref="T:System.ModuleHandle" /> structure.</param>
       </Docs>
@@ -144,13 +150,16 @@
         <Parameter Name="fieldToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a runtime handle for the field identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeFieldHandle" /> for the field identified by <paramref name="fieldToken" />.</para>
+        </returns>
         <param name="fieldToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
       </Docs>
@@ -170,13 +179,16 @@
         <Parameter Name="methodToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a runtime method handle for the method or constructor identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeMethodHandle" /> for the method or constructor identified by <paramref name="methodToken" />.</para>
+        </returns>
         <param name="methodToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
       </Docs>
@@ -196,13 +208,16 @@
         <Parameter Name="typeToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a runtime type handle for the type identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeTypeHandle" /> for the type identified by <paramref name="typeToken" />.</para>
+        </returns>
         <param name="typeToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
       </Docs>
@@ -248,12 +263,15 @@
         <Parameter Name="right" Type="System.ModuleHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two <see cref="T:System.ModuleHandle" /> structures are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ModuleHandle" /> structures are equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ModuleHandle" /> structure to the left of the equality operator.</param>
         <param name="right">
@@ -276,12 +294,15 @@
         <Parameter Name="right" Type="System.ModuleHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two <see cref="T:System.ModuleHandle" /> structures are unequal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ModuleHandle" /> structures are unequal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ModuleHandle" /> structure to the left of the inequality operator.</param>
         <param name="right">
@@ -303,7 +324,6 @@
         <Parameter Name="fieldToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -316,6 +336,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a runtime handle for the field identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeFieldHandle" /> for the field identified by <paramref name="fieldToken" />.</para>
+        </returns>
         <param name="fieldToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
       </Docs>
@@ -337,7 +361,6 @@
         <Parameter Name="methodInstantiationContext" Type="System.RuntimeTypeHandle[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -348,6 +371,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a runtime field handle for the field identified by the specified metadata token, specifying the generic type arguments of the type and method where the token is in scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeFieldHandle" /> for the field identified by <paramref name="fieldToken" />.</para>
+        </returns>
         <param name="fieldToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
         <param name="typeInstantiationContext">
@@ -371,7 +398,6 @@
         <Parameter Name="methodToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -384,6 +410,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a runtime method handle for the method or constructor identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeMethodHandle" /> for the method or constructor identified by <paramref name="methodToken" />.</para>
+        </returns>
         <param name="methodToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
       </Docs>
@@ -405,7 +435,6 @@
         <Parameter Name="methodInstantiationContext" Type="System.RuntimeTypeHandle[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -416,6 +445,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a runtime method handle for the method or constructor identified by the specified metadata token, specifying the generic type arguments of the type and method where the token is in scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeMethodHandle" /> for the method or constructor identified by <paramref name="methodToken" />.</para>
+        </returns>
         <param name="methodToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
         <param name="typeInstantiationContext">
@@ -439,7 +472,6 @@
         <Parameter Name="typeToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -452,6 +484,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a runtime type handle for the type identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeTypeHandle" /> for the type identified by <paramref name="typeToken" />.</para>
+        </returns>
         <param name="typeToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
       </Docs>
@@ -473,7 +509,6 @@
         <Parameter Name="methodInstantiationContext" Type="System.RuntimeTypeHandle[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -484,6 +519,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a runtime type handle for the type identified by the specified metadata token, specifying the generic type arguments of the type and method where the token is in scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeTypeHandle" /> for the type identified by <paramref name="typeToken" />.</para>
+        </returns>
         <param name="typeToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
         <param name="typeInstantiationContext">

@@ -165,7 +165,6 @@
         <Parameter Name="atomicComposition" Type="System.ComponentModel.Composition.Hosting.AtomicComposition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implementers should not treat cardinality-related mismatches as errors and should not throw exceptions for cardinality-related mismatches. For example, if the import requests exactly one export and the provider has no matching exports or more than one, the <see cref="M:System.ComponentModel.Composition.Hosting.ComposablePartExportProvider.GetExportsCore(System.ComponentModel.Composition.Primitives.ImportDefinition,System.ComponentModel.Composition.Hosting.AtomicComposition)" /> method should return an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection of <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects.</para>
@@ -174,6 +173,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of all exports in this provider that match the conditions of the specified import.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all exports in this provider that match the specified conditions.</para>
+        </returns>
         <param name="definition">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Composition.Primitives.ImportDefinition" /> that defines the conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> to get.</param>
         <param name="atomicComposition">

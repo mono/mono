@@ -1343,9 +1343,6 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 
 		if (virtual) {
 			/* Same as in mono_emit_method_call_full () */
-#ifndef MONO_ARCH_HAVE_IMT
-			NOT_IMPLEMENTED;
-#endif
 			if ((method->klass->parent == mono_defaults.multicastdelegate_class) && (!strcmp (method->name, "Invoke"))) {
 				/* See mono_emit_method_call_full () */
 				/* The gsharedvt trampoline will recognize this constant */
@@ -2689,7 +2686,9 @@ mini_method_get_rgctx (MonoMethod *m)
 gboolean
 mini_type_is_vtype (MonoCompile *cfg, MonoType *t)
 {
-    return MONO_TYPE_ISSTRUCT (t) || mini_is_gsharedvt_variable_type (cfg, t);
+	t = mini_native_type_replace_type (t);
+
+	return MONO_TYPE_ISSTRUCT (t) || mini_is_gsharedvt_variable_type (cfg, t);
 }
 
 gboolean

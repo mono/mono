@@ -90,7 +90,6 @@
         <Parameter Name="isLastVisibleRow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -100,6 +99,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Modifies an input row header border style according to the specified criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that represents the new border style used.</para>
+        </returns>
         <param name="dataGridViewAdvancedBorderStyleInput">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that represents the row header border style to modify. </param>
         <param name="dataGridViewAdvancedBorderStylePlaceholder">
@@ -160,7 +163,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -171,6 +173,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -214,7 +220,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -227,6 +232,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessible object for the <see cref="T:System.Windows.Forms.DataGridViewRow" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DataGridViewRow.DataGridViewRowAccessibleObject" /> for the <see cref="T:System.Windows.Forms.DataGridViewRow" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -302,7 +311,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -312,6 +320,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Constructs a new collection of cells based on this row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.Windows.Forms.DataGridViewCellCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -560,7 +572,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Pass the <see cref="M:System.Windows.Forms.DataGridViewRow.GetContextMenuStrip(System.Int32)" /> method the indexer you used to retrieve the <see cref="T:System.Windows.Forms.DataGridViewRow" />. Do not use the <see cref="P:System.Windows.Forms.DataGridViewBand.Index" /> property for the <paramref name="rowIndex" /> parameter. If the row is shared, <see cref="P:System.Windows.Forms.DataGridViewBand.Index" /> is -1, which is an invalid value for <paramref name="rowIndex" />.</para>
@@ -569,6 +580,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the shortcut menu for the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.ContextMenuStrip" /> that belongs to the <see cref="T:System.Windows.Forms.DataGridViewRow" /> at the specified index.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the current row.</param>
       </Docs>
@@ -583,7 +598,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -593,6 +607,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the error text for the row at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that describes the error of the row at the specified index.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the row that contains the error.</param>
       </Docs>
@@ -612,7 +630,6 @@
         <Parameter Name="fixedWidth" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -625,6 +642,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the ideal height of the specified row based on the specified criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ideal height of the row, in pixels.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the row whose preferred height is calculated.</param>
         <param name="autoSizeRowMode">
@@ -646,7 +667,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -656,6 +676,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the current state of the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values indicating the row state.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the row.</param>
       </Docs>
@@ -1084,7 +1108,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="values" /> parameter represents a variable number of arguments used to populate cell values in the row. These values can be passed to this method as multiple, individual arguments or as members of a single <see cref="T:System.Array" />. Because the values are expected to be instances of type <see cref="T:System.Object" />, however, if you pass in an array of value-type values (such as <see cref="T:System.Int32" /> values), this method will treat the array as a single object and assign it to a single cell. To avoid this behavior, you must cast a value-type array to an <see cref="T:System.Object" /> array or pass in multiple values as multiple arguments.</para>
@@ -1095,6 +1118,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the values of the row's cells.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all values have been set; otherwise, false.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />One or more objects that represent the cell values in the row.</param>
       </Docs>
@@ -1129,7 +1156,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1139,6 +1165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a human-readable string that describes the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that describes this row.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

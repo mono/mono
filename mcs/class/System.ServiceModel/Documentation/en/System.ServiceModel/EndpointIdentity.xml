@@ -51,7 +51,6 @@
         <Parameter Name="dnsName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A secure indigo2 client that connects to an endpoint with this identity verifies that the claims presented by the server contain a DNS claim that represents this identity.</para>
@@ -61,6 +60,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a DNS identity with a specified DNS name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A DNS <see cref="T:System.ServiceModel.EndpointIdentity" /> associated with the specified <paramref name="dnsName" />.</para>
+        </returns>
         <param name="dnsName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name for the DNS identity.</param>
       </Docs>
@@ -79,7 +82,6 @@
         <Parameter Name="identity" Type="System.IdentityModel.Claims.Claim" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A secure indigo2 client that connects to an endpoint with this identity verifies that the claims presented by the server contain the identity claim used to construct this identity.</para>
@@ -89,6 +91,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an identity with the specified claim.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.EndpointIdentity" /> associated with the specified <paramref name="identity" />.</para>
+        </returns>
         <param name="identity">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IdentityModel.Claims.Claim" /> used to create the new identity.</param>
       </Docs>
@@ -107,7 +113,6 @@
         <Parameter Name="certificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate2" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A secure indigo2 client that connects to an endpoint with this identity verifies that the claims presented by the server contain a claim that contains the RSA public key obtained from the certificate used to construct this identity.</para>
@@ -117,6 +122,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an RSA identity with the specified X.509 certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An RSA <see cref="T:System.ServiceModel.EndpointIdentity" /> associated with the specified <paramref name="certificate" />.</para>
+        </returns>
         <param name="certificate">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" />  that contains the certificate for the RSA identity.</param>
       </Docs>
@@ -135,7 +144,6 @@
         <Parameter Name="publicKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A secure indigo2 client that connects to an endpoint with this identity verifies that the claims presented by the server contain a claim that contains the RSA public key used to construct this identity.</para>
@@ -145,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an RSA identity with the specified public key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An RSA <see cref="T:System.ServiceModel.EndpointIdentity" /> associated with the specified <paramref name="publicKey" />.</para>
+        </returns>
         <param name="publicKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The public key for the RSA identity.</param>
       </Docs>
@@ -163,7 +175,6 @@
         <Parameter Name="spnName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A secure indigo2 client that connects to an endpoint with this identity uses the SPN when performing SSPI authentication with the endpoint.</para>
@@ -174,6 +185,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a server principal name (SPN) identity with a specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An SPN <see cref="T:System.ServiceModel.EndpointIdentity" /> associated with the specified <paramref name="spnName" />.</para>
+        </returns>
         <param name="spnName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name for the SPN identity.</param>
       </Docs>
@@ -192,7 +207,6 @@
         <Parameter Name="upnName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A secure indigo2 client that connects to an endpoint with this identity uses the UPN when performing SSPI authentication with the endpoint.</para>
@@ -203,6 +217,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a user principal name (UPN) identity with a specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A UPN <see cref="T:System.ServiceModel.EndpointIdentity" /> associated with the specified <paramref name="upnName" />.</para>
+        </returns>
         <param name="upnName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name for the UPN identity.</param>
       </Docs>
@@ -221,7 +239,6 @@
         <Parameter Name="certificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate2" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A secure indigo2 client that connects to an endpoint with this identity verifies that the claims presented by the server contain the claim that contains the thumbprint of the certificate used to construct this identity.</para>
@@ -231,6 +248,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an X509Certificate identity with the specified certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An X509Certificate <see cref="T:System.ServiceModel.EndpointIdentity" /> associated with the specified <paramref name="certificate" />.</para>
+        </returns>
         <param name="certificate">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" />  that contains the certificate for the identity.</param>
       </Docs>
@@ -250,7 +271,6 @@
         <Parameter Name="supportingCertificates" Type="System.Security.Cryptography.X509Certificates.X509Certificate2Collection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method creates an instance of <see cref="T:System.ServiceModel.X509CertificateEndpointIdentity" /> by calling its constructor, <see cref="M:System.ServiceModel.X509CertificateEndpointIdentity.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.X509Certificates.X509Certificate2Collection)" />, using <paramref name="primaryCertificate" /> and <paramref name="supportingCertificates" /> as input parameters.</para>
@@ -259,6 +279,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an X509Certificate identity with the specified primary and supporting certificates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A secure indigo2 client that connects to an endpoint with this identity verifies that the claims presented by the server contain the claim that contains the thumbprint of the certificate used to construct this identity.</para>
+          <para>An X509Certificate <see cref="T:System.ServiceModel.EndpointIdentity" /> associated with the specified <paramref name="primaryCertificate" /> and<paramref name=" supportingCertificates." /></para>
+        </returns>
         <param name="primaryCertificate">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> that contains the primary certificate for the identity.</param>
         <param name="supportingCertificates">
@@ -280,12 +305,15 @@
       </Parameters>
       <Docs>
         <param name="other">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that determines whether a specified object is equal to the current identity object or if they have equal security properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object <paramref name="obj" /> is equivalent to the current identity or contains the same security properties; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -300,12 +328,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a hash code for the current instance of the identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the current identity.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IdentityClaim">
@@ -372,8 +403,11 @@
       <Docs>
         <param name="claim">To be added.</param>
         <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an <see cref="T:System.ServiceModel.EndpointIdentity" /> with the specified claim and an interface and compares equality.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -388,12 +422,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> of the form "identity(string)" where string = <see cref="P:System.ServiceModel.EndpointIdentity.IdentityClaim" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

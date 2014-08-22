@@ -71,12 +71,15 @@
         <Parameter Name="delegateType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a delegate of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type, or null if no such delegate can be created.</para>
+        </returns>
         <param name="delegateType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate to return.</param>
       </Docs>

@@ -867,9 +867,6 @@ public class ConsoleTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A new synchronized <see cref="T:System.IO.Stream" /> object that writes to the console.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to reacquire the standard error stream after it has been changed by the <see cref="M:System.Console.SetError(System.IO.TextWriter)" /> method.</para>
@@ -878,6 +875,10 @@ public class ConsoleTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Acquires the standard error stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The standard error stream.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -898,9 +899,6 @@ public class ConsoleTest {
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A new synchronized <see cref="T:System.IO.Stream" /> object that writes to the console.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to reacquire the standard error stream after it has been changed by the <see cref="M:System.Console.SetError(System.IO.TextWriter)" /> method.</para>
@@ -909,6 +907,10 @@ public class ConsoleTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Acquires the standard error stream, which is set to a specified buffer size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The standard error stream.</para>
+        </returns>
         <param name="bufferSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The internal stream buffer size. </param>
       </Docs>
@@ -929,9 +931,6 @@ public class ConsoleTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A new synchronized <see cref="T:System.IO.Stream" /> object that reads from the console.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to reacquire the standard input stream after it has been changed by the <see cref="M:System.Console.SetIn(System.IO.TextReader)" /> method.</para>
@@ -940,6 +939,10 @@ public class ConsoleTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Acquires the standard input stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The standard input stream.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -960,9 +963,6 @@ public class ConsoleTest {
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new synchronized <see cref="T:System.IO.Stream" /> object that reads from the console.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to reacquire the standard output stream after it has been changed by the <see cref="M:System.Console.SetIn(System.IO.TextReader)" /> method.</para>
@@ -971,6 +971,10 @@ public class ConsoleTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Acquires the standard input stream, which is set to a specified buffer size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The standard input stream.</para>
+        </returns>
         <param name="bufferSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The internal stream buffer size. </param>
       </Docs>
@@ -991,9 +995,6 @@ public class ConsoleTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A new synchronized <see cref="T:System.IO.Stream" /> object that writes to the console.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to reacquire the standard output stream after it has been changed by the <see cref="M:System.Console.SetOut(System.IO.TextWriter)" /> method.</para>
@@ -1002,6 +1003,10 @@ public class ConsoleTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Acquires the standard output stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The standard output stream.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1022,9 +1027,6 @@ public class ConsoleTest {
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new synchronized <see cref="T:System.IO.Stream" /> object that writes to the console.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to reacquire the standard output stream after it has been changed by the <see cref="M:System.Console.SetOut(System.IO.TextWriter)" /> method.</para>
@@ -1033,6 +1035,10 @@ public class ConsoleTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Acquires the standard output stream, which is set to a specified buffer size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The standard output stream.</para>
+        </returns>
         <param name="bufferSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The internal stream buffer size. </param>
       </Docs>
@@ -1108,13 +1114,6 @@ public class ConsoleTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The next character from the character source represented
-      as a <see cref="T:System.Int32" />
-      , or -1 if at the
-      end of the
-      stream.</para>
-        </returns>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1126,6 +1125,10 @@ public class ConsoleTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the next character from the standard input stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next character from the input stream, or negative one (-1) if there are currently no more characters to be read.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1142,7 +1145,6 @@ public class ConsoleTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1154,6 +1156,10 @@ public class ConsoleTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the next character or function key pressed by the user. The pressed key is displayed in the console window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ConsoleKeyInfo" /> object that describes the <see cref="T:System.ConsoleKey" /> constant and Unicode character, if any, that correspond to the pressed console key. The <see cref="T:System.ConsoleKeyInfo" /> object also describes, in a bitwise combination of <see cref="T:System.ConsoleModifiers" /> values, whether one or more Shift, Alt, or Ctrl modifier keys was pressed simultaneously with the console key.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadKey">
@@ -1171,7 +1177,6 @@ public class ConsoleTest {
         <Parameter Name="intercept" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1184,6 +1189,10 @@ public class ConsoleTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the next character or function key pressed by the user. The pressed key is optionally displayed in the console window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ConsoleKeyInfo" /> object that describes the <see cref="T:System.ConsoleKey" /> constant and Unicode character, if any, that correspond to the pressed console key. The <see cref="T:System.ConsoleKeyInfo" /> object also describes, in a bitwise combination of <see cref="T:System.ConsoleModifiers" /> values, whether one or more Shift, Alt, or Ctrl modifier keys was pressed simultaneously with the console key.</para>
+        </returns>
         <param name="intercept">
           <attribution license="cc4" from="Microsoft" modified="false" />Determines whether to display the pressed key in the console window. true to not display the pressed key; otherwise, false. </param>
       </Docs>
@@ -1203,12 +1212,6 @@ public class ConsoleTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> containing the next line from the input stream, or
-<see langword="null" />
-if the end of the input stream has already been reached.
-</para>
-        </returns>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
         <remarks>
@@ -1223,6 +1226,10 @@ if the end of the input stream has already been reached.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the next line of characters from the standard input stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next line of characters from the input stream, or null if no more lines are available.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

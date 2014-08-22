@@ -163,12 +163,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a string representation of a peer node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.String" /> value that contains the mesh ID of the peer node if the mesh ID is set; otherwise, it returns the type.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

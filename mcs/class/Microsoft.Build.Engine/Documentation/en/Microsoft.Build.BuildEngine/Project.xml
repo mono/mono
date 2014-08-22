@@ -93,7 +93,6 @@
         <Parameter Name="itemInclude" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -103,6 +102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <format type="text/html"><a href="dcef5f91-0613-4bfc-8ee9-d7004bb6d3a9">Item</a></format> element to the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> containing the created item.</para>
+        </returns>
         <param name="itemName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the item collection to add the item to. Corresponds to the user-defined name of the Item element.</param>
         <param name="itemInclude">
@@ -124,7 +127,6 @@
         <Parameter Name="treatItemIncludeAsLiteral" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -134,6 +136,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <format type="text/html"><a href="dcef5f91-0613-4bfc-8ee9-d7004bb6d3a9">Item</a></format> element to the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> containing the created item.</para>
+        </returns>
         <param name="itemName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the item collection to add the item to. Corresponds to the user-defined name of the Item element.</param>
         <param name="itemInclude">
@@ -153,13 +159,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new <format type="text/html"><a href="aac894e3-a9f1-4bbc-a796-6ef07001f35b">ItemGroup</a></format> element to the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> containing the created item group.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -175,13 +184,16 @@
         <Parameter Name="insertAtEndOfProject" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new <format type="text/html"><a href="ff1e6c68-b9a1-4263-a1ce-dc3b829a64d4">PropertyGroup</a></format> element to the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:Microsoft.Build.BuildEngine.BuildPropertyGroup" /> containing the created property group.</para>
+        </returns>
         <param name="insertAtEndOfProject">
           <attribution license="cc4" from="Microsoft" modified="false" />true to insert the PropertyGroup at the end of the project; otherwise, false.</param>
       </Docs>
@@ -249,13 +261,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the default targets of the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -271,13 +286,16 @@
         <Parameter Name="targetName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the specified target in the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="targetName">
           <attribution license="cc4" from="Microsoft" modified="false" />The target to build.</param>
       </Docs>
@@ -295,13 +313,16 @@
         <Parameter Name="targetNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the specified list of targets in the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="targetNames">
           <attribution license="cc4" from="Microsoft" modified="false" />The list of targets to build. This parameter can be a null reference (Nothing in vbprvb) to build the default targets.</param>
       </Docs>
@@ -320,13 +341,16 @@
         <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the specified list of targets in the project, and returns the outputs of the targets.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="targetNames">
           <attribution license="cc4" from="Microsoft" modified="false" />The list of targets to build. This parameter can be a null reference (Nothing in vbprvb) to build the default targets.</param>
         <param name="targetOutputs">
@@ -348,13 +372,16 @@
         <Parameter Name="buildFlags" Type="Microsoft.Build.BuildEngine.BuildSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the specified list of targets in the project using the specified settings, and returns the outputs of the targets.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="targetNames">
           <attribution license="cc4" from="Microsoft" modified="false" />The list of targets to build. This parameter can be a null reference (Nothing in vbprvb) to build the default targets.</param>
         <param name="targetOutputs">
@@ -527,7 +554,6 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -537,6 +563,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a list of possible values for the specified property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The list of possible values for the property.</para>
+        </returns>
         <param name="propertyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The property to use when generating the list of possible values.</param>
       </Docs>
@@ -554,13 +584,16 @@
         <Parameter Name="itemName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all evaluated items belonging to the specified item collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> containing all of the evaluated items belonging to the specified item collection.</para>
+        </returns>
         <param name="itemName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the item collection.</param>
       </Docs>
@@ -578,13 +611,16 @@
         <Parameter Name="itemName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all items belonging to the specified item collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:Microsoft.Build.BuildEngine.BuildItemGroup" /> containing all items belonging to the specified item collection, even those not used in the build process because a <format type="text/html"><a href="9d7aa308-b667-48ed-b4c9-a61e49eb0a85">Condition</a></format> attribute evaluated to false..</para>
+        </returns>
         <param name="itemName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the specified item collection.</param>
       </Docs>
@@ -602,7 +638,6 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -612,6 +647,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified property.</para>
+        </returns>
         <param name="propertyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the property.</param>
       </Docs>
@@ -629,13 +668,16 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string value of the XML from the specified element in the <format type="text/html"><a href="f95f312f-ff92-41eb-9469-ad99e236a307">ProjectExtensions</a></format> element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string value of the specified element in the <unmanagedCodeEntityReference>ProjectExtensions</unmanagedCodeEntityReference> element of the project.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element in the ProjectExtensions element to return.</param>
       </Docs>

@@ -25,9 +25,7 @@ using System;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Assembly)]
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
-#endif
 	public sealed class RootNamespaceAttribute : Attribute
 	{
 		public RootNamespaceAttribute (string nameSpace)

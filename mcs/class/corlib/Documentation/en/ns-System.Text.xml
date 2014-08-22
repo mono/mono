@@ -1,9 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Text" FullName="System.Text" FullNameSP="System.Text" Maintainer="Mono">
   <Docs>
     <summary>
-        The System.Text namespace contains types for converting text between encodings, such as ASCII and UTF-8.  The namespace also contains the StringBuilder class which can be used to create and modify string values more efficiently than by concatenating String objects.
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Text" /> namespace contains classes that represent ASCII and Unicode character encodings; abstract base classes for converting blocks of characters to and from blocks of bytes; and a helper class that manipulates and formats <see cref="T:System.String" /> objects without creating intermediate instances of <see cref="T:System.String" />.</para>
     </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The encoding classes are primarily intended to convert between different encodings or code pages and a Unicode encoding. <see cref="P:System.Text.Encoding.Unicode" /> (UTF-16) encoding is used internally by the .NET Framework, and <see cref="P:System.Text.Encoding.UTF8" /> encoding is often used for storing character data to ensure portability across machines and cultures.</para>
+      <para>The classes derived from <see cref="T:System.Text.Encoding" /> enable you to choose a fallback strategy, which determines how characters that cannot be encoded into a sequence of bytes, or bytes that cannot be decoded into characters, are handled. You can choose one of the following: </para>
+      <list type="bullet">
+        <item>
+          <para>Exception fallback. You can choose to throw exceptions on data errors either by using a <paramref name="throwonerror" /> flag that is available in some class constructors or by using the <see cref="T:System.Text.EncoderExceptionFallback" /> and <see cref="T:System.Text.DecoderExceptionFallback" /> classes. If you are concerned about the integrity of the data stream, throwing on an exception is recommended.</para>
+        </item>
+        <item>
+          <para>Replacement fallback. You can use the <see cref="T:System.Text.EncoderFallback" /> and <see cref="T:System.Text.DecoderFallback" /> classes to silently change a character to "?" or to the Unicode replacement character (U+FFFD).</para>
+        </item>
+        <item>
+          <para>Best-fit fallback. This option maps a character in one encoding to a character in another encoding. Best fit fallback is often not recommended because it can cause data loss and confusion, and is slower than simple "?" character replacements. However, for ANSI code pages the best-fit behavior is the default.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Text.StringBuilder" /> class is designed for operations that perform extensive manipulations on a single string. Unlike the <see cref="T:System.String" /> class, the <see cref="T:System.Text.StringBuilder" /> class is mutable and provides better performance when concatenating or deleting strings.</para>
+      <para>For more information about <see cref="N:System.Text" />, see <format type="text/html"><a href="bf6d9823-4c2d-48af-b280-919c5af66ae9">Character Encoding in the .NET Framework</a></format> and the MSDN blog <see cref="http://go.microsoft.com/fwlink/?LinkId=161021">Shawn Steele's Thoughts about Windows and .NET Framework Globalization APIs</see>.</para>
     </remarks>
   </Docs>
 </Namespace>

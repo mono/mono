@@ -158,7 +158,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>While serializing, namespace prefixes are inferred from the namespace attributes in the XML tree.</para>
@@ -168,6 +167,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlWriter" /> that can be used to add nodes to the <see cref="T:System.Xml.Linq.XContainer" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> that is ready to have content written to it.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DescendantNodes">
@@ -182,7 +185,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note that attributes are not considered to be nodes in sqltecxlinq, so they will not be part of the collection that is returned by this method.</para>
@@ -192,6 +194,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of the descendant nodes for this document or element, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XNode" /> containing the descendant nodes of the <see cref="T:System.Xml.Linq.XContainer" />, in document order.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Descendants">
@@ -206,7 +212,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note that this method will not return itself in the resulting <see cref="T:System.Collections.Generic.IEnumerable`1" />. See <see cref="M:System.Xml.Linq.XElement.DescendantsAndSelf" /> if you need to include the current <see cref="T:System.Xml.Linq.XElement" /> in the results.</para>
@@ -216,6 +221,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of the descendant elements for this document or element, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> containing the descendant elements of the <see cref="T:System.Xml.Linq.XContainer" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Descendants">
@@ -232,7 +241,6 @@
         <Parameter Name="name" Type="System.Xml.Linq.XName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses deferred execution. </para>
@@ -241,6 +249,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a filtered collection of the descendant elements for this document or element, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> containing the descendant elements of the <see cref="T:System.Xml.Linq.XContainer" /> that match the specified <see cref="T:System.Xml.Linq.XName" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
       </Docs>
@@ -259,7 +271,6 @@
         <Parameter Name="name" Type="System.Xml.Linq.XName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns null if there is no element with the specified name.</para>
@@ -271,6 +282,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the first (in document order) child element with the specified <see cref="T:System.Xml.Linq.XName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Linq.XElement" /> that matches the specified <see cref="T:System.Xml.Linq.XName" />, or null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
       </Docs>
@@ -287,7 +302,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses deferred execution. </para>
@@ -296,6 +310,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of the child elements of this element or document, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> containing the child elements of this <see cref="T:System.Xml.Linq.XContainer" />, in document order.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Elements">
@@ -312,7 +330,6 @@
         <Parameter Name="name" Type="System.Xml.Linq.XName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses deferred execution. </para>
@@ -321,6 +338,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a filtered collection of the child elements of this element or document, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> containing the children of the <see cref="T:System.Xml.Linq.XContainer" /> that have a matching <see cref="T:System.Xml.Linq.XName" />, in document order.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
       </Docs>
@@ -375,7 +396,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note that the content does not include attributes. In sqltecxlinq, attributes are not considered to be nodes of the tree. They are name/value pairs associated with an element.</para>
@@ -385,6 +405,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of the child nodes of this element or document, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XNode" /> containing the contents of this <see cref="T:System.Xml.Linq.XContainer" />, in document order.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RemoveNodes">

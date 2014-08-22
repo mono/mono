@@ -292,7 +292,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.UdpClient.BeginReceive(System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.UdpClient.EndReceive(System.IAsyncResult,System.Net.IPEndPoint@)" /> method. Typically, the method is invoked by the <paramref name="requestCallback" /> delegate.</para>
@@ -303,6 +302,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Receives a datagram from a remote host asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous receive.</para>
+        </returns>
         <param name="requestCallback">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the operation is complete. </param>
         <param name="state">
@@ -327,7 +330,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.UdpClient.BeginSend(System.Byte[],System.Int32,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.UdpClient.EndSend(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="requestCallback" /> delegate.</para>
@@ -338,6 +340,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a datagram to a remote host asynchronously. The destination was specified previously by a call to <see cref="Overload:System.Net.Sockets.UdpClient.Connect" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous send.</para>
+        </returns>
         <param name="datagram">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains the data to be sent.</param>
         <param name="bytes">
@@ -367,7 +373,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.UdpClient.BeginSend(System.Byte[],System.Int32,System.Net.IPEndPoint,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.UdpClient.EndSend(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="requestCallback" /> delegate.</para>
@@ -378,6 +383,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a datagram to a destination asynchronously. The destination is specified by a <see cref="T:System.Net.EndPoint" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous send.</para>
+        </returns>
         <param name="datagram">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains the data to be sent.</param>
         <param name="bytes">
@@ -410,7 +419,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.UdpClient.BeginSend(System.Byte[],System.Int32,System.String,System.Int32,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.UdpClient.EndSend(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="requestCallback" /> delegate.</para>
@@ -421,6 +429,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a datagram to a destination asynchronously. The destination is specified by the host name and port number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous send.</para>
+        </returns>
         <param name="datagram">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains the data to be sent.</param>
         <param name="bytes">
@@ -773,7 +785,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method blocks until the operation is complete. </para>
@@ -783,6 +794,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends a pending asynchronous send.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, the number of bytes sent to the <see cref="T:System.Net.Sockets.UdpClient" />.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> object returned by a call to <see cref="Overload:System.Net.Sockets.UdpClient.BeginSend" />.</param>
       </Docs>
@@ -1038,7 +1053,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />&gt; object will complete after the UDP packet has been received.</para>
@@ -1052,6 +1066,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a UDP datagram asynchronously that was sent by a remote host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Send">
@@ -1071,7 +1090,6 @@
         <Parameter Name="bytes" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload sends datagrams to the remote host established in the <see cref="M:System.Net.Sockets.UdpClient.Connect(System.String,System.Int32)" /> method and returns the number of bytes sent. If you do not call <see cref="M:System.Net.Sockets.UdpClient.Connect(System.String,System.Int32)" /> before calling this overload, the <see cref="M:System.Net.Sockets.UdpClient.Send(System.Byte[],System.Int32,System.Net.IPEndPoint)" /> method will throw a <see cref="T:System.Net.Sockets.SocketException" />. If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> to obtain the specific error code. Once you have obtained this code, you can refer to the Windows Sockets version 2 API error code documentation in MSDN for a detailed description of the error.</para>
@@ -1081,6 +1099,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a UDP datagram to a remote host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent.</para>
+        </returns>
         <param name="dgram">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that specifies the UDP datagram that you intend to send represented as an array of bytes. </param>
         <param name="bytes">
@@ -1105,7 +1127,6 @@
         <Parameter Name="endPoint" Type="System.Net.IPEndPoint" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Sockets.UdpClient.Send(System.Byte[],System.Int32,System.Net.IPEndPoint)" /> method sends datagrams to the specified endpoint and returns the number of bytes successfully sent. Before calling this overload, you must first create an <see cref="T:System.Net.IPEndPoint" /> using the IP address and port number of the remote host to which your datagrams will be delivered. You can send datagrams to the default broadcast address, 255.255.255.255, by specifying <see cref="F:System.Net.Sockets.SocketOptionName.Broadcast" /> for the <see cref="P:System.Net.IPAddress.Address" /> property of the <see cref="T:System.Net.IPEndPoint" />. After you have created this <see cref="T:System.Net.IPEndPoint" />, pass it to the <see cref="M:System.Net.Sockets.UdpClient.Send(System.Byte[],System.Int32,System.Net.IPEndPoint)" /> method as the <paramref name="endPoint" /> parameter.</para>
@@ -1118,6 +1139,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a UDP datagram to the host at the specified remote endpoint.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent.</para>
+        </returns>
         <param name="dgram">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that specifies the UDP datagram that you intend to send, represented as an array of bytes. </param>
         <param name="bytes">
@@ -1145,7 +1170,6 @@
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Sockets.UdpClient.Send(System.Byte[],System.Int32,System.Net.IPEndPoint)" /> method sends datagrams to the values specified by the <paramref name="hostname" /> and <paramref name="port" /> parameters and returns the number of bytes successfully sent. You can send datagrams to the default broadcast address by specifying "255.255.255.255" for the <paramref name="hostname" /> parameter value.</para>
@@ -1158,6 +1182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a UDP datagram to a specified port on a specified remote host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent.</para>
+        </returns>
         <param name="dgram">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that specifies the UDP datagram that you intend to send represented as an array of bytes. </param>
         <param name="bytes">
@@ -1183,7 +1211,6 @@
         <Parameter Name="bytes" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload sends datagrams to the remote host established in the <see cref="M:System.Net.Sockets.UdpClient.Connect(System.String,System.Int32)" /> method. If you do not call <see cref="M:System.Net.Sockets.UdpClient.Connect(System.String,System.Int32)" /> before calling this overload, the method will throw a <see cref="T:System.Net.Sockets.SocketException" />. If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> to obtain the specific error code. Once you have obtained this code, you can refer to the Windows Sockets version 2 API error code documentation in MSDN for a detailed description of the error.</para>
@@ -1193,6 +1220,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a UDP datagram asynchronously to a remote host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
         <param name="datagram">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that specifies the UDP datagram that you intend to send represented as an array of bytes.</param>
         <param name="bytes">
@@ -1215,7 +1246,6 @@
         <Parameter Name="endPoint" Type="System.Net.IPEndPoint" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method sends datagrams to the specified endpoint. Before calling this overload, you must first create an <see cref="T:System.Net.IPEndPoint" /> using the IP address and port number of the remote host to which your datagrams will be delivered. You can send datagrams to the default broadcast address, 255.255.255.255, by specifying <see cref="F:System.Net.Sockets.SocketOptionName.Broadcast" /> for the <see cref="P:System.Net.IPAddress.Address" /> property of the <see cref="T:System.Net.IPEndPoint" />. After you have created this <see cref="T:System.Net.IPEndPoint" />, pass it to this method as the <paramref name="endPoint" /> parameter.</para>
@@ -1228,6 +1258,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a UDP datagram asynchronously to a remote host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
         <param name="datagram">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that specifies the UDP datagram that you intend to send represented as an array of bytes.</param>
         <param name="bytes">
@@ -1253,7 +1287,6 @@
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method sends datagrams to the values specified by the <paramref name="hostname" /> and <paramref name="port" /> parameters. You can send datagrams to the default broadcast address by specifying "255.255.255.255" for the <paramref name="hostname" /> parameter value.</para>
@@ -1266,6 +1299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a UDP datagram asynchronously to a remote host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
         <param name="datagram">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that specifies the UDP datagram that you intend to send represented as an array of bytes.</param>
         <param name="bytes">

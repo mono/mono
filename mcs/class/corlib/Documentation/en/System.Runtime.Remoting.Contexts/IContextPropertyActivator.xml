@@ -101,7 +101,6 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current method is called on each server context property that implements the <see cref="T:System.Runtime.Remoting.Contexts.IContextPropertyActivator" /> interface when a construction request arrives at a server. This allows the context property to examine the contents of each <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />.</para>
@@ -110,6 +109,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called on each client context property that has this interface, when the construction request returns to the client from the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if successful; otherwise, false.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />. </param>
       </Docs>
@@ -130,7 +133,6 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionReturnMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The context property can examine the contents of the <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" />.</para>
@@ -139,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called on each client context property that has this interface, when the construction request returns to the client from the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if successful; otherwise, false.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" />. </param>
       </Docs>
@@ -159,12 +165,15 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether it is all right to activate the object type indicated in the <paramref name="msg" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean value indicating whether the requested type can be activated.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />. </param>
       </Docs>

@@ -317,9 +317,16 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Syndication.SyndicationItem&gt;" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects passed into this constructor is buffered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> class with the specified collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -388,12 +395,19 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Syndication.SyndicationItem&gt;" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="description">To be added.</param>
-        <param name="feedAlternateLink">To be added.</param>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> class with the specified title, description, URI, and collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the feed.</param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of the feed.</param>
+        <param name="feedAlternateLink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI for the feed.</param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -444,14 +458,23 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Syndication.SyndicationItem&gt;" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="description">To be added.</param>
-        <param name="feedAlternateLink">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="lastUpdatedTime">To be added.</param>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication feed title.</param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication feed description.</param>
+        <param name="feedAlternateLink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The alternate URI for the syndication feed.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the syndication feed.</param>
+        <param name="lastUpdatedTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTimeOffset" /> that contains the last time the syndication feed was updated.</param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</param>
       </Docs>
     </Member>
     <Member MemberName="AttributeExtensions">
@@ -554,7 +577,6 @@
         <Parameter Name="cloneItems" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="cloneItems" /> parameter is true, all items within the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> object are cloned; otherwise, the new <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance's items collection contain references to the original <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance's items.</para>
@@ -563,6 +585,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplicate <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> object.</para>
+        </returns>
         <param name="cloneItems">
           <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies whether the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects are cloned.</param>
       </Docs>
@@ -625,7 +651,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not add the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> object to the <see cref="P:System.ServiceModel.Syndication.SyndicationFeed.Categories" /> collection.</para>
@@ -634,6 +659,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateItem">
@@ -648,7 +677,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not add the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> object to the <see cref="P:System.ServiceModel.Syndication.SyndicationFeed.Items" /> collection.</para>
@@ -657,6 +685,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateLink">
@@ -671,7 +703,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance is not added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance used to create it.</para>
@@ -680,6 +711,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreatePerson">
@@ -694,7 +729,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not add the <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> object to the <see cref="P:System.ServiceModel.Syndication.SyndicationFeed.Authors" /> or <see cref="P:System.ServiceModel.Syndication.SyndicationFeed.Contributors" /> collections. </para>
@@ -703,6 +737,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Description">
@@ -786,12 +824,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.ServiceModel.Syndication.Atom10FeedFormatter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Syndication.Atom10FeedFormatter" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRss20Formatter">
@@ -806,12 +847,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRss20Formatter">
@@ -828,7 +872,6 @@
         <Parameter Name="serializeExtensionsAsAtom" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The RSS 2.0 specification allows elements and attributes that are not specified in its specification only if they are within a namespace. When the <paramref name="serializedExtensionsAsAtom" /> parameter is true, the formatter automatically adds the a10 namespace qualifier to all extensions; otherwise, the extensions are not serialized.</para>
@@ -837,6 +880,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a new <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> instance.</para>
+        </returns>
         <param name="serializeExtensionsAsAtom">
           <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies whether to serialize element and attribute extensions with an Atom 1.0 namespace.</param>
       </Docs>
@@ -993,12 +1040,15 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a syndication feed from the specified XML reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> that contains the loaded contents.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to load the feed from.</param>
       </Docs>
@@ -1025,8 +1075,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <typeparam name="TSyndicationFeed">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method when you are loading a syndication item into a class derived from <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />.</para>
@@ -1035,8 +1083,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />-derived instance from the specified <see cref="T:System.Xml.XmlReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />-derived instance that contains the feed.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <typeparam name="TSyndicationFeed">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication feed type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="SaveAsAtom10">
@@ -1124,7 +1178,6 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attribute extensions are custom attributes that are not defined by the Atom 1.0 or RSS 2.0 specifications. They are serialized as an attribute of the &lt;feed&gt; (for Atom 1.0) or &lt;rss&gt; (for RSS 1.0) element, which depends upon the syndication version being used. This method is an extension point that allows you to handle the deserialization of a custom attribute extension. To do this, you must derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> and override this method. This method is called for all unrecognized attribute extensions.</para>
@@ -1133,6 +1186,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an attribute extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that specifies whether the attribute extension was parsed successfully.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
         <param name="ns">
@@ -1158,7 +1215,6 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Element extensions are valid XML elements that are not specified in either the Atom 1.0 or RSS 2.0 specifications. You can add any valid XML element as an extension, provided its namespace is different from the enclosing namespace. This method is an extension point that allows you to handle the deserialization of a custom element extension. To do this, you must derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> and override this method. This method is called for all unrecognized element extensions.</para>
@@ -1167,6 +1223,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an element extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that specifies whether the element extension was parsed successfully.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
         <param name="version">

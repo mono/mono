@@ -374,10 +374,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The next character to be read as a <see cref="T:System.Int32" /> , or -1 if no more characters are
-   available.</para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException">The current reader is closed.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -444,6 +440,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the next available character but does not consume it.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer representing the next character to be read, or -1 if no more characters are available or the stream does not support seeking.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -462,11 +462,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The next character from the underlying string as a 
-   <see cref="T:System.Int32" /> , or -1 if no more
-      characters are available.</para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException">The current reader is closed.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -595,6 +590,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the next character from the input string and advances the character position by one character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next character from the underlying string, or -1 if no more characters are available.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -617,10 +616,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing the total number of characters read into the
-   buffer, or zero if the end of the underlying string has been reached.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">(<paramref name="index" /> + <paramref name="count" /> ) &gt; <paramref name="buffer" /><see langword="." />Length.</exception>
@@ -761,6 +756,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a block of characters from the input string and advances the character position by <paramref name="count" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of characters read into the buffer. This can be less than the number of characters requested if that many characters are not currently available, or zero if the end of the underlying string has been reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> - 1) replaced by the characters read from the current source. </param>
         <param name="index">
@@ -786,7 +785,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The task completes after either the number of characters specified by the <paramref name="count" /> parameter are read or the end of the string is reached. </para>
@@ -795,6 +793,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a specified maximum number of characters from the current string asynchronously and writes the data to a buffer, beginning at the specified index. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the string has been reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> - 1) replaced by the characters read from the current source.</param>
         <param name="index">
@@ -819,7 +821,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The task does not complete until either the number of characters specified by the <paramref name="count" /> parameter are read, or the end of the string has been reached.</para>
@@ -828,6 +829,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a specified maximum number of characters from the current string asynchronously and writes the data to a buffer, beginning at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the string has been reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> - 1) replaced by the characters read from the current source.</param>
         <param name="index">
@@ -851,13 +856,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> containing the next line from the underlying string, or
-<see langword="null " />
-if the end of
-the underlying string is reached.
-</para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException">The current reader is closed.</exception>
         <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
         <remarks>
@@ -989,6 +987,10 @@ the underlying string is reached.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a line of characters from the current string and returns the data as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next line from the current string, or null if the end of the string is reached.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1004,12 +1006,15 @@ the underlying string is reached.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a line of characters asynchronously from the current string and returns the data as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the next line from the string reader, or is null if all the characters have been read.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadToEnd">
@@ -1027,10 +1032,6 @@ the underlying string is reached.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> containing the content from the current position to the end of the underlying
-   string.</para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException">The current reader is closed.</exception>
         <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
         <remarks>
@@ -1161,6 +1162,10 @@ the underlying string is reached.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads all characters from the current position to the end of the string and returns them as a single string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content from the current position to the end of the underlying string.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1176,12 +1181,15 @@ the underlying string is reached.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads all characters from the current position to the end of the string asynchronously and returns them as a single string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains a string with the characters from the current position to the end of the string. </para>
+        </returns>
       </Docs>
     </Member>
   </Members>

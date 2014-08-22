@@ -210,7 +210,6 @@ value returned by a process. The default value is zero.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>COM interop is used to retrieve the environment variables from the operating system. If the environment variables cannot be retrieved due to a COM error, the HRESULT that explains the cause of the failure is used to generate one of several possible exceptions; that is, the exception depends on the HRESULT. For more information about how the HRESULT is processed, see the Remarks section of the <see cref="M:System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(System.Int32)" /> method.</para>
@@ -221,6 +220,10 @@ value returned by a process. The default value is zero.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces the name of each environment variable embedded in the specified string with the string equivalent of the value of the variable, then returns the resulting string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string with each environment variable replaced by its value.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />A string containing the names of zero or more environment variables. Each environment variable is quoted with the percent sign character (%).</param>
       </Docs>
@@ -308,10 +311,6 @@ value returned by a process. The default value is zero.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> Returns a <see cref="T:System.String" /> array. Each <see cref="T:System.String" /> in the array
-   contains a single command line argument.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The first element in the array contains the file name of the executing program. If the file name is not available, the first element is equal to <see cref="F:System.String.Empty" />. The remaining elements contain any additional tokens entered on the command line.</para>
@@ -377,6 +376,10 @@ value returned by a process. The default value is zero.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string array containing the command-line arguments for the current process.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of string where each element contains a command-line argument. The first element is the executable file name, and the following zero or more elements contain the remaining command-line arguments.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -397,10 +400,6 @@ value returned by a process. The default value is zero.</para>
         <Parameter Name="variable" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the current setting of <paramref name="variable" /> , or 
-<see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="variable" /> is a null reference.</exception>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
@@ -414,6 +413,10 @@ value returned by a process. The default value is zero.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value of an environment variable from the current process.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the environment variable specified by <paramref name="variable" />, or null if the environment variable is not found.</para>
+        </returns>
         <param name="variable">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the environment variable.</param>
       </Docs>
@@ -435,7 +438,6 @@ value returned by a process. The default value is zero.</para>
         <Parameter Name="target" Type="System.EnvironmentVariableTarget" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -447,6 +449,10 @@ value returned by a process. The default value is zero.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value of an environment variable from the current process or from the Windows operating system registry key for the current user or local machine.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the environment variable specified by the <paramref name="variable" /> and <paramref name="target" /> parameters, or null if the environment variable is not found.</para>
+        </returns>
         <param name="variable">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of an environment variable.</param>
         <param name="target">
@@ -468,13 +474,6 @@ value returned by a process. The default value is zero.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.IDictionary" /> object containing environment variable names
-   and settings, or <see langword="null" />
-   if
-   the system does not
-   support environment variables.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <permission cref="T:System.Security.Permissions.EnvironmentPermission">Requires permission to read environment variables. See <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.Read" />.</permission>
         <example>
@@ -508,6 +507,10 @@ class EnvTest:Object {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves all environment variable names and their values from the current process.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dictionary that contains all environment variable names and their values; otherwise, an empty dictionary if no environment variables are found.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -526,7 +529,6 @@ class EnvTest:Object {
         <Parameter Name="target" Type="System.EnvironmentVariableTarget" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -537,6 +539,10 @@ class EnvTest:Object {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves all environment variable names and their values from the current process, or from the Windows operating system registry key for the current user or local machine.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dictionary that contains all environment variable names and their values from the source specified by the <paramref name="target" /> parameter; otherwise, an empty dictionary if no environment variables are found.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.EnvironmentVariableTarget" /> values.</param>
       </Docs>
@@ -599,12 +605,15 @@ class EnvTest:Object {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of string containing the names of the logical drives on the current computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings where each element contains the name of a logical drive. For example, if the computer's hard drive is the first logical drive, the first element returned is "C:\".</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasShutdownStarted">

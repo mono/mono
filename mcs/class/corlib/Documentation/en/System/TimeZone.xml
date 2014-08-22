@@ -119,7 +119,6 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Globalization.DaylightTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Only one daylight saving time period per year is supported.</para>
@@ -129,6 +128,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the daylight saving time period for a particular year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.DaylightTime" /> object that contains the start and end date for daylight saving time in <paramref name="year" />.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />The year that the daylight saving time period applies to. </param>
       </Docs>
@@ -149,7 +152,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TimeSpan'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns the offset, or difference, between the <paramref name="time" /> parameter and Coordinated Universal Time (UTC). That is:</para>
@@ -167,6 +169,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the Coordinated Universal Time (UTC) offset for the specified local time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Coordinated Universal Time (UTC) offset from <paramref name="time" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time value.</param>
       </Docs>
@@ -187,7 +193,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The year to which the daylight saving time period applies is derived from the <paramref name="time" /> parameter.</para>
@@ -197,6 +202,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified date and time is within a daylight saving time period.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="time" /> is in a daylight saving time period; otherwise, false.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time. </param>
       </Docs>
@@ -218,7 +227,6 @@
         <Parameter Name="daylightTimes" Type="System.Globalization.DaylightTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.TimeZoneInfo.IsDaylightSavingTime(System.DateTime)" /> method provides the same functionality as this overload of the <see cref="M:System.TimeZone.IsDaylightSavingTime(System.DateTime,System.Globalization.DaylightTime)" /> method. Whenever possible, use the <see cref="M:System.TimeZoneInfo.IsDaylightSavingTime(System.DateTime)" /> method.</para>
@@ -227,6 +235,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified date and time is within the specified daylight saving time period.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="time" /> is in <paramref name="daylightTimes" />; otherwise, false.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time. </param>
         <param name="daylightTimes">
@@ -273,7 +285,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>A DateTime object adjusted for the object's time zone.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table shows the relationship between the <paramref name="time" /> parameter and the <see cref="T:System.DateTime" /> value returned by this method.</para>
@@ -336,6 +347,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the local time that corresponds to a specified date and time value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> object whose value is the local time that corresponds to <paramref name="time" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />A Coordinated Universal Time (UTC) time. </param>
       </Docs>
@@ -356,7 +371,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the local time zone observes daylight saving time, <see cref="M:System.TimeZone.ToUniversalTime(System.DateTime)" /> applies the current adjustment rule to the <paramref name="time" /> parameter when performing the conversion. </para>
@@ -371,6 +385,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the Coordinated Universal Time (UTC) that corresponds to a specified time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> object whose value is the Coordinated Universal Time (UTC) that corresponds to <paramref name="time" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time. </param>
       </Docs>

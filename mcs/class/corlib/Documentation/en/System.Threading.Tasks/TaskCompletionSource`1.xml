@@ -141,9 +141,13 @@
         <Parameter Name="exceptions" Type="System.Collections.Generic.IEnumerable&lt;System.Exception&gt;" />
       </Parameters>
       <Docs>
-        <param name="exceptions">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transitions the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" /> state.</para>
+        </summary>
+        <param name="exceptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of exceptions to bind to this <see cref="T:System.Threading.Tasks.Task`1" />.</param>
       </Docs>
     </Member>
     <Member MemberName="SetException">
@@ -223,7 +227,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will return false if the <see cref="T:System.Threading.Tasks.Task`1" /> is already in one of the three final states: <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion" />, <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" />, or <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" />. </para>
@@ -233,6 +236,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to transition the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" /> state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the operation was successful; false if the operation was unsuccessful or the object has already been disposed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TrySetException">
@@ -249,10 +256,20 @@
         <Parameter Name="exceptions" Type="System.Collections.Generic.IEnumerable&lt;System.Exception&gt;" />
       </Parameters>
       <Docs>
-        <param name="exceptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will return false if the <see cref="T:System.Threading.Tasks.Task`1" /> is already in one of the three final states: <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion" />, <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" />, or <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to transition the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" /> state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the operation was successful; otherwise, false.</para>
+        </returns>
+        <param name="exceptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of exceptions to bind to this <see cref="T:System.Threading.Tasks.Task`1" />.</param>
       </Docs>
     </Member>
     <Member MemberName="TrySetException">
@@ -269,7 +286,6 @@
         <Parameter Name="exception" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will return false if the <see cref="T:System.Threading.Tasks.Task`1" /> is already in one of the three final states: <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion" />, <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" />, or <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" />.</para>
@@ -278,6 +294,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to transition the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" /> state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the operation was successful; otherwise, false.</para>
+        </returns>
         <param name="exception">
           <attribution license="cc4" from="Microsoft" modified="false" />The exception to bind to this <see cref="T:System.Threading.Tasks.Task`1" />.</param>
       </Docs>

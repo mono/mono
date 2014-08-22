@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.ConstrainedExecution">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.ConstrainedExecution" /> namespace defines a set of types that enumerate and define a contract for reliability between the author of some code, and the developers who take a dependency on that code. The types in the <see cref="N:System.Runtime.ConstrainedExecution" /> namespace are intended for use in constrained execution regions (CERs).</para>
+    </summary>
   </Docs>
 </Namespace>

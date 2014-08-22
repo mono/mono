@@ -46,7 +46,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -57,6 +56,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the attributes for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of attributes for <paramref name="component" />.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get attributes for.</param>
       </Docs>
@@ -77,7 +80,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -88,6 +90,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the class name for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the class that corresponds with <paramref name="component" />.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the class name for.</param>
       </Docs>
@@ -108,7 +114,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeConverter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -119,6 +124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type converter for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.TypeConverter" /> for <paramref name="component" />.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the <see cref="T:System.ComponentModel.TypeConverter" /> for.</param>
       </Docs>
@@ -139,7 +148,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -150,6 +158,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the default event for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> that represents <paramref name="component" />'s default event.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the default event for.</param>
       </Docs>
@@ -170,7 +182,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -181,6 +192,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the default property for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents <paramref name="component" />'s default property.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the default property for.</param>
       </Docs>
@@ -202,7 +217,6 @@
         <Parameter Name="baseEditorType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -213,6 +227,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the editor for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The editor for <paramref name="component" />. </para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the editor for.</param>
         <param name="baseEditorType">
@@ -235,7 +253,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -246,6 +263,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the events for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of event descriptors for <paramref name="component" />. </para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get events for.</param>
       </Docs>
@@ -267,7 +288,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -278,6 +298,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the events with the specified attributes for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of event descriptors for <paramref name="component" />. </para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get events for.</param>
         <param name="attributes">
@@ -300,7 +324,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -311,6 +334,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of <paramref name="component" />.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the name of.</param>
       </Docs>
@@ -332,7 +359,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -343,6 +369,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the properties with the specified attributes for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of property descriptors for <paramref name="component" />.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get events for.</param>
         <param name="attributes">

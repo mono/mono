@@ -104,13 +104,16 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified object and the current <see cref="T:System.Globalization.IdnMapping" /> object are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object specified by the <paramref name="obj" /> parameter is derived from <see cref="T:System.Globalization.IdnMapping" /> and its <see cref="P:System.Globalization.IdnMapping.AllowUnassigned" /> and <see cref="P:System.Globalization.IdnMapping.UseStd3AsciiRules" /> properties are equal; otherwise, false. </para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current object.</param>
       </Docs>
@@ -130,7 +133,6 @@
         <Parameter Name="unicode" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -157,6 +159,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a string of domain name labels that consist of Unicode characters to a string of displayable Unicode characters in the US-ASCII character range. The string is formatted according to the IDNA standard.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The equivalent of the string specified by the <paramref name="unicode" /> parameter, consisting of displayable Unicode characters in the US-ASCII character range (U+0020 to U+007E) and formatted according to the IDNA standard.</para>
+        </returns>
         <param name="unicode">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to convert, which consists of one or more domain name labels delimited with label separators.</param>
       </Docs>
@@ -177,7 +183,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -204,6 +209,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a substring of domain name labels that include Unicode characters outside the US-ASCII character range. The substring is converted to a string of displayable Unicode characters in the US-ASCII character range and is formatted according to the IDNA standard.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The equivalent of the substring specified by the <paramref name="unicode" /> and <paramref name="index" /> parameters, consisting of displayable Unicode characters in the US-ASCII character range (U+0020 to U+007E) and formatted according to the IDNA standard.</para>
+        </returns>
         <param name="unicode">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to convert, which consists of one or more domain name labels delimited with label separators.</param>
         <param name="index">
@@ -227,7 +236,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -253,6 +261,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes the specified number of characters in a  substring of domain name labels that include Unicode characters outside the US-ASCII character range. The substring is converted to a string of displayable Unicode characters in the US-ASCII character range and is formatted according to the IDNA standard. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The equivalent of the substring specified by the <paramref name="unicode" />, <paramref name="index" />, and <paramref name="count" /> parameters, consisting of displayable Unicode characters in the US-ASCII character range (U+0020 to U+007E) and formatted according to the IDNA standard.</para>
+        </returns>
         <param name="unicode">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to convert, which consists of one or more domain name labels delimited with label separators.</param>
         <param name="index">
@@ -274,7 +286,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -284,6 +295,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code for this <see cref="T:System.Globalization.IdnMapping" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of four 32-bit signed constants derived from the properties of an <see cref="T:System.Globalization.IdnMapping" /> object.  The return value has no special meaning and is not suitable for use in a hash code algorithm.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetUnicode">
@@ -301,7 +316,6 @@
         <Parameter Name="ascii" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -311,6 +325,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a string of one or more domain name labels, encoded according to the IDNA standard, to a string of Unicode characters. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Unicode equivalent of the IDNA substring specified by the <paramref name="ascii" /> parameter.</para>
+        </returns>
         <param name="ascii">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to decode, which consists of one or more labels in the US-ASCII character range (U+0020 to U+007E) encoded according to the IDNA standard. </param>
       </Docs>
@@ -331,7 +349,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -341,6 +358,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a substring of one or more domain name labels, encoded according to the IDNA standard, to a string of Unicode characters. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Unicode equivalent of the IDNA substring specified by the <paramref name="ascii" /> and <paramref name="index" /> parameters.</para>
+        </returns>
         <param name="ascii">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to decode, which consists of one or more labels in the US-ASCII character range (U+0020 to U+007E) encoded according to the IDNA standard. </param>
         <param name="index">
@@ -364,7 +385,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -374,6 +394,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a substring of a specified length that contains one or more domain name labels, encoded according to the IDNA standard, to a string of Unicode characters. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Unicode equivalent of the IDNA substring specified by the <paramref name="ascii" />, <paramref name="index" />, and <paramref name="count" /> parameters.</para>
+        </returns>
         <param name="ascii">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to decode, which consists of one or more labels in the US-ASCII character range (U+0020 to U+007E) encoded according to the IDNA standard. </param>
         <param name="index">

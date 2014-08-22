@@ -69,12 +69,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'RSA'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the default implementation of the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the default implementation of <see cref="T:System.Security.Cryptography.RSA" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -93,12 +96,15 @@
         <Parameter Name="algName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RSA'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified implementation of <see cref="T:System.Security.Cryptography.RSA" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the specified implementation of <see cref="T:System.Security.Cryptography.RSA" />.</para>
+        </returns>
         <param name="algName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the implementation of <see cref="T:System.Security.Cryptography.RSA" /> to use. </param>
       </Docs>
@@ -119,12 +125,15 @@
         <Parameter Name="rgb" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>An array of bytes containing the decrypted data. </returns>
         <remarks>Direct (raw) decryption (i.e. without padding) is discouraged due to high security risks.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, decrypts the input data using the private key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting decryption of the <paramref name="rgb" /> parameter in plain text.</para>
+        </returns>
         <param name="rgb">
           <attribution license="cc4" from="Microsoft" modified="false" />The cipher text to be decrypted. </param>
       </Docs>
@@ -145,12 +154,15 @@
         <Parameter Name="rgb" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>An array of bytes containing the encrypted data.</returns>
         <remarks>Direct (raw) encryption (i.e. without padding) is discouraged due to high security risks.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, encrypts the input data using the public key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting encryption of the <paramref name="rgb" /> parameter as cipher text.</para>
+        </returns>
         <param name="rgb">
           <attribution license="cc4" from="Microsoft" modified="false" />The plain text to be encrypted. </param>
       </Docs>
@@ -171,12 +183,15 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>a RSAParameters structure contaning each parameters of the key.</returns>
         <remarks>You are responsable to zeroize the private key (<see cref="T:System.Security.Cryptography.RSAParameters" /> parameters <see cref="M:System.Security.Cryptography.RSAParameters.D" />, <see cref="M:System.Security.Cryptography.RSAParameters.P" />, <see cref="M:System.Security.Cryptography.RSAParameters.Q" />, <see cref="M:System.Security.Cryptography.RSAParameters.DP" />, <see cref="M:System.Security.Cryptography.RSAParameters.DQ" /> and <see cref="M:System.Security.Cryptography.RSAParameters.InverseQ" />) if you export it from the instance.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, exports the <see cref="T:System.Security.Cryptography.RSAParameters" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters for <see cref="T:System.Security.Cryptography.DSA" />.</para>
+        </returns>
         <param name="includePrivateParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include private parameters; otherwise, false. </param>
       </Docs>
@@ -254,7 +269,6 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>An XML string containing the representation of the RSA key.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Security.Cryptography.RSA.ToXmlString(System.Boolean)" /> method creates an XML string that contains either the public and private key of the current <see cref="T:System.Security.Cryptography.RSA" /> object or contains only the public key of the current <see cref="T:System.Security.Cryptography.RSA" /> object.</para>
@@ -283,6 +297,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns an XML string containing the key of the current <see cref="T:System.Security.Cryptography.RSA" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML string containing the key of the current <see cref="T:System.Security.Cryptography.RSA" /> object.</para>
+        </returns>
         <param name="includePrivateParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include a public and private RSA key; false to include only the public key. </param>
       </Docs>

@@ -182,13 +182,23 @@
         <Parameter Name="fault" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <param name="body">To be added.</param>
-        <param name="handlers">To be added.</param>
-        <param name="finally">To be added.</param>
-        <param name="fault">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.TryExpression.Body" /> property of the result.</param>
+        <param name="handlers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.TryExpression.Handlers" /> property of the result.</param>
+        <param name="finally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.TryExpression.Finally" /> property of the result.</param>
+        <param name="fault">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.TryExpression.Fault" /> property of the result.</param>
       </Docs>
     </Member>
   </Members>

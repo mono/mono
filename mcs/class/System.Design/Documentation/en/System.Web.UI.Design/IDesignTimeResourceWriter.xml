@@ -32,12 +32,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a key, using the provided string, to use to retrieve data from the given resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key used to write or retrieve <paramref name="obj" /> from <paramref name="resourceName" />.</para>
+        </returns>
         <param name="resourceName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource.</param>
         <param name="obj">

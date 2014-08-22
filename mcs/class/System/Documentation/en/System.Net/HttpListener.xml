@@ -169,7 +169,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -182,6 +181,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins asynchronously retrieving an incoming request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when a client request is available.</param>
         <param name="state">
@@ -228,7 +231,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -240,6 +242,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Completes an asynchronous operation to retrieve an incoming client request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.HttpListenerContext" /> object that represents the client request.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> object that was obtained when the asynchronous operation was started.</param>
       </Docs>
@@ -257,7 +263,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -268,6 +273,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for an incoming request and returns when one is received.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.HttpListenerContext" /> object that represents a client request.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetContextAsync">
@@ -282,7 +291,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete when the incoming request has been received.</para>
@@ -292,6 +300,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for an incoming request as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns an <see cref="T:System.Net.HttpListenerContext" /> object that represents a client request.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IgnoreWriteExceptions">

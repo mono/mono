@@ -61,10 +61,24 @@ lib_dir = lib
 endif
 
 ifdef LIBRARY_SUBDIR
-the_libdir = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_SUBDIR)/
+the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_SUBDIR)/
 else
-the_libdir = $(topdir)/class/$(lib_dir)/$(PROFILE)/
+the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE)/
 endif
+
+#
+# The bare directory contains the plain versions of System and System.Xml
+#
+bare_libdir = $(the_libdir_base)bare
+
+#
+# The secxml directory contains the System version that depends on 
+# System.Xml and Mono.Security
+#
+secxml_libdir = $(the_libdir_base)secxml
+
+the_libdir = $(the_libdir_base)$(intermediate)
+
 ifdef LIBRARY_NEEDS_POSTPROCESSING
 build_libdir = fixup/$(PROFILE)/
 else
@@ -110,11 +124,9 @@ endif
 
 csproj-local: csproj-library csproj-test
 
-# to overcome the issues with circular dependencies, we'll create csprojs with a counter increment. 
-# This is more amenable for use in VS solutions to reference projects rather than transient dll files in the build process.
-csproj-library:
-	config_file=`basename $(LIBRARY) .dll`-$(PROFILE).input; \
- 	for counter in 1 2 3 4 5 ; do if test -f $(topdir)/../msvc/scripts/inputs/$$config_file ; then config_file=`basename $(LIBRARY) .dll`-$(PROFILE)-$$counter.input; fi ; done ;\
+intermediate_clean=$(subst /,-,$(intermediate))
+csproj-library: 
+	config_file=`basename $(LIBRARY) .dll`-$(intermediate_clean)$(PROFILE).input; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \

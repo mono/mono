@@ -59,12 +59,15 @@
         <Parameter Name="extension" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> to the end of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index where the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> has been added.</para>
+        </returns>
         <param name="extension">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />, passed by reference, to add to the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</param>
       </Docs>
@@ -83,12 +86,15 @@
         <Parameter Name="extension" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is a member of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is a member of the collection; otherwise, false.</para>
+        </returns>
         <param name="extension">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> for which to check collection membership.</param>
       </Docs>
@@ -133,7 +139,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method searches the collection in index order, and returns only the matching element with the lowest-numbered index.</para>
@@ -142,6 +147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> and returns the first element of the specified derived <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the search is successful, an object of the specified <see cref="T:System.Type" />; otherwise, null.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> for which to search the collection.</param>
       </Docs>
@@ -161,7 +170,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method searches the collection in index order, and returns the first <see cref="T:System.Xml.XmlElement" /> that meets the criteria of the two parameters.</para>
@@ -170,6 +178,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> for a member with the specified name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the search is successful, an <see cref="T:System.Xml.XmlElement" />; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Xml.XmlElement" /> to be found.</param>
         <param name="ns">
@@ -190,7 +202,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -201,6 +212,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> and returns an array of all elements of the specified <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Object" /> instances representing all collection members of the specified type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> for which to search the collection.</param>
       </Docs>
@@ -220,7 +235,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Xml.XmlElement[]" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -231,6 +245,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> and returns an array of all members with the specified name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Xml.XmlElement" /> instances.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The XML name attribute of the <see cref="T:System.Xml.XmlElement" /> objects to be found.</param>
         <param name="ns">
@@ -251,12 +269,15 @@
         <Parameter Name="extension" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> and returns the zero-based index of the first instance with the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the specified <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />, or -1 if the element was not found in the collection.</para>
+        </returns>
         <param name="extension">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> for which to search in the collection.</param>
       </Docs>
@@ -306,7 +327,6 @@
         <Parameter Name="item" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method checks whether the <paramref name="item" /> parameter is an <see cref="T:System.Xml.XmlElement" /> or a <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> (or a derived class) before determining whether it is supported by the XML Web service.</para>
@@ -315,6 +335,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified object is used by the import process when the extensibility element is imported into the XML Web service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="item" /> parameter is used; otherwise, false.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />An object, either of type <see cref="T:System.Xml.XmlElement" /> or <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> to check for use by the import process.</param>
       </Docs>
@@ -333,12 +357,15 @@
         <Parameter Name="item" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified object is necessary for the operation of the XML Web service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="item" /> parameter is required; otherwise, false.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />An object, either of type <see cref="T:System.Xml.XmlElement" /> or <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />, to check whether it is necessary.</param>
       </Docs>

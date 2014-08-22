@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -516,8 +517,7 @@
     <Compile Include="Monodoc\storage\UncompiledDocStorage.cs" />
     <Compile Include="Monodoc\storage\ZipStorage.cs" />
     <Compile Include="Monodoc\Tree.cs" />
-    <Compile Include="Monodoc\TypeUtils.cs" />
-  </ItemGroup>
+    <Compile Include="Monodoc\TypeUtils.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -526,9 +526,13 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PreBuildEvent>
+
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -537,33 +541,33 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+    <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib-net_4_5.csproj">
+    <ProjectReference Include="../ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib-net_4_5.csproj">
       <Project>{0B587DBA-BA92-4B92-821A-AA200C612A7E}</Project>
-      <Name>ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib-net_4_5</Name>
+      <Name>ICSharpCode.SharpZipLib-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
-      <Name>System\System-net_4_5-2</Name>
+    <ProjectReference Include="../System/System-net_4_5.csproj">
+      <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
+      <Name>System-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+    <ProjectReference Include="../System.Core/System.Core-net_4_5.csproj">
       <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
-      <Name>System.Core\System.Core-net_4_5</Name>
+      <Name>System.Core-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{2534ADE0-05E4-490F-933D-1E39310A0CB9}</Project>
-      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
+      <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
+      <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Xml.Linq\System.Xml.Linq-net_4_5.csproj">
+    <ProjectReference Include="../System.Xml.Linq/System.Xml.Linq-net_4_5.csproj">
       <Project>{8328796E-8A15-4972-8F1E-2F15E7D57C42}</Project>
-      <Name>System.Xml.Linq\System.Xml.Linq-net_4_5</Name>
+      <Name>System.Xml.Linq-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
+    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_5.csproj">
       <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
-      <Name>System.Configuration\System.Configuration-net_4_5</Name>
+      <Name>System.Configuration-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -591,14 +595,14 @@
     <EmbeddedResource Include="Resources/home.html">
       <LogicalName>home.html</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources/creativecommons.png">
-      <LogicalName>creativecommons.png</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources/Lminus.gif">
       <LogicalName>Lminus.gif</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources/Lplus.gif">
       <LogicalName>Lplus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources/creativecommons.png">
+      <LogicalName>creativecommons.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources/mdoc-html-format.xsl">
       <LogicalName>mdoc-html-format.xsl</LogicalName>
@@ -751,6 +755,5 @@
       <LogicalName>treebg.png</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-</Project>
 </Project>
 

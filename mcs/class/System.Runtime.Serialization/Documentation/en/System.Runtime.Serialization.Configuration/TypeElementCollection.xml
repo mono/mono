@@ -171,12 +171,15 @@
         <Parameter Name="element" Type="System.Runtime.Serialization.Configuration.TypeElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the position of the specified element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position of the specified element.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.Configuration.TypeElement" /> to find in the collection.</param>
       </Docs>

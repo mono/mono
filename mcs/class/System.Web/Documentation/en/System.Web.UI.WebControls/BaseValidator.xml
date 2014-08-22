@@ -417,7 +417,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.BaseValidator.ControlPropertiesValid" /> method is a helper method used primarily by the <see cref="P:System.Web.UI.WebControls.BaseValidator.PropertiesValid" /> property to determine whether the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate" /> property contains a valid input control. To be a valid input control, the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate" /> property must be set to some value and that value must be a control on the page that supports validation.</para>
@@ -429,6 +428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate" /> property is a valid control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control specified by <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate" /> is a valid control; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -538,7 +541,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.BaseValidator.DetermineRenderUplevel" /> method is a helper function that is used primarily by the <see cref="P:System.Web.UI.WebControls.BaseValidator.RenderUplevel" /> property to determine whether the client's browser supports client script. For this property to return true, the following conditions must be true:</para>
@@ -561,6 +563,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the validation control can perform client-side validation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the validation control can perform client-side validation; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -740,7 +746,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.BaseValidator.EvaluateIsValid" /> method to determine whether the value in the input control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate" /> property is valid.</para>
@@ -752,6 +757,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, this method contains the code to determine whether the value in the input control is valid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value in the input control is valid; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -796,7 +805,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.BaseValidator.GetControlRenderID(System.String)" /> method to get the client ID of the specified control. For more information, see <see cref="P:System.Web.UI.Control.ClientID" />.</para>
@@ -808,6 +816,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the client ID of the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The client ID of the specified control.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the control to get the client ID from. </param>
       </Docs>
@@ -826,7 +838,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.BaseValidator.GetControlValidationValue(System.String)" /> method to get the value associated with the specified input control, regardless of the control type. For example, you can use this method to get the value in a <see cref="T:System.Web.UI.WebControls.TextBox" /> control, as well as the value of the selected item from a <see cref="T:System.Web.UI.WebControls.ListBox" /> control. If the specified control cannot be found, null is returned.</para>
@@ -838,6 +849,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value associated with the specified input control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value associated with the specified input control.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the input control to get the value from. </param>
       </Docs>
@@ -857,7 +872,6 @@
       </Parameters>
       <Docs>
         <param name="o">a <see cref="T:System.Object" /></param>
-        <returns>a <see cref="T:System.ComponentModel.PropertyDescriptor" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.BaseValidator.GetValidationProperty(System.Object)" /> method is a helper function that gets the validation property of the specified input control.</para>
@@ -869,6 +883,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the validation property of a control (if it exists).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that contains the validation property of the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

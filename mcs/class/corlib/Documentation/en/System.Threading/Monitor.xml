@@ -225,7 +225,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method works only for locks that are acquired by using the methods of the <see cref="T:System.Threading.Monitor" /> class, or by using the C# lock statement or the Visual Basic SyncLock statement, which are implemented with <see cref="T:System.Threading.Monitor" />. </para>
@@ -235,6 +234,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current thread holds the lock on the specified object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current thread holds the lock on <paramref name="obj" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test. </param>
       </Docs>
@@ -333,11 +336,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " /> if the current thread acquired
-   the lock; otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="obj " />is <see langword="null" />.</exception>
         <remarks>
@@ -352,6 +350,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to acquire an exclusive lock on the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current thread acquires the lock; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to acquire the lock. </param>
       </Docs>
@@ -396,15 +398,12 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true " />if the current thread acquired the lock; otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="obj " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="millisecondsTimeout " />is negative, and not equal to <see cref="F:System.Threading.Timeout.Infinite" /> . </exception>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait for the lock. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="millisecondsTimeout" /> parameter equals <see cref="F:System.Threading.Timeout.Infinite" />, this method is equivalent to <see cref="M:System.Threading.Monitor.Enter(System.Object)" />. If <paramref name="millisecondsTimeout" /> equals 0, this method is equivalent to <see cref="M:System.Threading.Monitor.TryEnter(System.Object)" />.</para>
@@ -416,6 +415,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts, for the specified number of milliseconds, to acquire an exclusive lock on the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current thread acquires the lock; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to acquire the lock. </param>
         <param name="millisecondsTimeout">
@@ -441,14 +444,11 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true " />if the current thread acquires the lock; otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="obj " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="timeout " />in milliseconds is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> , or is greater than <see cref="F:System.Int32.MaxValue" /> .</exception>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> representing the amount of time to wait for the lock. A value of –1 millisecond specifies an infinite wait.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value of the <paramref name="timeout" /> parameter converted to milliseconds equals –1, this method is equivalent to <see cref="M:System.Threading.Monitor.Enter(System.Object)" />. If the value of <paramref name="timeout" /> equals 0, this method is equivalent to <see cref="M:System.Threading.Monitor.TryEnter(System.Object)" />.</para>
@@ -460,6 +460,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts, for the specified amount of time, to acquire an exclusive lock on the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current thread acquires the lock; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to acquire the lock. </param>
         <param name="timeout">
@@ -530,12 +534,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " /> if the
-   call returned because the caller reacquired the lock for the specified object.
-   This method does not return if the lock is not reacquired. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="obj " />is <see langword="null" />.</exception>
         <exception cref="T:System.Threading.SynchronizationLockException">The calling thread does not own the lock for the specified object.</exception>
@@ -553,6 +551,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases the lock on an object and blocks the current thread until it reacquires the lock.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the call returned because the caller reacquired the lock for the specified object. This method does not return if the lock is not reacquired.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to wait. </param>
       </Docs>
@@ -576,11 +578,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the lock was reacquired before the specified time elapsed; otherwise,
-<see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="obj " />is <see langword="null" />.</exception>
         <exception cref="T:System.Threading.SynchronizationLockException">The calling thread does not own the lock for the specified object.</exception>
@@ -605,6 +602,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases the lock on an object and blocks the current thread until it reacquires the lock. If the specified time-out interval elapses, the thread enters the ready queue.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the lock was reacquired before the specified time elapsed; false if the lock was reacquired after the specified time elapsed. The method does not return until the lock is reacquired.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to wait. </param>
         <param name="millisecondsTimeout">
@@ -630,11 +631,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the lock was reacquired before
-   the specified time elapsed; otherwise, <see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="obj " />is <see langword="null" />.</exception>
         <exception cref="T:System.Threading.SynchronizationLockException">The calling thread does not own the lock for the specified object.</exception>
@@ -659,6 +655,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases the lock on an object and blocks the current thread until it reacquires the lock. If the specified time-out interval elapses, the thread enters the ready queue.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the lock was reacquired before the specified time elapsed; false if the lock was reacquired after the specified time elapsed. The method does not return until the lock is reacquired.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to wait. </param>
         <param name="timeout">
@@ -684,7 +684,6 @@
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not return until it reacquires an exclusive lock on the <paramref name="obj" /> parameter.</para>
@@ -711,6 +710,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases the lock on an object and blocks the current thread until it reacquires the lock. If the specified time-out interval elapses, the thread enters the ready queue. This method also specifies whether the synchronization domain for the context (if in a synchronized context) is exited before the wait and reacquired afterward.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the lock was reacquired before the specified time elapsed; false if the lock was reacquired after the specified time elapsed. The method does not return until the lock is reacquired.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to wait. </param>
         <param name="millisecondsTimeout">
@@ -737,7 +740,6 @@
         <Parameter Name="exitContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not return until it reacquires an exclusive lock on the <paramref name="obj" /> parameter.</para>
@@ -764,6 +766,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases the lock on an object and blocks the current thread until it reacquires the lock. If the specified time-out interval elapses, the thread enters the ready queue. Optionally exits the synchronization domain for the synchronized context before the wait and reacquires the domain afterward.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the lock was reacquired before the specified time elapsed; false if the lock was reacquired after the specified time elapsed. The method does not return until the lock is reacquired.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to wait. </param>
         <param name="timeout">

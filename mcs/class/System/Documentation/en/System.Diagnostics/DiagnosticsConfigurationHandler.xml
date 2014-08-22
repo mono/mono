@@ -75,7 +75,6 @@
         <Parameter Name="section" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>An object implementing the <see cref="T:System.Collections.IDictionary" /> interface which contains the settings specified in the XML section <paramref name="section" />.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Diagnostics.DiagnosticsConfigurationHandler.Create(System.Object,System.Object,System.Xml.XmlNode)" /> method populates a <see cref="T:System.Collections.Hashtable" /> with the values obtained from the <format type="text/html"><a href="3f348f42-fa72-4ff2-aa1c-bb9eecad4bb2">&lt;system.diagnostics&gt; Element</a></format> section of a configuration file and returns the hashtable.</para>
@@ -84,6 +83,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Parses the configuration settings for the <format type="text/html"><a href="3f348f42-fa72-4ff2-aa1c-bb9eecad4bb2">&lt;system.diagnostics&gt; Element</a></format> section of configuration files.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new configuration object, in the form of a <see cref="T:System.Collections.Hashtable" />.</para>
+        </returns>
         <param name="parent">
           <attribution license="cc4" from="Microsoft" modified="false" />The object inherited from the parent path</param>
         <param name="configContext">

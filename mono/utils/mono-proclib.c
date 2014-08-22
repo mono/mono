@@ -16,6 +16,7 @@
 
 #ifdef HOST_WIN32
 #include <windows.h>
+#include <process.h>
 #endif
 
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
@@ -407,15 +408,21 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	struct task_basic_info t_info;
 	mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
 
-	if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
-		RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	if (pid == getpid ()) {
+		/* task_for_pid () doesn't work on ios, even for the current process */
+		task = mach_task_self ();
+	} else {
+		if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+			RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	}
 	
 	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count) != KERN_SUCCESS) {
-		mach_port_deallocate (mach_task_self (), task);
+		if (pid != getpid ())
+			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 
-	if (strcmp (item, "VmRSS") == 0 || strcmp (item, "VmHWM") == 0)
+	if (strcmp (item, "VmRSS") == 0 || strcmp (item, "VmHWM") == 0 || strcmp (item, "VmData") == 0)
 		ret = t_info.resident_size;
 	else if (strcmp (item, "VmSize") == 0 || strcmp (item, "VmPeak") == 0)
 		ret = t_info.virtual_size;
@@ -424,7 +431,8 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	else
 		ret = 0;
 
-	mach_port_deallocate (mach_task_self (), task);
+	if (pid != getpid ())
+		mach_port_deallocate (mach_task_self (), task);
 	
 	return ret;
 #else
@@ -499,6 +507,18 @@ mono_process_get_data (gpointer pid, MonoProcessData data)
 {
 	MonoProcessError error;
 	return mono_process_get_data_with_error (pid, data, &error);
+}
+
+int
+mono_process_current_pid ()
+{
+#if defined(HAVE_UNISTD_H)
+	return (int) getpid ();
+#elif defined(HOST_WIN32)
+	return (int) GetCurrentProcessId ();
+#else
+#error getpid
+#endif
 }
 
 /**

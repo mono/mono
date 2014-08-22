@@ -92,7 +92,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Pass the returned <see cref="T:System.IAsyncResult" /> object to the <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" /> method to determine how many bytes were read and to release operating system resources used for reading. <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" /> must be called once for every call to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />. This can be done either in the same code that called <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> or in a callback that is passed to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
@@ -103,6 +102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous read operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous read.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to read data into.</param>
         <param name="offset">
@@ -133,7 +136,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -145,6 +147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous write operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer that contains the data to write to the current stream.</param>
         <param name="offset">
@@ -335,7 +341,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns the number of bytes read into the byte array specified by the earlier call to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
@@ -347,6 +352,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends a pending asynchronous read request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes that were read. A return value of 0 indicates the end of the stream (the pipe has been closed).</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />The reference to the pending asynchronous request.</param>
       </Docs>
@@ -419,7 +428,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An access control list (ACL) describes individuals and/or groups that have, or do not have, rights to perform specific actions on a specified file. For more information, see <format type="text/html"><a href="06fbf66d-6f02-4378-b863-b2f12e349045">ACL Technology Overview</a></format> and <format type="text/html"><a href="53758b39-bd9b-4640-bb04-cad5ed8d0abf">How To: Add or Remove Access Control List Entries</a></format>.</para>
@@ -428,6 +436,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.IO.Pipes.PipeSecurity" /> object that encapsulates the access control list (ACL) entries for the pipe described by the current <see cref="T:System.IO.Pipes.PipeStream" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Pipes.PipeSecurity" /> object that encapsulates the access control list (ACL) entries for the pipe described by the current <see cref="T:System.IO.Pipes.PipeStream" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InBufferSize">
@@ -669,7 +681,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanRead" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports read operations.</para>
@@ -679,6 +690,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a block of bytes from a stream and writes the data to a specified buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of bytes that are read into <paramref name="buffer" />. This might be less than the number of bytes requested if that number of bytes is not currently available, or 0 if the end of the stream is reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified byte array with the values between <paramref name="offset" /> and (<paramref name="offset" /> + <paramref name="count" /> - 1) replaced by the bytes read from the current source.</param>
         <param name="offset">
@@ -704,7 +719,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanRead" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports read operations.</para>
@@ -713,6 +727,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a byte from a pipe.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The byte, cast to <see cref="T:System.Int32" />, or -1 indicates the end of the stream (the pipe has been closed).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadMode">
@@ -771,7 +789,6 @@
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Pipes.PipeStream.Seek(System.Int64,System.IO.SeekOrigin)" /> method is not supported in pipes and raises a <see cref="T:System.NotSupportedException" /> when it is called.</para>
@@ -780,6 +797,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the current position of the current stream to the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new position in the stream.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The point, relative to <paramref name="origin" />, to begin seeking from.</param>
         <param name="origin">

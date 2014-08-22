@@ -372,7 +372,6 @@ namespace System.Collections.Concurrent
 			CheckArray (collections);
 			WaitHandle[] wait_table = null;
 			while (true) {
-				int index = 0;
 				for (int i = 0; i < collections.Length; ++i) {
 					if (collections [i].TryTake (out item))
 						return i;
@@ -384,7 +383,6 @@ namespace System.Collections.Concurrent
 				}
 				WaitHandle.WaitAny (wait_table);
 			}
-			return -1;
 		}
 
 		public static int TakeFromAny (BlockingCollection<T>[] collections, out T item, CancellationToken cancellationToken)
@@ -393,7 +391,6 @@ namespace System.Collections.Concurrent
 			CheckArray (collections);
 			WaitHandle[] wait_table = null;
 			while (true) {
-				int index = 0;
 				for (int i = 0; i < collections.Length; ++i) {
 					if (collections [i].TryTake (out item))
 						return i;
@@ -408,8 +405,6 @@ namespace System.Collections.Concurrent
 				WaitHandle.WaitAny (wait_table);
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
-
-			return -1;
 		}
 
 		public static int TryTakeFromAny (BlockingCollection<T>[] collections, out T item)

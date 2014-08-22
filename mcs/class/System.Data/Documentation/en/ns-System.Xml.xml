@@ -1,6 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Xml">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Xml" /> namespace provides standards-based support for processing XML.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <format type="text/html">
+        <a href="#std" />
+      </format>
+      <format type="text/html">
+        <h2>Supported standards </h2>
+      </format>
+      <para>The <see cref="N:System.Xml" /> namespace supports these standards:</para>
+      <list type="bullet">
+        <item>
+          <para>XML 1.0, including DTD support: <see cref="http://www.w3.org/TR/2006/REC-xml-20060816/">http://www.w3.org/TR/2006/REC-xml-20060816/</see></para>
+        </item>
+        <item>
+          <para>XML namespaces, both stream-level and DOM: <see cref="http://www.w3.org/TR/REC-xml-names/">http://www.w3.org/TR/REC-xml-names/</see></para>
+        </item>
+        <item>
+          <para>XML schemas: <see cref="http://www.w3.org/2001/XMLSchema">http://www.w3.org/2001/XMLSchema</see> </para>
+        </item>
+        <item>
+          <para>XPath expressions: <see cref="http://www.w3.org/TR/xpath">http://www.w3.org/TR/xpath</see> </para>
+        </item>
+        <item>
+          <para>XSLT transformations: <see cref="http://www.w3.org/TR/xslt">http://www.w3.org/TR/xslt</see> </para>
+        </item>
+        <item>
+          <para>DOM Level 1 Core: <see cref="http://www.w3.org/TR/REC-DOM-Level-1/">http://www.w3.org/TR/REC-DOM-Level-1/</see> </para>
+        </item>
+        <item>
+          <para>DOM Level 2 Core: <see cref="http://www.w3.org/TR/DOM-Level-2/">http://www.w3.org/TR/DOM-Level-2/</see> </para>
+        </item>
+      </list>
+      <para>See the section <format type="text/html"><a href="#diff">Differences from the W3C specs</a></format> for two cases in which the XML classes differ from the W3C recommendations.</para>
+      <format type="text/html">
+        <a href="#related" />
+      </format>
+      <format type="text/html">
+        <h2>Related namespaces</h2>
+      </format>
+      <para>The .NET Framework also provides other namespaces for XML-related operations. For a list, descriptions, and links, see the <see cref="http://msdn.microsoft.com/library/gg145036.aspx">System.Xml Namespaces</see> webpage.</para>
+      <format type="text/html">
+        <a href="#async" />
+      </format>
+      <format type="text/html">
+        <h2>Processing XML asynchronously </h2>
+      </format>
+      <para>The <see cref="T:System.Xml.XmlReader" /> and <see cref="T:System.Xml.XmlWriter" /> classes include a number of asynchronous methods that are based on the <format type="text/html"><a href="db854f91-ccef-4035-ae4d-0911fde808c7">Visual Studio asynchronous programming model</a></format>. These methods can be identified by the string "Async" at the end of their names. With these methods, you can write asynchronous code that's similar to your synchronous code, and you can migrate your existing synchronous code to asynchronous code easily.</para>
+      <list type="bullet">
+        <item>
+          <para>Use the asynchronous methods in apps where there is significant network stream latency. Avoid using the asynchronous APIs for memory stream or local file stream read/write operations. The input stream, <see cref="T:System.Xml.XmlTextReader" />, and <see cref="T:System.Xml.XmlTextWriter" /> should support asynchronous operations as well. Otherwise, threads will still be blocked by I/O operations.</para>
+        </item>
+        <item>
+          <para>We don't recommend mixing synchronous and asynchronous function calls, because you might forget to use the await keyword or use a synchronous API where an asynchronous one is necessary.</para>
+        </item>
+        <item>
+          <para>Do not set the <see cref="P:System.Xml.XmlReaderSettings.Async" /> or <see cref="P:System.Xml.XmlWriterSettings.Async" /> flag to true if you don't intend to use an asynchronous method.</para>
+        </item>
+        <item>
+          <para>If you forget to specify the await keyword when you call an asynchronous method, the results are non-deterministic: You might receive the result you expected or an exception.</para>
+        </item>
+        <item>
+          <para>When an <see cref="T:System.Xml.XmlReader" /> object is reading a large text node, it might cache only a partial text value and return the text node, so retrieving the <see cref="P:System.Xml.XmlReader.Value" /> property might be blocked by an I/O operation. Use the <see cref="M:System.Xml.XmlReader.GetValueAsync" /> method to get the text value in asynchronous mode, or use the <see cref="M:System.Xml.XmlReader.ReadValueChunkAsync(System.Char[],System.Int32,System.Int32)" /> method to read a large text block in chunks.</para>
+        </item>
+        <item>
+          <para>When you use an <see cref="T:System.Xml.XmlWriter" /> object, call the <see cref="M:System.Xml.XmlWriter.FlushAsync" /> method before calling <see cref="M:System.Xml.XmlWriter.Close" /> to avoid blocking an I/O operation.</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#diff" />
+      </format>
+      <format type="text/html">
+        <h2>Differences from the W3C specs</h2>
+      </format>
+      <para>In two cases that involve constraints on model group schema components, the <see cref="N:System.Xml" /> namespace differs from the W3C recommendations.</para>
+      <para>Consistency in element declarations:</para>
+      <para>In some cases, when substitution groups are used, the <see cref="N:System.Xml" /> implementation does not satisfy the "Schema Component Constraint: Element Declarations Consistent," which is described in the <see cref="http://go.microsoft.com/fwlink/?LinkId=137029">Constraints on Model Group Schema Components</see> section of the W3C spec.</para>
+      <para>For example, the following schema includes elements that have the same name but different types in the same content model, and substitution groups are used. This should cause an error, but <see cref="N:System.Xml" /> compiles and validates the schema without errors. </para>
+      <code>&lt;?xml version="1.0" encoding="utf-8" ?&gt; 
+&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"&gt;
+
+   &lt;xs:element name="e1" type="t1"/&gt;
+   &lt;xs:complexType name="t1"/&gt;
+
+   &lt;xs:element name="e2" type="t2" substitutionGroup="e1"/&gt;
+      &lt;xs:complexType name="t2"&gt;
+         &lt;xs:complexContent&gt;
+            &lt;xs:extension base="t1"&gt;
+         &lt;/xs:extension&gt;
+      &lt;/xs:complexContent&gt;
+   &lt;/xs:complexType&gt;
+
+   &lt;xs:complexType name="t3"&gt;
+      &lt;xs:sequence&gt;
+         &lt;xs:element ref="e1"/&gt;
+         &lt;xs:element name="e2" type="xs:int"/&gt;
+      &lt;/xs:sequence&gt;
+   &lt;/xs:complexType&gt;
+&lt;/xs:schema&gt;</code>
+      <para>In this schema, type t3 contains a sequence of elements. Because of the substitution, the reference to element e1 from the sequence can result either in element e1 of type t1 or in element e2 of type t2. The latter case would result in a sequence of two e2 elements, where one is of type t2 and the other is of type xs:int. </para>
+      <para>Unique particle attribution:</para>
+      <para>Under the following conditions, the <see cref="N:System.Xml" /> implementation does not satisfy the "Schema Component Constraint: Unique Particle Attribution," which is described in the <see cref="http://go.microsoft.com/fwlink/?LinkId=137029">Constraints on Model Group Schema Components</see> section of the W3C spec.</para>
+      <list type="bullet">
+        <item>
+          <para>One of the elements in the group references another element.</para>
+        </item>
+        <item>
+          <para>The referenced element is a head element of a substitution group.</para>
+        </item>
+        <item>
+          <para>The substitution group contains an element that has the same name as one of the elements in the group.</para>
+        </item>
+        <item>
+          <para>The cardinality of the element that references the substitution group head element and the element with the same name as a substitution group element is not fixed (minOccurs &lt; maxOccurs).</para>
+        </item>
+        <item>
+          <para>The definition of the element that references the substitution group precedes the definition of the element with the same name as a substitution group element.</para>
+        </item>
+      </list>
+      <para>For example, in the schema below the content model is ambiguous and should cause a compilation error, but <see cref="N:System.Xml" /> compiles the schema without errors.</para>
+      <code>&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"&gt;
+
+  &lt;xs:element name="e1" type="xs:int"/&gt;
+  &lt;xs:element name="e2" type="xs:int" substitutionGroup="e1"/&gt;
+
+  &lt;xs:complexType name="t3"&gt;
+    &lt;xs:sequence&gt;
+      &lt;xs:element ref="e1" minOccurs="0" maxOccurs="1"/&gt;
+      &lt;xs:element name="e2" type="xs:int" minOccurs="0" maxOccurs="1"/&gt;
+    &lt;/xs:sequence&gt;
+  &lt;/xs:complexType&gt;
+  
+  &lt;xs:element name="e3" type="t3"/&gt;
+&lt;/xs:schema&gt;</code>
+      <para>If you try to validate the following XML against the schema above, the validation will fail with the following message: "The element 'e3' has invalid child element 'e2'." and an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> exception will be thrown. </para>
+      <code>&lt;e3&gt;
+  &lt;e2&gt;1&lt;/e2&gt;
+  &lt;e2&gt;2&lt;/e2&gt;
+&lt;/e3&gt;</code>
+      <para>To work around this problem, you can swap element declarations in the XSD document. For example:</para>
+      <code>&lt;xs:sequence&gt;
+  &lt;xs:element ref="e1" minOccurs="0" maxOccurs="1"/&gt;
+  &lt;xs:element name="e2" type="xs:int" minOccurs="0" maxOccurs="1"/&gt;
+&lt;/xs:sequence&gt;</code>
+      <para>becomes this:</para>
+      <code>&lt;xs:sequence&gt;
+  &lt;xs:element name="e2" type="xs:int" minOccurs="0" maxOccurs="1"/&gt;
+  &lt;xs:element ref="e1" minOccurs="0" maxOccurs="1"/&gt;
+&lt;/xs:sequence&gt;</code>
+      <para>Here's another example of the same issue:</para>
+      <code>&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"&gt;
+   &lt;xs:element name="e1" type="xs:string"/&gt;
+   &lt;xs:element name="e2" type="xs:string" substitutionGroup="e1"/&gt;
+   
+   &lt;xs:complexType name="t3"&gt;
+      &lt;xs:sequence&gt;
+         &lt;xs:element ref="e1" minOccurs="0" maxOccurs="1"/&gt;
+         &lt;xs:element name="e2" type="xs:int" minOccurs="0" maxOccurs="1"/&gt;
+      &lt;/xs:sequence&gt;
+   &lt;/xs:complexType&gt;
+   &lt;xs:element name="e3" type="t3"/&gt;
+&lt;/xs:schema&gt;</code>
+      <para>If you try to validate the following XML against the schema above, the validation will fail with the following exception: "Unhandled Exception: System.Xml.Schema.XmlSchemaValidationException: The 'e2' el element is invalid - The value 'abc' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:int' - The string 'abc' is not a valid Int32 value."\</para>
+      <code>&lt;e3&gt;&lt;e2&gt;abc&lt;/e2&gt;&lt;/e3&gt;</code>
+      <format type="text/html">
+        <a href="#security" />
+      </format>
+      <format type="text/html">
+        <h2>Security considerations</h2>
+      </format>
+      <para>The types and members in the <see cref="N:System.Xml" /> namespace rely on the <format type="text/html"><a href="9a9621d7-8883-4a4f-a874-65e8e09e20a6">.NET Framework security system</a></format>. The following sections discuss security issues that are specific to XML technologies. For details, see the specific classes and members mentioned, and visit the <see cref="http://go.microsoft.com/fwlink/?linkid=42458">XML Developer Center</see> for technical information, downloads, newsgroups, and other resources for XML developers.</para>
+      <para>Also note that when you use the <see cref="N:System.Xml" /> types and members, if the XML contains data that has potential privacy implications, you need to implement your app in a way that respects your end users' privacy.</para>
+      <para>External access</para>
+      <para>Several XML technologies have the ability to retrieve other documents during processing. For example, a document type definition (DTD) can reside in the document being parsed. The DTD can also live in an external document that is referenced by the document being parsed. The XML Schema definition language (XSD) and XSLT technologies also have the ability to include information from other files. These external resources can present some security concerns. For example, you'll want to ensure that your app retrieves files only from trusted sites, and that the file it retrieves doesn't contain malicious data.</para>
+      <para>The <see cref="T:System.Xml.XmlUrlResolver" /> class is used to load XML documents and to resolve external resources such as entities, DTDs, or schemas, and import or include directives.</para>
+      <para>You can override this class and specify the <see cref="T:System.Xml.XmlResolver" /> object to use. Use the <see cref="T:System.Xml.XmlSecureResolver" /> class if you need to open a resource that you do not control, or that is untrusted. The <see cref="T:System.Xml.XmlSecureResolver" /> wraps an <see cref="T:System.Xml.XmlResolver" /> and allows you to restrict the resources that the underlying <see cref="T:System.Xml.XmlResolver" /> has access to.</para>
+      <para>Denial of service</para>
+      <para>The following scenarios are considered to be less vulnerable to denial of service attacks because the <see cref="N:System.Xml" /> classes provide a means of protection from such attacks. </para>
+      <list type="bullet">
+        <item>
+          <para>Parsing text XML data.</para>
+        </item>
+        <item>
+          <para>Parsing binary XML data if the binary XML data was generated by Microsoft SQL Server.</para>
+        </item>
+        <item>
+          <para>Writing XML documents and fragments from data sources to the file system, streams, a <see cref="T:System.IO.TextWriter" />, or a <see cref="T:System.Text.StringBuilder" />.</para>
+        </item>
+        <item>
+          <para>Loading documents into the Document Object Model (DOM) object if you are using an <see cref="T:System.Xml.XmlReader" /> object and <see cref="P:System.Xml.XmlReaderSettings.DtdProcessing" /> set to <see cref="F:System.Xml.DtdProcessing.Prohibit" />.</para>
+        </item>
+        <item>
+          <para>Navigating the DOM object.</para>
+        </item>
+      </list>
+      <para>The following scenarios are not recommended if you are concerned about denial of service attacks, or if you are working in an untrusted environment.</para>
+      <list type="bullet">
+        <item>
+          <para>DTD processing.</para>
+        </item>
+        <item>
+          <para>Schema processing. This includes adding an untrusted schema to the schema collection, compiling an untrusted schema, and validating by using an untrusted schema.</para>
+        </item>
+        <item>
+          <para>XSLT processing.</para>
+        </item>
+        <item>
+          <para>Parsing any arbitrary stream of user supplied binary XML data.</para>
+        </item>
+        <item>
+          <para>DOM operations such as querying, editing, moving sub-trees between documents, and saving DOM objects.</para>
+        </item>
+      </list>
+      <para>If you are concerned about denial of service issues or if you are dealing with untrusted sources, do not enable DTD processing. This is disabled by default on <see cref="T:System.Xml.XmlReader" /> objects that the <see cref="Overload:System.Xml.XmlReader.Create" /> method creates. </para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Xml.XmlTextReader" /> allows DTD processing by default. Use the <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> property to disable this feature.</para>
+      </block>
+      <para>If you have DTD processing enabled, you can use the <see cref="T:System.Xml.XmlSecureResolver" /> class to restrict the resources that the <see cref="T:System.Xml.XmlReader" /> can access. You can also design your app so that the XML processing is memory and time constrained. For example, you can configure timeout limits in your ASP.NET app.</para>
+      <para>Processing considerations</para>
+      <para>Because XML documents can include references to other files, it is difficult to determine how much processing power is required to parse an XML document. For example, XML documents can include a DTD. If the DTD contains nested entities or complex content models, it could take an excessive amount of time to parse the document.</para>
+      <para>When using <see cref="T:System.Xml.XmlReader" />, you can limit the size of the document that can be parsed by setting the <see cref="P:System.Xml.XmlReaderSettings.MaxCharactersInDocument" /> property. You can limit the number of characters that result from expanding entities by setting the <see cref="P:System.Xml.XmlReaderSettings.MaxCharactersFromEntities" /> property. See the appropriate reference topics for examples of setting these properties.</para>
+      <para>The XSD and XSLT technologies have additional capabilities that can affect processing performance. For example, it is possible to construct an XML schema that requires a substantial amount of time to process when evaluated over a relatively small document. It is also possible to embed script blocks within an XSLT style sheet. Both cases pose a potential security threat to your app.</para>
+      <para>When creating an app that uses the <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class, you should be aware of the following items and their implications:</para>
+      <list type="bullet">
+        <item>
+          <para>XSLT scripting is disabled by default. XSLT scripting should be enabled only if you require script support and you are working in a fully trusted environment. </para>
+        </item>
+        <item>
+          <para>The XSLT document() function is disabled by default. If you enable the document() function, restrict the resources that can be accessed by passing an <see cref="T:System.Xml.XmlSecureResolver" /> object to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method.</para>
+        </item>
+        <item>
+          <para>Extension objects are enabled by default. If an <see cref="T:System.Xml.Xsl.XsltArgumentList" /> object that contains extension objects is passed to the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Transform(System.String,System.String)" /> method, the extension objects are used.</para>
+        </item>
+        <item>
+          <para>XSLT style sheets can include references to other files and embedded script blocks. A malicious user can exploit this by supplying you with data or style sheets that, when executed, can cause your system to process until the computer runs low on resources.</para>
+        </item>
+        <item>
+          <para>XSLT apps that run in a mixed trust environment can result in style sheet spoofing. For example, a malicious user can load an object with a harmful style sheet and hand it off to another user who subsequently calls the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Transform(System.String,System.String)" /> method and executes the transformation.</para>
+        </item>
+      </list>
+      <para>These security issues can be mitigated by not enabling scripting or the document() function unless the style sheet comes from a trusted source, and by not accepting <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> objects, XSLT style sheets, or XML source data from an untrusted source.</para>
+      <para>Exception handling</para>
+      <para>Exceptions thrown by lower level components can disclose path information that you do not want exposed to the app. Your apps must catch exceptions and process them appropriately.</para>
+    </remarks>
   </Docs>
 </Namespace>

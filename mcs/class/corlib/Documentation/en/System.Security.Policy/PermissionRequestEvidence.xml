@@ -80,12 +80,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'PermissionRequestEvidence'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an equivalent copy of the current <see cref="T:System.Security.Policy.PermissionRequestEvidence" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An equivalent copy of the current <see cref="T:System.Security.Policy.PermissionRequestEvidence" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DeniedPermissions">
@@ -237,7 +240,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful during debugging to get an easy-to-read representation of the <see cref="T:System.Security.Policy.PermissionRequestEvidence" />.</para>
@@ -246,6 +248,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string representation of the state of the <see cref="T:System.Security.Policy.PermissionRequestEvidence" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the state of the <see cref="T:System.Security.Policy.PermissionRequestEvidence" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -552,7 +552,7 @@ namespace System.Windows.Forms {
 				ErrorHandler = new XErrorHandler(HandleError);
 				XSetErrorHandler(ErrorHandler);
 			} else {
-				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check you DISPLAY environment variable)");
+				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check your DISPLAY environment variable)");
 			}
 		}
 		#endregion	// Internal Methods
@@ -2594,6 +2594,28 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override Screen[] AllScreens {
+			get {
+				if (!XineramaIsActive (DisplayHandle))
+					return null;
+				int nScreens;
+				IntPtr xineramaScreens = XineramaQueryScreens (DisplayHandle, out nScreens);
+				var screens = new Screen [nScreens];
+				IntPtr current = xineramaScreens;
+				for (int i = 0; i < nScreens; i++) {
+					var screen = (XineramaScreenInfo)Marshal.PtrToStructure (current,
+						typeof (XineramaScreenInfo));
+					var screenRect = new Rectangle (screen.x_org, screen.y_org, screen.width,
+						screen.height);
+					var name = string.Format ("Display {0}", screen.screen_number);
+					screens [i] = new Screen (i == 0, name, screenRect, screenRect);
+					current = (IntPtr)( (ulong)current + (ulong)Marshal.SizeOf(typeof (XineramaScreenInfo)));
+				}
+				XFree (xineramaScreens);
+				return screens;
+			}
+		}
+
 		internal override bool ThemesEnabled {
 			get {
 				return XplatUIX11.themes_enabled;
@@ -2727,9 +2749,14 @@ namespace System.Windows.Forms {
 			while (f != null) {
 				XConvertSelection(DisplayHandle, CLIPBOARD, (IntPtr)f.Id, (IntPtr)f.Id, FosterParent, IntPtr.Zero);
 
+				var timeToWaitForSelectionFormats = TimeSpan.FromSeconds(4);
+				var startTime = DateTime.Now;
 				Clipboard.Enumerating = true;
 				while (Clipboard.Enumerating) {
 					UpdateMessageQueue(null, false);
+
+					if (DateTime.Now - startTime > timeToWaitForSelectionFormats)
+						break;
 				}
 				f = f.Next;
 			}
@@ -6082,12 +6109,13 @@ namespace System.Windows.Forms {
 			}
 
 			hwnd.opacity = (uint)(0xffffffff * transparency);
-			opacity = (IntPtr)((int)hwnd.opacity);
+			opacity = (IntPtr)hwnd.opacity;
 
-			IntPtr w = hwnd.whole_window;
-			if (hwnd.reparented)
-				w = XGetParent (hwnd.whole_window);
-			XChangeProperty(DisplayHandle, w, _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+			if (transparency >= 1.0) {
+				XDeleteProperty (DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_OPACITY);
+			} else {
+				XChangeProperty (DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+			}
 		}
 
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool top, bool bottom)
@@ -6362,7 +6390,7 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		
-#if TRACE
+#if TRACE && false
 		
 #region Xcursor imports
 		[DllImport ("libXcursor", EntryPoint = "XcursorLibraryLoadCursor")]
@@ -7231,6 +7259,34 @@ namespace System.Windows.Forms {
 		}
 #endregion
 
+#region Xinerama imports
+		[DllImport ("libXinerama", EntryPoint="XineramaQueryScreens")]
+		extern static IntPtr _XineramaQueryScreens (IntPtr display, out int number);
+		internal static IntPtr XineramaQueryScreens (IntPtr display, out int number)
+		{
+			DebugHelper.TraceWriteLine ("XineramaQueryScreens");
+			return _XineramaQueryScreens (display, out number);
+		}
+
+		[DllImport ("libXinerama", EntryPoint="XineramaIsActive")]
+		extern static bool _XineramaIsActive (IntPtr display);
+		static bool XineramaNotInstalled;
+
+		internal static bool XineramaIsActive (IntPtr display)
+		{
+			DebugHelper.TraceWriteLine ("XineramaIsActive");
+
+			if (XineramaNotInstalled)
+				return false;
+			try {
+				return _XineramaIsActive (display);
+			} catch (DllNotFoundException) {
+				// Xinerama isn't installed
+				XineramaNotInstalled = true;
+				return false;
+			}
+		}
+#endregion
 
 #else //no TRACE defined
 
@@ -7599,6 +7655,29 @@ namespace System.Windows.Forms {
 
 		[DllImport("libgtk-x11-2.0")]
 		internal extern static void gtk_clipboard_set_text (IntPtr clipboard, string text, int len);
+#endregion
+
+
+#region Xinerama imports
+		[DllImport ("libXinerama")]
+		internal extern static IntPtr XineramaQueryScreens (IntPtr display, out int number);
+
+		[DllImport ("libXinerama", EntryPoint = "XineramaIsActive")]
+		extern static bool _XineramaIsActive (IntPtr display);
+		static bool XineramaNotInstalled;
+
+		internal static bool XineramaIsActive (IntPtr display)
+		{
+			if (XineramaNotInstalled)
+				return false;
+			try {
+				return _XineramaIsActive (display);
+			} catch (DllNotFoundException) {
+				// Xinerama isn't installed
+				XineramaNotInstalled = true;
+				return false;
+			}
+		}
 #endregion
 
 #endif

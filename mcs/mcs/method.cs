@@ -563,6 +563,12 @@ namespace Mono.CSharp {
 				if ((ModFlags & extern_static) != extern_static) {
 					Report.Error (601, a.Location, "The DllImport attribute must be specified on a method marked `static' and `extern'");
 				}
+
+				if (MemberName.IsGeneric || Parent.IsGenericOrParentIsGeneric) {
+					Report.Error (7042, a.Location, 
+						"The DllImport attribute cannot be applied to a method that is generic or contained in a generic type");
+				}
+
 				is_external_implementation = true;
 			}
 
@@ -718,6 +724,11 @@ namespace Mono.CSharp {
 
 			if (MethodData != null)
 				MethodData.Emit (Parent);
+
+			if (block != null && block.StateMachine is AsyncTaskStorey) {
+				var psm = Module.PredefinedAttributes.AsyncStateMachine;
+				psm.EmitAttribute (MethodBuilder, block.StateMachine);
+			}
 
 			if ((ModFlags & Modifiers.PARTIAL) == 0)
 				Block = null;
@@ -1101,61 +1112,61 @@ namespace Mono.CSharp {
 			}
 
 			for (int i = 0; i < tparams.Count; ++i) {
-				var tp = tparams[i];
+				var tp = tparams [i];
 
-				if (!tp.ResolveConstraints (this))
+				if (base_tparams == null) {
+					tp.ResolveConstraints (this);
 					continue;
+				}
 
 				//
 				// Copy base constraints for override/explicit methods
 				//
-				if (base_tparams != null) {
-					var base_tparam = base_tparams[i];
-					var local_tparam = tp.Type;
-					local_tparam.SpecialConstraint = base_tparam.SpecialConstraint;
+				var base_tparam = base_tparams [i];
+				var local_tparam = tp.Type;
+				local_tparam.SpecialConstraint = base_tparam.SpecialConstraint;
 
-					var inflator = new TypeParameterInflator (this, CurrentType, base_decl_tparams, base_targs);
-					base_tparam.InflateConstraints (inflator, local_tparam);
+				var inflator = new TypeParameterInflator (this, CurrentType, base_decl_tparams, base_targs);
+				base_tparam.InflateConstraints (inflator, local_tparam);
 
-					//
-					// Check all type argument constraints for possible collision or unification
-					// introduced by inflating inherited constraints in this context
-					//
-					// Conflict example:
-					//
-					// class A<T> { virtual void Foo<U> () where U : class, T {} }
-					// class B : A<int> { override void Foo<U> {} }
-					//
-					var local_tparam_targs = local_tparam.TypeArguments;
-					if (local_tparam_targs != null) {
-						for (int ii = 0; ii < local_tparam_targs.Length; ++ii) {
-							var ta = local_tparam_targs [ii];
-							if (!ta.IsClass && !ta.IsStruct)
-								continue;
+				//
+				// Check all type argument constraints for possible collision or unification
+				// introduced by inflating inherited constraints in this context
+				//
+				// Conflict example:
+				//
+				// class A<T> { virtual void Foo<U> () where U : class, T {} }
+				// class B : A<int> { override void Foo<U> {} }
+				//
+				var local_tparam_targs = local_tparam.TypeArguments;
+				if (local_tparam_targs != null) {
+					for (int ii = 0; ii < local_tparam_targs.Length; ++ii) {
+						var ta = local_tparam_targs [ii];
+						if (!ta.IsClass && !ta.IsStruct)
+							continue;
 
-							TypeSpec[] unique_tparams = null;
-							for (int iii = ii + 1; iii < local_tparam_targs.Length; ++iii) {
-								//
-								// Remove any identical or unified constraint types
-								//
-								var tparam_checked = local_tparam_targs[iii];
-								if (TypeSpecComparer.IsEqual (ta, tparam_checked) || TypeSpec.IsBaseClass (ta, tparam_checked, false)) {
-									unique_tparams = new TypeSpec[local_tparam_targs.Length - 1];
-									Array.Copy (local_tparam_targs, 0, unique_tparams, 0, iii);
-									Array.Copy (local_tparam_targs, iii + 1, unique_tparams, iii, local_tparam_targs.Length - iii - 1);
-								} else if (!TypeSpec.IsBaseClass (tparam_checked, ta, false)) {
-									Constraints.Error_ConflictingConstraints (this, local_tparam, ta, tparam_checked, Location);
-								}
+						TypeSpec[] unique_tparams = null;
+						for (int iii = ii + 1; iii < local_tparam_targs.Length; ++iii) {
+							//
+							// Remove any identical or unified constraint types
+							//
+							var tparam_checked = local_tparam_targs [iii];
+							if (TypeSpecComparer.IsEqual (ta, tparam_checked) || TypeSpec.IsBaseClass (ta, tparam_checked, false)) {
+								unique_tparams = new TypeSpec[local_tparam_targs.Length - 1];
+								Array.Copy (local_tparam_targs, 0, unique_tparams, 0, iii);
+								Array.Copy (local_tparam_targs, iii + 1, unique_tparams, iii, local_tparam_targs.Length - iii - 1);
+							} else if (!TypeSpec.IsBaseClass (tparam_checked, ta, false)) {
+								Constraints.Error_ConflictingConstraints (this, local_tparam, ta, tparam_checked, Location);
 							}
-
-							if (unique_tparams != null) {
-								local_tparam_targs = unique_tparams;
-								local_tparam.TypeArguments = local_tparam_targs;
-								continue;
-							}
-
-							Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location);
 						}
+
+						if (unique_tparams != null) {
+							local_tparam_targs = unique_tparams;
+							local_tparam.TypeArguments = local_tparam_targs;
+							continue;
+						}
+
+						Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location);
 					}
 				}
 			}
@@ -1176,7 +1187,8 @@ namespace Mono.CSharp {
 
 					// Using container location because the interface can be implemented
 					// by base class
-					container.Compiler.Report.Error (425, container.Location,
+					var tp = (tparams [i].MemberDefinition as MemberCore) ?? container;
+					container.Compiler.Report.Error (425, tp.Location,
 						"The constraints for type parameter `{0}' of method `{1}' must match the constraints for type parameter `{2}' of interface method `{3}'. Consider using an explicit interface implementation instead",
 						tparams[i].GetSignatureForError (), method.GetSignatureForError (),
 						base_tparams[i].GetSignatureForError (), baseMethod.GetSignatureForError ());
@@ -1324,6 +1336,12 @@ namespace Mono.CSharp {
 				if (IsPartialDefinition) {
 					if (partialMethodImplementation != null && CurrentTypeParameters != null) {
 						CurrentTypeParameters.CheckPartialConstraints (partialMethodImplementation);
+
+						var otp = partialMethodImplementation.CurrentTypeParameters;
+						for (int i = 0; i < CurrentTypeParameters.Count; ++i) {
+							var tp = CurrentTypeParameters [i];
+							tp.Define (otp[i]);
+						}
 					}
 
 					return;
@@ -1341,12 +1359,6 @@ namespace Mono.CSharp {
 						tp.CheckGenericConstraints (false);
 						tp.Emit ();
 					}
-				}
-
-				if (block != null && block.StateMachine is AsyncTaskStorey) {
-					var psm = Module.PredefinedAttributes.AsyncStateMachine;
-					
-					psm.EmitAttribute (MethodBuilder, block.StateMachine);
 				}
 
 				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
@@ -1387,17 +1399,40 @@ namespace Mono.CSharp {
 
 			// Ensure we are always using method declaration parameters
 			for (int i = 0; i < methodDefinition.parameters.Count; ++i ) {
-				parameters [i].Name = methodDefinition.parameters [i].Name;
-				parameters [i].DefaultValue = methodDefinition.parameters [i].DefaultValue;
+				var md_p = methodDefinition.parameters [i];
+				var p = parameters [i];
+				p.Name = md_p.Name;
+				p.DefaultValue = md_p.DefaultValue;
+				if (md_p.OptAttributes != null) {
+					if (p.OptAttributes == null) {
+						p.OptAttributes = md_p.OptAttributes;
+					} else {
+						p.OptAttributes.Attrs.AddRange (md_p.OptAttributes.Attrs);
+					}
+				}
 			}
 
-			if (methodDefinition.attributes == null)
-				return;
+			if (methodDefinition.attributes != null) {
+				if (attributes == null) {
+					attributes = methodDefinition.attributes;
+				} else {
+					attributes.Attrs.AddRange (methodDefinition.attributes.Attrs);
+				}
+			}
 
-			if (attributes == null) {
-				attributes = methodDefinition.attributes;
-			} else {
-				attributes.Attrs.AddRange (methodDefinition.attributes.Attrs);
+			if (CurrentTypeParameters != null) {
+				for (int i = 0; i < CurrentTypeParameters.Count; ++i) {
+					var tp_other = methodDefinition.CurrentTypeParameters [i];
+					if (tp_other.OptAttributes == null)
+						continue;
+
+					var tp = CurrentTypeParameters [i];
+					if (tp.OptAttributes == null) {
+						tp.OptAttributes = tp_other.OptAttributes;
+					} else {
+						tp.OptAttributes.Attrs.AddRange (tp.OptAttributes.Attrs);
+					}
+				}
 			}
 		}
 	}
@@ -1501,7 +1536,7 @@ namespace Mono.CSharp {
 			
 			var call = new CallEmitter ();
 			call.InstanceExpression = new CompilerGeneratedThis (type, loc); 
-			call.EmitPredefined (ec, base_ctor, argument_list);
+			call.EmitPredefined (ec, base_ctor, argument_list, false);
 		}
 
 		public override void EmitStatement (EmitContext ec)
@@ -1586,7 +1621,6 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsPrimaryConstructor { get; set; }
-
 		
 		MethodBase IMethodDefinition.Metadata {
 			get {
@@ -1675,12 +1709,12 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
-			if (Parent.PrimaryConstructorParameters != null && !IsPrimaryConstructor) {
-				if (Parent.Kind == MemberKind.Struct) {
-					Report.Error (9009, Location, "`{0}': Structs with primary constructor cannot have explicit constructor",
+			if (Parent.PrimaryConstructorParameters != null && !IsPrimaryConstructor && !IsStatic) {
+				if (Parent.Kind == MemberKind.Struct && Initializer is ConstructorThisInitializer && Initializer.Arguments == null) {
+					Report.Error (8043, Location, "`{0}': Structs with primary constructor cannot specify default constructor initializer",
 						GetSignatureForError ());
 				} else if (Initializer == null || Initializer is ConstructorBaseInitializer) {
-					Report.Error (9002, Location, "`{0}': Instance constructor of type with primary constructor must specify `this' constructor initializer",
+					Report.Error (8037, Location, "`{0}': Instance constructor of type with primary constructor must specify `this' constructor initializer",
 						GetSignatureForError ());
 				}
 			}
@@ -1740,6 +1774,14 @@ namespace Mono.CSharp {
 			bc.Set (ResolveContext.Options.ConstructorScope);
 
 			if (block != null) {
+				if (!IsStatic && Initializer == null && Parent.PartialContainer.Kind == MemberKind.Struct) {
+					//
+					// If this is a non-static `struct' constructor and doesn't have any
+					// initializer, it must initialize all of the struct's fields.
+					//
+					block.AddThisVariable (bc);
+				}
+
 				//
 				// If we use a "this (...)" constructor initializer, then
 				// do not emit field initializers, they are initialized in the other constructor
@@ -1748,16 +1790,8 @@ namespace Mono.CSharp {
 					Parent.PartialContainer.ResolveFieldInitializers (bc);
 
 				if (!IsStatic) {
-					if (Initializer == null) {
-						if (Parent.PartialContainer.Kind == MemberKind.Struct) {
-							//
-							// If this is a non-static `struct' constructor and doesn't have any
-							// initializer, it must initialize all of the struct's fields.
-							//
-							block.AddThisVariable (bc);
-						} else if (Parent.PartialContainer.Kind == MemberKind.Class) {
-							Initializer = new GeneratedBaseInitializer (Location, null);
-						}
+					if (Initializer == null && Parent.PartialContainer.Kind == MemberKind.Class) {
+						Initializer = new GeneratedBaseInitializer (Location, null);
 					}
 
 					if (Initializer != null) {
@@ -1987,7 +2021,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 				} else {
-					if (implementing != null) {
+					if (implementing != null && !optional) {
 						if (!method.IsAccessor) {
 							if (implementing.IsAccessor) {
 								container.Compiler.Report.SymbolRelatedToPreviousError (implementing);
@@ -2218,6 +2252,9 @@ namespace Mono.CSharp {
 
 		protected override bool CheckBase ()
 		{
+			if ((caching_flags & Flags.MethodOverloadsExist) != 0)
+				CheckForDuplications ();
+
 			// Don't check base, destructors have special syntax
 			return true;
 		}
@@ -2466,6 +2503,11 @@ namespace Mono.CSharp {
 		public override bool IsClsComplianceRequired()
 		{
 			return false;
+		}
+
+		public void PrepareEmit ()
+		{
+			method_data.DefineMethodBuilder (Parent.PartialContainer, ParameterInfo);
 		}
 
 		public override void WriteDebugSymbol (MonoSymbolFile file)

@@ -93,7 +93,6 @@
         <Parameter Name="handlerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You should never cache this value because other components are free to change it. This call is fairly quick, however, especially for cases when you are always asking for the same type of handler.</para>
@@ -102,6 +101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the currently active event handler of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the handler, or null if there is no handler of the requested type.</para>
+        </returns>
         <param name="handlerType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the handler to get. </param>
       </Docs>

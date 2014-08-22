@@ -70,7 +70,6 @@
         <Parameter Name="attribs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.XmlBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method of the <see cref="T:System.Web.UI.WebControls.XmlBuilder" /> class overrides the <see cref="M:System.Web.UI.ControlBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method of the <see cref="T:System.Web.UI.ControlBuilder" /> class. This implementation of the <see cref="M:System.Web.UI.WebControls.XmlBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method always returns null.</para>
@@ -79,6 +78,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the <see cref="T:System.Type" /> for the <see cref="T:System.Web.UI.WebControls.Xml" /> control's specified child control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.ControlBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method is overridden to always return null.</para>
+        </returns>
         <param name="tagName">
           <attribution license="cc4" from="Microsoft" modified="false" />The tag name of the child control.</param>
         <param name="attribs">
@@ -96,7 +99,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.XmlBuilder.NeedsTagInnerText" /> method of the <see cref="T:System.Web.UI.WebControls.XmlBuilder" /> class overrides the <see cref="M:System.Web.UI.ControlBuilder.NeedsTagInnerText" /> method of the <see cref="T:System.Web.UI.ControlBuilder" /> class to always return true.</para>
@@ -106,6 +108,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Web.UI.WebControls.Xml" /> control needs to get its inner text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.ControlBuilder.NeedsTagInnerText" /> method is overridden to always return true.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

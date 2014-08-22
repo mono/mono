@@ -231,12 +231,15 @@ class MethodAttributesExample
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
@@ -255,7 +258,6 @@ class MethodAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the currently executing method is defined on a generic type, the <see cref="T:System.Reflection.MethodInfo" /> that is returned by <see cref="M:System.Reflection.MethodBase.GetCurrentMethod" /> is obtained from the generic type definition (that is, <see cref="P:System.Reflection.MethodInfo.ContainsGenericParameters" /> returns true). Therefore, it does not reflect the type arguments that were used when the method was called. For example, if a method M() is defined on a generic type C&lt;T&gt; (C(Of T) in Visual Basic), and <see cref="M:System.Reflection.MethodBase.GetCurrentMethod" /> is called from C&lt;string&gt;.M(), then <see cref="M:System.Reflection.MethodBase.GetCurrentMethod" /> returns C&lt;T&gt;.M() (C(Of T).M() in Visual Basic).</para>
@@ -265,6 +267,10 @@ class MethodAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a MethodBase object representing the currently executing method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodBase object representing the currently executing method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGenericArguments">
@@ -285,9 +291,6 @@ class MethodAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Type" /> objects that represent the type arguments of a generic method or the type parameters of a generic method definition. Returns an empty array if the current method is not a generic method.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.NotSupportedException">
           <para>Default behavior when not overridden in a derived class.</para>
@@ -313,6 +316,10 @@ class MethodAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of <see cref="T:System.Type" /> objects that represent the type arguments of a generic method or the type parameters of a generic method definition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that represent the type arguments of a generic method or the type parameters of a generic method definition. Returns an empty array if the current method is not a generic method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -327,12 +334,15 @@ class MethodAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMethodBody">
@@ -348,7 +358,6 @@ class MethodAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -358,6 +367,10 @@ class MethodAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets a <see cref="T:System.Reflection.MethodBody" /> object that provides access to the MSIL stream, local variables, and exceptions for the current method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodBody" /> object that provides access to the MSIL stream, local variables, and exceptions for the current method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMethodFromHandle">
@@ -377,9 +390,6 @@ class MethodAttributesExample
         <Parameter Name="handle" Type="System.RuntimeMethodHandle" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodBase" /> object containing information about the method.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Handles are valid only in the application domain in which they were obtained.</para>
@@ -388,6 +398,10 @@ class MethodAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets method information by using the method's internal metadata representation (handle).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodBase containing information about the method.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />The method's handle. </param>
       </Docs>
@@ -415,7 +429,6 @@ class MethodAttributesExample
         <Parameter Name="declaringType" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -426,6 +439,10 @@ class MethodAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Reflection.MethodBase" /> object for the constructor or method represented by the specified handle, for the specified generic type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodBase" /> object representing the method or constructor specified by <paramref name="handle" />, in the generic type specified by <paramref name="declaringType" />.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />A handle to the internal metadata representation of a constructor or method.</param>
         <param name="declaringType">
@@ -446,12 +463,15 @@ class MethodAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the <see cref="T:System.Reflection.MethodImplAttributes" /> flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The MethodImplAttributes flags.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetParameters">
@@ -469,12 +489,6 @@ class MethodAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> An array of <see cref="T:System.Reflection.ParameterInfo" /> objects that
-   contain information that matches the signature of the method or constructor
-   reflected by the current
-   instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors">As described above.</block>
@@ -484,6 +498,10 @@ class MethodAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the parameters of the specified method or constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type ParameterInfo containing information that matches the signature of the method (or constructor) reflected by this MethodBase instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -526,11 +544,6 @@ class MethodAttributesExample
         <Parameter Name="parameters" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="parameters">To be added.</param>
-        <returns>
-          <para> A <see cref="T:System.Object" /> that contains the return
-   value of the invoked method, or a re-initialized object if a constructor was invoked.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The types of the elements of <paramref name="parameters" /> do not match the types of the parameters accepted by the constructor or method reflected by the current instance, under the constraints of  the default binder.</exception>
         <exception cref="T:System.Reflection.TargetException">The constructor or method reflected by the current instance is non-static and <paramref name="obj" /> is <see langword="null" />, or is of a type that does not implement the member reflected by the current instance.</exception>
         <exception cref="T:System.Reflection.TargetInvocationException">The constructor or method reflected by the current instance threw an exception.</exception>
@@ -539,6 +552,8 @@ class MethodAttributesExample
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to invoke non-public members of loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
         <exception cref="T:System.MemberAccessException">The caller does not have permission to execute the method or constructor.</exception>
         <exception cref="T:System.InvalidOperationException">The type that declares the method is an open generic type. That is, <see cref="P:System.Type.ContainsGenericParameters" /> returns <see langword="true" /> for the declaring type.</exception>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list for the invoked method or constructor. This is an array of objects with the same number, order, and type as the parameters of the method or constructor to be invoked. If there are no parameters, <paramref name="parameters" /> should be null.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that calls the <see cref="M:System.Reflection.MethodBase.Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method overload, passing <see cref="F:System.Reflection.BindingFlags.Default" /> for <paramref name="invokeAttr" /> and null for <paramref name="binder" /> and <paramref name="culture" />. </para>
@@ -557,6 +572,13 @@ class MethodAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes the method or constructor represented by the current instance, using the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing the return value of the invoked method, or null in the case of a constructor.</para>
+          <block subset="none" type="note">
+            <para>Elements of the <paramref name="parameters" /> array that represent parameters declared with the ref or out keyword may also be modified.</para>
+          </block>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to invoke the method or constructor. If a method is static, this argument is ignored. If a constructor is static, this argument must be null or an instance of the class that defines the constructor. </param>
         <param name="parameters">
@@ -585,15 +607,6 @@ class MethodAttributesExample
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="culture">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that
-   contains the return value of the invoked method, or a re-initialized object if a
-   constructor was invoked.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The types of the elements of <paramref name="parameters" /> do not match the types of the parameters accepted by the constructor or method reflected by the current instance, under the constraints of the default binder.</exception>
         <exception cref="T:System.Reflection.TargetException">The constructor or method reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the member reflected by the current instance.</exception>
         <exception cref="T:System.Reflection.TargetInvocationException">The method reflected by the current instance threw an exception.</exception>
@@ -602,6 +615,14 @@ class MethodAttributesExample
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to invoke non-public members of loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
         <exception cref="T:System.MemberAccessException">The caller does not have permission to execute the method or constructor.</exception>
         <exception cref="T:System.InvalidOperationException">The type that declares the method is an open generic type. That is, <see cref="P:System.Type.ContainsGenericParameters" /> returns <see langword="true" /> for the declaring type.</exception>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitmask that is a combination of 0 or more bit flags from <see cref="T:System.Reflection.BindingFlags" />. If <paramref name="binder" /> is null, this parameter is assigned the value <see cref="F:System.Reflection.BindingFlags.Default" />; thus, whatever you pass in is ignored. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that enables the binding, coercion of argument types, invocation of members, and retrieval of MemberInfo objects via reflection. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list for the invoked method or constructor. This is an array of objects with the same number, order, and type as the parameters of the method or constructor to be invoked. If there are no parameters, this should be null.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of CultureInfo used to govern the coercion of types. If this is null, the CultureInfo for the current thread is used. (This is necessary to convert a String that represents 1000 to a Double value, for example, since 1000 is represented differently by different cultures.) </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Dynamically invokes the method reflected by this instance on <paramref name="obj" />, and passes along the specified parameters. If the method is static, the <paramref name="obj" /> parameter is ignored. For non-static methods, <paramref name="obj" /> should be an instance of a class that inherits or declares the method and must be the same type as this class. If the method has no parameters, the value of <paramref name="parameters" /> should be null. Otherwise, the number, type, and order of elements in <paramref name="parameters" /> should be identical to the number, type, and order of parameters for the method reflected by this instance.</para>
@@ -625,6 +646,13 @@ class MethodAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, invokes the reflected method or constructor with the given parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Object containing the return value of the invoked method, or null in the case of a constructor, or null if the method's return type is void. Before calling the method or constructor, Invoke checks to see if the user has access permission and verifies that the parameters are valid.</para>
+          <block subset="none" type="note">
+            <para>Elements of the <paramref name="parameters" /> array that represent parameters declared with the ref or out keyword may also be modified.</para>
+          </block>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to invoke the method or constructor. If a method is static, this argument is ignored. If a constructor is static, this argument must be null or an instance of the class that defines the constructor.</param>
         <param name="invokeAttr">
@@ -1310,12 +1338,15 @@ class MethodAttributesExample
         <Parameter Name="right" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.MethodBase" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1337,12 +1368,15 @@ class MethodAttributesExample
         <Parameter Name="right" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.MethodBase" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1390,7 +1424,6 @@ class MethodAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Reflection.MethodBase" /> instance is cast to an <see cref="T:System.Runtime.InteropServices._MethodBase" /> interface.</para>
@@ -1399,6 +1432,10 @@ class MethodAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Runtime.InteropServices._MethodBase.GetType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Runtime.InteropServices._MethodBase.GetType" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._MethodBase.GetTypeInfo">

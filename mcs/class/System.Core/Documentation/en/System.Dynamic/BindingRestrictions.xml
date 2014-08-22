@@ -40,10 +40,17 @@
         <Parameter Name="contributingObjects" Type="System.Collections.Generic.IList&lt;System.Dynamic.DynamicMetaObject&gt;" />
       </Parameters>
       <Docs>
-        <param name="contributingObjects">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines binding restrictions from the list of <see cref="T:System.Dynamic.DynamicMetaObject" /> instances into one set of restrictions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new set of binding restrictions.</para>
+        </returns>
+        <param name="contributingObjects">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of <see cref="T:System.Dynamic.DynamicMetaObject" /> instances from which to combine restrictions.</param>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -78,7 +85,6 @@
         <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>By convention, the general restrictions created by this method must only test immutable object properties.</para>
@@ -87,6 +93,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the binding restriction that checks the expression for arbitrary immutable properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new binding restrictions.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression representing the restrictions.</param>
       </Docs>
@@ -106,12 +116,15 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the binding restriction that checks the expression for object instance identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new binding restrictions.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to test.</param>
         <param name="instance">
@@ -133,12 +146,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the binding restriction that check the expression for runtime type identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new binding restrictions.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to test.</param>
         <param name="type">
@@ -159,12 +175,15 @@
         <Parameter Name="restrictions" Type="System.Dynamic.BindingRestrictions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Merges the set of binding restrictions with the current binding restrictions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new set of binding restrictions.</para>
+        </returns>
         <param name="restrictions">
           <attribution license="cc4" from="Microsoft" modified="false" />The set of restrictions with which to merge the current binding restrictions.</param>
       </Docs>
@@ -181,12 +200,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the <see cref="T:System.Linq.Expressions.Expression" /> representing the binding restrictions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The expression tree representing the restrictions.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

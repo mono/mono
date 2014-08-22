@@ -35,6 +35,7 @@ using System.Security.Cryptography.X509Certificates;
 #else
 extern alias PrebuiltSystem;
 using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 #endif
@@ -47,7 +48,6 @@ using System.IO;
 using System.Net;
 using System.Net.Mime;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Reflection;
@@ -55,6 +55,9 @@ using System.Net.Configuration;
 using System.Configuration;
 using System.Net.Security;
 using System.Security.Authentication;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Net.Mail {
 	public class SmtpClient
@@ -547,8 +550,12 @@ namespace System.Net.Mail {
 				MailAddress from = message.From;
 				if (from == null)
 					from = defaultFrom;
-				
-				SendHeader (HeaderName.Date, DateTime.Now.ToString ("ddd, dd MMM yyyy HH':'mm':'ss zzz", DateTimeFormatInfo.InvariantInfo));
+
+				string dt = DateTime.Now.ToString("ddd, dd MMM yyyy HH':'mm':'ss zzz", DateTimeFormatInfo.InvariantInfo);
+				// remove ':' from time zone offset (e.g. from "+01:00")
+				dt = dt.Remove(dt.Length - 3, 1);
+				SendHeader(HeaderName.Date, dt);
+
 				SendHeader (HeaderName.From, EncodeAddress(from));
 				SendHeader (HeaderName.To, EncodeAddresses(message.To));
 				if (message.CC.Count > 0)
@@ -740,6 +747,43 @@ namespace System.Net.Mail {
 		{
 			Send (new MailMessage (from, to, subject, body));
 		}
+
+#if NET_4_5
+		public Task SendMailAsync (MailMessage message)
+		{
+			var tcs = new TaskCompletionSource<object> ();
+			SendCompletedEventHandler handler = null;
+			handler = (s, e) => SendMailAsyncCompletedHandler (tcs, e, handler, this);
+			SendCompleted += handler;
+			SendAsync (message, tcs);
+			return tcs.Task;
+		}
+
+		public Task SendMailAsync (string from, string recipients, string subject, string body)
+		{
+			return SendMailAsync (new MailMessage (from, recipients, subject, body));
+		}
+
+		static void SendMailAsyncCompletedHandler (TaskCompletionSource<object> source, AsyncCompletedEventArgs e, SendCompletedEventHandler handler, SmtpClient client)
+		{
+			if ((object) handler != e.UserState)
+				return;
+
+			client.SendCompleted -= handler;
+
+			if (e.Error != null) {
+				source.SetException (e.Error);
+				return;
+			}
+
+			if (e.Cancelled) {
+				source.SetCanceled ();
+				return;
+			}
+
+			source.SetResult (null);
+		}
+#endif
 
 		private void SendDot()
 		{

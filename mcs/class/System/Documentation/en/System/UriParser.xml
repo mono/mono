@@ -59,7 +59,6 @@
         <Parameter Name="format" Type="System.UriFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.UriParser.GetComponents(System.Uri,System.UriComponents,System.UriFormat)" /> method to determine the value of various parts of the URI, such as the <see cref="F:System.UriComponents.Scheme" />, <see cref="F:System.UriComponents.Host" />, or <see cref="F:System.UriComponents.Port" />.</para>
@@ -69,6 +68,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the components from a URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the components.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI to parse.</param>
         <param name="components">
@@ -115,12 +118,15 @@
         <Parameter Name="relativeUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether <paramref name="baseUri" /> is a base URI for <paramref name="relativeUri" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="baseUri" /> is a base URI for <paramref name="relativeUri" />; otherwise, false.</para>
+        </returns>
         <param name="baseUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The base URI.</param>
         <param name="relativeUri">
@@ -142,13 +148,16 @@
         <Parameter Name="schemeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the parser for a scheme is registered.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="schemeName" /> has been registered; otherwise, false.</para>
+        </returns>
         <param name="schemeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The scheme name to check.</param>
       </Docs>
@@ -168,7 +177,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.UriParser.IsWellFormedOriginalString(System.Uri)" /> method will return false if:</para>
@@ -191,6 +199,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a URI is well-formed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="uri" /> is well-formed; otherwise, false.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI to check.</param>
       </Docs>
@@ -208,7 +220,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation returns the same <see cref="T:System.UriParser" /> instance. You may need to override this method and return a different <see cref="T:System.UriParser" /> for each invocation if you are operating in a multithreaded environment.</para>
@@ -217,6 +228,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invoked by a <see cref="T:System.Uri" /> constructor to get a <see cref="T:System.UriParser" /> instance</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.UriParser" /> for the constructed <see cref="T:System.Uri" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnRegister">

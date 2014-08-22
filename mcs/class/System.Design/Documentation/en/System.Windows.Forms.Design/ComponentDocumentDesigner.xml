@@ -111,7 +111,6 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a tool is supported, it will be enabled in the toolbox when the designer regains focus. Otherwise, it will be disabled. Once a tool is marked as enabled or disabled it cannot be queried again.</para>
@@ -120,6 +119,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified tool is supported by the designer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the tool should be enabled on the toolbox; false if the document designer doesn't know how to use the tool.</para>
+        </returns>
         <param name="tool">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to test for toolbox support. </param>
       </Docs>
@@ -191,7 +194,6 @@
         <Parameter Name="technology" Type="System.ComponentModel.Design.ViewTechnology" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.ComponentDocumentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IRootDesigner" /> interface.</para>
@@ -200,6 +202,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="T:System.ComponentModel.Design.ViewTechnology" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the view for this designer.</para>
+        </returns>
         <param name="technology">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.ViewTechnology" /> that indicates a particular view technology.</param>
       </Docs>
@@ -241,7 +247,6 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.ComponentDocumentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" /> interface.</para>
@@ -250,6 +255,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.ITypeDescriptorFilterService.FilterAttributes(System.ComponentModel.IComponent,System.Collections.IDictionary)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the set of filtered attributes is to be cached; false if the filter service must query again.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to filter the attributes of.</param>
         <param name="attributes">
@@ -271,7 +280,6 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.ComponentDocumentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" /> interface.</para>
@@ -280,6 +288,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.ITypeDescriptorFilterService.FilterEvents(System.ComponentModel.IComponent,System.Collections.IDictionary)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the set of filtered events is to be cached; false if the filter service must query again.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to filter events for.</param>
         <param name="events">
@@ -301,7 +313,6 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.ComponentDocumentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" /> interface.</para>
@@ -310,6 +321,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.ITypeDescriptorFilterService.FilterProperties(System.ComponentModel.IComponent,System.Collections.IDictionary)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the set of filtered properties is to be cached; false if the filter service must query again.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to filter properties for.</param>
         <param name="properties">
@@ -330,7 +345,6 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.ComponentDocumentDesigner" /> instance is cast to an <see cref="T:System.Drawing.Design.IToolboxUser" /> interface.</para>
@@ -339,6 +353,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Drawing.Design.IToolboxUser.GetToolSupported(System.Drawing.Design.ToolboxItem)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the tool is supported by the toolbox and can be enabled; false if the document designer does not know how to use the tool.</para>
+        </returns>
         <param name="tool">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to be tested for toolbox support.</param>
       </Docs>

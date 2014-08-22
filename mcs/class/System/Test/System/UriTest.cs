@@ -10,6 +10,7 @@
 // (C) 2003 Ben Maurer
 //
 
+using System.Reflection;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -21,11 +22,20 @@ namespace MonoTests.System
 	public class UriTest
 	{
 		protected bool isWin32 = false;
+		public bool IriParsing;
 
 		[TestFixtureSetUp]
 		public void GetReady ()
 		{
 			isWin32 = (Path.DirectorySeparatorChar == '\\');
+
+			//Make sure Uri static constructor is called
+			Uri.EscapeDataString ("");
+
+			FieldInfo iriParsingField = typeof (Uri).GetField ("s_IriParsing",
+				BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+			if (iriParsingField != null)
+				IriParsing = (bool)iriParsingField.GetValue (null);
 		}
 
 		[Test]
@@ -604,7 +614,11 @@ namespace MonoTests.System
 			Uri u1 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx");
 			Uri u2 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx");
 
-			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx", u1.ToString (), "QE1");
+			if (IriParsing)
+				Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx", u1.ToString (), "QE1");
+			else
+				Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx", u1.ToString (), "QE1");
+
 			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx", u2.ToString (), "QE2");
 		}
 
@@ -688,10 +702,15 @@ namespace MonoTests.System
 		{
 			Assert.AreEqual ("#", UriEx.UnescapeString ("file://localhost/c#", "%23"), "#1");
 			Assert.AreEqual ("c#", UriEx.UnescapeString ("file://localhost/c#", "c%23"), "#2");
-			Assert.AreEqual ("\xA9", UriEx.UnescapeString ("file://localhost/c#", "%A9"), "#3");
 			Assert.AreEqual ("#", UriEx.UnescapeString ("http://localhost/c#", "%23"), "#1");
 			Assert.AreEqual ("c#", UriEx.UnescapeString ("http://localhost/c#", "c%23"), "#2");
+#if NET_4_0
+			Assert.AreEqual ("%A9", UriEx.UnescapeString ("file://localhost/c#", "%A9"), "#3");
+			Assert.AreEqual ("%A9", UriEx.UnescapeString ("http://localhost/c#", "%A9"), "#3");
+#else
+			Assert.AreEqual ("\xA9", UriEx.UnescapeString ("file://localhost/c#", "%A9"), "#3");
 			Assert.AreEqual ("\xA9", UriEx.UnescapeString ("http://localhost/c#", "%A9"), "#3");
+#endif
 		}
 
 		[Test]
@@ -767,9 +786,13 @@ namespace MonoTests.System
 			// 2-byte escape sequence, 2 individual characters
 			uri = new Uri ("file:///foo/a%C2%F8b", true);
 			path = uri.LocalPath;
+#if NET_4_0
+			Assert.AreEqual ("/foo/a%C2%F8b", path, "#7");
+#else
 			Assert.AreEqual (9, path.Length, "#7");
 			Assert.AreEqual (0xC2, path [6], "#8");
 			Assert.AreEqual (0xF8, path [7], "#9");
+#endif
 		}
 
 		[Test]
@@ -844,7 +867,12 @@ namespace MonoTests.System
 		public void Fragment_Escape ()
 		{
 			Uri u = new Uri("http://localhost/index.asp#main#start", false);
-			Assert.AreEqual (u.Fragment, "#main%23start", "#1");
+
+#if NET_4_5
+				Assert.AreEqual (u.Fragment, "#main#start", "#1");
+#else
+				Assert.AreEqual (u.Fragment, "#main%23start", "#1");
+#endif
 
 			u = new Uri("http://localhost/index.asp#main#start", true);
 			Assert.AreEqual (u.Fragment, "#main#start", "#2");
@@ -853,7 +881,11 @@ namespace MonoTests.System
 
 			Uri b = new Uri ("http://www.gnome.org");
 			Uri n = new Uri (b, "blah#main#start");
-			Assert.AreEqual (n.Fragment, "#main%23start", "#3");
+#if NET_4_5
+				Assert.AreEqual (n.Fragment, "#main#start", "#3");
+#else
+				Assert.AreEqual (n.Fragment, "#main%23start", "#3");
+#endif
 
 			n = new Uri (b, "blah#main#start", true);
 			Assert.AreEqual (n.Fragment, "#main#start", "#4");
@@ -1071,8 +1103,14 @@ namespace MonoTests.System
 			// IPv6 Address
 			Uri ftp = new Uri ("FTP://[::ffFF:169.32.14.5]/");
 			Assert.AreEqual ("ftp", ftp.Scheme, "#7");
+
+#if NET_4_5
+			Assert.AreEqual ("[::ffff:169.32.14.5]", ftp.Host, "#8");
+			Assert.AreEqual ("ftp://[::ffff:169.32.14.5]/", ftp.ToString (), "#9");
+#else
 			Assert.AreEqual ("[0000:0000:0000:0000:0000:FFFF:A920:0E05]", ftp.Host, "#8");
 			Assert.AreEqual ("ftp://[0000:0000:0000:0000:0000:FFFF:A920:0E05]/", ftp.ToString (), "#9");
+#endif
 		}
 
 		[Test]
@@ -1396,6 +1434,13 @@ namespace MonoTests.System
 			new Uri ("hey");
 		}
 
+		[Test]
+		public void SchemeWithDigits ()
+		{
+			Uri uri = new Uri ("net.p2p://foobar");
+			Assert.AreEqual ("net.p2p", uri.Scheme);
+		}
+
 		// on .NET 2.0 a port number is limited to UInt16.MaxValue
 		[ExpectedException (typeof (UriFormatException))]
 		[Test]
@@ -1480,13 +1525,19 @@ namespace MonoTests.System
 			for (int i = 0; i < 128; i++)
 				sb.Append ((char) i);
 
+#if NET_4_5
 			Assert.AreEqual (
-#if NET_4_0
 				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20%21%22%23%24%25%26%27%28%29%2A%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
-#else
+				Uri.EscapeDataString (sb.ToString ()));
+#elif NET_4_0
+			Assert.AreEqual (
 				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22%23%24%25%26'()*%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
+				Uri.EscapeDataString (sb.ToString ()));
+#else
+			Assert.AreEqual (
+				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22%23%24%25%26'()*%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
+				Uri.EscapeDataString (sb.ToString ()));
 #endif
-				 Uri.EscapeDataString (sb.ToString ()));
 
 			Assert.AreEqual ("%C3%A1", Uri.EscapeDataString ("á"));
 		}
@@ -1497,13 +1548,19 @@ namespace MonoTests.System
 			for (int i = 0; i < 128; i++)
 				sb.Append ((char) i);
 
+#if NET_4_5
 			Assert.AreEqual (
-#if NET_4_0
 				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[%5C]%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
-#else
-				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
-#endif
 				Uri.EscapeUriString (sb.ToString ()));
+#elif NET_4_0
+			Assert.AreEqual (
+				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
+				Uri.EscapeUriString (sb.ToString ()));
+#else
+			Assert.AreEqual (
+				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
+				Uri.EscapeUriString (sb.ToString ()));
+#endif
 
 			Assert.AreEqual ("%C3%A1", Uri.EscapeDataString ("á"));
 		}
@@ -1895,6 +1952,38 @@ namespace MonoTests.System
 			Uri result;
 			Assert.IsTrue (Uri.TryCreate (mainUri, uriPath, out result), "#1");
 			Assert.AreEqual ("http://www.imdb.com/title/tt0106521", result.ToString (), "#2");
+		}
+	}
+
+	// Tests non default IriParsing
+	[TestFixture]
+	public class UriTestAux : UriTest
+	{
+		private FieldInfo iriParsingField;
+		private bool originalIriParsing;
+
+		[TestFixtureSetUp]
+		public void GetReady ()
+		{
+			isWin32 = (Path.DirectorySeparatorChar == '\\');
+
+			//Make sure Uri static constructor is called
+			Uri.EscapeDataString ("");
+
+			iriParsingField = typeof (Uri).GetField ("s_IriParsing",
+				BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+
+			originalIriParsing = (bool) iriParsingField.GetValue (null);
+
+			IriParsing = !originalIriParsing;
+
+			iriParsingField.SetValue (null, IriParsing);
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			iriParsingField.SetValue (null, originalIriParsing);
 		}
 	}
 }

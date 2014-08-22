@@ -560,7 +560,6 @@
         <Parameter Name="tabType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See <see cref="T:System.Windows.Forms.Design.PropertyTab" /> for more information about creating property tabs.</para>
@@ -569,6 +568,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, enables the creation of a <see cref="T:System.Windows.Forms.Design.PropertyTab" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created property tab. Returns null in its default implementation.</para>
+        </returns>
         <param name="tabType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of tab to create. </param>
       </Docs>
@@ -1676,12 +1679,15 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a dialog key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed by the control; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies key codes and modifiers.</param>
       </Docs>
@@ -2173,7 +2179,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.PropertyGrid" /> instance is cast to an <see cref="T:System.Windows.Forms.ComponentModel.Com2Interop.IComPropertyBrowser" /> interface.</para>
@@ -2182,6 +2187,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Commits all pending changes to the <see cref="T:System.Windows.Forms.PropertyGrid" /> control. For a description of this member, see <see cref="M:System.Windows.Forms.ComponentModel.Com2Interop.IComPropertyBrowser.EnsurePendingChangesCommitted" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all the <see cref="T:System.Windows.Forms.PropertyGrid" /> successfully commits changes; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Windows.Forms.ComponentModel.Com2Interop.IComPropertyBrowser.HandleF4">

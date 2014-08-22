@@ -398,12 +398,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Get the value of a particular header in the collection, specified by an index into the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the value of the specified header.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the key to get from the collection.</param>
       </Docs>
@@ -424,7 +427,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns null if there is no <paramref name="name" /> header in the collection.</para>
@@ -433,6 +435,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Get the value of a particular header in the collection, specified by the name of the header.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> holding the value of the specified header.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the Web header.</param>
       </Docs>
@@ -450,12 +456,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that can iterate through the <see cref="T:System.Net.WebHeaderCollection" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Net.WebHeaderCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetKey">
@@ -474,12 +483,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Get the header name at the specified position in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> holding the header name.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the key to get from the collection.</param>
       </Docs>
@@ -531,7 +543,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -541,6 +552,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of header values stored in the <paramref name="index" /> position of the header collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of header strings.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The header index to return.</param>
       </Docs>
@@ -562,13 +577,6 @@
         <Parameter Name="header" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> An array of <see cref="T:System.String" /> objects that contain the values of the protocol
-   header named <paramref name="header" />
-   in the current instance. If <paramref name="header " />is not found in the current
-   instance, returns <see langword="null" /> .
-   </para>
-        </returns>
         <example>
           <para>This example demonstrates the <see cref="M:System.Net.WebHeaderCollection.GetValues(System.String)" /> method.</para>
           <code lang="C#">
@@ -612,6 +620,10 @@ Transfer-Encoding:</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of header values stored in a header.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of header strings.</para>
+        </returns>
         <param name="header">
           <attribution license="cc4" from="Microsoft" modified="false" />The header to return. </param>
       </Docs>
@@ -634,11 +646,6 @@ Transfer-Encoding:</para>
         <Parameter Name="headerName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-   the header is protected; otherwise <see langword="false" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="headerName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -694,6 +701,10 @@ Transfer-Encoding:</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether the specified HTTP header can be set for the request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the header is restricted; otherwise false.</para>
+        </returns>
         <param name="headerName">
           <attribution license="cc4" from="Microsoft" modified="false" />The header to test. </param>
       </Docs>
@@ -715,7 +726,6 @@ Transfer-Encoding:</para>
         <Parameter Name="response" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebHeaderCollection.IsRestricted(System.String,System.Boolean)" /> method returns true to indicate that a request or response header is restricted and must be set using properties instead of directly or is set by the system. The restricted headers are: </para>
@@ -765,6 +775,10 @@ Transfer-Encoding:</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether the specified HTTP header can be set for the request or the response.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the header is restricted; otherwise, false.</para>
+        </returns>
         <param name="headerName">
           <attribution license="cc4" from="Microsoft" modified="false" />The header to test.</param>
         <param name="response">
@@ -1105,12 +1119,15 @@ Transfer-Encoding:</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the <see cref="T:System.Net.WebHeaderCollection" /> to a byte array..</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array holding the header collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -1127,12 +1144,15 @@ Transfer-Encoding:</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is obsolete.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.String" /> representation of the collection.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

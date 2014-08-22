@@ -30,7 +30,6 @@
         <Parameter Name="keyPrefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -40,6 +39,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of implicit resource keys as specified by the prefix.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> of implicit resource keys.</para>
+        </returns>
         <param name="keyPrefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the implicit resource keys to be collected.</param>
       </Docs>
@@ -58,7 +61,6 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -68,6 +70,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an object representing the value of the specified resource key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the localized value of an implicit resource key.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The resource key containing the prefix, filter, and property.</param>
         <param name="culture">

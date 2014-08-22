@@ -161,7 +161,6 @@
         <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called by the Trace methods in the <see cref="T:System.Diagnostics.TraceSource" /> class to determine whether listeners should be called to write a trace.</para>
@@ -173,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if trace listeners should be called, based on the trace event type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the trace listeners should be called; otherwise, false.</para>
+        </returns>
         <param name="eventType">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values.</param>
       </Docs>

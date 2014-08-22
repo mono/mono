@@ -182,7 +182,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'OleDbCommand'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An application can use the <see cref="M:System.Data.OleDb.OleDbCommandBuilder.GetDeleteCommand" /> method for informational or troubleshooting purposes because it returns the <see cref="T:System.Data.OleDb.OleDbCommand" /> object to be executed.</para>
@@ -193,6 +192,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform deletions at the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform deletions.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,7 +215,6 @@
         <Parameter Name="useColumnsForParameterNames" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An application can use the <see cref="M:System.Data.OleDb.OleDbCommandBuilder.GetDeleteCommand" /> method for informational or troubleshooting purposes because it returns the <see cref="T:System.Data.OleDb.OleDbCommand" /> object to be executed.</para>
@@ -235,6 +237,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform deletions at the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform deletions.</para>
+        </returns>
         <param name="useColumnsForParameterNames">
           <attribution license="cc4" from="Microsoft" modified="false" />If true, generate parameter names matching column names, if it is possible. If false, generate @p1, @p2, and so on.</param>
       </Docs>
@@ -247,7 +253,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'OleDbCommand'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An application can use the <see cref="M:System.Data.OleDb.OleDbCommandBuilder.GetInsertCommand" /> method for informational or troubleshooting purposes because it returns the text of the <see cref="T:System.Data.OleDb.OleDbCommand" /> object to be executed.</para>
@@ -258,6 +263,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform insertions at the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform insertions.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -277,7 +286,6 @@
         <Parameter Name="useColumnsForParameterNames" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An application can use the <see cref="M:System.Data.OleDb.OleDbCommandBuilder.GetInsertCommand" /> method for informational or troubleshooting purposes because it returns the text of the <see cref="T:System.Data.OleDb.OleDbCommand" /> object to be executed.</para>
@@ -300,6 +308,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform insertions at the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform insertions.</para>
+        </returns>
         <param name="useColumnsForParameterNames">
           <attribution license="cc4" from="Microsoft" modified="false" />If true, generate parameter names matching column names, if it is possible. If false, generate @p1, @p2, and so on.</param>
       </Docs>
@@ -369,7 +381,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'OleDbCommand'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An application can use the <see cref="M:System.Data.OleDb.OleDbCommandBuilder.GetUpdateCommand" /> method for informational or troubleshooting purposes because it returns the <see cref="T:System.Data.OleDb.OleDbCommand" /> object to be executed.</para>
@@ -380,6 +391,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform updates at the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform updates.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -399,7 +414,6 @@
         <Parameter Name="useColumnsForParameterNames" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An application can use the <see cref="M:System.Data.OleDb.OleDbCommandBuilder.GetUpdateCommand" /> method for informational or troubleshooting purposes because it returns the <see cref="T:System.Data.OleDb.OleDbCommand" /> object to be executed.</para>
@@ -422,6 +436,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform updates at the data source, optionally using columns for parameter names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.OleDb.OleDbCommand" /> object required to perform updates.</para>
+        </returns>
         <param name="useColumnsForParameterNames">
           <attribution license="cc4" from="Microsoft" modified="false" />If true, generate parameter names matching column names, if it is possible. If false, generate @p1, @p2, and so on.</param>
       </Docs>
@@ -439,12 +457,15 @@
         <Parameter Name="unquotedIdentifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Given an unquoted identifier in the correct catalog case, returns the correct quoted form of that identifier. This includes correctly escaping any embedded quotes in the identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The quoted version of the identifier. Embedded quotes within the identifier are correctly escaped.</para>
+        </returns>
         <param name="unquotedIdentifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The original unquoted identifier.</param>
       </Docs>
@@ -463,12 +484,15 @@
         <Parameter Name="connection" Type="System.Data.OleDb.OleDbConnection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Given an unquoted identifier in the correct catalog case, returns the correct quoted form of that identifier. This includes correctly escaping any embedded quotes in the identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The quoted version of the identifier. Embedded quotes within the identifier are correctly escaped.</para>
+        </returns>
         <param name="unquotedIdentifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The unquoted identifier to be returned in quoted format.</param>
         <param name="connection">
@@ -567,12 +591,15 @@
         <Parameter Name="quotedIdentifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Given a quoted identifier, returns the correct unquoted form of that identifier. This includes correctly un-escaping any embedded quotes in the identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unquoted identifier, with embedded quotes correctly un-escaped.</para>
+        </returns>
         <param name="quotedIdentifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier that will have its embedded quotes removed.</param>
       </Docs>
@@ -591,12 +618,15 @@
         <Parameter Name="connection" Type="System.Data.OleDb.OleDbConnection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Given a quoted identifier, returns the correct unquoted form of that identifier. This includes correctly un-escaping any embedded quotes in the identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unquoted identifier, with embedded quotes correctly un-escaped.</para>
+        </returns>
         <param name="quotedIdentifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier that will have its embedded quotes removed.</param>
         <param name="connection">

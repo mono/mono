@@ -89,7 +89,6 @@
         <Parameter Name="p" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.Design.Behavior.Glyph.GetHitTest(System.Drawing.Point)" /> method is an abstract method that forces <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> implementations to provide hit test logic. Given any point, if the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> has decided to be involved with that location, it will need to return a valid <see cref="T:System.Windows.Forms.Cursor" />. Otherwise, returning null will cause the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" /> to ignore the location.</para>
@@ -98,6 +97,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides hit test logic.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Cursor" /> if the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is associated with <paramref name="p" />; otherwise, null.</para>
+        </returns>
         <param name="p">
           <attribution license="cc4" from="Microsoft" modified="false" />A point to hit-test.</param>
       </Docs>

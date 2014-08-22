@@ -156,12 +156,15 @@
         <Parameter Name="requestedType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjRef'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Runtime.Remoting.ObjRef" /> for the specified object type, and registers it with the remoting infrastructure as a client-activated object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Runtime.Remoting.ObjRef" /> that is created for the specified type.</para>
+        </returns>
         <param name="requestedType">
           <attribution license="cc4" from="Microsoft" modified="false" />The object type that an <see cref="T:System.Runtime.Remoting.ObjRef" /> is created for. </param>
       </Docs>
@@ -180,12 +183,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'MarshalByRefObject'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Detaches the current proxy instance from the remote server object that it represents.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The detached server object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCOMIUnknown">
@@ -204,7 +210,6 @@
         <Parameter Name="fIsMarshalled" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IntPtr'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the proxy is requested for marshaling, then an IUnknown interface for the object represented by the current proxy instance is returned. If an IUnknown was previously cached by the <see cref="M:System.Runtime.Remoting.Proxies.RealProxy.SetCOMIUnknown(System.IntPtr)" /> method, then that instance is returned; otherwise, a new instance is returned.</para>
@@ -214,6 +219,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Requests an unmanaged reference to the object represented by the current proxy instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pointer to a <format type="text/html"><a href="D04BE3B5-27B9-4F5B-8469-A44149FABF78">[&lt;topic://cpconcomcallablewrapper&gt;]</a></format> if the object reference is requested for communication with unmanaged objects in the current process through COM, or a pointer to a cached or newly generated IUnknown COM interface if the object reference is requested for marshaling to a remote location.</para>
+        </returns>
         <param name="fIsMarshalled">
           <attribution license="cc4" from="Microsoft" modified="false" />true if the object reference is requested for marshaling to a remote location; false if the object reference is requested for communication with unmanaged objects in the current process through COM. </param>
       </Docs>
@@ -260,12 +269,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Type" /> of the object that the current instance of <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> represents.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the object that the current instance of <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> represents.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetStubData">
@@ -284,7 +296,6 @@
         <Parameter Name="rp" Type="System.Runtime.Remoting.Proxies.RealProxy" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The stub data is used by custom proxy users to decide what to do with an incoming method call. For example, the stub data might be information about the server's context that you can use to determine whether to execute the call locally, or send it through the remoting infrastructure.</para>
@@ -293,6 +304,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves stub data that is stored for the specified proxy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stub data for the specified proxy.</para>
+        </returns>
         <param name="rp">
           <attribution license="cc4" from="Microsoft" modified="false" />The proxy for which stub data is requested. </param>
       </Docs>
@@ -311,12 +326,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the transparent proxy for the current instance of <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transparent proxy for the current proxy instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetUnwrappedServer">
@@ -333,7 +351,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'MarshalByRefObject'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Remoting.Proxies.RealProxy.GetUnwrappedServer" /> method is used in scenarios involving an external <see cref="T:System.Runtime.Remoting.Contexts.Context" /> in the same <see cref="T:System.AppDomain" />.</para>
@@ -342,6 +359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the server object that is represented by the current proxy instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server object that is represented by the current proxy instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InitializeServerObject">
@@ -365,7 +386,6 @@
         <Parameter Name="ctorMsg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.Activation.IConstructionReturnMessage'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="ctorMsg" /> parameter is null, then the <see cref="M:System.Runtime.Remoting.Proxies.RealProxy.InitializeServerObject(System.Runtime.Remoting.Activation.IConstructionCallMessage)" /> method calls the default constructor for the new instance of the remote object that is represented by the current <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" />.</para>
@@ -374,6 +394,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the object <see cref="T:System.Type" /> of the remote object that the current instance of <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> represents with the specified <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the construction request.</para>
+        </returns>
         <param name="ctorMsg">
           <attribution license="cc4" from="Microsoft" modified="false" />A construction call message that contains the constructor parameters for the new instance of the remote object that is represented by the current <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" />. Can be null. </param>
       </Docs>
@@ -394,7 +418,6 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When the transparent proxy that is backed by the <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> is called, it delegates the calls to the <see cref="M:System.Runtime.Remoting.Proxies.RealProxy.Invoke(System.Runtime.Remoting.Messaging.IMessage)" /> method. The <see cref="M:System.Runtime.Remoting.Proxies.RealProxy.Invoke(System.Runtime.Remoting.Messaging.IMessage)" /> method transforms the message in the <paramref name="msg" /> parameter into a <see cref="T:System.Runtime.Remoting.Messaging.IMethodCallMessage" />, and sends it to the remote object that is represented by the current instance of <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" />.</para>
@@ -404,6 +427,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, invokes the method that is specified in the provided <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> on the remote object that is represented by the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message returned by the invoked method, containing the return value and any out or ref parameters.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> that contains a <see cref="T:System.Collections.IDictionary" /> of information about the method call. </param>
       </Docs>

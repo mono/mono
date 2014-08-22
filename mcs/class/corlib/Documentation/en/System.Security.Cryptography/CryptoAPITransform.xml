@@ -270,12 +270,15 @@
         <Parameter Name="outputOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the transformation for the specified region of the input byte array and copies the resulting transformation to the specified region of the output byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written.</para>
+        </returns>
         <param name="inputBuffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input on which to perform the operation on. </param>
         <param name="inputOffset">
@@ -306,12 +309,15 @@
         <Parameter Name="inputCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the transformation for the specified region of the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed transformation.</para>
+        </returns>
         <param name="inputBuffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input on which to perform the operation on. </param>
         <param name="inputOffset">

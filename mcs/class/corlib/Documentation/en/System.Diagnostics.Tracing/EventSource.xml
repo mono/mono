@@ -127,12 +127,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current event source is enabled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current event source is enabled; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WriteEvent">

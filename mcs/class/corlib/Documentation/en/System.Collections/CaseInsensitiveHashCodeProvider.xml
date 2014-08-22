@@ -151,7 +151,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value from this method must not be persisted for two reasons. First, the hash function of a class might be altered to generate a better distribution, thereby rendering any values from the old hash function useless. Second, the default implementation of this class does not guarantee that the same value will be returned by different instances.</para>
@@ -160,6 +159,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code for the given object, using a hashing algorithm that ignores the case of strings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the given object, using a hashing algorithm that ignores the case of strings.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which a hash code is to be returned. </param>
       </Docs>

@@ -68,7 +68,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A session-based message encoder can keep track the individual messages that form part of a conversation that consists of all the messages exchanged between two endpoints that are part of a session.</para>
@@ -77,6 +76,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a message encoder that can be used to correlate messages in session-based exchanges.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.MessageEncoder" /> that is used in session-based exchanges of messages.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Encoder">

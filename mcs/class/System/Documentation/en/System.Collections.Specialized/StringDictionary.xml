@@ -131,7 +131,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The key is handled in a case-insensitive manner; it is translated to lowercase before it is used.</para>
@@ -142,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the <see cref="T:System.Collections.Specialized.StringDictionary" /> contains a specific key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.Specialized.StringDictionary" /> contains an entry with the specified key; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.Specialized.StringDictionary" />. </param>
       </Docs>
@@ -162,7 +165,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The values of the elements of the StringDictionary are compared to the specified value using the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
@@ -173,6 +175,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the <see cref="T:System.Collections.Specialized.StringDictionary" /> contains a specific value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.Specialized.StringDictionary" /> contains an element with the specified value; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to locate in the <see cref="T:System.Collections.Specialized.StringDictionary" />. The value can be null. </param>
       </Docs>
@@ -246,7 +252,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The foreach statement of the C# language (for each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
@@ -263,6 +268,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the string dictionary.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that iterates through the string dictionary.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsSynchronized">

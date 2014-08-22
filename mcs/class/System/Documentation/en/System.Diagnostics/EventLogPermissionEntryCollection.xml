@@ -40,12 +40,15 @@
         <Parameter Name="value" Type="System.Diagnostics.EventLogPermissionEntry" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified <see cref="T:System.Diagnostics.EventLogPermissionEntry" /> to this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the added <see cref="T:System.Diagnostics.EventLogPermissionEntry" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.EventLogPermissionEntry" /> to add. </param>
       </Docs>
@@ -116,12 +119,15 @@
         <Parameter Name="value" Type="System.Diagnostics.EventLogPermissionEntry" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether this collection contains a specified <see cref="T:System.Diagnostics.EventLogPermissionEntry" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Diagnostics.EventLogPermissionEntry" /> belongs to this collection; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.EventLogPermissionEntry" /> to find. </param>
       </Docs>
@@ -170,12 +176,15 @@
         <Parameter Name="value" Type="System.Diagnostics.EventLogPermissionEntry" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index of a specified permission entry in this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the specified permission entry, or -1 if the permission entry was not found in the collection.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The permission entry to search for. </param>
       </Docs>

@@ -85,7 +85,6 @@
         <Parameter Name="nextbaseUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>If they are equal, then 0; otherwise, compare two URI strings as string.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method supports the XSLT document() function which specifies that nodes selected across multiple documents are always returned in the same order. </para>
@@ -97,6 +96,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, compares the base Uniform Resource Identifiers (URIs) of two documents based upon the order the documents were loaded by the XSLT processor (that is, the <see cref="T:System.Xml.Xsl.XslTransform" /> class).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer value describing the relative order of the two base URIs: -1 if <paramref name="baseUri" /> occurs before <paramref name="nextbaseUri" />; 0 if the two base URIs are identical; and 1 if <paramref name="baseUri" /> occurs after <paramref name="nextbaseUri" />.</para>
+        </returns>
         <param name="baseUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The base URI of the first document to compare. </param>
         <param name="nextbaseUri">
@@ -119,12 +122,15 @@
         <Parameter Name="node" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>True if whitespaces should be preserved; otherwise False.</returns>
         <remarks>The return value comes from the nearest ancestor's preserve-whitespace or strip-whitespace attribute value.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, evaluates whether to preserve white space nodes or strip them for the given context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the white space is to be preserved or false if the white space is to be stripped.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The white space node that is to be preserved or stripped in the current context. </param>
       </Docs>
@@ -147,12 +153,15 @@
         <Parameter Name="ArgTypes" Type="System.Xml.XPath.XPathResultType[]" />
       </Parameters>
       <Docs>
-        <returns>An instance of <see cref="T:System.Xml.Xsl.IXsltContextFunction" /> that represents the matching function, or null if no proper function was found.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, resolves a function reference and returns an <see cref="T:System.Xml.Xsl.IXsltContextFunction" /> representing the function. The <see cref="T:System.Xml.Xsl.IXsltContextFunction" /> is used at execution time to get the return value of the function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Xsl.IXsltContextFunction" /> representing the function.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the function as it appears in the XPath expression. </param>
         <param name="name">
@@ -178,7 +187,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An instance of <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> that represents the matching variable, or null if no proper variable was found.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> is used at execution time to get the value of the variable.</para>
@@ -187,6 +195,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, resolves a variable reference and returns an <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> representing the variable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> representing the variable at runtime.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the variable as it appears in the XPath expression. </param>
         <param name="name">

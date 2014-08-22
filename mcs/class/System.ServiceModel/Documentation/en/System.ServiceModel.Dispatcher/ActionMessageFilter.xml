@@ -93,8 +93,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="FilterData">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method returns an instance of <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" />. </para>
@@ -104,6 +102,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new filter table that tests efficiently on message actions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" /> object to which <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" />s and associated <paramref name="FilterData" /> can be added.</para>
+        </returns>
+        <typeparam name="FilterData">
+          <attribution license="cc4" from="Microsoft" modified="false" />Data associated with the filters in the table.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Match">
@@ -120,7 +124,6 @@
         <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload of <see cref="Overload:System.ServiceModel.Dispatcher.ActionMessageFilter.Match" /> when a message must be tested against the actions in a single filter and the <see cref="T:System.ServiceModel.Channels.Message" /> is available.</para>
@@ -129,6 +132,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether a message's action matches one of the actions specified in this <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.Message" /> action header matches one of the specified actions; otherwise, false.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to test.</param>
       </Docs>
@@ -148,7 +155,6 @@
       </Parameters>
       <Docs>
         <param name="buffer">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload of the <see cref="Overload:System.ServiceModel.Dispatcher.ActionMessageFilter.Match" /> method when a message must be tested against the actions in a single filter and the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> is available.</para>
@@ -157,6 +163,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether a buffered message's action header matches one of the actions specified in this <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> action header matches one of the specified actions; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

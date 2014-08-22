@@ -38,7 +38,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the request message is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> is thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
@@ -47,6 +46,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to transmit a request message to the reply side of a request-reply message exchange. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous message transmission. </para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.ServiceModel.Channels.Message" /> to be transmitted.</param>
         <param name="callback">
@@ -72,7 +75,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the request message is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> should be thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
@@ -83,6 +85,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to transmit a request message to the reply side of a request-reply message exchange within a specified interval of time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous message transmission. </para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.ServiceModel.Channels.Message" /> to be transmitted.</param>
         <param name="timeout">
@@ -107,7 +113,6 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the request message is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> is thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
@@ -116,6 +121,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Completes an asynchronous operation to return a message-based response to a transmitted request. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> received in response to the request. </para>
+        </returns>
         <param name="result">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to the <see cref="Overload:System.ServiceModel.Channels.IInputChannel.BeginReceive" /> method. </param>
       </Docs>
@@ -156,7 +165,6 @@
         <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implementations of <see cref="T:System.ServiceModel.Channels.IRequestChannel" /> ensure that the response message is correlated with the request message. </para>
@@ -169,6 +177,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a message-based request and returns the correlated message-based response. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> received in response to the request. </para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.ServiceModel.Channels.Message" /> to be transmitted.</param>
       </Docs>
@@ -188,7 +200,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implementations of <see cref="T:System.ServiceModel.Channels.IRequestChannel" /> ensure that the response message is correlated with the request message. </para>
@@ -203,6 +214,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a message-based request and returns the correlated message-based response within a specified interval of time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> received in response to the request. </para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.ServiceModel.Channels.Message" /> to be transmitted.</param>
         <param name="timeout">

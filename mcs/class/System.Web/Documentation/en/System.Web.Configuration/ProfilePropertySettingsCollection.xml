@@ -171,13 +171,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Web.Configuration.ProfileSection" /> object at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.ProfileSection" /> object at the specified index, or null if there is no object at that index.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.Web.Configuration.ProfileSection" /> to get.</param>
       </Docs>
@@ -195,13 +198,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Web.Configuration.ProfileSection" /> object with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.ProfileSection" /> object with the specified name, or null if the name does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Web.Configuration.ProfileSection" /> to get.</param>
       </Docs>
@@ -219,13 +225,16 @@
         <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the key for the specified configuration element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the element.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.ConfigurationElement" /> in the collection.</param>
       </Docs>
@@ -243,7 +252,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -253,6 +261,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> at the specified index location.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> at the specified index location.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of a <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> in the collection.</param>
       </Docs>
@@ -270,13 +282,16 @@
         <Parameter Name="propertySettings" Type="System.Web.Configuration.ProfilePropertySettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the index of the specified <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> object, or -1 if the object is not found in the collection.</para>
+        </returns>
         <param name="propertySettings">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> object in the collection.</param>
       </Docs>
@@ -337,7 +352,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This implementation of <see cref="M:System.Web.Configuration.ProfilePropertySettingsCollection.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)" /> throws specialized errors if the element name is either "clear" or "group".  After checking for these conditions, the method then explicitly calls its base implementation, the <see cref="M:System.Configuration.ConfigurationElementCollection.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)" /> method.</para>
@@ -346,6 +360,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Handles the reading of unrecognized configuration elements from a configuration file and causes the configuration system to throw an exception if the element cannot be handled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the unrecognized element was deserialized successfully; otherwise, false.</para>
+        </returns>
         <param name="elementName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the unrecognized element.</param>
         <param name="reader">

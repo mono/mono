@@ -2,7 +2,7 @@
 // Authors
 //    Sebastien Pouliot  <sebastien@xamarin.com>
 //
-// Copyright 2013 Xamarin Inc. http://www.xamarin.com
+// Copyright 2013-2014 Xamarin Inc. http://www.xamarin.com
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,6 +25,8 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
@@ -43,8 +45,7 @@ namespace Xamarin.ApiDiff {
 
 		public override string GetDescription (XElement e)
 		{
-			var sb = GetObsoleteMessage (e);
-			bool obsolete = sb.Length > 0;
+			var sb = new StringBuilder ();
 
 			string name = e.GetAttribute ("name");
 			string value = e.GetAttribute ("value");
@@ -80,25 +81,25 @@ namespace Xamarin.ApiDiff {
 				sb.Append (';');
 			}
 
-			if (obsolete)
-				sb.AppendLine (); // more readable output
 			return sb.ToString ();
 		}
 
-		public override void BeforeAdding ()
+		public override void BeforeAdding (IEnumerable<XElement> list)
 		{
+			first = true;
 			if (State.BaseType == "System.Enum")
-				Output.WriteLine ("<p>Added values:</p><pre>");
+				Output.WriteLine ("<p>Added value{0}:</p><pre>", list.Count () > 1 ? "s" : String.Empty);
 			else
-				base.BeforeAdding ();
+				base.BeforeAdding (list);
 		}
 
-		public override void BeforeRemoving ()
+		public override void BeforeRemoving (IEnumerable<XElement> list)
 		{
+			first = true;
 			if (State.BaseType == "System.Enum")
-				Output.WriteLine ("<p>Removed values:</p><pre>");
+				Output.WriteLine ("<p>Removed value{0}:</p><pre>", list.Count () > 1 ? "s" : String.Empty);
 			else
-				base.BeforeRemoving ();
+				base.BeforeRemoving (list);
 		}
 	}
 }

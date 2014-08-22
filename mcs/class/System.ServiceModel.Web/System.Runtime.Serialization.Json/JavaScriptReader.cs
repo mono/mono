@@ -26,7 +26,7 @@ namespace System.Runtime.Serialization.Json
 		{
 			object v = ReadCore ();
 			SkipSpaces ();
-			if (r.Read () >= 0)
+			if (ReadChar () >= 0)
 				throw JsonError (String.Format ("extra characters in JSON input"));
 			return v;
 		}
@@ -68,8 +68,10 @@ namespace System.Runtime.Serialization.Json
 				}
 				while (true) {
 					SkipSpaces ();
-					if (PeekChar () == '}')
+					if (PeekChar () == '}') {
+						ReadChar ();
 						break;
+					}
 					string name = ReadStringLiteral ();
 					SkipSpaces ();
 					Expect (':');
@@ -160,98 +162,89 @@ namespace System.Runtime.Serialization.Json
 		// It could return either int, long or decimal, depending on the parsed value.
 		object ReadNumericLiteral ()
 		{
+			var sb = new StringBuilder ();
+			
 			bool negative = false;
 			if (PeekChar () == '-') {
 				negative = true;
-				ReadChar ();
-				if (PeekChar () < 0)
-					throw JsonError ("Invalid JSON numeric literal; extra negation");
+				sb.Append ((char) ReadChar ());
 			}
 
 			int c;
-			decimal val = 0;
 			int x = 0;
 			bool zeroStart = PeekChar () == '0';
 			for (; ; x++) {
 				c = PeekChar ();
 				if (c < '0' || '9' < c)
 					break;
-				val = val * 10 + (c - '0');
-				ReadChar ();
-				if (zeroStart && x == 1 && c == '0')
-					throw JsonError ("leading multiple zeros are not allowed");
+				sb.Append ((char) ReadChar ());
+				if (zeroStart && x == 1)
+					throw JsonError ("leading zeros are not allowed");
 			}
+			if (x == 0) // Reached e.g. for "- "
+				throw JsonError ("Invalid JSON numeric literal; no digit found");
 
 			// fraction
-
 			bool hasFrac = false;
-			decimal frac = 0;
 			int fdigits = 0;
 			if (PeekChar () == '.') {
 				hasFrac = true;
-				ReadChar ();
+				sb.Append ((char) ReadChar ());
 				if (PeekChar () < 0)
 					throw JsonError ("Invalid JSON numeric literal; extra dot");
-				decimal d = 10;
 				while (true) {
 					c = PeekChar ();
 					if (c < '0' || '9' < c)
 						break;
-					ReadChar ();
-					frac += (c - '0') / d;
-					d *= 10;
+					sb.Append ((char) ReadChar ());
 					fdigits++;
 				}
 				if (fdigits == 0)
 					throw JsonError ("Invalid JSON numeric literal; extra dot");
 			}
-			frac = Decimal.Round (frac, fdigits);
 
 			c = PeekChar ();
 			if (c != 'e' && c != 'E') {
 				if (!hasFrac) {
-					if (negative && int.MinValue <= -val ||
-					    !negative && val <= int.MaxValue)
-						return (int) (negative ? -val : val);
-					if (negative && long.MinValue <= -val ||
-					    !negative && val <= long.MaxValue)
-						return (long) (negative ? -val : val);
+					int valueInt;
+					if (int.TryParse (sb.ToString (), NumberStyles.Float, CultureInfo.InvariantCulture, out valueInt))
+						return valueInt;
+					
+					long valueLong;
+					if (long.TryParse (sb.ToString (), NumberStyles.Float, CultureInfo.InvariantCulture, out valueLong))
+						return valueLong;
+					
+					ulong valueUlong;
+					if (ulong.TryParse (sb.ToString (), NumberStyles.Float, CultureInfo.InvariantCulture, out valueUlong))
+						return valueUlong;
 				}
-				var v = val + frac;
-				return negative ? -v : v;
-			}
-
-			// exponent
-
-			ReadChar ();
-
-			int exp = 0;
-			if (PeekChar () < 0)
-				throw new ArgumentException ("Invalid JSON numeric literal; incomplete exponent");
+				decimal valueDecimal;
+				if (decimal.TryParse (sb.ToString (), NumberStyles.Float, CultureInfo.InvariantCulture, out valueDecimal) && valueDecimal != 0)
+					return valueDecimal;
+			} else {
+				// exponent
+				sb.Append ((char) ReadChar ());
+				if (PeekChar () < 0)
+					throw new ArgumentException ("Invalid JSON numeric literal; incomplete exponent");
 			
-			bool negexp = false;
-			c = PeekChar ();
-			if (c == '-') {
-				ReadChar ();
-				negexp = true;
-			}
-			else if (c == '+')
-				ReadChar ();
-
-			if (PeekChar () < 0)
-				throw JsonError ("Invalid JSON numeric literal; incomplete exponent");
-			while (true) {
 				c = PeekChar ();
-				if (c < '0' || '9' < c)
-					break;
-				exp = exp * 10 + (c - '0');
-				ReadChar ();
+				if (c == '-') {
+					sb.Append ((char) ReadChar ());
+				}
+				else if (c == '+')
+					sb.Append ((char) ReadChar ());
+
+				if (PeekChar () < 0)
+					throw JsonError ("Invalid JSON numeric literal; incomplete exponent");
+				while (true) {
+					c = PeekChar ();
+					if (c < '0' || '9' < c)
+						break;
+					sb.Append ((char) ReadChar ());
+				}
 			}
-			// it is messy to handle exponent, so I just use Decimal.Parse() with assured JSON format.
-			if (negexp)
-				return new Decimal ((double) (val + frac) / Math.Pow (10, exp));
-			int [] bits = Decimal.GetBits (val + frac);
-			return new Decimal (bits [0], bits [1], bits [2], negative, (byte) exp);
+
+			return double.Parse (sb.ToString (), NumberStyles.Float, CultureInfo.InvariantCulture);
 		}
 
 		StringBuilder vb = new StringBuilder ();

@@ -628,7 +628,11 @@ namespace System
 
 			result = default (TEnum);
 
-			if (value == null || value.Trim ().Length == 0)
+			if (value == null)
+				return false;
+
+			value = value.Trim ();
+			if (value.Length == 0)
 				return false;
 
 			return Parse (tenum_type, value, ignoreCase, out result);

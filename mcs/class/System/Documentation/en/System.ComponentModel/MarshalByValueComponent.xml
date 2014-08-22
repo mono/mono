@@ -270,7 +270,6 @@
         <Parameter Name="service" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information on designer services you can use, see <format type="text/html"><a href="4881917b-628f-4689-b872-472e4f8a4e3a">Design-Time Architecture</a></format>.</para>
@@ -279,6 +278,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the implementer of the <see cref="T:System.IServiceProvider" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the implementer of the <see cref="T:System.IServiceProvider" />.</para>
+        </returns>
         <param name="service">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of service you want. </param>
       </Docs>
@@ -332,7 +335,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.ComponentModel.Component" /> may or may not have a name. If a <see cref="T:System.ComponentModel.Component" /> is given a name, the name is unique among other <see cref="T:System.ComponentModel.Component" /> objects within its <see cref="T:System.ComponentModel.IContainer" />.</para>
@@ -342,6 +344,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.String" /> containing the name of the <see cref="T:System.ComponentModel.Component" />, if any. This method should not be overridden.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the <see cref="T:System.ComponentModel.Component" />, if any.</para>
+          <para>null if the <see cref="T:System.ComponentModel.Component" /> is unnamed.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

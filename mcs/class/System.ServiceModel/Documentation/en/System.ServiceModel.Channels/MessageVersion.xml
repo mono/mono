@@ -64,7 +64,6 @@
       </Parameters>
       <Docs>
         <param name="envelope_version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The SOAP versions currently available are SOAP 1.1 and SOAP 1.2. There is an <see cref="T:System.ServiceModel.EnvelopeVersion" /> for each version of SOAP that contains the data relevant to its use. </para>
@@ -73,6 +72,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message version object by using WS-Addressing 1.0 and with a specified SOAP version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.MessageVersion" /> using the specified version of SOAP and WS-Addressing 1.0.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateVersion">
@@ -92,7 +95,6 @@
       <Docs>
         <param name="envelope_version">To be added.</param>
         <param name="addressing_version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The SOAP versions currently available are SOAP 1.1 and SOAP 1.2. There is an <see cref="T:System.ServiceModel.EnvelopeVersion" /> for each version of SOAP that contains the data relevant to its use.</para>
@@ -102,6 +104,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message version object with specified SOAP and WS-Addressing versions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.MessageVersion" /> using the specified versions of WS-Addressing and SOAP.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -163,12 +169,15 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the current message version is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is equal to the current <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -183,12 +192,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a hash code for the current message version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique hash code for the current <see cref="T:System.ServiceModel.Channels.MessageVersion" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -420,12 +432,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the string representation of the current message version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current message version.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

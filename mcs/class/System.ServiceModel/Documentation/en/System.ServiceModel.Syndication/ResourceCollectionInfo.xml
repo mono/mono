@@ -94,12 +94,22 @@
         <Parameter Name="allowsNewEntries" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="link">To be added.</param>
-        <param name="categories">To be added.</param>
-        <param name="allowsNewEntries">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>&lt;accept&gt; elements specify the type of resources that can be added to a collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the collection.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the collection.</param>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of categories documents.</param>
+        <param name="allowsNewEntries">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies whether new &lt;accept&gt; elements can be added to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -116,12 +126,19 @@
         <Parameter Name="accepts" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="link">To be added.</param>
-        <param name="categories">To be added.</param>
-        <param name="accepts">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the collection.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the collection.</param>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of categories documents.</param>
+        <param name="accepts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of resource types that can be added to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Accepts">
@@ -212,12 +229,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.InlineCategoriesDocument" />.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateReferencedCategoriesDocument">
@@ -232,12 +254,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.ReferencedCategoriesDocument" />.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ElementExtensions">
@@ -319,12 +346,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an attribute extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.Boolean" />.
+</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
         <param name="ns">
@@ -350,12 +382,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an element extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.Boolean" />.
+</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
         <param name="version">

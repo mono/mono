@@ -30,9 +30,7 @@ namespace System.Windows.Markup
 {
 	[MarkupExtensionReturnType (typeof (Type))]
 	[TypeConverter (typeof (TypeExtensionConverter))]
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationFramework_3_5)]
-#endif
 	public class TypeExtension : MarkupExtension
 	{
 		public TypeExtension ()
@@ -56,9 +54,7 @@ namespace System.Windows.Markup
 		[ConstructorArgument ("type")]
 		[DefaultValue (null)]
 		public Type Type { get; set; }
-#if !NET_2_1
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public string TypeName { get; set; }
 
 		public override object ProvideValue (IServiceProvider serviceProvider)

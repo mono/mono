@@ -50,7 +50,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The implementation of the <see cref="M:System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner.ConnectToDataSource" /> method typically involves unhooking events from the previous data source, and then attaching new events to the new data source.</para>
@@ -59,6 +58,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, typically unhooks events from the previous data source, and then attaches new events to the new data source. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a connection to a new data source was performed, typically; false if the old and new data sources are the same.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDataSource">
@@ -200,7 +203,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner" /> class retrieves sample data that is used for binding purposes at design time before rendering the control. If the control is not data bound, it calls the <see cref="M:System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner.GetEmptyDesignTimeHtml" /> method. If there is an error rendering the control, it calls the <see cref="M:System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner.GetErrorDesignTimeHtml(System.Exception)" /> method.</para>
@@ -209,6 +211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates the markup that is used to render the control at design time. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The markup used to render the control at design time.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEmptyDesignTimeHtml">
@@ -222,7 +228,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner" /> class retrieves sample data that is used for binding purposes at design time before rendering the control. The empty design-time control renders as a placeholder that contains the type name and control name.</para>
@@ -231,6 +236,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the markup that is used to render the control at design time if the control is empty or if the data source cannot be retrieved. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The markup used to render the control at design time with an empty data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetErrorDesignTimeHtml">
@@ -246,7 +255,6 @@
         <Parameter Name="e" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The error design-time control renders as a placeholder that contains the type name, the control name, and a message describing the error.</para>
@@ -255,6 +263,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the markup that is used to render the control at design time when an error has occurred.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The markup used to render the control at design time when an error has occurred.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Exception" /> that was thrown.</param>
       </Docs>

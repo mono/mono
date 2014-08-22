@@ -39,12 +39,15 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.ServiceModel.Description.FaultDescription" /> object that has the specified action value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.FaultDescription" /> object that has the specified action, or null. If more than one <see cref="T:System.ServiceModel.Description.FaultDescription" /> object has the same action, the first one in the collection is returned.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FindAll">
@@ -62,12 +65,15 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all <see cref="T:System.ServiceModel.Description.FaultDescription" /> objects that have the specified action value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.FaultDescription" /> objects that have the specified action. If there are no <see cref="T:System.ServiceModel.Description.FaultDescription" /> objects with the action, an empty collection is returned.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

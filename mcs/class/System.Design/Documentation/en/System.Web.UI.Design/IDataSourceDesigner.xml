@@ -111,7 +111,6 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A class that implements <see cref="T:System.Web.UI.Design.IDataSourceDesigner" /> can define a view in a way that is useful within the context of that class.</para>
@@ -121,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Web.UI.Design.DesignerDataSourceView" /> for the specified view.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.DesignerDataSourceView" /> containing information about the identified view, or null if a view with the specified name is not found.</para>
+        </returns>
         <param name="viewName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a view in the underlying data source.</param>
       </Docs>
@@ -136,12 +139,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the names of the views in the underlying data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.String" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RefreshSchema">

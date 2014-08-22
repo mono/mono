@@ -47,30 +47,6 @@
         <Parameter Name="y" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of <paramref name="x" /> as compared to <paramref name="y" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Condition</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>
-                <paramref name="x" /> &lt; <paramref name="y" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>
-                <paramref name="x" /> == <paramref name="y" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>
-                <paramref name="x" /> &gt; <paramref name="y" />.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The preferred implementation is to use the <see cref="M:System.IComparable.CompareTo(System.Object)" /> method of one of the parameters.</para>
@@ -80,6 +56,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="x" /> and <paramref name="y" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is less than <paramref name="y" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> equals <paramref name="y" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is greater than <paramref name="y" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="y">

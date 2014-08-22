@@ -596,11 +596,6 @@ public class WebProxyExample {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.WebProxy" />
-instance that contains the default proxy settings of the
-system.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebProxy.GetDefaultProxy" /> method reads the nondynamic proxy settings stored by Internet Explorer 5.5 and later, and creates a <see cref="T:System.Net.WebProxy" /> instance with those settings.</para>
@@ -611,6 +606,10 @@ system.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the Internet Explorer nondynamic proxy settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebProxy" /> instance that contains the nondynamic proxy settings from Internet Explorer 5.5 and later.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -661,11 +660,6 @@ system.</para>
         <Parameter Name="destination" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>If <paramref name="destination" /> is on the bypass list of the 
- current instance, returns <paramref name="destination" />; otherwise, returns the <see cref="P:System.Net.WebProxy.Address" /> of
- the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebProxy.GetProxy(System.Uri)" /> method returns the URI that the <see cref="T:System.Net.WebRequest" /> instance uses to access the Internet resource.</para>
@@ -677,6 +671,10 @@ system.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the proxied URI for a request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Uri" /> instance of the Internet resource, if the resource is on the bypass list; otherwise, the <see cref="T:System.Uri" /> instance of the proxy.</para>
+        </returns>
         <param name="destination">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> instance of the requested Internet resource. </param>
       </Docs>
@@ -699,28 +697,6 @@ system.</para>
         <Parameter Name="host" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns <see langword="true" /> under any of the following conditions:</para>
-          <list type="bullet">
-            <item>
-              <term>
-      
-      The <see cref="P:System.Net.WebProxy.BypassProxyOnLocal" /> property of the current instance is
-   <see langword="true" /> and <paramref name="host " />is a local URI.</term>
-            </item>
-            <item>
-              <term>
-                <paramref name="host " />matches a regular expression in <see cref="P:System.Net.WebProxy.BypassList" />.</term>
-            </item>
-            <item>
-              <term>
-      
-      The <see cref="P:System.Net.WebProxy.Address" /> of the current instance is
-   <see langword="null" />.</term>
-            </item>
-          </list>
-          <para>All other conditions return <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The <see cref="P:System.Net.WebProxy.BypassList" /> of the current instance contains an invalid regular expression.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -745,6 +721,10 @@ system.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether to use the proxy server for the specified host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the proxy server should not be used for <paramref name="host" />; otherwise, false.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> instance of the host to check for proxy use. </param>
       </Docs>

@@ -33,7 +33,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The ultimate receiver is null if <see cref="P:System.ServiceModel.EnvelopeVersion.None" /> is specified.</para>
@@ -42,6 +41,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string that contains the URI name for the SOAP role associated with the current message version for the ultimate destination.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty string if SOAP1.1 is used; a string that contains http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver if SOAP1.2 is used.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="NextDestinationActorValue">
@@ -142,7 +145,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns a human-readable string that is culture-sensitive.</para>
@@ -151,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string that represents the current envelope version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current envelope version.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

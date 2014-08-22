@@ -111,12 +111,6 @@ class Ntable {
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <paramref name="key" />, if it did not exist in the 
-   table at the time of the call, or the <see cref="T:System.String" /> instance previously stored in the table with a value equal to
-<paramref name="key" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="key" /> is <see langword="null" />.</exception>
         <remarks>
@@ -127,6 +121,10 @@ class Ntable {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Atomizes the specified string and adds it to the NameTable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The atomized string or the existing string if it already exists in the NameTable.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to add. </param>
       </Docs>
@@ -151,13 +149,6 @@ class Ntable {
         <Parameter Name="len" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.String" qualify="true" /> equivalent of the 
-   specified subset of the <see cref="T:System.Char" qualify="true" /> array that is stored in the
-   table, or <see cref="F:System.String.Empty" qualify="true" />
-   if <paramref name="len" /> is
-   zero.</para>
-        </returns>
         <exception cref="T:System.IndexOutOfRangeException">
           <para>
             <paramref name="start" /> &lt; 0.</para>
@@ -178,6 +169,10 @@ class Ntable {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Atomizes the specified string and adds it to the NameTable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The atomized string or the existing string if one already exists in the NameTable. If <paramref name="len" /> is zero, String.Empty is returned.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the string to add. </param>
         <param name="start">
@@ -204,12 +199,6 @@ class Ntable {
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.String" /> instance previously stored in the table with a value 
-   equal to <paramref name="value" /> , or
-<see langword="null" /> if 
-   it does not exist.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="value" /> is <see langword="null" />.</exception>
         <remarks>
@@ -220,6 +209,10 @@ class Ntable {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the atomized string with the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The atomized string object or null if the string has not already been atomized.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The name to find. </param>
       </Docs>
@@ -244,12 +237,6 @@ class Ntable {
         <Parameter Name="len" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.String" qualify="true" /> equivalent of the specified subset of the <see cref="T:System.Char" qualify="true" /> array that is 
-   stored in the table, or <see langword="null" /> if the
-   equivalent <see cref="T:System.String" /> is not
-   in the table.</para>
-        </returns>
         <exception cref="T:System.IndexOutOfRangeException">
           <para>
             <paramref name="start" />
@@ -272,6 +259,10 @@ class Ntable {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the atomized string containing the same characters as the specified range of characters in the given array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The atomized string or null if the string has not already been atomized. If <paramref name="len" /> is zero, String.Empty is returned.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the name to find. </param>
         <param name="start">

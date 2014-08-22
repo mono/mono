@@ -48,12 +48,15 @@
         <Parameter Name="region" Type="System.Web.UI.Design.DesignerRegion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the outer bounds of the designer view.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> containing information about the location and measurements of the view at design time.</para>
+        </returns>
         <param name="region">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.DesignerRegion" /> for which you want to retrieve the bounds.</param>
       </Docs>

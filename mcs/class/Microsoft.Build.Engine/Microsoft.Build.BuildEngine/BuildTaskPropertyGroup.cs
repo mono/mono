@@ -52,7 +52,11 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			return GetAttributes ();
 		}
-		
+
+		public bool ResolveOutputItems ()
+		{
+			return true;
+		}
 	}
 }
 

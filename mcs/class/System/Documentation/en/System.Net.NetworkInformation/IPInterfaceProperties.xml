@@ -178,7 +178,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -189,6 +188,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides Internet Protocol version 4 (IPv4) configuration data for this network interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.NetworkInformation.IPv4InterfaceProperties" /> object that contains IPv4 configuration data, or null if no data is available for the interface.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIPv6Properties">
@@ -204,7 +207,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -214,6 +216,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides Internet Protocol version 6 (IPv6) configuration data for this network interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.NetworkInformation.IPv6InterfaceProperties" /> object that contains IPv6 configuration data.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDnsEnabled">

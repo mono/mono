@@ -95,12 +95,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Update">
@@ -119,12 +122,15 @@
         <Parameter Name="body" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
         <param name="variable">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.CatchBlock.Variable" /> property of the result.</param>
         <param name="filter">

@@ -47,11 +47,20 @@ namespace MonoTests.System
 	public class UriTest2
 	{
 		protected bool isWin32 = false;
+		public bool IriParsing;
 		
 		[SetUp]
 		public void SetUp ()
 		{
 			isWin32 = (Path.DirectorySeparatorChar == '\\');
+
+			//Make sure Uri static constructor is called
+			Uri.EscapeDataString ("");
+
+			FieldInfo iriParsingField = typeof (Uri).GetField ("s_IriParsing",
+				BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+			if (iriParsingField != null)
+				IriParsing = (bool)iriParsingField.GetValue (null);
 		}
 
 		// Segments cannot be validated here...
@@ -383,8 +392,15 @@ TextWriter sw = Console.Out;
 		{
 			string s = "Https://host.DOMAIN.com/dir%2fapp.xap#";
 			Uri uri = new Uri (s);
-			Assert.AreEqual ("/dir/app.xap", uri.AbsolutePath, "AbsolutePath");
-			Assert.AreEqual ("https://host.domain.com/dir/app.xap#", uri.AbsoluteUri, "AbsoluteUri");
+
+			if (IriParsing)	{
+				Assert.AreEqual ("/dir%2fapp.xap", uri.AbsolutePath, "AbsolutePath");
+				Assert.AreEqual ("https://host.domain.com/dir%2fapp.xap#", uri.AbsoluteUri, "AbsoluteUri");
+			} else {
+				Assert.AreEqual ("/dir/app.xap", uri.AbsolutePath, "AbsolutePath");
+				Assert.AreEqual ("https://host.domain.com/dir/app.xap#", uri.AbsoluteUri, "AbsoluteUri");
+			}
+
 			Assert.AreEqual ("host.domain.com", uri.DnsSafeHost, "DnsSafeHost");
 			Assert.AreEqual ("#", uri.Fragment, "Fragment");
 			Assert.AreEqual ("host.domain.com", uri.Host, "Host");
@@ -405,15 +421,22 @@ TextWriter sw = Console.Out;
 		{
 			string s = "https://monkey:s3kr3t@HOST.domain.Com:4430/dir/..%5Capp.xap?";
 			Uri uri = new Uri (s);
-			Assert.AreEqual ("/app.xap", uri.AbsolutePath, "AbsolutePath");
-			// non-standard port is present
-			Assert.AreEqual ("https://monkey:s3kr3t@host.domain.com:4430/app.xap?", uri.AbsoluteUri, "AbsoluteUri");
+
+			if (IriParsing) {
+				Assert.AreEqual ("/dir/..%5Capp.xap", uri.AbsolutePath, "AbsolutePath");
+				Assert.AreEqual ("https://monkey:s3kr3t@host.domain.com:4430/dir/..%5Capp.xap?", uri.AbsoluteUri, "AbsoluteUri");
+				Assert.AreEqual ("/dir/..\\app.xap", uri.LocalPath, "LocalPath");
+			} else {
+				Assert.AreEqual ("/app.xap", uri.AbsolutePath, "AbsolutePath");
+				Assert.AreEqual ("https://monkey:s3kr3t@host.domain.com:4430/app.xap?", uri.AbsoluteUri, "AbsoluteUri");
+				Assert.AreEqual ("/app.xap", uri.LocalPath, "LocalPath");
+			}
+
 			Assert.AreEqual ("host.domain.com", uri.DnsSafeHost, "DnsSafeHost");
 			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
 			Assert.AreEqual ("host.domain.com", uri.Host, "Host");
 			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
 			Assert.IsFalse (uri.IsUnc, "IsUnc");
-			Assert.AreEqual ("/app.xap", uri.LocalPath, "LocalPath");
 			Assert.AreEqual (s, uri.OriginalString, "OriginalString");
 			Assert.AreEqual (4430, uri.Port, "Port");
 			Assert.AreEqual ("?", uri.Query, "Query");
@@ -717,7 +740,10 @@ TextWriter sw = Console.Out;
 
 			// special characters
 			uri = new Uri ("mono://host/<>%\"{}|\\^`;/:@&=+$,[]#abc");
-			Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
+			if (IriParsing)
+				Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/:@&=+$,[]", uri.AbsolutePath, "Special");
+			else
+				Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 		}
 
 		[Test]
@@ -763,8 +789,11 @@ TextWriter sw = Console.Out;
 
 			// special escaped characters - they differs a bit from other URI
 			uri = new Uri ("news:novell.mono.moonlight/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
-			Assert.AreEqual ("novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 			Assert.AreEqual ("#abc", uri.Fragment, "Special/Fragment");
+			if (IriParsing)
+				Assert.AreEqual ("novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,[]", uri.AbsolutePath, "Special");
+			else
+				Assert.AreEqual ("novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 		}
 
 		[Test]
@@ -798,8 +827,11 @@ TextWriter sw = Console.Out;
 
 			// special escaped characters - they differs a bit from other URI
 			uri = new Uri ("nntp://news.mono-project.com/novell.mono.moonlight/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
-			Assert.AreEqual ("/novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 			Assert.AreEqual ("#abc", uri.Fragment, "Special/Fragment");
+			if (IriParsing)
+				Assert.AreEqual ("/novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,[]", uri.AbsolutePath, "Special");
+			else
+				Assert.AreEqual ("/novell.mono.moonlight/%3C%3E%25%22%7B%7D%7C%5C%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 		}
 
 		[Test]
@@ -832,16 +864,34 @@ TextWriter sw = Console.Out;
 
 			// special characters and fragment
 			uri = new Uri ("ftp://ftp.mono-project.com/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
-			Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 			Assert.AreEqual ("#abc", uri.Fragment, "Special/Fragment");
+			if (IriParsing)
+				Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/%3F:@&=+$,[]", uri.AbsolutePath, "Special");
+			else
+				Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
 		}
 
 		[Test]
 		public void FileScheme ()
 		{
 			Uri uri = new Uri ("file://host/dir/subdir/file?this-is-not-a-query#but-this-is-a-fragment");
-			Assert.AreEqual ("/dir/subdir/file%3Fthis-is-not-a-query", uri.AbsolutePath, "AbsolutePath");
-			Assert.AreEqual ("file://host/dir/subdir/file%3Fthis-is-not-a-query#but-this-is-a-fragment", uri.AbsoluteUri, "AbsoluteUri");
+
+			if (IriParsing)	{
+				Assert.AreEqual ("/dir/subdir/file", uri.AbsolutePath, "AbsolutePath");
+				Assert.AreEqual ("file://host/dir/subdir/file?this-is-not-a-query#but-this-is-a-fragment", uri.AbsoluteUri, "AbsoluteUri");
+				Assert.AreEqual (isWin32 ? "\\\\host\\dir\\subdir\\file" : "/dir/subdir/file", uri.LocalPath, "LocalPath");
+				Assert.AreEqual ("/dir/subdir/file?this-is-not-a-query", uri.PathAndQuery, "PathAndQuery");
+				Assert.AreEqual ("?this-is-not-a-query", uri.Query, "Query");
+				Assert.AreEqual ("file", uri.Segments [3], "Segments [3]");
+			} else {
+				Assert.AreEqual ("/dir/subdir/file%3Fthis-is-not-a-query", uri.AbsolutePath, "AbsolutePath");
+				Assert.AreEqual ("file://host/dir/subdir/file%3Fthis-is-not-a-query#but-this-is-a-fragment", uri.AbsoluteUri, "AbsoluteUri");
+				Assert.AreEqual (isWin32 ? "\\\\host\\dir\\subdir\\file?this-is-not-a-query" : "/dir/subdir/file?this-is-not-a-query", uri.LocalPath, "LocalPath");
+				Assert.AreEqual ("/dir/subdir/file%3Fthis-is-not-a-query", uri.PathAndQuery, "PathAndQuery");
+				Assert.AreEqual (String.Empty, uri.Query, "Query");
+				Assert.AreEqual ("file%3Fthis-is-not-a-query", uri.Segments [3], "Segments [3]");
+			}
+
 			Assert.AreEqual ("host", uri.Authority, "Authority");
 			Assert.AreEqual ("host", uri.DnsSafeHost, "DnsSafeHost");
 			Assert.AreEqual ("#but-this-is-a-fragment", uri.Fragment, "Fragment");
@@ -852,22 +902,21 @@ TextWriter sw = Console.Out;
 			Assert.IsTrue (uri.IsFile, "IsFile");
 			Assert.IsFalse (uri.IsLoopback, "IsLoopback");
 			Assert.AreEqual (isWin32, uri.IsUnc, "IsUnc");
-			Assert.AreEqual (isWin32 ? "\\\\host\\dir\\subdir\\file?this-is-not-a-query" : "/dir/subdir/file?this-is-not-a-query", uri.LocalPath, "LocalPath");
 			Assert.AreEqual ("file://host/dir/subdir/file?this-is-not-a-query#but-this-is-a-fragment", uri.OriginalString, "OriginalString");
-			Assert.AreEqual ("/dir/subdir/file%3Fthis-is-not-a-query", uri.PathAndQuery, "PathAndQuery");
 			Assert.AreEqual (-1, uri.Port, "Port");
-			Assert.AreEqual (String.Empty, uri.Query, "Query");
 			Assert.AreEqual ("file", uri.Scheme, "Scheme");
 			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
 			Assert.AreEqual ("dir/", uri.Segments [1], "Segments [1]");
 			Assert.AreEqual ("subdir/", uri.Segments [2], "Segments [2]");
-			Assert.AreEqual ("file%3Fthis-is-not-a-query", uri.Segments [3], "Segments [3]");
 			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
 			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
 
 			// special characters
-			uri = new Uri ("file://host/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
-			Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/%3F:@&=+$,%5B%5D", uri.AbsolutePath, "Special");
+			uri = new Uri ("file://host/<>%\"{}|\\^`;/:@&=+$,[]?#abc");
+			if (IriParsing)
+				Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/:@&=+$,[]", uri.AbsolutePath, "Special");
+			else
+				Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/:@&=+$,%5B%5D%3F", uri.AbsolutePath, "Special");
 		}
 
 		[Test]
@@ -901,22 +950,37 @@ TextWriter sw = Console.Out;
 		{
 			Uri uri = new Uri ("http://[1:2:3:4:5:6:7:8]");
 			Assert.AreEqual (UriHostNameType.IPv6, uri.HostNameType, "1.HostNameType");
-			Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", uri.Authority, "1.Authority");
-			Assert.AreEqual ("0001:0002:0003:0004:0005:0006:0007:0008", uri.DnsSafeHost, "1.DnsSafeHost");
-			Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", uri.Host, "1.Host");
+			if (IriParsing) {
+				Assert.AreEqual ("[1:2:3:4:5:6:7:8]", uri.Authority, "1.Authority");
+				Assert.AreEqual ("1:2:3:4:5:6:7:8", uri.DnsSafeHost, "1.DnsSafeHost");
+				Assert.AreEqual ("[1:2:3:4:5:6:7:8]", uri.Host, "1.Host");
+			} else {
+				Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", uri.Authority, "1.Authority");
+				Assert.AreEqual ("0001:0002:0003:0004:0005:0006:0007:0008", uri.DnsSafeHost, "1.DnsSafeHost");
+				Assert.AreEqual ("[0001:0002:0003:0004:0005:0006:0007:0008]", uri.Host, "1.Host");
+			}
 
 			uri = new Uri ("http://[fe80::200:39ff:fe36:1a2d%4]/temp/example.htm");
 			Assert.AreEqual (UriHostNameType.IPv6, uri.HostNameType, "1.HostNameType");
-			Assert.AreEqual ("[FE80:0000:0000:0000:0200:39FF:FE36:1A2D]", uri.Authority, "2.Authority");
-			Assert.AreEqual ("FE80:0000:0000:0000:0200:39FF:FE36:1A2D%4", uri.DnsSafeHost, "2.DnsSafeHost");
-			Assert.AreEqual ("[FE80:0000:0000:0000:0200:39FF:FE36:1A2D]", uri.Host, "2.Host");
+			if (IriParsing)	{
+				Assert.AreEqual ("[fe80::200:39ff:fe36:1a2d]", uri.Authority, "2.Authority");
+				Assert.AreEqual ("fe80::200:39ff:fe36:1a2d%4", uri.DnsSafeHost, "2.DnsSafeHost");
+				Assert.AreEqual ("[fe80::200:39ff:fe36:1a2d]", uri.Host, "2.Host");
+			} else {
+				Assert.AreEqual ("[FE80:0000:0000:0000:0200:39FF:FE36:1A2D]", uri.Authority, "2.Authority");
+				Assert.AreEqual ("FE80:0000:0000:0000:0200:39FF:FE36:1A2D%4", uri.DnsSafeHost, "2.DnsSafeHost");
+				Assert.AreEqual ("[FE80:0000:0000:0000:0200:39FF:FE36:1A2D]", uri.Host, "2.Host");
+			}
 		}
 
 		[Test]
 		public void RelativeEscapes ()
 		{
 			Uri uri = new Uri ("%2e%2e/dir/%2e%2e/subdir/file?query#fragment", UriKind.Relative);
-			Assert.AreEqual ("%2e%2e/dir/%2e%2e/subdir/file?query#fragment", uri.ToString (), "1.ToString");
+			if (IriParsing)
+				Assert.AreEqual ("../dir/../subdir/file?query#fragment", uri.ToString (), "1.ToString");
+			else
+				Assert.AreEqual ("%2e%2e/dir/%2e%2e/subdir/file?query#fragment", uri.ToString (), "1.ToString");
 		}
 
 		[Test]
@@ -963,26 +1027,38 @@ TextWriter sw = Console.Out;
 		public void Fragment_SpecialCharacters ()
 		{
 			Uri uri = new Uri ("http://host/dir/file#fragment <>%\"{}|\\^`;/?:@&=+$,[]#second");
-			Assert.AreEqual ("#fragment%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,%5B%5D%23second", uri.Fragment, "Fragment");
 			Assert.AreEqual ("http://host/dir/file#fragment <>%25\"{}|\\^`;/?:@&=+$,[]%23second", uri.ToString (), "ToString");
+			if (IriParsing)
+				Assert.AreEqual ("#fragment%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,[]#second", uri.Fragment, "Fragment");
+			else
+				Assert.AreEqual ("#fragment%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,%5B%5D%23second", uri.Fragment, "Fragment");
 		}
 
 		[Test]
 		public void Query_SpecialCharacters ()
 		{
 			Uri uri = new Uri ("http://host/dir/file?query <>%\"{}|\\^`;/?:@&=+$,[]");
-			Assert.AreEqual ("?query%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,%5B%5D", uri.Query, "Query");
 			Assert.AreEqual ("http://host/dir/file?query <>%25\"{}|\\^`;/?:@&=+$,[]", uri.ToString (), "ToString");
+			if (IriParsing)
+				Assert.AreEqual ("?query%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,[]", uri.Query, "Query");
+			else
+				Assert.AreEqual ("?query%20%3C%3E%25%22%7B%7D%7C%5C%5E%60;/?:@&=+$,%5B%5D", uri.Query, "Query");
 		}
 
 		[Test]
 		public void OriginalPathEscaped ()
 		{
 			Uri uri = new Uri ("http://www.mono-project.com/%41/%42/%43", UriKind.Absolute);
-			Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.AbsoluteUri, "AbsoluteUri");
-			Assert.AreEqual ("/%41/%42/%43", uri.AbsolutePath, "AbsolutePath");
 			Assert.AreEqual ("/A/B/C", uri.LocalPath, "LocalPath");
-			Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
+			if (IriParsing)	{
+				Assert.AreEqual ("http://www.mono-project.com/A/B/C", uri.AbsoluteUri, "AbsoluteUri");
+				Assert.AreEqual ("/A/B/C", uri.AbsolutePath, "AbsolutePath");
+				Assert.AreEqual ("http://www.mono-project.com/A/B/C", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
+			} else {
+				Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.AbsoluteUri, "AbsoluteUri");
+				Assert.AreEqual ("/%41/%42/%43", uri.AbsolutePath, "AbsolutePath");
+				Assert.AreEqual ("http://www.mono-project.com/%41/%42/%43", uri.GetLeftPart (UriPartial.Path), "GetLeftPart(Path)");
+			}
 		}
 
 		[Test]

@@ -1253,7 +1253,7 @@ namespace System.Net.Sockets {
 				throw new SocketException (error);
 			}
 
-			if (socket_type == SocketType.Dgram && (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)))
+			if (socket_type == SocketType.Dgram && ep != null && (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)))
 				connected = false;
 			else
 				connected = true;

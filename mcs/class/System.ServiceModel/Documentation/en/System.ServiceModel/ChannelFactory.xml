@@ -101,12 +101,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented in a derived class, creates a description of the service endpoint associated with the channel factory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> associated with the channel factory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateFactory">
@@ -121,12 +124,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the channel factory for the current endpoint of the factory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelFactory" /> for the endpoint of the current factory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Credentials">
@@ -260,8 +266,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this to retrieve capabilities, requirements and parameters from the channel stack. If a channel factory supports returning the requested object, it returns it. If not, it delegates the call down to the next level in the stack. If it gets to the bottom of the stack and no channel factory supported the requested object, then the method returns null.</para>
@@ -272,6 +276,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the typed object requested, if present, from the appropriate layer in the channel stack, or null if not present.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typed object <paramref name="T" /> requested if it is present or null if it is not.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The typed object for which the method is querying.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="InitializeEndpoint">
@@ -393,7 +403,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method receives notification, through a callback, of the identity of the event handler for the operation. The operation is not complete until either the asynchronous close on the inner channel factory returns or the time-out occurs.</para>
@@ -402,6 +411,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous close operation on the inner channel factory of the current channel factory that has a state object associated with it. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous operation.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the operation has to complete before timing out.</param>
         <param name="callback">
@@ -426,7 +439,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method receives notification, through a callback, of the identity of the event handler for the operation. The operation is not complete until either the asynchronous open on the inner channel factory returns or the time-out occurs.</para>
@@ -435,6 +447,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous open operation on the inner channel factory of the current channel factory that has a state object associated with it. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous operation.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the operation has to complete before timing out.</param>
         <param name="callback">

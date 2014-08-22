@@ -25,7 +25,6 @@
         <Parameter Name="relativePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -35,6 +34,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a file from the current directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A stream of the specified file.</para>
+        </returns>
         <param name="relativePath">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to open.</param>
       </Docs>

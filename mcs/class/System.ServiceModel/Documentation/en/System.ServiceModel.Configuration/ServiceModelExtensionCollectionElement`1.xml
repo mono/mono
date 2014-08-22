@@ -128,12 +128,15 @@
         <Parameter Name="elementName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether this collection contains an element of the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains an element of the specified name; otherwise, false.</para>
+        </returns>
         <param name="elementName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element to search for.</param>
       </Docs>
@@ -152,12 +155,15 @@
         <Parameter Name="elementType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether this collection contains an element of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains an element of the specified type; otherwise, false.</para>
+        </returns>
         <param name="elementType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the element to search for.</param>
       </Docs>
@@ -240,12 +246,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IEnumerator" /> that iterates through a collection. This method cannot be inherited.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsModified">
@@ -260,7 +269,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method determines whether this object is written to the configuration file. If the return value is false, it is assumed that the configuration file represents the current state of the element. </para>
@@ -271,6 +279,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether this configuration element has been modified since it was last saved or loaded, when implemented in a derived class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element has been modified; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -328,12 +340,15 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether an unknown element is encountered during deserialization.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true when an unknown element is encountered while deserializing; otherwise, false.</para>
+        </returns>
         <param name="elementName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the unknown sub-element.</param>
         <param name="reader">
@@ -474,12 +489,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IEnumerator" /> that iterates through a collection. This method cannot be inherited.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection. </para>
+        </returns>
       </Docs>
     </Member>
   </Members>

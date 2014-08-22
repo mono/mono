@@ -51,7 +51,6 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The concrete <see cref="T:System.Web.Services.Discovery.ContractReference" /> class inherits from the abstract <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> class. </para>
@@ -61,6 +60,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the <see cref="T:System.Web.Services.Discovery.ContractReference" /> object for the specified .asmx file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.ContractReference" /> object with the specified file name for its .asmx file.</para>
+        </returns>
         <param name="filename">
           <attribution license="cc4" from="Microsoft" modified="false" />The file-system path of the Web service's .asmx file.</param>
       </Docs>

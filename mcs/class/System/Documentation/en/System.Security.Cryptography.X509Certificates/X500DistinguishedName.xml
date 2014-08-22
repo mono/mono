@@ -230,7 +230,6 @@
         <Parameter Name="flag" Type="System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -240,6 +239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a distinguished name using the characteristics specified by the <paramref name="flag" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decoded distinguished name.</para>
+        </returns>
         <param name="flag">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that specify the characteristics of the distinguished name.</param>
       </Docs>
@@ -259,7 +262,6 @@
         <Parameter Name="multiLine" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -269,6 +271,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a formatted version of an X500 distinguished name for printing or for output to a text window or to a console.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A formatted string that represents the X500 distinguished name.</para>
+        </returns>
         <param name="multiLine">
           <attribution license="cc4" from="Microsoft" modified="false" />true if the return string should contain carriage returns; otherwise, false.</param>
       </Docs>

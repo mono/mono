@@ -174,7 +174,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -184,6 +183,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the current number of ticks in the timer mechanism.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A long integer representing the tick counter value of the underlying timer mechanism.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsHighResolution">
@@ -318,7 +321,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -328,6 +330,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Diagnostics.Stopwatch" /> instance, sets the elapsed time property to zero, and starts measuring elapsed time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.Stopwatch" /> that has just begun measuring elapsed time.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Stop">

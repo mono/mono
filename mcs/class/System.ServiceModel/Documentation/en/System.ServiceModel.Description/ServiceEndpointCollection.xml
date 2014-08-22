@@ -40,7 +40,6 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This <see cref="M:System.ServiceModel.Description.ServiceEndpointCollection.Find(System.Type)" /> overload is specific to the indigo1 programming model. It looks at the <see cref="P:System.ServiceModel.Description.ContractDescription.ContractType" /> property for each endpoint. The <see cref="P:System.ServiceModel.Description.ContractDescription.ContractType" /> may be null if the <see cref="T:System.ServiceModel.Description.ContractDescription" /> was not created from the indigo2 programming model (types with *Contract attributes). </para>
@@ -50,6 +49,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first service endpoint found that satisfies the specified contract type from the collection of service endpoints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> of the specified contract type or null if none was found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -67,7 +70,6 @@
       </Parameters>
       <Docs>
         <param name="uri">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>There are potentially multiple endpoints that could satisfy the criteria. The method returns the first one encountered in the collection. If you need to find all of the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that satisfy the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> methods instead.</para>
@@ -76,6 +78,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a service endpoint with a specified address from the collection of service endpoints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> of the specified address or null if none was found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -93,7 +99,6 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>There are potentially multiple endpoints that could satisfy the criteria. The method returns the first one encountered in the collection. If you need to find all of the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that satisfy the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> methods instead.</para>
@@ -102,6 +107,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a service endpoint with a specified namespace and contract name from the collection of service endpoints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> with the specified namespace and contract name or null if none was found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -119,7 +128,6 @@
         <Parameter Name="bindingName" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>There are potentially multiple endpoints that could satisfy the criteria. The method returns the first one encountered in the collection. If you need to find all of the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that satisfy the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> methods instead.</para>
@@ -128,6 +136,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a service endpoint of a specified contract type and with a specified binding name and namespace from the collection of service endpoints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> of the specified contract type and binding name and namespace or null if none was found.</para>
+        </returns>
         <param name="contractType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract for the service endpoint.</param>
         <param name="bindingName">
@@ -149,7 +161,6 @@
         <Parameter Name="bindingName" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>There are potentially multiple endpoints that could satisfy the criteria. The method returns the first one encountered in the collection. If you need to find all of the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that satisfy the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> methods instead.</para>
@@ -158,6 +169,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first service endpoint with the specified contract name and namespace and binding name and namespace from the collection of service endpoints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> with the specified binding and contract names and namespaces.</para>
+        </returns>
         <param name="contractName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> for the contract of the service.</param>
         <param name="bindingName">
@@ -178,7 +193,6 @@
         <Parameter Name="contractType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you only need to find the first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> that satisfies the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.Find" /> methods instead.</para>
@@ -187,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of all the service endpoints for a specified type of service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> that contains service endpoints of the specified type or the empty collection if none is found.</para>
+        </returns>
         <param name="contractType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract for the service endpoint.</param>
       </Docs>
@@ -206,7 +224,6 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you only need to find the first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> that satisfies the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.Find" /> methods instead.</para>
@@ -215,6 +232,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of all the service endpoints for a specified service name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> that contains service endpoints with the specified contract name and namespace or the empty collection if none is found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InsertItem">

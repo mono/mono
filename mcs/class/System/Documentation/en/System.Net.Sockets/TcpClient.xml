@@ -230,7 +230,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.TcpClient.BeginConnect(System.Net.IPAddress,System.Int32,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.TcpClient.EndConnect(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="asyncCallback" /> delegate.</para>
@@ -241,6 +240,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a remote host connection. The remote host is specified by an <see cref="T:System.Net.IPAddress" /> and a port number (<see cref="T:System.Int32" />).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous connection.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.IPAddress" /> of the remote host.</param>
         <param name="port">
@@ -269,7 +272,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.TcpClient.BeginConnect(System.Net.IPAddress,System.Int32,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.TcpClient.EndConnect(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="asyncCallback" /> delegate.</para>
@@ -281,6 +283,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a remote host connection. The remote host is specified by an <see cref="T:System.Net.IPAddress" /> array and a port number (<see cref="T:System.Int32" />).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous connection.</para>
+        </returns>
         <param name="addresses">
           <attribution license="cc4" from="Microsoft" modified="false" />At least one <see cref="T:System.Net.IPAddress" /> that designates the remote hosts.</param>
         <param name="port">
@@ -309,7 +315,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.TcpClient.BeginConnect(System.String,System.Int32,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.TcpClient.EndConnect(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="asyncCallback" /> delegate.</para>
@@ -320,6 +325,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a remote host connection. The remote host is specified by a host name (<see cref="T:System.String" />) and a port number (<see cref="T:System.Int32" />).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous connection.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the remote host.</param>
         <param name="port">
@@ -543,7 +552,6 @@
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned Returns <see cref="T:System.Threading.Tasks.Task" />  object will complete after the TCP connection has been established. This method does not block the calling thread while the connection request is underway.</para>
@@ -559,6 +567,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Connects the client to a remote TCP host using the specified IP address and port number as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.IPAddress" /> of the host to which you intend to connect. </param>
         <param name="port">
@@ -580,7 +593,6 @@
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned Returns <see cref="T:System.Threading.Tasks.Task" />  object will complete after the TCP connection has been established. This method does not block the calling thread while the connection request is underway.</para>
@@ -596,6 +608,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Connects the client to a remote TCP host using the specified IP addresses and port number as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="addresses">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.IPAddress" /> array of the host to which you intend to connect.</param>
         <param name="port">
@@ -617,7 +634,6 @@
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned Returns <see cref="T:System.Threading.Tasks.Task" />  object will complete after the TCP connection has been established. This method does not block the calling thread while the connection request is underway.</para>
@@ -634,6 +650,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Connects the client to the specified TCP port on the specified host as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The DNS name of the remote host to which you intend to connect. </param>
         <param name="port">
@@ -790,7 +811,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The <see cref="T:System.Net.Sockets.NetworkStream" /> object connected to the connection socket.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -810,6 +830,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Net.Sockets.NetworkStream" /> used to send and receive data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The underlying <see cref="T:System.Net.Sockets.NetworkStream" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LingerState">

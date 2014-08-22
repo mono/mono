@@ -51,11 +51,6 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> represents the same
-   type and value as the current instance; otherwise,  <see langword="false" />.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method
@@ -66,6 +61,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks if this object is equal to the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this object is equal to the specified object; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object with which to compare the current object. </param>
       </Docs>
@@ -84,9 +83,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para> The algorithm used to
       generate the hash code is unspecified. </para>
@@ -99,6 +95,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code of this object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTargetType">
@@ -117,14 +117,15 @@
         <Parameter Name="value" Type="System.TypedReference" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Type" /> of the target of the specified <see cref="T:System.TypedReference" />.</para>
-        </returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type of the target of the specified TypedReference.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the target of the specified TypedReference.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value whose target's type is to be returned. </param>
       </Docs>
@@ -151,9 +152,6 @@
         <Parameter Name="flds" Type="System.Reflection.FieldInfo[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TypedReference" /> for the field described by the last element of <paramref name="flds" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>The 
 <paramref name="flds" /> array has no elements. </para>
@@ -184,6 +182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Makes a TypedReference for a field identified by a specified object and list of field descriptions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.TypedReference" /> for the field described by the last element of <paramref name="flds" />.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that contains the field described by the first element of <paramref name="flds" />. </param>
         <param name="flds">
@@ -226,6 +228,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified value to a TypedReference. This method is not supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method always throws <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The target of the conversion. </param>
         <param name="value">
@@ -248,14 +254,15 @@
         <Parameter Name="value" Type="System.TypedReference" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The internal metadata type handle for the specified <see cref="T:System.TypedReference" />.</para>
-        </returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the internal metadata type handle for the specified TypedReference.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The internal metadata type handle for the specified TypedReference.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The TypedReference for which the type handle is requested. </param>
       </Docs>
@@ -276,9 +283,6 @@
         <Parameter Name="value" Type="System.TypedReference" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Object" /> that results from the conversion of the specified <see cref="T:System.TypedReference" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This might be a boxing operation.</para>
@@ -287,6 +291,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified TypedReference to an Object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> converted from a TypedReference.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The TypedReference to be converted. </param>
       </Docs>

@@ -164,7 +164,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -174,6 +173,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the full name of the manifest-activated application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The full name of the manifest-activated application.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

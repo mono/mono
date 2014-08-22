@@ -219,16 +219,26 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_EAGAIN          Mono_Posix_Errno_EAGAIN
 	Mono_Posix_Errno_EALREADY              = 0x00000072,
 	#define Mono_Posix_Errno_EALREADY        Mono_Posix_Errno_EALREADY
+	Mono_Posix_Errno_EAUTH                 = 0x00000438,
+	#define Mono_Posix_Errno_EAUTH           Mono_Posix_Errno_EAUTH
+	Mono_Posix_Errno_EBADARCH              = 0x0000043e,
+	#define Mono_Posix_Errno_EBADARCH        Mono_Posix_Errno_EBADARCH
 	Mono_Posix_Errno_EBADE                 = 0x00000034,
 	#define Mono_Posix_Errno_EBADE           Mono_Posix_Errno_EBADE
+	Mono_Posix_Errno_EBADEXEC              = 0x0000043d,
+	#define Mono_Posix_Errno_EBADEXEC        Mono_Posix_Errno_EBADEXEC
 	Mono_Posix_Errno_EBADF                 = 0x00000009,
 	#define Mono_Posix_Errno_EBADF           Mono_Posix_Errno_EBADF
 	Mono_Posix_Errno_EBADFD                = 0x0000004d,
 	#define Mono_Posix_Errno_EBADFD          Mono_Posix_Errno_EBADFD
+	Mono_Posix_Errno_EBADMACHO             = 0x00000440,
+	#define Mono_Posix_Errno_EBADMACHO       Mono_Posix_Errno_EBADMACHO
 	Mono_Posix_Errno_EBADMSG               = 0x0000004a,
 	#define Mono_Posix_Errno_EBADMSG         Mono_Posix_Errno_EBADMSG
 	Mono_Posix_Errno_EBADR                 = 0x00000035,
 	#define Mono_Posix_Errno_EBADR           Mono_Posix_Errno_EBADR
+	Mono_Posix_Errno_EBADRPC               = 0x00000430,
+	#define Mono_Posix_Errno_EBADRPC         Mono_Posix_Errno_EBADRPC
 	Mono_Posix_Errno_EBADRQC               = 0x00000038,
 	#define Mono_Posix_Errno_EBADRQC         Mono_Posix_Errno_EBADRQC
 	Mono_Posix_Errno_EBADSLT               = 0x00000039,
@@ -237,6 +247,8 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_EBFONT          Mono_Posix_Errno_EBFONT
 	Mono_Posix_Errno_EBUSY                 = 0x00000010,
 	#define Mono_Posix_Errno_EBUSY           Mono_Posix_Errno_EBUSY
+	Mono_Posix_Errno_ECANCELED             = 0x0000007d,
+	#define Mono_Posix_Errno_ECANCELED       Mono_Posix_Errno_ECANCELED
 	Mono_Posix_Errno_ECHILD                = 0x0000000a,
 	#define Mono_Posix_Errno_ECHILD          Mono_Posix_Errno_ECHILD
 	Mono_Posix_Errno_ECHRNG                = 0x0000002c,
@@ -255,6 +267,8 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_EDEADLOCK       Mono_Posix_Errno_EDEADLOCK
 	Mono_Posix_Errno_EDESTADDRREQ          = 0x00000059,
 	#define Mono_Posix_Errno_EDESTADDRREQ    Mono_Posix_Errno_EDESTADDRREQ
+	Mono_Posix_Errno_EDEVERR               = 0x0000043b,
+	#define Mono_Posix_Errno_EDEVERR         Mono_Posix_Errno_EDEVERR
 	Mono_Posix_Errno_EDOM                  = 0x00000021,
 	#define Mono_Posix_Errno_EDOM            Mono_Posix_Errno_EDOM
 	Mono_Posix_Errno_EDOTDOT               = 0x00000049,
@@ -267,6 +281,8 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_EFAULT          Mono_Posix_Errno_EFAULT
 	Mono_Posix_Errno_EFBIG                 = 0x0000001b,
 	#define Mono_Posix_Errno_EFBIG           Mono_Posix_Errno_EFBIG
+	Mono_Posix_Errno_EFTYPE                = 0x00000437,
+	#define Mono_Posix_Errno_EFTYPE          Mono_Posix_Errno_EFTYPE
 	Mono_Posix_Errno_EHOSTDOWN             = 0x00000070,
 	#define Mono_Posix_Errno_EHOSTDOWN       Mono_Posix_Errno_EHOSTDOWN
 	Mono_Posix_Errno_EHOSTUNREACH          = 0x00000071,
@@ -289,6 +305,12 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_EISDIR          Mono_Posix_Errno_EISDIR
 	Mono_Posix_Errno_EISNAM                = 0x00000078,
 	#define Mono_Posix_Errno_EISNAM          Mono_Posix_Errno_EISNAM
+	Mono_Posix_Errno_EKEYEXPIRED           = 0x0000007f,
+	#define Mono_Posix_Errno_EKEYEXPIRED     Mono_Posix_Errno_EKEYEXPIRED
+	Mono_Posix_Errno_EKEYREJECTED          = 0x00000081,
+	#define Mono_Posix_Errno_EKEYREJECTED    Mono_Posix_Errno_EKEYREJECTED
+	Mono_Posix_Errno_EKEYREVOKED           = 0x00000080,
+	#define Mono_Posix_Errno_EKEYREVOKED     Mono_Posix_Errno_EKEYREVOKED
 	Mono_Posix_Errno_EL2HLT                = 0x00000033,
 	#define Mono_Posix_Errno_EL2HLT          Mono_Posix_Errno_EL2HLT
 	Mono_Posix_Errno_EL2NSYNC              = 0x0000002d,
@@ -325,6 +347,8 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_ENAMETOOLONG    Mono_Posix_Errno_ENAMETOOLONG
 	Mono_Posix_Errno_ENAVAIL               = 0x00000077,
 	#define Mono_Posix_Errno_ENAVAIL         Mono_Posix_Errno_ENAVAIL
+	Mono_Posix_Errno_ENEEDAUTH             = 0x00000439,
+	#define Mono_Posix_Errno_ENEEDAUTH       Mono_Posix_Errno_ENEEDAUTH
 	Mono_Posix_Errno_ENETDOWN              = 0x00000064,
 	#define Mono_Posix_Errno_ENETDOWN        Mono_Posix_Errno_ENETDOWN
 	Mono_Posix_Errno_ENETRESET             = 0x00000066,
@@ -335,6 +359,8 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_ENFILE          Mono_Posix_Errno_ENFILE
 	Mono_Posix_Errno_ENOANO                = 0x00000037,
 	#define Mono_Posix_Errno_ENOANO          Mono_Posix_Errno_ENOANO
+	Mono_Posix_Errno_ENOATTR               = 0x00000445,
+	#define Mono_Posix_Errno_ENOATTR         Mono_Posix_Errno_ENOATTR
 	Mono_Posix_Errno_ENOBUFS               = 0x00000069,
 	#define Mono_Posix_Errno_ENOBUFS         Mono_Posix_Errno_ENOBUFS
 	Mono_Posix_Errno_ENOCSI                = 0x00000032,
@@ -347,6 +373,8 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_ENOENT          Mono_Posix_Errno_ENOENT
 	Mono_Posix_Errno_ENOEXEC               = 0x00000008,
 	#define Mono_Posix_Errno_ENOEXEC         Mono_Posix_Errno_ENOEXEC
+	Mono_Posix_Errno_ENOKEY                = 0x0000007e,
+	#define Mono_Posix_Errno_ENOKEY          Mono_Posix_Errno_ENOKEY
 	Mono_Posix_Errno_ENOLCK                = 0x00000025,
 	#define Mono_Posix_Errno_ENOLCK          Mono_Posix_Errno_ENOLCK
 	Mono_Posix_Errno_ENOLINK               = 0x00000043,
@@ -361,6 +389,8 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_ENONET          Mono_Posix_Errno_ENONET
 	Mono_Posix_Errno_ENOPKG                = 0x00000041,
 	#define Mono_Posix_Errno_ENOPKG          Mono_Posix_Errno_ENOPKG
+	Mono_Posix_Errno_ENOPOLICY             = 0x0000044f,
+	#define Mono_Posix_Errno_ENOPOLICY       Mono_Posix_Errno_ENOPOLICY
 	Mono_Posix_Errno_ENOPROTOOPT           = 0x0000005c,
 	#define Mono_Posix_Errno_ENOPROTOOPT     Mono_Posix_Errno_ENOPROTOOPT
 	Mono_Posix_Errno_ENOSPC                = 0x0000001c,
@@ -381,6 +411,8 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_ENOTEMPTY       Mono_Posix_Errno_ENOTEMPTY
 	Mono_Posix_Errno_ENOTNAM               = 0x00000076,
 	#define Mono_Posix_Errno_ENOTNAM         Mono_Posix_Errno_ENOTNAM
+	Mono_Posix_Errno_ENOTRECOVERABLE       = 0x00000083,
+	#define Mono_Posix_Errno_ENOTRECOVERABLE Mono_Posix_Errno_ENOTRECOVERABLE
 	Mono_Posix_Errno_ENOTSOCK              = 0x00000058,
 	#define Mono_Posix_Errno_ENOTSOCK        Mono_Posix_Errno_ENOTSOCK
 	Mono_Posix_Errno_ENOTTY                = 0x00000019,
@@ -393,18 +425,30 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_EOPNOTSUPP      Mono_Posix_Errno_EOPNOTSUPP
 	Mono_Posix_Errno_EOVERFLOW             = 0x0000004b,
 	#define Mono_Posix_Errno_EOVERFLOW       Mono_Posix_Errno_EOVERFLOW
+	Mono_Posix_Errno_EOWNERDEAD            = 0x00000082,
+	#define Mono_Posix_Errno_EOWNERDEAD      Mono_Posix_Errno_EOWNERDEAD
 	Mono_Posix_Errno_EPERM                 = 0x00000001,
 	#define Mono_Posix_Errno_EPERM           Mono_Posix_Errno_EPERM
 	Mono_Posix_Errno_EPFNOSUPPORT          = 0x00000060,
 	#define Mono_Posix_Errno_EPFNOSUPPORT    Mono_Posix_Errno_EPFNOSUPPORT
 	Mono_Posix_Errno_EPIPE                 = 0x00000020,
 	#define Mono_Posix_Errno_EPIPE           Mono_Posix_Errno_EPIPE
+	Mono_Posix_Errno_EPROCLIM              = 0x0000042b,
+	#define Mono_Posix_Errno_EPROCLIM        Mono_Posix_Errno_EPROCLIM
+	Mono_Posix_Errno_EPROCUNAVAIL          = 0x00000434,
+	#define Mono_Posix_Errno_EPROCUNAVAIL    Mono_Posix_Errno_EPROCUNAVAIL
+	Mono_Posix_Errno_EPROGMISMATCH         = 0x00000433,
+	#define Mono_Posix_Errno_EPROGMISMATCH   Mono_Posix_Errno_EPROGMISMATCH
+	Mono_Posix_Errno_EPROGUNAVAIL          = 0x00000432,
+	#define Mono_Posix_Errno_EPROGUNAVAIL    Mono_Posix_Errno_EPROGUNAVAIL
 	Mono_Posix_Errno_EPROTO                = 0x00000047,
 	#define Mono_Posix_Errno_EPROTO          Mono_Posix_Errno_EPROTO
 	Mono_Posix_Errno_EPROTONOSUPPORT       = 0x0000005d,
 	#define Mono_Posix_Errno_EPROTONOSUPPORT Mono_Posix_Errno_EPROTONOSUPPORT
 	Mono_Posix_Errno_EPROTOTYPE            = 0x0000005b,
 	#define Mono_Posix_Errno_EPROTOTYPE      Mono_Posix_Errno_EPROTOTYPE
+	Mono_Posix_Errno_EPWROFF               = 0x0000043a,
+	#define Mono_Posix_Errno_EPWROFF         Mono_Posix_Errno_EPWROFF
 	Mono_Posix_Errno_ERANGE                = 0x00000022,
 	#define Mono_Posix_Errno_ERANGE          Mono_Posix_Errno_ERANGE
 	Mono_Posix_Errno_EREMCHG               = 0x0000004e,
@@ -417,6 +461,10 @@ enum Mono_Posix_Errno {
 	#define Mono_Posix_Errno_ERESTART        Mono_Posix_Errno_ERESTART
 	Mono_Posix_Errno_EROFS                 = 0x0000001e,
 	#define Mono_Posix_Errno_EROFS           Mono_Posix_Errno_EROFS
+	Mono_Posix_Errno_ERPCMISMATCH          = 0x00000431,
+	#define Mono_Posix_Errno_ERPCMISMATCH    Mono_Posix_Errno_ERPCMISMATCH
+	Mono_Posix_Errno_ESHLIBVERS            = 0x0000043f,
+	#define Mono_Posix_Errno_ESHLIBVERS      Mono_Posix_Errno_ESHLIBVERS
 	Mono_Posix_Errno_ESHUTDOWN             = 0x0000006c,
 	#define Mono_Posix_Errno_ESHUTDOWN       Mono_Posix_Errno_ESHUTDOWN
 	Mono_Posix_Errno_ESOCKTNOSUPPORT       = 0x0000005e,

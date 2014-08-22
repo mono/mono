@@ -1,6 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Drawing.Drawing2D">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Drawing.Drawing2D" /> namespace provides advanced two-dimensional and vector graphics functionality.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following table lists some of the important classes and enumerations in the<see cref="N:System.Drawing.Drawing2D" /> namespace, grouped into categories. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Class category</para>
+            </term>
+            <description>
+              <para>Details</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Graphics and Graphics paths</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>The <see cref="T:System.Drawing.Drawing2D.GraphicsState" /> and <see cref="T:System.Drawing.Drawing2D.GraphicsContainer" /> classes report information about the current Graphics object. <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> classes represent a series of lines and curves. The <see cref="T:System.Drawing.Drawing2D.GraphicsPathIterator" /> and <see cref="T:System.Drawing.Drawing2D.PathData" /> classes provide detailed information about the contents of a <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> object.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Matrix and transformation related types</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>The <see cref="T:System.Drawing.Drawing2D.Matrix" /> class represents a matrix for geometric transforms. The <see cref="T:System.Drawing.Drawing2D.MatrixOrder" /> enumeration specifies the order for matrix transformations.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Brush classes</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>The <see cref="T:System.Drawing.Drawing2D.PathGradientBrush" /> and <see cref="T:System.Drawing.Drawing2D.HatchBrush" /> classes enable you to fill shapes with either a gradient, or hatch pattern, respectively.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Enumeration related to lines</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>The <see cref="T:System.Drawing.Drawing2D.LineCap" /> and <see cref="T:System.Drawing.Drawing2D.CustomLineCap" /> enumerations enable you to specify cap styles for a line. The, <see cref="T:System.Drawing.Drawing2D.LineJoin" />  enumeration enables you to specify how two lines are joined in a path. The <see cref="T:System.Drawing.Drawing2D.PenAlignment" /> enumeration enables you specify the alignment of the drawing tip, when you draw a line. The <see cref="T:System.Drawing.Drawing2D.PenType" /> enumeration specifies the pattern a line should be filled with.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Enumerations related to filling shapes and paths</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>The <see cref="T:System.Drawing.Drawing2D.HatchStyle" /> enumeration specifies fill styles for a <see cref="T:System.Drawing.Drawing2D.HatchBrush" />. The <see cref="T:System.Drawing.Drawing2D.Blend" /> class specifies a blend pattern for a <see cref="T:System.Drawing.Drawing2D.LinearGradientBrush" />. The <see cref="T:System.Drawing.Drawing2D.FillMode" /> enumeration specifies the fill style for a <see cref="T:System.Drawing.Drawing2D.GraphicsPath" />.</para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Classes in the <see cref="N:System.Drawing.Drawing2D" /> namespace are not supported for use in a Windows or vstecasp service. Attempting to use these classes in one of these application types may produce unexpected problems, such as diminished service performance and run-time exceptions.</para>
+      </block>
+    </remarks>
   </Docs>
 </Namespace>

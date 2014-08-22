@@ -422,7 +422,6 @@
         <Parameter Name="lparam" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A hook procedure is a mechanism by which a function can intercept events before they reach an application. When you override the <see cref="M:System.Windows.Forms.CommonDialog.HookProc(System.IntPtr,System.Int32,System.IntPtr,System.IntPtr)" /> method for a <see cref="T:System.Windows.Forms.CommonDialog" /> class, the operating system invokes your override of the function to post operating system messages to the window.</para>
@@ -431,6 +430,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies the common dialog box hook procedure that is overridden to add specific functionality to a common dialog box.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A zero value if the default dialog box procedure processes the message; a nonzero value if the default dialog box procedure ignores the message.</para>
+        </returns>
         <param name="hWnd">
           <attribution license="cc4" from="Microsoft" modified="false" />The handle to the dialog box window. </param>
         <param name="msg">
@@ -583,7 +586,6 @@
         <Parameter Name="hWndOwner" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.FontDialog.RunDialog(System.IntPtr)" /> method is invoked when the user of a font dialog box calls the <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> method.</para>
@@ -592,6 +594,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies a file dialog box.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the dialog box was successfully run; otherwise, false.</para>
+        </returns>
         <param name="hWndOwner">
           <attribution license="cc4" from="Microsoft" modified="false" />The window handle of the owner window for the common dialog box.</param>
       </Docs>
@@ -728,12 +734,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a string that includes the name of the current font selected in the dialog box.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that includes the name of the currently selected font.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

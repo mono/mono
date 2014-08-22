@@ -43,12 +43,15 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a memory-mapped file from a file on disk.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to file to map.</param>
       </Docs>
@@ -68,7 +71,6 @@
         <Parameter Name="mode" Type="System.IO.FileMode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="mode" /> parameter pertains to the source file on disk. You can use only the <see cref="F:System.IO.FileMode.Open" /> enumeration value to create the memory-mapped file from the source file on disk.</para>
@@ -77,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a memory-mapped file that has the specified access mode from a file on disk. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified access mode.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to file to map.</param>
         <param name="mode">
@@ -99,7 +105,6 @@
         <Parameter Name="mapName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="mode" /> parameter pertains to the source file on disk. You can use only the <see cref="F:System.IO.FileMode.Open" /> enumeration value to create the memory-mapped file from the source file on disk.</para>
@@ -108,6 +113,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a memory-mapped file that has the specified access mode and name from a file on disk.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified name and access mode.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to map.</param>
         <param name="mode">
@@ -133,7 +142,6 @@
         <Parameter Name="capacity" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="mode" /> parameter pertains to the source file on disk. </para>
@@ -143,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a memory-mapped file that has the specified access mode, name, and capacity from a file on disk.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to map.</param>
         <param name="mode">
@@ -171,7 +183,6 @@
         <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="mode" /> parameter pertains to the source file on disk. </para>
@@ -181,6 +192,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a memory-mapped file that has the specified access mode, name, capacity, and access type from a file on disk.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to map.</param>
         <param name="mode">
@@ -218,7 +233,6 @@
         <Parameter Name="leaveOpen" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="capacity" /> is larger than the size of the file on disk, the file on disk is increased to match the specified capacity even if no data is written to the memory-mapped file. To prevent this from occurring, specify 0 (zero) for the default capacity, which will internally set <paramref name="capacity" /> to the size of the file on disk.</para>
@@ -227,6 +241,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a memory-mapped file that has the specified name, capacity, access type, security permissions, inheritability, and disposal requirement from a file on disk. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
         <param name="fileStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The <paramref name="fileStream" /> to the file to map.</param>
         <param name="mapName">
@@ -263,7 +281,6 @@
         <Parameter Name="capacity" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
@@ -272,6 +289,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a memory-mapped file that has the specified capacity in system memory. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified name and capacity.</para>
+        </returns>
         <param name="mapName">
           <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
         <param name="capacity">
@@ -299,7 +320,6 @@
         <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
@@ -308,6 +328,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a memory-mapped file that has the specified capacity and access type in system memory. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
         <param name="mapName">
           <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
         <param name="capacity">
@@ -340,7 +364,6 @@
         <Parameter Name="inheritability" Type="System.IO.HandleInheritability" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
@@ -349,6 +372,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a memory-mapped file that has the specified capacity, access type, memory allocation, security permissions, and inheritability in system memory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
         <param name="mapName">
           <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
         <param name="capacity">
@@ -383,7 +410,6 @@
         <Parameter Name="capacity" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create or open a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
@@ -392,6 +418,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates or opens a memory-mapped file that has the specified capacity in system memory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified name and size.</para>
+        </returns>
         <param name="mapName">
           <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
         <param name="capacity">
@@ -419,7 +449,6 @@
         <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create or open a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
@@ -428,6 +457,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates or opens a memory-mapped file that has the specified capacity and access type in system memory. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
         <param name="mapName">
           <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
         <param name="capacity">
@@ -460,7 +493,6 @@
         <Parameter Name="inheritability" Type="System.IO.HandleInheritability" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create or open a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
@@ -469,6 +501,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates or opens a memory-mapped file that has the specified capacity, access type, memory allocation, security permissions, and inheritability in system memory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
         <param name="mapName">
           <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
         <param name="capacity">
@@ -495,7 +531,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the view returned by this method for random access to a memory-mapped file.</para>
@@ -504,6 +539,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedViewAccessor" /> that maps to a view of the memory-mapped file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A randomly accessible block of memory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateViewAccessor">
@@ -521,7 +560,6 @@
         <Parameter Name="size" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the view returned by this method for random access to a memory-mapped file.</para>
@@ -531,6 +569,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedViewAccessor" /> that maps to a view of the memory-mapped file, and that has the specified offset and size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A randomly accessible block of memory.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the view.</param>
         <param name="size">
@@ -553,7 +595,6 @@
         <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the view returned by this method for random access to a memory-mapped file.</para>
@@ -563,6 +604,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedViewAccessor" /> that maps to a view of the memory-mapped file, and that has the specified offset, size, and access restrictions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A randomly accessible block of memory.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the view.</param>
         <param name="size">
@@ -583,7 +628,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the stream returned by this method for sequential access to a memory-mapped file, such as for inter-process communications. </para>
@@ -592,6 +636,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a stream that maps to a view of the memory-mapped file.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A stream of memory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateViewStream">
@@ -609,7 +657,6 @@
         <Parameter Name="size" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the stream returned by this method for sequential access to a memory-mapped file, such as for inter-process communications.</para>
@@ -619,6 +666,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a stream that maps to a view of the memory-mapped file, and that has the specified offset and size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A stream of memory that has the specified offset and size.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the view.</param>
         <param name="size">
@@ -641,7 +692,6 @@
         <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the stream returned by this method for sequential access to a memory-mapped file, such as for inter-process communications.</para>
@@ -651,6 +701,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a stream that maps to a view of the memory-mapped file, and that has the specified offset, size, and access type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A stream of memory that has the specified characteristics.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the view.</param>
         <param name="size">
@@ -718,12 +772,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the access control to the memory-mapped file resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The permissions that can be granted for file access and operations on memory-mapped files.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OpenExisting">
@@ -745,7 +802,6 @@
         <Parameter Name="mapName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The memory-mapped file can be either a persisted memory-mapped file (associated with a file on disk) or non persisted.</para>
@@ -754,6 +810,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens an existing memory-mapped file that has the specified name in system memory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified name. </para>
+        </returns>
         <param name="mapName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the memory-mapped file to open.</param>
       </Docs>
@@ -778,12 +838,15 @@
         <Parameter Name="desiredAccessRights" Type="System.IO.MemoryMappedFiles.MemoryMappedFileRights" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens an existing memory-mapped file that has the specified name and access rights in system memory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
         <param name="mapName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the memory-mapped file to open.</param>
         <param name="desiredAccessRights">
@@ -811,12 +874,15 @@
         <Parameter Name="inheritability" Type="System.IO.HandleInheritability" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens an existing memory-mapped file that has the specified name, access rights, and inheritability in system memory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
         <param name="mapName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the memory-mapped file to open.</param>
         <param name="desiredAccessRights">

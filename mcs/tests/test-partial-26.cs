@@ -1,21 +1,25 @@
 using System;
 
-namespace ConsoleApplication1
+namespace TestAttributesCollecting
 {
-	public partial class X
+	class A : Attribute
 	{
-		[CLSCompliant (true)]
-		partial void Foo ();
 	}
 
 	public partial class X
 	{
-		partial void Foo ()
+		[A]
+		partial void Foo<[A] T>(/*[A]*/ int p);
+	}
+
+	public partial class X
+	{
+		partial void Foo<T> (int p)
 		{
 			int i;
 		}
 	}
-	
+
 	public partial class Y
 	{
 		partial void Foo ()
@@ -23,7 +27,7 @@ namespace ConsoleApplication1
 			int i;
 		}
 	}
-	
+
 	public partial class Y
 	{
 		[CLSCompliant (true)]
@@ -34,16 +38,22 @@ namespace ConsoleApplication1
 	{
 		public static int Main ()
 		{
-			var x = typeof (X).GetMethod ("Foo", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetCustomAttributes (true);
+			var m = typeof (X).GetMethod ("Foo", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			var x = m.GetCustomAttributes (true);
 			Console.WriteLine (x.Length);
 			if (x.Length != 1)
 				return 1;
 
+			var ga = m.GetGenericArguments ();
+			x = ga [0].GetCustomAttributes (false);
+			if (x.Length != 1)
+				return 2;
+
 			x = typeof (Y).GetMethod ("Foo", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetCustomAttributes (true);
 			Console.WriteLine (x.Length);
 			if (x.Length != 1)
-				return 2;
-			
+				return 3;
+
 			return 0;
 		}
 	}

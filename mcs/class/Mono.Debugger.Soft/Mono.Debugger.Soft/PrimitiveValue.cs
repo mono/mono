@@ -22,8 +22,11 @@ namespace Mono.Debugger.Soft
 		public override bool Equals (object obj) {
 			if (value == obj)
 				return true;
-			if (obj != null && obj is PrimitiveValue)
-				return value == (obj as PrimitiveValue).Value;
+
+			var primitive = obj as PrimitiveValue;
+			if (primitive != null)
+				return value == primitive.Value;
+
 			return base.Equals (obj);
 		}
 
@@ -51,6 +54,10 @@ namespace Mono.Debugger.Soft
 
 		public Value EndInvokeMethod (IAsyncResult asyncResult) {
 			return ObjectMirror.EndInvokeMethodInternal (asyncResult);
+		}
+
+		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
+			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
 		}
 	}
 }

@@ -1472,7 +1472,7 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		void TestTimeOut (string url)
+		void TestTimeOut (string url, WebExceptionStatus expectedExceptionStatus)
 		{
 			var timeoutWorker = new TimeoutTestHelper (url, three_seconds_in_milliseconds);
 			var threadStart = new ThreadStart (timeoutWorker.LaunchWebRequest);
@@ -1492,15 +1492,14 @@ namespace MonoTests.System.Net
 				Assert.Fail ("Should not be reached, timeout exception was not thrown and webrequest managed to retrieve an incorrect body: " + timeoutWorker.Body);
 			}
 
-			Assert.IsNotNull (timeoutWorker.Exception,
-			                  "Timeout exception was not thrown");
+			Assert.IsNotNull (timeoutWorker.Exception, "Exception was not thrown");
 
 			var webEx = timeoutWorker.Exception as WebException;
 			Assert.IsNotNull (webEx, "Exception thrown should be WebException, but was: " +
 			                  timeoutWorker.Exception.GetType ().FullName);
 
-			Assert.AreEqual (webEx.Status, WebExceptionStatus.Timeout,
-			                 "WebException was thrown, but with a wrong status (should be timeout): " + webEx.Status);
+			Assert.AreEqual (expectedExceptionStatus, webEx.Status,
+			                 "WebException was thrown, but with a wrong status (should be " + expectedExceptionStatus + "): " + webEx.Status);
 
 			Assert.IsFalse (timeoutWorker.End > (timeoutWorker.Start + TimeSpan.FromMilliseconds (three_seconds_in_milliseconds + 500)),
 			                "Timeout exception should have been thrown shortly after timeout is reached, however it was at least half-second late");
@@ -1516,18 +1515,19 @@ namespace MonoTests.System.Net
 			{
 				responder.Start ();
 
-				TestTimeOut (url);
+				TestTimeOut (url, WebExceptionStatus.Timeout);
 
 				responder.Stop ();
 			}
 		}
 
 		[Test] // 2nd possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
-		public void TestTimeoutPropertyWithServerThatDoesntExist ()
+		public void TestTimeoutWithEndpointThatDoesntExistThrowsConnectFailureBeforeTimeout ()
 		{
-			string url = "http://10.128.200.100:8271/"; // some endpoint that is unlikely to exist
+			string url = "http://127.0.0.1:8271/"; // some endpoint that is unlikely to exist
 
-			TestTimeOut (url);
+			// connecting to a non-existing endpoint should throw a ConnectFailure before the timeout is reached
+			TestTimeOut (url, WebExceptionStatus.ConnectFailure);
 		}
 
 		const string response_of_timeout_handler = "RESPONSE_OF_TIMEOUT_HANDLER";
@@ -2319,7 +2319,7 @@ namespace MonoTests.System.Net
 
 		void DoRequest (Action<HttpWebRequest, EventWaitHandle> request)
 		{
-			int port = rand.Next (20000, 65535);
+			int port = 30158;
 
 			ManualResetEvent completed = new ManualResetEvent (false);
 			Uri address = new Uri (string.Format ("http://localhost:{0}", port));
@@ -2333,7 +2333,7 @@ namespace MonoTests.System.Net
 
 		void DoRequest (Action<HttpWebRequest, EventWaitHandle> request, Action<HttpListenerContext> processor)
 		{
-			int port = rand.Next (20000, 65535);
+			int port = 30158;
 
 			ManualResetEvent [] completed = new ManualResetEvent [2];
 			completed [0] = new ManualResetEvent (false);

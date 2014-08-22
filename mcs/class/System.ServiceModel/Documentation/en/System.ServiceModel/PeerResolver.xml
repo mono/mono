@@ -111,12 +111,15 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a <see cref="T:System.ServiceModel.PeerNodeAddress" /> for a specific peer mesh.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the registration ID. This registration ID object is passed to the <see cref="M:System.ServiceModel.PeerResolver.Update(System.Object,System.ServiceModel.PeerNodeAddress,System.TimeSpan)" /> and <see cref="M:System.ServiceModel.PeerResolver.Unregister(System.Object,System.TimeSpan)" /> methods. </para>
+        </returns>
         <param name="meshId">
           <attribution license="cc4" from="Microsoft" modified="false" />The ID of the peer mesh in which the peer node is to be registered.</param>
         <param name="nodeAddress">
@@ -141,12 +144,15 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves the supplied mesh ID to zero or more endpoint addresses of nodes participating in the peer mesh.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> that contains <see cref="T:System.ServiceModel.PeerNodeAddress" /> objects representing nodes participating in the peer mesh.</para>
+        </returns>
         <param name="meshId">
           <attribution license="cc4" from="Microsoft" modified="false" />The mesh ID of the peer mesh within which the <see cref="T:System.ServiceModel.PeerNodeAddress" /> objects representing participating nodes are to be obtained.</param>
         <param name="maxAddresses">

@@ -46,7 +46,6 @@
       </Parameters>
       <Docs>
         <param name="exception">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> method to implement error-related behaviors such as error logging, system notifications, shutting down the application, and so on, and return a value that specifies whether the exception has been handled appropriately. </para>
@@ -62,6 +61,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enables error-related processing and returns a value that indicates whether the dispatcher aborts the session and the instance context in certain cases. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if indigo1 should not abort the session (if there is one) and instance context if the instance context is not <see cref="F:System.ServiceModel.InstanceContextMode.Single" />; otherwise, false. The default is false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ProvideFault">

@@ -94,7 +94,6 @@
         <Parameter Name="rid" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When testing for newly created role information, such as a new user or a new group, it is important to log out and log in to force the propagation of role information within the domain. Not doing so can cause the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> test to return false. This method is not supported on Windows 98 or Windows Millennium Edition.</para>
@@ -250,6 +249,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current principal belongs to the Windows user group with the specified relative identifier (RID).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current principal is a member of the specified Windows user group, that is, in a particular role; otherwise, false.</para>
+        </returns>
         <param name="rid">
           <attribution license="cc4" from="Microsoft" modified="false" />The RID of the Windows user group in which to check for the principal’s membership status. </param>
       </Docs>
@@ -274,7 +277,6 @@
         <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -288,6 +290,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current principal belongs to the Windows user group with the specified security identifier (SID).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current principal is a member of the specified Windows user group; otherwise, false.</para>
+        </returns>
         <param name="sid">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Principal.SecurityIdentifier" />  that uniquely identifies a Windows user group.</param>
       </Docs>
@@ -308,7 +314,6 @@
         <Parameter Name="role" Type="System.Security.Principal.WindowsBuiltInRole" />
       </Parameters>
       <Docs>
-        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When testing for newly created role information, such as a new user or a new group, it is important to log out and log in to force the propagation of role information within the domain. Not doing so can cause the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> test to return false. This method is not supported on Windows 98 or Windows Millennium Edition.</para>
@@ -321,6 +326,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current principal belongs to the Windows user group with the specified <see cref="T:System.Security.Principal.WindowsBuiltInRole" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current principal is a member of the specified Windows user group; otherwise, false.</para>
+        </returns>
         <param name="role">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Principal.WindowsBuiltInRole" /> values. </param>
       </Docs>
@@ -341,7 +350,6 @@
         <Parameter Name="role" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When testing for newly created role information, such as a new user or a new group, it is important to log out and log in to force the propagation of role information within the domain. Not doing so can cause the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> test to return false. This method is not supported on Windows 98 or Windows Millennium Edition.</para>
@@ -412,6 +420,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current principal belongs to the Windows user group with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current principal is a member of the specified Windows user group; otherwise, false.</para>
+        </returns>
         <param name="role">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the Windows user group for which to check membership. </param>
       </Docs>

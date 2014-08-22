@@ -126,12 +126,6 @@
         <Parameter Name="perm" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>If <paramref name="perm" /> is <see langword="null" />,
-   returns <see langword="null" /> . If a permission of the same type as
-<paramref name="perm" /> already exists in the current instance, the union of the existing 
-   permission and <paramref name="perm" /> is added to the current instance and is returned.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="perm" /> is not a <see cref="T:System.Security.IPermission" /> object.</exception>
         <remarks>
@@ -142,6 +136,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified permission to the <see cref="T:System.Security.PermissionSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The union of the permission added and any permission of the same type that already exists in the <see cref="T:System.Security.PermissionSet" />.</para>
+        </returns>
         <param name="perm">
           <attribution license="cc4" from="Microsoft" modified="false" />The permission to add. </param>
       </Docs>
@@ -196,12 +194,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the <see cref="T:System.Security.PermissionSet" /> contains permissions that are not derived from <see cref="T:System.Security.CodeAccessPermission" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Security.PermissionSet" /> contains permissions that are not derived from <see cref="T:System.Security.CodeAccessPermission" />; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ConvertPermissionSet">
@@ -222,7 +223,6 @@
         <Parameter Name="outFormat" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Do not use this method.</para>
@@ -231,6 +231,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an encoded <see cref="T:System.Security.PermissionSet" /> from one XML encoding format to another XML encoding format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encrypted permission set with the specified output format.</para>
+        </returns>
         <param name="inFormat">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing one of the following encoding formats: ASCII, Unicode, or Binary. Possible values are "XMLASCII" or "XML", "XMLUNICODE", and "BINARY".</param>
         <param name="inData">
@@ -254,9 +258,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Security.PermissionSet" /> that is value equal to the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A copy of a <see cref="T:System.Security.PermissionSet" /> represents the same access to resources as the original object. Changes made to the copy do not affect the original permission set.</para>
@@ -265,6 +266,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the <see cref="T:System.Security.PermissionSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the <see cref="T:System.Security.PermissionSet" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -430,7 +435,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -441,6 +445,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Security.PermissionSet" /> or <see cref="T:System.Security.NamedPermissionSet" /> object is equal to the current <see cref="T:System.Security.PermissionSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is equal to the current <see cref="T:System.Security.PermissionSet" /> object; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.Security.PermissionSet" />. </param>
       </Docs>
@@ -515,11 +523,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.IEnumerator" /> object
-   for the permissions of the
-   set.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the enumerator as an index to access individual permission objects in the set.</para>
@@ -528,6 +531,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator for the permissions of the set.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator object for the permissions of the set.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -549,7 +556,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -559,6 +565,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a hash code for the <see cref="T:System.Security.PermissionSet" /> object that is suitable for use in hashing algorithms and data structures such as a hash table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Security.PermissionSet" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPermission">
@@ -577,7 +587,6 @@
         <Parameter Name="permClass" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method returns null for an Unrestricted <see cref="T:System.Security.PermissionSet" />. Although an Unrestricted <see cref="T:System.Security.PermissionSet" /> effectively contains all permissions, it does not have any actual instances to return.</para>
@@ -586,6 +595,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a permission object of the specified type, if it exists in the set.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the permission object of the type specified by the <paramref name="permClass" /> parameter contained in the <see cref="T:System.Security.PermissionSet" />, or null if none exists.</para>
+        </returns>
         <param name="permClass">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the desired permission object. </param>
       </Docs>
@@ -606,7 +619,6 @@
         <Parameter Name="other" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The intersection of two permission sets is a permission set that describes the set of operations they both describe in common. Specifically, it represents the minimum permissions such that any demand that passes both permission sets also passes their intersection.</para>
@@ -616,6 +628,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a permission set that is the intersection of the current <see cref="T:System.Security.PermissionSet" /> and the specified <see cref="T:System.Security.PermissionSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission set that represents the intersection of the current <see cref="T:System.Security.PermissionSet" /> and the specified target. This object is null if the intersection is empty.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission set to intersect with the current <see cref="T:System.Security.PermissionSet" />. </param>
       </Docs>
@@ -634,7 +650,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.Security.PermissionSet" /> can be empty and yet contain instances of permissions if those permissions are in the fully-restricted state. Permissions are in a fully restricted state if their IsSubsetOf methods return true when null is passed as a parameter.</para>
@@ -643,6 +658,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the <see cref="T:System.Security.PermissionSet" /> is empty.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Security.PermissionSet" /> is empty; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -686,11 +705,6 @@
         <Parameter Name="target" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the current instance is a subset of <paramref name="target" />;
-   otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.Security.PermissionSet" /> is a subset of the target <see cref="T:System.Security.PermissionSet" /> if all demands that succeed for the <see cref="T:System.Security.PermissionSet" /> also succeed for the target. That is, the target contains at least the permissions contained in the subset.</para>
@@ -699,6 +713,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current <see cref="T:System.Security.PermissionSet" /> is a subset of the specified <see cref="T:System.Security.PermissionSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current <see cref="T:System.Security.PermissionSet" /> is a subset of the <paramref name="target" /> parameter; otherwise, false.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The permission set to test for the subset relationship. This must be either a <see cref="T:System.Security.PermissionSet" /> or a <see cref="T:System.Security.NamedPermissionSet" />. </param>
       </Docs>
@@ -747,7 +765,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An Unrestricted <see cref="T:System.Security.PermissionSet" /> effectively contains all permissions that implement the <see cref="T:System.Security.Permissions.IUnrestrictedPermission" /> interface.</para>
@@ -756,6 +773,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Security.PermissionSet" /> is Unrestricted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Security.PermissionSet" /> is Unrestricted; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PermitOnly">
@@ -806,7 +827,6 @@
         <Parameter Name="permClass" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -821,6 +841,10 @@ myPermSet.RemovePermission(typeof(FileIOPermission));</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes a permission of a certain type from the set.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The permission removed from the set.</para>
+        </returns>
         <param name="permClass">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of permission to delete. </param>
       </Docs>
@@ -865,7 +889,6 @@ myPermSet.RemovePermission(typeof(FileIOPermission));</code>
         <Parameter Name="perm" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method removes any existing permission object of the same type from the <see cref="T:System.Security.PermissionSet" /> and replaces it with the <paramref name="perm" /> parameter. If a permission that implements <see cref="T:System.Security.Permissions.IUnrestrictedPermission" /> is set on a <see cref="T:System.Security.PermissionSet" /> that is <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />, the resulting <see cref="T:System.Security.PermissionSet" /> is no longer Unrestricted. </para>
@@ -874,6 +897,10 @@ myPermSet.RemovePermission(typeof(FileIOPermission));</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets a permission to the <see cref="T:System.Security.PermissionSet" />, replacing any existing permission of the same type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set permission.</para>
+        </returns>
         <param name="perm">
           <attribution license="cc4" from="Microsoft" modified="false" />The permission to set. </param>
       </Docs>
@@ -945,10 +972,6 @@ myPermSet.RemovePermission(typeof(FileIOPermission));</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" />
-containing the XML representation of the state of the current instance.</para>
-        </returns>
         <example>
           <para>The following example displays the XML that encodes the 
       state of a <see cref="T:System.Security.PermissionSet" />
@@ -979,6 +1002,10 @@ public class PermissionSetToStringExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the <see cref="T:System.Security.PermissionSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the <see cref="T:System.Security.PermissionSet" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -997,10 +1024,6 @@ public class PermissionSetToStringExample {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Security.SecurityElement" /> containing an XML encoding of the state of the
-   current instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors">As described above.</block>
@@ -1018,6 +1041,10 @@ public class PermissionSetToStringExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of the security object and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1038,12 +1065,6 @@ public class PermissionSetToStringExample {
         <Parameter Name="other" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A new <see cref="T:System.Security.PermissionSet" /> instance that represents the
-   union of the current instance and <paramref name="other" />. If the current
-   instance or <paramref name="other" /> is unrestricted, returns a <see cref="T:System.Security.PermissionSet" />
-   instance that is unrestricted.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The result of a call to <see cref="M:System.Security.PermissionSet.Union(System.Security.PermissionSet)" /> is a <see cref="T:System.Security.PermissionSet" /> that represents all the operations represented by the current <see cref="T:System.Security.PermissionSet" /> as well as all the operations represented by the specified <see cref="T:System.Security.PermissionSet" />. If either set is Unrestricted, the union is Unrestricted as well.</para>
@@ -1052,6 +1073,10 @@ public class PermissionSetToStringExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Security.PermissionSet" /> that is the union of the current <see cref="T:System.Security.PermissionSet" /> and the specified <see cref="T:System.Security.PermissionSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission set that represents the union of the current <see cref="T:System.Security.PermissionSet" /> and the specified <see cref="T:System.Security.PermissionSet" />.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The permission set to form the union with the current <see cref="T:System.Security.PermissionSet" />. </param>
       </Docs>

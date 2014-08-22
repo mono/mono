@@ -117,13 +117,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Configuration.ConfigurationElement" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Configuration.ConfigurationElement" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -139,13 +142,16 @@
         <Parameter Name="elementName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Configuration.ConfigurationElement" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Configuration.ConfigurationElement" />.</para>
+        </returns>
         <param name="elementName">
           <attribution license="cc4" from="Microsoft" modified="false" />Name of the <see cref="T:System.Configuration.ConfigurationElement" /> to be created. </param>
       </Docs>
@@ -182,13 +188,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Web.Configuration.AuthorizationRule" /> at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.AuthorizationRule" /> at the specified index.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.AuthorizationRule" /> index. </param>
       </Docs>
@@ -206,13 +215,16 @@
         <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the element key for a specified <see cref="T:System.Configuration.ConfigurationElement" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement" />. </para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationElement" /> whose key is returned.</param>
       </Docs>
@@ -230,13 +242,16 @@
         <Parameter Name="rule" Type="System.Web.Configuration.AuthorizationRule" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the collection index of the specified <see cref="T:System.Web.Configuration.AuthorizationRule" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <see cref="T:System.Web.Configuration.AuthorizationRule" /> object.</para>
+        </returns>
         <param name="rule">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.AuthorizationRule" /> object whose index is returned.</param>
       </Docs>
@@ -254,13 +269,16 @@
         <Parameter Name="elementname" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies that the specified name is allowed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the name is allowed; otherwise, false.</para>
+        </returns>
         <param name="elementname">
           <attribution license="cc4" from="Microsoft" modified="false" />The element name to check.</param>
       </Docs>

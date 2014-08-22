@@ -94,7 +94,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Any object can call this method to request that the loader reload the design document. If the loader supports reloading and complies with the reload, the designer loader can return true. Otherwise, it returns false, indicating that the reload will not occur. Callers cannot rely on the reload happening immediately; the designer loader can schedule this for some other time, or it can try to reload at once.</para>
@@ -104,6 +103,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reloads the design document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reload request is accepted, or false if the loader does not allow the reload.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

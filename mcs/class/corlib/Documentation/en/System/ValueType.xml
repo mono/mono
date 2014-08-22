@@ -92,12 +92,6 @@ class Boxer {
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " />if <paramref name="obj" /> and the current
-   instance are of the same type and represent the same value; otherwise,
-<see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ValueType.Equals(System.Object)" /> method overrides <see cref="M:System.Object.Equals(System.Object)" /> and provides the default implementation of value equality for all value types in the .NET Framework. </para>
@@ -114,6 +108,10 @@ class Boxer {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether this instance and a specified object are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, false. </para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance. </param>
       </Docs>
@@ -134,9 +132,6 @@ class Boxer {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ValueType.GetHashCode" /> method applies to types derived from <see cref="T:System.ValueType" />. One or more fields of the derived type is used to calculate the return value. If you call the derived type's GetHashCode method, the return value is not likely to be suitable for use as a key in a hash table. Additionally, if the value of one or more of those fields changes, the return value might become unsuitable for use as a key in a hash table. In either case, consider writing your own implementation of the <see cref="M:System.ValueType.GetHashCode" /> method that more closely represents the concept of a hash code for the type. </para>
@@ -150,6 +145,10 @@ class Boxer {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer that is the hash code for this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -168,10 +167,6 @@ class Boxer {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the fully-qualified name of
-   the type of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you call the <see cref="M:System.ValueType.ToString" /> method on a wrt structure, it provides the default behavior for value types that don’t override <see cref="M:System.ValueType.ToString" />. This is part of the support that the .NET Framework provides for the wrt (see <format type="text/html"><a href="6fa7d044-ae12-4c54-b8ee-50915607a565">.NET Framework Support for Windows Store Apps and Windows Runtime</a></format>). wrt structures can’t override <see cref="M:System.ValueType.ToString" />, even if they’re written with C# or Visual Basic, because they can’t have methods. (In addition, structures in the wrt itself don’t inherit <see cref="T:System.ValueType" />.) However, they appear to have <see cref="M:System.ValueType.ToString" />, <see cref="M:System.ValueType.Equals(System.Object)" />, and <see cref="M:System.ValueType.GetHashCode" /> methods when you use them in your C# or Visual Basic code, and the .NET Framework provides the default behavior for these methods. </para>
@@ -180,6 +175,10 @@ class Boxer {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the fully qualified type name of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing a fully qualified type name.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

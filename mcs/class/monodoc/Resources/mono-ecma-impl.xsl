@@ -403,8 +403,8 @@
 
 			<!-- summary -->
 
-			<p>
-				<xsl:apply-templates select="summary" mode="notoppara"/>
+			<p><div class="msummary"><xsl:apply-templates select="summary" mode="notoppara"/></div>
+				
 				<xsl:if test="monodoc:MonoEditing()">
 					<xsl:value-of select="' '" />
 					[<a href="{monodoc:EditUrlNamespace (., $namespace, 'summary')}">Edit</a>]
@@ -515,7 +515,6 @@
 					</td>
 					<td>
 						<xsl:apply-templates select="summary" mode="notoppara"/>
-
 						<xsl:variable name="MonoImplInfo" select="monodoc:MonoImpInfo(string(@assembly), string(@fullname), false())"/>
 						<xsl:if test="$MonoImplInfo"><br/><b><xsl:value-of disable-output-escaping="yes" select="$MonoImplInfo"/></b></xsl:if>
 					</td>

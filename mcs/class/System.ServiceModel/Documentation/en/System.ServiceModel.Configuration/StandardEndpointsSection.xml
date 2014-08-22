@@ -68,12 +68,15 @@
       </Parameters>
       <Docs>
         <param name="config">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the standard endpoints section from the specified configuration file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A standard endpoints configuration section.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">

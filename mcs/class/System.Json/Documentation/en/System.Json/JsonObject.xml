@@ -39,9 +39,13 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.String,System.Json.JsonValue&gt;&gt;" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Json.JsonObject" /> class using items.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of items.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,9 +65,13 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Json.JsonObject" /> class using items.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of items.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -81,8 +89,11 @@
       </Parameters>
       <Docs>
         <param name="pair">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a key/value pair to the JSON CLR object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -125,9 +136,13 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.String,System.Json.JsonValue&gt;&gt;" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a specified of key/value pairs to the current instance of the JsonObject.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collections of items to add.</param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -150,9 +165,13 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a specified array of key/value pairs to the current instance of JsonObject.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collections of items to add.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -188,12 +207,15 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether a key/value pair with a specified key exists in the JSON CLR object type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the JSON CLR object contains the key; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to check for.</param>
       </Docs>
@@ -213,10 +235,15 @@
         <Parameter Name="arrayIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="arrayIndex">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the contents of the JSON CLR object into a specified key/value destination array beginning at a specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination array type to which the elements of the JsonObject are copied.</param>
+        <param name="arrayIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero based index at which to begin the insertion of the contents from the JSON CLR object type.</param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -327,12 +354,15 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the key/value pair with a specified from the JSON CLR object type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the element is successfully found and removed; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key of the item to remove.</param>
       </Docs>
@@ -424,12 +454,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the key/value pairs in the JsonObject.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that iterates through the key/value pairs in the JsonObject.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryGetValue">

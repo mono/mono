@@ -132,12 +132,15 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether this module and the specified object are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is equal to this instance; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance. </param>
       </Docs>
@@ -207,7 +210,6 @@
         <Parameter Name="filterCriteria" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -219,6 +221,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of classes accepted by the given filter and filter criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type Type containing classes that were accepted by the filter.</para>
+        </returns>
         <param name="filter">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate used to filter the classes. </param>
         <param name="filterCriteria">
@@ -283,12 +289,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all custom attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type Object containing all custom attributes.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />This argument is ignored for objects of this type. </param>
       </Docs>
@@ -310,12 +319,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets custom attributes of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type Object containing all custom attributes of the specified type.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to get. </param>
         <param name="inherit">
@@ -334,7 +346,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to examine the custom attributes of code in the reflection-only context, in cases where the custom attributes themselves are defined in code that is loaded into the reflection-only context. Methods such as <see cref="Overload:System.Attribute.GetCustomAttributes" /> and <see cref="Overload:System.Reflection.Module.GetCustomAttributes" /> cannot be used in such cases, because they create instances of the attributes. Code in the reflection-only context cannot be executed. For more information and example code, see the <see cref="T:System.Reflection.CustomAttributeData" /> class.</para>
@@ -343,6 +354,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a list of <see cref="T:System.Reflection.CustomAttributeData" /> objects for the current module, which can be used in the reflection-only context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic list of <see cref="T:System.Reflection.CustomAttributeData" /> objects representing data about the attributes that have been applied to the current module.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetField">
@@ -362,13 +377,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns a <see cref="T:System.Reflection.FieldInfo" /> instance that reflects the global public field that
-   has the name <paramref name="name" />, and is a member of the module
-   reflected by the current instance, if found; otherwise, returns
-<see langword="null" /> 
-.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">A global public field is a static field
@@ -381,6 +389,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a field having the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A FieldInfo object having the specified name, or null if the field does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The field name. </param>
       </Docs>
@@ -404,12 +416,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns a <see cref="T:System.Reflection.FieldInfo" /> instance that reflects the global field that has the name
-<paramref name="name" /> and characteristics specified by <paramref name="bindingAttr" />, and is a member of the module reflected by 
-   the current instance, if found; otherwise, returns <see langword="null" />
-   .</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">A global field is a field with a
@@ -422,6 +428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a field having the specified name and binding attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A FieldInfo object having the specified name and binding attributes, or null if the field does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The field name. </param>
         <param name="bindingAttr">
@@ -444,11 +454,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> An array of <see cref="T:System.Reflection.FieldInfo" /> objects that reflect the global public fields that are
-      members of the module reflected by the current instance. If no global public fields are contained in the module reflected by the current instance, returns an array with
-      zero elements.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Reflection.Module.GetFields" /> method does not return fields in a particular order, such as alphabetical or declaration order. Your code must not depend on the order in which fields are returned, because that order can vary.</para>
@@ -457,6 +462,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the global fields defined on the module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.FieldInfo" /> objects representing the global fields defined on the module; if there are no global fields, an empty array is returned.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -475,9 +484,6 @@
         <Parameter Name="bindingFlags" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> An      array <see cref="T:System.Reflection.FieldInfo" /> objects that reflect the global fields that have the specified binding attributes, and are members of the module reflected by the current instance. If no global fields are contained in the module reflected by the current instance, returns an array with zero elements.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -487,6 +493,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the global fields defined on the module that match the specified binding flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Reflection.FieldInfo" /> representing the global fields defined on the module that match the specified binding flags; if no global fields match the binding flags, an empty array is returned.</para>
+        </returns>
         <param name="bindingFlags">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values that limit the search.</param>
       </Docs>
@@ -503,12 +513,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMethod">
@@ -528,13 +541,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" />
-instance that reflects the global public method that
-has the name <paramref name="name" />, and is a member of the module reflected by the
-current instance, if found; otherwise, returns <see langword="null" />
-.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">A global public method
@@ -547,6 +553,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a method having the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodInfo object having the specified name, or null if the method does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The method name. </param>
       </Docs>
@@ -570,13 +580,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="types" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" />
-instance that reflects the global public method that
-has the name <paramref name="name" /> and parameter types <paramref name="types" />, and is a member of the module reflected by the
-current instance, if found; otherwise, returns <see langword="null" />
-.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">A global public method
@@ -596,6 +599,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a method having the specified name and parameter types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodInfo object in accordance with the specified criteria, or null if the method does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The method name. </param>
         <param name="types">
@@ -624,12 +631,15 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a method having the specified name, binding information, calling convention, and parameter types and modifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodInfo object in accordance with the specified criteria, or null if the method does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The method name. </param>
         <param name="bindingAttr">
@@ -665,12 +675,15 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the method implementation in accordance with the specified criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodInfo object containing implementation information as specified, or null if the method does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The method name. </param>
         <param name="bindingAttr">
@@ -700,10 +713,6 @@ current instance, if found; otherwise, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> An array of <see cref="T:System.Reflection.MethodInfo" /> objects that reflect the global public methods that are members of the module
-   reflected by the current instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">A global public method
@@ -714,6 +723,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the global methods defined on the module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects representing all the global methods defined on the module; if there are no global methods, an empty array is returned.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -732,9 +745,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="bindingFlags" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> An array of <see cref="T:System.Reflection.MethodInfo" /> objects that reflect the global methods that have characteristics specified by bindingAttr, and are members of the module reflected by the current instance, if found; otherwise, returns null.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">A global method is a method with a module-level scope.</block>
@@ -745,6 +755,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the global methods defined on the module that match the specified binding flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Reflection.MethodInfo" /> representing the global methods defined on the module that match the specified binding flags; if no global methods match the binding flags, an empty array is returned.</para>
+        </returns>
         <param name="bindingFlags">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values that limit the search.</param>
       </Docs>
@@ -814,12 +828,15 @@ current instance, if found; otherwise, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an X509Certificate object corresponding to the certificate included in the Authenticode signature of the assembly which this module belongs to. If the assembly has not been Authenticode signed, null is returned.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An X509Certificate object, or null if the assembly to which this module belongs has not been Authenticode signed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -843,7 +860,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="className" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -855,6 +871,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified type, performing a case-sensitive search.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Type object representing the given type, if the type is in this module; otherwise, null.</para>
+        </returns>
         <param name="className">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to locate. The name must be fully qualified with the namespace. </param>
       </Docs>
@@ -881,7 +901,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -893,6 +912,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified type, searching the module with the specified case sensitivity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Type object representing the given type, if the type is in this module; otherwise, null.</para>
+        </returns>
         <param name="className">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to locate. The name must be fully qualified with the namespace. </param>
         <param name="ignoreCase">
@@ -922,7 +945,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="throwOnError" /> parameter affects only what happens when the type is not found. It does not affect any other exceptions that might be thrown. In particular, if the type is found but cannot be loaded, <see cref="T:System.TypeLoadException" /> can be thrown even if <paramref name="throwOnError" /> is false.</para>
@@ -935,6 +957,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified type, specifying whether to make a case-sensitive search of the module and whether to throw an exception if the type cannot be found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the specified type, if the type is declared in this module; otherwise, null.</para>
+        </returns>
         <param name="className">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to locate. The name must be fully qualified with the namespace. </param>
         <param name="throwOnError">
@@ -957,7 +983,6 @@ current instance, if found; otherwise, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>ReflectionTypeLoadException is a special load exception. The ReflectionTypeLoadException.Types property contains the array of types that were defined in the module and were loaded. This array may contain some null values. The ReflectionTypeLoadException.LoaderExceptions property is an array of exceptions that represent the exceptions that were thrown by the loader. The holes in the class array line up with the exceptions.</para>
@@ -970,6 +995,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the types defined within this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type Type containing types defined within the module that is reflected by this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDefined">
@@ -989,12 +1018,15 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified attribute type has been applied to this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instances of <paramref name="attributeType" /> have been applied to this module; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of custom attribute to test for. </param>
         <param name="inherit">
@@ -1015,12 +1047,15 @@ current instance, if found; otherwise, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the object is a resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is a resource; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MDStreamVersion">
@@ -1175,12 +1210,15 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="right" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.Module" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="right">
@@ -1202,12 +1240,15 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="right" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.Module" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1229,7 +1270,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1243,6 +1283,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the field identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object representing the field that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
       </Docs>
@@ -1264,7 +1308,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. It is always safe to provide these arguments, even when they are not needed.</para>
@@ -1277,6 +1320,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the field identified by the specified metadata token, in the context defined by the specified generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object representing the field that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
         <param name="genericTypeArguments">
@@ -1300,7 +1347,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1314,6 +1360,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type or member identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MemberInfo" /> object representing the type or member that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type or member in the module.</param>
       </Docs>
@@ -1335,7 +1385,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. It is always safe to provide these arguments, even when they are not needed.</para>
@@ -1348,6 +1397,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type or member identified by the specified metadata token, in the context defined by the specified generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MemberInfo" /> object representing the type or member that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type or member in the module.</param>
         <param name="genericTypeArguments">
@@ -1371,7 +1424,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1384,6 +1436,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the method or constructor identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodBase" /> object representing the method or constructor that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
       </Docs>
@@ -1405,7 +1461,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericMethodArguments" />. It is always safe to provide these arguments, even when they are not needed. </para>
@@ -1417,6 +1472,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the method or constructor identified by the specified metadata token, in the context defined by the specified generic type parameters. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodBase" /> object representing the method that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
         <param name="genericTypeArguments">
@@ -1440,7 +1499,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1452,6 +1510,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the signature blob identified by a metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes representing the signature blob.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a signature in the module.</param>
       </Docs>
@@ -1471,7 +1533,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1483,6 +1544,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the string identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing a string value from the metadata string heap.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a string in the string heap of the module. </param>
       </Docs>
@@ -1502,7 +1567,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1515,6 +1579,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the type that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
       </Docs>
@@ -1536,7 +1604,6 @@ current instance, if found; otherwise, returns <see langword="null" />
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. It is always safe to provide these arguments, even when they are not needed.</para>
@@ -1549,6 +1616,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type identified by the specified metadata token, in the context defined by the specified generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the type that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
         <param name="genericTypeArguments">
@@ -1715,10 +1786,6 @@ current instance, if found; otherwise, returns <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> representation of
-   the name of the module reflected by the current instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method
@@ -1729,6 +1796,10 @@ current instance, if found; otherwise, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A String representing the name of this module.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

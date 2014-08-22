@@ -570,12 +570,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> that contains a
-   comma-separated list of the values at the specified index of the current
-   instance, if found;
-   otherwise, <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is outside the valid range of indices for the current instance.</exception>
         <remarks>
@@ -586,6 +580,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the values at the specified index of the <see cref="T:System.Collections.Specialized.NameValueCollection" /> combined into one comma-separated list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains a comma-separated list of the values at the specified index of the <see cref="T:System.Collections.Specialized.NameValueCollection" />, if found; otherwise, null.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the entry that contains the values to get from the collection.</param>
       </Docs>
@@ -608,12 +606,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> that contains a
-   comma-separated list of the values associated with the specified key from the
-   current instance, if found;
-   otherwise, <see langword="null" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -625,6 +617,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the values associated with the specified key from the <see cref="T:System.Collections.Specialized.NameValueCollection" /> combined into one comma-separated list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains a comma-separated list of the values associated with the specified key from the <see cref="T:System.Collections.Specialized.NameValueCollection" />, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> key of the entry that contains the values to get. The key can be null.</param>
       </Docs>
@@ -647,11 +643,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> that contains the
-   key at the specified index of the current instance, if found;
-   otherwise, <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is outside the valid range of indices for the current instance.</exception>
         <remarks>
@@ -662,6 +653,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the key at the specified index of the <see cref="T:System.Collections.Specialized.NameValueCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the key at the specified index of the <see cref="T:System.Collections.Specialized.NameValueCollection" />, if found; otherwise, null.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the key to get from the collection.</param>
       </Docs>
@@ -684,11 +679,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> array containing the values at the specified index of the
-   current instance, if found;
-   otherwise, <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is outside the valid range of indices for the current instance.</exception>
         <remarks>
@@ -699,6 +689,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the values at the specified index of the <see cref="T:System.Collections.Specialized.NameValueCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> array that contains the values at the specified index of the <see cref="T:System.Collections.Specialized.NameValueCollection" />, if found; otherwise, null.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the entry that contains the values to get from the collection.</param>
       </Docs>
@@ -721,12 +715,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" />
-array containing the values associated with <paramref name="name" />
-from the current instance, if found;
-otherwise, <see langword="null" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -738,6 +726,10 @@ otherwise, <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the values associated with the specified key from the <see cref="T:System.Collections.Specialized.NameValueCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> array that contains the values associated with the specified key from the <see cref="T:System.Collections.Specialized.NameValueCollection" />, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> key of the entry that contains the values to get. The key can be null.</param>
       </Docs>
@@ -758,12 +750,6 @@ otherwise, <see langword="null" />.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the
-   current instance contains
-   keys that are not <see langword="null" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is an O(1) operation.</para>
@@ -772,6 +758,10 @@ otherwise, <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the <see cref="T:System.Collections.Specialized.NameValueCollection" /> contains keys that are not null.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.Specialized.NameValueCollection" /> contains keys that are not null; otherwise, false.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

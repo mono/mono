@@ -491,12 +491,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this <see cref="T:System.Drawing.Font" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> this method creates, cast as an <see cref="T:System.Object" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -523,6 +526,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases all resources used by this <see cref="T:System.Drawing.Font" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -539,12 +546,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified object is a <see cref="T:System.Drawing.Font" /> and has the same <see cref="P:System.Drawing.Font.FontFamily" />, <see cref="P:System.Drawing.Font.GdiVerticalFont" />, <see cref="P:System.Drawing.Font.GdiCharSet" />, <see cref="P:System.Drawing.Font.Style" />, <see cref="P:System.Drawing.Font.Size" />, and <see cref="P:System.Drawing.Font.Unit" /> property values as this <see cref="T:System.Drawing.Font" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="obj" /> parameter is a <see cref="T:System.Drawing.Font" /> and has the same <see cref="P:System.Drawing.Font.FontFamily" />, <see cref="P:System.Drawing.Font.GdiVerticalFont" />, <see cref="P:System.Drawing.Font.GdiCharSet" />, <see cref="P:System.Drawing.Font.Style" />, <see cref="P:System.Drawing.Font.Size" />, and <see cref="P:System.Drawing.Font.Unit" /> property values as this <see cref="T:System.Drawing.Font" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test. </param>
       </Docs>
@@ -606,7 +616,6 @@
         <Parameter Name="hdc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Font'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For this method to work, the <paramref name="hdc" /> parameter must contain a handle to a device context in which a font is selected. This method will not work with an <paramref name="hdc" /> handle acquired from a ndptecgdiplus <see cref="T:System.Drawing.Graphics" /> object because the <paramref name="hdc" /> handle does not have a font selected.</para>
@@ -615,6 +624,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Font" /> from the specified Windows handle to a device context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> this method creates.</para>
+        </returns>
         <param name="hdc">
           <attribution license="cc4" from="Microsoft" modified="false" />A handle to a device context. </param>
       </Docs>
@@ -633,12 +646,15 @@
         <Parameter Name="hfont" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Font'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Font" /> from the specified Windows handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> this method creates.</para>
+        </returns>
         <param name="hfont">
           <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a ndptecgdi font. </param>
       </Docs>
@@ -657,7 +673,6 @@
         <Parameter Name="lf" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Font'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A ndptecgdi <unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>, or logical font, is a structure that contains 14 properties that describe a particular font. For more information, see "The Logical Font" in the Windows Development documentation at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
@@ -666,6 +681,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Font" /> from the specified GDI logical font (<unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>) structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> that this method creates.</para>
+        </returns>
         <param name="lf">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the ndptecgdi LOGFONT structure from which to create the <see cref="T:System.Drawing.Font" />. </param>
       </Docs>
@@ -685,7 +704,6 @@
         <Parameter Name="hdc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Font'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A ndptecgdi <unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>, or logical font, is a structure that contains 14 properties that describe a particular font. For more information, see "The Logical Font" in the Windows Development documentation at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
@@ -694,6 +712,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Font" /> from the specified GDI logical font (<unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>) structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> that this method creates.</para>
+        </returns>
         <param name="lf">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the ndptecgdi LOGFONT structure from which to create the <see cref="T:System.Drawing.Font" />. </param>
         <param name="hdc">
@@ -941,12 +963,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the hash code for this <see cref="T:System.Drawing.Font" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for this <see cref="T:System.Drawing.Font" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -961,7 +986,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line spacing of a <see cref="T:System.Drawing.Font" /> is the vertical distance between the base lines of two consecutive lines of text. Thus, the line spacing includes the blank space between lines along with the height of the character itself.</para>
@@ -972,6 +996,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the line spacing, in pixels, of this font. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line spacing, in pixels, of this font.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -988,7 +1016,6 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line spacing of a <see cref="T:System.Drawing.Font" /> is the vertical distance between the base lines of two consecutive lines of text. Thus, the line spacing includes the blank space between lines along with the height of the character itself.</para>
@@ -1001,6 +1028,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the line spacing, in the current unit of a specified <see cref="T:System.Drawing.Graphics" />, of this font. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line spacing, in pixels, of this font.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> that holds the vertical resolution, in dots per inch, of the display device as well as settings for page unit and page scale. </param>
       </Docs>
@@ -1019,7 +1050,6 @@
         <Parameter Name="dpi" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.Drawing.Font.Unit" /> property of the font is set to anything other than <see cref="F:System.Drawing.GraphicsUnit.Pixel" />, the height (in pixels) is calculated using the vertical resolution of the screen display. For example, suppose the font unit is inches and the font size is 0.3. Also suppose that for the corresponding font family, the em-height is 2048 and the line spacing is 2355. If the specified vertical resolution is 96 dots per inch, the height is calculated as follows: </para>
@@ -1029,6 +1059,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the height, in pixels, of this <see cref="T:System.Drawing.Font" /> when drawn to a device with the specified vertical resolution.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height, in pixels, of this <see cref="T:System.Drawing.Font" />.</para>
+        </returns>
         <param name="dpi">
           <attribution license="cc4" from="Microsoft" modified="false" />The vertical resolution, in dots per inch, used to calculate the height of the font. </param>
       </Docs>
@@ -1298,7 +1332,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IntPtr'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When using this method, you must dispose of the resulting <unmanagedCodeEntityReference>Hfont</unmanagedCodeEntityReference> using the ndptecgdi <unmanagedCodeEntityReference>DeleteObject</unmanagedCodeEntityReference> method to ensure the resources are released.</para>
@@ -1307,6 +1340,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a handle to this <see cref="T:System.Drawing.Font" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows handle to this <see cref="T:System.Drawing.Font" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1376,7 +1413,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned string has the following format:</para>
@@ -1386,6 +1422,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a human-readable string representation of this <see cref="T:System.Drawing.Font" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Drawing.Font" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

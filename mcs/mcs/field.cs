@@ -223,7 +223,9 @@ namespace Mono.CSharp
 			if (MemberType.IsStatic)
 				Error_VariableOfStaticClass (Location, GetSignatureForError (), MemberType, Report);
 
-			CheckBase ();
+			if (!IsCompilerGenerated)
+				CheckBase ();
+
 			IsTypePermitted ();
 		}
 
@@ -707,7 +709,7 @@ namespace Mono.CSharp
 				loc = parameter.Location;
 			}
 
-			public override TypeSpec ResolveAsType (IMemberContext mc)
+			public override TypeSpec ResolveAsType (IMemberContext mc, bool allowUnboundTypeArguments)
 			{
 				return parameter.Type;
 			}

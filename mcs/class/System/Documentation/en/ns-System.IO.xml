@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.IO">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The System.IO namespace contains types that allow reading and writing to files and data streams, and types that provide basic file and directory support.</para>
+    </summary>
   </Docs>
 </Namespace>

@@ -38,7 +38,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -48,6 +47,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the literal slash mark (/) to the end of the virtual path, if one does not already exist.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified virtual path.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to append the slash mark to.</param>
       </Docs>
@@ -66,7 +69,6 @@
         <Parameter Name="relativePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -77,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Combines a base path and a relative path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The combined <paramref name="basePath" /> and <paramref name="relativePath" />.</para>
+        </returns>
         <param name="basePath">
           <attribution license="cc4" from="Microsoft" modified="false" />The base path.</param>
         <param name="relativePath">
@@ -96,7 +102,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -107,6 +112,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the directory portion of a virtual path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The directory referenced in the virtual path. </para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path.</param>
       </Docs>
@@ -124,7 +133,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -134,6 +142,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the extension of the file that is referenced in the virtual path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file name extension string literal, including the period (.), null, or an empty string ("").</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path.</param>
       </Docs>
@@ -151,7 +163,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -161,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the file name of the file that is referenced in the virtual path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file name literal after the last directory character in <paramref name="virtualPath" />; otherwise, the last directory name if the last character of <paramref name="virtualPath" /> is a directory or volume separator character.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path. </param>
       </Docs>
@@ -178,7 +193,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -188,6 +202,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value indicating whether the specified virtual path is absolute; that is, it starts with a literal slash mark (/).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="virtualPath" /> is an absolute path and is not null or an empty string (""); otherwise, false.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to check. </param>
       </Docs>
@@ -205,7 +223,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -219,6 +236,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value indicating whether the specified virtual path is relative to the application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="virtualPath" /> is relative to the application; otherwise, false.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to check. </param>
       </Docs>
@@ -237,7 +258,6 @@
         <Parameter Name="toPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -249,6 +269,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the relative virtual path from one virtual path containing the root operator (the tilde [~]) to another.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The relative virtual path from <paramref name="fromPath" /> to <paramref name="toPath" />.</para>
+        </returns>
         <param name="fromPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The starting virtual path to return the relative virtual path from.</param>
         <param name="toPath">
@@ -268,7 +292,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -278,6 +301,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes a trailing slash mark (/) from a virtual path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A virtual path without a trailing slash mark, if the virtual path is not already the root directory ("/"); otherwise, null.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to remove any trailing slash mark from. </param>
       </Docs>
@@ -295,7 +322,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -317,6 +343,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a virtual path to an application absolute path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The absolute path representation of the specified virtual path. </para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to convert to an application-relative path. </param>
       </Docs>
@@ -335,7 +365,6 @@
         <Parameter Name="applicationPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -357,6 +386,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a virtual path to an application absolute path using the specified application path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The absolute virtual path representation of <paramref name="virtualPath" />.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to convert to an application-relative path.</param>
         <param name="applicationPath">
@@ -399,7 +432,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -411,6 +443,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a virtual path to an application-relative path using the application virtual path that is in the <see cref="P:System.Web.HttpRuntime.AppDomainAppVirtualPath" /> property. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application-relative path representation of <paramref name="virtualPath" />.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to convert to an application-relative path. </param>
       </Docs>
@@ -429,7 +465,6 @@
         <Parameter Name="applicationPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -439,6 +474,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a virtual path to an application-relative path using a specified application path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application-relative path representation of <paramref name="virtualPath" />.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to convert to an application-relative path. </param>
         <param name="applicationPath">

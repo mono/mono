@@ -32,9 +32,13 @@
         <Parameter Name="translations" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.FaultReasonText&gt;" />
       </Parameters>
       <Docs>
-        <param name="translations">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.FaultReason" /> class using the specified list of fault translations. </para>
+        </summary>
+        <param name="translations">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ServiceModel.FaultReasonText" /> objects; each object describes the fault in a specific language. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -89,7 +93,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A translation is always returned. </para>
@@ -112,6 +115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the fault description in the language used by the current thread. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultReasonText" /> object that contains the fault description. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMatchingTranslation">
@@ -128,7 +135,6 @@
         <Parameter Name="cultureInfo" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A translation is always returned. </para>
@@ -152,6 +158,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the fault description in the specified language. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fault text in the specified language.</para>
+        </returns>
         <param name="cultureInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> object that specifies the language of the fault description. </param>
       </Docs>
@@ -168,12 +178,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the fault reason as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the reason for the fault.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Translations">

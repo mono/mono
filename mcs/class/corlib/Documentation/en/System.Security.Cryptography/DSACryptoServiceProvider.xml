@@ -146,12 +146,15 @@
         <Parameter Name="rgbHash" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>An array of 40 bytes containing the DSA signature of the specified hash.</returns>
         <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the instance doesn't have a private key or if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are).</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digital signature for the specified data.</para>
+        </returns>
         <param name="rgbHash">
           <attribution license="cc4" from="Microsoft" modified="false" />The data to be signed. </param>
       </Docs>
@@ -235,7 +238,6 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -245,6 +247,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exports a blob containing the key information associated with a <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> object.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing the key information associated with a <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> object.</para>
+        </returns>
         <param name="includePrivateParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include the private key; otherwise, false.</param>
       </Docs>
@@ -265,7 +271,6 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>a DSAParameters structure contaning each parameters of the key.</returns>
         <remarks>
           <para>A <see cref="T:System.Security.Cryptography.CryptographicException" /> is thrown if the private key is requested but not available. Sadly there is not way (before 2.0) to know if the private key is available without throwing an exception. Here is a safe way to test for the private key presence:</para>
           <example>
@@ -293,6 +298,10 @@ bool IsPrivateKeyAvailable (DSA dsa)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exports the <see cref="T:System.Security.Cryptography.DSAParameters" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters for <see cref="T:System.Security.Cryptography.DSA" />.</para>
+        </returns>
         <param name="includePrivateParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include private parameters; otherwise, false. </param>
       </Docs>
@@ -531,7 +540,6 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="buffer" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>The signature value of the processed buffer.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a digital signature that is verified using the <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.VerifyData(System.Byte[],System.Byte[])" /> method.</para>
@@ -542,6 +550,10 @@ bool IsPrivateKeyAvailable (DSA dsa)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value of the specified byte array and signs the resulting hash value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input data for which to compute the hash. </param>
       </Docs>
@@ -562,7 +574,6 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="inputStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>The signature value of the processed stream.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -572,6 +583,10 @@ bool IsPrivateKeyAvailable (DSA dsa)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value of the specified input stream and signs the resulting hash value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </returns>
         <param name="inputStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The input data for which to compute the hash. </param>
       </Docs>
@@ -594,7 +609,6 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>The signature value of the processed buffer.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a digital signature that is verified using the <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.VerifyData(System.Byte[],System.Byte[])" /> method.</para>
@@ -605,6 +619,10 @@ bool IsPrivateKeyAvailable (DSA dsa)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Signs a byte array from the specified start point to the specified end point.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input data to sign. </param>
         <param name="offset">
@@ -630,7 +648,6 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An array of 40 bytes containing the DSA signature of the specified hash.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a digital signature that is verified using the <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.VerifyHash(System.Byte[],System.String,System.Byte[])" /> method.</para>
@@ -641,6 +658,10 @@ bool IsPrivateKeyAvailable (DSA dsa)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the signature for the specified hash value by encrypting it with the private key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified hash value.</para>
+        </returns>
         <param name="rgbHash">
           <attribution license="cc4" from="Microsoft" modified="false" />The hash value of the data to be signed. </param>
         <param name="str">
@@ -688,7 +709,6 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="rgbSignature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>True if the signature can be verified, false otherwise.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method verifies the <see cref="T:System.Security.Cryptography.DSA" /> digital signature produced by <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.SignData(System.IO.Stream)" />.</para>
@@ -699,6 +719,10 @@ bool IsPrivateKeyAvailable (DSA dsa)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies the specified signature data by comparing it to the signature computed for the specified data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signature verifies as valid; otherwise, false.</para>
+        </returns>
         <param name="rgbData">
           <attribution license="cc4" from="Microsoft" modified="false" />The data that was signed. </param>
         <param name="rgbSignature">
@@ -723,7 +747,6 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="rgbSignature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>True if the signature can be verified, false otherwise. </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method verifies the <see cref="T:System.Security.Cryptography.DSA" /> digital signature produced by <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.SignHash(System.Byte[],System.String)" />.</para>
@@ -733,6 +756,10 @@ bool IsPrivateKeyAvailable (DSA dsa)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies the specified signature data by comparing it to the signature computed for the specified hash value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signature verifies as valid; otherwise, false.</para>
+        </returns>
         <param name="rgbHash">
           <attribution license="cc4" from="Microsoft" modified="false" />The hash value of the data to be signed. </param>
         <param name="str">
@@ -758,12 +785,15 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="rgbSignature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>True if the signature can be verified, false otherwise. </returns>
         <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are) or if the signature length isn't 40 bytes long (as all DSA signatures are).</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies the <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="rgbSignature" /> matches the signature computed using the specified hash algorithm and key on <paramref name="rgbHash" />; otherwise, false.</para>
+        </returns>
         <param name="rgbHash">
           <attribution license="cc4" from="Microsoft" modified="false" />The data signed with <paramref name="rgbSignature" />. </param>
         <param name="rgbSignature">

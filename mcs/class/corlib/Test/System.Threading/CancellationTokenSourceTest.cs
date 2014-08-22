@@ -90,9 +90,9 @@ namespace MonoTests.System.Threading
 			int called = 0;
 			var cts = new CancellationTokenSource ();
 			cts.Token.Register (() => called++);
-			cts.CancelAfter (20);
+			cts.CancelAfter (50);
 			cts.Dispose ();
-			Thread.Sleep (50);
+			Thread.Sleep (100);
 			Assert.AreEqual (0, called, "#1");
 		}
 

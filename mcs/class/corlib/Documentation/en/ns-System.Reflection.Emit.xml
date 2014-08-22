@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Reflection.Emit" FullName="System.Reflection.Emit" FullNameSP="System.Reflection.Emit" Maintainer="Mono">
   <Docs>
-    <summary>
-		This namespace contains classes for creating new assemblies and types at run-time by emitting IL instructions.
-    </summary>
     <remarks>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Reflection.Emit" /> namespace contains classes that allow a compiler or tool to emit metadata and Microsoft intermediate language (MSIL) and optionally generate a PE file on disk. The primary clients of these classes are script engines and compilers.</para>
+    </summary>
   </Docs>
 </Namespace>

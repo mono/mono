@@ -71,7 +71,6 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ComponentModel.InheritanceAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the component has been profiled by the <see cref="M:System.ComponentModel.Design.IInheritanceService.AddInheritedComponents(System.ComponentModel.IComponent,System.ComponentModel.IContainer)" /> method, this method returns the value <see cref="F:System.ComponentModel.InheritanceAttribute.NotInherited" />. Otherwise, it returns the inheritance attribute for this component.</para>
@@ -81,6 +80,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the inheritance attribute for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.ComponentModel.InheritanceAttribute" /> that describes the level of inheritance of the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> for which to retrieve the inheritance attribute. </param>
       </Docs>

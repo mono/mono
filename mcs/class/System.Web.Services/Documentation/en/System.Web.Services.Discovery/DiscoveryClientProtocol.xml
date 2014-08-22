@@ -77,7 +77,6 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DiscoveryDocument'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" /> method expects that the supplied URL is a discovery document. If the URL refers to a service description or an XML schema an exception is thrown. To discover an XML schema or a service description invoke the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" /> method.</para>
@@ -87,6 +86,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Discovers the supplied URL to determine if it is a discovery document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> containing the results of XML Web services discovery at the supplied URL.</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />The URL where XML Web services discovery begins. </param>
       </Docs>
@@ -105,7 +108,6 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DiscoveryDocument'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoverAny(System.String)" /> method discovers whether the supplied URL is a discovery document, service description or XSD schema. If it is known that the URL only refers to a discovery document, the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.Discover(System.String)" /> method might be invoked.</para>
@@ -115,6 +117,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Discovers the supplied URL to determine if it is a discovery document, service description or an XML Schema Definition (XSD) schema.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> containing the results of XML Web services discovery at the supplied URL. If the <paramref name="url" /> parameter refers to a service description or an XSD Schema, a <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> is created in memory for it.</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />The URL where XML Web services discovery begins. </param>
       </Docs>
@@ -246,7 +252,6 @@
         <Parameter Name="topLevelFilename" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DiscoveryClientResultCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A file containing a map of saved discovery documents can be created by the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.WriteAll(System.String,System.String)" /> method or Disco.exe.</para>
@@ -256,6 +261,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads in a file containing a map of saved discovery documents populating the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> and <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> properties, with discovery documents, XML Schema Definition (XSD) schemas, and service descriptions referenced in the file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryClientResultCollection" /> containing the results found in the file with the map of saved discovery documents. The file format is a <see cref="T:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoveryClientResultsFile" /> class serialized into XML; however, one would typically create the file using only the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.WriteAll(System.String,System.String)" /> method or Disco.exe.</para>
+        </returns>
         <param name="topLevelFilename">
           <attribution license="cc4" from="Microsoft" modified="false" />Name of file to read in, containing the map of saved discovery documents. </param>
       </Docs>
@@ -345,7 +354,6 @@
         <Parameter Name="topLevelFilename" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DiscoveryClientResultCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The file created with the name of the <paramref name="topLevelFilename" /> parameter in the directory specified by the directory parameter contains a map of saved discovery documents, XML Schema Definition (XSD) schemas and service descriptions. This file can be read in using the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ReadAll(System.String)" /> method to populate the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> and <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> properties. The format of the file is XML containing an serialized version of the <see cref="T:System.Web.Services.Discovery.DiscoveryClientProtocol.DiscoveryClientResultsFile" /> class.</para>
@@ -355,6 +363,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes all discovery documents, XML Schema Definition (XSD) schemas, and Service Descriptions in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> property to the supplied directory and creates a file in that directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryClientResultCollection" /> containing the results of all files saved.</para>
+        </returns>
         <param name="directory">
           <attribution license="cc4" from="Microsoft" modified="false" />The directory in which to save all documents currently in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> property. </param>
         <param name="topLevelFilename">

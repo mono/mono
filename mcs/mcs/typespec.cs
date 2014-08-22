@@ -295,6 +295,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsStructOrEnum {
+			get {
+				return (Kind & (MemberKind.Struct | MemberKind.Enum)) != 0;
+			}
+		}
+
 		public bool IsTypeBuilder {
 			get {
 #if STATIC
@@ -645,6 +651,7 @@ namespace Mono.CSharp
 			case MemberKind.Struct:
 			case MemberKind.Enum:
 			case MemberKind.Void:
+			case MemberKind.PointerType:
 				return false;
 			case MemberKind.InternalCompilerType:
 				//
@@ -1929,6 +1936,11 @@ namespace Mono.CSharp
 			}
 
 			return ac;
+		}
+
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
+		{
+			return Element.ResolveMissingDependencies (caller);
 		}
 	}
 

@@ -133,7 +133,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a new instance of the object indicated by the <see cref="P:System.ComponentModel.Design.Serialization.InstanceDescriptor.MemberInfo" /> property, using the specified arguments to create that particular type of instance.</para>
@@ -142,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes this instance descriptor and returns the object the descriptor describes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object this instance descriptor describes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsComplete">

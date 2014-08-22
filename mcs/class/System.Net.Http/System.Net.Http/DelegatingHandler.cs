@@ -34,6 +34,7 @@ namespace System.Net.Http
 	public abstract class DelegatingHandler : HttpMessageHandler
 	{
 		bool disposed;
+		HttpMessageHandler handler;
 		
 		protected DelegatingHandler ()
 		{
@@ -47,13 +48,24 @@ namespace System.Net.Http
 			InnerHandler = innerHandler;
 		}
 		
-		public HttpMessageHandler InnerHandler { get; set; }
+		public HttpMessageHandler InnerHandler {
+			get {
+				return handler;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("InnerHandler");
+
+				handler = value;
+			}
+		}
 		
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
 				disposed = true;
-				InnerHandler.Dispose ();
+				if (InnerHandler != null)
+					InnerHandler.Dispose ();
 			}
 			
 			base.Dispose (disposing);

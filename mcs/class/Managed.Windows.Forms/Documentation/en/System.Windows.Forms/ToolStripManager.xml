@@ -36,7 +36,6 @@
         <Parameter Name="toolStripName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Windows.Forms.ToolStripManager.FindToolStrip(System.String)" /> method to search for a <see cref="T:System.Windows.Forms.ToolStrip" /> or an object derived from <see cref="T:System.Windows.Forms.ToolStrip" />. Derived types of <see cref="T:System.Windows.Forms.ToolStrip" /> are <see cref="T:System.Windows.Forms.StatusStrip" />, <see cref="T:System.Windows.Forms.MenuStrip" />, <see cref="T:System.Windows.Forms.ToolStripDropDown" />, <see cref="T:System.Windows.Forms.ToolStripDropDownMenu" />, and <see cref="T:System.Windows.Forms.ContextMenuStrip" />. If the object of the search is not specifically a <see cref="T:System.Windows.Forms.ToolStrip" /> but one of these derived types, cast the return type as required.</para>
@@ -45,6 +44,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds the specified <see cref="T:System.Windows.Forms.ToolStrip" /> or a type derived from <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ToolStrip" /> or one of its derived types as specified by the <paramref name="toolStripName" /> parameter, or null if the <see cref="T:System.Windows.Forms.ToolStrip" /> is not found.</para>
+        </returns>
         <param name="toolStripName">
           <attribution license="cc4" from="Microsoft" modified="false" />A string specifying the name of the <see cref="T:System.Windows.Forms.ToolStrip" /> or derived <see cref="T:System.Windows.Forms.ToolStrip" /> type to find.</param>
       </Docs>
@@ -62,12 +65,15 @@
         <Parameter Name="shortcut" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a value indicating whether the specified shortcut key is used by any of the <see cref="T:System.Windows.Forms.ToolStrip" /> controls of a form.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the shortcut key is used by any <see cref="T:System.Windows.Forms.ToolStrip" /> on the form; otherwise, false. </para>
+        </returns>
         <param name="shortcut">
           <attribution license="cc4" from="Microsoft" modified="false" />The shortcut key for which to search.</param>
       </Docs>
@@ -85,7 +91,6 @@
         <Parameter Name="shortcut" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Valid shortcut keys are the function keys F1 through F12 alone; function keys with CTRL, ALT, or SHIFT modifiers; or other keys with CTRL, ALT, or SHIFT modifiers. CTRL, ALT, or SHIFT keys and keys other than function keys are not valid shortcut keys if used alone.</para>
@@ -94,6 +99,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a value indicating whether a defined shortcut key is valid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the shortcut key is valid; otherwise, false. </para>
+        </returns>
         <param name="shortcut">
           <attribution license="cc4" from="Microsoft" modified="false" />The shortcut key to test for validity.</param>
       </Docs>
@@ -167,7 +176,6 @@
         <Parameter Name="targetName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Windows.Forms.ToolStripManager.Merge(System.Windows.Forms.ToolStrip,System.String)" /> method to combine <see cref="T:System.Windows.Forms.ToolStrip" /> objects of identical type, such as <see cref="T:System.Windows.Forms.ToolStrip" /> objects with other <see cref="T:System.Windows.Forms.ToolStrip" /> objects, <see cref="T:System.Windows.Forms.MenuStrip" /> objects with other <see cref="T:System.Windows.Forms.MenuStrip" /> objects, and so on.</para>
@@ -181,6 +189,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Combines two <see cref="T:System.Windows.Forms.ToolStrip" /> objects of the same type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the merge is successful; otherwise, false. </para>
+        </returns>
         <param name="sourceToolStrip">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStrip" /> to be combined with the <see cref="T:System.Windows.Forms.ToolStrip" /> referred to by the <paramref name="targetName" /> parameter.</param>
         <param name="targetName">
@@ -201,7 +213,6 @@
         <Parameter Name="targetToolStrip" Type="System.Windows.Forms.ToolStrip" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Windows.Forms.ToolStripManager.Merge(System.Windows.Forms.ToolStrip,System.Windows.Forms.ToolStrip)" /> method to combine <see cref="T:System.Windows.Forms.ToolStrip" /> objects of different types.</para>
@@ -215,6 +226,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Combines two <see cref="T:System.Windows.Forms.ToolStrip" /> objects of different types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the merge is successful; otherwise, false.</para>
+        </returns>
         <param name="sourceToolStrip">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStrip" /> to be combined with the <see cref="T:System.Windows.Forms.ToolStrip" /> referred to by the <paramref name="targetToolStrip" /> parameter.</param>
         <param name="targetToolStrip">
@@ -302,7 +317,6 @@
         <Parameter Name="targetName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="P:System.Windows.Forms.ToolStrip.AllowMerge" /> property must be set to true for both <see cref="T:System.Windows.Forms.ToolStrip" /> objects, or this method returns false.</para>
@@ -311,6 +325,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Undoes a merging of two <see cref="T:System.Windows.Forms.ToolStrip" /> objects, returning the <see cref="T:System.Windows.Forms.ToolStrip" /> with the specified name to its state before the merge and nullifying all previous merge operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the undoing of the merge is successful; otherwise, false. </para>
+        </returns>
         <param name="targetName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Windows.Forms.ToolStripItem" /> for which to undo a merge operation.</param>
       </Docs>
@@ -328,7 +346,6 @@
         <Parameter Name="targetToolStrip" Type="System.Windows.Forms.ToolStrip" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="P:System.Windows.Forms.ToolStrip.AllowMerge" /> property must be set to true for both <see cref="T:System.Windows.Forms.ToolStrip" /> objects, or this method returns false.</para>
@@ -337,6 +354,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Undoes a merging of two <see cref="T:System.Windows.Forms.ToolStrip" /> objects, returning the specified <see cref="T:System.Windows.Forms.ToolStrip" /> to its state before the merge and nullifying all previous merge operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the undoing of the merge is successful; otherwise, false. </para>
+        </returns>
         <param name="targetToolStrip">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStripItem" /> for which to undo a merge operation.</param>
       </Docs>
@@ -355,7 +376,6 @@
         <Parameter Name="sourceToolStrip" Type="System.Windows.Forms.ToolStrip" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="P:System.Windows.Forms.ToolStrip.AllowMerge" /> property must be set to true for both <see cref="T:System.Windows.Forms.ToolStrip" /> objects, or this method returns false.</para>
@@ -364,6 +384,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Undoes a merging of two <see cref="T:System.Windows.Forms.ToolStrip" /> objects, returning both <see cref="T:System.Windows.Forms.ToolStrip" /> controls to their state before the merge and nullifying all previous merge operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the undoing of the merge is successful; otherwise, false.</para>
+        </returns>
         <param name="targetToolStrip">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Windows.Forms.ToolStripItem" /> for which to undo a merge operation.</param>
         <param name="sourceToolStrip">

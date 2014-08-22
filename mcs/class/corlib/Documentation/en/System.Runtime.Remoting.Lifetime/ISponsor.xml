@@ -43,7 +43,6 @@
         <Parameter Name="lease" Type="System.Runtime.Remoting.Lifetime.ILease" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TimeSpan'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Remoting.Lifetime.ISponsor.Renewal(System.Runtime.Remoting.Lifetime.ILease)" /> method is called by the distributed garbage collector to renew the lease for the specified object.</para>
@@ -52,6 +51,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Requests a sponsoring client to renew the lease for the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The additional lease time for the specified object.</para>
+        </returns>
         <param name="lease">
           <attribution license="cc4" from="Microsoft" modified="false" />The lifetime lease of the object that requires lease renewal. </param>
       </Docs>

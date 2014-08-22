@@ -201,12 +201,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that can be used to create a <see cref="T:System.ServiceModel.Channels.Message" /> that represents the SOAP fault.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message fault created.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Detail">
@@ -266,12 +269,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string for the <see cref="T:System.ServiceModel.FaultException`1" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string for the SOAP fault.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

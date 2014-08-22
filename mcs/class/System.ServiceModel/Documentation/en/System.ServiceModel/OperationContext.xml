@@ -192,8 +192,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call the <see cref="M:System.ServiceModel.OperationContext.GetCallbackChannel``1" /> property to obtain a channel that you can use to call operations on the client instance that called the service. </para>
@@ -202,6 +200,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a channel to the client instance that called the current operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel to the client instance that called the operation of the type specified in the <see cref="P:System.ServiceModel.ServiceContractAttribute.CallbackContract" /> property.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel used to call back to the client.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="HasSupportingTokens">

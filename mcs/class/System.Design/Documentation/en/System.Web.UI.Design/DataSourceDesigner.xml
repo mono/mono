@@ -187,7 +187,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of the <see cref="M:System.Web.UI.Design.DataSourceDesigner.GetDesignTimeHtml" /> method returns the result from the base <see cref="M:System.Web.UI.Design.ControlDesigner.CreatePlaceHolderDesignTimeHtml" /> method.</para>
@@ -196,6 +195,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the HTML markup for displaying the associated data source control at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The markup for the design-time display.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetView">
@@ -211,7 +214,6 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In derived classes, if <paramref name="viewName" /> does not exist, the <see cref="M:System.Web.UI.Design.DataSourceDesigner.GetView(System.String)" /> method should return null.</para>
@@ -220,6 +222,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Web.UI.Design.DesignerDataSourceView" /> object that is identified by the view name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation always returns null.</para>
+        </returns>
         <param name="viewName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the view.</param>
       </Docs>
@@ -235,12 +241,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of the view names that are available in this data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of view names.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnDataSourceChanged">
@@ -370,7 +379,6 @@
         <Parameter Name="schema2" Type="System.Web.UI.Design.IDataSourceSchema" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Comparison of the two schemas is based on the views, as well as the names and types of the fields that are contained in the views. The <see cref="M:System.Web.UI.Design.DataSourceDesigner.SchemasEquivalent(System.Web.UI.Design.IDataSourceSchema,System.Web.UI.Design.IDataSourceSchema)" /> method can be used without an instance of the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class.</para>
@@ -379,6 +387,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a value that indicates whether two schemas are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both schemas are equivalent; otherwise, false.</para>
+        </returns>
         <param name="schema1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first schema to compare (derived from the <see cref="T:System.Web.UI.Design.IDataSourceSchema" />).</param>
         <param name="schema2">
@@ -438,7 +450,6 @@
         <Parameter Name="viewSchema2" Type="System.Web.UI.Design.IDataSourceViewSchema" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DataSourceDesigner.ViewSchemasEquivalent(System.Web.UI.Design.IDataSourceViewSchema,System.Web.UI.Design.IDataSourceViewSchema)" /> method can be used without an instance of the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class.</para>
@@ -447,6 +458,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a value that determines whether two schema views are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both views are equivalent; otherwise, false. </para>
+        </returns>
         <param name="viewSchema1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first view to compare (derived from the <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" />).</param>
         <param name="viewSchema2">

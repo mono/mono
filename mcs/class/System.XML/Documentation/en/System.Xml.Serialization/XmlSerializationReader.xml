@@ -197,7 +197,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -207,6 +206,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes all occurrences of white space characters from the beginning and end of the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The trimmed string.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string that will have its white space trimmed.</param>
       </Docs>
@@ -228,7 +231,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.Exception'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended only for use by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -237,6 +239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidOperationException" /> that indicates that an object being deserialized should be abstract. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the abstract type.</param>
         <param name="ns">
@@ -263,7 +269,6 @@
         <Parameter Name="clrBase" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -273,6 +278,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Populates an object from its XML representation at the current location of the <see cref="T:System.Xml.XmlReader" />, with an option to read the inner element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </returns>
         <param name="xsdDerived">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the derived XML Schema data type.</param>
         <param name="nsDerived">
@@ -303,7 +312,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -312,6 +320,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidOperationException" /> that indicates that an object being deserialized cannot be instantiated because the constructor throws a security exception.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the type.</param>
       </Docs>
@@ -332,7 +344,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -341,6 +352,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidOperationException" /> that indicates that an object being deserialized cannot be instantiated because there is no constructor available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the type.</param>
       </Docs>
@@ -362,7 +377,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.Exception'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -371,6 +385,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidCastException" /> that indicates that an explicit reference conversion failed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidCastException" /> exception.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that an object cannot be cast to. This type is incorporated into the exception message.</param>
         <param name="value">
@@ -394,7 +412,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -404,6 +421,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidCastException" /> that indicates that an explicit reference conversion failed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidCastException" /> exception.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that an object cannot be cast to. This type is incorporated into the exception message.</param>
         <param name="value">
@@ -429,7 +450,6 @@
         <Parameter Name="clrType" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -439,6 +459,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidOperationException" /> that indicates that a derived type that is mapped to an XML Schema data type cannot be located.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the XML Schema data type that is mapped to the unavailable derived type.</param>
         <param name="ns">
@@ -463,7 +487,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.Exception'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -472,6 +495,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidOperationException" /> that indicates that a SOAP-encoded collection type cannot be modified and its values cannot be filled in. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the .NET Framework type for which there is a mapping.</param>
       </Docs>
@@ -493,7 +520,6 @@
         <Parameter Name="enumType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.Exception'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -502,6 +528,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidOperationException" /> that indicates that an enumeration value is not valid. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration value that is not valid.</param>
         <param name="enumType">
@@ -522,7 +552,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'System.Exception'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -531,6 +560,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidOperationException" /> that indicates that the current position of <see cref="T:System.Xml.XmlReader" /> represents an unknown XML node. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateUnknownTypeException">
@@ -549,7 +582,6 @@
         <Parameter Name="type" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.Exception'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -558,6 +590,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.InvalidOperationException" /> that indicates that a type is unknown. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> that represents the name of the unknown type.</param>
       </Docs>
@@ -628,7 +664,6 @@
         <Parameter Name="elementType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.Array'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -637,6 +672,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ensures that a given array, or a copy, is large enough to contain a specified index. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The existing <see cref="T:System.Array" />, if it is already large enough; otherwise, a new, larger array that contains the original array's elements.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Array" /> that is being checked.</param>
         <param name="index">
@@ -693,7 +732,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -703,6 +741,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the length of the SOAP-encoded array where the <see cref="T:System.Xml.XmlReader" /> is currently positioned.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The length of the SOAP array.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name that the array should have.</param>
         <param name="ns">
@@ -723,7 +765,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -732,6 +773,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the XML element where the <see cref="T:System.Xml.XmlReader" /> is currently positioned has a null attribute set to the value true.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="T:System.Xml.XmlReader" /> is currently positioned over a null attribute with the value true; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTarget">
@@ -750,7 +795,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -760,6 +804,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an object that is being deserialized from a SOAP-encoded multiRef element and that was stored earlier by <see cref="M:System.Xml.Serialization.XmlSerializationReader.AddTarget(System.String,System.Object)" />.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object to be deserialized from a SOAP-encoded multiRef element.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The value of the id attribute of a multiRef element that identifies the element.</param>
       </Docs>
@@ -778,7 +826,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'System.Xml.XmlQualifiedName'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -788,6 +835,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the xsi:type attribute for the XML element at the current location of the <see cref="T:System.Xml.XmlReader" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML qualified name that indicates the data type of an XML element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InitCallbacks">
@@ -883,7 +934,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -893,6 +943,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an XML attribute name indicates an XML namespace. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the XML attribute name indicates an XML namespace; otherwise, false.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of an XML attribute.</param>
       </Docs>
@@ -940,7 +994,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'System.Xml.XmlQualifiedName'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -949,6 +1002,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Makes the <see cref="T:System.Xml.XmlReader" /> read the fully qualified name of the element where it is currently positioned. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fully qualified name of the current XML element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadEndElement">
@@ -1038,7 +1095,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1047,6 +1103,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Instructs the <see cref="T:System.Xml.XmlReader" /> to read the current XML element if the element has a null attribute with the value true. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element has a null="true" attribute value and has been read; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadNullableQualifiedName">
@@ -1063,7 +1123,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'System.Xml.XmlQualifiedName'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1072,6 +1131,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Instructs the <see cref="T:System.Xml.XmlReader" /> to read the fully qualified name of the element where it is currently positioned. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.XmlQualifiedName" /> that represents the fully qualified name of the current XML element; otherwise, null if a null="true" attribute value is present.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadNullableString">
@@ -1088,7 +1151,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1097,6 +1159,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Instructs the <see cref="T:System.Xml.XmlReader" /> to read a simple, text-only XML element that could be null. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string value; otherwise, null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadReference">
@@ -1135,7 +1201,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1147,6 +1212,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes an object from a SOAP-encoded multiRef XML element. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the referenced element in the document.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadReferencedElement">
@@ -1166,7 +1235,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1178,6 +1246,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes an object from a SOAP-encoded multiRef XML element. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the referenced element in the document.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element's XML Schema data type.</param>
         <param name="ns">
@@ -1302,7 +1374,6 @@
         <Parameter Name="serializable" Type="System.Xml.Serialization.IXmlSerializable" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IXmlSerializable'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1311,6 +1382,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Populates an object from its XML representation at the current location of the <see cref="T:System.Xml.XmlReader" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the <see cref="T:System.Xml.Serialization.IXmlSerializable" /> interface with its members populated from the location of the <see cref="T:System.Xml.XmlReader" />.</para>
+        </returns>
         <param name="serializable">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.IXmlSerializable" /> that corresponds to the current position of the <see cref="T:System.Xml.XmlReader" />.</param>
       </Docs>
@@ -1331,7 +1406,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1340,6 +1414,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the result of a call to the <see cref="M:System.Xml.XmlReader.ReadString" /> method appended to the input value. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of call to the <see cref="M:System.Xml.XmlReader.ReadString" /> method appended to the input value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to prefix to the result of a call to the <see cref="M:System.Xml.XmlReader.ReadString" /> method.</param>
       </Docs>
@@ -1360,13 +1438,16 @@
         <Parameter Name="trim" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the result of a call to the <see cref="M:System.Xml.XmlReader.ReadString" /> method of the <see cref="T:System.Xml.XmlReader" /> class, trimmed of white space if needed, and appended to the input value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the read operation appended to the input value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that will be appended to.</param>
         <param name="trim">
@@ -1388,13 +1469,16 @@
         <Parameter Name="type" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an XML element that allows null values (xsi:nil = 'true') and returns a generic <see cref="T:System.Nullable`1" /> value. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic <see cref="T:System.Nullable`1" /> that represents a null XML value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> that represents the simple data type for the current location of the <see cref="T:System.Xml.XmlReader" />.</param>
       </Docs>
@@ -1415,7 +1499,6 @@
         <Parameter Name="type" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1424,6 +1507,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the XML node at which the <see cref="T:System.Xml.XmlReader" /> is currently positioned. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the node as a .NET Framework value type, if the value is a simple XML Schema data type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> that represents the simple data type for the current location of the <see cref="T:System.Xml.XmlReader" />.</param>
       </Docs>
@@ -1444,7 +1531,6 @@
         <Parameter Name="wrapped" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1453,6 +1539,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Instructs the <see cref="T:System.Xml.XmlReader" /> to read an XML document root element at its current position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDocument" /> that contains the root element that has been read.</para>
+        </returns>
         <param name="wrapped">
           <attribution license="cc4" from="Microsoft" modified="false" />true if the method should read content only after reading the element's start element; otherwise, false.</param>
       </Docs>
@@ -1473,7 +1563,6 @@
         <Parameter Name="wrapped" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.Xml.XmlNode'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1482,6 +1571,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Instructs the <see cref="T:System.Xml.XmlReader" /> to read the XML node at its current position. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlNode" /> that represents the XML node that has been read.</para>
+        </returns>
         <param name="wrapped">
           <attribution license="cc4" from="Microsoft" modified="false" />true to read content only after reading the element's start element; otherwise, false.</param>
       </Docs>
@@ -1531,7 +1624,6 @@
         <Parameter Name="assemblyFullName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1542,6 +1634,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a dynamically generated assembly by name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamically generated <see cref="T:System.Reflection.Assembly" />.</para>
+        </returns>
         <param name="assemblyFullName">
           <attribution license="cc4" from="Microsoft" modified="false" />The full name of the assembly.</param>
       </Docs>
@@ -1565,7 +1661,6 @@
         <Parameter Name="isNullable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.Array'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1574,6 +1669,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ensures that a given array, or a copy, is no larger than a specified length. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The existing <see cref="T:System.Array" />, if it is already small enough; otherwise, a new, smaller array that contains the original array's elements up to the size of<paramref name=" length" />.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The array that is being checked.</param>
         <param name="length">
@@ -1600,7 +1699,6 @@
         <Parameter Name="isNull" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte[]'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1609,6 +1707,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Instructs the <see cref="T:System.Xml.XmlReader" /> to read the string value at its current position and return it as a base-64 byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A base-64 byte array; otherwise, null if the value of the <paramref name="isNull" /> parameter is true.</para>
+        </returns>
         <param name="isNull">
           <attribution license="cc4" from="Microsoft" modified="false" />true to return null; false to return a base-64 byte array.</param>
       </Docs>
@@ -1629,7 +1731,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte[]'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1639,6 +1740,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a base-64 byte array from an input string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A base-64 byte array.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to translate into a base-64 byte array.</param>
       </Docs>
@@ -1659,7 +1764,6 @@
         <Parameter Name="isNull" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte[]'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1668,6 +1772,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Instructs the <see cref="T:System.Xml.XmlReader" /> to read the string value at its current position and return it as a hexadecimal byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hexadecimal byte array; otherwise, null if the value of the <paramref name="isNull" /> parameter is true. </para>
+        </returns>
         <param name="isNull">
           <attribution license="cc4" from="Microsoft" modified="false" />true to return null; false to return a hexadecimal byte array.</param>
       </Docs>
@@ -1688,7 +1796,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte[]'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1698,6 +1805,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a hexadecimal byte array from an input string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hexadecimal byte array.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to translate into a hexadecimal byte array.</param>
       </Docs>
@@ -1718,7 +1829,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1728,6 +1838,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a <see cref="T:System.Char" /> object from an input string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Char" /> object.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to translate into a <see cref="T:System.Char" /> object.</param>
       </Docs>
@@ -1748,7 +1862,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1758,6 +1871,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a <see cref="T:System.DateTime" /> object from an input string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> object.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to translate into a <see cref="T:System.DateTime" /> class object.</param>
       </Docs>
@@ -1778,7 +1895,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1788,6 +1904,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a <see cref="T:System.DateTime" /> object from an input string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> object.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to translate into a <see cref="T:System.DateTime" /> object.</param>
       </Docs>
@@ -1810,7 +1930,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1820,6 +1939,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a numeric enumeration value from a string that consists of delimited identifiers that represent constants from the enumerator list. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A long value that consists of the enumeration value as a series of bitwise OR operations.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that consists of delimited identifiers where each identifier represents a constant from the set enumerator list.</param>
         <param name="h">
@@ -1844,7 +1967,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1854,6 +1976,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a <see cref="T:System.DateTime" /> from a string that represents the time. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> object.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to translate into a <see cref="T:System.DateTime" /> object.</param>
       </Docs>
@@ -1874,7 +2000,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1886,6 +2011,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes an XML name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded string.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An XML name to be decoded.</param>
       </Docs>
@@ -1906,7 +2035,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1918,6 +2046,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes an XML name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded string.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An XML name to be decoded.</param>
       </Docs>
@@ -1938,7 +2070,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are only intended for use by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1950,6 +2081,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes an XML name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded string.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An XML name to be decoded.</param>
       </Docs>
@@ -1970,7 +2105,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -1982,6 +2116,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes an XML name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded string.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An XML name to be decoded.</param>
       </Docs>
@@ -2002,7 +2140,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'System.Xml.XmlQualifiedName'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The protected members of <see cref="T:System.Xml.Serialization.XmlSerializationReader" /> are intended for use only by derived classes that are used internally within the .NET Framework XML serialization infrastructure.</para>
@@ -2012,6 +2149,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains an <see cref="T:System.Xml.XmlQualifiedName" /> from a name that may contain a prefix. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlQualifiedName" /> that represents a namespace-qualified XML name.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A name that may contain a prefix.</param>
       </Docs>

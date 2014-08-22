@@ -305,7 +305,6 @@
         <Parameter Name="iocb" Type="System.Threading.IOCompletionCallback" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'NativeOverlapped*'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The unmanaged pointer returned by this method can be passed to the operating system in overlapped I/O operations. The <see cref="T:System.Threading.NativeOverlapped" /> structure is fixed in physical memory until <see cref="M:System.Threading.Overlapped.Unpack(System.Threading.NativeOverlapped*)" /> is called. </para>
@@ -317,6 +316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Packs the current instance into a <see cref="T:System.Threading.NativeOverlapped" /> structure, specifying the delegate to be invoked when the asynchronous I/O operation is complete.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure. </para>
+        </returns>
         <param name="iocb">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.IOCompletionCallback" /> delegate that represents the callback method invoked when the asynchronous I/O operation completes.</param>
       </Docs>
@@ -345,7 +348,6 @@
         <Parameter Name="userData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -359,6 +361,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Packs the current instance into a <see cref="T:System.Threading.NativeOverlapped" /> structure, specifying a delegate that is invoked when the asynchronous I/O operation is complete and a managed object that serves as a buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure. </para>
+        </returns>
         <param name="iocb">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.IOCompletionCallback" /> delegate that represents the callback method invoked when the asynchronous I/O operation completes.</param>
         <param name="userData">
@@ -386,7 +392,6 @@
         <Parameter Name="nativeOverlappedPtr" Type="System.Threading.NativeOverlapped*" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Overlapped'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Threading.NativeOverlapped" /> structure is not freed from physical memory until you call the <see cref="M:System.Threading.Overlapped.Free(System.Threading.NativeOverlapped*)" /> method.</para>
@@ -395,6 +400,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unpacks the specified unmanaged <see cref="T:System.Threading.NativeOverlapped" /> structure into a managed <see cref="T:System.Threading.Overlapped" /> object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Threading.Overlapped" /> object containing the information unpacked from the native structure.</para>
+        </returns>
         <param name="nativeOverlappedPtr">
           <attribution license="cc4" from="Microsoft" modified="false" />An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure.</param>
       </Docs>
@@ -423,7 +432,6 @@
         <Parameter Name="iocb" Type="System.Threading.IOCompletionCallback" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'NativeOverlapped*'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The unmanaged pointer returned by this method can be passed to the operating system in overlapped I/O operations. The <see cref="T:System.Threading.NativeOverlapped" /> structure is fixed in physical memory until <see cref="M:System.Threading.Overlapped.Unpack(System.Threading.NativeOverlapped*)" /> is called. </para>
@@ -436,6 +444,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Packs the current instance into a <see cref="T:System.Threading.NativeOverlapped" /> structure specifying the delegate to invoke when the asynchronous I/O operation is complete. Does not propagate the calling stack.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure. </para>
+        </returns>
         <param name="iocb">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.IOCompletionCallback" /> delegate that represents the callback method invoked when the asynchronous I/O operation completes.</param>
       </Docs>
@@ -464,7 +476,6 @@
         <Parameter Name="userData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -479,6 +490,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Packs the current instance into a <see cref="T:System.Threading.NativeOverlapped" /> structure, specifying the delegate to invoke when the asynchronous I/O operation is complete and the managed object that serves as a buffer. Does not propagate the calling stack.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure. </para>
+        </returns>
         <param name="iocb">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.IOCompletionCallback" /> delegate that represents the callback method invoked when the asynchronous I/O operation completes.</param>
         <param name="userData">

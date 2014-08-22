@@ -34,13 +34,16 @@
         <Parameter Name="appRelativeUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a project item from a design host based on its URL.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A project item from a design host based on its URL.</para>
+        </returns>
         <param name="appRelativeUrl">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative path to the project item to retrieve.</param>
       </Docs>
@@ -58,13 +61,16 @@
         <Parameter Name="isReadOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Configuration.Configuration" /> object representing the current Web application in the design host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the current Web application in the design host.</para>
+        </returns>
         <param name="isReadOnly">
           <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the returned <see cref="T:System.Configuration.Configuration" /> is editable; otherwise, false.</param>
       </Docs>

@@ -71,7 +71,6 @@
         <Parameter Name="elemCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The DefineByValArray method is not a simple native marshal.</para>
@@ -82,6 +81,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies a fixed-length array (ByValArray) to marshal to unmanaged code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
         <param name="elemCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the fixed-length array. </param>
       </Docs>
@@ -102,7 +105,6 @@
         <Parameter Name="elemCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The DefineByValStr method is not a simple native marshal.</para>
@@ -113,6 +115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies a string in a fixed array buffer (ByValTStr) to marshal to unmanaged code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
         <param name="elemCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the fixed array buffer. </param>
       </Docs>
@@ -159,7 +165,6 @@
         <Parameter Name="elemType" Type="System.Runtime.InteropServices.UnmanagedType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The DefineLPArray method is not a simple native marshal.</para>
@@ -170,6 +175,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies an LPArray to marshal to unmanaged code. The length of an LPArray is determined at runtime by the size of the actual marshaled array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
         <param name="elemType">
           <attribution license="cc4" from="Microsoft" modified="false" />The unmanaged type to which to marshal the array. </param>
       </Docs>
@@ -190,7 +199,6 @@
         <Parameter Name="elemType" Type="System.Runtime.InteropServices.UnmanagedType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The DefineSafeArray method is not a simple native marshal.</para>
@@ -201,6 +209,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies a SafeArray to marshal to unmanaged code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
         <param name="elemType">
           <attribution license="cc4" from="Microsoft" modified="false" />The base type or the UnmanagedType of each element of the array. </param>
       </Docs>
@@ -221,7 +233,6 @@
         <Parameter Name="unmanagedType" Type="System.Runtime.InteropServices.UnmanagedType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Runtime.InteropServices.UnmanagedType" /> passed to this method must be a simple native type. None of the following values may be used: <see cref="F:System.Runtime.InteropServices.UnmanagedType.ByValTStr" />, <see cref="F:System.Runtime.InteropServices.UnmanagedType.SafeArray" />, <see cref="F:System.Runtime.InteropServices.UnmanagedType.ByValArray" />, <see cref="F:System.Runtime.InteropServices.UnmanagedType.LPArray" />, or <see cref="F:System.Runtime.InteropServices.UnmanagedType.CustomMarshaler" />.</para>
@@ -231,6 +242,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies a given type that is to be marshaled to unmanaged code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
         <param name="unmanagedType">
           <attribution license="cc4" from="Microsoft" modified="false" />The unmanaged type to which the type is to be marshaled. </param>
       </Docs>

@@ -306,8 +306,8 @@ enum {
 
 #ifdef ENABLE_VERIFIER_STATS
 
-#define MEM_ALLOC(amt) do { allocated_memory += (amt); working_set += (amt); } while (0)
-#define MEM_FREE(amt) do { working_set -= (amt); } while (0)
+#define _MEM_ALLOC(amt) do { allocated_memory += (amt); working_set += (amt); } while (0)
+#define _MEM_FREE(amt) do { working_set -= (amt); } while (0)
 
 static int allocated_memory;
 static int working_set;
@@ -338,8 +338,8 @@ init_verifier_stats (void)
 
 #else
 
-#define MEM_ALLOC(amt) do {} while (0)
-#define MEM_FREE(amt) do { } while (0)
+#define _MEM_ALLOC(amt) do {} while (0)
+#define _MEM_FREE(amt) do { } while (0)
 
 #define finish_collect_stats()
 #define init_verifier_stats()
@@ -369,7 +369,7 @@ init_verifier_stats (void)
 static gboolean
 token_bounds_check (MonoImage *image, guint32 token)
 {
-	if (image->dynamic)
+	if (image_is_dynamic (image))
 		return mono_reflection_is_valid_dynamic_token ((MonoDynamicImage*)image, token);
 	return image->tables [mono_metadata_token_table (token)].rows >= mono_metadata_token_index (token) && mono_metadata_token_index (token) > 0;
 }
@@ -378,7 +378,7 @@ static MonoType *
 mono_type_create_fnptr_from_mono_method (VerifyContext *ctx, MonoMethod *method)
 {
 	MonoType *res = g_new0 (MonoType, 1);
-	MEM_ALLOC (sizeof (MonoType));
+	_MEM_ALLOC (sizeof (MonoType));
 
 	//FIXME use mono_method_get_signature_full
 	res->data.method = mono_method_signature (method);
@@ -1352,8 +1352,6 @@ is_correct_rethrow (MonoMethodHeader *header, guint offset)
 		clause = &header->clauses [i];
 		if (MONO_OFFSET_IN_HANDLER (clause, offset))
 			return 1;
-		if (MONO_OFFSET_IN_FILTER (clause, offset))
-			return 1;
 	}
 	return 0;
 }
@@ -1500,13 +1498,13 @@ ensure_stack_size (ILCodeDesc *stack, int required)
 	g_assert (new_size >= required);
 
 	tmp = g_new0 (ILStackDesc, new_size);
-	MEM_ALLOC (sizeof (ILStackDesc) * new_size);
+	_MEM_ALLOC (sizeof (ILStackDesc) * new_size);
 
 	if (stack->stack) {
 		if (stack->size)
 			memcpy (tmp, stack->stack, stack->size * sizeof (ILStackDesc));
 		g_free (stack->stack);
-		MEM_FREE (sizeof (ILStackDesc) * stack->max_size);
+		_MEM_FREE (sizeof (ILStackDesc) * stack->max_size);
 	}
 
 	stack->stack = tmp;
@@ -3219,9 +3217,10 @@ do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 		if (constrained && virtual) {
 			if (!stack_slot_is_managed_pointer (value))
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Object is not a managed pointer for a constrained call at 0x%04x", ctx->ip_offset));
-			if (!mono_metadata_type_equal_full (mono_type_get_type_byval (value->type), ctx->constrained_type, TRUE))
+			if (!mono_metadata_type_equal_full (mono_type_get_type_byval (value->type), mono_type_get_underlying_type (ctx->constrained_type), TRUE))
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Object not compatible with constrained type at 0x%04x", ctx->ip_offset));
 			copy.stype |= BOXED_MASK;
+			copy.type = ctx->constrained_type;
 		} else {
 			if (stack_slot_is_managed_pointer (value) && !mono_class_from_mono_type (value->type)->valuetype)
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot call a reference type using a managed pointer to the this arg at 0x%04x", ctx->ip_offset));
@@ -4419,7 +4418,7 @@ static void
 do_ldstr (VerifyContext *ctx, guint32 token)
 {
 	GSList *error = NULL;
-	if (ctx->method->wrapper_type == MONO_WRAPPER_NONE && !ctx->image->dynamic) {
+	if (ctx->method->wrapper_type == MONO_WRAPPER_NONE && !image_is_dynamic (ctx->image)) {
 		if (mono_metadata_token_code (token) != MONO_TOKEN_STRING) {
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid string token %x at 0x%04x", token, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 			return;
@@ -4850,19 +4849,19 @@ mono_method_verify (MonoMethod *method, int level)
 
 	ctx.code = g_new (ILCodeDesc, ctx.header->code_size);
 	ctx.code_size = ctx.header->code_size;
-	MEM_ALLOC (sizeof (ILCodeDesc) * ctx.header->code_size);
+	_MEM_ALLOC (sizeof (ILCodeDesc) * ctx.header->code_size);
 
 	memset(ctx.code, 0, sizeof (ILCodeDesc) * ctx.header->code_size);
 
 	ctx.num_locals = ctx.header->num_locals;
 	ctx.locals = g_memdup (ctx.header->locals, sizeof (MonoType*) * ctx.header->num_locals);
-	MEM_ALLOC (sizeof (MonoType*) * ctx.header->num_locals);
+	_MEM_ALLOC (sizeof (MonoType*) * ctx.header->num_locals);
 
 	if (ctx.num_locals > 0 && !ctx.header->init_locals)
 		CODE_NOT_VERIFIABLE (&ctx, g_strdup_printf ("Method with locals variable but without init locals set"));
 
 	ctx.params = g_new (MonoType*, ctx.max_args);
-	MEM_ALLOC (sizeof (MonoType*) * ctx.max_args);
+	_MEM_ALLOC (sizeof (MonoType*) * ctx.max_args);
 
 	if (ctx.signature->hasthis)
 		ctx.params [0] = method->klass->valuetype ? &method->klass->this_arg : &method->klass->byval_arg;
@@ -5002,7 +5001,7 @@ mono_method_verify (MonoMethod *method, int level)
 
 	while (ip < end && ctx.valid) {
 		int op_size;
-		ip_offset = ip - code_start;
+		ip_offset = (guint) (ip - code_start);
 		{
 			const unsigned char *ip_copy = ip;
 			int op;
@@ -5033,7 +5032,7 @@ mono_method_verify (MonoMethod *method, int level)
 			}
 		}
 
-		ctx.ip_offset = ip_offset = ip - code_start;
+		ctx.ip_offset = ip_offset =  (guint) (ip - code_start);
 
 		/*We need to check against fallthrou in and out of protected blocks.
 		 * For fallout we check the once a protected block ends, if the start flag is not set.
@@ -6022,7 +6021,7 @@ mono_verifier_is_enabled_for_image (MonoImage *image)
 gboolean
 mono_verifier_is_method_full_trust (MonoMethod *method)
 {
-	return mono_verifier_is_class_full_trust (method->klass) && !method->dynamic;
+	return mono_verifier_is_class_full_trust (method->klass) && !method_is_dynamic (method);
 }
 
 /*
@@ -6282,7 +6281,7 @@ mono_verifier_verify_class (MonoClass *class)
 	if (!class->parent &&
 		class != mono_defaults.object_class && 
 		!MONO_CLASS_IS_INTERFACE (class) &&
-		(!class->image->dynamic && class->type_token != 0x2000001)) /*<Module> is the first type in the assembly*/
+		(!image_is_dynamic (class->image) && class->type_token != 0x2000001)) /*<Module> is the first type in the assembly*/
 		return FALSE;
 	if (class->parent) {
 		if (MONO_CLASS_IS_INTERFACE (class->parent))

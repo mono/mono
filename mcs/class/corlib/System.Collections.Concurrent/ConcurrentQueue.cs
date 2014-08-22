@@ -97,12 +97,13 @@ namespace System.Collections.Concurrent
 		public bool TryDequeue (out T result)
 		{
 			result = default (T);
+			Node oldNext = null;
 			bool advanced = false;
 
 			while (!advanced) {
 				Node oldHead = head;
 				Node oldTail = tail;
-				Node oldNext = oldHead.Next;
+				oldNext = oldHead.Next;
 				
 				if (oldHead == head) {
 					// Empty case ?
@@ -122,6 +123,8 @@ namespace System.Collections.Concurrent
 				}
 			}
 
+			oldNext.Value = default (T);
+
 			Interlocked.Decrement (ref count);
 
 			return true;
@@ -129,14 +132,24 @@ namespace System.Collections.Concurrent
 		
 		public bool TryPeek (out T result)
 		{
-			Node first = head.Next;	
+			result = default (T);
+			bool update = true;
+			
+			while (update)
+			{
+				Node oldHead = head;
+				Node oldNext = oldHead.Next;
 
-			if (first == null) {
-				result = default (T);
-				return false;
+				if (oldNext == null) {
+					result = default (T);
+					return false;
+				}
+
+				result = oldNext.Value;
+				
+				//check if head has been updated
+				update = head != oldHead;
 			}
-
-			result = first.Value;
 			return true;
 		}
 		

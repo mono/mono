@@ -1,8 +1,8 @@
-// Compiler options: -langversion:future
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections;
+using System.Collections.Generic;
 
 interface IFoo
 {
@@ -25,12 +25,28 @@ struct S : IFoo
 	}
 }
 
+struct S2 : IEnumerable
+{
+	public List<int> Values;
+
+	public void Add (int x)
+	{
+		if (Values == null)
+			Values = new List<int> ();
+
+		Values.Add(x);
+	}
+
+	public IEnumerator GetEnumerator()
+	{
+		return Values as IEnumerator;
+	}
+}
+
 class Tester
 {
 	async Task<T> NewInitTestGen<T> () where T : struct, IFoo
 	{
-		int value = 9;
-		
 		var s = new T () {
 			Value = await Task.Factory.StartNew (() => 13).ConfigureAwait (false)
 		};
@@ -39,6 +55,16 @@ class Tester
 			return new T ();
 		
 		return s;
+	}
+
+	static async Task<int> NewInitCol ()
+	{
+		var s = new S2 { 
+			await Task.FromResult (1),
+			await Task.Factory.StartNew (() => 2)
+		};
+
+		return s.Values [0] + s.Values [1];
 	}
 	
 	public static int Main ()
@@ -51,6 +77,10 @@ class Tester
 		
 		if (t.Result.Value != 13)
 			return 2;
+
+		var v = NewInitCol ().Result;
+		if (v != 3)
+			return 3;
 		
 		return 0;
 	}

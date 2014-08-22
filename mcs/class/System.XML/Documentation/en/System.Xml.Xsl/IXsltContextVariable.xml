@@ -38,12 +38,15 @@
         <Parameter Name="xsltContext" Type="System.Xml.Xsl.XsltContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates the variable at runtime and returns an object that represents the value of the variable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the value of the variable. Possible return types include number, string, Boolean, document fragment, or node set.</para>
+        </returns>
         <param name="xsltContext">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltContext" /> representing the execution context of the variable. </param>
       </Docs>

@@ -133,7 +133,6 @@
         <Parameter Name="fileExtension" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns a file name with the specified extension that has been added to the temporary files collection. Other code must still create the file before it can be used.</para>
@@ -143,6 +142,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a file name with the specified file name extension to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file name with the specified extension that was just added to the collection.</para>
+        </returns>
         <param name="fileExtension">
           <attribution license="cc4" from="Microsoft" modified="false" />The file name extension for the auto-generated temporary file name to add to the collection. </param>
       </Docs>
@@ -164,7 +167,6 @@
         <Parameter Name="keepFile" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns a file name with the specified extension that has been added to the temporary files collection. Other code must still create the file before it can be used.</para>
@@ -174,6 +176,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a file name with the specified file name extension to the collection, using the specified value indicating whether the file should be deleted or retained.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file name with the specified extension that was just added to the collection.</para>
+        </returns>
         <param name="fileExtension">
           <attribution license="cc4" from="Microsoft" modified="false" />The file name extension for the auto-generated temporary file name to add to the collection. </param>
         <param name="keepFile">
@@ -371,12 +377,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an enumerator that can enumerate the members of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that contains the collection's members.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="KeepFiles">
@@ -522,7 +531,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.TempFileCollection" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
@@ -531,6 +539,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through a collection. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">

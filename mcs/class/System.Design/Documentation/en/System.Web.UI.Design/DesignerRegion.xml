@@ -383,7 +383,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DesignerRegion.GetBounds" /> method returns a value that is equivalent to calling the <see cref="M:System.Web.UI.Design.IControlDesignerView.GetBounds(System.Web.UI.Design.DesignerRegion)" /> method on the <see cref="P:System.Web.UI.Design.DesignerObject.Designer" /> object with this designer region.</para>
@@ -392,6 +391,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the size of the designer region on the design surface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> representing the designer region size on the design surface.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Highlight">

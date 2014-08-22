@@ -87,7 +87,6 @@
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The recommended way to create access control rules is to use the constructors of the <see cref="T:System.IO.Pipes.PipeAccessRule" /> class.</para>
@@ -96,6 +95,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AccessRule" /> class with the specified values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.AccessControl.AccessRule" /> object that this method creates.</para>
+        </returns>
         <param name="identityReference">
           <attribution license="cc4" from="Microsoft" modified="false" />The identity that the access rule applies to. It must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</param>
         <param name="accessMask">
@@ -204,7 +207,6 @@
         <Parameter Name="flags" Type="System.Security.AccessControl.AuditFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The recommended way to create audit rules is to use the constructors of the <see cref="T:System.IO.Pipes.PipeAuditRule" /> class.</para>
@@ -213,6 +215,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AuditRule" /> class with the specified values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.AccessControl.AuditRule" /> object that this method creates.</para>
+        </returns>
         <param name="identityReference">
           <attribution license="cc4" from="Microsoft" modified="false" />The identity that the access rule applies to. It must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</param>
         <param name="accessMask">
@@ -309,7 +315,6 @@
         <Parameter Name="rule" Type="System.IO.Pipes.PipeAccessRule" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAccessRule(System.IO.Pipes.PipeAccessRule)" /> method removes either all matching <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> access rules or all matching <see cref="F:System.Security.AccessControl.AccessControlType.Allow" /> access rules from the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object. For example, you can use this method to remove all <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> access rules for a user by passing a <see cref="T:System.IO.Pipes.PipeAccessRule" /> object created using the <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> value, the <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value, and a user account. The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAccessRule(System.IO.Pipes.PipeAccessRule)" /> method removes any deny rules that specify the <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value or the <see cref="F:System.IO.Pipes.PipeAccessRights.Write" /> value.</para>
@@ -318,6 +323,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes an access rule from the Discretionary Access Control List (DACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation is successful; otherwise, false.</para>
+        </returns>
         <param name="rule">
           <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
       </Docs>
@@ -362,7 +371,6 @@
         <Parameter Name="rule" Type="System.IO.Pipes.PipeAuditRule" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAuditRule(System.IO.Pipes.PipeAuditRule)" /> method removes either all matching <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> audit rules or all matching <see cref="F:System.Security.AccessControl.AccessControlType.Allow" /> audit rules from the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.  For example, you can use this method to remove all <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> audit rules for a user by passing a <see cref="T:System.Security.AccessControl.FileSystemAuditRule" /> object created using the <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> value, the <see cref="F:System.Security.AccessControl.AuditFlags.Failure" /> value, and a user account.  When you do this, the <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAuditRule(System.IO.Pipes.PipeAuditRule)" /> method removes any deny rules that specify the <see cref="F:System.Security.AccessControl.AuditFlags.Failure" /> value or the <see cref="F:System.Security.AccessControl.AuditFlags.Success" /> value.</para>
@@ -371,6 +379,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes an audit rule from the System Access Control List (SACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the audit rule was removed; otherwise, false</para>
+        </returns>
         <param name="rule">
           <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
       </Docs>

@@ -282,7 +282,6 @@ public class EncoderExample
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -294,6 +293,10 @@ public class EncoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, calculates the number of bytes produced by encoding a set of characters starting at the specified character pointer. A parameter indicates whether to clear the internal state of the encoder after the calculation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters and any characters in the internal buffer.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first character to encode. </param>
         <param name="count">
@@ -322,19 +325,6 @@ public class EncoderExample
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the
-   number of bytes required to encode the range in <paramref name="chars" /> from
-<paramref name="index" /> to 
-<paramref name=" index" />
-+ <paramref name="count" /> -1 for a particular encoding.</para>
-          <para>
-            <block subset="none" type="note">This value takes
-   into account the state in which the current instance was left following the last
-   call to <see cref="M:System.Text.Encoder.GetBytes(System.Char[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Boolean)" />
-   .</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="chars " /> is <see langword="null" />. </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -359,6 +349,10 @@ public class EncoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, calculates the number of bytes produced by encoding a set of characters from the specified character array. A parameter indicates whether to clear the internal state of the encoder after the calculation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters and any characters in the internal buffer.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the set of characters to encode. </param>
         <param name="index">
@@ -397,7 +391,6 @@ public class EncoderExample
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -410,6 +403,10 @@ public class EncoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, encodes a set of characters starting at the specified character pointer and any characters in the internal buffer into a sequence of bytes that are stored starting at the specified byte pointer. A parameter indicates whether to clear the internal state of the encoder after the conversion.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written at the location indicated by the <paramref name="bytes" /> parameter.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first character to encode. </param>
         <param name="charCount">
@@ -444,11 +441,6 @@ public class EncoderExample
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing the number of bytes encoded into <paramref name="bytes" /> for a
-   particular encoding.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="bytes" /> does not contain sufficient space to store the encoded characters.</para>
@@ -486,6 +478,10 @@ public class EncoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, encodes a set of characters from the specified character array and any characters in the internal buffer into the specified byte array. A parameter indicates whether to clear the internal state of the encoder after the conversion.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written into <paramref name="bytes" />.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the set of characters to encode. </param>
         <param name="charIndex">

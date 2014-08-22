@@ -35,12 +35,15 @@
         <Parameter Name="dataContractType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>During schema export operations, inserts annotations into the schema for non-null return values. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the annotation to be inserted into the XML schema definition. </para>
+        </returns>
         <param name="memberInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.MemberInfo" /> that describes the member. </param>
         <param name="dataContractType">
@@ -62,12 +65,15 @@
         <Parameter Name="dataContractType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>During schema export operations, inserts annotations into the schema for non-null return values. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the annotation to be inserted into the XML schema definition. </para>
+        </returns>
         <param name="clrType">
           <attribution license="cc4" from="Microsoft" modified="false" />The CLR type to be replaced. </param>
         <param name="dataContractType">
@@ -88,12 +94,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>During serialization, deserialization, and schema import and export, returns a data contract type that substitutes the specified type. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> to substitute for the <paramref name="type" /> value. This type must be serializable by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. For example, it must be marked with the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute or other mechanisms that the serializer recognizes.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The CLR type <see cref="T:System.Type" /> to substitute. </param>
       </Docs>
@@ -113,7 +122,6 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a simple implementation, use an if…then…else control structure to test whether the <paramref name="obj" /> value is of the surrogated type. If so, transform it as necessary and return the substituted object. The substituted object can be a new instance or the same <paramref name="obj" /> instance.</para>
@@ -122,6 +130,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>During deserialization, returns an object that is a substitute for the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The substituted deserialized object. This object must be of a type that is serializable by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. For example, it must be marked with the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute or other mechanisms that the serializer recognizes.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The deserialized object to be substituted.</param>
         <param name="targetType">
@@ -142,9 +154,16 @@
         <Parameter Name="customDataTypes" Type="System.Collections.ObjectModel.Collection&lt;System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="customDataTypes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is required during schema export or schema import only if annotations are inserted into the schema using the <see cref="Overload:System.Runtime.Serialization.IDataContractSurrogate.GetCustomDataToExport" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the collection of known types to use for serialization and deserialization of the custom data objects. </para>
+        </summary>
+        <param name="customDataTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ObjectModel.Collection`1" />  of <see cref="T:System.Type" /> to add known types to.</param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectToSerialize">
@@ -162,7 +181,6 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method must not return null because on deserialization the data will be cast to type <see cref="T:System.Object" /> and an <see cref="T:System.InvalidCastException" /> is thrown.  </para>
@@ -171,6 +189,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>During serialization, returns an object that substitutes the specified object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The substituted object that will be serialized. The object must be serializable by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. For example, it must be marked with the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute or other mechanisms that the serializer recognizes.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to substitute. </param>
         <param name="targetType">
@@ -193,7 +215,6 @@
         <Parameter Name="customData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Null should be returned if a CLR type does not exist for representing the schema type. This will cause a new type to be generated during schema import.</para>
@@ -202,6 +223,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>During schema import, returns the type referenced by the schema.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> to use for the referenced type.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the type in schema.</param>
         <param name="typeNamespace">
@@ -225,7 +250,6 @@
         <Parameter Name="compileUnit" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The input <see cref="T:System.CodeDom.CodeTypeDeclaration" /> or other information in the <see cref="T:System.CodeDom.CodeCompileUnit" /> can be modified by the user in this method. If null is returned, it will cause the type to not be generated. If a new <see cref="T:System.CodeDom.CodeTypeDeclaration" /> is returned, it will replace the original type generated.</para>
@@ -234,6 +258,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the type that has been generated from the imported schema.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeTypeDeclaration" /> that contains the processed type.</para>
+        </returns>
         <param name="typeDeclaration">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeDeclaration" /> to process that represents the type declaration generated during schema import.</param>
         <param name="compileUnit">

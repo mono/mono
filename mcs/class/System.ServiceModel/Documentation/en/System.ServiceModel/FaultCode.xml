@@ -144,12 +144,15 @@
       </Parameters>
       <Docs>
         <param name="subcode">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a receiver fault code with the specified subcode. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultCode" /> object with the created SOAP fault subcode in the <see cref="P:System.ServiceModel.FaultCode.SubCode" /> property. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateReceiverFaultCode">
@@ -167,12 +170,15 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a receiver fault code with the specified subcode. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultCode" /> instance with the created SOAP fault subcode in the <see cref="P:System.ServiceModel.FaultCode.SubCode" /> property. </para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name for the fault subcode. </param>
         <param name="ns">
@@ -194,12 +200,15 @@
       </Parameters>
       <Docs>
         <param name="subcode">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a sender fault code with the specified subcode. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultCode" /> object with the created SOAP fault subcode in the <see cref="P:System.ServiceModel.FaultCode.SubCode" /> property. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateSenderFaultCode">
@@ -217,12 +226,15 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a sender fault code with the specified subcode.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultCode" /> object with the created SOAP fault subcode in <see cref="P:System.ServiceModel.FaultCode.SubCode" />. </para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name for the fault subcode. </param>
         <param name="ns">

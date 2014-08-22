@@ -44,7 +44,6 @@
         <Parameter Name="certificateProblem" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.ICertificatePolicy.CheckValidationResult(System.Net.ServicePoint,System.Security.Cryptography.X509Certificates.X509Certificate,System.Net.WebRequest,System.Int32)" /> method implements the application certificate validation policy. The method can examine the <paramref name="srvPoint" />, <paramref name="certificate" />, <paramref name="request" />, and <paramref name="certificateProblem" /> parameters to determine whether the certificate should be honored.</para>
@@ -54,6 +53,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Validates a server certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the certificate should be honored; otherwise, false.</para>
+        </returns>
         <param name="srvPoint">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.ServicePoint" /> that will use the certificate. </param>
         <param name="certificate">

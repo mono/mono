@@ -67,7 +67,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.DirectoryServices.SearchResult.GetDirectoryEntry" /> when you want to look at the live entry instead of the entry that was returned through <see cref="T:System.DirectoryServices.DirectorySearcher" />, or when you want to invoke a method on the object that was returned.</para>
@@ -79,6 +78,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.DirectoryServices.DirectoryEntry" /> that corresponds to the <see cref="T:System.DirectoryServices.SearchResult" /> from the Active Directory Domain Services hierarchy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DirectoryServices.DirectoryEntry" /> that corresponds to the <see cref="T:System.DirectoryServices.SearchResult" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Properties">

@@ -425,6 +425,21 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_UserAgentExtra ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			var headers = message.Headers;
+
+			headers.Add ("User-Agent", "MonoDevelop (Unix 3.13.0; amd64; en-US; Octokit 0.3.4)");
+
+			var se = headers.UserAgent.SequenceEqual (
+				new[] {
+						new ProductInfoHeaderValue ("MonoDevelop", null),
+						new ProductInfoHeaderValue ("(Unix 3.13.0; amd64; en-US; Octokit 0.3.4)")
+				});
+		}
+
+		[Test]
 		public void Header_BaseImplementation ()
 		{
 			HttpRequestMessage message = new HttpRequestMessage ();

@@ -174,7 +174,6 @@
         <Parameter Name="contractDescription" Type="System.ServiceModel.Description.ContractDescription" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Other code artifacts may also get generated as specified by using the <see cref="P:System.ServiceModel.Description.ServiceContractGenerator.Options" /> property.</para>
@@ -183,6 +182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a service contract type from the specified <see cref="T:System.ServiceModel.Description.ContractDescription" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeTypeReference" /> instance for the generated contract type.</para>
+        </returns>
         <param name="contractDescription">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ContractDescription" /> to use to generate the contract type.</param>
       </Docs>

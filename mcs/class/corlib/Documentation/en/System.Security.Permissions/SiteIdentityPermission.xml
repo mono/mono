@@ -116,7 +116,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A copy of the permission represents the same access to resources or the same site identity as the original permission.</para>
@@ -125,6 +124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns an identical copy of the current permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current permission.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -168,7 +171,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The intersection of two permissions is a permission that describes the sites they both describe in common. Only a demand that passes both original permissions will pass the intersection. For example, the intersection of a permission that represents access to www.fourthcoffee.com and one that represents access to *.fourthcoffee.com is a permission that represents access to www.fourthcoffee.com.</para>
@@ -178,6 +180,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a permission that is the intersection of the current permission and the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the intersection of the current permission and the specified permission. This new permission is null if the intersection is empty.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission to intersect with the current permission. It must be of the same type as the current permission. </param>
       </Docs>
@@ -198,7 +204,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current permission is a subset of the specified permission if the current permission specifies a site that is wholly contained by the specified permission.</para>
@@ -322,6 +327,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current permission is a subset of the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current permission is a subset of the specified permission; otherwise, false.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission that is to be tested for the subset relationship. This permission must be of the same type as the current permission. </param>
       </Docs>
@@ -384,12 +393,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of the permission and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the permission, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Union">
@@ -408,7 +420,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The result of a call to <see cref="M:System.Security.Permissions.SiteIdentityPermission.Union(System.Security.IPermission)" /> is a permission that represents all the sites represented by both the current permission and the specified permission. Any demand that passes either permission passes their union. For example, the union of a permission that represents access to www.fourthcoffee.com and one that represents access to *.fourthcoffee.com is a permission that represents access to *.fourthcoffee.com.</para>
@@ -418,6 +429,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a permission that is the union of the current permission and the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the union of the current permission and the specified permission.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission to combine with the current permission. It must be of the same type as the current permission. </param>
       </Docs>

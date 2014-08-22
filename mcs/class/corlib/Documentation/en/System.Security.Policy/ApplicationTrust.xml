@@ -90,10 +90,19 @@
         <Parameter Name="fullTrustAssemblies" Type="System.Collections.Generic.IEnumerable&lt;System.Security.Policy.StrongName&gt;" />
       </Parameters>
       <Docs>
-        <param name="defaultGrantSet">To be added.</param>
-        <param name="fullTrustAssemblies">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="fullTrustAssemblies" /> identifies strong-named assemblies within the <see cref="T:System.AppDomain" /> that are to be granted full trust. This constructor is called by the <see cref="M:System.AppDomain.CreateDomain(System.String,System.Security.Policy.Evidence,System.AppDomainSetup,System.Security.PermissionSet,System.Security.Policy.StrongName[])" /> method to create an <see cref="T:System.AppDomain" /> that will be used as a sandbox. For more information about running an application in a sandbox, see <format type="text/html"><a href="d1ad722b-5b49-4040-bff3-431b94bb8095">How To: Run Partially Trusted Code in a Sandbox</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.ApplicationTrust" /> class using the provided grant set and collection of full-trust assemblies.</para>
+        </summary>
+        <param name="defaultGrantSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />A default permission set that is granted to all assemblies that do not have specific grants.</param>
+        <param name="fullTrustAssemblies">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of strong names that represent assemblies that should be considered fully trusted in an application domain.</param>
       </Docs>
     </Member>
     <Member MemberName="ApplicationIdentity">
@@ -277,7 +286,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -287,6 +295,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of the <see cref="T:System.Security.Policy.ApplicationTrust" /> object and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

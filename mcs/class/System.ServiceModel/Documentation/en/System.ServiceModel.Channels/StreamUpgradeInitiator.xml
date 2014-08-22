@@ -54,7 +54,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method calls <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.InitiateUpgrade(System.IO.Stream)" /> and returns. </para>
@@ -63,6 +62,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This abstract method can be implemented to do asynchronous processing that initiates an upgrade.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.IAsyncResult" /> to be passed into the <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.EndInitiateUpgrade(System.IAsyncResult)" /> method.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream to be upgraded.</param>
         <param name="callback">
@@ -85,7 +88,6 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about using this method, see the remarks in <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.InitiateUpgrade(System.IO.Stream)" />.</para>
@@ -94,6 +96,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is the asynchronous callback method that is called after <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.BeginInitiateUpgrade(System.IO.Stream,System.AsyncCallback,System.Object)" /> has completed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the upgraded stream.</para>
+        </returns>
         <param name="result">
           <attribution license="cc4" from="Microsoft" modified="false" />The IAsyncResult returned from the <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.BeginInitiateUpgrade(System.IO.Stream,System.AsyncCallback,System.Object)" /> method. </param>
       </Docs>
@@ -110,7 +116,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns a set of upgrade content types supported by the upgrade provider in the order in which they are expected. Upgrade providers that support a single upgrade return only a single value. Upgrade providers that support multiple upgrades return the values in order (for example, compression content type followed by the security content type).</para>
@@ -119,6 +124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the content type of the next upgrade to be performed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the content type of the next upgrade.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InitiateUpgrade">
@@ -135,7 +144,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be called multiple times for each upgrade supported by the upgrade provider. For example, an upgrade provider that supports compression and security would call this method twice: first to upgrade the default transport streaming for compression, and second to upgrade the security. Subsequent calls to this method should pass in the upgrade stream from the previous call.</para>
@@ -144,6 +152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initiates the upgrade of the stream by requesting the other end of its connection to upgrade the channel transport layer. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the upgraded stream.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream to be upgraded.</param>
       </Docs>

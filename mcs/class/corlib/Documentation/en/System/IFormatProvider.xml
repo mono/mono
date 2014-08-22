@@ -61,9 +61,6 @@
         <Parameter Name="formatType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance, if <paramref name="formatType" /> is the same type as the current instance; otherwise, a <see langword="null" /> reference.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -75,6 +72,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that provides formatting services for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the object specified by <paramref name="formatType" />, if the <see cref="T:System.IFormatProvider" /> implementation can supply that type of object; otherwise, null.</para>
+        </returns>
         <param name="formatType">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that specifies the type of format object to return. </param>
       </Docs>

@@ -184,7 +184,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.ComplexBindingPropertiesAttribute.Equals(System.Object)" /> method returns true if <paramref name="obj" /> is of type <see cref="T:System.ComponentModel.ComplexBindingPropertiesAttribute" /> and the <see cref="P:System.ComponentModel.ComplexBindingPropertiesAttribute.DataSource" /> and <see cref="P:System.ComponentModel.ComplexBindingPropertiesAttribute.DataMember" /> properties of the two objects are equal.</para>
@@ -193,6 +192,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.ComponentModel.ComplexBindingPropertiesAttribute" /> instance. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is equal to the current instance; otherwise, false, indicating they are not equal.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.ComponentModel.ComplexBindingPropertiesAttribute" /> instance </param>
       </Docs>

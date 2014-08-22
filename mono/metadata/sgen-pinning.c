@@ -27,9 +27,9 @@
 #include "metadata/sgen-protocol.h"
 
 static void** pin_queue;
-static int pin_queue_size = 0;
-static int next_pin_slot = 0;
-static int last_num_pinned = 0;
+static size_t pin_queue_size = 0;
+static size_t next_pin_slot = 0;
+static size_t last_num_pinned = 0;
 
 #define PIN_HASH_SIZE 1024
 static void *pin_hash_filter [PIN_HASH_SIZE];
@@ -50,13 +50,13 @@ sgen_finish_pinning (void)
 static void
 realloc_pin_queue (void)
 {
-	int new_size = pin_queue_size? pin_queue_size + pin_queue_size/2: 1024;
+	size_t new_size = pin_queue_size? pin_queue_size + pin_queue_size/2: 1024;
 	void **new_pin = sgen_alloc_internal_dynamic (sizeof (void*) * new_size, INTERNAL_MEM_PIN_QUEUE, TRUE);
 	memcpy (new_pin, pin_queue, sizeof (void*) * next_pin_slot);
 	sgen_free_internal_dynamic (pin_queue, sizeof (void*) * pin_queue_size, INTERNAL_MEM_PIN_QUEUE);
 	pin_queue = new_pin;
 	pin_queue_size = new_size;
-	SGEN_LOG (4, "Reallocated pin queue to size: %d", new_size);
+	SGEN_LOG (4, "Reallocated pin queue to size: %zd", new_size);
 }
 
 void
@@ -75,12 +75,12 @@ sgen_pin_stage_ptr (void *ptr)
 	pin_queue [next_pin_slot++] = ptr;
 }
 
-static int
+static size_t
 optimized_pin_queue_search (void *addr)
 {
-	int first = 0, last = next_pin_slot;
+	size_t first = 0, last = next_pin_slot;
 	while (first < last) {
-		int middle = first + ((last - first) >> 1);
+		size_t middle = first + ((last - first) >> 1);
 		if (addr <= pin_queue [middle])
 			last = middle;
 		else
@@ -91,9 +91,9 @@ optimized_pin_queue_search (void *addr)
 }
 
 void**
-sgen_find_optimized_pin_queue_area (void *start, void *end, int *num)
+sgen_find_optimized_pin_queue_area (void *start, void *end, size_t *num)
 {
-	int first, last;
+	size_t first, last;
 	first = optimized_pin_queue_search (start);
 	last = optimized_pin_queue_search (end);
 	*num = last - first;
@@ -107,7 +107,7 @@ sgen_find_section_pin_queue_start_end (GCMemSection *section)
 {
 	SGEN_LOG (6, "Pinning from section %p (%p-%p)", section, section->data, section->end_data);
 	section->pin_queue_start = sgen_find_optimized_pin_queue_area (section->data, section->end_data, &section->pin_queue_num_entries);
-	SGEN_LOG (6, "Found %d pinning addresses in section %p", section->pin_queue_num_entries, section);
+	SGEN_LOG (6, "Found %zd pinning addresses in section %p", section->pin_queue_num_entries, section);
 }
 
 /*This will setup the given section for the while pin queue. */
@@ -125,7 +125,7 @@ sgen_pinning_trim_queue_to_section (GCMemSection *section)
 }
 
 void
-sgen_pin_queue_clear_discarded_entries (GCMemSection *section, int max_pin_slot)
+sgen_pin_queue_clear_discarded_entries (GCMemSection *section, size_t max_pin_slot)
 {
 	void **start = section->pin_queue_start + section->pin_queue_num_entries;
 	void **end = pin_queue + max_pin_slot;
@@ -144,12 +144,12 @@ sgen_pin_queue_clear_discarded_entries (GCMemSection *section, int max_pin_slot)
 
 /* reduce the info in the pin queue, removing duplicate pointers and sorting them */
 void
-sgen_optimize_pin_queue (int start_slot)
+sgen_optimize_pin_queue (size_t start_slot)
 {
 	void **start, **cur, **end;
 	/* sort and uniq pin_queue: we just sort and we let the rest discard multiple values */
 	/* it may be better to keep ranges of pinned memory instead of individually pinning objects */
-	SGEN_LOG (5, "Sorting pin queue, size: %d", next_pin_slot);
+	SGEN_LOG (5, "Sorting pin queue, size: %zd", next_pin_slot);
 	if ((next_pin_slot - start_slot) > 1)
 		sgen_sort_addresses (pin_queue + start_slot, next_pin_slot - start_slot);
 	start = cur = pin_queue + start_slot;
@@ -161,10 +161,10 @@ sgen_optimize_pin_queue (int start_slot)
 		start++;
 	};
 	next_pin_slot = start - pin_queue;
-	SGEN_LOG (5, "Pin queue reduced to size: %d", next_pin_slot);
+	SGEN_LOG (5, "Pin queue reduced to size: %zd", next_pin_slot);
 }
 
-int
+size_t
 sgen_get_pinned_count (void)
 {
 	return next_pin_slot;
@@ -176,7 +176,7 @@ sgen_dump_pin_queue (void)
 	int i;
 
 	for (i = 0; i < last_num_pinned; ++i) {
-		SGEN_LOG (3, "Bastard pinning obj %p (%s), size: %d", pin_queue [i], sgen_safe_name (pin_queue [i]), sgen_safe_object_get_size (pin_queue [i]));
+		SGEN_LOG (3, "Bastard pinning obj %p (%s), size: %zd", pin_queue [i], sgen_safe_name (pin_queue [i]), sgen_safe_object_get_size (pin_queue [i]));
 	}	
 }
 
@@ -246,7 +246,8 @@ sgen_cement_concurrent_finish (void)
 gboolean
 sgen_cement_lookup (char *obj)
 {
-	int i = mono_aligned_addr_hash (obj) % SGEN_CEMENT_HASH_SIZE;
+	guint hv = mono_aligned_addr_hash (obj);
+	int i = SGEN_CEMENT_HASH (hv);
 
 	SGEN_ASSERT (5, sgen_ptr_in_nursery (obj), "Looking up cementing for non-nursery objects makes no sense");
 
@@ -264,6 +265,7 @@ sgen_cement_lookup (char *obj)
 gboolean
 sgen_cement_lookup_or_register (char *obj)
 {
+	guint hv;
 	int i;
 	CementHashEntry *hash;
 	gboolean concurrent_cementing = sgen_concurrent_collection_in_progress ();
@@ -279,17 +281,8 @@ sgen_cement_lookup_or_register (char *obj)
 	else
 		hash = cement_hash;
 
-	/*
-	 * We use modulus hashing, which is fine with constants as gcc
-	 * can optimize them to multiplication, but with variable
-	 * values it would be a bad idea given armv7 has no hardware
-	 * for division, making it 20x slower than a multiplication.
-	 *
-	 * This code path can be quite hot, depending on the workload,
-	 * so if we make the hash size user-adjustable we should
-	 * figure out something not involving division.
-	 */
-	i = mono_aligned_addr_hash (obj) % SGEN_CEMENT_HASH_SIZE;
+	hv = mono_aligned_addr_hash (obj);
+	i = SGEN_CEMENT_HASH (hv);
 
 	SGEN_ASSERT (5, sgen_ptr_in_nursery (obj), "Can only cement pointers to nursery objects");
 
@@ -311,7 +304,7 @@ sgen_cement_lookup_or_register (char *obj)
 					vt->klass->name_space, vt->klass->name);
 		}
 		binary_protocol_cement (obj, (gpointer)SGEN_LOAD_VTABLE (obj),
-				sgen_safe_object_get_size ((MonoObject*)obj));
+				(int)sgen_safe_object_get_size ((MonoObject*)obj));
 	}
 
 	return FALSE;

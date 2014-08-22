@@ -45,6 +45,7 @@
 #include "metadata/profiler-private.h"
 #include "metadata/marshal.h"
 #include "metadata/method-builder.h"
+#include "metadata/abi-details.h"
 #include "utils/mono-memory-model.h"
 #include "utils/mono-counters.h"
 
@@ -117,15 +118,15 @@ alloc_degraded (MonoVTable *vtable, size_t size, gboolean for_mature)
 	void *p;
 
 	if (!for_mature) {
-		if (last_major_gc_warned < stat_major_gcs) {
+		if (last_major_gc_warned < gc_stats.major_gc_count) {
 			++num_degraded;
 			if (num_degraded == 1 || num_degraded == 3)
-				fprintf (stderr, "Warning: Degraded allocation.  Consider increasing nursery-size if the warning persists.\n");
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Degraded allocation.  Consider increasing nursery-size if the warning persists.");
 			else if (num_degraded == 10)
-				fprintf (stderr, "Warning: Repeated degraded allocation.  Consider increasing nursery-size.\n");
-			last_major_gc_warned = stat_major_gcs;
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Repeated degraded allocation.  Consider increasing nursery-size.");
+			last_major_gc_warned = gc_stats.major_gc_count;
 		}
-		InterlockedExchangeAdd (&degraded_mode, size);
+		SGEN_ATOMIC_ADD_P (degraded_mode, size);
 		sgen_ensure_free_space (size);
 	} else {
 		if (sgen_need_major_collection (size))
@@ -148,7 +149,7 @@ alloc_degraded (MonoVTable *vtable, size_t size, gboolean for_mature)
 static void
 zero_tlab_if_necessary (void *p, size_t size)
 {
-	if (nursery_clear_policy == CLEAR_AT_TLAB_CREATION) {
+	if (nursery_clear_policy == CLEAR_AT_TLAB_CREATION || nursery_clear_policy == CLEAR_AT_TLAB_CREATION_DEBUG) {
 		memset (p, 0, size);
 	} else {
 		/*
@@ -283,7 +284,7 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 			if (degraded_mode && degraded_mode < DEFAULT_NURSERY_SIZE)
 				return alloc_degraded (vtable, size, FALSE);
 
-			available_in_tlab = TLAB_REAL_END - TLAB_NEXT;
+			available_in_tlab = (int)(TLAB_REAL_END - TLAB_NEXT);//We'll never have tlabs > 2Gb
 			if (size > tlab_size || available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
 				/* Allocate directly from the nursery */
 				do {
@@ -396,7 +397,7 @@ mono_gc_try_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 		new_next = (char*)p + size;
 
 		real_end = TLAB_REAL_END;
-		available_in_tlab = real_end - (char*)p;
+		available_in_tlab = (int)(real_end - (char*)p);//We'll never have tlabs > 2Gb
 
 		if (G_LIKELY (new_next < real_end)) {
 			TLAB_NEXT = new_next;
@@ -454,12 +455,12 @@ void*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	void *res;
+	TLAB_ACCESS_INIT;
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
 
 #ifndef DISABLE_CRITICAL_REGION
-	TLAB_ACCESS_INIT;
 
 	if (G_UNLIKELY (has_per_allocation_action)) {
 		static int alloc_count;
@@ -498,17 +499,17 @@ void*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *arr;
+	TLAB_ACCESS_INIT;
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
 
 #ifndef DISABLE_CRITICAL_REGION
-	TLAB_ACCESS_INIT;
 	ENTER_CRITICAL_REGION;
 	arr = mono_gc_try_alloc_obj_nolock (vtable, size);
 	if (arr) {
 		/*This doesn't require fencing since EXIT_CRITICAL_REGION already does it for us*/
-		arr->max_length = max_length;
+		arr->max_length = (mono_array_size_t)max_length;
 		EXIT_CRITICAL_REGION;
 		return arr;
 	}
@@ -523,7 +524,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 		return mono_gc_out_of_memory (size);
 	}
 
-	arr->max_length = max_length;
+	arr->max_length = (mono_array_size_t)max_length;
 
 	UNLOCK_GC;
 
@@ -535,17 +536,17 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 {
 	MonoArray *arr;
 	MonoArrayBounds *bounds;
+	TLAB_ACCESS_INIT;
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
 
 #ifndef DISABLE_CRITICAL_REGION
-	TLAB_ACCESS_INIT;
 	ENTER_CRITICAL_REGION;
 	arr = mono_gc_try_alloc_obj_nolock (vtable, size);
 	if (arr) {
 		/*This doesn't require fencing since EXIT_CRITICAL_REGION already does it for us*/
-		arr->max_length = max_length;
+		arr->max_length = (mono_array_size_t)max_length;
 
 		bounds = (MonoArrayBounds*)((char*)arr + size - bounds_size);
 		arr->bounds = bounds;
@@ -563,7 +564,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 		return mono_gc_out_of_memory (size);
 	}
 
-	arr->max_length = max_length;
+	arr->max_length = (mono_array_size_t)max_length;
 
 	bounds = (MonoArrayBounds*)((char*)arr + size - bounds_size);
 	arr->bounds = bounds;
@@ -577,12 +578,12 @@ void*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
 	MonoString *str;
+	TLAB_ACCESS_INIT;
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
 
 #ifndef DISABLE_CRITICAL_REGION
-	TLAB_ACCESS_INIT;
 	ENTER_CRITICAL_REGION;
 	str = mono_gc_try_alloc_obj_nolock (vtable, size);
 	if (str) {
@@ -797,10 +798,10 @@ create_allocator (int atype)
 	if (atype == ATYPE_NORMAL || atype == ATYPE_SMALL) {
 		/* size = vtable->klass->instance_size; */
 		mono_mb_emit_ldarg (mb, 0);
-		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoVTable, klass));
+		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoVTable, klass));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoClass, instance_size));
+		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoClass, instance_size));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		/* FIXME: assert instance_size stays a 4 byte integer */
 		mono_mb_emit_byte (mb, CEE_LDIND_U4);
@@ -840,10 +841,10 @@ create_allocator (int atype)
 
 		/* vtable->klass->sizes.element_size */
 		mono_mb_emit_ldarg (mb, 0);
-		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoVTable, klass));
+		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoVTable, klass));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoClass, sizes.element_size));
+		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoClass, sizes));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_U4);
 		mono_mb_emit_byte (mb, CEE_CONV_I);
@@ -940,7 +941,7 @@ create_allocator (int atype)
 
 	/* tlab_next_addr (local) = tlab_next_addr (TLS var) */
 	tlab_next_addr_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-	EMIT_TLS_ACCESS (mb, tlab_next_addr, TLS_KEY_SGEN_TLAB_NEXT_ADDR);
+	EMIT_TLS_ACCESS_NEXT_ADDR (mb);
 	mono_mb_emit_stloc (mb, tlab_next_addr_var);
 
 	/* p = (void**)tlab_next; */
@@ -959,7 +960,7 @@ create_allocator (int atype)
 
 	/* if (G_LIKELY (new_next < tlab_temp_end)) */
 	mono_mb_emit_ldloc (mb, new_next_var);
-	EMIT_TLS_ACCESS (mb, tlab_temp_end, TLS_KEY_SGEN_TLAB_TEMP_END);
+	EMIT_TLS_ACCESS_TEMP_END (mb);
 	slowpath_branch = mono_mb_emit_short_branch (mb, MONO_CEE_BLT_UN_S);
 
 	/* Slowpath */
@@ -997,7 +998,7 @@ create_allocator (int atype)
 
 	/*The tlab store must be visible before the the vtable store. This could be replaced with a DDS but doing it with IL would be tricky. */
 	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_MEMORY_BARRIER, StoreStoreBarrier);
+	mono_mb_emit_op (mb, CEE_MONO_MEMORY_BARRIER, (gpointer)StoreStoreBarrier);
 
 	/* *p = vtable; */
 	mono_mb_emit_ldloc (mb, p_var);
@@ -1007,7 +1008,7 @@ create_allocator (int atype)
 	if (atype == ATYPE_VECTOR) {
 		/* arr->max_length = max_length; */
 		mono_mb_emit_ldloc (mb, p_var);
-		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoArray, max_length));
+		mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoArray, max_length));
 		mono_mb_emit_ldarg (mb, 1);
 #ifdef MONO_BIG_ARRAYS
 		mono_mb_emit_byte (mb, CEE_STIND_I);
@@ -1018,7 +1019,7 @@ create_allocator (int atype)
 		/* need to set length and clear the last char */
 		/* s->length = len; */
 		mono_mb_emit_ldloc (mb, p_var);
-		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoString, length));
+		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoString, length));
 		mono_mb_emit_byte (mb, MONO_CEE_ADD);
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_byte (mb, MONO_CEE_STIND_I4);
@@ -1036,7 +1037,7 @@ create_allocator (int atype)
 	We must make sure both vtable and max_length are globaly visible before returning to managed land.
 	*/
 	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_MEMORY_BARRIER, StoreStoreBarrier);
+	mono_mb_emit_op (mb, CEE_MONO_MEMORY_BARRIER, (gpointer)StoreStoreBarrier);
 
 	/* return p */
 	mono_mb_emit_ldloc (mb, p_var);

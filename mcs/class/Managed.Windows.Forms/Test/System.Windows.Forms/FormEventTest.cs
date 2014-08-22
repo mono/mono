@@ -642,6 +642,7 @@ namespace MonoTests.System.Windows.Forms
 		private static int oipt_t1 = 0;
 		private static int oipt_t2 = 0;
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void OneIdlePerThread () {
 			Thread t = Thread.CurrentThread;
 			oipt_t1 = t.ManagedThreadId;

@@ -39,12 +39,15 @@
         <Parameter Name="item" Type="System.ServiceModel.Description.MessagePropertyDescription" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlQualifiedName" /> for a <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlQualifiedName" /> of the <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" />.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" /> to locate.</param>
       </Docs>

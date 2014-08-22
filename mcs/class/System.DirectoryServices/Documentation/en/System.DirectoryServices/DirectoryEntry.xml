@@ -190,7 +190,6 @@
         <Parameter Name="newParent" Type="System.DirectoryServices.DirectoryEntry" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <see cref="P:System.DirectoryServices.DirectoryEntry.UsePropertyCache" /> is true, call <see cref="M:System.DirectoryServices.DirectoryEntry.CommitChanges" /> on the new object to make the copy permanent.</para>
@@ -200,6 +199,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of this entry as a child of the specified parent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DirectoryServices.DirectoryEntry" /> object that represents the copy of this entry as a child of the new parent.</para>
+        </returns>
         <param name="newParent">
           <attribution license="cc4" from="Microsoft" modified="false" />The distinguished name of the <see cref="T:System.DirectoryServices.DirectoryEntry" /> object that will be the parent for the copy that is being created.</param>
       </Docs>
@@ -243,12 +246,15 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the specified path represents an actual entry in the directory service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified path represents a valid entry in the directory service; otherwise, false.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path of the entry to verify.</param>
       </Docs>
@@ -342,7 +348,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the return value of the native method implements the IADs interface, a corresponding <see cref="T:System.DirectoryServices.DirectoryEntry" /> is returned. For more information about the IADs interface, see the topic <see cref="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/adsi/adsi/iads.asp">IADs</see> in the MSDN Library at <see cref="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/adsi/adsi/iads.asp">http://msdn.microsoft.com/library</see>.</para>
@@ -351,6 +356,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calls a method on the native Active Directory Domain Services object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value of the invoked method.</para>
+        </returns>
         <param name="methodName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the method to invoke.</param>
         <param name="args">
@@ -368,7 +377,6 @@
         <Parameter Name="newName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The Lightweight Directory Access Protocol (LDAP) provider does not currently support this method.</para>
@@ -378,6 +386,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of this <see cref="T:System.DirectoryServices.DirectoryEntry" /> object, as a child of the specified parent <see cref="T:System.DirectoryServices.DirectoryEntry" /> object, with the specified new name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A renamed copy of this entry as a child of the specified parent.</para>
+        </returns>
         <param name="newParent">
           <attribution license="cc4" from="Microsoft" modified="false" />The DN of the <see cref="T:System.DirectoryServices.DirectoryEntry" /> object that will be the parent for the copy that is being created.</param>
         <param name="newName">

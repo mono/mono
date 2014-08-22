@@ -37,7 +37,6 @@
         <Parameter Name="toDecrypt" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -47,6 +46,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decrypts an XrML &lt;encryptedGrant&gt; element that is contained within a <see cref="T:System.IO.Stream" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object that contains a decrypted &lt;encryptedGrant&gt; element.</para>
+        </returns>
         <param name="encryptionMethod">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> object that encapsulates the algorithm used for XML encryption.</param>
         <param name="keyInfo">

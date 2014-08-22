@@ -1480,9 +1480,9 @@ namespace System
 			return false;
 		}
 		
-		private static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
+		unsafe static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
 		{
-			QSortStack[] stack = new QSortStack[32];
+			QSortStack* stack = stackalloc QSortStack [32];
 			const int QSORT_THRESHOLD = 7;
 			int high, low, mid, i, k;
 			object key, hi, lo;
@@ -1934,9 +1934,9 @@ namespace System
 			return false;
 		}
 		
-		private static void qsort<T, U> (T[] keys, U[] items, int low0, int high0) where T : IComparable<T>
+		unsafe static void qsort<T, U> (T[] keys, U[] items, int low0, int high0) where T : IComparable<T>
 		{
-			QSortStack[] stack = new QSortStack[32];
+			QSortStack* stack = stackalloc QSortStack [32];
 			const int QSORT_THRESHOLD = 7;
 			int high, low, mid, i, k;
 			int sp = 1;
@@ -2043,9 +2043,9 @@ namespace System
 		}		
 
 		// Specialized version for items==null
-		private static void qsort<T> (T[] keys, int low0, int high0) where T : IComparable<T>
+		unsafe static void qsort<T> (T[] keys, int low0, int high0) where T : IComparable<T>
 		{
-			QSortStack[] stack = new QSortStack[32];
+			QSortStack* stack = stackalloc QSortStack [32];
 			const int QSORT_THRESHOLD = 7;
 			int high, low, mid, i, k;
 			int sp = 1;
@@ -2232,9 +2232,9 @@ namespace System
 			return false;
 		}
 		
-		private static void qsort<K, V> (K [] keys, V [] items, int low0, int high0, IComparer<K> comparer)
+		unsafe static void qsort<K, V> (K [] keys, V [] items, int low0, int high0, IComparer<K> comparer)
 		{
-			QSortStack[] stack = new QSortStack[32];
+			QSortStack* stack = stackalloc QSortStack [32];
 			const int QSORT_THRESHOLD = 7;
 			int high, low, mid, i, k;
 			IComparable<K> gcmp;
@@ -2378,9 +2378,9 @@ namespace System
 		}
 
 		// Specialized version for items==null
-		private static void qsort<K> (K [] keys, int low0, int high0, IComparer<K> comparer)
+		unsafe static void qsort<K> (K [] keys, int low0, int high0, IComparer<K> comparer)
 		{
-			QSortStack[] stack = new QSortStack[32];
+			QSortStack* stack = stackalloc QSortStack [32];
 			const int QSORT_THRESHOLD = 7;
 			int high, low, mid, i, k;
 			IComparable<K> gcmp;
@@ -2535,9 +2535,9 @@ namespace System
 			return false;
 		}
 		
-		private static void qsort<T> (T [] array, int low0, int high0, Comparison<T> compare)
+		unsafe static void qsort<T> (T [] array, int low0, int high0, Comparison<T> compare)
 		{
-			QSortStack[] stack = new QSortStack[32];
+			QSortStack* stack = stackalloc QSortStack [32];
 			const int QSORT_THRESHOLD = 7;
 			int high, low, mid, i, k;
 			int sp = 1;

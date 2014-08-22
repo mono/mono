@@ -38,7 +38,7 @@ namespace System.Security.Cryptography {
 	public class CryptographicUnexpectedOperationException : CryptographicException {
 
 		public CryptographicUnexpectedOperationException ()
-			: base (Locale.GetText ("Unexpected error occured during a cryptographic operation."))
+			: base (Locale.GetText ("Unexpected error occurred during a cryptographic operation."))
 		{
 			// Default to CORSEC_E_CRYPTO_UNEX_OPER (CorError.h)
 			HResult = unchecked ((int)0x80131431);

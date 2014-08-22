@@ -140,7 +140,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to retrieve the actual handle value from an instance of the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> derived class. This method is needed for backwards compatibility because many properties in the .NET Framework return IntPtr handle types. IntPtr handle types are platform-specific types used to represent a pointer or a handle.</para>
@@ -152,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the <see cref="F:System.Runtime.InteropServices.SafeHandle.handle" /> field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An IntPtr representing the value of the <see cref="F:System.Runtime.InteropServices.SafeHandle.handle" /> field. If the handle has been marked invalid with <see cref="M:System.Runtime.InteropServices.SafeHandle.SetHandleAsInvalid" />, this method still returns the original handle value, which can be a stale value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DangerousRelease">
@@ -378,7 +381,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> method is guaranteed to be called only once and only if the handle is valid as defined by the <see cref="P:System.Runtime.InteropServices.SafeHandle.IsInvalid" /> property. Implement this method in your <see cref="T:System.Runtime.InteropServices.SafeHandle" /> derived classes to execute any code that is required to free the handle. Because one of the functions of <see cref="T:System.Runtime.InteropServices.SafeHandle" /> is to guarantee prevention of resource leaks, the code in your implementation of <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> must never fail. The garbage collector calls <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> after normal finalizers have been run for objects that were garbage collected at the same time. The garbage collector guarantees the resources to invoke this method and that the method will not be interrupted while it is in progress. This method will be prepared as a constrained execution region (CER) at instance construction time (along with all the methods in its statically determinable call graph). Although this prevents thread abort interrupts, you must still be careful not to introduce any fault paths in your overridden <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> method. In particular, apply the <see cref="T:System.Runtime.ConstrainedExecution.ReliabilityContractAttribute" /> attribute to any methods you call from <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" />. In most cases this code should be:</para>
@@ -390,6 +392,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, executes the code required to free the handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this case, it generates a <format type="text/html"><a href="44cd98ba-95e5-40a1-874d-e8e163612c51">ReleaseHandleFailed</a></format> Managed Debugging Assistant.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SetHandle">

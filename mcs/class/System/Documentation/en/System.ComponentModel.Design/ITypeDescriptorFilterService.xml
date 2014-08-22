@@ -78,7 +78,6 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called when a user requests a set of attributes for a component. The attributes are added to the dictionary with the attribute's <see cref="P:System.Attribute.TypeId" /> as the keys and the actual attribute as the value. Implementers of this service can add, remove, or alter existing attribute entries in the dictionary.</para>
@@ -87,6 +86,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Filters the attributes that a component exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the set of filtered attributes is to be cached; false if the filter service must query again.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to filter the attributes of. </param>
         <param name="attributes">
@@ -110,7 +113,6 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called when a user requests a set of events for a component. The events are added to the dictionary with the event names as the keys and the corresponding <see cref="T:System.ComponentModel.EventDescriptor" /> objects as the values. Implementers of this service can add, remove, or alter event entries in the dictionary.</para>
@@ -119,6 +121,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Filters the events that a component exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the set of filtered events is to be cached; false if the filter service must query again.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to filter events for. </param>
         <param name="events">
@@ -142,7 +148,6 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called when a user requests a set of properties for a component. The properties are added to the dictionary with the property names as the keys and the corresponding <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects as the values. Implementers of this service can add, remove, or alter property entries in the dictionary.</para>
@@ -151,6 +156,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Filters the properties that a component exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the set of filtered properties is to be cached; false if the filter service must query again.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to filter properties for. </param>
         <param name="properties">

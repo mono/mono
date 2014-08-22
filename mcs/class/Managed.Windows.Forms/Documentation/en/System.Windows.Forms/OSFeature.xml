@@ -74,7 +74,6 @@
         <Parameter Name="feature" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="P:System.Windows.Forms.OSFeature.Feature" /> property, the static instance of <see cref="T:System.Windows.Forms.OSFeature" /> provided in this class, to query for the version number of a feature.</para>
@@ -83,6 +82,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the version of the specified feature currently available on the system. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Version" /> representing the version of the specified operating system feature currently available on the system; or null if the feature cannot be found.</para>
+        </returns>
         <param name="feature">
           <attribution license="cc4" from="Microsoft" modified="false" />The feature whose version is requested, either <see cref="F:System.Windows.Forms.OSFeature.LayeredWindows" /> or <see cref="F:System.Windows.Forms.OSFeature.Themes" />.</param>
       </Docs>
@@ -104,7 +107,6 @@
         <Parameter Name="enumVal" Type="System.Windows.Forms.SystemParameter" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you use the <see cref="M:System.Windows.Forms.OSFeature.IsPresent(System.Windows.Forms.SystemParameter)" /> method to determine if the operating system supports the specific feature or metric identified by <paramref name="enumValue" />. Based upon the value returned from <see cref="M:System.Windows.Forms.OSFeature.IsPresent(System.Windows.Forms.SystemParameter)" />, you would perform conditional actions in your code. For example, if calling this method with a parameter value of <see cref="F:System.Windows.Forms.SystemParameter.FlatMenu" /> returns true, you could create owner-drawn menus in your application in a flat style.</para>
@@ -114,6 +116,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a value indicating whether the operating system supports the specified feature or metric. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the feature is available on the system; otherwise, false.</para>
+        </returns>
         <param name="enumVal">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.SystemParameter" /> representing the feature to search for.</param>
       </Docs>

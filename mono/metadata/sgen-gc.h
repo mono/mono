@@ -49,6 +49,7 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #include <mono/metadata/sgen-gray.h>
 #include <mono/metadata/sgen-hash-table.h>
 #include <mono/metadata/sgen-bridge.h>
+#include <mono/metadata/sgen-protocol.h>
 
 /* The method used to clear the nursery */
 /* Clearing at nursery collections is the safest, but has bad interactions with caches.
@@ -57,7 +58,8 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
  */
 typedef enum {
 	CLEAR_AT_GC,
-	CLEAR_AT_TLAB_CREATION
+	CLEAR_AT_TLAB_CREATION,
+	CLEAR_AT_TLAB_CREATION_DEBUG
 } NurseryClearPolicy;
 
 NurseryClearPolicy sgen_get_nursery_clear_policy (void) MONO_INTERNAL;
@@ -143,8 +145,8 @@ struct _GCMemSection {
 	char **scan_starts;
 	/* in major collections indexes in the pin_queue for objects that pin this section */
 	void **pin_queue_start;
-	int pin_queue_num_entries;
-	unsigned int num_scan_start;
+	size_t pin_queue_num_entries;
+	size_t num_scan_start;
 };
 
 /*
@@ -239,13 +241,19 @@ extern int num_ready_finalizers;
 #define SGEN_CAN_ALIGN_UP(s)		((s) <= SIZE_MAX - (SGEN_ALLOC_ALIGN - 1))
 #define SGEN_ALIGN_UP(s)		(((s)+(SGEN_ALLOC_ALIGN-1)) & ~(SGEN_ALLOC_ALIGN-1))
 
+#if SIZEOF_VOID_P == 4
+#define ONE_P 1
+#else
+#define ONE_P 1ll
+#endif
+
 /*
  * The link pointer is hidden by negating each bit.  We use the lowest
  * bit of the link (before negation) to store whether it needs
  * resurrection tracking.
  */
-#define HIDE_POINTER(p,t)	((gpointer)(~((gulong)(p)|((t)?1:0))))
-#define REVEAL_POINTER(p)	((gpointer)((~(gulong)(p))&~3L))
+#define HIDE_POINTER(p,t)	((gpointer)(~((size_t)(p)|((t)?1:0))))
+#define REVEAL_POINTER(p)	((gpointer)((~(size_t)(p))&~3L))
 
 #ifdef SGEN_ALIGN_NURSERY
 #define SGEN_PTR_IN_NURSERY(p,bits,start,end)	(((mword)(p) & ~((1 << (bits)) - 1)) == (mword)(start))
@@ -257,7 +265,7 @@ extern int num_ready_finalizers;
 
 /* good sizes are 512KB-1MB: larger ones increase a lot memzeroing time */
 #define DEFAULT_NURSERY_SIZE (sgen_nursery_size)
-extern int sgen_nursery_size MONO_INTERNAL;
+extern size_t sgen_nursery_size MONO_INTERNAL;
 #ifdef SGEN_ALIGN_NURSERY
 /* The number of trailing 0 bits in DEFAULT_NURSERY_SIZE */
 #define DEFAULT_NURSERY_BITS (sgen_nursery_bits)
@@ -340,26 +348,52 @@ typedef struct {
  */
 #define SGEN_LOAD_VTABLE(addr) ((*(mword*)(addr)) & ~SGEN_VTABLE_BITS_MASK)
 
+static inline MONO_ALWAYS_INLINE void
+GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, char* obj)
+{
 #if defined(SGEN_GRAY_OBJECT_ENQUEUE) || SGEN_MAX_DEBUG_LEVEL >= 9
-#define GRAY_OBJECT_ENQUEUE sgen_gray_object_enqueue
-#define GRAY_OBJECT_DEQUEUE(queue,o) ((o) = sgen_gray_object_dequeue ((queue)))
+	sgen_gray_object_enqueue (queue, obj);
 #else
-#define GRAY_OBJECT_ENQUEUE(queue,o) do {				\
-		if (G_UNLIKELY (!(queue)->first || (queue)->first->end == SGEN_GRAY_QUEUE_SECTION_SIZE)) \
-			sgen_gray_object_enqueue ((queue), (o));	\
-		else							\
-			(queue)->first->objects [(queue)->first->end++] = (o); \
-		PREFETCH ((o));						\
-	} while (0)
-#define GRAY_OBJECT_DEQUEUE(queue,o) do {				\
-		if (!(queue)->first)					\
-			(o) = NULL;					\
-		else if (G_UNLIKELY ((queue)->first->end == 1))		\
-			(o) = sgen_gray_object_dequeue ((queue));		\
-		else							\
-			(o) = (queue)->first->objects [--(queue)->first->end]; \
-	} while (0)
+	if (G_UNLIKELY (!queue->first || queue->cursor == GRAY_LAST_CURSOR_POSITION (queue->first))) {
+		sgen_gray_object_enqueue (queue, obj);
+	} else {
+		HEAVY_STAT (gc_stats.gray_queue_enqueue_fast_path ++);
+
+		*++queue->cursor = obj;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_enqueue (queue, queue->cursor, obj);
 #endif
+	}
+
+	PREFETCH (obj);
+#endif
+}
+
+static inline MONO_ALWAYS_INLINE void
+GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, char** obj)
+{
+#if defined(SGEN_GRAY_OBJECT_ENQUEUE) || SGEN_MAX_DEBUG_LEVEL >= 9
+	*obj = sgen_gray_object_enqueue (queue);
+#else
+	if (!queue->first) {
+		HEAVY_STAT (gc_stats.gray_queue_dequeue_fast_path ++);
+
+		*obj = NULL;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_dequeue (queue, queue->cursor, *obj);
+#endif
+	} else if (G_UNLIKELY (queue->cursor == GRAY_FIRST_CURSOR_POSITION (queue->first))) {
+		*obj = sgen_gray_object_dequeue (queue);
+	} else {
+		HEAVY_STAT (gc_stats.gray_queue_dequeue_fast_path ++);
+
+		*obj = *queue->cursor--;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_dequeue (queue, queue->cursor + 1, *obj);
+#endif
+	}
+#endif
+}
 
 /*
 List of what each bit on of the vtable gc bits means. 
@@ -367,6 +401,7 @@ List of what each bit on of the vtable gc bits means.
 enum {
 	SGEN_GC_BIT_BRIDGE_OBJECT = 1,
 	SGEN_GC_BIT_BRIDGE_OPAQUE_OBJECT = 2,
+	SGEN_GC_BIT_FINALIZER_AWARE = 4,
 };
 
 /* the runtime can register areas of memory as roots: we keep two lists of roots,
@@ -427,10 +462,16 @@ enum {
 	INTERNAL_MEM_WORKER_DATA,
 	INTERNAL_MEM_WORKER_JOB_DATA,
 	INTERNAL_MEM_BRIDGE_DATA,
+	INTERNAL_MEM_OLD_BRIDGE_HASH_TABLE,
+	INTERNAL_MEM_OLD_BRIDGE_HASH_TABLE_ENTRY,
 	INTERNAL_MEM_BRIDGE_HASH_TABLE,
 	INTERNAL_MEM_BRIDGE_HASH_TABLE_ENTRY,
 	INTERNAL_MEM_BRIDGE_ALIVE_HASH_TABLE,
 	INTERNAL_MEM_BRIDGE_ALIVE_HASH_TABLE_ENTRY,
+	INTERNAL_MEM_TARJAN_BRIDGE_HASH_TABLE,
+	INTERNAL_MEM_TARJAN_BRIDGE_HASH_TABLE_ENTRY,
+	INTERNAL_MEM_TARJAN_OBJ_BUCKET,
+	INTERNAL_MEM_BRIDGE_DEBUG,
 	INTERNAL_MEM_JOB_QUEUE_ENTRY,
 	INTERNAL_MEM_TOGGLEREF_DATA,
 	INTERNAL_MEM_CARDTABLE_MOD_UNION,
@@ -484,7 +525,7 @@ void sgen_free_internal (void *addr, int type) MONO_INTERNAL;
 void* sgen_alloc_internal_dynamic (size_t size, int type, gboolean assert_on_failure) MONO_INTERNAL;
 void sgen_free_internal_dynamic (void *addr, size_t size, int type) MONO_INTERNAL;
 
-void** sgen_find_optimized_pin_queue_area (void *start, void *end, int *num) MONO_INTERNAL;
+void** sgen_find_optimized_pin_queue_area (void *start, void *end, size_t *num) MONO_INTERNAL;
 void sgen_find_section_pin_queue_start_end (GCMemSection *section) MONO_INTERNAL;
 void sgen_pin_objects_in_section (GCMemSection *section, ScanCopyContext ctx) MONO_INTERNAL;
 
@@ -492,7 +533,7 @@ void sgen_pin_stats_register_object (char *obj, size_t size);
 void sgen_pin_stats_register_global_remset (char *obj);
 void sgen_pin_stats_print_class_stats (void);
 
-void sgen_sort_addresses (void **array, int size) MONO_INTERNAL;
+void sgen_sort_addresses (void **array, size_t size) MONO_INTERNAL;
 void sgen_add_to_global_remset (gpointer ptr, gpointer obj) MONO_INTERNAL;
 
 int sgen_get_current_collection_generation (void) MONO_INTERNAL;
@@ -553,14 +594,14 @@ Test 1 (compiling corlib):
 #define SGEN_TO_SPACE_GRANULE_IN_BYTES (1 << SGEN_TO_SPACE_GRANULE_BITS)
 
 extern char *sgen_space_bitmap MONO_INTERNAL;
-extern int sgen_space_bitmap_size MONO_INTERNAL;
+extern size_t sgen_space_bitmap_size MONO_INTERNAL;
 
 static inline gboolean
 sgen_nursery_is_to_space (char *object)
 {
-	int idx = (object - sgen_nursery_start) >> SGEN_TO_SPACE_GRANULE_BITS;
-	int byte = idx / 8;
-	int bit = idx & 0x7;
+	size_t idx = (object - sgen_nursery_start) >> SGEN_TO_SPACE_GRANULE_BITS;
+	size_t byte = idx / 8;
+	size_t bit = idx & 0x7;
 
 	SGEN_ASSERT (4, sgen_ptr_in_nursery (object), "object %p is not in nursery [%p - %p]", object, sgen_get_nursery_start (), sgen_get_nursery_end ());
 	SGEN_ASSERT (4, byte < sgen_space_bitmap_size, "byte index %d out of range", byte, sgen_space_bitmap_size);
@@ -598,7 +639,7 @@ typedef struct {
 	SgenObjectOperations serial_ops;
 	SgenObjectOperations parallel_ops;
 
-	void (*prepare_to_space) (char *to_space_bitmap, int space_bitmap_size);
+	void (*prepare_to_space) (char *to_space_bitmap, size_t space_bitmap_size);
 	void (*clear_fragments) (void);
 	SgenFragment* (*build_fragments_get_exclude_head) (void);
 	void (*build_fragments_release_exclude_head) (void);
@@ -655,8 +696,8 @@ struct _SgenMajorCollector {
 	SgenObjectOperations major_ops;
 	SgenObjectOperations major_concurrent_ops;
 
-	void* (*alloc_object) (MonoVTable *vtable, int size, gboolean has_references);
-	void* (*par_alloc_object) (MonoVTable *vtable, int size, gboolean has_references);
+	void* (*alloc_object) (MonoVTable *vtable, size_t size, gboolean has_references);
+	void* (*par_alloc_object) (MonoVTable *vtable, size_t size, gboolean has_references);
 	void (*free_pinned_object) (char *obj, size_t size);
 	void (*iterate_objects) (IterateObjectsFlags flags, IterateObjectCallbackFunc callback, void *data);
 	void (*free_non_pinned_object) (char *obj, size_t size);
@@ -679,7 +720,7 @@ struct _SgenMajorCollector {
 	gboolean (*ptr_is_in_non_pinned_space) (char *ptr, char **start);
 	gboolean (*obj_is_from_pinned_alloc) (char *obj);
 	void (*report_pinned_memory_usage) (void);
-	int (*get_num_major_sections) (void);
+	size_t (*get_num_major_sections) (void);
 	gboolean (*handle_gc_param) (const char *opt);
 	void (*print_gc_param_usage) (void);
 	gboolean (*is_worker_thread) (MonoNativeThreadId thread);
@@ -704,7 +745,7 @@ void sgen_marksweep_conc_init (SgenMajorCollector *collector) MONO_INTERNAL;
 SgenMajorCollector* sgen_get_major_collector (void) MONO_INTERNAL;
 
 
-typedef struct {
+typedef struct _SgenRemeberedSet {
 	void (*wbarrier_set_field) (MonoObject *obj, gpointer field_ptr, MonoObject* value);
 	void (*wbarrier_set_arrayref) (MonoArray *arr, gpointer slot_ptr, MonoObject* value);
 	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gpointer src_ptr, int count);
@@ -724,7 +765,7 @@ typedef struct {
 
 SgenRemeberedSet *sgen_get_remset (void) MONO_INTERNAL;
 
-static guint /*__attribute__((noinline)) not sure if this hint is a good idea*/
+static mword /*__attribute__((noinline)) not sure if this hint is a good idea*/
 slow_object_get_size (MonoVTable *vtable, MonoObject* o)
 {
 	MonoClass *klass = vtable->klass;
@@ -755,7 +796,7 @@ slow_object_get_size (MonoVTable *vtable, MonoObject* o)
  * vtable field, is not intact.  This is necessary for the parallel
  * collector.
  */
-static inline guint
+static inline mword
 sgen_par_object_get_size (MonoVTable *vtable, MonoObject* o)
 {
 	mword descr = (mword)vtable->gc_descr;
@@ -782,7 +823,7 @@ sgen_par_object_get_size (MonoVTable *vtable, MonoObject* o)
 	return slow_object_get_size (vtable, o);
 }
 
-static inline guint
+static inline mword
 sgen_safe_object_get_size (MonoObject *obj)
 {
        char *forwarded;
@@ -805,11 +846,10 @@ void sgen_bridge_processing_stw_step (void) MONO_INTERNAL;
 void sgen_bridge_processing_finish (int generation) MONO_INTERNAL;
 void sgen_register_test_bridge_callbacks (const char *bridge_class_name) MONO_INTERNAL;
 gboolean sgen_is_bridge_object (MonoObject *obj) MONO_INTERNAL;
-MonoGCBridgeObjectKind sgen_bridge_class_kind (MonoClass *class) MONO_INTERNAL;
+MonoGCBridgeObjectKind sgen_bridge_class_kind (MonoClass *klass) MONO_INTERNAL;
 void sgen_mark_bridge_object (MonoObject *obj) MONO_INTERNAL;
 void sgen_bridge_register_finalized_object (MonoObject *object) MONO_INTERNAL;
 void sgen_bridge_describe_pointer (MonoObject *object) MONO_INTERNAL;
-void sgen_enable_bridge_accounting (void) MONO_INTERNAL;
 
 void sgen_mark_togglerefs (char *start, char *end, ScanCopyContext ctx) MONO_INTERNAL;
 void sgen_clear_togglerefs (char *start, char *end, ScanCopyContext ctx) MONO_INTERNAL;
@@ -817,24 +857,40 @@ void sgen_clear_togglerefs (char *start, char *end, ScanCopyContext ctx) MONO_IN
 void sgen_process_togglerefs (void) MONO_INTERNAL;
 void sgen_register_test_toggleref_callback (void) MONO_INTERNAL;
 
-
-void sgen_register_test_bridge_callbacks (const char *bridge_class_name) MONO_INTERNAL;
 gboolean sgen_is_bridge_object (MonoObject *obj) MONO_INTERNAL;
 void sgen_mark_bridge_object (MonoObject *obj) MONO_INTERNAL;
+
+gboolean sgen_bridge_handle_gc_debug (const char *opt) MONO_INTERNAL;
+void sgen_bridge_print_gc_debug_usage (void) MONO_INTERNAL;
 
 typedef struct {
 	void (*reset_data) (void);
 	void (*processing_stw_step) (void);
-	void (*processing_finish) (int generation);
+	void (*processing_build_callback_data) (int generation);
+	void (*processing_after_callback) (int generation);
 	MonoGCBridgeObjectKind (*class_kind) (MonoClass *class);
 	void (*register_finalized_object) (MonoObject *object);
 	void (*describe_pointer) (MonoObject *object);
 	void (*enable_accounting) (void);
+	void (*set_dump_prefix) (const char *prefix);
+
+	/*
+	 * These are set by processing_build_callback_data().
+	 */
+	int num_sccs;
+	MonoGCBridgeSCC **api_sccs;
+
+	int num_xrefs;
+	MonoGCBridgeXRef *api_xrefs;
 } SgenBridgeProcessor;
 
 void sgen_old_bridge_init (SgenBridgeProcessor *collector) MONO_INTERNAL;
 void sgen_new_bridge_init (SgenBridgeProcessor *collector) MONO_INTERNAL;
+void sgen_tarjan_bridge_init (SgenBridgeProcessor *collector) MONO_INTERNAL;
 void sgen_set_bridge_implementation (const char *name) MONO_INTERNAL;
+void sgen_bridge_set_dump_prefix (const char *prefix) MONO_INTERNAL;
+
+gboolean sgen_compare_bridge_processor_results (SgenBridgeProcessor *a, SgenBridgeProcessor *b) MONO_INTERNAL;
 
 typedef mono_bool (*WeakLinkAlivePredicateFunc) (MonoObject*, void*);
 
@@ -902,8 +958,6 @@ struct _LOSObject {
 	char data [MONO_ZERO_LEN_ARRAY];
 };
 
-#define ARRAY_OBJ_INDEX(ptr,array,elem_size) (((char*)(ptr) - ((char*)(array) + G_STRUCT_OFFSET (MonoArray, vector))) / (elem_size))
-
 extern LOSObject *los_object_list;
 extern mword los_memory_usage;
 
@@ -931,7 +985,7 @@ gboolean sgen_los_object_is_pinned (char *obj) MONO_INTERNAL;
 void sgen_clear_nursery_fragments (void) MONO_INTERNAL;
 void sgen_nursery_allocator_prepare_for_pinning (void) MONO_INTERNAL;
 void sgen_nursery_allocator_set_nursery_bounds (char *nursery_start, char *nursery_end) MONO_INTERNAL;
-mword sgen_build_nursery_fragments (GCMemSection *nursery_section, void **start, int num_entries, SgenGrayQueue *unpin_queue) MONO_INTERNAL;
+mword sgen_build_nursery_fragments (GCMemSection *nursery_section, void **start, size_t num_entries, SgenGrayQueue *unpin_queue) MONO_INTERNAL;
 void sgen_init_nursery_allocator (void) MONO_INTERNAL;
 void sgen_nursery_allocator_init_heavy_stats (void) MONO_INTERNAL;
 void sgen_alloc_init_heavy_stats (void) MONO_INTERNAL;
@@ -984,24 +1038,43 @@ extern __thread char *stack_end;
 #endif
 
 #ifdef HAVE_KW_THREAD
-#define EMIT_TLS_ACCESS(mb,member,key)	do {	\
+
+#define EMIT_TLS_ACCESS_NEXT_ADDR(mb)	do {	\
 	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
 	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
-	mono_mb_emit_i4 ((mb), (key));		\
+	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_TLAB_NEXT_ADDR);		\
 	} while (0)
+
+#define EMIT_TLS_ACCESS_TEMP_END(mb)	do {	\
+	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
+	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
+	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_TLAB_TEMP_END);		\
+	} while (0)
+
 #else
 
 #if defined(__APPLE__) || defined (HOST_WIN32)
-#define EMIT_TLS_ACCESS(mb,member,key)	do {	\
+#define EMIT_TLS_ACCESS_NEXT_ADDR(mb)	do {	\
 	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
 	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
 	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO);	\
-	mono_mb_emit_icon ((mb), G_STRUCT_OFFSET (SgenThreadInfo, member));	\
+	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_next_addr));	\
 	mono_mb_emit_byte ((mb), CEE_ADD);		\
 	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
 	} while (0)
+
+#define EMIT_TLS_ACCESS_TEMP_END(mb)	do {	\
+	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
+	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
+	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO);	\
+	mono_mb_emit_icon ((mb), MONO_STRUCT_OFFSET (SgenThreadInfo, tlab_temp_end));	\
+	mono_mb_emit_byte ((mb), CEE_ADD);		\
+	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
+	} while (0)
+
 #else
-#define EMIT_TLS_ACCESS(mb,member,key)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
+#define EMIT_TLS_ACCESS_NEXT_ADDR(mb)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
+#define EMIT_TLS_ACCESS_TEMP_END(mb)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
 #endif
 
 #endif
@@ -1009,11 +1082,10 @@ extern __thread char *stack_end;
 /* Other globals */
 
 extern GCMemSection *nursery_section;
-extern int stat_major_gcs;
 extern guint32 collect_before_allocs;
 extern guint32 verify_before_allocs;
 extern gboolean has_per_allocation_action;
-extern int degraded_mode;
+extern size_t degraded_mode;
 extern int default_nursery_size;
 extern guint32 tlab_size;
 extern NurseryClearPolicy nursery_clear_policy;
@@ -1028,7 +1100,7 @@ extern int do_pin_stats;
 static inline void
 sgen_set_nursery_scan_start (char *p)
 {
-	int idx = (p - (char*)nursery_section->data) / SGEN_SCAN_START_SIZE;
+	size_t idx = (p - (char*)nursery_section->data) / SGEN_SCAN_START_SIZE;
 	char *old = nursery_section->scan_starts [idx];
 	if (!old || old > p)
 		nursery_section->scan_starts [idx] = p;
@@ -1076,10 +1148,8 @@ sgen_dummy_use (gpointer v) {
 #if defined(__GNUC__)
 	__asm__ volatile ("" : "=r"(v) : "r"(v));
 #elif defined(_MSC_VER)
-	__asm {
-		mov eax, v;
-		and eax, eax;
-	};
+	static volatile gpointer ptr;
+	ptr = v;
 #else
 #error "Implement sgen_dummy_use for your compiler"
 #endif
@@ -1090,7 +1160,7 @@ sgen_dummy_use (gpointer v) {
 #define MONO_GC_PARAMS_NAME	"MONO_GC_PARAMS"
 #define MONO_GC_DEBUG_NAME	"MONO_GC_DEBUG"
 
-gboolean sgen_parse_environment_string_extract_number (const char *str, glong *out) MONO_INTERNAL;
+gboolean sgen_parse_environment_string_extract_number (const char *str, size_t *out) MONO_INTERNAL;
 void sgen_env_var_error (const char *env_var, const char *fallback, const char *description_format, ...) MONO_INTERNAL;
 
 /* Utilities */

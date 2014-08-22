@@ -327,7 +327,6 @@
         <Parameter Name="targetHost" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method authenticates using <see cref="F:System.Security.Authentication.SslProtocols.Default" />. No client certificates are used in the authentication. The certificate revocation list is not checked during authentication. The value specified for <paramref name="targetHost" /> must match the name on the server's certificate. </para>
@@ -338,6 +337,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by clients to authenticate the server and optionally the client in a client-server connection as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="targetHost">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that shares this <see cref="T:System.Net.Security.SslStream" />.</param>
       </Docs>
@@ -359,7 +363,6 @@
         <Parameter Name="checkCertificateRevocation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When authentication succeeds, you must check the <see cref="P:System.Net.Security.SslStream.IsEncrypted" /> and <see cref="P:System.Net.Security.SslStream.IsSigned" /> properties to determine what security services are used by the <see cref="T:System.Net.Security.SslStream" />. Check the <see cref="P:System.Net.Security.SslStream.IsMutuallyAuthenticated" /> property to determine whether mutual authentication occurred.</para>
@@ -372,6 +375,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by clients to authenticate the server and optionally the client in a client-server connection as an asynchronous operation. The authentication process uses the specified certificate collection and SSL protocol.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="targetHost">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that will share this <see cref="T:System.Net.Security.SslStream" />.</param>
         <param name="clientCertificates">
@@ -464,7 +472,6 @@
         <Parameter Name="serverCertificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method authenticates using <see cref="F:System.Security.Authentication.SslProtocols.Default" />. The certificate revocation list is not checked during authentication. The client is not required to provide a certificate for authentication.</para>
@@ -474,6 +481,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by servers to authenticate the server and optionally the client in a client-server connection using the specified certificate as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="serverCertificate">
           <attribution license="cc4" from="Microsoft" modified="false" />The certificate used to authenticate the server.</param>
       </Docs>
@@ -495,7 +507,6 @@
         <Parameter Name="checkCertificateRevocation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
@@ -504,6 +515,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by servers to authenticate the server and optionally the client in a client-server connection using the specified certificates, requirements and security protocol as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="serverCertificate">
           <attribution license="cc4" from="Microsoft" modified="false" />The X509Certificate used to authenticate the server.</param>
         <param name="clientCertificateRequired">
@@ -531,7 +547,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -546,6 +561,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by clients to begin an asynchronous operation to authenticate the server and optionally the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation. </para>
+        </returns>
         <param name="targetHost">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that shares this <see cref="T:System.Net.Security.SslStream" />.</param>
         <param name="asyncCallback">
@@ -574,7 +593,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -591,6 +609,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by clients to begin an asynchronous operation to authenticate the server and optionally the client using the specified certificates and security protocol.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation. </para>
+        </returns>
         <param name="targetHost">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that shares this <see cref="T:System.Net.Security.SslStream" />.</param>
         <param name="clientCertificates">
@@ -622,7 +644,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -636,6 +657,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by servers to begin an asynchronous operation to authenticate the client and optionally the server in a client-server connection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
         <param name="serverCertificate">
           <attribution license="cc4" from="Microsoft" modified="false" />The X509Certificate used to authenticate the server.</param>
         <param name="asyncCallback">
@@ -664,7 +689,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -677,6 +701,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by servers to begin an asynchronous operation to authenticate the server and optionally the client using the specified certificates, requirements and security protocol.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation. </para>
+        </returns>
         <param name="serverCertificate">
           <attribution license="cc4" from="Microsoft" modified="false" />The X509Certificate used to authenticate the server.</param>
         <param name="clientCertificateRequired">
@@ -710,7 +738,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -724,6 +751,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous read operation that reads data from the stream and stores it in the specified array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation. </para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that receives the bytes read from the stream.</param>
         <param name="offset">
@@ -755,13 +786,16 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous write operation that writes <see cref="T:System.Byte" />s from the specified buffer to the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that supplies the bytes to be written to the stream.</param>
         <param name="offset">
@@ -1078,7 +1112,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1090,6 +1123,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous read operation started with a previous call to <see cref="M:System.Net.Security.SslStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Int32" /> value that specifies the number of bytes read from the underlying stream.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance returned by a call to <see cref="M:System.Net.Security.SslStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /></param>
       </Docs>
@@ -1467,7 +1504,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1479,6 +1515,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads data from this stream and stores it in the specified array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Int32" /> value that specifies the number of bytes read. When there is no more data to be read, returns 0.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that receives the bytes read from this stream.</param>
         <param name="offset">
@@ -1549,7 +1589,6 @@
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1559,6 +1598,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Throws a <see cref="T:System.NotSupportedException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />This value is ignored.</param>
         <param name="origin">

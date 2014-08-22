@@ -87,12 +87,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an equivalent copy of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new, identical copy of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateIdentityPermission">
@@ -111,7 +114,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The identity permission for a strong name can be used to determine whether calling code is in a particular strong named code assembly.</para>
@@ -120,6 +122,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Security.Permissions.StrongNameIdentityPermission" /> that corresponds to the current <see cref="T:System.Security.Policy.StrongName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.StrongNameIdentityPermission" /> for the specified <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.Evidence" /> from which to construct the <see cref="T:System.Security.Permissions.StrongNameIdentityPermission" />. </param>
       </Docs>
@@ -140,12 +146,15 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified strong name is equal to the current strong name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified strong name is equal to the current strong name; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The strong name to compare against the current strong name. </param>
       </Docs>
@@ -164,12 +173,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the hash code of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -304,7 +316,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful during debugging to get an easy-to-read representation of the object.</para>
@@ -313,6 +324,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a string representation of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Version">

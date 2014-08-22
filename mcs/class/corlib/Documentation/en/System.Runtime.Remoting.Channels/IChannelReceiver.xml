@@ -71,7 +71,6 @@
         <Parameter Name="objectURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is used by the <see cref="M:System.Runtime.Remoting.Channels.ChannelServices.GetUrlsForObject(System.MarshalByRefObject)" /> method.</para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of all the URLs for a URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the URLs.</para>
+        </returns>
         <param name="objectURI">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI for which URLs are required. </param>
       </Docs>

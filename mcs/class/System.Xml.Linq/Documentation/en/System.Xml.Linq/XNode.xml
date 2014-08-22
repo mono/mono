@@ -203,7 +203,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not return itself in the results.</para>
@@ -214,6 +213,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of the ancestor elements of this node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the ancestor elements of this node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Ancestors">
@@ -230,7 +233,6 @@
         <Parameter Name="name" Type="System.Xml.Linq.XName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method will not return itself in the results.</para>
@@ -239,6 +241,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a filtered collection of the ancestor elements of this node. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the ancestor elements of this node. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+          <para>The nodes in the returned collection are in reverse document order.</para>
+          <para>This method uses deferred execution.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
       </Docs>
@@ -258,7 +266,6 @@
         <Parameter Name="n2" Type="System.Xml.Linq.XNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="M:System.Xml.Linq.XNode.CompareDocumentOrder" /> method must traverse the ancestors of the two nodes being compared until it finds the common parent. Then it must traverse the list of the common parent’s child nodes to determine the order of the two nodes being compared. Therefore, using this method might affect your performance.</para>
@@ -267,6 +274,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two nodes to determine their relative XML document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An int containing 0 if the nodes are equal; -1 if <paramref name="n1" /> is before <paramref name="n2" />; 1 if <paramref name="n1" /> is after <paramref name="n2" />.</para>
+        </returns>
         <param name="n1">
           <attribution license="cc4" from="Microsoft" modified="false" />First <see cref="T:System.Xml.Linq.XNode" /> to compare.</param>
         <param name="n2">
@@ -285,7 +296,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You typically use this method when you have to supply another component with an <see cref="T:System.Xml.XmlReader" />. For example, you can create an <see cref="T:System.Xml.XmlReader" /> from a sqltecxlinq tree, and then pass that reader to <see cref="M:System.Xml.XmlDocument.Load(System.Xml.XmlReader)" />.</para>
@@ -299,6 +309,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlReader" /> for this node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> that can be used to read this node and its descendants.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateReader">
@@ -315,12 +329,15 @@
         <Parameter Name="readerOptions" Type="System.Xml.Linq.ReaderOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlReader" /> with the options specified by the <paramref name="readerOptions" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object.</para>
+        </returns>
         <param name="readerOptions">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.ReaderOptions" /> object that specifies whether to omit duplicate namespaces.</param>
       </Docs>
@@ -340,7 +357,6 @@
         <Parameter Name="n2" Type="System.Xml.Linq.XNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following criteria determine whether two nodes are equal:</para>
@@ -375,6 +391,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the values of two nodes, including the values of all descendant nodes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the nodes are equal; otherwise false.</para>
+        </returns>
         <param name="n1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XNode" /> to compare.</param>
         <param name="n2">
@@ -415,7 +435,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
@@ -425,6 +444,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of the sibling elements after this node, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the sibling elements after this node, in document order.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ElementsAfterSelf">
@@ -441,7 +464,6 @@
         <Parameter Name="name" Type="System.Xml.Linq.XName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
@@ -451,6 +473,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a filtered collection of the sibling elements after this node, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the sibling elements after this node, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
       </Docs>
@@ -467,7 +493,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
@@ -477,6 +502,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of the sibling elements before this node, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the sibling elements before this node, in document order.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ElementsBeforeSelf">
@@ -493,7 +522,6 @@
         <Parameter Name="name" Type="System.Xml.Linq.XName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
@@ -503,6 +531,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a filtered collection of the sibling elements before this node, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the sibling elements before this node, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
       </Docs>
@@ -540,7 +572,6 @@
         <Parameter Name="node" Type="System.Xml.Linq.XNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="M:System.Xml.Linq.XNode.CompareDocumentOrder" /> method must traverse the ancestors of the two nodes being compared until it finds the common parent. Then it must traverse the list of the common parent’s child nodes to determine the order of the two nodes being compared. Therefore, using this method might affect your performance.</para>
@@ -549,6 +580,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the current node appears after a specified node in terms of document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this node appears after the specified node; otherwise false.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> to compare for document order.</param>
       </Docs>
@@ -567,7 +602,6 @@
         <Parameter Name="node" Type="System.Xml.Linq.XNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="M:System.Xml.Linq.XNode.IsBefore" /> method must traverse the ancestors of the two nodes being compared until it finds the common parent. Then it must traverse the list of the common parent’s child nodes to determine the order of the two nodes being compared. Therefore, using this method might affect your performance.</para>
@@ -576,6 +610,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the current node appears before a specified node in terms of document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this node appears before the specified node; otherwise false.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> to compare for document order.</param>
       </Docs>
@@ -614,7 +652,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
@@ -624,6 +661,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of the sibling nodes after this node, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XNode" /> of the sibling nodes after this node, in document order.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="NodesBeforeSelf">
@@ -638,7 +679,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
@@ -648,6 +688,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of the sibling nodes before this node, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XNode" /> of the sibling nodes before this node, in document order.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PreviousNode">
@@ -687,7 +731,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to write a method that returns a collection of nodes, yielding each node as the node is read from the reader. This method enables you to process arbitrarily large XML files with a very small memory footprint.</para>
@@ -700,6 +743,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.Linq.XNode" /> from an <see cref="T:System.Xml.XmlReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XNode" /> that contains the node and its descendant nodes that were read from the reader. The runtime type of the node is determined by the node type (<see cref="P:System.Xml.Linq.XObject.NodeType" />) of the first node encountered in the reader.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> positioned at the node to read into this <see cref="T:System.Xml.Linq.XNode" />.</param>
       </Docs>
@@ -805,12 +852,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the indented XML for this node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the indented XML.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -827,12 +877,15 @@
         <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the XML for this node, optionally disabling formatting.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the XML.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> that specifies formatting behavior.</param>
       </Docs>

@@ -362,7 +362,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation for <see cref="M:System.Diagnostics.TraceListener.GetSupportedAttributes" /> returns null.</para>
@@ -371,6 +370,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the custom attributes supported by the trace listener.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array naming the custom attributes supported by the trace listener, or null if there are no custom attributes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndentLevel">

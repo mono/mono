@@ -73,7 +73,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The reader provides access to the information that is not contained in the model of the endpoint reference defined by WS-Addressing.</para>
@@ -82,6 +81,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the XML dictionary reader that contains the extensions of the endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlDictionaryReader" /> that reads the extensions of the endpoint address.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetReaderAtMetadata">
@@ -96,12 +99,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the reader that contains the metadata associated with the endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlDictionaryReader" /> that reads the metadata associated the endpoint address if there is some; otherwise, null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -206,7 +212,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The values initialized from the endpoint address are the identity, the address header collection, the URI, and the extension buffer.</para>
@@ -215,6 +220,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new endpoint address initialized with the property values of the current endpoint address builder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> whose property are initialized with the values of the current endpoint address builder.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Uri">

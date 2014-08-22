@@ -45,10 +45,6 @@
         <Parameter Name="credentials" Type="System.Net.ICredentials" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.Authorization" /> instance containing the
-   challenge response, or <see langword="null " />if the challenge cannot be handled.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.IAuthenticationModule.Authenticate(System.String,System.Net.WebRequest,System.Net.ICredentials)" /> method conducts the authentication process with the server and returns an <see cref="T:System.Net.Authorization" /> instance to the <see cref="T:System.Net.AuthenticationManager" />.</para>
@@ -57,6 +53,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an instance of the <see cref="T:System.Net.Authorization" /> class in respose to an authentication challenge from a server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.Authorization" /> instance containing the authorization message for the request, or null if the challenge cannot be handled.</para>
+        </returns>
         <param name="challenge">
           <attribution license="cc4" from="Microsoft" modified="false" />The authentication challenge sent by the server. </param>
         <param name="request">
@@ -145,10 +145,6 @@
         <Parameter Name="credentials" Type="System.Net.ICredentials" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.Authorization" /> instance containing client authentication
-   information to be sent with <paramref name="request" />, or <see langword="null " />if the current instance does not support preauthentication.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When the <see cref="P:System.Net.IAuthenticationModule.CanPreAuthenticate" /> property is true, the <see cref="M:System.Net.IAuthenticationModule.PreAuthenticate(System.Net.WebRequest,System.Net.ICredentials)" /> method will return an instance of the <see cref="T:System.Net.Authorization" /> class containing an authentication message.</para>
@@ -157,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an instance of the <see cref="T:System.Net.Authorization" /> class for an authentication request to a server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.Authorization" /> instance containing the authorization message for the request.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebRequest" /> instance associated with the authentication request. </param>
         <param name="credentials">

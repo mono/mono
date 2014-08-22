@@ -36,6 +36,8 @@ using System.IO;
 using Microsoft.Build.Exceptions;
 using System.Globalization;
 using Microsoft.Build.Construction;
+using Microsoft.Build.Internal.Expressions;
+using System.Xml;
 
 namespace Microsoft.Build.Internal
 {
@@ -120,17 +122,23 @@ namespace Microsoft.Build.Internal
 			
 			try {
 				
-				var initialPropertiesFormatted = "Initial Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
-				LogMessageEvent (new BuildMessageEventArgs (initialPropertiesFormatted, null, null, MessageImportance.Low));
+				var initialGlobalPropertiesFormatted = "Initial Global Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Where (p => p.IsImmutable).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
+				LogMessageEvent (new BuildMessageEventArgs (initialGlobalPropertiesFormatted, null, null, MessageImportance.Low));
+				var initialProjectPropertiesFormatted = "Initial Project Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Where (p => !p.IsImmutable).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
+				LogMessageEvent (new BuildMessageEventArgs (initialProjectPropertiesFormatted, null, null, MessageImportance.Low));
 				var initialItemsFormatted = "Initial Items:\n" + string.Join (Environment.NewLine, project.Items.OrderBy (i => i.ItemType).Select (i => string.Format ("{0} : {1}", i.ItemType, i.EvaluatedInclude)).ToArray ());
 				LogMessageEvent (new BuildMessageEventArgs (initialItemsFormatted, null, null, MessageImportance.Low));
 				
 				// null targets -> success. empty targets -> success(!)
+				foreach (var targetName in (request.ProjectInstance.InitialTargets).Where (t => t != null))
+					BuildTargetByName (targetName, args);
 				if (request.TargetNames == null)
-					args.Result.OverallResult = BuildResultCode.Success;
+					args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Any (p => p.Value.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
 				else {
-					foreach (var targetName in (args.TargetNames ?? request.TargetNames).Where (t => t != null))
-						BuildTargetByName (targetName, args);
+					foreach (var targetName in (args.TargetNames ?? request.TargetNames).Where (t => t != null)) {
+						if (!BuildTargetByName (targetName, args))
+							break;
+					}
 			
 					// FIXME: check .NET behavior, whether cancellation always results in failure.
 					args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Any (p => p.Value.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
@@ -252,6 +260,7 @@ namespace Microsoft.Build.Internal
 							var value = args.Project.ExpandString (p.Value);
 							project.SetProperty (p.Name, value);
 						}
+						continue;
 					}
 
 					var ii = child as ProjectItemGroupTaskInstance;
@@ -263,6 +272,7 @@ namespace Microsoft.Build.Internal
 								continue;
 							project.AddItem (item.ItemType, project.ExpandString (item.Include));
 						}
+						continue;
 					}
 					
 					var task = child as ProjectTaskInstance;
@@ -274,7 +284,14 @@ namespace Microsoft.Build.Internal
 						}
 						if (!RunBuildTask (target, task, targetResult, args))
 							return false;
+						continue;
 					}
+
+					var onError = child as ProjectOnErrorInstance;
+					if (onError != null)
+						continue; // evaluated under catch clause.
+
+					throw new NotSupportedException (string.Format ("Unexpected Target element children \"{0}\"", child.GetType ()));
 				}
 			} catch (Exception ex) {
 				// fallback task specified by OnError element
@@ -306,13 +323,16 @@ namespace Microsoft.Build.Internal
 			factoryIdentityParameters ["MSBuildArchitecture"] = taskInstance.MSBuildArchitecture;
 			#endif
 			var task = args.BuildTaskFactory.CreateTask (taskInstance.Name, factoryIdentityParameters, this);
-			LogMessageEvent (new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", taskInstance.Name, task.GetType ().AssemblyQualifiedName), null, null, MessageImportance.Low));
+			if (task == null)
+				throw new InvalidOperationException (string.Format ("TaskFactory {0} returned null Task", args.BuildTaskFactory));
+			LogMessageEvent (new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", taskInstance.Name, task.GetType ()), null, null, MessageImportance.Low));
 			task.HostObject = host;
 			task.BuildEngine = this;
 			
 			// Prepare task parameters.
-			var evaluatedTaskParams = taskInstance.Parameters.Select (p => new KeyValuePair<string,string> (p.Key, project.ExpandString (p.Value)));
-			
+			var evaluator = new ExpressionEvaluator (project);
+			var evaluatedTaskParams = taskInstance.Parameters.Select (p => new KeyValuePair<string,string> (p.Key, project.ExpandString (evaluator, p.Value)));
+
 			var requiredProps = task.GetType ().GetProperties ()
 				.Where (p => p.CanWrite && p.GetCustomAttributes (typeof (RequiredAttribute), true).Any ());
 			var missings = requiredProps.Where (p => !evaluatedTaskParams.Any (tp => tp.Key.Equals (p.Name, StringComparison.OrdinalIgnoreCase)));
@@ -334,8 +354,7 @@ namespace Microsoft.Build.Internal
 				if (string.IsNullOrEmpty (p.Value) && !requiredProps.Contains (prop))
 					continue;
 				try {
-					var valueInstance = ConvertTo (p.Value, prop.PropertyType);
-					prop.SetValue (task, valueInstance, null);
+					prop.SetValue (task, ConvertTo (p.Value, prop.PropertyType, evaluator), null);
 				} catch (Exception ex) {
 					throw new InvalidOperationException (string.Format ("Failed to convert '{0}' for property '{1}' of type {2}", p.Value, prop.Name, prop.PropertyType), ex);
 				}
@@ -365,14 +384,29 @@ namespace Microsoft.Build.Internal
 							throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", taskInstance.Name, toItem.TaskParameter));
 						if (!pi.CanRead)
 							throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", taskInstance.Name, toItem.TaskParameter));
-						var value = ConvertFrom (pi.GetValue (task, null));
+						var value = pi.GetValue (task, null);
+						var valueString = ConvertFrom (value);
 						if (toItem != null) {
-							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Item {0} from TaskParameter {1}: {2}", toItem.ItemType, toItem.TaskParameter, value), null, null, MessageImportance.Low));
-							foreach (var item in value.Split (';'))
-								args.Project.AddItem (toItem.ItemType, item);
+							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Item {0} from TaskParameter {1}: {2}", toItem.ItemType, toItem.TaskParameter, valueString), null, null, MessageImportance.Low));
+							Action<ITaskItem> addItem = i => {
+								var metadata = new ArrayList (i.MetadataNames).ToArray ().Cast<string> ().Select (n => new KeyValuePair<string,string> (n, i.GetMetadata (n)));
+								args.Project.AddItem (toItem.ItemType, i.ItemSpec, metadata);
+							};
+							var taskItemArray = value as ITaskItem [];
+							if (taskItemArray != null) {
+								foreach (var ti in taskItemArray)
+									addItem (ti);
+							} else {
+								var taskItem = value as ITaskItem;
+								if (taskItem != null) 
+									addItem (taskItem);
+								else
+									foreach (var item in valueString.Split (';'))
+										args.Project.AddItem (toItem.ItemType, item);
+							}
 						} else {
-							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Property {0} from TaskParameter {1}: {2}", toProp.PropertyName, toProp.TaskParameter, value), null, null, MessageImportance.Low));
-							args.Project.SetProperty (toProp.PropertyName, value);
+							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Property {0} from TaskParameter {1}: {2}", toProp.PropertyName, toProp.TaskParameter, valueString), null, null, MessageImportance.Low));
+							args.Project.SetProperty (toProp.PropertyName, valueString);
 						}
 					}
 				}
@@ -381,15 +415,21 @@ namespace Microsoft.Build.Internal
 			}
 			return true;
 		}
-		
-		object ConvertTo (string source, Type targetType)
+
+		object ConvertTo (string source, Type targetType, ExpressionEvaluator evaluator)
 		{
-			if (targetType == typeof(ITaskItem) || targetType.IsSubclassOf (typeof(ITaskItem)))
-				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.FindMatchingPath (source.Trim ()) };
+			if (targetType == typeof (ITaskItem) || targetType.IsSubclassOf (typeof (ITaskItem))) {
+				var item = evaluator.EvaluatedTaskItems.FirstOrDefault (i => string.Equals (i.ItemSpec, source.Trim (), StringComparison.OrdinalIgnoreCase));
+				var ret = new TargetOutputTaskItem () { ItemSpec = source.Trim () };
+				if (item != null)
+					foreach (string name in item.MetadataNames)
+						ret.SetMetadata (name, item.GetMetadata (name));
+				return ret;
+			}
 			if (targetType.IsArray)
-				return new ArrayList (source.Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
+				return new ArrayList (source.Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType (), evaluator)).ToArray ())
 						.ToArray (targetType.GetElementType ());
-			if (targetType == typeof(bool)) {
+			if (targetType == typeof (bool)) {
 				switch (source != null ? source.ToLower (CultureInfo.InvariantCulture) : string.Empty) {
 				case "true":
 				case "yes":
@@ -428,7 +468,7 @@ namespace Microsoft.Build.Internal
 			}
 			public void SetMetadataValueLiteral (string metadataName, string metadataValue)
 			{
-				metadata [metadataName] = ProjectCollection.Unescape (metadataValue);
+				metadata [metadataName] = WindowsCompatibilityExtensions.NormalizeFilePath (ProjectCollection.Unescape (metadataValue));
 			}
 			public IDictionary CloneCustomMetadataEscaped ()
 			{
@@ -466,7 +506,7 @@ namespace Microsoft.Build.Internal
 			}
 			public void SetMetadata (string metadataName, string metadataValue)
 			{
-				metadata [metadataName] = metadataValue;
+				metadata [metadataName] = WindowsCompatibilityExtensions.NormalizeFilePath (metadataValue);
 			}
 			public string ItemSpec { get; set; }
 			public int MetadataCount {
@@ -476,6 +516,11 @@ namespace Microsoft.Build.Internal
 				get { return metadata.Keys; }
 			}
 			#endregion
+
+			public override string ToString ()
+			{
+				return ItemSpec;
+			}
 		}
 		
 #if NET_4_5
@@ -545,13 +590,20 @@ namespace Microsoft.Build.Internal
 		// To NOT reuse this IBuildEngine instance for different build, we create another BuildManager and BuildSubmisson and then run it.
 		public bool BuildProjectFile (string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs, string toolsVersion)
 		{
+			toolsVersion = string.IsNullOrEmpty (toolsVersion) ? project.ToolsVersion : toolsVersion;
 			var globalPropertiesThatMakeSense = new Dictionary<string,string> ();
 			foreach (DictionaryEntry p in globalProperties)
 				globalPropertiesThatMakeSense [(string) p.Key] = (string) p.Value;
-			var result = new BuildManager ().Build (this.submission.BuildManager.OngoingBuildParameters.Clone (), new BuildRequestData (projectFileName, globalPropertiesThatMakeSense, toolsVersion, targetNames, null));
-			foreach (var p in result.ResultsByTarget)
-				targetOutputs [p.Key] = p.Value.Items;
-			return result.OverallResult == BuildResultCode.Success;
+			var projectToBuild = new ProjectInstance (ProjectRootElement.Create (XmlReader.Create (projectFileName)), globalPropertiesThatMakeSense, toolsVersion, Projects);
+			// Not very sure if ALL of these properties should be added, but some are certainly needed. 
+			foreach (var p in this.project.Properties.Where (p => !globalProperties.Contains (p.Name)))
+				projectToBuild.SetProperty (p.Name, p.EvaluatedValue);
+			
+			IDictionary<string,TargetResult> outs;
+			var ret = projectToBuild.Build (targetNames ?? new string [] {"Build"}, Projects.Loggers, out outs);
+			foreach (var p in outs)
+				targetOutputs [p.Key] = p.Value.Items ?? new ITaskItem [0];
+			return ret;
 		}
 
 		public bool BuildProjectFilesInParallel (string[] projectFileNames, string[] targetNames, IDictionary[] globalProperties, IDictionary[] targetOutputsPerProject, string[] toolsVersion, bool useResultsCache, bool unloadProjectsOnCompletion)

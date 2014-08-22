@@ -199,7 +199,6 @@
         <Parameter Name="serializationStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For successful deserialization, the current position in the stream must be at the beginning of the object graph.</para>
@@ -211,6 +210,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the data on the provided stream and reconstitutes the graph of objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The top object of the deserialized graph (root).</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the data to deserialize. </param>
       </Docs>
@@ -230,7 +233,6 @@
         <Parameter Name="handler" Type="System.Runtime.Remoting.Messaging.HeaderHandler" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Headers are used only for specific remoting applications. The <see cref="T:System.Runtime.Remoting.Messaging.HeaderHandler" /> parameter is one of two ways to return headers from a stream in SOAP Remote Procedure Call (RPC) format. The other way is to use the <see cref="P:System.Runtime.Serialization.Formatters.Soap.SoapFormatter.TopObject" /> property.</para>
@@ -247,6 +249,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the stream into an object graph with any headers in that stream being handled by the given <see cref="T:System.Runtime.Remoting.Messaging.HeaderHandler" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The top object of the deserialized graph (root).</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the data to deserialize.</param>
         <param name="handler">

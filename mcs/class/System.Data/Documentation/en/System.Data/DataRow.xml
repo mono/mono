@@ -220,7 +220,6 @@
         <Parameter Name="relation" Type="System.Data.DataRelation" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects that is returned by the <see cref="P:System.Data.DataTable.ChildRelations" /> property.</para>
@@ -229,6 +228,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the child rows of this <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
         <param name="relation">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
       </Docs>
@@ -247,7 +250,6 @@
         <Parameter Name="relationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects that is returned by the <see cref="P:System.Data.DataTable.ChildRelations" /> property.</para>
@@ -256,6 +258,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the child rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
         <param name="relationName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of the <see cref="T:System.Data.DataRelation" /> to use. </param>
       </Docs>
@@ -275,7 +281,6 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects that is returned by the <see cref="P:System.Data.DataTable.ChildRelations" /> property.</para>
@@ -286,6 +291,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the child rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects.</para>
+        </returns>
         <param name="relation">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
         <param name="version">
@@ -307,7 +316,6 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects that is returned by the <see cref="P:System.Data.DataTable.ChildRelations" /> property.</para>
@@ -318,6 +326,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the child rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
         <param name="relationName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of the <see cref="T:System.Data.DataRelation" /> to use. </param>
         <param name="version">
@@ -338,7 +350,6 @@
         <Parameter Name="column" Type="System.Data.DataColumn" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> method to set column errors.</para>
@@ -349,6 +360,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the error description of the specified <see cref="T:System.Data.DataColumn" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text of the error description.</para>
+        </returns>
         <param name="column">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataColumn" />. </param>
       </Docs>
@@ -367,7 +382,6 @@
         <Parameter Name="columnIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> method to set column errors.</para>
@@ -378,6 +392,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the error description for the column specified by index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text of the error description.</para>
+        </returns>
         <param name="columnIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the column. </param>
       </Docs>
@@ -396,7 +414,6 @@
         <Parameter Name="columnName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> method to set column errors.</para>
@@ -407,6 +424,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the error description for a column, specified by name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text of the error description.</para>
+        </returns>
         <param name="columnName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
       </Docs>
@@ -423,7 +444,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DataColumn []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.DataRow.GetColumnsInError" /> lets you reduce the number of <see cref="T:System.Data.DataColumn" /> objects that must be processed for errors by returning only those columns that have an error. Errors can be set to individual columns with the <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> method. To further reduce the number of processing, examine the <see cref="P:System.Data.DataRow.HasErrors" /> property of the <see cref="T:System.Data.DataRow" /> class to determine whether a <see cref="T:System.Data.DataRow" /> has errors before invoking <see cref="M:System.Data.DataRow.GetColumnsInError" />.</para>
@@ -433,6 +453,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of columns that have errors.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataColumn" /> objects that contain errors.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -449,7 +473,6 @@
         <Parameter Name="relation" Type="System.Data.DataRelation" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
@@ -459,6 +482,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parent row of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent <see cref="T:System.Data.DataRow" /> of the current row.</para>
+        </returns>
         <param name="relation">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
       </Docs>
@@ -477,7 +504,6 @@
         <Parameter Name="relationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
@@ -487,6 +513,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parent row of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent <see cref="T:System.Data.DataRow" /> of the current row.</para>
+        </returns>
         <param name="relationName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />. </param>
       </Docs>
@@ -506,7 +536,6 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
@@ -517,6 +546,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parent row of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent <see cref="T:System.Data.DataRow" /> of the current row.</para>
+        </returns>
         <param name="relation">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
         <param name="version">
@@ -538,7 +571,6 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
@@ -549,6 +581,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parent row of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent <see cref="T:System.Data.DataRow" /> of the current row.</para>
+        </returns>
         <param name="relationName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />. </param>
         <param name="version">
@@ -569,7 +605,6 @@
         <Parameter Name="relation" Type="System.Data.DataRelation" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
@@ -579,6 +614,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parent rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
         <param name="relation">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
       </Docs>
@@ -597,7 +636,6 @@
         <Parameter Name="relationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
@@ -607,6 +645,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parent rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
         <param name="relationName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />. </param>
       </Docs>
@@ -626,7 +668,6 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
@@ -637,6 +678,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parent rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
         <param name="relation">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
         <param name="version">
@@ -658,7 +703,6 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
@@ -669,6 +713,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parent rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
         <param name="relationName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />. </param>
         <param name="version">
@@ -715,7 +763,6 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.Data.DataRow.BeginEdit" /> method for more information.</para>
@@ -724,6 +771,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether a specified version exists.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the version exists; otherwise, false.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values that specifies the row version. </param>
       </Docs>
@@ -742,12 +793,15 @@
         <Parameter Name="column" Type="System.Data.DataColumn" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the specified <see cref="T:System.Data.DataColumn" /> contains a null value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the column contains a null value; otherwise, false.</para>
+        </returns>
         <param name="column">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataColumn" />. </param>
       </Docs>
@@ -766,12 +820,15 @@
         <Parameter Name="columnIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the column at the specified index contains a null value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the column contains a null value; otherwise, false.</para>
+        </returns>
         <param name="columnIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the column. </param>
       </Docs>
@@ -790,12 +847,15 @@
         <Parameter Name="columnName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the named column contains a null value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the column contains a null value; otherwise, false.</para>
+        </returns>
         <param name="columnName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
       </Docs>
@@ -815,12 +875,15 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the specified <see cref="T:System.Data.DataColumn" /> and <see cref="T:System.Data.DataRowVersion" /> contains a null value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the column contains a null value; otherwise, false.</para>
+        </returns>
         <param name="column">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataColumn" />. </param>
         <param name="version">

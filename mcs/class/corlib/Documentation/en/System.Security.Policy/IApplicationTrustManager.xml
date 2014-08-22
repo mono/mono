@@ -46,7 +46,6 @@
         <Parameter Name="context" Type="System.Security.Policy.TrustManagerContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -56,6 +55,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an application should be executed and which set of permissions should be granted to it.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains security decisions about the application.</para>
+        </returns>
         <param name="activationContext">
           <attribution license="cc4" from="Microsoft" modified="false" />The activation context for the application.</param>
         <param name="context">

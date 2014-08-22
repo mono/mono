@@ -199,7 +199,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You use this method to access the stream for an entry in a zip archive. After retrieving the stream, you can read from or write to the stream. When you write to the stream, the modifications you make to the entry will appear in the zip archive.</para>
@@ -208,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the entry from the zip archive.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The stream that represents the contents of the entry.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -113,7 +113,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -124,6 +123,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new host protection permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.IPermission" /> that corresponds to the current attribute.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ExternalProcessMgmt">

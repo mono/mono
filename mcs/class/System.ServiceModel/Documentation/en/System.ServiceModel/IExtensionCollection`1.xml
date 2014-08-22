@@ -45,8 +45,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="E">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -56,6 +54,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds the specified extension object in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The extension object that was found.</para>
+        </returns>
+        <typeparam name="E">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of extension object.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindAll&lt;E&gt;">
@@ -73,13 +77,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="E">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds all extension object in the collection specified by <paramref name="E" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all extension objects in the collection that implement the specified type.</para>
+        </returns>
+        <typeparam name="E">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of extension object.</typeparam>
       </Docs>
     </Member>
   </Members>

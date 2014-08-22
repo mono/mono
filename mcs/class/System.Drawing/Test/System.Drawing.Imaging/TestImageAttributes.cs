@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Security.Permissions;
@@ -114,6 +115,8 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		private void Bug80323 (Color c)
 		{
+			string fileName = String.Format ("80323-{0}.png", c.ToArgb ().ToString ("X"));
+
 			// test case from bug #80323
 			ColorMatrix cm = new ColorMatrix (new float[][] {
 				new float[] 	{1,	0,	0, 	0, 	0}, //R
@@ -138,12 +141,14 @@ namespace MonoTests.System.Drawing.Imaging {
 							g.DrawImage (bmp, new Rectangle (0, 0, 100, 100), 0, 0, 100, 100, GraphicsUnit.Pixel, null);
 							g.DrawImage (bmp, new Rectangle (100, 0, 100, 100), 0, 0, 100, 100, GraphicsUnit.Pixel, ia);
 						}
-						b.Save (String.Format ("80323-{0}.png", c.ToArgb ().ToString ("X")));
+						b.Save (fileName);
 						Assert.AreEqual (Color.FromArgb (255, 255, 155, 155), b.GetPixel (50, 50), "50,50");
 						Assert.AreEqual (Color.FromArgb (255, 255, 205, 205), b.GetPixel (150, 50), "150,50");
 					}
 				}
 			}
+
+			File.Delete (fileName);
 		}
 	
 		[Test]

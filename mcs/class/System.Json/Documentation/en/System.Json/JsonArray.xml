@@ -39,9 +39,13 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.Json.JsonValue&gt;" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Json.JsonArray" /> class with the specified items.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration of objects of type <see cref="T:System.Json.JsonValue" /> used to initialize the JavaScript Object Notation (JSON) array.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -107,9 +111,13 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.Json.JsonValue&gt;" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the elements from a collection of type <see cref="T:System.Json.JsonValue" /> to the array.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of types to add.</param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -174,12 +182,15 @@
         <Parameter Name="item" Type="System.Json.JsonValue" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified JSON CLR type is in the <see cref="T:System.Json.JsonArray" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the item is found in the <see cref="T:System.Json.JsonArray" />; otherwise, false.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Json.JsonValue" /> to check for in the array.</param>
       </Docs>
@@ -243,12 +254,15 @@
         <Parameter Name="item" Type="System.Json.JsonValue" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for a specified object and returns the zero-based index of its first occurrence within the array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of item within the array, if found; otherwise, -1.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Json.JsonValue" /> object to look up.</param>
       </Docs>
@@ -351,12 +365,15 @@
         <Parameter Name="item" Type="System.Json.JsonValue" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the first occurrence of the specified JSON value from the array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the item is successfully removed; otherwise, false. This method also returns false if the item was not found in the array.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The JSON value to remove from the array.</param>
       </Docs>
@@ -432,12 +449,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the <see cref="T:System.Json.JsonValue" /> objects in the array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that iterates through the <see cref="T:System.Json.JsonValue" /> elements in the array.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

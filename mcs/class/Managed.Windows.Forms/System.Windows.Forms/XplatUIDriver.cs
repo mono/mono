@@ -248,6 +248,7 @@ namespace System.Windows.Forms {
 		internal abstract bool MouseWheelPresent { get; }
 		internal abstract Rectangle VirtualScreen { get; }
 		internal abstract Rectangle WorkingArea { get; }
+		internal abstract Screen[] AllScreens { get; }
 		internal abstract bool ThemesEnabled { get; }
 
 		internal virtual bool RequiresPositiveClientAreaSize {

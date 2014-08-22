@@ -47,13 +47,16 @@
         <param name="protection_provider_type">To be added.</param>
         <param name="params_keys">To be added.</param>
         <param name="param_values">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Conditionally encrypts or decrypts the value of the string referenced by the <paramref name="xmlString" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing either the encrypted or decrypted value of the <paramref name="xmlString" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,13 +126,16 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used internally to support remote access to configuration data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A concatenated string representing the file path of the configuration file.</para>
+        </returns>
         <param name="webLevel">
           <attribution license="cc4" from="Microsoft" modified="false" />The level of the configuration file.</param>
         <param name="path">

@@ -35,6 +35,7 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Xml.Schema;
+using System.Xml.Serialization;
 
 using QName = System.Xml.XmlQualifiedName;
 
@@ -451,10 +452,12 @@ namespace System.Runtime.Serialization
 		{
 			Type rootType = type;
 
+			if (IsAny())
+				return;
+
 			if (root_name.Value == "")
 				throw new InvalidDataContractException ("Type '" + type.ToString () +
 					"' cannot have a DataContract attribute Name set to null or empty string.");
-
 
 			if (graph == null) {
 				if (names_filled)
@@ -544,6 +547,9 @@ namespace System.Runtime.Serialization
 
 		public override void WriteEndObject (XmlDictionaryWriter writer)
 		{
+			if (IsAny())
+				return;
+
 			writer.WriteEndElement ();
 		}
 
@@ -559,5 +565,15 @@ namespace System.Runtime.Serialization
 			get { throw new NotImplementedException (); }
 		}
 #endif
+
+		private bool IsAny ()
+		{
+			var xpa = type.GetCustomAttribute<XmlSchemaProviderAttribute> (true);
+
+			if (xpa != null)
+				return xpa.IsAny;
+
+			return false;
+		}
 	}
 }

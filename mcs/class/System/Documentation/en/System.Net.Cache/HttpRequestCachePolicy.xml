@@ -334,7 +334,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -344,6 +343,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> value that contains the property values for this instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

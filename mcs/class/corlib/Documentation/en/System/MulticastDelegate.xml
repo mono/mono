@@ -111,12 +111,15 @@
         <Parameter Name="follow" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Combines this <see cref="T:System.Delegate" /> with the specified <see cref="T:System.Delegate" /> to form a new delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate that is the new root of the <see cref="T:System.MulticastDelegate" /> invocation list.</para>
+        </returns>
         <param name="follow">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate to combine with this delegate. </param>
       </Docs>
@@ -137,12 +140,15 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the full invocation list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the return value of the encapsulated method.</para>
+        </returns>
         <param name="args">
           <attribution license="cc4" from="Microsoft" modified="false" />The arguments to pass to the encapsulated method. </param>
       </Docs>
@@ -163,7 +169,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two delegates are equal if they are not null and are of exactly the same type, their invocation lists contain the same number of elements, and every element in the invocation list of the first delegate is equal to the corresponding element in the invocation list of the second delegate.</para>
@@ -173,6 +178,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether this multicast delegate and the specified object are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> and this instance have the same invocation lists; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance. </param>
       </Docs>
@@ -191,12 +200,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInvocationList">
@@ -213,7 +225,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The array contains a set of delegates, each with an invocation list of one entry. Invoking these delegates sequentially, in the order they appear in the array, produces the same results as invoking the current instance.</para>
@@ -222,6 +233,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the invocation list of this multicast delegate, in invocation order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of delegates whose invocation lists collectively match the invocation list of this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -273,7 +288,6 @@
         <Parameter Name="d2" Type="System.MulticastDelegate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two delegates are equal if they are not null and are of exactly the same type, their invocation lists contain the same number of elements, and every element in the invocation list of the first delegate is equal to the corresponding element in the invocation list of the second delegate.</para>
@@ -283,6 +297,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two <see cref="T:System.MulticastDelegate" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d1" /> and <paramref name="d2" /> have the same invocation lists; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The left operand. </param>
         <param name="d2">
@@ -306,7 +324,6 @@
         <Parameter Name="d2" Type="System.MulticastDelegate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two delegates are equal if they are not null and are of exactly the same type, their invocation lists contain the same number of elements, and every element in the invocation list of the first delegate is equal to the corresponding element in the invocation list of the second delegate.</para>
@@ -316,6 +333,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two <see cref="T:System.MulticastDelegate" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d1" /> and <paramref name="d2" /> do not have the same invocation lists; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The left operand. </param>
         <param name="d2">
@@ -338,12 +359,15 @@
         <Parameter Name="value" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes an element from the invocation list of this <see cref="T:System.MulticastDelegate" /> that is equal to the specified delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="value" /> is found in the invocation list for this instance, then a new <see cref="T:System.Delegate" /> without <paramref name="value" /> in its invocation list; otherwise, this instance with its original invocation list.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate to search for in the invocation list. </param>
       </Docs>

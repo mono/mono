@@ -218,7 +218,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the signature was verified, false otherwise.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method also computes the digest of the references and the value of the signature.</para>
@@ -228,6 +227,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies using the public key in the signature.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CheckSignature">
@@ -246,12 +249,15 @@
         <Parameter Name="key" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
       </Parameters>
       <Docs>
-        <returns>True if the signature was verified, false otherwise.</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified key; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The implementation of the <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> property that holds the key to be used to verify the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property. </param>
       </Docs>
@@ -272,7 +278,6 @@
         <Parameter Name="macAlg" Type="System.Security.Cryptography.KeyedHashAlgorithm" />
       </Parameters>
       <Docs>
-        <returns>True if the signature was verified, false otherwise.</returns>
         <remarks>
           <para>Only <see cref="T:System.Security.Cryptography.HMACSHA1" /> is supported by the XMLDSIG specification.</para>
           <para>This example read a XML file (document.xml) and verify if it has been signed with the shared secret "trustme".</para>
@@ -305,6 +310,10 @@ else {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified message authentication code (MAC) algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified MAC; otherwise, false.</para>
+        </returns>
         <param name="macAlg">
           <attribution license="cc4" from="Microsoft" modified="false" />The implementation of <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> that holds the MAC to be used to verify the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property. </param>
       </Docs>
@@ -330,7 +339,6 @@ else {
         <Parameter Name="verifySignatureOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In version 1.1 of the .NET Framework, the X.509 certificate is not verified.  In version 2.0 and later, the X.509 certificate is verified.  </para>
@@ -340,6 +348,12 @@ else {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> object and, optionally, whether the certificate is valid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signature is valid; otherwise, false. </para>
+          <para>-or-</para>
+          <para>true if the signature and certificate are valid; otherwise, false. </para>
+        </returns>
         <param name="certificate">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> object to use to verify the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property.</param>
         <param name="verifySignatureOnly">
@@ -464,12 +478,15 @@ else {
         <Parameter Name="idValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Xml.XmlElement" /> object with the specified ID from the specified <see cref="T:System.Xml.XmlDocument" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlElement" /> object with the specified ID from the specified <see cref="T:System.Xml.XmlDocument" /> object, or null if it could not be found.</para>
+        </returns>
         <param name="document">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDocument" /> object to retrieve the <see cref="T:System.Xml.XmlElement" /> object from.</param>
         <param name="idValue">
@@ -490,7 +507,6 @@ else {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Security.Cryptography.Xml.SignedXml.GetPublicKey" /> method returns an <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> object that contains a public key that can be used to verify an XML digital signature.</para>
@@ -500,6 +516,10 @@ else {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public key of a signature.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> object that contains the public key of the signature, or null if the key cannot be found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -516,12 +536,15 @@ else {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the XML representation of a <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML representation of the <see cref="T:System.Security.Cryptography.Xml.Signature" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="KeyInfo">

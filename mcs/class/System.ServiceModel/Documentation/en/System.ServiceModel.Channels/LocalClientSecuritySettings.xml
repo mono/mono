@@ -68,12 +68,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of this class, which is a copy or clone of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.ServiceModel.Channels.LocalClientSecuritySettings" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CookieRenewalThresholdPercentage">

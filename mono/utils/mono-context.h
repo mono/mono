@@ -118,7 +118,8 @@ typedef struct {
 	 __asm mov [eax+0x14], esp											\
 	 __asm mov [eax+0x18], esi											\
 	 __asm mov [eax+0x1c], edi											\
-	 __asm call $+5														\
+	 __asm call __mono_context_get_ip									\
+	 __asm __mono_context_get_ip:										\
 	 __asm pop dword ptr [eax+0x20]										\
 		 }																\
 	} while (0)
@@ -179,7 +180,12 @@ typedef struct {
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->rbp))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->rsp))
 
-#if defined(__native_client__)
+#if defined (HOST_WIN32) && !defined(__GNUC__)
+/* msvc doesn't support inline assembly, so have to use a separate .asm file */
+extern void mono_context_get_current (void *);
+#define MONO_CONTEXT_GET_CURRENT(ctx) do { mono_context_get_current((void*)&(ctx)); } while (0)
+
+#elif defined(__native_client__)
 #define MONO_CONTEXT_GET_CURRENT(ctx)	\
 	__asm__ __volatile__(	\
 		"movq $0x0,  %%nacl:0x00(%%r15, %0, 1)\n"	\
@@ -222,7 +228,8 @@ typedef struct {
 		"movq %%r13, 0x68(%0)\n"	\
 		"movq %%r14, 0x70(%0)\n"	\
 		"movq %%r15, 0x78(%0)\n"	\
-		"leaq (%%rip), %%rdx\n"	\
+		/* "leaq (%%rip), %%rdx\n" is not understood by icc */	\
+		".byte 0x48, 0x8d, 0x15, 0x00, 0x00, 0x00, 0x00\n" \
 		"movq %%rdx, 0x80(%0)\n"	\
 		: 	\
 		: "a" (&(ctx))	\

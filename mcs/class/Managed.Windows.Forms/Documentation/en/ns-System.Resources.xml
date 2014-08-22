@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Resources">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Resources" /> namespace provides classes and interfaces that allow developers to create, store, and manage various culture-specific resources used in an application. One of the most important classes of the <see cref="N:System.Resources" /> namespace is the <see cref="T:System.Resources.ResourceManager" /> class.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Resources.ResourceManager" /> class allows the user to access and control resources stored in the main assembly or in resource satellite assemblies. Use the <see cref="M:System.Resources.ResourceManager.GetObject(System.String)" /> and <see cref="M:System.Resources.ResourceManager.GetString(System.String)" /> methods to retrieve culture-specific objects and strings.</para>
+    </remarks>
   </Docs>
 </Namespace>

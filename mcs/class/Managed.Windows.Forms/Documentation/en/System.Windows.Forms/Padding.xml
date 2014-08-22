@@ -101,13 +101,16 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the two specified <see cref="T:System.Windows.Forms.Padding" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Padding" /> that contains the sum of the two specified <see cref="T:System.Windows.Forms.Padding" /> values.</para>
+        </returns>
         <param name="p1">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" />.</param>
         <param name="p2">
@@ -204,7 +207,6 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -214,6 +216,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the value of the specified object is equivalent to the current <see cref="T:System.Windows.Forms.Padding" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Windows.Forms.Padding" /> objects are equivalent; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current <see cref="T:System.Windows.Forms.Padding" />.</param>
       </Docs>
@@ -229,7 +235,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -241,6 +246,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a hash code for the current <see cref="T:System.Windows.Forms.Padding" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -311,7 +320,6 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -322,6 +330,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs vector addition on the two specified <see cref="T:System.Windows.Forms.Padding" /> objects, resulting in a new <see cref="T:System.Windows.Forms.Padding" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.Padding" /> that results from adding <paramref name="p1" /> and <paramref name="p2" />.</para>
+        </returns>
         <param name="p1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Windows.Forms.Padding" /> to add.</param>
         <param name="p2">
@@ -342,7 +354,6 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -352,6 +363,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two specified <see cref="T:System.Windows.Forms.Padding" /> objects are equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Windows.Forms.Padding" /> objects are equal; otherwise, false.</para>
+        </returns>
         <param name="p1">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" /> to test.</param>
         <param name="p2">
@@ -372,7 +387,6 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -382,6 +396,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two specified <see cref="T:System.Windows.Forms.Padding" /> objects are not equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Windows.Forms.Padding" /> objects are different; otherwise, false.</para>
+        </returns>
         <param name="p1">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" /> to test.</param>
         <param name="p2">
@@ -402,7 +420,6 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -412,6 +429,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs vector subtraction on the two specified <see cref="T:System.Windows.Forms.Padding" /> objects, resulting in a new <see cref="T:System.Windows.Forms.Padding" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.Padding" /> result of subtracting <paramref name="p2" /> from <paramref name="p1" />.</para>
+        </returns>
         <param name="p1">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Padding" /> to subtract from (the minuend).</param>
         <param name="p2">
@@ -488,13 +509,16 @@
         <Parameter Name="p2" Type="System.Windows.Forms.Padding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts one specified <see cref="T:System.Windows.Forms.Padding" /> value from another.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Padding" /> that contains the result of the subtraction of one specified <see cref="T:System.Windows.Forms.Padding" /> value from another.</para>
+        </returns>
         <param name="p1">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Padding" />.</param>
         <param name="p2">
@@ -539,7 +563,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -550,6 +573,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current <see cref="T:System.Windows.Forms.Padding" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the current <see cref="T:System.Windows.Forms.Padding" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

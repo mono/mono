@@ -49,12 +49,15 @@
         <Parameter Name="documentType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ISymbolDocument'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a document specified by the language, vendor, and type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified document.</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />The URL that identifies the document. </param>
         <param name="language">
@@ -79,12 +82,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolDocument []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of all documents defined in the symbol store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of all documents defined in the symbol store.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGlobalVariables">
@@ -101,12 +107,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolVariable []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all global variables in the module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of all variables in the module.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMethod">
@@ -125,12 +134,15 @@
         <Parameter Name="method" Type="System.Diagnostics.SymbolStore.SymbolToken" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ISymbolMethod'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a symbol reader method object when given the identifier of a method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The symbol reader method object for the specified method identifier.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />The metadata token of the method. </param>
       </Docs>
@@ -152,12 +164,15 @@
         <Parameter Name="version" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ISymbolMethod'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a symbol reader method object when given the identifier of a method and its edit and continue version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The symbol reader method object for the specified method identifier.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />The metadata token of the method. </param>
         <param name="version">
@@ -182,12 +197,15 @@
         <Parameter Name="column" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ISymbolMethod'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a symbol reader method object that contains a specified position in a document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reader method object for the specified position in the document.</para>
+        </returns>
         <param name="document">
           <attribution license="cc4" from="Microsoft" modified="false" />The document in which the method is located. </param>
         <param name="line">
@@ -210,12 +228,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolNamespace []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the namespaces that are defined in the global scope within the current symbol store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespaces defined in the global scope within the current symbol store.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSymAttribute">
@@ -235,7 +256,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This attribute is only associated with symbolic information and is not a metadata custom attribute.</para>
@@ -244,6 +264,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an attribute value when given the attribute name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the attribute.</para>
+        </returns>
         <param name="parent">
           <attribution license="cc4" from="Microsoft" modified="false" />The metadata token for the object for which the attribute is requested. </param>
         <param name="name">
@@ -266,12 +290,15 @@
         <Parameter Name="parent" Type="System.Diagnostics.SymbolStore.SymbolToken" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ISymbolVariable []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the variables that are not local when given the parent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of variables for the parent.</para>
+        </returns>
         <param name="parent">
           <attribution license="cc4" from="Microsoft" modified="false" />The metadata token for the type for which the variables are requested. </param>
       </Docs>

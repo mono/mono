@@ -34,11 +34,17 @@
         <Parameter Name="attachmentMode" Type="System.ServiceModel.Security.SecurityTokenAttachmentMode" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
-        <param name="tokenPolicies">To be added.</param>
-        <param name="attachmentMode">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SupportingTokenSpecification" /> class.</para>
+        </summary>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security token.</param>
+        <param name="tokenPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of security token policies.</param>
+        <param name="attachmentMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security token attachment mode.</param>
       </Docs>
     </Member>
     <Member MemberName="SecurityTokenAttachmentMode">

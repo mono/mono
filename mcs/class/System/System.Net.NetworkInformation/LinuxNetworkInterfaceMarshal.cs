@@ -85,8 +85,15 @@ namespace System.Net.NetworkInformation {
 		public ushort sll_hatype;
 		public byte   sll_pkttype;
 		public byte   sll_halen;
-
+#if MONODROID
+		// In MonoDroid the structure has larger space allocated for the address part since there exist
+		// addresses (Infiniband, ipv6 tunnels) which exceed the standard 8 bytes. In fact, glibc's
+		// getifaddrs implementation also uses the bigger size, but for compatibility with other libc
+		// implementations we use the standard address size
+		[MarshalAs (UnmanagedType.ByValArray, SizeConst=24)]
+#else
 		[MarshalAs (UnmanagedType.ByValArray, SizeConst=8)]
+#endif
 		public byte[] sll_addr;
 	}
 
@@ -96,11 +103,18 @@ namespace System.Net.NetworkInformation {
 		PRONET = 4,
 		ATM = 19,
 		SLIP = 256,
+		CSLIP = 257,
+		SLIP6 = 258,
+		CSLIP6 = 259,
 		PPP = 512,
 		LOOPBACK = 772,
 		FDDI = 774,
 		TUNNEL = 768,
-		TUNNEL6 = 769
+		TUNNEL6 = 769,
+		SIT = 776, // IPv6-in-IPv4 tunnel
+		IPDDP = 777, // IP over DDP tunnel
+		IPGRE = 778, // GRE over IP
+		IP6GRE = 823 // GRE over IPv6
 	}
 }
 

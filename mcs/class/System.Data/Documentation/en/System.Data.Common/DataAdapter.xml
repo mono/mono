@@ -178,7 +178,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DataAdapter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is deprecated. The <see cref="M:System.Data.Common.DataAdapter.#ctor(System.Data.Common.DataAdapter)" /> constructor should be used instead of this method.</para>
@@ -188,6 +187,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of this instance of <see cref="T:System.Data.Common.DataAdapter" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned instance of <see cref="T:System.Data.Common.DataAdapter" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -237,12 +240,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DataTableMappingCollection'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Data.Common.DataTableMappingCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new table mapping collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -286,7 +292,6 @@
         <Parameter Name="dataSet" Type="System.Data.DataSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DataAdapter.Fill(System.Data.DataSet)" /> method retrieves rows from the data source using the SELECT statement specified by an associated <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> property. The connection object associated with the SELECT statement must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.Common.DataAdapter.Fill(System.Data.DataSet)" /> is called, it is opened to retrieve data, then closed. If the connection is open before <see cref="M:System.Data.Common.DataAdapter.Fill(System.Data.DataSet)" /> is called, it remains open.</para>
@@ -303,6 +308,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in the <see cref="T:System.Data.DataSet" /> to match those in the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataSet" /> to fill with records and, if necessary, schema. </param>
       </Docs>
@@ -325,7 +334,6 @@
         <Parameter Name="dataReader" Type="System.Data.IDataReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the remarks for System.Data.Common.DataAdapter.Fill(System.Data.DataSet) for additional information.</para>
@@ -334,6 +342,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in the <see cref="T:System.Data.DataTable" /> to match those in the data source using the <see cref="T:System.Data.DataTable" /> name and the specified <see cref="T:System.Data.IDataReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataTable" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataTable">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataTable" /> to fill with records.</param>
         <param name="dataReader">
@@ -356,7 +368,6 @@
         <Parameter Name="maxRecords" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the remarks for System.Data.Common.DataAdapter.Fill(System.Data.DataSet) for additional information.</para>
@@ -365,6 +376,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in a specified range in the collection of <see cref="T:System.Data.DataTable" /> objects to match those in the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataTable" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataTables">
           <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.Data.DataTable" /> objects to fill with records.</param>
         <param name="dataReader">
@@ -392,7 +407,6 @@
         <Parameter Name="maxRecords" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the remarks for System.Data.Common.DataAdapter.Fill(System.Data.DataSet) for additional information.</para>
@@ -401,6 +415,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in a specified range in the <see cref="T:System.Data.DataSet" /> to match those in the data source using the <see cref="T:System.Data.DataSet" /> and <see cref="T:System.Data.DataTable" /> names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataSet" /> to fill with records.</param>
         <param name="srcTable">
@@ -475,7 +493,6 @@
         <Parameter Name="schemaType" Type="System.Data.SchemaType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Data.DataTable []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DataAdapter.FillSchema(System.Data.DataSet,System.Data.SchemaType)" /> method retrieves the schema from the data source using the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" />. The connection object associated with the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.Common.DataAdapter.FillSchema(System.Data.DataSet,System.Data.SchemaType)" /> is called, it is opened to retrieve data and then closed. If the connection is open before <see cref="M:System.Data.Common.DataAdapter.FillSchema(System.Data.DataSet,System.Data.SchemaType)" /> is called, it remains open.</para>
@@ -531,6 +548,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.DataTable" /> to the specified <see cref="T:System.Data.DataSet" /> and configures the schema to match that in the data source based on the specified <see cref="T:System.Data.SchemaType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> object that contains schema information returned from the data source.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataSet" /> to be filled with the schema from the data source. </param>
         <param name="schemaType">
@@ -556,12 +577,15 @@
         <Parameter Name="dataReader" Type="System.Data.IDataReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.DataTable" /> to the specified <see cref="T:System.Data.DataSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> object that contains schema information returned from the data source.</para>
+        </returns>
         <param name="dataTable">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataTable" /> to be filled from the <see cref="T:System.Data.IDataReader" />.</param>
         <param name="schemaType">
@@ -586,12 +610,15 @@
         <Parameter Name="dataReader" Type="System.Data.IDataReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.DataTable" /> to the specified <see cref="T:System.Data.DataSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to a collection of <see cref="T:System.Data.DataTable" /> objects that were added to the <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataTable" /> to be filled from the <see cref="T:System.Data.IDataReader" />.</param>
         <param name="schemaType">
@@ -610,12 +637,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Data.IDataParameter []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parameters set by the user when executing an SQL SELECT statement.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.IDataParameter" /> objects that contains the parameters set by the user.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -638,12 +668,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a <see cref="T:System.Data.Common.DataTableMappingCollection" /> has been created.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a <see cref="T:System.Data.Common.DataTableMappingCollection" /> has been created; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MissingMappingAction">
@@ -788,12 +821,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="P:System.Data.Common.DataAdapter.AcceptChangesDuringFill" /> property should be persisted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Data.Common.DataAdapter.AcceptChangesDuringFill" /> property is persisted; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ShouldSerializeFillLoadOption">
@@ -812,12 +848,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="P:System.Data.Common.DataAdapter.FillLoadOption" /> property should be persisted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Data.Common.DataAdapter.FillLoadOption" /> property is persisted; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ShouldSerializeTableMappings">
@@ -828,12 +867,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one or more <see cref="T:System.Data.Common.DataTableMapping" /> objects exist and they should be persisted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more <see cref="T:System.Data.Common.DataTableMapping" /> objects exist; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -900,7 +942,6 @@
         <Parameter Name="dataSet" Type="System.Data.DataSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The update is performed on a by-row basis. For every inserted, modified, and deleted row, the <see cref="M:System.Data.Common.DataAdapter.Update(System.Data.DataSet)" /> method determines the type of change that has been performed on it (Insert, Update or Delete). Depending on the type of change, the Insert, Update, or Delete command template executes to propagate the modified row to the data source. When an application calls the <see cref="M:System.Data.Common.DataAdapter.Update(System.Data.DataSet)" /> method, the <see cref="T:System.Data.Common.DataAdapter" /> examines the <see cref="P:System.Data.DataRow.RowState" /> property, and executes the required INSERT, UPDATE, or DELETE statements iteratively for each row, based on the order of the indexes configured in the <see cref="T:System.Data.DataSet" />. For example, <see cref="M:System.Data.Common.DataAdapter.Update(System.Data.DataSet)" /> might execute a DELETE statement, followed by an INSERT statement, and then another DELETE statement, due to the ordering of the rows in the <see cref="T:System.Data.DataTable" />.</para>
@@ -983,6 +1024,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calls the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the specified <see cref="T:System.Data.DataSet" /> from a <see cref="T:System.Data.DataTable" /> named "Table."</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully updated from the <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataSet" /> used to update the data source. </param>
       </Docs>

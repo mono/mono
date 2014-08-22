@@ -61,7 +61,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="key" /> parameter of the <see cref="M:System.Web.IPartitionResolver.ResolvePartition(System.Object)" /> method is the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> property. The <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> property uniquely identifies a browser with session data on the server.</para>
@@ -70,6 +69,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves the partition based on a key parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string with connection information.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />An identifier used to determine which partition to use for the current session state.</param>
       </Docs>

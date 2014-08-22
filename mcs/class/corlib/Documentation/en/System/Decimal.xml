@@ -418,11 +418,6 @@ class ConstructDecimal {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Decimal" /> containing the sum of <paramref name="d1" /> and <paramref name="d2" />. The 
-   scale of the result, before any rounding, is the larger of the scales of d1 and
-   d2. For example, 1.1 + 2.22 gives 3.32, and 2.50 + 1 gives 3.50.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The sum of <paramref name="d1" /> and <paramref name="d2" /> is less than <see cref="F:System.Decimal.MinValue" /> or greater than <see cref="F:System.Decimal.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -433,6 +428,10 @@ class ConstructDecimal {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds two specified <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of <paramref name="d1" /> and <paramref name="d2" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to add. </param>
         <param name="d2">
@@ -455,7 +454,6 @@ class ConstructDecimal {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -465,6 +463,10 @@ class ConstructDecimal {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smallest integral value that is greater than or equal to the specified decimal number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The smallest integral value that is greater than or equal to the <paramref name="d" /> parameter. Note that this method returns a <see cref="T:System.Decimal" /> instead of an integral type.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number. </param>
       </Docs>
@@ -492,38 +494,54 @@ class ConstructDecimal {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of <paramref name="d1" /> as compared to <paramref name="d2" />.  Trailing zero digits in the fractional part of  are ignored.  For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value. Each comparison compares the numerical values of <paramref name="d1" /> and <paramref name="d2" />.</para>
-          <list type="table">
-            <listheader>
-              <term> Return Value</term>
-              <description> Meaning</description>
-            </listheader>
-            <item>
-              <term> Any
-         negative
-         number</term>
-              <description>
-                <paramref name="d1" />&lt; <paramref name="d2" /></description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>
-                <paramref name="d1" /> == <paramref name="d2" /></description>
-            </item>
-            <item>
-              <term> A positive
-      number</term>
-              <description>
-                <paramref name="d1" />&gt;<paramref name="d2" /></description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two specified <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of <paramref name="d1" /> and <paramref name="d2" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>
+                        <paramref name="d1" /> is less than <paramref name="d2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>
+                            <paramref name="d1" /> and <paramref name="d2" /> are equal. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>
+                                <paramref name="d1" /> is greater than <paramref name="d2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare. </param>
         <param name="d2">
@@ -546,27 +564,6 @@ class ConstructDecimal {
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. Trailing zero digits in the fractional part of the current instance and <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>current instance &gt; <paramref name="value" />.</description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -579,6 +576,46 @@ class ConstructDecimal {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified <see cref="T:System.Decimal" /> object and returns a comparison of their relative values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance.</param>
       </Docs>
@@ -600,28 +637,6 @@ class ConstructDecimal {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. Trailing zero digits in the fractional part of the current instance and <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>current instance &gt; <paramref name="value" />, or <paramref name="value" /> is
-   a null reference.</description>
-            </item>
-          </list>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="value" /> is not a <see cref="T:System.Decimal" /> and is not a null reference. </exception>
         <remarks>
@@ -633,6 +648,49 @@ class ConstructDecimal {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified object and returns a comparison of their relative values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>
+                        <paramref name="value" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance, or null. </param>
       </Docs>
@@ -656,11 +714,6 @@ class ConstructDecimal {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Decimal" /> containing the result of dividing <paramref name="d1" /> by
-<paramref name="d2" />. The scale of the result, before any rounding, is 
-   the closest scale to the preferred scale which will preserve a result equal to the exact result. The preferred scale is the scale of <paramref name="d1" />  less the scale of <paramref name="d2" />. For example, 2.20 / 2 gives 1.10.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.DivideByZeroException">
           <paramref name="d2" /> is zero. </exception>
@@ -669,6 +722,10 @@ class ConstructDecimal {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Divides two specified <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of dividing <paramref name="d1" /> by <paramref name="d2" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The dividend. </param>
         <param name="d2">
@@ -691,10 +748,6 @@ class ConstructDecimal {
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="value" /> is numerically equal to (has the same value as) the current instance; otherwise, <see langword="false" />. </para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -707,6 +760,11 @@ class ConstructDecimal {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance and a specified <see cref="T:System.Decimal" /> object represent the same value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="value" /> is equal to this instance; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance.</param>
       </Docs>
@@ -728,13 +786,6 @@ class ConstructDecimal {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="value" /> has the same type and is numerically equal to
-   (has the same value as) the current instance. If <paramref name="value" /> is a null
-   reference or is not an instance of <see cref="T:System.Decimal" />, returns
-<see langword="false" />. </para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note"> This method
@@ -745,6 +796,11 @@ class ConstructDecimal {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance and a specified <see cref="T:System.Object" /> represent the same type and value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="value" /> is a <see cref="T:System.Decimal" /> and equal to this instance; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance. </param>
       </Docs>
@@ -768,17 +824,16 @@ class ConstructDecimal {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="d1" /> and <paramref name="d2" /> are numerically
-   equal
-   (have the same value), otherwise <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether two specified instances of <see cref="T:System.Decimal" /> represent the same value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="d1" /> and <paramref name="d2" /> are equal; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare. </param>
         <param name="d2">
@@ -803,14 +858,6 @@ class ConstructDecimal {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Decimal" /> value <paramref name="v" /> such that <paramref name="v" /> is an integer and <paramref name="d" />
-   - 1 &lt; <paramref name="v" />
-   &lt;=
-   
-<paramref name="d" /> . The scale of the result will be zero.
-   </para>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Decimal.Floor(System.Decimal)" /> method.</para>
           <code lang="C#">using System;
@@ -837,6 +884,12 @@ class DecimalTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a specified <see cref="T:System.Decimal" /> number to the closest integer toward negative infinity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="d" /> has a fractional part, the next whole <see cref="T:System.Decimal" /> number toward negative infinity that is less than <paramref name="d" />.</para>
+          <para>-or- </para>
+          <para>If <paramref name="d" /> doesn't have a fractional part, <paramref name="d" /> is returned unchanged. Note that the method returns an integral value of type <see cref="T:System.Decimal" />. </para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to round. </param>
       </Docs>
@@ -858,12 +911,15 @@ class DecimalTest {
         <Parameter Name="cy" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 64-bit signed integer, which contains an OLE Automation Currency value, to the equivalent <see cref="T:System.Decimal" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Decimal" /> that contains the equivalent of <paramref name="cy" />.</para>
+        </returns>
         <param name="cy">
           <attribution license="cc4" from="Microsoft" modified="false" />An OLE Automation Currency value. </param>
       </Docs>
@@ -885,10 +941,6 @@ class DecimalTest {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of four <see cref="T:System.Int32" /> containing an unspecified 128-bit representation of a    <see cref="T:System.Decimal" /> in its raw form.
-   </para>
-        </returns>
         <example>
           <para>The following example demonstrates the different
       representations of 1.00 and 1.</para>
@@ -932,6 +984,10 @@ public static void Main () {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a specified instance of <see cref="T:System.Decimal" /> to its equivalent binary representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer array with four elements that contain the binary representation of <paramref name="d" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to convert. </param>
       </Docs>
@@ -952,9 +1008,6 @@ public static void Main () {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
-        </returns>
         <remarks>
           <para>The algorithm used to
       generate the hash code value is unspecified.</para>
@@ -967,6 +1020,10 @@ public static void Main () {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -984,12 +1041,15 @@ public static void Main () {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.TypeCode" /> for value type <see cref="T:System.Decimal" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerated constant <see cref="F:System.TypeCode.Decimal" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MaxValue">
@@ -1091,19 +1151,16 @@ public static void Main () {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The result of multiplying <paramref name="d1" /> and
-<paramref name="d2" /> . The scale of the result, before any 
-   rounding, is the sum of the scales of d1 and
-   d2.</para>
-          <para>For example, 123 x 3 gives 369, and 2.2 x 1.35 gives 2.970.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Multiplies two specified <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of multiplying <paramref name="d1" /> and <paramref name="d2" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The multiplicand. </param>
         <param name="d2">
@@ -1128,16 +1185,17 @@ public static void Main () {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The negated value of <paramref name="d" />. If <paramref name="d" /> is zero then zero is returned (with 0 sign); otherwise the scale of the result is the same as the scale of
-<paramref name="d" />
-.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the result of multiplying the specified <see cref="T:System.Decimal" /> value by negative one.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decimal number with the value of <paramref name="d" />, but the opposite sign.</para>
+          <para>-or- </para>
+          <para>Zero, if <paramref name="d" /> is zero.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to negate. </param>
       </Docs>
@@ -1188,10 +1246,6 @@ public static void Main () {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The value returned by <see cref="M:System.Decimal.Add(System.Decimal,System.Decimal)" />
-(<paramref name="d1" />,<paramref name="d2" />).</para>
-        </returns>
         <exception cref="T:System.OverflowException">The sum of <paramref name="d1" /> and <paramref name="d2" /> is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1203,6 +1257,10 @@ public static void Main () {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds two specified <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of adding <paramref name="d1" /> and <paramref name="d2" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to add. </param>
         <param name="d2">
@@ -1227,9 +1285,6 @@ public static void Main () {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The value returned by <see cref="M:System.Decimal.Subtract(System.Decimal,System.Decimal)" /> (<paramref name="d" /> , <see cref="F:System.Decimal.One" /> ).</para>
-        </returns>
         <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" /> .</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1244,6 +1299,10 @@ public static void Main () {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decrements the <see cref="T:System.Decimal" /> operand by one.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of <paramref name="d" /> decremented by 1.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to decrement. </param>
       </Docs>
@@ -1267,10 +1326,6 @@ public static void Main () {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The value returned by <see cref="M:System.Decimal.Divide(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
-<paramref name="d2" />). </para>
-        </returns>
         <exception cref="T:System.DivideByZeroException">The divisor is zero. </exception>
         <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
         <remarks>
@@ -1283,6 +1338,10 @@ public static void Main () {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Divides two specified <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of dividing <paramref name="d1" /> by <paramref name="d2" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The dividend. </param>
         <param name="d2">
@@ -1308,12 +1367,6 @@ public static void Main () {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" />
-(<paramref name="d1" />, <paramref name="d2" /> ) returns
-zero; otherwise <see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.op_Equality(System.Decimal,System.Decimal)" /> method defines the operation of the equality operator for <see cref="T:System.Decimal" /> values. It enables code such as the following: </para>
@@ -1324,6 +1377,11 @@ zero; otherwise <see langword="false" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether two <see cref="T:System.Decimal" /> values are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="d1" /> and <paramref name="d2" /> are equal; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare. </param>
         <param name="d2">
@@ -1808,12 +1866,6 @@ specified value.</para>
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
-<paramref name="d2" />) returns a value that is greater than zero; otherwise 
-<see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.op_GreaterThan(System.Decimal,System.Decimal)" /> method defines the operation of the greater than operator for <see cref="T:System.Decimal" /> values. It enables code such as the following: </para>
@@ -1825,6 +1877,11 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether a specified <see cref="T:System.Decimal" /> is greater than another specified <see cref="T:System.Decimal" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                    true if <paramref name="d1" /> is greater than <paramref name="d2" />; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare. </param>
         <param name="d2">
@@ -1850,12 +1907,6 @@ specified value.</para>
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
-<paramref name="d2" />) returns a value that is greater than or equal to zero; otherwise 
-<see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.op_GreaterThanOrEqual(System.Decimal,System.Decimal)" /> method defines the operation of the greater than or equal operator for <see cref="T:System.Decimal" /> values. It enables code such as the following: </para>
@@ -1867,6 +1918,11 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether a specified <see cref="T:System.Decimal" /> is greater than or equal to another specified <see cref="T:System.Decimal" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                    true if <paramref name="d1" /> is greater than or equal to <paramref name="d2" />; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare. </param>
         <param name="d2">
@@ -2191,10 +2247,6 @@ specified value.</para>
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The value returned by <see cref="M:System.Decimal.Add(System.Decimal,System.Decimal)" /> (<paramref name="d" /> ,
-<see cref="F:System.Decimal.One" /> ).</para>
-        </returns>
         <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" /> .</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2209,6 +2261,10 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Increments the <see cref="T:System.Decimal" /> operand by 1.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of <paramref name="d" /> incremented by 1.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to increment. </param>
       </Docs>
@@ -2232,11 +2288,6 @@ specified value.</para>
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
-<paramref name="d2" />) does not return zero; otherwise <see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.op_Inequality(System.Decimal,System.Decimal)" /> method defines the operation of the inequality operator for <see cref="T:System.Decimal" /> values. It enables code such as the following: </para>
@@ -2255,6 +2306,11 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether two <see cref="T:System.Decimal" /> objects have different values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="d1" /> and <paramref name="d2" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare. </param>
         <param name="d2">
@@ -2280,12 +2336,6 @@ specified value.</para>
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
-<paramref name="d2" />) returns a value that is less than zero; otherwise 
-<see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.op_LessThan(System.Decimal,System.Decimal)" /> method defines the operation of the less than operator for <see cref="T:System.Decimal" /> values. It enables code such as the following: </para>
@@ -2297,6 +2347,11 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether a specified <see cref="T:System.Decimal" /> is less than another specified <see cref="T:System.Decimal" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="d1" /> is less than <paramref name="d2" />; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare. </param>
         <param name="d2">
@@ -2322,12 +2377,6 @@ specified value.</para>
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <see cref="M:System.Decimal.Compare(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
-<paramref name="d2" />) returns a value that is less than or equal to zero; otherwise 
-<see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.op_LessThanOrEqual(System.Decimal,System.Decimal)" /> method defines the operation of the less than or equal operator for <see cref="T:System.Decimal" /> values. It enables code such as the following: </para>
@@ -2339,6 +2388,11 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether a specified <see cref="T:System.Decimal" /> is less than or equal to another specified <see cref="T:System.Decimal" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="d1" /> is less than or equal to <paramref name="d2" />; otherwise, false.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare. </param>
         <param name="d2">
@@ -2364,10 +2418,6 @@ specified value.</para>
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The value returned by <see cref="M:System.Decimal.Remainder(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
-<paramref name="d2" />).</para>
-        </returns>
         <exception cref="T:System.DivideByZeroException">
           <paramref name="d2" /> is zero. </exception>
         <exception cref="T:System.OverflowException">
@@ -2383,6 +2433,10 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the remainder resulting from dividing two specified <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The remainder resulting from dividing <paramref name="d1" /> by <paramref name="d2" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The dividend. </param>
         <param name="d2">
@@ -2408,10 +2462,6 @@ specified value.</para>
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The value returned by <see cref="M:System.Decimal.Multiply(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
-<paramref name="d2" />). </para>
-        </returns>
         <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2423,6 +2473,10 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Multiplies two specified <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of multiplying <paramref name="d1" /> by <paramref name="d2" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to multiply. </param>
         <param name="d2">
@@ -2448,11 +2502,6 @@ specified value.</para>
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The value returned by <see cref="M:System.Decimal.Subtract(System.Decimal,System.Decimal)" /> (<paramref name="d1" />,
-<paramref name="d2" />
-).</para>
-        </returns>
         <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2464,6 +2513,10 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts two specified <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of subtracting <paramref name="d2" /> from <paramref name="d1" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The minuend. </param>
         <param name="d2">
@@ -2488,9 +2541,6 @@ specified value.</para>
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The value returned by <see cref="M:System.Decimal.Negate(System.Decimal)" /> (<paramref name="d" />).</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.op_UnaryPlus(System.Decimal)" /> method defines the operation of the unary negation operator (or the additive inverse operator) for <see cref="T:System.Decimal" /> values. The operation produces a value that results in 0 (zero) when it is added to the original number. Languages that do not support custom operators can call the <see cref="M:System.Decimal.Negate(System.Decimal)" /> method instead. </para>
@@ -2499,6 +2549,10 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Negates the value of the specified <see cref="T:System.Decimal" /> operand.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of <paramref name="d" /> multiplied by negative one (-1).</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to negate. </param>
       </Docs>
@@ -2521,9 +2575,6 @@ specified value.</para>
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns <paramref name="d" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.op_UnaryPlus(System.Decimal)" /> method defines the operation of the unary positive operator for <see cref="T:System.Decimal" /> values. </para>
@@ -2532,6 +2583,10 @@ specified value.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the <see cref="T:System.Decimal" /> operand (the sign of the operand is unchanged).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the operand, <paramref name="d" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The operand to return.</param>
       </Docs>
@@ -2554,9 +2609,6 @@ specified value.</para>
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Decimal" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -2672,6 +2724,10 @@ class DecimalParseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number to its <see cref="T:System.Decimal" /> equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The equivalent to the number contained in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The string representation of the number to convert.</param>
       </Docs>
@@ -2695,10 +2751,6 @@ class DecimalParseClass {
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Decimal" /> value obtained from <paramref name="s" />
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -2997,6 +3049,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified style to its <see cref="T:System.Decimal" /> equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Decimal" /> number equivalent to the number contained in <paramref name="s" /> as specified by <paramref name="style" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The string representation of the number to convert. </param>
         <param name="style">
@@ -3022,10 +3078,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Decimal" /> value obtained from <paramref name="s" />
-.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
@@ -3143,6 +3195,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number to its <see cref="T:System.Decimal" /> equivalent using the specified culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Decimal" /> number equivalent to the number contained in <paramref name="s" /> as specified by <paramref name="provider" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The string representation of the number to convert. </param>
         <param name="provider">
@@ -3169,10 +3225,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Decimal" /> value obtained from <paramref name="s" />
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="s" /> is a null reference. </para>
@@ -3478,6 +3530,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number to its <see cref="T:System.Decimal" /> equivalent using the specified style and culture-specific format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Decimal" /> number equivalent to the number contained in <paramref name="s" /> as specified by <paramref name="style" /> and <paramref name="provider" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The string representation of the number to convert. </param>
         <param name="style">
@@ -3505,23 +3561,21 @@ public static void Main() {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <param name="d2">To be added.</param>
-        <returns>
-          <para>The remainder after dividing d1 by d2 to give an integer
-      result. The sign of the result, if non-zero, is the same as the sign of d1, and
-      the scale of the result is the larger of the scales of d1 and d2.</para>
-          <para>For example, -10 % 3 gives -1, and 3.6 % 1.3 gives 1.0 (where % indicates the
-      remainder operation).</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.DivideByZeroException">
           <paramref name="d2" /> is zero.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="d1" /> divided by <paramref name="d2" /> is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
+        <param name="d2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The divisor. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the remainder after dividing two <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The remainder after dividing <paramref name="d1" /> by <paramref name="d2" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The dividend. </param>
         <param name="d2">
@@ -3544,7 +3598,6 @@ public static void Main() {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3554,6 +3607,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a decimal value to the nearest integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer that is nearest to the <paramref name="d" /> parameter. If <paramref name="d" /> is halfway between two integers, one of which is even and the other odd, the even number is returned.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number to round. </param>
       </Docs>
@@ -3576,10 +3633,6 @@ public static void Main() {
         <Parameter Name="decimals" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Decimal" /> result of rounding <paramref name="d" /> to <paramref name="decimals" />
-decimal places.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="decimals" /> is not between 0 and 28, inclusive. </exception>
         <example>
@@ -3626,6 +3679,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a <see cref="T:System.Decimal" /> value to a specified number of decimal places.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decimal number equivalent to <paramref name="d" /> rounded to <paramref name="decimals" /> number of decimal places.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number to round. </param>
         <param name="decimals">
@@ -3649,7 +3706,6 @@ public static void Main() {
         <Parameter Name="mode" Type="System.MidpointRounding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3659,6 +3715,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a decimal value to the nearest integer. A parameter specifies how to round the value if it is midway between two other numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer that is nearest to the <paramref name="d" /> parameter. If <paramref name="d" /> is halfway between two numbers, one of which is even and the other odd, the <paramref name="mode" /> parameter determines which of the two numbers is returned. </para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number to round. </param>
         <param name="mode">
@@ -3682,7 +3742,6 @@ public static void Main() {
         <Parameter Name="mode" Type="System.MidpointRounding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3693,6 +3752,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a decimal value to a specified precision. A parameter specifies how to round the value if it is midway between two other numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number that is nearest to the <paramref name="d" /> parameter with a precision equal to the <paramref name="decimals" /> parameter. If <paramref name="d" /> is halfway between two numbers, one of which is even and the other odd, the <paramref name="mode" /> parameter determines which of the two numbers is returned. If the precision of <paramref name="d" /> is less than <paramref name="decimals" />, <paramref name="d" /> is returned unchanged.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number to round. </param>
         <param name="decimals">
@@ -3719,19 +3782,16 @@ public static void Main() {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Decimal" /> containing the result of subtracting <paramref name="d2" /> from
-<paramref name="d1" /> . The scale of the result, before any rounding, is 
-   the larger of the scales of d1 and
-   d2.</para>
-          <para>For example, 1.1 - 2.22 gives -1.12, and 2.50 - 1 gives 1.50.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.OverflowException">The result is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />. </exception>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts one specified <see cref="T:System.Decimal" /> value from another.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of subtracting <paramref name="d2" /> from <paramref name="d1" />.</para>
+        </returns>
         <param name="d1">
           <attribution license="cc4" from="Microsoft" modified="false" />The minuend. </param>
         <param name="d2">
@@ -3755,7 +3815,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToBoolean(System.Decimal)" /> method.</para>
@@ -3764,6 +3823,11 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToBoolean(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                                            true if the value of the current instance is not zero; otherwise, false.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored. </param>
       </Docs>
@@ -3784,7 +3848,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToByte(System.Decimal)" /> method or the <see cref="M:System.Convert.ToByte(System.Decimal)" /> method.</para>
@@ -3793,6 +3856,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToByte(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Byte" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3813,12 +3880,15 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. This conversion is not supported. </para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3839,12 +3909,15 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. This conversion is not supported. </para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3865,7 +3938,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface.</para>
@@ -3874,6 +3946,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToDecimal(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, unchanged.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3894,7 +3970,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToDouble(System.Decimal)" /> method or the <see cref="M:System.Convert.ToDouble(System.Decimal)" /> method.</para>
@@ -3904,6 +3979,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToDouble(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Double" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3924,7 +4003,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToInt16(System.Decimal)" /> method or the <see cref="M:System.Convert.ToInt16(System.Decimal)" /> method.</para>
@@ -3934,6 +4012,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt16(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Int16" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3954,7 +4036,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToInt32(System.Decimal)" /> method or the <see cref="M:System.Convert.ToInt32(System.Decimal)" /> method.</para>
@@ -3964,6 +4045,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt32(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Int32" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />The parameter is ignored.</param>
       </Docs>
@@ -3984,7 +4069,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToInt64(System.Decimal)" /> method or the <see cref="M:System.Convert.ToInt64(System.Decimal)" /> method.</para>
@@ -3993,6 +4077,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt64(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Int64" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -4013,7 +4101,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToSByte(System.Decimal)" /> method or the <see cref="M:System.Convert.ToSByte(System.Decimal)" /> method.</para>
@@ -4022,6 +4109,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToSByte(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.SByte" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -4042,7 +4133,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToSingle(System.Decimal)" /> method or the <see cref="M:System.Convert.ToSingle(System.Decimal)" /> method.</para>
@@ -4051,6 +4141,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToSingle(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Single" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -4073,7 +4167,6 @@ public static void Main() {
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the static (Shared in Visual Basic) <see cref="M:System.Convert.ChangeType(System.Object,System.Type,System.IFormatProvider)" /> method instead.</para>
@@ -4082,6 +4175,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToType(System.Type,System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <paramref name="type" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> implementation that supplies culture-specific information about the format of the returned value.</param>
       </Docs>
@@ -4102,7 +4199,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToUInt16(System.Decimal)" /> method or the <see cref="M:System.Convert.ToUInt16(System.Decimal)" /> method.</para>
@@ -4111,6 +4207,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt16(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt16" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -4131,7 +4231,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToUInt32(System.Decimal)" /> method or the <see cref="M:System.Convert.ToUInt32(System.Decimal)" /> method.</para>
@@ -4141,6 +4240,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt32(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt32" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -4161,7 +4264,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Decimal" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call either the <see cref="M:System.Decimal.ToUInt64(System.Decimal)" /> method or the <see cref="M:System.Convert.ToUInt64(System.Decimal)" /> method.</para>
@@ -4171,6 +4273,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt64(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt64" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -4214,7 +4320,6 @@ public static void Main() {
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Parameter <paramref name="value" /> is rounded to the nearest integer value toward zero, and that result is returned.</para>
@@ -4223,6 +4328,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent 8-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-bit unsigned integer equivalent to <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4243,7 +4352,6 @@ public static void Main() {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation can produce round-off errors because a double-precision floating-point number has fewer significant digits than a <see cref="T:System.Decimal" />.</para>
@@ -4252,6 +4360,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number equivalent to <paramref name="d" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4272,12 +4384,15 @@ public static void Main() {
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent 16-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit signed integer equivalent to <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4298,7 +4413,6 @@ public static void Main() {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value is the integral part of the decimal value; fractional digits are truncated.</para>
@@ -4307,6 +4421,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent 32-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer equivalent to the value of <paramref name="d" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4327,7 +4445,6 @@ public static void Main() {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value is the integral part of the decimal value; fractional digits are truncated.</para>
@@ -4336,6 +4453,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit signed integer equivalent to the value of <paramref name="d" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4356,12 +4477,15 @@ public static void Main() {
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.Decimal" /> value to the equivalent OLE Automation Currency value, which is contained in a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit signed integer that contains the OLE Automation equivalent of <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4387,12 +4511,15 @@ public static void Main() {
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent 8-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-bit signed integer equivalent to <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4413,7 +4540,6 @@ public static void Main() {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation can produce round-off errors because a single-precision floating-point number has fewer significant digits than a <see cref="T:System.Decimal" />.</para>
@@ -4422,6 +4548,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent single-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single-precision floating-point number equivalent to the value of <paramref name="d" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4441,12 +4571,6 @@ public static void Main() {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of
-   the current instance formatted using the general format specifier, ("G"). The string
-   takes into account the current system culture and
-   preserves the scale of the number.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.ToString" /> method formats a <see cref="T:System.Decimal" /> value in the default ("G", or general) format of the current culture. If you want to specify a different format or culture, use the other overloads of the <see cref="M:System.Decimal.ToString(System.String)" /> method, as follows: </para>
@@ -4520,6 +4644,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -4540,11 +4668,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
-   the general format specifier, ("G"). The string takes into account the
-   formatting information in the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Decimal.ToString(System.IFormatProvider)" /> method formats a <see cref="T:System.Decimal" /> value in the default ("G", or general) format of a specified culture. If you want to specify a different format or the current culture, use the other overloads of the <see cref="M:System.Decimal.ToString(System.String)" /> method, as follows:</para>
@@ -4620,6 +4743,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation using the specified culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="provider" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information. </param>
       </Docs>
@@ -4642,11 +4769,6 @@ public static void Main() {
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the current system
-   culture.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
         <example>
@@ -4750,6 +4872,10 @@ class test {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation, using the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom numeric format string (see Remarks).</param>
       </Docs>
@@ -4773,11 +4899,6 @@ class test {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the information in
-   the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
         <remarks>
@@ -4853,6 +4974,10 @@ class test {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation using the specified format and culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" /> and <paramref name="provider" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string (see Remarks).</param>
         <param name="provider">
@@ -4881,7 +5006,6 @@ class test {
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value is the integral part of the decimal value; fractional digits are truncated.</para>
@@ -4890,6 +5014,10 @@ class test {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent 16-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit unsigned integer equivalent to the value of <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4915,7 +5043,6 @@ class test {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value is the integral part of the decimal value; fractional digits are truncated.</para>
@@ -4924,6 +5051,10 @@ class test {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent 32-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit unsigned integer equivalent to the value of <paramref name="d" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4949,7 +5080,6 @@ class test {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value is the integral part of the decimal value; fractional digits are truncated.</para>
@@ -4958,6 +5088,10 @@ class test {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified <see cref="T:System.Decimal" /> to the equivalent 64-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit unsigned integer equivalent to the value of <paramref name="d" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to convert. </param>
       </Docs>
@@ -4979,10 +5113,6 @@ class test {
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Decimal" /> result of truncating <paramref name="d" /> . the scale of the result is 
-   0.</para>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Decimal.Truncate(System.Decimal)" /> method.</para>
           <code lang="C#">using System;
@@ -5009,6 +5139,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the integral digits of the specified <see cref="T:System.Decimal" />; any fractional digits are discarded.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of <paramref name="d" /> rounded toward zero, to the nearest whole number.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The decimal number to truncate. </param>
       </Docs>

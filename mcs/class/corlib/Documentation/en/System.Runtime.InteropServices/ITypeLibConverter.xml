@@ -49,7 +49,6 @@
         <Parameter Name="notifySink" Type="System.Runtime.InteropServices.ITypeLibExporterNotifySink" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information on ITypeLib, please see its existing documentation in the MSDN library.</para>
@@ -58,6 +57,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an assembly to a COM type library.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the ITypeLib interface.</para>
+        </returns>
         <param name="assembly">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly to convert. </param>
         <param name="typeLibName">
@@ -90,7 +93,6 @@
         <Parameter Name="unsafeInterfaces" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information on ITypeLib, please see its existing documentation in the MSDN library.</para>
@@ -99,6 +101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a COM type library to an assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> object containing the converted type library.</para>
+        </returns>
         <param name="typeLib">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the ITypeLib interface. </param>
         <param name="asmFileName">
@@ -139,7 +145,6 @@
         <Parameter Name="asmVersion" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information on ITypeLib, please see its existing documentation in the MSDN library.</para>
@@ -148,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a COM type library to an assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> object containing the converted type library.</para>
+        </returns>
         <param name="typeLib">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the ITypeLib interface. </param>
         <param name="asmFileName">

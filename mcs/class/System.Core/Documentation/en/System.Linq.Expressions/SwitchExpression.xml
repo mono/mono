@@ -173,12 +173,21 @@
         <Parameter Name="defaultBody" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <param name="switchValue">To be added.</param>
-        <param name="cases">To be added.</param>
-        <param name="defaultBody">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
+        <param name="switchValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.SwitchExpression.SwitchValue" /> property of the result.</param>
+        <param name="cases">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.SwitchExpression.Cases" /> property of the result.</param>
+        <param name="defaultBody">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.SwitchExpression.DefaultBody" /> property of the result.</param>
       </Docs>
     </Member>
   </Members>

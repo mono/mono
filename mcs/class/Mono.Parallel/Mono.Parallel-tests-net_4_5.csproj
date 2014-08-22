@@ -46,8 +46,6 @@
   <ItemGroup>
     <Compile Include="Test\Mono.Collections.Concurrent\CollectionStressTestHelper.cs" />
     <Compile Include="Test\Mono.Collections.Concurrent\ConcurrentSkipListTests.cs" />
-    <Compile Include="Test\Mono.Threading.Tasks\MonoTaskExtensionsTests.cs" />
-    <Compile Include="Test\Mono.Threading.Tasks\MonoTaskSchedulerTests.cs" />
     <Compile Include="Test\Mono.Threading\ParallelTestHelper.cs" />
     <Compile Include="Test\Mono.Threading\SnziTests.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

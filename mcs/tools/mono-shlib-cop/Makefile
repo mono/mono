@@ -20,7 +20,7 @@ cleanup:
 run-test-local: run-mono-shlib-cop-test
 
 run-mono-shlib-cop-test: $(the_lib) $(TEST_INPUT)
-	$(RUNTIME) $(the_lib) $(TEST_INPUT) | diff - test.dll.out
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(the_lib) $(TEST_INPUT) | diff - test.dll.out
 
 $(TEST_INPUT) : test.cs
 	$(CSCOMPILE) -target:library $< -out:$@

@@ -56,7 +56,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IAsyncResult'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you would not call the <see cref="M:System.Web.Services.Protocols.SoapHttpClientProtocol.BeginInvoke(System.String,System.Object[],System.AsyncCallback,System.Object)" /> method directly, unless you were building your own proxy class for an XML Web service.</para>
@@ -70,6 +69,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts an asynchronous invocation of an XML Web service method using SOAP.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that is passed to the <see cref="M:System.Web.Services.Protocols.SoapHttpClientProtocol.EndInvoke(System.IAsyncResult)" /> method to obtain the return values from the remote method call.</para>
+        </returns>
         <param name="methodName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the XML Web service method in the derived class that is invoking the <see cref="M:System.Web.Services.Protocols.SoapHttpClientProtocol.BeginInvoke(System.String,System.Object[],System.AsyncCallback,System.Object)" /> method. </param>
         <param name="parameters">
@@ -117,7 +120,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you would not call the <see cref="M:System.Web.Services.Protocols.SoapHttpClientProtocol.EndInvoke(System.IAsyncResult)" /> method directly, unless you were building your own proxy class for an XML Web service.</para>
@@ -128,6 +130,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous invocation of an XML Web service method using SOAP.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects that contains the return value and any by-reference or out parameters of the derived class method.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned from the <see cref="M:System.Web.Services.Protocols.SoapHttpClientProtocol.BeginInvoke(System.String,System.Object[],System.AsyncCallback,System.Object)" /> method. </param>
       </Docs>
@@ -150,12 +156,15 @@
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlReader" /> initialized with the <see cref="P:System.Web.Services.Protocols.SoapMessage.Stream" /> property of the <see cref="T:System.Web.Services.Protocols.SoapClientMessage" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.XmlReader" /> initialized with the <see cref="P:System.Web.Services.Protocols.SoapMessage.Stream" /> property of the <paramref name="message" /> parameter.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.SoapClientMessage" /> that provides the <see cref="P:System.Web.Services.Protocols.SoapMessage.Stream" /> to initialize the <see cref="T:System.Xml.XmlReader" />.</param>
         <param name="bufferSize">
@@ -172,7 +181,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Net.WebRequest" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be overridden to customize the <see cref="T:System.Net.WebRequest" /> before the XML Web service request is made. For example, you could add a custom header to the request.</para>
@@ -181,6 +189,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Net.WebRequest" /> for the specified <paramref name="uri" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.WebRequest" /> for the specified URI.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> to use when creating the <see cref="T:System.Net.WebRequest" />. </param>
       </Docs>
@@ -203,12 +215,15 @@
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Xml.XmlWriter" /> initialized with the <see cref="P:System.Web.Services.Protocols.SoapMessage.Stream" /> property of the <see cref="T:System.Web.Services.Protocols.SoapClientMessage" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.XmlWriter" /> initialized with the <see cref="P:System.Web.Services.Protocols.SoapMessage.Stream" /> property of the <paramref name="message" /> parameter.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.SoapClientMessage" /> that provides the <see cref="P:System.Web.Services.Protocols.SoapMessage.Stream" /> to initialize the <see cref="T:System.Xml.XmlWriter" />.</param>
         <param name="bufferSize">
@@ -227,7 +242,6 @@
       </Parameters>
       <Docs>
         <param name="method_name">a <see cref="T:System.String" /></param>
-        <returns>a <see cref="T:System.Object[]" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you do not call the <see cref="M:System.Web.Services.Protocols.SoapHttpClientProtocol.Invoke(System.String,System.Object[])" /> method directly, unless you are building your own proxy class for an XML Web service.</para>
@@ -238,6 +252,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes an XML Web service method synchronously using SOAP.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects that contains the return value and any reference or out parameters of the derived class method.</para>
+        </returns>
         <param name="parameters">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of objects that contains the parameters to pass to the XML Web service. The order of the values in the array corresponds to the order of the parameters in the calling method of the derived class. </param>
       </Docs>

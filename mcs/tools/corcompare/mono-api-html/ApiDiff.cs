@@ -9,7 +9,7 @@
 // Authors
 //    Sebastien Pouliot  <sebastien@xamarin.com>
 //
-// Copyright 2013 Xamarin Inc. http://www.xamarin.com
+// Copyright 2013-2014 Xamarin Inc. http://www.xamarin.com
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -63,6 +63,13 @@ namespace Xamarin.ApiDiff {
 		public static List<Regex> IgnoreAdded {
 			get { return ignoreAdded; }
 		}
+
+		static List<Regex> ignoreRemoved = new List<Regex> ();
+		public static List<Regex> IgnoreRemoved {
+			get { return ignoreRemoved; }
+		}
+
+		public static bool Lax;
 	}
 
 	class Program {
@@ -76,9 +83,20 @@ namespace Xamarin.ApiDiff {
 			var options = new OptionSet {
 				{ "h|help", "Show this help", v => showHelp = true },
 				{ "d|diff=", "HTML diff file out output (omit for stdout)", v => diff = v },
-				{ "i|ignore-added=", "Ignore added members whose description matches a given C# regular expression (see below).",
+				{ "i|ignore=", "Ignore both added and removed members whose description matches a given C# regular expression (see below).",
+					v => {
+						var r = new Regex (v);
+						State.IgnoreAdded.Add (r);
+						State.IgnoreRemoved.Add (r);
+					}
+				},
+				{ "a|ignore-added=", "Ignore added members whose description matches a given C# regular expression (see below).",
 					v => State.IgnoreAdded.Add (new Regex (v))
-				}
+				},
+				{ "r|ignore-removed=", "Ignore removed members whose description matches a given C# regular expression (see below).",
+					v => State.IgnoreRemoved.Add (new Regex (v))
+				},
+				{ "x|lax", "Ignore duplicate XML entries", v => State.Lax = true }
 			};
 
 			try {

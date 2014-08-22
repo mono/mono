@@ -53,12 +53,15 @@
         <Parameter Name="helperType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a script.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Boolean" /> indicating whether the script was successfully loaded.</para>
+        </returns>
         <param name="scriptLocation">
           <attribution license="cc4" from="Microsoft" modified="false" />Internal only.</param>
         <param name="script">
@@ -83,7 +86,6 @@
         <Parameter Name="host" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When the <see cref="T:System.Net.HttpWebRequest" /> object is run, it may need to run the WPAD (Web Proxy Automatic Detection) protocol to detect whether a proxy is required for reaching the destination URL. During this process, the system downloads and compiles the PAC (Proxy Auto-Configuration) script in memory and tries to execute the FindProxyForURL function as per the PAC specification.
@@ -94,6 +96,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Runs a script.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" />.</para>
+          <para>An internal-only value returned.</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />Internal only.</param>
         <param name="host">

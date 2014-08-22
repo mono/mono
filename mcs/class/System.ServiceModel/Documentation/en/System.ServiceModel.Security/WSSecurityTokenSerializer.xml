@@ -136,8 +136,11 @@
         <param name="samlSerializer">To be added.</param>
         <param name="securityStateEncoder">To be added.</param>
         <param name="knownTypes">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.WSSecurityTokenSerializer" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -166,8 +169,11 @@
         <param name="maximumKeyDerivationOffset">To be added.</param>
         <param name="maximumKeyDerivationLabelLength">To be added.</param>
         <param name="maximumKeyDerivationNonceLength">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.WSSecurityTokenSerializer" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanReadKeyIdentifierClauseCore">
@@ -185,12 +191,15 @@
       </Parameters>
       <Docs>
         <param name="reader">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the key identifier clause core can be read using the specified reader. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key identifier clause core can be read using the specified reader; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CanReadKeyIdentifierCore">
@@ -208,12 +217,15 @@
       </Parameters>
       <Docs>
         <param name="reader">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the key identifier core can be read using the specified reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key identifier core can be read using the specified reader; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CanReadTokenCore">
@@ -231,12 +243,15 @@
       </Parameters>
       <Docs>
         <param name="reader">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the token core can be read using the specified reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the token core can be read using the specified reader; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CanWriteKeyIdentifierClauseCore">
@@ -254,12 +269,15 @@
       </Parameters>
       <Docs>
         <param name="keyIdentifierClause">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the key identifier clause core with a specified key identifier clause can be written.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key identifier clause core with the specified key identifier clause can be written; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CanWriteKeyIdentifierCore">
@@ -277,12 +295,15 @@
       </Parameters>
       <Docs>
         <param name="keyIdentifier">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the key identifier core with a specified key identifier clause can be written.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key identifier core with the specified key identifier clause can be written; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CanWriteTokenCore">
@@ -300,12 +321,15 @@
       </Parameters>
       <Docs>
         <param name="token">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the token core with a specified security token can be written.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the token core with the specified security token can be written; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateKeyIdentifierClauseFromTokenXml">
@@ -325,12 +349,15 @@
       <Docs>
         <param name="tokenXml">To be added.</param>
         <param name="referenceStyle">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a key identifier clause from a token expressed as XML.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created security key identifier.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultInstance">
@@ -386,12 +413,15 @@
       </Parameters>
       <Docs>
         <param name="tokenType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the URI of the security token of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URI of the security token of the specified type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MaximumKeyDerivationLabelLength">
@@ -466,12 +496,15 @@
       </Parameters>
       <Docs>
         <param name="reader">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the key identifier clause core using the specified <see cref="T:System.Xml.XmlReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security key identifier clause that was read.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadKeyIdentifierCore">
@@ -489,12 +522,15 @@
       </Parameters>
       <Docs>
         <param name="reader">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the key identifier core using the specified <see cref="T:System.Xml.XmlReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security key identifier that was read.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadTokenCore">
@@ -514,12 +550,15 @@
       <Docs>
         <param name="reader">To be added.</param>
         <param name="tokenResolver">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the token core using the specified <see cref="T:System.Xml.XmlReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security token that was read.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SecurityVersion">

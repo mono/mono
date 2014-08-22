@@ -270,13 +270,16 @@
         <Parameter Name="contentType" Type="System.Net.Mime.ContentType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a mail attachment using the content from the specified string, and the specified <see cref="T:System.Net.Mime.ContentType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <see cref="T:System.Net.Mail.Attachment" />.</para>
+        </returns>
         <param name="content">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the content for this attachment.</param>
         <param name="contentType">
@@ -299,7 +302,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -310,6 +312,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a mail attachment using the content from the specified string, and the specified MIME content type name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <see cref="T:System.Net.Mail.Attachment" />.</para>
+        </returns>
         <param name="content">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the content for this attachment.</param>
         <param name="name">
@@ -334,13 +340,16 @@
         <Parameter Name="mediaType" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a mail attachment using the content from the specified string, the specified MIME content type name, character encoding, and MIME header information for the attachment.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <see cref="T:System.Net.Mail.Attachment" />.</para>
+        </returns>
         <param name="content">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the content for this attachment.</param>
         <param name="name">

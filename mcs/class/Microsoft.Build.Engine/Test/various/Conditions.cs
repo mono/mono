@@ -357,6 +357,24 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.IsNull (proj.EvaluatedProperties ["A"], "A1");
 		}
 
+		[Test]
+		public void TestCondition_References ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A Condition=""$([System.String]::new('test').StartsWith(`te`))"">valid</A>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.AreEqual ("valid", proj.GetEvaluatedProperty ("A"), "#1");
+		}
 
 		[Test]
 		public void TestHasTrailingSlash1 ()

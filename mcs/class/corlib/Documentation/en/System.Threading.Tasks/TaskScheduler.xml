@@ -105,7 +105,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>All <see cref="T:System.Threading.Tasks.Task" /> instances queued to the returned scheduler will be executed through a call to the <see cref="M:System.Threading.SynchronizationContext.Post(System.Threading.SendOrPostCallback,System.Object)" /> method on that context.</para>
@@ -115,6 +114,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Threading.Tasks.TaskScheduler" /> associated with the current <see cref="T:System.Threading.SynchronizationContext" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.TaskScheduler" /> associated with the current <see cref="T:System.Threading.SynchronizationContext" />, as determined by <see cref="P:System.Threading.SynchronizationContext.Current" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetScheduledTasks">
@@ -129,7 +132,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A class derived from <see cref="T:System.Threading.Tasks.TaskScheduler" /> implements this method in order to support integration with debuggers. This method will only be invoked by the .NET Framework when the debugger requests access to the data. The enumerable returned will be traversed by debugging utilities to access the tasks currently queued to this scheduler, enabling the debugger to provide a representation of this information in the user interface.</para>
@@ -158,6 +160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For debugger support only, generates an enumerable of <see cref="T:System.Threading.Tasks.Task" /> instances currently queued to the scheduler waiting to be executed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable that allows a debugger to traverse the tasks currently queued to this scheduler.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -247,7 +253,6 @@
         <Parameter Name="task" Type="System.Threading.Tasks.Task" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <format type="text/html"><a href="638f8ea5-21db-47a2-a934-86e1e961bf65">Task Schedulers</a></format>.</para>
@@ -257,6 +262,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to dequeue a <see cref="T:System.Threading.Tasks.Task" /> that was previously queued to this scheduler.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean denoting whether the <paramref name="task" /> argument was successfully dequeued.</para>
+        </returns>
         <param name="task">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.Task" /> to be dequeued.</param>
       </Docs>
@@ -275,7 +284,6 @@
         <Parameter Name="task" Type="System.Threading.Tasks.Task" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> Scheduler implementations are provided with <see cref="T:System.Threading.Tasks.Task" /> instances to be executed through either the <see cref="M:System.Threading.Tasks.TaskScheduler.QueueTask(System.Threading.Tasks.Task)" /> method or the <see cref="M:System.Threading.Tasks.TaskScheduler.TryExecuteTaskInline(System.Threading.Tasks.Task,System.Boolean)" /> method. When the scheduler deems it appropriate to run the provided task, <see cref="M:System.Threading.Tasks.TaskScheduler.TryExecuteTask(System.Threading.Tasks.Task)" /> should be used to do so. TryExecuteTask handles all aspects of executing a task, including action invocation, exception handling, state management, and lifecycle control.</para>
@@ -286,6 +294,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to execute the provided <see cref="T:System.Threading.Tasks.Task" /> on this scheduler.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean that is true if <paramref name="task" /> was successfully executed, false if it was not. A common reason for execution failure is that the task had previously been executed or is in the process of being executed by another thread.</para>
+        </returns>
         <param name="task">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.Tasks.Task" /> object to be executed.</param>
       </Docs>
@@ -305,7 +317,6 @@
         <Parameter Name="taskWasPreviouslyQueued" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A class derived from <see cref="T:System.Threading.Tasks.TaskScheduler" /> implements this function to support inline execution of a task on a thread that initiates a wait on that task object. Inline execution is optional, and the request may be rejected by returning false. However, the more tasks that can be inlined, the better the scheduler will scale. In fact, a scheduler that inlines too little may be prone to deadlocks. A proper implementation should ensure that a request executing under the policies guaranteed by the scheduler can successfully inline. For example, if a scheduler uses a dedicated thread to execute tasks, any inlining requests from that thread should succeed.</para>
@@ -317,6 +328,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the provided <see cref="T:System.Threading.Tasks.Task" /> can be executed synchronously in this call, and if it can, executes it.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean value indicating whether the task was executed inline.</para>
+        </returns>
         <param name="task">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.Task" /> to be executed.</param>
         <param name="taskWasPreviouslyQueued">

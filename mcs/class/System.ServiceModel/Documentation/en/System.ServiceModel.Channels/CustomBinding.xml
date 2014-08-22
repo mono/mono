@@ -272,8 +272,11 @@
       </Parameters>
       <Docs>
         <param name="bindingElements">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.CustomBinding" /> class with the binding elements from a complete channel stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -386,12 +389,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a generic collection of the binding elements from the custom binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.ICollection`1" /> object of type <see cref="T:System.ServiceModel.Channels.BindingElement" /> that contains the binding elements from the custom binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Elements">

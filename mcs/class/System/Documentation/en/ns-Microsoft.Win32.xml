@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="Microsoft.Win32">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:Microsoft.Win32" /> namespace provides two types of classes: those that handle events raised by the operating system and those that manipulate the system registry.</para>
+    </summary>
   </Docs>
 </Namespace>

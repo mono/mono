@@ -18,6 +18,7 @@ using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting.Messaging;
 using System.Collections;
 using NUnit.Framework;
+using System.Text;
 
 namespace MonoTests.System.Runtime.Serialization
 {
@@ -39,6 +40,41 @@ namespace MonoTests.System.Runtime.Serialization
 			ReadData();
 
 			RemotingServices.Disconnect (mt);
+		}
+
+#if !MONOTOUCH
+		[Test]
+		public void DelegateSerializationTest ()
+		{
+			var a = new DelegateSerialization ();
+			a.E += HandleE1;
+
+			var d2 = Delegate.CreateDelegate (typeof(Func<StringBuilder, int>), "val", typeof(SerializationTest).GetMethod ("HandleE2"));
+			a.E += (Func<StringBuilder, int>) d2;
+
+			using (var ms = new MemoryStream ()) {
+				var fmt = new BinaryFormatter ();
+				fmt.Serialize (ms, a);
+				ms.Flush ();
+
+				ms.Seek (0, SeekOrigin.Begin);
+				var a2 = (DelegateSerialization) fmt.Deserialize (ms);
+				a2.Test ();
+			}
+		}
+#endif
+
+		static int HandleE1 (StringBuilder arg)
+		{
+			arg.Append ("E1");
+			return 1;
+		}
+
+		public static int HandleE2 (object o, StringBuilder arg)
+		{
+			arg.Append ("E2|");
+			arg.Append (o);
+			return 2;
 		}
 
 		void WriteData ()
@@ -814,5 +850,17 @@ namespace MonoTests.System.Runtime.Serialization
 		public int x;
 	}
 
+	[Serializable]
+	class DelegateSerialization
+	{
+		public event Func<StringBuilder, int> E;
+
+		public void Test ()
+		{
+			var sb = new StringBuilder ();
+			Assert.AreEqual (2, E (sb), "#1");
+			Assert.AreEqual ("E1E2|val", sb.ToString (), "#2");
+		}
+	}
 
 }

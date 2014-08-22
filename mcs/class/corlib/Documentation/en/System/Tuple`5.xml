@@ -101,7 +101,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="obj" /> parameter is considered to be equal to the current instance under the following conditions:</para>
@@ -121,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the current <see cref="T:System.Tuple`5" /> object is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance is equal to the specified object; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance.</param>
       </Docs>
@@ -137,12 +140,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the current <see cref="T:System.Tuple`5" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item1">
@@ -310,7 +316,6 @@
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`5" /> instance is cast to an <see cref="T:System.Collections.IStructuralComparable" /> interface.</para>
@@ -323,6 +328,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the current <see cref="T:System.Tuple`5" /> object to a specified object by using a specified comparer and returns an integer that indicates whether the current object is before, after, or in the same position as the specified object in the sort order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative position of this instance and <paramref name="other" /> in the sort order, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer</para>
+              </term>
+              <description>
+                <para>This instance precedes <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>This instance and <paramref name="other" /> have the same position in the sort order.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer</para>
+              </term>
+              <description>
+                <para>This instance follows <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current instance.</param>
         <param name="comparer">
@@ -344,7 +389,6 @@
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`5" /> instance is cast to an <see cref="T:System.Collections.IStructuralEquatable" /> interface.</para>
@@ -354,6 +398,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the current <see cref="T:System.Tuple`5" /> object is equal to a specified object based on a specified comparison method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance is equal to the specified object; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance.</param>
         <param name="comparer">
@@ -374,7 +422,6 @@
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`5" /> instance is cast to an <see cref="T:System.Collections.IStructuralEquatable" /> interface.</para>
@@ -385,6 +432,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the hash code for the current <see cref="T:System.Tuple`5" /> object by using a specified computation method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
         <param name="comparer">
           <attribution license="cc4" from="Microsoft" modified="false" />An object whose <see cref="M:System.Collections.IEqualityComparer.GetHashCode(System.Object)" />  method calculates the hash code of the current <see cref="T:System.Tuple`5" /> object.</param>
       </Docs>
@@ -403,7 +454,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`5" /> instance is cast to an <see cref="T:System.IComparable" /> interface.</para>
@@ -417,6 +467,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the current <see cref="T:System.Tuple`5" /> object to a specified object and returns an integer that indicates whether the current object is before, after, or in the same position as the specified object in the sort order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative position of this instance and <paramref name="obj" /> in the sort order, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer</para>
+              </term>
+              <description>
+                <para>This instance precedes <paramref name="obj" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>This instance and <paramref name="obj" /> have the same position in the sort order.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer</para>
+              </term>
+              <description>
+                <para>This instance follows <paramref name="obj" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current instance.</param>
       </Docs>
@@ -450,7 +540,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The string returned by this method takes the form (Item1, Item2, Item3, Item4, <paramref name="Item5" />), where Item1, Item2, Item3, Item4, and <paramref name="Item5" /> represent the values of the <see cref="P:System.Tuple`5.Item1" />, <see cref="P:System.Tuple`5.Item2" />, <see cref="P:System.Tuple`5.Item3" />, <see cref="P:System.Tuple`5.Item4" />, and <see cref="P:System.Tuple`5.Item5" /> properties, respectively. If any of the property values is null, it is represented as <see cref="F:System.String.Empty" />.</para>
@@ -459,6 +548,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the value of this <see cref="T:System.Tuple`5" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of this <see cref="T:System.Tuple`5" /> object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

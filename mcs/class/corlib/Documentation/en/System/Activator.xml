@@ -64,7 +64,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
@@ -79,6 +78,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the COM object whose name is specified, using the named assembly file and the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
         <param name="typeName">
@@ -104,7 +107,6 @@
         <Parameter Name="hashAlgorithm" Type="System.Configuration.Assemblies.AssemblyHashAlgorithm" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
@@ -119,6 +121,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the COM object whose name is specified, using the named assembly file and the default constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
         <param name="typeName">
@@ -144,7 +150,6 @@
         <Parameter Name="activationContext" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
@@ -154,6 +159,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type designated by the specified <see cref="T:System.ActivationContext" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created object.</para>
+        </returns>
         <param name="activationContext">
           <attribution license="cc4" from="Microsoft" modified="false" />An activation context object that specifies the object to create.</param>
       </Docs>
@@ -174,7 +183,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>An instance of the relevant <see cref="T:System.Type" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The constructor to be invoked must be accessible.</para>
@@ -187,6 +195,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified type using that type's default constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
       </Docs>
@@ -207,7 +219,6 @@
         <Parameter Name="activationCustomData" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
@@ -217,6 +228,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type that is designated by the specified <see cref="T:System.ActivationContext" /> object and activated with the specified custom activation data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created object.</para>
+        </returns>
         <param name="activationContext">
           <attribution license="cc4" from="Microsoft" modified="false" />An activation context object that specifies the object to create.</param>
         <param name="activationCustomData">
@@ -240,7 +255,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
@@ -264,6 +278,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified, using the named assembly and default constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. For more information, see the Remarks section. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
         <param name="typeName">
@@ -287,7 +305,6 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -299,6 +316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified type using that type's default constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
         <param name="nonPublic">
@@ -328,7 +349,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>The created instance of the <see cref="T:System.Type" />.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The constructor to be invoked must be accessible and must provide the most specific match with the specified argument list.</para>
@@ -341,6 +361,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified type using the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
         <param name="args">
@@ -364,7 +388,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Activator.CreateInstance(System.AppDomain,System.String,System.String)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
@@ -377,6 +400,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly and default constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="domain">
           <attribution license="cc4" from="Microsoft" modified="false" />The remote domain where the type named <paramref name="typeName" /> is created.</param>
         <param name="assemblyName">
@@ -403,7 +430,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
@@ -417,6 +443,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified, using the named assembly and default constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
         <param name="typeName">
@@ -443,7 +473,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The constructor to be invoked must be accessible and must provide the most specific match with the specified argument list.</para>
@@ -457,6 +486,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified type using the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
         <param name="args">
@@ -485,7 +518,6 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The constructor to be invoked must provide the most specific match with the specified argument list under the constraints of the specified binder and binding attributes.</para>
@@ -498,6 +530,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified type using the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
         <param name="bindingAttr">
@@ -531,7 +567,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The constructor to be invoked must provide the most specific match with the specified argument list under the constraints of the specified binder and binding attributes.</para>
@@ -545,6 +580,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified type using the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
         <param name="bindingAttr">
@@ -580,7 +619,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
@@ -594,6 +632,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified, using the named assembly and the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
         <param name="typeName">
@@ -634,7 +676,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Activator.CreateInstance(System.AppDomain,System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
@@ -648,6 +689,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly and the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="domain">
           <attribution license="cc4" from="Microsoft" modified="false" />The domain where the type named <paramref name="typeName" /> is created.</param>
         <param name="assemblyName">
@@ -697,7 +742,6 @@
         <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
@@ -711,6 +755,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified, using the named assembly and the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
         <param name="typeName">
@@ -760,7 +808,6 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Activator.CreateInstance(System.AppDomain,System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
@@ -773,6 +820,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly and the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="domain">
           <attribution license="cc4" from="Microsoft" modified="false" />The domain where the type named <paramref name="typeName" /> is created.</param>
         <param name="assemblyName">
@@ -811,8 +862,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -825,6 +874,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type designated by the specified generic type parameter, using the parameterless constructor .</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to create.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CreateInstanceFrom">
@@ -844,7 +899,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
@@ -854,6 +908,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified, using the named assembly file and default constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
         <param name="typeName">
@@ -877,7 +935,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Activator.CreateInstanceFrom(System.AppDomain,System.String,System.String)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
@@ -891,6 +948,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly file and default constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="domain">
           <attribution license="cc4" from="Microsoft" modified="false" />The remote domain where the type named <paramref name="typeName" /> is created.</param>
         <param name="assemblyFile">
@@ -917,7 +978,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
@@ -928,6 +988,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified, using the named assembly file and default constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
         <param name="typeName">
@@ -957,7 +1021,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
@@ -968,6 +1031,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified, using the named assembly file and the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
         <param name="typeName">
@@ -1008,7 +1075,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Activator.CreateInstanceFrom(System.AppDomain,System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
@@ -1020,6 +1086,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly file and the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="domain">
           <attribution license="cc4" from="Microsoft" modified="false" />The remote domain where the type named <paramref name="typeName" /> is created.</param>
         <param name="assemblyFile">
@@ -1069,7 +1139,6 @@
         <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
@@ -1080,6 +1149,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified, using the named assembly file and the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
         <param name="typeName">
@@ -1129,7 +1202,6 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Activator.CreateInstanceFrom(System.AppDomain,System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
@@ -1144,6 +1216,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly file and the constructor that best matches the specified parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
         <param name="domain">
           <attribution license="cc4" from="Microsoft" modified="false" />The remote domain where the type named <paramref name="typeName" /> is created.</param>
         <param name="assemblyFile">
@@ -1183,7 +1259,6 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call the proxy to send messages to the remote object. No messages are sent over the network until a method is called on the proxy.</para>
@@ -1192,6 +1267,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a proxy for the well-known object indicated by the specified type and URL.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A proxy that points to an endpoint served by the requested well-known object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the well-known object to which you want to connect. </param>
         <param name="url">
@@ -1216,7 +1295,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call the proxy to send messages to the remote object. No messages are sent over the network until a method is called on the proxy.</para>
@@ -1226,6 +1304,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a proxy for the well-known object indicated by the specified type, URL, and channel data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A proxy that points to an endpoint served by the requested well-known object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the well-known object to which you want to connect. </param>
         <param name="url">

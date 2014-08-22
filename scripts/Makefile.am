@@ -200,13 +200,13 @@ if INSTALL_4_5
 REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.5,g'
 REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.5,g'
 else 
-	if INSTALL_4_0
-	REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.0,g'
-	REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.0,g'
-	else
-	REWRITE4 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
-	REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
-	endif
+if INSTALL_4_0
+REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.0,g'
+REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.0,g'
+else
+REWRITE4 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
+REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
+endif
 endif
 
 peverify: peverify.in Makefile

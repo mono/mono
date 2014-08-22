@@ -32,7 +32,6 @@
         <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -109,6 +108,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of defined prefix-namespace mappings that are currently in scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> that contains the current in-scope namespaces.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNamespaceScope" /> value that specifies the type of namespace nodes to return.</param>
       </Docs>
@@ -128,7 +131,6 @@
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -185,6 +187,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the namespace URI mapped to the specified prefix.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace URI that is mapped to the prefix; null if the prefix is not mapped to a namespace URI.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix whose namespace URI you wish to find.</param>
       </Docs>
@@ -204,7 +210,6 @@
         <Parameter Name="namespaceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -254,6 +259,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the prefix that is mapped to the specified namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The prefix that is mapped to the namespace URI; null if the namespace URI is not mapped to a prefix.</para>
+        </returns>
         <param name="namespaceName">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI whose prefix you wish to find.</param>
       </Docs>

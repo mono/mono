@@ -77,10 +77,6 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the value of the current instance formatted
-   in accordance with <paramref name="format" /> and <paramref name="formatProvider" /> .</para>
-        </returns>
         <exception cref="T:System.FormatException">The specified <paramref name="format" /> is invalid or cannot be used with the type of the current instance.</exception>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.IFormattable.ToString(System.String,System.IFormatProvider)" />
@@ -160,6 +156,10 @@ class FormattableExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Formats the value of the current instance using the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance in the specified format.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />The format to use.</param>
         <param name="formatProvider">

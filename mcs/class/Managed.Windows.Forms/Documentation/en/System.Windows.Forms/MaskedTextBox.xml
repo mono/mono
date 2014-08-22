@@ -637,7 +637,6 @@
         <Parameter Name="lineNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.GetFirstCharIndexFromLine(System.Int32)" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this method is not supported. </para>
@@ -646,6 +645,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the index of the first character of a given line. This method is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will always return 0. </para>
+        </returns>
         <param name="lineNumber">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
       </Docs>
@@ -666,7 +669,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.GetFirstCharIndexOfCurrentLine" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this method is not supported. </para>
@@ -675,6 +677,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the index of the first character of the current line. This method is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will always return 0. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLineFromCharIndex">
@@ -695,7 +701,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.GetLineFromCharIndex(System.Int32)" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this method is not supported. </para>
@@ -704,6 +709,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the line number from the specified character position within the text of the control. This method is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will always return 0.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
       </Docs>
@@ -2186,7 +2195,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the <see cref="M:System.Windows.Forms.MaskedTextBox.ToString" /> method calls the base class implementation of this method, <see cref="M:System.Windows.Forms.TextBoxBase.ToString" />, then appends the input string after processing by the mask. This method honors properties that alter the appearance of the formatted string, with the following exceptions:</para>
@@ -2203,6 +2211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current masked text box. This method overrides <see cref="M:System.Windows.Forms.TextBoxBase.ToString" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains information about the current <see cref="T:System.Windows.Forms.MaskedTextBox" />. The string includes the type, a simplified view of the input string, and the formatted input string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypeValidationCompleted">
@@ -2324,7 +2336,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.ValidateText" /> method attempts to convert the formatted string contained in the <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property to an instance of the type that is specified by the <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property. Prompt characters are ignored in the formatted string, but literals are handled in accordance with the current value of the <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> property.</para>
@@ -2335,6 +2346,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the user input string to an instance of the validating type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Object" /> of the type specified by the <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property; otherwise, null to indicate conversion failure.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ValidatingType">

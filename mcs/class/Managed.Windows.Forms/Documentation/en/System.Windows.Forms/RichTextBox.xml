@@ -386,12 +386,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an IRichEditOleCallback-compatible object for handling rich-edit callback operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the IRichEditOleCallback interface.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -639,7 +642,6 @@
         <Parameter Name="characterSet" Type="System.Char[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method searches for the first instance of a character from a list of characters specified in the <paramref name="characterSet" /> parameter and returns the location of the character. For example, you pass an array of characters containing the character 'Q'. If the control contained the text "The Quick Brown Fox", the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method would return the value of four. An upper case character and a lower case character are considered different values in the search.</para>
@@ -649,6 +651,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the text of a <see cref="T:System.Windows.Forms.RichTextBox" /> control for the first instance of a character from a list of characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location within the control where the search characters were found or -1 if the search characters are not found or an empty search character set is specified in the <paramref name="char" /> parameter.</para>
+        </returns>
         <param name="characterSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of characters to search for. </param>
       </Docs>
@@ -667,7 +673,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method searches for the text specified in the <paramref name="str" /> parameter and returns the location of the first character within the control. If the property returns a negative value, the text string being searched for was not found within the contents of the control. You can use this method to create search functionality that can be provided to the user of the control. You can also use this method to search for text to be replaced with a specific format. For example, if the user entered dates into the control, you could use the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to search for all dates in the document and replace them with the appropriate format before using the <see cref="M:System.Windows.Forms.RichTextBox.SaveFile(System.String)" /> method of the control.</para>
@@ -679,6 +684,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the text in a <see cref="T:System.Windows.Forms.RichTextBox" /> control for a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location within the control where the search text was found or -1 if the search string is not found or an empty search string is specified in the <paramref name="str" /> parameter.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to locate in the control. </param>
       </Docs>
@@ -698,7 +707,6 @@
         <Parameter Name="start" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method searches for the first instance of a character from a list of characters specified in the <paramref name="characterSet" /> parameter and returns the location the character. For example, you pass an array of characters containing the character 'Q'. If the control contained the text "The Quick Brown Fox", the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method would return the value of four. An upper case character and a lower case character are considered different values in the search.</para>
@@ -709,6 +717,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the text of a <see cref="T:System.Windows.Forms.RichTextBox" /> control, at a specific starting point, for the first instance of a character from a list of characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location within the control where the search characters are found.</para>
+        </returns>
         <param name="characterSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of characters to search for. </param>
         <param name="start">
@@ -730,7 +742,6 @@
         <Parameter Name="options" Type="System.Windows.Forms.RichTextBoxFinds" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method searches for the text specified in the <paramref name="str" /> parameter and returns the location of the first character within the control. If the property returns a negative value, the text string being searched for was not found within the contents of the control. You can use this method to create search functionality that can be provided to the user of the control. You can also use this method to search for text to be replaced with a specific format. For example, if the user entered dates into the control, you can use the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to search for all dates in the document and replace them with the appropriate format before using the <see cref="M:System.Windows.Forms.RichTextBox.SaveFile(System.String)" /> method of the control.</para>
@@ -743,6 +754,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the text in a <see cref="T:System.Windows.Forms.RichTextBox" /> control for a string with specific options applied to the search.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location within the control where the search text was found.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to locate in the control. </param>
         <param name="options">
@@ -765,7 +780,6 @@
         <Parameter Name="end" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method searches for the first instance of a character from a list of characters specified in the <paramref name="characterSet" /> parameter and returns the location of the character. For example, you pass an array of characters containing the character 'Q'. If the control contained the text "The Quick Brown Fox", the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method would return the value of four. An upper case character and a lower case character are considered different values in the search.</para>
@@ -776,6 +790,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches a range of text in a <see cref="T:System.Windows.Forms.RichTextBox" /> control for the first instance of a character from a list of characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location within the control where the search characters are found.</para>
+        </returns>
         <param name="characterSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of characters to search for. </param>
         <param name="start">
@@ -800,7 +818,6 @@
         <Parameter Name="options" Type="System.Windows.Forms.RichTextBoxFinds" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method searches for the text specified in the <paramref name="str" /> parameter and returns the location of the first character of the search string within the control. If the property returns a negative value, the text string being searched for was not found within the contents of the control. You can use this method to create search functionality that can be provided to the user of the control. You can also use this method to search for text to be replaced with a specific format. For example, if the user entered dates into the control, you could use the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to search for all dates in the document and replace them with the appropriate format before using the <see cref="M:System.Windows.Forms.RichTextBox.SaveFile(System.String)" /> method of the control.</para>
@@ -813,6 +830,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the text in a <see cref="T:System.Windows.Forms.RichTextBox" /> control for a string at a specific location within the control and with specific options applied to the search.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location within the control where the search text was found.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to locate in the control. </param>
         <param name="start">
@@ -838,7 +859,6 @@
         <Parameter Name="options" Type="System.Windows.Forms.RichTextBoxFinds" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method searches for the text specified in the <paramref name="str" /> parameter and returns the location of the first character of the search string within the control. If the property returns a negative value, the text string being searched for was not found within the contents of the control. You can use this method to create search functionality that can be provided to the user of the control. You can also use this method to search for text to be replaced with a specific format. For example, if the user entered dates into the control, you can use the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to search for all dates in the document and replace them with the appropriate format before using the <see cref="M:System.Windows.Forms.RichTextBox.SaveFile(System.String)" /> method of the control.</para>
@@ -851,6 +871,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the text in a <see cref="T:System.Windows.Forms.RichTextBox" /> control for a string within a range of text within the control and with specific options applied to the search.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location within the control where the search text was found.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to locate in the control. </param>
         <param name="start">
@@ -932,7 +956,6 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns the character index that is closest to the position specified in the <paramref name="pt" /> parameter. The character index is a zero-based index of text in the control, including spaces. You can use this method to determine where in the text the user has the mouse over by passing the mouse coordinates to this method. This can be useful if you want to perform tasks when the user rests the mouse pointer over a word in the text of the control.</para>
@@ -941,6 +964,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the index of the character nearest to the specified location.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based character index at the specified location.</para>
+        </returns>
         <param name="pt">
           <attribution license="cc4" from="Microsoft" modified="false" />The location to search. </param>
       </Docs>
@@ -959,7 +986,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method enables you to determine the line number based on the character index specified in the <paramref name="index" /> parameter of the method. The first line of text in the control returns the value zero. The <see cref="M:System.Windows.Forms.RichTextBox.GetLineFromCharIndex(System.Int32)" /> method returns the physical line number where the indexed character is located within the control. For example, if a portion of the first logical line of text in the control wraps to the next line, the <see cref="M:System.Windows.Forms.RichTextBox.GetLineFromCharIndex(System.Int32)" /> method returns 1 if the character at the specified character index has wrapped to the second physical line. If <see cref="P:System.Windows.Forms.TextBoxBase.WordWrap" /> is set to false, no portion of the line wraps to the next, and the method returns 0 for the specified character index. You can use this method to determine which line a specific character index is located within. For example, after calling the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to search for text, you can obtain the character index to where the search results are found. You can call this method with the character index returned by the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to determine which line the word was found.</para>
@@ -981,6 +1007,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the line number from the specified character position within the text of the <see cref="T:System.Windows.Forms.RichTextBox" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based line number in which the character index is located.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The character index position to search. </param>
       </Docs>
@@ -999,7 +1029,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method enables you to determine where in the control a specific character index is located. You can use this method for such tasks as displaying shortcut menu items or help information for a word in the control. For example, if you wanted to display a menu of options to the user when the user right clicks on a word in the control, you can use this method to determine the position of the word to properly display a <see cref="T:System.Windows.Forms.ContextMenu" /> control.</para>
@@ -1008,6 +1037,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the location within the control at the specified character index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location of the specified character.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the character for which to retrieve the location. </param>
       </Docs>

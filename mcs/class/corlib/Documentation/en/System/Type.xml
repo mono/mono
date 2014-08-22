@@ -740,7 +740,6 @@ public abstract class DeclaringTypeTest{
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" />.</para>
@@ -749,6 +748,10 @@ public abstract class DeclaringTypeTest{
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the underlying system type of the current <see cref="T:System.Type" /> is the same as the underlying system type of the specified <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the underlying system type of <paramref name="o" /> is the same as the underlying system type of the current <see cref="T:System.Type" />; otherwise, false. This method also returns false if the object specified by the <paramref name="o" /> parameter is not a Type.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object whose underlying system type is to be compared with the underlying system type of the current <see cref="T:System.Type" />. </param>
       </Docs>
@@ -770,16 +773,15 @@ public abstract class DeclaringTypeTest{
         <Parameter Name="o" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the underlying system type of <paramref name="o" /> is the same
-   as the underlying system type of the current <see cref="T:System.Type" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the underlying system type of the current <see cref="T:System.Type" /> is the same as the underlying system type of the specified <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the underlying system type of <paramref name="o" /> is the same as the underlying system type of the current <see cref="T:System.Type" />; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object whose underlying system type is to be compared with the underlying system type of the current <see cref="T:System.Type" />. </param>
       </Docs>
@@ -875,7 +877,6 @@ public abstract class DeclaringTypeTest{
         <Parameter Name="filterCriteria" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be overridden by a derived class.</para>
@@ -892,6 +893,10 @@ public abstract class DeclaringTypeTest{
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of <see cref="T:System.Type" /> objects representing a filtered list of interfaces implemented or inherited by the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects representing a filtered list of the interfaces implemented or inherited by the current <see cref="T:System.Type" />, or an empty array of type <see cref="T:System.Type" /> if no interfaces matching the filter are implemented or inherited by the current <see cref="T:System.Type" />.</para>
+        </returns>
         <param name="filter">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate that compares the interfaces against <paramref name="filterCriteria" />. </param>
         <param name="filterCriteria">
@@ -917,7 +922,6 @@ public abstract class DeclaringTypeTest{
         <Parameter Name="filterCriteria" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be overridden by a derived class.</para>
@@ -955,6 +959,12 @@ public abstract class DeclaringTypeTest{
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a filtered array of <see cref="T:System.Reflection.MemberInfo" /> objects of the specified member type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A filtered array of <see cref="T:System.Reflection.MemberInfo" /> objects of the specified member type.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.MemberInfo" />, if the current <see cref="T:System.Type" /> does not have members of type <paramref name="memberType" /> that match the filter criteria.</para>
+        </returns>
         <param name="memberType">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that indicates the type of member to search for. </param>
         <param name="bindingAttr">
@@ -1220,16 +1230,16 @@ Base[System.Int32, V]
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the number of dimensions in the  current
-<see cref="T:System.Type" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentException">The current <see cref="T:System.Type" /> is  not an array.</exception>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the number of dimensions in an <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Int32" /> containing the number of dimensions in the current Type.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1248,10 +1258,6 @@ Base[System.Int32, V]
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.TypeAttributes" /> value that signifies the attributes of the
-   type represented by the current instance.</para>
-        </returns>
         <remarks>
           <block subset="none" type="behaviors">
             <para>This property is read-only.</para>
@@ -1270,6 +1276,10 @@ Base[System.Int32, V]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, implements the <see cref="P:System.Type.Attributes" /> property and gets a bitmask indicating the attributes associated with the <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.TypeAttributes" /> object representing the attribute set of the <see cref="T:System.Type" />.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -1296,15 +1306,6 @@ Base[System.Int32, V]
         <Parameter Name="types" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.ConstructorInfo" /> object representing the public instance
-   constructor whose parameters match exactly the types in <paramref name="types" /> , if found;
-   otherwise, <see langword="null" />. If the type represented by the current
-   instance is contained in a loaded assembly, the constructor that matches the
-   specified criteria is not public, and the caller does not have sufficient
-   permissions, returns <see langword="null" />. </para>
-          <para>If the current instance represents a generic type, this method returns the  <see cref="T:System.Reflection.ConstructorInfo" /> with the type parameters replaced by the appropriate type arguments. If the current instance represents an unassigned type parameter of a generic type or method, this method always returns <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="types" /> is <see langword="null" />, or at least one of the elements in <paramref name="types" /> is <see langword="null" />.</para>
@@ -1327,6 +1328,10 @@ Base[System.Int32, V]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for a public instance constructor whose parameters match the types in the specified array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public instance constructor whose parameters match the types in the parameter type array, if found; otherwise, null.</para>
+        </returns>
         <param name="types">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects representing the number, order, and type of the parameters for the desired constructor.</param>
       </Docs>
@@ -1358,16 +1363,6 @@ Base[System.Int32, V]
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.ConstructorInfo" /> object that reflects the constructor
-   that matches the specified criteria. If an exact match does not exist,
-<paramref name="binder" /> will attempt to coerce the parameter types specified in 
-<paramref name="types" /> to select a match. If <paramref name="binder" /> is unable to select a 
-   match, returns <see langword="null" /> . If the type represented by the current
-   instance is contained in a loaded assembly, the constructor that matches the
-   specified criteria is not public, and the caller does not have sufficient
-   permissions, returns <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="types" /> is <see langword="null" />, or at least one of the elements in <paramref name="types" /> is <see langword="null" />.</para>
@@ -1403,6 +1398,10 @@ Base[System.Int32, V]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for a constructor whose parameters match the specified argument types and modifiers, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.ConstructorInfo" /> object representing the constructor that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
         <param name="binder">
@@ -1440,7 +1439,6 @@ Base[System.Int32, V]
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the default binder does not process <see cref="T:System.Reflection.ParameterModifier" /> (the <paramref name="modifiers" /> parameter), you can use the abstract <see cref="T:System.Reflection.Binder" /> class to write a custom binder that does process <paramref name="modifiers" />. ParameterModifier is only used when calling through COM interop, and only parameters that are passed by reference are handled.</para>
@@ -1561,6 +1559,10 @@ Base[System.Int32, V]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for a constructor whose parameters match the specified argument types and modifiers, using the specified binding constraints and the specified calling convention.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the constructor that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
         <param name="binder">
@@ -1593,7 +1595,6 @@ Base[System.Int32, V]
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the default binder does not process <see cref="T:System.Reflection.ParameterModifier" /> (the <paramref name="modifiers" /> parameter), you can use the abstract <see cref="T:System.Reflection.Binder" /> class to write a custom binder that does process <paramref name="modifiers" />. ParameterModifier is only used when calling through COM interop, and only parameters that are passed by reference are handled.</para>
@@ -1617,6 +1618,10 @@ Base[System.Int32, V]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for a constructor whose parameters match the specified argument types and modifiers, using the specified binding constraints and the specified calling convention.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.ConstructorInfo" /> object representing the constructor that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
         <param name="binder">
@@ -1649,14 +1654,6 @@ Base[System.Int32, V]
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.ConstructorInfo" /> objects that reflect the public constructors
-   defined in the type represented by the current instance. If no public
-   constructors are defined in the type represented by the current instance, or if the current instance represents an unassigned type parameter of a generic type or method,
-   returns an empty array.</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.ConstructorInfo" /> objects with the type parameters replaced by the appropriate type arguments.</para>
-          <para>If the current instance represents a generic type parameter, the <see cref="M:System.Type.GetConstructors" />method returns an empty array.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Type.GetConstructors" /> method does not return constructors in a particular order, such as declaration order. Your code must not depend on the order in which constructors are returned, because that order varies.</para>
@@ -1761,6 +1758,10 @@ Base[System.Int32, V]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the public constructors defined for the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.ConstructorInfo" /> objects representing all the public instance constructors defined for the current <see cref="T:System.Type" />, but not including the type initializer (static constructor). If no public instance constructors are defined for the current <see cref="T:System.Type" />, or if the current <see cref="T:System.Type" /> represents a type parameter in the definition of a generic type or generic method, an empty array of type <see cref="T:System.Reflection.ConstructorInfo" /> is returned.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -1787,19 +1788,6 @@ Base[System.Int32, V]
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.ConstructorInfo" /> objects that reflect the constructors that
-   are defined in the type represented by the current instance and match the
-   constraints of <paramref name="bindingAttr" />. If <see cref="F:System.Reflection.BindingFlags.NonPublic" /> and <see cref="F:System.Reflection.BindingFlags.Static" /> are specified, this array
-   includes the type initializer if it is defined. If no constructors meeting the
-   constraints of <paramref name="bindingAttr" /> are defined in the type represented by the
-   current instance, or if the current instance represents an unassigned type parameter of a generic type or method, returns an empty array. If the type represented by the current
-   instance is contained in a loaded assembly, the constructors that match the
-   specified criteria are not public, and the caller does not have sufficient
-   permission, returns <see langword="null" /> .</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.ConstructorInfo" /> objects with the type parameters replaced by the appropriate type arguments.</para>
-          <para>If the current instance represents a generic type parameter, the <see cref="M:System.Type.GetConstructors" />method returns an empty array.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1828,6 +1816,10 @@ Base[System.Int32, V]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the constructors defined for the current <see cref="T:System.Type" />, using the specified BindingFlags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.ConstructorInfo" /> objects representing all constructors defined for the current <see cref="T:System.Type" /> that match the specified binding constraints, including the type initializer if it is defined. Returns an empty array of type <see cref="T:System.Reflection.ConstructorInfo" /> if no constructors are defined for the current <see cref="T:System.Type" />, if none of the defined constructors match the binding constraints, or if the current <see cref="T:System.Type" /> represents a type parameter in the definition of a generic type or generic method.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
       </Docs>
@@ -1849,11 +1841,6 @@ Base[System.Int32, V]
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects reflecting the default members of the
-   type represented by the current instance. If the type represented by the current
-   instance does not have any default members, returns an empty array.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Type.GetDefaultMembers" /> method does not return members in a particular order, such as alphabetical or declaration order. Your code must not depend on the order in which members are returned, because that order varies.</para>
@@ -1959,6 +1946,12 @@ Base[System.Int32, V]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the members defined for the current <see cref="T:System.Type" /> whose <see cref="T:System.Reflection.DefaultMemberAttribute" /> is set.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects representing all default members of the current <see cref="T:System.Type" />.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.MemberInfo" />, if the current <see cref="T:System.Type" /> does not have default members.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -1978,13 +1971,6 @@ Base[System.Int32, V]
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> that represents 
-   the type used to create the current instance if the current
-   instance represents an array, pointer, or an argument
-   passed by reference. Otherwise, returns <see langword="null" />
- if the current instance is not an array or a pointer, or is not passed by reference, or represents a generic type or a type parameter of a generic type or method.</para>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Type.GetElementType" />
 method.</para>
@@ -2017,6 +2003,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the <see cref="T:System.Type" /> of the object encompassed or referred to by the current array, pointer or reference type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the object encompassed or referred to by the current array, pointer, or reference type, or null if the current <see cref="T:System.Type" /> is not an array or a pointer, or is not passed by reference, or represents a generic type or a type parameter in the definition of a generic type or generic method.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2034,12 +2024,15 @@ class TestType {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the constant that has the specified value, for the current enumeration type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the member of the current enumeration type that has the specified value, or null if no such constant is found.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value whose name is to be retrieved.</param>
       </Docs>
@@ -2056,7 +2049,6 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The elements of the return value array are sorted by the binary values (that is, the unsigned values) of the enumerated constants. If the array contains enumerated constants with the same value, the order of their corresponding names is unspecified.</para>
@@ -2065,6 +2057,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the names of the members of the current enumeration type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the names of the members of the enumeration.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEnumUnderlyingType">
@@ -2079,7 +2075,6 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>By default, the underlying type of an enumeration in C# and Visual Basic is <see cref="T:System.Int32" />. Other integer types can be specified.</para>
@@ -2088,6 +2083,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the underlying type of the current enumeration type. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The underlying type of the current enumeration.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEnumValues">
@@ -2102,12 +2101,15 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of the values of the constants in the current enumeration type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the values. The elements of the array are sorted by the binary values (that is, the unsigned values) of the enumeration constants.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEvent">
@@ -2127,13 +2129,6 @@ class TestType {
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.EventInfo" /> object 
-   reflecting the public event that is named
-<paramref name="name" /> and is defined in the type represented by the current instance, if 
-   found; otherwise, <see langword="null" />.</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.EventInfo" /> with the type parameters replaced by the appropriate type arguments.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />.</exception>
         <remarks>
@@ -2240,6 +2235,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Reflection.EventInfo" /> object representing the specified public event.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object representing the specified public event that is declared or inherited by the current <see cref="T:System.Type" />, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of an event that is declared or inherited by the current <see cref="T:System.Type" />. </param>
       </Docs>
@@ -2264,16 +2263,6 @@ class TestType {
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.EventInfo" /> object reflecting the event that is named
-<paramref name="name" />, is defined in the type represented by the current instance, and 
-   matches the constraints of <paramref name="bindingAttr" />. If an event
-   matching these criteria is not found, returns <see langword="null" />. If the event is not
-   public, the current instance represents
-   a type from a loaded assembly, and the caller does not have sufficient
-   permission, returns <see langword="null" />.</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.EventInfo" /> with the type parameters replaced by the appropriate type arguments.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
@@ -2312,6 +2301,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the <see cref="T:System.Reflection.EventInfo" /> object representing the specified event, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object representing the specified event that is declared or inherited by the current <see cref="T:System.Type" />, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of an event which is declared or inherited by the current <see cref="T:System.Type" />. </param>
         <param name="bindingAttr">
@@ -2335,13 +2328,6 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.EventInfo" /> objects that reflect the public events
-   defined in the type represented by the current instance. If no public events
-   are defined in the type represented by the current instance, returns an empty
-   array.</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.EventInfo" /> objects with the type parameters replaced by the appropriate type arguments.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An event is considered public to reflection if it has at least one method or accessor that is public. Otherwise the event is considered private, and you must use <see cref="F:System.Reflection.BindingFlags.NonPublic" /> | <see cref="F:System.Reflection.BindingFlags.Instance" /> | <see cref="F:System.Reflection.BindingFlags.Static" /> (in Visual Basic, combine the values using Or) to get it.</para>
@@ -2447,6 +2433,12 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the public events that are declared or inherited by the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.EventInfo" /> objects representing all the public events which are declared or inherited by the current <see cref="T:System.Type" />.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.EventInfo" />, if the current <see cref="T:System.Type" /> does not have public events.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -2468,16 +2460,6 @@ class TestType {
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.EventInfo" /> objects that reflect the events that are
-   defined in the type represented by the current instance and match the
-   constraints of <paramref name="bindingAttr" /> . If no events match
-   these constraints, returns an empty array. If the type reflected by the current
-   instance is from a loaded assembly and the caller does not have permission to
-   reflect on non-public objects in loaded assemblies, returns only public
-   events.</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.EventInfo" /> objects with the type parameters replaced by the appropriate type arguments.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2512,6 +2494,12 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for events that are declared or inherited by the current <see cref="T:System.Type" />, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.EventInfo" /> objects representing all events that are declared or inherited by the current <see cref="T:System.Type" /> that match the specified binding constraints.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.EventInfo" />, if the current <see cref="T:System.Type" /> does not have events, or if none of the events match the binding constraints.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
       </Docs>
@@ -2535,16 +2523,6 @@ class TestType {
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.FieldInfo" /> object reflecting the field that is named
-<paramref name="name" /> and is defined in the type represented by the current instance, if 
-   found; otherwise, <see langword="null" />. If the selected field is non-public, the type represented by the
-   current instance is from a loaded assembly and the caller does not have
-   sufficient permission to reflect on non-public objects in loaded assemblies,
-   returns <see langword="null" />.</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.FieldInfo" /> with the type parameters replaced by the appropriate type arguments.
-</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
@@ -2558,6 +2536,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the public field with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public field with the specified name, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the data field to get. </param>
       </Docs>
@@ -2582,16 +2564,6 @@ class TestType {
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.FieldInfo" /> object reflecting the field that is named
-<paramref name="name" />, is defined in the type represented by the current instance, and 
-   matches the constraints of <paramref name="bindingAttr" />. If a field matching these criteria
-   cannot be found, returns <see langword="null" />. If the field is not public, the current type is
-   from a loaded assembly, and the caller does not have sufficient permission,
-   returns <see langword="null" />.</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.FieldInfo" /> with the type parameters replaced by the appropriate type arguments.
-</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
@@ -2722,6 +2694,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified field, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the field that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the data field to get. </param>
         <param name="bindingAttr">
@@ -2745,13 +2721,6 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.FieldInfo" /> objects that reflect the public fields
-   defined in the type represented by the current instance. If no public fields
-   are defined in the type represented by the current instance, returns an empty
-   array.</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.FieldInfo" /> objects with the type parameters replaced by the appropriate type arguments.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Type.GetFields" /> method does not return fields in a particular order, such as alphabetical or declaration order. Your code must not depend on the order in which fields are returned, because that order varies.</para>
@@ -2855,6 +2824,12 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the public fields of the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.FieldInfo" /> objects representing all the public fields defined for the current <see cref="T:System.Type" />.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.FieldInfo" />, if no public fields are defined for the current <see cref="T:System.Type" />.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -2876,16 +2851,6 @@ class TestType {
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.FieldInfo" /> objects that reflect the fields that are
-   defined in the type represented by the current instance and match the
-   constraints of <paramref name="bindingAttr" /> . If no fields match
-   these constraints, returns an empty array. If the type represented by the
-   current instance is from a loaded assembly and the caller does not have
-   sufficient permission to reflect on non-public objects in loaded assemblies,
-   returns only public fields.</para>
-          <para>If the current instance represents a generic type, this method returns the <see cref="T:System.Reflection.FieldInfo" /> objects with the type parameters replaced by the appropriate type arguments.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2919,6 +2884,12 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the fields defined for the current <see cref="T:System.Type" />, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.FieldInfo" /> objects representing all fields defined for the current <see cref="T:System.Type" /> that match the specified binding constraints.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.FieldInfo" />, if no fields are defined for the current <see cref="T:System.Type" />, or if none of the defined fields match the binding constraints.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
       </Docs>
@@ -2938,9 +2909,6 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Type" /> objects that represent the type arguments of a generic type or the type parameters of a generic type definition. Returns an empty array if the current type is not a generic type. The array elements are returned in the order in which they appear in the list of type arguments for the generic type.</para>
-        </returns>
         <since version=".NET 2.0" />
         <example>
           <para>For an example of using this method, see the example for <see cref="P:System.Type.GenericParameterPosition" />.</para>
@@ -2965,6 +2933,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of <see cref="T:System.Type" /> objects that represent the type arguments of a generic type or the type parameters of a generic type definition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that represent the type arguments of a generic type. Returns an empty array if the current type is not a generic type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGenericParameterConstraints">
@@ -2980,9 +2952,6 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Type" /> objects that represent the type constraints on the current generic type parameter.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.InvalidOperationException">The current <see cref="T:System.Type" /> object is not a generic type parameter. That is, the <see cref="P:System.Type.IsGenericParameter" /> property returns <see langword="false" />.</exception>
         <remarks>
@@ -2994,6 +2963,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of <see cref="T:System.Type" /> objects that represent the constraints on the current generic type parameter. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that represent the constraints on the current generic type parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGenericTypeDefinition">
@@ -3009,9 +2982,6 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> object representing a generic type from which the current type can be constructed.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.InvalidOperationException">The current type is not a generic type.  That is, <see cref="P:System.Type.HasGenericArguments" /> returns <see langword="false" />. </exception>
         <example>
@@ -3031,6 +3001,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents a generic type definition from which the current generic type can be constructed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing a generic type from which the current type can be constructed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -3048,10 +3022,6 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the hash code for this instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.GetHashCode" />.</para>
@@ -3060,6 +3030,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -3080,12 +3054,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Type" /> object
-   representing the interface with the specified name, implemented or inherited by
-   the current <see cref="T:System.Type" />, if found; otherwise, <see langword="null" />.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
         <exception cref="T:System.Reflection.AmbiguousMatchException">The current instance represents a type that implements the same generic interface with different type arguments.</exception>
@@ -3102,6 +3070,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the interface with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the interface with the specified name, implemented or inherited by the current <see cref="T:System.Type" />, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the interface to get. For generic interfaces, this is the mangled name.</param>
       </Docs>
@@ -3126,11 +3098,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> object representing
-   the interface with the specified name, implemented or inherited by the type
-   represented by the instance, if found; otherwise, <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
         <exception cref="T:System.Reflection.AmbiguousMatchException">The current instance represents a type that implements the same generic interface with different type arguments.</exception>
@@ -3147,6 +3114,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the specified interface, specifying whether to do a case-insensitive search for the interface name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the interface with the specified name, implemented or inherited by the current <see cref="T:System.Type" />, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the interface to get. For generic interfaces, this is the mangled name.</param>
         <param name="ignoreCase">
@@ -3176,7 +3147,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="interfaceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The interface map denotes how an interface is mapped into the actual methods on a class that implements that interface.</para>
@@ -3186,6 +3156,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an interface mapping for the specified interface type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the interface mapping for <paramref name="interfaceType" />.</para>
+        </returns>
         <param name="interfaceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The interface type to retrieve a mapping for. </param>
       </Docs>
@@ -3205,11 +3179,6 @@ containing the hash code for this instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Type" /> objects representing the interfaces implemented or
-   inherited by the type represented by the current instance. If no interfaces are
-   found, returns an empty <see cref="T:System.Type" /> array.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Type.GetInterfaces" /> method does not return interfaces in a particular order, such as alphabetical or declaration order. Your code must not depend on the order in which interfaces are returned, because that order varies.</para>
@@ -3220,6 +3189,12 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets all the interfaces implemented or inherited by the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects representing all the interfaces implemented or inherited by the current <see cref="T:System.Type" />.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Type" />, if no interfaces are implemented or inherited by the current <see cref="T:System.Type" />.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -3241,12 +3216,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects that reflect the public members that
-   are named <paramref name="name" /> and are defined in the type represented by the current instance. If no public
-   members with the specified name are defined in the type represented by the
-   current instance, returns an empty array.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
         <remarks>
@@ -3358,6 +3327,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the public members with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects representing the public members with the specified name, if found; otherwise, an empty array.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the public members to get. </param>
       </Docs>
@@ -3382,15 +3355,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects that reflect the members
-   named <paramref name="name" />, are defined in the type represented by the current instance
-   and match the constraints of <paramref name="bindingAttr" /> .
-   If no members match these constraints, returns an empty array.
-   If the selected member is non-public, the type reflected by the current instance is from a
-   loaded assembly and the caller does not have sufficient permission to reflect on
-   non-public objects in loaded assemblies, returns <see langword="null" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
@@ -3435,6 +3399,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified members, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects representing the public members with the specified name, if found; otherwise, an empty array.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the members to get. </param>
         <param name="bindingAttr">
@@ -3461,7 +3429,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Members include properties, methods, fields, events, and so on. </para>
@@ -3502,6 +3469,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified members of the specified member type, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects representing the public members with the specified name, if found; otherwise, an empty array.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the members to get. </param>
         <param name="type">
@@ -3525,12 +3496,6 @@ containing the hash code for this instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects that reflect the public members
-   defined in the type represented by the current instance. If no public members
-   are defined in the type represented by the current instance, returns an empty
-   array.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Members include properties, methods, fields, events, and so on.</para>
@@ -3636,6 +3601,12 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the public members of the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects representing all the public members of the current <see cref="T:System.Type" />.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.MemberInfo" />, if the current <see cref="T:System.Type" /> does not have public members.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -3657,14 +3628,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects that reflect the members
-   defined in the type represented by the current instance that match the
-   constraints of <paramref name="bindingAttr" /> . If no members match these constraints,
-   returns an empty array. If the type represented by the current instance is from
-   a loaded assembly and the caller does not have sufficient permission to reflect
-   on non-public objects in loaded assemblies, returns only public members.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3701,6 +3664,12 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the members defined for the current <see cref="T:System.Type" />, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects representing all members defined for the current <see cref="T:System.Type" /> that match the specified binding constraints.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.MemberInfo" />, if no members are defined for the current <see cref="T:System.Type" />, or if none of the defined members match the binding constraints.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
       </Docs>
@@ -3724,11 +3693,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> object reflecting the public method that is
-   defined in the type represented by the current instance and has the specified
-   name, if found; otherwise, <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one method matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
@@ -3748,6 +3712,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the public method with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the public method with the specified name, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the public method to get. </param>
       </Docs>
@@ -3772,12 +3740,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> object
-   that reflects the method that is defined
-   in the type represented by the current instance and matches the specified
-   criteria, if found; otherwise, <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one method matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />.</exception>
@@ -3822,6 +3784,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified method, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the method that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the method to get. </param>
         <param name="bindingAttr">
@@ -3848,12 +3814,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="types" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> object reflecting
-   the public method defined in the type represented by the current instance
-   that matches the specified criteria. If no public method matching the specified criteria
-   is found, returns <see langword="null" /> . </para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one method matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -3881,6 +3841,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified public method whose parameters match the specified argument types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public method whose parameters match the specified argument types, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the public method to get. </param>
         <param name="types">
@@ -3908,11 +3872,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> object reflecting the public method that is
-   defined in the type represented by the current instance and matches the
-   specified criteria, if found; otherwise, <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one method matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -3941,6 +3900,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified public method whose parameters match the specified argument types and modifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public method that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the public method to get. </param>
         <param name="types">
@@ -3972,16 +3935,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodInfo" /> object that reflects
-   the method defined in the type represented by the current instance that
-   matches the specified criteria. If no method matching the specified criteria is found, returns
-<see langword="null" /> . If the 
-   selected method is non-public, the type reflected by
-   the current instance is from a loaded assembly, and the caller
-   does not have permission to reflect on non-public objects in loaded assemblies,
-   returns <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one method matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -4035,6 +3988,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified method whose parameters match the specified argument types and modifiers, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the method that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the method to get. </param>
         <param name="bindingAttr">
@@ -4070,7 +4027,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the default binder does not process <see cref="T:System.Reflection.ParameterModifier" /> (the <paramref name="modifiers" /> parameter), you can use the abstract <see cref="T:System.Reflection.Binder" /> class to write a custom binder that does process <paramref name="modifiers" />. ParameterModifier is only used when calling through COM interop, and only parameters that are passed by reference are handled.</para>
@@ -4205,6 +4161,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified method whose parameters match the specified argument types and modifiers, using the specified binding constraints and the specified calling convention.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the method that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the method to get. </param>
         <param name="bindingAttr">
@@ -4240,7 +4200,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the default binder does not process <see cref="T:System.Reflection.ParameterModifier" /> (the <paramref name="modifiers" /> parameter), you can use the abstract <see cref="T:System.Reflection.Binder" /> class to write a custom binder that does process <paramref name="modifiers" />. ParameterModifier is only used when calling through COM interop, and only parameters that are passed by reference are handled.</para>
@@ -4275,6 +4234,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the specified method whose parameters match the specified argument types and modifiers, using the specified binding constraints and the specified calling convention.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the method that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the method to get. </param>
         <param name="bindingAttr">
@@ -4304,9 +4267,6 @@ containing the hash code for this instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects reflecting the public methods defined in the type represented by the current instance. If no methods are found, returns an empty array.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Type.GetMethods" /> method does not return methods in a particular order, such as alphabetical or declaration order. Your code must not depend on the order in which methods are returned, because that order varies.</para>
@@ -4414,6 +4374,12 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the public methods of the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects representing all the public methods defined for the current <see cref="T:System.Type" />.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.MethodInfo" />, if no public methods are defined for the current <see cref="T:System.Type" />.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -4435,14 +4401,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects reflecting the methods defined in the type
-   represented by the current instance that match the constraints of
-<paramref name="bindingAttr" /> . If no such methods found, returns an 
-   empty array. If the type represented by the current instance is from a loaded
-   assembly and the caller does not have permission to reflect on non-public
-   objects in loaded assemblies, returns only public methods.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4479,6 +4437,12 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the methods defined for the current <see cref="T:System.Type" />, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects representing all methods defined for the current <see cref="T:System.Type" /> that match the specified binding constraints.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.MethodInfo" />, if no methods are defined for the current <see cref="T:System.Type" />, or if none of the defined methods match the binding constraints.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
       </Docs>
@@ -4502,11 +4466,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> object
-   representing the public nested type with the specified
-   name, if found; otherwise, <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
         <remarks>
@@ -4617,6 +4576,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the public nested type with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public nested type with the specified name, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the nested type to get. </param>
       </Docs>
@@ -4641,14 +4604,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> object representing the nested type that
-   matches the specified criteria, if found; otherwise, <see langword="null" />. If the selected nested
-   type is non-public, the current instance represents a type contained in a loaded
-   assembly and the caller does not have sufficient permissions, returns
-<see langword="null" /> 
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <see langword="null" />. </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
@@ -4682,6 +4637,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the specified nested type, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the nested type that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the nested type to get. </param>
         <param name="bindingAttr">
@@ -4705,10 +4664,6 @@ containing the hash code for this instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Type" /> objects representing all public types nested within the type
-   represented by the current instance, if any. Otherwise, returns an empty <see cref="T:System.Type" /> array.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Type.GetNestedTypes" /> method does not return types in a particular order, such as alphabetical or declaration order. Your code must not depend on the order in which types are returned, because that order varies.</para>
@@ -4817,6 +4772,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public types nested in the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects representing the public types nested in the current <see cref="T:System.Type" /> (the search is not recursive), or an empty array of type <see cref="T:System.Type" /> if no public types are nested in the current <see cref="T:System.Type" />.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -4838,14 +4797,6 @@ containing the hash code for this instance.</para>
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Type" /> objects representing all types nested within the type
-   represented by the current instance that match the specified binding constraints,
-   if any. Otherwise, returns an empty <see cref="T:System.Type" /> array. If the type reflected by the current instance is
-   contained in a loaded assembly, the type that matches the specified criteria is
-   not public, and the caller does not have sufficient permission, returns only
-   public types.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4878,6 +4829,10 @@ containing the hash code for this instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the types nested in the current <see cref="T:System.Type" />, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects representing all the types nested in the current <see cref="T:System.Type" /> that match the specified binding constraints (the search is not recursive), or an empty array of type <see cref="T:System.Type" />, if no nested types are found that match the binding constraints.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
       </Docs>
@@ -4899,12 +4854,6 @@ containing the hash code for this instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.PropertyInfo" /> 
-objects that reflect the public properties defined in the type
-represented by the current instance. If no public properties are found, returns
-an empty array.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A property is considered public to reflection if it has at least one accessor that is public. Otherwise the property is considered private, and you must use <see cref="F:System.Reflection.BindingFlags.NonPublic" /> | <see cref="F:System.Reflection.BindingFlags.Instance" /> | <see cref="F:System.Reflection.BindingFlags.Static" /> (in Visual Basic, combine the values using Or) to get it.</para>
@@ -5009,6 +4958,12 @@ an empty array.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the public properties of the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.PropertyInfo" /> objects representing all public properties of the current <see cref="T:System.Type" />.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.PropertyInfo" />, if the current <see cref="T:System.Type" /> does not have public properties.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -5030,14 +4985,6 @@ an empty array.</para>
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Reflection.PropertyInfo" /> objects that reflect the properties
-   defined in the type represented by the current instance and match the
-   constraints of <paramref name="bindingAttr" /> . If no matching properties are found,
-   returns an empty array. If the type represented by the current instance is from
-   a loaded assembly and the caller does not have permission to reflect on
-   non-public objects in loaded assemblies, returns only public properties.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5073,6 +5020,12 @@ an empty array.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the properties of the current <see cref="T:System.Type" />, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.PropertyInfo" /> objects representing all properties of the current <see cref="T:System.Type" /> that match the specified binding constraints.</para>
+          <para>-or- </para>
+          <para>An empty array of type <see cref="T:System.Reflection.PropertyInfo" />, if the current <see cref="T:System.Type" /> does not have properties, or if none of the properties match the binding constraints.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitmask comprised of one or more <see cref="T:System.Reflection.BindingFlags" /> that specify how the search is conducted.</param>
       </Docs>
@@ -5096,11 +5049,6 @@ an empty array.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object reflecting the public property defined 
-   on the type represented by the current instance that has the specified name. If
-   no matching property is found, returns <see langword="null" /> . </para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one property matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5132,6 +5080,10 @@ an empty array.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the public property with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public property with the specified name, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the public property to get. </param>
       </Docs>
@@ -5156,15 +5108,6 @@ an empty array.</para>
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.PropertyInfo" />
-object reflecting the property defined in the type represented by
-the current instance that matches the specified criteria. If no matching property is
-found, returns <see langword="null" /> . If the type reflected by the current
-instance is contained in a loaded assembly, the property that matches the
-specified criteria is not public, and the caller does not have sufficient
-permission, returns <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one property matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5221,6 +5164,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified property, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the property that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the property to get. </param>
         <param name="bindingAttr">
@@ -5247,17 +5194,13 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="returnType">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object reflecting the public property defined 
-   on the type represented by the current instance that matches the specified
-   criteria. If no matching property is found, returns <see langword="null" /> .</para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one property matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="name" /> is <see langword="null" />.</para>
         </exception>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A property is considered public to reflection if it has at least one accessor that is public. Otherwise the property is considered private, and you must use <see cref="F:System.Reflection.BindingFlags.NonPublic" /> | <see cref="F:System.Reflection.BindingFlags.Instance" /> | <see cref="F:System.Reflection.BindingFlags.Static" /> (in Visual Basic, combine the values using Or) to get it.</para>
@@ -5275,6 +5218,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the public property with the specified name and return type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public property with the specified name, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the public property to get. </param>
         <param name="returnType">
@@ -5301,11 +5248,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="types" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object reflecting the public property defined
-   on the type represented by the current instance that matches the specified
-   criteria. If no matching property is found, returns <see langword="null" /> .</para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one property matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5332,6 +5274,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified public property whose parameters match the specified argument types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public property whose parameters match the specified argument types, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the public property to get. </param>
         <param name="types">
@@ -5359,13 +5305,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="types" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="returnType">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object
-   reflecting the public property defined in the type represented by
-   the current instance that matches the specified criteria. If no matching property is
-   found, returns <see langword="null" /> . </para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one property matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5373,6 +5312,8 @@ permission, returns <see langword="null" />.</para>
         </exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="types" /> has more than one dimension.</exception>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A property is considered public to reflection if it has at least one accessor that is public. Otherwise the property is considered private, and you must use <see cref="F:System.Reflection.BindingFlags.NonPublic" /> | <see cref="F:System.Reflection.BindingFlags.Instance" /> | <see cref="F:System.Reflection.BindingFlags.Static" /> (in Visual Basic, combine the values using Or) to get it.</para>
@@ -5390,6 +5331,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified public property whose parameters match the specified argument types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public property whose parameters match the specified argument types, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the public property to get. </param>
         <param name="returnType">
@@ -5419,7 +5364,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A property is considered public to reflection if it has at least one accessor that is public. Otherwise the property is considered private, and you must use <see cref="F:System.Reflection.BindingFlags.NonPublic" /> | <see cref="F:System.Reflection.BindingFlags.Instance" /> | <see cref="F:System.Reflection.BindingFlags.Static" /> (in Visual Basic, combine the values using Or) to get it.</para>
@@ -5438,6 +5382,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified public property whose parameters match the specified argument types and modifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the public property that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the public property to get. </param>
         <param name="returnType">
@@ -5470,16 +5418,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <param name="returnType">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object
-   reflecting the property that is defined in the type represented by the
-   current instance and matches the specified criteria. If no matching property is
-   found, returns <see langword="null" /> . If the type reflected by the current
-   instance is contained in a loaded assembly, the property that matches the
-   specified criteria is not public, and the caller does not have sufficient
-   permission, returns <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one property matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5490,6 +5428,8 @@ permission, returns <see langword="null" />.</para>
             <paramref name="types" /> has more than one dimension.</para>
         </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A property is considered public to reflection if it has at least one accessor that is public. Otherwise the property is considered private, and you must use <see cref="F:System.Reflection.BindingFlags.NonPublic" /> | <see cref="F:System.Reflection.BindingFlags.Instance" /> | <see cref="F:System.Reflection.BindingFlags.Static" /> (in Visual Basic, combine the values using Or) to get it.</para>
@@ -5625,6 +5565,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified property whose parameters match the specified argument types and modifiers, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the property that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the property to get. </param>
         <param name="bindingAttr">
@@ -5663,14 +5607,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <param name="returnType">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object representing the property that matches the
-   specified search criteria, if found; otherwise, <see langword="null" />. If the type reflected by the current
-   instance is from a loaded assembly, the matching property is not
-   public, and the caller does not have permission to reflect on non-public
-   objects in loaded assemblies, returns <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one property matching the specified criteria was found.</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5681,6 +5617,8 @@ permission, returns <see langword="null" />.</para>
             <paramref name="types" /> has more than one dimension.</para>
         </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the default binder does not process <see cref="T:System.Reflection.ParameterModifier" /> (the <paramref name="modifiers" /> parameter), you can use the abstract <see cref="T:System.Reflection.Binder" /> class to write a custom binder that does process <paramref name="modifiers" />. ParameterModifier is only used when calling through COM interop, and only parameters that are passed by reference are handled.</para>
@@ -5714,6 +5652,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, searches for the specified property whose parameters match the specified argument types and modifiers, using the specified binding constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the property that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the property to get. </param>
         <param name="bindingAttr">
@@ -5744,12 +5686,15 @@ permission, returns <see langword="null" />.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current <see cref="T:System.Type" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -5769,12 +5714,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Type" /> with the specified name, if found; otherwise, <see langword="null" />. If the
-   requested type is non-public and the caller does not have permission to reflect
-   non-public objects outside the current assembly, this method returns
-<see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="typeName" /> is <see langword="null" />. </exception>
         <exception cref="T:System.Reflection.TargetInvocationException">A type initializer was invoked and threw an exception.</exception>
@@ -6103,6 +6042,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Type" /> with the specified name, performing a case-sensitive search.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type with the specified name, if found; otherwise, null.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly-qualified name of the type to get. See <see cref="P:System.Type.AssemblyQualifiedName" />. If the type is in the currently executing assembly or in Mscorlib.dll, it is sufficient to supply the type name qualified by its namespace.</param>
       </Docs>
@@ -6127,11 +6070,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Type" /> with the specified name, if found; otherwise, <see langword="null" /> . If the
-   requested type is non-public and the caller does not have permission to reflect non-public objects
-   outside the current assembly, this method returns <see langword="null" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="typeName" /> is <see langword="null" />. </exception>
         <exception cref="T:System.Reflection.TargetInvocationException">A type initializer was invoked and threw an exception.</exception>
@@ -6463,6 +6401,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Type" /> with the specified name, performing a case-sensitive search and specifying whether to throw an exception if the type is not found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type with the specified name. If the type is not found, the <paramref name="throwOnError" /> parameter specifies whether null is returned or an exception is thrown. In some cases, an exception is thrown regardless of the value of <paramref name="throwOnError" />. See the Exceptions section. </para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly-qualified name of the type to get. See <see cref="P:System.Type.AssemblyQualifiedName" />. If the type is in the currently executing assembly or in Mscorlib.dll, it is sufficient to supply the type name qualified by its namespace.</param>
         <param name="throwOnError">
@@ -6490,11 +6432,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Type" /> with the specified name, if found; otherwise, <see langword="null" />. If the
-   requested type is non-public and the caller does not have permission to reflect non-public objects
-   outside the current assembly, this method returns <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="typeName" /> is <see langword="null" />.</exception>
         <exception cref="T:System.Reflection.TargetInvocationException">A type initializer was invoked and threw an exception.</exception>
@@ -6826,6 +6763,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Type" /> with the specified name, specifying whether to perform a case-sensitive search and whether to throw an exception if the type is not found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type with the specified name. If the type is not found, the <paramref name="throwOnError" /> parameter specifies whether null is returned or an exception is thrown. In some cases, an exception is thrown regardless of the value of <paramref name="throwOnError" />. See the Exceptions section. </para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly-qualified name of the type to get. See <see cref="P:System.Type.AssemblyQualifiedName" />. If the type is in the currently executing assembly or in Mscorlib.dll, it is sufficient to supply the type name qualified by its namespace.</param>
         <param name="throwOnError">
@@ -6852,12 +6793,25 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="typeResolver" Type="System.Func&lt;System.Reflection.Assembly,System.String,System.Boolean,System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="assemblyResolver">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Usage scenarios for this method and details about the <paramref name="assemblyResolver" /> and <paramref name="typeResolver" /> parameters can be found in the <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean,System.Boolean)" /> method overload.</para>
+          <para>Calling this method overload is the same as calling the <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean,System.Boolean)" /> method overload and specifying false for the <paramref name="throwOnError" /> and <paramref name="ignoreCase" /> parameters. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type with the specified name, optionally providing custom methods to resolve the assembly and the type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type with the specified name, or null if the type is not found. </para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to get. If the <paramref name="typeResolver" /> parameter is provided, the type name can be any string that <paramref name="typeResolver" /> is capable of resolving. If the <paramref name="assemblyResolver" /> parameter is provided or if standard type resolution is used, <paramref name="typeName" /> must be an assembly-qualified name (see <see cref="P:System.Type.AssemblyQualifiedName" />), unless the type is in the currently executing assembly or in Mscorlib.dll, in which case it is sufficient to supply the type name qualified by its namespace.</param>
+        <param name="assemblyResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the assembly that is specified in <paramref name="typeName" />. The assembly name is passed to <paramref name="assemblyResolver" /> as an <see cref="T:System.Reflection.AssemblyName" /> object. If <paramref name="typeName" /> does not contain the name of an assembly, <paramref name="assemblyResolver" /> is not called. If <paramref name="assemblyResolver" /> is not supplied, standard assembly resolution is performed. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the type that is specified by <paramref name="typeName" /> from the assembly that is returned by <paramref name="assemblyResolver" /> or by standard assembly resolution. If no assembly is provided, the <paramref name="typeResolver" /> method can provide one. The method also takes a parameter that specifies whether to perform a case-insensitive search; false is passed to that parameter. </param>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -6877,13 +6831,27 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="assemblyResolver">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <param name="throwOnError">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Usage scenarios for this method and details about the <paramref name="assemblyResolver" /> and <paramref name="typeResolver" /> parameters can be found in the <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean,System.Boolean)" /> method overload.</para>
+          <para>Calling this method overload is the same as calling the <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean,System.Boolean)" /> method overload and specifying false for the <paramref name="ignoreCase" /> parameter. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type with the specified name, specifying whether to throw an exception if the type is not found, and optionally providing custom methods to resolve the assembly and the type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type with the specified name. If the type is not found, the <paramref name="throwOnError" /> parameter specifies whether null is returned or an exception is thrown. In some cases, an exception is thrown regardless of the value of <paramref name="throwOnError" />. See the Exceptions section. </para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to get. If the <paramref name="typeResolver" /> parameter is provided, the type name can be any string that <paramref name="typeResolver" /> is capable of resolving. If the <paramref name="assemblyResolver" /> parameter is provided or if standard type resolution is used, <paramref name="typeName" /> must be an assembly-qualified name (see <see cref="P:System.Type.AssemblyQualifiedName" />), unless the type is in the currently executing assembly or in Mscorlib.dll, in which case it is sufficient to supply the type name qualified by its namespace.</param>
+        <param name="assemblyResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the assembly that is specified in <paramref name="typeName" />. The assembly name is passed to <paramref name="assemblyResolver" /> as an <see cref="T:System.Reflection.AssemblyName" /> object. If <paramref name="typeName" /> does not contain the name of an assembly, <paramref name="assemblyResolver" /> is not called. If <paramref name="assemblyResolver" /> is not supplied, standard assembly resolution is performed. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the type that is specified by <paramref name="typeName" /> from the assembly that is returned by <paramref name="assemblyResolver" /> or by standard assembly resolution. If no assembly is provided, the method can provide one. The method also takes a parameter that specifies whether to perform a case-insensitive search; false is passed to that parameter. </param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if the type cannot be found; false to return null. Specifying false also suppresses some other exception conditions, but not all of them. See the Exceptions section.</param>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -6904,14 +6872,320 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="assemblyResolver">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <param name="throwOnError">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload and its associated overloads (<see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type})" /> and <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean)" />) to replace the default implementation of the <see cref="M:System.Type.GetType(System.String)" /> method with more flexible implementations. By providing your own methods that resolve type names and the names of the assemblies that contain them, you can do the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Control which version of an assembly a type is loaded from.</para>
+            </item>
+            <item>
+              <para>Provide another place to look for a type name that does not include an assembly name.</para>
+            </item>
+            <item>
+              <para>Load assemblies using partial assembly names.</para>
+            </item>
+            <item>
+              <para>Return subclasses of <see cref="T:System.Type" /> that are not created by the common language runtime (CLR).</para>
+            </item>
+          </list>
+          <para>For example, in version-tolerant serialization this method enables you to search for a "best fit" assembly by using a partial name. Other overloads of the <see cref="M:System.Type.GetType(System.String)" /> method require an assembly-qualified type name, which includes the version number. </para>
+          <para>Alternate implementations of the type system may need to return subclasses of <see cref="T:System.Type" /> that are not created by the CLR; all types that are returned by other overloads of the <see cref="M:System.Type.GetType(System.String)" /> method are runtime types.</para>
+          <format type="text/html">
+            <a href="#usage_notes" />
+          </format>
+          <format type="text/html">
+            <h2>Usage Notes</h2>
+          </format>
+          <para>This method overload and its associated overloads parse <paramref name="typeName" /> into the name of a type and the name of an assembly, and then resolve the names. Resolution of the assembly name occurs before resolution of the type name, because a type name must be resolved in the context of an assembly. </para>
+          <block subset="none" type="note">
+            <para>If you are unfamiliar with the concept of assembly-qualified type names, see the <see cref="P:System.Type.AssemblyQualifiedName" /> property.</para>
+          </block>
+          <para>If <paramref name="typeName" /> is not an assembly-qualified name, assembly resolution is skipped. Unqualified type names can be resolved in the context of Mscorlib.dll or the currently executing assembly, or you can optionally provide an assembly in the <paramref name="typeResolver" /> parameter. The effects of including or omitting the assembly name for different kinds of name resolution are displayed as a table in the <format type="text/html"><a href="#mixed_name_resolution">Mixed Name Resolution</a></format> section.</para>
+          <para>General usage notes:</para>
+          <list type="bullet">
+            <item>
+              <para>Do not pass methods to <paramref name="assemblyResolver" /> or <paramref name="typeResolver" /> if they come from unknown or untrusted callers. Use only methods that you provide or that you are familiar with.</para>
+              <block subset="none" type="note">
+                <para>Using methods from unknown or untrusted callers could result in elevation of privilege for malicious code. </para>
+              </block>
+            </item>
+            <item>
+              <para>If you omit the <paramref name="assemblyResolver" /> and/or <paramref name="typeResolver" /> parameters, the value of the <paramref name="throwOnError" /> parameter is passed to the methods that perform the default resolution. </para>
+            </item>
+            <item>
+              <para>If <paramref name="throwOnError" /> is true, this method throws a <see cref="T:System.TypeLoadException" /> when <paramref name="typeResolver" /> returns null, and a <see cref="T:System.IO.FileNotFoundException" /> when <paramref name="assemblyResolver" /> returns null.</para>
+            </item>
+            <item>
+              <para>This method does not catch exceptions thrown by <paramref name="assemblyResolver" /> and <paramref name="typeResolver" />. You are responsible for any exceptions that are thrown by the resolver methods.</para>
+            </item>
+          </list>
+          <format type="text/html">
+            <a href="#resolving_assemblies" />
+          </format>
+          <format type="text/html">
+            <h2>Resolving Assemblies</h2>
+          </format>
+          <para>The <paramref name="assemblyResolver" /> method receives an <see cref="T:System.Reflection.AssemblyName" /> object, which is produced by parsing the string assembly name that is included in <paramref name="typeName" />. If <paramref name="typeName" /> does not contain an assembly name, <paramref name="assemblyResolver" /> is not called and null is passed to <paramref name="typeResolver" />. </para>
+          <para>If <paramref name="assemblyResolver" /> is not supplied, standard assembly probing is used to locate the assembly. If <paramref name="assemblyResolver" /> is provided, the <see cref="M:System.Type.GetType(System.String)" /> method does not do standard probing; in that case you must ensure that your <paramref name="assemblyResolver" /> can handle all the assemblies you pass to it.</para>
+          <para>The <paramref name="assemblyResolver" /> method should return null if the assembly cannot be resolved. If <paramref name="assemblyResolver" /> returns null, <paramref name="typeResolver" /> is not called and no further processing occurs; additionally, if <paramref name="throwOnError" /> is true, a <see cref="T:System.IO.FileNotFoundException" /> is thrown.</para>
+          <para>If the <see cref="T:System.Reflection.AssemblyName" /> that is passed to <paramref name="assemblyResolver" /> is a partial name, one or more of its parts are null. For example, if it has no version, the <see cref="P:System.Reflection.AssemblyName.Version" /> property is null. If the <see cref="P:System.Reflection.AssemblyName.Version" /> property, the <see cref="P:System.Reflection.AssemblyName.CultureInfo" /> property, and the <see cref="M:System.Reflection.AssemblyName.GetPublicKeyToken" /> method all return null, then only the simple name of the assembly was supplied. The <paramref name="assemblyResolver" /> method can use or ignore all parts of the assembly name.</para>
+          <para>The effects of different assembly resolution options are displayed as a table in the <format type="text/html"><a href="#mixed_name_resolution">Mixed Name Resolution</a></format> section, for simple and assembly-qualified type names.</para>
+          <format type="text/html">
+            <a href="#resolving_types" />
+          </format>
+          <format type="text/html">
+            <h2>Resolving Types</h2>
+          </format>
+          <para>If <paramref name="typeName" /> does not specify an assembly name, <paramref name="typeResolver" /> is always called. If <paramref name="typeName" /> specifies an assembly name, <paramref name="typeResolver" /> is called only when the assembly name is successfully resolved. If <paramref name="assemblyResolver" /> or standard assembly probing returns null, <paramref name="typeResolver" /> is not called. </para>
+          <para>The <paramref name="typeResolver" /> method receives three arguments: </para>
+          <list type="bullet">
+            <item>
+              <para>The assembly to search or null if <paramref name="typeName" /> does not contain an assembly name.</para>
+            </item>
+            <item>
+              <para>The simple name of the type. In the case of a nested type, this is the outermost containing type. In the case of a generic type, this is the simple name of the generic type.</para>
+            </item>
+            <item>
+              <para>A Boolean value that is true if the case of type names is to be ignored. </para>
+            </item>
+          </list>
+          <para>The implementation determines the way these arguments are used. The <paramref name="typeResolver" /> method should return null if it cannot resolve the type. If <paramref name="typeResolver" /> returns null and <paramref name="throwOnError" /> is true, this overload of <see cref="M:System.Type.GetType(System.String)" /> throws a <see cref="T:System.TypeLoadException" />. </para>
+          <para>The effects of different type resolution options are displayed as a table in the <format type="text/html"><a href="#mixed_name_resolution">Mixed Name Resolution</a></format> section, for simple and assembly-qualified type names.</para>
+          <format type="text/html">
+            <h2>Resolving Nested Types</h2>
+          </format>
+          <para>If <paramref name="typeName" /> is a nested type, only the name of the outermost containing type is passed to <paramref name="typeResolver" />. When <paramref name="typeResolver" /> returns this type, the <see cref="M:System.Type.GetNestedType(System.String)" /> method is called recursively until the innermost nested type has been resolved. </para>
+          <format type="text/html">
+            <h2>Resolving Generic Types</h2>
+          </format>
+          <para>The <see cref="M:System.Type.GetType(System.String)" /> is called recursively to resolve generic types: First to resolve the generic type itself, and then to resolve its type arguments. If a type argument is generic, <see cref="M:System.Type.GetType(System.String)" /> is called recursively to resolve its type arguments, and so on.</para>
+          <para>The combination of <paramref name="assemblyResolver" /> and <paramref name="typeResolver" /> that you provide must be capable of resolving all levels of this recursion. For example, suppose you supply an <paramref name="assemblyResolver" /> that controls the loading of MyAssembly. Suppose you want to resolve the generic type Dictionary&lt;string, MyType&gt; (Dictionary(Of String, MyType) in Visual Basic). You might pass the following generic type name:</para>
+          <code>"System.Collections.Generic.Dictionary`2[System.String,[MyNamespace.MyType, MyAssembly]]"</code>
+          <para>Notice that MyType is the only assembly-qualified type argument. The names of the <see cref="T:System.Collections.Generic.Dictionary`2" /> and <see cref="T:System.String" /> classes are not assembly-qualified. Your <paramref name="typeResolver" /> must be able handle either an assembly or null, because it will receive null for <see cref="T:System.Collections.Generic.Dictionary`2" /> and <see cref="T:System.String" />. It can handle that case by calling an overload of the <see cref="M:System.Type.GetType(System.String)" /> method that takes a string, because both of the unqualified type names are in Mscorlib.dll:</para>
+          <para>code reference: GetTypeOnSteroids#1</para>
+          <para>The <paramref name="assemblyResolver" /> method is not called for the dictionary type and the string type, because those type names are not assembly-qualified.</para>
+          <para>Now suppose that instead of System.String, the first generic argument type is YourType, from YourAssembly: </para>
+          <code>"System.Collections.Generic.Dictionary`2[[YourNamespace.YourType, YourAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null], [MyNamespace.MyType, MyAssembly]]"</code>
+          <para>Because this assembly is neither Mscorlib.dll nor the currently executing assembly, you cannot resolve YourType without an assembly-qualified name. Because your <paramref name="assemblyResolve" /> will be called recursively, it must be able to handle this case. Instead of returning null for assemblies other than MyAssembly, it now performs an assembly load using the supplied <see cref="T:System.Reflection.AssemblyName" /> object.</para>
+          <para>code reference: GetTypeOnSteroids#2</para>
+          <para>Back to <format type="text/html"><a href="#usage_notes">Usage Notes</a></format>.</para>
+          <format type="text/html">
+            <h2>Resolving Type Names with Special Characters</h2>
+          </format>
+          <para>Certain characters have special meanings in assembly-qualified names. If a simple type name contains these characters, the characters cause parsing errors when the simple name is part of an assembly-qualified name. To avoid the parsing errors, you must escape the special characters with a backslash before you can pass the assembly-qualified name to the <see cref="M:System.Type.GetType(System.String)" /> method. For example, if a type is named Strange]Type, the escape character must be added ahead of the square bracket as follows: Strange\]Type. </para>
+          <block subset="none" type="note">
+            <para>Names with such special characters cannot be created in Visual Basic or C#, but can be created by using Microsoft intermediate language (MSIL) or by emitting dynamic assemblies. </para>
+          </block>
+          <para>The following table shows the special characters for type names.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Character</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>, (comma)</para>
+              </term>
+              <description>
+                <para>Delimiter for assembly-qualified names.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>[] (square brackets)</para>
+              </term>
+              <description>
+                <para>As a suffix pair, indicates an array type; as a delimiter pair, encloses generic argument lists and assembly-qualified names.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>&amp; (ampersand)</para>
+              </term>
+              <description>
+                <para>As a suffix, indicates that a type is a reference type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>As a suffix, indicates that a type is a pointer type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>+ (plus)</para>
+              </term>
+              <description>
+                <para>Delimiter for nested types.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>\ (backslash)</para>
+              </term>
+              <description>
+                <para>Escape character.</para>
+              </description>
+            </item>
+          </list>
+          <para>Properties such as <see cref="P:System.Type.AssemblyQualifiedName" /> return correctly escaped strings. You must pass correctly escaped strings to the <see cref="M:System.Type.GetType(System.String)" /> method. In turn, the <see cref="M:System.Type.GetType(System.String)" /> method passes correctly escaped names to <paramref name="typeResolver" /> and to the default type resolution methods. If you need to compare a name to an unescaped name in <paramref name="typeResolver" />, you must remove the escape characters. </para>
+          <para>Back to <format type="text/html"><a href="#usage_notes">Usage Notes</a></format>.</para>
+          <format type="text/html">
+            <a href="#mixed_name_resolution" />
+          </format>
+          <format type="text/html">
+            <h2>Mixed Name Resolution</h2>
+          </format>
+          <para>The following table summarizes the interactions between <paramref name="assemblyResolver" />, <paramref name="typeResolver" />, and default name resolution, for all combinations of type name and assembly name in <paramref name="typeName" />:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Contents of type name</para>
+                </term>
+                <description>
+                  <para>Assembly resolver method</para>
+                </description>
+                <description>
+                  <para>Type resolver method</para>
+                </description>
+                <description>
+                  <para>Result</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>type, assembly</para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>Equivalent to calling the <see cref="M:System.Type.GetType(System.String,System.Boolean,System.Boolean)" /> method overload. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type, assembly</para>
+              </term>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>
+                  <paramref name="assemblyResolver" /> returns the assembly or returns null if it cannot resolve the assembly. If the assembly is resolved, the <see cref="M:System.Reflection.Assembly.GetType(System.String,System.Boolean,System.Boolean)" /> method overload is used to load the type from the assembly; otherwise, there is no attempt to resolve the type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type, assembly</para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>Equivalent to converting the assembly name to an <see cref="T:System.Reflection.AssemblyName" /> object and calling the <see cref="M:System.Reflection.Assembly.Load(System.Reflection.AssemblyName)" /> method overload to get the assembly. If the assembly is resolved, it is passed to <paramref name="typeResolver" />; otherwise, <paramref name="typeResolver" /> is not called and there is no further attempt to resolve the type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type, assembly</para>
+              </term>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>
+                  <paramref name="assemblyResolver" /> returns the assembly or returns null if it cannot resolve the assembly. If the assembly is resolved, it is passed to <paramref name="typeResolver" />; otherwise, <paramref name="typeResolver" /> is not called and there is no further attempt to resolve the type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type</para>
+              </term>
+              <description>
+                <para>null, provided</para>
+              </description>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>Equivalent to calling the <see cref="M:System.Type.GetType(System.String,System.Boolean,System.Boolean)" /> method overload. Because the assembly name is not provided, only Mscorlib.dll and the currently executing assembly are searched. If <paramref name="assemblyResolver" /> is provided, it is ignored.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type</para>
+              </term>
+              <description>
+                <para>null, provided</para>
+              </description>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>
+                  <paramref name="typeResolver" /> is called, and null is passed for the assembly. <paramref name="typeResolver" /> can provide a type from any assembly, including assemblies it loads for the purpose. If <paramref name="assemblyResolver" /> is provided, it is ignored.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>assembly</para>
+              </term>
+              <description>
+                <para>null, provided</para>
+              </description>
+              <description>
+                <para>null, provided</para>
+              </description>
+              <description>
+                <para>A <see cref="T:System.IO.FileLoadException" /> is thrown, because the assembly name is parsed as if it were an assembly-qualified type name. This results in an invalid assembly name.</para>
+              </description>
+            </item>
+          </list>
+          <para>Back to: <format type="text/html"><a href="#usage_notes">Usage Notes</a></format>, <format type="text/html"><a href="#resolving_assemblies">Resolving Assemblies</a></format>, <format type="text/html"><a href="#resolving_types">Resolving Types</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type with the specified name, specifying whether to perform a case-sensitive search and whether to throw an exception if the type is not found, and optionally providing custom methods to resolve the assembly and the type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type with the specified name. If the type is not found, the <paramref name="throwOnError" /> parameter specifies whether null is returned or an exception is thrown. In some cases, an exception is thrown regardless of the value of <paramref name="throwOnError" />. See the Exceptions section. </para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to get. If the <paramref name="typeResolver" /> parameter is provided, the type name can be any string that <paramref name="typeResolver" /> is capable of resolving. If the <paramref name="assemblyResolver" /> parameter is provided or if standard type resolution is used, <paramref name="typeName" /> must be an assembly-qualified name (see <see cref="P:System.Type.AssemblyQualifiedName" />), unless the type is in the currently executing assembly or in Mscorlib.dll, in which case it is sufficient to supply the type name qualified by its namespace.</param>
+        <param name="assemblyResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the assembly that is specified in <paramref name="typeName" />. The assembly name is passed to <paramref name="assemblyResolver" /> as an <see cref="T:System.Reflection.AssemblyName" /> object. If <paramref name="typeName" /> does not contain the name of an assembly, <paramref name="assemblyResolver" /> is not called. If <paramref name="assemblyResolver" /> is not supplied, standard assembly resolution is performed. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the type that is specified by <paramref name="typeName" /> from the assembly that is returned by <paramref name="assemblyResolver" /> or by standard assembly resolution. If no assembly is provided, the method can provide one. The method also takes a parameter that specifies whether to perform a case-insensitive search; the value of <paramref name="ignoreCase" /> is passed to that parameter. </param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if the type cannot be found; false to return null. Specifying false also suppresses some other exception conditions, but not all of them. See the Exceptions section.</param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to perform a case-insensitive search for <paramref name="typeName" />, false to perform a case-sensitive search for <paramref name="typeName" />. </param>
       </Docs>
     </Member>
     <Member MemberName="GetTypeArray">
@@ -6931,14 +7205,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> An array of <see cref="T:System.Type" /> objects representing the types of the corresponding
-   elements in <paramref name="args" />. If a requested type is not public
-   and the caller does not have permission to
-   reflect non-public objects outside the current assembly, the corresponding element in the
-   array returned by this method will be <see langword="null" />.
-   </para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="args" /> is <see langword="null" />. </exception>
@@ -6948,6 +7214,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the types of the objects in the specified array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects representing the types of the corresponding elements in <paramref name="args" />.</para>
+        </returns>
         <param name="args">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of objects whose types to determine. </param>
       </Docs>
@@ -6970,7 +7240,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you inherit from <see cref="T:System.Type" />, you can change the behavior of this method by overriding the <see cref="M:System.Type.GetTypeCodeImpl" /> method.</para>
@@ -6979,6 +7248,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the underlying type code of the specified <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The code of the underlying type, or <see cref="F:System.TypeCode.Empty" /> if <paramref name="type" /> is null.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type whose underlying type code to get. </param>
       </Docs>
@@ -6995,7 +7268,6 @@ permission, returns <see langword="null" />.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method provides the implementation for the <see cref="M:System.Type.GetTypeCode(System.Type)" /> method. When you inherit from <see cref="T:System.Type" />, you can override this method to provide your own implementation of <see cref="M:System.Type.GetTypeCode(System.Type)" />.</para>
@@ -7004,6 +7276,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the underlying type code of the specified <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The code of the underlying type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTypeFromCLSID">
@@ -7022,12 +7298,15 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="clsid" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type associated with the specified class identifier (CLSID).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>System.__ComObject regardless of whether the CLSID is valid.</para>
+        </returns>
         <param name="clsid">
           <attribution license="cc4" from="Microsoft" modified="false" />The CLSID of the type to get. </param>
       </Docs>
@@ -7049,7 +7328,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exceptions such as <see cref="T:System.OutOfMemoryException" /> will be thrown when specifying true for <paramref name="throwOnError" />, but it will not fail for unregistered CLSIDs.</para>
@@ -7058,6 +7336,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type associated with the specified class identifier (CLSID), specifying whether to throw an exception if an error occurs while loading the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>System.__ComObject regardless of whether the CLSID is valid.</para>
+        </returns>
         <param name="clsid">
           <attribution license="cc4" from="Microsoft" modified="false" />The CLSID of the type to get. </param>
         <param name="throwOnError">
@@ -7081,12 +7363,15 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="server" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type associated with the specified class identifier (CLSID) from the specified server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>System.__ComObject regardless of whether the CLSID is valid.</para>
+        </returns>
         <param name="clsid">
           <attribution license="cc4" from="Microsoft" modified="false" />The CLSID of the type to get. </param>
         <param name="server">
@@ -7111,7 +7396,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exceptions such as <see cref="T:System.OutOfMemoryException" /> will be thrown when specifying true for <paramref name="throwOnError" />, but it will not fail for unregistered CLSIDs.</para>
@@ -7120,6 +7404,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type associated with the specified class identifier (CLSID) from the specified server, specifying whether to throw an exception if an error occurs while loading the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>System.__ComObject regardless of whether the CLSID is valid.</para>
+        </returns>
         <param name="clsid">
           <attribution license="cc4" from="Microsoft" modified="false" />The CLSID of the type to get. </param>
         <param name="server">
@@ -7145,9 +7433,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="handle" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Type" /> referenced by the specified <see cref="T:System.RuntimeTypeHandle" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="handle" /> is <see langword="null" />.</exception>
         <exception cref="T:System.Security.SecurityException">The requested type is non-public and outside the current assembly, and the caller does not have the required permission.</exception>
@@ -7161,6 +7446,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type referenced by the specified type handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type referenced by the specified <see cref="T:System.RuntimeTypeHandle" />, or null if the <see cref="P:System.RuntimeTypeHandle.Value" /> property of <paramref name="handle" /> is null.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that refers to the type. </param>
       </Docs>
@@ -7183,7 +7472,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="progID" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is provided for COM support. ProgIDs are not used in the Microsoft .NET Framework because they have been superseded by the concept of namespace.</para>
@@ -7192,6 +7480,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type associated with the specified program identifier (ProgID), returning null if an error is encountered while loading the <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type associated with the specified ProgID, if <paramref name="progID" /> is a valid entry in the registry and a type is associated with it; otherwise, null.</para>
+        </returns>
         <param name="progID">
           <attribution license="cc4" from="Microsoft" modified="false" />The ProgID of the type to get. </param>
       </Docs>
@@ -7213,7 +7505,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is provided for COM support. Program IDs are not used in Microsoft .NET Framework because they have been superseded by the concept of namespace.</para>
@@ -7222,6 +7513,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type associated with the specified program identifier (ProgID), specifying whether to throw an exception if an error occurs while loading the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type associated with the specified program identifier (ProgID), if <paramref name="progID" /> is a valid entry in the registry and a type is associated with it; otherwise, null.</para>
+        </returns>
         <param name="progID">
           <attribution license="cc4" from="Microsoft" modified="false" />The ProgID of the type to get. </param>
         <param name="throwOnError">
@@ -7245,7 +7540,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="server" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is provided for COM support. Program IDs are not used in Microsoft .NET Framework because they have been superseded by the concept of namespace.</para>
@@ -7254,6 +7548,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type associated with the specified program identifier (progID) from the specified server, returning null if an error is encountered while loading the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type associated with the specified program identifier (progID), if <paramref name="progID" /> is a valid entry in the registry and a type is associated with it; otherwise, null.</para>
+        </returns>
         <param name="progID">
           <attribution license="cc4" from="Microsoft" modified="false" />The progID of the type to get. </param>
         <param name="server">
@@ -7278,7 +7576,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is provided for COM support. Program IDs are not used in Microsoft .NET Framework because they have been superseded by the concept of namespace.</para>
@@ -7287,6 +7584,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type associated with the specified program identifier (progID) from the specified server, specifying whether to throw an exception if an error occurs while loading the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type associated with the specified program identifier (progID), if <paramref name="progID" /> is a valid entry in the registry and a type is associated with it; otherwise, null.</para>
+        </returns>
         <param name="progID">
           <attribution license="cc4" from="Microsoft" modified="false" />The progID of the <see cref="T:System.Type" /> to get. </param>
         <param name="server">
@@ -7312,9 +7613,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.RuntimeTypeHandle" /> for the <see cref="T:System.Type" /> of the specified <see cref="T:System.Object" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The handles are valid only in the application domain in which they were obtained.</para>
@@ -7323,6 +7621,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the handle for the <see cref="T:System.Type" /> of a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The handle for the <see cref="T:System.Type" /> of the specified <see cref="T:System.Object" />.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object for which to get the type handle. </param>
       </Docs>
@@ -7400,10 +7702,6 @@ permission, returns <see langword="null" />.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the <see cref="T:System.Type" /> is an array, a pointer, or is passed by reference; otherwise, <see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For example, Type.GetType("Int32[]").HasElementTypeImpl returns true, but Type.GetType("Int32").HasElementTypeImpl returns false. HasElementTypeImpl also returns true for "Int32*" and "Int32&amp;".</para>
@@ -7412,6 +7710,10 @@ permission, returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, implements the <see cref="P:System.Type.HasElementType" /> property and determines whether the current <see cref="T:System.Type" /> encompasses or refers to another type; that is, whether the current <see cref="T:System.Type" /> is an array, a pointer, or is passed by reference.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> is an array, a pointer, or is passed by reference; otherwise, false.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -7442,11 +7744,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" />
-containing the return value of the invoked member. If the invoked member does
-not have a return value, returns a <see cref="T:System.Object" /> containing <see cref="T:System.Void" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="name" /> is <see langword="null" />.</para>
@@ -7573,6 +7870,10 @@ not have a return value, returns a <see cref="T:System.Object" /> containing <se
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes the specified member, using the specified binding constraints and matching the specified argument list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the return value of the invoked member.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the constructor, method, property, or field member to invoke.</param>
         <param name="invokeAttr">
@@ -7614,11 +7915,6 @@ not have a return value, returns a <see cref="T:System.Object" /> containing <se
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" />
-containing the return value of the invoked member. If the invoked member does
-not have a return value, returns a <see cref="T:System.Object" /> containing <see cref="T:System.Void" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="n" />
@@ -7754,6 +8050,10 @@ not have a return value, returns a <see cref="T:System.Object" /> containing <se
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes the specified member, using the specified binding constraints and matching the specified argument list and culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the return value of the invoked member.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the constructor, method, property, or field member to invoke.</param>
         <param name="invokeAttr">
@@ -7794,11 +8094,6 @@ not have a return value, returns a <see cref="T:System.Object" /> containing <se
         <Parameter Name="namedParameters" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" />
-containing the return value of the invoked or accessed member. If the member
-does not have a return value, returns a <see cref="T:System.Object" /> containing <see cref="T:System.Void" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="name" /> is <see langword="null" />.</para>
@@ -7996,6 +8291,10 @@ class InvokeMemberExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, invokes the specified member, using the specified binding constraints and matching the specified argument list, modifiers and culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the return value of the invoked member.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the constructor, method, property, or field member to invoke.</param>
         <param name="invokeAttr">
@@ -8143,10 +8442,6 @@ class TestType {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the <see cref="T:System.Type" /> is an array; otherwise, <see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An instance of the <see cref="T:System.Array" /> class must return false because it is an object, not an array.</para>
@@ -8155,6 +8450,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, implements the <see cref="P:System.Type.IsArray" /> property and determines whether the <see cref="T:System.Type" /> is an array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> is an array; otherwise, false.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -8176,35 +8475,6 @@ class TestType {
         <Parameter Name="c" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="false" /> if <paramref name="c" /> is a null reference.</para>
-          <para>
-            <see langword="true" /> if one or more of the following
-statements are true; otherwise <see langword="false" />. </para>
-          <list type="bullet">
-            <item>
-              <term>
-      
-      If <paramref name="c" /> and the current <see cref="T:System.Type" /> represent the same type.</term>
-            </item>
-            <item>
-              <term>
-      
-      If the current <see cref="T:System.Type" /> is in the inheritance hierarchy of <paramref name="c" />.</term>
-            </item>
-            <item>
-              <term>
-      
-      If the current <see cref="T:System.Type" /> is an interface and <paramref name="c" /> supports that
-      interface.</term>
-            </item>
-            <item>
-              <term>If <paramref name="c" /> is a generic type parameter and the current instance represents one of the constraints of <paramref name="c" />.</term>
-            </item>
-          </list>
-          <see langword="" />
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Type.IsAssignableFrom(System.Type)" />
 method using arrays.</para>
@@ -8264,6 +8534,10 @@ typeof(A).IsAssignableFrom(b1))</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an instance of the current <see cref="T:System.Type" /> can be assigned from an instance of the specified Type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> and the current Type represent the same type, or if the current Type is in the inheritance hierarchy of <paramref name="c" />, or if the current Type is an interface that <paramref name="c" /> implements, or if <paramref name="c" /> is a generic type parameter and the current Type represents one of the constraints of <paramref name="c" />, or if <paramref name="c" /> represents a value type and the current Type represents Nullable&lt;c&gt; (Nullable(Of c) in Visual Basic). false if none of these conditions are true, or if <paramref name="c" /> is null.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to compare with the current type. </param>
       </Docs>
@@ -8380,10 +8654,6 @@ typeof(A).IsAssignableFrom(b1))</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the <see cref="T:System.Type" /> is passed by reference; otherwise, <see langword="false" />. </para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors">As described above.</block>
@@ -8393,6 +8663,10 @@ typeof(A).IsAssignableFrom(b1))</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, implements the <see cref="P:System.Type.IsByRef" /> property and determines whether the <see cref="T:System.Type" /> is passed by reference.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> is passed by reference; otherwise, false.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -8477,11 +8751,6 @@ typeof(A).IsAssignableFrom(b1))</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>
-            <see langword="false" />
-          </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns false for COM interfaces because they are not objects. COM interfaces can be implemented by Microsoft .NET Framework objects.</para>
@@ -8490,6 +8759,10 @@ typeof(A).IsAssignableFrom(b1))</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, implements the <see cref="P:System.Type.IsCOMObject" /> property and determines whether the <see cref="T:System.Type" /> is a COM object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> is a COM object; otherwise, false.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -8556,7 +8829,6 @@ typeof(A).IsAssignableFrom(b1))</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be overridden by a derived class.</para>
@@ -8566,6 +8838,10 @@ typeof(A).IsAssignableFrom(b1))</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implements the <see cref="P:System.Type.IsContextful" /> property and determines whether the <see cref="T:System.Type" /> can be hosted in a context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> can be hosted in a context; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsEnum">
@@ -8642,12 +8918,15 @@ class TestType {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified value exists in the current enumeration type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified value is a member of the current enumeration type; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to be tested.</param>
       </Docs>
@@ -8666,7 +8945,6 @@ class TestType {
         <Parameter Name="other" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Beginning with the net_v40_long, the common language runtime supports the embedding of type information for COM types directly into managed assemblies, instead of requiring the managed assemblies to obtain type information for COM types from interop assemblies. Because the embedded type information includes only the types and members that are actually used by a managed assembly, two managed assemblies might have very different views of the same COM type. Each managed assembly has a different <see cref="T:System.Type" /> object to represent its view of the COM type. The common language runtime supports type equivalence between these different views for interfaces, structures, enumerations, and delegates.</para>
@@ -8677,6 +8955,10 @@ class TestType {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two COM types have the same identity and are eligible for type equivalence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the COM types are equivalent; otherwise, false. This method also returns false if one type is in an assembly that is loaded for execution, and the other is in an assembly that is loaded into the reflection-only context.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The COM type that is tested for equivalence with the current type.</param>
       </Docs>
@@ -9047,26 +9329,6 @@ class TestType {
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if either of the following
-   statements is true; otherwise <see langword="false" />.
-   </para>
-          <list type="bullet">
-            <item>
-              <term>
-      
-      If the current <see cref="T:System.Type" /> is in the inheritance hierarchy of <paramref name="o" />.</term>
-            </item>
-            <item>
-              <term>
-      
-      If the current <see cref="T:System.Type" /> is an interface and <paramref name="o" /> supports that
-      interface.</term>
-            </item>
-          </list>
-          <para>If <paramref name="o" /> is a null reference or if the current instance is an open generic type (that is, <see cref="P:System.Type.ContainsGenericParameters" />  returns <see langword="true" />) returns <see langword="false" />.</para>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Type.IsInstanceOfType(System.Object)" />
 method.</para>
@@ -9111,6 +9373,10 @@ class IsInstanceTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object is an instance of the current <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current Type is in the inheritance hierarchy of the object represented by <paramref name="o" />, or if the current Type is an interface that <paramref name="o" /> supports. false if neither of these conditions is the case, or if <paramref name="o" /> is null, or if the current Type is an open generic type (that is, <see cref="P:System.Type.ContainsGenericParameters" /> returns true).</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current type. </param>
       </Docs>
@@ -9234,7 +9500,6 @@ class IsInstanceTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be overridden by a derived class.</para>
@@ -9243,6 +9508,10 @@ class IsInstanceTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implements the <see cref="P:System.Type.IsMarshalByRef" /> property and determines whether the <see cref="T:System.Type" /> is marshaled by reference.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> is marshaled by reference; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsNested">
@@ -9560,10 +9829,6 @@ class IsInstanceTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the <see cref="T:System.Type" /> is a pointer; otherwise, <see langword="false" />. </para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors">As described above.</block>
@@ -9573,6 +9838,10 @@ class IsInstanceTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, implements the <see cref="P:System.Type.IsPointer" /> property and determines whether the <see cref="T:System.Type" /> is a pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> is a pointer; otherwise, false.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -9624,10 +9893,6 @@ class IsInstanceTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the <see cref="T:System.Type" /> is one of the primitive types; otherwise, <see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The primitive types are <see cref="T:System.Boolean" />, <see cref="T:System.Byte" />, <see cref="T:System.SByte" />, <see cref="T:System.Int16" />, <see cref="T:System.UInt16" />, <see cref="T:System.Int32" />, <see cref="T:System.UInt32" />, <see cref="T:System.Int64" />, <see cref="T:System.UInt64" />, <see cref="T:System.Char" />, <see cref="T:System.Double" />, and <see cref="T:System.Single" />.</para>
@@ -9636,6 +9901,10 @@ class IsInstanceTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, implements the <see cref="P:System.Type.IsPrimitive" /> property and determines whether the <see cref="T:System.Type" /> is one of the primitive types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> is one of the primitive types; otherwise, false.</para>
+        </returns>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
@@ -9986,14 +10255,6 @@ class IsInstanceTest {
         <Parameter Name="c" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> and the current
-<see cref="T:System.Type" /> represent 
-   classes, and the class represented by the current <see cref="T:System.Type" /> derives from the class represented by
-<paramref name="c" />; otherwise <see langword="false" />. Returns <see langword="false" /> if 
-<paramref name="c" /> and the current <see cref="T:System.Type" /> represent the same class.</para>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Type.IsSubclassOf(System.Type)" />
 method.</para>
@@ -10046,6 +10307,10 @@ class IsSubclassTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the class represented by the current <see cref="T:System.Type" /> derives from the class represented by the specified <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the Type represented by the <paramref name="c" /> parameter and the current Type represent classes, and the class represented by the current Type derives from the class represented by <paramref name="c" />; otherwise, false. This method also returns false if <paramref name="c" /> and the current Type represent the same class.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to compare with the current type. </param>
       </Docs>
@@ -10126,7 +10391,6 @@ class IsSubclassTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is provided to enable the implementation of alternate type systems. It is not generally used in application code. </para>
@@ -10135,6 +10399,10 @@ class IsSubclassTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implements the <see cref="P:System.Type.IsValueType" /> property and determines whether the <see cref="T:System.Type" /> is a value type; that is, not a class or an interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Type" /> is a value type; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsVisible">
@@ -10174,9 +10442,6 @@ class IsSubclassTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> object representing a one-dimensional array type whose element type is the current type, with a lower bound of zero.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -10187,6 +10452,10 @@ class IsSubclassTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object representing a one-dimensional array of the current type, with a lower bound of zero.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing a one-dimensional array of the current type, with a lower bound of zero.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MakeArrayType">
@@ -10204,9 +10473,6 @@ class IsSubclassTest {
         <Parameter Name="rank" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> object representing an array of the current type, with the specified number of dimensions.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.IndexOutOfRangeException">
           <para>
@@ -10223,6 +10489,10 @@ class IsSubclassTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object representing an array of the current type, with the specified number of dimensions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing an array of the current type, with the specified number of dimensions.</para>
+        </returns>
         <param name="rank">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of dimensions for the array. This number must be less than or equal to 32.</param>
       </Docs>
@@ -10240,9 +10510,6 @@ class IsSubclassTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> object that represents the current type when passed as a byref parameter.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -10253,6 +10520,10 @@ class IsSubclassTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents the current type when passed as a ref parameter (ByRef parameter in Visual Basic).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the current type when passed as a ref parameter (ByRef parameter in Visual Basic).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MakeGenericType">
@@ -10276,9 +10547,6 @@ class IsSubclassTest {
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> representing the constructed type formed by substituting the elements of <paramref name="typeArguments" /> for the type parameters of the current generic type definition.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentException">
           <para>The number of elements in 
@@ -10413,6 +10681,10 @@ System.Collections.Generic.Dictionary[System.String, Test]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Substitutes the elements of an array of types for the type parameters of the current generic type definition and returns a <see cref="T:System.Type" /> object representing the resulting constructed type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> representing the constructed type formed by substituting the elements of <paramref name="typeArguments" /> for the type parameters of the current generic type.</para>
+        </returns>
         <param name="typeArguments">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of types to be substituted for the type parameters of the current generic type.</param>
       </Docs>
@@ -10430,9 +10702,6 @@ System.Collections.Generic.Dictionary[System.String, Test]
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Type" /> object that represents the type of an unmanaged pointer to the current type.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -10443,6 +10712,10 @@ System.Collections.Generic.Dictionary[System.String, Test]
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents a pointer to the current type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents a pointer to the current type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MemberType">
@@ -10577,12 +10850,15 @@ System.Collections.Generic.Dictionary[System.String, Test]
         <Parameter Name="right" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Type" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -10604,12 +10880,15 @@ System.Collections.Generic.Dictionary[System.String, Test]
         <Parameter Name="right" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Type" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -10687,7 +10966,6 @@ public abstract class ReflectedTypeTest {
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -10700,6 +10978,10 @@ public abstract class ReflectedTypeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Type" /> with the specified name, specifying whether to perform a case-sensitive search and whether to throw an exception if the type is not found. The type is loaded for reflection only, not for execution.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type with the specified name, if found; otherwise, null. If the type is not found, the <paramref name="throwIfNotFound" /> parameter specifies whether null is returned or an exception is thrown. In some cases, an exception is thrown regardless of the value of <paramref name="throwIfNotFound" />. See the Exceptions section.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly-qualified name of the <see cref="T:System.Type" /> to get. </param>
         <param name="throwIfNotFound">
@@ -10867,9 +11149,6 @@ public abstract class ReflectedTypeTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>Returns <see cref="P:System.Type.FullName" /> .</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns the fully qualified common language runtime namespace and name for all primitive types. For example, the C# instruction, (long)0.Type().ToString() returns "System.Int64" instead of merely "Int64".</para>
@@ -10879,6 +11158,10 @@ public abstract class ReflectedTypeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a String representing the name of the current Type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> representing the name of the current <see cref="T:System.Type" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

@@ -122,11 +122,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Security.Permissions.EnvironmentPermission" />
-object with the security information of the current
-instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should only be called by the security system, never by application code.</para>
@@ -136,6 +131,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new <see cref="T:System.Security.Permissions.EnvironmentPermission" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Permissions.EnvironmentPermission" /> that corresponds to this attribute.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

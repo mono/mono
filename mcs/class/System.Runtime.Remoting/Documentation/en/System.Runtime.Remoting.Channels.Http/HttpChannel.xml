@@ -287,7 +287,6 @@
         <Parameter Name="objectURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is used by <see cref="M:System.Runtime.Remoting.Channels.ChannelServices.GetUrlsForObject(System.MarshalByRefObject)" />.</para>
@@ -296,6 +295,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of all the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" />.</para>
+        </returns>
         <param name="objectURI">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the object for which URL's are required. </param>
       </Docs>

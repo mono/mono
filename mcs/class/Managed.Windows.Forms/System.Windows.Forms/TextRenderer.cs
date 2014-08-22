@@ -487,8 +487,8 @@ namespace System.Windows.Forms
 			if ((flags & TextFormatFlags.WordEllipsis) == TextFormatFlags.WordEllipsis || (flags & TextFormatFlags.EndEllipsis) == TextFormatFlags.EndEllipsis || (flags & TextFormatFlags.WordBreak) == TextFormatFlags.WordBreak) {
 				r.Width -= 4;
 			}
-			if ((flags & TextFormatFlags.VerticalCenter) == TextFormatFlags.VerticalCenter) {
-				r.Y += 1;
+			if ((flags & TextFormatFlags.VerticalCenter) == TextFormatFlags.VerticalCenter && XplatUI.RunningOnUnix) {
+				r.Y -= 1;
 			}
 
 			return r;

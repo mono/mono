@@ -104,11 +104,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> that contains
-   information about the asynchronous read operation, which could still
-   be pending.</para>
-        </returns>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
         <exception cref="T:System.NotSupportedException">The current <see cref="T:System.IO.Stream" /> does not support reading.</exception>
         <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
@@ -126,6 +121,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous read operation. (Consider using <see cref="M:System.IO.Stream.ReadAsync(System.Byte[],System.Int32,System.Int32)" /> instead; see the Remarks section.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that represents the asynchronous read, which could still be pending.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to read the data into. </param>
         <param name="offset">
@@ -160,10 +159,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" />
-that represents the asynchronous write, which could still be pending.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">The current <see cref="T:System.IO.Stream" /> does not support writing.</exception>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
         <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
@@ -181,6 +176,10 @@ that represents the asynchronous write, which could still be pending.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous write operation. (Consider using <see cref="M:System.IO.Stream.WriteAsync(System.Byte[],System.Int32,System.Int32)" /> instead; see the Remarks section.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An IAsyncResult that represents the asynchronous write, which could still be pending.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write data from. </param>
         <param name="offset">
@@ -416,7 +415,6 @@ that represents the asynchronous write, which could still be pending.</para>
         <Parameter Name="destination" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Stream.CopyToAsync(System.IO.Stream)" /> method enables you to perform resource-intensive I/O operations without blocking the main thread. This performance consideration is particularly important in a win8_appname_long app or desktop_appname app where a time-consuming stream operation can block the UI thread and make your app appear as if it is not working. The async methods are used in conjunction with the async and await keywords in Visual Basic and C#.</para>
@@ -426,6 +424,10 @@ that represents the asynchronous write, which could still be pending.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the bytes from the current stream and writes them to another stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous copy operation.</para>
+        </returns>
         <param name="destination">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream to which the contents of the current stream will be copied.</param>
       </Docs>
@@ -445,7 +447,6 @@ that represents the asynchronous write, which could still be pending.</para>
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Stream.CopyToAsync(System.IO.Stream,System.Int32)" /> method enables you to perform resource-intensive I/O operations without blocking the main thread. This performance consideration is particularly important in a win8_appname_long app or desktop_appname app where a time-consuming stream operation can block the UI thread and make your app appear as if it is not working. The async methods are used in conjunction with the async and await keywords in Visual Basic and C#.</para>
@@ -456,6 +457,10 @@ that represents the asynchronous write, which could still be pending.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the bytes from the current stream and writes them to another stream, using a specified buffer size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous copy operation.</para>
+        </returns>
         <param name="destination">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream to which the contents of the current stream will be copied.</param>
         <param name="bufferSize">
@@ -478,7 +483,6 @@ that represents the asynchronous write, which could still be pending.</para>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Stream.CopyToAsync(System.IO.Stream,System.Int32,System.Threading.CancellationToken)" /> method enables you to perform resource-intensive I/O operations without blocking the main thread. This performance consideration is particularly important in a win8_appname_long app or desktop_appname app where a time-consuming stream operation can block the UI thread and make your app appear as if it is not working. The async methods are used in conjunction with the async and await keywords in Visual Basic and C#.</para>
@@ -490,6 +494,10 @@ that represents the asynchronous write, which could still be pending.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads the bytes from the current stream and writes them to another stream, using a specified buffer size and cancellation token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous copy operation.</para>
+        </returns>
         <param name="destination">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream to which the contents of the current stream will be copied.</param>
         <param name="bufferSize">
@@ -518,9 +526,6 @@ that represents the asynchronous write, which could still be pending.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A reference to the allocated <see cref="T:System.Threading.WaitHandle" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When called for the first time, the current method creates a WaitHandle object and returns it. On subsequent calls, CreateWaitHandle returns a reference to a new wait handle.</para>
@@ -530,6 +535,10 @@ that represents the asynchronous write, which could still be pending.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allocates a <see cref="T:System.Threading.WaitHandle" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the allocated WaitHandle.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -605,12 +614,6 @@ that represents the asynchronous write, which could still be pending.</para>
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> that indicates the number of bytes read from the stream, 
-   between 0 and the number of bytes specified via the <see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> parameter <paramref name="count" />. Streams only return
-0 at the end of the stream, otherwise, they block until at
-least 1 byte is available.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -626,6 +629,10 @@ least 1 byte is available.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for the pending asynchronous read to complete. (Consider using <see cref="M:System.IO.Stream.ReadAsync(System.Byte[],System.Int32,System.Int32)" /> instead; see the Remarks section.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes read from the stream, between zero (0) and the number of bytes you requested. Streams return zero (0) only at the end of the stream, otherwise, they should block until at least one byte is available.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />The reference to the pending asynchronous request to finish. </param>
       </Docs>
@@ -707,7 +714,6 @@ least 1 byte is available.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a derived class, such as <see cref="T:System.IO.Compression.DeflateStream" /> or <see cref="T:System.IO.Compression.GZipStream" />, does not flush the buffer in its implementation of the <see cref="M:System.IO.Stream.Flush" /> method, the <see cref="M:System.IO.Stream.FlushAsync" /> method will not flush the buffer.</para>
@@ -716,6 +722,10 @@ least 1 byte is available.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously clears all buffers for this stream and causes any buffered data to be written to the underlying device.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FlushAsync">
@@ -732,7 +742,6 @@ least 1 byte is available.</para>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the operation is canceled before it completes, the returned task contains the <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" /> value for the <see cref="P:System.Threading.Tasks.Task.Status" /> property. </para>
@@ -742,6 +751,10 @@ least 1 byte is available.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously clears all buffers for this stream, causes any buffered data to be written to the underlying device, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation.</para>
+        </returns>
         <param name="cancellationToken">
           <attribution license="cc4" from="Microsoft" modified="false" />The token to monitor for cancellation requests. The default value is <see cref="P:System.Threading.CancellationToken.None" />.</param>
       </Docs>
@@ -888,11 +901,6 @@ seeking.</block>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> that specifies the total number of bytes read into the
-   buffer, or zero if the end of the stream has been
-   reached before any data can be read.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">(<paramref name="offset" /> + <paramref name="count" /> - 1) is greater than the length of <paramref name="buffer" />.</exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
@@ -911,6 +919,10 @@ seeking.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, reads a sequence of bytes from the current stream and advances the position within the stream by the number of bytes read.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many bytes are not currently available, or zero (0) if the end of the stream has been reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. When this method returns, the buffer contains the specified byte array with the values between <paramref name="offset" /> and (<paramref name="offset" /> + <paramref name="count" /> - 1) replaced by the bytes read from the current source. </param>
         <param name="offset">
@@ -936,7 +948,6 @@ seeking.</block>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Stream.ReadAsync(System.Byte[],System.Int32,System.Int32)" /> method enables you to perform resource-intensive I/O operations without blocking the main thread. This performance consideration is particularly important in a win8_appname_long app or desktop_appname app where a time-consuming stream operation can block the UI thread and make your app appear as if it is not working. The async methods are used in conjunction with the async and await keywords in Visual Basic and C#.</para>
@@ -946,6 +957,10 @@ seeking.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads a sequence of bytes from the current stream and advances the position within the stream by the number of bytes read.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the stream has been reached. </para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write the data into.</param>
         <param name="offset">
@@ -971,7 +986,6 @@ seeking.</block>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Stream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)" /> method enables you to perform resource-intensive I/O operations without blocking the main thread. This performance consideration is particularly important in a win8_appname_long app or desktop_appname app where a time-consuming stream operation can block the UI thread and make your app appear as if it is not working. The async methods are used in conjunction with the async and await keywords in Visual Basic and C#.</para>
@@ -983,6 +997,10 @@ seeking.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads a sequence of bytes from the current stream, advances the position within the stream by the number of bytes read, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the stream has been reached. </para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write the data into.</param>
         <param name="offset">
@@ -1008,10 +1026,6 @@ seeking.</block>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The unsigned byte cast to a <see cref="T:System.Int32" /> , or -1 if at the end
-   of the stream.</para>
-        </returns>
         <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
         <exception cref="T:System.NotSupportedException">The stream does not support reading.</exception>
         <exception cref="T:System.ObjectDisposedException">The stream is closed. </exception>
@@ -1024,6 +1038,10 @@ seeking.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a byte from the stream and advances the position within the stream by one byte, or returns -1 if at the end of the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unsigned byte cast to an Int32, or -1 if at the end of the stream.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1071,9 +1089,6 @@ seeking.</block>
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int64" /> that specifies the new position within the current stream.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">The stream does not support seeking, such as if the stream is constructed from a pipe or console output.</exception>
         <exception cref="T:System.ObjectDisposedException">The stream is closed.</exception>
         <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
@@ -1088,6 +1103,10 @@ seeking.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, sets the position within the current stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new position within the current stream.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />A byte offset relative to the <paramref name="origin" /> parameter. </param>
         <param name="origin">
@@ -1145,7 +1164,6 @@ seeking.</block>
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1155,6 +1173,10 @@ seeking.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a thread-safe (synchronized) wrapper around the specified <see cref="T:System.IO.Stream" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread-safe <see cref="T:System.IO.Stream" /> object.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> object to synchronize.</param>
       </Docs>
@@ -1235,7 +1257,6 @@ seeking.</block>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Stream.WriteAsync(System.Byte[],System.Int32,System.Int32)" /> method enables you to perform resource-intensive I/O operations without blocking the main thread. This performance consideration is particularly important in a win8_appname_long app or desktop_appname app where a time-consuming stream operation can block the UI thread and make your app appear as if it is not working. The async methods are used in conjunction with the async and await keywords in Visual Basic and C#.</para>
@@ -1245,6 +1266,10 @@ seeking.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes a sequence of bytes to the current stream and advances the current position within this stream by the number of bytes written.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write data from.</param>
         <param name="offset">
@@ -1270,7 +1295,6 @@ seeking.</block>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Stream.WriteAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)" /> method enables you to perform resource-intensive I/O operations without blocking the main thread. This performance consideration is particularly important in a win8_appname_long app or desktop_appname app where a time-consuming stream operation can block the UI thread and make your app appear as if it is not working. The async methods are used in conjunction with the async and await keywords in Visual Basic and C#.</para>
@@ -1282,6 +1306,10 @@ seeking.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes a sequence of bytes to the current stream, advances the current position within this stream by the number of bytes written, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write data from.</param>
         <param name="offset">

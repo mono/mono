@@ -84,7 +84,6 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -95,6 +94,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deletes user profile data for profiles in which the last activity date occurred before the specified date and time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> values, specifying whether anonymous, authenticated, or both types of profiles are deleted.</param>
         <param name="userInactiveSinceDate">
@@ -114,7 +117,6 @@
         <Parameter Name="usernames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -126,6 +128,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deletes profile properties and information from the data source for the supplied list of user names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
         <param name="usernames">
           <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names for profiles to be deleted. </param>
       </Docs>
@@ -143,7 +149,6 @@
         <Parameter Name="profiles" Type="System.Web.Profile.ProfileInfoCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -155,6 +160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deletes profile properties and information for the supplied list of profiles from the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
         <param name="profiles">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Profile.ProfileInfoCollection" />  that contains profile information for profiles to be deleted.</param>
       </Docs>
@@ -285,7 +294,6 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -295,6 +303,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the number of profiles in the data source where the last activity date occurred on or before the specified <paramref name="userInactiveSinceDate" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles in the data source for which the last activity date occurred before the specified date and time.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
         <param name="userInactiveSinceDate">
@@ -315,7 +327,6 @@
         <Parameter Name="properties" Type="System.Configuration.SettingsPropertyCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -325,6 +336,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves profile property information and values from a SQL Server profile database.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.SettingsPropertyValueCollection" /> containing profile property information and values.</para>
+        </returns>
         <param name="sc">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.SettingsContext" /> that contains user profile information.</param>
         <param name="properties">

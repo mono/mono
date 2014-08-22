@@ -9,14 +9,16 @@
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/lock-tracer.h>
 #include <mono/utils/mono-codeman.h>
+#include <mono/utils/mono-mutex.h>
 #include <mono/metadata/mono-hash.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-internal-hash.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/metadata/mempool-internals.h>
 
-extern CRITICAL_SECTION mono_delegate_section;
-extern CRITICAL_SECTION mono_strtod_mutex;
+
+extern mono_mutex_t mono_delegate_section;
+extern mono_mutex_t mono_strtod_mutex;
 
 /*
  * If this is set, the memory belonging to appdomains is not freed when a domain is
@@ -197,8 +199,7 @@ struct _MonoJitInfo {
 	} d;
 	struct _MonoJitInfo *next_jit_code_hash;
 	gpointer    code_start;
-	/* This might contain an id for the unwind info instead of a register mask */
-	guint32     used_regs;
+	guint32     unwind_info;
 	int         code_size;
 	guint32     num_clauses:15;
 	/* Whenever the code is domain neutral or 'shared' */
@@ -282,7 +283,7 @@ struct _MonoDomain {
 	 * i.e. if both are taken by the same thread, the loader lock
 	 * must taken first.
 	 */
-	CRITICAL_SECTION    lock;
+	mono_mutex_t    lock;
 	MonoMemPool        *mp;
 	MonoCodeManager    *code_mp;
 	/*
@@ -332,7 +333,7 @@ struct _MonoDomain {
 	GHashTable         *proxy_vtable_hash;
 	/* Protected by 'jit_code_hash_lock' */
 	MonoInternalHashTable jit_code_hash;
-	CRITICAL_SECTION    jit_code_hash_lock;
+	mono_mutex_t    jit_code_hash_lock;
 	int		    num_jit_info_tables;
 	MonoJitInfoTable * 
 	  volatile          jit_info_table;
@@ -361,9 +362,9 @@ struct _MonoDomain {
 	GHashTable         *finalizable_objects_hash;
 
 	/* Protects the three hashes above */
-	CRITICAL_SECTION   finalizable_objects_hash_lock;
+	mono_mutex_t   finalizable_objects_hash_lock;
 	/* Used when accessing 'domain_assemblies' */
-	CRITICAL_SECTION    assemblies_lock;
+	mono_mutex_t    assemblies_lock;
 
 	GHashTable	   *method_rgctx_hash;
 

@@ -32,12 +32,15 @@
         <Parameter Name="port" Type="System.Web.Services.Description.Port" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <see cref="T:System.Web.Services.Description.Port" /> to the end of the <see cref="T:System.Web.Services.Description.PortCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index where the <paramref name="port" /> parameter has been added.</para>
+        </returns>
         <param name="port">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Port" /> to add to the collection. </param>
       </Docs>
@@ -56,12 +59,15 @@
         <Parameter Name="port" Type="System.Web.Services.Description.Port" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.Port" /> is a member of the <see cref="T:System.Web.Services.Description.PortCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Web.Services.Description.Port" /> is a member of the <see cref="T:System.Web.Services.Description.PortCollection" />; otherwise, false.</para>
+        </returns>
         <param name="port">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Port" /> for which to check collection membership.</param>
       </Docs>
@@ -126,12 +132,15 @@
         <Parameter Name="port" Type="System.Web.Services.Description.Port" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Web.Services.Description.Port" /> and returns the zero-based index of the first occurrence within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer.</para>
+        </returns>
         <param name="port">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Port" /> for which to search in the collection.</param>
       </Docs>

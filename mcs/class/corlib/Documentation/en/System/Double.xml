@@ -319,46 +319,6 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> Any
-         negative
-         number</term>
-              <description>
-                <para>Current instance &lt; <paramref name="value" />.</para>
-                <para>-or-</para>
-                <para>Current instance is a NaN and <paramref name="value" /> is
-      not a NaN.</para>
-              </description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>
-                <para> Current instance ==
-      <paramref name="value" />.</para>
-                <para>-or-</para>
-                <para> Current instance and <paramref name="value" />
-   are both NaN, positive infinity, or negative
-   infinity.</para>
-              </description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>
-                <para>Current instance &gt; <paramref name="value" />.</para>
-                <para>-or-</para>
-                <para>Current instance is not a NaN and <paramref name="value" />
-is a NaN.</para>
-              </description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -381,6 +341,52 @@ is a NaN.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified double-precision floating-point number and returns an integer that indicates whether the value of this instance is less than, equal to, or greater than the value of the specified double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>This instance is not a number (<see cref="F:System.Double.NaN" />) and <paramref name="value" /> is a number. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>Both this instance and <paramref name="value" /> are not a number (<see cref="F:System.Double.NaN" />), <see cref="F:System.Double.PositiveInfinity" />, or <see cref="F:System.Double.NegativeInfinity" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>This instance is a number and <paramref name="value" /> is not a number (<see cref="F:System.Double.NaN" />). </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number to compare. </param>
       </Docs>
@@ -402,49 +408,6 @@ is a NaN.</para>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> Any
-         negative
-         number</term>
-              <description>
-                <para>Current instance &lt; <paramref name="value" />.</para>
-                <para>-or-</para>
-                <para>Current instance is a NaN and <paramref name="value" /> is
-      not a NaN and is not a null reference.</para>
-              </description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>
-                <para> Current instance ==
-      <paramref name="value" />.</para>
-                <para>-or-</para>
-                <para> Current instance and <paramref name="value" />
-   are both NaN, positive infinity, or negative
-   infinity.</para>
-              </description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>
-                <para>Current instance &gt; <paramref name="value" />.</para>
-                <para>-or-</para>
-                <para>
-                  <paramref name="value" /> is a null reference.</para>
-                <para>-or-</para>
-                <para>Current instance is not a NaN and <paramref name="value" />
-is a NaN.</para>
-              </description>
-            </item>
-          </list>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="value " />is not a null reference and is not of type <see cref="T:System.Double" />.</exception>
         <remarks>
@@ -462,6 +425,55 @@ is a NaN.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified object and returns an integer that indicates whether the value of this instance is less than, equal to, or greater than the value of the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>This instance is not a number (<see cref="F:System.Double.NaN" />) and <paramref name="value" /> is a number. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>This instance and <paramref name="value" /> are both Double.NaN, <see cref="F:System.Double.PositiveInfinity" />, or <see cref="F:System.Double.NegativeInfinity" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>This instance is a number and <paramref name="value" /> is not a number (<see cref="F:System.Double.NaN" />).</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="value" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare, or null. </param>
       </Docs>
@@ -522,11 +534,6 @@ is a NaN.</para>
         <Parameter Name="obj" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> has  the same value as the current instance, otherwise <see langword="false" />. If either <paramref name="obj" /> or the current instance is a NaN and the other is not, returns <see langword="false" />. If <paramref name="obj" /> and the current instance are both
-NaN, positive infinity, or negative infinity, returns <see langword="true" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -556,6 +563,10 @@ NaN, positive infinity, or negative infinity, returns <see langword="true" />.</
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance and a specified <see cref="T:System.Double" /> object represent the same value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is equal to this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Double" /> object to compare to this instance.</param>
       </Docs>
@@ -577,16 +588,6 @@ NaN, positive infinity, or negative infinity, returns <see langword="true" />.</
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> is a <see cref="T:System.Double" /> 
-with the same value as the current instance, otherwise <see langword="false" />.
-If <paramref name="obj" /> is a null reference or is not an instance of <see cref="T:System.Double" />, returns
-<see langword="false" />. If 
-either <paramref name="obj" /> or the current instance is a NaN and the other is not,
-returns <see langword="false" />. If <paramref name="obj" /> and the current instance are both
-NaN, positive infinity, or negative infinity, returns <see langword="true" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Double.Equals(System.Double)" /> method should be used with caution, because two apparently equivalent values can be unequal due to the differing precision of the two values. The following example reports that the <see cref="T:System.Double" /> value .3333 and the <see cref="T:System.Double" /> returned by dividing 1 by 3 are unequal.</para>
@@ -602,6 +603,10 @@ NaN, positive infinity, or negative infinity, returns <see langword="true" />.</
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an instance of <see cref="T:System.Double" /> and equals the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance. </param>
       </Docs>
@@ -622,9 +627,6 @@ NaN, positive infinity, or negative infinity, returns <see langword="true" />.</
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
-        </returns>
         <remarks>
           <para>
  The algorithm used to generate the hash code is
@@ -640,6 +642,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -657,12 +663,15 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.TypeCode" /> for value type <see cref="T:System.Double" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerated constant, <see cref="F:System.TypeCode.Double" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsInfinity">
@@ -682,11 +691,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="d" /> represents a
-   positive or negative infinity value; otherwise <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Floating-point operations return <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" /> to signal an overflow condition.</para>
@@ -695,6 +699,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified number evaluates to negative or positive infinity </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d" /> evaluates to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />; otherwise, false.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number. </param>
       </Docs>
@@ -722,11 +730,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="d" /> represents a NaN
-   value; otherwise <see langword="false." /></para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Floating-point operations return <see cref="F:System.Double.NaN" /> to signal that that result of the operation is undefined. For example, dividing 0.0 by 0.0 results in <see cref="F:System.Double.NaN" />.</para>
@@ -739,6 +742,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified value is not a number (<see cref="F:System.Double.NaN" />).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d" /> evaluates to <see cref="F:System.Double.NaN" />; otherwise, false.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number. </param>
       </Docs>
@@ -761,12 +768,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="d" /> represents a negative
-   infinity value; otherwise <see langword="false" />
-   .</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Floating-point operations return <see cref="F:System.Double.NegativeInfinity" /> to signal an overflow condition.</para>
@@ -775,6 +776,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified number evaluates to negative infinity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d" /> evaluates to <see cref="F:System.Double.NegativeInfinity" />; otherwise, false.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number. </param>
       </Docs>
@@ -797,11 +802,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="d " />represents a positive
-   infinity value; otherwise <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Floating-point operations return <see cref="F:System.Double.PositiveInfinity" /> to signal an overflow condition.</para>
@@ -810,6 +810,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified number evaluates to positive infinity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="d" /> evaluates to <see cref="F:System.Double.PositiveInfinity" />; otherwise, false.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number. </param>
       </Docs>
@@ -949,7 +953,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="right" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Double.op_Equality(System.Double,System.Double)" /> method defines the equality operator for <see cref="T:System.Double" /> values.</para>
@@ -959,6 +962,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether two specified <see cref="T:System.Double" /> values are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare. </param>
         <param name="right">
@@ -980,7 +987,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="right" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Double.op_GreaterThan(System.Double,System.Double)" /> method defines the operation of the greater-than operator for <see cref="T:System.Double" /> values.</para>
@@ -989,6 +995,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a specified <see cref="T:System.Double" /> value is greater than another specified <see cref="T:System.Double" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1010,7 +1020,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="right" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Double.op_GreaterThanOrEqual(System.Double,System.Double)" /> method defines the operation of the greater-than-or-equal operator for <see cref="T:System.Double" /> values.</para>
@@ -1019,6 +1028,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a specified <see cref="T:System.Double" /> value is greater than or equal to another specified <see cref="T:System.Double" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than or equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1040,7 +1053,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="right" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Double.op_Inequality(System.Double,System.Double)" /> method defines the inequality operator for <see cref="T:System.Double" /> values.</para>
@@ -1049,6 +1061,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether two specified <see cref="T:System.Double" /> values are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1070,7 +1086,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="right" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Double.op_LessThan(System.Double,System.Double)" /> method defines the operation of the less-than operator for <see cref="T:System.Double" /> values.</para>
@@ -1079,6 +1094,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a specified <see cref="T:System.Double" /> value is less than another specified <see cref="T:System.Double" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1100,7 +1119,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="right" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Double.op_LessThanOrEqual(System.Double,System.Double)" /> method defines the operation of the less-than-or-equal operator for <see cref="T:System.Double" /> values.</para>
@@ -1109,6 +1127,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a specified <see cref="T:System.Double" /> value is less than or equal to another specified <see cref="T:System.Double" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1132,12 +1154,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Double" /> value obtained from <paramref name="s" />. If
-<paramref name="s" /> equals
-<see cref="P:System.Globalization.NumberFormatInfo.NaNSymbol" />, this method returns 
-<see cref="F:System.Double.NaN" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1235,6 +1251,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number to its double-precision floating-point number equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number that is equivalent to the numeric value or symbol specified in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert. </param>
       </Docs>
@@ -1258,11 +1278,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Double" /> value obtained from <paramref name="s" />. If <paramref name="s" />
-   equals <see cref="P:System.Globalization.NumberFormatInfo.NaNSymbol" />, this method returns
-<see cref="F:System.Double.NaN" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1533,6 +1548,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified style to its double-precision floating-point number equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number that is equivalent to the numeric value or symbol specified in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert. </param>
         <param name="style">
@@ -1558,11 +1577,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Double" /> value obtained from <paramref name="s" />.  If <paramref name="s" />
-   equals <see cref="P:System.Globalization.NumberFormatInfo.NaNSymbol" />, this method returns
-<see cref="F:System.Double.NaN" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1653,6 +1667,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified culture-specific format to its double-precision floating-point number equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number that is equivalent to the numeric value or symbol specified in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert. </param>
         <param name="provider">
@@ -1679,11 +1697,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Double" /> value obtained from <paramref name="s" />.  If <paramref name="s" /> equals
-<see cref="P:System.Globalization.NumberFormatInfo.NaNSymbol" />, this method returns 
-<see cref="F:System.Double.NaN" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference</exception>
         <exception cref="T:System.FormatException">
@@ -1954,6 +1967,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified style and culture-specific format to its double-precision floating-point number equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number that is equivalent to the numeric value or symbol specified in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert. </param>
         <param name="style">
@@ -2008,7 +2025,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToBoolean(System.Double)" /> method. </para>
@@ -2017,6 +2033,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToBoolean(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of the current instance is not zero; otherwise, false.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2037,7 +2057,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToByte(System.Double)" /> method.</para>
@@ -2046,6 +2065,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToByte(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Byte" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2066,12 +2089,15 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2092,12 +2118,15 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" /></para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2118,7 +2147,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToDecimal(System.Double)" /> method.</para>
@@ -2127,6 +2155,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToDecimal(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Decimal" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2147,7 +2179,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. </para>
@@ -2156,6 +2187,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToDouble(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, unchanged.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2176,7 +2211,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt16(System.Double)" /> method.</para>
@@ -2185,6 +2219,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt16(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.Int16" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2205,7 +2243,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt32(System.Double)" /> method.</para>
@@ -2214,6 +2251,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt32(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.Int32" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2234,7 +2275,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt64(System.Double)" /> method.</para>
@@ -2243,6 +2283,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt64(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.Int64" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2263,7 +2307,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToSByte(System.Double)" /> method.</para>
@@ -2272,6 +2315,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToSByte(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.SByte" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2292,7 +2339,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToSingle(System.Double)" /> method.</para>
@@ -2301,6 +2347,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToSingle(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Single" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2323,7 +2373,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the static (Shared in Visual Basic) <see cref="M:System.Convert.ChangeType(System.Object,System.Type,System.IFormatProvider)" /> method.</para>
@@ -2332,6 +2381,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToType(System.Type,System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to <paramref name="type" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> implementation that supplies culture-specific information about the format of the returned value.</param>
       </Docs>
@@ -2352,7 +2405,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt16(System.Double)" /> method.</para>
@@ -2361,6 +2413,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt16(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt16" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored. </param>
       </Docs>
@@ -2381,7 +2437,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt32(System.Double)" /> method.</para>
@@ -2390,6 +2445,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt32(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt32" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.   </param>
       </Docs>
@@ -2410,7 +2469,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Double" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt64(System.Double)" /> method.</para>
@@ -2419,6 +2477,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt64(System.IFormatProvider)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt64" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2438,11 +2500,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
-   the general format specifier, ("G"). The string
-   takes into account the current system culture.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Double.ToString" /> method formats a <see cref="T:System.Double" /> value in the default ("G", or general) format of the current culture. If you want to specify a different format or culture, use the other overloads of the <see cref="M:System.Double.ToString(System.String)" /> method, as follows: </para>
@@ -2579,6 +2636,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2599,12 +2660,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
-   the general format specifier, ("G"). The string takes into account the
-   formatting information in the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by
-<paramref name="provider" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Double.ToString(System.IFormatProvider)" /> method formats a <see cref="T:System.Double" /> value in the default ("G", or general) format of a specified culture. If you want to specify a different format or culture, use the other overloads of the <see cref="M:System.Double.ToString(System.String)" /> method, as follows:</para>
@@ -2742,6 +2797,10 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation using the specified culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="provider" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information. </param>
       </Docs>
@@ -2764,11 +2823,6 @@ This method overrides <see cref="M:System.Object.GetHashCode" />.
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the current system
-   culture.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
         <example>
@@ -2873,6 +2927,10 @@ class test {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation, using the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
       </Docs>
@@ -2896,11 +2954,6 @@ class test {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the information in
-   the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
         <remarks>
@@ -2978,6 +3031,10 @@ class test {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation using the specified format and culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" /> and <paramref name="provider" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
         <param name="provider">

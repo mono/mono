@@ -51,12 +51,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the representation of the type of the specified object in this reflection context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the type of the specified object.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to represent.</param>
       </Docs>
@@ -75,12 +78,15 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the representation, in this reflection context, of an assembly that is represented by an object from another reflection context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The representation of the assembly in this reflection context.</para>
+        </returns>
         <param name="assembly">
           <attribution license="cc4" from="Microsoft" modified="false" />The external representation of the assembly to represent in this context.</param>
       </Docs>
@@ -99,12 +105,15 @@
         <Parameter Name="type" Type="System.Reflection.TypeInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the representation, in this reflection context, of a type represented by an object from another reflection context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The representation of the type in this reflection context..</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The external representation of the type to represent in this context.</param>
       </Docs>

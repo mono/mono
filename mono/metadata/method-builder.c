@@ -10,6 +10,7 @@
 
 #include "config.h"
 #include "loader.h"
+#include "mono/metadata/abi-details.h"
 #include "mono/metadata/method-builder.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/exception.h"
@@ -201,7 +202,7 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 		GList *tmp;
 		void **data;
 		l = g_list_reverse (mw->method_data);
-		if (method->dynamic)
+		if (method_is_dynamic (method))
 			data = g_malloc (sizeof (gpointer) * (i + 1));
 		else
 			data = mono_image_alloc (image, sizeof (gpointer) * (i + 1));
@@ -536,7 +537,7 @@ mono_mb_emit_exception_full (MonoMethodBuilder *mb, const char *exc_nspace, cons
 	mono_mb_emit_op (mb, CEE_NEWOBJ, ctor);
 	if (msg != NULL) {
 		mono_mb_emit_byte (mb, CEE_DUP);
-		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoException, message));
+		mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoException, message));
 		mono_mb_emit_ldstr (mb, (char*)msg);
 		mono_mb_emit_byte (mb, CEE_STIND_REF);
 	}

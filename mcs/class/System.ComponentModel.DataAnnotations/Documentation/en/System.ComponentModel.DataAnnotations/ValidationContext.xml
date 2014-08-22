@@ -57,10 +57,18 @@
         <Parameter Name="items" Type="System.Collections.Generic.IDictionary&lt;System.Object,System.Object&gt;" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="items" /> is null, an empty dictionary is created. If <paramref name="items" /> is not null, the set of key/value pairs is copied into a new dictionary, preventing consumers from modifying the original dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext" /> class using the specified object and an optional property bag.</para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object instance to validate.  It cannot be null</param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional set of key/value pairs to make available to consumers.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -76,11 +84,21 @@
         <Parameter Name="items" Type="System.Collections.Generic.IDictionary&lt;System.Object,System.Object&gt;" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="serviceProvider" /> parameter represents a service that can be used by the <see cref="M:System.ComponentModel.DataAnnotations.ValidationContext.GetService(System.Type)" /> method in order to perform custom validation. </para>
+          <para>If the <paramref name="items" /> parameter is null, an empty dictionary is created. If the parameter is not null, the set of key/value pairs is copied into a new dictionary, which prevents the service consumers from modifying the original dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext" /> class using the service provider and dictionary of service consumers. </para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate. This parameter is required.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the <see cref="T:System.IServiceProvider" /> interface. This parameter is optional.</param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary of key/value pairs to make available to the service consumers. This parameter is optional.</param>
       </Docs>
     </Member>
     <Member MemberName="DisplayName">
@@ -119,7 +137,6 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ServiceContainer" /> object is defined at the application level, the <see cref="M:System.ComponentModel.DataAnnotations.ValidationContext.GetService(System.Type)" /> method accesses it to retrieve the requested service. </para>
@@ -129,6 +146,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the service that provides custom validation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the service, or null if the service is not available.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the service to use for validation.</param>
       </Docs>
@@ -147,9 +168,13 @@
         <Parameter Name="serviceProvider" Type="System.Func&lt;System.Type,System.Object&gt;" />
       </Parameters>
       <Docs>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext" /> using a service provider that can return service instances by type when <see cref="http://msdn.microsoft.com/en-us/library/system.web.mvc.idependencyresolver.getservice(VS.98).aspx">GetService</see> is called.</para>
+        </summary>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service provider.</param>
       </Docs>
     </Member>
     <Member MemberName="Items">

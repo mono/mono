@@ -64,7 +64,6 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.WebControls.AccessDataSourceView" /> object overrides the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method to ensure that the <see cref="P:System.Web.UI.WebControls.AccessDataSource.DataFile" /> property of its associated <see cref="T:System.Web.UI.WebControls.AccessDataSource" /> control is set before retrieving data. </para>
@@ -77,6 +76,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves data from the underlying data storage using the SQL string in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectCommand" /> property and any parameters in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectParameters" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> of data rows.</para>
+        </returns>
         <param name="arguments">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> that is used to request operations on the data beyond basic data retrieval.</param>
       </Docs>

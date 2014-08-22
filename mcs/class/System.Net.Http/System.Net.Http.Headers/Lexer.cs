@@ -114,6 +114,15 @@ namespace System.Net.Http.Headers
 			this.s = stream;
 		}
 
+		public int Position {
+			get {
+				return pos;
+			}
+			set {
+				pos = value;
+			}
+		}
+
 		public string GetStringValue (Token token)
 		{
 			return s.Substring (token.StartPosition, token.EndPosition - token.StartPosition);

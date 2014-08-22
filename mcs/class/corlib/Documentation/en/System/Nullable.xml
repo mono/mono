@@ -59,13 +59,64 @@
         <Parameter Name="n2" Type="System.Nullable&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="n1">To be added.</param>
-        <param name="n2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the relative values of two <see cref="T:System.Nullable`1" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that indicates the relative values of the <paramref name="n1" /> and <paramref name="n2" /> parameters.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> property for <paramref name="n1" /> is false, and the <see cref="P:System.Nullable`1.HasValue" /> property for <paramref name="n2" /> is true.</para>
+                <para>-or-</para>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> properties for <paramref name="n1" /> and <paramref name="n2" /> are true, and the value of the <see cref="P:System.Nullable`1.Value" /> property for <paramref name="n1" /> is less than the value of the <see cref="P:System.Nullable`1.Value" /> property for <paramref name="n2" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> properties for <paramref name="n1" /> and <paramref name="n2" /> are false.</para>
+                <para>-or-</para>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> properties for <paramref name="n1" /> and <paramref name="n2" /> are true, and the value of the <see cref="P:System.Nullable`1.Value" /> property for <paramref name="n1" /> is equal to the value of the <see cref="P:System.Nullable`1.Value" /> property for <paramref name="n2" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> property for <paramref name="n1" /> is true, and the <see cref="P:System.Nullable`1.HasValue" /> property for <paramref name="n2" /> is false.</para>
+                <para>-or-</para>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> properties for <paramref name="n1" /> and <paramref name="n2" /> are true, and the value of the <see cref="P:System.Nullable`1.Value" /> property for <paramref name="n1" /> is greater than the value of the <see cref="P:System.Nullable`1.Value" /> property for <paramref name="n2" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="n1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Nullable`1" /> object.</param>
+        <param name="n2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Nullable`1" /> object.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The underlying value type of the <paramref name="n1" /> and <paramref name="n2" /> parameters.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Equals&lt;T&gt;">
@@ -93,13 +144,55 @@
         <Parameter Name="n2" Type="System.Nullable&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="n1">To be added.</param>
-        <param name="n2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether two specified <see cref="T:System.Nullable`1" /> objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="n1" /> parameter is equal to the <paramref name="n2" /> parameter; otherwise, false. </para>
+          <para>The return value depends on the <see cref="P:System.Nullable`1.HasValue" /> and <see cref="P:System.Nullable`1.Value" /> properties of the two parameters that are compared.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>true</para>
+              </term>
+              <description>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> properties for <paramref name="n1" /> and <paramref name="n2" /> are false. </para>
+                <para>-or-</para>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> properties for <paramref name="n1" /> and <paramref name="n2" /> are true, and the <see cref="P:System.Nullable`1.Value" /> properties of the parameters are equal.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>false</para>
+              </term>
+              <description>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> property is true for one parameter and false for the other parameter.</para>
+                <para>-or-</para>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> properties for <paramref name="n1" /> and <paramref name="n2" /> are true, and the <see cref="P:System.Nullable`1.Value" /> properties of the parameters are unequal.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="n1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Nullable`1" /> object.</param>
+        <param name="n2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Nullable`1" /> object.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The underlying value type of the <paramref name="n1" /> and <paramref name="n2" /> parameters.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetUnderlyingType">
@@ -117,7 +210,6 @@
         <Parameter Name="nullableType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -128,6 +220,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the underlying type argument of the specified nullable type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type argument of the <paramref name="nullableType" /> parameter, if the <paramref name="nullableType" /> parameter is a closed generic nullable type; otherwise, null. </para>
+        </returns>
         <param name="nullableType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that describes a closed generic nullable type. </param>
       </Docs>

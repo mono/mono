@@ -331,11 +331,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A new <see cref="T:System.Net.WebPermission" /> instance
-   containing the same values as the current instance.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Security.IPermission" /> returned by this method represents the same access to resources as the original <see cref="T:System.Net.WebPermission" />. This method overrides <see cref="M:System.Security.CodeAccessPermission.Copy" /> and is implemented to support the <see cref="T:System.Security.IPermission" /> interface.</para>
@@ -344,6 +339,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of a <see cref="T:System.Net.WebPermission" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Net.WebPermission" /> class that has the same values as the original. </para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -403,13 +402,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.WebPermission" /> instance that represents the intersection of the
-   current instance and <paramref name="target" />. If the intersection is
-   empty, returns <see langword="null" />. If the
-   current instance is unrestricted, returns a copy of <paramref name="target" />. If
-<paramref name="target" /> is unrestricted, returns a copy of the current instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="target " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -424,6 +416,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the logical intersection of two <see cref="T:System.Net.WebPermission" /> instances.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Net.WebPermission" /> that represents the intersection of the current instance and the <paramref name="target" /> parameter. If the intersection is empty, the method returns null.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebPermission" /> to compare with the current instance. </param>
       </Docs>
@@ -446,14 +442,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the current instance is a subset of <paramref name="target" /> ;
-   otherwise,<see langword=" false" />. If target is null, return
-<see langword="false" />. If the current instance is unrestricted, and
-<paramref name="target" /> is not, returns <see langword="false" />. If <paramref name="target" /> is 
-   unrestricted, returns <see langword="true" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="target " />is not of type <see cref="T:System.Net.WebPermission" />.</para>
@@ -466,6 +454,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current <see cref="T:System.Net.WebPermission" /> is a subset of the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance is a subset of the <paramref name="target" /> parameter; otherwise, false. If the target is null, the method returns true for an empty current permission that is not unrestricted and false otherwise.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebPermission" /> to compare to the current <see cref="T:System.Net.WebPermission" />. </param>
       </Docs>
@@ -485,7 +477,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <see cref="T:System.Net.WebPermission" /> is <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />, then the target class can use all URIs. Otherwise, specific permission must be given for any URI you want to use with the target class.</para>
@@ -497,6 +488,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks the overall permission state of the <see cref="T:System.Net.WebPermission" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Net.WebPermission" /> was created with the <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> <see cref="T:System.Security.Permissions.PermissionState" />; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -514,10 +509,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Security.SecurityElement" /> containing the XML encoding of the state of the
-   current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Net.WebPermission.FromXml(System.Security.SecurityElement)" /> method to restore the state information from a <see cref="T:System.Security.SecurityElement" />.</para>
@@ -526,6 +517,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of a <see cref="T:System.Net.WebPermission" /> and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.SecurityElement" /> that contains an XML-encoded representation of the <see cref="T:System.Net.WebPermission" />, including state information.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -546,11 +541,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.WebPermission" /> instance that represents the union of the current
-   instance and <paramref name="target" />. If the current instance
-   or <paramref name="target" /> is unrestricted, returns a <see cref="T:System.Net.WebPermission" /> instance that is unrestricted.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="target " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -564,6 +554,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the logical union between two instances of the <see cref="T:System.Net.WebPermission" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebPermission" /> that represents the union of the current instance and the <paramref name="target" /> parameter. If either WebPermission is <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />, the method returns a <see cref="T:System.Net.WebPermission" /> that is <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />. If the target is null, the method returns a copy of the current <see cref="T:System.Net.WebPermission" />.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebPermission" /> to combine with the current <see cref="T:System.Net.WebPermission" />. </param>
       </Docs>

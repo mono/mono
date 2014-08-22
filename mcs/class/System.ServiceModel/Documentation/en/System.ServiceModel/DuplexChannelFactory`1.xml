@@ -570,12 +570,15 @@
         <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplex channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="callbackInstance">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
       </Docs>
@@ -595,12 +598,15 @@
         <Parameter Name="endpointConfigurationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="callbackObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that the client uses to listen for messages from the connected service.</param>
         <param name="endpointConfigurationName">
@@ -622,12 +628,15 @@
         <Parameter Name="via" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplex channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
         <param name="via">
@@ -649,12 +658,15 @@
         <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplex channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="callbackInstance">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
         <param name="address">
@@ -676,12 +688,15 @@
         <Parameter Name="endpointConfigurationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="callbackInstance">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
         <param name="endpointConfigurationName">
@@ -704,12 +719,15 @@
         <Parameter Name="endpointAddress" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="callbackObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that the client uses to listen for messages from the connected service.</param>
         <param name="binding">
@@ -734,12 +752,15 @@
         <Parameter Name="endpointAddress" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="callbackInstance">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
         <param name="binding">
@@ -764,12 +785,15 @@
         <Parameter Name="via" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="callbackInstance">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
         <param name="address">
@@ -795,12 +819,15 @@
         <Parameter Name="via" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="callbackObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that the client uses to listen for messages from the connected service.</param>
         <param name="binding">
@@ -828,12 +855,15 @@
         <Parameter Name="via" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplex channel between a service and a callback instance on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
         <param name="callbackInstance">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
         <param name="binding">

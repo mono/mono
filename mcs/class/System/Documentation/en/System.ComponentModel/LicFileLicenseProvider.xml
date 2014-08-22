@@ -63,12 +63,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a key for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A confirmation that the <paramref name="type" /> parameter is licensed.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The object type to return the key. </param>
       </Docs>
@@ -92,7 +95,6 @@
         <Parameter Name="allowExceptions" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'License'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>At design time, the <see cref="M:System.ComponentModel.LicFileLicenseProvider.GetLicense(System.ComponentModel.LicenseContext,System.Type,System.Object,System.Boolean)" /> method looks for a license file named myClassName.LIC, where myClassName is the <see cref="P:System.Type.FullName" /> of the component to create. This file must be in the same directory as the .dll file that contains the component.</para>
@@ -102,6 +104,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a license for the instance of the component, if one is available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid <see cref="T:System.ComponentModel.License" />. If this method cannot find a valid <see cref="T:System.ComponentModel.License" /> or a valid <paramref name="context" /> parameter, it returns null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.LicenseContext" /> that specifies where you can use the licensed object. </param>
         <param name="type">
@@ -129,7 +135,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method checks the key against the phrase: " myClassName is a licensed component. ", where myClassName is the <see cref="P:System.Type.FullName" /> of the component you want to create.</para>
@@ -138,6 +143,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the key that the <see cref="M:System.ComponentModel.LicFileLicenseProvider.GetLicense(System.ComponentModel.LicenseContext,System.Type,System.Object,System.Boolean)" /> method retrieves is valid for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key is a valid <see cref="P:System.ComponentModel.License.LicenseKey" /> for the specified type; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.ComponentModel.License.LicenseKey" /> to check. </param>
         <param name="type">

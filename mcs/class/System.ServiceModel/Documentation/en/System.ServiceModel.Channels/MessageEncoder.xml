@@ -101,8 +101,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this to request a typed object such as an interface for setting properties or getting status from the appropriate layer in the channel stack. If a layer supports returning the requested object, it returns it. If not, it delegates the call down to the next layer in the stack. If it gets to the bottom of the stack and no channel layer supported the requested object, then the method returns null.</para>
@@ -111,6 +109,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a typed object requested, if present, from the appropriate layer in the channel stack.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typed object <paramref name="T " />requested if it is present or null if it is not.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The typed object for which the method is querying.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="IsContentTypeSupported">
@@ -127,7 +131,6 @@
         <Parameter Name="contentType" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is used to determine whether the message encoder can be used to read a particular style of message, based on its content-type. The information in the <see cref="T:System.Net.Mime.ContentType" /> class is used to describe the data that is contained in a message and is used to determine if there is a content-type match.</para>
@@ -137,6 +140,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a specified message-level content-type value is supported by the message encoder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the message-level content-type specified is supported; otherwise false.</para>
+        </returns>
         <param name="contentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The message-level content-type being tested.</param>
       </Docs>
@@ -200,11 +207,19 @@
         <Parameter Name="bufferManager" Type="System.ServiceModel.Channels.BufferManager" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="bufferManager">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, reads a message from a specified buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> that is read from the buffer specified.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ArraySegment`1" /> of type <see cref="T:System.Byte" /> that provides the buffer from which the message is deserialized.</param>
+        <param name="bufferManager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BufferManager" /> that manages the buffer from which the message is deserialized.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadMessage">
@@ -222,12 +237,15 @@
         <Parameter Name="maxSizeOfHeaders" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, reads a message from a specified stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> that is read from the stream specified.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> object from which the message is read.</param>
         <param name="maxSizeOfHeaders">
@@ -250,12 +268,21 @@
         <Parameter Name="contentType" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="bufferManager">To be added.</param>
-        <param name="contentType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, reads a message from a specified stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> that is read from the stream specified.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ArraySegment`1" /> of type <see cref="T:System.Byte" /> that provides the buffer from which the message is deserialized.</param>
+        <param name="bufferManager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BufferManager" /> that manages the buffer from which the message is deserialized.</param>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Multipurpose Internet Mail Extensions (MIME) message-level content-type.</param>
       </Docs>
     </Member>
     <Member MemberName="ReadMessage">
@@ -274,12 +301,15 @@
         <Parameter Name="contentType" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, reads a message from a specified stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> that is read from the stream specified.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> object from which the message is read.</param>
         <param name="maxSizeOfHeaders">
@@ -300,12 +330,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the content type that is used by the message encoder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content type that is used by the message encoder.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WriteMessage">
@@ -350,7 +383,6 @@
         <Parameter Name="bufferManager" Type="System.ServiceModel.Channels.BufferManager" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method calls the abstract method <see cref="M:System.ServiceModel.Channels.MessageEncoder.WriteMessage(System.ServiceModel.Channels.Message,System.Int32,System.ServiceModel.Channels.BufferManager,System.Int32)" /> with <paramref name="messageOffset" /> = 0.</para>
@@ -359,6 +391,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a message less than a specified size to a byte array buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ArraySegment`1" /> of type byte that provides the buffer to which the message is serialized.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to write to the message buffer.</param>
         <param name="maxMessageSize">
@@ -384,7 +420,6 @@
         <Parameter Name="messageOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called by <see cref="M:System.ServiceModel.Channels.MessageEncoder.WriteMessage(System.ServiceModel.Channels.Message,System.Int32,System.ServiceModel.Channels.BufferManager,System.Int32)" />.</para>
@@ -393,6 +428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, writes a message of less than a specified size to a byte array buffer at the specified offset.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ArraySegment`1" /> of type byte that provides the buffer to which the message is serialized.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to write to the message buffer.</param>
         <param name="maxMessageSize">

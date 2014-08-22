@@ -28,13 +28,16 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the full name of the dnprdnshort root registry key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the full name of the dnprdnshort root registry key.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
@@ -52,13 +55,16 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the value under the <see cref="M:Microsoft.Build.Utilities.ToolLocationHelper.GetDotNetFrameworkRootRegistryKey(Microsoft.Build.Utilities.TargetDotNetFrameworkVersion)" /> that contains the dnprdnshort SDK installation path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the name of the registry key value under the <see cref="M:Microsoft.Build.Utilities.ToolLocationHelper.GetDotNetFrameworkRootRegistryKey(Microsoft.Build.Utilities.TargetDotNetFrameworkVersion)" /> that contains the dnprdnshort SDK installation path.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
@@ -76,7 +82,6 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -86,6 +91,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the prefix of the dnprdnshort folder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the prefix of the dnprdnshort folder.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
@@ -103,13 +112,16 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a fully qualified path to the dnprdnshort root directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the dnprdnshort root directory, or a null reference (Nothing in vbprvb) if the targeted version of the dnprdnshort is not installed.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
@@ -128,13 +140,16 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a fully qualified path to a file in the dnprdnshort directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the specified file, or a null reference (Nothing in vbprvb) if the targeted version of the dnprdnshort is not installed.</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to locate in the dnprdnshort directory.</param>
         <param name="version">
@@ -154,13 +169,16 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the fully qualified path to the \bin directory of the dnprdnshort SDK.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the \bin directory of the dnprdnshort SDK, or a null reference (Nothing in vbprvb) if the targeted version of the dnprdnshort SDK is not installed.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The version of the dnprdnshort to target.</param>
       </Docs>
@@ -179,7 +197,6 @@
         <Parameter Name="version" Type="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -190,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the fully qualified path to a file in the dnprdnshort SDK.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the \bin directory of the dnprdnshort SDK, or a null reference (Nothing in vbprvb) if the targeted version of the dnprdnshort SDK is not installed.</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to locate in the dnprdnshort SDK.</param>
         <param name="version">
@@ -209,7 +230,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -219,6 +239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a fully qualified path to a file in the system directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified path to the the file in the system directory.</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to locate in the System folder.</param>
       </Docs>

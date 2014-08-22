@@ -331,7 +331,7 @@ DOC_FILES= README.QUICK doc/README.Mac doc/README.MacOSX doc/README.OS2 \
 TESTS= tests/test.c tests/test_cpp.cc tests/trace_test.c \
 	tests/leak_test.c tests/thread_leak_test.c tests/middle.c
 
-GNU_BUILD_FILES= configure.in Makefile.am configure acinclude.m4 \
+GNU_BUILD_FILES= configure.ac Makefile.am configure acinclude.m4 \
 		 libtool.m4 install-sh configure.host Makefile.in \
 		 aclocal.m4 config.sub config.guess \
 		 include/Makefile.am include/Makefile.in \

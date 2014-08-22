@@ -108,7 +108,6 @@
         <Parameter Name="documentType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Diagnostics.SymbolStore.ISymbolDocumentWriter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -119,6 +118,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a document for source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined document.</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />The URL for the document. </param>
         <param name="language">
@@ -147,7 +150,6 @@
         <Parameter Name="underlyingType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EnumBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The defined enum is a derived class of <see cref="T:System.Enum" />. The <paramref name="value__" /> field has <see cref="F:System.Reflection.FieldAttributes.Private" /> and <see cref="F:System.Reflection.FieldAttributes.SpecialName" /> attributes set.</para>
@@ -163,6 +165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines an enumeration type that is a value type with a single non-static field called <paramref name="value__" /> of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined enumeration.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The full path of the enumeration type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="visibility">
@@ -190,7 +196,6 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The global method that this method defines is not usable until you call <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" />.</para>
@@ -202,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a global method with the specified name, attributes, return type, and parameter types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined global method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -232,7 +241,6 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You cannot use the global method that this method defines until you call <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" />.</para>
@@ -244,6 +252,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a global method with the specified name, attributes, calling convention, return type, and parameter types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined global method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -279,7 +291,6 @@
         <Parameter Name="optionalParameterTypeCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -293,6 +304,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a global method with the specified name, attributes, calling convention, return type, custom modifiers for the return type, parameter types, and custom modifiers for the parameter types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined global method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded null characters. </param>
         <param name="attributes">
@@ -331,7 +346,6 @@
         <Parameter Name="attributes" Type="System.Reflection.FieldAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FieldBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -345,6 +359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines an initialized data field in the .sdata section of the portable executable (PE) file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A field to reference the data.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name used to refer to the data. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="data">
@@ -425,7 +443,6 @@
         <Parameter Name="nativeCharSet" Type="System.Runtime.InteropServices.CharSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Some DLL import attributes (see the description of System.Runtime.InteropServices.DllImportAttribute) cannot be specified as arguments to this method. Such attributes should be set by emitting a custom attribute for the method. For example, the DLL import attribute PreserveSig is set by emitting a custom attribute.</para>
@@ -437,6 +454,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a PInvoke method with the specified name, the name of the DLL in which the method is defined, the attributes of the method, the calling convention of the method, the return type of the method, the types of the parameters of the method, and the PInvoke flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined PInvoke method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the PInvoke method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="dllName">
@@ -479,7 +500,6 @@
         <Parameter Name="nativeCharSet" Type="System.Runtime.InteropServices.CharSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Some DLL import attributes (see the description of <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />) cannot be specified as arguments to this method. Such attributes should be set by emitting a custom attribute for the method. For example, the DLL import attribute PreserveSig is set by emitting a custom attribute.</para>
@@ -491,6 +511,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a PInvoke method with the specified name, the name of the DLL in which the method is defined, the attributes of the method, the calling convention of the method, the return type of the method, the types of the parameters of the method, and the PInvoke flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined PInvoke method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the PInvoke method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="dllName">
@@ -528,7 +552,6 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Resources.IResourceWriter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The caller must not call the ResourceWriter.Generate() and ResourceWriter.Close() methods, because these methods are called by ModuleBuilder.Save when the dynamic assembly is written to disk.</para>
@@ -541,6 +564,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines the named managed embedded resource to be stored in this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A resource writer for the defined resource.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="description">
@@ -565,7 +592,6 @@
         <Parameter Name="attribute" Type="System.Reflection.ResourceAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Resources.IResourceWriter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The caller must not call the ResourceWriter.Generate() and ResourceWriter.Close() methods, because these methods are called by ModuleBuilder.Save when the dynamic assembly is written to disk.</para>
@@ -578,6 +604,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines the named managed embedded resource with the given attributes that is to be stored in this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A resource writer for the defined resource.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="description">
@@ -602,7 +632,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
@@ -614,6 +643,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Constructs a TypeBuilder for a private type with the specified name in this module. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A private type with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type, including the namespace. <paramref name="name" /> cannot contain embedded nulls. </param>
       </Docs>
@@ -635,7 +668,6 @@
         <Parameter Name="attr" Type="System.Reflection.TypeAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
@@ -647,6 +679,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Constructs a TypeBuilder given the type name and the type attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder created with all of the requested attributes.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -671,7 +707,6 @@
         <Parameter Name="parent" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
@@ -683,6 +718,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Constructs a TypeBuilder given type name, its attributes, and the type that the defined type extends.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder created with all of the requested attributes.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -710,7 +749,6 @@
         <Parameter Name="typesize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Type names must be unique within an assembly. It is forbidden to have two types with the same name in two different modules of an assembly.</para>
@@ -722,6 +760,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Constructs a TypeBuilder given the type name, the attributes, the type that the defined type extends, and the total size of the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder object.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -751,7 +793,6 @@
         <Parameter Name="packsize" Type="System.Reflection.Emit.PackingSize" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
@@ -763,6 +804,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Constructs a TypeBuilder given the type name, the attributes, the type that the defined type extends, and the packing size of the type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder object.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -797,7 +842,6 @@
         <Parameter Name="interfaces" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
@@ -809,6 +853,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Constructs a TypeBuilder given the type name, attributes, the type that the defined type extends, and the interfaces that the defined type implements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder created with all of the requested attributes.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -839,7 +887,6 @@
         <Parameter Name="typesize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
@@ -851,6 +898,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Constructs a TypeBuilder given the type name, attributes, the type that the defined type extends, the packing size of the defined type, and the total size of the defined type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder created with all of the requested attributes.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -881,7 +932,6 @@
         <Parameter Name="attributes" Type="System.Reflection.FieldAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FieldBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -895,6 +945,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines an uninitialized data field in the .sdata section of the portable executable (PE) file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A field to reference the data.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name used to refer to the data. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="size">
@@ -979,12 +1033,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
@@ -1036,7 +1093,6 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.MethodInfo'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>GetArrayMethod is useful when you have an array of a type whose definition has not been completed and you want to access methods defined on <see cref="T:System.Array" />. For example, you might define a type and want to define a method that takes an array of the type as a parameter. In order to access the elements of the array, you will need to call methods of the <see cref="T:System.Array" /> class.</para>
@@ -1045,6 +1101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the named method on an array class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The named method on an array class.</para>
+        </returns>
         <param name="arrayClass">
           <attribution license="cc4" from="Microsoft" modified="false" />An array class. </param>
         <param name="methodName">
@@ -1077,7 +1137,6 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodToken'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is similar to <see cref="M:System.Reflection.Emit.ModuleBuilder.GetArrayMethod(System.Type,System.String,System.Reflection.CallingConventions,System.Type,System.Type[])" />, except that it returns the token of the array method instead of the method itself.</para>
@@ -1086,6 +1145,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the token for the named method on an array class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token for the named method on an array class.</para>
+        </returns>
         <param name="arrayClass">
           <attribution license="cc4" from="Microsoft" modified="false" />The object for the array. </param>
         <param name="methodName">
@@ -1119,12 +1182,15 @@
         <Parameter Name="con" Type="System.Reflection.ConstructorInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodToken'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the token used to identify the specified constructor within this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the specified constructor within this module.</para>
+        </returns>
         <param name="con">
           <attribution license="cc4" from="Microsoft" modified="false" />The constructor to get a token for. </param>
       </Docs>
@@ -1143,12 +1209,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the custom attributes that have been applied to the current <see cref="T:System.Reflection.Emit.ModuleBuilder" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the custom attributes; the array is empty if there are no attributes.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />This argument is ignored for objects of this type.</param>
       </Docs>
@@ -1168,12 +1237,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the custom attributes that have been applied to the current <see cref="T:System.Reflection.Emit.ModuleBuilder" />, and that derive from a specified attribute type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the custom attributes that are derived, at any level, from <paramref name="attributeType" />; the array is empty if there are no such attributes.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The base type from which attributes derive.</param>
         <param name="inherit">
@@ -1195,7 +1267,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you emit dynamic assemblies, fields in the .sdata region of the portable executable (PE) file are defined by using the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineInitializedData(System.String,System.Byte[],System.Reflection.FieldAttributes)" /> or <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineUninitializedData(System.String,System.Int32,System.Reflection.FieldAttributes)" /> methods. </para>
@@ -1207,6 +1278,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a module-level field, defined in the .sdata region of the portable executable (PE) file, that has the specified name and binding attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A field that has the specified name and binding attributes, or null if the field does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The field name. </param>
         <param name="bindingAttr">
@@ -1227,7 +1302,6 @@
         <Parameter Name="bindingFlags" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you emit dynamic assemblies, fields in the .sdata region of the portable executable (PE) file are defined by using the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineInitializedData(System.String,System.Byte[],System.Reflection.FieldAttributes)" /> or <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineUninitializedData(System.String,System.Int32,System.Reflection.FieldAttributes)" /> methods. </para>
@@ -1239,6 +1313,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all fields defined in the .sdata region of the portable executable (PE) file that match the specified binding flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of fields that match the specified flags; the array is empty if no such fields exist.</para>
+        </returns>
         <param name="bindingFlags">
           <attribution license="cc4" from="Microsoft" modified="false" />A combination of the BindingFlags bit flags used to control the search.</param>
       </Docs>
@@ -1259,12 +1337,15 @@
         <Parameter Name="field" Type="System.Reflection.FieldInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FieldToken'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the token used to identify the specified field within this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the specified field within this module.</para>
+        </returns>
         <param name="field">
           <attribution license="cc4" from="Microsoft" modified="false" />The field to get a token for. </param>
       </Docs>
@@ -1281,12 +1362,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMethodImpl">
@@ -1308,7 +1392,6 @@
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method provides the implementation for all overloads of the inherited <see cref="Overload:System.Reflection.Module.GetMethod" /> method. Use the inherited <see cref="Overload:System.Reflection.Module.GetMethod" /> method to get methods that have been declared at the module level. Module-level methods are defined in emitted code by using the <see cref="Overload:System.Reflection.Emit.ModuleBuilder.DefineGlobalMethod" /> method. </para>
@@ -1320,6 +1403,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the module-level method that matches the specified criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A method that is defined at the module level, and matches the specified criteria; or null if such a method does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The method name. </param>
         <param name="bindingAttr">
@@ -1348,7 +1435,6 @@
         <Parameter Name="bindingFlags" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Module-level methods are defined in emitted code by using the <see cref="Overload:System.Reflection.Emit.ModuleBuilder.DefineGlobalMethod" /> method. </para>
@@ -1360,6 +1446,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the methods that have been defined at the module level for the current <see cref="T:System.Reflection.Emit.ModuleBuilder" />, and that match the specified binding flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains all the module-level methods that match <paramref name="bindingFlags" />.</para>
+        </returns>
         <param name="bindingFlags">
           <attribution license="cc4" from="Microsoft" modified="false" />A combination of BindingFlags bit flags used to control the search.</param>
       </Docs>
@@ -1380,12 +1470,15 @@
         <Parameter Name="method" Type="System.Reflection.MethodInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodToken'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the token used to identify the specified method within this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the specified method within this module.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />The method to get a token for. </param>
       </Docs>
@@ -1406,7 +1499,6 @@
         <Parameter Name="sigHelper" Type="System.Reflection.Emit.SignatureHelper" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SignatureToken'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method defines a metadata token for the signature described by <paramref name="sigHelper" />.</para>
@@ -1415,6 +1507,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a token for the signature that is defined by the specified <see cref="T:System.Reflection.Emit.SignatureHelper" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token for the defined signature.</para>
+        </returns>
         <param name="sigHelper">
           <attribution license="cc4" from="Microsoft" modified="false" />The signature. </param>
       </Docs>
@@ -1436,12 +1532,15 @@
         <Parameter Name="sigLength" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SignatureToken'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a token for the signature that has the specified character array and signature length.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token for the specified signature.</para>
+        </returns>
         <param name="sigBytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The signature binary large object (BLOB). </param>
         <param name="sigLength">
@@ -1464,7 +1563,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'StringToken'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="str" /> has already been defined, the existing token will be returned.</para>
@@ -1473,6 +1571,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the token of the given string in the module’s constant pool.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token of the string in the constant pool.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to add to the module's constant pool. </param>
       </Docs>
@@ -1491,7 +1593,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Diagnostics.SymbolStore.ISymbolWriter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1502,6 +1603,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the symbol writer associated with this dynamic module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The symbol writer associated with this dynamic module.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -1525,7 +1630,6 @@
         <Parameter Name="className" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Do not use this method to generate array types, pointer types, or byref types. Use the <see cref="M:System.Reflection.Emit.TypeBuilder.MakeArrayType" />, <see cref="M:System.Reflection.Emit.TypeBuilder.MakePointerType" />, and <see cref="M:System.Reflection.Emit.TypeBuilder.MakeByRefType" /> methods instead.</para>
@@ -1537,6 +1641,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the named type defined in the module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested type, if the type is defined in this module; otherwise, null.</para>
+        </returns>
         <param name="className">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Type" /> to get. </param>
       </Docs>
@@ -1563,7 +1671,6 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Do not use this method to generate array types, pointer types, or byref types. Use the <see cref="M:System.Reflection.Emit.TypeBuilder.MakeArrayType" />, <see cref="M:System.Reflection.Emit.TypeBuilder.MakePointerType" />, and <see cref="M:System.Reflection.Emit.TypeBuilder.MakeByRefType" /> methods instead.</para>
@@ -1575,6 +1682,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the named type defined in the module, optionally ignoring the case of the type name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested type, if the type is defined in this module; otherwise, null.</para>
+        </returns>
         <param name="className">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Type" /> to get. </param>
         <param name="ignoreCase">
@@ -1604,7 +1715,6 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="throwOnError" /> parameter only affects what happens when the type is not found. It does not affect any other exceptions that might be thrown. In particular, if the type is found but cannot be loaded, <see cref="T:System.TypeLoadException" /> can be thrown even if <paramref name="throwOnError" /> is false.</para>
@@ -1617,6 +1727,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the named type defined in the module, optionally ignoring the case of the type name. Optionally throws an exception if the type is not found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified type, if the type is declared in this module; otherwise, null.</para>
+        </returns>
         <param name="className">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Type" /> to get. </param>
         <param name="throwOnError">
@@ -1639,7 +1753,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>ReflectionTypeLoadException is a special class load exception. The ReflectionTypeLoadException.Types property contains the array of classes that were defined in the module and loaded. This array can contain some null values. The ReflectionTypeLoadException.LoaderExceptions property is an array of exceptions that represent the exceptions that were thrown by the class loader. The holes in the class array line up with the exceptions.</para>
@@ -1652,6 +1765,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the classes defined within this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the types defined within the module that is reflected by this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTypeToken">
@@ -1670,7 +1787,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeToken'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful for clients of the <see cref="T:System.Reflection.Emit.MethodRental" /> class who want to directly modify the body of a method.</para>
@@ -1679,6 +1795,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the token used to identify the type with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the type with the specified name within this module.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the class, including the namespace. </param>
       </Docs>
@@ -1699,7 +1819,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeToken'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tokens are used in Microsoft intermediate language (MSIL) instructions to identify objects. Tokens are relative to the module in which they are contained. For example, the token value for String is likely to be different from module to module. When GetTypeToken is invoked, a reference is added to the module. The reference becomes a permanent part of the module; multiple calls with the same argument have no additional effect.</para>
@@ -1708,6 +1827,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the token used to identify the specified type within this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the given type within this module.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type object that represents the class type. </param>
       </Docs>
@@ -1727,12 +1850,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified attribute type has been applied to this module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instances of <paramref name="attributeType" /> have been applied to this module; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of custom attribute to test for.</param>
         <param name="inherit">
@@ -1751,12 +1877,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the object is a resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is a resource; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsTransient">
@@ -1773,12 +1902,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this dynamic module is transient.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this dynamic module is transient; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MetadataToken">
@@ -1869,7 +2001,6 @@
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. It is always safe to provide these arguments, even when they are not needed.</para>
@@ -1882,6 +2013,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the field identified by the specified metadata token, in the context defined by the specified generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object representing the field that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
         <param name="genericTypeArguments">
@@ -1906,7 +2041,6 @@
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. It is always safe to provide these arguments, even when they are not needed.</para>
@@ -1919,6 +2053,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type or member identified by the specified metadata token, in the context defined by the specified generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MemberInfo" /> object representing the type or member that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type or member in the module.</param>
         <param name="genericTypeArguments">
@@ -1943,7 +2081,6 @@
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericMethodArguments" />. It is always safe to provide these arguments, even when they are not needed. </para>
@@ -1956,6 +2093,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the method or constructor identified by the specified metadata token, in the context defined by the specified generic type parameters. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodBase" /> object representing the method that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
         <param name="genericTypeArguments">
@@ -1978,7 +2119,6 @@
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1989,6 +2129,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the signature blob identified by a metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes representing the signature blob.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a signature in the module.</param>
       </Docs>
@@ -2007,7 +2151,6 @@
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2018,6 +2161,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the string identified by the specified metadata token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing a string value from the metadata string heap.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a string in the string heap of the module.</param>
       </Docs>
@@ -2038,7 +2185,6 @@
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. It is always safe to provide these arguments, even when they are not needed.</para>
@@ -2051,6 +2197,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type identified by the specified metadata token, in the context defined by the specified generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the type that is identified by the specified metadata token.</para>
+        </returns>
         <param name="metadataToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
         <param name="genericTypeArguments">

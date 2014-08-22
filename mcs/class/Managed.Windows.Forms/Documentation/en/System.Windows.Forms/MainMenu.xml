@@ -101,7 +101,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to create a copy of the menu structure stored in a <see cref="T:System.Windows.Forms.MainMenu" />. You can use this method to reuse the menu structure stored in a <see cref="T:System.Windows.Forms.MainMenu" /> as the foundation for a new <see cref="T:System.Windows.Forms.MainMenu" />. For example, if you want to create a menu structure that has the same menu items as an existing <see cref="T:System.Windows.Forms.MainMenu" /> but will also have additional <see cref="T:System.Windows.Forms.MenuItem" /> objects added to it, you can use the <see cref="M:System.Windows.Forms.MainMenu.CloneMenu" /> method to create a copy of the original <see cref="T:System.Windows.Forms.MainMenu" /> and then add the new <see cref="T:System.Windows.Forms.MenuItem" /> objects to the cloned <see cref="T:System.Windows.Forms.MainMenu" />.</para>
@@ -110,6 +109,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Windows.Forms.MainMenu" /> that is a duplicate of the current <see cref="T:System.Windows.Forms.MainMenu" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.MainMenu" /> that represents the cloned menu.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -190,7 +193,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This property enables you to determine if a specific <see cref="T:System.Windows.Forms.MainMenu" /> is parented to a form. The property is typically used when multiple <see cref="T:System.Windows.Forms.MainMenu" /> objects are being used on a form and you need to determine which one is currently being used by a form.</para>
@@ -199,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Windows.Forms.Form" /> that contains this control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Form" /> that is the container for this control. Returns null if the <see cref="T:System.Windows.Forms.MainMenu" /> is not currently hosted on a form.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -272,7 +278,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return string includes the type and the string returned by the <see cref="M:System.Windows.Forms.Form.ToString" /> method if the <see cref="T:System.Windows.Forms.MainMenu" /> is assigned to a form.</para>
@@ -281,6 +286,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the <see cref="T:System.Windows.Forms.MainMenu" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.MainMenu" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

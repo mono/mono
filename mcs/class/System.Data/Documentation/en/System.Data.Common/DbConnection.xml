@@ -48,7 +48,6 @@
         <Parameter Name="isolationLevel" Type="System.Data.IsolationLevel" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -58,6 +57,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a database transaction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the new transaction.</para>
+        </returns>
         <param name="isolationLevel">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies the isolation level for the transaction.</param>
       </Docs>
@@ -73,7 +76,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -83,6 +85,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a database transaction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the new transaction.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -98,13 +104,16 @@
         <Parameter Name="isolationLevel" Type="System.Data.IsolationLevel" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a database transaction with the specified isolation level.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the new transaction.</para>
+        </returns>
         <param name="isolationLevel">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies the isolation level for the transaction.</param>
       </Docs>
@@ -225,13 +234,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a <see cref="T:System.Data.Common.DbCommand" /> object associated with the current connection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.Common.DbCommand" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -245,7 +257,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -255,6 +266,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a <see cref="T:System.Data.Common.DbCommand" /> object associated with the current connection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.Common.DbCommand" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -338,7 +353,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -348,6 +362,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns schema information for the data source of this <see cref="T:System.Data.Common.DbConnection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that contains schema information.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -363,7 +381,6 @@
         <Parameter Name="collectionName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -373,6 +390,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns schema information for the data source of this <see cref="T:System.Data.Common.DbConnection" /> using the specified string for the schema name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that contains schema information.</para>
+        </returns>
         <param name="collectionName">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies the name of the schema to return. </param>
       </Docs>
@@ -391,7 +412,6 @@
         <Parameter Name="restrictionValues" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -403,6 +423,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns schema information for the data source of this <see cref="T:System.Data.Common.DbConnection" /> using the specified string for the schema name and the specified string array for the restriction values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that contains schema information.</para>
+        </returns>
         <param name="collectionName">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies the name of the schema to return.</param>
         <param name="restrictionValues">
@@ -539,7 +563,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnection" /> instance is cast to an <see cref="T:System.Data.IDbConnection" /> interface.</para>
@@ -549,6 +572,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins a database transaction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the new transaction.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Data.IDbConnection.BeginTransaction">
@@ -565,7 +592,6 @@
       </Parameters>
       <Docs>
         <param name="il">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.Data.IDbConnection.BeginTransaction(System.Data.IsolationLevel)" />.</para>
@@ -574,6 +600,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins a database transaction with the specified <see cref="T:System.Data.IsolationLevel" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the new transaction.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Data.IDbConnection.CreateCommand">
@@ -587,7 +617,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <format type="text/html"><a href="b623f810-d871-49a5-b0f5-078cc3c34db6">Commands (ADO.NET)</a></format> and <see cref="M:System.Data.IDbConnection.CreateCommand" />.</para>
@@ -596,6 +625,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a <see cref="T:System.Data.Common.DbCommand" /> object that is associated with the current connection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.Common.DbCommand" /> object that is associated with the connection.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

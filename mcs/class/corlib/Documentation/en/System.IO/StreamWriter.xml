@@ -631,12 +631,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears all buffers for this stream asynchronously and causes any buffered data to be written to the underlying device.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Null">
@@ -836,12 +839,15 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a character to the stream asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the stream.</param>
       </Docs>
@@ -860,12 +866,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a string to the stream asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to write to the stream. If <paramref name="value" /> is null, nothing is written.</param>
       </Docs>
@@ -886,12 +895,15 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a subarray of characters to the stream asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />A character array that contains the data to write.</param>
         <param name="index">
@@ -912,7 +924,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property. </para>
@@ -921,6 +932,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a line terminator asynchronously to the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WriteLineAsync">
@@ -937,7 +952,6 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property. </para>
@@ -946,6 +960,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a character followed by a line terminator asynchronously to the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the stream.</param>
       </Docs>
@@ -964,7 +982,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property. </para>
@@ -973,6 +990,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a string followed by a line terminator asynchronously to the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to write. If the value is null, only a line terminator is written. </param>
       </Docs>
@@ -993,7 +1014,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property. </para>
@@ -1002,6 +1022,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a subarray of characters followed by a line terminator asynchronously to the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from.</param>
         <param name="index">
