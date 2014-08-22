@@ -1285,7 +1285,7 @@ namespace Mono.CSharp {
 			// This is used to track the Entry Point,
 			//
 			var settings = Compiler.Settings;
-			if (settings.NeedsEntryPoint && MemberName.Name == "Main" && (settings.MainClass == null || settings.MainClass == Parent.TypeBuilder.FullName)) {
+			if (settings.NeedsEntryPoint && MemberName.Name == "Main" && !IsPartialDefinition && (settings.MainClass == null || settings.MainClass == Parent.TypeBuilder.FullName)) {
 				if (IsEntryPoint ()) {
 					if (Parent.DeclaringAssembly.EntryPoint == null) {
 						if (Parent.IsGenericOrParentIsGeneric || MemberName.IsGeneric) {
