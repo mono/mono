@@ -38,10 +38,9 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	internal class TaskEngine {
 		
-		ITask		task;
-		XmlElement	taskElement;
 		Type		taskType;
 		Project		parentProject;
+		ITask task;
 		
 		static Type	requiredAttribute;
 		static Type	outputAttribute;
@@ -52,9 +51,11 @@ namespace Microsoft.Build.BuildEngine {
 			outputAttribute = typeof (Microsoft.Build.Framework.OutputAttribute);
 		}
 
-		public TaskEngine (Project project)
+		public TaskEngine (Project project, ITask task, Type taskType)
 		{
 			parentProject = project;
+			this.task = task;
+			this.taskType = taskType;
 		}
 
 		// Rules (inferred) for property values incase of empty data
@@ -69,17 +70,13 @@ namespace Microsoft.Build.BuildEngine {
 		// string/
 		//   ITaskItem[]     empty/whitespace   null	        No
 		
-		public void Prepare (ITask task, XmlElement taskElement,
-				     IDictionary <string, string> parameters, Type taskType)
+		public void Prepare (IDictionary <string, string> parameters)
 		{
 			Dictionary <string, object>	values;
 			PropertyInfo	currentProperty;
 			PropertyInfo[]	properties;
 			object		value;
 			
-			this.task = task;
-			this.taskElement = taskElement;
-			this.taskType = taskType;
 			values = new Dictionary <string, object> (StringComparer.OrdinalIgnoreCase);
 			
 			foreach (KeyValuePair <string, string> de in parameters) {
@@ -131,20 +128,18 @@ namespace Microsoft.Build.BuildEngine {
 				InitializeParameter (pi, val);
 			}
 		}
-		
+
 		public bool Execute ()
 		{
 			return task.Execute ();
 		}
 		
-		public void PublishOutput ()
+		public void PublishOutput (XmlElement taskElement, Func<PropertyInfo, object> valueProvider)
 		{
 			XmlElement	xmlElement;
-			PropertyInfo	propertyInfo;
 			string		propertyName;
 			string		taskParameter;
 			string		itemName;
-			object		o;
 		
 			foreach (XmlNode xmlNode in taskElement.ChildNodes) {
 				if (!(xmlNode is XmlElement))
@@ -165,16 +160,17 @@ namespace Microsoft.Build.BuildEngine {
 				taskParameter = xmlElement.GetAttribute ("TaskParameter");
 				itemName = xmlElement.GetAttribute ("ItemName");
 				propertyName = xmlElement.GetAttribute ("PropertyName");
-				
-				propertyInfo = taskType.GetProperty (taskParameter, BindingFlags.Public | BindingFlags.Instance |
-							BindingFlags.IgnoreCase);
+
+				var propertyInfo = taskType.GetProperty (taskParameter, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+
 				if (propertyInfo == null)
-					throw new InvalidProjectFileException (String.Format (
-						"The parameter '{0}' was not found for the '{1}' task.", taskParameter, taskElement.Name));
+					throw new InvalidProjectFileException (String.Format ("The parameter '{0}' was not found for the '{1}' task.", taskParameter, taskElement.Name));
+
 				if (!propertyInfo.IsDefined (outputAttribute, false))
-					throw new InvalidProjectFileException ("This is not output property.");
+					throw new InvalidProjectFileException ("This is not output property.");				
 				
-				o = propertyInfo.GetValue (task, null);
+				var o = valueProvider (propertyInfo);
+
 				if (itemName != String.Empty) {
 					PublishItemGroup (propertyInfo, o, itemName);
 				} else {
@@ -259,6 +255,11 @@ namespace Microsoft.Build.BuildEngine {
 			result = e.ConvertTo (parentProject, type, ExpressionOptions.ExpandItemRefs);
 			
 			return true;
+		}
+
+		public object ValueFromExecution (PropertyInfo propertyInfo)
+		{
+			return propertyInfo.GetValue (task, null);
 		}
 	}
 }
