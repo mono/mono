@@ -38,6 +38,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		bool Execute ();
+		bool ResolveOutputItems ();
 
 		IEnumerable<string> GetAttributes ();
 	}
