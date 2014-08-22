@@ -44,6 +44,7 @@ namespace Mono.CSharp
 	using System.Text.RegularExpressions;
 	using System.Threading;
 	using System.Collections.Generic;
+	using System.Globalization;
 	
 	internal class CSharpCodeCompiler : CSharpCodeGenerator, ICodeCompiler
 	{
@@ -194,7 +195,14 @@ namespace Mono.CSharp
 			if (Environment.GetEnvironmentVariable ("MONO_TESTS_IN_PROGRESS") != null) {
 				string monoPath = Environment.GetEnvironmentVariable ("MONO_PATH");
 				if (!String.IsNullOrEmpty (monoPath)) {
-					monoPath = monoPath.Replace ("/class/lib/net_2_0", "/class/lib/net_4_0");
+					const string basePath = "/class/lib/";
+					const string profile = "net_2_0";
+					var basePathIndex = monoPath.IndexOf (basePath, StringComparison.Ordinal);
+					if (basePathIndex > 0 && basePathIndex + basePath.Length + profile.Length <= monoPath.Length) {
+						var currentProfile = monoPath.Substring (basePathIndex + basePath.Length, profile.Length);
+						if (currentProfile.Equals (profile, StringComparison.OrdinalIgnoreCase))
+							monoPath = monoPath.Replace (basePath + currentProfile, basePath + "net_4_0");
+					}
 					mcs.StartInfo.EnvironmentVariables ["MONO_PATH"] = monoPath;
 				}
 			}
