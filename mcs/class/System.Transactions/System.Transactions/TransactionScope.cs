@@ -62,7 +62,6 @@ namespace System.Transactions
 		{
 		}
 
-		[MonoTODO ("No TimeoutException is thrown")]
 		public TransactionScope (TransactionScopeOption option,
 			TimeSpan timeout)
 		{
@@ -92,6 +91,10 @@ namespace System.Transactions
 			completed = false;
 			isRoot = false;
 			nested = 0;
+
+			if (timeout < TimeSpan.Zero)
+				throw new ArgumentOutOfRangeException ("timeout");
+
 			this.timeout = timeout;
 
 			oldTransaction = Transaction.CurrentInternal;
