@@ -127,31 +127,31 @@ namespace Microsoft.Build.Utilities
 			hasLoggedErrors = true;
 		}
 
-		public void LogErrorFromException (Exception e)
+		public void LogErrorFromException (Exception exception)
 		{
-			LogErrorFromException (e, true);
+			LogErrorFromException (exception, true);
 		}
 
-		public void LogErrorFromException (Exception e,
+		public void LogErrorFromException (Exception exception,
 						   bool showStackTrace)
 		{
-			LogErrorFromException (e, showStackTrace, true, String.Empty);
+			LogErrorFromException (exception, showStackTrace, true, String.Empty);
 		}
 
 		[MonoTODO ("Arguments @showDetail and @file are not honored")]
-		public void LogErrorFromException (Exception e,
+		public void LogErrorFromException (Exception exception,
 						   bool showStackTrace, bool showDetail, string file)
 		{
-			if (e == null)
-				throw new ArgumentNullException ("e");
+			if (exception == null)
+				throw new ArgumentNullException ("exception");
 		
 			StringBuilder sb = new StringBuilder ();
-			sb.Append (e.Message);
+			sb.Append (exception.Message);
 			if (showStackTrace == true)
-				sb.Append (e.StackTrace);
+				sb.Append (exception.StackTrace);
 			BuildErrorEventArgs beea = new BuildErrorEventArgs (
 				null, null, buildEngine.ProjectFileOfTaskNode, 0, 0, 0, 0, sb.ToString (),
-				e.HelpLink, e.Source);
+				exception.HelpLink, exception.Source);
 			buildEngine.LogErrorEvent (beea);
 			hasLoggedErrors = true;
 		}
@@ -239,16 +239,16 @@ namespace Microsoft.Build.Utilities
 				messageResourceName), messageArgs);
 		}
 
-		public bool LogMessagesFromFile (string filename)
+		public bool LogMessagesFromFile (string fileName)
 		{
-			return LogMessagesFromFile (filename, MessageImportance.Normal);
+			return LogMessagesFromFile (fileName, MessageImportance.Normal);
 		}
 
-		public bool LogMessagesFromFile (string filename,
+		public bool LogMessagesFromFile (string fileName,
 						 MessageImportance messageImportance)
 		{
 			try {
-				StreamReader sr = new StreamReader (filename);
+				StreamReader sr = new StreamReader (fileName);
 				LogMessage (messageImportance, sr.ReadToEnd (),
 					null);
 				sr.Close ();
@@ -276,14 +276,14 @@ namespace Microsoft.Build.Utilities
 		}
 
 		public bool LogMessageFromText (string lineOfText,
-						MessageImportance importance)
+						MessageImportance messageImportance)
 		{
 			if (lineOfText == null)
 				throw new ArgumentNullException ("lineOfText");
 
 			BuildMessageEventArgs bmea = new BuildMessageEventArgs (
 				lineOfText, helpKeywordPrefix,
-				null, importance);
+				null, messageImportance);
 			buildEngine.LogMessageEvent (bmea);
 
 			return true;
@@ -313,18 +313,18 @@ namespace Microsoft.Build.Utilities
 			buildEngine.LogWarningEvent (bwea);
 		}
 
-		public void LogWarningFromException (Exception e)
+		public void LogWarningFromException (Exception exception)
 		{
-			LogWarningFromException (e, false);
+			LogWarningFromException (exception, false);
 		}
 
-		public void LogWarningFromException (Exception e,
+		public void LogWarningFromException (Exception exception,
 						     bool showStackTrace)
 		{
 			StringBuilder sb = new StringBuilder ();
-			sb.Append (e.Message);
+			sb.Append (exception.Message);
 			if (showStackTrace)
-				sb.Append (e.StackTrace);
+				sb.Append (exception.StackTrace);
 			LogWarning (null, null, null, null, 0, 0, 0, 0,
 				sb.ToString (), null);
 		}

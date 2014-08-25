@@ -3,8 +3,8 @@ namespace Microsoft.Build.Framework
 {
 	public enum RegisteredTaskObjectLifetime
 	{
-		AppDomain,
-		Build
+		Build,
+		AppDomain
 	}
 }
 #endif

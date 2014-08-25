@@ -610,12 +610,12 @@ namespace Microsoft.Build.Tasks {
 			get { return findSerializationAssemblies; }
 			set { findSerializationAssemblies = value; }
 		}
-		
+/*		
 		public string[] InstalledAssemblyTables {
 			get { return installedAssemblyTables; }
 			set { installedAssemblyTables = value; }
 		}
-		
+*/		
 		[Output]
 		public ITaskItem[] RelatedFiles {
 			get { return relatedFiles; }

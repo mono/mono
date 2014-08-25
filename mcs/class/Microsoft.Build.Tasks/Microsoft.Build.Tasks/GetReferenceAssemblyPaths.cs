@@ -222,7 +222,6 @@ namespace Microsoft.Build.Tasks
 							"It should have either 2 or 3 comma separated components.", moniker_literal);
 		}
 
-		[Required]
 		public string TargetFrameworkMoniker { get; set; }
 
 		public string RootPath { get; set; }
@@ -233,10 +232,10 @@ namespace Microsoft.Build.Tasks
 		public string TargetFrameworkMonikerDisplayName { get; set; }
 
 		[Output]
-		public string[] ReferenceAssemblyPaths { get; set; }
+		public string[] ReferenceAssemblyPaths { get; private set; }
 
 		[Output]
-		public string[] FullFrameworkReferenceAssemblyPaths { get; set; }
+		public string[] FullFrameworkReferenceAssemblyPaths { get; private set; }
 
 		static string DefaultFrameworksBasePath {
 			get {
