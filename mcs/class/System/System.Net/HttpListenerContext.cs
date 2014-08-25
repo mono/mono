@@ -32,6 +32,11 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Security.Principal;
 using System.Text;
+#if NET_4_5
+using System.Threading.Tasks;
+using System.Net.WebSockets;
+#endif
+
 namespace System.Net {
 	public sealed class HttpListenerContext {
 		HttpListenerRequest request;
@@ -133,6 +138,23 @@ namespace System.Net {
 				return null;
 			} 
 		}
+
+#if NET_4_5
+		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, int receiveBufferSize, TimeSpan keepAliveInterval)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, int receiveBufferSize, TimeSpan keepAliveInterval, ArraySegment<byte> internalBuffer)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
 #endif
