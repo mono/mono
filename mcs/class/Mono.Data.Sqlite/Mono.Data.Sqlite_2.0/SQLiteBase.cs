@@ -206,8 +206,13 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
         int n = UnsafeNativeMethods.sqlite3_close_interop(db);
 #else
-      ResetConnection(db);
-      int n = UnsafeNativeMethods.sqlite3_close(db);
+        ResetConnection(db);
+        int n;
+        try {
+          n = UnsafeNativeMethods.sqlite3_close_v2(db);
+        } catch (EntryPointNotFoundException) {
+          n = UnsafeNativeMethods.sqlite3_close(db);
+        }
 #endif
         if (n > 0) throw new SqliteException(n, SQLiteLastError(db));
       }
