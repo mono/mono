@@ -731,10 +731,10 @@ namespace Mono.CSharp
 		public sealed class BackingField : Field
 		{
 			readonly Property property;
+			const Modifiers DefaultModifiers = Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | Modifiers.DEBUGGER_HIDDEN;
 
 			public BackingField (Property p, bool readOnly)
-				: base (p.Parent, p.type_expr,
-				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
+				: base (p.Parent, p.type_expr, DefaultModifiers | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				new MemberName ("<" + p.GetFullName (p.MemberName) + ">k__BackingField", p.Location), null)
 			{
 				this.property = p;
