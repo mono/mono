@@ -52,6 +52,11 @@ namespace System.Security.Principal {
 
 		static private IntPtr invalidWindows = IntPtr.Zero;
 
+#if NET_4_5
+		[NonSerialized]
+		public new const string DefaultIssuer = "AD AUTHORITY";
+#endif
+
 		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (IntPtr userToken) 
 			: this (userToken, null, WindowsAccountType.Normal, false)

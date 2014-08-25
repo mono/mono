@@ -33,6 +33,10 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO
 {
@@ -47,6 +51,9 @@ namespace System.IO
 		long current_position;
 #if NET_4_0
 		SafeBuffer safebuffer;
+#endif
+#if NET_4_5
+		Task<int> read_task;
 #endif
 		
 		internal event EventHandler Closed;
@@ -209,6 +216,36 @@ namespace System.IO
 			return progress;
 		}
 
+#if NET_4_5
+		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException("buffer");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException("offset", "Non-negative number required.");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count", "Non-negative number required.");
+			if ((buffer.Length - offset) < count)
+				throw new ArgumentException("The length of the buffer array minus the offset parameter is less than the count parameter");
+
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants<int>.Canceled;
+
+			try {
+				count = Read (buffer, offset, count);
+
+				// Try not to allocate a new task for every buffer read
+				if (read_task == null || read_task.Result != count)
+					read_task = Task<int>.FromResult (count);
+
+				return read_task;
+			} catch (Exception ex) {
+				return Task<int>.FromException (ex);
+			}
+		}
+
+#endif
+
 		public override int ReadByte ()
 		{
 			if (closed)
@@ -293,6 +330,21 @@ namespace System.IO
 			//This method performs no action for this class
 			//but is included as part of the Stream base class
 		}
+
+#if NET_4_5
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants.Canceled;
+
+			try {
+				Flush ();
+				return TaskConstants.Finished;
+			} catch (Exception ex) {
+				return Task<object>.FromException (ex);
+			}
+		}
+#endif	
 		 
 		protected override void Dispose (bool disposing)
 		{
@@ -349,6 +401,32 @@ namespace System.IO
 			if (current_position > length)
 				length = current_position;
 		}
+
+#if NET_4_5
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException("The buffer parameter is a null reference");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException("offset", "Non-negative number required.");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count", "Non-negative number required.");
+			if ((buffer.Length - offset) < count)
+				throw new ArgumentException("The length of the buffer array minus the offset parameter is less than the count parameter");
+			if (current_position > capacity - count)
+				throw new NotSupportedException ("Unable to expand length of this stream beyond its capacity.");
+
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants.Canceled;
+
+			try {
+				Write (buffer, offset, count);
+				return TaskConstants.Finished;
+			} catch (Exception ex) {
+				return Task<object>.FromException (ex);
+			}
+		}
+#endif
 		
 		public override void WriteByte (byte value)
 		{

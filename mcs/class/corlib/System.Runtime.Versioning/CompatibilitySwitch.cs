@@ -1,8 +1,8 @@
 //
-// Claim.cs
+// CompatibilitySwitch.cs
 //
 // Authors:
-//  Miguel de Icaza (miguel@xamarin.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2014 Xamarin Inc
 //
@@ -25,18 +25,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
-namespace System.Security.Claims {
+#if NET_4_5
 
-	public static class AuthenticationTypes {
-		public const string Basic = "Basic";
-		public const string Federation = "Federation";
-		public const string Kerberos = "Kerberos";
-		public const string Negotiate = "Negotiate";
-		public const string Password = "Password";
-		public const string Signature = "Signature";
-		public const string Windows = "Windows";
-		public const string X509 = "X509";
+namespace System.Runtime.Versioning {
+	public static class CompatibilitySwitch
+	{
+		public static bool IsEnabled (string compatibilitySwitchName)
+		{
+			return false;
+		}
+
+		public static string GetValue (string compatibilitySwitchName)
+		{
+			return null;
+		}
 	}
 }
+
+#endif

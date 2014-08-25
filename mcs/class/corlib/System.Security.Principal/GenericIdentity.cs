@@ -29,6 +29,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 #if NET_4_5
 using System.Security.Claims;
 #endif
@@ -71,6 +72,13 @@ namespace System.Security.Principal {
 		}
 
 #if NET_4_5
+		protected GenericIdentity (GenericIdentity identity)
+			: base (identity)
+		{
+		}
+#endif
+
+#if NET_4_5
 		override
 #else
 		virtual
@@ -102,5 +110,13 @@ namespace System.Security.Principal {
 				return (m_name.Length > 0);
 			}
 		}
+
+#if NET_4_5
+		public override IEnumerable<Claim> Claims {
+			get {
+				return base.Claims;
+			}
+		}
+#endif
 	}
 }
