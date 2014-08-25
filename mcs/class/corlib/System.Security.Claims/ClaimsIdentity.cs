@@ -260,7 +260,7 @@ namespace System.Security.Claims {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 			foreach (var c in claims){
-				if (string.Equals (c.Type, type, StringComparison.OrdinalIgnoreCase) && string.Equals (c.Value, value, StringComparison.OrdinalIgnoreCase))
+				if (string.Equals (c.Type, type, StringComparison.OrdinalIgnoreCase) && c.Value == value)
 					return true;
 			}
 			return false;

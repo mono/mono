@@ -128,7 +128,7 @@ namespace MonoTests.System.Security.Claims
 		public void EnumClaimsCtorWithClaimsWithNameWorks ()
 		{
 			var id = new ClaimsIdentity (
-				       new [] {
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 				});
@@ -148,7 +148,7 @@ namespace MonoTests.System.Security.Claims
 		public void EnumClaimsCtorWithClaimsWithoutNameWorks ()
 		{
 			var id = new ClaimsIdentity (
-				       new [] {
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType + "_x", "claim_name_value"), 
 				});
@@ -176,7 +176,7 @@ namespace MonoTests.System.Security.Claims
 				new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 				new Claim ("claim_role_type", "claim_role_value"), 
 			},
-				       "test_auth_type", "test_name_type", "claim_role_type");
+					   "test_auth_type", "test_name_type", "claim_role_type");
 			Assert.AreEqual ("test_auth_type", id.AuthenticationType, "#1");
 			Assert.IsNull (id.Actor, "#2");
 			Assert.IsNull (id.BootstrapContext, "#3");
@@ -227,11 +227,11 @@ namespace MonoTests.System.Security.Claims
 		public void EnumClaimsAuthNameRoleTypeCtorWithTwoClaimsAndTypesEmptyWorks ()
 		{
 			var id = new ClaimsIdentity (
-				       new [] {
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 				},
-				       "", "", "");
+					   "", "", "");
 			//NOTE: According to MSDN the id.AuthenticationType should be null, but it isn't on .Net 4.5
 			//Assert.IsNull (id.AuthenticationType, "#1");
 			Assert.AreEqual ("", id.AuthenticationType, "#1");
@@ -250,11 +250,11 @@ namespace MonoTests.System.Security.Claims
 		public void EnumClaimsAuthNameRoleTypeCtorWithTwoClaimsAndTypesNullWorks ()
 		{
 			var id = new ClaimsIdentity (
-				       new [] {
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 				}, 
-				       (string)null, (string)null, (string)null);
+					   (string)null, (string)null, (string)null);
 			Assert.IsNull (id.AuthenticationType, "#1");
 			Assert.IsNull (id.Actor, "#2");
 			Assert.IsNull (id.BootstrapContext, "#3");
@@ -309,12 +309,12 @@ namespace MonoTests.System.Security.Claims
 		public void IdentityEnumClaimsAuthNameRoleTypeCtorNullClaimsArrayEmptyTypesWorks ()
 		{
 			var id = new ClaimsIdentity (
-				       null,
-				       new [] {
+					   null,
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 				}, 
-				       "", "", "");
+					   "", "", "");
 			//NOTE: According to MSDN the id.AuthenticationType should be null, but it isn't on .Net 4.5
 			//Assert.IsNull (id.AuthenticationType, "#1");
 			Assert.AreEqual ("", id.AuthenticationType, "#1");
@@ -333,12 +333,12 @@ namespace MonoTests.System.Security.Claims
 		public void IdentityEnumClaimsAuthNameRoleTypeCtorNullClaimsArrayNullsWorks ()
 		{
 			var id = new ClaimsIdentity (
-				       null,
-				       new [] {
+					   null,
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 				},
-				       (string)null, (string)null, (string)null);
+					   (string)null, (string)null, (string)null);
 			Assert.IsNull (id.AuthenticationType, "#1");
 			Assert.IsNull (id.Actor, "#2");
 			Assert.IsNull (id.BootstrapContext, "#3");
@@ -355,13 +355,13 @@ namespace MonoTests.System.Security.Claims
 		public void IdentityEnumClaimsAuthNameRoleTypeCtorNullIdentityRestFilledWorks ()
 		{
 			var id = new ClaimsIdentity (
-				       null,
-				       new [] {
+					   null,
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 					new Claim ("claim_role_type", "claim_role_value"), 
 				},
-				       "test_auth_type", "test_name_type", "claim_role_type");
+					   "test_auth_type", "test_name_type", "claim_role_type");
 			Assert.AreEqual ("test_auth_type", id.AuthenticationType, "#1");
 			Assert.IsNull (id.Actor, "#2");
 			Assert.IsNull (id.BootstrapContext, "#3");
@@ -378,8 +378,8 @@ namespace MonoTests.System.Security.Claims
 		public void IdentityEnumClaimsAuthNameRoleTypeCtorClaimsIdentityRestFilledWorks ()
 		{
 			var baseId = new ClaimsIdentity (
-				           new[] { new Claim ("base_claim_type", "base_claim_value") },
-				           "base_auth_type");
+						   new[] { new Claim ("base_claim_type", "base_claim_value") },
+						   "base_auth_type");
 
 			baseId.Actor = new ClaimsIdentity ("base_actor");
 			baseId.BootstrapContext = "bootstrap_context";
@@ -388,13 +388,13 @@ namespace MonoTests.System.Security.Claims
 			Assert.IsTrue (baseId.IsAuthenticated, "#0");
 
 			var id = new ClaimsIdentity (
-				       baseId,
-				       new [] {
+					   baseId,
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 					new Claim ("claim_role_type", "claim_role_value"), 
 				},
-				       "test_auth_type", "test_name_type", "claim_role_type");
+					   "test_auth_type", "test_name_type", "claim_role_type");
 
 			Assert.AreEqual ("test_auth_type", id.AuthenticationType, "#1");
 
@@ -417,13 +417,13 @@ namespace MonoTests.System.Security.Claims
 			var baseId = new TestIdentity { Name = "base_name", AuthenticationType = "TestId_AuthType" };
 
 			var id = new ClaimsIdentity (
-				       baseId,
-				       new [] {
+					   baseId,
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 					new Claim ("claim_role_type", "claim_role_value"), 
 				},
-				       "", "", "");
+					   "", "", "");
 
 			Assert.AreEqual ("TestId_AuthType", id.AuthenticationType, "#1");
 
@@ -447,8 +447,8 @@ namespace MonoTests.System.Security.Claims
 		public void IdentityEnumClaimsCtorClaimsIdentityClaimsWorks ()
 		{
 			var baseId = new ClaimsIdentity (
-				           new [] { new Claim ("base_claim_type", "base_claim_value") },
-				           "base_auth_type", "base_name_claim_type", null);
+						   new [] { new Claim ("base_claim_type", "base_claim_value") },
+						   "base_auth_type", "base_name_claim_type", null);
 
 			baseId.Actor = new ClaimsIdentity ("base_actor");
 			baseId.BootstrapContext = "bootstrap_context";
@@ -457,8 +457,8 @@ namespace MonoTests.System.Security.Claims
 			Assert.IsTrue (baseId.IsAuthenticated, "#0");
 
 			var id = new ClaimsIdentity (
-				       baseId,
-				       new [] {
+					   baseId,
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 					new Claim ("claim_role_type", "claim_role_value"), 
@@ -487,8 +487,8 @@ namespace MonoTests.System.Security.Claims
 			};
 
 			var id = new ClaimsIdentity (
-				       baseId,
-				       new [] {
+					   baseId,
+					   new [] {
 					new Claim ("claim_type", "claim_value"),
 					new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
 					new Claim ("claim_role_type", "claim_role_value"), 
@@ -524,6 +524,23 @@ namespace MonoTests.System.Security.Claims
 			var f2 = id.FindAll ("tyPE").First ();
 			Assert.AreEqual ("value", f2.Value, "#2");
 		}
+
+		[Test]
+		public void HasClaim_typeValue_Works()
+		{
+			var id = new ClaimsIdentity(
+			new[] {
+				new Claim ("claim_type", "claim_value"),
+				new Claim (ClaimsIdentity.DefaultNameClaimType, "claim_name_value"), 
+				new Claim ("claim_role_type", "claim_role_value"), 
+			}, "test_authority");
+
+			Assert.IsTrue (id.HasClaim("claim_type", "claim_value"), "#1");
+			Assert.IsTrue (id.HasClaim("cLaIm_TyPe", "claim_value"), "#2");
+			Assert.IsFalse (id.HasClaim("claim_type", "cLaIm_VaLuE"), "#3");
+			Assert.IsFalse (id.HasClaim("Xclaim_type", "claim_value"), "#4");
+			Assert.IsFalse (id.HasClaim("claim_type", "Xclaim_value"), "#5");
+	  }
 	}
 
 	class TestIdentity : IIdentity
