@@ -123,8 +123,10 @@ namespace MonoTests.System.IO
 			};
 
 			Assert.IsFalse (created);
+			Assert.IsFalse (File.Exists (path_a));
 
-			File.WriteAllText (path_a, "this should create the file");
+			// Since the file doesn't exist yet, this will create it.
+			Process.Start ("touch", path_a);
 
 			Thread.Sleep (20);
 
