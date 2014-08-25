@@ -29,9 +29,9 @@ namespace Mono.CSharp {
 		V_4 = 4,
 		V_5 = 5,
 		V_6 = 6,
-		Future = 100,
+		Experimental = 100,
 
-		Default = LanguageVersion.Future,
+		Default = LanguageVersion.V_6,
 	}
 
 	public enum RuntimeVersion
@@ -1159,8 +1159,8 @@ namespace Mono.CSharp {
 				case "6":
 					settings.Version = LanguageVersion.V_6;
 					return ParseResult.Success;
-				case "future":
-					settings.Version = LanguageVersion.Future;
+				case "experimental":
+					settings.Version = LanguageVersion.Experimental;
 					return ParseResult.Success;
 				}
 
