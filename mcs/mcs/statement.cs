@@ -4635,13 +4635,15 @@ namespace Mono.CSharp {
 
 		class MissingBreak : Statement
 		{
-			SwitchLabel label;
+			readonly SwitchLabel label;
 
 			public MissingBreak (SwitchLabel sl)
 			{
 				this.label = sl;
 				this.loc = sl.loc;
 			}
+
+			public bool FallOut { get; set; }
 
 			protected override void DoEmit (EmitContext ec)
 			{
@@ -4653,9 +4655,13 @@ namespace Mono.CSharp {
 
 			protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 			{
-				fc.Report.Error (163, loc, "Control cannot fall through from one case label `{0}' to another",
-					label.GetSignatureForError ());
-
+				if (FallOut) {
+					fc.Report.Error (8070, loc, "Control cannot fall out of switch statement through final case label `{0}'",
+						label.GetSignatureForError ());
+				} else {
+					fc.Report.Error (163, loc, "Control cannot fall through from one case label `{0}' to another",
+						label.GetSignatureForError ());
+				}
 				return true;
 			}
 		}
@@ -5237,7 +5243,10 @@ namespace Mono.CSharp {
 
 			if (!section_rc.IsUnreachable && prev_label != null) {
 				prev_label.SectionStart = false;
-				var s = new MissingBreak (prev_label);
+				var s = new MissingBreak (prev_label) {
+					FallOut = true
+				};
+
 				s.MarkReachable (rc);
 				block.Statements.Add (s);
 			}
