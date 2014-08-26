@@ -24,10 +24,10 @@ namespace MonoTests.System.Security.Claims
 		{
 			var p = new ClaimsPrincipal ();
 			Assert.IsNotNull (p.Identities, "#1");
-			Assert.IsEmpty (p.Identities.ToArray (), "#2");
+			Assert.AreEqual (p.Identities.ToArray ().Length, 0, "#2");
 
 			Assert.IsNotNull (p.Claims, "#3");
-			Assert.IsEmpty (p.Claims.ToArray (), "#4");
+			Assert.AreEqual (p.Claims.ToArray ().Length, 0, "#4");
 
 			Assert.IsNull (p.Identity, "#5");
 		}
@@ -145,10 +145,10 @@ namespace MonoTests.System.Security.Claims
 		{
 			var p = new ClaimsPrincipal (new TestPrincipal ());
 			Assert.IsNotNull (p.Identities, "#1");
-			Assert.IsNotEmpty (p.Identities.ToArray (), "#2");
+			Assert.AreEqual (p.Identities.ToArray ().Length, 1, "#2");
 
 			Assert.IsNotNull (p.Claims, "#3");
-			Assert.IsEmpty (p.Claims.ToArray (), "#4");
+			Assert.AreEqual (p.Claims.ToArray ().Length, 0, "#4");
 
 			Assert.IsNotNull (p.Identity, "#5");
 			Assert.IsFalse (p.Identity.IsAuthenticated, "#6");
@@ -160,10 +160,10 @@ namespace MonoTests.System.Security.Claims
 		{
 			var p = new ClaimsPrincipal (new ClaimsPrincipal ());
 			Assert.IsNotNull (p.Identities, "#1");
-			Assert.IsEmpty (p.Identities.ToArray (), "#2");
+			Assert.AreEqual (p.Identities.ToArray ().Length, 0, "#2");
 
 			Assert.IsNotNull (p.Claims, "#3");
-			Assert.IsEmpty (p.Claims.ToArray (), "#4");
+			Assert.AreEqual (p.Claims.ToArray ().Length, 0, "#4");
 
 			Assert.IsNull (p.Identity, "#5");
 		}
@@ -210,9 +210,9 @@ namespace MonoTests.System.Security.Claims
 		{
 			var p = new ClaimsPrincipal (new ClaimsIdentity [0]);
 			Assert.IsNotNull (p.Identities, "#1");
-			Assert.IsEmpty (p.Identities.ToArray (), "#2");
+			Assert.AreEqual (p.Identities.ToArray ().Length, 0, "#2");
 			Assert.IsNotNull (p.Claims, "#3");
-			Assert.IsEmpty (p.Claims.ToArray (), "#4");
+			Assert.AreEqual (p.Claims.ToArray ().Length, 0, "#4");
 			Assert.IsNull (p.Identity, "#5");
 		}
 
