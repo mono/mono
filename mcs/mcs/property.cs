@@ -1040,7 +1040,7 @@ namespace Mono.CSharp
 					Location)));
 				args.Add (new Argument (new LocalVariableReference (obj1, Location)));
 
-				var cas = Module.PredefinedMembers.InterlockedCompareExchange_T.Resolve (Location);
+				var cas = Module.PredefinedMembers.InterlockedCompareExchange_T.Get ();
 				if (cas == null) {
 					// Workaround for cripled (e.g. microframework) mscorlib without CompareExchange
 					body.AddStatement (new Lock (
