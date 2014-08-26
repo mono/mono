@@ -151,6 +151,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public event AssemblyLoadEventHandler AssemblyLoaded;
+
 		public bool IgnorePrivateMembers { get; set; }
 
 		#endregion
@@ -955,6 +957,10 @@ namespace Mono.CSharp
 				assembly_2_definition.Add (assembly, def);
 				def.ReadAttributes ();
 				found = def;
+
+				var loaded = AssemblyLoaded;
+				if (loaded != null)
+					loaded (this, new AssemblyLoadEventArgs (assembly));
 			}
 
 			return found;
