@@ -1029,16 +1029,18 @@ namespace Mono.CSharp
 		/// <summary>
 		///    Loads the given assembly and exposes the API to the user.
 		/// </summary>
-		public void LoadAssembly (string file)
+		public Assembly LoadAssembly (string file)
 		{
 			var loader = new DynamicLoader (importer, ctx);
 			var assembly = loader.LoadAssemblyFile (file, false);
 			if (assembly == null)
-				return;
+				return null;
 
 			lock (evaluator_lock){
 				importer.ImportAssembly (assembly, module.GlobalRootNamespace);
 			}
+
+			return assembly;
 		}
 
 		/// <summary>
