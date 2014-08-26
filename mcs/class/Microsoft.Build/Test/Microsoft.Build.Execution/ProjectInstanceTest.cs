@@ -311,6 +311,34 @@ namespace MonoTests.Microsoft.Build.Execution
 		}
 
 		[Test]
+		public void ItemsAndPostEvaluationCondition ()
+		{
+			// target-assigned property X is not considered when evaluating condition for C.
+			string project_xml = @"<Project DefaultTargets='X;Y' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<ItemGroup>
+		<A Include='foo.txt' />
+		<B Condition='False' Include='bar.txt' />
+		<C Condition=""'$(X)'=='True'"" Include='baz.txt' />
+        </ItemGroup>
+        <Target Name='X'>
+    		<CreateProperty Value='True'>
+	    		<Output TaskParameter='Value' PropertyName='X' />
+		    </CreateProperty>
+        </Target>
+        <Target Name='Y'>
+		<Error Condition=""'@(C)'==''"" Text='missing C. X is $(X)' />
+        </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.ItemsAndPostEvaluationCondition.proj";
+			var proj = new ProjectInstance (root);
+			Assert.AreEqual (1, proj.Items.Count, "Count1");
+			Assert.IsFalse (proj.Build (), "Build");
+			Assert.AreEqual (1, proj.Items.Count, "Count2");
+		}
+
+		[Test]
 		[Category ("NotWorking")] // until we figure out why it fails on wrench.
 		public void ItemsInTargets ()
 		{
@@ -340,6 +368,33 @@ namespace MonoTests.Microsoft.Build.Execution
 			// make sure items are stored after build.
 			Assert.IsTrue (items.Any (), "items.Any");
 			Assert.IsTrue (!string.IsNullOrEmpty (items.First ().EvaluatedInclude), "item.EvaluatedInclude");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConditionalCyclicDependence ()
+		{
+			string project_xml = @"<Project DefaultTargets='Build' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<PropertyGroup>
+		<C>False</C>
+	</PropertyGroup>
+	<Target Name='Build' DependsOnTargets='ResolveReferences' />
+	<Target Name='Build2' DependsOnTargets='Bar' />
+	<Target Name='ResolveReferences' DependsOnTargets='Foo;Bar' />
+	<Target Name='Foo'>
+		<CreateProperty Value='True'>
+			<Output TaskParameter='Value' PropertyName='C' />
+		</CreateProperty>
+	</Target>
+	<Target Name='Bar' Condition='!($(C))' DependsOnTargets='ResolveReferences'>
+	</Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.ConditionalCyclicDependence.proj";
+			var proj = new ProjectInstance (root, null, "4.0", ProjectCollection.GlobalProjectCollection);
+			Assert.IsTrue (proj.Build (), "#1");
+			Assert.IsFalse (proj.Build ("Build2", new ILogger [0]), "#2");
 		}
 	}
 	

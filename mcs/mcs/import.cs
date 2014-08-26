@@ -1293,6 +1293,23 @@ namespace Mono.CSharp
 			public string DefaultIndexerName;
 			public bool? CLSAttributeValue;
 			public TypeSpec CoClass;
+
+			static bool HasMissingType (ConstructorInfo ctor)
+			{
+#if STATIC
+				//
+				// Mimic odd csc behaviour where missing type on predefined
+				// attributes means the attribute is silently ignored. This can
+				// happen with PCL facades
+				//
+				foreach (var p in ctor.GetParameters ()) {
+					if (p.ParameterType.__ContainsMissingType)
+						return true;
+				}
+#endif
+
+				return false;
+			}
 			
 			public static AttributesBag Read (MemberInfo mi, MetadataImporter importer)
 			{
@@ -1367,6 +1384,9 @@ namespace Mono.CSharp
 							if (dt.Namespace != "System")
 								continue;
 
+							if (HasMissingType (a.Constructor))
+								continue;
+
 							if (bag == null)
 								bag = new AttributesBag ();
 
@@ -1383,6 +1403,9 @@ namespace Mono.CSharp
 						// Interface only attribute
 						if (name == "CoClassAttribute") {
 							if (dt.Namespace != "System.Runtime.InteropServices")
+								continue;
+
+							if (HasMissingType (a.Constructor))
 								continue;
 
 							if (bag == null)

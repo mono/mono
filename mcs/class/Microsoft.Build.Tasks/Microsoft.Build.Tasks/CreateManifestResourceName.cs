@@ -122,7 +122,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected abstract string CreateManifestName (string fileName,
 							      string linkFileName,
-							      string rootNamespace,
+							      string rootNamespaceName,
 							      string dependentUponFileName,
 							      Stream binaryStream);
 		

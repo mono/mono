@@ -33,7 +33,7 @@ typedef struct {
 
 #define ALIGN_TO(val,align) ((((size_t)val) + ((align) - 1)) & ~((align) - 1))
 
-static CRITICAL_SECTION unwind_mutex;
+static mono_mutex_t unwind_mutex;
 
 static MonoUnwindInfo **cached_info;
 static int cached_info_next, cached_info_size;
@@ -41,8 +41,8 @@ static GSList *cached_info_list;
 /* Statistics */
 static int unwind_info_size;
 
-#define unwind_lock() EnterCriticalSection (&unwind_mutex)
-#define unwind_unlock() LeaveCriticalSection (&unwind_mutex)
+#define unwind_lock() mono_mutex_lock (&unwind_mutex)
+#define unwind_unlock() mono_mutex_unlock (&unwind_mutex)
 
 #ifdef TARGET_AMD64
 static int map_hw_reg_to_dwarf_reg [] = { 0, 2, 1, 3, 7, 6, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
@@ -57,13 +57,15 @@ static int map_hw_reg_to_dwarf_reg [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 
 #define DWARF_DATA_ALIGN (-4)
 #define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (ARMREG_LR))
 #elif defined(TARGET_ARM64)
-#define NUM_REGS 32
+#define NUM_REGS 96
 #define DWARF_DATA_ALIGN (-8)
 /* LR */
 #define DWARF_PC_REG 30
 static int map_hw_reg_to_dwarf_reg [] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+	/* v8..v15 */
+	72, 73, 74, 75, 76, 77, 78, 79,
 };
 #elif defined (TARGET_X86)
 #ifdef __APPLE__
@@ -489,7 +491,7 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 {
 	Loc locations [NUM_REGS];
 	guint8 reg_saved [NUM_REGS];
-	int i, pos, reg, cfa_reg, cfa_offset, offset;
+	int i, pos, reg, cfa_reg = -1, cfa_offset = 0, offset;
 	guint8 *p;
 	guint8 *cfa_val;
 	UnwindState state_stack [1];
@@ -597,6 +599,7 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 	if (save_locations)
 		memset (save_locations, 0, save_locations_len * sizeof (mgreg_t*));
 
+	g_assert (cfa_reg != -1);
 	cfa_val = (guint8*)regs [mono_dwarf_reg_to_hw_reg (cfa_reg)] + cfa_offset;
 	for (i = 0; i < NUM_REGS; ++i) {
 		if (reg_saved [i] && locations [i].loc_type == LOC_OFFSET) {
@@ -614,7 +617,7 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 void
 mono_unwind_init (void)
 {
-	InitializeCriticalSection (&unwind_mutex);
+	mono_mutex_init_recursive (&unwind_mutex);
 
 	mono_counters_register ("Unwind info size", MONO_COUNTER_JIT | MONO_COUNTER_INT, &unwind_info_size);
 }
@@ -624,7 +627,7 @@ mono_unwind_cleanup (void)
 {
 	int i;
 
-	DeleteCriticalSection (&unwind_mutex);
+	mono_mutex_destroy (&unwind_mutex);
 
 	if (!cached_info)
 		return;

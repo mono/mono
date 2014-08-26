@@ -32,7 +32,7 @@ using System;
 namespace Microsoft.Build.Framework
 {
 	[Serializable]		
-	public abstract class LazyFormattedBuildEventArgs : BuildEventArgs {
+	public class LazyFormattedBuildEventArgs : BuildEventArgs {
 
 		string message, format;
 		object[] args;

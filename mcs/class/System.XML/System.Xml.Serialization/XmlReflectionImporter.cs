@@ -326,21 +326,21 @@ namespace System.Xml.Serialization {
 			return map;
 		}
 
-		XmlTypeMapping ImportClassMapping (Type type, XmlRootAttribute root, string defaultNamespace)
+		XmlTypeMapping ImportClassMapping (Type type, XmlRootAttribute root, string defaultNamespace, bool isBaseType = false)
 		{
 			TypeData typeData = TypeTranslator.GetTypeData (type);
-			return ImportClassMapping (typeData, root, defaultNamespace);
+			return ImportClassMapping (typeData, root, defaultNamespace, isBaseType);
 		}
 
-		XmlTypeMapping ImportClassMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
+		XmlTypeMapping ImportClassMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace, bool isBaseType = false)
 		{
 			Type type = typeData.Type;
 
+			if (!allowPrivateTypes && !isBaseType)
+				ReflectionHelper.CheckSerializableType (type, false);
+
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
-
-			if (!allowPrivateTypes)
-				ReflectionHelper.CheckSerializableType (type, false);
 			
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
@@ -372,7 +372,7 @@ namespace System.Xml.Serialization {
 				string ns = map.XmlTypeNamespace;
 				if (rmember.XmlAttributes.XmlIgnore) continue;
 				if (rmember.DeclaringType != null && rmember.DeclaringType != type) {
-					XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace);
+					XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace, true);
 					if (bmap.HasXmlTypeNamespace)
 						ns = bmap.XmlTypeNamespace;
 				}
@@ -400,7 +400,7 @@ namespace System.Xml.Serialization {
 
 			if (type.BaseType != null)
 			{
-				XmlTypeMapping bmap = ImportClassMapping (type.BaseType, root, defaultNamespace);
+				XmlTypeMapping bmap = ImportClassMapping (type.BaseType, root, defaultNamespace, true);
 				ClassMap cbmap = bmap.ObjectMap as ClassMap;
 				
 				if (type.BaseType != typeof (object)) {
@@ -1041,6 +1041,9 @@ namespace System.Xml.Serialization {
 
 				if (choiceEnumMap != null) {
 					string cname = choiceEnumMap.GetEnumName (choiceEnumType.FullName, elem.ElementName);
+					if (cname == null && elem.Namespace != null)
+						cname = choiceEnumMap.GetEnumName (choiceEnumType.FullName,
+							elem.Namespace.ToString () + ":" + elem.ElementName);
 					if (cname == null)
 						throw new InvalidOperationException (string.Format (
 							CultureInfo.InvariantCulture, "Type {0} is missing"

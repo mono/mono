@@ -276,7 +276,7 @@ namespace MonoTests.System.Threading.Tasks
 					tasks[i] = Task.Factory.StartNew (delegate { Thread.Sleep (0); });
 				}
 
-				Assert.IsTrue (Task.WaitAll (tasks, 2000));
+				Assert.IsTrue (Task.WaitAll (tasks, 5000));
 			}
 		}
 
@@ -1106,7 +1106,8 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			var task = new TaskFactory ().StartNew (() => { });
 			var ar = (IAsyncResult)task;
-			ar.AsyncWaitHandle.WaitOne ();
+			Assert.IsFalse (ar.CompletedSynchronously, "#1");
+			Assert.IsTrue (ar.AsyncWaitHandle.WaitOne (5000), "#2");
 		}
 
 		[Test]

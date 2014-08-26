@@ -41,7 +41,7 @@ using System.Collections.Specialized;
 
 namespace Microsoft.Build.Tasks
 {
-	public class CodeTaskFactory : ITaskFactory2
+	public class CodeTaskFactory : ITaskFactory
 	{
 		public CodeTaskFactory ()
 		{
@@ -51,11 +51,12 @@ namespace Microsoft.Build.Tasks
 		public void CleanupTask (ITask task)
 		{
 		}
-		public ITask CreateTask (IBuildEngine taskFactoryLoggingHost)
+		public ITask CreateTask (IBuildEngine loggingHost)
 		{
-			return CreateTask (taskFactoryLoggingHost, null);
+			return CreateTask (loggingHost, null);
 		}
-		public ITask CreateTask (IBuildEngine taskFactoryLoggingHost, IDictionary<string, string> taskIdentityParameters)
+		
+		ITask CreateTask (IBuildEngine taskFactoryLoggingHost, IDictionary<string, string> taskIdentityParameters)
 		{
 			if (assembly == null)
 				return null;
@@ -66,11 +67,11 @@ namespace Microsoft.Build.Tasks
 		{
 			return parameter_group != null ? parameter_group.Values.ToArray () : new TaskPropertyInfo [0];
 		}
-		public bool Initialize (string taskName, IDictionary<string, TaskPropertyInfo> parameterGroup, string taskBody, IBuildEngine taskFactoryLoggingHost)
+		public bool Initialize (string taskName, IDictionary<string, TaskPropertyInfo> taskParameters, string taskElementContents, IBuildEngine taskFactoryLoggingHost)
 		{
-			return Initialize (taskName, null, parameterGroup, taskBody, taskFactoryLoggingHost);
+			return Initialize (taskName, null, taskParameters, taskElementContents, taskFactoryLoggingHost);
 		}
-		public bool Initialize (string taskName, IDictionary<string, string> factoryIdentityParameters, IDictionary<string, TaskPropertyInfo> parameterGroup, string taskBody, IBuildEngine taskFactoryLoggingHost)
+		bool Initialize (string taskName, IDictionary<string, string> factoryIdentityParameters, IDictionary<string, TaskPropertyInfo> parameterGroup, string taskBody, IBuildEngine taskFactoryLoggingHost)
 		{
 			task_name = taskName;
 			if (parameterGroup != null)

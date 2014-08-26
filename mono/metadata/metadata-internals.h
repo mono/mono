@@ -249,7 +249,7 @@ struct _MonoImage {
 
 	GHashTable *szarray_cache;
 	/* This has a separate lock to improve scalability */
-	CRITICAL_SECTION szarray_cache_lock;
+	mono_mutex_t szarray_cache_lock;
 
 	/*
 	 * indexed by MonoMethodSignature 
@@ -346,7 +346,7 @@ struct _MonoImage {
 	 * No other runtime locks must be taken while holding this lock.
 	 * It's meant to be used only to mutate and query structures part of this image.
 	 */
-	CRITICAL_SECTION    lock;
+	mono_mutex_t    lock;
 };
 
 /*
@@ -362,7 +362,7 @@ typedef struct {
 
 	GHashTable *gclass_cache, *ginst_cache, *gmethod_cache, *gsignature_cache;
 
-	CRITICAL_SECTION    lock;
+	mono_mutex_t    lock;
 
 	/*
 	 * Memory for generic instances owned by this image set should be allocated from
@@ -524,6 +524,26 @@ struct _MonoMethodSignature {
 };
 
 #define MONO_SIZEOF_METHOD_SIGNATURE (sizeof (struct _MonoMethodSignature) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
+
+static inline gboolean
+image_is_dynamic (MonoImage *image)
+{
+#ifdef DISABLE_REFLECTION_EMIT
+	return FALSE;
+#else
+	return image->dynamic;
+#endif
+}
+
+static inline gboolean
+assembly_is_dynamic (MonoAssembly *assembly)
+{
+#ifdef DISABLE_REFLECTION_EMIT
+	return FALSE;
+#else
+	return assembly->dynamic;
+#endif
+}
 
 /* for use with allocated memory blocks (assumes alignment is to 8 bytes) */
 guint mono_aligned_addr_hash (gconstpointer ptr) MONO_INTERNAL;

@@ -65,6 +65,7 @@ Microsoft.Build.BuildEngine/TargetCollection.cs
 Microsoft.Build.BuildEngine/Target.cs
 Microsoft.Build.BuildEngine/TaskDatabase.cs
 Microsoft.Build.BuildEngine/TaskEngine.cs
+Microsoft.Build.BuildEngine/TaskExecutionMode.cs
 Microsoft.Build.BuildEngine/Token.cs
 Microsoft.Build.BuildEngine/Toolset.cs
 Microsoft.Build.BuildEngine/ToolsetCollection.cs

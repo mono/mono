@@ -26,12 +26,12 @@ namespace Microsoft.Build.Framework
 		{
 		}
 
-		public BuildEventContext (int nodeId, int projectInstanceId, int targetId, int projectContextId, int taskId)
-			: this (rnd.Next (), nodeId, projectInstanceId, targetId, projectContextId, taskId)
+		public BuildEventContext (int nodeId, int projectInstanceId, int projectContextId, int targetId, int taskId)
+			: this (rnd.Next (), nodeId, projectInstanceId, projectContextId, targetId, taskId)
 		{
 		}
 
-		public BuildEventContext (int submissionId, int nodeId, int projectInstanceId, int targetId, int projectContextId, int taskId)
+		public BuildEventContext (int submissionId, int nodeId, int projectInstanceId, int projectContextId, int targetId, int taskId)
 		{
 			SubmissionId = submissionId;
 			NodeId = nodeId;
@@ -56,9 +56,9 @@ namespace Microsoft.Build.Framework
 		public int TaskId { get; private set; }
 
 		// MSDN document says "true if the references are equal, false otherwise." but that doesn't make sense.
-		public override bool Equals (object other)
+		public override bool Equals (object obj)
 		{
-			var o = other as BuildEventContext;
+			var o = obj as BuildEventContext;
 			return (object) o != null &&
 				o.NodeId == NodeId &&
 				o.ProjectContextId == ProjectContextId &&

@@ -92,10 +92,12 @@ namespace System.Text.RegularExpressions
 			return splits.ToArray ();
 		}
 
-		virtual public Match Scan (Regex regex, string text, int start, int end)
+		public Match Scan (Regex regex, string text, int start, int end)
 		{
-			throw new NotImplementedException ("Scan method must be implemented in derived classes");
+			return Scan (regex, text, start, end, false);
 		}
+
+		public abstract Match Scan (Regex regex, string text, int start, int end, bool substring_mode);
 
 		virtual public string Result (string replacement, Match match)
 		{

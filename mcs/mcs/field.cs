@@ -709,7 +709,7 @@ namespace Mono.CSharp
 				loc = parameter.Location;
 			}
 
-			public override TypeSpec ResolveAsType (IMemberContext mc)
+			public override TypeSpec ResolveAsType (IMemberContext mc, bool allowUnboundTypeArguments)
 			{
 				return parameter.Type;
 			}

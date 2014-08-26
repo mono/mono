@@ -1,8 +1,9 @@
 //
 // System.Security.Principal.GenericIdentity.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
@@ -28,12 +29,22 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+#if NET_4_5
+using System.Security.Claims;
+#endif
 
 namespace System.Security.Principal {
 
 	[Serializable]
 	[ComVisible (true)]
-	public class GenericIdentity : IIdentity {
+	public class GenericIdentity :
+#if NET_4_5
+		ClaimsIdentity
+#else
+		IIdentity
+#endif
+	{
 
 		// field names are serialization compatible with .net
 		private string m_name;
@@ -49,6 +60,10 @@ namespace System.Security.Principal {
 
 			m_name = name;
 			m_type = type;
+
+#if NET_4_5
+			AddDefaultClaim (name);
+#endif
 		}
 
 		public GenericIdentity (string name)
@@ -56,22 +71,52 @@ namespace System.Security.Principal {
 		{
 		}
 
-		public virtual string AuthenticationType {
+#if NET_4_5
+		protected GenericIdentity (GenericIdentity identity)
+			: base (identity)
+		{
+		}
+#endif
+
+#if NET_4_5
+		override
+#else
+		virtual
+#endif
+		public string AuthenticationType {
 			get {
 				return m_type;
 			}
 		}
 
-		public virtual string Name {
+#if NET_4_5
+		override
+#else
+		virtual
+#endif
+		public string Name {
 			get {
 				return m_name;
 			}
 		}
 
-		public virtual bool IsAuthenticated {
+#if NET_4_5
+		override
+#else
+		virtual
+#endif
+		public bool IsAuthenticated {
 			get {
 				return (m_name.Length > 0);
 			}
 		}
+
+#if NET_4_5
+		public override IEnumerable<Claim> Claims {
+			get {
+				return base.Claims;
+			}
+		}
+#endif
 	}
 }

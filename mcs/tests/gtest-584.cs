@@ -66,6 +66,14 @@ class C
 		if ((s & e) != null)
 			return 15;
 
+		var res1 = (E?) 1 == null;
+		if (res1)
+			return 16;
+
+		var res2 = null == (E?) 1;
+		if (res2)
+			return 17;
+
 		Console.WriteLine ("ok");
 
 		return 0;
