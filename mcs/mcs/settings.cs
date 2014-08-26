@@ -1162,6 +1162,9 @@ namespace Mono.CSharp {
 				case "experimental":
 					settings.Version = LanguageVersion.Experimental;
 					return ParseResult.Success;
+				case "future":
+					report.Warning (8000, 1, "Language version `future' is no longer supported");
+					goto case "6";
 				}
 
 				report.Error (1617, "Invalid -langversion option `{0}'. It must be `ISO-1', `ISO-2', Default or value in range 1 to 6", value);
