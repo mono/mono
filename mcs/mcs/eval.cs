@@ -129,7 +129,12 @@ namespace Mono.CSharp
 		readonly CompilationSourceFile source_file;
 
 		int? listener_id;
-		
+
+		public event AssemblyLoadEventHandler AssemblyLoaded {
+			add { importer.AssemblyLoaded += value; }
+			remove { importer.AssemblyLoaded -= value; }
+		}
+
 		public Evaluator (CompilerContext ctx)
 		{
 			this.ctx = ctx;
