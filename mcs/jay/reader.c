@@ -40,6 +40,11 @@ static char sccsid[] = "@(#)reader.c	5.7 (Berkeley) 1/20/91";
 
 #include "defs.h"
 
+/* this resolves "unresolved symbol _snprintf" on Windows */	
+#if defined (_MSC_VER)
+#define snprintf _snprintf
+#endif
+
 /*  The line size must be a positive integer.  One hundred was chosen	*/
 /*  because few lines in Yacc input grammars exceed 100 characters.	*/
 /*  Note that if a line exceeds LINESIZE characters, the line buffer	*/
