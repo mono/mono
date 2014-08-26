@@ -57,6 +57,8 @@ case $host in
     SEARCHSEP=';'
     OS="WIN32"
     PIDTYPE='void *'
+    CC="$host-gcc -static-libgcc"
+    CXX="$host-g++ -static-libgcc"
     ;;
 *-*darwin*)
     platform_darwin=yes
