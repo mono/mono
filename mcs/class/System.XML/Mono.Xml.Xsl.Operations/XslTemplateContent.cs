@@ -46,6 +46,7 @@ namespace Mono.Xml.Xsl.Operations
 		int stackSize;
 		XPathNodeType parentType;
 		bool xslForEach;
+		bool isEmptyElement;
 		
 		public XslTemplateContent (Compiler c,
 			XPathNodeType parentType, bool xslForEach)
@@ -58,6 +59,10 @@ namespace Mono.Xml.Xsl.Operations
 
 		public XPathNodeType ParentType {
 			get { return parentType; }
+		}
+
+		public bool IsEmptyElement {
+			get { return isEmptyElement; }
 		}
 
 		protected override void Compile (Compiler c)
@@ -178,6 +183,14 @@ namespace Mono.Xml.Xsl.Operations
 				
 			} while (c.Input.MoveToNext ());
 			
+			isEmptyElement = true;
+			foreach (var n in content) {
+				if (n is XslAttribute)
+					continue;
+
+				isEmptyElement = false;
+				break;
+			}
 			
 			if (hasStack) {
 				stackSize = c.PopScope ().VariableHighTide;
