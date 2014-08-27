@@ -4262,10 +4262,20 @@ additive_expression
 	  {
 		$$ = new As ((Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
-	| additive_expression IS type
+	| additive_expression IS type opt_identifier
 	  {
-		$$ = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
-	  }	  
+		var is_expr = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
+		if ($4 != null) {
+			if (lang_version != LanguageVersion.Experimental)
+				FeatureIsNotAvailable (GetLocation ($4), "type pattern matching");
+
+			var lt = (LocatedToken) $4;
+			is_expr.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
+			current_block.AddLocalName (is_expr.Variable);
+		}
+
+		$$ = is_expr;
+	  }
 	| additive_expression PLUS error 
 	  {
 		Error_SyntaxError (yyToken);
