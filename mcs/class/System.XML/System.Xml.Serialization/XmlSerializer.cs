@@ -68,6 +68,7 @@ namespace System.Xml.Serialization
 		internal class SerializerData
 		{
 			public int UsageCount;
+			public bool Generated;
 			public Type ReaderType;
 			public MethodInfo ReaderMethod;
 			public Type WriterType;
@@ -145,7 +146,6 @@ namespace System.Xml.Serialization
 				else {
 					generationThreshold = int.Parse (th, CultureInfo.InvariantCulture);
 					backgroundGeneration = (generationThreshold != 0);
-					if (generationThreshold < 1) generationThreshold = 1;
 				}
 			}
 #endif
@@ -664,7 +664,10 @@ namespace System.Xml.Serialization
 			bool generate = false;
 			lock (serializerData)
 			{
-				generate = (++serializerData.UsageCount == generationThreshold);
+				if (serializerData.UsageCount >= generationThreshold && !serializerData.Generated)
+					serializerData.Generated = generate = true;
+
+				serializerData.UsageCount++;
 			}
 			
 			if (generate)

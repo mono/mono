@@ -122,13 +122,13 @@ namespace Microsoft.Build.Tasks {
 			Log.LogMessage (MessageImportance.Normal, "Executing: " + command);
 		}
 		
-		protected override void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
+		protected override void LogEventsFromTextOutput (string singleLine, MessageImportance messageImportance)
 		{
 #if NET_4_0
 			if (IgnoreStandardErrorWarningFormat ||
 				(!errorMatcher (singleLine) && !warningMatcher (singleLine)))
 #endif
-				Log.LogMessage (importance, singleLine);
+				Log.LogMessage (messageImportance, singleLine);
 		}
 
 #if NET_4_0

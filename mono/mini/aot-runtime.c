@@ -139,7 +139,7 @@ typedef struct MonoAotModule {
 	MonoDl *sofile;
 
 	JitInfoMap *async_jit_info_table;
-	CRITICAL_SECTION mutex;
+	mono_mutex_t mutex;
 } MonoAotModule;
 
 typedef struct {
@@ -149,9 +149,9 @@ typedef struct {
 } TrampolinePage;
 
 static GHashTable *aot_modules;
-#define mono_aot_lock() EnterCriticalSection (&aot_mutex)
-#define mono_aot_unlock() LeaveCriticalSection (&aot_mutex)
-static CRITICAL_SECTION aot_mutex;
+#define mono_aot_lock() mono_mutex_lock (&aot_mutex)
+#define mono_aot_unlock() mono_mutex_unlock (&aot_mutex)
+static mono_mutex_t aot_mutex;
 
 /* 
  * Maps assembly names to the mono_aot_module_<NAME>_info symbols in the
@@ -199,9 +199,9 @@ static GHashTable *aot_jit_icall_hash;
 #define USE_PAGE_TRAMPOLINES 0
 #endif
 
-#define mono_aot_page_lock() EnterCriticalSection (&aot_page_mutex)
-#define mono_aot_page_unlock() LeaveCriticalSection (&aot_page_mutex)
-static CRITICAL_SECTION aot_page_mutex;
+#define mono_aot_page_lock() mono_mutex_lock (&aot_page_mutex)
+#define mono_aot_page_unlock() mono_mutex_unlock (&aot_page_mutex)
+static mono_mutex_t aot_page_mutex;
 
 static void
 init_plt (MonoAotModule *info);
@@ -213,13 +213,13 @@ init_plt (MonoAotModule *info);
 static inline void
 amodule_lock (MonoAotModule *amodule)
 {
-	EnterCriticalSection (&amodule->mutex);
+	mono_mutex_lock (&amodule->mutex);
 }
 
 static inline void
 amodule_unlock (MonoAotModule *amodule)
 {
-	LeaveCriticalSection (&amodule->mutex);
+	mono_mutex_unlock (&amodule->mutex);
 }
 
 /*
@@ -489,7 +489,6 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 			serial = decode_value (p, &p);
 		}
 
-		// FIXME: Memory management
 		t = g_new0 (MonoType, 1);
 		t->type = type;
 		if (container) {
@@ -497,7 +496,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 			g_assert (serial == 0);
 		} else {
 			/* Anonymous */
-			MonoGenericParam *par = (MonoGenericParam*)g_new0 (MonoGenericParamFull, 1);
+			MonoGenericParam *par = (MonoGenericParam*)mono_image_alloc0 (module->assembly->image, sizeof (MonoGenericParamFull));
 			par->num = num;
 			par->serial = serial;
 			// FIXME:
@@ -1342,7 +1341,7 @@ load_aot_module_from_cache (MonoAssembly *assembly, char **aot_name)
 
 	*aot_name = NULL;
 
-	if (assembly->image->dynamic)
+	if (image_is_dynamic (assembly->image))
 		return NULL;
 
 	create_cache_structure ();
@@ -1584,7 +1583,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		 */
 		return;
 
-	if (assembly->image->dynamic || assembly->ref_only)
+	if (image_is_dynamic (assembly->image) || assembly->ref_only)
 		return;
 
 	if (mono_security_cas_enabled ())
@@ -1702,7 +1701,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	amodule->method_to_code = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	amodule->blob = blob;
 
-	InitializeCriticalSection (&amodule->mutex);
+	mono_mutex_init_recursive (&amodule->mutex);
 
 	/* Read image table */
 	{
@@ -1933,8 +1932,8 @@ mono_aot_register_module (gpointer *aot_info)
 void
 mono_aot_init (void)
 {
-	InitializeCriticalSection (&aot_mutex);
-	InitializeCriticalSection (&aot_page_mutex);
+	mono_mutex_init_recursive (&aot_mutex);
+	mono_mutex_init_recursive (&aot_page_mutex);
 	aot_modules = g_hash_table_new (NULL, NULL);
 
 #ifndef __native_client__
@@ -3031,7 +3030,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 			goto cleanup;
 		break;
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
-		ji->data.del_tramp = mono_mempool_alloc0 (mp, sizeof (MonoClassMethodPair));
+		ji->data.del_tramp = mono_mempool_alloc0 (mp, sizeof (MonoDelegateClassMethodPair));
 		ji->data.del_tramp->klass = decode_klass_ref (aot_module, p, &p);
 		if (!ji->data.del_tramp->klass)
 			goto cleanup;
@@ -3040,6 +3039,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 			if (!ji->data.del_tramp->method)
 				goto cleanup;
 		}
+		ji->data.del_tramp->virtual = decode_value (p, &p) ? TRUE : FALSE;
 		break;
 	case MONO_PATCH_INFO_IMAGE:
 		ji->data.image = load_image (aot_module, decode_value (p, &p), TRUE);

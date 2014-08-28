@@ -207,7 +207,7 @@ mono_mempool_stats (MonoMemPool *pool)
 #include "metadata/appdomain.h"
 #include "metadata/metadata-internals.h"
 
-static CRITICAL_SECTION mempool_tracing_lock;
+static mono_mutex_t mempool_tracing_lock;
 #define BACKTRACE_DEPTH 7
 static void
 mono_backtrace (int size)
@@ -218,11 +218,11 @@ mono_backtrace (int size)
         static gboolean inited;
 
         if (!inited) {
-            InitializeCriticalSection (&mempool_tracing_lock);
+            mono_mutex_init_recursive (&mempool_tracing_lock);
             inited = TRUE;
         }
 
-        EnterCriticalSection (&mempool_tracing_lock);
+        mono_mutex_lock (&mempool_tracing_lock);
         g_print ("Allocating %d bytes\n", size);
         symbols = backtrace (array, BACKTRACE_DEPTH);
         names = backtrace_symbols (array, symbols);
@@ -230,7 +230,7 @@ mono_backtrace (int size)
                 g_print ("\t%s\n", names [i]);
         }
         free (names);
-        LeaveCriticalSection (&mempool_tracing_lock);
+        mono_mutex_unlock (&mempool_tracing_lock);
 }
 
 #endif
@@ -269,7 +269,7 @@ mono_mempool_alloc (MonoMemPool *pool, guint size)
 
 #ifdef MALLOC_ALLOCATION
 	{
-		Chunk *c = g_malloc (size);
+		Chunk *c = g_malloc (size + sizeof (Chunk));
 
 		c->next = pool->chunks;
 		pool->chunks = c;

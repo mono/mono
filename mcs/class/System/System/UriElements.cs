@@ -33,20 +33,26 @@ namespace System {
 		public UriElements()
 		{
 			scheme = String.Empty;
-			user = String.Empty;
+			delimiter = String.Empty;
 			host = String.Empty;
-			port = String.Empty;
+			port = -1;
 			path = String.Empty;
-			query = String.Empty;
-			fragment = String.Empty;
+
+			isAbsoluteUri = true;
 		}
 		
 		public string scheme;
+		public string delimiter;
 		public string user;
 		public string host;
-		public string port;
+		public int port;
 		public string path;
 		public string query;
 		public string fragment;
+
+		public bool isAbsoluteUri;
+		public bool isUnixFilePath;
+		public bool isUnc;
+		public long scopeId;
 	}
 }

@@ -178,7 +178,7 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				if (Reader.LocalName != rootMap.ElementName || Reader.NamespaceURI != rootMap.Namespace)
+				if (!rootMap.IsAny && (Reader.LocalName != rootMap.ElementName || Reader.NamespaceURI != rootMap.Namespace))
 					throw CreateUnknownNodeException();
 				
 				return ReadObject (rootMap, rootMap.IsNullable, true);
@@ -835,7 +835,7 @@ namespace System.Xml.Serialization
 			Reader.MoveToContent ();
 			if (Reader.NodeType == XmlNodeType.Element)
 			{
-				if (Reader.LocalName == typeMap.ElementName && Reader.NamespaceURI == typeMap.Namespace)
+				if (typeMap.IsAny || (Reader.LocalName == typeMap.ElementName && Reader.NamespaceURI == typeMap.Namespace))
 				{
 					object ob = CreateInstance (typeMap.TypeData.Type, true);
 					return ReadSerializable ((IXmlSerializable)ob);

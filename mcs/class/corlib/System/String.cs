@@ -2630,9 +2630,22 @@ namespace System
 			
 			if (ptr < max && str[ptr] == ':') {
 				int start = ++ ptr;
-				while (ptr < max && str[ptr] != '}')
-					++ ptr;
-				
+				while (ptr < max) {
+					if (str [ptr] == '}') {
+						if (ptr + 1 < max && str [ptr + 1] == '}') {
+							++ptr;
+							format += str.Substring (start, ptr - start);
+							++ptr;
+							start = ptr;
+							continue;
+						}
+
+						break;
+					}
+
+					++ptr;
+				}
+
 				format += str.Substring (start, ptr - start);
 			}
 			else

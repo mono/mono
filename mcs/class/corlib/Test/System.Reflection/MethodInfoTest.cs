@@ -783,6 +783,51 @@ namespace MonoTests.System.Reflection
 			var m = GetType ().GetMethod ("Bug12856");
 			Assert.AreEqual ("System.Nullable`1[System.Int32] Bug12856()", m.ToString (), "#1");
 		}
+
+#if !MONOTOUCH
+		class GenericClass<T>
+		{
+			public void Method ()
+			{
+				T lv = default(T);
+				Console.WriteLine(lv);
+			}
+
+			public void Method2<K> (T a0, K a1)
+			{
+				T var0 = a0;
+				K var1 = a1;
+				Console.WriteLine (var0);
+				Console.WriteLine (var1);
+			}
+		}
+
+		[Test]
+		public void TestLocalVariableTypes ()
+		{
+			var typeofT = typeof (GenericClass<>).GetGenericArguments () [0];
+			var typeofK = typeof (GenericClass<>).GetMethod ("Method2").GetGenericArguments () [0];
+
+			var type = typeof (GenericClass<>).GetMethod("Method").GetMethodBody().LocalVariables[0].LocalType;
+			Assert.AreEqual (typeofT, type);
+			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
+
+			type = typeof (GenericClass<>).GetMethod("Method2").GetMethodBody().LocalVariables[0].LocalType;
+			Assert.AreEqual (typeofT, type);
+			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
+
+			type = typeof (GenericClass<>).GetMethod("Method2").GetMethodBody().LocalVariables[1].LocalType;
+			Assert.AreEqual (typeofK, type);
+			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
+
+			type = typeof (GenericClass<int>).GetMethod("Method2").GetMethodBody().LocalVariables[0].LocalType;
+			Assert.AreEqual (typeof (int), type);
+
+			type = typeof (GenericClass<int>).GetMethod("Method2").GetMethodBody().LocalVariables[1].LocalType;
+			Assert.AreEqual (typeofK, type);
+			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
+		}
+#endif
 	}
 	
 #if NET_2_0

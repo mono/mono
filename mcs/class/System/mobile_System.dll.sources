@@ -680,6 +680,7 @@ System/UriBuilder.cs
 System/UriComponents.cs
 System/UriFormat.cs
 System/UriFormatException.cs
+System/UriHelper.cs
 System/UriHostNameType.cs
 System/UriIdnScope.cs
 System/UriKind.cs

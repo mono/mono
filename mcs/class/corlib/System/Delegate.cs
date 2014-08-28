@@ -42,10 +42,9 @@ namespace System
 	/* Contains the rarely used fields of Delegate */
 	sealed class DelegateData
 	{
-		public static readonly DelegateData ClosedDelegateForStaticMethod = new DelegateData ();
-
 		public Type target_type;
 		public string method_name;
+		public bool curried_first_arg;
 	}
 
 	[ClassInterface (ClassInterfaceType.AutoDual)]
@@ -232,7 +231,7 @@ namespace System
 					return null;
 
 			bool argsMatch;
-			DelegateData delegate_data = null;
+			DelegateData delegate_data = new DelegateData ();
 
 			if (target != null) {
 				if (!method.IsStatic) {
@@ -244,7 +243,7 @@ namespace System
 					for (int i = 1; i < args.Length; i++)
 						argsMatch &= arg_type_match (delargs [i - 1].ParameterType, args [i].ParameterType);
 
-					delegate_data =	DelegateData.ClosedDelegateForStaticMethod;
+					delegate_data.curried_first_arg = true;
 				}
 			} else {
 				if (!method.IsStatic) {
@@ -266,7 +265,7 @@ namespace System
 						for (int i = 0; i < delargs.Length; i++)
 							argsMatch &= arg_type_match (delargs [i].ParameterType, args [i + 1].ParameterType);
 
-						delegate_data =	DelegateData.ClosedDelegateForStaticMethod;
+						delegate_data.curried_first_arg = true;
 					} else {
 						argsMatch = true;
 						for (int i = 0; i < args.Length; i++)
@@ -408,6 +407,21 @@ namespace System
 			return DynamicInvokeImpl (args);
 		}
 
+		void InitializeDelegateData ()
+		{
+			DelegateData delegate_data = new DelegateData ();
+			if (method_info.IsStatic) {
+				if (m_target != null) {
+					delegate_data.curried_first_arg = true;
+				} else {
+					MethodInfo invoke = GetType ().GetMethod ("Invoke");
+					if (invoke.GetParametersCount () + 1 == method_info.GetParametersCount ())
+						delegate_data.curried_first_arg = true;
+				}
+			}
+			this.data = delegate_data;
+		}
+
 		protected virtual object DynamicInvokeImpl (object[] args)
 		{
 			if (Method == null) {
@@ -419,11 +433,14 @@ namespace System
 			}
 
 			var target = m_target;
+			if (this.data == null)
+				InitializeDelegateData ();
+
 			if (Method.IsStatic) {
 				//
 				// The delegate is bound to m_target
 				//
-				if (data == DelegateData.ClosedDelegateForStaticMethod) {
+				if (data.curried_first_arg) {
 					if (args == null) {
 						args = new [] { target };
 					} else {
@@ -461,8 +478,13 @@ namespace System
 					/* Uncommon case */
 					if (d.data != null && data != null)
 						return (d.data.target_type == data.target_type && d.data.method_name == data.method_name);
-					else
+					else {
+						if (d.data != null)
+							return d.data.target_type == null;
+						if (data != null)
+							return data.target_type == null;
 						return false;
+					}
 				}
 				return true;
 			}

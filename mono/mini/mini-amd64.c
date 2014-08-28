@@ -60,9 +60,9 @@ static gboolean optimize_for_xen = TRUE;
 #endif
 
 /* This mutex protects architecture specific caches */
-#define mono_mini_arch_lock() EnterCriticalSection (&mini_arch_mutex)
-#define mono_mini_arch_unlock() LeaveCriticalSection (&mini_arch_mutex)
-static CRITICAL_SECTION mini_arch_mutex;
+#define mono_mini_arch_lock() mono_mutex_lock (&mini_arch_mutex)
+#define mono_mini_arch_unlock() mono_mutex_unlock (&mini_arch_mutex)
+static mono_mutex_t mini_arch_mutex;
 
 MonoBreakpointInfo
 mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
@@ -1233,7 +1233,7 @@ mono_arch_init (void)
 {
 	int flags;
 
-	InitializeCriticalSection (&mini_arch_mutex);
+	mono_mutex_init_recursive (&mini_arch_mutex);
 #if defined(__native_client_codegen__)
 	mono_native_tls_alloc (&nacl_instruction_depth, NULL);
 	mono_native_tls_set_value (nacl_instruction_depth, (gpointer)0);
@@ -1271,7 +1271,7 @@ mono_arch_init (void)
 void
 mono_arch_cleanup (void)
 {
-	DeleteCriticalSection (&mini_arch_mutex);
+	mono_mutex_destroy (&mini_arch_mutex);
 #if defined(__native_client_codegen__)
 	mono_native_tls_free (nacl_instruction_depth);
 	mono_native_tls_free (nacl_rex_tag);
@@ -7899,6 +7899,31 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 	return start;
 }
+
+gpointer
+mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method, int offset, gboolean load_imt_reg)
+{
+	guint8 *code, *start;
+	int size = 20;
+
+	start = code = mono_global_codeman_reserve (size);
+
+	/* Replace the this argument with the target */
+	amd64_mov_reg_reg (code, AMD64_RAX, AMD64_ARG_REG1, 8);
+	amd64_mov_reg_membase (code, AMD64_ARG_REG1, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, target), 8);
+
+	if (load_imt_reg) {
+		/* Load the IMT reg */
+		amd64_mov_reg_membase (code, MONO_ARCH_IMT_REG, AMD64_RAX, MONO_STRUCT_OFFSET (MonoDelegate, method), 8);
+	}
+
+	/* Load the vtable */
+	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoObject, vtable), 8);
+	amd64_jump_membase (code, AMD64_RAX, offset);
+
+	return start;
+}
+
 void
 mono_arch_finish_init (void)
 {

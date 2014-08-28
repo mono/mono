@@ -439,6 +439,7 @@ namespace Mono.CSharp {
 	//
 	public abstract class DelegateCreation : Expression, OverloadResolver.IErrorHandler
 	{
+		bool conditional_access_receiver;
 		protected MethodSpec constructor_method;
 		protected MethodGroupExpr method_group;
 
@@ -507,8 +508,19 @@ namespace Mono.CSharp {
 
 			var invoke_method = Delegate.GetInvokeMethod (type);
 
+			if (!ec.HasSet (ResolveContext.Options.ConditionalAccessReceiver)) {
+				if (method_group.HasConditionalAccess ()) {
+					conditional_access_receiver = true;
+					ec.Set (ResolveContext.Options.ConditionalAccessReceiver);
+				}
+			}
+
 			Arguments arguments = CreateDelegateMethodArguments (ec, invoke_method.Parameters, invoke_method.Parameters.Types, loc);
 			method_group = method_group.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.CovariantDelegate);
+
+			if (conditional_access_receiver)
+				ec.With (ResolveContext.Options.ConditionalAccessReceiver, false);
+
 			if (method_group == null)
 				return null;
 
@@ -564,10 +576,15 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (method_group.InstanceExpression == null)
+			if (conditional_access_receiver)
+				ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ());
+
+			if (method_group.InstanceExpression == null) {
 				ec.EmitNull ();
-			else
-				method_group.InstanceExpression.Emit (ec);
+			} else {
+				var ie = new InstanceEmitter (method_group.InstanceExpression, false);
+				ie.Emit (ec, method_group.ConditionalAccess);
+			}
 
 			var delegate_method = method_group.BestCandidate;
 
@@ -580,11 +597,18 @@ namespace Mono.CSharp {
 			}
 
 			ec.Emit (OpCodes.Newobj, constructor_method);
+
+			if (conditional_access_receiver)
+				ec.CloseConditionalAccess (null);
 		}
 
-		public override void FlowAnalysis (FlowAnalysisContext fc) {
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
 			base.FlowAnalysis (fc);
 			method_group.FlowAnalysis (fc);
+
+			if (conditional_access_receiver)
+				fc.ConditionalAccessEnd ();
 		}
 
 		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, Expression return_type)
@@ -830,13 +854,15 @@ namespace Mono.CSharp {
 	class DelegateInvocation : ExpressionStatement
 	{
 		readonly Expression InstanceExpr;
+		readonly bool conditionalAccessReceiver;
 		Arguments arguments;
 		MethodSpec method;
 		
-		public DelegateInvocation (Expression instance_expr, Arguments args, Location loc)
+		public DelegateInvocation (Expression instance_expr, Arguments args, bool conditionalAccessReceiver, Location loc)
 		{
 			this.InstanceExpr = instance_expr;
 			this.arguments = args;
+			this.conditionalAccessReceiver = conditionalAccessReceiver;
 			this.loc = loc;
 		}
 
@@ -877,29 +903,45 @@ namespace Mono.CSharp {
 				return null;
 
 			type = method.ReturnType;
+			if (conditionalAccessReceiver)
+				type = LiftMemberType (ec, type);
+
 			eclass = ExprClass.Value;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			if (conditionalAccessReceiver) {
+				ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ());
+			}
+
 			//
 			// Invocation on delegates call the virtual Invoke member
 			// so we are always `instance' calls
 			//
 			var call = new CallEmitter ();
 			call.InstanceExpression = InstanceExpr;
-			call.EmitPredefined (ec, method, arguments, loc);
+			call.Emit (ec, method, arguments, loc);
+
+			if (conditionalAccessReceiver)
+				ec.CloseConditionalAccess (type.IsNullableType && type !=  method.ReturnType ? type : null);
 		}
 
 		public override void EmitStatement (EmitContext ec)
 		{
-			Emit (ec);
-			// 
-			// Pop the return value if there is one
-			//
-			if (type.Kind != MemberKind.Void)
-				ec.Emit (OpCodes.Pop);
+			if (conditionalAccessReceiver) {
+				ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ()) {
+					Statement = true
+				};
+			}
+
+			var call = new CallEmitter ();
+			call.InstanceExpression = InstanceExpr;
+			call.EmitStatement (ec, method, arguments, loc);
+
+			if (conditionalAccessReceiver)
+				ec.CloseConditionalAccess (null);
 		}
 
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)

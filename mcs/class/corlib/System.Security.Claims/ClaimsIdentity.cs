@@ -3,6 +3,7 @@
 //
 // Authors:
 //  Miguel de Icaza (miguel@xamarin.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2014 Xamarin Inc
 //
@@ -26,10 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_4_5
-using System;
+
 using System.Collections.Generic;
 using System.Security.Principal;
 using System.Runtime.Serialization;
+
 namespace System.Security.Claims {
 
 	[Serializable]
@@ -41,12 +43,16 @@ namespace System.Security.Claims {
 		[NonSerializedAttribute]
 		public const string DefaultIssuer = "LOCAL AUTHORITY";
 		
-		List<Claim> claims;
+		readonly List<Claim> claims;
 		ClaimsIdentity actor;
-		string auth_type;
+		readonly string auth_type;
 
 		public ClaimsIdentity ()
 			: this (claims: null, authenticationType: null, nameType: null, roleType: null)
+		{ }
+		
+		public ClaimsIdentity(IEnumerable<Claim> claims)
+			: this (claims: claims, authenticationType: null, nameType: null, roleType: null)
 		{ }
 		
 		public ClaimsIdentity (string authenticationType)
@@ -68,43 +74,42 @@ namespace System.Security.Claims {
 		public ClaimsIdentity(IEnumerable<Claim> claims, string authenticationType, string nameType, string roleType)
 			: this (identity: null, claims: claims, authenticationType: authenticationType, nameType: nameType, roleType: roleType)
 		{
-			claims = claims == null ? new List<Claim> (): new List<Claim> (claims);
-			
-			// Special case: if empty, set to null.
-			if (authenticationType == "")
-				auth_type = null;
-			else
-				auth_type = authenticationType;
-
-			NameClaimType = nameType == null ? DefaultNameClaimType : nameType;
-			RoleClaimType = roleType == null ? DefaultRoleClaimType : roleType;
 		}
 
 		public ClaimsIdentity (IIdentity identity, IEnumerable<Claim> claims)
 			: this (identity, claims, authenticationType: null, nameType: null, roleType: null)
-		{ }
+		{
+		}
 		
 		public ClaimsIdentity (IIdentity identity, IEnumerable<Claim> claims, string authenticationType, string nameType, string roleType)
 		{
-			var ci = identity as ClaimsIdentity;
-			NameClaimType = nameType == null ? DefaultNameClaimType : nameType;
-			RoleClaimType = roleType == null ? DefaultRoleClaimType : roleType;
-			
+			NameClaimType = string.IsNullOrEmpty (nameType) ? DefaultNameClaimType : nameType;
+			RoleClaimType = string.IsNullOrEmpty (roleType) ? DefaultRoleClaimType : roleType;
+			auth_type = authenticationType;
+
 			this.claims = new List<Claim> ();
-			if (ci != null){
-				actor = ci.Actor;
-				BootstrapContext = ci.BootstrapContext;
-				foreach (var c in ci.Claims)
-					this.claims.Add (c);
-				
-				if (claims != null) {
-					foreach (var c in claims)
+
+			if (identity != null) {
+				if (string.IsNullOrEmpty (authenticationType))
+					auth_type = identity.AuthenticationType;
+
+				var ci = identity as ClaimsIdentity;
+				if (ci != null) {
+					actor = ci.Actor;
+					BootstrapContext = ci.BootstrapContext;
+					foreach (var c in ci.Claims)
 						this.claims.Add (c);
+				
+					Label = ci.Label;
+					NameClaimType = string.IsNullOrEmpty (nameType) ? ci.NameClaimType : nameType;
+					RoleClaimType = string.IsNullOrEmpty (roleType) ? ci.RoleClaimType : roleType;
+				} else if (!string.IsNullOrEmpty (identity.Name)) {
+					AddDefaultClaim (identity.Name);
 				}
-				Label = ci.Label;
-				NameClaimType = ci.NameClaimType;
-				RoleClaimType = ci.RoleClaimType;
-				auth_type = ci.AuthenticationType;
+			}
+
+			if (claims != null) {
+				AddClaims (claims);
 			}
 		}
 
@@ -127,8 +132,9 @@ namespace System.Security.Claims {
 				return actor;
 			}
 			set {
-				if (actor == this)
+				if (value == this)
 					throw new InvalidOperationException ("can not set the Actor property to this instance");
+
 				actor = value;
 			}
 		}
@@ -169,6 +175,10 @@ namespace System.Security.Claims {
 		{
 			if (claim == null)
 				throw new ArgumentNullException ("claim");
+
+			if (claim.Subject != this)
+				claim = claim.Clone (this);
+
 			claims.Add (claim);
 		}
 
@@ -176,8 +186,14 @@ namespace System.Security.Claims {
 		{
 			if (claims == null)
 				throw new ArgumentNullException ("claims");
+
 			foreach (var c in claims)
-				this.claims.Add (c);
+				AddClaim (c);
+		}
+
+		internal void AddDefaultClaim (string identityName)
+		{
+			this.claims.Add (new Claim (NameClaimType, identityName, "http://www.w3.org/2001/XMLSchema#string", DefaultIssuer, DefaultIssuer, this)); 
 		}
 
 		public virtual ClaimsIdentity Clone ()
@@ -198,12 +214,12 @@ namespace System.Security.Claims {
 					yield return c;
 		}
 
-		public virtual IEnumerable<Claim> FindAll(string type)
+		public virtual IEnumerable<Claim> FindAll (string type)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
 			foreach (var c in claims)
-				if (c.Type == type)
+				if (string.Equals (c.Type, type, StringComparison.OrdinalIgnoreCase))
 					yield return c;
 		}
 
@@ -222,7 +238,7 @@ namespace System.Security.Claims {
 			if (type == null)
 				throw new ArgumentNullException ("type");
 			foreach (var c in claims)
-				if (c.Type == type)
+				if (string.Equals (c.Type, type, StringComparison.OrdinalIgnoreCase))
 					return c;
 			return null;
 		}
@@ -244,7 +260,7 @@ namespace System.Security.Claims {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 			foreach (var c in claims){
-				if (c.Type == type && c.Value == value)
+				if (string.Equals (c.Type, type, StringComparison.OrdinalIgnoreCase) && c.Value == value)
 					return true;
 			}
 			return false;

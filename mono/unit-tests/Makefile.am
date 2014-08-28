@@ -11,6 +11,7 @@ endif
 if !CROSS_COMPILE
 if !HOST_WIN32
 if SUPPORT_BOEHM
+if !PLATFORM_GNU
 
 test_sgen_qsort_SOURCES = test-sgen-qsort.c
 test_sgen_qsort_CFLAGS = $(TEST_CFLAGS)
@@ -27,10 +28,16 @@ test_mono_linked_list_set_CFLAGS = $(TEST_CFLAGS)
 test_mono_linked_list_set_LDADD = $(TEST_LDADD)
 test_mono_linked_list_set_LDFLAGS = $(TEST_LDFLAGS)
 
-noinst_PROGRAMS = test-sgen-qsort test-gc-memfuncs test-mono-linked-list-set
+test_conc_hashtable_SOURCES = test-conc-hashtable.c
+test_conc_hashtable_CFLAGS = $(TEST_CFLAGS)
+test_conc_hashtable_LDADD = $(TEST_LDADD)
+test_conc_hashtable_LDFLAGS = $(TEST_LDFLAGS)
 
-TESTS = test-sgen-qsort test-gc-memfuncs test-mono-linked-list-set
+noinst_PROGRAMS = test-sgen-qsort test-gc-memfuncs test-mono-linked-list-set test-conc-hashtable
 
+TESTS = test-sgen-qsort test-gc-memfuncs test-mono-linked-list-set test-conc-hashtable
+
+endif !PLATFORM_GNU
 endif SUPPORT_BOEHM
 endif !HOST_WIN32
 endif !CROSS_COMPILE

@@ -46,7 +46,7 @@ namespace System
 		{
 			string type;
 			string assembly;
-			public object target;
+			object target;
 			string targetTypeAssembly;
 			string targetTypeName;
 			string methodName;
@@ -64,15 +64,18 @@ namespace System
 				methodName = del.Method.Name;
 			}
 
-			public Delegate DeserializeDelegate (SerializationInfo info)
+			public Delegate DeserializeDelegate (SerializationInfo info, int index)
 			{
 				object realTarget = null;
 				if (target != null)
 					realTarget = info.GetValue (target.ToString(), typeof(object));
 
+				var key = "method" + index;
+				var method = info.HasKey (key) ? (MethodInfo)info.GetValue (key, typeof (MethodInfo)) : null;
+
 				Assembly dasm = Assembly.Load (assembly);
 				Type dt = dasm.GetType (type);
-				Delegate del;
+
 				if (realTarget != null) {
 #if !DISABLE_REMOTING
 					if (RemotingServices.IsTransparentProxy (realTarget)) {
@@ -86,15 +89,16 @@ namespace System
 							throw new RemotingException ("Unexpected proxy type.");
 					}
 #endif
-					del = Delegate.CreateDelegate (dt, realTarget, methodName);
-				}
-				else {
-					Assembly tasm = Assembly.Load (targetTypeAssembly);
-					Type tt = tasm.GetType (targetTypeName);
-					del = Delegate.CreateDelegate (dt, tt, methodName);
+					return method == null ?
+						Delegate.CreateDelegate (dt, realTarget, methodName) :
+						Delegate.CreateDelegate (dt, realTarget, method);
 				}
 
-				return del;
+				if (method != null)
+					return Delegate.CreateDelegate (dt, realTarget, method);
+
+				Type tt2 = Assembly.Load (targetTypeAssembly).GetType (targetTypeName);
+				return Delegate.CreateDelegate (dt, tt2, methodName);
 			}
 		}
 
@@ -112,14 +116,14 @@ namespace System
 
 			// Deserializes and combines the delegates
 			if (count == 1) 
-				_delegate = entryChain.DeserializeDelegate (info);
+				_delegate = entryChain.DeserializeDelegate (info, 0);
 			else
 			{
 				Delegate[] delegates = new Delegate[count];
 				entry = entryChain;
 				for (int n=0; n<count; n++)
 				{
-					delegates[n] = entry.DeserializeDelegate (info);
+					delegates[n] = entry.DeserializeDelegate (info, n);
 					entry = entry.delegateEntry;
 				}
 				_delegate = Delegate.Combine (delegates);
@@ -145,6 +149,8 @@ namespace System
 				lastEntry = entry;
 				if (del.Target != null)
 					info.AddValue (targetLabel, del.Target);
+
+				info.AddValue ("method" + n, del.Method);
 			}
 			info.SetType (typeof (DelegateSerializationHolder));
 		}

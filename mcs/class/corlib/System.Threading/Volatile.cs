@@ -91,6 +91,7 @@ namespace System.Threading
 		public extern static float Read (ref float location);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public extern static T Read<T> (ref T location) where T : class;
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -151,6 +152,7 @@ namespace System.Threading
 		public extern static void Write (ref float location, float value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public extern static void Write<T>(ref T location, T value) where T : class;
 	}
 }

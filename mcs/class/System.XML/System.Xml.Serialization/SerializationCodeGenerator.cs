@@ -580,7 +580,7 @@ namespace System.Xml.Serialization
 				WriteLine (string.Empty);
 			}
 
-			WriteLine ("string " + GetGetEnumValueName (map) + " (" + map.TypeData.CSharpFullName + " val)");
+			WriteLine ("string " + GetGetEnumValueName (map) + " (" + GetTypeFullName (map.TypeData) + " val)");
 			WriteLineInd ("{");
 
 
@@ -616,7 +616,7 @@ namespace System.Xml.Serialization
 		
 		void GenerateWriteObject (XmlTypeMapping typeMap)
 		{
-			WriteLine ("void " + GetWriteObjectName (typeMap) + " (" + typeMap.TypeData.CSharpFullName + " ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)");
+			WriteLine ("void " + GetWriteObjectName (typeMap) + " (" + GetTypeFullName (typeMap.TypeData) + " ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)");
 			WriteLineInd ("{");
 			
 			PushHookContext ();
@@ -653,9 +653,9 @@ namespace System.Xml.Serialization
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlNode)
 			{
 				if (_format == SerializationFormat.Literal)
-					WriteLine ("WriteElementLiteral (ob, \"\", \"\", true, false);");
+					WriteLine ("WriteElementLiteral (ob, \"\", \"\", true, " + GetLiteral(typeMap.IsAny) + ");");
 				else 
-					WriteLine ("WriteElementEncoded (ob, \"\", \"\", true, false);");
+					WriteLine ("WriteElementEncoded (ob, \"\", \"\", true, " + GetLiteral(typeMap.IsAny) + ");");
 					
 				GenerateEndHook ();
 				WriteLineUni ("}");
@@ -666,7 +666,7 @@ namespace System.Xml.Serialization
 
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
-				WriteLine ("WriteSerializable (ob, element, namesp, isNullable);");
+				WriteLine ("WriteSerializable (ob, element, namesp, isNullable, " + GetLiteral(!typeMap.IsAny) + ");");
 				
 				GenerateEndHook ();
 				WriteLineUni ("}");
@@ -971,7 +971,7 @@ namespace System.Xml.Serialization
 		
 		void GenerateWriteAnyElementContent (XmlTypeMapMemberAnyElement member, string memberValue)
 		{
-			bool singleElement = (member.TypeData.Type == typeof (XmlElement));
+			bool singleElement = (member.TypeData.Type == typeof (XmlElement) || member.TypeData.Type == typeof (XmlNode));
 			string var, var2;
 			
 			var = GetObTempVar ();
@@ -1371,9 +1371,11 @@ namespace System.Xml.Serialization
 						else
 							WriteLine ("return ReadXmlNode (false);");
 					} else {
-						WriteLineInd ("if (Reader.LocalName != " + GetLiteral (typeMap.ElementName) + " || Reader.NamespaceURI != " + GetLiteral (typeMap.Namespace) + ")");
-						WriteLine ("throw CreateUnknownNodeException();");
-						Unindent ();
+						if (!typeMap.IsAny) {
+							WriteLineInd ("if (Reader.LocalName != " + GetLiteral (typeMap.ElementName) + " || Reader.NamespaceURI != " + GetLiteral (typeMap.Namespace) + ")");
+							WriteLine ("throw CreateUnknownNodeException();");
+							Unindent ();
+						}
 
 						WriteLine ("return " + GetReadObjectCall (typeMap, GetLiteral(typeMap.IsNullable), "true") + ";");
 					}
@@ -1384,12 +1386,15 @@ namespace System.Xml.Serialization
 					WriteLine ("Reader.MoveToContent();");
 					WriteLine ("if (Reader.NodeType == System.Xml.XmlNodeType.Element) ");
 					WriteLineInd ("{");
-					WriteLineInd ("if (Reader.LocalName == " + GetLiteral(typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
+					if (!typeMap.IsAny)
+						WriteLineInd ("if (Reader.LocalName == " + GetLiteral(typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
 					WriteLine ("ob = ReadReferencedElement();");
 					Unindent ();
-					WriteLineInd ("else ");
-					WriteLine ("throw CreateUnknownNodeException();");
-					Unindent ();
+					if (!typeMap.IsAny) {
+						WriteLineInd ("else ");
+						WriteLine ("throw CreateUnknownNodeException();");
+						Unindent ();
+					}
 					WriteLineUni ("}");
 					WriteLineInd ("else ");
 					WriteLine ("UnknownNode(null);");
@@ -1489,7 +1494,7 @@ namespace System.Xml.Serialization
 		{
 			string isNullable;
 			if (_format == SerializationFormat.Literal) {
-				WriteLine ("public " + typeMap.TypeData.CSharpFullName + " " + GetReadObjectName (typeMap) + " (bool isNullable, bool checkType)");
+				WriteLine ("public " + GetTypeFullName(typeMap.TypeData) + " " + GetReadObjectName (typeMap) + " (bool isNullable, bool checkType)");
 				isNullable = "isNullable";
 			}
 			else {
@@ -2466,10 +2471,14 @@ namespace System.Xml.Serialization
 			WriteLine ("Reader.MoveToContent ();");
 			WriteLine ("if (Reader.NodeType == XmlNodeType.Element)");
 			WriteLineInd ("{");
-			WriteLine ("if (Reader.LocalName == " + GetLiteral (typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
+			if (!typeMap.IsAny)
+				WriteLineInd ("if (Reader.LocalName == " + GetLiteral (typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
 			WriteLine (String.Format ("\treturn ({0}) ReadSerializable (({0}) Activator.CreateInstance(typeof({0}), true));", typeMap.TypeData.CSharpFullName));
-			WriteLine ("else");
-			WriteLine ("\tthrow CreateUnknownNodeException ();");
+			Unindent ();
+			if (!typeMap.IsAny) {
+				WriteLine ("else");
+				WriteLine ("\tthrow CreateUnknownNodeException ();");
+			}
 			WriteLineUni ("}");
 			WriteLine ("else UnknownNode (null);");
 			WriteLine ("");
@@ -2659,7 +2668,7 @@ namespace System.Xml.Serialization
 		
 		string GetRootTypeName ()
 		{
-			if (_typeMap is XmlTypeMapping) return ((XmlTypeMapping)_typeMap).TypeData.CSharpFullName;
+			if (_typeMap is XmlTypeMapping) return GetTypeFullName (((XmlTypeMapping)_typeMap).TypeData);
 			else return "object[]";
 		}
 
@@ -2769,10 +2778,7 @@ namespace System.Xml.Serialization
 
 		string GetCast (TypeData td, string val)
 		{
-			if (td.IsNullable && td.IsValueType)
-				return "((" + td.CSharpFullName + "?) " + val + ")";
-			else
-				return "((" + td.CSharpFullName + ") " + val + ")";
+			return "((" + GetTypeFullName (td) + ") " + val + ")";
 		}
 
 		string GetCast (Type td, string val)
@@ -2782,12 +2788,19 @@ namespace System.Xml.Serialization
 
 		string GetTypeOf (TypeData td)
 		{
-			return "typeof(" + td.CSharpFullName + ")";
+			return "typeof(" + GetTypeFullName (td) + ")";
 		}
 		
 		string GetTypeOf (Type td)
 		{
 			return "typeof(" + ToCSharpFullName (td) + ")";
+		}
+
+		string GetTypeFullName (TypeData td) {
+			if (td.IsNullable && td.IsValueType)
+				return td.CSharpFullName + "?";
+
+			return td.CSharpFullName;
 		}
 		
 		string GetLiteral (object ob)

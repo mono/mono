@@ -44,29 +44,25 @@ namespace System.Security.Claims
 
 		public const string AuthorizationDecision = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision";
 
-		public const string ClaimsType2005Namespace = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims";
-
-		public const string ClaimsType2009Namespace = "http://schemas.xmlsoap.org/ws/2009/09/identity/claims";
-
-		public const string ClaimsTypeNamespace = "http://schemas.microsoft.com/ws/2008/06/identity/claims";
-
 		public const string CookiePath = "http://schemas.microsoft.com/ws/2008/06/identity/claims/cookiepath";
 
 		public const string Country = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country";
 
 		public const string DateOfBirth = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth";
 
-		public const string DenyOnlyPrimaryGroup = "http://schemas.microsoft.com/ws/2008/06/identity/claims/denyonlyprimarygroup";
+		public const string DenyOnlyPrimaryGroupSid = "http://schemas.microsoft.com/ws/2008/06/identity/claims/denyonlyprimarygroupsid";
 
 		public const string DenyOnlyPrimarySid = "http://schemas.microsoft.com/ws/2008/06/identity/claims/denyonlyprimarysid";
 
 		public const string DenyOnlySid = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/denyonlysid";
 
+		public const string DenyOnlyWindowsDeviceGroup = "http://schemas.microsoft.com/ws/2008/06/identity/claims/denyonlywindowsdevicegroup";
+
 		public const string Dns = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dns";
 
 		public const string Dsa = "http://schemas.microsoft.com/ws/2008/06/identity/claims/dsa";
 
-		public const string Email = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email";
+		public const string Email = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
 
 		public const string Expiration = "http://schemas.microsoft.com/ws/2008/06/identity/claims/expiration";
 
@@ -95,8 +91,6 @@ namespace System.Security.Claims
 		public const string OtherPhone = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/otherphone";
 
 		public const string PostalCode = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/postalcode";
-
-		public const string PPID = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/privatepersonalidentifier";
 
 		public const string PrimaryGroupSid = "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarygroupsid";
 
@@ -133,6 +127,16 @@ namespace System.Security.Claims
 		public const string Webpage = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/webpage";
 
 		public const string WindowsAccountName = "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname";
+
+		public const string WindowsDeviceClaim = "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsdeviceclaim";
+
+		public const string WindowsDeviceGroup = "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsdevicegroup";
+
+		public const string WindowsFqbnVersion = "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsfqbnversion";
+
+		public const string WindowsSubAuthority = "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowssubauthority";
+
+		public const string WindowsUserClaim = "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsuserclaim";
 
 		public const string X500DistinguishedName = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/x500distinguishedname";
 	}

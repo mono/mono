@@ -755,8 +755,22 @@ namespace System.Net
 			disposed = true;
 		}
 
+		internal bool GetResponseOnClose {
+			get; set;
+		}
+
 		public override void Close ()
 		{
+			if (GetResponseOnClose) {
+				if (disposed)
+					return;
+				disposed = true;
+				var response = (HttpWebResponse)request.GetResponse ();
+				response.ReadAll ();
+				response.Close ();
+				return;
+			}
+
 			if (sendChunked) {
 				if (disposed)
 					return;

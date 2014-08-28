@@ -90,7 +90,6 @@ namespace Mono.CSharp {
 			if (reachable) {
 				fc.UnreachableReported = false;
 				var res = DoFlowAnalysis (fc);
-				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
 				return res;
 			}
 
@@ -266,14 +265,11 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
-
-			expr.FlowAnalysis (fc);
+			expr.FlowAnalysisConditional (fc);
 
 			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
 
 			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
-			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
 
 			var res = TrueStatement.FlowAnalysis (fc);
 
@@ -423,8 +419,7 @@ namespace Mono.CSharp {
 		{
 			var res = Statement.FlowAnalysis (fc);
 
-			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
-			expr.FlowAnalysis (fc);
+			expr.FlowAnalysisConditional (fc);
 
 			fc.DefiniteAssignment = fc.DefiniteAssignmentOnFalse;
 
@@ -569,13 +564,10 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
-	
-			expr.FlowAnalysis (fc);
+			expr.FlowAnalysisConditional (fc);
 
 			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
 			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
-			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
 
 			Statement.FlowAnalysis (fc);
 
@@ -701,12 +693,9 @@ namespace Mono.CSharp {
 
 			DefiniteAssignmentBitSet da_false;
 			if (Condition != null) {
-				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
-
-				Condition.FlowAnalysis (fc);
+				Condition.FlowAnalysisConditional (fc);
 				fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
 				da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
-				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
 			} else {
 				da_false = fc.BranchDefiniteAssignment ();
 			}
@@ -3673,6 +3662,9 @@ namespace Mono.CSharp {
 			get {
 				return top_block;
 			}
+			set {
+				top_block = value;
+			}
 		}
 
 		public bool Resolved {
@@ -4312,6 +4304,24 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public void IncludeBlock (ParametersBlock pb, ToplevelBlock block)
+		{
+			if (block.names != null) {
+				foreach (var n in block.names) {
+					var variable = n.Value as INamedBlockVariable;
+					if (variable != null) {
+						if (variable.Block.ParametersBlock == pb)
+							AddLocalName (n.Key, variable, false);
+						continue;
+					}
+
+					foreach (var v in (List<INamedBlockVariable>) n.Value)
+						if (v.Block.ParametersBlock == pb)
+							AddLocalName (n.Key, v, false);
+				}
+			}
+		}
+
 		// <summary>
 		//   This is used by non-static `struct' constructors which do not have an
 		//   initializer - in this case, the constructor must initialize all of the
@@ -4625,13 +4635,15 @@ namespace Mono.CSharp {
 
 		class MissingBreak : Statement
 		{
-			SwitchLabel label;
+			readonly SwitchLabel label;
 
 			public MissingBreak (SwitchLabel sl)
 			{
 				this.label = sl;
 				this.loc = sl.loc;
 			}
+
+			public bool FallOut { get; set; }
 
 			protected override void DoEmit (EmitContext ec)
 			{
@@ -4643,9 +4655,13 @@ namespace Mono.CSharp {
 
 			protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 			{
-				fc.Report.Error (163, loc, "Control cannot fall through from one case label `{0}' to another",
-					label.GetSignatureForError ());
-
+				if (FallOut) {
+					fc.Report.Error (8070, loc, "Control cannot fall out of switch statement through final case label `{0}'",
+						label.GetSignatureForError ());
+				} else {
+					fc.Report.Error (163, loc, "Control cannot fall through from one case label `{0}' to another",
+						label.GetSignatureForError ());
+				}
 				return true;
 			}
 		}
@@ -5198,14 +5214,16 @@ namespace Mono.CSharp {
 
 				if (sl != null && sl.SectionStart) {
 					//
-					// Section is marked already via constant switch or goto case
+					// Section is marked already via goto case
 					//
 					if (!sl.IsUnreachable) {
 						section_rc = new Reachability ();
 						continue;
 					}
 
-					if (section_rc.IsUnreachable) {
+					if (constant_label != null && constant_label != sl)
+						section_rc = Reachability.CreateUnreachable ();
+					else if (section_rc.IsUnreachable) {
 						section_rc = new Reachability ();
 					} else {
 						if (prev_label != null) {
@@ -5218,9 +5236,6 @@ namespace Mono.CSharp {
 					}
 
 					prev_label = sl;
-
-					if (constant_label != null && constant_label != sl)
-						section_rc = Reachability.CreateUnreachable ();
 				}
 
 				section_rc = s.MarkReachable (section_rc);
@@ -5228,7 +5243,10 @@ namespace Mono.CSharp {
 
 			if (!section_rc.IsUnreachable && prev_label != null) {
 				prev_label.SectionStart = false;
-				var s = new MissingBreak (prev_label);
+				var s = new MissingBreak (prev_label) {
+					FallOut = true
+				};
+
 				s.MarkReachable (rc);
 				block.Statements.Add (s);
 			}
@@ -5511,7 +5529,7 @@ namespace Mono.CSharp {
 
 		public override void AddEndDefiniteAssignment (FlowAnalysisContext fc)
 		{
-			if (case_default == null)
+			if (case_default == null && !(new_expr is Constant))
 				return;
 
 			if (end_reachable_das == null)
@@ -5614,7 +5632,7 @@ namespace Mono.CSharp {
 
 				var ce = new CallEmitter ();
 				ce.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
-				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0));
+				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0), true);
 			} else {
 				EmitFinallyBody (ec);
 			}
@@ -5679,7 +5697,7 @@ namespace Mono.CSharp {
 			if (finally_host != null) {
 				var ce = new CallEmitter ();
 				ce.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
-				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0));
+				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0), true);
 			} else {
 				EmitFinallyBody (ec);
 			}

@@ -7,21 +7,19 @@ class A : Attribute
 {
 }
 
-class X ([field:A] int value)
+[method:A]
+class X (int value)
 {
 	public int f = value;
 
-	public int P {
-		get {
-			return value;
-		}
-	}
+	public int P { get; } = value;
 
 	public static int Main ()
 	{
-		var attr = (A)typeof (X).GetField("value", BindingFlags.NonPublic | BindingFlags.Instance).GetCustomAttribute (typeof (A));
+		var x = typeof (X);
+		var attr = x.GetConstructors ()[0].GetCustomAttribute (typeof (A)) as A;
 		if (attr == null)
-			return 1;
+			return 2;
 
 		return 0;
 	}

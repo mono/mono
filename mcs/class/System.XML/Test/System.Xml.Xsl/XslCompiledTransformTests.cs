@@ -108,5 +108,38 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root attr='D'><foo attr='A'/><foo attr='B'/><foo attr='C'/></root>"))), null, sw);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><root><bar>D</bar><baz>foo: A,foo: B,foo: C</baz></root>", sw.ToString ());
 		}
+
+		[Test]
+		public void ElementToAttribute ()
+		{
+			var xsl = @"<?xml version='1.0' encoding='utf-8'?>
+<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
+  <xsl:output method='xml'/>
+  <xsl:template match='/'>
+	<Node>
+	  <xsl:attribute name='name'>
+		<xsl:call-template name='makeName'>
+		  <xsl:with-param name='Name' select='Node/Name' />
+		</xsl:call-template>
+	  </xsl:attribute>
+	</Node>
+  </xsl:template>
+
+  <xsl:template name='makeName'>
+	<xsl:param name='Name' />
+	<xsl:value-of select='$Name' />
+  </xsl:template>
+</xsl:stylesheet>";
+
+			var t = new XslCompiledTransform ();
+			t.Load (new XmlTextReader (new StringReader (xsl)));
+
+			var source = "<?xml version='1.0' encoding='utf-8' ?><Node><Name>123</Name></Node>";
+			var expected = "<?xml version=\"1.0\" encoding=\"utf-16\"?><Node name=\"123\" />";
+
+			StringWriter sw = new StringWriter ();
+			t.Transform (new XPathDocument (new XmlTextReader (new StringReader (source))), null, sw);
+			Assert.AreEqual (expected, sw.ToString ());
+		}
 	}
 }

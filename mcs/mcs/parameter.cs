@@ -222,8 +222,7 @@ namespace Mono.CSharp {
 			CallerMask = CallerMemberName | CallerLineNumber | CallerFilePath
 		}
 
-		static readonly string[] attribute_targets = new string[] { "param" };
-		static readonly string[] attribute_targets_primary = new string[] { "param", "field" };
+		static readonly string[] attribute_targets = new [] { "param" };
 
 		FullNamedExpression texpr;
 		Modifier modFlags;
@@ -234,7 +233,6 @@ namespace Mono.CSharp {
 		protected int idx;
 		public bool HasAddressTaken;
 
-		Constructor primary_constructor;
 		TemporaryVariableReference expr_tree_variable;
 
 		HoistedParameter hoisted_variant;
@@ -309,7 +307,7 @@ namespace Mono.CSharp {
 
 		public override string[] ValidAttributeTargets {
 			get {
-				return primary_constructor != null ? attribute_targets_primary : attribute_targets;
+				return attribute_targets;
 			}
 		}
 
@@ -317,12 +315,6 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
-			if (a.Target == AttributeTargets.Field) {
-				var field = MemberCache.FindMember (primary_constructor.Spec.DeclaringType, MemberFilter.Field (name, parameter_type), BindingRestriction.DeclaredOnly);
-				((Field)field.MemberDefinition).ApplyAttributeBuilder (a, ctor, cdata, pa);
-				return;
-			}
-
 			if (a.Type == pa.In && ModFlags == Modifier.OUT) {
 				a.Report.Error (36, a.Location, "An out parameter cannot have the `In' attribute");
 				return;
@@ -398,10 +390,6 @@ namespace Mono.CSharp {
 
 			if (attributes != null)
 				attributes.AttachTo (this, rc);
-
-			var ctor = rc.CurrentMemberDefinition as Constructor;
-			if (ctor != null && ctor.IsPrimaryConstructor)
-				primary_constructor = ctor;
 
 			parameter_type = texpr.ResolveAsType (rc);
 			if (parameter_type == null)
