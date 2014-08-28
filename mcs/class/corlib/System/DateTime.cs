@@ -1397,13 +1397,8 @@ namespace System
 					} else if (num < 3) {
 						year = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
 					} else {
-						year = _ParseNumber (s, valuePos, exact ? 4 : 3, 4, false, sloppy_parsing, out num_parsed);
-						if ((year >= 1000) && (num_parsed == 4) && (!longYear) && (s.Length > 4 + valuePos)) {
-							int np = 0;
-							int ly = _ParseNumber (s, valuePos, 5, 5, false, sloppy_parsing, out np);
-							longYear = (ly > 9999);
-						}
-						num = 3;
+						year = _ParseNumber (s, valuePos, exact ? num + 1 : 3, num + 1, false, sloppy_parsing, out num_parsed);
+						longYear = (year > 9999);
 					}
 
 					//FIXME: We should do use dfi.Calendat.TwoDigitYearMax
