@@ -1,10 +1,10 @@
-//
-// SecurityKeyIdentifierClause.cs
+﻿//
+// SessionSecurityTokenCacheKey.cs
 //
 // Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+//   Noesis Labs (Ryan.Melena@noesislabs.com)
 //
-// Copyright (C) 2005-2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2014 Noesis Labs, LLC  https://noesislabs.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,60 +25,50 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_4_5
+
 using System;
-using System.Collections.Generic;
 using System.Xml;
-using System.IdentityModel.Policy;
 
 namespace System.IdentityModel.Tokens
 {
-	public abstract class SecurityKeyIdentifierClause
+	public class SessionSecurityTokenCacheKey
 	{
-		protected SecurityKeyIdentifierClause (string clauseType)
-		{
-			this.clause_type = clauseType;
-		}
-
-		protected SecurityKeyIdentifierClause (string clauseType, byte [] derivationNonce, int derivationLength)
-		{
-			this.clause_type = clauseType;
-			if (derivationNonce != null)
-				this.nonce = (byte []) derivationNonce.Clone ();
-			this.deriv_length = derivationLength;
-		}
-
-		string clause_type;
-		byte [] nonce;
-		int deriv_length;
-
-		public virtual bool CanCreateKey {
-			get { return false; }
-		}
-
-		public string ClauseType {
-			get { return clause_type; }
-		}
-
-		public int DerivationLength {
-			get { return deriv_length; }
-		}
-
-		public byte [] GetDerivationNonce ()
-		{
-			return nonce != null ? (byte []) nonce.Clone () : null;
-		}
-
-		public string Id { get; set; }
-
-		public virtual SecurityKey CreateKey ()
-		{
-			throw new NotSupportedException (String.Format ("This '{0}' identifier clause does not support key creation.", GetType ()));
+		[MonoTODO]
+		public static bool operator !=(SessionSecurityTokenCacheKey first, SessionSecurityTokenCacheKey second) {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool Matches (SecurityKeyIdentifierClause clause)
-		{
+		public static bool operator ==(SessionSecurityTokenCacheKey first, SessionSecurityTokenCacheKey second) {
+			throw new NotImplementedException ();
+		}
+
+		public UniqueId ContextId { get; private set; }
+		public string EndpointId { get; private set; }
+		public bool IgnoreKeyGeneration { get; set; }
+		public UniqueId KeyGeneration { get; private set; }
+
+		public SessionSecurityTokenCacheKey (string endpointId, UniqueId contextId, UniqueId keyGeneration) {
+			EndpointId = endpointId;
+			ContextId = contextId;
+			KeyGeneration = keyGeneration;
+		}
+
+		[MonoTODO]
+		public override bool Equals (System.Object obj) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override int GetHashCode () {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override string ToString () {
 			throw new NotImplementedException ();
 		}
 	}
 }
+#endif

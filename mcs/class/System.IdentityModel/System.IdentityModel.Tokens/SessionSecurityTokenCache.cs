@@ -1,10 +1,10 @@
-//
-// SecurityKeyIdentifierClause.cs
+﻿//
+// SessionSecurityTokenCache.cs
 //
 // Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+//   Noesis Labs (Ryan.Melena@noesislabs.com)
 //
-// Copyright (C) 2005-2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2014 Noesis Labs, LLC  https://noesislabs.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,60 +25,27 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_4_5
+
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Configuration;
 using System.Xml;
-using System.IdentityModel.Policy;
 
 namespace System.IdentityModel.Tokens
 {
-	public abstract class SecurityKeyIdentifierClause
+	public abstract class SessionSecurityTokenCache : ICustomIdentityConfiguration
 	{
-		protected SecurityKeyIdentifierClause (string clauseType)
-		{
-			this.clause_type = clauseType;
-		}
-
-		protected SecurityKeyIdentifierClause (string clauseType, byte [] derivationNonce, int derivationLength)
-		{
-			this.clause_type = clauseType;
-			if (derivationNonce != null)
-				this.nonce = (byte []) derivationNonce.Clone ();
-			this.deriv_length = derivationLength;
-		}
-
-		string clause_type;
-		byte [] nonce;
-		int deriv_length;
-
-		public virtual bool CanCreateKey {
-			get { return false; }
-		}
-
-		public string ClauseType {
-			get { return clause_type; }
-		}
-
-		public int DerivationLength {
-			get { return deriv_length; }
-		}
-
-		public byte [] GetDerivationNonce ()
-		{
-			return nonce != null ? (byte []) nonce.Clone () : null;
-		}
-
-		public string Id { get; set; }
-
-		public virtual SecurityKey CreateKey ()
-		{
-			throw new NotSupportedException (String.Format ("This '{0}' identifier clause does not support key creation.", GetType ()));
-		}
-
+		public abstract void AddOrUpdate (SessionSecurityTokenCacheKey key, SessionSecurityToken value, DateTime expiryTime);
+		public abstract SessionSecurityToken Get (SessionSecurityTokenCacheKey key);
+		public abstract IEnumerable<SessionSecurityToken> GetAll (string endpointId, UniqueId contextId);
 		[MonoTODO]
-		public virtual bool Matches (SecurityKeyIdentifierClause clause)
-		{
+		public virtual void LoadCustomConfiguration (XmlNodeList nodelist) {
 			throw new NotImplementedException ();
 		}
+		public abstract void Remove (SessionSecurityTokenCacheKey key);
+		public abstract void RemoveAll (string endpointId);
+		public abstract void RemoveAll (string endpointId, UniqueId contextId);
 	}
 }
+#endif

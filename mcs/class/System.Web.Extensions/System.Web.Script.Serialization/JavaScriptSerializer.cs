@@ -203,6 +203,10 @@ namespace System.Web.Script.Serialization
 			return ConvertToType<T> (DeserializeObjectInternal(input));
 		}
 
+		public object Deserialize (string input, Type targetType) {
+			return DeserializeObjectInternal (input);
+		}
+
 		static object Evaluate (object value) {
 			return Evaluate (value, false);
 		}
