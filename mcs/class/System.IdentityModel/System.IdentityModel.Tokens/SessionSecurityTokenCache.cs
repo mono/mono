@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_4_5
+
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Configuration;
@@ -46,3 +48,4 @@ namespace System.IdentityModel.Tokens
 		public abstract void RemoveAll (string endpointId, UniqueId contextId);
 	}
 }
+#endif
