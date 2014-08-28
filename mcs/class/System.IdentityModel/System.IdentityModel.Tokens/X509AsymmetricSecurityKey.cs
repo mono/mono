@@ -84,24 +84,62 @@ namespace System.IdentityModel.Tokens
 			switch (algorithm) {
 			//case SignedXml.XmlDsigDSAUrl: // it is documented as supported, but it isn't in reality and it wouldn't be possible.
 			case SignedXml.XmlDsigRSASHA1Url:
-				return new HMACSHA1 ();
+				return new SHA1Managed ();
 			case SecurityAlgorithms.RsaSha256Signature:
-				return new HMACSHA256 ();
+				return new SHA256Managed ();
 			default:
 				throw new NotSupportedException (String.Format ("'{0}' Hash algorithm is not supported in this security key.", algorithm));
 			}
 		}
 
-		[MonoTODO]
 		public override AsymmetricSignatureDeformatter GetSignatureDeformatter (string algorithm)
 		{
-			throw new NotImplementedException ();
+			switch (algorithm) {
+				//case SignedXml.XmlDsigDSAUrl:
+				//	DSA dsa = (cert.PublicKey.Key as DSA);
+				//	if (dsa == null) {
+				//		throw new NotSupportedException (String.Format ("The certificate does not contain DSA public key while '{0}' requires it.", algorithm));
+				//	}
+				//	else {
+				//		return new DSASignatureDeformatter(dsa);
+				//	}
+				case SignedXml.XmlDsigRSASHA1Url:
+				case SecurityAlgorithms.RsaSha256Signature:
+					RSA rsa = (cert.PublicKey.Key as RSA);
+					if (rsa == null) {
+						throw new NotSupportedException (String.Format ("The certificate does not contain RSA public key while '{0}' requires it.", algorithm));
+					}
+					else {
+						return new RSAPKCS1SignatureDeformatter (rsa);
+					}
+				default:
+					throw new NotSupportedException (String.Format ("'{0}' Hash algorithm is not supported in this security key.", algorithm));
+			}
 		}
 
-		[MonoTODO]
 		public override AsymmetricSignatureFormatter GetSignatureFormatter (string algorithm)
 		{
-			throw new NotImplementedException ();
+			switch (algorithm) {
+				//case SignedXml.XmlDsigDSAUrl:
+				//	DSA dsa = (cert.PrivateKey as DSA);
+				//	if (dsa == null) {
+				//		throw new NotSupportedException (String.Format ("The certificate does not contain DSA private key while '{0}' requires it.", algorithm));
+				//	}
+				//	else {
+				//		return new DSASignatureFormatter(dsa);
+				//	}
+				case SignedXml.XmlDsigRSASHA1Url:
+				case SecurityAlgorithms.RsaSha256Signature:
+					RSA rsa = (cert.PrivateKey as RSA);
+					if (rsa == null) {
+						throw new NotSupportedException (String.Format ("The certificate does not contain RSA private key while '{0}' requires it.", algorithm));
+					}
+					else {
+						return new RSAPKCS1SignatureFormatter (rsa);
+					}
+				default:
+					throw new NotSupportedException (String.Format ("'{0}' Hash algorithm is not supported in this security key.", algorithm));
+			}
 		}
 
 		public override bool HasPrivateKey ()
