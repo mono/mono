@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,6 +11,7 @@
     <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
+    
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
@@ -18,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -46,15 +48,17 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+	<Compile Include="System.IdentityModel\CookieTransform.cs" />
+    <Compile Include="System.IdentityModel\OpenObject.cs" />
     <Compile Include="System.IdentityModel.Claims\Claim.cs" />
     <Compile Include="System.IdentityModel.Claims\ClaimSet.cs" />
     <Compile Include="System.IdentityModel.Claims\ClaimTypes.cs" />
     <Compile Include="System.IdentityModel.Claims\DefaultClaimSet.cs" />
     <Compile Include="System.IdentityModel.Claims\Rights.cs" />
     <Compile Include="System.IdentityModel.Claims\WindowsClaimSet.cs" />
-    <Compile Include="System.IdentityModel.Claims\X509CertificateClaimSet.cs" />
     <Compile Include="System.IdentityModel.Configuration\ICustomIdentityConfiguration.cs" />
     <Compile Include="System.IdentityModel.Configuration\IdentityModelCaches.cs" />
+    <Compile Include="System.IdentityModel.Claims\X509CertificateClaimSet.cs" />
     <Compile Include="System.IdentityModel.Policy\AuthorizationContext.cs" />
     <Compile Include="System.IdentityModel.Policy\EvaluationContext.cs" />
     <Compile Include="System.IdentityModel.Policy\IAuthorizationComponent.cs" />
@@ -64,9 +68,9 @@
     <Compile Include="System.IdentityModel.Protocols\WSTrust\Entropy.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\Lifetime.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\ProtectedKey.cs" />
-    <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestedProofToken.cs" />
-    <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestedSecurityToken.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestSecurityTokenResponse.cs" />
+    <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestedProofToken.cs" />
+    <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestedSecurityTOken.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\Status.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\UseKey.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\WSTrustMessage.cs" />
@@ -96,6 +100,7 @@
     <Compile Include="System.IdentityModel.Tokens\AudienceRestriction.cs" />
     <Compile Include="System.IdentityModel.Tokens\AuthenticationContext.cs" />
     <Compile Include="System.IdentityModel.Tokens\AuthenticationInformation.cs" />
+    <Compile Include="System.IdentityModel.Tokens\AuthenticationContext.cs" />
     <Compile Include="System.IdentityModel.Tokens\BinaryKeyIdentifierClause.cs" />
     <Compile Include="System.IdentityModel.Tokens\EncryptedKeyIdentifierClause.cs" />
     <Compile Include="System.IdentityModel.Tokens\EncryptingCredentials.cs" />
@@ -142,15 +147,15 @@
     <Compile Include="System.IdentityModel.Tokens\SecurityToken.cs" />
     <Compile Include="System.IdentityModel.Tokens\SecurityTokenDescriptor.cs" />
     <Compile Include="System.IdentityModel.Tokens\SecurityTokenException.cs" />
-    <Compile Include="System.IdentityModel.Tokens\SecurityTokenHandler.cs" />
+	<Compile Include="System.IdentityModel.Tokens\SecurityTokenHandler.cs" />
     <Compile Include="System.IdentityModel.Tokens\SecurityTokenHandlerCollection.cs" />
     <Compile Include="System.IdentityModel.Tokens\SecurityTokenHandlerConfiguration.cs" />
     <Compile Include="System.IdentityModel.Tokens\SecurityTokenTypes.cs" />
     <Compile Include="System.IdentityModel.Tokens\SecurityTokenValidationException.cs" />
+    <Compile Include="System.IdentityModel.Tokens\SessionSecurityToken.cs" />
     <Compile Include="System.IdentityModel.Tokens\SessionSecurityTokenCache.cs" />
     <Compile Include="System.IdentityModel.Tokens\SessionSecurityTokenCacheKey.cs" />
     <Compile Include="System.IdentityModel.Tokens\SessionSecurityTokenHandler.cs" />
-    <Compile Include="System.IdentityModel.Tokens\SessionSecurityToken.cs" />
     <Compile Include="System.IdentityModel.Tokens\SigningCredentials.cs" />
     <Compile Include="System.IdentityModel.Tokens\SymmetricSecurityKey.cs" />
     <Compile Include="System.IdentityModel.Tokens\TlsHMAC.cs" />
@@ -165,10 +170,7 @@
     <Compile Include="System.IdentityModel.Tokens\X509SubjectKeyIdentifierClause.cs" />
     <Compile Include="System.IdentityModel.Tokens\X509ThumbprintKeyIdentifierClause.cs" />
     <Compile Include="System.IdentityModel.Tokens\X509WindowsSecurityToken.cs" />
-    <Compile Include="System.IdentityModel\CookieTransform.cs" />
-    <Compile Include="System.IdentityModel\OpenObject.cs" />
-    <Compile Include="System.Security.Claims\AuthenticationTypes.cs" />
-    <Compile Include="System.ServiceModel.Security\X509CertificateValidationMode.cs" />
+    <Compile Include="System.Security.Claims\AuthenticationTypes.cs" />    <Compile Include="System.ServiceModel.Security\X509CertificateValidationMode.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -179,12 +181,17 @@
   -->
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
     </PreBuildEvent>
+
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
     </PostBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
@@ -228,8 +235,5 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.IdentityModel" />
-  </ItemGroup>
 </Project>
+
