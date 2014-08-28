@@ -357,7 +357,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void IsBaseOf_UriNull ()
 		{
 			UnitTestUriParser p = new UnitTestUriParser ();
@@ -365,7 +365,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void IsBaseOf_NullUri ()
 		{
 			UnitTestUriParser p = new UnitTestUriParser ();

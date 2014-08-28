@@ -425,13 +425,8 @@ namespace MonoTests.System
 				http.IsBaseOf (null);
 				Assert.Fail ();
 			}
-#if NET_4_0
 			catch (ArgumentNullException) {
 			}
-#else
-			catch (NullReferenceException) {
-			}
-#endif
 		}
 
 		[Test] 
