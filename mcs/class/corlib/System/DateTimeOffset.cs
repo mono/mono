@@ -343,9 +343,17 @@ namespace System
 			if ((styles & DateTimeStyles.AssumeLocal) != 0 && (styles & DateTimeStyles.AssumeUniversal) != 0)
 				throw new ArgumentException ("styles parameter contains incompatible flags");
 
+			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (formatProvider);
+			DateTime d;
 			DateTimeOffset result;
-			if (!ParseExact (input, formats, DateTimeFormatInfo.GetInstance (formatProvider), styles, out result))
-				throw new FormatException ("Invalid format string");
+			Exception exception = null;
+			bool longYear = false;
+			try {
+				if (!DateTime.CoreParseExact (input, formats, dfi, styles, out d, out result, true, ref longYear, true, ref exception, true))
+					throw exception;
+			} catch (ArgumentOutOfRangeException ex) {
+				throw new FormatException ("The UTC representation falls outside the 1-9999 year range", ex);
+			}
 
 			return result;
 		}
