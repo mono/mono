@@ -1722,7 +1722,15 @@ namespace System
 			if (tzsign == -1) {
 				if (result != DateTime.MinValue) {
 					try {
-						dto = new DateTimeOffset (result);
+						TimeSpan offset;
+						if ((style & DateTimeStyles.AssumeUniversal) != 0) {
+							offset = TimeSpan.Zero;
+						} else if ((style & DateTimeStyles.AssumeLocal) != 0) {
+							offset = use_invariant ?
+								TimeSpan.Zero :
+								TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now);
+						}
+						dto = new DateTimeOffset (result, offset);
 					} catch { } // We handle this error in DateTimeOffset.Parse
 				}
 			} else {
