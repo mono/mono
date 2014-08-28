@@ -68,6 +68,8 @@ namespace System.IdentityModel.Tokens
 			return nonce != null ? (byte []) nonce.Clone () : null;
 		}
 
+		public string Id { get; set; }
+
 		public virtual SecurityKey CreateKey ()
 		{
 			throw new NotSupportedException (String.Format ("This '{0}' identifier clause does not support key creation.", GetType ()));
