@@ -1722,15 +1722,16 @@ namespace System
 			if (tzsign == -1) {
 				if (result != DateTime.MinValue) {
 					try {
-						TimeSpan offset;
 						if ((style & DateTimeStyles.AssumeUniversal) != 0) {
-							offset = TimeSpan.Zero;
+							dto = new DateTimeOffset (result, TimeSpan.Zero);
 						} else if ((style & DateTimeStyles.AssumeLocal) != 0) {
-							offset = use_invariant ?
+							var offset = use_invariant ?
 								TimeSpan.Zero :
 								TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now);
+							dto = new DateTimeOffset (result, offset);
+						} else {
+							dto = new DateTimeOffset (result);
 						}
-						dto = new DateTimeOffset (result, offset);
 					} catch { } // We handle this error in DateTimeOffset.Parse
 				}
 			} else {
@@ -1882,6 +1883,7 @@ namespace System
 						bool setExceptionOnError, ref Exception exception,
 						bool dateTimeOffset = false)
 		{
+			dto = new DateTimeOffset (0, TimeSpan.Zero);
 			int i;
 			bool incompleteFormat = false;
 			for (i = 0; i < formats.Length; i++)
