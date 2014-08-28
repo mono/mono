@@ -34,9 +34,6 @@ namespace System.Drawing.Imaging
 {
 	// MUST BE KEPT IN SYNC WITH gdip.h in libgdiplus!
 	// The first 6 fields MUST also match MS definition
-#if TARGET_JVM
-	[MonoTODO]
-#endif
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BitmapData {
 		private int		width;

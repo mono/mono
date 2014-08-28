@@ -71,7 +71,6 @@ namespace MonoTests.System.Configuration {
 			Assert.IsNull (p3, "A1");
 		}
 
-#if !TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Intersect_wrongtype ()
@@ -80,7 +79,6 @@ namespace MonoTests.System.Configuration {
 
 			IPermission p3 = p1.Intersect (new StrongNameIdentityPermission (PermissionState.Unrestricted));
 		}
-#endif
 
 		[Test]
 		public void Union ()
@@ -107,7 +105,6 @@ namespace MonoTests.System.Configuration {
 			Assert.IsTrue (((ConfigurationPermission)p3).IsUnrestricted(), "A2");
 		}
 
-#if !TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Union_wrongtypee ()
@@ -116,7 +113,6 @@ namespace MonoTests.System.Configuration {
 
 			IPermission p3 = p1.Union (new StrongNameIdentityPermission (PermissionState.Unrestricted));
 		}
-#endif
 
 		[Test]
 		public void Subset ()
@@ -133,7 +129,6 @@ namespace MonoTests.System.Configuration {
 			Assert.IsTrue (p2.IsSubsetOf (null), "A6");
 		}
 
-#if !TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Subset_wrongtype ()
@@ -142,12 +137,8 @@ namespace MonoTests.System.Configuration {
 
 			Assert.IsFalse (p1.IsSubsetOf (new StrongNameIdentityPermission (PermissionState.Unrestricted)));
 		}
-#endif
 
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void ToXml ()
 		{
 			ConfigurationPermission p = new ConfigurationPermission (PermissionState.Unrestricted);

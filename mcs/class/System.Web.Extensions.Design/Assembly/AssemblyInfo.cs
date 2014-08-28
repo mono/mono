@@ -57,7 +57,7 @@ using System.Security;
 
 [assembly: NeutralResourcesLanguage ("en-US")]
 
-#if !(TARGET_JVM || TARGET_DOTNET)
+#if !(TARGET_DOTNET)
 	[assembly: CLSCompliant (true)]
 	[assembly: AssemblyDelaySign (true)]
 	[assembly: AssemblyKeyFile ("../winfx.pub")]

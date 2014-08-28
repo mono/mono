@@ -98,12 +98,10 @@ namespace System.Net.Mail {
 			base.GetObjectData (info, context);
 			info.AddValue ("Status", statusCode, typeof (int));
 		}
-#if !TARGET_JVM //remove private implementation
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			GetObjectData (info, context);
 		}
-#endif
 	}
 }
 

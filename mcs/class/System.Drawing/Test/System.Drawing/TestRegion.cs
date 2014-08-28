@@ -85,9 +85,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestCloneAndEquals()
 		{
 			Bitmap bmp = new Bitmap (600, 800);
@@ -122,9 +119,6 @@ namespace MonoTests.System.Drawing
 
 		 /*Tests infinite, empty, etc*/
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestInfiniteAndEmpty()
 		{
 			Bitmap bmp = new Bitmap (600, 800);
@@ -160,9 +154,6 @@ namespace MonoTests.System.Drawing
 
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestUnionGroup1 ()
 		{
 			Bitmap bmp = new Bitmap (600, 800);
@@ -316,9 +307,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestUnionGroup2 ()
 		{
 			RectangleF[] rects;
@@ -466,9 +454,6 @@ namespace MonoTests.System.Drawing
 
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestComplementGroup1 ()
 		{
 			RectangleF[] rects;
@@ -573,9 +558,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestComplementGroup2 ()
 		{
 
@@ -614,9 +596,6 @@ namespace MonoTests.System.Drawing
 
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestExcludeGroup1 ()
 		{
 			RectangleF[] rects;
@@ -880,9 +859,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestExcludeGroup2 ()
 		{
 			Bitmap bmp = new Bitmap (600, 800);
@@ -912,9 +888,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void ExcludeBug402613 ()
 		{
 			Region r = new Region();
@@ -925,9 +898,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestIntersect()
 		{
 
@@ -972,9 +942,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestXor()
 		{
 			Bitmap bmp = new Bitmap (600, 800);
@@ -1064,9 +1031,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TestTranslate()
 		{
 			Region rgn1 = new Region (new RectangleF (10, 10, 120,120));
@@ -1085,9 +1049,6 @@ namespace MonoTests.System.Drawing
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Constructor_GraphicsPath_Null ()
 		{
 			GraphicsPath gp = null;
@@ -1096,9 +1057,6 @@ namespace MonoTests.System.Drawing
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Constructor_RegionData_Null ()
 		{
 			RegionData rd = null;
@@ -1204,27 +1162,18 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IsVisible_IntIntNull ()
 		{
 			Assert.IsTrue (new Region ().IsVisible (0, 0, null));
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IsVisible_IntIntIntIntNull ()
 		{
 			Assert.IsFalse (new Region ().IsVisible (0, 0, 0, 0, null));
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IsVisible_PointNull ()
 		{
 			Point p = new Point ();
@@ -1232,9 +1181,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IsVisible_PointFNull ()
 		{
 			PointF p = new PointF ();
@@ -1242,9 +1188,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IsVisible_RectangleNull ()
 		{
 			Rectangle r = new Rectangle ();
@@ -1252,9 +1195,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IsVisible_RectangleFNull ()
 		{
 			RectangleF r = new RectangleF ();
@@ -1262,18 +1202,12 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IsVisible_SingleSingleNull ()
 		{
 			Assert.IsTrue (new Region ().IsVisible (0f, 0f, null));
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void IsVisible_SingleSingleSingleSingleNull ()
 		{
 			Assert.IsFalse (new Region ().IsVisible (0f, 0f, 0f, 0f, null));
@@ -1294,9 +1228,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Equals_NullGraphics ()
 		{
@@ -1319,9 +1250,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetRegionScans_Null ()
 		{
@@ -1349,9 +1277,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Region_Empty ()
 		{
 			Region region = new Region ();
@@ -1388,9 +1313,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Rectangle_GetRegionScans ()
 		{
 			Matrix matrix = new Matrix ();
@@ -1579,12 +1501,8 @@ namespace MonoTests.System.Drawing
 	}
 
 	[TestFixture]
-#if TARGET_JVM
-	[Ignore ("Unsafe code is not supported")]
-#endif
 	// the test cases in this fixture aren't restricted wrt running unmanaged code
 	public class RegionTestUnmanaged {
-#if !TARGET_JVM
 		private Bitmap bitmap;
 		private Graphics graphic;
 
@@ -1687,7 +1605,6 @@ namespace MonoTests.System.Drawing
 			Assert.IsFalse (IntPtr.Zero == ptr, "ptr");
 			r.ReleaseHrgn (ptr);
 		}
-#endif
 #endif
 	}
 }

@@ -83,13 +83,11 @@ namespace MonoTests.System.Reflection
 		{
 		}
 
-#if !TARGET_JVM // No support for extern methods in TARGET_JVM
 		[DllImport ("foo")]
 		public extern static void marshalAsMethod (
 			[MarshalAs(UnmanagedType.Bool)]int p0, 
 			[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr)] string [] p1,
 			[MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")] object p2);
-#endif
 		[Test]
 		public void DefaultValueEnum () {
 			ParameterInfo[] info = typeof (ParameterInfoTest).GetMethod ("paramMethod").GetParameters ();
@@ -151,7 +149,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (1, info[3].GetCustomAttributes (typeof (OptionalAttribute), true).Length, "#A4");
 			Assert.AreEqual (2, info[4].GetCustomAttributes (true).Length, "#A5");
 
-#if !TARGET_JVM // No support for extern methods in TARGET_JVM
 			ParameterInfo[] pi = typeof (ParameterInfoTest).GetMethod ("marshalAsMethod").GetParameters ();
 			MarshalAsAttribute attr;
 
@@ -166,7 +163,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#D1");
 			Assert.AreEqual ("5", attr.MarshalCookie, "#D2");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#D3");
-#endif
 		}
 
 		[Test] // bug #342536

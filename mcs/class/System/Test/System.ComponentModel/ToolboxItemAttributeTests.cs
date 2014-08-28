@@ -18,9 +18,6 @@ namespace MonoTests.System.ComponentModel
 	{
 #if !MOBILE
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD BUG ID: 7215, 7216")]
-#endif
 		public void DefaultType ()
 		{
 			ToolboxItemAttribute attr = new ToolboxItemAttribute (true);

@@ -86,24 +86,7 @@ namespace System.Web
 				if (strHeader != null) {
 					DateTime dtIfModifiedSince = DateTime.ParseExact (strHeader, "r", null);
 					DateTime ftime;
-#if TARGET_JVM
-					try 
-					{
-						ftime = fi.LastWriteTime.ToUniversalTime ();
-					} 
-					catch (NotSupportedException) 
-					{
-						// The file is in a WAR, it might be modified with last redeploy.
-						try {
-							ftime = (DateTime) AppDomain.CurrentDomain.GetData (".appStartTime");
-						}
-						catch {
-							ftime = DateTime.MaxValue;
-						}
-					}
-#else
 					ftime = fi.LastWriteTime.ToUniversalTime ();
-#endif
 					if (ftime <= dtIfModifiedSince) {
 						response.ContentType = MimeTypes.GetMimeType (fileName);
 						response.StatusCode = 304;

@@ -289,11 +289,9 @@ namespace System.Web
 			}
 		}
 
-#if !TARGET_JVM
 		public WindowsIdentity LogonUserIdentity {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 		
 		string anonymous_id;
 		public string AnonymousID {
@@ -580,10 +578,8 @@ namespace System.Web
 		// GetSubStream returns a 'copy' of the InputStream with Position set to 0.
 		static Stream GetSubStream (Stream stream)
 		{
-#if !TARGET_JVM
 			if (stream is IntPtrStream)
 				return new IntPtrStream (stream);
-#endif
 
 			if (stream is MemoryStream) {
 				MemoryStream other = (MemoryStream) stream;
@@ -797,7 +793,6 @@ namespace System.Web
 			input_stream = new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length, false, true);
 		}
 
-#if !TARGET_JVM
 		const int INPUT_BUFFER_SIZE = 32*1024;
 
 		TempFileStream GetTempStream ()
@@ -951,7 +946,6 @@ namespace System.Web
 			if (total < content_length)
 				throw HttpException.NewWithCode (411, "The request body is incomplete.", WebEventCodes.WebErrorOtherError);
 		}
-#endif
 
 		internal void ReleaseResources ()
 		{
@@ -1563,14 +1557,10 @@ namespace System.Web
 			
 			if (!isAppVirtualPath && !virtualPath.StartsWith (appVirtualPath, RuntimeHelpers.StringComparison))
 				throw new InvalidOperationException (String.Format ("Failed to map path '{0}'", virtualPath));
-#if TARGET_JVM
-			return worker_request.MapPath (virtualPath);
-#else
 			string path = worker_request.MapPath (virtualPath);
 			if (virtualPath [virtualPath.Length - 1] != '/' && path [path.Length - 1] == System.IO.Path.DirectorySeparatorChar)
 				path = path.TrimEnd (System.IO.Path.DirectorySeparatorChar);
 			return path;
-#endif
 		}
 
 		public void SaveAs (string filename, bool includeHeaders)

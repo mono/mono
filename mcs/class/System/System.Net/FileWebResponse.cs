@@ -145,11 +145,7 @@ namespace System.Net
 			((IDisposable) this).Dispose ();
 		}
 
-#if TARGET_JVM //enable overrides for extenders
-		public override void Dispose()
-#else
 		void IDisposable.Dispose()
-#endif
 		{
 			Dispose (true);
 			

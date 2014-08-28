@@ -62,18 +62,7 @@ namespace System.Web.Services.Protocols {
 		public abstract void ProcessMessage (SoapMessage message);
 
 
-#if !TARGET_JVM
 		static ArrayList[] globalExtensions;
-#else
-		static ArrayList[] globalExtensions {
-			get {
-				return (ArrayList[])AppDomain.CurrentDomain.GetData("SoapExtension.globalExtensions");
-			}
-			set {
-				AppDomain.CurrentDomain.SetData("SoapExtension.globalExtensions", value);
-			}
-		}
-#endif
 
 		internal static SoapExtension[] CreateExtensionChain (SoapExtensionRuntimeConfig[] extensionConfigs)
 		{

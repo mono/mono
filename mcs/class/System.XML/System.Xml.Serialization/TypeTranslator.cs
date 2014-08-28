@@ -45,44 +45,13 @@ namespace System.Xml.Serialization
 		static Hashtable primitiveArrayTypes;
 		static Hashtable nullableTypes;
 
-#if TARGET_JVM
-		static readonly object AppDomain_TypeTranslatorCacheLock = new object ();
-		const string AppDomain_nameCacheName = "System.Xml.Serialization.TypeTranslator.nameCache";
-		const string AppDomain_nullableTypesName = "System.Xml.Serialization.TypeTranslator.nullableTypes";
-		
-		static Hashtable AppDomain_nameCache {
-			get { return GetAppDomainCache (AppDomain_nameCacheName); }
-		}
-
-		static Hashtable AppDomain_nullableTypes {
-			get { return GetAppDomainCache (AppDomain_nullableTypesName); }
-		}
-
-		static Hashtable GetAppDomainCache(string name) {
-			Hashtable res = (Hashtable) AppDomain.CurrentDomain.GetData (name);
-
-			if (res == null) {
-				lock (AppDomain_TypeTranslatorCacheLock) {
-					res = (Hashtable) AppDomain.CurrentDomain.GetData (name);
-					if (res == null) {
-						res = Hashtable.Synchronized (new Hashtable ());
-						AppDomain.CurrentDomain.SetData (name, res);
-					}
-				}
-			}
-
-			return res;
-		}
-#endif
 
 		static TypeTranslator ()
 		{
 			nameCache = new Hashtable ();
 			primitiveArrayTypes = Hashtable.Synchronized (new Hashtable ());
 
-#if !TARGET_JVM
 			nameCache = Hashtable.Synchronized (nameCache);
-#endif
 			// XSD Types with direct map to CLR types
 
 			nameCache.Add (typeof (bool), new TypeData (typeof (bool), "boolean", true));
@@ -211,18 +180,10 @@ namespace System.Xml.Serialization
 				TypeData pt = GetTypeData (type); // beware this recursive call btw ...
 				if (pt != null) {
 						TypeData tt = (TypeData) nullableTypes [pt.XmlType];
-#if TARGET_JVM
-						if (tt == null)
-							tt = (TypeData) AppDomain_nullableTypes [pt.XmlType];
-#endif
 						if (tt == null) {
 							tt = new TypeData (type, pt.XmlType, false);
 							tt.IsNullable = true;
-#if TARGET_JVM
-							AppDomain_nullableTypes [pt.XmlType] = tt;
-#else
 							nullableTypes [pt.XmlType] = tt;
-#endif
 						}
 						return tt;
 				}
@@ -232,11 +193,6 @@ namespace System.Xml.Serialization
 				TypeData typeData = nameCache[runtimeType] as TypeData;
 				if (typeData != null) return typeData;
 
-#if TARGET_JVM
-				Hashtable dynamicCache = AppDomain_nameCache;
-				typeData = dynamicCache[runtimeType] as TypeData;
-				if (typeData != null) return typeData;
-#endif
 
 				string name;
 				if (type.IsArray) {
@@ -258,11 +214,7 @@ namespace System.Xml.Serialization
 				typeData = new TypeData (type, name, false);
 				if (nullableOverride)
 					typeData.IsNullable = true;
-#if TARGET_JVM
-				dynamicCache[runtimeType] = typeData;
-#else
 				nameCache[runtimeType] = typeData;
-#endif
 				return typeData;
 		}
 

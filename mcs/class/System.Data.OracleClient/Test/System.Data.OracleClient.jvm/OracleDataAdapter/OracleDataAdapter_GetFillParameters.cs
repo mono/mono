@@ -70,9 +70,7 @@ public class OracleDataAdapter_GetFillParameters : GHTBase
 	//BY DEFAULT LOGGING IS DONE TO THE STANDARD OUTPUT ONLY FOR FAILURES
 
 	[Test]
-#if !TARGET_JVM
 	[Ignore ("JVM test")]
-#endif
 	public void run()
 	{
 		Exception exp = null;

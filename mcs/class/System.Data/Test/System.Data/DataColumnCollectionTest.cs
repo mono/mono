@@ -638,9 +638,6 @@ namespace MonoTests.System.Data
 		}	
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Does not work with TARGET_JVM")]
-#endif
 		public void ToStringTest ()
 		{
 			DataTable Table = new DataTable ("test_table");

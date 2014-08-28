@@ -32,7 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if CONFIGURATION_DEP && !TARGET_JVM
+#if CONFIGURATION_DEP
 extern alias PrebuiltSystem;
 using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
 #endif
@@ -47,32 +47,12 @@ using System.Security.Permissions;
 using System.Xml;
 using System.Xml.XPath;
 #endif
-#if TARGET_JVM
-using vmw.common;
-using vmw.@internal.io;
-#endif
 
 namespace System.Configuration
 {
 	public sealed class ConfigurationSettings
 	{
-#if !TARGET_JVM
      		static IConfigurationSystem config = DefaultConfig.GetInstance ();
-#else
-		static IConfigurationSystem config {
-			get {
-				IConfigurationSystem conf = (IConfigurationSystem) AppDomain.CurrentDomain.GetData ("ConfigurationSettings.Config");
-				if (conf == null) {
-					conf = DefaultConfig.GetInstance ();
-					AppDomain.CurrentDomain.SetData ("ConfigurationSettings.Config", conf);
-				}
-				return conf;
-			}
-			set {
-				AppDomain.CurrentDomain.SetData ("ConfigurationSettings.Config", value);
-			}
-		}
-#endif
 		static object lockobj = new object ();
 		private ConfigurationSettings ()
 		{
@@ -123,23 +103,7 @@ namespace System.Configuration
 	//
 	class DefaultConfig : IConfigurationSystem
 	{
-#if !TARGET_JVM
         	static readonly DefaultConfig instance = new DefaultConfig ();        
-#else
-		static DefaultConfig instance {
-			get {
-				DefaultConfig conf = (DefaultConfig) AppDomain.CurrentDomain.GetData ("DefaultConfig.instance");
-				if (conf == null) {
-					conf = new DefaultConfig ();
-					AppDomain.CurrentDomain.SetData ("DefaultConfig.instance", conf);
-				}
-				return conf;
-			}
-			set {
-				AppDomain.CurrentDomain.SetData ("DefaultConfig.instance", value);
-			}
-		}
-#endif
 		ConfigurationData config;
 		
 		private DefaultConfig ()
@@ -185,16 +149,6 @@ namespace System.Configuration
 					config = data;
 			}
 		}
-#if TARGET_JVM
-		internal static string GetBundledMachineConfig ()
-		{
-			return null;
-		}
-		internal static string GetMachineConfigPath ()
-		{
-			return System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile;
-		}
-#else
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern private static string get_bundled_machine_config ();
 		internal static string GetBundledMachineConfig ()
@@ -207,7 +161,6 @@ namespace System.Configuration
 		{
 			return get_machine_config_path ();
 		}
-#endif
 		private static string GetAppConfigPath ()
 		{
 			AppDomainSetup currentInfo = AppDomain.CurrentDomain.SetupInformation;
@@ -291,29 +244,14 @@ namespace System.Configuration
 #if (XML_DEP)
 			this.fileName = fileName;
 			if (fileName == null
-#if !TARGET_JVM
 				|| !File.Exists (fileName)
-#endif
 )
 				return false;
 			
 			XmlTextReader reader = null;
 
 			try {
-#if !TARGET_JVM
 				FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
-#else
-				Stream fs = (Stream) vmw.common.IOUtils.getStream (fileName);
-
-				//patch for machine.config
-				if (fs == null && fileName.EndsWith ("machine.config")) {
-					fs = (Stream) IOUtils.getStreamForGHConfigs (fileName);
-				}
-
-				if (fs == null) {
-					return false;
-				}
-#endif
 				reader = new XmlTextReader (fs);
 				if (InitRead (reader))
 					ReadConfigFile (reader);

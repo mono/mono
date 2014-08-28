@@ -53,11 +53,9 @@ using System.Runtime.InteropServices;
 
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 
-#if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
 	[assembly: AssemblyDelaySign (true)]
 	[assembly: AssemblyKeyFile ("../msfinal.pub")]
-#endif
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: ComVisible (true)]

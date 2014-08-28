@@ -409,9 +409,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-#if TARGET_JVM
-		[Category ("NotWorking")] // File watcher is not supported
-#endif
 		public void Save ()
 		{
 			string origin = @"<div>

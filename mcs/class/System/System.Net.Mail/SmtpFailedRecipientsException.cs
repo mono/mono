@@ -88,12 +88,10 @@ namespace System.Net.Mail {
 			info.AddValue ("innerExceptions", innerExceptions);
 		}
 
-#if !TARGET_JVM //remove private implementation
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			GetObjectData (info, context);
 		}
-#endif
 
 		#endregion // Methods
 	}

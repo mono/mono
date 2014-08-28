@@ -71,11 +71,9 @@ namespace System.Data.OracleClient
 			return new OracleConnectionStringBuilder ();
 		}
 
-#if !TARGET_JVM
 		public override CodeAccessPermission CreatePermission (PermissionState state) {
 			return new OraclePermission (state);
 		}
-#endif
 
 		public override DbDataAdapter CreateDataAdapter () {
 			return new OracleDataAdapter ();

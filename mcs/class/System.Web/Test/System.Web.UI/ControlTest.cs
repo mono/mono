@@ -816,11 +816,7 @@ namespace MonoTests.System.Web.UI
 
 		public static void ResolveUrl_Load (Page p)
 		{
-#if TARGET_JVM
-			string appPath = "/MainsoftWebApp20";
-#else
 			string appPath = "/NunitWeb";
-#endif
 			Control ctrl = new Control ();
 			p.Controls.Add (ctrl);
 			Assert.AreEqual (appPath + "/MyPage.aspx", ctrl.ResolveUrl ("~/MyPage.aspx"), "ResolveClientUrl Failed");
@@ -866,11 +862,7 @@ namespace MonoTests.System.Web.UI
 
 		public static void ResolveUrl2_Load (Page p)
 		{
-#if TARGET_JVM
-			string appPath = "/MainsoftWebApp20";
-#else
 			string appPath = "/NunitWeb";
-#endif
 			Control uc = p.FindControl ("WebUserControl1");
 			Control ctrl = uc.FindControl ("Label");
 

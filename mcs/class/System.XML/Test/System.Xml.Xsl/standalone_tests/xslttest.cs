@@ -26,11 +26,7 @@ namespace MonoTests.oasis_xslt {
 			string exceptionsFilename = Path.Combine (EnvOptions.OutputDir, "res-exceptions.lst");
 
 			Helpers.ReadStrings (skipTargets, "ignore.lst");
-#if TARGET_JVM
-			Helpers.ReadStrings (knownFailures, "knownFailures.jvm.lst");
-#else
 			Helpers.ReadStrings (knownFailures, "knownFailures.lst");
-#endif
 			Helpers.ReadStrings (fixmeList, "fixme.lst");
 			ArrayList exceptionsArray = new ArrayList();
 			Helpers.ReadStrings (exceptionsArray, exceptionsFilename);

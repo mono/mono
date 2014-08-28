@@ -85,15 +85,7 @@ namespace System.Web
 		[ThreadStatic]
 		static Dictionary <string, IResourceProvider> resource_providers;
 		
-#if TARGET_JVM
-		const string app_global_res_key = "HttpContext.app_global_res_key";
-		internal static Assembly AppGlobalResourcesAssembly {
-			get { return (Assembly) AppDomain.CurrentDomain.GetData (app_global_res_key); }
-			set { AppDomain.CurrentDomain.SetData (app_global_res_key, value); }
-		}
-#else
 		internal static Assembly AppGlobalResourcesAssembly;
-#endif
 		ProfileBase profile = null;
 		LinkedList<IHttpHandler> handlers;
 
@@ -178,7 +170,6 @@ namespace System.Web
 		// The "Current" property is set just after we have constructed it with 
 		// the 'HttpContext (HttpWorkerRequest)' constructor.
 		//
-#if !TARGET_JVM // No remoting CallContext support in Grasshopper
 		public static HttpContext Current {
 			get {
 				return (HttpContext) CallContext.GetData ("c");
@@ -188,7 +179,6 @@ namespace System.Web
 				CallContext.SetData ("c", value);
 			}
 		}
-#endif
 
 		public Exception Error {
 			get {
@@ -228,11 +218,9 @@ namespace System.Web
 				return (cfg.Mode == CustomErrorMode.RemoteOnly) && !Request.IsLocal;
 			}
 		}
-#if !TARGET_JVM
 		public bool IsDebuggingEnabled {
 			get { return RuntimeHelpers.DebuggingEnabled; }
 		}
-#endif
 		public IDictionary Items {
 			get {
 				if (items == null)

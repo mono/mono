@@ -45,9 +45,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Ignore failures in Sys.Net")]
-#endif
 		public void Proxy_Null ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
@@ -58,9 +55,6 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category("InetAccess")]
-#if TARGET_JVM
-		[Ignore ("NMA - wrong cookies number returned")]
-#endif
 		public void Sync ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
@@ -151,7 +145,7 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if !TARGET_JVM && !MOBILE
+#if !MOBILE
 		[Test]
 		[Ignore ("Fails on MS.NET")]
 		public void SslClientBlock ()
@@ -186,9 +180,6 @@ namespace MonoTests.System.Net
 		}
 #endif
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void Missing_ContentEncoding ()
 		{
 			ServicePointManager.CertificatePolicy = new AcceptAllPolicy ();
@@ -211,9 +202,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void BadServer_ChunkedClose ()
 		{
 			// The server will send a chunked response without a 'last-chunked' mark
@@ -1002,9 +990,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		[Ignore ("This does not timeout any more. That's how MS works when reading small responses")]
 		public void ReadTimeout ()
 		{
@@ -1039,9 +1024,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #324300
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void AllowAutoRedirect ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8765);
@@ -2563,7 +2545,7 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if !TARGET_JVM && !MOBILE
+#if !MOBILE
 		class SslHttpServer : HttpServer {
 			X509Certificate _certificate;
 
@@ -2894,9 +2876,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #324182
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void CanTimeout ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 9128);

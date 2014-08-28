@@ -93,23 +93,8 @@ namespace System.Web
 			}
 		}		
 
-#if TARGET_JVM
-		const string SiteMap_provider = "SiteMap_provider";
-		const string SiteMap_providers = "SiteMap_providers";
-		static SiteMapProvider provider
-		{
-			get { return (SiteMapProvider) AppDomain.CurrentDomain.GetData (SiteMap_provider); }
-			set { AppDomain.CurrentDomain.SetData (SiteMap_provider, value); }
-		}
-		static SiteMapProviderCollection providers
-		{
-			get { return (SiteMapProviderCollection) AppDomain.CurrentDomain.GetData (SiteMap_providers); }
-			set { AppDomain.CurrentDomain.SetData (SiteMap_providers, value); }
-		}
-#else
 		static SiteMapProvider provider;
 		static SiteMapProviderCollection providers;
-#endif
 		static object locker = new object ();
 	}
 }

@@ -148,7 +148,6 @@ public class CryptoConfigTest {
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#hmac-sha1", null);
 		// URL used in DigestMethod element 
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#sha1", "System.Security.Cryptography.SHA1CryptoServiceProvider");
-#if !TARGET_JVM //TargetJvmNotWorking - algorithms from System.Security assembly
 		// URL used in Canonicalization or Transform elements 
 		CreateFromName ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315", "System.Security.Cryptography.Xml.XmlDsigC14NTransform");
 		CreateFromName ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", "System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform");
@@ -178,7 +177,6 @@ public class CryptoConfigTest {
 		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#hmac-sha384", "System.Security.Cryptography.HMACSHA384");
 		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#hmac-sha512", "System.Security.Cryptography.HMACSHA512");
 		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160", "System.Security.Cryptography.HMACRIPEMD160");
-#endif
 #endif
 	}
 

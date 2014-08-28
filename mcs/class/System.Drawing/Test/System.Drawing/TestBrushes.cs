@@ -49,9 +49,6 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[Ignore ("Throws ArgumentException - Implementation specific")]
-#endif
 		public void Dispose ()
 		{
 			Brushes.YellowGreen.Dispose ();

@@ -47,7 +47,7 @@ namespace System.Text.RegularExpressions {
 	[Serializable]
 	public partial class Regex : ISerializable {
 
-#if !TARGET_JVM && !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME
 		[MonoTODO]
 		public static void CompileToAssembly (RegexCompilationInfo [] regexes, AssemblyName aname)
 		{
@@ -306,7 +306,6 @@ namespace System.Text.RegularExpressions {
 				throw new ArgumentOutOfRangeException ("options");
 		}
 
-#if !TARGET_JVM
 		private void Init ()
 		{
 			this.machineFactory = cache.Lookup (this.pattern, this.roptions);
@@ -320,7 +319,6 @@ namespace System.Text.RegularExpressions {
 				this.group_names = this.machineFactory.NamesMapping;
 			}
 		}
-#endif
 
 		private void InitNewRegex () 
 		{

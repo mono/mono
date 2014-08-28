@@ -46,12 +46,10 @@ namespace System.Drawing
 		public FontConverter ()
 		{
 		}
-#if !TARGET_JVM
 		~FontConverter ()
 		{
 			// required to match API definition
 		}	
-#endif
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
 			if (sourceType == typeof (string))

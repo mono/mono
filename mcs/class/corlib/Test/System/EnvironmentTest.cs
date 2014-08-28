@@ -138,7 +138,7 @@ namespace MonoTests.System
 			Assert.IsFalse (d.IsSynchronized, "IsSynchronized");
 		}
 
-#if NET_2_0 && !TARGET_JVM && !NET_2_1
+#if NET_2_0 && !NET_2_1
 		[Test] // bug #333740
 		public void GetEnvironmentVariables_NewlySet ()
 		{
@@ -176,7 +176,6 @@ namespace MonoTests.System
 			Environment.GetEnvironmentVariables ((EnvironmentVariableTarget)Int32.MinValue);
 		}
 
-#if !TARGET_JVM // Environment.SetEnvironmentVariable not supported under TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void SetEnvironmentVariable_Target_Invalid ()
@@ -228,7 +227,6 @@ namespace MonoTests.System
 			Environment.SetEnvironmentVariable ("A3", "\0");
 			Assert.IsNull (Environment.GetEnvironmentVariables ()["A3"]);
 		}
-#endif // TARGET_JVM
 #endif
 	}
 }

@@ -133,10 +133,6 @@ namespace System.Web.UI {
 		protected virtual void AddAttribute (string name, string value, HtmlTextWriterAttribute key)
 		{
 			NextAttrStack ();
-#if TARGET_JVM
-			if (attrs [attrs_pos] == null)
-				attrs [attrs_pos] = new AddedAttr ();
-#endif
 			attrs [attrs_pos].name = name;
 			attrs [attrs_pos].value = value;
 			attrs [attrs_pos].key = key;
@@ -146,10 +142,6 @@ namespace System.Web.UI {
 		protected virtual void AddStyleAttribute (string name, string value, HtmlTextWriterStyle key)
 		{
 			NextStyleStack ();
-#if TARGET_JVM
-			if (styles [styles_pos] == null)
-				styles [styles_pos] = new AddedStyle ();
-#endif
 			styles [styles_pos].name = name;
 			value = HttpUtility.HtmlAttributeEncode (value);
 			styles [styles_pos].value = value;
@@ -765,10 +757,6 @@ namespace System.Web.UI {
 				return tagstack [tagstack_pos].key;
 			}
 			set {
-#if TARGET_JVM
-				if (tagstack [tagstack_pos] == null)
-					tagstack [tagstack_pos] = new AddedTag ();
-#endif
 				tagstack [tagstack_pos].key = value;
 				tagstack [tagstack_pos].name = GetTagName (value);
 			}
@@ -782,10 +770,6 @@ namespace System.Web.UI {
 				return tagstack [tagstack_pos].name;
 			}
 			set {
-#if TARGET_JVM
-				if (tagstack [tagstack_pos] == null)
-					tagstack [tagstack_pos] = new AddedTag ();
-#endif
 				tagstack [tagstack_pos].name = value;
 				tagstack [tagstack_pos].key = GetTagKey (value);
 				if (tagstack [tagstack_pos].key != HtmlTextWriterTag.Unknown)
@@ -828,33 +812,21 @@ namespace System.Web.UI {
 
 		int styles_pos = -1, attrs_pos = -1, tagstack_pos = -1;
 
-#if TARGET_JVM
-		class
-#else
 		struct 
-#endif
 		AddedTag {
 			public string name;
 			public HtmlTextWriterTag key;
 			public bool ignore;
 		}
 
-#if TARGET_JVM
-		class
-#else
 		struct 
-#endif
 		AddedStyle {
 			public string name;
 			public HtmlTextWriterStyle key;
 			public string value;
 		}
 
-#if TARGET_JVM
-		class
-#else
 		struct 
-#endif
 		AddedAttr {
 			public string name;
 			public HtmlTextWriterAttribute key;

@@ -29,9 +29,7 @@
 
 #if CONFIGURATION_DEP
 
-#if !TARGET_JVM
 extern alias PrebuiltSystem;
-#endif
 
 using System;
 using System.Collections;
@@ -44,11 +42,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 
-#if TARGET_JVM
-using NameValueCollection = System.Collections.Specialized.NameValueCollection;
-#else
 using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
-#endif
 
 namespace System.Configuration
 {
@@ -264,7 +258,6 @@ namespace System.Configuration
 				return attrs [0].Company;
 			}
 
-#if !TARGET_JVM
 			MethodInfo entryPoint = assembly.EntryPoint;
 			Type entryType = entryPoint != null ? entryPoint.DeclaringType : null;
 			if (entryType != null && !String.IsNullOrEmpty (entryType.Namespace)) {
@@ -272,9 +265,6 @@ namespace System.Configuration
 				return end < 0 ? entryType.Namespace : entryType.Namespace.Substring (0, end);
 			}
 			return "Program";
-#else
-			return assembly.GetName ().Name;
-#endif
 		}
 
 		private static string GetProductName ()
@@ -283,20 +273,11 @@ namespace System.Configuration
 			if (assembly == null)
 				assembly = Assembly.GetCallingAssembly ();
 
-#if !TARGET_JVM
 			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
 			return String.Format ("{0}_{1}_{2}",
 				AppDomain.CurrentDomain.FriendlyName,
 				pkt != null && pkt.Length > 0 ? "StrongName" : "Url",
 				GetEvidenceHash());
-#else // AssemblyProductAttribute-based code
-			AssemblyProductAttribute [] attrs = (AssemblyProductAttribute[]) assembly.GetCustomAttributes (typeof (AssemblyProductAttribute), true);
-		
-			if ((attrs != null) && attrs.Length > 0) {
-				return attrs [0].Product;
-			}
-			return assembly.GetName ().Name;
-#endif
 		}
 
 		// Note: Changed from base64() to hex output to avoid unexpected chars like '\' or '/' with filesystem meaning.
@@ -341,19 +322,15 @@ namespace System.Configuration
 				ProductVersion = GetProductVersion ().Split('.');
 
 			// C:\Documents and Settings\(user)\Application Data
-#if !TARGET_JVM
 			if (userRoamingBasePath == "")
 				userRoamingPath = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
 			else
-#endif
 				userRoamingPath = userRoamingBasePath;
 
 			// C:\Documents and Settings\(user)\Local Settings\Application Data (on Windows)
-#if !TARGET_JVM
 			if (userLocalBasePath == "")
 				userLocalPath = Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData);
 			else
-#endif
 				userLocalPath = userLocalBasePath;
 
 			if (isCompany) {
@@ -366,13 +343,11 @@ namespace System.Configuration
 					Assembly assembly = Assembly.GetEntryAssembly ();
 					if (assembly == null)
 						assembly = Assembly.GetCallingAssembly ();
-#if !TARGET_JVM
 					byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
 					ProductName = String.Format ("{0}_{1}_{2}",
 						ProductName,
 						pkt != null ? "StrongName" : "Url",
 						GetEvidenceHash());
-#endif
 				}
 				userRoamingPath = Path.Combine (userRoamingPath, ProductName);
 				userLocalPath = Path.Combine (userLocalPath, ProductName);

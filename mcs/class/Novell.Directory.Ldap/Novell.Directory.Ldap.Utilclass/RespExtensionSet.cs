@@ -33,11 +33,6 @@ using System;
 namespace Novell.Directory.Ldap.Utilclass
 {
 	
-#if TARGET_JVM
-    // This dummy class workarounds a MS CSC bug by using SupportClass before
-	// using its inner class (SupportClass.AbstractSetSupport)
-	class RespExtensionSetDummy : SupportClass {}
-#endif
 
 	/// <summary> This  class  extends the AbstractSet and Implements the Set
 	/// so that it can be used to maintain a list of currently

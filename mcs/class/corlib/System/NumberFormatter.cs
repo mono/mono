@@ -28,12 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// NumberFormatter is shared with Grasshopper and hence the #if TARGET_JVM for
-// marking the use of unsafe code that is not supported in Grasshopper.
-#if !TARGET_JVM
-#define UNSAFE_TABLES
-#endif
-
 using System.Globalization;
 using System.Text;
 using System.Threading;
@@ -72,7 +66,6 @@ namespace System
 		const double MinRoundtripVal = -1.79769313486231E+308;
 		const double MaxRoundtripVal = 1.79769313486231E+308;
 
-#if UNSAFE_TABLES
 		// The below arrays are taken from mono/metatdata/number-formatter.h
 
 		private static readonly unsafe ulong* MantissaBitsTable;
@@ -96,9 +89,7 @@ namespace System
 				out DigitLowerTable, out DigitUpperTable, out TenPowersList, out DecHexDigits);
 		}
 
-		unsafe
-#endif
-		static long GetTenPowerOf(int i)
+		unsafe static long GetTenPowerOf(int i)
 		{
 			return TenPowersList [i];
 		}
@@ -212,10 +203,7 @@ namespace System
 
 		// Helper to translate an int in the range 0 .. 9999 to its
 		// Hexadecimal digits representation.
-#if UNSAFE_TABLES
-		unsafe
-#endif
-		private static uint FastToDecHex (int val)
+		unsafe private static uint FastToDecHex (int val)
 		{
 			if (val < 100)
 				return (uint)DecHexDigits [val];
@@ -440,10 +428,7 @@ namespace System
 			_decPointPos = _digitsLen = DecHexLen ();
 		}
 
-#if UNSAFE_TABLES // No unsafe code under TARGET_JVM
-		unsafe
-#endif
-		private void Init (string format, double value, int defPrecision)
+		unsafe private void Init (string format, double value, int defPrecision)
 		{
 			Init (format);
 
@@ -1236,17 +1221,11 @@ namespace System
 			return new string (_cbuf, 0, _ind);
 		}
 
-#if UNSAFE_TABLES // No unsafe code under TARGET_JVM
-		unsafe
-#endif
-		private string FormatHexadecimal (int precision)
+		unsafe private string FormatHexadecimal (int precision)
 		{
 			int size = Math.Max (precision, _decPointPos);
-#if UNSAFE_TABLES
 			char* digits = _specifierIsUpper ? DigitUpperTable : DigitLowerTable;
-#else
-			char[] digits = _specifierIsUpper ? DigitUpperTable : DigitLowerTable;
-#endif
+
 			ResetCharBuf (size);
 			_ind = size;
 			ulong val = _val1 | ((ulong)_val2 << 32);
@@ -1769,10 +1748,7 @@ namespace System
 			_cbuf [_ind++] = (char)('0' | v & 0xf);
 		}
 
-#if UNSAFE_TABLES // No unsafe code under TARGET_JVM
-		unsafe
-#endif
-		private void FastAppendDigits (int val, bool force)
+		unsafe private void FastAppendDigits (int val, bool force)
 		{
 			int i = _ind;
 			int digits;

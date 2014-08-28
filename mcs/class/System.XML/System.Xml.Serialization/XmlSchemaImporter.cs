@@ -30,7 +30,7 @@
 //
 
 using System.Xml;
-#if !TARGET_JVM && !MOBILE
+#if !MOBILE
 using System.CodeDom.Compiler;
 #endif
 using System.Xml.Schema;
@@ -98,7 +98,7 @@ namespace System.Xml.Serialization
 			this.typeIdentifiers = typeIdentifiers;
 		}
 		
-#if !TARGET_JVM && !MOBILE
+#if !MOBILE
 		[MonoTODO]
 		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, CodeDomProvider codeProvider, ImportContext context)
 		{

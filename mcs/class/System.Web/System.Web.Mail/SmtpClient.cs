@@ -68,11 +68,6 @@ namespace System.Web.Mail {
 	    	    
 		void ChangeToSSLSocket ()
 		{
-#if TARGET_JVM
-			java.lang.Class c = vmw.common.TypeUtils.ToClass (smtp.Stream);
-			java.lang.reflect.Method m = c.getMethod ("ChangeToSSLSocket", null);
-			m.invoke (smtp.Stream, new object[]{});
-#else
 			// Load Mono.Security.dll
 			Assembly a;
 			try {
@@ -94,7 +89,6 @@ namespace System.Web.Mail {
 
 			if (objSslClientStream != null)
 				smtp = new SmtpStream ((Stream)objSslClientStream);
-#endif
 		}
 		
 		void ReadFields (MailMessageWrapper msg)

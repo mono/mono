@@ -491,13 +491,6 @@ public class HashtableTest {
 			h['b'] = 2;
 			DictionaryEntry[] o = new DictionaryEntry[2];
 			h.CopyTo(o,0);
-#if TARGET_JVM // Hashtable is not an ordered collection!
-			if (o[0].Key.Equals('b')) {
-				DictionaryEntry v = o[0];
-				o[0] = o[1];
-				o[1] = v;
-			}
-#endif // TARGET_JVM
 			Assert.AreEqual ('a', o[0].Key, "first copy fine.");
 			Assert.AreEqual (1, o[0].Value, "first copy fine.");
 			Assert.AreEqual ('b', o[1].Key, "second copy fine.");
@@ -543,7 +536,6 @@ public class HashtableTest {
 	}
 	
 	[Test]
-	[Category ("TargetJvmNotWorking")]
 	public void TestSerialization2 () {
 		// Test from bug #70570
 		MemoryStream stream = new MemoryStream();

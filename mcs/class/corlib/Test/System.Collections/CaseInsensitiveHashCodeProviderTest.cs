@@ -183,11 +183,7 @@ namespace MonoTests.System.Collections
 		[Test]
 		public void Deserialize ()
 		{
-#if TARGET_JVM
-			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
-#else
 			BinaryFormatter bf = new BinaryFormatter ();
-#endif // TARGET_JVM
 
 			MemoryStream ms = new MemoryStream (serialized_en_us);
 			CaseInsensitiveHashCodeProvider enus = (CaseInsensitiveHashCodeProvider) bf.Deserialize (ms);

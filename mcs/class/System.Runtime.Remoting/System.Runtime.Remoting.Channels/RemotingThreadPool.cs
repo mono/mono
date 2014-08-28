@@ -46,9 +46,6 @@ namespace System.Runtime.Remoting.Channels
 		AutoResetEvent threadDone = new AutoResetEvent (false);
 		ArrayList runningThreads = new ArrayList ();
 		 
-#if TARGET_JVM
-		volatile 
-#endif
 		bool stopped = false;
 		
 		static object globalLock = new object ();
@@ -75,11 +72,7 @@ namespace System.Runtime.Remoting.Channels
 					threadDone.Set ();
 					workItems.Clear ();
 					foreach (Thread t in runningThreads)
-#if !TARGET_JVM
 						t.Abort ();
-#else
-						t.Interrupt();
-#endif
 					runningThreads.Clear ();
 				}
 				if (this == sharedPool)
@@ -138,12 +131,7 @@ namespace System.Runtime.Remoting.Channels
 		
 		void PoolThread ()
 		{
-#if !TARGET_JVM
 			while (true) {
-#else
-			while (!stopped) 
-			{
-#endif
 				ThreadStart work = null;
 				do {
 					lock (workItems) {

@@ -55,9 +55,7 @@ namespace System.Web.Script.Services
 				if (url.EndsWith (AuthenticationService.DefaultWebServicePath, StringComparison.Ordinal))
 					handlerType = typeof(AuthenticationService);
 				else {
-#if !TARGET_JVM
 					handlerType = BuildManager.GetCompiledType (url);
-#endif
 					if (handlerType == null)
 						handlerType = WebServiceParser.GetCompiledType (url, context);
 				}

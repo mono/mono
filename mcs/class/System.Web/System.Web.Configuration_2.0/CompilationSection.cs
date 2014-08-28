@@ -67,11 +67,9 @@ namespace System.Web.Configuration
 								    ConfigurationPropertyOptions.None);
 			assemblyPostProcessorTypeProp = new ConfigurationProperty ("assemblyPostProcessorType", typeof (string), "");
 			batchProp = new ConfigurationProperty ("batch", typeof (bool), true);
-#if !TARGET_JVM
 			buildProvidersProp = new ConfigurationProperty ("buildProviders", typeof (BuildProviderCollection), null,
 									null, PropertyHelper.DefaultValidator,
 									ConfigurationPropertyOptions.None);
-#endif
 			batchTimeoutProp = new ConfigurationProperty ("batchTimeout", typeof (TimeSpan), new TimeSpan (0, 15, 0),
 								      PropertyHelper.TimeSpanSecondsOrInfiniteConverter,
 								      PropertyHelper.PositiveTimeSpanValidator,
@@ -109,9 +107,7 @@ namespace System.Web.Configuration
 			properties.Add (assembliesProp);
 			properties.Add (assemblyPostProcessorTypeProp);
 			properties.Add (batchProp);
-#if !TARGET_JVM
 			properties.Add (buildProvidersProp);
-#endif
 			properties.Add (batchTimeoutProp);
 			properties.Add (codeSubDirectoriesProp);
 			properties.Add (compilersProp);
@@ -171,12 +167,10 @@ namespace System.Web.Configuration
 			set { base [batchTimeoutProp] = value; }
 		}
 
-#if !TARGET_JVM
 		[ConfigurationProperty ("buildProviders")]
 		public BuildProviderCollection BuildProviders {
 			get { return (BuildProviderCollection) base [buildProvidersProp]; }
 		}
-#endif
 
 		[ConfigurationProperty ("codeSubDirectories")]
 		public CodeSubDirectoriesCollection CodeSubDirectories {

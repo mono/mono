@@ -54,11 +54,9 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 [assembly: AllowPartiallyTrustedCallers]
 
-#if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
 	[assembly: AssemblyDelaySign (true)]
 	[assembly: AssemblyKeyFile("../msfinal.pub")]
-#endif
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]

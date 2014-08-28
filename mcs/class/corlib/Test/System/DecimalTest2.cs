@@ -136,25 +136,10 @@ namespace MonoTests.System
             }
         }
 
-#if TARGET_JVM
-        // Under TARGET_JVm we have a slightly better precision (becuase of
-        // using Java BigDecimal).
-        private bool AreNotEqual(Decimal v1, Decimal v2)
-        {
-            Decimal delta = v1 - v2;
-            if (delta < 0m)
-                delta = -delta;
-	    Decimal absV1 = v1 < 0m ? -v1 : v1;
-            if (absV1 < 1m)
-                return delta > 1E-27m;
-            return delta / absV1 > 1E-27m;
-        }
-#else
         private bool AreNotEqual(Decimal v1, Decimal v2)
         {
             return v1 != v2;
         }
-#endif
 
 	[Test]
 	     

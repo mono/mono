@@ -44,9 +44,6 @@ public class ServicePointManagerTest
 
         [Test, ExpectedException (typeof (InvalidOperationException))]
 		[Category ("InetAccess")]
-#if TARGET_JVM
-	[Ignore ("Unsupported property - ServicePointManager.MaxServicePoints")]
-#endif
         public void MaxServicePointManagers ()
         {
 		Assert.AreEqual (0, ServicePointManager.MaxServicePoints, "#1");

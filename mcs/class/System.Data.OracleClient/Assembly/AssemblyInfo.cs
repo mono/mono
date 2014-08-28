@@ -32,11 +32,9 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
-#if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
 	[assembly: AssemblyDelaySign (true)]
 	[assembly: AssemblyKeyFile ("../ecma.pub")]
-#endif
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: AllowPartiallyTrustedCallers]

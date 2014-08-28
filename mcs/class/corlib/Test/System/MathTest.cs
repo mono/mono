@@ -17,11 +17,7 @@ namespace MonoTests.System
 	public class MathTest
 	{
 		private static double double_epsilon =
-#if TARGET_JVM
-			1E-15;
-#else
 			double.Epsilon;
-#endif
 
 		static double x = 0.1234;
 		static double y = 12.345;
@@ -521,11 +517,9 @@ namespace MonoTests.System
 				iTest++;
 				Assert.IsTrue (Double.IsNaN (Math.Pow (1, Double.NaN)),
 					"Math.Pow(1, NaN) should be NaN");
-#if !TARGET_JVM
 				iTest++;
 				Assert.IsTrue (Double.IsNaN (Math.Pow (Double.NaN, 0)),
 					"Math.Pow(NaN, 0) should be NaN");
-#endif
 				iTest++;
 				Assert.IsTrue (1.0 == Math.Pow (-1, Double.MaxValue),
 					"Math.Pow(-1, MaxValue) should be 1.0");

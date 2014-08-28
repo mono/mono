@@ -56,10 +56,8 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 
-#if !TARGET_JVM
 	[assembly: AssemblyDelaySign (true)]
 	[assembly: AssemblyKeyFile("../ecma.pub")]
-#endif
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CLSCompliant (false)]
