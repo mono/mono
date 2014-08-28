@@ -189,6 +189,11 @@ namespace System {
 
 		protected internal virtual bool IsBaseOf (Uri baseUri, Uri relativeUri)
 		{
+			if (baseUri == null)
+				throw new ArgumentNullException ("baseUri");
+			if (relativeUri == null)
+				throw new ArgumentNullException ("relativeUri");
+
 			// compare, not case sensitive, the scheme, host and port (+ user informations)
 			if (Uri.Compare (baseUri, relativeUri, UriComponents.SchemeAndServer | UriComponents.UserInfo, UriFormat.Unescaped, StringComparison.InvariantCultureIgnoreCase) != 0)
 				return false;
