@@ -928,10 +928,10 @@ namespace System
 			}
 
 			// Try as a last resort all the patterns
-			if (ParseExact (s, dfi.GetAllDateTimePatternsInternal (), dfi, styles, out result, false, ref longYear, setExceptionOnError, ref exception))
+			if (CoreParseExact (s, dfi.GetAllDateTimePatternsInternal (), dfi, styles, out result, out dto, false, ref longYear, setExceptionOnError, ref exception))
 				return true;
 
-			if (ParseExact (s, ExoticAndNonStandardFormats, dfi, styles, out result, false, ref longYear, setExceptionOnError, ref exception))
+			if (CoreParseExact (s, ExoticAndNonStandardFormats, dfi, styles, out result, out dto, false, ref longYear, setExceptionOnError, ref exception))
 				return true;
 
 			if (!setExceptionOnError)
@@ -1795,9 +1795,10 @@ namespace System
 				throw new FormatException ("Format specifier was invalid.");
 
 			DateTime result;
+			DateTimeOffset dto;
 			bool longYear = false;
 			Exception e = null;
-			if (!ParseExact (s, formats, dfi, style, out result, true, ref longYear, true, ref e))
+			if (!CoreParseExact (s, formats, dfi, style, out result, out dto, true, ref longYear, true, ref e))
 				throw e;
 			return result;
 		}		
@@ -1861,20 +1862,23 @@ namespace System
 		{
 			try {
 				DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
+				DateTimeOffset dto;
 
 				bool longYear = false;
 				Exception e = null;
-				return ParseExact (s, formats, dfi, style, out result, true, ref longYear, false, ref e);
+				return CoreParseExact (s, formats, dfi, style, out result, out dto, true, ref longYear, false, ref e);
 			} catch {
 				result = MinValue;
 				return false;
 			}
 		}
 
-		private static bool ParseExact (string s, string [] formats,
-						DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret,
+		internal static bool CoreParseExact (string s, string [] formats,
+						DateTimeFormatInfo dfi, DateTimeStyles style,
+						out DateTime ret, out DateTimeOffset dto,
 						bool exact, ref bool longYear,
-						bool setExceptionOnError, ref Exception exception)
+						bool setExceptionOnError, ref Exception exception,
+						bool dateTimeOffset = false)
 		{
 			int i;
 			bool incompleteFormat = false;
@@ -1885,8 +1889,7 @@ namespace System
 				if (format == null || format == String.Empty)
 					break;
 
-				DateTimeOffset dto;
-				if (_DoParse (s, formats[i], null, exact, out result, out dto, dfi, style, false, ref incompleteFormat, ref longYear)) {
+				if (_DoParse (s, formats[i], null, exact, out result, out dto, dfi, style, false, ref incompleteFormat, ref longYear, dateTimeOffset)) {
 					ret = result;
 					return true;
 				}
