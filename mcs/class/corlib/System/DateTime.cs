@@ -1142,7 +1142,8 @@ namespace System
 					      DateTimeStyles style,
 					      bool firstPartIsDate,
 					      ref bool incompleteFormat,
-					      ref bool longYear)
+					      ref bool longYear,
+					      bool dateTimeOffset = false)
 		{
 			bool useutc = false;
 			bool use_invariant = false;
@@ -1155,7 +1156,7 @@ namespace System
 			bool afterTFormat = false;
 			DateTimeFormatInfo invInfo = DateTimeFormatInfo.InvariantInfo;
 			if (format.Length == 1)
-				format = DateTimeUtils.GetStandardPattern (format [0], dfi, out useutc, out use_invariant);
+				format = DateTimeUtils.GetStandardPattern (format [0], dfi, out useutc, out use_invariant, dateTimeOffset);
 
 			result = new DateTime (0);
 			if (format == null)
