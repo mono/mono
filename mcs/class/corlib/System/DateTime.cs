@@ -1534,7 +1534,6 @@ namespace System
 						valuePos += num_parsed;
 
 						tzoffmin = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
-						num = 2;
 						if (num_parsed < 0)
 							return false;
 					}
