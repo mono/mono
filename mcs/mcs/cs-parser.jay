@@ -4276,6 +4276,13 @@ additive_expression
 
 		$$ = is_expr;
 	  }
+	| additive_expression IS complex_pattern
+	  {
+		if (lang_version != LanguageVersion.Experimental)
+			FeatureIsNotAvailable (GetLocation ($2), "pattern matching");
+
+		$$ = new MatchExpression ((Expression) $1, (Expression) $3, GetLocation ($1));
+	  }
 	| additive_expression PLUS error 
 	  {
 		Error_SyntaxError (yyToken);
@@ -4311,6 +4318,18 @@ additive_expression
 	  {
 		var lt = (LocatedToken) $1;
 		$$ = new As (new SimpleName (lt.Value, lt.Location), (Expression) $3, GetLocation ($2));
+	  }
+	;
+
+complex_pattern
+	: literal
+	| PLUS prefixed_unary_expression
+	  {
+		$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, GetLocation ($1));
+	  }
+	| MINUS prefixed_unary_expression
+	  {
+		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, GetLocation ($1));
 	  }
 	;
 

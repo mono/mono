@@ -8464,6 +8464,137 @@ namespace Mono.CSharp
 		}
 	}
 
+	public class MatchExpression : Expression
+	{
+		Nullable.Unwrap expr_unwrap;
+		MethodSpec number_mg;
+
+		public MatchExpression (Expression expr, Expression match, Location loc)
+		{
+			Expr = expr;
+			Match = match;
+			this.loc = loc;
+		}
+
+		public Expression Expr { get; private set; }
+		public Expression Match { get; private set; }
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			// TODO: check me
+			return Expr.ContainsEmitWithAwait ();
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			throw new NotSupportedException ("pattern matching in expression tree");
+		}
+
+		void DefineNumberComparison (ResolveContext rc)
+		{
+			var helper = rc.Module.CreatePatterMatchingHelper ();
+			number_mg = helper.NumberMatcher.Spec;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			Expr = Expr.Resolve (rc);
+			Match = Match.Resolve (rc);
+
+			if (Match == null || Expr == null)
+				return null;
+
+			var mc = Match as Constant;
+			if (mc != null) {
+				if (!Convert.ImplicitConversionExists (rc, Match, Expr.Type)) {
+					Match.Error_ValueCannotBeConverted (rc, Expr.Type, false);
+					return null;
+				}
+
+				if (mc.IsNull)
+					return new Binary (Binary.Operator.Equality, Expr, mc).Resolve (rc);
+
+				var c = Expr as Constant;
+				if (c != null) {
+					c = ConstantFold.BinaryFold (rc, Binary.Operator.Equality, c, mc, loc);
+					if (c != null)
+						return c;
+				}
+
+				if (Expr.Type.IsNullableType) {
+					expr_unwrap = new Nullable.Unwrap (Expr);
+					expr_unwrap.Resolve (rc);
+				} else if (Match.Type.BuiltinType >= BuiltinTypeSpec.Type.Byte && Match.Type.BuiltinType <= BuiltinTypeSpec.Type.Decimal) {
+					DefineNumberComparison (rc);
+					Match = Convert.ImplicitConversion (rc, Match, rc.BuiltinTypes.Object, loc);
+				}
+			} else {
+				throw new NotImplementedException ();
+			}
+
+			type = rc.BuiltinTypes.Bool;
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			var no_match = ec.DefineLabel ();
+			var end = ec.DefineLabel ();
+
+			if (expr_unwrap != null) {
+				expr_unwrap.EmitCheck (ec);
+
+				if (Match.IsNull) {
+					ec.EmitInt (0);
+					ec.Emit (OpCodes.Ceq);
+					return;
+				}
+
+				ec.Emit (OpCodes.Brfalse_S, no_match);
+				expr_unwrap.Emit (ec);
+				Match.Emit (ec);
+				ec.Emit (OpCodes.Ceq);
+				ec.Emit (OpCodes.Br_S, end);
+				ec.MarkLabel (no_match);
+				ec.EmitInt (0);
+				ec.MarkLabel (end);
+				return;
+			}
+
+			Expr.Emit (ec);
+			ec.Emit (OpCodes.Isinst, Match.Type);
+			ec.Emit (OpCodes.Dup);
+			ec.Emit (OpCodes.Brfalse, no_match);
+
+			if (number_mg != null) {
+				var args = new Arguments (1);
+				args.Add (new Argument (Match));
+				var ce = new CallEmitter ();
+				ce.Emit (ec, number_mg, args, loc);
+			} else {
+				Match.Emit (ec);
+				ec.Emit (OpCodes.Ceq);
+			}
+			ec.Emit (OpCodes.Br_S, end);
+			ec.MarkLabel (no_match);
+
+			ec.Emit (OpCodes.Pop);
+			ec.EmitInt (0);
+			ec.MarkLabel (end);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			Expr.EmitSideEffect (ec);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			Expr.FlowAnalysis (fc);
+		}
+	}
+
 	/// <summary>
 	///   Implements the typeof operator
 	/// </summary>

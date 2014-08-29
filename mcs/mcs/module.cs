@@ -103,6 +103,101 @@ namespace Mono.CSharp
 
 			return static_data.DefineInitializedData (data, loc);
 		}
+
+		public sealed class PatternMatchingHelper : CompilerGeneratedContainer
+		{
+			public PatternMatchingHelper (ModuleContainer module)
+				: base (module, new MemberName ("<PatternMatchingHelper>" + module.builder.ModuleVersionId.ToString ("B"), Location.Null),
+					Modifiers.STATIC | Modifiers.INTERNAL)
+			{
+			}
+
+			public Method NumberMatcher { get; private set; }
+
+			protected override bool DoDefineMembers ()
+			{
+				if (!base.DoDefineMembers ())
+					return false;
+
+				NumberMatcher = GenerateNumberMatcher ();
+				return true;
+			}
+
+			Method GenerateNumberMatcher ()
+			{
+				var loc = Location;
+				var parameters = ParametersCompiled.CreateFullyResolved (
+					new [] {
+						new Parameter (new TypeExpression (Compiler.BuiltinTypes.Object, loc), "obj", 0, null, loc),
+						new Parameter (new TypeExpression (Compiler.BuiltinTypes.Object, loc), "value", 0, null, loc),
+					},
+					new [] {
+						Compiler.BuiltinTypes.Object,
+						Compiler.BuiltinTypes.Object
+					});
+
+				var m = new Method (this, new TypeExpression (Compiler.BuiltinTypes.Bool, loc),
+					Modifiers.PUBLIC | Modifiers.STATIC | Modifiers.DEBUGGER_HIDDEN, new MemberName ("NumberMatcher", loc),
+					parameters, null);
+
+				parameters[0].Resolve (m, 0);
+				parameters[1].Resolve (m, 1);
+
+				ToplevelBlock top_block = new ToplevelBlock (Compiler, parameters, loc);
+				m.Block = top_block;
+
+				var system_convert = new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Convert", loc);
+
+				//
+				// var converted = System.Convert.ChangeType (obj, System.Convert.GetTypeCode (value));
+				//
+				var lv_converted = LocalVariable.CreateCompilerGenerated (Compiler.BuiltinTypes.Object, top_block, loc);
+
+				var arguments_gettypecode = new Arguments (1);
+				arguments_gettypecode.Add (new Argument (top_block.GetParameterReference (1, loc)));
+
+				var gettypecode = new Invocation (new MemberAccess (system_convert, "GetTypeCode", loc), arguments_gettypecode);
+
+				var arguments_changetype = new Arguments (1);
+				arguments_changetype.Add (new Argument (top_block.GetParameterReference (0, loc)));
+				arguments_changetype.Add (new Argument (gettypecode));
+
+				var changetype = new Invocation (new MemberAccess (system_convert, "ChangeType", loc), arguments_changetype);
+
+				top_block.AddStatement (new StatementExpression (new SimpleAssign (new LocalVariableReference (lv_converted, loc), changetype, loc)));
+
+
+				//
+				// return converted.Equals (value)
+				//
+				var equals_arguments = new Arguments (1);
+				equals_arguments.Add (new Argument (top_block.GetParameterReference (1, loc)));
+				var equals_invocation = new Invocation (new MemberAccess (new LocalVariableReference (lv_converted, loc), "Equals"), equals_arguments);
+				top_block.AddStatement (new Return (equals_invocation, loc));
+
+				m.Define ();
+				m.PrepareEmit ();
+				AddMember (m);
+
+				return m;
+			}
+		}
+
+		PatternMatchingHelper pmh;
+
+		public PatternMatchingHelper CreatePatterMatchingHelper ()
+		{
+			if (pmh == null) {
+				pmh = new PatternMatchingHelper (this);
+
+				pmh.CreateContainer ();
+				pmh.DefineContainer ();
+				pmh.Define ();
+				AddCompilerGeneratedClass (pmh);
+			}
+
+			return pmh;
+		}
 #endif
 
 		public CharSet? DefaultCharSet;
