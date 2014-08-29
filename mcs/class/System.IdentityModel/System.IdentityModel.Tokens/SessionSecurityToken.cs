@@ -1,4 +1,4 @@
-﻿//
+//
 // SessionSecurityToken.cs
 //
 // Author:
@@ -31,6 +31,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Xml;
 
 namespace System.IdentityModel.Tokens
@@ -38,6 +39,8 @@ namespace System.IdentityModel.Tokens
 	[Serializable]
 	public class SessionSecurityToken : SecurityToken
 	{
+		private const int DEFAULT_KEY_SIZE_IN_BITS = 128;
+
 		private ReadOnlyCollection<SecurityKey> securityKeys;
 		private DateTime validFrom;
 		private DateTime validTo;
@@ -97,12 +100,26 @@ namespace System.IdentityModel.Tokens
 			EndpointId = endpointId;
 			validFrom = (validFrom.HasValue) ? validFrom.Value.ToUniversalTime () : DateTime.UtcNow;
 			validTo = (validTo.HasValue) ? validTo.Value.ToUniversalTime () : ValidFrom + SessionSecurityTokenHandler.DefaultTokenLifetime;
-			securityKeys = new ReadOnlyCollection<SecurityKey> (new SecurityKey[] { new InMemorySymmetricSecurityKey ((key == null) ? null : key.GetSymmetricKey ()) });
+
+			if (key == null ) {
+				key = new InMemorySymmetricSecurityKey (GetRandomByteArray (DEFAULT_KEY_SIZE_IN_BITS / 8));
+			}
+
+			securityKeys = new ReadOnlyCollection<SecurityKey> (new SecurityKey[] { key });
 		}
 
 		[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {
 			throw new NotImplementedException ();
+		}
+
+		private static byte[] GetRandomByteArray (int arraySize) {
+			byte[] b = new byte[arraySize];
+
+			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+			rng.GetNonZeroBytes(b);
+
+			return b;
 		}
 	}
 }
