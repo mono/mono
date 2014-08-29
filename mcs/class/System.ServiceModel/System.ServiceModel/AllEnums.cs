@@ -411,6 +411,8 @@ namespace System.ServiceModel.Security
 		Custom,
 	}
 
+#if !NET_4_5
+
 	public enum X509CertificateValidationMode
 	{
 		None,
@@ -419,6 +421,7 @@ namespace System.ServiceModel.Security
 		PeerOrChainTrust,
 		Custom,
 	}
+#endif
 }
 
 namespace System.ServiceModel.Security.Tokens
