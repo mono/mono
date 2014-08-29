@@ -2097,5 +2097,13 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (xe.Content.ToString (), "<Data />", "#3");
 		}
 #endif
+
+		[Test] // Bug #20151
+		public void XElementFromArrayWithNullValuesAsObject ()
+		{
+			string[] content = {null, "content1", null, "content2"};
+			var el = new XElement ("test", (object)content);
+			Assert.AreEqual ("<test>content1content2</test>", el.ToString ());
+		}
 	}
 }
