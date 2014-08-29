@@ -126,5 +126,22 @@ namespace MonoTests.System.Xml.Linq
 				doc.WriteTo (writer);
 			Assert.IsTrue (sw.ToString ().StartsWith ("<?xml"), "#1");
 		}
+
+		[Test] // bug #18772
+		public void ChangedEvent ()
+		{
+			const string xml = "<?xml version='1.0' encoding='utf-8'?><Start><Ele1/></Start>";
+			var testXmlDoc = XDocument.Load (new MemoryStream(Encoding.UTF8.GetBytes(xml)));
+
+			var changed = false;
+			testXmlDoc.Changed += (sender, e) => {
+				changed = true;
+			};
+
+			XElement p = new XElement ("Hello");
+			testXmlDoc.Root.Add (p);
+
+			Assert.IsTrue (changed);
+		}
 	}
 }
