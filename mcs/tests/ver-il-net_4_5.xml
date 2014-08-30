@@ -68442,6 +68442,31 @@
       </method>
     </type>
   </test>
+  <test name="test-pattern-01.cs">
+    <type name="TypePattern">
+      <method name="Int32 Main()" attrs="150">
+        <size>227</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-pattern-02.cs">
+    <type name="ConstantPattern">
+      <method name="Int32 Main()" attrs="150">
+        <size>470</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;PatternMatchingHelper&gt;">
+      <method name="Boolean NumberMatcher(System.Object, System.Object, Boolean)" attrs="150">
+        <size>54</size>
+      </method>
+    </type>
+  </test>
   <test name="test-primary-ctor-01.cs">
     <type name="Simple">
       <method name="Int32 get_Property()" attrs="2177">

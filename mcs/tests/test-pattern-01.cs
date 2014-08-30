@@ -7,7 +7,7 @@ class TypePattern
 	public static int Main ()
 	{
 		object o = 3;
-		bool r = o is string t1;
+		bool r = o is System.String t1;
 		if (t1 != null)
 			return 1;
 

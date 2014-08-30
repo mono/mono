@@ -103,12 +103,13 @@ namespace Mono.CSharp
 
 			return static_data.DefineInitializedData (data, loc);
 		}
+#endif
 
 		public sealed class PatternMatchingHelper : CompilerGeneratedContainer
 		{
 			public PatternMatchingHelper (ModuleContainer module)
-				: base (module, new MemberName ("<PatternMatchingHelper>" + module.builder.ModuleVersionId.ToString ("B"), Location.Null),
-					Modifiers.STATIC | Modifiers.INTERNAL)
+				: base (module, new MemberName ("<PatternMatchingHelper>", Location.Null),
+					Modifiers.STATIC | Modifiers.INTERNAL | Modifiers.DEBUGGER_HIDDEN)
 			{
 			}
 
@@ -130,21 +131,54 @@ namespace Mono.CSharp
 					new [] {
 						new Parameter (new TypeExpression (Compiler.BuiltinTypes.Object, loc), "obj", 0, null, loc),
 						new Parameter (new TypeExpression (Compiler.BuiltinTypes.Object, loc), "value", 0, null, loc),
+						new Parameter (new TypeExpression (Compiler.BuiltinTypes.Bool, loc), "enumType", 0, null, loc),
 					},
 					new [] {
 						Compiler.BuiltinTypes.Object,
-						Compiler.BuiltinTypes.Object
+						Compiler.BuiltinTypes.Object,
+						Compiler.BuiltinTypes.Bool
 					});
 
 				var m = new Method (this, new TypeExpression (Compiler.BuiltinTypes.Bool, loc),
 					Modifiers.PUBLIC | Modifiers.STATIC | Modifiers.DEBUGGER_HIDDEN, new MemberName ("NumberMatcher", loc),
 					parameters, null);
 
-				parameters[0].Resolve (m, 0);
-				parameters[1].Resolve (m, 1);
+				parameters [0].Resolve (m, 0);
+				parameters [1].Resolve (m, 1);
+				parameters [2].Resolve (m, 2);
 
 				ToplevelBlock top_block = new ToplevelBlock (Compiler, parameters, loc);
 				m.Block = top_block;
+
+				//
+				// if (enumType)
+				//		return Equals (obj, value);
+				//
+				var equals_args = new Arguments (2);
+				equals_args.Add (new Argument (top_block.GetParameterReference (0, loc)));
+				equals_args.Add (new Argument (top_block.GetParameterReference (1, loc)));
+
+				var if_type = new If (
+					              top_block.GetParameterReference (2, loc),
+					              new Return (new Invocation (new SimpleName ("Equals", loc), equals_args), loc),
+					              loc);
+
+				top_block.AddStatement (if_type);
+
+				//
+				// if (obj is Enum || obj == null)
+				//		return false;
+				//
+
+				var if_enum = new If (
+					              new Binary (Binary.Operator.LogicalOr,
+						              new Is (top_block.GetParameterReference (0, loc), new TypeExpression (Compiler.BuiltinTypes.Enum, loc), loc),
+						              new Binary (Binary.Operator.Equality, top_block.GetParameterReference (0, loc), new NullLiteral (loc))),
+					              new Return (new BoolLiteral (Compiler.BuiltinTypes, false, loc), loc),
+					              loc);
+
+				top_block.AddStatement (if_enum);
+
 
 				var system_convert = new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Convert", loc);
 
@@ -198,7 +232,6 @@ namespace Mono.CSharp
 
 			return pmh;
 		}
-#endif
 
 		public CharSet? DefaultCharSet;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;

@@ -3114,29 +3114,21 @@ member_type
 //
 type
 	: type_expression_or_array
-	| VOID
-	  {
-	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), report);
-		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
-	  }	
+	| void_invalid
 	;
 	
 simple_type
 	: type_expression
-	| VOID
-	  {
-	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), report);
-		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
-	  }	
+	| void_invalid
 	;
 	
 parameter_type
 	: type_expression_or_array
 	| VOID
 	  {
-	  	report.Error (1536, GetLocation ($1), "Invalid parameter type `void'");
+		report.Error (1536, GetLocation ($1), "Invalid parameter type `void'");
 		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
-	  }	
+	  }
 	;
 
 type_expression_or_array
@@ -3164,7 +3156,19 @@ type_expression
 	  {
 		$$ = new ComposedCast ((ATypeNameExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
-	| builtin_types opt_nullable
+	| builtin_type_expression
+	;
+
+void_invalid
+	: VOID
+	  {
+		Expression.Error_VoidInvalidInTheContext (GetLocation ($1), report);
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
+	  }
+	;
+
+builtin_type_expression
+	: builtin_types opt_nullable
 	  {
 		if ($2 != null)
 			$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
@@ -4258,32 +4262,7 @@ additive_expression
 		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
-	| additive_expression AS type
-	  {
-		$$ = new As ((Expression) $1, (Expression) $3, GetLocation ($2));
-	  }
-	| additive_expression IS type opt_identifier
-	  {
-		var is_expr = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
-		if ($4 != null) {
-			if (lang_version != LanguageVersion.Experimental)
-				FeatureIsNotAvailable (GetLocation ($4), "type pattern matching");
-
-			var lt = (LocatedToken) $4;
-			is_expr.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
-			current_block.AddLocalName (is_expr.Variable);
-		}
-
-		$$ = is_expr;
-	  }
-	| additive_expression IS complex_pattern
-	  {
-		if (lang_version != LanguageVersion.Experimental)
-			FeatureIsNotAvailable (GetLocation ($2), "pattern matching");
-
-		$$ = new MatchExpression ((Expression) $1, (Expression) $3, GetLocation ($1));
-	  }
-	| additive_expression PLUS error 
+	| additive_expression PLUS error
 	  {
 		Error_SyntaxError (yyToken);
 
@@ -4296,6 +4275,24 @@ additive_expression
 
 		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, null);
 		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| additive_expression AS type
+	  {
+		$$ = new As ((Expression) $1, (Expression) $3, GetLocation ($2));
+	  }
+	| additive_expression IS is_match_expr opt_identifier
+	  {
+		var is_expr = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
+		if ($4 != null) {
+			if (lang_version != LanguageVersion.Experimental)
+				FeatureIsNotAvailable (GetLocation ($4), "type pattern matching");
+
+			var lt = (LocatedToken) $4;
+			is_expr.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
+			current_block.AddLocalName (is_expr.Variable);
+		}
+
+		$$ = is_expr;
 	  }
 	| additive_expression AS error
 	  {
@@ -4321,8 +4318,16 @@ additive_expression
 	  }
 	;
 
-complex_pattern
-	: literal
+is_match_expr
+	: match_type
+	| match_type rank_specifiers
+	  {
+		if ($1 is VarExpr)
+			$1 = new SimpleName ("var", ((VarExpr) $1).Location);
+
+		$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
+	  }
+	| literal
 	| PLUS prefixed_unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, GetLocation ($1));
@@ -4331,6 +4336,38 @@ complex_pattern
 	  {
 		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, GetLocation ($1));
 	  }
+	;
+
+match_type
+	: primary_expression_or_type opt_nullable
+	  {
+		Expression expr = (Expression) $1;
+		if ($2 == null) {
+			SimpleName sn = expr as SimpleName;
+			if (sn != null && sn.Name == "var")
+				$$ = new VarExpr (sn.Location);
+			else
+				$$ = $1;
+		} else if (expr is ATypeNameExpression) {
+			$$ = new ComposedCast ((ATypeNameExpression)expr, (ComposedTypeSpecifier) $2);
+		} else {
+			Error_ExpectingTypeName (expr);
+			$$ = null;
+		}
+	  }
+	| primary_expression_or_type pointer_stars
+	  {
+		ATypeNameExpression expr = $1 as ATypeNameExpression;
+
+		if (expr != null) {
+			$$ = new ComposedCast (expr, (ComposedTypeSpecifier) $2);
+		} else {
+			Error_ExpectingTypeName ((Expression)$1);
+			$$ = expr;
+		}
+	  }
+	| builtin_type_expression
+	| void_invalid
 	;
 
 shift_expression
@@ -5430,26 +5467,8 @@ variable_type_simple
 			$$ = expr;
 		}
 	  }
-	| builtin_types opt_nullable
-	  {
-		if ($2 == null)
-			$$ = $1;
-		else
-			$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
-	  }
-	| builtin_types pointer_stars
-	  {
-		$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
-	  }
-	| VOID pointer_stars
-	  {
-		$$ = new ComposedCast (new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
-	  }	  
-	| VOID
-	  {
-		Expression.Error_VoidInvalidInTheContext (GetLocation ($1), report);
-		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
-	  }
+	| builtin_type_expression
+	| void_invalid
 	;
 	
 pointer_stars

@@ -1373,7 +1373,7 @@ namespace Mono.CSharp
 
 		public SourceMethodBuilder CreateMethodSymbolEntry ()
 		{
-			if (Module.DeclaringAssembly.SymbolWriter == null)
+			if (Module.DeclaringAssembly.SymbolWriter == null || (ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
 				return null;
 
 			var source_file = GetCompilationSourceFile ();
