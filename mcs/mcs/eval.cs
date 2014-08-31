@@ -1366,11 +1366,10 @@ namespace Mono.CSharp
 			}
 
 			base.EmitStatement(ec);
-/*
+
 #if STATIC
 			throw new NotSupportedException ();
 #else
-
 			var assignType = source.Type;
 			var boxed = source as BoxedCast;
 			if (boxed != null)
@@ -1390,12 +1389,11 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Stind_I4);
 
 			if (ec.Module.Evaluator != null && ec.Module.Evaluator.EvaluationListener != null) {
-				source.Emit (ec);
+				target.Emit (ec);
 				ec.Module.Evaluator.EmitEvaluatedValue (ec,
 					null, assignType, Location.Null, source.StartLocation, false);
 			}
 #endif
-*/
 		}
 	}
 
