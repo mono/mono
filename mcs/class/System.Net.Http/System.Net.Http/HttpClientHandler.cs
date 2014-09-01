@@ -306,6 +306,8 @@ namespace System.Net.Http
 				item_headers.TryAddWithoutValidation (key, value);
 			}
 
+			requestMessage.RequestUri = wr.ResponseUri;
+
 			return response;
 		}
 
