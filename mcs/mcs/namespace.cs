@@ -488,7 +488,19 @@ namespace Mono.CSharp {
 
 		public void RemoveContainer (TypeContainer tc)
 		{
-			types.Remove (tc.Basename);
+			IList<TypeSpec> found;
+			if (types.TryGetValue (tc.MemberName.Name, out found)) {
+				for (int i = 0; i < found.Count; ++i) {
+					if (tc.MemberName.Arity != found [i].Arity)
+						continue;
+
+					if (found.Count == 1)
+						types.Remove (tc.MemberName.Name);
+					else
+						found.RemoveAt (i);
+				}
+			}
+
 			cached_types.Remove (tc.Basename);
 		}
 
