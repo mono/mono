@@ -1,5 +1,5 @@
 //
-// EventAttribute.cs
+// EventTask.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -30,41 +30,9 @@
 
 namespace System.Diagnostics.Tracing
 {
-	[AttributeUsageAttribute (AttributeTargets.Method)]
-	public sealed class EventAttribute : Attribute
+	public enum EventTask
 	{
-		public EventAttribute (int eventId)
-		{
-			EventId = eventId;
-		}
-
-		public int EventId {
-			get; private set;
-		}
-		
-		public EventLevel Level {
-			get; set;
-		}
-
-		public EventKeywords Keywords {
-			get; set;
-		}
-		
-		public EventOpcode Opcode {
-			get; set;
-		}
-		
-		public EventTask Task {
-			get; set;
-		}
-		
-		public byte Version {
-			get; set;
-		}
-		
-		public string Message {
-			get; set;
-		}
+		None
 	}
 }
 
