@@ -225,6 +225,7 @@ sqliteDataAdapter.Update (dataSet, "Primus");
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Requires newer sqlite than is on wrench
 		public void UpdateResetRowErrorCorrectly ()
 		{
 			const string connectionString = "URI = file::memory:; Version = 3";
