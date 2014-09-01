@@ -830,14 +830,17 @@ namespace DbLinq.Data.Linq
             }
         }
 
-		private static Lazy<MethodInfo> _WhereMethod = new Lazy<MethodInfo> (() => typeof(Queryable).GetMethods().First(m => m.Name == "Where"));
+		private static MethodInfo _WhereMethod;
         internal object GetOtherTableQuery(Expression predicate, ParameterExpression parameter, Type otherTableType, IQueryable otherTable)
         {
+            if (_WhereMethod == null)
+                System.Threading.Interlocked.CompareExchange (ref _WhereMethod, typeof(Queryable).GetMethods().First(m => m.Name == "Where"), null);
+
             //predicate: other.EmployeeID== "WARTH"
             Expression lambdaPredicate = Expression.Lambda(predicate, parameter);
             //lambdaPredicate: other=>other.EmployeeID== "WARTH"
 
-			Expression call = Expression.Call(_WhereMethod.Value.MakeGenericMethod(otherTableType), otherTable.Expression, lambdaPredicate);
+			Expression call = Expression.Call(_WhereMethod.MakeGenericMethod(otherTableType), otherTable.Expression, lambdaPredicate);
             //Table[EmployeesTerritories].Where(other=>other.employeeID="WARTH")
 
             return otherTable.Provider.CreateQuery(call);
