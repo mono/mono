@@ -150,6 +150,11 @@ public class ConditionalParsing
 		}
 	}
 
+	void Test_18 (bool b, Action a)
+	{
+		var e = b ? () => { } : a;
+	}
+
 	static void Helper<T> (T arg)
 	{
 	}

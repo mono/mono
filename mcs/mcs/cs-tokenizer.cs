@@ -1319,7 +1319,6 @@ namespace Mono.CSharp
 				case Token.COMMA:
 				case Token.SEMICOLON:
 				case Token.OPEN_BRACE:
-				case Token.CLOSE_PARENS:
 				case Token.IN:
 					next_token = Token.INTERR_NULLABLE;
 					break;
@@ -1332,6 +1331,10 @@ namespace Mono.CSharp
 				case Token.OPEN_PARENS_CAST:
 				case Token.OPEN_PARENS_LAMBDA:
 					++parens;
+					goto default;
+
+				case Token.CLOSE_PARENS:
+					--parens;
 					goto default;
 
 				case Token.OP_GENERICS_LT:
