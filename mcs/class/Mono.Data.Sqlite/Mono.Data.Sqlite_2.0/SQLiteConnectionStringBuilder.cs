@@ -555,16 +555,5 @@ namespace Mono.Data.Sqlite
       }
     }
   }
-
-#if WINDOWS_STORE_APP
-  internal class DisplayNameAttribute : Attribute {
-    public DisplayNameAttribute (string displayName)
-    {
-      DisplayName = displayName;
-    }
-    public string DisplayName { get; set; }
-  }
-#endif
-
 #endif
 }

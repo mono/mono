@@ -1,0 +1,7 @@
+#include Mono.Data.Sqlite.dll.sources
+
+..\corlib\system.collections\ArrayList.cs
+..\corlib\system.collections\Comparer.cs
+..\corlib\system.io\FileUtil.cs
+..\corlib\system\ICloneable.cs
+..\System\System.ComponentModel\DisplayNameAttribute.cs

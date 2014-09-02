@@ -143,6 +143,13 @@ namespace Mono.Data.Sqlite
 #else
     [DllImport(SQLITE_DLL)]
 #endif
+    internal static extern int sqlite3_close_v2(IntPtr db);
+
+#if !PLATFORM_COMPACTFRAMEWORK
+    [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
+#else
+    [DllImport(SQLITE_DLL)]
+#endif
     internal static extern int sqlite3_create_function(IntPtr db, byte[] strName, int nArgs, int nType, IntPtr pvUser, SQLiteCallback func, SQLiteCallback fstep, SQLiteFinalCallback ffinal);
 
 #if !PLATFORM_COMPACTFRAMEWORK
@@ -723,6 +730,10 @@ namespace Mono.Data.Sqlite
     internal static int sqlite3_close (IntPtr db)
     {
         return NativeWrapper.sqlite3_close (db.ToInt64 ());
+    }
+    internal static int sqlite3_close_v2 (IntPtr db)
+    {
+        return NativeWrapper.sqlite3_close_v2 (db.ToInt64 ());
     }
     internal static int sqlite3_create_function (IntPtr db, byte[] strName, int nArgs, int nType, IntPtr pvUser, SQLiteCallback func, SQLiteCallback fstep, SQLiteFinalCallback ffinal)
     {

@@ -119,7 +119,7 @@ namespace System.Data {
 		/// </summary>
 		public bool HasErrors {
 			get {
-				if (RowError != string.Empty)
+				if (RowError != null && RowError != string.Empty)
 					return true;
 
 				foreach (String columnError in ColumnErrors) {
