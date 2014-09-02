@@ -1595,8 +1595,10 @@ namespace Mono.CSharp
 				return;
 			}
 
+			var probe_type = ProbeType.Type;
+
 			Expr.Emit (ec);
-			ec.Emit (OpCodes.Isinst, ProbeType.Type);
+			ec.Emit (OpCodes.Isinst, probe_type);
 			ec.Emit (OpCodes.Dup);
 			ec.Emit (OpCodes.Brfalse, no_match);
 
@@ -1604,6 +1606,9 @@ namespace Mono.CSharp
 				var ce = new CallEmitter ();
 				ce.Emit (ec, number_mg, number_args, loc);
 			} else {
+				if (TypeSpec.IsValueType (probe_type))
+					ec.Emit (OpCodes.Unbox_Any, probe_type);
+
 				ProbeType.Emit (ec);
 				ec.Emit (OpCodes.Ceq);
 			}
@@ -1696,14 +1701,36 @@ namespace Mono.CSharp
 		protected override void ResolveProbeType (ResolveContext rc)
 		{
 			if (!(ProbeType is TypeExpr) && rc.Module.Compiler.Settings.Version == LanguageVersion.Experimental) {
-				ProbeType = ProbeType.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup | ResolveFlags.Type);
-				if (ProbeType == null)
-					return;
+				//
+				// Have to use session recording because we don't have reliable type probing
+				// mechanism (similar issue as in attributes resolving)
+				//
+				// TODO: This is still wrong because ResolveAsType can be destructive
+				//
+				var type_printer = new SessionReportPrinter ();
+				var prev_recorder = rc.Report.SetPrinter (type_printer);
 
-				if (ProbeType.eclass == ExprClass.Type) {
-					probe_type_expr = ProbeType.Type;
+				probe_type_expr = ProbeType.ResolveAsType (rc);
+				type_printer.EndSession ();
+
+				if (probe_type_expr != null) {
+					type_printer.Merge (rc.Report.Printer);
+					rc.Report.SetPrinter (prev_recorder);
+					return;
 				}
 
+				var expr_printer = new SessionReportPrinter ();
+				rc.Report.SetPrinter (expr_printer);
+				ProbeType = ProbeType.Resolve (rc);
+				expr_printer.EndSession ();
+
+				if (ProbeType != null) {
+					expr_printer.Merge (rc.Report.Printer);
+				} else {
+					type_printer.Merge (rc.Report.Printer);
+				}
+
+				rc.Report.SetPrinter (prev_recorder);
 				return;
 			}
 

@@ -230,10 +230,10 @@ namespace Mono.CSharp {
 		//
 		public virtual TypeSpec ResolveAsType (IMemberContext mc, bool allowUnboundTypeArguments = false)
 		{
-			ResolveContext ec = new ResolveContext (mc);
-			Expression e = Resolve (ec);
+			var rc = mc as ResolveContext ?? new ResolveContext (mc);
+			Expression e = Resolve (rc);
 			if (e != null)
-				e.Error_UnexpectedKind (ec, ResolveFlags.Type, loc);
+				e.Error_UnexpectedKind (rc, ResolveFlags.Type, loc);
 
 			return null;
 		}

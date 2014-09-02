@@ -498,6 +498,8 @@ namespace Mono.CSharp {
 						types.Remove (tc.MemberName.Name);
 					else
 						found.RemoveAt (i);
+
+					break;
 				}
 			}
 

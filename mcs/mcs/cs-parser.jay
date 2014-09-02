@@ -4336,6 +4336,9 @@ is_match_expr
 	  {
 		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, GetLocation ($1));
 	  }
+	| sizeof_expression
+	| invocation_expression
+	| default_value_expression
 	;
 
 match_type
@@ -7934,6 +7937,7 @@ static string GetTokenName (int token)
 	case Token.OP_AND_ASSIGN:
 	case Token.OP_XOR_ASSIGN:
 	case Token.OP_OR_ASSIGN:
+	case Token.INTERR_OPERATOR:
 		return "<operator>";
 
 	case Token.BOOL:

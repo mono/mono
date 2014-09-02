@@ -68446,7 +68446,7 @@
   <test name="test-pattern-02.cs">
     <type name="ConstantPattern">
       <method name="Int32 Main()" attrs="150">
-        <size>470</size>
+        <size>633</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -68455,6 +68455,11 @@
     <type name="&lt;PatternMatchingHelper&gt;">
       <method name="Boolean NumberMatcher(System.Object, System.Object, Boolean)" attrs="150">
         <size>54</size>
+      </method>
+    </type>
+    <type name="ConstantPattern">
+      <method name="Boolean Generic[T](T)" attrs="145">
+        <size>28</size>
       </method>
     </type>
   </test>

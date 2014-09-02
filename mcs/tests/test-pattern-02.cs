@@ -9,6 +9,11 @@ enum MyEnum : short
 
 class ConstantPattern
 {
+	static bool Generic<T> (T t) where T : class
+	{
+		return t is default (T);
+	}
+
 	public static int Main ()
 	{
 		bool b4 = false;
@@ -61,6 +66,26 @@ class ConstantPattern
 		r4 = o6 is MyEnum.V_4;
 		if (!r4)
 			return 12;
+
+		ConstantPattern o7 = new ConstantPattern ();
+		if (!(o7 is ConstantPattern))
+			return 13;
+
+		if (!(o7 is object))
+			return 14;
+
+		object o8 = true;
+		if (o8 is false)
+			return 15;
+
+		if (!(o8 is true))
+			return 16;
+
+		if (Generic (""))
+			return 17;
+
+		if (!Generic<Delegate> (null))
+			return 18;
 
 		Console.WriteLine ("ok");
 		return 0;
