@@ -457,18 +457,18 @@ fail_no_space:
 	}
 
 	private unsafe static int InternalGetCharCount (
-		byte* bytes, int count, uint leftOverBits,
+		byte* bytes, int byteCount, uint leftOverBits,
 		uint leftOverCount, object provider,
 		ref DecoderFallbackBuffer fallbackBuffer, ref byte [] bufferArg, bool flush)
 	{
-		int index = 0;
+		int byteIndex = 0;
 
 		int length = 0;
 
 		if (leftOverCount == 0) {
-			int end = index + count;
-			for (; index < end; index++, count--) {
-				if (bytes [index] < 0x80)
+			int end = byteIndex + byteCount;
+			for (; byteIndex < end; byteIndex++, byteCount--) {
+				if (bytes [byteIndex] < 0x80)
 					length++;
 				else
 					break;
@@ -480,9 +480,11 @@ fail_no_space:
 		uint leftBits = leftOverBits;
 		uint leftSoFar = (leftOverCount & (uint)0x0F);
 		uint leftSize = ((leftOverCount >> 4) & (uint)0x0F);
-		while (count > 0) {
-			ch = (uint)(bytes[index++]);
-			--count;
+
+		int byteEnd = byteIndex + byteCount;
+		for(; byteIndex < byteEnd; byteIndex++) {
+			// Fetch the next character from the byte buffer.
+			ch = (uint)(bytes[byteIndex]);
 			if (leftSize == 0) {
 				// Process a UTF-8 start character.
 				if (ch < (uint)0x0080) {
@@ -515,7 +517,7 @@ fail_no_space:
 					leftSize = 6;
 				} else {
 					// Invalid UTF-8 start character.
-					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1, 1);
+					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, 1);
 				}
 			} else {
 				// Process an extra byte in a multi-byte sequence.
@@ -544,34 +546,33 @@ fail_no_space:
 								break;
 							}
 							if (overlong) {
-								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar);
 							}
 							else if ((leftBits & 0xF800) == 0xD800) {
 								// UTF-8 doesn't use surrogate characters
-								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar);
 							}
 							else
 								++length;
 						} else if (leftBits < (uint)0x110000) {
 							length += 2;
 						} else {
-							length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+							length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar);
 						}
 						leftSize = 0;
 					}
 				} else {
 					// Invalid UTF-8 sequence: clear and restart.
-					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar);
 					leftSize = 0;
-					--index;
-					++count;
+					--byteIndex;
 				}
 			}
 		}
 		if (flush && leftSize != 0) {
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
-			length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+			length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar);
 		}
 
 		// Return the final length to the caller.
