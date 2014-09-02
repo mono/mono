@@ -547,6 +547,7 @@ fail_no_space:
 							}
 							if (overlong) {
 								length += Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar);
+								--byteIndex; //process byte again
 							}
 							else if ((leftBits & 0xF800) == 0xD800) {
 								// UTF-8 doesn't use surrogate characters
@@ -775,6 +776,7 @@ fail_no_space:
 							}
 							if (overlong) {
 								Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
+								--byteIndex; //process byte again
 							}
 							else if ((leftBits & 0xF800) == 0xD800) {
 								// UTF-8 doesn't use surrogate characters
