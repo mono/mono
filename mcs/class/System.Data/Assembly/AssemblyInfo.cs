@@ -53,9 +53,7 @@ using System.Runtime.InteropServices;
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-#if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
-#endif
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
@@ -68,10 +66,12 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyKeyFile("../mono.snk")]
 #else
 [assembly: AssemblyDelaySign (true)]
-#if !TARGET_JVM
 	[assembly: AssemblyKeyFile("../ecma.pub")]
+<<<<<<< HEAD
 #endif
 #endif // WINDOWS_STORE_APP
+=======
+>>>>>>> master-origin
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 #if !WINDOWS_STORE_APP

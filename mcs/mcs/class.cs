@@ -1373,7 +1373,7 @@ namespace Mono.CSharp
 
 		public SourceMethodBuilder CreateMethodSymbolEntry ()
 		{
-			if (Module.DeclaringAssembly.SymbolWriter == null)
+			if (Module.DeclaringAssembly.SymbolWriter == null || (ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
 				return null;
 
 			var source_file = GetCompilationSourceFile ();
@@ -1608,8 +1608,12 @@ namespace Mono.CSharp
 			// defined after current container
 			//
 			if (class_partial_parts != null) {
-				foreach (var pp in class_partial_parts)
+				foreach (var pp in class_partial_parts) {
+					if (pp.PrimaryConstructorBaseArguments != null)
+						PrimaryConstructorBaseArguments = pp.PrimaryConstructorBaseArguments;
+
 					pp.DoDefineBaseType ();
+				}
 
 			}
 
@@ -2665,7 +2669,7 @@ namespace Mono.CSharp
 			
 			AddConstructor (c, true);
 			if (PrimaryConstructorBlock == null) {
-				c.Block = new ToplevelBlock (Compiler, c.ParameterInfo, Location) {
+				c.Block = new ToplevelBlock (Compiler, parameters, Location) {
 					IsCompilerGenerated = true
 				};
 			} else {

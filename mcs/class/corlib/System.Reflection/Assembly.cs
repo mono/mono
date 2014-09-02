@@ -752,13 +752,6 @@ namespace System.Reflection {
 			}
 		}
 
-		//
-		// The following functions are only for the Mono Debugger.
-		//
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern int MonoDebugger_GetMethodToken (MethodBase method);
-
 		[MonoTODO ("Currently it always returns zero")]
 		[ComVisible (false)]
 		public

@@ -1,7 +1,3 @@
-#if TARGET_JVM
-#define BUG_78521_FIXED
-#endif
-
 using System;
 using System.Web.UI;
 
@@ -106,11 +102,8 @@ namespace MonoTests.SystemWeb.Framework
 			_page = (Page) parameters[0];
 
 #if NET_2_0
-#if BUG_78521_FIXED
-			_page.PreInit += OnPreInit;
-#else
 			OnPreInit (null, null);
-#endif
+
 			_page.LoadComplete += OnLoadComplete;
 			_page.PreLoad += OnPreLoad;
 			_page.PreRenderComplete += OnPreRenderComplete;

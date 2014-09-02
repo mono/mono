@@ -109,14 +109,14 @@ namespace System.Xml.Serialization
 
 			if (ob is XmlNode)
 			{
-				if (_format == SerializationFormat.Literal) WriteElementLiteral((XmlNode)ob, "", "", true, false);
-				else WriteElementEncoded((XmlNode)ob, "", "", true, false);
+				if (_format == SerializationFormat.Literal) WriteElementLiteral((XmlNode)ob, "", "", true, typeMap.IsAny);
+				else WriteElementEncoded((XmlNode)ob, "", "", true, typeMap.IsAny);
 				return;
 			}
 
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
-				WriteSerializable ((IXmlSerializable)ob, element, namesp, isNullable);
+				WriteSerializable ((IXmlSerializable)ob, element, namesp, isNullable, !typeMap.IsAny);
 				return;
 			}
 

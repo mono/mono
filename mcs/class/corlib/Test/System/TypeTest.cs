@@ -297,16 +297,11 @@ namespace MonoTests.System
 			Assert.AreEqual (typeof (ICloneable[][]).IsAssignableFrom (typeof (Duper[][])), true, "#12");
 
 			// Tests for vectors<->one dimensional arrays */
-#if TARGET_JVM // Lower bounds arrays are not supported for TARGET_JVM.
-			Array arr1 = Array.CreateInstance (typeof (int), new int[] {1});
-			Assert.AreEqual (typeof (int[]).IsAssignableFrom (arr1.GetType ()), true, "#13");
-#else
 			Array arr1 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0});
 			Array arr2 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {10});
 
 			Assert.AreEqual (typeof (int[]).IsAssignableFrom (arr1.GetType ()), true, "#13");
 			Assert.AreEqual (typeof (int[]).IsAssignableFrom (arr2.GetType ()), false, "#14");
-#endif // TARGET_JVM
 
 			// Test that arrays of enums can be cast to their base types
 			Assert.AreEqual (typeof (int[]).IsAssignableFrom (typeof (TypeCode[])), true, "#15");
@@ -390,7 +385,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("TargetJvmNotWorking")]
 		public void TestGetPropertyImpl ()
 		{
 			// Test getting property that is exact
@@ -1517,7 +1511,6 @@ namespace MonoTests.System
 							    typeof (long), new Type[0], null), "#2");
 		}
 
-#if !TARGET_JVM // StructLayout not supported for TARGET_JVM
 		[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
 		public class Class1
 		{
@@ -1543,7 +1536,6 @@ namespace MonoTests.System
 			Assert.AreEqual (LayoutKind.Explicit, attr3.Value);
 			Assert.AreEqual (CharSet.Unicode, attr3.CharSet);
 		}
-#endif // TARGET_JVM
 
 		[Test]
 		public void Namespace ()
@@ -2786,7 +2778,7 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (i);
 		}
 
-#if !TARGET_JVM && !MOBILE // Reflection.Emit is not supported for TARGET_JVM
+#if !MOBILE
 		[Test]
 		public void EqualsUnderlyingType ()
 		{
@@ -2805,7 +2797,7 @@ PublicKeyToken=b77a5c561934e089"));
 
 			Assert.IsTrue (typeof (int).Equals (e));
 		}
-#endif // TARGET_JVM
+#endif
 
 		[Test]
 		public void Equals_Type_Null ()

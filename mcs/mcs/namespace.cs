@@ -249,7 +249,7 @@ namespace Mono.CSharp {
 				return null;
 
 			foreach (var ts in found) {
-				if (ts.Arity == arity) {
+				if (ts.Arity == arity || mode == LookupMode.NameOf) {
 					if (best == null) {
 						if ((ts.Modifiers & Modifiers.INTERNAL) != 0 && !ts.MemberDefinition.IsInternalAsPublic (ctx.Module.DeclaringAssembly) && mode != LookupMode.IgnoreAccessibility)
 							continue;
@@ -310,6 +310,12 @@ namespace Mono.CSharp {
 			// TODO MemberCache: Cache more
 			if (arity == 0 && mode == LookupMode.Normal)
 				cached_types.Add (name, best);
+
+			if (best != null) {
+				var dep = best.GetMissingDependencies ();
+				if (dep != null)
+					ImportedTypeDefinition.Error_MissingDependency (ctx, dep, loc);
+			}
 
 			return best;
 		}
@@ -482,7 +488,21 @@ namespace Mono.CSharp {
 
 		public void RemoveContainer (TypeContainer tc)
 		{
-			types.Remove (tc.Basename);
+			IList<TypeSpec> found;
+			if (types.TryGetValue (tc.MemberName.Name, out found)) {
+				for (int i = 0; i < found.Count; ++i) {
+					if (tc.MemberName.Arity != found [i].Arity)
+						continue;
+
+					if (found.Count == 1)
+						types.Remove (tc.MemberName.Name);
+					else
+						found.RemoveAt (i);
+
+					break;
+				}
+			}
+
 			cached_types.Remove (tc.Basename);
 		}
 
@@ -1371,7 +1391,7 @@ namespace Mono.CSharp {
 
 		public virtual void Define (NamespaceContainer ctx)
 		{
-			resolved = expr.ResolveAsTypeOrNamespace (ctx);
+			resolved = expr.ResolveAsTypeOrNamespace (ctx, false);
 			var ns = resolved as NamespaceExpression;
 			if (ns != null)
 				return;
@@ -1549,7 +1569,7 @@ namespace Mono.CSharp {
 			// We achieve that by introducing alias-context which redirect any local
 			// namespace or type resolve calls to parent namespace
 			//
-			resolved = NamespaceExpression.ResolveAsTypeOrNamespace (new AliasContext (ctx));
+			resolved = NamespaceExpression.ResolveAsTypeOrNamespace (new AliasContext (ctx), false);
 		}
 	}
 }

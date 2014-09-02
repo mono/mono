@@ -38,9 +38,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
-#if TARGET_JVM
-	[Ignore ("The class HttpListener is not supported")]
-#endif
 	public class HttpListenerRequestTest
 	{
 		[Test]

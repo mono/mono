@@ -59,18 +59,7 @@ namespace System.Web.Services.Protocols {
 		//
 		WebRequest current_request;
 		
-#if !TARGET_JVM
 		static HybridDictionary cache;
-#else
-		static HybridDictionary cache {
-			get {
-				return (HybridDictionary)AppDomain.CurrentDomain.GetData("WebClientProtocol.cache");
-			}
-			set {
-				AppDomain.CurrentDomain.SetData("WebClientProtocol.cache", value);
-			}
-		}
-#endif
 		#endregion
 
 		#region Constructors

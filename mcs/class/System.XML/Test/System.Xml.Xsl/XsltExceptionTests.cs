@@ -47,10 +47,8 @@ namespace MonoCasTests.System.Xml.Xsl {
 			Assert.IsNull (xsltException.SourceUri, "#4");
 			Assert.IsNull (xsltException.InnerException, "#5");
 			Assert.IsNull (xsltException.Source, "#6");
-#if !TARGET_JVM
 			Assert.IsNull (xsltException.StackTrace, "#7");
 			Assert.IsNull (xsltException.TargetSite, "#8");
-#endif
 		}
 
 		[Test]
@@ -65,10 +63,8 @@ namespace MonoCasTests.System.Xml.Xsl {
 			Assert.IsNull (xsltException.SourceUri, "#4");
 			Assert.IsNull (xsltException.InnerException, "#5");
 			Assert.IsNull (xsltException.Source, "#6");
-#if !TARGET_JVM
 			Assert.IsNull (xsltException.StackTrace, "#7");
 			Assert.IsNull (xsltException.TargetSite, "#8");
-#endif
 		}
 #endif
 
@@ -85,10 +81,8 @@ namespace MonoCasTests.System.Xml.Xsl {
 			Assert.IsNull (xsltException.SourceUri, "#A4");
 			Assert.AreSame (cause, xsltException.InnerException, "#A5");
 			Assert.IsNull (xsltException.Source, "#A6");
-#if !TARGET_JVM
 			Assert.IsNull (xsltException.StackTrace, "#A7");
 			Assert.IsNull (xsltException.TargetSite, "#A8");
-#endif
 			xsltException = new XsltException ((string) null, cause);
 			Assert.AreEqual (0, xsltException.LineNumber, "#B1");
 			Assert.AreEqual (0, xsltException.LinePosition, "#B2");
@@ -97,10 +91,8 @@ namespace MonoCasTests.System.Xml.Xsl {
 			Assert.IsNull (xsltException.SourceUri, "#B5");
 			Assert.AreSame (cause, xsltException.InnerException, "#B6");
 			Assert.IsNull (xsltException.Source, "#B7");
-#if !TARGET_JVM
 			Assert.IsNull (xsltException.StackTrace, "#B8");
 			Assert.IsNull (xsltException.TargetSite, "#B9");
-#endif
 			xsltException = new XsltException (msg, (Exception) null);
 			Assert.AreEqual (0, xsltException.LineNumber, "#C1");
 			Assert.AreEqual (0, xsltException.LinePosition, "#C2");
@@ -108,10 +100,8 @@ namespace MonoCasTests.System.Xml.Xsl {
 			Assert.IsNull (xsltException.SourceUri, "#C4");
 			Assert.IsNull (xsltException.InnerException, "#C5");
 			Assert.IsNull (xsltException.Source, "#C6");
-#if !TARGET_JVM
 			Assert.IsNull (xsltException.StackTrace, "#C7");
 			Assert.IsNull (xsltException.TargetSite, "#C8");
-#endif
 			xsltException = new XsltException ((string) null, (Exception) null);
 			Assert.AreEqual (0, xsltException.LineNumber, "#D1");
 			Assert.AreEqual (0, xsltException.LinePosition, "#D2");
@@ -119,10 +109,8 @@ namespace MonoCasTests.System.Xml.Xsl {
 			Assert.IsNull (xsltException.SourceUri, "#D4");
 			Assert.IsNull (xsltException.InnerException, "#D5");
 			Assert.IsNull (xsltException.Source, "#D6");
-#if !TARGET_JVM
 			Assert.IsNull (xsltException.StackTrace, "#D7");
 			Assert.IsNull (xsltException.TargetSite, "#D8");
-#endif
 		}
 	}
 }

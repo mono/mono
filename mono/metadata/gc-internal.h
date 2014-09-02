@@ -19,8 +19,8 @@
 typedef struct {
 	int minor_gc_count;
 	int major_gc_count;
-	long long minor_gc_time_usecs;
-	long long major_gc_time_usecs;
+	long long minor_gc_time;
+	long long major_gc_time;
 #ifdef HEAVY_STATISTICS
 	unsigned long long gray_queue_section_alloc;
 	unsigned long long gray_queue_section_free;
@@ -31,8 +31,8 @@ typedef struct {
 #endif
 } GCStats;
 
-#define mono_domain_finalizers_lock(domain) EnterCriticalSection (&(domain)->finalizable_objects_hash_lock);
-#define mono_domain_finalizers_unlock(domain) LeaveCriticalSection (&(domain)->finalizable_objects_hash_lock);
+#define mono_domain_finalizers_lock(domain) mono_mutex_lock (&(domain)->finalizable_objects_hash_lock);
+#define mono_domain_finalizers_unlock(domain) mono_mutex_unlock (&(domain)->finalizable_objects_hash_lock);
 
 /* Register a memory area as a conservatively scanned GC root */
 #define MONO_GC_REGISTER_ROOT_PINNING(x) mono_gc_register_root ((char*)&(x), sizeof(x), NULL)

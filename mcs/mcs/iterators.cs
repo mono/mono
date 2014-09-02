@@ -74,6 +74,9 @@ namespace Mono.CSharp
 
 		public void RegisterResumePoint ()
 		{
+			if (resume_pc != 0)
+				return;
+
 			if (inside_try_block == null) {
 				resume_pc = machine_initializer.AddResumePoint (this);
 			} else {

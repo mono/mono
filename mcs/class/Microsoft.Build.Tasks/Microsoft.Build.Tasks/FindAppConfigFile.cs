@@ -36,7 +36,7 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	//FIXME: This should be in v3.5 only
-	public sealed class FindAppConfigFile : TaskExtension {
+	public class FindAppConfigFile : TaskExtension {
 
 		public FindAppConfigFile ()
 		{

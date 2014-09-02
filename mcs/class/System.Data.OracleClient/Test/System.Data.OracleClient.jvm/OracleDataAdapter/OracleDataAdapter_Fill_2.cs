@@ -64,9 +64,6 @@ namespace MonoTests.System.Data.OracleClient
 				DoTestTypes3(con);
 			}
 			
-#if TARGET_JVM
-			DoTestTypes4(con);
-#endif
 		//	DoTestTypes5(con);   //Table direct --> multipe tables
 			DoTestTypes6(con);
 			

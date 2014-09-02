@@ -25,13 +25,6 @@ LIB_MCS_FLAGS = \
 	-r:System.Core.dll 			\
 
 
-ifeq (net_1_1_java, $(PROFILE))
-OTHER_RES = $(RESOURCE_FILES)
-LIB_MCS_FLAGS +=	\
-	-r:rt.dll				\
-	-r:J2SE.Helpers.dll			\
-	$(OTHER_LIB_MCS_FLAGS)
-else 
 MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE
 LIB_MCS_FLAGS += \
@@ -42,7 +35,6 @@ LIB_MCS_FLAGS += \
 	-r:System.EnterpriseServices.dll 	\
 	-r:Mono.Data.Tds.dll \
 	$(OTHER_LIB_MCS_FLAGS)
-endif
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.Core.dll -r:Mono.Data.Sqlite.dll -nowarn:618,169,612,219,168

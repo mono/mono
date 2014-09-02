@@ -7,11 +7,7 @@ LIB_MCS_FLAGS = -r:System.dll -warn:1
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-EXTRA_DISTFILES = README build-csproj2k5
-
-Mono.WebBrowser2K5.csproj: Mono.WebBrowser.dll.sources build-csproj2k5
-	./build-csproj2k5
+EXTRA_DISTFILES = README
 
 include ../../build/library.make
 
-$(the_lib): Mono.WebBrowser2K5.csproj

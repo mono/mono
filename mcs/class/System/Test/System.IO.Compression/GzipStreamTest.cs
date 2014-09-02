@@ -12,6 +12,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 
 namespace MonoTests.System.IO.Compression
 {
@@ -296,6 +297,31 @@ namespace MonoTests.System.IO.Compression
 			0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd,
 			0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31,
 			0x06, 0x00, 0x00, 0x00};
+
+		public MemoryStream GenerateStreamFromString(string s)
+		{
+			return new MemoryStream (Encoding.UTF8.GetBytes (s));
+		}
+
+#if NET_4_5
+		[Test]
+		public void CheckNet45Overloads () // Xambug #21982
+		{
+			MemoryStream dataStream = GenerateStreamFromString("Hello");
+			MemoryStream backing = new MemoryStream ();
+			GZipStream compressing = new GZipStream (backing, CompressionLevel.Fastest, true);
+			CopyStream (dataStream, compressing);
+			dataStream.Close();
+			compressing.Close();
+
+			backing.Seek (0, SeekOrigin.Begin);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
+			StreamReader reader = new StreamReader (decompressing);
+			Assert.AreEqual ("Hello", reader.ReadLine ());
+			decompressing.Close();
+			backing.Close();
+		}
+#endif
 	}
 }
 

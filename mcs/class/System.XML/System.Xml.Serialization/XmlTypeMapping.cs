@@ -49,6 +49,7 @@ namespace System.Xml.Serialization
 		string documentation;
 		bool includeInSchema;
 		bool isNullable = true;
+		bool isAny;
 
 		ArrayList _derivedTypes = new ArrayList();
 
@@ -158,6 +159,12 @@ namespace System.Xml.Serialization
 			set { isNullable = value; }
 		}
 
+		internal bool IsAny
+		{
+			get { return isAny; }
+			set { isAny = value; }
+		}
+
 		internal XmlTypeMapping GetRealTypeMap (Type objectType)
 		{
 			if (TypeData.SchemaType == SchemaTypes.Enum)
@@ -205,6 +212,13 @@ namespace System.Xml.Serialization
 			XmlSchemaProviderAttribute schemaProvider = (XmlSchemaProviderAttribute) Attribute.GetCustomAttribute (typeData.Type, typeof (XmlSchemaProviderAttribute));
 
 			if (schemaProvider != null) {
+				_schemaTypeName = XmlQualifiedName.Empty;
+
+				if (schemaProvider.IsAny) {
+					IsAny = true;
+					return;
+				}
+
 				string method = schemaProvider.MethodName;
 				MethodInfo mi = typeData.Type.GetMethod (method, BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
 				if (mi == null)
@@ -216,7 +230,6 @@ namespace System.Xml.Serialization
 					throw new InvalidOperationException (String.Format ("Method '{0}' indicated by XmlSchemaProviderAttribute must have its return type as XmlQualifiedName", method));
 				XmlSchemaSet xs = new XmlSchemaSet ();
 				object retVal = mi.Invoke (null, new object [] { xs });
-				_schemaTypeName = XmlQualifiedName.Empty;
 				if (retVal == null)
 					return;
 

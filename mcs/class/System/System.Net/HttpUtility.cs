@@ -1315,11 +1315,7 @@ namespace System.Net {
 					// MS starts encoding with &# from 160 and stops at 255.
 					// We don't do that. One reason is the 65308/65310 unicode
 					// characters that look like '<' and '>'.
-#if TARGET_JVM
-					if (c > 159 && c < 256) {
-#else
 					if (c > 159) {
-#endif
 						output.Append ("&#");
 						if (char.IsSurrogate (c))
 							output.Append (char.ConvertToUtf32 (s, i++));

@@ -120,19 +120,19 @@ typedef struct {
 #define UICULTURES_START_IDX NUM_CACHED_CULTURES
 
 /* Controls access to the 'threads' hash table */
-#define mono_threads_lock() EnterCriticalSection (&threads_mutex)
-#define mono_threads_unlock() LeaveCriticalSection (&threads_mutex)
-static CRITICAL_SECTION threads_mutex;
+#define mono_threads_lock() mono_mutex_lock (&threads_mutex)
+#define mono_threads_unlock() mono_mutex_unlock (&threads_mutex)
+static mono_mutex_t threads_mutex;
 
 /* Controls access to context static data */
-#define mono_contexts_lock() EnterCriticalSection (&contexts_mutex)
-#define mono_contexts_unlock() LeaveCriticalSection (&contexts_mutex)
-static CRITICAL_SECTION contexts_mutex;
+#define mono_contexts_lock() mono_mutex_lock (&contexts_mutex)
+#define mono_contexts_unlock() mono_mutex_unlock (&contexts_mutex)
+static mono_mutex_t contexts_mutex;
 
 /* Controls access to the 'joinable_threads' hash table */
-#define joinable_threads_lock() EnterCriticalSection (&joinable_threads_mutex)
-#define joinable_threads_unlock() LeaveCriticalSection (&joinable_threads_mutex)
-static CRITICAL_SECTION joinable_threads_mutex;
+#define joinable_threads_lock() mono_mutex_lock (&joinable_threads_mutex)
+#define joinable_threads_unlock() mono_mutex_unlock (&joinable_threads_mutex)
+static mono_mutex_t joinable_threads_mutex;
 
 /* Holds current status of static data heap */
 static StaticDataInfo thread_static_info;
@@ -208,9 +208,9 @@ static MonoException* mono_thread_execute_interruption (MonoInternalThread *thre
 static void ref_stack_destroy (gpointer rs);
 
 /* Spin lock for InterlockedXXX 64 bit functions */
-#define mono_interlocked_lock() EnterCriticalSection (&interlocked_mutex)
-#define mono_interlocked_unlock() LeaveCriticalSection (&interlocked_mutex)
-static CRITICAL_SECTION interlocked_mutex;
+#define mono_interlocked_lock() mono_mutex_lock (&interlocked_mutex)
+#define mono_interlocked_unlock() mono_mutex_unlock (&interlocked_mutex)
+static mono_mutex_t interlocked_mutex;
 
 /* global count of thread interruptions requested */
 static gint32 thread_interruption_requested = 0;
@@ -332,19 +332,19 @@ static gboolean handle_remove(MonoInternalThread *thread)
 
 static void ensure_synch_cs_set (MonoInternalThread *thread)
 {
-	CRITICAL_SECTION *synch_cs;
+	mono_mutex_t *synch_cs;
 
 	if (thread->synch_cs != NULL) {
 		return;
 	}
 
-	synch_cs = g_new0 (CRITICAL_SECTION, 1);
-	InitializeCriticalSection (synch_cs);
+	synch_cs = g_new0 (mono_mutex_t, 1);
+	mono_mutex_init_recursive (synch_cs);
 
 	if (InterlockedCompareExchangePointer ((gpointer *)&thread->synch_cs,
 					       synch_cs, NULL) != NULL) {
 		/* Another thread must have installed this CS */
-		DeleteCriticalSection (synch_cs);
+		mono_mutex_destroy (synch_cs);
 		g_free (synch_cs);
 	}
 }
@@ -356,13 +356,13 @@ lock_thread (MonoInternalThread *thread)
 		ensure_synch_cs_set (thread);
 
 	g_assert (thread->synch_cs);
-	EnterCriticalSection (thread->synch_cs);
+	mono_mutex_lock (thread->synch_cs);
 }
 
 static inline void
 unlock_thread (MonoInternalThread *thread)
 {
-	LeaveCriticalSection (thread->synch_cs);
+	mono_mutex_unlock (thread->synch_cs);
 }
 
 /*
@@ -529,8 +529,8 @@ create_internal_thread (void)
 	vt = mono_class_vtable (mono_get_root_domain (), mono_defaults.internal_thread_class);
 	thread = (MonoInternalThread*)mono_gc_alloc_mature (vt);
 
-	thread->synch_cs = g_new0 (CRITICAL_SECTION, 1);
-	InitializeCriticalSection (thread->synch_cs);
+	thread->synch_cs = g_new0 (mono_mutex_t, 1);
+	mono_mutex_init_recursive (thread->synch_cs);
 
 	thread->apartment_state = ThreadApartmentState_Unknown;
 	thread->managed_id = get_next_managed_thread_id ();
@@ -651,7 +651,7 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 
 	/* if the name was set before starting, we didn't invoke the profiler callback */
 	if (internal->name && (internal->flags & MONO_THREAD_FLAG_NAME_SET)) {
-		char *tname = g_utf16_to_utf8 (internal->name, -1, NULL, NULL, NULL);
+		char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
 		mono_profiler_thread_name (internal->tid, tname);
 		g_free (tname);
 	}
@@ -987,6 +987,27 @@ mono_thread_detach (MonoThread *thread)
 		mono_thread_detach_internal (thread->internal_thread);
 }
 
+/*
+ * mono_thread_detach_if_exiting:
+ *
+ *   Detach the current thread from the runtime if it is exiting, i.e. it is running pthread dtors.
+ * This should be used at the end of embedding code which calls into managed code, and which
+ * can be called from pthread dtors, like dealloc: implementations in objective-c.
+ */
+void
+mono_thread_detach_if_exiting (void)
+{
+	if (mono_thread_info_is_exiting ()) {
+		MonoInternalThread *thread;
+
+		thread = mono_thread_internal_current ();
+		if (thread) {
+			mono_thread_detach_internal (thread);
+			mono_thread_info_detach ();
+		}
+	}
+}
+
 void
 mono_thread_exit ()
 {
@@ -1079,9 +1100,9 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 		CloseHandle (thread);
 
 	if (this->synch_cs) {
-		CRITICAL_SECTION *synch_cs = this->synch_cs;
+		mono_mutex_t *synch_cs = this->synch_cs;
 		this->synch_cs = NULL;
-		DeleteCriticalSection (synch_cs);
+		mono_mutex_destroy (synch_cs);
 		g_free (synch_cs);
 	}
 
@@ -2536,10 +2557,10 @@ mono_thread_init_tls (void)
 void mono_thread_init (MonoThreadStartCB start_cb,
 		       MonoThreadAttachCB attach_cb)
 {
-	InitializeCriticalSection(&threads_mutex);
-	InitializeCriticalSection(&interlocked_mutex);
-	InitializeCriticalSection(&contexts_mutex);
-	InitializeCriticalSection(&joinable_threads_mutex);
+	mono_mutex_init_recursive(&threads_mutex);
+	mono_mutex_init_recursive(&interlocked_mutex);
+	mono_mutex_init_recursive(&contexts_mutex);
+	mono_mutex_init_recursive(&joinable_threads_mutex);
 	
 	background_change_event = CreateEvent (NULL, TRUE, FALSE, NULL);
 	g_assert(background_change_event != NULL);
@@ -2580,11 +2601,11 @@ void mono_thread_cleanup (void)
 	 * critical sections can be locked when mono_thread_cleanup is
 	 * called.
 	 */
-	DeleteCriticalSection (&threads_mutex);
-	DeleteCriticalSection (&interlocked_mutex);
-	DeleteCriticalSection (&contexts_mutex);
-	DeleteCriticalSection (&delayed_free_table_mutex);
-	DeleteCriticalSection (&small_id_mutex);
+	mono_mutex_destroy (&threads_mutex);
+	mono_mutex_destroy (&interlocked_mutex);
+	mono_mutex_destroy (&contexts_mutex);
+	mono_mutex_destroy (&delayed_free_table_mutex);
+	mono_mutex_destroy (&small_id_mutex);
 	CloseHandle (background_change_event);
 #endif
 

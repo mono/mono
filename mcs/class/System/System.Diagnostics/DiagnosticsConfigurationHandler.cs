@@ -186,7 +186,6 @@ namespace System.Diagnostics
 		// them
 		private void AddSwitchesNode (IDictionary d, XmlNode node)
 		{
-#if !TARGET_JVM
 			// There are no attributes on <switch/>
 			ValidateInvalidAttributes (node.Attributes, node);
 
@@ -224,7 +223,6 @@ namespace System.Diagnostics
 			}
 
 			d [node.Name] = newNodes;
-#endif
 		}
 
 		private static object GetSwitchValue (string name, string value)
@@ -367,7 +365,6 @@ namespace System.Diagnostics
 		// for add, "name" is required; initializeData is optional; "type" is required in 1.x, optional in 2.0.
 		private void AddTraceListeners (IDictionary d, XmlNode listenersNode, TraceListenerCollection listeners)
 		{
-#if !TARGET_JVM
 			// There are no attributes on <listeners/>
 			ValidateInvalidAttributes (listenersNode.Attributes, listenersNode);
 
@@ -398,7 +395,6 @@ namespace System.Diagnostics
 				else
 					ThrowUnrecognizedNode (child);
 			}
-#endif
 		}
 
 		private void AddTraceListener (IDictionary d, XmlNode child, XmlAttributeCollection attributes, TraceListenerCollection listeners)

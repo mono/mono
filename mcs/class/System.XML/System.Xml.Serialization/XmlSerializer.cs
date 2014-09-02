@@ -37,7 +37,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Text;
-#if !TARGET_JVM && !NET_2_1
+#if !NET_2_1
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
@@ -68,6 +68,7 @@ namespace System.Xml.Serialization
 		internal class SerializerData
 		{
 			public int UsageCount;
+			public bool Generated;
 			public Type ReaderType;
 			public MethodInfo ReaderMethod;
 			public Type WriterType;
@@ -120,7 +121,7 @@ namespace System.Xml.Serialization
 			//       debugging pourposes by adding the "nofallback" option.
 			//       For example: MONO_XMLSERIALIZER_THS=0,nofallback
 			
-#if TARGET_JVM || NET_2_1
+#if NET_2_1
 			string db = null;
 			string th = null;
 			generationThreshold = -1;
@@ -145,7 +146,6 @@ namespace System.Xml.Serialization
 				else {
 					generationThreshold = int.Parse (th, CultureInfo.InvariantCulture);
 					backgroundGeneration = (generationThreshold != 0);
-					if (generationThreshold < 1) generationThreshold = 1;
 				}
 			}
 #endif
@@ -521,7 +521,7 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-#if !TARGET_JVM && !MOBILE
+#if !MOBILE
 		public static Assembly GenerateSerializer (Type[] types, XmlMapping[] mappings)
 		{
 			return GenerateSerializer (types, mappings, null);
@@ -630,7 +630,7 @@ namespace System.Xml.Serialization
 			return new XmlSerializationReaderInterpreter (typeMapping);
 		}
 		
-#if TARGET_JVM || NET_2_1
+#if NET_2_1
  		void CheckGeneratedTypes (XmlMapping typeMapping)
  		{
 			throw new NotImplementedException();
@@ -664,7 +664,10 @@ namespace System.Xml.Serialization
 			bool generate = false;
 			lock (serializerData)
 			{
-				generate = (++serializerData.UsageCount == generationThreshold);
+				if (serializerData.UsageCount >= generationThreshold && !serializerData.Generated)
+					serializerData.Generated = generate = true;
+
+				serializerData.UsageCount++;
 			}
 			
 			if (generate)

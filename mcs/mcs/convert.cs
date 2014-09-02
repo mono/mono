@@ -345,7 +345,7 @@ namespace Mono.CSharp {
 					if (target_type.Kind == MemberKind.InternalCompilerType)
 						return target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 
-					return TypeSpec.IsReferenceType (target_type);
+					return TypeSpec.IsReferenceType (target_type) || target_type.Kind == MemberKind.PointerType;
 				}
 
 				//

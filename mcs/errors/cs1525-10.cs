@@ -1,4 +1,4 @@
-// CS1525: Unexpected symbol `ref', expecting `.', `?', `[', `<operator>', or `identifier'
+// CS1525: Unexpected symbol `ref'
 // Line: 8
 
 public class Test

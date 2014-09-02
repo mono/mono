@@ -2,6 +2,7 @@
 
 // Compilation test only for missing 2nd level dependecies
 
+[A2]
 class Program
 {
 	void Test ()

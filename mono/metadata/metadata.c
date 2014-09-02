@@ -1376,7 +1376,7 @@ static int next_generic_inst_id = 0;
 static MonoImageSet *mscorlib_image_set;
 /* Protected by image_sets_mutex */
 static GPtrArray *image_sets;
-static CRITICAL_SECTION image_sets_mutex;
+static mono_mutex_t image_sets_mutex;
 
 static guint mono_generic_class_hash (gconstpointer data);
 
@@ -1490,7 +1490,7 @@ mono_metadata_init (void)
 	for (i = 0; i < NBUILTIN_TYPES (); ++i)
 		g_hash_table_insert (type_cache, (gpointer) &builtin_types [i], (gpointer) &builtin_types [i]);
 
-	InitializeCriticalSection (&image_sets_mutex);
+	mono_mutex_init_recursive (&image_sets_mutex);
 }
 
 /**
@@ -1506,7 +1506,7 @@ mono_metadata_cleanup (void)
 	type_cache = NULL;
 	g_ptr_array_free (image_sets, TRUE);
 	image_sets = NULL;
-	DeleteCriticalSection (&image_sets_mutex);
+	mono_mutex_destroy (&image_sets_mutex);
 }
 
 /**
@@ -1766,7 +1766,7 @@ mono_metadata_parse_signature_full (MonoImage *image, MonoGenericContainer *gene
 	guint32 sig;
 	const char *ptr;
 
-	if (image->dynamic)
+	if (image_is_dynamic (image))
 		return mono_lookup_dynamic_token (image, token, NULL);
 
 	g_assert (mono_metadata_token_table(token) == MONO_TABLE_STANDALONESIG);
@@ -2192,13 +2192,13 @@ retry:
 static inline void
 image_sets_lock (void)
 {
-	EnterCriticalSection (&image_sets_mutex);
+	mono_mutex_lock (&image_sets_mutex);
 }
 
 static inline void
 image_sets_unlock (void)
 {
-	LeaveCriticalSection (&image_sets_mutex);
+	mono_mutex_unlock (&image_sets_mutex);
 }
 
 /*
@@ -2255,7 +2255,7 @@ get_image_set (MonoImage **images, int nimages)
 		set = g_new0 (MonoImageSet, 1);
 		set->nimages = nimages;
 		set->images = g_new0 (MonoImage*, nimages);
-		InitializeCriticalSection (&set->lock);
+		mono_mutex_init_recursive (&set->lock);
 		for (i = 0; i < nimages; ++i)
 			set->images [i] = images [i];
 		set->gclass_cache = g_hash_table_new_full (mono_generic_class_hash, mono_generic_class_equal, NULL, (GDestroyNotify)free_generic_class);
@@ -2301,20 +2301,20 @@ delete_image_set (MonoImageSet *set)
 	if (set->mempool)
 		mono_mempool_destroy (set->mempool);
 	g_free (set->images);
-	DeleteCriticalSection (&set->lock);
+	mono_mutex_destroy (&set->lock);
 	g_free (set);
 }
 
 static void
 mono_image_set_lock (MonoImageSet *set)
 {
-	EnterCriticalSection (&set->lock);
+	mono_mutex_lock (&set->lock);
 }
 
 static void
 mono_image_set_unlock (MonoImageSet *set)
 {
-	LeaveCriticalSection (&set->lock);
+	mono_mutex_unlock (&set->lock);
 }
 
 gpointer
@@ -2469,7 +2469,7 @@ collect_method_images (MonoMethodInflated *method, CollectData *data)
 	/*
 	 * Dynamic assemblies have no references, so the images they depend on can be unloaded before them.
 	 */
-	if (m->klass->image->dynamic)
+	if (image_is_dynamic (m->klass->image))
 		collect_signature_images (mono_method_signature (m), data);
 }
 
@@ -2651,7 +2651,6 @@ mono_metadata_clean_for_image (MonoImage *image)
 	 */
 	ginst_data.image = gclass_data.image = image;
 	ginst_data.list = gclass_data.list = NULL;
-	mono_loader_lock ();
 
 	/* Collect the items to delete */
 	/* delete_image_set () modifies the lists so make a copy */
@@ -2681,8 +2680,6 @@ mono_metadata_clean_for_image (MonoImage *image)
 		delete_image_set (set);
 	}
 	g_slist_free (set_list);
-
-	mono_loader_unlock ();
 }
 
 static void
@@ -3593,22 +3590,13 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
  *
  * Decode the method header at @ptr, including pointer to the IL code,
  * info about local variables and optional exception tables.
- * This is a Mono runtime internal function.
  *
- * Returns: a MonoMethodHeader.
+ * Returns: a transient MonoMethodHeader allocated from the heap.
  */
 MonoMethodHeader *
 mono_metadata_parse_mh (MonoImage *m, const char *ptr)
 {
-	MonoMethodHeader *res;
-
-	mono_loader_lock ();
-
-	res = mono_metadata_parse_mh_full (m, NULL, ptr);
-
-	mono_loader_unlock ();
-
-	return res;
+	return mono_metadata_parse_mh_full (m, NULL, ptr);
 }
 
 /*
@@ -4004,8 +3992,7 @@ mono_metadata_typedef_from_method (MonoImage *meta, guint32 index)
  * The array of interfaces that the @index typedef token implements is returned in
  * @interfaces. The number of elements in the array is returned in @count. 
  *
- * LOCKING: Assumes the loader lock is held.
- *
+
  * Returns: TRUE on success, FALSE on failure.
  */
 gboolean
@@ -4092,9 +4079,7 @@ mono_metadata_interfaces_from_typedef (MonoImage *meta, guint32 index, guint *co
 	MonoClass **interfaces;
 	gboolean rv;
 
-	mono_loader_lock ();
 	rv = mono_metadata_interfaces_from_typedef_full (meta, index, &interfaces, count, TRUE, NULL);
-	mono_loader_unlock ();
 	if (rv)
 		return interfaces;
 	else
@@ -4636,7 +4621,7 @@ mono_metadata_type_hash (MonoType *t1)
 		 * This is specially problematic with generic instances since they are
 		 * inserted in a bunch of hash tables before been finished.
 		 */
-		if (class->image->dynamic)
+		if (image_is_dynamic (class->image))
 			return (t1->byref << 6) | mono_metadata_str_hash (class->name);
 		return ((hash << 5) - hash) ^ mono_metadata_str_hash (class->name);
 	}
@@ -5308,46 +5293,39 @@ mono_type_create_from_typespec (MonoImage *image, guint32 type_spec)
 	guint32 len;
 	MonoType *type, *type2;
 
-	mono_loader_lock ();
-
+	mono_image_lock (image);
 	type = g_hash_table_lookup (image->typespec_cache, GUINT_TO_POINTER (type_spec));
-	if (type) {
-		mono_loader_unlock ();
+	mono_image_unlock (image);
+	if (type)
 		return type;
-	}
 
 	t = &image->tables [MONO_TABLE_TYPESPEC];
 
 	mono_metadata_decode_row (t, idx-1, cols, MONO_TYPESPEC_SIZE);
 	ptr = mono_metadata_blob_heap (image, cols [MONO_TYPESPEC_SIGNATURE]);
 
-	if (!mono_verifier_verify_typespec_signature (image, cols [MONO_TYPESPEC_SIGNATURE], type_spec, NULL)) {
-		mono_loader_unlock ();
+	if (!mono_verifier_verify_typespec_signature (image, cols [MONO_TYPESPEC_SIGNATURE], type_spec, NULL))
 		return NULL;
-	}
 
 	len = mono_metadata_decode_value (ptr, &ptr);
 
 	type = mono_metadata_parse_type_internal (image, NULL, MONO_PARSE_TYPE, 0, TRUE, ptr, &ptr);
-	if (!type) {
-		mono_loader_unlock ();
+	if (!type)
 		return NULL;
-	}
-
-	type2 = g_hash_table_lookup (image->typespec_cache, GUINT_TO_POINTER (type_spec));
-
-	if (type2) {
-		mono_loader_unlock ();
-		return type2;
-	}
 
 	type2 = mono_metadata_type_dup (image, type);
-	g_hash_table_insert (image->typespec_cache, GUINT_TO_POINTER (type_spec), type2);
 	mono_metadata_free_type (type);
 
-	mono_loader_unlock ();
+	mono_image_lock (image);
+	type = g_hash_table_lookup (image->typespec_cache, GUINT_TO_POINTER (type_spec));
+	/* We might leak some data in the image mempool if found */
+	if (!type) {
+		g_hash_table_insert (image->typespec_cache, GUINT_TO_POINTER (type_spec), type2);
+		type = type2;
+	}
+	mono_image_unlock (image);
 
-	return type2;
+	return type;
 }
 
 

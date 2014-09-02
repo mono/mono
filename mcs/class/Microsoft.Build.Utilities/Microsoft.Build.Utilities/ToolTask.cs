@@ -233,10 +233,10 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
+		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance messageImportance)
 		{
 			if (singleLine.Length == 0) {
-				Log.LogMessage (singleLine, importance);
+				Log.LogMessage (singleLine, messageImportance);
 				return;
 			}
 
@@ -254,7 +254,7 @@ namespace Microsoft.Build.Utilities
 
 			var result = MSBuildErrorParser.TryParseLine (singleLine);
 			if (result == null) {
-				Log.LogMessage (importance, singleLine);
+				Log.LogMessage (messageImportance, singleLine);
 				return;
 			}
 
@@ -304,7 +304,7 @@ namespace Microsoft.Build.Utilities
 			return String.Format ("@{0}", responseFilePath);
 		}
 
-		protected virtual ProcessStartInfo GetProcessStartInfo (string pathToTool, string commandLineCommands, string responseFileSwitch)
+		protected ProcessStartInfo GetProcessStartInfo (string pathToTool, string commandLineCommands, string responseFileSwitch)
 		{
 			var pinfo = new ProcessStartInfo (pathToTool, String.Format ("{0} {1}", commandLineCommands, responseFileSwitch));
 

@@ -166,6 +166,8 @@ namespace MonoTests.System.IO.Compression
 			using (var archive = new ZipArchive(File.Open("create.zip", FileMode.Create),
 				ZipArchiveMode.Create))
 			{
+				var dir = archive.CreateEntry("foobar/");
+
 				var entry = archive.CreateEntry("foo.txt");
 				using (var stream = entry.Open())
 				{
@@ -177,6 +179,8 @@ namespace MonoTests.System.IO.Compression
 			using (var archive = new ZipArchive(File.Open("create.zip", FileMode.Open),
 				ZipArchiveMode.Read))
 			{
+				Assert.IsNotNull(archive.GetEntry("foobar/"));
+
 				var entry = archive.GetEntry("foo.txt");
 				Assert.IsNotNull(entry);
 

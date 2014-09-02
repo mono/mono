@@ -21,10 +21,6 @@ using System.Security.Permissions;
 
 using NUnit.Framework;
 
-#if TARGET_JVM
-using System.Globalization;
-using System.Reflection;
-#endif
 
 namespace MonoTests.System.Net
 {
@@ -363,13 +359,11 @@ namespace MonoTests.System.Net
 #else
 				Assert.AreEqual ("value", ex.Message, "#4");
 #endif
-#if !TARGET_JVM
 #if NET_2_0
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("value", ex.ParamName, "#6");
 #else
 				Assert.IsNull (ex.ParamName, "#5");
-#endif
 #endif
 				Assert.IsNull (ex.InnerException, "#7");
 			}
@@ -588,11 +582,9 @@ namespace MonoTests.System.Net
 			} catch (WebException ex) {
 				Assert.AreEqual (typeof (WebException), ex.GetType (), "#1");
 				Assert.IsNotNull (ex.Message, "#2");
-#if !TARGET_JVM				
 				Assert.IsTrue (ex.Message.IndexOf ("FileWebRequestTest.tmp") != -1, "#3");				
 				Assert.IsNull (ex.Response, "#4");
 				Assert.IsNotNull (ex.InnerException, "#5");
-#endif				
 
 #if ONLY_1_1
 				FileNotFoundException fnf = ex.InnerException as FileNotFoundException;
@@ -631,12 +623,10 @@ namespace MonoTests.System.Net
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.Message, "#3");
-#if !TARGET_JVM
 #if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#4");
 #else
 				Assert.IsNull (ex.ParamName, "#4");
-#endif
 #endif
 				Assert.IsNull (ex.InnerException, "#5");
 			}
@@ -652,12 +642,10 @@ namespace MonoTests.System.Net
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.Message, "#3");
-#if !TARGET_JVM
 #if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#4");
 #else
 				Assert.IsNull (ex.ParamName, "#4");
-#endif
 #endif
 				Assert.IsNull (ex.InnerException, "#5");
 			}
@@ -713,23 +701,17 @@ namespace MonoTests.System.Net
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if !TARGET_JVM
 				Assert.IsNotNull (ex.ParamName, "#5");
 #if NET_2_0
 				Assert.IsFalse (ex.ParamName == "value", "#6");
 #else
 				Assert.AreEqual ("value", ex.ParamName, "#6");
 #endif
-#endif
 				Assert.IsNull (ex.InnerException, "#7");
 			}
 		}
 
 		[Test]
-#if TARGET_JVM
-		//FIXME: include Java serialization compliant tests
-		[Ignore ("The MS compliant binary serialization is not supported")]
-#endif			
 		public void GetObjectData ()
 		{
 			FileWebRequest fwr = (FileWebRequest) WebRequest.Create ("file:///test.txt");
@@ -833,9 +815,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("The MS compliant binary serialization is not supported")]
-#endif		
 		public void Deserialize ()
 		{
 			MemoryStream ms = new MemoryStream ();
@@ -888,23 +867,6 @@ namespace MonoTests.System.Net
 			return new Uri ("file:///" + tempFile);
 		}
 
-#if TARGET_JVM
-        
-        private bool RunningOnUnix {
-			get {
-				Type t = Type.GetType("java.lang.System");
-				MethodInfo mi = t.GetMethod("getProperty", new Type[] { typeof(string) });
-				string osName = (string) mi.Invoke(null, new object[] { "os.name" });
-				
-				if(osName == null) {
-					return false;
-				}
-				
-				return !osName.StartsWith("win", true, CultureInfo.InvariantCulture);
-			}
-		}
-				
-#else
 		private bool RunningOnUnix {
 			get {
 				// check for Unix platforms - see FAQ for more details
@@ -913,7 +875,6 @@ namespace MonoTests.System.Net
 				return ((platform == 4) || (platform == 128) || (platform == 6));
 			}
 		}
-#endif		
 
 		private static readonly byte [] _serialized = new byte [] {
 #if NET_2_0

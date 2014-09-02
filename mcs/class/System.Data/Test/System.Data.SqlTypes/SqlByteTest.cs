@@ -37,9 +37,6 @@ using System.Xml;
 using System.Data.SqlTypes;
 using System.Threading;
 using System.Globalization;
-#if TARGET_JVM
-using DivideByZeroException = System.ArithmeticException;
-#endif
 #if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;

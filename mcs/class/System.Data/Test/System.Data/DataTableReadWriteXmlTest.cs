@@ -351,9 +351,6 @@ namespace MonoTests.System.Data
         }
         
         [Test]
-#if TARGET_JVM
-	[Ignore ("Should review the test")]
-#endif
         public void TestReadXml()
         {
             // For reading, DataTable.ReadXml only supports reading in xml with

@@ -96,7 +96,6 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
-		[Category("TargetJvmNotWorking")]
 		public void TestCopyTo ()
 		{
 			var data = new [] {1, 2, 3, 4, 5};

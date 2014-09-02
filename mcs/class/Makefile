@@ -16,15 +16,6 @@ build_SUBDIRS :=  \
 	Mono.Posix \
 	System.Core
 
-net_1_1_java_SUBDIRS = \
-	System.Xml					\
-	System.Data					\
-	System.Drawing					\
-	Novell.Directory.Ldap				\
-	System.DirectoryServices			\
-	System.Runtime.Serialization.Formatters.Soap	\
-	System.Runtime.Remoting
-
 net_2_0_dirs := \
 	corlib				\
 	System				\

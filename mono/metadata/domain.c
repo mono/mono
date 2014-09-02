@@ -93,9 +93,9 @@ static gboolean debug_domain_unload;
 
 gboolean mono_dont_free_domains;
 
-#define mono_appdomains_lock() EnterCriticalSection (&appdomains_mutex)
-#define mono_appdomains_unlock() LeaveCriticalSection (&appdomains_mutex)
-static CRITICAL_SECTION appdomains_mutex;
+#define mono_appdomains_lock() mono_mutex_lock (&appdomains_mutex)
+#define mono_appdomains_unlock() mono_mutex_unlock (&appdomains_mutex)
+static mono_mutex_t appdomains_mutex;
 
 static MonoDomain *mono_root_domain = NULL;
 
@@ -137,6 +137,9 @@ static const MonoRuntimeInfo supported_runtimes[] = {
 /* Callbacks installed by the JIT */
 static MonoCreateDomainFunc create_domain_hook;
 static MonoFreeDomainFunc free_domain_hook;
+
+/* AOT cache configuration */
+static MonoAotCacheConfig aot_cache_config;
 
 /* This is intentionally not in the header file, so people don't misuse it. */
 extern void _mono_debug_init_corlib (MonoDomain *domain);
@@ -1304,10 +1307,10 @@ mono_domain_create (void)
 	domain->finalizable_objects_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	domain->ftnptrs_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
-	InitializeCriticalSection (&domain->lock);
-	InitializeCriticalSection (&domain->assemblies_lock);
-	InitializeCriticalSection (&domain->jit_code_hash_lock);
-	InitializeCriticalSection (&domain->finalizable_objects_hash_lock);
+	mono_mutex_init_recursive (&domain->lock);
+	mono_mutex_init_recursive (&domain->assemblies_lock);
+	mono_mutex_init_recursive (&domain->jit_code_hash_lock);
+	mono_mutex_init_recursive (&domain->finalizable_objects_hash_lock);
 
 	domain->method_rgctx_hash = NULL;
 
@@ -1381,7 +1384,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	MONO_FAST_TLS_INIT (tls_appdomain);
 	mono_native_tls_alloc (&appdomain_thread_id, NULL);
 
-	InitializeCriticalSection (&appdomains_mutex);
+	mono_mutex_init_recursive (&appdomains_mutex);
 
 	mono_metadata_init ();
 	mono_images_init ();
@@ -1789,7 +1792,7 @@ mono_cleanup (void)
 	mono_metadata_cleanup ();
 
 	mono_native_tls_free (appdomain_thread_id);
-	DeleteCriticalSection (&appdomains_mutex);
+	mono_mutex_destroy (&appdomains_mutex);
 
 #ifndef HOST_WIN32
 	wapi_cleanup ();
@@ -2023,7 +2026,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	/* Close dynamic assemblies first, since they have no ref count */
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly *ass = tmp->data;
-		if (!ass->image || !ass->image->dynamic)
+		if (!ass->image || !image_is_dynamic (ass->image))
 			continue;
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
 		if (!mono_assembly_close_except_image_pools (ass))
@@ -2034,7 +2037,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		MonoAssembly *ass = tmp->data;
 		if (!ass)
 			continue;
-		if (!ass->image || ass->image->dynamic)
+		if (!ass->image || image_is_dynamic (ass->image))
 			continue;
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
 		if (!mono_assembly_close_except_image_pools (ass))
@@ -2137,10 +2140,10 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		domain->ftnptrs_hash = NULL;
 	}
 
-	DeleteCriticalSection (&domain->finalizable_objects_hash_lock);
-	DeleteCriticalSection (&domain->assemblies_lock);
-	DeleteCriticalSection (&domain->jit_code_hash_lock);
-	DeleteCriticalSection (&domain->lock);
+	mono_mutex_destroy (&domain->finalizable_objects_hash_lock);
+	mono_mutex_destroy (&domain->assemblies_lock);
+	mono_mutex_destroy (&domain->jit_code_hash_lock);
+	mono_mutex_destroy (&domain->lock);
 	domain->setup = NULL;
 
 	mono_gc_deregister_root ((char*)&(domain->MONO_DOMAIN_FIRST_GC_TRACKED));
@@ -2775,4 +2778,10 @@ void
 mono_enable_debug_domain_unload (gboolean enable)
 {
 	debug_domain_unload = enable;
+}
+
+MonoAotCacheConfig *
+mono_get_aot_cache_config (void)
+{
+	return &aot_cache_config;
 }

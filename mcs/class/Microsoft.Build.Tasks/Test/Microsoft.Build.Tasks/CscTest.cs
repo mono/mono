@@ -434,6 +434,24 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
+		public void TestReferencesAlias ()
+		{
+			CscExtended csc = new CscExtended ();
+			CommandLineBuilderExtension c1 = new CommandLineBuilderExtension ();
+			CommandLineBuilderExtension c2 = new CommandLineBuilderExtension ();
+
+			TaskItem ti1 = new TaskItem ("A");
+			ti1.SetMetadata ("Aliases", "r1,global,r2");
+
+			csc.References = new ITaskItem[2] { ti1, new TaskItem ("B") };
+			csc.ARFC (c1);
+			csc.ACLC (c2);
+
+			Assert.AreEqual ("/reference:r1=A /reference:A /reference:r2=A /reference:B", c1.ToString (), "A1");
+			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
+		}
+
+		[Test]
 		public void TestResponseFiles ()
 		{
 			CscExtended csc = new CscExtended ();

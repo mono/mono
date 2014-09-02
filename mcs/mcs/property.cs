@@ -731,10 +731,10 @@ namespace Mono.CSharp
 		public sealed class BackingField : Field
 		{
 			readonly Property property;
+			const Modifiers DefaultModifiers = Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | Modifiers.DEBUGGER_HIDDEN;
 
 			public BackingField (Property p, bool readOnly)
-				: base (p.Parent, p.type_expr,
-				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
+				: base (p.Parent, p.type_expr, DefaultModifiers | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				new MemberName ("<" + p.GetFullName (p.MemberName) + ">k__BackingField", p.Location), null)
 			{
 				this.property = p;
@@ -1040,13 +1040,22 @@ namespace Mono.CSharp
 					Location)));
 				args.Add (new Argument (new LocalVariableReference (obj1, Location)));
 
-				var cas = Module.PredefinedMembers.InterlockedCompareExchange_T.Resolve (Location);
-				if (cas == null)
-					return;
-
-				body.AddStatement (new StatementExpression (new SimpleAssign (
-					new LocalVariableReference (obj1, Location),
-					new Invocation (MethodGroupExpr.CreatePredefined (cas, cas.DeclaringType, Location), args))));
+				var cas = Module.PredefinedMembers.InterlockedCompareExchange_T.Get ();
+				if (cas == null) {
+					if (Module.PredefinedMembers.MonitorEnter_v4.Get () != null || Module.PredefinedMembers.MonitorEnter.Get () != null) {
+						// Workaround for cripled (e.g. microframework) mscorlib without CompareExchange
+						body.AddStatement (new Lock (
+							block.GetParameterReference (0, Location),
+							new StatementExpression (new SimpleAssign (
+								f_expr, args [1].Expr, Location), Location), Location));
+					} else {
+						Module.PredefinedMembers.InterlockedCompareExchange_T.Resolve (Location);
+					}
+				} else {
+					body.AddStatement (new StatementExpression (new SimpleAssign (
+						new LocalVariableReference (obj1, Location),
+						new Invocation (MethodGroupExpr.CreatePredefined (cas, cas.DeclaringType, Location), args))));
+				}
 			}
 		}
 

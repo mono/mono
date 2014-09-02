@@ -408,7 +408,7 @@ namespace System.Net
 				SetBusy ();
 				async = false;
 				WebRequest request = SetupRequest (address, method, true);
-				return request.GetRequestStream ();
+				return OpenWriteStream (request);
 			} catch (WebException) {
 				throw;
 			} catch (Exception ex) {
@@ -417,6 +417,15 @@ namespace System.Net
 			} finally {
 				is_busy = false;
 			}
+		}
+
+		Stream OpenWriteStream (WebRequest request)
+		{
+			var stream = request.GetRequestStream ();
+			var wcs = stream as WebConnectionStream;
+			if (wcs != null)
+				wcs.GetResponseOnClose = true;
+			return stream;
 		}
 
 		private string DetermineMethod (Uri address, string method, bool is_upload)
@@ -1268,7 +1277,7 @@ namespace System.Net
 					WebRequest request = null;
 					try {
 						request = SetupRequest ((Uri) args [0], (string) args [1], true);
-						Stream stream = request.GetRequestStream ();
+						var stream = OpenWriteStream (request);
 						OnOpenWriteCompleted (
 							new OpenWriteCompletedEventArgs (stream, null, false, args [2]));
 					} catch (ThreadInterruptedException){
@@ -1841,8 +1850,12 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = SetupRequest (address);
-				return await request.GetRequestStreamAsync ().ConfigureAwait (false);
+				request = await SetupRequestAsync (address, method, true).ConfigureAwait (false);
+				var stream = await request.GetRequestStreamAsync ();
+				var wcs = stream as WebConnectionStream;
+				if (wcs != null)
+					wcs.GetResponseOnClose = true;
+				return stream;
 			} catch (WebException) {
 				throw;
 			} catch (OperationCanceledException) {
@@ -2183,6 +2196,12 @@ namespace System.Net
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
+			string cType = Headers ["Content-Type"];
+				if (cType != null && String.Compare (cType, urlEncodedCType, true) != 0)
+					throw new WebException ("Content-Type header cannot be changed from its default " +
+								"value for this request.");
+			Headers ["Content-Type"] = urlEncodedCType;
+
 			WebRequest request = null;
 			try {
 				SetBusy ();
@@ -2209,14 +2228,8 @@ namespace System.Net
 		                                              CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested ();
-			string cType = Headers ["Content-Type"];
-			if (cType != null && String.Compare (cType, urlEncodedCType, true) != 0)
-				throw new WebException ("Content-Type header cannot be changed from its default " +
-							"value for this request.");
 
 			WebResponse response = null;
-
-			Headers ["Content-Type"] = urlEncodedCType;
 			try {
 				MemoryStream tmpStream = new MemoryStream ();
 				foreach (string key in data) {

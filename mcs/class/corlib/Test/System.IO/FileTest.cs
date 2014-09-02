@@ -1107,7 +1107,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void TestGetCreationTime ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "baz";
@@ -1123,7 +1122,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void CreationTime ()
 		{
 			if (RunningOnUnix)
@@ -1166,7 +1164,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void LastAccessTime ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "lastAccessTime";
@@ -1261,7 +1258,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTime_Path_Null ()
 		{
 			try {
@@ -1276,7 +1272,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTime_Path_Empty ()
 		{
 			try {
@@ -1292,7 +1287,6 @@ namespace MonoTests.System.IO
 		}
 	
 		[Test]
-		//[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeException3";
@@ -1322,7 +1316,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTime_Path_Whitespace ()
 		{
 			try {
@@ -1338,7 +1331,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTime_Path_InvalidPathChars ()
 		{
 			try {
@@ -1354,7 +1346,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTimeUtc_Path_Null ()
 		{
 			try {
@@ -1369,7 +1360,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTimeUtc_Path_Empty ()
 		{
 			try {
@@ -1385,7 +1375,6 @@ namespace MonoTests.System.IO
 		}
 	
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeUtcException3";
@@ -1414,7 +1403,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTimeUtc_Path_Whitespace ()
 		{
 			try {
@@ -1430,7 +1418,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void GetCreationTimeUtc_Path_InvalidPathChars ()
 		{
 			try {
@@ -1446,7 +1433,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTime_Path_Null ()
 		{
 			try {
@@ -1461,7 +1447,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTime_Path_Empty ()
 		{
 			try {
@@ -1477,7 +1462,6 @@ namespace MonoTests.System.IO
 		}
 	
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeException3";
@@ -1507,7 +1491,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTime_Path_Whitespace ()
 		{
 			try {
@@ -1523,7 +1506,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTime_Path_InvalidPathChars ()
 		{
 			try {
@@ -1539,7 +1521,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTimeUtc_Path_Null ()
 		{
 			try {
@@ -1554,7 +1535,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTimeUtc_Path_Empty ()
 		{
 			try {
@@ -1570,7 +1550,6 @@ namespace MonoTests.System.IO
 		}
 	
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";
@@ -1599,7 +1578,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTimeUtc_Path_Whitespace ()
 		{
 			try {
@@ -1615,7 +1593,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 		public void GetLastAccessTimeUtc_Path_InvalidPathChars ()
 		{
 			try {
@@ -1824,7 +1801,6 @@ namespace MonoTests.System.IO
 		// SetCreationTime and SetCreationTimeUtc exceptions
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTime_Path_Null ()
 		{
 			try {
@@ -1839,7 +1815,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTime_Path_Empty ()
 		{
 			try {
@@ -1855,7 +1830,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTime_Path_Whitespace ()
 		{
 			try {
@@ -1871,7 +1845,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTime_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
@@ -1891,7 +1864,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeFileNotFoundException1";
@@ -1927,7 +1899,6 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTime_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "CreationTimeIOException1";
@@ -1954,7 +1925,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTimeUtc_Path_Null ()
 		{ 
 			try {
@@ -1969,7 +1939,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTimeUtc_Path_Empty ()
 		{
 			try {
@@ -1985,7 +1954,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTimeUtc_Path_Whitespace ()
 		{
 			try {
@@ -2001,7 +1969,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTimeUtc_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
@@ -2021,7 +1988,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcFileNotFoundException1";
@@ -2057,7 +2023,6 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
 		public void SetCreationTimeUtc_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcIOException1";
@@ -2086,7 +2051,6 @@ namespace MonoTests.System.IO
 		// SetLastAccessTime and SetLastAccessTimeUtc exceptions
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTime_Path_Null ()
 		{
 			try {
@@ -2101,7 +2065,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTime_Path_Empty ()
 		{
 			try {
@@ -2117,7 +2080,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTime_Path_Whitespace ()
 		{
 			try {
@@ -2133,7 +2095,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTime_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
@@ -2153,7 +2114,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeFileNotFoundException1";
@@ -2189,7 +2149,6 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTime_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "LastAccessIOException1";
@@ -2216,7 +2175,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTimeUtc_Path_Null ()
 		{
 			try {
@@ -2231,7 +2189,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetCLastAccessTimeUtc_Path_Empty ()
 		{
 			try {
@@ -2247,7 +2204,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTimeUtc_Path_Whitespace ()
 		{
 			try {
@@ -2263,7 +2219,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTimeUtc_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
@@ -2283,7 +2238,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcFileNotFoundException1";
@@ -2319,7 +2273,6 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
 		public void SetLastAccessTimeUtc_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcIOException1";

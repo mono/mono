@@ -749,6 +749,21 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(true , dr.HasErrors , "DRW48");
 		}
 
+		[Test] public void HasErrorsWithNullError()
+		{
+			DataTable dt = new DataTable("myTable"); 
+			DataRow dr = dt.NewRow();
+
+			// HasErrors (default)
+			Assert.AreEqual(false, dr.HasErrors, "DRW47.2");
+
+			dr.RowError = null;
+
+			// HasErrors (set/get)
+			Assert.AreEqual(string.Empty , dr.RowError , "DRW48.2");
+			Assert.AreEqual(false , dr.HasErrors , "DRW49.2");
+		}
+
 		[Test] public void HasVersion_ByDataRowVersion()
 		{
 			DataTable t = new DataTable("atable");

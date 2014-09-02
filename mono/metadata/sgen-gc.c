@@ -549,7 +549,6 @@ static void report_finalizer_roots (void);
 static void report_registered_roots (void);
 
 static void pin_from_roots (void *start_nursery, void *end_nursery, GrayQueue *queue);
-static int pin_objects_from_addresses (GCMemSection *section, void **start, void **end, void *start_nursery, void *end_nursery, ScanCopyContext ctx);
 static void finish_gray_stack (int generation, GrayQueue *queue);
 
 void mono_gc_scan_for_specific_ref (MonoObject *key, gboolean precise);
@@ -891,21 +890,25 @@ sgen_drain_gray_stack (int max_objs, ScanCopyContext ctx)
 }
 
 /*
- * Addresses from start to end are already sorted. This function finds
+ * Addresses in the pin queue are already sorted. This function finds
  * the object header for each address and pins the object. The
- * addresses must be inside the passed section.  The (start of the)
+ * addresses must be inside the nursery section.  The (start of the)
  * address array is overwritten with the addresses of the actually
  * pinned objects.  Return the number of pinned objects.
  */
 static int
-pin_objects_from_addresses (GCMemSection *section, void **start, void **end, void *start_nursery, void *end_nursery, ScanCopyContext ctx)
+pin_objects_from_nursery_pin_queue (ScanCopyContext ctx)
 {
+	GCMemSection *section = nursery_section;
+	void **start = section->pin_queue_start;
+	void **end = start + section->pin_queue_num_entries;
+	void *start_nursery = section->data;
+	void *end_nursery = section->next_data;
 	void *last = NULL;
 	int count = 0;
 	void *search_start;
-	void *last_obj = NULL;
-	size_t last_obj_size = 0;
 	void *addr;
+	void *pinning_front = start_nursery;
 	size_t idx;
 	void **definitely_pinned = start;
 	ScanObjectFunc scan_func = ctx.scan_func;
@@ -914,93 +917,132 @@ pin_objects_from_addresses (GCMemSection *section, void **start, void **end, voi
 	sgen_nursery_allocator_prepare_for_pinning ();
 
 	while (start < end) {
+		void *obj_to_pin = NULL;
+		size_t obj_to_pin_size = 0;
+
 		addr = *start;
-		/* the range check should be reduntant */
-		if (addr != last && addr >= start_nursery && addr < end_nursery) {
-			SGEN_LOG (5, "Considering pinning addr %p", addr);
-			/* multiple pointers to the same object */
-			if (addr >= last_obj && (char*)addr < (char*)last_obj + last_obj_size) {
-				start++;
+
+		SGEN_ASSERT (0, addr >= start_nursery && addr < end_nursery, "Potential pinning address out of range");
+		SGEN_ASSERT (0, addr >= last, "Pin queue not sorted");
+
+		if (addr == last) {
+			++start;
+			continue;
+		}
+
+		SGEN_LOG (5, "Considering pinning addr %p", addr);
+		/* We've already processed everything up to pinning_front. */
+		if (addr < pinning_front) {
+			start++;
+			continue;
+		}
+
+		/*
+		 * Find the closest scan start <= addr.  We might search backward in the
+		 * scan_starts array because entries might be NULL.  In the worst case we
+		 * start at start_nursery.
+		 */
+		idx = ((char*)addr - (char*)section->data) / SCAN_START_SIZE;
+		SGEN_ASSERT (0, idx < section->num_scan_start, "Scan start index out of range");
+		search_start = (void*)section->scan_starts [idx];
+		if (!search_start || search_start > addr) {
+			while (idx) {
+				--idx;
+				search_start = section->scan_starts [idx];
+				if (search_start && search_start <= addr)
+					break;
+			}
+			if (!search_start || search_start > addr)
+				search_start = start_nursery;
+		}
+
+		/*
+		 * If the pinning front is closer than the scan start we found, start
+		 * searching at the front.
+		 */
+		if (search_start < pinning_front)
+			search_start = pinning_front;
+
+		/*
+		 * Now addr should be in an object a short distance from search_start.
+		 *
+		 * search_start must point to zeroed mem or point to an object.
+		 */
+		do {
+			size_t obj_size;
+
+			/* Skip zeros. */
+			if (!*(void**)search_start) {
+				search_start = (void*)ALIGN_UP ((mword)search_start + sizeof (gpointer));
+				/* The loop condition makes sure we don't overrun addr. */
 				continue;
 			}
-			idx = ((char*)addr - (char*)section->data) / SCAN_START_SIZE;
-			g_assert (idx < section->num_scan_start);
-			search_start = (void*)section->scan_starts [idx];
-			if (!search_start || search_start > addr) {
-				while (idx) {
-					--idx;
-					search_start = section->scan_starts [idx];
-					if (search_start && search_start <= addr)
-						break;
-				}
-				if (!search_start || search_start > addr)
-					search_start = start_nursery;
+
+			obj_size = ALIGN_UP (safe_object_get_size ((MonoObject*)search_start));
+
+			if (addr >= search_start && (char*)addr < (char*)search_start + obj_size) {
+				/* This is the object we're looking for. */
+				obj_to_pin = search_start;
+				obj_to_pin_size = obj_size;
+				break;
 			}
-			if (search_start < last_obj)
-				search_start = (char*)last_obj + last_obj_size;
-			/* now addr should be in an object a short distance from search_start
-			 * Note that search_start must point to zeroed mem or point to an object.
-			 */
 
-			do {
-				if (!*(void**)search_start) {
-					/* Consistency check */
-					/*
-					for (frag = nursery_fragments; frag; frag = frag->next) {
-						if (search_start >= frag->fragment_start && search_start < frag->fragment_end)
-							g_assert_not_reached ();
-					}
-					*/
+			/* Skip to the next object */
+			search_start = (void*)((char*)search_start + obj_size);
+		} while (search_start <= addr);
 
-					search_start = (void*)ALIGN_UP ((mword)search_start + sizeof (gpointer));
-					continue;
-				}
-				last_obj = search_start;
-				last_obj_size = ALIGN_UP (safe_object_get_size ((MonoObject*)search_start));
+		/* We've searched past the address we were looking for. */
+		if (!obj_to_pin) {
+			pinning_front = search_start;
+			goto next_pin_queue_entry;
+		}
 
-				if (((MonoObject*)last_obj)->synchronisation == GINT_TO_POINTER (-1)) {
-					/* Marks the beginning of a nursery fragment, skip */
-				} else {
-					SGEN_LOG (8, "Pinned try match %p (%s), size %zd", last_obj, safe_name (last_obj), last_obj_size);
-					if (addr >= search_start && (char*)addr < (char*)last_obj + last_obj_size) {
-						if (scan_func) {
-							scan_func (search_start, queue);
-						} else {
-							SGEN_LOG (4, "Pinned object %p, vtable %p (%s), count %d\n",
-									search_start, *(void**)search_start, safe_name (search_start), count);
-							binary_protocol_pin (search_start,
-									(gpointer)LOAD_VTABLE (search_start),
-									safe_object_get_size (search_start));
+		/*
+		 * We've found an object to pin.  It might still be a dummy array, but we
+		 * can advance the pinning front in any case.
+		 */
+		pinning_front = (char*)obj_to_pin + obj_to_pin_size;
+
+		/*
+		 * If this is a dummy array marking the beginning of a nursery
+		 * fragment, we don't pin it.
+		 */
+		if (((MonoObject*)obj_to_pin)->synchronisation == GINT_TO_POINTER (-1))
+			goto next_pin_queue_entry;
+
+		/*
+		 * Finally - pin the object!
+		 */
+		if (scan_func) {
+			scan_func (obj_to_pin, queue);
+		} else {
+			SGEN_LOG (4, "Pinned object %p, vtable %p (%s), count %d\n",
+					obj_to_pin, *(void**)obj_to_pin, safe_name (obj_to_pin), count);
+			binary_protocol_pin (obj_to_pin,
+					(gpointer)LOAD_VTABLE (obj_to_pin),
+					safe_object_get_size (obj_to_pin));
 
 #ifdef ENABLE_DTRACE
-							if (G_UNLIKELY (MONO_GC_OBJ_PINNED_ENABLED ())) {
-								int gen = sgen_ptr_in_nursery (search_start) ? GENERATION_NURSERY : GENERATION_OLD;
-								MonoVTable *vt = (MonoVTable*)LOAD_VTABLE (search_start);
-								MONO_GC_OBJ_PINNED ((mword)search_start,
-										sgen_safe_object_get_size (search_start),
-										vt->klass->name_space, vt->klass->name, gen);
-							}
+			if (G_UNLIKELY (MONO_GC_OBJ_PINNED_ENABLED ())) {
+				int gen = sgen_ptr_in_nursery (obj_to_pin) ? GENERATION_NURSERY : GENERATION_OLD;
+				MonoVTable *vt = (MonoVTable*)LOAD_VTABLE (obj_to_pin);
+				MONO_GC_OBJ_PINNED ((mword)obj_to_pin,
+						sgen_safe_object_get_size (obj_to_pin),
+						vt->klass->name_space, vt->klass->name, gen);
+			}
 #endif
 
-							pin_object (search_start);
-							GRAY_OBJECT_ENQUEUE (queue, search_start);
-							if (G_UNLIKELY (do_pin_stats))
-								sgen_pin_stats_register_object (search_start, last_obj_size);
-							definitely_pinned [count] = search_start;
-							count++;
-						}
-						break;
-					}
-				}
-				/* skip to the next object */
-				search_start = (void*)((char*)search_start + last_obj_size);
-			} while (search_start <= addr);
-			/* we either pinned the correct object or we ignored the addr because
-			 * it points to unused zeroed memory.
-			 */
-			last = addr;
+			pin_object (obj_to_pin);
+			GRAY_OBJECT_ENQUEUE (queue, obj_to_pin);
+			if (G_UNLIKELY (do_pin_stats))
+				sgen_pin_stats_register_object (obj_to_pin, obj_to_pin_size);
+			definitely_pinned [count] = obj_to_pin;
+			count++;
 		}
-		start++;
+
+	next_pin_queue_entry:
+		last = addr;
+		++start;
 	}
 	//printf ("effective pinned: %d (at the end: %d)\n", count, (char*)end_nursery - (char*)last);
 	if (mono_profiler_get_events () & MONO_PROFILE_GC_ROOTS) {
@@ -1014,19 +1056,18 @@ pin_objects_from_addresses (GCMemSection *section, void **start, void **end, voi
 	return count;
 }
 
-void
-sgen_pin_objects_in_section (GCMemSection *section, ScanCopyContext ctx)
+static void
+pin_objects_in_nursery (ScanCopyContext ctx)
 {
-	size_t num_entries = section->pin_queue_num_entries;
-	if (num_entries) {
-		void **start = section->pin_queue_start;
-		size_t reduced_to;
-		reduced_to = pin_objects_from_addresses (section, start, start + num_entries,
-				section->data, section->next_data, ctx);
-		section->pin_queue_num_entries = reduced_to;
-		if (!reduced_to)
-			section->pin_queue_start = NULL;
-	}
+	size_t reduced_to;
+
+	if (!nursery_section->pin_queue_num_entries)
+		return;
+
+	reduced_to = pin_objects_from_nursery_pin_queue (ctx);
+	nursery_section->pin_queue_num_entries = reduced_to;
+	if (!reduced_to)
+		nursery_section->pin_queue_start = NULL;
 }
 
 
@@ -2258,12 +2299,12 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 	/* pin cemented objects */
 	sgen_cement_iterate (pin_stage_object_callback, NULL);
 	/* identify pinned objects */
-	sgen_optimize_pin_queue (0);
+	sgen_optimize_pin_queue ();
 	sgen_pinning_setup_section (nursery_section);
 	ctx.scan_func = NULL;
 	ctx.copy_func = NULL;
 	ctx.queue = WORKERS_DISTRIBUTE_GRAY_QUEUE;
-	sgen_pin_objects_in_section (nursery_section, ctx);
+	pin_objects_in_nursery (ctx);
 	sgen_pinning_trim_queue_to_section (nursery_section);
 
 	TV_GETTIME (atv);
@@ -2377,7 +2418,7 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 	sgen_workers_reset_data ();
 
 	if (objects_pinned) {
-		sgen_optimize_pin_queue (0);
+		sgen_optimize_pin_queue ();
 		sgen_pinning_setup_section (nursery_section);
 	}
 
@@ -2406,7 +2447,7 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 	major_collector.finish_nursery_collection ();
 
 	TV_GETTIME (all_btv);
-	gc_stats.minor_gc_time_usecs += TV_ELAPSED (all_atv, all_btv);
+	gc_stats.minor_gc_time += TV_ELAPSED (all_atv, all_btv);
 
 	if (heap_dump_file)
 		dump_heap ("minor", gc_stats.minor_gc_count - 1, NULL);
@@ -2543,7 +2584,7 @@ major_copy_or_mark_from_roots (size_t *old_next_pin_slot, gboolean finish_up_con
 			sgen_cement_reset ();
 	}
 
-	sgen_optimize_pin_queue (0);
+	sgen_optimize_pin_queue ();
 
 	/*
 	 * The concurrent collector doesn't move objects, neither on
@@ -2631,7 +2672,7 @@ major_copy_or_mark_from_roots (size_t *old_next_pin_slot, gboolean finish_up_con
 	if (concurrent_collection_in_progress && sgen_minor_collector.is_split) {
 		scan_nursery_objects (ctx);
 	} else {
-		sgen_pin_objects_in_section (nursery_section, ctx);
+		pin_objects_in_nursery (ctx);
 		if (check_nursery_objects_pinned && !sgen_minor_collector.is_split)
 			sgen_check_nursery_objects_pinned (!concurrent_collection_in_progress || finish_up_concurrent_mark);
 	}
@@ -2848,7 +2889,7 @@ major_finish_collection (const char *reason, size_t old_next_pin_slot, gboolean 
 
 		/*This is slow, but we just OOM'd*/
 		sgen_pin_queue_clear_discarded_entries (nursery_section, old_next_pin_slot);
-		sgen_optimize_pin_queue (0);
+		sgen_optimize_pin_queue ();
 		sgen_find_section_pin_queue_start_end (nursery_section);
 		objects_pinned = 0;
 	}
@@ -2975,7 +3016,7 @@ major_do_collection (const char *reason)
 	major_finish_collection (reason, old_next_pin_slot, FALSE);
 
 	TV_GETTIME (all_btv);
-	gc_stats.major_gc_time_usecs += TV_ELAPSED (all_atv, all_btv);
+	gc_stats.major_gc_time += TV_ELAPSED (all_atv, all_btv);
 
 	/* FIXME: also report this to the user, preferably in gc-end. */
 	if (major_collector.get_and_reset_num_major_objects_marked)
@@ -3839,6 +3880,12 @@ sgen_thread_unregister (SgenThreadInfo *p)
 	tid = mono_thread_info_get_tid (p);
 	binary_protocol_thread_unregister ((gpointer)tid);
 	SGEN_LOG (3, "unregister thread %p (%p)", p, (gpointer)tid);
+
+#ifndef HAVE_KW_THREAD
+	mono_native_tls_set_value (thread_info_key, NULL);
+#else
+	sgen_thread_info = NULL;
+#endif
 
 	if (p->info.runtime_thread)
 		mono_threads_add_joinable_thread ((gpointer)tid);
@@ -4922,6 +4969,10 @@ mono_gc_base_init (void)
 				nursery_clear_policy = CLEAR_AT_GC;
 			} else if (!strcmp (opt, "clear-nursery-at-gc")) {
 				nursery_clear_policy = CLEAR_AT_GC;
+			} else if (!strcmp (opt, "clear-at-tlab-creation")) {
+				nursery_clear_policy = CLEAR_AT_TLAB_CREATION;
+			} else if (!strcmp (opt, "debug-clear-at-tlab-creation")) {
+				nursery_clear_policy = CLEAR_AT_TLAB_CREATION_DEBUG;
 			} else if (!strcmp (opt, "check-scan-starts")) {
 				do_scan_starts_check = TRUE;
 			} else if (!strcmp (opt, "verify-nursery-at-minor-gc")) {
@@ -4950,7 +5001,16 @@ mono_gc_base_init (void)
 				}
 			} else if (g_str_has_prefix (opt, "binary-protocol=")) {
 				char *filename = strchr (opt, '=') + 1;
-				binary_protocol_init (filename);
+				char *colon = strrchr (filename, ':');
+				size_t limit = -1;
+				if (colon) {
+					if (!mono_gc_parse_environment_string_extract_number (colon + 1, &limit)) {
+						sgen_env_var_error (MONO_GC_DEBUG_NAME, "Ignoring limit.", "Binary protocol file size limit must be an integer.");
+						limit = -1;
+					}
+					*colon = '\0';
+				}
+				binary_protocol_init (filename, (long long)limit);
 			} else if (!sgen_bridge_handle_gc_debug (opt)) {
 				sgen_env_var_error (MONO_GC_DEBUG_NAME, "Ignoring.", "Unknown option `%s`.", opt);
 
@@ -4971,14 +5031,15 @@ mono_gc_base_init (void)
 				fprintf (stderr, "  disable-major\n");
 				fprintf (stderr, "  xdomain-checks\n");
 				fprintf (stderr, "  check-concurrent\n");
-				fprintf (stderr, "  clear-at-gc\n");
-				fprintf (stderr, "  clear-nursery-at-gc\n");
+				fprintf (stderr, "  clear-[nursery-]at-gc\n");
+				fprintf (stderr, "  clear-at-tlab-creation\n");
+				fprintf (stderr, "  debug-clear-at-tlab-creation\n");
 				fprintf (stderr, "  check-scan-starts\n");
 				fprintf (stderr, "  no-managed-allocator\n");
 				fprintf (stderr, "  print-allowance\n");
 				fprintf (stderr, "  print-pinning\n");
 				fprintf (stderr, "  heap-dump=<filename>\n");
-				fprintf (stderr, "  binary-protocol=<filename>\n");
+				fprintf (stderr, "  binary-protocol=<filename>[:<file-size-limit>]\n");
 				sgen_bridge_print_gc_debug_usage ();
 				fprintf (stderr, "\n");
 

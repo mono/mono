@@ -808,6 +808,12 @@ namespace System.Reflection.Emit
 
 			if (parent == pmodule.assemblyb.corlib_enum_type && methods != null)
 				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is an enum with methods.");
+			if (interfaces != null) {
+				foreach (var iface in interfaces) {
+					if (iface.IsNestedPrivate && iface.Assembly != Assembly)
+						throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is implements the inaccessible interface '" + iface.FullName + "'.");
+				}
+			}
 
 			if (methods != null) {
 				bool is_concrete = !IsAbstract;

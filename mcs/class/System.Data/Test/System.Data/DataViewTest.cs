@@ -529,9 +529,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")] // defect 5446
-#endif
 		public void Find_3 ()
 		{
 			dataView.Sort = "itemID, itemName";

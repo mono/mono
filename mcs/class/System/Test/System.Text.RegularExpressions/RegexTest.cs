@@ -217,6 +217,27 @@ namespace MonoTests.System.Text.RegularExpressions
 			           AddOptions(RegexOptions.RightToLeft)).Matches (null);
 		}
 
+		[Test]
+		public void Match_SubstringAnchors ()
+		{
+			Regex r = new Regex ("^ooba$",
+			                     AddOptions( RegexOptions.None ));
+			Match m = r.Match ("foobar", 1, 4);
+
+			Assert.IsTrue (m.Success);
+			Assert.AreEqual ("ooba", m.Value);
+		}
+
+		[Test]
+		public void Match_SubstringRtl ()
+		{
+			Regex r = new Regex(@".*", RegexOptions.RightToLeft);
+			Match m = r.Match("ABCDEFGHI", 2, 6);
+
+			Assert.IsTrue (m.Success);
+			Assert.AreEqual ("CDEFGH", m.Value);
+		}
+
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Replace_InputNull ()
 		{

@@ -54,9 +54,9 @@ using System.Runtime.InteropServices;
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: AllowPartiallyTrustedCallers]
 
-#if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
 	[assembly: AssemblyDelaySign (true)]
+#if !MOBILE
 	[assembly: AssemblyKeyFile("../msfinal.pub")]
 #endif
 

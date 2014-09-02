@@ -177,7 +177,6 @@ public class TimeZoneTest {
         }
 
 	[Test]
-	[Category ("TargetJvmNotWorking")]
 	public void CurrentTimeZone_SerializationRoundtrip ()
 	{
 		TimeZone tz = TimeZone.CurrentTimeZone;

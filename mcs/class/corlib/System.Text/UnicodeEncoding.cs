@@ -362,7 +362,7 @@ public class UnicodeEncoding : Encoding
 	// Get a Unicode-specific decoder that is attached to this instance.
 	public override Decoder GetDecoder ()
 	{
-		return new UnicodeDecoder (bigEndian);
+		return new UnicodeDecoder (bigEndian, this);
 	}
 
 	// Get the Unicode preamble.
@@ -516,13 +516,14 @@ public class UnicodeEncoding : Encoding
 	}
 
 	// Unicode decoder implementation.
-	private sealed class UnicodeDecoder : Decoder
+	private sealed class UnicodeDecoder : EncodingDecoder
 	{
 		private bool bigEndian;
 		private int leftOverByte;
 
 		// Constructor.
-		public UnicodeDecoder (bool bigEndian)
+		public UnicodeDecoder (bool bigEndian, UnicodeEncoding encoding)
+			: base (encoding)
 		{
 			this.bigEndian = bigEndian;
 			leftOverByte = -1;

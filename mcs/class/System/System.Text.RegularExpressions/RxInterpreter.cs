@@ -147,7 +147,7 @@ namespace System.Text.RegularExpressions {
 			ResetGroups ();
 		}
 
-		public override Match Scan (Regex regex, string text, int start, int end) {
+		public override Match Scan (Regex regex, string text, int start, int end, bool substring_mode) {
 			str = text;
 			string_start = start;
 			string_end = end;

@@ -72,6 +72,9 @@ namespace System.Xml.Linq
 
 			foreach (object o in XUtil.ExpandArray (content))
 			{
+				if (o == null)
+					continue;
+
 				if (!OnAddingObject (o, false, last, false))
 				{
 					var node = XUtil.ToNode (o);

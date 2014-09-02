@@ -65,12 +65,10 @@ namespace System.Web.Configuration
 			get { return (ClientTargetSection)Sections ["clientTarget"]; }
 		}
 
-#if !TARGET_JVM
 		[ConfigurationProperty ("compilation")]
 		public CompilationSection Compilation {
 			get { return (CompilationSection)Sections ["compilation"]; }
 		}
-#endif
 
 		[ConfigurationProperty ("customErrors")]
 		public CustomErrorsSection CustomErrors {

@@ -56,7 +56,7 @@ namespace MonoTests.System.Net.Http.Headers
 
 		[Test]
 		/*
-		 * This fails on Windows with the .NET runtime:
+		 * .NET BUG
 		 * 
 		 * Test Case Failures:
 		 * 1) MonoTests.System.Net.Http.Headers.ContentDispositionHeaderValueTest.Equals : System.NullReferenceException : Der Objektverweis wurde nicht auf eine Objektinstanz festgelegt.
@@ -64,7 +64,7 @@ namespace MonoTests.System.Net.Http.Headers
 		 * bei MonoTests.System.Net.Http.Headers.ContentDispositionHeaderValueTest.Equals()
 		 * 
 		 */
-		[Category ("NotWorking")]
+		[Category ("NotDotNet")]
 		public void Equals ()
 		{
 			var value = new ContentDispositionHeaderValue ("x");
@@ -215,6 +215,14 @@ namespace MonoTests.System.Net.Http.Headers
 			value.FileName = "(@)";
 			Assert.AreEqual ("\"(@)\"", value.FileName, "#21");
 			Assert.AreEqual (new NameValueHeaderValue ("filename", "\"(@)\""), value.Parameters.First (), "#22");
+
+			value.FileName = "\"č\"";
+			Assert.AreEqual ("č", value.FileName, "#31");
+			Assert.AreEqual (new NameValueHeaderValue ("filename", "\"=?utf-8?B?xI0=?=\""), value.Parameters.First (), "#32");
+
+			value.FileName = "\"quoted\"";
+			Assert.AreEqual ("\"quoted\"", value.FileName, "#41");
+			Assert.AreEqual (new NameValueHeaderValue ("filename", "\"quoted\""), value.Parameters.First (), "#42");
 		}
 
 		[Test]

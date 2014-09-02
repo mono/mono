@@ -317,7 +317,6 @@ namespace System.Web
 			// apparently does nothing in MS.NET
 		}
 
-#if !TARGET_JVM
 		public virtual void SendResponseFromMemory (IntPtr data, int length)
 		{
 			if (data != IntPtr.Zero) {
@@ -326,7 +325,6 @@ namespace System.Web
 				SendResponseFromMemory (copy, length);
 			}
 		}
-#endif
 
 		public virtual void SetEndOfSendNotification (HttpWorkerRequest.EndOfSendNotification callback, object extraData)
 		{

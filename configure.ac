@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [3.6.1],
+AC_INIT(mono, [3.10],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -139,6 +139,17 @@ case "$host" in
 		need_link_unlink=yes
 		libdl="-ldl"
 		libgc_threads=pthreads
+		with_sigaltstack=no
+		use_sigposix=yes
+		;;
+	*-*-kfreebsd*-gnu)
+		host_win32=no
+		CPPFLAGS="$CPPFLAGS -DGC_FREEBSD_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP -DUSE_MUNMAP -DTHREAD_LOCAL_ALLOC -pthread"
+		libmono_cflags="-D_REENTRANT -DTHREAD_LOCAL_ALLOC -pthread"
+		libmono_ldflags="-lpthread -pthread"
+		libdl="-ldl"
+		libgc_threads=pthreads
+		need_link_unlink=yes
 		with_sigaltstack=no
 		use_sigposix=yes
 		;;
@@ -357,6 +368,7 @@ fi
 AC_SUBST(extra_runtime_ldflags)
 AM_CONDITIONAL(HOST_WIN32, test x$host_win32 = xyes)
 AM_CONDITIONAL(TARGET_WIN32, test x$target_win32 = xyes)
+AM_CONDITIONAL(PLATFORM_GNU, echo x$target_os | grep -q -- -gnu)
 AM_CONDITIONAL(PLATFORM_LINUX, echo x$target_os | grep -q linux)
 AM_CONDITIONAL(PLATFORM_DARWIN, test x$platform_darwin = xyes)
 AM_CONDITIONAL(PLATFORM_SIGPOSIX, test x$use_sigposix = xyes)
@@ -2495,7 +2507,7 @@ SQLITE3="libsqlite3.so.0"
 X11="libX11.so"
 GDKX11="libgdk-x11-2.0.so.0"
 GTKX11="libgtk-x11-2.0.so.0"
-XINERAMA="libXinerama.so"
+XINERAMA="libXinerama.so.1"
 
 sizeof_register="SIZEOF_VOID_P"
 
@@ -2565,7 +2577,7 @@ case "$host" in
 			sgen_supported=true
 			AOT_SUPPORTED="yes"
 			;;
-		  openbsd*|freebsd*)
+		  openbsd*|freebsd*|kfreebsd-gnu*)
 			sgen_supported=true
 		        ;;
 		esac
@@ -2587,7 +2599,7 @@ case "$host" in
 			sgen_supported=true
 			AOT_SUPPORTED="yes"
 			;;
-		  openbsd*|freebsd*)
+		  openbsd*|freebsd*|kfreebsd-gnu*)
 			sgen_supported=true
 			;;
 		  mingw*)
@@ -2961,6 +2973,11 @@ case "$host" in
 	LIBC="libc.so.12"
 	INTL="libintl.so.0"
 	;;
+     *-*-kfreebsd*-gnu)
+	LIBC="libc.so.0.1"
+	INTL="libc.so.0.1"
+	X11="libX11.so.6"
+	;;
     *-*-*freebsd*)
     	LIBC="libc.so"
 	INTL="libintl.so"
@@ -2987,20 +3004,8 @@ case "$host" in
 	done
 	
 	if test "x$X11" = "xlibX11.so"; then
-		AC_MSG_WARN([Could not find X development libs. Do you have the -devel package installed? Assuming libX11.so.6...]);
+		AC_MSG_WARN([Could not find libX11.so. Do you have X.org or XFree86 installed? Assuming libX11.so.6...]);
 		X11=libX11.so.6
-	fi
-	AC_MSG_CHECKING(for the soname of libXinerama.so)
-	for i in $x_libraries $dlsearch_path; do
-		for r in 1 2 3; do
-			if test -f $i/libXinerama.so.$r; then
-				XINERAMA=libXinerama.so.$r
-				AC_MSG_RESULT($XINERAMA)
-			fi
-		done
-	done
-	if test "x$XINERAMA" = "xlibXinerama.so"; then
-		AC_MSG_WARN([Could not find Xinerama development libs. Support for multiple monitors might not work...]);
 	fi
 	;;
 esac

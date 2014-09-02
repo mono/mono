@@ -75,75 +75,6 @@ namespace System.Web
 				filter = value;
 			}
 		}
-#if TARGET_JVM
-
-		class BlockManager {
-			const int PreferredLength = 16 * 1024;
-			static readonly byte[] EmptyBuffer = new byte[0];
-
-			byte[] buffer = EmptyBuffer;
-			int position;
-
-			public BlockManager () {
-			}
-
-			public int Position {
-				get { return position; }
-			}
-
-			void EnsureCapacity (int capacity) {
-				if (buffer.Length >= capacity)
-					return;
-
-				capacity += PreferredLength;
-				capacity = (capacity / PreferredLength) * PreferredLength;
-				byte[] temp = new byte[capacity];
-				Array.Copy(buffer, 0, temp, 0, buffer.Length);
-				buffer = temp;
-			}
-
-			public void Write (byte [] buffer, int offset, int count) {
-				if (count == 0)
-					return;
-
-				EnsureCapacity (position + count);
-				Array.Copy(buffer, offset, this.buffer, position, count);
-				position += count;
-			}
-
-			public void Send (HttpWorkerRequest wr, int start, int end) {
-				int length = end - start;
-				if (length <= 0)
-					return;
-
-				if (length > buffer.Length - start)
-					length = buffer.Length - start;
-
-				if (start > 0) {
-					byte[] temp = new byte[length];
-					Array.Copy(buffer, start, temp, 0, length);
-					buffer = temp;
-				}
-				wr.SendResponseFromMemory(buffer, length);
-			}
-
-			public void Send (Stream stream, int start, int end) {
-				int length = end - start;
-				if (length <= 0)
-					return;
-
-				if (length > buffer.Length - start)
-					length = buffer.Length - start;
-
-				stream.Write(buffer, start, length);
-			}
-
-			public void Dispose () {
-				buffer = null;
-			}
-		}
-
-#else // TARGET_JVM
 		unsafe sealed class BlockManager {
 			const int PreferredLength = 128 * 1024;
 			byte *data;
@@ -234,7 +165,6 @@ namespace System.Web
 			}
 		}
 
-#endif
 		abstract class Bucket {
 			public Bucket Next;
 
@@ -247,9 +177,7 @@ namespace System.Web
 			public abstract int Length { get; }
 		}
 
-#if !TARGET_JVM
 		unsafe
-#endif
 		class ByteBucket : Bucket {
 			int start;
 			int length;
@@ -559,24 +487,12 @@ namespace System.Web
 			}
 		}
 
-#if TARGET_JVM
-		void UnsafeWrite (HttpWorkerRequest wr, byte [] buffer, int offset, int count)
-		{
-			if (count <= 0)
-				return;
-
-			byte[] copy = new byte[count];
-			Array.Copy(buffer, offset, copy, 0, count);
-			wr.SendResponseFromMemory (copy, count);
-		}
-#else
 		unsafe void UnsafeWrite (HttpWorkerRequest wr, byte [] buffer, int offset, int count)
 		{
 			fixed (byte *ptr = buffer) {
 				wr.SendResponseFromMemory ((IntPtr) (ptr + offset), count);
 			}
 		}
-#endif
 		void AppendBuffer (byte [] buffer, int offset, int count)
 		{
 			if (!(cur_bucket is ByteBucket))

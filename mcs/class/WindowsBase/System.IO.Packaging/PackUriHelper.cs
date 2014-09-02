@@ -42,11 +42,13 @@ namespace System.IO.Packaging {
 		
 		public static int ComparePackUri (Uri firstPackUri, Uri secondPackUri)
 		{
-			// FIXME: Do i need to do validation that it is a pack:// uri?
 			if (firstPackUri == null)
 				return secondPackUri == null ? 0 : -1;
 			if (secondPackUri == null)
 				return 1;
+
+			Check.PackUriIsValid (firstPackUri);
+			Check.PackUriIsValid (secondPackUri);
 
 			// FIXME: What exactly is compared. Lets assume originalstring
 			return firstPackUri.OriginalString.CompareTo (secondPackUri.OriginalString);
@@ -54,11 +56,13 @@ namespace System.IO.Packaging {
 
 		public static int ComparePartUri (Uri firstPartUri, Uri secondPartUri)
 		{
-			// FIXME: Do i need to do validation that it is a part URI?
 			if (firstPartUri == null)
 				return secondPartUri == null ? 0 : -1;
 			if (secondPartUri == null)
 				return 1;
+
+			Check.PartUriIsValid (firstPartUri);
+			Check.PartUriIsValid (secondPartUri);
 
 			return firstPartUri.OriginalString.CompareTo (secondPartUri.OriginalString);
 		}

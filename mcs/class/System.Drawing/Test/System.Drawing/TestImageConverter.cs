@@ -77,9 +77,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void TestCanConvertFrom ()
 		{
 			Assert.IsTrue (imgConv.CanConvertFrom (typeof (byte [])), "CCF#1");
@@ -111,9 +108,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void TestCanConvertTo ()
 		{
 			Assert.IsTrue (imgConv.CanConvertTo (typeof (String)), "CCT#1");
@@ -147,9 +141,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void ConvertFrom ()
 		{
 			Image newImage = (Image) imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, imageBytes);
@@ -166,9 +157,6 @@ namespace MonoTests.System.Drawing
 		}
 		
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_BadString ()
 		{
@@ -176,9 +164,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_BadString_WithCulture ()
 		{
@@ -186,9 +171,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_Bitmap ()
 		{
@@ -196,9 +178,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_Point ()
 		{
@@ -206,9 +185,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_SizeF ()
 		{
@@ -216,9 +192,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_Object ()
 		{
@@ -226,9 +199,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertFrom_BadString ()
 		{
@@ -236,9 +206,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertFrom_BadString_Culture ()
 		{
@@ -246,9 +213,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertFrom_Bitmap ()
 		{
@@ -256,9 +220,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertFrom_Point ()
 		{
@@ -266,9 +227,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertFrom_SizeF ()
 		{
@@ -276,9 +234,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertFrom_Object ()
 		{
@@ -286,9 +241,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void ConvertTo ()
 		{
 			Assert.AreEqual (imageStr, (String) imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
@@ -326,9 +278,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertTo_Rectangle ()
 		{
@@ -336,9 +285,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertTo_Image ()
 		{
@@ -346,9 +292,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertTo_Size ()
 		{
@@ -356,9 +299,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertTo_Bitmap ()
 		{
@@ -366,9 +306,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertTo_Point ()
 		{
@@ -376,9 +313,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertTo_Metafile ()
 		{
@@ -386,9 +320,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertTo_Object ()
 		{
@@ -396,9 +327,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertTo_Int ()
 		{
@@ -406,9 +334,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertTo_Rectangle ()
 		{
@@ -416,9 +341,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertTo_Image ()
 		{
@@ -426,9 +348,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertTo_Size ()
 		{
@@ -436,9 +355,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertTo_Bitmap ()
 		{
@@ -446,9 +362,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertTo_Point ()
 		{
@@ -456,9 +369,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertTo_Metafile ()
 		{
@@ -466,9 +376,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertTo_Object ()
 		{
@@ -476,9 +383,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeDescriptor_ConvertTo_Int ()
 		{
@@ -486,9 +390,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void TestGetPropertiesSupported ()
 		{
 			Assert.IsTrue (imgConv.GetPropertiesSupported (), "GPS#1");
@@ -496,9 +397,6 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void TestGetProperties ()
 		{
 #if NET_2_0

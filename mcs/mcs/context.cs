@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 namespace Mono.CSharp
 {
@@ -21,7 +22,8 @@ namespace Mono.CSharp
 	{
 		Normal = 0,
 		Probing = 1,
-		IgnoreAccessibility = 2
+		IgnoreAccessibility = 2,
+		NameOf = 3
 	}
 
 	//
@@ -187,6 +189,8 @@ namespace Mono.CSharp
 			TryScope = 1 << 14,
 
 			TryWithCatchScope = 1 << 15,
+
+			ConditionalAccessReceiver = 1 << 16,
 
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 
@@ -442,6 +446,7 @@ namespace Mono.CSharp
 	public class FlowAnalysisContext
 	{
 		readonly CompilerContext ctx;
+		DefiniteAssignmentBitSet conditional_access;
 
 		public FlowAnalysisContext (CompilerContext ctx, ParametersBlock parametersBlock, int definiteAssignmentLength)
 		{
@@ -481,6 +486,19 @@ namespace Mono.CSharp
 			if (dat != DefiniteAssignmentBitSet.Empty)
 				DefiniteAssignment = new DefiniteAssignmentBitSet (dat);
 			return dat;
+		}
+
+		public void BranchConditionalAccessDefiniteAssignment ()
+		{
+			if (conditional_access == null)
+				conditional_access = BranchDefiniteAssignment ();
+		}
+
+		public void ConditionalAccessEnd ()
+		{
+			Debug.Assert (conditional_access != null);
+			DefiniteAssignment = conditional_access;
+			conditional_access = null;
 		}
 
 		public bool IsDefinitelyAssigned (VariableInfo variable)

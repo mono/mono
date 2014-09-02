@@ -861,9 +861,22 @@ namespace Mono.CSharp {
 									 ((IntConstant) right).Value);
 
 						return new IntConstant (ec.BuiltinTypes, res, left.Location);
-					} else {
-						throw new Exception ( "Unexepected modulus input: " + left);
 					}
+
+					if (left is DecimalConstant) {
+						decimal res;
+
+						if (ec.ConstantCheckState)
+							res = checked (((DecimalConstant) left).Value %
+								((DecimalConstant) right).Value);
+						else
+							res = unchecked (((DecimalConstant) left).Value %
+								((DecimalConstant) right).Value);
+
+						return new DecimalConstant (ec.BuiltinTypes, res, left.Location);
+					}
+
+					throw new Exception ( "Unexepected modulus input: " + left);
 				} catch (DivideByZeroException){
 					ec.Report.Error (20, loc, "Division by constant zero");
 				} catch (OverflowException){

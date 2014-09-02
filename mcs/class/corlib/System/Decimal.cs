@@ -574,6 +574,14 @@ namespace System
 			dec_part = Decimal.Floor(dec_part);
 			dec_part /= (10000000000000000000000000000M / p);
 			dec_part = Math.Round (dec_part, mode);
+
+			// ignore trailing zeros
+			while (decimals > 0 && (dec_part % 10) == 0) {
+				decimals--;
+				dec_part /= 10;
+				p /= 10;
+			}
+
 			dec_part /= p;
 			decimal result = int_part + dec_part;
 

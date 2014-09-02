@@ -1216,6 +1216,17 @@ is used.
 Performs a check to make sure that no references are left to an
 unloaded AppDomain.
 .TP
+\fBclear-at-tlab-creation\fR
+Clears the nursery incrementally when the thread local allocation
+buffers (TLAB) are created.  The default setting clears the whole
+nursery at GC time.
+.TP
+\fBdebug-clear-at-tlab-creation\fR
+Clears the nursery incrementally when the thread local allocation
+buffers (TLAB) are created, but at GC time fills it with the byte
+`0xff`, which should result in a crash more quickly if
+`clear-at-tlab-creation` doesn't work properly.
+.TP
 \fBclear-at-gc\fR
 This clears the nursery at GC time instead of doing it when the thread
 local allocation buffer (TLAB) is created.  The default is to clear

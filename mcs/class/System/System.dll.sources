@@ -1012,6 +1012,7 @@ System/Uri.cs
 System/UriFormat.cs
 System/UriFormatException.cs
 System/UriHostNameType.cs
+System/UriHelper.cs
 System/UriIdnScope.cs
 System/UriKind.cs
 System/UriParser.cs

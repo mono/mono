@@ -49,19 +49,19 @@ for line in iter (proc.stdout.readline, ''):
     if m:
         generation = int (m.group (1))
         concurrent = int (m.group (2))
-        usecs = int (m.group (3))
-        start = int (m.group (4))
+        msecs = int (m.group (3)) / 10.0 / 1000.0
+        start = int (m.group (4)) / 10.0 / 1000.0
         if generation == 0:
             generation = "minor"
-            minor_pausetimes.append (usecs)
+            minor_pausetimes.append (msecs)
         else:
             generation = "major"
-            major_pausetimes.append (usecs)
+            major_pausetimes.append (msecs)
         if concurrent == 1:
             kind = "CONC"
         else:
             kind = "SYNC"
-        rec = (generation, start, start + usecs, kind)
+        rec = (generation, start, start + msecs, kind)
         print rec
         data.append (rec)
 
@@ -72,6 +72,7 @@ if show_histogram:
     if show_major:
         pausetimes += major_pausetimes
     plt.hist (pausetimes, 100)
+    plt.xlabel ('Pause time in msec')
 else:
     data = np.array (data, dtype = [('caption', '|S20'), ('start', int), ('stop', int), ('kind', '|S20')])
     cap, start, stop=data['caption'], data['start'], data['stop']

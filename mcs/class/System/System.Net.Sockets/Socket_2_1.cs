@@ -901,14 +901,12 @@ namespace System.Net.Sockets {
 			}
 		}
 
-#if !TARGET_JVM
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Socket_internal(AddressFamily family,
 						      SocketType type,
 						      ProtocolType proto,
 						      out int error);
-#endif		
 		
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
 		{
@@ -964,12 +962,10 @@ namespace System.Net.Sockets {
 			get { return address_family; }
 		}
 
-#if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Blocking_internal(IntPtr socket,
 							     bool block,
 							     out int error);
-#endif
 
 		public bool Blocking {
 			get {
