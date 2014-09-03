@@ -2584,5 +2584,16 @@ namespace MonoTests.System
 
 			Assert.AreEqual (dt, parsed, "#1");
 		}
+
+		[Test]
+		public void ISO8601FractionalDigits ()
+		{
+			string date = "2014-08-25T01:20:23.601911612343423423465789789365674575676746756747467Z";
+			long expectedTicks = 635445264236019116;
+
+			var dt = DateTime.Parse (date, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+
+			Assert.AreEqual (expectedTicks, dt.Ticks);
+		}
 	}
 }
