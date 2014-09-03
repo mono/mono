@@ -9420,8 +9420,8 @@ mono_marshal_get_array_address (int rank, int elem_size)
 		sig->params [i + 1] = &mono_defaults.int32_class->byval_arg;
 	}
 
-	function_name = g_new0 (char, 30);
-	g_snprintf (function_name, 30, "ElementAddr_%d_%d", rank, elem_size);
+	function_name = g_new0 (char, 32);
+	g_snprintf (function_name, 32, "ElementAddr_%d_%d", rank, elem_size);
 	mb = mono_mb_new (mono_defaults.object_class, function_name, MONO_WRAPPER_MANAGED_TO_MANAGED);
 	
 	bounds = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
