@@ -528,6 +528,11 @@ struct _MonoMethodSignature {
  * Doesn't really belong here.
  */
 typedef struct {
+	/*
+	 * Enable aot caching for applications whose main assemblies are in
+	 * this list.
+	 */
+	GSList *apps;
 	GSList *assemblies;
 } MonoAotCacheConfig;
 
