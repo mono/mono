@@ -108,8 +108,7 @@ namespace System.ServiceModel
 					// sync invocation
 					pl = new object [inmsg.MethodBase.GetParameters ().Length];
 					Array.Copy (inmsg.Args, pl, inmsg.ArgCount);
-					channel.Context = OperationContext.Current;
-					ret = channel.Process (inmsg.MethodBase, od.Name, pl);
+					ret = channel.Process (inmsg.MethodBase, od.Name, pl, OperationContext.Current);
 					method = od.SyncMethod;
 				} else if (inmsg.MethodBase.Equals (od.BeginMethod)) {
 					// async invocation

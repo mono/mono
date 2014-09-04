@@ -114,9 +114,9 @@ namespace System.ServiceModel.MonoInternal
 			return client.EndProcess (method, operationName, parameters, result);
 		}
 
-		public object Process (MethodBase method, string operationName, object [] parameters)
+		public object Process (MethodBase method, string operationName, object [] parameters, OperationContext context)
 		{
-			return client.Process (method, operationName, parameters);
+			return client.Process (method, operationName, parameters, context);
 		}
 	}
 

@@ -389,7 +389,7 @@ namespace System.ServiceModel
 				var od = cd.Operations.Find (methodName);
 				if (od == null)
 					throw new ArgumentException (String.Format ("Operation '{0}' not found in the service contract '{1}' in namespace '{2}'", methodName, cd.Name, cd.Namespace));
-				return Inner.Process (od.SyncMethod, methodName, args);
+				return Inner.Process (od.SyncMethod, methodName, args, OperationContext.Current);
 			}
 
 			protected IAsyncResult BeginInvoke (string methodName, object [] args, AsyncCallback callback, object state)
