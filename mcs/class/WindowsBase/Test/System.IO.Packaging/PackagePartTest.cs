@@ -377,8 +377,8 @@ namespace System.IO.Packaging.Tests {
                 part.CreateRelationship (part.Uri, TargetMode.Internal, "self");
                 package.Close ();
                 package = Package.Open (new MemoryStream (stream.ToArray ()), FileMode.Open, FileAccess.Read);
-                part  = package.GetPart(uris[0]);
-                part.GetRelationships();
+                part = package.GetPart (uris [0]);
+                part.GetRelationships ();
             }
         }
     }
