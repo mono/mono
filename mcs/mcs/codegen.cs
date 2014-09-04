@@ -222,6 +222,8 @@ namespace Mono.CSharp
 
 		public List<TryFinally> TryFinallyUnwind { get; set; }
 
+		public Label RecursivePatternLabel { get; set; }
+
 		#endregion
 
 		public void AddStatementEpilog (IExpressionCleanup cleanupExpression)

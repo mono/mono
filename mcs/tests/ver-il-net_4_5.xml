@@ -68463,6 +68463,42 @@
       </method>
     </type>
   </test>
+  <test name="test-pattern-03.cs">
+    <type name="WildcardPattern">
+      <method name="Int32 Main()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-pattern-04.cs">
+    <type name="RecursivePattern">
+      <method name="Int32 Main()" attrs="145">
+        <size>750</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C1">
+      <method name="Boolean op_Is(C1, Int32 ByRef)" attrs="2198">
+        <size>13</size>
+      </method>
+      <method name="Boolean op_Is(C1, C1 ByRef, C1 ByRef)" attrs="2198">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="Boolean op_Is(S, System.Nullable`1[System.Int32] ByRef, System.Decimal ByRef)" attrs="2198">
+        <size>34</size>
+      </method>
+    </type>
+  </test>
   <test name="test-primary-ctor-01.cs">
     <type name="Simple">
       <method name="Int32 get_Property()" attrs="2177">
