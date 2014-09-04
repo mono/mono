@@ -46,9 +46,7 @@ namespace System.ServiceModel.MonoInternal
 	{
 		ContractDescription Contract { get; }
 
-		OperationContext Context { set; }
-
-		object Process (MethodBase method, string operationName, object [] parameters);
+		object Process (MethodBase method, string operationName, object [] parameters, OperationContext context);
 
 		IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState);
 
@@ -69,12 +67,11 @@ namespace System.ServiceModel.MonoInternal
 		TimeSpan default_open_timeout, default_close_timeout;
 		IChannel channel;
 		IChannelFactory factory;
-		OperationContext context;
 
 		#region delegates
 		readonly ProcessDelegate _processDelegate;
 
-		delegate object ProcessDelegate (MethodBase method, string operationName, object [] parameters);
+		delegate object ProcessDelegate (MethodBase method, string operationName, object [] parameters, OperationContext context);
 
 		readonly RequestDelegate requestDelegate;
 
@@ -147,10 +144,6 @@ namespace System.ServiceModel.MonoInternal
 
 		internal IDuplexChannel DuplexChannel {
 			get { return channel as IDuplexChannel; }
-		}
-
-		public OperationContext Context {
-			set { context = value; }
 		}
 
 		#region IClientChannel
@@ -445,42 +438,28 @@ namespace System.ServiceModel.MonoInternal
 
 		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState)
 		{
-			if (context != null)
-				throw new InvalidOperationException ("another operation is in progress");
-			context = OperationContext.Current;
-
-			try {
-				return _processDelegate.BeginInvoke (method, operationName, parameters, callback, asyncState);
-			} catch {
-				context = null;
-				throw;
-			}
+			return _processDelegate.BeginInvoke (method, operationName, parameters, OperationContext.Current, callback, asyncState);
 		}
 
 		public object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result)
 		{
-			try {
-				if (result == null)
-					throw new ArgumentNullException ("result");
-				if (parameters == null)
-					throw new ArgumentNullException ("parameters");
-				// FIXME: the method arguments should be verified to be 
-				// identical to the arguments in the corresponding begin method.
-				return _processDelegate.EndInvoke (result);
-			} finally {
-				context = null;
-			}
+			if (result == null)
+				throw new ArgumentNullException ("result");
+			if (parameters == null)
+				throw new ArgumentNullException ("parameters");
+			// FIXME: the method arguments should be verified to be 
+			// identical to the arguments in the corresponding begin method.
+			return _processDelegate.EndInvoke (result);
 		}
 
-		public object Process (MethodBase method, string operationName, object [] parameters)
+		public object Process (MethodBase method, string operationName, object [] parameters, OperationContext context)
 		{
 			var previousContext = OperationContext.Current;
 			try {
 				// Inherit the context from the calling thread
-				if (this.context != null) 
-					OperationContext.Current = this.context;
+				OperationContext.Current = context;
 
-				return DoProcess (method, operationName, parameters);
+				return DoProcess (method, operationName, parameters, context);
 			} catch (Exception ex) {
 				throw;
 			} finally {
@@ -489,7 +468,7 @@ namespace System.ServiceModel.MonoInternal
 			}
 		}
 
-		object DoProcess (MethodBase method, string operationName, object [] parameters)
+		object DoProcess (MethodBase method, string operationName, object [] parameters, OperationContext context)
 		{
 			if (AllowInitializationUI)
 				DisplayInitializationUI ();
@@ -499,9 +478,9 @@ namespace System.ServiceModel.MonoInternal
 				Open ();
 
 			if (!od.IsOneWay)
-				return Request (od, parameters);
+				return Request (od, parameters, context);
 			else {
-				Output (od, parameters);
+				Output (od, parameters, context);
 				return null;
 			}
 		}
@@ -519,17 +498,17 @@ namespace System.ServiceModel.MonoInternal
 			return od;
 		}
 
-		void Output (OperationDescription od, object [] parameters)
+		void Output (OperationDescription od, object [] parameters, OperationContext context)
 		{
 			ClientOperation op = runtime.Operations [od.Name];
-			Send (CreateRequest (op, parameters), OperationTimeout);
+			Send (CreateRequest (op, parameters, context), OperationTimeout);
 		}
 
-		object Request (OperationDescription od, object [] parameters)
+		object Request (OperationDescription od, object [] parameters, OperationContext context)
 		{
 			ClientOperation op = runtime.Operations [od.Name];
 			object [] inspections = new object [runtime.MessageInspectors.Count];
-			Message req = CreateRequest (op, parameters);
+			Message req = CreateRequest (op, parameters, context);
 
 			for (int i = 0; i < inspections.Length; i++)
 				inspections [i] = runtime.MessageInspectors [i].BeforeSendRequest (ref req, this);
@@ -621,7 +600,7 @@ namespace System.ServiceModel.MonoInternal
 		}
 		#endregion
 
-		Message CreateRequest (ClientOperation op, object [] parameters)
+		Message CreateRequest (ClientOperation op, object [] parameters, OperationContext context)
 		{
 			MessageVersion version = message_version;
 			if (version == null)
