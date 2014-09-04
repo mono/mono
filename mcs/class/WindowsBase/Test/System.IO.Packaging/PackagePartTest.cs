@@ -369,5 +369,19 @@ namespace MonoTests.System.IO.Packaging {
         {
 	        Assert.IsFalse (package.PartExists(new Uri ("[Content_Types].xml", UriKind.Relative)));
         }
+
+        [Test]
+        public void CheckCanGetRelationshipsIfReadOnly ()
+        {
+            using (var stream = new MemoryStream ()) {
+                var package = Package.Open (stream, FileMode.OpenOrCreate);
+                var part = package.CreatePart (uris [0], contentType);
+                part.CreateRelationship (part.Uri, TargetMode.Internal, "self");
+                package.Close ();
+                package = Package.Open (new MemoryStream (stream.ToArray ()), FileMode.Open, FileAccess.Read);
+                part = package.GetPart (uris [0]);
+                part.GetRelationships ();
+            }
+        }
     }
 }
