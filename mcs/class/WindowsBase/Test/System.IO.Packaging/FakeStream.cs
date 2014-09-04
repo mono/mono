@@ -25,9 +25,10 @@
 
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 
-namespace System.IO.Packaging.Tests {
+namespace MonoTests.System.IO.Packaging {
 
     public class FakeStream : MemoryStream {
         public bool canRead;

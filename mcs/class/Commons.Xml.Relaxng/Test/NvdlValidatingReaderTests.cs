@@ -13,7 +13,7 @@ using System.Xml;
 using Commons.Xml.Nvdl;
 using NUnit.Framework;
 
-namespace MonoTests.Commons.Xml.Nvdl
+namespace MonoTests.Commons.Xml.Relaxng
 {
 	[TestFixture]
 	public class NvdlValidatingReaderTests
