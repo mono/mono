@@ -4360,7 +4360,7 @@ pattern_expr
 	  }
 	| type_name_expression OPEN_PARENS opt_pattern_list CLOSE_PARENS
 	  {
-		$$ = new RecursivePattern ((ATypeNameExpression) $1, (List<Expression>) $3, GetLocation ($2));
+		$$ = new RecursivePattern ((ATypeNameExpression) $1, (Arguments) $3, GetLocation ($2));
 	  }
 	;
 
@@ -4376,27 +4376,40 @@ pattern
 
 opt_pattern_list
 	: /* empty */
+	  {
+		$$ = new Arguments (0);
+	  }
 	| pattern_list
 	;
 
 pattern_list
 	: pattern_argument
 	  {
-		var expr = new List<Expression> ();
-		expr.Add ((Expression) $1);
-		$$ = expr;
+		Arguments args = new Arguments (4);
+		args.Add ((Argument) $1);
+		$$ = args;
 	  }
 	| pattern_list COMMA pattern_argument
 	  {
-		var expr = (List<Expression>) $1;
-		expr.Add ((Expression) $3);
-		$$ = expr;
+		Arguments args = (Arguments) $1;
+		if (args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
+			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
+
+		args.Add ((Argument) $3);
+		$$ = args;
 	  }
 	;
 
 pattern_argument
 	: pattern
+	  {
+		$$ = new Argument ((Expression) $1);
+	  }
 	| IDENTIFIER COLON pattern
+	  {
+		var lt = (LocatedToken) $1;
+		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $3);
+	  }
 	;
 
 shift_expression

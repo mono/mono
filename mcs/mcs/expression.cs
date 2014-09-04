@@ -1984,17 +1984,17 @@ namespace Mono.CSharp
 	class RecursivePattern : PatternExpression
 	{
 		MethodGroupExpr operator_mg;
-		Arguments args;
 		Expression[] args_comparison;
+		Arguments operator_args;
 
-		public RecursivePattern (ATypeNameExpression typeExpresion, List<Expression> arguments, Location loc)
+		public RecursivePattern (ATypeNameExpression typeExpresion, Arguments arguments, Location loc)
 			: base (loc)
 		{
-			PatternList = arguments;
+			Arguments = arguments;
 			TypeExpression = typeExpresion;
 		}
 
-		public List<Expression> PatternList { get; private set; }
+		public Arguments Arguments { get; private set; }
 
 		public ATypeNameExpression TypeExpression { get; private set; }
 
@@ -2017,22 +2017,10 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			args = new Arguments (PatternList.Count + 1);
-			args.Add (new Argument (new EmptyExpression (type)));
-
-			bool ok = true;
-			for (int i = 0; i < PatternList.Count; ++i) {
-				var expr = PatternList [i].Resolve (rc);
-				if (expr == null) {
-					ok = false;
-					continue;
-				}
-
-				PatternList [i] = expr;
-			}
-
-			if (!ok)
-				return null;
+			bool dynamic_args;
+			Arguments.Resolve (rc, out dynamic_args);
+			if (dynamic_args)
+				throw new NotImplementedException ("dynamic argument");
 
 			var op = FindBestOverload (rc, ops);
 			if (op == null) {
@@ -2042,18 +2030,32 @@ namespace Mono.CSharp
 			}
 
 			var op_types = op.Parameters.Types;
+			operator_args = new Arguments (op_types.Length);
+			operator_args.Add (new Argument (new EmptyExpression (type)));
 
-			for (int i = 0; i < PatternList.Count; ++i) {
+			for (int i = 0; i < Arguments.Count; ++i) {
 				// TODO: Needs releasing optimization
 				var lt = new LocalTemporary (op_types [i + 1]);
-				args.Add (new Argument (lt, Argument.AType.Out));
+				operator_args.Add (new Argument (lt, Argument.AType.Out));
 
 				if (args_comparison == null)
-					args_comparison = new Expression[PatternList.Count];
+					args_comparison = new Expression[Arguments.Count];
 
-				var expr = PatternList [i];
+				int arg_comp_index;
+				Expression expr;
+
+				var arg = Arguments [i];
+				var named = arg as NamedArgument;
+				if (named != null) {
+					arg_comp_index = op.Parameters.GetParameterIndexByName (named.Name) - 1;
+					expr = Arguments [arg_comp_index].Expr;
+				} else {
+					arg_comp_index = i;
+					expr = arg.Expr;
+				}
+
 				if (expr is WildcardPattern) {
-					args_comparison [i] = new EmptyExpression (expr.Type);
+					args_comparison [arg_comp_index] = new EmptyExpression (expr.Type);
 					continue;
 				}
 
@@ -2067,12 +2069,12 @@ namespace Mono.CSharp
 					continue;
 
 				if (expr is RecursivePattern) {
-					args_comparison [i] = expr;
+					args_comparison [arg_comp_index] = expr;
 					continue;
 				}
 
 				// TODO: Better error handling
-				args_comparison [i] = new Binary (Binary.Operator.Equality, lt, expr, expr.Location).Resolve (rc);
+				args_comparison [arg_comp_index] = new Binary (Binary.Operator.Equality, lt, expr, expr.Location).Resolve (rc);
 			}
 
 			operator_mg = MethodGroupExpr.CreatePredefined (op, type, loc);
@@ -2083,10 +2085,11 @@ namespace Mono.CSharp
 
 		List<MethodSpec> FindMatchingOverloads (IList<MemberSpec> members)
 		{
+			int arg_count = Arguments.Count + 1;
 			List<MethodSpec> best = null;
 			foreach (MethodSpec method in members) {
 				var pm = method.Parameters;
-				if (pm.Count != PatternList.Count + 1)
+				if (pm.Count != arg_count)
 					continue;
 
 				// TODO: Needs more thorough checks elsewhere to avoid doing this every time
@@ -2112,13 +2115,28 @@ namespace Mono.CSharp
 
 		MethodSpec FindBestOverload (ResolveContext rc, List<MethodSpec> methods)
 		{
-			for (int ii = 0; ii < PatternList.Count; ++ii) {
-				var expr = PatternList [ii];
+			for (int ii = 0; ii < Arguments.Count; ++ii) {
+				var arg = Arguments [ii];
+				var expr = arg.Expr;
 				if (expr is WildcardPattern)
 					continue;
 
+				var na = arg as NamedArgument;
 				for (int i = 0; i < methods.Count; ++i) {
-					var m = methods [i].Parameters.Types [ii + 1];
+					var pd = methods [i].Parameters;
+
+					int index;
+					if (na != null) {
+						index = pd.GetParameterIndexByName (na.Name);
+						if (index < 1) {
+							methods.RemoveAt (i--);
+							continue;
+						}
+					} else {
+						index = ii + 1;
+					}
+
+					var m = pd.Types [index];
 					if (!Convert.ImplicitConversionExists (rc, expr, m))
 						methods.RemoveAt (i--);
 				}
@@ -2137,16 +2155,18 @@ namespace Mono.CSharp
 
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
-			operator_mg.EmitCall (ec, args, false);
+			operator_mg.EmitCall (ec, operator_args, false);
 			ec.Emit (OpCodes.Brfalse, ec.RecursivePatternLabel);
-			foreach (var ac in args_comparison) {
-				ac.EmitBranchable (ec, ec.RecursivePatternLabel, false);
+			if (args_comparison != null) {
+				foreach (var ac in args_comparison) {
+					ac.EmitBranchable (ec, ec.RecursivePatternLabel, false);
+				}
 			}
 		}
 
 		void SetParentInstance (LocalTemporary instance)
 		{
-			args [0] = new Argument (instance);
+			operator_args [0] = new Argument (instance);
 		}
 	}
 
