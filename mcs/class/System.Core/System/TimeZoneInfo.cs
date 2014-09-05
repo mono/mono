@@ -35,7 +35,7 @@ using System.Threading;
 
 [assembly:TypeForwardedTo (typeof(TimeZoneInfo))]
 
-#elif (INSIDE_CORLIB && NET_4_0) || (!INSIDE_CORLIB && (NET_3_5 && !NET_4_0 && !MOBILE))
+#elif INSIDE_CORLIB || (NET_3_5 && !NET_4_0 && !MOBILE)
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -57,7 +57,10 @@ namespace System
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 	[SerializableAttribute]
-	public sealed partial class TimeZoneInfo : IEquatable<TimeZoneInfo>, ISerializable, IDeserializationCallback
+#if NET_4_0 || !INSIDE_CORLIB
+	public
+#endif
+	sealed partial class TimeZoneInfo : IEquatable<TimeZoneInfo>, ISerializable, IDeserializationCallback
 	{
 		TimeSpan baseUtcOffset;
 		public TimeSpan BaseUtcOffset {
