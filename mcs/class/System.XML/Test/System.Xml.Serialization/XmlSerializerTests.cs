@@ -3348,6 +3348,69 @@ namespace MonoTests.System.XmlSerialization
 				}
 			}
 		}
+
+		public class ClassWithOptionalMethods
+		{
+			private readonly bool shouldSerializeX;
+			private readonly bool xSpecified;
+
+			[XmlAttribute]
+			public int X { get; set; }
+
+			public bool ShouldSerializeX () { return shouldSerializeX; }
+
+			public bool XSpecified
+			{
+				get { return xSpecified; }
+			}
+
+			public ClassWithOptionalMethods ()
+			{
+			}
+
+			public ClassWithOptionalMethods (int x, bool shouldSerializeX, bool xSpecified)
+			{
+				this.X = x;
+				this.shouldSerializeX = shouldSerializeX;
+				this.xSpecified = xSpecified;
+			}
+		}
+
+		[Test]
+		public void OptionalMethods ()
+		{
+			var ser = new XmlSerializer (typeof (ClassWithOptionalMethods));
+
+			var expectedValueWithoutX = Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+				"<ClassWithOptionalMethods xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" />");
+
+			var expectedValueWithX = Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+				"<ClassWithOptionalMethods xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" X=\"11\" />");
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, false, false);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithoutX, Infoset (t.ToString ()));
+			}
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, true, false);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithoutX, Infoset (t.ToString ()));
+			}
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, false, true);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithoutX, Infoset (t.ToString ()));
+			}
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, true, true);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithX, Infoset (t.ToString ()));
+			}
+		}
 	}
 
 	// Test generated serialization code.
