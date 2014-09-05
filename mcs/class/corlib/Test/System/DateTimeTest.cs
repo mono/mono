@@ -2595,5 +2595,29 @@ namespace MonoTests.System
 
 			Assert.AreEqual (expectedTicks, dt.Ticks);
 		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ISO8601FractionalDigitsException1 ()
+		{
+			string date = "2014-08-25T01:20:23.60191161234342342346578978936567457567:6746756747467Z";
+			DateTime.Parse (date, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ISO8601FractionalDigitsException2 ()
+		{
+			string date = "2014-08-25T01:20:23.6019116-12343423423465789789365674575676746756747467Z";
+			DateTime.Parse (date, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ISO8601FractionalDigitsException3 ()
+		{
+			string date = "2014-08-25T01:20:23.601911612343423423465789789365674575676746756747467%Z";
+			DateTime.Parse (date, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+		}
 	}
 }
