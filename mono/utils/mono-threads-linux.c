@@ -1,7 +1,8 @@
 #include <config.h>
 
-#if defined(PLATFORM_LINUX)
+#if defined(__linux__)
 
+#include <mono/utils/mono-threads.h>
 #include <pthread.h>
 
 void
