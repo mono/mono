@@ -2098,9 +2098,7 @@ mono_aot_init (void)
 
 	if (g_getenv ("MONO_LASTAOT"))
 		mono_last_aot_method = atoi (g_getenv ("MONO_LASTAOT"));
-#ifdef ENABLE_AOT_CACHE
 	aot_cache_init ();
-#endif
 }
 
 void
@@ -2693,6 +2691,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 
 		eh_info = mono_jit_info_get_arch_eh_info (jinfo);
 		eh_info->stack_size = decode_value (p, &p);
+		eh_info->epilog_size = decode_value (p, &p);
 	}
 
 	if (async) {
@@ -2852,8 +2851,7 @@ mono_aot_get_unwind_info (MonoJitInfo *ji, guint32 *unwind_info_len)
 		mono_aot_unlock ();
 	}
 
-	/* The upper 16 bits of ji->unwind_info might contain the epilog offset */
-	p = amodule->unwind_info + (ji->unwind_info & 0xffff);
+	p = amodule->unwind_info + ji->unwind_info;
 	*unwind_info_len = decode_value (p, &p);
 	return p;
 }
