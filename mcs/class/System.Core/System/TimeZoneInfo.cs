@@ -778,14 +778,6 @@ namespace System
 			if (!SupportsDaylightSavingTime)
 				return false;
 			
-			//FIXME: do not rely on DateTime implementation !
-			if ((dateTime.Kind == DateTimeKind.Local || dateTime.Kind == DateTimeKind.Unspecified) && this == TimeZoneInfo.Local)
-				return dateTime.IsDaylightSavingTime ();
-			
-			//FIXME: do not rely on DateTime implementation !
-			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Utc)
-				return IsDaylightSavingTime (DateTime.SpecifyKind (dateTime.ToUniversalTime (), DateTimeKind.Utc));
-			
 			AdjustmentRule rule = GetApplicableRule (dateTime.Date);
 			if (rule == null)
 				return false;

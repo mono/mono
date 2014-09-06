@@ -366,10 +366,7 @@ namespace System
 			if (time.Kind == DateTimeKind.Utc)
 				return TimeSpan.Zero;
 
-			if (IsDaylightSavingTime (time) && !IsAmbiguousTime (time))
-				return utcOffsetWithDLS;
-
-			return utcOffsetWithOutDLS;
+			return TimeZoneInfo.Local.GetUtcOffset (time);
 		}
 
 		private bool IsAmbiguousTime (DateTime time)
