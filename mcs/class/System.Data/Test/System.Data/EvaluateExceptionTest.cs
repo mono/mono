@@ -33,7 +33,7 @@ using System.IO;
 using System.Data;
 //using GHTUtils;
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture] public class EvaluateExceptionTest
 	{

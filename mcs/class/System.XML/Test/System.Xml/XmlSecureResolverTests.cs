@@ -20,7 +20,7 @@ using System.Security.Permissions;
 using System.Xml;
 using NUnit.Framework;
 
-namespace MonoTestsXml
+namespace MonoTests.System.Xml
 {
 	[TestFixture]
 	public class XmlSecureResolverTests

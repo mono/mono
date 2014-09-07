@@ -28,10 +28,12 @@
 
 using NUnit.Framework;
 using System;
+using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using MonoTests.System.Data.Utils;
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture] public class DataTableCollectionTest2
 	{
@@ -143,7 +145,7 @@ namespace MonoTests_System.Data
 		{
 			counter = 0;
 			DataSet ds = new DataSet();
-			ds.Tables.CollectionChanged+=new System.ComponentModel.CollectionChangeEventHandler(Tables_CollectionChanged);
+			ds.Tables.CollectionChanged+=new CollectionChangeEventHandler(Tables_CollectionChanged);
 			ds.Tables.Add();
 			ds.Tables.Add();
 			Assert.AreEqual(2, counter, "DTC15");
@@ -153,7 +155,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(4, counter, "DTC16");
 		}
 
-		private void Tables_CollectionChanged(object sender, System.ComponentModel.CollectionChangeEventArgs e)
+		private void Tables_CollectionChanged(object sender, CollectionChangeEventArgs e)
 		{
 			counter++;
 		}
@@ -163,7 +165,7 @@ namespace MonoTests_System.Data
 		{
 			counter = 0;
 			DataSet ds = new DataSet();
-			ds.Tables.CollectionChanging+=new System.ComponentModel.CollectionChangeEventHandler(Tables_CollectionChanging);
+			ds.Tables.CollectionChanging+=new CollectionChangeEventHandler(Tables_CollectionChanging);
 			ds.Tables.Add();
 			ds.Tables.Add();
 			Assert.AreEqual(2, counter, "DTC17");
@@ -173,7 +175,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(4, counter, "DTC18");
 		}
 
-		private void Tables_CollectionChanging(object sender, System.ComponentModel.CollectionChangeEventArgs e)
+		private void Tables_CollectionChanging(object sender, CollectionChangeEventArgs e)
 		{
 			counter++;
 		}
@@ -233,7 +235,7 @@ namespace MonoTests_System.Data
 			ds.Tables.Add();
 			int count=0;
 
-			System.Collections.IEnumerator myEnumerator = ds.Tables.GetEnumerator();
+			IEnumerator myEnumerator = ds.Tables.GetEnumerator();
 
 			while (myEnumerator.MoveNext())
 			{

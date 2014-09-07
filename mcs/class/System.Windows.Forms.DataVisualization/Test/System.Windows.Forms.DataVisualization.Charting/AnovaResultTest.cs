@@ -27,7 +27,7 @@ using System;
 using System.Windows.Forms.DataVisualization.Charting;
 using NUnit.Framework;
 
-namespace ChartingTests
+namespace MonoTests.System.Windows.Forms.DataVisualization.Charting
 {
 	[TestFixture]
 	public class AnovaResultTest

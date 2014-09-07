@@ -1111,7 +1111,7 @@ namespace MonoTests.System.IO
 			try {
 				Directory.CreateDirectory (path);
 				Directory.CreateDirectory (dir);
-				Mono.Unix.UnixSymbolicLinkInfo li = new Mono.Unix.UnixSymbolicLinkInfo (link);
+				global::Mono.Unix.UnixSymbolicLinkInfo li = new global::Mono.Unix.UnixSymbolicLinkInfo (link);
 				li.CreateSymbolicLinkTo (dir);
 
 				DirectoryInfo info = new DirectoryInfo (path);
