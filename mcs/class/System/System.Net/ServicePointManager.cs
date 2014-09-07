@@ -369,6 +369,22 @@ namespace System.Net
 			
 			return sp;
 		}
+		public static void CloseConnectionGroupForAllServicePoints(string group)
+		{
+			if (group == null)
+				throw new ArgumentNullException("group");
+
+			lock (servicePoints) {
+				foreach (var key in servicePoints.Keys)
+				{
+					var sp = servicePoints[key] as ServicePoint;
+					if (sp == null)
+						continue;
+
+					sp.CloseConnectionGroup(group);
+				}
+			}
+		}
 		
 #if SECURITY_DEP
 		internal class ChainValidationHelper {
