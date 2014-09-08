@@ -1466,6 +1466,25 @@ namespace System
 					if (num_parsed == -1)
 						return false;
 					fractionalSeconds = decimalNumber / Math.Pow(10.0, num_parsed);
+
+					//Parse ISO8601 with an unlimited number of fractional digits.
+					if (!exact && num == 6 && hour != -1 && minute != -1 && second != -1) {
+						var total_num_parsed = num_parsed;
+						while (true) {
+							valuePos += num_parsed;
+							decimalNumber = (double) _ParseNumber (s, valuePos, 0, 1, leading_zeros, sloppy_parsing, out num_parsed);
+							if (num_parsed < 1) {
+								num_parsed = 0;
+								break;
+							}
+
+							total_num_parsed += num_parsed;
+							if (total_num_parsed > 15)
+								continue; //not enough precision, ignore additional digits.
+
+							fractionalSeconds += decimalNumber / Math.Pow (10.0, total_num_parsed);
+						}
+					}
 					break;
 				case 't':
 					if (!_ParseAmPm (s, valuePos, num > 0 ? 0 : 1, dfi, exact, out num_parsed, ref ampm))
