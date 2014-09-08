@@ -123,7 +123,7 @@ namespace System.Xml.Serialization
 				_specifiedMember = null;
 
 			var method = type.GetMethod ("ShouldSerialize" + _name, BindingFlags.Instance | BindingFlags.Public, null, Type.EmptyTypes, null);
-			if (method != null && method.ReturnType == typeof (bool))
+			if (method != null && method.ReturnType == typeof (bool) && !method.IsGenericMethod)
 				_shouldSerialize = method;
 		}
 
