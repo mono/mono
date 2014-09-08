@@ -3411,6 +3411,30 @@ namespace MonoTests.System.XmlSerialization
 				Assert.AreEqual (expectedValueWithX, Infoset (t.ToString ()));
 			}
 		}
+
+		public class ClassWithShouldSerializeGeneric
+		{
+			[XmlAttribute]
+			public int X { get; set; }
+
+			public bool ShouldSerializeX<T> () { return false; }
+		}
+
+		[Test]
+		[Category("NotDotNet")]
+		public void ShouldSerializeGeneric ()
+		{
+			var ser = new XmlSerializer (typeof (ClassWithShouldSerializeGeneric));
+
+			var expectedValueWithX = Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+				"<ClassWithShouldSerializeGeneric xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" X=\"11\" />");
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithShouldSerializeGeneric { X = 11 };
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithX, Infoset (t.ToString ()));
+			}
+		}
 	}
 
 	// Test generated serialization code.
