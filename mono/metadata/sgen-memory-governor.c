@@ -305,7 +305,7 @@ sgen_alloc_os_memory (size_t size, SgenAllocFlags flags, const char *assert_desc
 
 	g_assert (!(flags & ~(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE)));
 
-	ptr = mono_valloc (0, size, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
+	ptr = mono_valloc (0, size, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE), assert_description);
 	sgen_assert_memory_alloc (ptr, size, assert_description);
 	if (ptr) {
 		SGEN_ATOMIC_ADD_P (total_alloc, size);
@@ -323,7 +323,7 @@ sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags flags
 
 	g_assert (!(flags & ~(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE)));
 
-	ptr = mono_valloc_aligned (size, alignment, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
+	ptr = mono_valloc_aligned (size, alignment, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE), assert_description);
 	sgen_assert_memory_alloc (ptr, size, assert_description);
 	if (ptr) {
 		SGEN_ATOMIC_ADD_P (total_alloc, size);

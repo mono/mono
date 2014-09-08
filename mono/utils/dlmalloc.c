@@ -25,6 +25,7 @@
 #define HAVE_MORECORE 0
 #define NO_MALLINFO 1
 #include <mono/utils/dlmalloc.h>
+#include <mono/metadata/memory-profiler.h>
 
 /*
 * Quickstart
@@ -1360,6 +1361,7 @@ static int win32munmap(void* ptr, size_t size) {
     if (minfo.BaseAddress != cptr || minfo.AllocationBase != cptr ||
         minfo.State != MEM_COMMIT || minfo.RegionSize > size)
       return -1;
+    mono_profiler_vfree (cptr, size);
     if (VirtualFree(cptr, 0, MEM_RELEASE) == 0)
       return -1;
     cptr += minfo.RegionSize;
@@ -3448,6 +3450,7 @@ static void* sys_alloc(mstate m, size_t nb) {
     if (rsize > nb) { /* Fail if wraps around zero */
       char* mp = (char*)(CALL_MMAP(rsize));
       if (mp != CMFAIL) {
+        mono_profiler_valloc (mp, rsize, "dlmalloc");
         tbase = mp;
         tsize = rsize;
         mmap_flag = IS_MMAPPED_BIT;
@@ -3567,6 +3570,7 @@ static size_t release_unused_segments(mstate m) {
           unlink_large_chunk(m, tp);
         }
         if (CALL_MUNMAP(base, size) == 0) {
+          mono_profiler_vfree (base, size);
           released += size;
           m->footprint -= size;
           /* unlink obsoleted record */
@@ -3605,6 +3609,7 @@ static int sys_trim(mstate m, size_t pad) {
             /* Prefer mremap, fall back to munmap */
             if ((CALL_MREMAP(sp->base, sp->size, newsize, 0) != MFAIL) ||
                 (CALL_MUNMAP(sp->base + newsize, extra) == 0)) {
+              mono_profiler_vfree (sp->base + newsize, extra);
               released = extra;
             }
           }
@@ -4219,8 +4224,10 @@ void dlfree(void* mem) {
           if ((prevsize & IS_MMAPPED_BIT) != 0) {
             prevsize &= ~IS_MMAPPED_BIT;
             psize += prevsize + MMAP_FOOT_PAD;
-            if (CALL_MUNMAP((char*)p - prevsize, psize) == 0)
+            if (CALL_MUNMAP((char*)p - prevsize, psize) == 0) {
+              mono_profiler_vfree ((char*)p - prevsize, psize);
               fm->footprint -= psize;
+            }
             goto postaction;
           }
           else {
@@ -4443,6 +4450,7 @@ mspace create_mspace(size_t capacity, int locked) {
     size_t tsize = granularity_align(rs);
     char* tbase = (char*)(CALL_MMAP(tsize));
     if (tbase != CMFAIL) {
+      mono_profiler_valloc (table, tsize, "dlmalloc");
       m = init_user_mstate(tbase, tsize);
       m->seg.sflags = IS_MMAPPED_BIT;
       set_lock(m, locked);
@@ -4476,8 +4484,10 @@ size_t destroy_mspace(mspace msp) {
       flag_t flag = sp->sflags;
       sp = sp->next;
       if ((flag & IS_MMAPPED_BIT) && !(flag & EXTERN_BIT) &&
-          CALL_MUNMAP(base, size) == 0)
+          CALL_MUNMAP(base, size) == 0) {
+        mono_profiler_vfree (base, size);
         freed += size;
+      }
     }
   }
   else {
@@ -4627,8 +4637,10 @@ void mspace_free(mspace msp, void* mem) {
           if ((prevsize & IS_MMAPPED_BIT) != 0) {
             prevsize &= ~IS_MMAPPED_BIT;
             psize += prevsize + MMAP_FOOT_PAD;
-            if (CALL_MUNMAP((char*)p - prevsize, psize) == 0)
+            if (CALL_MUNMAP((char*)p - prevsize, psize) == 0) {
+	          mono_profiler_vfree ((char*)p - prevsize, psize);
               fm->footprint -= psize;
+            }
             goto postaction;
           }
           else {

@@ -30,6 +30,7 @@
 
 #include "mono-mmap.h"
 #include "mono-proclib.h"
+#include <mono/metadata/memory-profiler.h>
 
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS MAP_ANON
@@ -104,7 +105,7 @@ prot_from_flags (int flags)
 }
 
 void*
-mono_valloc (void *addr, size_t length, int flags)
+mono_valloc (void *addr, size_t length, int flags, const char *name)
 {
 	void *ptr;
 	int mflags = MEM_RESERVE|MEM_COMMIT;
@@ -112,11 +113,13 @@ mono_valloc (void *addr, size_t length, int flags)
 	/* translate the flags */
 
 	ptr = VirtualAlloc (addr, length, mflags, prot);
+	mono_profiler_valloc (ptr, length, name);
+
 	return ptr;
 }
 
 void*
-mono_valloc_aligned (size_t length, size_t alignment, int flags)
+mono_valloc_aligned (size_t length, size_t alignment, int flags, const char *name)
 {
 	int prot = prot_from_flags (flags);
 	char *mem = VirtualAlloc (NULL, length + alignment, MEM_RESERVE, prot);
@@ -129,14 +132,15 @@ mono_valloc_aligned (size_t length, size_t alignment, int flags)
 
 	aligned = VirtualAlloc (aligned, length, MEM_COMMIT, prot);
 	g_assert (aligned);
+	mono_profiler_valloc (aligned, length, name);
 
 	return aligned;
 }
 
 #define HAVE_VALLOC_ALIGNED
 
-int
-mono_vfree (void *addr, size_t length)
+static int
+mono_vfree_internal (void *addr, size_t length)
 {
 	MEMORY_BASIC_INFORMATION mbi;
 	SIZE_T query_result = VirtualQuery (addr, &mbi, sizeof (mbi));
@@ -293,7 +297,7 @@ prot_from_flags (int flags)
  * Returns: NULL on failure, the address of the memory area otherwise
  */
 void*
-mono_valloc (void *addr, size_t length, int flags)
+mono_valloc (void *addr, size_t length, int flags, const char *name)
 {
 	void *ptr;
 	int mflags = 0;
@@ -317,6 +321,7 @@ mono_valloc (void *addr, size_t length, int flags)
 		if (ptr == MAP_FAILED)
 			return NULL;
 	}
+	mono_profiler_valloc (ptr, length, name);
 	return ptr;
 }
 
@@ -329,8 +334,8 @@ mono_valloc (void *addr, size_t length, int flags)
  *
  * Returns: 0 on success.
  */
-int
-mono_vfree (void *addr, size_t length)
+static int
+mono_vfree_internal (void *addr, size_t length)
 {
 	return munmap (addr, length);
 }
@@ -453,21 +458,23 @@ mono_pagesize (void)
 }
 
 void*
-mono_valloc (void *addr, size_t length, int flags)
+mono_valloc (void *addr, size_t length, int flags, const char *name)
 {
-	return malloc (length);
+	void *res = malloc (length);
+	mono_profiler_valloc (res, length, name);
+	return res;
 }
 
 void*
-mono_valloc_aligned (size_t length, size_t alignment, int flags)
+mono_valloc_aligned (size_t length, size_t alignment, int flags, const char *name)
 {
 	g_assert_not_reached ();
 }
 
 #define HAVE_VALLOC_ALIGNED
 
-int
-mono_vfree (void *addr, size_t length)
+static int
+mono_vfree_internal (void *addr, size_t length)
 {
 	free (addr);
 	return 0;
@@ -482,6 +489,15 @@ mono_mprotect (void *addr, size_t length, int flags)
 	return 0;
 }
 #endif // HAVE_MMAP
+
+int
+mono_vfree (void *addr, size_t length)
+{
+	int res = mono_vfree_internal (addr, length);
+	if (!res)
+		mono_profiler_vfree (addr, length);
+	return res;
+}
 
 #if defined(HAVE_SHM_OPEN) && !defined (DISABLE_SHARED_PERFCOUNTERS)
 
@@ -709,10 +725,10 @@ mono_shared_area_instances (void **array, int count)
 
 #ifndef HAVE_VALLOC_ALIGNED
 void*
-mono_valloc_aligned (size_t size, size_t alignment, int flags)
+mono_valloc_aligned (size_t size, size_t alignment, int flags, const char *name)
 {
 	/* Allocate twice the memory to be able to put the block on an aligned address */
-	char *mem = mono_valloc (NULL, size + alignment, flags);
+	char *mem = mono_valloc (NULL, size + alignment, flags, NULL);
 	char *aligned;
 
 	if (!mem)
@@ -721,10 +737,11 @@ mono_valloc_aligned (size_t size, size_t alignment, int flags)
 	aligned = aligned_address (mem, size, alignment);
 
 	if (aligned > mem)
-		mono_vfree (mem, aligned - mem);
+		mono_vfree_internal (mem, aligned - mem);
 	if (aligned + size < mem + size + alignment)
-		mono_vfree (aligned + size, (mem + size + alignment) - (aligned + size));
+		mono_vfree_internal (aligned + size, (mem + size + alignment) - (aligned + size));
 
+	mono_profiler_valloc (aligned, size, name);
 	return aligned;
 }
 #endif

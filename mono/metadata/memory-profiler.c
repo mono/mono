@@ -4,6 +4,8 @@
 #include <mono/utils/mono-mutex.h>
 #include <mono/utils/mono-internal-hash.h>
 #include <mono/utils/mono-conc-hashtable.h>
+#include <mono/utils/mono-mmap.h>
+#include <mono/utils/atomic.h>
 
 typedef enum
 {
@@ -108,6 +110,178 @@ mono_profiler_remove_allocation (const char *tag, gsize size)
 		info->alloc_bytes -= size;
 	memprof_unlock ();
 }
+
+typedef struct {
+	const char *tag;
+	gpointer address;
+	size_t size;
+} VAllocRecord;
+
+#define VALLOC_ENTRIES (4096 / sizeof (VAllocRecord) - 1)
+
+typedef struct _VAllocRecordBucket VAllocRecordBucket;
+
+struct _VAllocRecordBucket{
+	int index;
+	VAllocRecordBucket *next_bucket;
+	VAllocRecord entries [VALLOC_ENTRIES];
+};
+
+static VAllocRecordBucket *current_bucket;
+
+static VAllocRecordBucket*
+alloc_bucket (void)
+{
+	VAllocRecordBucket *old, *bucket;
+
+	old = current_bucket;
+	if (old && old->index < VALLOC_ENTRIES)
+		return old;
+
+	bucket = mono_valloc (NULL, sizeof (VAllocRecordBucket),  MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_PRIVATE|MONO_MMAP_ANON, NULL);
+	bucket->index = 0;
+
+	do {
+		old = current_bucket;
+		bucket->next_bucket = old;
+	} while (InterlockedCompareExchangePointer ((gpointer)&current_bucket, bucket, old) != old);
+	return bucket;
+}
+
+static VAllocRecord*
+get_next_record (void)
+{
+	VAllocRecordBucket *bucket;
+	int index;
+
+retry:
+	bucket = current_bucket;
+	if (!current_bucket)
+		bucket = alloc_bucket ();
+	while (bucket->index >= VALLOC_ENTRIES)
+		bucket = alloc_bucket ();
+
+	index = InterlockedIncrement (&bucket->index) - 1;
+	if (index >= VALLOC_ENTRIES)
+		goto retry;	
+
+	return &bucket->entries [index];
+}
+
+#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
+
+void
+mono_profiler_valloc (gpointer address, size_t size, const char *tag)
+{
+	VAllocRecord *record;
+	if (!tag)
+		return;
+
+	record = get_next_record ();
+	record->tag = tag;
+	record->address = address;
+	record->size = ALIGN_TO (size, 4096);
+}
+
+void
+mono_profiler_vfree (gpointer address, size_t size)
+{
+	VAllocRecord *record;
+	record = get_next_record ();
+	record->tag = NULL;
+	record->address = address;
+	record->size = ALIGN_TO (size, 4096);
+}
+
+
+#if (SIZEOF_VOID_P == 4)
+#define UINT_TO_POINTER(u) ((void*)(guint32)(u))
+#define POINTER_TO_UINT(p) ((guint32)(void*)(p))
+#elif (SIZEOF_VOID_P == 8)
+#define UINT_TO_POINTER(u) ((void*)(guint64)(u))
+#define POINTER_TO_UINT(p) ((guint64)(void*)(p))
+#else
+#error Bad size of void pointer
+#endif
+
+
+static void
+cat_add_val (GHashTable *hash, const char *tag, size_t new_val)
+{
+	size_t cur_val = POINTER_TO_UINT (g_hash_table_lookup (hash, tag));
+	g_hash_table_replace (hash, (char*)tag, UINT_TO_POINTER (cur_val + new_val));
+}
+
+//This sucks, but tracking partial vfree makes it really complicated
+static const char *
+find_cat (gpointer address, gpointer limit)
+{
+	int i;
+	const char *cat = NULL;
+	VAllocRecordBucket *bucket = current_bucket;
+
+	for (bucket = current_bucket; bucket; bucket = bucket->next_bucket) {
+		for (i = 0; i < MIN (bucket->index, VALLOC_ENTRIES); ++i) {
+			VAllocRecord *r = &bucket->entries [i];
+			if (r == limit)
+				return cat;
+			if (!r->tag)
+				continue;
+			if (r->address <= address && ((char*)r->address + r->size) > (char*)address)
+				cat = r->tag;
+		}
+	}
+	g_error ("should not happen");
+}
+
+static void
+cat_del_val (GHashTable *hash, gpointer address, size_t size, gpointer record)
+{
+	size_t cur_val;
+	const char *cat = find_cat (address, record);
+	if (!cat) {
+		printf ("bad vfree %p\n", address);
+		return;
+	}
+	cur_val = POINTER_TO_UINT (g_hash_table_lookup (hash, cat));
+	g_hash_table_replace (hash, (char*)cat, UINT_TO_POINTER (cur_val - size));
+}
+
+static void
+dump_cat_alloc (gpointer key, gpointer val, gpointer user_data)
+{
+	printf ("\t%s %zd\n", key, POINTER_TO_UINT (val));
+}
+
+//TODO sumarize alloc records
+static size_t
+dump_valloc (void)
+{
+	int i, entries = 0;
+	size_t total_alloc = 0, total_free = 0;
+	VAllocRecordBucket *bucket = current_bucket;
+	GHashTable *per_cat_alloc = g_hash_table_new (g_str_hash, g_str_equal);
+
+	for (bucket = current_bucket; bucket; bucket = bucket->next_bucket) {
+		for (i = 0; i < MIN (bucket->index, VALLOC_ENTRIES); ++i) {
+			VAllocRecord *r = &bucket->entries [i];
+			++entries;
+			if (r->tag) {
+				total_alloc += r->size;
+				cat_add_val (per_cat_alloc, r->tag, r->size);
+			} else {
+				total_free += r->size;
+				cat_del_val (per_cat_alloc, r->address, r->size, r);
+			}
+		}
+	}
+
+	g_hash_table_foreach (per_cat_alloc, dump_cat_alloc, NULL);
+	printf ("VALLOC summary %zd allocated %zd freed - %zd active %d entries\n", total_alloc, total_free, total_alloc - total_free, entries);
+	g_hash_table_destroy (per_cat_alloc);
+	return total_alloc;
+}
+
 
 static void
 add_nested_hashes (gpointer key, gpointer value, gpointer user_data)
@@ -231,14 +405,10 @@ mono_memprof_dump (void)
 	g_hash_table_foreach (mem_domains, dump_domain, &grand_total);
 	printf ("---Allocations---\n");
 	g_hash_table_foreach (global_allocs, dump_allocs, &grand_total);
+	printf ("---VALLOC---\n");
+	grand_total += dump_valloc ();
+
 	printf ("---------- grand total: %zd\n", grand_total);
 	memprof_unlock ();
 }
 
-
-
-//g_hash_table_foreach (override_map, foreach_override, NULL);
-
-
-// void mono_profiler_add_allocation (gpointer domain, gpointer address, gsize size, const char *description) MONO_INTERNAL;
-// void mono_profiler_remove_allocation (gpointer domain, gpointer address) MONO_INTERNAL;

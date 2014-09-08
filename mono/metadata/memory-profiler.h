@@ -19,6 +19,8 @@ void mono_profiler_free_memory_domain (gpointer domain) MONO_INTERNAL;
 void mono_profiler_add_allocation (const char *tag, gsize size) MONO_INTERNAL;
 void mono_profiler_remove_allocation (const char *tag, gsize size) MONO_INTERNAL;
 
+void mono_profiler_valloc (gpointer address, size_t size, const char *tag) MONO_INTERNAL;
+void mono_profiler_vfree (gpointer address, size_t size) MONO_INTERNAL;
 
 void mono_memory_profiler_init (void) MONO_INTERNAL;
 

@@ -1262,8 +1262,8 @@ mono_arch_init (void)
 
 	mono_mutex_init_recursive (&mini_arch_mutex);
 
-	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ);
-	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ);
+	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ, "sdb");
+	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ, "sdb");
 	mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
 	
 	code = (guint8 *) &breakpointCode;

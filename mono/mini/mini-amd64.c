@@ -1256,8 +1256,8 @@ mono_arch_init (void)
 	/* amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4); */
 	single_step_fault_size = 4;
 
-	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
-	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
+	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), flags, "sdb");
+	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), flags, "sdb");
 	mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
 
 	mono_aot_register_jit_icall ("mono_amd64_throw_exception", mono_amd64_throw_exception);

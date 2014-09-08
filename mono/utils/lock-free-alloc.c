@@ -140,9 +140,9 @@ prot_flags_for_activate (int activate)
 }
 
 static void*
-mono_sgen_alloc_os_memory (size_t size, int activate)
+mono_sgen_alloc_os_memory (size_t size, int activate, const char *name)
 {
-	return mono_valloc (0, size, prot_flags_for_activate (activate));
+	return mono_valloc (0, size, prot_flags_for_activate (activate), name);
 }
 
 static void
@@ -153,15 +153,15 @@ mono_sgen_free_os_memory (void *addr, size_t size)
 
 /* size must be a power of 2 */
 static void*
-mono_sgen_alloc_os_memory_aligned (size_t size, size_t alignment, gboolean activate)
+mono_sgen_alloc_os_memory_aligned (size_t size, size_t alignment, gboolean activate, const char *name)
 {
-	return mono_valloc_aligned (size, alignment, prot_flags_for_activate (activate));
+	return mono_valloc_aligned (size, alignment, prot_flags_for_activate (activate), name);
 }
 
 static gpointer
 alloc_sb (Descriptor *desc)
 {
-	gpointer sb_header = mono_sgen_alloc_os_memory_aligned (SB_SIZE, SB_SIZE, TRUE);
+	gpointer sb_header = mono_sgen_alloc_os_memory_aligned (SB_SIZE, SB_SIZE, TRUE, "lock-free-alloc-sb");
 	g_assert (sb_header == SB_HEADER_FOR_ADDR (sb_header));
 	DESCRIPTOR_FOR_ADDR (sb_header) = desc;
 	//g_print ("sb %p for %p\n", sb_header, desc);
@@ -198,7 +198,7 @@ desc_alloc (void)
 			Descriptor *d;
 			int i;
 
-			desc = mono_sgen_alloc_os_memory (desc_size * NUM_DESC_BATCH, TRUE);
+			desc = mono_sgen_alloc_os_memory (desc_size * NUM_DESC_BATCH, TRUE, "lock-free-alloc-descriptors");
 
 			/* Organize into linked list. */
 			d = desc;
