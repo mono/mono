@@ -4352,13 +4352,16 @@ pattern_expr
 		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, GetLocation ($1));
 	  }
 	| sizeof_expression
-	| invocation_expression
 	| default_value_expression
 	| STAR
 	  {
 		$$ = new WildcardPattern (GetLocation ($1));
 	  }
-	| type_name_expression OPEN_PARENS opt_pattern_list CLOSE_PARENS
+	| pattern_expr_invocation
+	;
+
+pattern_expr_invocation
+	: type_name_expression OPEN_PARENS opt_pattern_list CLOSE_PARENS
 	  {
 		$$ = new RecursivePattern ((ATypeNameExpression) $1, (Arguments) $3, GetLocation ($2));
 	  }
@@ -4368,9 +4371,11 @@ pattern
 	: pattern_expr
 	| pattern_type_expr opt_identifier
 	  {
-		var lt = (LocatedToken) $2;
-		var variable = new LocalVariable (current_block, lt.Value, lt.Location);
-		current_block.AddLocalName (variable);	  
+	  	if ($2 != null) {
+			var lt = (LocatedToken) $2;
+			var variable = new LocalVariable (current_block, lt.Value, lt.Location);
+			current_block.AddLocalName (variable);
+		}
 	  }
 	;
 
@@ -5816,6 +5821,16 @@ switch_label
 	  {
 		Error_SyntaxError (yyToken);
 		$$ = new SwitchLabel ((Expression) $2, GetLocation ($1));
+	  }
+	| CASE pattern_expr_invocation COLON
+	  {
+		if (lang_version != LanguageVersion.Experimental)
+			FeatureIsNotAvailable (GetLocation ($2), "pattern matching");
+
+		$$ = new SwitchLabel ((Expression) $2, GetLocation ($1)) {
+			PatternMatching = true
+		};
+		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 	| DEFAULT_COLON
 	  {

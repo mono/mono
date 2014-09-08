@@ -181,6 +181,7 @@ namespace Mono.CSharp
 
 
 				var system_convert = new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Convert", loc);
+				var expl_block = new ExplicitBlock (top_block, loc, loc);
 
 				//
 				// var converted = System.Convert.ChangeType (obj, System.Convert.GetTypeCode (value));
@@ -198,7 +199,7 @@ namespace Mono.CSharp
 
 				var changetype = new Invocation (new MemberAccess (system_convert, "ChangeType", loc), arguments_changetype);
 
-				top_block.AddStatement (new StatementExpression (new SimpleAssign (new LocalVariableReference (lv_converted, loc), changetype, loc)));
+				expl_block.AddStatement (new StatementExpression (new SimpleAssign (new LocalVariableReference (lv_converted, loc), changetype, loc)));
 
 
 				//
@@ -207,7 +208,13 @@ namespace Mono.CSharp
 				var equals_arguments = new Arguments (1);
 				equals_arguments.Add (new Argument (top_block.GetParameterReference (1, loc)));
 				var equals_invocation = new Invocation (new MemberAccess (new LocalVariableReference (lv_converted, loc), "Equals"), equals_arguments);
-				top_block.AddStatement (new Return (equals_invocation, loc));
+				expl_block.AddStatement (new Return (equals_invocation, loc));
+
+				var catch_block = new ExplicitBlock (top_block, loc, loc);
+				catch_block.AddStatement (new Return (new BoolLiteral (Compiler.BuiltinTypes, false, loc), loc));
+				top_block.AddStatement (new TryCatch (expl_block, new List<Catch> () {
+					new Catch (catch_block, loc)
+				}, loc, false));
 
 				m.Define ();
 				m.PrepareEmit ();

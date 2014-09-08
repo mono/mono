@@ -1807,6 +1807,10 @@ namespace Mono.CSharp
 			}
 
 			if (ProbeType is PatternExpression) {
+				if (!(ProbeType is WildcardPattern) && !Convert.ImplicitConversionExists (rc, ProbeType, Expr.Type)) {
+					ProbeType.Error_ValueCannotBeConverted (rc, Expr.Type, false);
+				}
+
 				return this;
 			}
 
