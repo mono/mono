@@ -171,6 +171,8 @@ common_sources = \
 	process.h		\
 	profiler.c		\
 	profiler-private.h	\
+	memory-profiler.h	\
+	memory-profiler.c	\
 	rand.h			\
 	rand.c			\
 	runtime.c		\

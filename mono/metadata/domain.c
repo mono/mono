@@ -42,6 +42,7 @@
 #include <metadata/threads.h>
 #include <metadata/profiler-private.h>
 #include <mono/metadata/coree.h>
+#include <mono/metadata/memory-profiler.h>
 
 //#define DEBUG_DOMAIN_UNLOAD 1
 
@@ -1281,6 +1282,8 @@ mono_domain_create (void)
 	domain = mono_gc_alloc_fixed (sizeof (MonoDomain), domain_gc_desc);
 	mono_gc_register_root ((char*)&(domain->MONO_DOMAIN_FIRST_GC_TRACKED), G_STRUCT_OFFSET (MonoDomain, MONO_DOMAIN_LAST_GC_TRACKED) - G_STRUCT_OFFSET (MonoDomain, MONO_DOMAIN_FIRST_GC_TRACKED), NULL);
 #endif
+	mono_profiler_register_memory_domain (domain, MEMDOM_APPDOMAIN);
+
 	domain->shadow_serial = shadow_serial;
 	domain->domain = NULL;
 	domain->setup = NULL;
@@ -1366,6 +1369,9 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	/* Avoid system error message boxes. */
 	SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
 #endif
+
+	/* init before wapi so we can record large mallocs */
+	mono_memory_profiler_init ();
 
 #ifndef HOST_WIN32
 	wapi_init ();
@@ -1951,6 +1957,8 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	int code_size, code_alloc;
 	GSList *tmp;
 	gpointer *p;
+
+	mono_profiler_free_memory_domain (domain);
 
 	if ((domain == mono_root_domain) && !force) {
 		g_warning ("cant unload root domain");

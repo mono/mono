@@ -57,6 +57,14 @@ typedef struct {
 	Slot *slot;
 } Iter;
 
+size_t
+mono_eg_hashtable_get_memory_size (GHashTable *hashtable)
+{
+	return sizeof (GHashTable) + 
+		hashtable->in_use * sizeof (Slot) +
+		hashtable->table_size * sizeof (Slot*);
+}
+
 static const guint prime_tbl[] = {
 	11, 19, 37, 73, 109, 163, 251, 367, 557, 823, 1237,
 	1861, 2777, 4177, 6247, 9371, 14057, 21089, 31627,

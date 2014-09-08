@@ -661,4 +661,6 @@ MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, 
 
 void mono_enable_debug_domain_unload (gboolean enable);
 
+size_t mono_hashtable_get_memory_size (MonoGHashTable *hashtable);
+
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

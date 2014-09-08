@@ -34,6 +34,7 @@
 #include <mono/utils/atomic.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/memory-profiler.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/security-core-clr.h>
 #include <mono/metadata/verify-internals.h>
@@ -946,6 +947,7 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 	GSList *errors = NULL;
 
 	mono_profiler_module_event (image, MONO_PROFILE_START_LOAD);
+	mono_profiler_register_memory_domain (image, MEMDOM_IMAGE);
 
 	mono_image_init (image);
 
@@ -1528,6 +1530,7 @@ mono_image_close_except_pools (MonoImage *image)
 #endif
 
 	mono_profiler_module_event (image, MONO_PROFILE_START_UNLOAD);
+	mono_profiler_free_memory_domain (image);
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading image %s [%p].", image->name, image);
 

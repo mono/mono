@@ -477,6 +477,14 @@ mono_g_hash_table_print_stats (MonoGHashTable *table)
 	printf ("Size: %d Table Size: %d Max Chain Length: %d\n", table->in_use, table->table_size, max_chain_size);
 }
 
+size_t
+mono_hashtable_get_memory_size (MonoGHashTable *hashtable)
+{
+	return sizeof (MonoGHashTable) + 
+		hashtable->in_use * sizeof (Slot) +
+		hashtable->table_size * sizeof (Slot*);
+}
+
 #ifdef HAVE_SGEN_GC
 
 /* GC marker function */

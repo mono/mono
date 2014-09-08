@@ -26,6 +26,7 @@
 #include "marshal.h"
 #include "debug-helpers.h"
 #include "abi-details.h"
+#include "memory-profiler.h"
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/bsearch.h>
 
@@ -2256,6 +2257,8 @@ get_image_set (MonoImage **images, int nimages)
 		set->nimages = nimages;
 		set->images = g_new0 (MonoImage*, nimages);
 		mono_mutex_init_recursive (&set->lock);
+		mono_profiler_register_memory_domain (set, MEMDOM_IMAGE_SET);
+		
 		for (i = 0; i < nimages; ++i)
 			set->images [i] = images [i];
 		set->gclass_cache = g_hash_table_new_full (mono_generic_class_hash, mono_generic_class_equal, NULL, (GDestroyNotify)free_generic_class);
@@ -2283,6 +2286,7 @@ static void
 delete_image_set (MonoImageSet *set)
 {
 	int i;
+	mono_profiler_free_memory_domain (set);
 
 	g_hash_table_destroy (set->gclass_cache);
 	g_hash_table_destroy (set->ginst_cache);

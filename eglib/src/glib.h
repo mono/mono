@@ -467,6 +467,8 @@ guint           g_spaced_primes_closest      (guint x);
 #define g_hash_table_insert(h,k,v)    g_hash_table_insert_replace ((h),(k),(v),FALSE)
 #define g_hash_table_replace(h,k,v)   g_hash_table_insert_replace ((h),(k),(v),TRUE)
 
+size_t mono_eg_hashtable_get_memory_size (GHashTable *hashtable);
+
 gboolean g_direct_equal (gconstpointer v1, gconstpointer v2);
 guint    g_direct_hash  (gconstpointer v1);
 gboolean g_int_equal    (gconstpointer v1, gconstpointer v2);
