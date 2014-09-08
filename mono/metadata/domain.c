@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 
 #include <mono/metadata/gc-internal.h>
+#include <mono/metadata/memory-profiler.h>
 
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-compiler.h>
@@ -204,6 +205,7 @@ static MonoJitInfoTableChunk*
 jit_info_table_new_chunk (void)
 {
 	MonoJitInfoTableChunk *chunk = g_new0 (MonoJitInfoTableChunk, 1);
+	mono_profiler_add_allocation ("jittable:table-chunk", sizeof (MonoJitInfoTableChunk));
 	chunk->refcount = 1;
 
 	return chunk;
@@ -212,7 +214,9 @@ jit_info_table_new_chunk (void)
 static MonoJitInfoTable *
 jit_info_table_new (MonoDomain *domain)
 {
-	MonoJitInfoTable *table = g_malloc0 (MONO_SIZEOF_JIT_INFO_TABLE + sizeof (MonoJitInfoTableChunk*));
+	size_t size = MONO_SIZEOF_JIT_INFO_TABLE + sizeof (MonoJitInfoTableChunk*);
+	MonoJitInfoTable *table = g_malloc0 (size);
+	mono_profiler_add_allocation ("jittable:table", size);
 
 	table->domain = domain;
 	table->num_chunks = 1;
@@ -234,8 +238,10 @@ jit_info_table_free (MonoJitInfoTable *table)
 	if (table->domain->num_jit_info_tables <= 1) {
 		GSList *list;
 
-		for (list = table->domain->jit_info_free_queue; list; list = list->next)
+		for (list = table->domain->jit_info_free_queue; list; list = list->next) {
+			mono_profiler_remove_allocation ("jittable:info", sizeof (MonoJitInfo));
 			g_free (list->data);
+		}
 
 		g_slist_free (table->domain->jit_info_free_queue);
 		table->domain->jit_info_free_queue = NULL;
@@ -257,15 +263,19 @@ jit_info_table_free (MonoJitInfoTable *table)
 		for (j = 0; j < num_elements; ++j) {
 			MonoJitInfo *ji = chunk->data [j];
 
-			if (IS_JIT_INFO_TOMBSTONE (ji))
+			if (IS_JIT_INFO_TOMBSTONE (ji)) {
+				mono_profiler_remove_allocation ("jittable:tombstone", sizeof (MonoJitInfo));
 				g_free (ji);
+			}
 		}
 
+		mono_profiler_remove_allocation ("jittable:table-chunk", sizeof (MonoJitInfoTableChunk));
 		g_free (chunk);
 	}
 
 	mono_domain_unlock (domain);
 
+	mono_profiler_remove_allocation ("jittable:table", MONO_SIZEOF_JIT_INFO_TABLE + sizeof (MonoJitInfoTableChunk*) * table->num_chunks);
 	g_free (table);
 }
 
@@ -481,6 +491,7 @@ jit_info_table_check (MonoJitInfoTable *table)
 static MonoJitInfoTable*
 jit_info_table_realloc (MonoJitInfoTable *old)
 {
+	size_t table_size;
 	int i;
 	int num_elements = jit_info_table_num_elements (old);
 	int required_size;
@@ -497,9 +508,11 @@ jit_info_table_realloc (MonoJitInfoTable *old)
 	}
 	g_assert (num_chunks > 0);
 
-	new = g_malloc (MONO_SIZEOF_JIT_INFO_TABLE + sizeof (MonoJitInfoTableChunk*) * num_chunks);
+	table_size = MONO_SIZEOF_JIT_INFO_TABLE + sizeof (MonoJitInfoTableChunk*) * num_chunks;
+	new = g_malloc (table_size);
 	new->domain = old->domain;
 	new->num_chunks = num_chunks;
+	mono_profiler_add_allocation ("jittable:table", table_size);
 
 	for (i = 0; i < num_chunks; ++i)
 		new->chunks [i] = jit_info_table_new_chunk ();
@@ -566,9 +579,10 @@ jit_info_table_split_chunk (MonoJitInfoTableChunk *chunk, MonoJitInfoTableChunk 
 static MonoJitInfoTable*
 jit_info_table_copy_and_split_chunk (MonoJitInfoTable *table, MonoJitInfoTableChunk *chunk)
 {
-	MonoJitInfoTable *new_table = g_malloc (MONO_SIZEOF_JIT_INFO_TABLE
-		+ sizeof (MonoJitInfoTableChunk*) * (table->num_chunks + 1));
+	size_t size = MONO_SIZEOF_JIT_INFO_TABLE + sizeof (MonoJitInfoTableChunk*) * (table->num_chunks + 1);
+	MonoJitInfoTable *new_table = g_malloc (size);
 	int i, j;
+	mono_profiler_add_allocation ("jittable:table", size);
 
 	new_table->domain = table->domain;
 	new_table->num_chunks = table->num_chunks + 1;
@@ -614,9 +628,10 @@ jit_info_table_purify_chunk (MonoJitInfoTableChunk *old)
 static MonoJitInfoTable*
 jit_info_table_copy_and_purify_chunk (MonoJitInfoTable *table, MonoJitInfoTableChunk *chunk)
 {
-	MonoJitInfoTable *new_table = g_malloc (MONO_SIZEOF_JIT_INFO_TABLE
-		+ sizeof (MonoJitInfoTableChunk*) * table->num_chunks);
+	size_t size = MONO_SIZEOF_JIT_INFO_TABLE + sizeof (MonoJitInfoTableChunk*) * table->num_chunks;
+	MonoJitInfoTable *new_table = g_malloc (size);
 	int i, j;
+	mono_profiler_add_allocation ("jittable:table", size);
 
 	new_table->domain = table->domain;
 	new_table->num_chunks = table->num_chunks;
@@ -776,6 +791,7 @@ static MonoJitInfo*
 mono_jit_info_make_tombstone (MonoJitInfo *ji)
 {
 	MonoJitInfo *tombstone = g_new0 (MonoJitInfo, 1);
+	mono_profiler_add_allocation ("jittable:tombstone", sizeof (MonoJitInfo));
 
 	tombstone->code_start = ji->code_start;
 	tombstone->code_size = ji->code_size;
@@ -793,6 +809,7 @@ mono_jit_info_free_or_queue (MonoDomain *domain, MonoJitInfo *ji)
 	if (domain->num_jit_info_tables <= 1) {
 		/* Can it actually happen that we only have one table
 		   but ji is still hazardous? */
+		mono_profiler_remove_allocation ("jittable:info", sizeof (MonoJitInfo));
 		mono_thread_hazardous_free_or_queue (ji, g_free, TRUE, FALSE);
 	} else {
 		domain->jit_info_free_queue = g_slist_prepend (domain->jit_info_free_queue, ji);
@@ -877,6 +894,7 @@ mono_jit_info_add_aot_module (MonoImage *image, gpointer start, gpointer end)
 	ji->code_start = start;
 	ji->code_size = (guint8*)end - (guint8*)start;
 	jit_info_table_add (mono_root_domain, &mono_root_domain->aot_modules, ji);
+	mono_profiler_add_allocation ("jittable:aot-info", sizeof (MonoJitInfo));
 
 	mono_domain_unlock (mono_root_domain);
 }
