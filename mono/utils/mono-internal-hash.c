@@ -124,3 +124,11 @@ mono_internal_hash_table_remove (MonoInternalHashTable *table, gpointer key)
 
 	g_assert (0);
 }
+
+size_t
+mono_internal_hashtable_get_memory_size (MonoInternalHashTable *table)
+{
+	return sizeof (MonoInternalHashTable) +
+		sizeof (gpointer) * table->size;
+}
+

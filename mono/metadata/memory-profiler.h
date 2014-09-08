@@ -16,8 +16,8 @@ void mono_profiler_register_memory_domain (gpointer domain, MemoryDomainKind kin
 void mono_profiler_free_memory_domain (gpointer domain) MONO_INTERNAL;
 
 /*use this for large allocations that are not automtically tracked */
-void mono_profiler_add_allocation (gpointer domain, gpointer address, gsize size, const char *description) MONO_INTERNAL;
-void mono_profiler_remove_allocation (gpointer domain, gpointer address) MONO_INTERNAL;
+void mono_profiler_add_allocation (const char *tag, gsize size) MONO_INTERNAL;
+void mono_profiler_remove_allocation (const char *tag, gsize size) MONO_INTERNAL;
 
 
 void mono_memory_profiler_init (void) MONO_INTERNAL;

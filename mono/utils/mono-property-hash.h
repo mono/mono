@@ -36,6 +36,8 @@ MONO_API void mono_property_hash_remove_object (MonoPropertyHash *hash, gpointer
 
 MONO_API gpointer mono_property_hash_lookup (MonoPropertyHash *hash, gpointer object, guint32 property);
 
+size_t mono_property_hash_get_memory_size (MonoPropertyHash *hash);
+
 G_END_DECLS
 
 #endif

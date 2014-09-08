@@ -352,20 +352,16 @@ mono_conc_hashtable_insert (MonoConcurrentHashTable *hash_table, gpointer key, g
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+size_t
+mono_conc_hashtable_get_memory_size (MonoConcurrentHashTable *hash_table)
+{
+	MonoThreadHazardPointers* hp = mono_hazard_pointer_get ();
+	size_t size = sizeof (MonoConcurrentHashTable);
+	conc_table *table = get_hazardous_pointer ((gpointer volatile*)&hash_table->table, hp, 0);
+	if (table) {
+		size += sizeof (conc_table);
+		size += table->table_size * sizeof (key_value_pair);
+	}
+	mono_hazard_pointer_clear (hp, 0);
+	return size;
+}

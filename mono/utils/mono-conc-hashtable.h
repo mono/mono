@@ -22,6 +22,7 @@ void mono_conc_hashtable_destroy (MonoConcurrentHashTable *hash_table) MONO_INTE
 gpointer mono_conc_hashtable_lookup (MonoConcurrentHashTable *hash_table, gpointer key) MONO_INTERNAL;
 gpointer mono_conc_hashtable_insert (MonoConcurrentHashTable *hash_table, gpointer key, gpointer value) MONO_INTERNAL;
 gpointer mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key) MONO_INTERNAL;
+size_t mono_conc_hashtable_get_memory_size (MonoConcurrentHashTable *hash_table) MONO_INTERNAL;
 
 #endif
 

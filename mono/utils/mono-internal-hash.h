@@ -73,4 +73,7 @@ mono_internal_hash_table_insert (MonoInternalHashTable *table,
 void
 mono_internal_hash_table_remove (MonoInternalHashTable *table, gpointer key) MONO_INTERNAL;
 
+size_t
+mono_internal_hashtable_get_memory_size (MonoInternalHashTable *table) MONO_INTERNAL;
+	
 #endif

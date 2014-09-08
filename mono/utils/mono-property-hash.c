@@ -81,4 +81,21 @@ mono_property_hash_lookup (MonoPropertyHash *hash, gpointer object, guint32 prop
 		return NULL;
 	return g_hash_table_lookup (prop_hash, object);
 }
-	
+
+static void
+sum_sizes (gpointer key, gpointer value, gpointer user_data)
+{
+	GHashTable *prop_hash = (GHashTable*)value;
+	size_t *size = user_data;
+	*size += mono_eg_hashtable_get_memory_size (prop_hash);
+} 
+
+size_t
+mono_property_hash_get_memory_size (MonoPropertyHash *hash)
+{
+	size_t size = sizeof (MonoPropertyHash);
+	size += mono_eg_hashtable_get_memory_size (hash->hashes);
+	g_hash_table_foreach (hash->hashes, sum_sizes, &size);
+
+	return size;
+}
