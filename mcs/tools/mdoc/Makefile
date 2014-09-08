@@ -90,6 +90,13 @@ cleanup:
 	-rm -Rf Test/en.actual Test/html.actual
 	-rm -f monodocer1.exe*
 
+Test/DocTest-DropNS-classic.dll:
+	@echo $(value @)
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs
+
+Test/DocTest-DropNS-unified.dll:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs
+
 Test/DocTest.dll: 
 	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest.cs
 
@@ -105,6 +112,18 @@ Test/DocTest.dll-v2:
 	cd Test && patch -p0 < DocTest-v2.patch
 	-rm -f Test/DocTest.dll
 	$(MAKE) TEST_CSCFLAGS=$(TEST_CSCFLAGS) Test/DocTest.dll
+
+check-monodocer-dropns-classic: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-DropNS-classic.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll
+	$(MAKE) check-monodocer-dropns-unified
+	diff --exclude=.svn -rup Test/en.expected-dropns-classic-v1 Test/en.actual
+
+check-monodocer-dropns-unified: $(PROGRAM)
+	$(MAKE) Test/DocTest-DropNS-unified.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --dropns=MyFramework
+		
 
 check-monodocer-update: $(PROGRAM)
 	find Test/en.expected -name \*.xml -exec rm "{}" \;
