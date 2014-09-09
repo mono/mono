@@ -90,6 +90,10 @@ cleanup:
 	-rm -Rf Test/en.actual Test/html.actual
 	-rm -f monodocer1.exe*
 
+Test/DocTest-DropNS-classic-secondary.dll:
+	@echo $(value @)
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic-secondary.cs
+
 Test/DocTest-DropNS-classic.dll:
 	@echo $(value @)
 	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs
@@ -114,15 +118,33 @@ Test/DocTest.dll-v2:
 	$(MAKE) TEST_CSCFLAGS=$(TEST_CSCFLAGS) Test/DocTest.dll
 
 check-monodocer-dropns-classic: $(PROGRAM)
+	# tests the simplest --dropns case, a single class where the root namespace was dropped.
 	-rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest-DropNS-classic.dll
 	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll
-	$(MAKE) check-monodocer-dropns-unified
+	$(MAKE) update-monodocer-dropns-unified
 	diff --exclude=.svn -rup Test/en.expected-dropns-classic-v1 Test/en.actual
 
-check-monodocer-dropns-unified: $(PROGRAM)
+check-monodocer-dropns-classic-withsecondary: $(PROGRAM)
+	# tests case where a secondary assembly is included with a --dropns parameter
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-DropNS-classic.dll
+	$(MAKE) Test/DocTest-DropNS-classic-secondary.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll Test/DocTest-DropNS-classic-secondary.dll
+	$(MAKE) update-monodocer-dropns-unified-withsecondary
+	diff --exclude=.svn -rup Test/en.expected-dropns-classic-withsecondary Test/en.actual
+
+update-monodocer-dropns-unified: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-unified.dll
 	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --dropns=MyFramework
+
+update-monodocer-dropns-unified-withsecondary: $(PROGRAM)
+	$(MAKE) Test/DocTest-DropNS-unified.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll Test/DocTest-DropNS-classic-secondary.dll --dropns=MyFramework
+
+update-monodocer-dropns-classic-secondary: $(PROGRAM)
+	$(MAKE) Test/DocTest-DropNS-classic-secondary.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-secondary.dll
 		
 
 check-monodocer-update: $(PROGRAM)
