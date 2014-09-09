@@ -494,15 +494,11 @@ Directory Roadmap
 
   * `dis/` - CIL executable Disassembler
 
-  * `cli/` - Common code for the JIT and the interpreter.
-
   * `io-layer/` - The I/O layer and system abstraction for 
 emulating the .NET IO model.
 
   * `cil/` - Common Intermediate Representation, XML
 definition of the CIL bytecodes.
-
- * `interp/` - Interpreter for CLI executables (obsolete).
 
  * `arch/` - Architecture specific portions.
 
