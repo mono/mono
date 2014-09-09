@@ -108,6 +108,7 @@ namespace System
 			"H:m",
 			"H tt", // Specifies AM to disallow '8'.
 			"H'\u6642'm'\u5206's'\u79D2'",
+			"zzz"
 		};
 
 		// DateTime.Parse date patterns extend ParseExact patterns as follows:
