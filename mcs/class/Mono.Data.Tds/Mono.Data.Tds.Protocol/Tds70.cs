@@ -547,7 +547,6 @@ namespace Mono.Data.Tds.Protocol
 				 */
 				if (param.Value == null || param.Value == DBNull.Value)
 					size = 0;
-				}
 			}
 
 			// Change colType according to the following table
