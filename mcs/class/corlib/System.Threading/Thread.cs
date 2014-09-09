@@ -585,13 +585,19 @@ namespace System.Threading {
 			}
 		}
 
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private extern static void SetPriority_internal(InternalThread thread, ThreadPriority priority);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private extern static ThreadPriority GetPriority_internal(InternalThread thread);
+
 		public ThreadPriority Priority {
 			get {
-				return(ThreadPriority.Lowest);
+                return GetPriority_internal(Internal);
 			}
 			
 			set {
-				// FIXME: Implement setter.
+                SetPriority_internal(Internal, value);
 			}
 		}
 
