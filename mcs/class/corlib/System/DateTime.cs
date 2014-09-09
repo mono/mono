@@ -107,8 +107,7 @@ namespace System
 			"H:mzzz",
 			"H:m",
 			"H tt", // Specifies AM to disallow '8'.
-			"H'\u6642'm'\u5206's'\u79D2'",
-			"zzz"
+			"H'\u6642'm'\u5206's'\u79D2'"
 		};
 
 		// DateTime.Parse date patterns extend ParseExact patterns as follows:
@@ -886,6 +885,9 @@ namespace System
 					if (_DoParse (s, firstPart, ParseTimeFormats [j], false, out result, out dto, dfi, styles, true, ref incompleteFormat, ref longYear))
 						return true;
 				}
+
+				if (_DoParse (s, firstPart, "zzz", false, out result, out dto, dfi, styles, true, ref incompleteFormat, ref longYear))
+					return true;
 			}
 
 			//
