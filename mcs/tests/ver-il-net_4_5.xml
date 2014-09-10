@@ -475,255 +475,255 @@
       </method>
     </type>
     <type name="AssertDynamicObject">
-      <method name="System.Object &lt;BindGetIndex&gt;m__0(System.Object, System.Dynamic.DynamicMetaObject)" attrs="145">
+      <method name="System.Object &lt;BindGetIndex&gt;m__0(System.Dynamic.DynamicMetaObject)" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.Object &lt;BindInvoke&gt;m__1(System.Object, System.Dynamic.DynamicMetaObject)" attrs="145">
+      <method name="System.Object &lt;BindInvoke&gt;m__1(System.Dynamic.DynamicMetaObject)" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.Object &lt;BindInvokeMember&gt;m__2(System.Object, System.Dynamic.DynamicMetaObject)" attrs="145">
+      <method name="System.Object &lt;BindInvokeMember&gt;m__2(System.Dynamic.DynamicMetaObject)" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.Object &lt;BindSetIndex&gt;m__3(System.Object, System.Dynamic.DynamicMetaObject)" attrs="145">
+      <method name="System.Object &lt;BindSetIndex&gt;m__3(System.Dynamic.DynamicMetaObject)" attrs="145">
         <size>14</size>
       </method>
     </type>
     <type name="Tester">
-      <method name="Void &lt;BinaryAdd_1&gt;m__0(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAdd_1&gt;m__0(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>73</size>
       </method>
-      <method name="Void &lt;BinaryAdd_2&gt;m__1(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAdd_2&gt;m__1(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>68</size>
       </method>
-      <method name="Void &lt;BinaryAdd_3&gt;m__2(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAdd_3&gt;m__2(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>73</size>
       </method>
-      <method name="Void &lt;BinaryAdd_4&gt;m__3(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAdd_4&gt;m__3(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>73</size>
       </method>
-      <method name="Void &lt;BinaryAddChecked_1&gt;m__4(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAddChecked_1&gt;m__4(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>73</size>
       </method>
-      <method name="Void &lt;BinaryAddChecked_2&gt;m__5(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAddChecked_2&gt;m__5(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>73</size>
       </method>
-      <method name="Void &lt;BinaryAddAssign_1&gt;m__6(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAddAssign_1&gt;m__6(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryAddAssignChecked_1&gt;m__7(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAddAssignChecked_1&gt;m__7(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryAnd_1&gt;m__8(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAnd_1&gt;m__8(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>73</size>
       </method>
-      <method name="Void &lt;BinaryAndAssign_1&gt;m__9(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryAndAssign_1&gt;m__9(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryDivide_1&gt;m__A(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryDivide_1&gt;m__A(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryDivideAssign_1&gt;m__B(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryDivideAssign_1&gt;m__B(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryEqual_1&gt;m__C(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryEqual_1&gt;m__C(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryExclusiveOr_1&gt;m__D(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryExclusiveOr_1&gt;m__D(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryExclusiveOrAssign_1&gt;m__E(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryExclusiveOrAssign_1&gt;m__E(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryGreaterThan_1&gt;m__F(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryGreaterThan_1&gt;m__F(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryGreaterThanOrEqual_1&gt;m__10(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryGreaterThanOrEqual_1&gt;m__10(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryLeftShift_1&gt;m__11(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryLeftShift_1&gt;m__11(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryLeftShiftAssign_1&gt;m__12(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryLeftShiftAssign_1&gt;m__12(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryLessThan_1&gt;m__13(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryLessThan_1&gt;m__13(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryLessThanOrEqual_1&gt;m__14(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryLessThanOrEqual_1&gt;m__14(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryModulo_1&gt;m__15(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryModulo_1&gt;m__15(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryModuloAssign_1&gt;m__16(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryModuloAssign_1&gt;m__16(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryMultiply_1&gt;m__17(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryMultiply_1&gt;m__17(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryMultiplyAssign_1&gt;m__18(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryMultiplyAssign_1&gt;m__18(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryNotEqual_1&gt;m__19(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryNotEqual_1&gt;m__19(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryOr_1&gt;m__1A(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryOr_1&gt;m__1A(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryOrAssign_1&gt;m__1B(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryOrAssign_1&gt;m__1B(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryRightShift_1&gt;m__1C(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryRightShift_1&gt;m__1C(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinaryRightShiftAssign_1&gt;m__1D(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinaryRightShiftAssign_1&gt;m__1D(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinarySubtract_1&gt;m__1E(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinarySubtract_1&gt;m__1E(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;BinarySubtractAssign_1&gt;m__1F(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;BinarySubtractAssign_1&gt;m__1F(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="System.Object &lt;Convert_1&gt;m__20(System.Object, System.Dynamic.ConvertBinder)" attrs="145">
+      <method name="System.Object &lt;Convert_1&gt;m__20(System.Dynamic.ConvertBinder)" attrs="145">
         <size>58</size>
       </method>
-      <method name="System.Object &lt;Convert_2&gt;m__21(System.Object, System.Dynamic.ConvertBinder)" attrs="145">
+      <method name="System.Object &lt;Convert_2&gt;m__21(System.Dynamic.ConvertBinder)" attrs="145">
         <size>58</size>
       </method>
-      <method name="System.Object &lt;Convert_3&gt;m__22(System.Object, System.Dynamic.ConvertBinder)" attrs="145">
+      <method name="System.Object &lt;Convert_3&gt;m__22(System.Dynamic.ConvertBinder)" attrs="145">
         <size>58</size>
       </method>
-      <method name="System.Object &lt;Convert_4&gt;m__23(System.Object, System.Dynamic.ConvertBinder)" attrs="145">
+      <method name="System.Object &lt;Convert_4&gt;m__23(System.Dynamic.ConvertBinder)" attrs="145">
         <size>58</size>
       </method>
-      <method name="System.Object &lt;Convert_5&gt;m__24(System.Object, System.Dynamic.ConvertBinder)" attrs="145">
+      <method name="System.Object &lt;Convert_5&gt;m__24(System.Dynamic.ConvertBinder)" attrs="145">
         <size>67</size>
       </method>
-      <method name="Void &lt;GetIndex_1&gt;m__25(System.Object, System.Dynamic.GetIndexBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;GetIndex_1&gt;m__25(System.Dynamic.GetIndexBinder, System.Object[])" attrs="145">
         <size>93</size>
       </method>
-      <method name="Void &lt;GetIndex_2&gt;m__26(System.Object, System.Dynamic.GetIndexBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;GetIndex_2&gt;m__26(System.Dynamic.GetIndexBinder, System.Object[])" attrs="145">
         <size>112</size>
       </method>
-      <method name="System.Object &lt;GetMember_1&gt;m__27(System.Object, System.Dynamic.GetMemberBinder)" attrs="145">
+      <method name="System.Object &lt;GetMember_1&gt;m__27(System.Dynamic.GetMemberBinder)" attrs="145">
         <size>75</size>
       </method>
-      <method name="Void &lt;Invoke_1&gt;m__28(System.Object, System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;Invoke_1&gt;m__28(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
         <size>102</size>
       </method>
-      <method name="Void &lt;Invoke_2&gt;m__29(System.Object, System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;Invoke_2&gt;m__29(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
         <size>74</size>
       </method>
-      <method name="Void &lt;Invoke_4&gt;m__2A(System.Object, System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;Invoke_4&gt;m__2A(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
         <size>128</size>
       </method>
-      <method name="Void &lt;Invoke_5&gt;m__2B(System.Object, System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;Invoke_5&gt;m__2B(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
         <size>92</size>
       </method>
-      <method name="Void &lt;Invoke_5&gt;m__2C(System.Object, System.Object)" attrs="145">
+      <method name="Void &lt;Invoke_5&gt;m__2C(System.Object)" attrs="145">
         <size>94</size>
       </method>
-      <method name="Void &lt;Invoke_6&gt;m__2D(System.Object, System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;Invoke_6&gt;m__2D(System.Dynamic.InvokeBinder, System.Object[])" attrs="145">
         <size>93</size>
       </method>
-      <method name="Void &lt;InvokeMember_1&gt;m__2E(System.Object, System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;InvokeMember_1&gt;m__2E(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
         <size>111</size>
       </method>
-      <method name="Void &lt;InvokeMember_3&gt;m__2F(System.Object, System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;InvokeMember_3&gt;m__2F(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
         <size>112</size>
       </method>
-      <method name="Void &lt;InvokeMember_4&gt;m__30(System.Object, System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;InvokeMember_4&gt;m__30(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
         <size>111</size>
       </method>
-      <method name="Void &lt;InvokeMember_7&gt;m__31(System.Object, System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;InvokeMember_7&gt;m__31(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
         <size>91</size>
       </method>
-      <method name="Void &lt;InvokeMember_8&gt;m__32(System.Object, System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
+      <method name="Void &lt;InvokeMember_8&gt;m__32(System.Dynamic.InvokeMemberBinder, System.Object[])" attrs="145">
         <size>112</size>
       </method>
-      <method name="Void &lt;SetIndex_1&gt;m__33(System.Object, System.Dynamic.SetIndexBinder, System.Object[], System.Object)" attrs="145">
+      <method name="Void &lt;SetIndex_1&gt;m__33(System.Dynamic.SetIndexBinder, System.Object[], System.Object)" attrs="145">
         <size>125</size>
       </method>
-      <method name="Void &lt;SetIndex_2&gt;m__34(System.Object, System.Dynamic.SetIndexBinder, System.Object[], System.Object)" attrs="145">
+      <method name="Void &lt;SetIndex_2&gt;m__34(System.Dynamic.SetIndexBinder, System.Object[], System.Object)" attrs="145">
         <size>140</size>
       </method>
-      <method name="Void &lt;SetMember_1&gt;m__35(System.Object, System.Dynamic.SetMemberBinder, System.Object)" attrs="145">
+      <method name="Void &lt;SetMember_1&gt;m__35(System.Dynamic.SetMemberBinder, System.Object)" attrs="145">
         <size>102</size>
       </method>
-      <method name="Void &lt;SetMember_2&gt;m__36(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;SetMember_2&gt;m__36(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>69</size>
       </method>
-      <method name="Void &lt;SetMember_2&gt;m__37(System.Object, System.Dynamic.SetMemberBinder, System.Object)" attrs="145">
+      <method name="Void &lt;SetMember_2&gt;m__37(System.Dynamic.SetMemberBinder, System.Object)" attrs="145">
         <size>77</size>
       </method>
-      <method name="System.Object &lt;UnaryPlus_1&gt;m__38(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryPlus_1&gt;m__38(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>55</size>
       </method>
-      <method name="System.Object &lt;UnaryMinus_1&gt;m__39(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryMinus_1&gt;m__39(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>55</size>
       </method>
-      <method name="System.Object &lt;UnaryNot_1&gt;m__3A(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryNot_1&gt;m__3A(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>55</size>
       </method>
-      <method name="System.Object &lt;UnaryOnesComplement_1&gt;m__3B(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryOnesComplement_1&gt;m__3B(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>55</size>
       </method>
-      <method name="System.Object &lt;UnaryDecrement_1&gt;m__3C(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryDecrement_1&gt;m__3C(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>55</size>
       </method>
-      <method name="System.Object &lt;UnaryDecrement_2&gt;m__3D(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryDecrement_2&gt;m__3D(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>59</size>
       </method>
-      <method name="System.Object &lt;UnaryIncrement_1&gt;m__3E(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryIncrement_1&gt;m__3E(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>55</size>
       </method>
-      <method name="System.Object &lt;UnaryIncrement_2&gt;m__3F(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryIncrement_2&gt;m__3F(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>59</size>
       </method>
-      <method name="System.Object &lt;UnaryIsFalse_1&gt;m__40(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryIsFalse_1&gt;m__40(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>60</size>
       </method>
-      <method name="Void &lt;UnaryIsFalse_1&gt;m__41(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;UnaryIsFalse_1&gt;m__41(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>69</size>
       </method>
-      <method name="System.Object &lt;UnaryIsFalse_2&gt;m__42(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryIsFalse_2&gt;m__42(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>60</size>
       </method>
-      <method name="Void &lt;UnaryIsFalse_2&gt;m__43(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;UnaryIsFalse_2&gt;m__43(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>69</size>
       </method>
-      <method name="System.Object &lt;UnaryIsFalse_3&gt;m__44(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryIsFalse_3&gt;m__44(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>60</size>
       </method>
-      <method name="Void &lt;UnaryIsFalse_3&gt;m__45(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;UnaryIsFalse_3&gt;m__45(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>68</size>
       </method>
-      <method name="System.Object &lt;UnaryIsTrue_1&gt;m__46(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryIsTrue_1&gt;m__46(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>60</size>
       </method>
-      <method name="System.Object &lt;UnaryIsTrue_2&gt;m__47(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryIsTrue_2&gt;m__47(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>60</size>
       </method>
-      <method name="Void &lt;UnaryIsTrue_2&gt;m__48(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;UnaryIsTrue_2&gt;m__48(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>69</size>
       </method>
-      <method name="System.Object &lt;UnaryIsTrue_3&gt;m__49(System.Object, System.Dynamic.UnaryOperationBinder)" attrs="145">
+      <method name="System.Object &lt;UnaryIsTrue_3&gt;m__49(System.Dynamic.UnaryOperationBinder)" attrs="145">
         <size>60</size>
       </method>
-      <method name="Void &lt;UnaryIsTrue_3&gt;m__4A(System.Object, System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
+      <method name="Void &lt;UnaryIsTrue_3&gt;m__4A(System.Dynamic.BinaryOperationBinder, System.Object)" attrs="145">
         <size>74</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__4B(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__4B(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__4C(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__4C(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__4D(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__4D(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__4E(System.Object, Boolean)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__4E(Boolean)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -1369,19 +1369,19 @@
       <method name="Void IsTest()" attrs="129">
         <size>69</size>
       </method>
-      <method name="Void &lt;SubtractAssignEvent&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;SubtractAssignEvent&gt;m__0()" attrs="145">
         <size>12</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__1(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__1(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__2(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__2(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__4(System.Object, Boolean)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__4(Boolean)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -1591,31 +1591,31 @@
       </method>
     </type>
     <type name="Tester">
-      <method name="Int32 &lt;InvokeTest&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="Int32 &lt;InvokeTest&gt;m__0(System.String)" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void &lt;InvokeMember_Error&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;InvokeMember_Error&gt;m__1()" attrs="145">
         <size>112</size>
       </method>
-      <method name="Void &lt;InvokeConstructor&gt;m__2(System.Object, System.Decimal)" attrs="145">
+      <method name="Void &lt;InvokeConstructor&gt;m__2(System.Decimal)" attrs="145">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;IsEvent&gt;m__3(System.Object)" attrs="145">
+      <method name="Int32 &lt;IsEvent&gt;m__3()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;IsEvent&gt;m__4(System.Object)" attrs="145">
+      <method name="Int32 &lt;IsEvent&gt;m__4()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__5(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__5(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__6(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__6(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__7(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__7(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__8(System.Object, Boolean)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__8(Boolean)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -1901,7 +1901,7 @@
       </method>
     </type>
     <type name="DynamicAssignments">
-      <method name="System.Object &lt;Main&gt;m__0(System.Object, System.Object)" attrs="145">
+      <method name="System.Object &lt;Main&gt;m__0(System.Object)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -2085,7 +2085,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -2656,13 +2656,13 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>11</size>
       </method>
-      <method name="Void &lt;Main&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__1()" attrs="145">
         <size>11</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2(System.Object, Int32 ByRef)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2(Int32 ByRef)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -2691,7 +2691,7 @@
       </method>
     </type>
     <type name="C`1[T]">
-      <method name="Int32 &lt;E&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;E&gt;m__0(Int32)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -2890,10 +2890,10 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Test`1&gt;m__0[T](System.Object, T)" attrs="145">
+      <method name="Void &lt;Test`1&gt;m__0[T](T)" attrs="145">
         <size>103</size>
       </method>
-      <method name="Void &lt;Test3`1&gt;m__1[T](System.Object, T)" attrs="145">
+      <method name="Void &lt;Test3`1&gt;m__1[T](T)" attrs="145">
         <size>105</size>
       </method>
     </type>
@@ -2982,7 +2982,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="System.Object &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Object &lt;Main&gt;m__0()" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -3145,25 +3145,25 @@
       </method>
     </type>
     <type name="Tester">
-      <method name="Void &lt;NonInvocable&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;NonInvocable&gt;m__0()" attrs="145">
         <size>86</size>
       </method>
-      <method name="Void &lt;Using_1&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;Using_1&gt;m__1()" attrs="145">
         <size>92</size>
       </method>
-      <method name="Void &lt;NullableConversion&gt;m__2(System.Object)" attrs="145">
+      <method name="Void &lt;NullableConversion&gt;m__2()" attrs="145">
         <size>106</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__4(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__4(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__5(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__5(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__6(System.Object, Boolean)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__6(Boolean)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -5067,7 +5067,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="System.String &lt;Main&gt;m__0(System.Object, Double)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(Double)" attrs="145">
         <size>25</size>
       </method>
     </type>
@@ -6538,7 +6538,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="Double &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Double &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>21</size>
       </method>
     </type>
@@ -6710,7 +6710,7 @@
       </method>
     </type>
     <type name="MyTest">
-      <method name="System.String &lt;Main&gt;m__0(System.Object, Double)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(Double)" attrs="145">
         <size>25</size>
       </method>
     </type>
@@ -7629,10 +7629,10 @@
       </method>
     </type>
     <type name="B">
-      <method name="Int32 &lt;M`1&gt;m__0[X](System.Object, X)" attrs="145">
+      <method name="Int32 &lt;M`1&gt;m__0[X](X)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;N&gt;m__1(System.Object, Int64)" attrs="145">
+      <method name="Int32 &lt;N&gt;m__1(Int64)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -7757,7 +7757,7 @@
       <method name="U apply[T,U](T, Mapping`2)" attrs="145">
         <size>16</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>22</size>
       </method>
     </type>
@@ -8409,7 +8409,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>20</size>
       </method>
     </type>
@@ -11223,7 +11223,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -11679,7 +11679,7 @@
       </method>
     </type>
     <type name="TestClass">
-      <method name="Void &lt;a&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;a&gt;m__0(Int32)" attrs="145">
         <size>8</size>
       </method>
     </type>
@@ -13396,10 +13396,10 @@
       </method>
     </type>
     <type name="Thing">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__1()" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -14065,7 +14065,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Boolean &lt;GetMethodGroup&gt;m__0(System.Object)" attrs="145">
+      <method name="Boolean &lt;GetMethodGroup&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -14328,7 +14328,7 @@
       </method>
     </type>
     <type name="C`2[A,B]">
-      <method name="B &lt;C&gt;m__0(System.Object, B)" attrs="145">
+      <method name="B &lt;C&gt;m__0(B)" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -14462,7 +14462,7 @@
       </method>
     </type>
     <type name="ConditionalParsing">
-      <method name="Int32 &lt;Test_12&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;Test_12&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -14500,13 +14500,13 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Maybe`1[System.String] &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="Maybe`1[System.String] &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>14</size>
       </method>
-      <method name="Maybe`1[System.String] &lt;Main&gt;m__1(System.Object, System.String)" attrs="145">
+      <method name="Maybe`1[System.String] &lt;Main&gt;m__1(System.String)" attrs="145">
         <size>14</size>
       </method>
-      <method name="Maybe`1[System.String] &lt;Main&gt;m__2(System.Object, System.String)" attrs="145">
+      <method name="Maybe`1[System.String] &lt;Main&gt;m__2(System.String)" attrs="145">
         <size>18</size>
       </method>
     </type>
@@ -18679,7 +18679,7 @@
       </method>
     </type>
     <type name="Combinator">
-      <method name="System.Tuple`2[System.Int32,System.Int32] &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="System.Tuple`2[System.Int32,System.Int32] &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -19942,10 +19942,10 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, &lt;&gt;__AnonType0`2[System.String,System.Reflection.PropertyInfo])" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(&lt;&gt;__AnonType0`2[System.String,System.Reflection.PropertyInfo])" attrs="145">
         <size>21</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__1(System.Object, &lt;&gt;__AnonType0`2[System.String,System.Reflection.PropertyInfo])" attrs="145">
+      <method name="System.String &lt;Main&gt;m__1(&lt;&gt;__AnonType0`2[System.String,System.Reflection.PropertyInfo])" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -20282,17 +20282,17 @@
       <method name="Void Main()" attrs="150">
         <size>2</size>
       </method>
+      <method name="System.String &lt;Test&gt;m__0(System.String)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="System.String &lt;Test&gt;m__1(System.String)" attrs="145">
+        <size>13</size>
+      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
         <size>69</size>
-      </method>
-      <method name="System.String &lt;Test&gt;m__0(System.Object, System.String)" attrs="145">
-        <size>13</size>
-      </method>
-      <method name="System.String &lt;Test&gt;m__1(System.Object, System.String)" attrs="145">
-        <size>13</size>
       </method>
     </type>
   </test>
@@ -21500,34 +21500,34 @@
       <method name="Void EqualTest_16()" attrs="129">
         <size>185</size>
       </method>
-      <method name="Void &lt;EqualTestDelegate_2&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;EqualTestDelegate_2&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;EqualTestDelegate_2&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;EqualTestDelegate_2&gt;m__1()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;EqualTestDelegate_2&gt;m__2(System.Object)" attrs="145">
+      <method name="Void &lt;EqualTestDelegate_2&gt;m__2()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;EqualTestDelegate_2&gt;m__3(System.Object)" attrs="145">
+      <method name="Void &lt;EqualTestDelegate_2&gt;m__3()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;EqualTestDelegate_2&gt;m__4(System.Object)" attrs="145">
+      <method name="Void &lt;EqualTestDelegate_2&gt;m__4()" attrs="145">
         <size>2</size>
       </method>
-      <method name="System.String &lt;InvokeTest_2&gt;m__5(System.Object, Int32)" attrs="145">
+      <method name="System.String &lt;InvokeTest_2&gt;m__5(Int32)" attrs="145">
         <size>25</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__6(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__6(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__7(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__7(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__8(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__8(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__9(System.Object, Boolean)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__9(Boolean)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -22070,7 +22070,7 @@
       </method>
     </type>
     <type name="NotifyingPropertyTest">
-      <method name="System.Object &lt;CreateDependent_DependentsNull&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Object &lt;CreateDependent_DependentsNull&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -23029,7 +23029,7 @@
       <method name="Void Method[T](System.Collections.Generic.IEnumerable`1[T], System.Func`2[T,System.Boolean])" attrs="145">
         <size>2</size>
       </method>
-      <method name="Boolean &lt;Test`1&gt;m__0[U](System.Object, System.String)" attrs="145">
+      <method name="Boolean &lt;Test`1&gt;m__0[U](System.String)" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -23789,7 +23789,7 @@
       <method name="Void Main()" attrs="150">
         <size>68</size>
       </method>
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -24108,7 +24108,7 @@
       </method>
     </type>
     <type name="Mono.Rocks.Test">
-      <method name="System.Nullable`1[System.Collections.Generic.KeyValuePair`2[System.Int32,System.Int32]] &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="System.Nullable`1[System.Collections.Generic.KeyValuePair`2[System.Int32,System.Int32]] &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>37</size>
       </method>
     </type>
@@ -25345,7 +25345,7 @@
       <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
         <size>14</size>
       </method>
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -25732,7 +25732,7 @@
       </method>
     </type>
     <type name="MyTest">
-      <method name="System.String &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>22</size>
       </method>
     </type>
@@ -25787,13 +25787,13 @@
       </method>
     </type>
     <type name="X">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>12</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>11</size>
       </method>
-      <method name="Void &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -25846,7 +25846,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="System.String &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>19</size>
       </method>
     </type>
@@ -25880,7 +25880,7 @@
       </method>
     </type>
     <type name="Demo">
-      <method name="System.TimeSpan &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="System.TimeSpan &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -25914,10 +25914,10 @@
       </method>
     </type>
     <type name="Demo">
-      <method name="System.TimeSpan &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="System.TimeSpan &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>14</size>
       </method>
-      <method name="Double &lt;Main&gt;m__1(System.Object, System.TimeSpan)" attrs="145">
+      <method name="Double &lt;Main&gt;m__1(System.TimeSpan)" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -26011,10 +26011,10 @@
       </method>
     </type>
     <type name="C">
-      <method name="System.String &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>38</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>38</size>
       </method>
     </type>
@@ -26122,7 +26122,7 @@
       </method>
     </type>
     <type name="TestClass">
-      <method name="Void &lt;Main&gt;m__0(System.Object, F)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(F)" attrs="145">
         <size>31</size>
       </method>
     </type>
@@ -26181,22 +26181,22 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__1()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__2(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__2()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__3(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__3()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__4(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__4()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__5(System.Object, Boolean)" attrs="145">
+      <method name="Void &lt;Main&gt;m__5(Boolean)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -26212,25 +26212,25 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>12</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>12</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>11</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>12</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__4(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__4(Int32)" attrs="145">
         <size>11</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__5(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__5(Int32)" attrs="145">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__6(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__6(Int32)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -26286,13 +26286,13 @@
       </method>
     </type>
     <type name="C">
-      <method name="System.String &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__1(System.Object)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__1()" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__2(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__2(System.String)" attrs="145">
         <size>13</size>
       </method>
     </type>
@@ -26456,18 +26456,18 @@
       </method>
     </type>
     <type name="TestUnary">
-      <method name="Void &lt;Bar&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;Bar&gt;m__0(Int32)" attrs="145">
         <size>6</size>
       </method>
     </type>
     <type name="Program">
-      <method name="System.String &lt;Bar&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Bar&gt;m__0(System.String)" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__1(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__1(System.String)" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void &lt;Main&gt;m__2(System.Object, System.String)" attrs="145">
+      <method name="Void &lt;Main&gt;m__2(System.String)" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -26483,7 +26483,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="T &lt;Foo`1&gt;m__0[T](System.Object, T)" attrs="145">
+      <method name="T &lt;Foo`1&gt;m__0[T](T)" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -26514,7 +26514,7 @@
       </method>
     </type>
     <type name="Repro">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -26640,7 +26640,7 @@
       </method>
     </type>
     <type name="Z">
-      <method name="Void &lt;Z&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Z&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -26662,13 +26662,13 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="System.String &lt;Bar&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Bar&gt;m__0(System.String)" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__1(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__1(System.String)" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void &lt;Main&gt;m__2(System.Object, System.String)" attrs="145">
+      <method name="Void &lt;Main&gt;m__2(System.String)" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -26716,18 +26716,18 @@
       </method>
     </type>
     <type name="MainClass">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Product)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Product)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Product &lt;Main&gt;m__1(System.Object, Product)" attrs="145">
+      <method name="Product &lt;Main&gt;m__1(Product)" attrs="145">
         <size>10</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[System.Linq.IGrouping`2[System.Int32,Product],System.Collections.Generic.IEnumerable`1[Product]] &lt;Main&gt;m__2(System.Object, System.Linq.IGrouping`2[System.Int32,Product])" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Linq.IGrouping`2[System.Int32,Product],System.Collections.Generic.IEnumerable`1[Product]] &lt;Main&gt;m__2(System.Linq.IGrouping`2[System.Int32,Product])" attrs="145">
         <size>56</size>
       </method>
     </type>
     <type name="MainClass+&lt;Main&gt;c__AnonStorey0">
-      <method name="System.Decimal &lt;&gt;m__1(System.Object, Product)" attrs="145">
+      <method name="System.Decimal &lt;&gt;m__1(Product)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -26743,7 +26743,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>20</size>
       </method>
     </type>
@@ -26778,7 +26778,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="System.String &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__2()" attrs="145">
         <size>13</size>
       </method>
     </type>
@@ -26800,7 +26800,7 @@
       </method>
     </type>
     <type name="MonoBugs.Program">
-      <method name="Void &lt;Main&gt;m__0(System.Object, MonoBugs.Foo`1[System.Int32])" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(MonoBugs.Foo`1[System.Int32])" attrs="145">
         <size>13</size>
       </method>
     </type>
@@ -26816,7 +26816,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -26835,10 +26835,10 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="System.String[] &lt;Main&gt;m__0(System.Object, IB)" attrs="145">
+      <method name="System.String[] &lt;Main&gt;m__0(IB)" attrs="145">
         <size>14</size>
       </method>
-      <method name="IA`1[System.String][] &lt;Main&gt;m__1(System.Object, IB)" attrs="145">
+      <method name="IA`1[System.String][] &lt;Main&gt;m__1(IB)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -26859,7 +26859,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="G`1[System.Int32][] &lt;Main&gt;m__0(System.Object, G`1[System.Int32][])" attrs="145">
+      <method name="G`1[System.Int32][] &lt;Main&gt;m__0(G`1[System.Int32][])" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -26886,13 +26886,13 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Void &lt;Main&gt;m__0(System.Object, Int32[][])" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(Int32[][])" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__1(System.Object, C`1[System.Int16][])" attrs="145">
+      <method name="Void &lt;Main&gt;m__1(C`1[System.Int16][])" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__2(System.Object, C`1[System.Int16[]][])" attrs="145">
+      <method name="Void &lt;Main&gt;m__2(C`1[System.Int16[]][])" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -26918,7 +26918,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="System.Func`2[T,System.Object] &lt;Method`1&gt;m__0[T](System.Object, System.Object)" attrs="145">
+      <method name="System.Func`2[T,System.Object] &lt;Method`1&gt;m__0[T](System.Object)" attrs="145">
         <size>33</size>
       </method>
     </type>
@@ -26944,7 +26944,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Byte &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Byte &lt;Main&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
     </type>
@@ -27182,183 +27182,183 @@
       </method>
     </type>
     <type name="from.C">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="System.Nullable`1[System.Boolean] &lt;Main&gt;m__2(System.Object, System.Nullable`1[System.Boolean])" attrs="145">
+      <method name="System.Nullable`1[System.Boolean] &lt;Main&gt;m__2(System.Nullable`1[System.Boolean])" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__3(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__4(System.Object, Int32, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__4(Int32, Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__5(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__5(Int32)" attrs="145">
         <size>18</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__6(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__6(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__7(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__7(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__8(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__8(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__9(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__9(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__A(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__A(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__B(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__B(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__C(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__C(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__D(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__D(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__E(System.Object, from.ITest)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__E(from.ITest)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__F(System.Object, Int32, from.ITest)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__F(Int32, from.ITest)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__10(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__10(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__11(System.Object, from.ITest)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__11(from.ITest)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__12(System.Object, Int32, from.ITest)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__12(Int32, from.ITest)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__13(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__13(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__14(System.Object, from.ITest)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__14(from.ITest)" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,from.ITest] &lt;Main&gt;m__15(System.Object, Int32, from.ITest)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,from.ITest] &lt;Main&gt;m__15(Int32, from.ITest)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__16(System.Object, &lt;&gt;__AnonType0`2[System.Int32,from.ITest])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__16(&lt;&gt;__AnonType0`2[System.Int32,from.ITest])" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__17(System.Object, from.ITest)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__17(from.ITest)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__18(System.Object, &lt;&gt;__AnonType0`2[System.Int32,from.ITest], from.ITest)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__18(&lt;&gt;__AnonType0`2[System.Int32,from.ITest], from.ITest)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__19(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__19(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1A(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1A(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1B(System.Object, Int32, System.Collections.Generic.IEnumerable`1[System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1B(Int32, System.Collections.Generic.IEnumerable`1[System.Int32])" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1C(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1C(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1D(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1D(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1E(System.Object, Int32, System.Collections.Generic.IEnumerable`1[System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1E(Int32, System.Collections.Generic.IEnumerable`1[System.Int32])" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1F(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1F(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__20(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__20(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__21(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__21(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__22(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__22(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="System.Linq.IGrouping`2[System.Int32,System.Int32] &lt;Main&gt;m__23(System.Object, System.Linq.IGrouping`2[System.Int32,System.Int32])" attrs="145">
+      <method name="System.Linq.IGrouping`2[System.Int32,System.Int32] &lt;Main&gt;m__23(System.Linq.IGrouping`2[System.Int32,System.Int32])" attrs="145">
         <size>10</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__24(System.Object, Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__24(Int32)" attrs="145">
         <size>18</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__25(System.Object, &lt;&gt;__AnonType1`2[System.Int32,System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__25(&lt;&gt;__AnonType1`2[System.Int32,System.Int32])" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__26(System.Object, Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__26(Int32)" attrs="145">
         <size>18</size>
       </method>
-      <method name="&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__27(System.Object, &lt;&gt;__AnonType1`2[System.Int32,System.Int32])" attrs="145">
+      <method name="&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__27(&lt;&gt;__AnonType1`2[System.Int32,System.Int32])" attrs="145">
         <size>23</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__28(System.Object, &lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__28(&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>20</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__29(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__29(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2A(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2A(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__2B(System.Object, System.Linq.IGrouping`2[System.Int32,System.Int32], Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__2B(System.Linq.IGrouping`2[System.Int32,System.Int32], Int32)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2C(System.Object, &lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2C(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2D(System.Object, &lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2D(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__2E(System.Object, System.Linq.IGrouping`2[System.Int32,System.Int32], Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__2E(System.Linq.IGrouping`2[System.Int32,System.Int32], Int32)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2F(System.Object, &lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2F(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__30(System.Object, &lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__30(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__31(System.Object, System.Linq.IGrouping`2[System.Int32,System.Int32], Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__31(System.Linq.IGrouping`2[System.Int32,System.Int32], Int32)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__32(System.Object, &lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__32(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__33(System.Object, &lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__33(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>15</size>
       </method>
-      <method name="System.Linq.IGrouping`2[System.Int32,System.Int32] &lt;Main&gt;m__34(System.Object, System.Linq.IGrouping`2[System.Int32,System.Int32])" attrs="145">
+      <method name="System.Linq.IGrouping`2[System.Int32,System.Int32] &lt;Main&gt;m__34(System.Linq.IGrouping`2[System.Int32,System.Int32])" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__35(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__35(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__36(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__36(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__37(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__37(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="&lt;&gt;__AnonType4`2[&lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]],System.Int32] &lt;Main&gt;m__38(System.Object, &lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]])" attrs="145">
+      <method name="&lt;&gt;__AnonType4`2[&lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]],System.Int32] &lt;Main&gt;m__38(&lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]])" attrs="145">
         <size>17</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__39(System.Object, &lt;&gt;__AnonType4`2[&lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__39(&lt;&gt;__AnonType4`2[&lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]],System.Int32])" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="from.C+&lt;Main&gt;c__AnonStorey0">
-      <method name="Int32 &lt;&gt;m__5(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;&gt;m__5(Int32)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -27371,16 +27371,16 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>11</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__3(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>11</size>
       </method>
     </type>
@@ -27393,13 +27393,13 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>13</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -27412,16 +27412,16 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>12</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>12</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__3(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -27456,55 +27456,55 @@
       </method>
     </type>
     <type name="OrderByTests">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__3(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>12</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__4(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__4(System.String)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__5(System.Object, System.String)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__5(System.String)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__6(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__6(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__7(System.Object, Data)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__7(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__8(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__8(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__9(System.Object, Data)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__9(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__A(System.Object, Data)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__A(Data)" attrs="145">
         <size>19</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__B(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__B(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__C(System.Object, Data)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__C(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__D(System.Object, Data)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__D(Data)" attrs="145">
         <size>19</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__E(System.Object, Data)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__E(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__F(System.Object, Data)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__F(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Data &lt;Main&gt;m__10(System.Object, Data)" attrs="145">
+      <method name="Data &lt;Main&gt;m__10(Data)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -27559,22 +27559,22 @@
       </method>
     </type>
     <type name="Let">
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>18</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, &lt;&gt;__AnonType0`2[System.Int32,System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(&lt;&gt;__AnonType0`2[System.Int32,System.Int32])" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>18</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__3(System.Object, &lt;&gt;__AnonType0`2[System.Int32,System.Int32])" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__3(&lt;&gt;__AnonType0`2[System.Int32,System.Int32])" attrs="145">
         <size>23</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__4(System.Object, &lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__4(&lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>26</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__5(System.Object, &lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__5(&lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -27669,25 +27669,25 @@
       </method>
     </type>
     <type name="SelectMany">
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.String] &lt;Main&gt;m__0(System.Object, Int32, System.String)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.String] &lt;Main&gt;m__0(Int32, System.String)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>13</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.String] &lt;Main&gt;m__2(System.Object, Int32, System.String)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.String] &lt;Main&gt;m__2(Int32, System.String)" attrs="145">
         <size>16</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.String],System.Int32] &lt;Main&gt;m__3(System.Object, &lt;&gt;__AnonType0`2[System.Int32,System.String], Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.String],System.Int32] &lt;Main&gt;m__3(&lt;&gt;__AnonType0`2[System.Int32,System.String], Int32)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__4(System.Object, &lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.String],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__4(&lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.String],System.Int32])" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType2`3[System.Int32,System.Int32,System.Int32] &lt;Main&gt;m__5(System.Object, &lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.String],System.Int32])" attrs="145">
+      <method name="&lt;&gt;__AnonType2`3[System.Int32,System.Int32,System.Int32] &lt;Main&gt;m__5(&lt;&gt;__AnonType1`2[&lt;&gt;__AnonType0`2[System.Int32,System.String],System.Int32])" attrs="145">
         <size>33</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.String] &lt;Main&gt;m__6(System.Object, Int32, System.String)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.String] &lt;Main&gt;m__6(Int32, System.String)" attrs="145">
         <size>16</size>
       </method>
     </type>
@@ -27713,10 +27713,10 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="TestA &lt;Main&gt;m__0(System.Object, TestA)" attrs="145">
+      <method name="TestA &lt;Main&gt;m__0(TestA)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__1(System.Object, TestA)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__1(TestA)" attrs="145">
         <size>25</size>
       </method>
     </type>
@@ -27773,52 +27773,52 @@
       </method>
     </type>
     <type name="Join">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`1[System.String] &lt;Main&gt;m__2(System.Object, Data, Data)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`1[System.String] &lt;Main&gt;m__2(Data, Data)" attrs="145">
         <size>31</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__3(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__3(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__4(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__4(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[Data,Data] &lt;Main&gt;m__5(System.Object, Data, Data)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[Data,Data] &lt;Main&gt;m__5(Data, Data)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__6(System.Object, &lt;&gt;__AnonType1`2[Data,Data])" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__6(&lt;&gt;__AnonType1`2[Data,Data])" attrs="145">
         <size>30</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`1[System.String] &lt;Main&gt;m__7(System.Object, &lt;&gt;__AnonType1`2[Data,Data])" attrs="145">
+      <method name="&lt;&gt;__AnonType0`1[System.String] &lt;Main&gt;m__7(&lt;&gt;__AnonType1`2[Data,Data])" attrs="145">
         <size>41</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__8(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__8(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__9(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__9(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`1[System.String] &lt;Main&gt;m__A(System.Object, Data, Data)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`1[System.String] &lt;Main&gt;m__A(Data, Data)" attrs="145">
         <size>31</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__B(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__B(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__C(System.Object, Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__C(Data)" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[Data,Data] &lt;Main&gt;m__D(System.Object, Data, Data)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[Data,Data] &lt;Main&gt;m__D(Data, Data)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__E(System.Object, &lt;&gt;__AnonType1`2[Data,Data])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__E(&lt;&gt;__AnonType1`2[Data,Data])" attrs="145">
         <size>20</size>
       </method>
-      <method name="Data &lt;Main&gt;m__F(System.Object, &lt;&gt;__AnonType1`2[Data,Data])" attrs="145">
+      <method name="Data &lt;Main&gt;m__F(&lt;&gt;__AnonType1`2[Data,Data])" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -27883,43 +27883,43 @@
       </method>
     </type>
     <type name="GroupJoin">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, DataA)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(DataA)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, DataB)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(DataB)" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]] &lt;Main&gt;m__2(System.Object, DataA, System.Collections.Generic.IEnumerable`1[DataB])" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]] &lt;Main&gt;m__2(DataA, System.Collections.Generic.IEnumerable`1[DataB])" attrs="145">
         <size>16</size>
       </method>
-      <method name="System.Collections.Generic.IEnumerable`1[DataB] &lt;Main&gt;m__3(System.Object, &lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]])" attrs="145">
+      <method name="System.Collections.Generic.IEnumerable`1[DataB] &lt;Main&gt;m__3(&lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]])" attrs="145">
         <size>20</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[System.String,System.String] &lt;Main&gt;m__4(System.Object, &lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]], DataB)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[System.String,System.String] &lt;Main&gt;m__4(&lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]], DataB)" attrs="145">
         <size>47</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__5(System.Object, DataA)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__5(DataA)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__6(System.Object, DataB)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__6(DataB)" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]] &lt;Main&gt;m__7(System.Object, DataA, System.Collections.Generic.IEnumerable`1[DataB])" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]] &lt;Main&gt;m__7(DataA, System.Collections.Generic.IEnumerable`1[DataB])" attrs="145">
         <size>16</size>
       </method>
-      <method name="System.Collections.Generic.IEnumerable`1[DataB] &lt;Main&gt;m__8(System.Object, &lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]])" attrs="145">
+      <method name="System.Collections.Generic.IEnumerable`1[DataB] &lt;Main&gt;m__8(&lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]])" attrs="145">
         <size>20</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[System.String,System.String] &lt;Main&gt;m__9(System.Object, &lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]], DataB)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[System.String,System.String] &lt;Main&gt;m__9(&lt;&gt;__AnonType0`2[DataA,System.Collections.Generic.IEnumerable`1[DataB]], DataB)" attrs="145">
         <size>47</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__A(System.Object, DataA)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__A(DataA)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__B(System.Object, DataB)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__B(DataB)" attrs="145">
         <size>15</size>
       </method>
-      <method name="DataA &lt;Main&gt;m__C(System.Object, DataA, System.Collections.Generic.IEnumerable`1[DataB])" attrs="145">
+      <method name="DataA &lt;Main&gt;m__C(DataA, System.Collections.Generic.IEnumerable`1[DataB])" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -27932,19 +27932,19 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>12</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__4(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__4(Int32)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -28022,37 +28022,37 @@
       </method>
     </type>
     <type name="NestedQuery">
-      <method name="&lt;&gt;__AnonType0`2[System.String,System.Int32] &lt;XX&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.String,System.Int32] &lt;XX&gt;m__0(System.String)" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.Collections.Generic.IEnumerable`1[System.Char] &lt;XX&gt;m__1(System.Object, &lt;&gt;__AnonType0`2[System.String,System.Int32])" attrs="145">
+      <method name="System.Collections.Generic.IEnumerable`1[System.Char] &lt;XX&gt;m__1(&lt;&gt;__AnonType0`2[System.String,System.Int32])" attrs="145">
         <size>117</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__2(System.Object, System.String)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__2(System.String)" attrs="145">
         <size>18</size>
       </method>
-      <method name="System.Collections.Generic.IEnumerable`1[System.Char] &lt;Main&gt;m__3(System.Object, System.String)" attrs="145">
+      <method name="System.Collections.Generic.IEnumerable`1[System.Char] &lt;Main&gt;m__3(System.String)" attrs="145">
         <size>44</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[System.String,System.Int32] &lt;Main&gt;m__4(System.Object, System.String)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.String,System.Int32] &lt;Main&gt;m__4(System.String)" attrs="145">
         <size>21</size>
       </method>
-      <method name="System.Collections.Generic.IEnumerable`1[System.Char] &lt;Main&gt;m__5(System.Object, &lt;&gt;__AnonType0`2[System.String,System.Int32])" attrs="145">
+      <method name="System.Collections.Generic.IEnumerable`1[System.Char] &lt;Main&gt;m__5(&lt;&gt;__AnonType0`2[System.String,System.Int32])" attrs="145">
         <size>118</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[System.Char,System.Int32] &lt;XX&gt;m__6(System.Object, Char)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[System.Char,System.Int32] &lt;XX&gt;m__6(Char)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Char &lt;XX&gt;m__7(System.Object, &lt;&gt;__AnonType1`2[System.Char,System.Int32])" attrs="145">
+      <method name="Char &lt;XX&gt;m__7(&lt;&gt;__AnonType1`2[System.Char,System.Int32])" attrs="145">
         <size>14</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__8(System.Object, Char)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__8(Char)" attrs="145">
         <size>14</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[System.Char,System.Int32] &lt;Main&gt;m__9(System.Object, Char)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[System.Char,System.Int32] &lt;Main&gt;m__9(Char)" attrs="145">
         <size>17</size>
       </method>
-      <method name="Char &lt;Main&gt;m__A(System.Object, &lt;&gt;__AnonType1`2[System.Char,System.Int32])" attrs="145">
+      <method name="Char &lt;Main&gt;m__A(&lt;&gt;__AnonType1`2[System.Char,System.Int32])" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -28096,7 +28096,7 @@
       </method>
     </type>
     <type name="Program">
-      <method name="MethodDefinition &lt;Foo&gt;m__0(System.Object, MethodDefinition)" attrs="145">
+      <method name="MethodDefinition &lt;Foo&gt;m__0(MethodDefinition)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -28192,10 +28192,10 @@
       </method>
     </type>
     <type name="NameCollisionTest.C">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, NameCollisionTest.Data)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(NameCollisionTest.Data)" attrs="145">
         <size>14</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>13</size>
       </method>
     </type>
@@ -28262,17 +28262,17 @@
       </method>
     </type>
     <type name="C">
-      <method name="System.Func`1[System.Collections.Generic.IEnumerable`1[System.Int32]] &lt;Test_2&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="System.Func`1[System.Collections.Generic.IEnumerable`1[System.Int32]] &lt;Test_2&gt;m__0(Int32)" attrs="145">
         <size>33</size>
       </method>
     </type>
     <type name="C+&lt;Test_1&gt;c__AnonStorey0">
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;&gt;m__1(Int32)" attrs="145">
         <size>16</size>
       </method>
     </type>
     <type name="C+&lt;Test_2&gt;c__AnonStorey1">
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;&gt;m__1(Int32)" attrs="145">
         <size>16</size>
       </method>
     </type>
@@ -28285,7 +28285,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -28476,58 +28476,58 @@
       </method>
     </type>
     <type name="C">
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Boolean] &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Boolean] &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>50</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__1(System.Object, &lt;&gt;__AnonType0`2[System.Int32,System.Boolean])" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__1(&lt;&gt;__AnonType0`2[System.Int32,System.Boolean])" attrs="145">
         <size>19</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__2(System.Object, &lt;&gt;__AnonType0`2[System.Int32,System.Boolean])" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__2(&lt;&gt;__AnonType0`2[System.Int32,System.Boolean])" attrs="145">
         <size>39</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>39</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__4(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__4(Int32)" attrs="145">
         <size>39</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__5(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__5(Int32)" attrs="145">
         <size>39</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__6(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__6(Int32)" attrs="145">
         <size>39</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__7(System.Object, Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__7(Int32)" attrs="145">
         <size>18</size>
       </method>
-      <method name="&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__8(System.Object, &lt;&gt;__AnonType1`2[System.Int32,System.Int32])" attrs="145">
+      <method name="&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__8(&lt;&gt;__AnonType1`2[System.Int32,System.Int32])" attrs="145">
         <size>23</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__9(System.Object, &lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__9(&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>39</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__A(System.Object, &lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__A(&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>23</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__B(System.Object, &lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__B(&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])" attrs="145">
         <size>20</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__C(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__C(Int32)" attrs="145">
         <size>39</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__D(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__D(Int32)" attrs="145">
         <size>39</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__E(System.Object, Int32, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__E(Int32, Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__F(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__F(Int32)" attrs="145">
         <size>39</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__10(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__10(Int32)" attrs="145">
         <size>39</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__11(System.Object, Int32, System.Collections.Generic.IEnumerable`1[System.Int32])" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__11(Int32, System.Collections.Generic.IEnumerable`1[System.Int32])" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -28543,7 +28543,7 @@
       <method name="Void .cctor()" attrs="6289">
         <size>28</size>
       </method>
-      <method name="Char &lt;E&gt;m__0(System.Object, Char)" attrs="145">
+      <method name="Char &lt;E&gt;m__0(Char)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -28615,16 +28615,16 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Maybe`1[System.Int32] &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Maybe`1[System.Int32] &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;Main&gt;m__1(System.Object, Int32, Int32)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;Main&gt;m__1(Int32, Int32)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Maybe`1[System.Int32] &lt;Main&gt;m__2(System.Object, &lt;&gt;__AnonType0`2[System.Int32,System.Int32])" attrs="145">
+      <method name="Maybe`1[System.Int32] &lt;Main&gt;m__2(&lt;&gt;__AnonType0`2[System.Int32,System.Int32])" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__3(System.Object, &lt;&gt;__AnonType0`2[System.Int32,System.Int32], Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__3(&lt;&gt;__AnonType0`2[System.Int32,System.Int32], Int32)" attrs="145">
         <size>24</size>
       </method>
     </type>
@@ -28728,13 +28728,13 @@
       <method name="Int32 Main()" attrs="150">
         <size>362</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__0(System.Object, OrderByBugExample.Foo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(OrderByBugExample.Foo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, OrderByBugExample.Foo)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(OrderByBugExample.Foo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2(System.Object, OrderByBugExample.Foo)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2(OrderByBugExample.Foo)" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -28758,7 +28758,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Int32 &lt;Test&gt;m__0(System.Object, A)" attrs="145">
+      <method name="Int32 &lt;Test&gt;m__0(A)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -28832,19 +28832,19 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>162</size>
       </method>
-      <method name="System.Collections.Generic.IEnumerable`1[B] &lt;Main&gt;m__1(System.Object, A)" attrs="145">
+      <method name="System.Collections.Generic.IEnumerable`1[B] &lt;Main&gt;m__1(A)" attrs="145">
         <size>15</size>
       </method>
-      <method name="&lt;&gt;__AnonType0`2[A,B] &lt;Main&gt;m__2(System.Object, A, B)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[A,B] &lt;Main&gt;m__2(A, B)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, &lt;&gt;__AnonType0`2[A,B])" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(&lt;&gt;__AnonType0`2[A,B])" attrs="145">
         <size>75</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[A,B] &lt;Main&gt;m__4(System.Object, &lt;&gt;__AnonType0`2[A,B])" attrs="145">
+      <method name="&lt;&gt;__AnonType1`2[A,B] &lt;Main&gt;m__4(&lt;&gt;__AnonType0`2[A,B])" attrs="145">
         <size>26</size>
       </method>
     </type>
@@ -28875,10 +28875,10 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__0(System.Object, Test.C)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(Test.C)" attrs="145">
         <size>15</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__1(System.Object, Test.C)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__1(Test.C)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -28933,15 +28933,15 @@
       </method>
     </type>
     <type name="C">
-      <method name="System.String &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
-      <method name="&lt;&gt;__AnonType0`2[System.String,System.Boolean] &lt;&gt;m__1(System.Object, System.String)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.String,System.Boolean] &lt;&gt;m__1(System.String)" attrs="145">
         <size>55</size>
       </method>
-      <method name="Boolean &lt;&gt;m__2(System.Object, &lt;&gt;__AnonType0`2[System.String,System.Boolean])" attrs="145">
+      <method name="Boolean &lt;&gt;m__2(&lt;&gt;__AnonType0`2[System.String,System.Boolean])" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -28976,13 +28976,13 @@
       </method>
     </type>
     <type name="C">
-      <method name="&lt;&gt;__AnonType0`2[System.Char,System.Collections.Generic.IEnumerable`1[System.Char]] &lt;Main&gt;m__0(System.Object, Char)" attrs="145">
+      <method name="&lt;&gt;__AnonType0`2[System.Char,System.Collections.Generic.IEnumerable`1[System.Char]] &lt;Main&gt;m__0(Char)" attrs="145">
         <size>54</size>
       </method>
-      <method name="System.Collections.Generic.IEnumerable`1[System.Char] &lt;Main&gt;m__1(System.Object, &lt;&gt;__AnonType0`2[System.Char,System.Collections.Generic.IEnumerable`1[System.Char]])" attrs="145">
+      <method name="System.Collections.Generic.IEnumerable`1[System.Char] &lt;Main&gt;m__1(&lt;&gt;__AnonType0`2[System.Char,System.Collections.Generic.IEnumerable`1[System.Char]])" attrs="145">
         <size>15</size>
       </method>
-      <method name="Char &lt;Main&gt;m__2(System.Object, Char)" attrs="145">
+      <method name="Char &lt;Main&gt;m__2(Char)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -29011,7 +29011,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -29427,7 +29427,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -29503,10 +29503,10 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="IPackage &lt;Main&gt;m__0(System.Object, IPackageRepository)" attrs="145">
+      <method name="IPackage &lt;Main&gt;m__0(IPackageRepository)" attrs="145">
         <size>14</size>
       </method>
-      <method name="IPackage &lt;Main&gt;m__1(System.Object, IPackageRepository)" attrs="145">
+      <method name="IPackage &lt;Main&gt;m__1(IPackageRepository)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -29632,10 +29632,10 @@
       </method>
     </type>
     <type name="CallerMemberTest">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
-      <method name="System.Object &lt;Main&gt;m__1(System.Object, Char)" attrs="145">
+      <method name="System.Object &lt;Main&gt;m__1(Char)" attrs="145">
         <size>24</size>
       </method>
     </type>
@@ -29657,7 +29657,7 @@
       <method name="Void TraceStatic2(Double, System.Decimal)" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>11</size>
       </method>
     </type>
@@ -29746,7 +29746,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -30218,7 +30218,7 @@
       </method>
     </type>
     <type name="D">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -30348,7 +30348,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Main&gt;m__0(System.Object, System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -30544,7 +30544,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, System.Object)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(System.Object)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -36242,10 +36242,10 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0()" attrs="145">
         <size>11</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1()" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -37565,7 +37565,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="Double &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Double &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -41150,7 +41150,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Test&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;Test&gt;m__0(Int32)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -41178,7 +41178,7 @@
       </method>
     </type>
     <type name="TestClass">
-      <method name="Void &lt;Main&gt;m__0(System.Object, Int32 ByRef)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(Int32 ByRef)" attrs="145">
         <size>5</size>
       </method>
     </type>
@@ -41640,7 +41640,7 @@
       </method>
     </type>
     <type name="Tests">
-      <method name="Boolean &lt;foo&gt;m__0(System.Object, System.Object)" attrs="145">
+      <method name="Boolean &lt;foo&gt;m__0(System.Object)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -42313,7 +42313,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>36</size>
       </method>
     </type>
@@ -42484,7 +42484,7 @@
       </method>
     </type>
     <type name="ClassMain">
-      <method name="Void &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -43343,7 +43343,7 @@
       </method>
     </type>
     <type name="Test1.CC">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -45534,7 +45534,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -48132,7 +48132,7 @@
       </method>
     </type>
     <type name="A">
-      <method name="Void &lt;Test&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Test&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -48379,7 +48379,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -49526,7 +49526,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Void &lt;Main&gt;m__0(System.Object, System.Object, System.String)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -51206,7 +51206,7 @@
       <method name="Void .cctor()" attrs="6289">
         <size>18</size>
       </method>
-      <method name="Void &lt;f&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;f&gt;m__0()" attrs="145">
         <size>27</size>
       </method>
     </type>
@@ -51710,7 +51710,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Void &lt;op_Implicit&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;op_Implicit&gt;m__0()" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -51773,16 +51773,16 @@
       </method>
     </type>
     <type name="X">
-      <method name="Void &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__2(System.Object, Int32[])" attrs="145">
+      <method name="Void &lt;Main&gt;m__2(Int32[])" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__3(System.Object, Int32[])" attrs="145">
+      <method name="Void &lt;Main&gt;m__3(Int32[])" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -51951,7 +51951,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="TDelegate &lt;CreateMethodUnscoped`1&gt;m__0[TDelegate](System.Object, System.Object)" attrs="145">
+      <method name="TDelegate &lt;CreateMethodUnscoped`1&gt;m__0[TDelegate](System.Object)" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -51970,7 +51970,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Int32 &lt;SomeCaller&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;SomeCaller&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -52075,7 +52075,7 @@
       </method>
     </type>
     <type name="TestClass">
-      <method name="Void &lt;a&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;a&gt;m__0(Int32)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -52111,10 +52111,10 @@
       </method>
     </type>
     <type name="C">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -52156,16 +52156,16 @@
       </method>
     </type>
     <type name="C">
-      <method name="T &lt;Test2`1&gt;m__0[T](System.Object, T)" attrs="145">
+      <method name="T &lt;Test2`1&gt;m__0[T](T)" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>24</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__3(System.Object, Int32)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>14</size>
       </method>
     </type>
@@ -52194,7 +52194,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Int32 &lt;TestNaturalSort&gt;m__0(System.Object, System.String, System.String)" attrs="145">
+      <method name="Int32 &lt;TestNaturalSort&gt;m__0(System.String, System.String)" attrs="145">
         <size>114</size>
       </method>
     </type>
@@ -52228,7 +52228,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, System.Object)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(System.Object)" attrs="145">
         <size>20</size>
       </method>
     </type>
@@ -52254,7 +52254,7 @@
       </method>
     </type>
     <type name="C`1[T]">
-      <method name="Void &lt;Foo`1&gt;m__0[U](System.Object)" attrs="145">
+      <method name="Void &lt;Foo`1&gt;m__0[U]()" attrs="145">
         <size>6</size>
       </method>
     </type>
@@ -52358,7 +52358,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -52440,19 +52440,19 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Main&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__1()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Void &lt;Main&gt;m__2(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__2()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Void &lt;Main&gt;m__3(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__3()" attrs="145">
         <size>62</size>
       </method>
-      <method name="Void &lt;Main&gt;m__4(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__4()" attrs="145">
         <size>54</size>
       </method>
-      <method name="Void &lt;Main&gt;m__5(System.Object, E)" attrs="145">
+      <method name="Void &lt;Main&gt;m__5(E)" attrs="145">
         <size>35</size>
       </method>
     </type>
@@ -52717,10 +52717,10 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="TDest &lt;GetUpcaster`2&gt;m__0[TSource,TDest](System.Object, TSource)" attrs="145">
+      <method name="TDest &lt;GetUpcaster`2&gt;m__0[TSource,TDest](TSource)" attrs="145">
         <size>20</size>
       </method>
-      <method name="TDest &lt;GetDowncaster`2&gt;m__1[TSource,TDest](System.Object, TSource)" attrs="145">
+      <method name="TDest &lt;GetDowncaster`2&gt;m__1[TSource,TDest](TSource)" attrs="145">
         <size>20</size>
       </method>
     </type>
@@ -52989,7 +52989,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Void &lt;&gt;m__1(System.Object, System.Object, System.EventArgs)" attrs="145">
+      <method name="Void &lt;&gt;m__1(System.Object, System.EventArgs)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -53046,7 +53046,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="System.String &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>24</size>
       </method>
     </type>
@@ -53130,17 +53130,17 @@
       </method>
     </type>
     <type name="C`1[T]">
-      <method name="T &lt;XX&gt;m__0(System.Object)" attrs="145">
+      <method name="T &lt;XX&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
     </type>
     <type name="C2`1[T]">
-      <method name="C`1[T] &lt;XX&gt;m__0(System.Object)" attrs="145">
+      <method name="C`1[T] &lt;XX&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="N1">
-      <method name="T &lt;XX`1&gt;m__0[T](System.Object)" attrs="145">
+      <method name="T &lt;XX`1&gt;m__0[T]()" attrs="145">
         <size>17</size>
       </method>
     </type>
@@ -53418,10 +53418,10 @@
       <method name="System.Decimal Average[TSource](System.Collections.Generic.IEnumerable`1[TSource], System.Func`2[TSource,System.Decimal])" attrs="150">
         <size>45</size>
       </method>
-      <method name="System.Decimal &lt;Average`1&gt;m__0[TSource](System.Object, System.Decimal, System.Decimal)" attrs="145">
+      <method name="System.Decimal &lt;Average`1&gt;m__0[TSource](System.Decimal, System.Decimal)" attrs="145">
         <size>15</size>
       </method>
-      <method name="System.Decimal &lt;Average`1&gt;m__1[TSource](System.Object, System.Decimal, System.Decimal)" attrs="145">
+      <method name="System.Decimal &lt;Average`1&gt;m__1[TSource](System.Decimal, System.Decimal)" attrs="145">
         <size>15</size>
       </method>
     </type>
@@ -53453,7 +53453,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Void &lt;Test_3`1&gt;m__0[T](System.Object)" attrs="145">
+      <method name="Void &lt;Test_3`1&gt;m__0[T]()" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -53469,7 +53469,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="System.Type &lt;Test`1&gt;m__0[T](System.Object)" attrs="145">
+      <method name="System.Type &lt;Test`1&gt;m__0[T]()" attrs="145">
         <size>18</size>
       </method>
     </type>
@@ -53493,7 +53493,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Void &lt;ThisCausesACrash`1&gt;m__0[I](System.Object, System.Object, System.EventArgs)" attrs="145">
+      <method name="Void &lt;ThisCausesACrash`1&gt;m__0[I](System.Object, System.EventArgs)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -53519,7 +53519,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;AnyMethod`1&gt;m__0[T](System.Object)" attrs="145">
+      <method name="Void &lt;AnyMethod`1&gt;m__0[T]()" attrs="145">
         <size>32</size>
       </method>
     </type>
@@ -53591,7 +53591,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Void &lt;Main&gt;m__0(System.Object, Int32, Int32, Int32)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(Int32, Int32, Int32)" attrs="145">
         <size>24</size>
       </method>
     </type>
@@ -53724,7 +53724,7 @@
       </method>
     </type>
     <type name="Foo">
-      <method name="Inner &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="Inner &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>21</size>
       </method>
     </type>
@@ -53889,7 +53889,7 @@
       </method>
     </type>
     <type name="TestComp.Program+MyClass">
-      <method name="Void &lt;UseATemplate&gt;m__0(System.Object, System.Collections.Generic.List`1[System.Int32] ByRef)" attrs="145">
+      <method name="Void &lt;UseATemplate&gt;m__0(System.Collections.Generic.List`1[System.Int32] ByRef)" attrs="145">
         <size>17</size>
       </method>
     </type>
@@ -53964,7 +53964,7 @@
       </method>
     </type>
     <type name="Program">
-      <method name="System.Object &lt;Main&gt;m__0(System.Object, System.Object)" attrs="145">
+      <method name="System.Object &lt;Main&gt;m__0(System.Object)" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -54051,7 +54051,7 @@
       </method>
     </type>
     <type name="X`1[T]">
-      <method name="Void &lt;Test&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Test&gt;m__0()" attrs="145">
         <size>8</size>
       </method>
     </type>
@@ -54128,7 +54128,7 @@
       </method>
     </type>
     <type name="TestGenericsSubtypeMatching.C">
-      <method name="Void &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(System.String)" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -54205,7 +54205,7 @@
       </method>
     </type>
     <type name="TestGenericsSubtypeMatching.C">
-      <method name="Void &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -54233,7 +54233,7 @@
       </method>
     </type>
     <type name="TestCase+&lt;Test&gt;c__AnonStorey0`1[T]">
-      <method name="Int32 &lt;&gt;m__1(System.Object, System.Collections.Generic.IList`1[System.Collections.Generic.IList`1[T]])" attrs="145">
+      <method name="Int32 &lt;&gt;m__1(System.Collections.Generic.IList`1[System.Collections.Generic.IList`1[T]])" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -54450,7 +54450,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="T &lt;Foo`1&gt;m__0[T](System.Object, T)" attrs="145">
+      <method name="T &lt;Foo`1&gt;m__0[T](T)" attrs="145">
         <size>77</size>
       </method>
     </type>
@@ -54476,7 +54476,7 @@
       </method>
     </type>
     <type name="A">
-      <method name="Void &lt;Test`2&gt;m__0[T,U](System.Object)" attrs="145">
+      <method name="Void &lt;Test`2&gt;m__0[T,U]()" attrs="145">
         <size>39</size>
       </method>
     </type>
@@ -54495,7 +54495,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>89</size>
       </method>
     </type>
@@ -54536,13 +54536,13 @@
       </method>
     </type>
     <type name="Program">
-      <method name="Int32 &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>51</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>46</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>42</size>
       </method>
     </type>
@@ -54613,7 +54613,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>18</size>
       </method>
     </type>
@@ -55102,7 +55102,7 @@
       </method>
     </type>
     <type name="TestGotoLabels.GotoLabelsTest">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -55229,10 +55229,10 @@
       </method>
     </type>
     <type name="X">
-      <method name="Void &lt;Hello&gt;m__1(System.Object, System.String)" attrs="145">
+      <method name="Void &lt;Hello&gt;m__1(System.String)" attrs="145">
         <size>8</size>
       </method>
-      <method name="Void &lt;Hello&gt;m__2(System.Object, System.String)" attrs="145">
+      <method name="Void &lt;Hello&gt;m__2(System.String)" attrs="145">
         <size>8</size>
       </method>
     </type>
@@ -55312,7 +55312,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="System.Object &lt;Main&gt;m__0(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.Object &lt;Main&gt;m__0(System.Reflection.MethodInfo)" attrs="145">
         <size>26</size>
       </method>
     </type>
@@ -55557,7 +55557,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -55589,7 +55589,7 @@
       </method>
     </type>
     <type name="DelegateInit">
-      <method name="Void &lt;_print&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;_print&gt;m__0()" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -55888,10 +55888,10 @@
       </method>
     </type>
     <type name="X">
-      <method name="Simple &lt;Test&gt;m__0(System.Object)" attrs="145">
+      <method name="Simple &lt;Test&gt;m__0()" attrs="145">
         <size>45</size>
       </method>
-      <method name="Void &lt;Test&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;Test&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -56068,7 +56068,7 @@
       </method>
     </type>
     <type name="TestClass">
-      <method name="Void &lt;a&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;a&gt;m__0(Int32)" attrs="145">
         <size>8</size>
       </method>
     </type>
@@ -56340,7 +56340,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="Void &lt;Print&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Print&gt;m__0()" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -56573,7 +56573,7 @@
       </method>
     </type>
     <type name="Observable">
-      <method name="Void &lt;Main&gt;m__0(System.Object, Observable)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(Observable)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -56968,7 +56968,7 @@
       </method>
     </type>
     <type name="Source">
-      <method name="Void &lt;AddSource&gt;m__0(System.Object, System.Object, System.EventArgs)" attrs="145">
+      <method name="Void &lt;AddSource&gt;m__0(System.Object, System.EventArgs)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -57145,10 +57145,10 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Main&gt;m__1(System.Object, System.String ByRef)" attrs="145">
+      <method name="Void &lt;Main&gt;m__1(System.String ByRef)" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -57254,7 +57254,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
     </type>
@@ -57370,10 +57370,10 @@
       </method>
     </type>
     <type name="T">
-      <method name="Void &lt;Main&gt;m__0(System.Object, System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
         <size>16</size>
       </method>
-      <method name="Void &lt;Test_1&gt;m__1(System.Object, System.Object)" attrs="145">
+      <method name="Void &lt;Test_1&gt;m__1(System.Object)" attrs="145">
         <size>32</size>
       </method>
     </type>
@@ -57406,7 +57406,7 @@
       </method>
     </type>
     <type name="Foo">
-      <method name="System.String[,] &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="System.String[,] &lt;Main&gt;m__0()" attrs="145">
         <size>42</size>
       </method>
     </type>
@@ -57464,7 +57464,7 @@
       </method>
     </type>
     <type name="Test">
-      <method name="Boolean &lt;TestMe&gt;m__0(System.Object)" attrs="145">
+      <method name="Boolean &lt;TestMe&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -57598,7 +57598,7 @@
       </method>
     </type>
     <type name="DelegateTest">
-      <method name="Void &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>19</size>
       </method>
     </type>
@@ -57677,7 +57677,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
       </method>
-      <method name="Void &lt;get_DoNothingEventHandler&gt;m__0(System.Object, System.Object, System.EventArgs)" attrs="145">
+      <method name="Void &lt;get_DoNothingEventHandler&gt;m__0(System.Object, System.EventArgs)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -57887,21 +57887,21 @@
       </method>
     </type>
     <type name="MainClass">
-      <method name="Void &lt;Test2&gt;m__0(System.Object, System.String)" attrs="145">
+      <method name="Void &lt;Test2&gt;m__0(System.String)" attrs="145">
         <size>28</size>
       </method>
-      <method name="Void &lt;Test3&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;Test3&gt;m__1()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;Test4&gt;m__2(System.Object)" attrs="145">
+      <method name="Void &lt;Test4&gt;m__2()" attrs="145">
         <size>32</size>
       </method>
-      <method name="Void &lt;Test4&gt;m__3(System.Object)" attrs="145">
+      <method name="Void &lt;Test4&gt;m__3()" attrs="145">
         <size>29</size>
       </method>
     </type>
     <type name="MainClass+&lt;Test5&gt;c__AnonStorey4">
-      <method name="Int32 &lt;&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1(Int32)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -57923,7 +57923,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>42</size>
       </method>
-      <method name="Void &lt;MyDelegate&gt;m__0(System.Object, System.Object, System.EventArgs)" attrs="145">
+      <method name="Void &lt;MyDelegate&gt;m__0(System.Object, System.EventArgs)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -57957,7 +57957,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="C &lt;field&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="C &lt;field&gt;m__0(Int32)" attrs="145">
         <size>12</size>
       </method>
     </type>
@@ -58146,7 +58146,7 @@
       </method>
     </type>
     <type name="C+&lt;Test&gt;c__AnonStorey2">
-      <method name="Void &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__2()" attrs="145">
         <size>4</size>
       </method>
     </type>
@@ -58394,7 +58394,7 @@
       </method>
     </type>
     <type name="BaseTest.MainClass">
-      <method name="Void &lt;Main&gt;m__0(System.Object, System.Object, System.EventArgs)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(System.Object, System.EventArgs)" attrs="145">
         <size>13</size>
       </method>
     </type>
@@ -58705,7 +58705,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Test&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Test&gt;m__0()" attrs="145">
         <size>63</size>
       </method>
     </type>
@@ -58737,7 +58737,7 @@
       </method>
     </type>
     <type name="Program">
-      <method name="Void &lt;RunAsync&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;RunAsync&gt;m__0()" attrs="145">
         <size>62</size>
       </method>
     </type>
@@ -59029,7 +59029,7 @@
       </method>
     </type>
     <type name="Program">
-      <method name="System.Threading.Tasks.Task`1[System.Decimal] &lt;Main&gt;m__0(System.Object, System.Decimal)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Decimal] &lt;Main&gt;m__0(System.Decimal)" attrs="145">
         <size>41</size>
       </method>
     </type>
@@ -59116,7 +59116,7 @@
       </method>
     </type>
     <type name="Program">
-      <method name="System.Threading.Tasks.Task`1[System.Int16] &lt;Main&gt;m__0(System.Object, Int16)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Int16] &lt;Main&gt;m__0(Int16)" attrs="145">
         <size>41</size>
       </method>
     </type>
@@ -59180,29 +59180,29 @@
       </method>
     </type>
     <type name="AsyncTypeInference">
-      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>33</size>
       </method>
-      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>33</size>
       </method>
-      <method name="System.Threading.Tasks.Task &lt;Main&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="System.Threading.Tasks.Task &lt;Main&gt;m__2(Int32)" attrs="145">
         <size>33</size>
       </method>
-      <method name="System.Threading.Tasks.Task &lt;Main&gt;m__3(System.Object, Int32)" attrs="145">
+      <method name="System.Threading.Tasks.Task &lt;Main&gt;m__3(Int32)" attrs="145">
         <size>33</size>
       </method>
-      <method name="Int32 &lt;TT&gt;m__4(System.Object)" attrs="145">
+      <method name="Int32 &lt;TT&gt;m__4()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async2">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async5">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -59346,49 +59346,49 @@
       </method>
     </type>
     <type name="C+&lt;TestCompositionCall_1&gt;c__async0">
-      <method name="System.String &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__0()" attrs="145">
         <size>21</size>
       </method>
-      <method name="System.String &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__1()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="C+&lt;TestCompositionCall_2&gt;c__async1">
-      <method name="System.String &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="C+&lt;TestCompositionCall_3&gt;c__async2">
-      <method name="Byte &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Byte &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;TestCompositionPair_1&gt;c__async3">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;TestCompositionPair_2&gt;c__async4">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;TestCompositionPair_3&gt;c__async5">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;TestCompositionPair_4&gt;c__async6">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -59515,27 +59515,27 @@
       </method>
     </type>
     <type name="G`1+&lt;TestStack_1&gt;c__async0[T]">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;TestStack_1&gt;c__async0">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;TestStack_2&gt;c__async1">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;TestStack_3&gt;c__async2">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;TestStack_4&gt;c__async3">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -59562,13 +59562,13 @@
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -60537,485 +60537,485 @@
       </method>
     </type>
     <type name="Tester">
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(System.Reflection.MethodInfo)" attrs="145">
         <size>45</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__1(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__1(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__2(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__2(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, Boolean)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(Boolean)" attrs="145">
         <size>12</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_1&gt;c__async0">
-      <method name="Boolean &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Boolean &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_2&gt;c__async1">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Double &lt;&gt;m__3(System.Object)" attrs="145">
+      <method name="Double &lt;&gt;m__3()" attrs="145">
         <size>17</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_3&gt;c__async2">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
-      <method name="System.Decimal &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="System.Decimal &lt;&gt;m__2()" attrs="145">
         <size>19</size>
       </method>
-      <method name="Int32 &lt;&gt;m__3(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__3()" attrs="145">
         <size>9</size>
       </method>
-      <method name="System.Decimal &lt;&gt;m__4(System.Object)" attrs="145">
+      <method name="System.Decimal &lt;&gt;m__4()" attrs="145">
         <size>19</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_4&gt;c__async3">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="System.String &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__1()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_5&gt;c__async4">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_6&gt;c__async5">
-      <method name="Int64 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int64 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_7&gt;c__async6">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_8&gt;c__async7">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Byte &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Byte &lt;&gt;m__1()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_9&gt;c__async8">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__3(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__3()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__4(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__4()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__5(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__5()" attrs="145">
         <size>9</size>
       </method>
-      <method name="S &lt;&gt;m__6(System.Object)" attrs="145">
+      <method name="S &lt;&gt;m__6()" attrs="145">
         <size>25</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_10&gt;c__async9">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_11&gt;c__asyncA">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;AssignTest_1&gt;c__asyncB">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;AssignTest_2&gt;c__asyncC">
-      <method name="System.Nullable`1[System.SByte] &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.SByte] &lt;&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
     </type>
     <type name="Tester+&lt;AssignTest_3&gt;c__asyncD">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;BinaryTest_1&gt;c__asyncE">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;BinaryTest_3&gt;c__async10">
-      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__0()" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__1()" attrs="145">
         <size>17</size>
       </method>
-      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__2()" attrs="145">
         <size>17</size>
       </method>
-      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__3(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__3()" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__4(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__4()" attrs="145">
         <size>17</size>
       </method>
-      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__5(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Boolean] &lt;&gt;m__5()" attrs="145">
         <size>14</size>
       </method>
     </type>
     <type name="Tester+&lt;BinaryTest_4&gt;c__async11">
-      <method name="System.Nullable`1[System.Int16] &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Int16] &lt;&gt;m__0()" attrs="145">
         <size>14</size>
       </method>
-      <method name="System.Nullable`1[System.Byte] &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Byte] &lt;&gt;m__1()" attrs="145">
         <size>17</size>
       </method>
-      <method name="System.Nullable`1[System.Decimal] &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Decimal] &lt;&gt;m__2()" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.Nullable`1[System.Decimal] &lt;&gt;m__3(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Decimal] &lt;&gt;m__3()" attrs="145">
         <size>17</size>
       </method>
     </type>
     <type name="Tester+&lt;CallTest_1&gt;c__async14">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;CallTest_2&gt;c__async15">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
     </type>
     <type name="Tester+&lt;CallTest_3&gt;c__async16">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;CallTest_4&gt;c__async17">
-      <method name="E &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="E &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;CastTest_1&gt;c__async19">
-      <method name="System.Decimal &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Decimal &lt;&gt;m__0()" attrs="145">
         <size>15</size>
       </method>
     </type>
     <type name="Tester+&lt;CoalescingTest_1&gt;c__async1B">
-      <method name="System.String &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="System.String &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__1()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;CoalescingTest_2&gt;c__async1C">
-      <method name="System.Nullable`1[System.Int16] &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.Int16] &lt;&gt;m__0()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Byte &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Byte &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;ConditionalTest_1&gt;c__async1D">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;ConditionalTest_2&gt;c__async1E">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;ConditionalTest_3&gt;c__async1F">
-      <method name="Boolean &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Boolean &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;ConditionalTest_4&gt;c__async20">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;DelegateInvoke_4&gt;c__async21">
-      <method name="Int32 &lt;&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0(Int32)" attrs="145">
         <size>11</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;FieldTest_1&gt;c__async23">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;IndexerTest_1&gt;c__async24">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;IndexerTest_2&gt;c__async25">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;IndexerTest_3&gt;c__async26">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;IndexerTest_4&gt;c__async27">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;IndexerTest_5&gt;c__async28">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;IndexerTest_6&gt;c__async29">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;IsTest_1&gt;c__async2B">
-      <method name="Tester &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Tester &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;IsTest_2&gt;c__async2C">
-      <method name="System.Nullable`1[System.UInt32] &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Nullable`1[System.UInt32] &lt;&gt;m__0()" attrs="145">
         <size>14</size>
       </method>
     </type>
     <type name="Tester+&lt;LogicalUserOperator_1&gt;c__async2D">
-      <method name="Base &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Base &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Base &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Base &lt;&gt;m__1()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;LogicalUserOperator_2&gt;c__async2E">
-      <method name="Base &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Base &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;LogicalUserOperator_3&gt;c__async2F">
-      <method name="Base &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Base &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Base &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Base &lt;&gt;m__1()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;NewTest_1&gt;c__async30">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;NewTest_2&gt;c__async31">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
-      <method name="System.String &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__1()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;NewDelegate_1_0&gt;c__async33">
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;NewInitTest_1&gt;c__async34">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__3(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__3()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__4(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__4()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__5(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__5()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;NewInitTest_2&gt;c__async35">
-      <method name="System.String &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
-      <method name="System.String &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__1()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__3(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__3()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_1&gt;c__async36">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_2&gt;c__async37">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_3&gt;c__async38">
-      <method name="Byte &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Byte &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_4&gt;c__async39">
-      <method name="UInt16 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="UInt16 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="UInt16 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="UInt16 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_5&gt;c__async3A">
-      <method name="S &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="S &lt;&gt;m__0()" attrs="145">
         <size>25</size>
       </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_6&gt;c__async3B">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;PropertyTest_1&gt;c__async3D">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;PropertyTest_2&gt;c__async3E">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;PropertyTest_3&gt;c__async3F">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;StringConcatTest_1&gt;c__async40">
-      <method name="System.String &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
-      <method name="System.String &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__1()" attrs="145">
         <size>13</size>
       </method>
-      <method name="System.String &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__2()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;UnaryTest_1&gt;c__async41">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;UnaryTest_3&gt;c__async43">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;VariableInitializer_1&gt;c__async44">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -61053,17 +61053,17 @@
       </method>
     </type>
     <type name="C">
-      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0()" attrs="145">
         <size>33</size>
       </method>
     </type>
     <type name="C+&lt;TestResult&gt;c__async0">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;Main&gt;c__async1">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -61124,12 +61124,12 @@
       </method>
     </type>
     <type name="Tester+&lt;NewInitTestGen&gt;c__async0`1[T]">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
     <type name="Tester+&lt;NewInitCol&gt;c__async1">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -61194,40 +61194,40 @@
       </method>
     </type>
     <type name="Tester">
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__1(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__1(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__2(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__2(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, Boolean)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(Boolean)" attrs="145">
         <size>12</size>
       </method>
     </type>
     <type name="Tester+&lt;SwitchTest_1&gt;c__async0">
-      <method name="System.String &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.String &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;Using_1&gt;c__async1">
-      <method name="Base &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Base &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Tester &lt;&gt;m__1(System.Object)" attrs="145">
+      <method name="Tester &lt;&gt;m__1()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Base &lt;&gt;m__2(System.Object)" attrs="145">
+      <method name="Base &lt;&gt;m__2()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Base &lt;&gt;m__3(System.Object)" attrs="145">
+      <method name="Base &lt;&gt;m__3()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;Foreach_1&gt;c__async2">
-      <method name="System.Collections.Generic.List`1[System.Int32] &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Collections.Generic.List`1[System.Int32] &lt;&gt;m__0()" attrs="145">
         <size>36</size>
       </method>
     </type>
@@ -61348,56 +61348,56 @@
       </method>
     </type>
     <type name="Tester">
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__1(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__1(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__2(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__2(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, Boolean)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(Boolean)" attrs="145">
         <size>12</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_1&gt;c__async0">
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_2&gt;c__async1">
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_3&gt;c__async2">
-      <method name="System.Threading.Tasks.Task &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Threading.Tasks.Task &lt;&gt;m__0()" attrs="145">
         <size>33</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_4&gt;c__async3">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_5&gt;c__async4">
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_6&gt;c__async5">
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_7&gt;c__async6">
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async7">
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -61591,36 +61591,36 @@
       </method>
     </type>
     <type name="Tester">
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(System.Reflection.MethodInfo)" attrs="145">
         <size>20</size>
       </method>
-      <method name="System.String &lt;Main&gt;m__1(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="System.String &lt;Main&gt;m__1(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__2(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__2(System.Reflection.MethodInfo)" attrs="145">
         <size>15</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, Boolean)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(Boolean)" attrs="145">
         <size>12</size>
       </method>
     </type>
     <type name="Tester+&lt;Add_1&gt;c__async0">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;AssignCompound_1&gt;c__async1">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="Tester+&lt;Convert_1&gt;c__async2">
-      <method name="System.Object &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Object &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
     </type>
     <type name="Tester+&lt;Invocation_1&gt;c__async3">
-      <method name="System.Object &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Object &lt;&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
     </type>
@@ -61909,13 +61909,13 @@
       </method>
     </type>
     <type name="AwaitNS.Formals">
-      <method name="Void &lt;M1&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;M1&gt;m__0(Int32)" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;M1&gt;m__1(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;M1&gt;m__1(Int32)" attrs="145">
         <size>2</size>
       </method>
-      <method name="Void &lt;M1&gt;m__2(System.Object, Int32)" attrs="145">
+      <method name="Void &lt;M1&gt;m__2(Int32)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -61960,7 +61960,7 @@
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>21</size>
       </method>
     </type>
@@ -61989,7 +61989,7 @@
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -62015,7 +62015,7 @@
       </method>
     </type>
     <type name="Program">
-      <method name="Int32 &lt;CompilationTestOnly&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;CompilationTestOnly&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -62044,10 +62044,10 @@
       </method>
     </type>
     <type name="ConsoleApplication1.Program">
-      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0()" attrs="145">
         <size>47</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;Main&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -62071,7 +62071,7 @@
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -62095,7 +62095,7 @@
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0(Int32)" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -62516,21 +62516,21 @@
       </method>
     </type>
     <type name="N.M.C">
-      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0()" attrs="145">
         <size>33</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__1(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__1(System.Reflection.MethodInfo)" attrs="145">
         <size>24</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__2(System.Object, System.Type)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__2(System.Type)" attrs="145">
         <size>24</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__3(System.Object, System.Reflection.MethodInfo)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__3(System.Reflection.MethodInfo)" attrs="145">
         <size>24</size>
       </method>
     </type>
     <type name="N.M.C+&lt;NestedAsyncAnonymousMethod&gt;c__async1">
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>27</size>
       </method>
     </type>
@@ -62578,7 +62578,7 @@
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -62629,7 +62629,7 @@
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -62663,12 +62663,12 @@
       </method>
     </type>
     <type name="Program">
-      <method name="Void &lt;Main&gt;m__0(System.Object, C)" attrs="145">
+      <method name="Void &lt;Main&gt;m__0(C)" attrs="145">
         <size>35</size>
       </method>
     </type>
     <type name="Program+&lt;Main&gt;c__async1">
-      <method name="Void &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -62703,12 +62703,12 @@
       </method>
     </type>
     <type name="AmbiguousGeneric">
-      <method name="Int32 &lt;ReturnOne&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;ReturnOne&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="AmbiguousGeneric+&lt;NestedVoidTestSuccess&gt;c__async0">
-      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;&gt;m__0()" attrs="145">
         <size>33</size>
       </method>
     </type>
@@ -63149,7 +63149,7 @@
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Void &lt;&gt;m__0(System.Object, Player)" attrs="145">
+      <method name="Void &lt;&gt;m__0(Player)" attrs="145">
         <size>2</size>
       </method>
     </type>
@@ -63206,7 +63206,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="System.Threading.Tasks.Task &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Threading.Tasks.Task &lt;Main&gt;m__0()" attrs="145">
         <size>33</size>
       </method>
     </type>
@@ -63592,7 +63592,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="Boolean &lt;Call&gt;m__0(System.Object)" attrs="145">
+      <method name="Boolean &lt;Call&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -63618,7 +63618,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(System.Object)" attrs="145">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0()" attrs="145">
         <size>33</size>
       </method>
     </type>
@@ -63686,7 +63686,7 @@
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -64958,13 +64958,13 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;Test_1&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Test_1&gt;m__0()" attrs="145">
         <size>6</size>
       </method>
-      <method name="Void &lt;Test_2&gt;m__1(System.Object)" attrs="145">
+      <method name="Void &lt;Test_2&gt;m__1()" attrs="145">
         <size>7</size>
       </method>
-      <method name="Void &lt;Test_3&gt;m__2(System.Object)" attrs="145">
+      <method name="Void &lt;Test_3&gt;m__2()" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -65053,7 +65053,7 @@
       </method>
     </type>
     <type name="C">
-      <method name="Int32 &lt;Test_4&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;Test_4&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
     </type>
@@ -65113,15 +65113,15 @@
       </method>
     </type>
     <type name="C">
-      <method name="Void &lt;RunAsync&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;RunAsync&gt;m__0()" attrs="145">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;RunAsync_2&gt;m__1(System.Object)" attrs="145">
+      <method name="Int32 &lt;RunAsync_2&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
     </type>
     <type name="C+&lt;Test_3&gt;c__async2">
-      <method name="Int32 &lt;&gt;m__0(System.Object)" attrs="145">
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
     </type>
@@ -65273,7 +65273,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Program &lt;Test_4&gt;m__0(System.Object)" attrs="145">
+      <method name="Program &lt;Test_4&gt;m__0()" attrs="145">
         <size>13</size>
       </method>
     </type>
@@ -68212,7 +68212,7 @@
       </method>
     </type>
     <type name="Mono.Sms.Main">
-      <method name="Void &lt;Test&gt;m__0(System.Object)" attrs="145">
+      <method name="Void &lt;Test&gt;m__0()" attrs="145">
         <size>7</size>
       </method>
     </type>
@@ -68701,7 +68701,7 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="Boolean &lt;Main&gt;m__0(System.Object, Int32)" attrs="145">
+      <method name="Boolean &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>14</size>
       </method>
     </type>
