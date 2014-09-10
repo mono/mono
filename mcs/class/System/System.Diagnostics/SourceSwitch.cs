@@ -59,15 +59,11 @@ namespace System.Diagnostics
 		{
 			switch (eventType) {
 			case TraceEventType.Critical:
-				return (Level & (SourceLevels)TraceEventType.Critical) != 0;
 			case TraceEventType.Error:
-				return (Level & (SourceLevels)TraceEventType.Error) != 0;
 			case TraceEventType.Warning:
-				return (Level & (SourceLevels)TraceEventType.Warning) != 0;
 			case TraceEventType.Information:
-				return (Level & (SourceLevels)TraceEventType.Information) != 0;
 			case TraceEventType.Verbose:
-				return (Level & (SourceLevels)TraceEventType.Verbose) != 0;
+				return (Level & (SourceLevels)eventType) != 0;
 			case TraceEventType.Start:
 			case TraceEventType.Stop:
 			case TraceEventType.Suspend:
