@@ -7246,46 +7246,14 @@ namespace Mono.CSharp
 			return this;
 		}
 
-		bool DoEmitTypeParameter (EmitContext ec)
+		void DoEmitTypeParameter (EmitContext ec)
 		{
 			var m = ec.Module.PredefinedMembers.ActivatorCreateInstance.Resolve (loc);
 			if (m == null)
-				return true;
+				return;
 
 			var ctor_factory = m.MakeGenericMethod (ec.MemberContext, type);
-			var tparam = (TypeParameterSpec) type;
-
-			if (tparam.IsReferenceType) {
-				ec.Emit (OpCodes.Call, ctor_factory);
-				return true;
-			}
-
-			// Allow DoEmit() to be called multiple times.
-			// We need to create a new LocalTemporary each time since
-			// you can't share LocalBuilders among ILGeneators.
-			LocalTemporary temp = new LocalTemporary (type);
-
-			Label label_activator = ec.DefineLabel ();
-			Label label_end = ec.DefineLabel ();
-
-			temp.AddressOf (ec, AddressOp.Store);
-			ec.Emit (OpCodes.Initobj, type);
-
-			temp.Emit (ec);
-			ec.Emit (OpCodes.Box, type);
-			ec.Emit (OpCodes.Brfalse, label_activator);
-
-			temp.AddressOf (ec, AddressOp.Store);
-			ec.Emit (OpCodes.Initobj, type);
-			temp.Emit (ec);
-			temp.Release (ec);
-			ec.Emit (OpCodes.Br_S, label_end);
-
-			ec.MarkLabel (label_activator);
-
 			ec.Emit (OpCodes.Call, ctor_factory);
-			ec.MarkLabel (label_end);
-			return true;
 		}
 
 		//
@@ -7317,7 +7285,7 @@ namespace Mono.CSharp
 		//
 		public virtual bool Emit (EmitContext ec, IMemoryLocation target)
 		{
-			bool is_value_type = TypeSpec.IsValueType (type);
+			bool is_value_type = type.IsStructOrEnum;
 			VariableReference vr = target as VariableReference;
 
 			if (target != null && is_value_type && (vr != null || method == null)) {
@@ -7346,8 +7314,10 @@ namespace Mono.CSharp
 				}
 			}
 			
-			if (type is TypeParameterSpec)
-				return DoEmitTypeParameter (ec);
+			if (type is TypeParameterSpec) {
+				DoEmitTypeParameter (ec);
+				return true;
+			}
 
 			ec.MarkCallEntry (loc);
 			ec.Emit (OpCodes.Newobj, method);
@@ -7357,7 +7327,7 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			LocalTemporary v = null;
-			if (method == null && TypeSpec.IsValueType (type)) {
+			if (method == null && type.IsStructOrEnum) {
 				// TODO: Use temporary variable from pool
 				v = new LocalTemporary (type);
 			}

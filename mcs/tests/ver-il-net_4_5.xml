@@ -4727,7 +4727,7 @@
   <test name="gtest-052.cs">
     <type name="Foo`1[T]">
       <method name="T Create()" attrs="134">
-        <size>44</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -6792,10 +6792,10 @@
         <size>86</size>
       </method>
       <method name="Polynomial`1[E] Mul(Polynomial`1[E])" attrs="486">
-        <size>235</size>
+        <size>203</size>
       </method>
       <method name="E Eval(E)" attrs="134">
-        <size>114</size>
+        <size>84</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>20</size>
@@ -7527,7 +7527,7 @@
   <test name="gtest-151.cs">
     <type name="Test`1[T]">
       <method name="Void .ctor()" attrs="6278">
-        <size>16</size>
+        <size>14</size>
       </method>
     </type>
     <type name="X">
@@ -7580,7 +7580,7 @@
   <test name="gtest-153.cs">
     <type name="MyClass`1[T]">
       <method name="Void .ctor()" attrs="6278">
-        <size>57</size>
+        <size>27</size>
       </method>
     </type>
     <type name="X">
@@ -7640,7 +7640,7 @@
   <test name="gtest-155.cs">
     <type name="MyClass`1[T]">
       <method name="Void .ctor()" attrs="6278">
-        <size>57</size>
+        <size>27</size>
       </method>
     </type>
     <type name="X">
@@ -12378,7 +12378,7 @@
   <test name="gtest-325.cs">
     <type name="SomeClass`1[T]">
       <method name="Void Foo()" attrs="134">
-        <size>38</size>
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -12411,7 +12411,7 @@
   <test name="gtest-327.cs">
     <type name="Tester`1[T]">
       <method name="Void Do()" attrs="134">
-        <size>51</size>
+        <size>21</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -15212,7 +15212,7 @@
   <test name="gtest-446.cs">
     <type name="BugTest.Bug`1[T]">
       <method name="Void CreateObject(T ByRef)" attrs="134">
-        <size>43</size>
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -15672,7 +15672,7 @@
   <test name="gtest-471.cs">
     <type name="Q">
       <method name="Void bar[T](T ByRef)" attrs="145">
-        <size>17</size>
+        <size>13</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>19</size>
@@ -16655,7 +16655,7 @@
   <test name="gtest-514.cs">
     <type name="test2.Test`3[T,U,V]">
       <method name="Void Method()" attrs="134">
-        <size>128</size>
+        <size>35</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -17477,7 +17477,7 @@
     </type>
     <type name="B">
       <method name="G Foo[G]()" attrs="198">
-        <size>18</size>
+        <size>14</size>
       </method>
       <method name="G Foo2[G]()" attrs="198">
         <size>15</size>
@@ -17650,7 +17650,7 @@
   <test name="gtest-551.cs">
     <type name="Base`1[T]">
       <method name="Void .ctor()" attrs="6278">
-        <size>48</size>
+        <size>18</size>
       </method>
     </type>
     <type name="Derived`1[T]">
@@ -18081,7 +18081,7 @@
     </type>
     <type name="G`1[T]">
       <method name="Void Foo()" attrs="150">
-        <size>61</size>
+        <size>31</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -18929,7 +18929,7 @@
         <size>26</size>
       </method>
       <method name="TBase Constructor[T]()" attrs="145">
-        <size>54</size>
+        <size>24</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -19398,6 +19398,19 @@
       </method>
       <method name="Void Main()" attrs="150">
         <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-623.cs">
+    <type name="C">
+      <method name="Boolean Test[T]()" attrs="145">
+        <size>42</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>37</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -30572,7 +30585,7 @@
     </type>
     <type name="Invariant`1[T]">
       <method name="T get_Foo()" attrs="2534">
-        <size>44</size>
+        <size>14</size>
       </method>
       <method name="Int32 Bar(T)" attrs="486">
         <size>22</size>
@@ -61102,7 +61115,7 @@
     </type>
     <type name="Tester+&lt;NewInitTestGen&gt;c__async0`1[T]">
       <method name="Void MoveNext()" attrs="486">
-        <size>295</size>
+        <size>305</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
