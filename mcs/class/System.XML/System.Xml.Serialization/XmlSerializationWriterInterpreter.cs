@@ -359,14 +359,13 @@ namespace System.Xml.Serialization
 		{
 			if (obj == null)
 				return null;
-			for (Type t = type; t != typeof (object); t = t.BaseType) {
-				MethodInfo mi = t.GetMethod ("op_Implicit", new Type [] {t});
-				if (mi != null && mi.ReturnType.IsAssignableFrom (obj.GetType ()))
-					return mi.Invoke (null, new object [] {obj});
-			}
 
 			for (Type t = obj.GetType (); t != typeof (object); t = t.BaseType) {
 				MethodInfo mi = t.GetMethod ("op_Implicit", new Type [] {t});
+				if (mi != null && mi.ReturnType == type)
+					return mi.Invoke (null, new object [] {obj});
+
+				mi = type.GetMethod ("op_Implicit", new Type [] {t});
 				if (mi != null && mi.ReturnType == type)
 					return mi.Invoke (null, new object [] {obj});
 			}
