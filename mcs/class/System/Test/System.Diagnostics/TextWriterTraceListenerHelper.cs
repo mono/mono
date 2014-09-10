@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.IO;
 using System.Diagnostics;
 
 namespace MonoTests.System.Diagnostics
@@ -42,7 +43,7 @@ namespace MonoTests.System.Diagnostics
 		public int InfoMessageCount { get; set;}
 		public int VerboseMessageCount { set; get;}
 
-		public TestTextWriterTraceListener(System.IO.TextWriter textWriter): base(textWriter)
+		public TestTextWriterTraceListener(TextWriter textWriter): base(textWriter)
 		{
 			Console.WriteLine ("TextWriterTraceListener is instantiated.");
 		}
