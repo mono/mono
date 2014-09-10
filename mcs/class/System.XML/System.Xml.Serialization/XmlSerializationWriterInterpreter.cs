@@ -355,7 +355,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		object ImplicitConvert (object obj, Type type)
+		internal static object ImplicitConvert (object obj, Type type)
 		{
 			if (obj == null)
 				return null;
