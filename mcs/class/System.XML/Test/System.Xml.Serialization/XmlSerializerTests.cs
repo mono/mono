@@ -3332,6 +3332,22 @@ namespace MonoTests.System.XmlSerialization
 			using (var sw = new StringWriter ())
 				ser.Serialize (sw, c);
 		}
+
+		[Test]
+		public void ClassWithImplicitlyConvertibleElement ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithElementRequiringImplicitCast));
+
+			var obj = new ObjectWithElementRequiringImplicitCast ("test");
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithElementRequiringImplicitCast) ser.Deserialize (r);
+					Assert.AreEqual (obj.Object.Text, desObj.Object.Text);
+				}
+			}
+		}
 	}
 
 	// Test generated serialization code.

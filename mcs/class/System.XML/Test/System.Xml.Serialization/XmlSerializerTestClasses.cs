@@ -1117,5 +1117,48 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlElement ("Extra", Order=1)]
 		public string[] Extra;
 	}
+
+	public class SimpleObjectA
+	{
+		[XmlAttribute]
+		public string Text
+		{
+			get; set;
+		}
+
+		public static implicit operator SimpleObjectA (SimpleObjectB o)
+		{
+			return new SimpleObjectA { Text = o.Text };
+		}
+
+		public static implicit operator SimpleObjectB (SimpleObjectA o)
+		{
+		 return new SimpleObjectB { Text = o.Text };
+		}
+	}
+
+	public class SimpleObjectB
+	{
+		[XmlAttribute]
+		public string Text
+		{
+			get; set;
+		}
+	}
+
+	public class ObjectWithElementRequiringImplicitCast
+	{
+		public ObjectWithElementRequiringImplicitCast () { }
+		public ObjectWithElementRequiringImplicitCast (string text)
+		{
+			Object = new SimpleObjectB { Text = text };
+		}
+
+		[XmlElement(Type = typeof (SimpleObjectA))]
+		public SimpleObjectB Object
+		{
+			get; set;
+		}
+	}
 }
 
