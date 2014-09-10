@@ -120,9 +120,17 @@ namespace System.Net.Http.Headers
 
 		public string Name {
 			get {
-				return FindParameter ("name");
+				var value = FindParameter ("name");
+
+				if (value == null)
+					return null;
+
+				return DecodeValue (value, false);
 			}
 			set {
+				if (value != null)
+					value = EncodeBase64Value (value);
+
 				SetValue ("name", value);
 			}
 		}
