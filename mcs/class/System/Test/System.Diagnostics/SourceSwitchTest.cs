@@ -51,7 +51,7 @@ namespace MonoTests.System.Diagnostics
 		public void ConstructorNullName ()
 		{
 			SourceSwitch s = new SourceSwitch (null);
-			Assert.IsNull (s.DisplayName);
+			Assert.IsEmpty (s.DisplayName);
 		}
 
 		[Test]
