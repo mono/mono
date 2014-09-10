@@ -1894,13 +1894,15 @@ ves_icall_System_Threading_Thread_ClrState (MonoInternalThread* this, guint32 st
 }
 
 void
-vec_icall_System_Threading_Thread_Set_Priority (MonoInternalThread* this, guint32 priority)
+ves_icall_System_Threading_Thread_Set_Priority (MonoInternalThread* this, guint32 priority)
 {
+    mono_threads_set_priority(MONO_UINT_TO_NATIVE_THREAD_ID(this->tid), priority);
 }
 
 guint32
-vec_icall_Sytem_Threading_Thread_Get_Priority (MonoInternalThread* this)
+ves_icall_System_Threading_Thread_Get_Priority (MonoInternalThread* this)
 {
+    return mono_threads_get_priority(MONO_UINT_TO_NATIVE_THREAD_ID(this->tid));
 }
 
 void

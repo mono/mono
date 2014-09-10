@@ -586,10 +586,10 @@ namespace System.Threading {
 		}
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private extern static void SetPriority_internal(InternalThread thread, ThreadPriority priority);
+        private extern static ThreadPriority GetPriority_internal(InternalThread thread);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private extern static ThreadPriority GetPriority_internal(InternalThread thread);
+        private extern static void SetPriority_internal(InternalThread thread, ThreadPriority priority);
 
 		public ThreadPriority Priority {
 			get {

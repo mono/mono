@@ -236,6 +236,32 @@ mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
 	return handle;
 }
 
+void
+mono_threads_set_priority(MonoNativeThreadId tid, enum thread_priority priority)
+{
+    struct sched_param params;
+    params.sched_priority =
+           (priority - thread_priority_lowest) *
+           (sched_get_priority_max(SCHED_FIFO) - sched_get_priority_min(SCHED_FIFO)) /
+           (thread_priority_highest - thread_priority_lowest) +
+           sched_get_priority_min(SCHED_FIFO);
+    pthread_setschedparam(tid, SCHED_FIFO, &params);
+}
+
+enum thread_priority
+mono_threads_get_priority(MonoNativeThreadId tid)
+{
+    struct sched_param params;
+    int policy = 0;
+    if(pthread_getschedparam(tid, &policy, &params) != 0 ||
+       policy != SCHED_FIFO)
+        return thread_priority_normal;
+    return (params.sched_priority - sched_get_priority_min(SCHED_FIFO)) *
+           (thread_priority_highest - thread_priority_lowest) /
+           (sched_get_priority_max(SCHED_FIFO) - sched_get_priority_min(SCHED_FIFO)) +
+           thread_priority_lowest;
+}
+
 #if !defined (__MACH__)
 
 #if !defined(__native_client__)

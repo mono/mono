@@ -268,4 +268,15 @@ mono_threads_core_set_name (MonoNativeThreadId tid, const char *name)
 {
 }
 
+void
+mono_threads_set_priority(MonoNativeThreadId, enum thread_priority)
+{
+}
+
+enum thread_priority
+mono_threads_get_priority(MonoNativeThreadId)
+{
+    return thread_priority_normal;
+}
+
 #endif
