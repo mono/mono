@@ -80,6 +80,12 @@ namespace MonoTests.System.Diagnostics {
 		}
 	}
 
+	class TestNullSwitch : Switch {
+		public TestNullSwitch () : base (null, null)
+		{
+		}
+	}
+
 	[TestFixture]
 	public class SwitchesTest {
     
@@ -183,6 +189,14 @@ namespace MonoTests.System.Diagnostics {
 		{
 			BooleanSwitch s = new BooleanSwitch ("test", "", "hoge");
 			Assert.IsTrue (!s.Enabled);
+		}
+
+		[Test]
+		public void NullSwitchHasEmptyDisplayNameAndDescription ()
+		{
+			var s = new TestNullSwitch ();
+			Assert.IsEmpty (s.DisplayName);
+			Assert.IsEmpty (s.Description);
 		}
 #endif
 	}
