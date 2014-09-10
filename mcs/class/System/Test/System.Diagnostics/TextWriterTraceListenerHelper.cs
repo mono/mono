@@ -1,12 +1,12 @@
-//
-// SourceSwitch.cs
-//
-// Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
-//
-// Copyright (C) 2007 Novell, Inc.
-//
+// TextWriterTraceListenerHelper.cs -
+// Test Helper for System.Diagnostics/SourceSwitchTest.cs
 
+//
+//  Author:
+//	Ramtin Raji Kermani
+//
+//  Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+//
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,62 +28,58 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
+using System.Diagnostics;
 
-namespace System.Diagnostics
+namespace MonoTests.System.Diagnostics
 {
-	public class SourceSwitch : Switch
+	public class TestTextWriterTraceListener: TextWriterTraceListener
 	{
-		// FIXME: better explanation.
-		const string description = "Source switch.";
+		public int TotalMessageCount { set; get;}
+		public int CritialMessageCount { get; set;}
+		public int ErrorMessageCount { get; set;}
+		public int WarningMessageCount { get; set;}
+		public int InfoMessageCount { get; set;}
+		public int VerboseMessageCount { set; get;}
 
-		public SourceSwitch (string displayName)
-			: this (displayName, null)
+		public TestTextWriterTraceListener(System.IO.TextWriter textWriter): base(textWriter)
 		{
+			Console.WriteLine ("TextWriterTraceListener is instantiated.");
 		}
 
-		public SourceSwitch (string displayName, string defaultSwitchValue)
-			: base (displayName, description, defaultSwitchValue)
-		{
-		}
-		
-		public SourceLevels Level {
-			get { return (SourceLevels) SwitchSetting; }
-			set {
-				SwitchSetting = (int) value;
-			}
-		}
 
-		public bool ShouldTrace (TraceEventType eventType)
+		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
 		{
+			base.TraceEvent (eventCache, source, eventType, id, message); 
+			TotalMessageCount++;
+
 			switch (eventType) {
 			case TraceEventType.Critical:
-				return (Level & (SourceLevels)TraceEventType.Critical) != 0;
+				CritialMessageCount++; break;
 			case TraceEventType.Error:
-				return (Level & (SourceLevels)TraceEventType.Error) != 0;
+				ErrorMessageCount++; break;
 			case TraceEventType.Warning:
-				return (Level & (SourceLevels)TraceEventType.Warning) != 0;
+				WarningMessageCount++; break;
 			case TraceEventType.Information:
-				return (Level & (SourceLevels)TraceEventType.Information) != 0;
+				InfoMessageCount++; break;
 			case TraceEventType.Verbose:
-				return (Level & (SourceLevels)TraceEventType.Verbose) != 0;
-			case TraceEventType.Start:
-			case TraceEventType.Stop:
-			case TraceEventType.Suspend:
-			case TraceEventType.Resume:
-			case TraceEventType.Transfer:
+				VerboseMessageCount++; break;
 			default:
-				return (Level & SourceLevels.ActivityTracing) != 0;
+				break;
 			}
 		}
 
-
-		protected override void OnValueChanged ()
+		public void clearMessageCounters()
 		{
-			SwitchSetting = (int) Enum.Parse (typeof (SourceLevels),
-				Value, true);
+			TotalMessageCount	= 0;
+			CritialMessageCount = 0;
+			WarningMessageCount = 0;
+			ErrorMessageCount 	= 0;
+			InfoMessageCount 	= 0;
+			VerboseMessageCount	= 0;
 		}
+
 	}
 }
+
 
