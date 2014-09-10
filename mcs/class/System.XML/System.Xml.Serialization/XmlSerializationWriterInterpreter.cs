@@ -120,6 +120,10 @@ namespace System.Xml.Serialization
 				return;
 			}
 
+			var obExpectedType = typeMap.TypeData.Type;
+			if (!ob.GetType().IsAssignableFrom (obExpectedType))
+				ob = ImplicitConvert (ob, obExpectedType);
+
 			XmlTypeMapping map = typeMap.GetRealTypeMap (ob.GetType());
 
 			if (map == null) 

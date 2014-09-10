@@ -585,6 +585,10 @@ namespace System.Xml.Serialization
 
 		void SetMemberValue (XmlTypeMapMember member, object ob, object value, bool isValueList)
 		{
+			var memberType = member.TypeData.Type;
+			if (value != null && !value.GetType().IsAssignableFrom (memberType))
+				value = XmlSerializationWriterInterpreter.ImplicitConvert (value, memberType);
+
 			if (isValueList)
 				((object[])ob)[member.GlobalIndex] = value;
 			else
