@@ -120,7 +120,7 @@ namespace Mono.Documentation {
 			string typename = t.FullName;
 
 			bool isInAssembly = MDocUpdater.IsInAssemblies (t.Module.Name);
-			if (isInAssembly && MDocUpdater.HasDroppedNamespace () && !typename.StartsWith ("System")) {
+			if (isInAssembly && !typename.StartsWith ("System") && MDocUpdater.HasDroppedNamespace (t)) {
 				string nameWithDropped = string.Format ("{0}.{1}", MDocUpdater.droppedNamespace, typename);
 				return nameWithDropped;
 			}
@@ -166,9 +166,26 @@ class MDocUpdater : MDocCommand
 	HashSet<string> forwardedTypes = new HashSet<string> ();
 
 	public static string droppedNamespace = string.Empty;
-	public static bool HasDroppedNamespace() {
-		return !string.IsNullOrWhiteSpace (droppedNamespace);
+
+	public static bool HasDroppedNamespace(TypeDefinition forType) {
+		return HasDroppedNamespace(forType.Module);
 	}
+
+	public static bool HasDroppedNamespace(MemberReference forMember) {
+		return HasDroppedNamespace(forMember.Module);
+	}
+
+	public static bool HasDroppedNamespace(AssemblyDefinition forAssembly) {
+		return HasDroppedNamespace(forAssembly.MainModule);
+	}
+
+	public static bool HasDroppedNamespace(ModuleDefinition forModule) {
+		return !string.IsNullOrWhiteSpace (droppedNamespace) && droppedAssemblies.Any(da => da == forModule.Name);
+	}
+
+	
+	static List<string> droppedAssemblies = new List<string>();
+
 	public string PreserveTag { get; set; }
 	public static MDocUpdater Instance { get; private set; }
 	public static bool SwitchingToMagicTypes { get; private set; }
@@ -238,6 +255,9 @@ class MDocUpdater : MDocCommand
 			{ "dropns=",
 				"Instructs the update process that {NAMESPACE} has been dropped, so that types and members will match existing documentation nodes.",
 				v => droppedNamespace = v },
+			{ "dropns-assemblies=",
+				"Comma separated list of the assemblies that are having the namespace dropped. If this is not provided, it is assumed that all are",
+					v => droppedAssemblies.AddRange(v.Split(',').Select(a => Path.GetFileName(a.Trim()))) },
 			{ "ntypes",
 				"If the new assembly is switching to 'magic types', then this switch should be defined.",
 				v => SwitchingToMagicTypes = true },
@@ -580,7 +600,7 @@ class MDocUpdater : MDocCommand
 			nsname
 		};
 
-		if (MDocUpdater.HasDroppedNamespace ()) {
+		if (MDocUpdater.HasDroppedNamespace (type)) {
 			// If dropping namespace, types may have moved into a couple of different places.
 			var newSearchLocations = searchLocations.Union (new string[] {
 				string.Format ("{0}.{1}", droppedNamespace, nsname),
@@ -847,10 +867,10 @@ class MDocUpdater : MDocCommand
 			
 			// Add namespace and type nodes into the index file as needed
 			AddIndexType (type, index_types);
-				
+
 			// Ensure the namespace index file exists
 			string namespaceToUse = type.Namespace;
-			if (HasDroppedNamespace()) {
+			if (HasDroppedNamespace(assembly)) {
 				namespaceToUse = string.Format ("{0}.{1}", droppedNamespace, namespaceToUse);
 			}
 			string onsdoc = DocUtils.PathCombine (dest, namespaceToUse + ".xml");
@@ -974,7 +994,9 @@ class MDocUpdater : MDocCommand
 					XmlDocument doc = new XmlDocument ();
 					doc.Load (typefile.FullName);
 					XmlElement e = doc.SelectSingleNode("/Type") as XmlElement;
-					if (e != null && !no_assembly_versions && UpdateAssemblyVersions(e, GetAssemblyVersions(), false)) {
+					string assemblyName = doc.SelectSingleNode ("/Type/AssemblyInfo/AssemblyName").InnerText;
+					AssemblyDefinition assembly = assemblies.FirstOrDefault (a => a.Name.Name == assemblyName);
+					if (e != null && !no_assembly_versions && assembly != null && assemblyName != null && UpdateAssemblyVersions(e, assembly, GetAssemblyVersions(assemblyName), false)) {
 						using (TextWriter writer = OpenWrite (typefile.FullName, FileMode.Truncate))
 							WriteXml(doc.DocumentElement, writer);
 						goodfiles.Add (relTypeFile);
@@ -1002,9 +1024,11 @@ class MDocUpdater : MDocCommand
 		return w;
 	}
 
-	private string[] GetAssemblyVersions ()
+	private string[] GetAssemblyVersions (string assemblyName)
 	{
-		return (from a in assemblies select GetAssemblyVersion (a)).ToArray ();
+		return (from a in assemblies 
+			where a.Name.Name == assemblyName 
+			select GetAssemblyVersion (a)).ToArray ();
 	}
 
 	private static void CleanupIndexTypes (XmlElement index_types, HashSet<string> goodfiles)
@@ -1088,10 +1112,10 @@ class MDocUpdater : MDocCommand
 			
 			// Deleted (or signature changed)
 			if (oldmember2 == null) {
-				if (!no_assembly_versions && UpdateAssemblyVersions (oldmember, new string[]{ GetAssemblyVersion (type.Module.Assembly) }, false))
+					if (!no_assembly_versions && UpdateAssemblyVersions (oldmember, type.Module.Assembly, new string[]{ GetAssemblyVersion (type.Module.Assembly) }, false))
 					continue;
 
-				DeleteMember ("Member Removed", output, oldmember, todelete);
+				DeleteMember ("Member Removed", output, oldmember, todelete, type);
 				continue;
 			}
 			
@@ -1101,7 +1125,7 @@ class MDocUpdater : MDocCommand
 					// ignore, already seen
 				}
 				else if (DefaultMemberComparer.Compare (oldmember, seenmembers [sig]) == 0)
-					DeleteMember ("Duplicate Member Found", output, oldmember, todelete);
+					DeleteMember ("Duplicate Member Found", output, oldmember, todelete, type);
 				else
 					Warning ("TODO: found a duplicate member '{0}', but it's not identical to the prior member found!", sig);
 				continue;
@@ -1232,7 +1256,7 @@ class MDocUpdater : MDocCommand
 		return null;
 	}
 
-	void DeleteMember (string reason, string output, XmlNode member, MyXmlNodeList todelete)
+		void DeleteMember (string reason, string output, XmlNode member, MyXmlNodeList todelete, TypeDefinition type)
 	{
 		string format = output != null
 			? "{0}: File='{1}'; Signature='{4}'"
@@ -1245,7 +1269,7 @@ class MDocUpdater : MDocCommand
 				member.SelectSingleNode ("MemberSignature[@Language='C#']/@Value").Value);
 			if (!delete && MemberDocsHaveUserContent (member)) {
 				Warning ("Member deletions must be enabled with the --delete option.");
-			} else if (HasDroppedNamespace ()) {
+			} else if (HasDroppedNamespace (type)) {
 				// if we're dropping the namespace, add the "classic style"
 				var existingAttribute = member.Attributes ["apistyle"];
 				if (existingAttribute != null) {
@@ -1258,7 +1282,7 @@ class MDocUpdater : MDocCommand
 
 					member.Attributes.Append (apistyleAttr);
 				}
-			} else if (!HasDroppedNamespace () && member.Attributes ["apistyle"] != null && member.Attributes ["apistyle"].Value == "unified") {
+			} else if (!HasDroppedNamespace (type) && member.Attributes ["apistyle"] != null && member.Attributes ["apistyle"].Value == "unified") {
 				// do nothing if there's an apistyle=new attribute and we haven't dropped the namespace
 			} else if (!string.IsNullOrWhiteSpace (PreserveTag)) {
 				// do nothing
@@ -1400,10 +1424,11 @@ class MDocUpdater : MDocCommand
 					var node = WriteElementAttribute (root, element, "Language", f.Language, forceNewElement: true);
 					var newnode = WriteElementAttribute (root, node, "Value", valueToUse);
 					return newnode;
-				});
+				},
+				type);
 		}
 		
-		string assemblyInfoNodeFilter = MDocUpdater.HasDroppedNamespace () ? "[@apistyle='unified']" : "[not(@apistyle) or @apistyle='classic']";
+		string assemblyInfoNodeFilter = MDocUpdater.HasDroppedNamespace (type) ? "[@apistyle='unified']" : "[not(@apistyle) or @apistyle='classic']";
 
 		AddXmlNode(
 			root.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement> ().ToArray (),
@@ -1412,12 +1437,13 @@ class MDocUpdater : MDocCommand
 			() => {
 				XmlElement ass = WriteElement(root, "AssemblyInfo", forceNewElement:true);
 				
-				if (MDocUpdater.HasDroppedNamespace ()) ass.SetAttribute ("apistyle", "unified");
+				if (MDocUpdater.HasDroppedNamespace (type)) ass.SetAttribute ("apistyle", "unified");
 
 				
 
 				return ass;
-			});
+			},
+			type);
 
 		foreach(var ass in root.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement> ())
 		{
@@ -1448,7 +1474,7 @@ class MDocUpdater : MDocCommand
 		}
 		
 		if (type.IsGenericType ()) {
-				MakeTypeParameters (root, type.GenericParameters, MDocUpdater.HasDroppedNamespace());
+				MakeTypeParameters (root, type.GenericParameters, type, MDocUpdater.HasDroppedNamespace(type));
 		} else {
 			ClearElement(root, "TypeParameters");
 		}
@@ -1505,9 +1531,10 @@ class MDocUpdater : MDocCommand
 			MakeAttributes (root, GetCustomAttributes (type), type);
 		
 		if (DocUtils.IsDelegate (type)) {
-				MakeTypeParameters (root, type.GenericParameters, MDocUpdater.HasDroppedNamespace());
-			MakeParameters(root, type.GetMethod("Invoke").Parameters);
-			MakeReturnValue(root, type.GetMethod("Invoke"));
+			MakeTypeParameters (root, type.GenericParameters, type, MDocUpdater.HasDroppedNamespace(type));
+			var member = type.GetMethod ("Invoke");
+			MakeParameters(root, member, member.Parameters);
+			MakeReturnValue(root, member);
 		}
 		
 		DocsNodeInfo typeInfo = new DocsNodeInfo (WriteElement(root, "Docs"), type);
@@ -1567,7 +1594,8 @@ class MDocUpdater : MDocCommand
 					var node = WriteElementAttribute (me, element, "Language", f.Language, forceNewElement:true);
 					var newNode = WriteElementAttribute (me, node, "Value", valueToUse);
 					return newNode;
-				});
+				},
+				mi);
 
 		}
 
@@ -1582,13 +1610,13 @@ class MDocUpdater : MDocCommand
 
 		MakeAttributes (me, GetCustomAttributes (mi), mi.DeclaringType);
 
-		MakeReturnValue(me, mi, MDocUpdater.HasDroppedNamespace());
+		MakeReturnValue(me, mi, MDocUpdater.HasDroppedNamespace(mi));
 		if (mi is MethodReference) {
 			MethodReference mb = (MethodReference) mi;
 			if (mb.IsGenericMethod ())
-					MakeTypeParameters (me, mb.GenericParameters, MDocUpdater.HasDroppedNamespace());
+					MakeTypeParameters (me, mb.GenericParameters, mi, MDocUpdater.HasDroppedNamespace(mi));
 		}
-		MakeParameters(me, mi, MDocUpdater.HasDroppedNamespace());
+		MakeParameters(me, mi, MDocUpdater.HasDroppedNamespace(mi));
 		
 		string fieldValue;
 		if (mi is FieldDefinition && GetFieldConstValue ((FieldDefinition)mi, out fieldValue))
@@ -1600,14 +1628,22 @@ class MDocUpdater : MDocCommand
 		UpdateExtensionMethods (me, info);
 	}
 
+	static void AddXmlNode (XmlElement[] relevant, Func<XmlElement, bool> valueMatches, Action<XmlElement> setValue, Func<XmlElement> makeNewNode, MemberReference member) {
+		AddXmlNode (relevant, valueMatches, setValue, makeNewNode, member.Module);
+	}
+
+	static void AddXmlNode (XmlElement[] relevant, Func<XmlElement, bool> valueMatches, Action<XmlElement> setValue, Func<XmlElement> makeNewNode, TypeDefinition type) {
+		AddXmlNode (relevant, valueMatches, setValue, makeNewNode, type.Module);
+	}
+
 	/// <summary>Adds an xml node, reusing the node if it's available</summary>
 	/// <param name="relevant">The existing set of nodes</param>
 	/// <param name="valueMatches">Checks to see if the node's value matches what you're trying to write.</param>
 	/// <param name="setValue">Sets the node's value</param>
 	/// <param name="makeNewNode">Creates a new node, if valueMatches returns false.</param>
-	static void AddXmlNode (XmlElement[] relevant, Func<XmlElement, bool> valueMatches, Action<XmlElement> setValue, Func<XmlElement> makeNewNode)
+	static void AddXmlNode (XmlElement[] relevant, Func<XmlElement, bool> valueMatches, Action<XmlElement> setValue, Func<XmlElement> makeNewNode, ModuleDefinition module)
 	{
-		bool shouldDuplicate = MDocUpdater.HasDroppedNamespace ();
+		bool shouldDuplicate = MDocUpdater.HasDroppedNamespace (module);
 		var styleToUse = shouldDuplicate ? ApiStyle.Unified : ApiStyle.Classic;
 		var existing = relevant;
 		bool done = false;
@@ -2164,7 +2200,7 @@ class MDocUpdater : MDocCommand
 		TypeDefinition type = member as TypeDefinition;
 		if (type == null)
 			type = member.DeclaringType as TypeDefinition;
-		return UpdateAssemblyVersions(root, new string[]{ GetAssemblyVersion (type.Module.Assembly) }, add);
+			return UpdateAssemblyVersions(root, type.Module.Assembly, new string[]{ GetAssemblyVersion (type.Module.Assembly) }, add);
 	}
 	
 	private static string GetAssemblyVersion (AssemblyDefinition assembly)
@@ -2172,7 +2208,7 @@ class MDocUpdater : MDocCommand
 		return assembly.Name.Version.ToString();
 	}
 	
-	private static bool UpdateAssemblyVersions(XmlElement root, string[] assemblyVersions, bool add)
+	private static bool UpdateAssemblyVersions(XmlElement root, AssemblyDefinition assembly, string[] assemblyVersions, bool add)
 	{
 		XmlElement av = (XmlElement) root.SelectSingleNode ("AssemblyVersions");
 		if (av != null) {
@@ -2182,14 +2218,14 @@ class MDocUpdater : MDocCommand
 
 		string oldNodeFilter = "AssemblyInfo[not(@apistyle) or @apistyle='classic']";
 		string newNodeFilter = "AssemblyInfo[@apistyle='unified']";
-		string thisNodeFilter = MDocUpdater.HasDroppedNamespace () ? newNodeFilter : oldNodeFilter;
-		string thatNodeFilter = MDocUpdater.HasDroppedNamespace () ? oldNodeFilter : newNodeFilter;
+		string thisNodeFilter = MDocUpdater.HasDroppedNamespace (assembly) ? newNodeFilter : oldNodeFilter;
+		string thatNodeFilter = MDocUpdater.HasDroppedNamespace (assembly) ? oldNodeFilter : newNodeFilter;
 
 		XmlElement e = (XmlElement) root.SelectSingleNode (thisNodeFilter);
 		if (e == null) {
 			e = root.OwnerDocument.CreateElement("AssemblyInfo");
 
-			if (MDocUpdater.HasDroppedNamespace ()) {
+			if (MDocUpdater.HasDroppedNamespace (assembly)) {
 				e.SetAttribute ("apistyle", "unified");
 			}
 
@@ -2197,7 +2233,7 @@ class MDocUpdater : MDocCommand
 		}
 
 		var thatNode = (XmlElement) root.SelectSingleNode (thatNodeFilter);
-		if (MDocUpdater.HasDroppedNamespace () && thatNode != null) {
+		if (MDocUpdater.HasDroppedNamespace (assembly) && thatNode != null) {
 			// there's a classic node, we should add apistyles
 			e.SetAttribute ("apistyle", "unified");
 			thatNode.SetAttribute ("apistyle", "classic");
@@ -2333,7 +2369,7 @@ class MDocUpdater : MDocCommand
 		return Convert.ToInt64 (value);
 	}
 	
-	private void MakeParameters (XmlElement root, IList<ParameterDefinition> parameters, bool shouldDuplicateWithNew=false)
+	private void MakeParameters (XmlElement root, MemberReference member, IList<ParameterDefinition> parameters, bool shouldDuplicateWithNew=false)
 	{
 		XmlElement e = WriteElement(root, "Parameters");
 
@@ -2382,13 +2418,14 @@ class MDocUpdater : MDocCommand
 
 					MakeAttributes (pe, GetCustomAttributes (p.CustomAttributes, ""));
 					return pe;
-				});
+				},
+				member);
 
 			i++;
 		}
 	}
 	
-	private void MakeTypeParameters (XmlElement root, IList<GenericParameter> typeParams, bool shouldDuplicateWithNew)
+	private void MakeTypeParameters (XmlElement root, IList<GenericParameter> typeParams, MemberReference member, bool shouldDuplicateWithNew)
 	{
 		if (typeParams == null || typeParams.Count == 0) {
 			XmlElement f = (XmlElement) root.SelectSingleNode ("TypeParameters");
@@ -2450,18 +2487,19 @@ class MDocUpdater : MDocCommand
 						}
 					
 						return pe;
-					});
+					},
+				member);
 		}
 	}
 
 	private void MakeParameters (XmlElement root, MemberReference mi, bool shouldDuplicateWithNew)
 	{
 		if (mi is MethodDefinition && ((MethodDefinition) mi).IsConstructor)
-				MakeParameters (root, ((MethodDefinition)mi).Parameters, shouldDuplicateWithNew);
+				MakeParameters (root, mi, ((MethodDefinition)mi).Parameters, shouldDuplicateWithNew);
 		else if (mi is MethodDefinition) {
 			MethodDefinition mb = (MethodDefinition) mi;
 			IList<ParameterDefinition> parameters = mb.Parameters;
-				MakeParameters(root, parameters, shouldDuplicateWithNew);
+				MakeParameters(root, mi, parameters, shouldDuplicateWithNew);
 			if (parameters.Count > 0 && DocUtils.IsExtensionMethod (mb)) {
 				XmlElement p = (XmlElement) root.SelectSingleNode ("Parameters/Parameter[position()=1]");
 				p.SetAttribute ("RefType", "this");
@@ -2470,7 +2508,7 @@ class MDocUpdater : MDocCommand
 		else if (mi is PropertyDefinition) {
 			IList<ParameterDefinition> parameters = ((PropertyDefinition)mi).Parameters;
 			if (parameters.Count > 0)
-					MakeParameters(root, parameters, shouldDuplicateWithNew);
+					MakeParameters(root, mi, parameters, shouldDuplicateWithNew);
 			else
 				return;
 		}
@@ -2498,7 +2536,8 @@ class MDocUpdater : MDocCommand
 						MakeAttributes(e, GetCustomAttributes (attributes, ""), type);
 
 					return newNode;
-				});
+				},
+			type);
 	}
 	
 	private void MakeReturnValue (XmlElement root, MemberReference mi, bool shouldDuplicateWithNew=false)
@@ -2913,7 +2952,7 @@ static class DocUtils {
 			// first, make sure this isn't a type reference to another assembly/module
 
 			bool isInAssembly = MDocUpdater.IsInAssemblies(type.Module.Name);
-			if (isInAssembly && MDocUpdater.HasDroppedNamespace () && !typeNS.StartsWith ("System")) {
+			if (isInAssembly && !typeNS.StartsWith ("System") && MDocUpdater.HasDroppedNamespace (type)) {
 				typeNS = string.Format ("{0}.{1}", MDocUpdater.droppedNamespace, typeNS);
 			}
 			return typeNS;
@@ -3217,7 +3256,7 @@ class DocumentationEnumerator {
 					// did not match ... if we're dropping the namespace, and the paramType has the dropped
 					// namespace, we should see if it matches when added
 					bool stillDoesntMatch = true;
-					if (MDocUpdater.HasDroppedNamespace() && paramType.StartsWith (MDocUpdater.droppedNamespace)) {
+					if (MDocUpdater.HasDroppedNamespace(type) && paramType.StartsWith (MDocUpdater.droppedNamespace)) {
 						string withDroppedNs = string.Format ("{0}.{1}", MDocUpdater.droppedNamespace, xmlMemberType);
 
 						stillDoesntMatch = withDroppedNs != paramType;
@@ -3270,7 +3309,7 @@ class DocumentationEnumerator {
 	{
 		// In case of dropping the namespace, we have to remove the dropped NS
 		// so that docName will match what's in the assembly/type
-		if (MDocUpdater.HasDroppedNamespace () && docName.StartsWith(MDocUpdater.droppedNamespace + ".")) {
+		if (MDocUpdater.HasDroppedNamespace (type) && docName.StartsWith(MDocUpdater.droppedNamespace + ".")) {
 			int droppedNsLength = MDocUpdater.droppedNamespace.Length;
 			docName = docName.Substring (droppedNsLength + 1, docName.Length - droppedNsLength - 1);
 		}

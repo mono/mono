@@ -136,11 +136,11 @@ check-monodocer-dropns-classic-withsecondary: $(PROGRAM)
 
 update-monodocer-dropns-unified: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-unified.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --dropns=MyFramework
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --dropns=MyFramework --dropns-assemblies=Test/DocTest-DropNS-unified.dll
 
 update-monodocer-dropns-unified-withsecondary: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-unified.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll Test/DocTest-DropNS-classic-secondary.dll --dropns=MyFramework
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll Test/DocTest-DropNS-classic-secondary.dll --dropns=MyFramework --dropns-assemblies=Test/DocTest-DropNS-unified.dll
 
 update-monodocer-dropns-classic-secondary: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-classic-secondary.dll
@@ -303,8 +303,11 @@ check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-importecmadoc-update \
 	check-monodocer-importslashdoc-update \
 	check-monodocer-update \
+	check-monodocer-dropns-classic \
+	check-monodocer-dropns-classic-withsecondary \
 	check-monodocer-delete-update \
 	check-mdoc-export-html-update \
 	check-mdoc-export-msxdoc-update \
-	check-mdoc-validate-update
+	check-mdoc-validate-update 
+
 
