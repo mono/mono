@@ -1607,8 +1607,9 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Dup);
 			ec.Emit (OpCodes.Brfalse, no_match);
 
-			var rp = ProbeType as RecursivePattern;
-			if (rp != null)
+			bool complex_pattern = ProbeType is ComplexPatternExpression;
+			Label prev = ec.RecursivePatternLabel;
+			if (complex_pattern)
 				ec.RecursivePatternLabel = ec.DefineLabel ();
 
 			if (number_mg != null) {
@@ -1619,7 +1620,7 @@ namespace Mono.CSharp
 					ec.Emit (OpCodes.Unbox_Any, probe_type);
 
 				ProbeType.Emit (ec);
-				if (rp != null) {
+				if (complex_pattern) {
 					ec.EmitInt (1);
 				} else {
 					ec.Emit (OpCodes.Ceq);
@@ -1630,8 +1631,10 @@ namespace Mono.CSharp
 
 			ec.Emit (OpCodes.Pop);
 
-			if (rp != null)
+			if (complex_pattern)
 				ec.MarkLabel (ec.RecursivePatternLabel);
+
+			ec.RecursivePatternLabel = prev;
 
 			ec.EmitInt (0);
 			ec.MarkLabel (end);
@@ -1985,22 +1988,18 @@ namespace Mono.CSharp
 		}
 	}
 
-	class RecursivePattern : PatternExpression
+	class RecursivePattern : ComplexPatternExpression
 	{
 		MethodGroupExpr operator_mg;
-		Expression[] args_comparison;
 		Arguments operator_args;
 
 		public RecursivePattern (ATypeNameExpression typeExpresion, Arguments arguments, Location loc)
-			: base (loc)
+			: base (typeExpresion, loc)
 		{
 			Arguments = arguments;
-			TypeExpression = typeExpresion;
 		}
 
 		public Arguments Arguments { get; private set; }
-
-		public ATypeNameExpression TypeExpression { get; private set; }
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
@@ -2042,8 +2041,8 @@ namespace Mono.CSharp
 				var lt = new LocalTemporary (op_types [i + 1]);
 				operator_args.Add (new Argument (lt, Argument.AType.Out));
 
-				if (args_comparison == null)
-					args_comparison = new Expression[Arguments.Count];
+				if (comparisons == null)
+					comparisons = new Expression[Arguments.Count];
 
 				int arg_comp_index;
 				Expression expr;
@@ -2058,27 +2057,7 @@ namespace Mono.CSharp
 					expr = arg.Expr;
 				}
 
-				if (expr is WildcardPattern) {
-					args_comparison [arg_comp_index] = new EmptyExpression (expr.Type);
-					continue;
-				}
-
-				var recursive = expr as RecursivePattern;
-				if (recursive != null) {
-					recursive.SetParentInstance (lt);
-				}
-
-				expr = Convert.ImplicitConversionRequired (rc, expr, lt.Type, expr.Location);
-				if (expr == null)
-					continue;
-
-				if (expr is RecursivePattern) {
-					args_comparison [arg_comp_index] = expr;
-					continue;
-				}
-
-				// TODO: Better error handling
-				args_comparison [arg_comp_index] = new Binary (Binary.Operator.Equality, lt, expr, expr.Location).Resolve (rc);
+				comparisons [arg_comp_index] = ResolveComparison (rc, expr, lt);
 			}
 
 			operator_mg = MethodGroupExpr.CreatePredefined (op, type, loc);
@@ -2096,7 +2075,7 @@ namespace Mono.CSharp
 				if (pm.Count != arg_count)
 					continue;
 
-				// TODO: Needs more thorough checks elsewhere to avoid doing this every time
+				// TODO: Needs more thorough operator checks elsewhere to avoid doing this every time
 				bool ok = true;
 				for (int ii = 1; ii < pm.Count; ++ii) {
 					if ((pm.FixedParameters [ii].ModFlags & Parameter.Modifier.OUT) == 0) {
@@ -2152,26 +2131,142 @@ namespace Mono.CSharp
 			return methods [0];
 		}
 
-		public override void Emit (EmitContext ec)
+		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
-			EmitBranchable (ec, ec.RecursivePatternLabel, false);
+			operator_mg.EmitCall (ec, operator_args, false);
+			ec.Emit (OpCodes.Brfalse, target);
+
+			base.EmitBranchable (ec, target, on_true);
+		}
+
+		static Expression ResolveComparison (ResolveContext rc, Expression expr, LocalTemporary lt)
+		{
+			if (expr is WildcardPattern)
+				return new EmptyExpression (expr.Type);
+
+			var recursive = expr as RecursivePattern;
+			expr = Convert.ImplicitConversionRequired (rc, expr, lt.Type, expr.Location);
+			if (expr == null)
+				return null;
+
+			if (recursive != null) {
+				recursive.SetParentInstance (lt);
+				return expr;
+			}
+
+			// TODO: Better error handling
+			return new Binary (Binary.Operator.Equality, lt, expr, expr.Location).Resolve (rc);
+		}
+
+		public void SetParentInstance (Expression instance)
+		{
+			operator_args [0] = new Argument (instance);
+		}
+	}
+
+	class PropertyPattern : ComplexPatternExpression
+	{
+		LocalTemporary instance;
+
+		public PropertyPattern (ATypeNameExpression typeExpresion, List<PropertyPatternMember> members, Location loc)
+			: base (typeExpresion, loc)
+		{
+			Members = members;
+		}
+
+		public List<PropertyPatternMember> Members { get; private set; }
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			type = TypeExpression.ResolveAsType (rc);
+			if (type == null)
+				return null;
+
+			comparisons = new Expression[Members.Count];
+
+			// TODO: optimize when source is VariableReference, it'd save dup+pop
+			instance = new LocalTemporary (type);
+
+			for (int i = 0; i < Members.Count; i++) {
+				var lookup = Members [i];
+
+				var member = MemberLookup (rc, false, type, lookup.Name, 0, Expression.MemberLookupRestrictions.ExactArity, loc);
+				if (member == null) {
+					member = MemberLookup (rc, true, type, lookup.Name, 0, Expression.MemberLookupRestrictions.ExactArity, loc);
+					if (member != null) {
+						Expression.ErrorIsInaccesible (rc, member.GetSignatureForError (), loc);
+						continue;
+					}
+				}
+
+				if (member == null) {
+					Expression.Error_TypeDoesNotContainDefinition (rc, Location, Type, lookup.Name);
+					continue;
+				}
+
+				var pe = member as PropertyExpr;
+				if (pe == null || member is FieldExpr) {
+					rc.Report.Error (-2001, lookup.Location, "`{0}' is not a valid pattern member", lookup.Name);
+					continue;
+				}
+
+				// TODO: Obsolete checks
+				// TODO: check accessibility
+				if (pe != null && !pe.PropertyInfo.HasGet) {
+					rc.Report.Error (-2002, lookup.Location, "Property `{0}.get' accessor is required", pe.GetSignatureForError ());
+					continue;
+				}
+
+				var expr = lookup.Expr.Resolve (rc);
+				if (expr == null)
+					continue;
+
+				var me = (MemberExpr)member;
+				me.InstanceExpression = instance;
+
+				comparisons [i] = ResolveComparison (rc, expr, me);
+			}
+
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		static Expression ResolveComparison (ResolveContext rc, Expression expr, Expression instance)
+		{
+			if (expr is WildcardPattern)
+				return new EmptyExpression (expr.Type);
+
+			var res = Convert.ImplicitConversionRequired (rc, expr, instance.Type, expr.Location);
+			if (res == null)
+				return null;
+
+			if (expr is ComplexPatternExpression)
+				return new Is (instance, res, expr.Location).Resolve (rc);
+
+			// TODO: Better error handling
+			return new Binary (Binary.Operator.Equality, instance, res, expr.Location).Resolve (rc);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
-			operator_mg.EmitCall (ec, operator_args, false);
-			ec.Emit (OpCodes.Brfalse, ec.RecursivePatternLabel);
-			if (args_comparison != null) {
-				foreach (var ac in args_comparison) {
-					ac.EmitBranchable (ec, ec.RecursivePatternLabel, false);
-				}
-			}
+			instance.Store (ec);
+
+			base.EmitBranchable (ec, target, on_true);
+		}
+	}
+
+	class PropertyPatternMember
+	{
+		public PropertyPatternMember (string name, Expression expr, Location loc)
+		{
+			Name = name;
+			Expr = expr;
+			Location = loc;
 		}
 
-		void SetParentInstance (LocalTemporary instance)
-		{
-			operator_args [0] = new Argument (instance);
-		}
+		public string Name { get; private set; }
+		public Expression Expr { get; private set; }
+		public Location Location { get; private set; }
 	}
 
 	abstract class PatternExpression : Expression
@@ -2184,6 +2279,33 @@ namespace Mono.CSharp
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotImplementedException ();
+		}
+	}
+
+	abstract class ComplexPatternExpression : PatternExpression
+	{
+		protected Expression[] comparisons;
+
+		protected ComplexPatternExpression (ATypeNameExpression typeExpresion, Location loc)
+			: base (loc)
+		{
+			TypeExpression = typeExpresion;
+		}
+
+		public ATypeNameExpression TypeExpression { get; private set; }
+
+		public override void Emit (EmitContext ec)
+		{
+			EmitBranchable (ec, ec.RecursivePatternLabel, false);
+		}
+
+		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
+		{
+			if (comparisons != null) {
+				foreach (var comp in comparisons) {
+					comp.EmitBranchable (ec, target, false);
+				}
+			}
 		}
 	}
 

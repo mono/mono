@@ -4358,12 +4358,43 @@ pattern_expr
 		$$ = new WildcardPattern (GetLocation ($1));
 	  }
 	| pattern_expr_invocation
+	| pattern_property
 	;
 
 pattern_expr_invocation
 	: type_name_expression OPEN_PARENS opt_pattern_list CLOSE_PARENS
 	  {
 		$$ = new RecursivePattern ((ATypeNameExpression) $1, (Arguments) $3, GetLocation ($2));
+	  }
+	;
+
+pattern_property
+	: type_name_expression OPEN_BRACE pattern_property_list CLOSE_BRACE
+	  {
+		$$ = new PropertyPattern ((ATypeNameExpression) $1, (List<PropertyPatternMember>) $3, GetLocation ($2));
+	  }
+	;
+
+pattern_property_list
+	: pattern_property_entry
+	  {
+		var list = new List<PropertyPatternMember> ();
+		list.Add ((PropertyPatternMember) $1);
+		$$ = list;
+	  }
+	| pattern_property_list COMMA pattern_property_entry
+	  {
+		var list = (List<PropertyPatternMember>) $1;
+		list.Add ((PropertyPatternMember) $3);
+		$$ = list;
+	  }
+	;
+
+pattern_property_entry
+	: identifier_inside_body IS pattern
+	  {
+		var lt = (LocatedToken) $1;
+		$$ = new PropertyPatternMember (lt.Value, (Expression) $3, lt.Location);
 	  }
 	;
 
