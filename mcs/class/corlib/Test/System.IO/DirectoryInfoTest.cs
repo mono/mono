@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1058,6 +1059,23 @@ namespace MonoTests.System.IO
 			info = new DirectoryInfo (TempFolder + DSC + "ToString.Test");
 			Assert.AreEqual (TempFolder + DSC + "ToString.Test", info.ToString ());
 		}
+
+#if NET_4_0
+		[Test]
+		public void EnumerateFileSystemInfosTest ()
+		{
+			var dirInfo = new DirectoryInfo (TempFolder);
+			dirInfo.CreateSubdirectory ("1").CreateSubdirectory ("a");
+			dirInfo.CreateSubdirectory ("2").CreateSubdirectory ("b");
+
+			var l = new List<string> ();
+			foreach (var info in dirInfo.EnumerateFileSystemInfos ("*", SearchOption.AllDirectories))
+				l.Add (info.Name);
+
+			l.Sort ();
+			Assert.AreEqual ("1,2,a,b", string.Join (",", l), "#1");
+		}
+#endif
 
 #if !MOBILE
 		[Test]
