@@ -1744,7 +1744,7 @@ namespace System
 			if (tzsign == -1) {
 				if (result != DateTime.MinValue) {
 					try {
-						if ((style & DateTimeStyles.AssumeUniversal) != 0) {
+						if (((style & DateTimeStyles.AssumeUniversal) != 0) || useutc) {
 							dto = new DateTimeOffset (result, TimeSpan.Zero);
 						} else if ((style & DateTimeStyles.AssumeLocal) != 0) {
 							var offset = use_invariant ?
