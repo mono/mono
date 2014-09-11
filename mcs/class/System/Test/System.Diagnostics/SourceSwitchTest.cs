@@ -31,6 +31,8 @@
 
 #if !MOBILE
 
+#define TRACE
+
 using NUnit.Framework;
 using System;
 using System.Text;
