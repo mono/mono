@@ -167,19 +167,23 @@ class MDocUpdater : MDocCommand
 
 	public static string droppedNamespace = string.Empty;
 
-	public static bool HasDroppedNamespace(TypeDefinition forType) {
+	public static bool HasDroppedNamespace(TypeDefinition forType) 
+	{
 		return HasDroppedNamespace(forType.Module);
 	}
 
-	public static bool HasDroppedNamespace(MemberReference forMember) {
+	public static bool HasDroppedNamespace(MemberReference forMember) 
+	{
 		return HasDroppedNamespace(forMember.Module);
 	}
 
-	public static bool HasDroppedNamespace(AssemblyDefinition forAssembly) {
+	public static bool HasDroppedNamespace(AssemblyDefinition forAssembly) 
+	{
 		return HasDroppedNamespace(forAssembly.MainModule);
 	}
 
-	public static bool HasDroppedNamespace(ModuleDefinition forModule) {
+	public static bool HasDroppedNamespace(ModuleDefinition forModule) 
+	{
 		return !string.IsNullOrWhiteSpace (droppedNamespace) && droppedAssemblies.Any(da => da == forModule.Name);
 	}
 
@@ -257,7 +261,7 @@ class MDocUpdater : MDocCommand
 				v => droppedNamespace = v },
 			{ "dropns-assemblies=",
 				"Comma separated list of the assemblies that are having the namespace dropped. If this is not provided, it is assumed that all are",
-					v => droppedAssemblies.AddRange(v.Split(',').Select(a => Path.GetFileName(a.Trim()))) },
+				v => droppedAssemblies.AddRange (v.Split (',').Select (a => Path.GetFileName (a.Trim ()))) },
 			{ "ntypes",
 				"If the new assembly is switching to 'magic types', then this switch should be defined.",
 				v => SwitchingToMagicTypes = true },
@@ -1112,7 +1116,7 @@ class MDocUpdater : MDocCommand
 			
 			// Deleted (or signature changed)
 			if (oldmember2 == null) {
-					if (!no_assembly_versions && UpdateAssemblyVersions (oldmember, type.Module.Assembly, new string[]{ GetAssemblyVersion (type.Module.Assembly) }, false))
+				if (!no_assembly_versions && UpdateAssemblyVersions (oldmember, type.Module.Assembly, new string[]{ GetAssemblyVersion (type.Module.Assembly) }, false))
 					continue;
 
 				DeleteMember ("Member Removed", output, oldmember, todelete, type);
@@ -1256,7 +1260,7 @@ class MDocUpdater : MDocCommand
 		return null;
 	}
 
-		void DeleteMember (string reason, string output, XmlNode member, MyXmlNodeList todelete, TypeDefinition type)
+	void DeleteMember (string reason, string output, XmlNode member, MyXmlNodeList todelete, TypeDefinition type)
 	{
 		string format = output != null
 			? "{0}: File='{1}'; Signature='{4}'"
@@ -2200,7 +2204,7 @@ class MDocUpdater : MDocCommand
 		TypeDefinition type = member as TypeDefinition;
 		if (type == null)
 			type = member.DeclaringType as TypeDefinition;
-			return UpdateAssemblyVersions(root, type.Module.Assembly, new string[]{ GetAssemblyVersion (type.Module.Assembly) }, add);
+		return UpdateAssemblyVersions(root, type.Module.Assembly, new string[]{ GetAssemblyVersion (type.Module.Assembly) }, add);
 	}
 	
 	private static string GetAssemblyVersion (AssemblyDefinition assembly)
