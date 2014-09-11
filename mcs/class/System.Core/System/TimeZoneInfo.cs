@@ -651,7 +651,9 @@ namespace System
 #elif MONOTOUCH
 				if (systemTimeZones.Count == 0) {
 					foreach (string name in GetMonoTouchNames ()) {
-						using (Stream stream = GetMonoTouchData (name)) {
+						using (Stream stream = GetMonoTouchData (name, false)) {
+							if (stream == null)
+								continue;
 							systemTimeZones.Add (BuildFromStream (name, stream));
 						}
 					}
