@@ -19,7 +19,7 @@ TEST_RESOURCES = \
 	Test/System/test-uri-props-manual.txt \
 	Test/System/test-uri-relative-props.txt
 
-TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -r:System.Xml.dll -r:System.Core.dll -nowarn:618,672,219,67,169,612 \
+TEST_MCS_FLAGS = -d:TRACE -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -r:System.Xml.dll -r:System.Core.dll -nowarn:618,672,219,67,169,612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
