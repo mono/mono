@@ -129,6 +129,8 @@ namespace System.Security.Cryptography {
 	
 		public virtual byte[] Hash {
 			get { 
+				if (disposed)
+					throw new ObjectDisposedException ("HashAlgorithm");
 				if (State != 0 || HashValue == null) {
 					throw new CryptographicUnexpectedOperationException (
 						Locale.GetText ("No hash value computed."));
