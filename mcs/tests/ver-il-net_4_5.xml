@@ -27004,17 +27004,17 @@
       <method name="Int32 Main()" attrs="145">
         <size>161</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__0(System.Object)" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int16 &lt;Main&gt;m__1(System.Object)" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Int16 &lt;Main&gt;m__2(System.Object)" attrs="145">
-        <size>9</size>
-      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int16 &lt;Main&gt;m__1()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Int16 &lt;Main&gt;m__2()" attrs="145">
+        <size>9</size>
       </method>
     </type>
   </test>
@@ -53568,11 +53568,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Test">
-      <method name="Void &lt;Main&gt;m__0(System.Object, Int32, Int32, Int32)" attrs="145">
-        <size>24</size>
-      </method>
-    </type>
     <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1[T1,T2,T3]">
       <method name="System.Action`1[T3] &lt;&gt;m__0(T2)" attrs="131">
         <size>52</size>
@@ -53589,6 +53584,11 @@
     <type name="Test">
       <method name="Void &lt;Main&gt;m__0(Int32, Int32, Int32)" attrs="145">
         <size>24</size>
+      </method>
+    </type>
+    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1+&lt;Curry&gt;c__AnonStorey2[T1,T2,T3]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -59217,9 +59217,6 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-      <method name="System.Threading.Tasks.Task`1[System.Int16] &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
-        <size>33</size>
-      </method>
     </type>
     <type name="Test+&lt;Main&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
@@ -59227,6 +59224,11 @@
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="System.Threading.Tasks.Task`1[System.Int16] &lt;Main&gt;m__0(System.String)" attrs="145">
+        <size>33</size>
       </method>
     </type>
   </test>
@@ -65610,9 +65612,6 @@
       <method name="Int32 Main()" attrs="145">
         <size>21</size>
       </method>
-      <method name="System.String &lt;get_Prop2&gt;m__0(System.Object)" attrs="145">
-        <size>13</size>
-      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>29</size>
       </method>
@@ -65623,6 +65622,11 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="System.String &lt;get_Prop2&gt;m__0()" attrs="145">
+        <size>13</size>
       </method>
     </type>
   </test>
@@ -67618,11 +67622,11 @@
       <method name="Int32 Main()" attrs="150">
         <size>88</size>
       </method>
-      <method name="Int32 &lt;d&gt;m__0(System.Object, Int32)" attrs="145">
-        <size>10</size>
-      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>42</size>
+      </method>
+      <method name="Int32 &lt;d&gt;m__0(Int32)" attrs="145">
+        <size>10</size>
       </method>
     </type>
   </test>
@@ -68450,6 +68454,16 @@
     <type name="X">
       <method name="Void Main()" attrs="145">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-pattern-01.cs">
+    <type name="TypePattern">
+      <method name="Int32 Main()" attrs="150">
+        <size>227</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
