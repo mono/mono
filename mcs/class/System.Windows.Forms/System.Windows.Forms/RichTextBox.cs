@@ -1646,7 +1646,7 @@ namespace System.Windows.Forms {
 
 				case RTF.Minor.QuadJust:
 					FlushText (rtf, false);
-					rtf_style.rtf_rtfalign = HorizontalAlignment.Center;
+					rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
 					break;
 
 				case RTF.Minor.QuadLeft:

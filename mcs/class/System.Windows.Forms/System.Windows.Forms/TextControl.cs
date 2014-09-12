@@ -1830,7 +1830,7 @@ namespace System.Windows.Forms {
 					if (tag.BackColor != Color.Empty) {
 						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (tag.BackColor), 
 								offset_x + tag.X + line.X - viewport_x,
-								line_y + tag.Shift - tag.CharOffset, tag.Width, line.height);
+								line_y + tag.Shift - tag.CharOffset - line.SpacingBefore, tag.Width, line.height);
 					}
 
 					tag_color = tag.ColorToDisplay;
@@ -2363,8 +2363,8 @@ namespace System.Windows.Forms {
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
-				Add (line.line_no + 1, String.Empty, line.alignment, tag.Font, tag.Color, line.ending,
-					line.spacing_before, line.spacing_after);
+				Add (line.line_no + 1, String.Empty, line.alignment, tag.Font, tag.Color, tag.BackColor, tag.TextPosition,
+				    tag.CharOffset, line.Indent, line.spacing_before, line.spacing_after, line.ending);
 
 				new_line = GetLine (line.line_no + 1);
 				
@@ -2398,7 +2398,7 @@ namespace System.Windows.Forms {
 
 			// We need to move the rest of the text into the new line
 			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.Font, tag.Color,
-				line.ending, line.spacing_before, line.spacing_after);
+			     tag.BackColor, tag.TextPosition, tag.CharOffset, line.Indent, line.spacing_before, line.spacing_after, line.ending);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
@@ -2531,11 +2531,12 @@ namespace System.Windows.Forms {
 
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending)
 		{
-			Add (LineNo, Text, align, font, color, ending, 0, 0);
+			Add (LineNo, Text, align, font, color, Color.Empty, TextPositioning.Normal, 0, 0, 0, 0, ending);
 		}
 
-		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending,
-		                   int spacing_before, int spacing_after)
+		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, Color back_color,
+		                   TextPositioning text_position, int char_offset, int left_indent, int spacing_before, int spacing_after,
+		                   LineEnding ending)
 		{
 			Line	add;
 			Line	line;
@@ -2551,9 +2552,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			add = new Line (this, LineNo, Text, align, font, color, ending);
-			add.spacing_before = spacing_before;
-			add.spacing_after = spacing_after;
+			add = new Line (this, LineNo, Text, align, font, color, back_color, text_position,
+				char_offset, left_indent, spacing_before, spacing_after, ending);
 
 			line = document;
 			while (line != sentinel) {
@@ -4144,7 +4144,16 @@ namespace System.Windows.Forms {
 
 		public override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
 		{
-			picture.DrawImage (dc, xoff + + Line.widths [start], y, false);
+			Draw (dc, color, xoff, y, start, end);
+		}
+
+		public override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end,
+		                           string text, out Rectangle measuredText, bool measureText)
+		{
+			Draw (dc, color, xoff, y, start, end);
+			if (measureText) {
+				measuredText = new Rectangle(Point.Round (new PointF (xoff + Line.widths [start], y)), Size.Round (picture.Size));
+			}
 		}
 
 		public override string Text ()
