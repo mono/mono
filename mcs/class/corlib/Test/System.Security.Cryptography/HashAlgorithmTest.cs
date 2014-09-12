@@ -210,6 +210,22 @@ public class HashAlgorithmTest {
 		byte[] array = new byte [1];
 		hash.ComputeHash (array, 1, Int32.MaxValue);
 	}
+	
+	[Test]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+	public void GetHash_StateExeception ()
+	{
+		hash.Initialize ();
+		byte[] input = new byte [8];
+		byte[] output = new byte [8];
+		hash.TransformBlock (input, 0, input.Length, output, 0);
+		
+		//Should fail with CryptographicUnexpectedOperationException as TransformFinalBlock was not called.
+		byte[] result = hash.Hash;
+		
+		//Use var so no warning is shown when compiling.
+		result.GetType ();
+	}
 
 	[Test]
 // not checked in Fx 1.1
