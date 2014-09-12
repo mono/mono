@@ -88,7 +88,7 @@ namespace System.Security.Cryptography {
 
 			HashCore (buffer, offset, count);
 			HashValue = HashFinal ();
-			byte[] dataToReturn = (byte[])this.HashValue.Clone ();
+			byte[] dataToReturn = (byte[])HashValue.Clone ();
 			Initialize ();
 			
 			return dataToReturn;
@@ -107,7 +107,7 @@ namespace System.Security.Cryptography {
 				len = inputStream.Read (buffer, 0, 4096);
 			}
 			HashValue = HashFinal ();
-			byte[] dataToReturn = (byte[])this.HashValue.Clone ();
+			byte[] dataToReturn = (byte[])HashValue.Clone ();
 			Initialize ();
 
 			return dataToReturn;
@@ -135,7 +135,7 @@ namespace System.Security.Cryptography {
 					throw new CryptographicUnexpectedOperationException (
 						Locale.GetText ("No hash value computed."));
 				}
-				return (byte[])this.HashValue.Clone ();
+				return (byte[])HashValue.Clone ();
 			}
 		}
 	
