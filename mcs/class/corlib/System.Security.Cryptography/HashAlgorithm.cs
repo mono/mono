@@ -88,9 +88,10 @@ namespace System.Security.Cryptography {
 
 			HashCore (buffer, offset, count);
 			HashValue = HashFinal ();
+			byte[] dataToReturn = (byte[])this.HashValue.Clone ();
 			Initialize ();
 			
-			return HashValue;
+			return dataToReturn;
 		}
 
 		public byte[] ComputeHash (Stream inputStream) 
@@ -106,8 +107,10 @@ namespace System.Security.Cryptography {
 				len = inputStream.Read (buffer, 0, 4096);
 			}
 			HashValue = HashFinal ();
+			byte[] dataToReturn = (byte[])this.HashValue.Clone ();
 			Initialize ();
-			return HashValue;
+
+			return dataToReturn;
 		}
 	
 		public static HashAlgorithm Create () 
