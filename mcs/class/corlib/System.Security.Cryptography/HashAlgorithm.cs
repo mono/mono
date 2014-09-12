@@ -129,7 +129,7 @@ namespace System.Security.Cryptography {
 	
 		public virtual byte[] Hash {
 			get { 
-				if (HashValue == null) {
+				if (State != 0 || HashValue == null) {
 					throw new CryptographicUnexpectedOperationException (
 						Locale.GetText ("No hash value computed."));
 				}
