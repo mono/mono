@@ -257,11 +257,16 @@ class MDocUpdater : MDocCommand
 			  "Only update documentation for {TYPE}.",
 				v => types.Add (v) },
 			{ "dropns=",
-				"Instructs the update process that {NAMESPACE} has been dropped, so that types and members will match existing documentation nodes.",
-				v => droppedNamespace = v },
-			{ "dropns-assemblies=",
-				"Comma separated list of the assemblies that are having the namespace dropped. If this is not provided, it is assumed that all are",
-				v => droppedAssemblies.AddRange (v.Split (',').Select (a => Path.GetFileName (a.Trim ()))) },
+			  "When processing assembly {ASSEMBLY}, strip off leading namespace {PREFIX}:\n" +
+			  "  e.g. --dropns ASSEMBLY=PREFIX",
+			  v => {
+			    var parts = v.Split ('=');
+			    if (parts.Length != 2) { Console.Error.WriteLine ("Invalid dropns input"); return; }
+			    var assembly = Path.GetFileName (parts [0].Trim ());
+			    var prefix = parts [1].Trim();
+			    droppedAssemblies.Add (assembly);
+			    droppedNamespace = prefix;
+			} },
 			{ "ntypes",
 				"If the new assembly is switching to 'magic types', then this switch should be defined.",
 				v => SwitchingToMagicTypes = true },
