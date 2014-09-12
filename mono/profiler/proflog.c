@@ -16,6 +16,7 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-mutex.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -1909,21 +1910,34 @@ typedef struct MonoCounterAgent {
 	void *value;
 	size_t value_size;
 	short index;
+	short emitted : 1;
 	struct MonoCounterAgent *next;
 } MonoCounterAgent;
 
 static MonoCounterAgent* counters;
 static gboolean counters_initialized = FALSE;
 static int counters_index = 1;
+static mono_mutex_t counters_mutex;
 
-static mono_bool
-counters_init_add_counter (MonoCounter *counter, gpointer data)
+static void
+counters_add_agent (MonoCounter *counter)
 {
 	MonoCounterAgent *agent, *item;
 
+	if (!counters_initialized)
+		return;
+
+	mono_mutex_lock (&counters_mutex);
+
 	for (agent = counters; agent; agent = agent->next) {
-		if (agent->counter == counter)
-			return TRUE;
+		if (agent->counter == counter) {
+			agent->value_size = 0;
+			if (agent->value) {
+				free (agent->value);
+				agent->value = NULL;
+			}
+			goto unlock;
+		}
 	}
 
 	agent = malloc (sizeof (MonoCounterAgent));
@@ -1931,6 +1945,7 @@ counters_init_add_counter (MonoCounter *counter, gpointer data)
 	agent->value = NULL;
 	agent->value_size = 0;
 	agent->index = counters_index++;
+	agent->emitted = 0;
 	agent->next = NULL;
 
 	if (!counters) {
@@ -1942,22 +1957,52 @@ counters_init_add_counter (MonoCounter *counter, gpointer data)
 		item->next = agent;
 	}
 
+unlock:
+	mono_mutex_unlock (&counters_mutex);
+}
+
+static mono_bool
+counters_init_foreach_callback (MonoCounter *counter, gpointer data)
+{
+	counters_add_agent (counter);
 	return TRUE;
 }
 
 static void
 counters_init (MonoProfiler *profiler)
 {
+	assert (!counters_initialized);
+
+	mono_mutex_init (&counters_mutex);
+
+	counters_initialized = TRUE;
+
+	mono_counters_on_register (&counters_add_agent);
+	mono_counters_foreach (counters_init_foreach_callback, NULL);
+}
+
+static void
+counters_emit (MonoProfiler *profiler)
+{
 	MonoCounterAgent *agent;
 	LogBuffer *logbuffer;
 	int size = 1 + 5, len = 0;
 
-	mono_counters_foreach (counters_init_add_counter, NULL);
+	if (!counters_initialized)
+		return;
+
+	mono_mutex_lock (&counters_mutex);
 
 	for (agent = counters; agent; agent = agent->next) {
+		if (agent->emitted)
+			continue;
+
 		size += strlen (mono_counter_get_name (agent->counter)) + 1 + 5 * 5;
 		len += 1;
 	}
+
+	if (!len)
+		goto unlock;
 
 	logbuffer = ensure_logbuf (size);
 
@@ -1965,6 +2010,9 @@ counters_init (MonoProfiler *profiler)
 	emit_byte (logbuffer, TYPE_SAMPLE_COUNTERS_DESC | TYPE_SAMPLE);
 	emit_value (logbuffer, len);
 	for (agent = counters; agent; agent = agent->next) {
+		if (agent->emitted)
+			continue;
+
 		const char *name = mono_counter_get_name (agent->counter);
 		emit_value (logbuffer, mono_counter_get_section (agent->counter));
 		emit_string (logbuffer, name, strlen (name) + 1);
@@ -1972,10 +2020,15 @@ counters_init (MonoProfiler *profiler)
 		emit_value (logbuffer, mono_counter_get_unit (agent->counter));
 		emit_value (logbuffer, mono_counter_get_variance (agent->counter));
 		emit_value (logbuffer, agent->index);
+
+		agent->emitted = 1;
 	}
 	EXIT_LOG (logbuffer);
 
-	counters_initialized = TRUE;
+	safe_dump (profiler, ensure_logbuf (0));
+
+unlock:
+	mono_mutex_unlock (&counters_mutex);
 }
 
 static void
@@ -1992,8 +2045,12 @@ counters_sample (MonoProfiler *profiler, uint64_t timestamp)
 	if (!counters_initialized)
 		return;
 
+	counters_emit (profiler);
+
 	buffer_size = 8;
 	buffer = calloc (1, buffer_size);
+
+	mono_mutex_lock (&counters_mutex);
 
 	size = 1 + 10 + 5;
 	for (agent = counters; agent; agent = agent->next)
@@ -2088,6 +2145,8 @@ counters_sample (MonoProfiler *profiler, uint64_t timestamp)
 	EXIT_LOG (logbuffer);
 
 	safe_dump (profiler, ensure_logbuf (0));
+
+	mono_mutex_unlock (&counters_mutex);
 }
 
 #endif /* DISABLE_HELPER_THREAD */
