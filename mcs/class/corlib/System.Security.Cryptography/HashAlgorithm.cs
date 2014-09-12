@@ -199,6 +199,7 @@ namespace System.Security.Cryptography {
 				}
 			}
 
+			State = 1;
 			HashCore (inputBuffer, inputOffset, inputCount);
 
 			if (outputBuffer != null)
@@ -226,6 +227,7 @@ namespace System.Security.Cryptography {
 			
 			HashCore (inputBuffer, inputOffset, inputCount);
 			HashValue = HashFinal ();
+			State = 0;
 			
 			return outputBuffer;
 		}
