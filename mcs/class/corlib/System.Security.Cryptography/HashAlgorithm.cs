@@ -133,7 +133,7 @@ namespace System.Security.Cryptography {
 					throw new CryptographicUnexpectedOperationException (
 						Locale.GetText ("No hash value computed."));
 				}
-				return HashValue; 
+				return (byte[])this.HashValue.Clone ();
 			}
 		}
 	
