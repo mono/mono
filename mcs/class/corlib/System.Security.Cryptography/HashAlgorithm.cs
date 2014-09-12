@@ -226,7 +226,6 @@ namespace System.Security.Cryptography {
 			
 			HashCore (inputBuffer, inputOffset, inputCount);
 			HashValue = HashFinal ();
-			Initialize ();
 			
 			return outputBuffer;
 		}
