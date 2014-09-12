@@ -363,7 +363,7 @@ namespace MonoTests.System.Security.Cryptography {
 			badSignature[0] = (byte) ~md5Signature [0];
 			HashAlgorithm hash = MD5.Create ();
 			try {
-				fmt.VerifySignature (hash, md5Signature);
+				fmt.VerifySignature (hash, badSignature);
 				Assert.Fail ("VerifyBadSignatureMD5Hash - Expected CryptographicUnexpectedOperationException but none");
 			}
 			catch (CryptographicUnexpectedOperationException) {
@@ -385,7 +385,7 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] badSignature = new byte [md5Signature.Length-1];
 			HashAlgorithm hash = MD5.Create ();
 			try {
-				fmt.VerifySignature (hash, md5Signature);
+				fmt.VerifySignature (hash, badSignature);
 				Assert.Fail ("VerifySignatureMD5HashBadSignatureLength - Expected CryptographicUnexpectedOperationException but none");
 			}
 			catch (CryptographicUnexpectedOperationException) {
