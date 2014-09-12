@@ -195,11 +195,6 @@ namespace Mono.CSharp {
 
 			return name + "`" + args.Count;
 		}
-
-		public static string MakeName (string name, int count)
-		{
-			return name + "`" + count;
-		}
 	}
 
 	public class SimpleMemberName

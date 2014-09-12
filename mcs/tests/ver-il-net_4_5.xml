@@ -2853,11 +2853,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="C+&lt;Test2&gt;c__AnonStorey0`1+&lt;Test2&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
     <type name="C+&lt;Test2&gt;c__AnonStorey0`1[T]">
       <method name="Void &lt;&gt;m__0()" attrs="131">
         <size>46</size>
@@ -2866,11 +2861,6 @@
     <type name="C+&lt;Test4&gt;c__AnonStorey2`1[T]">
       <method name="Void &lt;&gt;m__0()" attrs="131">
         <size>114</size>
-      </method>
-    </type>
-    <type name="C+&lt;Test2&gt;c__AnonStorey0`1+&lt;Test2&gt;c__AnonStorey1`1[T]">
-      <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>118</size>
       </method>
     </type>
     <type name="C+&lt;&lt;Test3`1&gt;m__1&gt;c__DynamicSite1`1+Container0[T]">
@@ -2895,6 +2885,14 @@
       </method>
       <method name="Void &lt;Test3`1&gt;m__1[T](T)" attrs="145">
         <size>105</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test2&gt;c__AnonStorey0`1+&lt;Test2&gt;c__AnonStorey1[T]">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>118</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -21832,11 +21830,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Program+&lt;Test&gt;c__Iterator0`1+&lt;Test&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
     <type name="Program">
       <method name="System.Collections.Generic.IEnumerable`1[System.Int32] Test[T](Int32)" attrs="145">
         <size>30</size>
@@ -21848,6 +21841,11 @@
       </method>
       <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
         <size>14</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Test&gt;c__Iterator0`1+&lt;Test&gt;c__AnonStorey1[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -21894,11 +21892,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Repro+&lt;GetPersons&gt;c__Iterator0`1+&lt;GetPersons&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
     <type name="Repro">
       <method name="System.Collections.Generic.IEnumerable`1[T] GetPersons[T](System.Collections.Generic.IEnumerable`1[T], Int32)" attrs="145">
         <size>37</size>
@@ -21910,6 +21903,11 @@
       </method>
       <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
         <size>14</size>
+      </method>
+    </type>
+    <type name="Repro+&lt;GetPersons&gt;c__Iterator0`1+&lt;GetPersons&gt;c__AnonStorey1[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -51290,14 +51288,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>51</size>
-      </method>
-    </type>
     <type name="Simple">
       <method name="System.IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)" attrs="454">
         <size>0</size>
@@ -51312,6 +51302,14 @@
       </method>
       <method name="Simple EndInvoke(System.IAsyncResult)" attrs="454">
         <size>0</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey1[T]">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -52016,14 +52014,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Test`1+&lt;Hello&gt;c__AnonStorey1`1+&lt;Hello&gt;c__AnonStorey0`1[T,S]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0(T)" attrs="131">
-        <size>66</size>
-      </method>
-    </type>
     <type name="Foo`1[V]">
       <method name="System.IAsyncResult BeginInvoke(V, System.AsyncCallback, System.Object)" attrs="454">
         <size>0</size>
@@ -52038,6 +52028,14 @@
       </method>
       <method name="Void EndInvoke(System.IAsyncResult)" attrs="454">
         <size>0</size>
+      </method>
+    </type>
+    <type name="Test`1+&lt;Hello&gt;c__AnonStorey1`1+&lt;Hello&gt;c__AnonStorey0[T,S]">
+      <method name="Void &lt;&gt;m__0(T)" attrs="131">
+        <size>66</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -52948,14 +52946,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>51</size>
-      </method>
-    </type>
     <type name="Simple">
       <method name="System.IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)" attrs="454">
         <size>0</size>
@@ -52970,6 +52960,14 @@
       </method>
       <method name="Simple EndInvoke(System.IAsyncResult)" attrs="454">
         <size>0</size>
+      </method>
+    </type>
+    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey1[T]">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -53242,14 +53240,14 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
     <type name="Foo`1[T]">
       <method name="Boolean ContainsAll[U](System.Collections.Generic.IEnumerable`1[U])" attrs="134">
         <size>48</size>
+      </method>
+    </type>
+    <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1[T,U]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -53570,22 +53568,20 @@
         <size>7</size>
       </method>
     </type>
-    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3[T1,T2,T3]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+    <type name="Test">
+      <method name="Void &lt;Main&gt;m__0(System.Object, Int32, Int32, Int32)" attrs="145">
+        <size>24</size>
       </method>
     </type>
-    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3+&lt;Curry&gt;c__AnonStorey2`3[T1,T2,T3]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3[T1,T2,T3]">
+    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1[T1,T2,T3]">
       <method name="System.Action`1[T3] &lt;&gt;m__0(T2)" attrs="131">
         <size>52</size>
       </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
     </type>
-    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3+&lt;Curry&gt;c__AnonStorey2`3[T1,T2,T3]">
+    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1+&lt;Curry&gt;c__AnonStorey2[T1,T2,T3]">
       <method name="Void &lt;&gt;m__0(T3)" attrs="131">
         <size>35</size>
       </method>
@@ -54272,25 +54268,25 @@
         <size>7</size>
       </method>
     </type>
-    <type name="T+&lt;GetD&gt;c__AnonStorey2`1+&lt;GetD&gt;c__AnonStorey0`1[T]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="T+&lt;GetD&gt;c__AnonStorey2`1+&lt;GetD&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>52</size>
-      </method>
-    </type>
     <type name="D">
       <method name="System.IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)" attrs="454">
         <size>0</size>
       </method>
       <method name="Void EndInvoke(System.IAsyncResult)" attrs="454">
         <size>0</size>
+      </method>
+    </type>
+    <type name="T+&lt;GetD&gt;c__AnonStorey2`1+&lt;GetD&gt;c__AnonStorey0[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="T+&lt;GetD&gt;c__AnonStorey2`1+&lt;GetD&gt;c__AnonStorey1[T]">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>52</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -61452,20 +61448,8 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-    </type>
-    <type name="Tester+&lt;Lambda_3&gt;c__async2`1+&lt;Lambda_3&gt;c__AnonStorey6`1[T]">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;Lambda_2&gt;c__async1+&lt;Lambda_2&gt;c__AnonStorey4">
       <method name="Int32 &lt;&gt;m__0()" attrs="131">
         <size>26</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;Lambda_3&gt;c__async2`1+&lt;Lambda_3&gt;c__AnonStorey6`1[T]">
-      <method name="Int32 &lt;&gt;m__0()" attrs="131">
-        <size>14</size>
       </method>
     </type>
     <type name="Tester+&lt;Lambda_1&gt;c__async0">
@@ -61481,6 +61465,14 @@
     <type name="Tester+&lt;Lambda_3&gt;c__async2`1[T]">
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Lambda_3&gt;c__async2`1+&lt;Lambda_3&gt;c__AnonStorey6[T]">
+      <method name="Int32 &lt;&gt;m__0()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -63910,6 +63902,43 @@
     <type name="AwaitGotoBug+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
         <size>337</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-75.cs">
+    <type name="CorrectEncodingOfNestedTypes">
+      <method name="System.Threading.Tasks.Task`1[T] GetAsync[T](System.String)" attrs="145">
+        <size>41</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>91</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CorrectEncodingOfNestedTypes+&lt;GetAsync&gt;c__async0`1[T]">
+      <method name="Void MoveNext()" attrs="486">
+        <size>218</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="CorrectEncodingOfNestedTypes+&lt;GetAsync&gt;c__async0`1+&lt;GetAsync&gt;c__AnonStorey5[T]">
+      <method name="System.Threading.Tasks.Task`1[T] &lt;&gt;m__0()" attrs="131">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CorrectEncodingOfNestedTypes+&lt;GetAsync&gt;c__async0`1+&lt;GetAsync&gt;c__AnonStorey5+&lt;GetAsync&gt;c__async4[T]">
+      <method name="Void MoveNext()" attrs="486">
+        <size>190</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
