@@ -493,6 +493,21 @@ public class HashAlgorithmTest {
 		hash.TransformFinalBlock (input, 0, input.Length);
 		Assert.IsNotNull (hash.Hash);
 	}
+
+	[Test]
+	public void Hash_NoExternalChanges ()
+	{
+		byte[] input = new byte [512];
+		for (int i=0;i<input.Length;i++)
+			input[i] = (byte)(i % 0xFF);
+		hash.TransformFinalBlock (input, 0, input.Length);
+
+		byte[] brokenHash = hash.Hash;
+		Array.Clear(brokenHash, 0, brokenHash.Length);
+
+		//If the byte array is returned as a ref, both instance will be cleared.
+		Assert.AreNotEqual(hash.Hash, brokenHash, "ExternalChanges");
+	}
 }
 
 }
