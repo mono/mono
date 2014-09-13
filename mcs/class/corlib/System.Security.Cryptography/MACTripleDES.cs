@@ -144,6 +144,10 @@ namespace System.Security.Cryptography {
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("MACTripleDES");
+			if (!_isKeySetupCompleted) {
+				mac.Initialize (KeyValue);
+				_isKeySetupCompleted = true;
+			}
 			State = 0;
 			return mac.Final ();
 		}

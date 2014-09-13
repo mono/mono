@@ -148,6 +148,8 @@ namespace System.Security.Cryptography {
 		{
 			if (_disposed)
 				throw new ObjectDisposedException ("HMAC");
+			if (!_isKeySetupCompleted)
+				InitialKeySetup ();
 
 			Block.Final ();
 			byte[] intermediate = _algo.Hash;
