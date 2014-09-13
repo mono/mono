@@ -98,6 +98,8 @@ namespace System.Security.Cryptography {
 			// don't read stream unless object is ready to use
 			if (disposed)
 				throw new ObjectDisposedException ("HashAlgorithm");
+			if (inputStream == null)
+				throw new ArgumentNullException ("InputStream");
 
 			byte[] buffer = new byte [4096];
 			int len = inputStream.Read (buffer, 0, 4096);
