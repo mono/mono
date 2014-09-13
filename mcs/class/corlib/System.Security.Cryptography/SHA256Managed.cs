@@ -99,6 +99,7 @@ namespace System.Security.Cryptography {
 
 		public override void Initialize () 
 		{
+			State = 0;
 			count = 0;
 			_ProcessingBufferCount = 0;
 		

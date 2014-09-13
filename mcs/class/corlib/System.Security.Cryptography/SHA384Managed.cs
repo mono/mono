@@ -56,6 +56,8 @@ public class SHA384Managed : SHA384 {
 
 	private void Initialize (bool reuse) 
 	{
+		State = 0;
+		
 		// SHA-384 initial hash value
 		// The first 64 bits of the fractional parts of the square roots
 		// of the 9th through 16th prime numbers

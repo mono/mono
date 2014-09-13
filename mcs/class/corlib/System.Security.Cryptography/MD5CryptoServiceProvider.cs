@@ -114,6 +114,7 @@ namespace System.Security.Cryptography {
 					hash[i*4+j] = (byte)(_H[i] >> j*8);
 				}
 			}
+			State = 0;
 
 			return hash;
 		}

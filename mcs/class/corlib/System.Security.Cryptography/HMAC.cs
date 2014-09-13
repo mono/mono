@@ -138,7 +138,6 @@ namespace System.Security.Cryptography {
 		{
 			if (_disposed)
 				throw new ObjectDisposedException ("HMAC");
-			State = 0;
 
 			Block.Final ();
 			byte[] intermediate = _algo.Hash;
@@ -148,10 +147,13 @@ namespace System.Security.Cryptography {
 			_algo.TransformBlock (buf, 0, buf.Length, buf, 0);
 			_algo.TransformFinalBlock (intermediate, 0, intermediate.Length);
 			byte[] hash = _algo.Hash;
-			_algo.Initialize ();
+			State = 0;
+
 			// zeroize sensitive data
+			_algo.Initialize ();
 			Array.Clear (buf, 0, buf.Length);	
 			Array.Clear (intermediate, 0, intermediate.Length);
+
 			return hash;
 		}
 

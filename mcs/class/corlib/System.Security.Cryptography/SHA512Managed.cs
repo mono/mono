@@ -57,6 +57,8 @@ public class SHA512Managed : SHA512 {
 
 	private void Initialize (bool reuse) 
 	{
+		State = 0;
+		
 		// SHA-512 initial hash value
 		// The first 64 bits of the fractional parts of the square roots
 		// of the first eight prime numbers
