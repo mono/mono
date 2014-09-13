@@ -57,12 +57,12 @@ namespace System.Security.Cryptography {
 		private HashAlgorithm _algo;
 		private BlockProcessor _block;
 		private int _blockSizeValue; 
+		private bool _isKeySetupCompleted;
 
 		// constructors
 
 		protected HMAC () 
 		{
-			_disposed = false;
 			_blockSizeValue = 64;
 		}
 
@@ -101,6 +101,16 @@ namespace System.Security.Cryptography {
 
 		// methods
 
+		private void InitialKeySetup ()
+		{
+			Block.Initialize ();
+			byte[] buf = KeySetup (Key, 0x36);
+			Block.Core (buf);
+			// zeroize key
+			Array.Clear (buf, 0, buf.Length);
+			_isKeySetupCompleted = true;
+		}
+
 		private byte[] KeySetup (byte[] key, byte padding) 
 		{
 			byte[] buf = new byte [BlockSizeValue];
@@ -126,11 +136,11 @@ namespace System.Security.Cryptography {
 		{
 			if (_disposed)
 				throw new ObjectDisposedException ("HMACSHA1");
-
 			if (State == 0) {
-				Initialize ();
 				State = 1;
 			}
+			if (!_isKeySetupCompleted)
+				InitialKeySetup ();
 			Block.Core (rgb, ib, cb);
 		}
 
@@ -163,12 +173,9 @@ namespace System.Security.Cryptography {
 				throw new ObjectDisposedException ("HMAC");
 
 			State = 0;
-			Block.Initialize ();
-			byte[] buf = KeySetup (Key, 0x36);
+			_block = null;
 			_algo.Initialize ();
-			Block.Core (buf);
-			// zeroize key
-			Array.Clear (buf, 0, buf.Length);
+			_isKeySetupCompleted = false;
 		}
 
 #if FULL_AOT_RUNTIME

@@ -51,10 +51,10 @@ public class SHA384Managed : SHA384 {
 	{
 		xBuf = new byte [8];
 		W = new ulong [80];
-		Initialize (false); // limited initialization
+		InternalInitialize (false); // limited initialization
 	}
 
-	private void Initialize (bool reuse) 
+	private void InternalInitialize (bool reuse) 
 	{
 		State = 0;
 		
@@ -86,7 +86,7 @@ public class SHA384Managed : SHA384 {
 
 	public override void Initialize () 
 	{
-		Initialize (true); // reuse instance
+		InternalInitialize (true); // reuse instance
 	}
 
 	// protected
@@ -139,7 +139,6 @@ public class SHA384Managed : SHA384 {
 		unpackWord(H5, output, 32);
 		unpackWord(H6, output, 40);
 
-		Initialize ();
 		return output;
 	}
 

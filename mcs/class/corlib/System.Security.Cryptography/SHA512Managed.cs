@@ -52,10 +52,10 @@ public class SHA512Managed : SHA512 {
 	{
 		xBuf = new byte [8];
 		W = new ulong [80];
-		Initialize (false); // limited initialization
+		InternalInitialize (false); // limited initialization
 	}
 
-	private void Initialize (bool reuse) 
+	private void InternalInitialize (bool reuse) 
 	{
 		State = 0;
 		
@@ -87,7 +87,7 @@ public class SHA512Managed : SHA512 {
 
 	public override void Initialize () 
 	{
-		Initialize (true); // reuse instance
+		InternalInitialize (true); // reuse instance
 	}
 
 	// protected
@@ -139,10 +139,9 @@ public class SHA512Managed : SHA512 {
 		unpackWord(H4, output, 24);
 		unpackWord(H5, output, 32);
 		unpackWord(H6, output, 40);
-	        unpackWord(H7, output, 48);
+		unpackWord(H7, output, 48);
 		unpackWord(H8, output, 56);
 
-		Initialize ();
 		return output;
 	}
 

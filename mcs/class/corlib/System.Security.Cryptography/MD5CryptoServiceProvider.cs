@@ -47,7 +47,7 @@ namespace System.Security.Cryptography {
 			buff = new uint[16];
 			_ProcessingBuffer = new byte [BLOCK_SIZE_BYTES];
 
-			Initialize();
+			HInit ();
 		}
 
 		~MD5CryptoServiceProvider () 
@@ -123,7 +123,11 @@ namespace System.Security.Cryptography {
 		{
 			count = 0;
 			_ProcessingBufferCount = 0;
-
+			HInit ();
+		}
+		
+		private void HInit ()
+		{
 			_H[0] = 0x67452301;
 			_H[1] = 0xefcdab89;
 			_H[2] = 0x98badcfe;

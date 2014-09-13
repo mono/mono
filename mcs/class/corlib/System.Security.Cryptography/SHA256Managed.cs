@@ -46,7 +46,7 @@ namespace System.Security.Cryptography {
 			_H = new uint [8];
 			_ProcessingBuffer = new byte [BLOCK_SIZE_BYTES];
 			buff = new uint[64];
-			Initialize ();
+			HInit ();
 		}
 
 		protected override void HashCore (byte[] rgb, int ibStart, int cbSize) 
@@ -102,7 +102,11 @@ namespace System.Security.Cryptography {
 			State = 0;
 			count = 0;
 			_ProcessingBufferCount = 0;
+			HInit ();
+		}
 		
+		private void HInit()
+		{
 			_H[0] = 0x6A09E667;
 			_H[1] = 0xBB67AE85;
 			_H[2] = 0x3C6EF372;
