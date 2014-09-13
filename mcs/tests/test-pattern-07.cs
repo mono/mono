@@ -31,6 +31,24 @@ class PropertyPattern
 		if (res2)
 			return 5;
 
+		object o3 = new X () {
+			Value = 5
+		};
+
+		if (o3 is X { Value is 6 })
+			return 6;
+
+		if (!(o3 is X { Value is 5 }))
+			return 7;
+
+		object o4 = new X () {
+			NullableValue = 4
+		};
+
+		bool res3 = o4 is X { NullableValue is (byte) 4 };
+		if (!res3)
+			return 8;
+
 		Console.WriteLine("ok");
 		return 0;
 	}
@@ -39,6 +57,10 @@ class PropertyPattern
 class X
 {
 	public object Field { get; set; }
+
+	public object Value { get; set; }
+
+	public long? NullableValue { get; set; }
 }
 
 class Y
@@ -49,5 +71,5 @@ class Y
 	{
 		x = 4;
 		return true;
-	}	
+	}
 }

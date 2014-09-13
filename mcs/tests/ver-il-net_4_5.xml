@@ -68486,7 +68486,7 @@
   <test name="test-pattern-02.cs">
     <type name="ConstantPattern">
       <method name="Int32 Main()" attrs="150">
-        <size>633</size>
+        <size>609</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -68592,7 +68592,7 @@
   <test name="test-pattern-07.cs">
     <type name="PropertyPattern">
       <method name="Int32 Main()" attrs="145">
-        <size>444</size>
+        <size>684</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -68621,6 +68621,27 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="System.Object get_Value()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Value(System.Object)" attrs="2182">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="&lt;PatternMatchingHelper&gt;">
+      <method name="Boolean NumberMatcher(System.Object, System.Object, Boolean)" attrs="150">
+        <size>69</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="System.Nullable`1[System.Int64] get_NullableValue()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_NullableValue(System.Nullable`1[System.Int64])" attrs="2182">
+        <size>8</size>
       </method>
     </type>
   </test>

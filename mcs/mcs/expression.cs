@@ -1791,6 +1791,10 @@ namespace Mono.CSharp
 				if (Expr.Type.IsNullableType) {
 					expr_unwrap = new Nullable.Unwrap (Expr);
 					expr_unwrap.Resolve (rc);
+					ProbeType = Convert.ImplicitConversion (rc, ProbeType, expr_unwrap.Type, loc);
+				} else if (ProbeType.Type == Expr.Type) {
+					// TODO: Better error handling
+					return new Binary (Binary.Operator.Equality, Expr, mc, loc).Resolve (rc);
 				} else if (ProbeType.Type.IsEnum || (ProbeType.Type.BuiltinType >= BuiltinTypeSpec.Type.Byte && ProbeType.Type.BuiltinType <= BuiltinTypeSpec.Type.Decimal)) {
 					var helper = rc.Module.CreatePatterMatchingHelper ();
 					number_mg = helper.NumberMatcher.Spec;
@@ -2236,15 +2240,7 @@ namespace Mono.CSharp
 			if (expr is WildcardPattern)
 				return new EmptyExpression (expr.Type);
 
-			var res = Convert.ImplicitConversionRequired (rc, expr, instance.Type, expr.Location);
-			if (res == null)
-				return null;
-
-			if (expr is ComplexPatternExpression)
-				return new Is (instance, res, expr.Location).Resolve (rc);
-
-			// TODO: Better error handling
-			return new Binary (Binary.Operator.Equality, instance, res, expr.Location).Resolve (rc);
+			return new Is (instance, expr, expr.Location).Resolve (rc);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
