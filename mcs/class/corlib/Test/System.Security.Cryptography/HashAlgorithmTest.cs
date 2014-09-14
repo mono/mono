@@ -508,6 +508,15 @@ public class HashAlgorithmTest {
 		//If the byte array is returned as a ref, both instance will be cleared.
 		Assert.AreNotEqual(hash.Hash, brokenHash, "ExternalChanges");
 	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void Hash_DisposedException ()
+	{
+		hash.Dispose();
+		//Should fail since the hash object is disposed.
+		Assert.IsNull(hash.Hash);
+	}
 }
 
 }
