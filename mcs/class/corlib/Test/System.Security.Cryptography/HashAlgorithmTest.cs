@@ -512,9 +512,7 @@ public class HashAlgorithmTest {
 		hash.TransformBlock (input, 0, input.Length, output, 0);
 
 		//Should fail with CryptographicUnexpectedOperationException as TransformFinalBlock was not called.
-		byte[] result = hash.Hash;
-		//Use var so no warning is shown when compiling.
-		Assert.IsNull(result);
+		Assert.IsNull(hash.Hash);
 	}
 }
 
