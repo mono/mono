@@ -95,7 +95,7 @@ namespace Microsoft.Build.Utilities
 			if (SkipTaskExecution ())
 				return true;
 
-			exitCode = ExecuteTool (GenerateFullPathToTool (), GenerateResponseFileCommands (),
+			exitCode = ExecuteTool (ToolPath ?? GenerateFullPathToTool (), GenerateResponseFileCommands (),
 				GenerateCommandLineCommands ());
 
 			// HandleTaskExecutionErrors is called only if exitCode != 0
