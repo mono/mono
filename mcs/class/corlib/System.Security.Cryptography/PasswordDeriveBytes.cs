@@ -49,8 +49,7 @@ public class PasswordDeriveBytes : DeriveBytes {
 	private HashAlgorithm hash;
 	private int state;
 	private byte[] password;
-	private byte[] initial;
-	private byte[] output;
+	private byte[] hasedPassword;
 	private int position;
 	private int hashnumber;
 
@@ -113,10 +112,10 @@ public class PasswordDeriveBytes : DeriveBytes {
 #if NET_4_0
 	protected override void Dispose (bool disposing)
 	{
-		// zeroize buffer
-		if (initial != null) {
-			Array.Clear (initial, 0, initial.Length);
-			initial = null;
+		// zeroize password hash
+		if (hasedPassword != null) {
+			Array.Clear (hasedPassword, 0, hasedPassword.Length);
+			hasedPassword = null;
 		}
 		// zeroize temporary password storage
 		if (password != null) {
@@ -150,6 +149,26 @@ public class PasswordDeriveBytes : DeriveBytes {
 		IterationCount = iterations;
 		state = 0;
 	}
+
+	private void PreparePasswordHash()
+	{
+		hash = HashAlgorithm.Create (HashNameValue);
+		if (SaltValue != null) {
+			hash.TransformBlock (password, 0, password.Length, password, 0);
+			hash.TransformFinalBlock (SaltValue, 0, SaltValue.Length);
+			hasedPassword = hash.Hash;
+			hash.Initialize ();
+		}
+		else
+			hasedPassword = hash.ComputeHash (password);
+
+		// calculate the PKCS5 key
+		// the initial hash (in reset) + at least one iteration
+		int iter = Math.Max (1, IterationsValue);
+		for (int i = 0; i < iter - 2; i++)
+			hasedPassword = hash.ComputeHash (hasedPassword);
+	}
+
 	public string HashName {
 		get { return HashNameValue; } 
 		set {
@@ -217,52 +236,40 @@ public class PasswordDeriveBytes : DeriveBytes {
 		if (state == 0) {
 			// it's now impossible to change the HashName, Salt
 			// and IterationCount
-			Reset ();
 			state = 1;
+			PreparePasswordHash ();
 		}
 
 		byte[] result = new byte [cb];
 		int cpos = 0;
-		// the initial hash (in reset) + at least one iteration
-		int iter = Math.Max (1, IterationsValue - 1);
-
-		// start with the PKCS5 key
-		if (output == null) {
-			// calculate the PKCS5 key
-			output = initial;
-
-			// generate new key material
-			for (int i = 0; i < iter - 1; i++)
-				output = hash.ComputeHash (output);
-		}
 
 		while (cpos < cb) {
-			byte[] output2 = null;
+			byte[] output = null;
 			if (hashnumber == 0) {
-				// last iteration on output
-				output2 = hash.ComputeHash (output);
+				// First iteration on output
+				output = hash.ComputeHash (hasedPassword);
 			}
 			else if (hashnumber < 1000) {
 				string n = Convert.ToString (hashnumber);
-				output2 = new byte [output.Length + n.Length];
+				output = new byte [hasedPassword.Length + n.Length];
 				for (int j=0; j < n.Length; j++)
-					output2 [j] = (byte)(n [j]);
-				Buffer.BlockCopy (output, 0, output2, n.Length, output.Length);
-				// don't update output
-				output2 = hash.ComputeHash (output2);
+					output [j] = (byte)(n [j]);
+				Buffer.BlockCopy (hasedPassword, 0, output, n.Length, hasedPassword.Length);
+				// don't update hasedPassword
+				output = hash.ComputeHash (output);
 			}
 			else {
 				throw new CryptographicException (
 					Locale.GetText ("too long"));
 			}
 
-			int rem = output2.Length - position;
+			int rem = output.Length - position;
 			int l = Math.Min (cb - cpos, rem);
-			Buffer.BlockCopy (output2, position, result, cpos, l);
+			Buffer.BlockCopy (output, position, result, cpos, l);
 			cpos += l;
 			position += l;
-			while (position >= output2.Length) {
-				position -= output2.Length;
+			while (position >= output.Length) {
+				position -= output.Length;
 				hashnumber++;
 			}
 		}
@@ -274,15 +281,11 @@ public class PasswordDeriveBytes : DeriveBytes {
 		state = 0;
 		position = 0;
 		hashnumber = 0;
-
-		hash = HashAlgorithm.Create (HashNameValue);
-		if (SaltValue != null) {
-			hash.TransformBlock (password, 0, password.Length, password, 0);
-			hash.TransformFinalBlock (SaltValue, 0, SaltValue.Length);
-			initial = hash.Hash;
+		hash = null;
+		if (hasedPassword != null) {
+			Array.Clear (hasedPassword, 0, hasedPassword.Length);
+			hasedPassword = null;
 		}
-		else
-			initial = hash.ComputeHash (password);
 	}
 } 
 	
