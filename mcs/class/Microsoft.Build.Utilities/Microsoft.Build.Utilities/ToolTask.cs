@@ -1,12 +1,14 @@
 //
 // ToolTask.cs: Base class for command line tool tasks. 
 //
-// Author:
+// Authors:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 //   Ankit Jain (jankit@novell.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2005 Marek Sieradzki
 // Copyright 2009 Novell, Inc (http://www.novell.com)
+// Copyright 2014 Xamarin Inc
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -90,12 +92,41 @@ namespace Microsoft.Build.Utilities
 			return true;
 		}
 
+		string CreateToolPath ()
+		{
+			string tp;
+			if (string.IsNullOrEmpty (ToolPath)) {
+				tp = GenerateFullPathToTool ();
+				if (string.IsNullOrEmpty (tp))
+					return null;
+
+				tp = Path.GetDirectoryName (tp);
+				if (string.IsNullOrEmpty (tp))
+					tp = Directory.GetCurrentDirectory ();
+
+			} else {
+				tp = ToolPath;
+			}
+
+			var	path = Path.Combine (tp, ToolExe);
+			if (!File.Exists (path)) {
+				Log.LogError ("Tool executable '{0}' could not be found", path);
+				return null;
+			}
+
+			return path;
+		}
+
 		public override bool Execute ()
 		{
 			if (SkipTaskExecution ())
 				return true;
 
-			exitCode = ExecuteTool (GenerateFullPathToTool (), GenerateResponseFileCommands (),
+			var tool_path = CreateToolPath ();
+			if (tool_path == null)
+				return false;
+
+			exitCode = ExecuteTool (tool_path, GenerateResponseFileCommands (),
 				GenerateCommandLineCommands ());
 
 			// HandleTaskExecutionErrors is called only if exitCode != 0
@@ -289,14 +320,14 @@ namespace Microsoft.Build.Utilities
 
 		protected virtual string GenerateCommandLineCommands ()
 		{
-			return null;
+			return "";
 		}
 
 		protected abstract string GenerateFullPathToTool ();
 
 		protected virtual string GenerateResponseFileCommands ()
 		{
-			return null;
+			return "";
 		}
 
 		protected virtual string GetResponseFileSwitch (string responseFilePath)
