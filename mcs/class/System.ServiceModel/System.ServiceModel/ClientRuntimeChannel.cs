@@ -436,9 +436,16 @@ namespace System.ServiceModel.MonoInternal
 
 		#region Request/Output processing
 
+		class OperationParameters
+		{
+			public object[] Parameters;
+			public object UserData;
+		}
+
 		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState)
 		{
-			return _processDelegate.BeginInvoke (method, operationName, parameters, OperationContext.Current, callback, asyncState);
+			var p = new OperationParameters { Parameters = parameters, UserData = asyncState };
+			return _processDelegate.BeginInvoke (method, operationName, parameters, OperationContext.Current, callback, p);
 		}
 
 		public object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result)
@@ -447,8 +454,14 @@ namespace System.ServiceModel.MonoInternal
 				throw new ArgumentNullException ("result");
 			if (parameters == null)
 				throw new ArgumentNullException ("parameters");
-			// FIXME: the method arguments should be verified to be 
-			// identical to the arguments in the corresponding begin method.
+
+			var p = (OperationParameters)result.AsyncState;
+			if (p.Parameters.Length != parameters.Length)
+				throw new ArgumentException ("Parameter array has invalid length.", "parameters");
+
+			for (int i = 0; i < parameters.Length; i++)
+				parameters [i] = p.Parameters [i];
+
 			return _processDelegate.EndInvoke (result);
 		}
 
