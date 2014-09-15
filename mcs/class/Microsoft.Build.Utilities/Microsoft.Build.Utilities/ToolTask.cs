@@ -100,10 +100,13 @@ namespace Microsoft.Build.Utilities
 				if (string.IsNullOrEmpty (tp))
 					return null;
 
-				tp = Path.GetDirectoryName (tp);
-				if (string.IsNullOrEmpty (tp))
-					tp = Directory.GetCurrentDirectory ();
+				//
+				// GenerateFullPathToTool can return path including tool name
+				//
+				if (string.IsNullOrEmpty (ToolExe))
+					return tp;
 
+				tp = Path.GetDirectoryName (tp);
 			} else {
 				tp = ToolPath;
 			}

@@ -462,16 +462,16 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			var t = new TestExecuteToolTask ();
 			t.FullPathToTool = "fpt";
 			t.BuildEngine = new MockBuildEngine ();
-			t.ToolExe = "Makefile";
+			t.ToolExe = "Makefile.mk";
 
 			t.OnExecuteTool = (pathToTool, responseFileCommands, commandLineCommands) => {
-				Assert.AreEqual (Path.Combine (Directory.GetCurrentDirectory (), "Makefile"), pathToTool, "#1");
+				Assert.AreEqual ("Makefile.mk", pathToTool, "#1");
 				Assert.AreEqual ("", responseFileCommands, "#2");
 				Assert.AreEqual ("", commandLineCommands, "#3");
 
 			};
 
-			Assert.IsTrue (t.Execute (), "result");
+			Assert.IsFalse (t.Execute (), "result");
 		}
 	}
 
