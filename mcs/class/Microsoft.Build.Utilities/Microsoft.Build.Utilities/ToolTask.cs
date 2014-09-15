@@ -110,7 +110,8 @@ namespace Microsoft.Build.Utilities
 
 			var	path = Path.Combine (tp, ToolExe);
 			if (!File.Exists (path)) {
-				Log.LogError ("Tool executable '{0}' could not be found", path);
+				if (Log != null)
+					Log.LogError ("Tool executable '{0}' could not be found", path);
 				return null;
 			}
 
