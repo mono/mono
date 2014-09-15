@@ -1160,5 +1160,23 @@ namespace MonoTests.System.Xml.TestClasses
 			get; set;
 		}
 	}
+
+	public class ObjectWithNullableArrayItems
+	{
+		[XmlArrayItem ("Element", IsNullable = true)]
+		public List<SimpleClass> Elements;
+	}
+
+	public class ObjectWithNonNullableArrayItems
+	{
+		[XmlArrayItem ("Element", IsNullable = false)]
+		public List<SimpleClass> Elements;
+	}
+
+	public class ObjectWithNotSpecifiedNullableArrayItems
+	{
+		[XmlArrayItem ("Element")]
+		public List<SimpleClass> Elements;
+	}
 }
 

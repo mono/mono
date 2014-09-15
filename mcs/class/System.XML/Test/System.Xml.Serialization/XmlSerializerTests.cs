@@ -3435,6 +3435,66 @@ namespace MonoTests.System.XmlSerialization
 				Assert.AreEqual (expectedValueWithX, Infoset (t.ToString ()));
 			}
 		}
+
+		[Test]
+		public void NullableArrayItems ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithNullableArrayItems));
+
+			var obj = new ObjectWithNullableArrayItems ();
+			obj.Elements = new List <SimpleClass> ();
+			obj.Elements.Add (new SimpleClass { something = "Hello" });
+			obj.Elements.Add (null);
+			obj.Elements.Add (new SimpleClass { something = "World" });
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithNullableArrayItems) ser.Deserialize (r);
+					Assert.IsNull (desObj.Elements [1]);
+				}
+			}
+		}
+
+		[Test]
+		public void NonNullableArrayItems ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithNonNullableArrayItems));
+
+			var obj = new ObjectWithNonNullableArrayItems ();
+			obj.Elements = new List <SimpleClass> ();
+			obj.Elements.Add (new SimpleClass { something = "Hello" });
+			obj.Elements.Add (null);
+			obj.Elements.Add (new SimpleClass { something = "World" });
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithNonNullableArrayItems) ser.Deserialize (r);
+					Assert.IsNotNull (desObj.Elements [1]);
+				}
+			}
+		}
+
+		[Test]
+		public void NotSpecifiedNullableArrayItems ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithNotSpecifiedNullableArrayItems));
+
+			var obj = new ObjectWithNotSpecifiedNullableArrayItems ();
+			obj.Elements = new List <SimpleClass> ();
+			obj.Elements.Add (new SimpleClass { something = "Hello" });
+			obj.Elements.Add (null);
+			obj.Elements.Add (new SimpleClass { something = "World" });
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithNotSpecifiedNullableArrayItems) ser.Deserialize (r);
+					Assert.IsNull (desObj.Elements [1]);
+				}
+			}
+		}
 	}
 
 	// Test generated serialization code.
