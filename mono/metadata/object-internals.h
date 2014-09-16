@@ -1614,7 +1614,7 @@ char *
 mono_string_to_utf8_ignore (MonoString *s) MONO_INTERNAL;
 
 char *
-mono_string_to_utf8_image_ignore (MonoImage *image, MonoString *s) MONO_INTERNAL;
+mono_string_to_utf8_image_ignore (MonoImage *image, MonoString *s, const char *what) MONO_INTERNAL;
 
 char *
 mono_string_to_utf8_mp_ignore (MonoMemPool *mp, MonoString *s) MONO_INTERNAL;

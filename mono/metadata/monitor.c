@@ -1034,7 +1034,7 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 
 	res = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_enter_method), 5), fast_path_idx);
 
-	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (WrapperInfo));
+	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (WrapperInfo), "monitor-wrapper-info");
 	info->subtype = is_v4 ? WRAPPER_SUBTYPE_FAST_MONITOR_ENTER_V4 : WRAPPER_SUBTYPE_FAST_MONITOR_ENTER;
 	mono_marshal_set_wrapper_info (res, info);
 
@@ -1195,7 +1195,7 @@ mono_monitor_get_fast_exit_method (MonoMethod *monitor_exit_method)
 	res = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_exit_method), 5), FASTPATH_EXIT);
 	mono_mb_free (mb);
 
-	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (WrapperInfo));
+	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (WrapperInfo), "monitor-wrapper-info");
 	info->subtype = WRAPPER_SUBTYPE_FAST_MONITOR_EXIT;
 	mono_marshal_set_wrapper_info (res, info);
 

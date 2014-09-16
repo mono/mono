@@ -85,7 +85,7 @@ static void
 free_main_args (void);
 
 static char *
-mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, gboolean ignore_error, MonoError *error);
+mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, gboolean ignore_error, const char *what, MonoError *error);
 
 
 #define ldstr_lock() mono_mutex_lock (&ldstr_section)
@@ -2149,7 +2149,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 		/* this is a bounded memory retention issue: may want to 
 		 * handle it differently when we'll have a rcu-like system.
 		 */
-		runtime_info = mono_image_alloc0 (class->image, MONO_SIZEOF_CLASS_RUNTIME_INFO + new_size * sizeof (gpointer));
+		runtime_info = mono_image_alloc0 (class->image, MONO_SIZEOF_CLASS_RUNTIME_INFO + new_size * sizeof (gpointer), "runtime-info");
 		runtime_info->max_domain = new_size - 1;
 		/* copy the stuff from the older info */
 		if (old_info) {
@@ -5674,9 +5674,9 @@ mono_string_to_utf8_ignore (MonoString *s)
  * Same as mono_string_to_utf8_ignore, but allocate the string from the image mempool.
  */
 char *
-mono_string_to_utf8_image_ignore (MonoImage *image, MonoString *s)
+mono_string_to_utf8_image_ignore (MonoImage *image, MonoString *s, const char *what)
 {
-	return mono_string_to_utf8_internal (NULL, image, s, TRUE, NULL);
+	return mono_string_to_utf8_internal (NULL, image, s, TRUE, what, NULL);
 }
 
 /**
@@ -5688,7 +5688,7 @@ mono_string_to_utf8_image_ignore (MonoImage *image, MonoString *s)
 char *
 mono_string_to_utf8_mp_ignore (MonoMemPool *mp, MonoString *s)
 {
-	return mono_string_to_utf8_internal (mp, NULL, s, TRUE, NULL);
+	return mono_string_to_utf8_internal (mp, NULL, s, TRUE, NULL, NULL);
 }
 
 
@@ -5801,7 +5801,7 @@ mono_string_from_utf32 (mono_unichar4 *data)
 }
 
 static char *
-mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, gboolean ignore_error, MonoError *error)
+mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, gboolean ignore_error, const char *what, MonoError *error)
 {
 	char *r;
 	char *mp_s;
@@ -5822,7 +5822,7 @@ mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, 
 	if (mp)
 		mp_s = mono_mempool_alloc (mp, len);
 	else
-		mp_s = mono_image_alloc (image, len);
+		mp_s = mono_image_alloc (image, len, what);
 
 	memcpy (mp_s, r, len);
 
@@ -5840,7 +5840,7 @@ mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, 
 char *
 mono_string_to_utf8_image (MonoImage *image, MonoString *s, MonoError *error)
 {
-	return mono_string_to_utf8_internal (NULL, image, s, FALSE, error);
+	return mono_string_to_utf8_internal (NULL, image, s, FALSE, NULL, error);
 }
 
 /**
@@ -5852,7 +5852,7 @@ mono_string_to_utf8_image (MonoImage *image, MonoString *s, MonoError *error)
 char *
 mono_string_to_utf8_mp (MonoMemPool *mp, MonoString *s, MonoError *error)
 {
-	return mono_string_to_utf8_internal (mp, NULL, s, FALSE, error);
+	return mono_string_to_utf8_internal (mp, NULL, s, FALSE, NULL, error);
 }
 
 

@@ -15,6 +15,8 @@ typedef enum {
 void mono_profiler_register_memory_domain (gpointer domain, MemoryDomainKind kind) MONO_INTERNAL;
 void mono_profiler_free_memory_domain (gpointer domain) MONO_INTERNAL;
 
+void mono_profiler_add_mempool_alloc (gpointer domain, gsize size, const char *tag) MONO_INTERNAL;
+
 /*use this for large allocations that are not automtically tracked */
 void mono_profiler_add_allocation (const char *tag, gsize size) MONO_INTERNAL;
 void mono_profiler_remove_allocation (const char *tag, gsize size) MONO_INTERNAL;

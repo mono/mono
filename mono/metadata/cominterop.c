@@ -1918,7 +1918,7 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 
 	if (!ccw_entry) {
 		int vtable_index = method_count-1+start_slot;
-		vtable = mono_image_alloc0 (klass->image, sizeof (gpointer)*(method_count+start_slot));
+		vtable = mono_image_alloc0 (klass->image, sizeof (gpointer)*(method_count+start_slot), "ccw-vtable");
 		memcpy (vtable, iunknown, sizeof (iunknown));
 		if (start_slot == 7)
 			memcpy (vtable+3, idispatch, sizeof (idispatch));

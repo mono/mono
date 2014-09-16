@@ -38,12 +38,15 @@ typedef struct {
 	gpointer address;
 	MemoryDomainKind kind;
 	size_t extra_alloc;
+	GHashTable *mempool_allocs;
 } MemDomain;
 
 typedef struct {
 	const char *tag;
 	size_t alloc_bytes;
+	size_t alloc_count;
 } AllocInfo;
+
 
 static inline void
 memprof_lock (void)
@@ -57,14 +60,22 @@ memprof_unlock (void)
 	mono_mutex_unlock (&memprof_mutex);
 }
 
+static void
+free_memdom (gpointer arg)
+{
+	MemDomain *dom = arg;
+
+	g_hash_table_destroy (dom->mempool_allocs);
+	g_free (dom);
+}
+
 void
 mono_memory_profiler_init (void)
 {
 	mono_mutex_init (&memprof_mutex);
-	mem_domains = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, g_free);
+	mem_domains = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, free_memdom);
 	global_allocs = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
 }
-
 
 void
 mono_profiler_register_memory_domain (gpointer domain, MemoryDomainKind kind)
@@ -72,6 +83,7 @@ mono_profiler_register_memory_domain (gpointer domain, MemoryDomainKind kind)
 	MemDomain *dom = g_new0 (MemDomain, 1);
 	dom->address = domain;
 	dom->kind = kind;
+	dom->mempool_allocs = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
 	memprof_lock ();
 	g_hash_table_insert (mem_domains, domain, dom);
 	memprof_unlock ();
@@ -85,18 +97,39 @@ mono_profiler_free_memory_domain (gpointer domain)
 	memprof_unlock ();
 }
 
-void
-mono_profiler_add_allocation (const char *tag, gsize size)
+
+static void
+add_alloc_to_hashtable (GHashTable *hash, const char *tag, gsize size)
 {
-	AllocInfo *info;
-	memprof_lock ();
-	info = g_hash_table_lookup (global_allocs, tag);
+	AllocInfo *info = g_hash_table_lookup (hash, tag);
+
 	if (!info) {
 		info = g_new0 (AllocInfo, 1);
 		info->tag = tag;
-		g_hash_table_insert (global_allocs, (char*)tag, info);
+		g_hash_table_insert (hash, (char*)tag, info);
 	}
 	info->alloc_bytes += size;
+	info->alloc_count++;
+}
+
+void
+mono_profiler_add_mempool_alloc (gpointer domain, gsize size, const char *tag)
+{
+	MemDomain *dom;
+	memprof_lock ();
+	dom = g_hash_table_lookup (mem_domains, domain);
+	if (!dom)
+		g_print ("WARNING could not find memdom %p\n", domain);
+	else
+		add_alloc_to_hashtable (dom->mempool_allocs, tag, size);
+	memprof_unlock ();
+}
+
+void
+mono_profiler_add_allocation (const char *tag, gsize size)
+{
+	memprof_lock ();
+	add_alloc_to_hashtable (global_allocs, tag, size);
 	memprof_unlock ();
 }
 
@@ -348,16 +381,30 @@ dump_desc (ItemDesc *desc, gpointer *domain)
 	return size;
 }
 
+static void
+dump_allocs (gpointer key, gpointer val, gpointer user_data)
+{
+	size_t *md_total = user_data;
+	AllocInfo *info = val;
+	printf ("\t%s: %zd (%zd allocs)\n", info->tag, info->alloc_bytes, info->alloc_count);
+	*md_total += info->alloc_bytes;
+}
+
 static size_t
 dump_memdom (MemDomain *dom, int domsize, ItemDesc *descriptor, char *name)
 {
+	size_t tracked_count = 0;
 	int i;
 	size_t total = domsize + dom->extra_alloc;
 	printf ("%s: size %d extra malloc %zd\n", name, domsize, dom->extra_alloc);
 
 	for (i = 0; descriptor [i].type != ITEM_KIND_MAX; ++i)
 		total += dump_desc (&descriptor [i], dom->address);
-	printf ("--total: %zd\n\n", total);
+
+	printf ("mempool:\n");
+	g_hash_table_foreach (dom->mempool_allocs, dump_allocs, &tracked_count);
+
+	printf ("--total: %zd (mempool tracked %zd)\n\n", total, tracked_count);
 	g_free (name);
 	return total;
 }
@@ -379,21 +426,18 @@ dump_domain (gpointer key, gpointer val, gpointer user_data)
 		break;
 	} 
 	case MEMDOM_IMAGE_SET: {
-		*md_total += dump_memdom (dom, sizeof (MonoImageSet), descriptor_MonoImageSet, g_strdup_printf ("imageset_%p", dom->address));
+		MonoImageSet *set = dom->address;
+		int i;
+		GString* name = g_string_new (0);
+		g_string_append_printf (name, "imageset");
+		for (i = 0; i < set->nimages; ++i)
+			g_string_append_printf(name, "_%s", set->images [i]->module_name);
+		*md_total += dump_memdom (dom, sizeof (MonoImageSet), descriptor_MonoImageSet, g_string_free (name, FALSE));
 		break;
 	}
 	default:
 		g_assert (0);
 	}
-}
-
-static void
-dump_allocs (gpointer key, gpointer val, gpointer user_data)
-{
-	size_t *md_total = user_data;
-	AllocInfo *info = val;
-	printf ("%s: %zd\n", info->tag, info->alloc_bytes);
-	*md_total += info->alloc_bytes;
 }
 
 void

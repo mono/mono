@@ -836,7 +836,7 @@ create_allocator (int atype)
 
 		mono_mb_patch_short_branch (mb, pos);
 
-		clause = mono_image_alloc0 (mono_defaults.corlib, sizeof (MonoExceptionClause));
+		clause = mono_image_alloc0 (mono_defaults.corlib, sizeof (MonoExceptionClause), "sgen-exception-clause");
 		clause->try_offset = mono_mb_get_label (mb);
 
 		/* vtable->klass->sizes.element_size */
@@ -1048,7 +1048,7 @@ create_allocator (int atype)
 	mono_mb_free (mb);
 	mono_method_get_header (res)->init_locals = FALSE;
 
-	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (AllocatorWrapperInfo));
+	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (AllocatorWrapperInfo), "sgen-wrapper-info");
 	info->gc_name = "sgen";
 	info->alloc_type = atype;
 	mono_marshal_set_wrapper_info (res, info);

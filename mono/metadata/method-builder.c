@@ -155,20 +155,20 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 	{
 		/* Realloc the method info into a mempool */
 
-		method = mono_image_alloc0 (image, sizeof (MonoMethodWrapper));
+		method = mono_image_alloc0 (image, sizeof (MonoMethodWrapper), "mb-method-wrapper");
 		memcpy (method, mb->method, sizeof (MonoMethodWrapper));
 		mw = (MonoMethodWrapper*) method;
 
 		if (mb->no_dup_name)
 			method->name = mb->name;
 		else
-			method->name = mono_image_strdup (image, mb->name);
+			method->name = mono_image_strdup (image, mb->name, "mb-method-name");
 
 #ifndef DISABLE_JIT
 		mw->header = header = (MonoMethodHeader *) 
-			mono_image_alloc0 (image, MONO_SIZEOF_METHOD_HEADER + mb->locals * sizeof (MonoType *));
+			mono_image_alloc0 (image, MONO_SIZEOF_METHOD_HEADER + mb->locals * sizeof (MonoType *), "mb-method-header");
 
-		header->code = mono_image_alloc (image, mb->pos);
+		header->code = mono_image_alloc (image, mb->pos, "mb-method-code");
 		memcpy ((char*)header->code, mb->code, mb->pos);
 
 		for (i = 0, l = mb->locals_list; l; l = l->next, i++) {
@@ -205,7 +205,7 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 		if (method_is_dynamic (method))
 			data = g_malloc (sizeof (gpointer) * (i + 1));
 		else
-			data = mono_image_alloc (image, sizeof (gpointer) * (i + 1));
+			data = mono_image_alloc (image, sizeof (gpointer) * (i + 1), "mb-method-data");
 		/* store the size in the first element */
 		data [0] = GUINT_TO_POINTER (i);
 		i = 1;
@@ -232,9 +232,9 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 #endif
 
 	if (mb->param_names) {
-		char **param_names = mono_image_alloc0 (image, signature->param_count * sizeof (gpointer));
+		char **param_names = mono_image_alloc0 (image, signature->param_count * sizeof (gpointer), "mb-param-name-list");
 		for (i = 0; i < signature->param_count; ++i)
-			param_names [i] = mono_image_strdup (image, mb->param_names [i]);
+			param_names [i] = mono_image_strdup (image, mb->param_names [i], "mb-param-name");
 
 		mono_image_lock (image);
 		if (!image->wrapper_param_names)

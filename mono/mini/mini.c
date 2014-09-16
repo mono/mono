@@ -4693,7 +4693,7 @@ get_gsharedvt_type (MonoType *t)
 		mono_image_unlock (image);
 		if (res)
 			return res;
-		copy = mono_image_alloc0 (image, sizeof (MonoGenericParamFull));
+		copy = mono_image_alloc0 (image, sizeof (MonoGenericParamFull), "gsharedvt-generic-param");
 		memcpy (copy, par, sizeof (MonoGenericParamFull));
 	} else {
 		copy = g_memdup (par, sizeof (MonoGenericParamFull));

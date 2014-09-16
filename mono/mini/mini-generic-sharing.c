@@ -158,7 +158,7 @@ set_info_templates (MonoImage *image, MonoRuntimeGenericContextTemplate *templat
 
 		/* FIXME: quadratic! */
 		while (length < type_argc) {
-			template->method_templates = g_slist_append_image (image, template->method_templates, NULL);
+			template->method_templates = g_slist_append_image (image, template->method_templates, NULL, "gsharing-method-templates");
 			length++;
 		}
 
@@ -353,7 +353,7 @@ alloc_template (MonoClass *class)
 	num_allocted++;
 	num_bytes += size;
 
-	return mono_image_alloc0 (class->image, size);
+	return mono_image_alloc0 (class->image, size, "gsharing-alloc-template");
 }
 
 static MonoRuntimeGenericContextInfoTemplate*
@@ -374,7 +374,7 @@ alloc_oti (MonoImage *image)
 	num_allocted++;
 	num_bytes += size;
 
-	return mono_image_alloc0 (image, size);
+	return mono_image_alloc0 (image, size, "gsharing-alloc-oti");
 }
 
 #define MONO_RGCTX_SLOT_USED_MARKER	((gpointer)&mono_defaults.object_class->byval_arg)

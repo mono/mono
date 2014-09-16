@@ -925,7 +925,7 @@ create_allocator (int atype, int tls_key)
 	mono_mb_free (mb);
 	mono_method_get_header (res)->init_locals = FALSE;
 
-	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (AllocatorWrapperInfo));
+	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (AllocatorWrapperInfo), "wrapper-info");
 	info->gc_name = "boehm";
 	info->alloc_type = atype;
 	mono_marshal_set_wrapper_info (res, info);

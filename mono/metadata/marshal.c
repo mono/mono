@@ -1145,7 +1145,7 @@ mono_mb_emit_exception_marshal_directive (MonoMethodBuilder *mb, char *msg)
 	char *s;
 
 	if (!mb->dynamic) {
-		s = mono_image_strdup (mb->method->klass->image, msg);
+		s = mono_image_strdup (mb->method->klass->image, msg, "mb-exception-message");
 		g_free (msg);
 	} else {
 		s = g_strdup (msg);
@@ -2726,7 +2726,7 @@ mono_wrapper_info_create (MonoMethodBuilder *mb, WrapperSubtype subtype)
 {
 	WrapperInfo *info;
 
-	info = mono_image_alloc0 (mb->method->klass->image, sizeof (WrapperInfo));
+	info = mono_image_alloc0 (mb->method->klass->image, sizeof (WrapperInfo), "wrapper-info");
 	info->subtype = subtype;
 	return info;
 }
@@ -3583,7 +3583,7 @@ mono_marshal_get_xappdomain_dispatch (MonoMethod *method, int *marshal_types, in
 
 	/* try */
 
-	main_clause = mono_image_alloc0 (method->klass->image, sizeof (MonoExceptionClause));
+	main_clause = mono_image_alloc0 (method->klass->image, sizeof (MonoExceptionClause), "mb-exception-clause");
 	main_clause->try_offset = mono_mb_get_label (mb);
 
 	/* Clean the call context */
@@ -4942,7 +4942,7 @@ emit_runtime_invoke_body (MonoMethodBuilder *mb, MonoClass *target_klass, MonoMe
 	labels [2] = mono_mb_emit_branch (mb, CEE_LEAVE);
 
 	/* Add a try clause around the call */
-	clause = mono_image_alloc0 (target_klass->image, sizeof (MonoExceptionClause));
+	clause = mono_image_alloc0 (target_klass->image, sizeof (MonoExceptionClause), "mb-exception-clause");
 	clause->flags = MONO_EXCEPTION_CLAUSE_NONE;
 	clause->data.catch_class = mono_defaults.exception_class;
 	clause->try_offset = labels [1];
@@ -5234,7 +5234,7 @@ mono_marshal_get_runtime_invoke_dynamic (void)
 
 	pos = mono_mb_emit_branch (mb, CEE_LEAVE);
 
-	clause = mono_image_alloc0 (mono_defaults.corlib, sizeof (MonoExceptionClause));
+	clause = mono_image_alloc0 (mono_defaults.corlib, sizeof (MonoExceptionClause), "mb-exception-clause");
 	clause->flags = MONO_EXCEPTION_CLAUSE_FILTER;
 	clause->try_len = mono_mb_get_label (mb);
 
@@ -10534,7 +10534,7 @@ mono_marshal_get_synchronized_wrapper (MonoMethod *method)
 	/* this */
 	this_local = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
 
-	clause = mono_image_alloc0 (method->klass->image, sizeof (MonoExceptionClause));
+	clause = mono_image_alloc0 (method->klass->image, sizeof (MonoExceptionClause), "mb-exception-clause");
 	clause->flags = MONO_EXCEPTION_CLAUSE_FINALLY;
 #endif
 
@@ -12300,7 +12300,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 	layout = klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK;
 
 	/* The mempool is protected by the loader lock */
-	info = mono_image_alloc0 (klass->image, MONO_SIZEOF_MARSHAL_TYPE + sizeof (MonoMarshalField) * count);
+	info = mono_image_alloc0 (klass->image, MONO_SIZEOF_MARSHAL_TYPE + sizeof (MonoMarshalField) * count, "marshal-type-info");
 	info->num_fields = count;
 	
 	/* Try to find a size for this type in metadata */
@@ -12904,7 +12904,7 @@ mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method)
 	mono_mb_emit_byte (mb, CEE_STIND_REF);
 
 	/* try */
-	clause = mono_image_alloc0 (image, sizeof (MonoExceptionClause));
+	clause = mono_image_alloc0 (image, sizeof (MonoExceptionClause), "mb-exception-clause");
 	clause->try_offset = mono_mb_get_label (mb);
 
 	/* push method's args */

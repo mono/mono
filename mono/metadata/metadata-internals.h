@@ -566,21 +566,21 @@ void
 mono_image_check_for_module_cctor (MonoImage *image) MONO_INTERNAL;
 
 gpointer
-mono_image_alloc  (MonoImage *image, guint size) MONO_INTERNAL;
+mono_image_alloc  (MonoImage *image, guint size, const char *what) MONO_INTERNAL;
 
 gpointer
-mono_image_alloc0 (MonoImage *image, guint size) MONO_INTERNAL;
+mono_image_alloc0 (MonoImage *image, guint size, const char *what) MONO_INTERNAL;
 
-#define mono_image_new0(image,type,size) ((type *) mono_image_alloc0 (image, sizeof (type)* (size)))
+#define mono_image_new0(image,type,size,what) ((type *) mono_image_alloc0 (image, sizeof (type)* (size), what))
 
 char*
-mono_image_strdup (MonoImage *image, const char *s) MONO_INTERNAL;
+mono_image_strdup (MonoImage *image, const char *s, const char *what) MONO_INTERNAL;
 
 GList*
-g_list_prepend_image (MonoImage *image, GList *list, gpointer data) MONO_INTERNAL;
+g_list_prepend_image (MonoImage *image, GList *list, gpointer data, const char *what) MONO_INTERNAL;
 
 GSList*
-g_slist_append_image (MonoImage *image, GSList *list, gpointer data) MONO_INTERNAL;
+g_slist_append_image (MonoImage *image, GSList *list, gpointer data, const char *what) MONO_INTERNAL;
 
 void
 mono_image_lock (MonoImage *image) MONO_INTERNAL;
@@ -615,15 +615,15 @@ void
 mono_image_append_class_to_reflection_info_set (MonoClass *klass) MONO_INTERNAL;
 
 gpointer
-mono_image_set_alloc  (MonoImageSet *set, guint size) MONO_INTERNAL;
+mono_image_set_alloc  (MonoImageSet *set, guint size, const char *what) MONO_INTERNAL;
 
 gpointer
-mono_image_set_alloc0 (MonoImageSet *set, guint size) MONO_INTERNAL;
+mono_image_set_alloc0 (MonoImageSet *set, guint size, const char *what) MONO_INTERNAL;
 
 char*
-mono_image_set_strdup (MonoImageSet *set, const char *s) MONO_INTERNAL;
+mono_image_set_strdup (MonoImageSet *set, const char *s, const char *what) MONO_INTERNAL;
 
-#define mono_image_set_new0(image,type,size) ((type *) mono_image_set_alloc0 (image, sizeof (type)* (size)))
+#define mono_image_set_new0(image,type,size,what) ((type *) mono_image_set_alloc0 (image, sizeof (type)* (size), what))
 
 MonoType*
 mono_metadata_get_shared_type (MonoType *type) MONO_INTERNAL;
