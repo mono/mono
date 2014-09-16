@@ -50,7 +50,6 @@ namespace System.Net.Http
 		bool useProxy;
 		ClientCertificateOption certificate;
 		bool sentRequest;
-		HttpWebRequest wrequest;
 		string connectionGroupName;
 		bool disposed;
 
@@ -221,12 +220,9 @@ namespace System.Net.Http
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing) {
-				if (wrequest != null) {
-					wrequest.ServicePoint.CloseConnectionGroup (wrequest.ConnectionGroupName);
-					Volatile.Write (ref wrequest, null);
-				}
+			if (disposing && !disposed) {
 				Volatile.Write (ref disposed, true);
+				ServicePointManager.CloseConnectionGroup (connectionGroupName);
 			}
 
 			base.Dispose (disposing);
@@ -317,7 +313,7 @@ namespace System.Net.Http
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			Volatile.Write (ref sentRequest, true);
-			wrequest = CreateWebRequest (request);
+			var wrequest = CreateWebRequest (request);
 
 			if (request.Content != null) {
 				var headers = wrequest.Headers;

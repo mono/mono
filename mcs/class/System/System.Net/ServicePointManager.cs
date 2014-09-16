@@ -369,6 +369,15 @@ namespace System.Net
 			
 			return sp;
 		}
+
+		internal static void CloseConnectionGroup (string connectionGroupName)
+		{
+			lock (servicePoints) {
+				foreach (ServicePoint sp in servicePoints.Values) {
+					sp.CloseConnectionGroup (connectionGroupName);
+				}
+			}
+		}
 		
 #if SECURITY_DEP
 		internal class ChainValidationHelper {

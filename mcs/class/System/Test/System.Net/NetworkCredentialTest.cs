@@ -31,7 +31,7 @@ using System.Net;
 
 using NUnit.Framework;
 
-namespace MoonTest.System.Net {
+namespace MonoTests.System.Net {
 
 	[TestFixture]
 	public class NetworkCredentialTest {

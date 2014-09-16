@@ -31,7 +31,7 @@ using System.Data;
 
 using NUnit.Framework;
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class DBConcurrencyExceptionTest

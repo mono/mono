@@ -4352,15 +4352,54 @@ pattern_expr
 		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, GetLocation ($1));
 	  }
 	| sizeof_expression
-	| invocation_expression
 	| default_value_expression
+	| OPEN_PARENS_CAST type CLOSE_PARENS prefixed_unary_expression
+	  {
+		$$ = new Cast ((FullNamedExpression) $2, (Expression) $4, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3));
+	  }
 	| STAR
 	  {
 		$$ = new WildcardPattern (GetLocation ($1));
 	  }
-	| type_name_expression OPEN_PARENS opt_pattern_list CLOSE_PARENS
+	| pattern_expr_invocation
+	| pattern_property
+	;
+
+pattern_expr_invocation
+	: type_name_expression OPEN_PARENS opt_pattern_list CLOSE_PARENS
 	  {
 		$$ = new RecursivePattern ((ATypeNameExpression) $1, (Arguments) $3, GetLocation ($2));
+	  }
+	;
+
+pattern_property
+	: type_name_expression OPEN_BRACE pattern_property_list CLOSE_BRACE
+	  {
+		$$ = new PropertyPattern ((ATypeNameExpression) $1, (List<PropertyPatternMember>) $3, GetLocation ($2));
+	  }
+	;
+
+pattern_property_list
+	: pattern_property_entry
+	  {
+		var list = new List<PropertyPatternMember> ();
+		list.Add ((PropertyPatternMember) $1);
+		$$ = list;
+	  }
+	| pattern_property_list COMMA pattern_property_entry
+	  {
+		var list = (List<PropertyPatternMember>) $1;
+		list.Add ((PropertyPatternMember) $3);
+		$$ = list;
+	  }
+	;
+
+pattern_property_entry
+	: identifier_inside_body IS pattern
+	  {
+		var lt = (LocatedToken) $1;
+		$$ = new PropertyPatternMember (lt.Value, (Expression) $3, lt.Location);
 	  }
 	;
 
@@ -4368,9 +4407,11 @@ pattern
 	: pattern_expr
 	| pattern_type_expr opt_identifier
 	  {
-		var lt = (LocatedToken) $2;
-		var variable = new LocalVariable (current_block, lt.Value, lt.Location);
-		current_block.AddLocalName (variable);	  
+	  	if ($2 != null) {
+			var lt = (LocatedToken) $2;
+			var variable = new LocalVariable (current_block, lt.Value, lt.Location);
+			current_block.AddLocalName (variable);
+		}
 	  }
 	;
 
@@ -5816,6 +5857,16 @@ switch_label
 	  {
 		Error_SyntaxError (yyToken);
 		$$ = new SwitchLabel ((Expression) $2, GetLocation ($1));
+	  }
+	| CASE pattern_expr_invocation COLON
+	  {
+		if (lang_version != LanguageVersion.Experimental)
+			FeatureIsNotAvailable (GetLocation ($2), "pattern matching");
+
+		$$ = new SwitchLabel ((Expression) $2, GetLocation ($1)) {
+			PatternMatching = true
+		};
+		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 	| DEFAULT_COLON
 	  {

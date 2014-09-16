@@ -32,7 +32,7 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace Monotests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class XmlDataLoaderTest
@@ -74,7 +74,7 @@ namespace Monotests_System.Data
 			DataSet ds = new DataSet ("Set");
 			DataTable dt = new DataTable ("Test");
 			dt.Columns.Add ("CustName", typeof (String));
-			dt.Columns.Add ("Type", typeof (System.Type));
+			dt.Columns.Add ("Type", typeof (Type));
 			ds.Tables.Add (dt);
 			return ds;
 		}

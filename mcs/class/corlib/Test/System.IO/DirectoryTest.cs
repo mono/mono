@@ -374,11 +374,11 @@ public class DirectoryTest
 		string path = TempFolder + DSC + "ExistsAccessDenied";
 
 		Directory.CreateDirectory (path);
-		Mono.Posix.Syscall.chmod (path, 0);
+		global::Mono.Posix.Syscall.chmod (path, 0);
 		try {
 			Assert.IsFalse (Directory.Exists(path + DSC + "b"));
 		} finally {
-			Mono.Posix.Syscall.chmod (path, (Mono.Posix.FileMode) 755);
+			global::Mono.Posix.Syscall.chmod (path, (global::Mono.Posix.FileMode) 755);
 			Directory.Delete (path);
 		}
 	}

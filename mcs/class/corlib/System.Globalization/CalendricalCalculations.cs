@@ -466,6 +466,11 @@ static class CCGregorianCalendar {
 	/// <returns>An integer value representing the fixed day number.
 	/// </returns>
 	public static int fixed_from_dmy(int day, int month, int year) {
+		if (month > 12) {
+			year += CCMath.div_mod (out month, month - 1, 12);
+			month++;
+		}
+
 		int k = epoch - 1;
 		k += 365 * (year-1);
 		k += CCMath.div(year-1, 4);
@@ -944,6 +949,12 @@ static class CCJulianCalendar {
 	/// </returns>
 	public static int fixed_from_dmy(int day, int month, int year) {
 		int y = year < 0 ? year+1 : year;
+
+		if (month > 12) {
+			y += CCMath.div_mod (out month, month - 1, 12);
+			month++;
+		}
+
 		int k = epoch - 1;
 		k += 365 * (y-1);
 		k += CCMath.div(y-1, 4);
@@ -1371,6 +1382,13 @@ static class CCHebrewCalendar {
 	/// <returns>An integer value representing the fixed day number.
 	/// </returns>
 	public static int fixed_from_dmy(int day, int month, int year) {
+		var lastMonth = last_month_of_year (year);
+		while (month > lastMonth) {
+			year++;
+			month -= lastMonth;
+			lastMonth = last_month_of_year (year);
+		}
+
 		int m;
 		int k = epoch-1;
 		k += elapsed_days(year);
@@ -1686,6 +1704,11 @@ static class CCHijriCalendar {
 	/// <returns>An integer value representing the fixed day number.
 	/// </returns>
 	public static int fixed_from_dmy(int day, int month, int year) {
+		if (month > 12) {
+			year += CCMath.div_mod (out month, month - 1, 12);
+			month++;
+		}
+
 		int k = epoch - 1;
 		k += 354 * (year-1);
 		k += CCMath.div(3+11*year, 30);

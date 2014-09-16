@@ -1124,6 +1124,7 @@
     <Compile Include="System\UriElements.cs" />
     <Compile Include="System\UriFormat.cs" />
     <Compile Include="System\UriFormatException.cs" />
+    <Compile Include="System\UriHelper.cs" />
     <Compile Include="System\UriHostNameType.cs" />
     <Compile Include="System\UriIdnScope.cs" />
     <Compile Include="System\UriKind.cs" />

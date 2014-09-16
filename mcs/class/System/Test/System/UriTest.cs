@@ -1951,6 +1951,23 @@ namespace MonoTests.System
 			Assert.IsTrue (Uri.TryCreate (mainUri, uriPath, out result), "#1");
 			Assert.AreEqual ("http://www.imdb.com/title/tt0106521", result.ToString (), "#2");
 		}
+
+		[Test]
+		public void GetSerializationInfoStringOnRelativeUri ()
+		{
+			var uri = new Uri ("/relative/path", UriKind.Relative);
+			var result = uri.GetComponents (UriComponents.SerializationInfoString, UriFormat.UriEscaped);
+
+			Assert.AreEqual (uri.OriginalString, result);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void GetSerializationInfoStringException ()
+		{
+			var uri = new Uri ("/relative/path", UriKind.Relative);
+			uri.GetComponents (UriComponents.SerializationInfoString  | UriComponents.Host, UriFormat.UriEscaped);
+		}
 	}
 
 	// Tests non default IriParsing

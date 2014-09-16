@@ -50,6 +50,16 @@ namespace System {
 			if ((format < UriFormat.UriEscaped) || (format > UriFormat.SafeUnescaped))
 				throw new ArgumentOutOfRangeException ("format");
 
+			if ((components & UriComponents.SerializationInfoString) != 0) {
+				if (components != UriComponents.SerializationInfoString)
+					throw new ArgumentOutOfRangeException ("components", "UriComponents.SerializationInfoString must not be combined with other UriComponents.");
+
+				if (!uri.IsAbsoluteUri)
+					return UriHelper.FormatRelative (uri.OriginalString, "", format);
+
+				components |= UriComponents.AbsoluteUri;
+			}
+
 			return GetComponentsHelper (uri, components, format);
 		}
 

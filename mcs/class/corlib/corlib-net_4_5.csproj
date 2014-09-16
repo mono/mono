@@ -1399,6 +1399,8 @@
     <Compile Include="System.Text\EncoderReplacementFallback.cs" />
     <Compile Include="System.Text\EncoderReplacementFallbackBuffer.cs" />
     <Compile Include="System.Text\Encoding.cs" />
+    <Compile Include="System.Text\EncodingDecoder.cs" />
+    <Compile Include="System.Text\EncodingEncoder.cs" />
     <Compile Include="System.Text\EncodingInfo.cs" />
     <Compile Include="System.Text\Latin1Encoding.cs" />
     <Compile Include="System.Text\MLangCodePageEncoding.cs" />

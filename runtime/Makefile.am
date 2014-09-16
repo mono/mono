@@ -168,7 +168,7 @@ CLEANFILES = etc/mono/config
 # depend on $(symlinks) to ensure 'etc/mono' directory exists
 etc/mono/config: ../data/config Makefile $(symlinks)
 	d=`cd ../support && pwd`; \
-	sed 's,target="$(prefix)/lib/libMonoPosixHelper$(libsuffix)",target="'$$d'/libMonoPosixHelper.la",' ../data/config > $@t
+	sed 's,target="$(prefix)/$(reloc_libdir)/libMonoPosixHelper$(libsuffix)",target="'$$d'/libMonoPosixHelper.la",' ../data/config > $@t
 	if test -z "$(libgdiplus_loc)"; then :; else \
 	  sed 's,target="$(libgdiplus_install_loc)",target="$(libgdiplus_loc)",' $@t > $@tt; \
 	  mv -f $@tt $@t; fi

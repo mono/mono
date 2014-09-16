@@ -6338,6 +6338,7 @@ mini_get_method (MonoCompile *cfg, MonoMethod *m, guint32 token, MonoClass *klas
 static inline MonoClass*
 mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
 {
+	MonoError error;
 	MonoClass *klass;
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE) {
@@ -6345,7 +6346,8 @@ mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
 		if (context)
 			klass = mono_class_inflate_generic_class (klass, context);
 	} else {
-		klass = mono_class_get_full (method->klass->image, token, context);
+		klass = mono_class_get_and_inflate_typespec_checked (method->klass->image, token, context, &error);
+		mono_error_cleanup (&error); /* FIXME don't swallow the error */
 	}
 	if (klass)
 		mono_class_init (klass);
@@ -8431,6 +8433,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						imt_arg = emit_get_rgctx_method (cfg, context_used,
 														 cmethod, MONO_RGCTX_INFO_METHOD);
 						/* This is not needed, as the trampoline code will pass one, and it might be passed in the same reg as the imt arg */
+						vtable_arg = NULL;
+					} else if ((cmethod->klass->flags & TYPE_ATTRIBUTE_INTERFACE) && !imt_arg) {
+						/* This can happen when we call a fully instantiated iface method */
+						imt_arg = emit_get_rgctx_method (cfg, context_used,
+														 cmethod, MONO_RGCTX_INFO_METHOD);
 						vtable_arg = NULL;
 					}
 				}
@@ -10943,7 +10950,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_INST_NEW (cfg, ins, *ip);
 			--sp;
 			CHECK_OPSIZE (5);
-			klass = mono_class_get_full (image, read32 (ip + 1), generic_context);
+			klass = mono_class_get_and_inflate_typespec_checked (image, read32 (ip + 1), generic_context, &error);
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 			CHECK_TYPELOAD (klass);
 			mono_class_init (klass);
 
@@ -10983,7 +10991,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_INST_NEW (cfg, ins, *ip);
 			--sp;
 			CHECK_OPSIZE (5);
-			klass = mono_class_get_full (image, read32 (ip + 1), generic_context);
+			klass = mono_class_get_and_inflate_typespec_checked (image, read32 (ip + 1), generic_context, &error);
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 			CHECK_TYPELOAD (klass);
 			mono_class_init (klass);
 
@@ -11106,10 +11115,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							tclass, MONO_RGCTX_INFO_REFLECTION_TYPE);
 					} else if (cfg->compile_aot) {
 						if (method->wrapper_type) {
-							if (mono_class_get (tclass->image, tclass->type_token) == tclass && !generic_context) {
+							mono_error_init (&error); //got to do it since there are multiple conditionals below
+							if (mono_class_get_checked (tclass->image, tclass->type_token, &error) == tclass && !generic_context) {
 								/* Special case for static synchronized wrappers */
 								EMIT_NEW_TYPE_FROM_HANDLE_CONST (cfg, ins, tclass->image, tclass->type_token, generic_context);
 							} else {
+								mono_error_cleanup (&error); /* FIXME don't swallow the error */
 								/* FIXME: n is not a normal token */
 								DISABLE_AOT (cfg);
 								EMIT_NEW_PCONST (cfg, ins, NULL);
@@ -12159,10 +12170,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				if (mono_metadata_token_table (token) == MONO_TABLE_TYPESPEC && !image_is_dynamic (method->klass->image) && !generic_context) {
-					MonoType *type = mono_type_create_from_typespec (image, token);
+					MonoType *type = mono_type_create_from_typespec_checked (image, token, &error);
+					mono_error_cleanup (&error); /* FIXME don't swallow the error */
+					if (!type)
+						UNVERIFIED;
+
 					val = mono_type_size (type, &ialign);
 				} else {
-					MonoClass *klass = mono_class_get_full (image, token, generic_context);
+					MonoClass *klass = mono_class_get_and_inflate_typespec_checked (image, token, generic_context, &error);
+					mono_error_cleanup (&error); /* FIXME don't swallow the error */
 					CHECK_TYPELOAD (klass);
 					mono_class_init (klass);
 					val = mono_type_size (&klass->byval_arg, &ialign);

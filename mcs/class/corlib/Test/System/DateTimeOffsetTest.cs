@@ -705,6 +705,23 @@ namespace MonoTests.System {
 			expected = string.Format ("{0:D2}/{1:D2}/{2} 00:00:45 +00:00", now.Month, now.Day, now.Year);
 			Assert.AreEqual (expected, date.ToString (CultureInfo.InvariantCulture));
 		}
+
+		[Test]
+		public void TestDateOnlyWithTimeOffset ()
+		{
+			var fp = CultureInfo.InvariantCulture;
+			var date = DateTimeOffset.Parse("2013-11-07+11:00", fp, DateTimeStyles.AssumeUniversal);
+			var expected = string.Format ("{0:D2}/{1:D2}/{2} 00:00:00 +11:00", 11, 7, 2013);
+			Assert.AreEqual (expected, date.ToString (CultureInfo.InvariantCulture));
+		}
+
+		[Test]
+		public void GMTDateTime ()
+		{
+			var date = DateTimeOffset.Parse ("Wed, 10 Sep 2014 22:01:40 GMT", CultureInfo.InvariantCulture);
+			var expected = "09/10/2014 22:01:40 +00:00";
+			Assert.AreEqual (expected, date.ToString (CultureInfo.InvariantCulture));
+		}
 	}
 }
 

@@ -3332,6 +3332,169 @@ namespace MonoTests.System.XmlSerialization
 			using (var sw = new StringWriter ())
 				ser.Serialize (sw, c);
 		}
+
+		[Test]
+		public void ClassWithImplicitlyConvertibleElement ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithElementRequiringImplicitCast));
+
+			var obj = new ObjectWithElementRequiringImplicitCast ("test");
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithElementRequiringImplicitCast) ser.Deserialize (r);
+					Assert.AreEqual (obj.Object.Text, desObj.Object.Text);
+				}
+			}
+		}
+
+		public class ClassWithOptionalMethods
+		{
+			private readonly bool shouldSerializeX;
+			private readonly bool xSpecified;
+
+			[XmlAttribute]
+			public int X { get; set; }
+
+			public bool ShouldSerializeX () { return shouldSerializeX; }
+
+			public bool XSpecified
+			{
+				get { return xSpecified; }
+			}
+
+			public ClassWithOptionalMethods ()
+			{
+			}
+
+			public ClassWithOptionalMethods (int x, bool shouldSerializeX, bool xSpecified)
+			{
+				this.X = x;
+				this.shouldSerializeX = shouldSerializeX;
+				this.xSpecified = xSpecified;
+			}
+		}
+
+		[Test]
+		public void OptionalMethods ()
+		{
+			var ser = new XmlSerializer (typeof (ClassWithOptionalMethods));
+
+			var expectedValueWithoutX = Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+				"<ClassWithOptionalMethods xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" />");
+
+			var expectedValueWithX = Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+				"<ClassWithOptionalMethods xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" X=\"11\" />");
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, false, false);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithoutX, Infoset (t.ToString ()));
+			}
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, true, false);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithoutX, Infoset (t.ToString ()));
+			}
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, false, true);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithoutX, Infoset (t.ToString ()));
+			}
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, true, true);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithX, Infoset (t.ToString ()));
+			}
+		}
+
+		public class ClassWithShouldSerializeGeneric
+		{
+			[XmlAttribute]
+			public int X { get; set; }
+
+			public bool ShouldSerializeX<T> () { return false; }
+		}
+
+		[Test]
+		[Category("NotDotNet")]
+		public void ShouldSerializeGeneric ()
+		{
+			var ser = new XmlSerializer (typeof (ClassWithShouldSerializeGeneric));
+
+			var expectedValueWithX = Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+				"<ClassWithShouldSerializeGeneric xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" X=\"11\" />");
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithShouldSerializeGeneric { X = 11 };
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithX, Infoset (t.ToString ()));
+			}
+		}
+
+		[Test]
+		public void NullableArrayItems ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithNullableArrayItems));
+
+			var obj = new ObjectWithNullableArrayItems ();
+			obj.Elements = new List <SimpleClass> ();
+			obj.Elements.Add (new SimpleClass { something = "Hello" });
+			obj.Elements.Add (null);
+			obj.Elements.Add (new SimpleClass { something = "World" });
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithNullableArrayItems) ser.Deserialize (r);
+					Assert.IsNull (desObj.Elements [1]);
+				}
+			}
+		}
+
+		[Test]
+		public void NonNullableArrayItems ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithNonNullableArrayItems));
+
+			var obj = new ObjectWithNonNullableArrayItems ();
+			obj.Elements = new List <SimpleClass> ();
+			obj.Elements.Add (new SimpleClass { something = "Hello" });
+			obj.Elements.Add (null);
+			obj.Elements.Add (new SimpleClass { something = "World" });
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithNonNullableArrayItems) ser.Deserialize (r);
+					Assert.IsNotNull (desObj.Elements [1]);
+				}
+			}
+		}
+
+		[Test]
+		public void NotSpecifiedNullableArrayItems ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithNotSpecifiedNullableArrayItems));
+
+			var obj = new ObjectWithNotSpecifiedNullableArrayItems ();
+			obj.Elements = new List <SimpleClass> ();
+			obj.Elements.Add (new SimpleClass { something = "Hello" });
+			obj.Elements.Add (null);
+			obj.Elements.Add (new SimpleClass { something = "World" });
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithNotSpecifiedNullableArrayItems) ser.Deserialize (r);
+					Assert.IsNull (desObj.Elements [1]);
+				}
+			}
+		}
 	}
 
 	// Test generated serialization code.

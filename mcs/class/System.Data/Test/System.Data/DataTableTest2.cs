@@ -36,7 +36,7 @@ using MonoTests.System.Data.Utils;
 
 using NUnit.Framework;
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class DataTableTest2

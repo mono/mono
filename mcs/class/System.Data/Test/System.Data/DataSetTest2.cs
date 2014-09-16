@@ -39,7 +39,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Globalization;
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class DataSetTest2
@@ -448,7 +448,7 @@ namespace MonoTests_System.Data
 			dt.Rows.Add(new object[] {2,"Value3","Value4"});
 			dt.Rows.Add(new object[] {3,"Value5","Value5"});
 
-			System.Text.StringBuilder resultXML = new System.Text.StringBuilder();
+			StringBuilder resultXML = new StringBuilder();
 
 			resultXML.Append("<" + ds.DataSetName  + "xmlns=\"namespace\">");
 
@@ -975,13 +975,13 @@ namespace MonoTests_System.Data
 		[Test] public void Locale()
 		{
 			DataSet ds = new DataSet("MyDataSet");
-			System.Globalization.CultureInfo culInfo = System.Globalization.CultureInfo.CurrentCulture ;
+			CultureInfo culInfo = CultureInfo.CurrentCulture ;
 
 			// Checking Locale default from system
 			Assert.AreEqual(culInfo, ds.Locale  , "DS156");
 
 			// Checking Locale get/set
-			culInfo = new System.Globalization.CultureInfo("fr"); // = french
+			culInfo = new CultureInfo("fr"); // = french
 			ds.Locale = culInfo ;
 			Assert.AreEqual(culInfo , ds.Locale , "DS157");
 		}
@@ -1998,11 +1998,11 @@ namespace MonoTests_System.Data
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
 			ds1.Tables.Add(DataProvider.CreateChildDataTable());
 
-			System.IO.MemoryStream ms = new System.IO.MemoryStream();
+			MemoryStream ms = new MemoryStream();
 			//write xml  schema only
 			ds1.WriteXmlSchema(ms);
 
-			System.IO.MemoryStream ms1 = new System.IO.MemoryStream(ms.GetBuffer());
+			MemoryStream ms1 = new MemoryStream(ms.GetBuffer());
 			//copy schema
 			DataSet ds2 = new DataSet();
 			ds2.ReadXmlSchema(ms1);
@@ -2073,7 +2073,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(0, ds2.Tables[1].Rows.Count , "DS282");
 
 			//try to delete the file
-			System.IO.File.Delete(sTempFileName);
+			File.Delete(sTempFileName);
 		}
 
 		[Test] public void ReadXmlSchema_ByTextReader()
@@ -2082,11 +2082,11 @@ namespace MonoTests_System.Data
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
 			ds1.Tables.Add(DataProvider.CreateChildDataTable());
 
-			System.IO.StringWriter sw = new System.IO.StringWriter();
+			StringWriter sw = new StringWriter();
 			//write xml file, schema only
 			ds1.WriteXmlSchema(sw);
 
-			System.IO.StringReader sr = new System.IO.StringReader(sw.GetStringBuilder().ToString());
+			StringReader sr = new StringReader(sw.GetStringBuilder().ToString());
 			//copy both data and schema
 			DataSet ds2 = new DataSet();
 			ds2.ReadXmlSchema(sr);
@@ -2122,14 +2122,14 @@ namespace MonoTests_System.Data
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
 			ds1.Tables.Add(DataProvider.CreateChildDataTable());
 
-			System.IO.StringWriter sw = new System.IO.StringWriter();
-			System.Xml.XmlTextWriter xmlTW = new System.Xml.XmlTextWriter(sw);
+			StringWriter sw = new StringWriter();
+			XmlTextWriter xmlTW = new XmlTextWriter(sw);
 			//write xml file, schema only
 			ds1.WriteXmlSchema(xmlTW);
 			xmlTW.Flush();
 
-			System.IO.StringReader sr = new System.IO.StringReader(sw.ToString());
-			System.Xml.XmlTextReader xmlTR = new System.Xml.XmlTextReader(sr);
+			StringReader sr = new StringReader(sw.ToString());
+			XmlTextReader xmlTR = new XmlTextReader(sr);
 
 			//copy both data and schema
 			DataSet ds2 = new DataSet();
@@ -2196,7 +2196,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(ds2.Tables[1].Rows.Count, ds1.Tables[1].Rows.Count , "DS299");
 
 			//try to delete the file
-			System.IO.File.Delete(sTempFileName);
+			File.Delete(sTempFileName);
 		}
 
 		[Test]
@@ -2212,7 +2212,7 @@ namespace MonoTests_System.Data
 			ds1.Tables[1].Rows.Add(new object[] {7,2," ","		",new DateTime(2000,1,1,0,0,0,0),35});
 			ds1.Tables[1].Rows.Add(new object[] {7,3,"","",new DateTime(2000,1,1,0,0,0,0),35});
 
-			System.IO.MemoryStream ms = new System.IO.MemoryStream();
+			MemoryStream ms = new MemoryStream();
 			//write xml file, data only
 			ds1.WriteXml(ms);
 
@@ -2241,7 +2241,7 @@ namespace MonoTests_System.Data
 		{
 			string input = string.Empty;
 
-			System.IO.StringReader sr;
+			StringReader sr;
 			DataSet ds = new DataSet();
 
 			input += "<?xml version=\"1.0\"?>";
@@ -2261,7 +2261,7 @@ namespace MonoTests_System.Data
 			input += "		</Price>";
 			input += "</Stock>";
 
-			sr = new System.IO.StringReader(input);
+			sr = new StringReader(input);
 
 			ds.ReadXml(sr);
 
@@ -2311,7 +2311,7 @@ namespace MonoTests_System.Data
 		{
 			DataSet ds = new DataSet("TestDataSet");
 			string input = string.Empty;
-			System.IO.StringReader sr;
+			StringReader sr;
 
 			input += "<?xml version=\"1.0\" standalone=\"yes\"?>";
 			input += "<Stocks><Stock name=\"MSFT\"><Company name=\"Microsoft Corp.\" /><Price type=\"high\"><Value>10.0</Value>";
@@ -2320,7 +2320,7 @@ namespace MonoTests_System.Data
 			input += "<Company name=\"General Electric\" /><Price type=\"high\"><Value>22.23</Value><Date>02/12/2001</Date></Price>";
 			input += "<Price type=\"low\"><Value>1.97</Value><Date>04/20/2003</Date></Price><Price type=\"current\"><Value>3.0</Value>";
 			input += "<Date>TODAY</Date></Price></Stock></Stocks>";
-			sr = new System.IO.StringReader(input);
+			sr = new StringReader(input);
 			ds.EnforceConstraints = false;
 			ds.ReadXml(sr);
 
@@ -2339,7 +2339,7 @@ namespace MonoTests_System.Data
 		{
 			m_ds = new DataSet("Stocks");
 			string input = string.Empty;
-			System.IO.StringReader sr;
+			StringReader sr;
 
 			input += "<?xml version=\"1.0\"?>";
 			input += "<Stocks>";
@@ -2408,7 +2408,7 @@ namespace MonoTests_System.Data
 			input += "		</Stock>";
 			input += "</Stocks>";
 
-			sr = new System.IO.StringReader(input);
+			sr = new StringReader(input);
 			m_ds.EnforceConstraints = true;
 			m_ds.ReadXml(sr);
 			this.privateTestCase("TestCase 1", "Company", "name='Microsoft Corp.'", "Stock", "name='MSFT'", "DS320");
@@ -2444,14 +2444,14 @@ namespace MonoTests_System.Data
 			#region "TestCase 1 - Empty string"
 			// Empty string
 			DataSet ds = new DataSet();
-			System.IO.StringReader sr = new System.IO.StringReader (string.Empty);
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr);
+			StringReader sr = new StringReader (string.Empty);
+			XmlTextReader xReader = new XmlTextReader(sr);
 			try
 			{
 				ds.ReadXml (xReader);
 				Assert.Fail("DS335: ReadXml Failed to throw XmlException");
 			}
-			catch (System.Xml.XmlException) {}
+			catch (XmlException) {}
 			catch (AssertionException exc) {throw  exc;}
 			catch (Exception exc)
 			{
@@ -2635,8 +2635,8 @@ namespace MonoTests_System.Data
 		private void PrivateTestCase(string a_name, string a_expected, string a_xmlData)
 		{
 			DataSet ds = new DataSet();
-			System.IO.StringReader sr = new System.IO.StringReader(a_xmlData) ;
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			StringReader sr = new StringReader(a_xmlData) ;
+			XmlTextReader xReader = new XmlTextReader(sr) ;
 			ds.ReadXml (xReader);
 			Assert.AreEqual(a_expected, this.dataSetDescription(ds), "DS337");
 		}
@@ -2681,8 +2681,8 @@ namespace MonoTests_System.Data
 			xmlData += 		"<c>3</c>";
 			xmlData +=    "</b>";
 			xmlData += 	"</a>";
-			System.IO.StringReader sr = new System.IO.StringReader(xmlData) ;
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			StringReader sr = new StringReader(xmlData) ;
+			XmlTextReader xReader = new XmlTextReader(sr) ;
 			ds.ReadXml (xReader);
 			Assert.AreEqual(3, ds.Tables["c"].Rows.Count, "DS338");
 		}
@@ -2738,7 +2738,7 @@ namespace MonoTests_System.Data
 			ds1.Tables[1].Rows.Add(new object[] {7,2," ","		",new DateTime(2000,1,1,0,0,0,0),35});
 			ds1.Tables[1].Rows.Add(new object[] {7,3,"","",new DateTime(2000,1,1,0,0,0,0),35});
 
-			System.IO.StringWriter sw = new System.IO.StringWriter();
+			StringWriter sw = new StringWriter();
 			//write xml file, data only
 			ds1.WriteXml(sw);
 
@@ -2747,7 +2747,7 @@ namespace MonoTests_System.Data
 			//clear the data
 			ds2.Clear();
 
-			System.IO.StringReader sr = new System.IO.StringReader(sw.GetStringBuilder().ToString());
+			StringReader sr = new StringReader(sw.GetStringBuilder().ToString());
 			ds2.ReadXml(sr);
 
 			//check xml data
@@ -2777,8 +2777,8 @@ namespace MonoTests_System.Data
 			ds1.Tables[1].Rows.Add(new object[] {7,2," ","		",new DateTime(2000,1,1,0,0,0,0),35});
 			ds1.Tables[1].Rows.Add(new object[] {7,3,"","",new DateTime(2000,1,1,0,0,0,0),35});
 
-			System.IO.StringWriter sw = new System.IO.StringWriter();
-			System.Xml.XmlTextWriter xmlTW = new System.Xml.XmlTextWriter(sw);
+			StringWriter sw = new StringWriter();
+			XmlTextWriter xmlTW = new XmlTextWriter(sw);
 
 			//write xml file, data only
 			ds1.WriteXml(xmlTW);
@@ -2788,8 +2788,8 @@ namespace MonoTests_System.Data
 			DataSet ds2 = ds1.Copy();
 			//clear the data
 			ds2.Clear();
-			System.IO.StringReader sr = new System.IO.StringReader(sw.ToString());
-			System.Xml.XmlTextReader xmlTR = new System.Xml.XmlTextReader(sr);
+			StringReader sr = new StringReader(sw.ToString());
+			XmlTextReader xmlTR = new XmlTextReader(sr);
 			ds2.ReadXml(xmlTR);
 
 			//check xml data
@@ -2847,8 +2847,8 @@ namespace MonoTests_System.Data
 
 		[Test] public void WriteXmlSchema_Relations_ForeignKeys ()
 		{
-			System.IO.MemoryStream ms = null;
-			System.IO.MemoryStream ms1 = null;
+			MemoryStream ms = null;
+			MemoryStream ms1 = null;
 
 			DataSet ds1 = new DataSet();
 
@@ -2884,10 +2884,10 @@ namespace MonoTests_System.Data
 				new DataColumn[] {col1_5, col1_6},
 				new DataColumn[] {col2_5, col2_6});
 
-			ms = new System.IO.MemoryStream();
+			ms = new MemoryStream();
 			ds1.WriteXmlSchema (ms);
 
-			ms1 = new System.IO.MemoryStream (ms.GetBuffer());
+			ms1 = new MemoryStream (ms.GetBuffer());
 			DataSet ds2 = new DataSet();
 			ds2.ReadXmlSchema(ms1);
 		
@@ -3096,18 +3096,18 @@ namespace MonoTests_System.Data
 
 		[Test] public void WriteXml_ByTextWriterXmlWriteMode()
 		{
-			System.IO.StringReader sr = null;
-			System.IO.StringWriter sw = null;
+			StringReader sr = null;
+			StringWriter sw = null;
 
 			try  // For real
 			{
 				// ReadXml - DataSetOut
 
 				DataSet oDataset = new DataSet("DataSetOut");
-				sw = new System.IO.StringWriter();
-				oDataset.WriteXml(sw,System.Data.XmlWriteMode.WriteSchema);
+				sw = new StringWriter();
+				oDataset.WriteXml(sw, XmlWriteMode.WriteSchema);
 
-				sr = new System.IO.StringReader(sw.GetStringBuilder().ToString());
+				sr = new StringReader(sw.GetStringBuilder().ToString());
 				oDataset = new DataSet("DataSetOut");
 
 				oDataset.ReadXml(sr);
@@ -3252,13 +3252,13 @@ namespace MonoTests_System.Data
 			{
 			DataSet ds = new DataSet();
 			string input = "<a><b><c>2</c></b></a>";
-			System.IO.StringReader sr = new System.IO.StringReader(input) ;
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			StringReader sr = new StringReader(input) ;
+			XmlTextReader xReader = new XmlTextReader(sr) ;
 			ds.ReadXml (xReader);
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
-			System.Xml.XmlTextWriter xWriter = new System.Xml.XmlTextWriter(sw);
+			StringBuilder sb = new StringBuilder();
+			StringWriter sw = new StringWriter(sb);
+			XmlTextWriter xWriter = new XmlTextWriter(sw);
 			ds.WriteXml(xWriter);
 			string output = sb.ToString();
 			Assert.AreEqual(input,output, "DS76");
@@ -3267,20 +3267,20 @@ namespace MonoTests_System.Data
 			DataSet ds = new DataSet();
 			string input = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><a><b><c>2</c></b></a>";
 			string expectedOutput = "<a><b><c>2</c></b></a>";
-			System.IO.StringReader sr = new System.IO.StringReader(input) ;
-			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
+			StringReader sr = new StringReader(input) ;
+			XmlTextReader xReader = new XmlTextReader(sr) ;
 			ds.ReadXml (xReader);
 			
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
-			System.Xml.XmlTextWriter xWriter = new System.Xml.XmlTextWriter(sw);
+			StringBuilder sb = new StringBuilder();
+			StringWriter sw = new StringWriter(sb);
+			XmlTextWriter xWriter = new XmlTextWriter(sw);
 			ds.WriteXml(xWriter);
 			string output = sb.ToString();
 			Assert.AreEqual(expectedOutput,output, "DS77");
 			}
 			{
 			DataSet ds = new DataSet("DSName"); 
-			System.IO.StringWriter sr = new System.IO.StringWriter();
+			StringWriter sr = new StringWriter();
 			ds.WriteXml(sr); 
 			Assert.AreEqual("<DSName />",sr.ToString(), "DS78");
 			}
@@ -3315,7 +3315,7 @@ namespace MonoTests_System.Data
 			ds.Tables.Remove("ChildTable");
 
 			//Get the xml representation of the dataset.
-			System.IO.StringWriter sr = new System.IO.StringWriter();
+			StringWriter sr = new StringWriter();
 			ds.WriteXml(sr); 
 			string xml = sr.ToString();
 

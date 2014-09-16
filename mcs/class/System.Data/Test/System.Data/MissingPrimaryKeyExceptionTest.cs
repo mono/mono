@@ -32,7 +32,7 @@ using System.Data;
 using NUnit.Framework;
 using MonoTests.System.Data.Utils;
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture]
 	class MissingPrimaryKeyExceptionTest

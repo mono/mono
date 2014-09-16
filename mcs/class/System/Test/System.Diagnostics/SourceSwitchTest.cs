@@ -31,6 +31,8 @@
 
 #if !MOBILE
 
+#define TRACE
+
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -43,11 +45,15 @@ namespace MonoTests.System.Diagnostics
 	[TestFixture]
 	public class SourceSwitchTest
 	{
+		internal TraceSource traceSource { get; set; }
+		internal TestTextWriterTraceListener txtTraceListener;
+
+
 		[Test]
 		public void ConstructorNullName ()
 		{
 			SourceSwitch s = new SourceSwitch (null);
-			Assert.IsNull (s.DisplayName);
+			Assert.IsEmpty (s.DisplayName);
 		}
 
 		[Test]
@@ -97,6 +103,80 @@ namespace MonoTests.System.Diagnostics
 			Assert.IsTrue (s.ShouldTrace (TraceEventType.Suspend), "#8");
 			Assert.IsTrue (s.ShouldTrace (TraceEventType.Resume), "#9");
 			Assert.IsTrue (s.ShouldTrace (TraceEventType.Transfer), "#10");
+		}
+
+
+		[SetUp]						
+		public void InitalizeSourceSwitchTest()
+		{
+			// Initializing the TraceSource instance
+			traceSource = new TraceSource ("LoggingTraceSource");
+			traceSource.Listeners.Remove("Default");
+			traceSource.Switch = new SourceSwitch ("MySwitch");
+
+			// Initializing the TraceListener instance
+			txtTraceListener = new TestTextWriterTraceListener (Console.Out);
+			traceSource.Listeners.Add (txtTraceListener); 
+		}
+
+		[Test]						
+		public void setSwitchToCritical()
+		{
+			traceSource.Switch.Level = SourceLevels.Critical;
+			LogAllTraceLevels ();
+			// Switch.Level is Critical so it should log Critical
+			Assert.AreEqual (1, txtTraceListener.TotalMessageCount);
+			Assert.AreEqual (1, txtTraceListener.CritialMessageCount);
+		}
+			
+		[Test]						
+		public void setSwitchToError()
+		{
+			traceSource.Switch.Level = SourceLevels.Error;
+			LogAllTraceLevels ();
+			// Switch.Level is Error so it should log Critical, Error
+			Assert.AreEqual (2, txtTraceListener.TotalMessageCount);
+			Assert.AreEqual (1, txtTraceListener.ErrorMessageCount);
+		}
+
+		[Test]						
+		public void setSwitchToWarning()
+		{
+			traceSource.Switch.Level = SourceLevels.Warning;
+			LogAllTraceLevels ();
+			// Switch.Level is Warning so it should log Critical, Error, Warning
+			Assert.AreEqual (3, txtTraceListener.TotalMessageCount);
+			Assert.AreEqual (1, txtTraceListener.WarningMessageCount);
+		}
+
+		[Test]						
+		public void setSwitchToInfo()
+		{
+			traceSource.Switch.Level = SourceLevels.Information;
+			LogAllTraceLevels ();
+			// Switch.Level is Information so it should log Critical, Error, Warning, Information
+			Assert.AreEqual (4, txtTraceListener.TotalMessageCount);
+			Assert.AreEqual (1, txtTraceListener.InfoMessageCount);
+		}
+
+		[Test]						
+		public void setSwitchToVerbose()
+		{
+			traceSource.Switch.Level = SourceLevels.Verbose;
+			LogAllTraceLevels ();
+			// Switch.Level is Verbose so it should log Critical, Error, Warning, Information, Verbose
+			Assert.AreEqual (5, txtTraceListener.TotalMessageCount);
+			Assert.AreEqual (1, txtTraceListener.VerboseMessageCount);
+		}
+
+		void LogAllTraceLevels ()
+		{
+			traceSource.TraceEvent (TraceEventType.Critical, 123, "Critical Level message.");
+			traceSource.TraceEvent (TraceEventType.Error, 123, "Error Level message.");
+			traceSource.TraceEvent (TraceEventType.Warning, 123, "Warning Level message.");
+			traceSource.TraceEvent (TraceEventType.Information, 123, "Information Level message.");
+			traceSource.TraceEvent (TraceEventType.Verbose, 123, "Verbose Level message.");
+			traceSource.Flush ();
 		}
 	}
 }

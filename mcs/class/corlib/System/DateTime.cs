@@ -107,7 +107,7 @@ namespace System
 			"H:mzzz",
 			"H:m",
 			"H tt", // Specifies AM to disallow '8'.
-			"H'\u6642'm'\u5206's'\u79D2'",
+			"H'\u6642'm'\u5206's'\u79D2'"
 		};
 
 		// DateTime.Parse date patterns extend ParseExact patterns as follows:
@@ -885,6 +885,9 @@ namespace System
 					if (_DoParse (s, firstPart, ParseTimeFormats [j], false, out result, out dto, dfi, styles, true, ref incompleteFormat, ref longYear))
 						return true;
 				}
+
+				if (_DoParse (s, firstPart, "zzz", false, out result, out dto, dfi, styles, true, ref incompleteFormat, ref longYear))
+					return true;
 			}
 
 			//
@@ -1466,6 +1469,25 @@ namespace System
 					if (num_parsed == -1)
 						return false;
 					fractionalSeconds = decimalNumber / Math.Pow(10.0, num_parsed);
+
+					//Parse ISO8601 with an unlimited number of fractional digits.
+					if (!exact && num == 6 && hour != -1 && minute != -1 && second != -1) {
+						var total_num_parsed = num_parsed;
+						while (true) {
+							valuePos += num_parsed;
+							decimalNumber = (double) _ParseNumber (s, valuePos, 0, 1, leading_zeros, sloppy_parsing, out num_parsed);
+							if (num_parsed < 1) {
+								num_parsed = 0;
+								break;
+							}
+
+							total_num_parsed += num_parsed;
+							if (total_num_parsed > 15)
+								continue; //not enough precision, ignore additional digits.
+
+							fractionalSeconds += decimalNumber / Math.Pow (10.0, total_num_parsed);
+						}
+					}
 					break;
 				case 't':
 					if (!_ParseAmPm (s, valuePos, num > 0 ? 0 : 1, dfi, exact, out num_parsed, ref ampm))
@@ -1722,7 +1744,7 @@ namespace System
 			if (tzsign == -1) {
 				if (result != DateTime.MinValue) {
 					try {
-						if ((style & DateTimeStyles.AssumeUniversal) != 0) {
+						if (((style & DateTimeStyles.AssumeUniversal) != 0) || useutc) {
 							dto = new DateTimeOffset (result, TimeSpan.Zero);
 						} else if ((style & DateTimeStyles.AssumeLocal) != 0) {
 							var offset = use_invariant ?
