@@ -764,6 +764,10 @@ namespace Mono.CSharp {
 			if (ctors == null) {
 				switch (type.Kind) {
 				case MemberKind.Struct:
+					// Every struct has implicit default constructor if not provided by user
+					if (args == null)
+						return null;
+
 					rc.Report.SymbolRelatedToPreviousError (type);
 					// Report meaningful error for struct as they always have default ctor in C# context
 					OverloadResolver.Error_ConstructorMismatch (rc, type, args == null ? 0 : args.Count, loc);
@@ -5369,6 +5373,13 @@ namespace Mono.CSharp {
 				//
 				if (best_candidate_rate == 0)
 					break;
+
+				//
+				// We don't include implicit struct constructors in member-cache. Hence
+				// we need explicit check during lookup 
+				//
+				if (args_count == 0 && (restrictions & Restrictions.NoBaseMembers) != 0 && best_candidate != null && best_candidate.Kind == MemberKind.Constructor && best_candidate.DeclaringType.IsStruct)
+					return null;
 
 				//
 				// Try extension methods lookup when no ordinary method match was found and provider enables it
