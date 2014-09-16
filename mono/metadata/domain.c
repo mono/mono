@@ -2219,7 +2219,7 @@ mono_domain_get_id (MonoDomain *domain)
  * LOCKING: Acquires the domain lock.
  */
 gpointer
-mono_domain_alloc (MonoDomain *domain, guint size)
+mono_domain_alloc (MonoDomain *domain, guint size, const char *what)
 {
 	gpointer res;
 
@@ -2227,6 +2227,7 @@ mono_domain_alloc (MonoDomain *domain, guint size)
 #ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes += size;
 #endif
+	mono_profiler_add_mempool_alloc (domain, size, what);
 	res = mono_mempool_alloc (domain->mp, size);
 	mono_domain_unlock (domain);
 
@@ -2239,7 +2240,7 @@ mono_domain_alloc (MonoDomain *domain, guint size)
  * LOCKING: Acquires the domain lock.
  */
 gpointer
-mono_domain_alloc0 (MonoDomain *domain, guint size)
+mono_domain_alloc0 (MonoDomain *domain, guint size, const char *what)
 {
 	gpointer res;
 
@@ -2247,6 +2248,7 @@ mono_domain_alloc0 (MonoDomain *domain, guint size)
 #ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes += size;
 #endif
+	mono_profiler_add_mempool_alloc (domain, size, what);
 	res = mono_mempool_alloc0 (domain->mp, size);
 	mono_domain_unlock (domain);
 

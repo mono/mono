@@ -116,7 +116,7 @@ mono_create_static_rgctx_trampoline (MonoMethod *m, gpointer addr)
 
 	mono_domain_lock (domain);
 	/* Duplicates inserted while we didn't hold the lock are OK */
-	info = mono_domain_alloc (domain, sizeof (RgctxTrampInfo));
+	info = mono_domain_alloc (domain, sizeof (RgctxTrampInfo), "rgctx-tramp-info");
 	info->m = m;
 	info->addr = addr;
 	g_hash_table_insert (domain_jit_info (domain)->static_rgctx_trampoline_hash, info, res);
@@ -983,7 +983,7 @@ create_delegate_trampoline_data (MonoDomain *domain, MonoClass *klass, MonoMetho
 	invoke = mono_get_delegate_invoke (klass);
 	g_assert (invoke);
 
-	tramp_data = mono_domain_alloc0 (domain, sizeof (MonoDelegateTrampInfo));
+	tramp_data = mono_domain_alloc0 (domain, sizeof (MonoDelegateTrampInfo), "delegate-tramp-info");
 	tramp_data->invoke = invoke;
 	tramp_data->invoke_sig = mono_method_signature (invoke);
 	tramp_data->impl_this = mono_arch_get_delegate_invoke_impl (mono_method_signature (invoke), TRUE);
@@ -1444,7 +1444,7 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 	code = mono_create_specific_trampoline (method, MONO_TRAMPOLINE_JUMP, mono_domain_get (), &code_size);
 	g_assert (code_size);
 
-	ji = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
+	ji = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO, "jit-info");
 	ji->code_start = code;
 	ji->code_size = code_size;
 	ji->d.method = method;
@@ -1507,7 +1507,7 @@ mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token)
 	MonoDomain *domain = mono_domain_get ();
 	guint8 *buf, *start;
 
-	buf = start = mono_domain_alloc0 (domain, 2 * sizeof (gpointer));
+	buf = start = mono_domain_alloc0 (domain, 2 * sizeof (gpointer), "tramp-from-token");
 
 	*(gpointer*)(gpointer)buf = image;
 	buf += sizeof (gpointer);
@@ -1547,7 +1547,7 @@ mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, Mono
 	tramp_info->invoke_impl = mono_create_specific_trampoline (tramp_info, MONO_TRAMPOLINE_DELEGATE, domain, &code_size);
 	g_assert (code_size);
 
-	dpair = mono_domain_alloc0 (domain, sizeof (MonoClassMethodPair));
+	dpair = mono_domain_alloc0 (domain, sizeof (MonoClassMethodPair), "class-method-pair");
 	memcpy (dpair, &pair, sizeof (MonoClassMethodPair));
 
 	/* store trampoline address */

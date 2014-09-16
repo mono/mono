@@ -3402,7 +3402,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			domain_jit_info (domain)->method_code_hash = g_hash_table_new (NULL, NULL);
 		code_slot = g_hash_table_lookup (domain_jit_info (domain)->method_code_hash, patch_info->data.method);
 		if (!code_slot) {
-			code_slot = mono_domain_alloc0 (domain, sizeof (gpointer));
+			code_slot = mono_domain_alloc0 (domain, sizeof (gpointer), "code-slot");
 			g_hash_table_insert (domain_jit_info (domain)->method_code_hash, patch_info->data.method, code_slot);
 		}
 		mono_domain_unlock (domain);
@@ -3421,7 +3421,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			jump_table = mono_code_manager_reserve (mono_dynamic_code_hash_lookup (domain, method)->code_mp, sizeof (gpointer) * patch_info->data.table->table_size);
 		} else {
 			if (mono_aot_only) {
-				jump_table = mono_domain_alloc (domain, sizeof (gpointer) * patch_info->data.table->table_size);
+				jump_table = mono_domain_alloc (domain, sizeof (gpointer) * patch_info->data.table->table_size, "jump-table");
 			} else {
 				jump_table = mono_domain_code_reserve (domain, sizeof (gpointer) * patch_info->data.table->table_size);
 			}
@@ -3680,7 +3680,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	}
 	case MONO_PATCH_INFO_CASTCLASS_CACHE: {
-		target = mono_domain_alloc0 (domain, sizeof (gpointer));
+		target = mono_domain_alloc0 (domain, sizeof (gpointer), "castclass-cache");
 		break;
 	}
 	case MONO_PATCH_INFO_JIT_TLS_ID: {
@@ -3898,7 +3898,7 @@ mono_postprocess_patches (MonoCompile *cfg)
 			mono_domain_lock (domain);
 			jlist = g_hash_table_lookup (domain_jit_info (domain)->jump_target_hash, patch_info->data.method);
 			if (!jlist) {
-				jlist = mono_domain_alloc0 (domain, sizeof (MonoJumpList));
+				jlist = mono_domain_alloc0 (domain, sizeof (MonoJumpList), "jump-list");
 				g_hash_table_insert (domain_jit_info (domain)->jump_target_hash, patch_info->data.method, jlist);
 			}
 			jlist->list = g_slist_prepend (jlist->list, ip);
@@ -4307,7 +4307,7 @@ create_jit_info_for_trampoline (MonoMethod *wrapper, MonoTrampInfo *info)
 		uw_info = mono_unwind_ops_encode (info->unwind_ops, &info_len);
 	}
 
-	jinfo = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
+	jinfo = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO, "jit-info");
 	jinfo->d.method = wrapper;
 	jinfo->code_start = info->code;
 	jinfo->code_size = info->code_size;
@@ -4391,7 +4391,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 	} else {
 		jinfo = mono_domain_alloc0 (cfg->domain, MONO_SIZEOF_JIT_INFO +
 				(num_clauses * sizeof (MonoJitExceptionInfo)) +
-				generic_info_size + holes_size + arch_eh_info_size + cas_size);
+				generic_info_size + holes_size + arch_eh_info_size + cas_size, "jit-info");
 	}
 
 	jinfo->d.method = cfg->method_to_register;
@@ -4416,7 +4416,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 		if (cfg->method->dynamic)
 			gi->generic_sharing_context = g_new0 (MonoGenericSharingContext, 1);
 		else
-			gi->generic_sharing_context = mono_domain_alloc0 (cfg->domain, sizeof (MonoGenericSharingContext));
+			gi->generic_sharing_context = mono_domain_alloc0 (cfg->domain, sizeof (MonoGenericSharingContext), "gsharing-context");
 		mini_init_gsctx (cfg->method->dynamic ? NULL : cfg->domain, NULL, cfg->gsctx_context, gi->generic_sharing_context);
 
 		if ((method_to_compile->flags & METHOD_ATTRIBUTE_STATIC) ||
@@ -4448,7 +4448,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 			if (cfg->method->dynamic)
 				gi->locations = g_malloc0 (gi->nlocs * sizeof (MonoDwarfLocListEntry));
 			else
-				gi->locations = mono_domain_alloc0 (cfg->domain, gi->nlocs * sizeof (MonoDwarfLocListEntry));
+				gi->locations = mono_domain_alloc0 (cfg->domain, gi->nlocs * sizeof (MonoDwarfLocListEntry), "dwarf-loc-list-entry");
 			i = 0;
 			for (l = loclist; l; l = l->next) {
 				memcpy (&(gi->locations [i]), l->data, sizeof (MonoDwarfLocListEntry));
@@ -4874,7 +4874,7 @@ mini_init_gsctx (MonoDomain *domain, MonoMemPool *mp, MonoGenericContext *contex
 	if (context && context->class_inst) {
 		inst = context->class_inst;
 		if (domain)
-			gsctx->var_is_vt = mono_domain_alloc0 (domain, sizeof (gboolean) * inst->type_argc);
+			gsctx->var_is_vt = mono_domain_alloc0 (domain, sizeof (gboolean) * inst->type_argc, "gsharing-context-var-is-vt");
 		else if (mp)
 			gsctx->var_is_vt = mono_mempool_alloc0 (mp, sizeof (gboolean) * inst->type_argc);
 		else
@@ -4890,7 +4890,7 @@ mini_init_gsctx (MonoDomain *domain, MonoMemPool *mp, MonoGenericContext *contex
 	if (context && context->method_inst) {
 		inst = context->method_inst;
 		if (domain)
-			gsctx->mvar_is_vt = mono_domain_alloc0 (domain, sizeof (gboolean) * inst->type_argc);
+			gsctx->mvar_is_vt = mono_domain_alloc0 (domain, sizeof (gboolean) * inst->type_argc, "gsharing-context-mvar-is-vt");
 		else if (mp)
 			gsctx->mvar_is_vt = mono_mempool_alloc0 (mp, sizeof (gboolean) * inst->type_argc);
 		else
@@ -7103,7 +7103,7 @@ mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 	desc [1] = NULL;
 #	elif defined(__ppc64__) || defined(__powerpc64__)
 
-	desc = mono_domain_alloc0 (domain, 3 * sizeof (gpointer));
+	desc = mono_domain_alloc0 (domain, 3 * sizeof (gpointer), "ftnptr-desc");
 
 	desc [0] = addr;
 	desc [1] = NULL;

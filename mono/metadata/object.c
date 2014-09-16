@@ -1492,7 +1492,7 @@ init_thunk_free_lists (MonoDomain *domain)
 {
 	if (domain->thunk_free_lists)
 		return;
-	domain->thunk_free_lists = mono_domain_alloc0 (domain, sizeof (gpointer) * NUM_FREE_LISTS);
+	domain->thunk_free_lists = mono_domain_alloc0 (domain, sizeof (gpointer) * NUM_FREE_LISTS, "thunk-free-lists");
 }
 
 static int
@@ -1714,7 +1714,7 @@ mono_method_add_generic_virtual_invocation (MonoDomain *domain, MonoVTable *vtab
 
 	/* If not found, make a new one */
 	if (!gvc) {
-		gvc = mono_domain_alloc (domain, sizeof (GenericVirtualCase));
+		gvc = mono_domain_alloc (domain, sizeof (GenericVirtualCase), "generic-virtual-case");
 		gvc->method = method;
 		gvc->code = code;
 		gvc->count = 0;
@@ -1937,7 +1937,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 
 	mono_stats.used_class_count++;
 	mono_stats.class_vtable_size += vtable_size;
-	interface_offsets = mono_domain_alloc0 (domain, vtable_size);
+	interface_offsets = mono_domain_alloc0 (domain, vtable_size, "runtime-vtable");
 
 	if (ARCH_USE_IMT)
 		vt = (MonoVTable*) ((char*)interface_offsets + imt_table_bytes);
@@ -1988,7 +1988,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 			if (bitmap != default_bitmap)
 				g_free (bitmap);
 		} else {
-			vt->vtable [class->vtable_size] = mono_domain_alloc0 (domain, class_size);
+			vt->vtable [class->vtable_size] = mono_domain_alloc0 (domain, class_size, "static-data");
 		}
 		vt->has_static_fields = TRUE;
 		mono_stats.class_static_data_size += class_size;
@@ -2266,7 +2266,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 
 	mono_stats.class_vtable_size += vtsize + extra_interface_vtsize;
 
-	interface_offsets = mono_domain_alloc0 (domain, vtsize + extra_interface_vtsize);
+	interface_offsets = mono_domain_alloc0 (domain, vtsize + extra_interface_vtsize, "runtime-vtable-proxy");
 	if (ARCH_USE_IMT)
 		pvt = (MonoVTable*) (interface_offsets + MONO_IMT_SIZE);
 	else
@@ -2304,7 +2304,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 #ifdef COMPRESSED_INTERFACE_BITMAP
 	bitmap = g_malloc0 (bsize);
 #else
-	bitmap = mono_domain_alloc0 (domain, bsize);
+	bitmap = mono_domain_alloc0 (domain, bsize, "interface bitmap");
 #endif
 
 	if (! ARCH_USE_IMT) {
@@ -2358,7 +2358,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 
 #ifdef COMPRESSED_INTERFACE_BITMAP
 	bcsize = mono_compress_bitmap (NULL, bitmap, bsize);
-	pvt->interface_bitmap = mono_domain_alloc0 (domain, bcsize);
+	pvt->interface_bitmap = mono_domain_alloc0 (domain, bcsize, "interface bitmap");
 	mono_compress_bitmap (pvt->interface_bitmap, bitmap, bsize);
 	g_free (bitmap);
 #else
@@ -2489,7 +2489,7 @@ static gpointer*
 copy_remote_class_key (MonoDomain *domain, gpointer *key)
 {
 	int key_size = (GPOINTER_TO_UINT (key [0]) + 1) * sizeof (gpointer);
-	gpointer *mp_key = mono_domain_alloc (domain, key_size);
+	gpointer *mp_key = mono_domain_alloc (domain, key_size, "remote-class-key");
 
 	memcpy (mp_key, key, key_size);
 
@@ -2536,12 +2536,12 @@ mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_
 	key = mp_key;
 
 	if (proxy_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
-		rc = mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS + sizeof(MonoClass*));
+		rc = mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS + sizeof(MonoClass*), "remote-class");
 		rc->interface_count = 1;
 		rc->interfaces [0] = proxy_class;
 		rc->proxy_class = mono_defaults.marshalbyrefobject_class;
 	} else {
-		rc = mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS);
+		rc = mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS, "remote-class");
 		rc->interface_count = 0;
 		rc->proxy_class = proxy_class;
 	}
@@ -2582,7 +2582,7 @@ clone_remote_class (MonoDomain *domain, MonoRemoteClass* remote_class, MonoClass
 
 	if (extra_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		int i,j;
-		rc = mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS + sizeof(MonoClass*) * (remote_class->interface_count + 1));
+		rc = mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS + sizeof(MonoClass*) * (remote_class->interface_count + 1), "remote-class");
 		rc->proxy_class = remote_class->proxy_class;
 		rc->interface_count = remote_class->interface_count + 1;
 		
@@ -2597,7 +2597,7 @@ clone_remote_class (MonoDomain *domain, MonoRemoteClass* remote_class, MonoClass
 			rc->interfaces [j] = extra_class;
 	} else {
 		// Replace the old class. The interface array is the same
-		rc = mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS + sizeof(MonoClass*) * remote_class->interface_count);
+		rc = mono_domain_alloc (domain, MONO_SIZEOF_REMOTE_CLASS + sizeof(MonoClass*) * remote_class->interface_count, "remote-class");
 		rc->proxy_class = extra_class;
 		rc->interface_count = remote_class->interface_count;
 		if (rc->interface_count > 0)

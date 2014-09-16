@@ -481,10 +481,10 @@ gboolean
 mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name) MONO_INTERNAL;
 
 gpointer
-mono_domain_alloc  (MonoDomain *domain, guint size) MONO_INTERNAL;
+mono_domain_alloc  (MonoDomain *domain, guint size, const char *what) MONO_INTERNAL;
 
 gpointer
-mono_domain_alloc0 (MonoDomain *domain, guint size) MONO_INTERNAL;
+mono_domain_alloc0 (MonoDomain *domain, guint size, const char *what) MONO_INTERNAL;
 
 gpointer
 mono_domain_alloc0_lock_free (MonoDomain *domain, guint size) MONO_INTERNAL;

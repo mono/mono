@@ -577,7 +577,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		MonoDomain *domain = mono_domain_get ();
 		int i;
 
-		res = mono_domain_alloc0 (domain, sizeof (MonoGSharedVtMethodInfo));
+		res = mono_domain_alloc0 (domain, sizeof (MonoGSharedVtMethodInfo), "gsharedvt-method-info");
 		/*
 		res->nlocals = info->nlocals;
 		res->locals_types = g_new0 (MonoType*, info->nlocals);
@@ -585,7 +585,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 			res->locals_types [i] = mono_class_inflate_generic_type (info->locals_types [i], context);
 		*/
 		res->num_entries = oinfo->num_entries;
-		res->entries = mono_domain_alloc0 (domain, sizeof (MonoRuntimeGenericContextInfoTemplate) * oinfo->num_entries);
+		res->entries = mono_domain_alloc0 (domain, sizeof (MonoRuntimeGenericContextInfoTemplate) * oinfo->num_entries, "gsharedvt-entries");
 		for (i = 0; i < oinfo->num_entries; ++i) {
 			MonoRuntimeGenericContextInfoTemplate *otemplate = &oinfo->entries [i];
 			MonoRuntimeGenericContextInfoTemplate *template = &res->entries [i];
@@ -605,7 +605,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		MonoJumpInfoGSharedVtCall *res;
 		MonoDomain *domain = mono_domain_get ();
 
-		res = mono_domain_alloc0 (domain, sizeof (MonoJumpInfoGSharedVtCall));
+		res = mono_domain_alloc0 (domain, sizeof (MonoJumpInfoGSharedVtCall), "gshared-vtcall");
 		/* Keep the original signature */
 		res->sig = info->sig;
 
@@ -938,7 +938,7 @@ class_type_info (MonoDomain *domain, MonoClass *class, MonoRgctxInfoType info_ty
 	}
 	case MONO_RGCTX_INFO_CAST_CACHE: {
 		/*First slot is the cache itself, the second the vtable.*/
-		gpointer **cache_data = mono_domain_alloc0 (domain, sizeof (gpointer) * 2);
+		gpointer **cache_data = mono_domain_alloc0 (domain, sizeof (gpointer) * 2, "gshared-cast-cache");
 		cache_data [1] = (gpointer)class;
 		return cache_data;
 	}
@@ -1187,7 +1187,7 @@ mini_get_gsharedvt_wrapper (gboolean gsharedvt_in, gpointer addr, MonoMethodSign
 	num_trampolines ++;
 
 	/* Cache it */
-	tramp_info = mono_domain_alloc0 (domain, sizeof (GSharedVtTrampInfo));
+	tramp_info = mono_domain_alloc0 (domain, sizeof (GSharedVtTrampInfo), "gsharedvt-wrapper");
 	memcpy (tramp_info, &tinfo, sizeof (GSharedVtTrampInfo));
 
 	mono_domain_lock (domain);
@@ -1263,7 +1263,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		return mono_compile_method (mono_marshal_get_remoting_invoke_with_check (data));
 #endif
 	case MONO_RGCTX_INFO_METHOD_DELEGATE_CODE:
-		return mono_domain_alloc0 (domain, sizeof (gpointer));
+		return mono_domain_alloc0 (domain, sizeof (gpointer), "gshared-delegate-code");
 	case MONO_RGCTX_INFO_CLASS_FIELD:
 		return data;
 	case MONO_RGCTX_INFO_FIELD_OFFSET: {
@@ -1799,7 +1799,7 @@ alloc_rgctx_array (MonoDomain *domain, int n, gboolean is_mrgctx)
 	static int mrgctx_bytes_alloced = 0;
 
 	int size = mono_class_rgctx_get_array_size (n, is_mrgctx) * sizeof (gpointer);
-	gpointer array = mono_domain_alloc0 (domain, size);
+	gpointer array = mono_domain_alloc0 (domain, size, "gshared-array");
 
 	if (!inited) {
 		mono_counters_register ("RGCTX num arrays alloced", MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &rgctx_num_alloced);

@@ -4550,7 +4550,7 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 				domain_jit_info (domain)->method_code_hash = g_hash_table_new (NULL, NULL);
 			code_slot = g_hash_table_lookup (domain_jit_info (domain)->method_code_hash, method);
 			if (!code_slot) {
-				code_slot = mono_domain_alloc0 (domain, sizeof (gpointer));
+				code_slot = mono_domain_alloc0 (domain, sizeof (gpointer), "delegate-code-slot");
 				g_hash_table_insert (domain_jit_info (domain)->method_code_hash, method, code_slot);
 			}
 			mono_domain_unlock (domain);
@@ -7669,7 +7669,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 #endif
 
 			/* FIXME: we should really allocate this only late in the compilation process */
-			f = mono_domain_alloc (cfg->domain, sizeof (float));
+			f = mono_domain_alloc (cfg->domain, sizeof (float), "jit-ldc-float");
 			CHECK_OPSIZE (5);
 			CHECK_STACK_OVF (1);
 
@@ -7706,7 +7706,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 #endif
 
 			/* FIXME: we should really allocate this only late in the compilation process */
-			d = mono_domain_alloc (cfg->domain, sizeof (double));
+			d = mono_domain_alloc (cfg->domain, sizeof (double), "jit-ldc-double");
 			CHECK_OPSIZE (9);
 			CHECK_STACK_OVF (1);
 
@@ -9755,7 +9755,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (cfg->compile_aot)
 					EMIT_NEW_AOTCONST (cfg, args [2], MONO_PATCH_INFO_CASTCLASS_CACHE, NULL);
 				else
-					EMIT_NEW_PCONST (cfg, args [2], mono_domain_alloc0 (cfg->domain, sizeof (gpointer)));
+					EMIT_NEW_PCONST (cfg, args [2], mono_domain_alloc0 (cfg->domain, sizeof (gpointer), "jit-castclass-cache"));
 
 				/*The wrapper doesn't inline well so the bloat of inlining doesn't pay off.*/
 
@@ -9819,7 +9819,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (cfg->compile_aot)
 					EMIT_NEW_AOTCONST (cfg, args [2], MONO_PATCH_INFO_CASTCLASS_CACHE, NULL);
 				else
-					EMIT_NEW_PCONST (cfg, args [2], mono_domain_alloc0 (cfg->domain, sizeof (gpointer)));
+					EMIT_NEW_PCONST (cfg, args [2], mono_domain_alloc0 (cfg->domain, sizeof (gpointer), "jit-isinst-cache"));
 
 				*sp++ = mono_emit_method_call (cfg, mono_isinst, args, NULL);
 				ip += 5;
@@ -9891,7 +9891,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (cfg->compile_aot)
 						EMIT_NEW_AOTCONST (cfg, args [2], MONO_PATCH_INFO_CASTCLASS_CACHE, NULL);
 					else
-						EMIT_NEW_PCONST (cfg, args [2], mono_domain_alloc0 (cfg->domain, sizeof (gpointer)));
+						EMIT_NEW_PCONST (cfg, args [2], mono_domain_alloc0 (cfg->domain, sizeof (gpointer), "jit-castclass-cache"));
 
 					/* The wrapper doesn't inline well so the bloat of inlining doesn't pay off. */
 					*sp++ = emit_castclass_with_cache (cfg, klass, args, &bblock);
