@@ -568,6 +568,7 @@
   <ItemGroup>
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\mono\io-layer\io-layer.h" />
+    <ClInclude Include="..\mono\mini\mini-windows.h" />
     <ClInclude Include="..\mono\utils\dlmalloc.h" />
     <ClInclude Include="..\mono\utils\mono-codeman.h" />
     <ClInclude Include="..\mono\utils\mono-compiler.h" />
