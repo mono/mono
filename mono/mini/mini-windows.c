@@ -135,6 +135,8 @@ mono_runtime_shutdown_stat_profiler (void)
 {
 }
 
+#ifndef MONO_CROSS_COMPILE
+
 typedef struct
 {
 	guint32 free_stack;
@@ -210,4 +212,6 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, MonoContext *ctx)
 	/* use the new stack and call mono_arch_handle_exception () */
 	restore_stack (ctx);
 }
+
+#endif
 
