@@ -324,88 +324,116 @@ public abstract class Encoding : ICloneable
 
 	// Loaded copy of the "I18N" assembly.  We need to move
 	// this into a class in "System.Private" eventually.
-	private static Assembly i18nAssembly;
+	private static Type i18nManagerClass;
 	private static bool i18nDisabled;
 
 	// Invoke a specific method on the "I18N" manager object.
 	// Returns NULL if the method failed.
 	private static Object InvokeI18N (String name, params Object[] args)
 	{
-		lock (lockobj) {
-			// Bail out if we previously detected that there
-			// is insufficent engine support for I18N handling.
-			if (i18nDisabled) {
-				return null;
-			}
+        // Bail out if we previously detected that there
+        // is insufficent engine support for I18N handling.
+        if (i18nDisabled) {
+            return null;
+        }
 
-			// Find or load the "I18N" assembly.
-			if (i18nAssembly == null) {
-				try {
-					try {
-						i18nAssembly = Assembly.Load (Consts.AssemblyI18N);
-					} catch (NotImplementedException) {
-						// Assembly loading unsupported by the engine.
-						i18nDisabled = true;
-						return null;
-					}
-					if (i18nAssembly == null) {
-						return null;
-					}
-				} catch (SystemException) {
-					return null;
-				}
-			}
+        if(i18nManagerClass == null)
+        {
+            lock (lockobj) {
+                // Find or load the "I18N" assembly.
+                if (i18nManagerClass == null) {
+                    Assembly i18nAssembly;
+                    try {
+                        i18nAssembly = Assembly.Load (Consts.AssemblyI18N);
+                    } catch (NotImplementedException) {
+                        // Assembly loading unsupported by the engine.
+                        i18nDisabled = true;
+                        return null;
+                    } catch (SystemException) {
+                        return null;
+                    }
+                    if (i18nAssembly == null) {
+                        return null;
+                    }
 
-			// Find the "I18N.Common.Manager" class.
-			Type managerClass;
-			try {
-				managerClass = i18nAssembly.GetType ("I18N.Common.Manager");
-			} catch (NotImplementedException) {
-				// "GetType" is not supported by the engine.
-				i18nDisabled = true;
-				return null;
-			}
-			if (managerClass == null) {
-				return null;
-			}
+                    // Find the "I18N.Common.Manager" class.
+                    try {
+                        i18nManagerClass = i18nAssembly.GetType ("I18N.Common.Manager");
+                    } catch (NotImplementedException) {
+                        // "GetType" is not supported by the engine.
+                        i18nDisabled = true;
+                        return null;
+                    }
+                    if (i18nManagerClass == null) {
+                        return null;
+                    }
+                }
+            }
+        }
 
-			// Get the value of the "PrimaryManager" property.
-			Object manager;
-			try {
-				manager = managerClass.InvokeMember
-						("PrimaryManager",
-						 BindingFlags.GetProperty |
-						 	BindingFlags.Static |
-							BindingFlags.Public,
-						 null, null, null, null, null, null);
-				if (manager == null) {
-					return null;
-				}
-			} catch (MissingMethodException) {
-				return null;
-			} catch (SecurityException) {
-				return null;
-			} catch (NotImplementedException) {
-				// "InvokeMember" is not supported by the engine.
-				i18nDisabled = true;
-				return null;
-			}
+        // Get the value of the "PrimaryManager" property.
+        Object manager;
+        try {
+            manager = i18nManagerClass.InvokeMember
+                    ("PrimaryManager",
+                     BindingFlags.GetProperty |
+                        BindingFlags.Static |
+                        BindingFlags.Public,
+                     null, null, null, null, null, null);
+            if (manager == null) {
+                return null;
+            }
+        } catch (MissingMethodException) {
+            return null;
+        } catch (SecurityException) {
+            return null;
+        } catch (NotImplementedException) {
+            // "InvokeMember" is not supported by the engine.
+            i18nDisabled = true;
+            return null;
+        }
 
-			// Invoke the requested method on the manager.
-			try {
-				return managerClass.InvokeMember
-						(name,
-						 BindingFlags.InvokeMethod |
-						 	BindingFlags.Instance |
-							BindingFlags.Public,
-						 null, manager, args, null, null, null);
-			} catch (MissingMethodException) {
-				return null;
-			} catch (SecurityException) {
-				return null;
-			}
-		}
+        // Invoke the requested method on the manager.
+        try {
+            return i18nManagerClass.InvokeMember
+                    (name,
+                     BindingFlags.InvokeMethod |
+                        BindingFlags.Instance |
+                        BindingFlags.Public,
+                     null, manager, args, null, null, null);
+        } catch (MissingMethodException) {
+            return null;
+        } catch (SecurityException) {
+            return null;
+        }
 	}
+
+    private static bool TryCreateEncoding(Type type, out Encoding enc)
+    {
+        if(type != null) {
+            enc = Activator.CreateInstance(type) as Encoding;
+            if(enc == null) return false;
+            else {
+                enc.is_readonly = true;
+                return true;
+            }
+        }
+        else {
+            enc = null;
+            return false;
+        }
+    }
+
+    private static bool TryCreateEncoding(string typeName, out Encoding enc)
+    {
+        // Look for a code page converter in this assembly.
+        return TryCreateEncoding(Assembly.GetExecutingAssembly().GetType(typeName),
+                                 out enc) ||
+        // Look in any assembly, in case the application
+        // has provided its own code page handler
+               TryCreateEncoding(Type.GetType(typeName),
+                                 out enc);
+    }
 
 	// Get an encoder for a specific code page.
 #if ECMA_COMPAT
@@ -448,33 +476,17 @@ public abstract class Encoding : ICloneable
 				return ISOLatin1;
 			default: break;
 		}
+
 		// Try to obtain a code page handler from the I18N handler.
-		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", codepage));
+		Encoding enc = InvokeI18N ("GetEncoding", codepage) as Encoding;
 		if (enc != null) {
 			enc.is_readonly = true;
 			return enc;
 		}
 
-		// Build a code page class name.
-		String cpName = "System.Text.CP" + codepage.ToString ();
+        if(TryCreateEncoding("System.Text.CP" + codepage.ToString (), out enc))
+            return enc;
 
-		// Look for a code page converter in this assembly.
-		Assembly assembly = Assembly.GetExecutingAssembly ();
-		Type type = assembly.GetType (cpName);
-		if (type != null) {
-			enc = (Encoding)(Activator.CreateInstance (type));
-			enc.is_readonly = true;
-			return enc;
-		}
-
-		// Look in any assembly, in case the application
-		// has provided its own code page handler.
-		type = Type.GetType (cpName);
-		if (type != null) {
-			enc = (Encoding)(Activator.CreateInstance (type));
-			enc.is_readonly = true;
-			return enc;
-		}
 		// We have no idea how to handle this code page.
 		throw new NotSupportedException
 			(String.Format ("CodePage {0} not supported", codepage.ToString ()));
@@ -527,6 +539,10 @@ public abstract class Encoding : ICloneable
 	// this method to make sure that this method always returns
 	// the same number and content of encoding infos, this won't
 	// matter practically.
+
+    // Any reason why we do not define encoding_infos as readonly,
+    // and initialize it in static constructor?
+    // just for a small size of memory?
 	public static EncodingInfo[] GetEncodings ()
 	{
 		if (encoding_infos == null) {
@@ -550,9 +566,10 @@ public abstract class Encoding : ICloneable
 				57008, 57009, 57010, 57011,
 				65000, 65001};
 
-			encoding_infos = new EncodingInfo [codepages.Length];
+            EncodingInfo [] infos = new EncodingInfo [codepages.Length];
 			for (int i = 0; i < codepages.Length; i++)
-				encoding_infos [i] = new EncodingInfo (codepages [i]);
+				infos [i] = new EncodingInfo (codepages [i]);
+            encoding_infos = infos;
 		}
 		return encoding_infos;
 	}
@@ -640,23 +657,9 @@ public abstract class Encoding : ICloneable
 			return enc;
 		}
 
-		// Build a web encoding class name.
-		String encName = "System.Text.ENC" + converted;
-						 
+        if(TryCreateEncoding("System.Text.ENC" + converted, out enc))
+            return enc;
 
-		// Look for a code page converter in this assembly.
-		Assembly assembly = Assembly.GetExecutingAssembly ();
-		Type type = assembly.GetType (encName);
-		if (type != null) {
-			return (Encoding)(Activator.CreateInstance (type));
-		}
-
-		// Look in any assembly, in case the application
-		// has provided its own code page handler.
-		type = Type.GetType (encName);
-		if (type != null) {
-			return (Encoding)(Activator.CreateInstance (type));
-		}
 		// We have no idea how to handle this encoding name.
 		throw new ArgumentException (String.Format ("Encoding name '{0}' not "
 			+ "supported", name), "name");

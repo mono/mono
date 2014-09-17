@@ -40,320 +40,320 @@ using System.Security;
 
 public class Manager
 {
-	// The primary I18N manager.
-	private static Manager manager;
+    // The primary I18N manager.
+    private readonly static Manager manager;
 
-	// Internal state.
-	private Hashtable handlers;		// List of all handler classes.
-	private Hashtable active;		// Currently active handlers.
-	private Hashtable assemblies;	// Currently loaded region assemblies.
-	static readonly object lockobj = new object ();
+    // Internal state.
+    private readonly Hashtable handlers;        // List of all handler classes.
+    private readonly Hashtable active;          // Currently active handlers.
+    private readonly Hashtable assemblies;      // Currently loaded region assemblies.
 
-	// Constructor.
-	private Manager()
-			{
-				handlers = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-							  CaseInsensitiveComparer.Default);
-				active = new Hashtable(16);
-				assemblies = new Hashtable(8);
-				LoadClassList();
-			}
+    static Manager()
+    {
+        manager = new Manager();
+    }
 
-	// Get the primary I18N manager instance.
-	public static Manager PrimaryManager
-			{
-				get
-				{
-					lock(lockobj)
-					{
-						if(manager == null)
-						{
-							manager = new Manager();
-						}
-						return manager;
-					}
-				}
-			}
+    // Constructor.
+    private Manager()
+    {
+        handlers = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+                                  CaseInsensitiveComparer.Default);
+        active = new Hashtable(16);
+        assemblies = new Hashtable(8);
+        LoadClassList();
+    }
 
-	// Normalize a name.
-	// FIXME: This means, we accept invalid names such as "euc_jp"
-	private static String Normalize(String name)
-			{
-			#if ECMA_COMPAT
-				return (name.ToLower()).Replace('-', '_');
-			#else
-				return (name.ToLower(CultureInfo.InvariantCulture))
-							.Replace('-', '_');
-			#endif
-			}
+    // Get the primary I18N manager instance.
+    public static Manager PrimaryManager
+    {
+        get
+        {
+            return manager;
+        }
+    }
 
-	// Get an encoding object for a specific code page.
-	// Returns NULL if the code page is not available.
-	public Encoding GetEncoding(int codePage)
-			{
-				return (Instantiate("CP" + codePage.ToString()) as Encoding);
-			}
+    // Normalize a name.
+    // FIXME: This means, we accept invalid names such as "euc_jp"
+    private static String Normalize(String name)
+    {
+    #if ECMA_COMPAT
+        return (name.ToLower()).Replace('-', '_');
+    #else
+        return (name.ToLower(CultureInfo.InvariantCulture))
+                    .Replace('-', '_');
+    #endif
+    }
 
-	// Get an encoding object for a specific Web encoding.
-	// Returns NULL if the encoding is not available.
-	public Encoding GetEncoding(String name)
-			{
-				// Validate the parameter.
-				if(name == null)
-				{
-					return null;
-				}
+    // Get an encoding object for a specific code page.
+    // Returns NULL if the code page is not available.
+    public Encoding GetEncoding(int codePage)
+    {
+        return (Instantiate("CP" + codePage.ToString()) as Encoding);
+    }
 
-				string orgName = name;
+    // Get an encoding object for a specific Web encoding.
+    // Returns NULL if the encoding is not available.
+    public Encoding GetEncoding(String name)
+    {
+        // Validate the parameter.
+        if(name == null)
+        {
+            return null;
+        }
 
-				// Normalize the encoding name.
-				name = Normalize(name);
+        string orgName = name;
 
-				// Try to find a class called "ENCname".
-				Encoding e = Instantiate ("ENC" + name) as Encoding;
-				if (e == null)
-					e = Instantiate (name) as Encoding;
+        // Normalize the encoding name.
+        name = Normalize(name);
 
-				if (e == null) {
-					// Try windows aliases
-					string alias = Handlers.GetAlias (name);
-					if (alias != null) {
-						e = Instantiate ("ENC" + alias) as Encoding;
-						if (e == null)
-							e = Instantiate (alias) as Encoding;
-					}
-				}
-				if (e == null)
-					return null;
+        // Try to find a class called "ENCname".
+        Encoding e = Instantiate ("ENC" + name) as Encoding;
+        if (e == null)
+            e = Instantiate (name) as Encoding;
 
-				// e.g. Neither euc_jp nor shift-jis not allowed (Normalize() badness)
-				if (orgName.IndexOf ('_') > 0 && e.WebName.IndexOf ('-') > 0)
-					return null;
-				if (orgName.IndexOf ('-') > 0 && e.WebName.IndexOf ('_') > 0)
-					return null;
-				return e;
-			}
-	
-	// List of hex digits for use by "GetCulture".
-	private const String hex = "0123456789abcdef";
+        if (e == null) {
+            // Try windows aliases
+            string alias = Handlers.GetAlias (name);
+            if (alias != null) {
+                e = Instantiate ("ENC" + alias) as Encoding;
+                if (e == null)
+                    e = Instantiate (alias) as Encoding;
+            }
+        }
+        if (e == null)
+            return null;
 
-	// Get a specific culture by identifier.  Returns NULL
-	// if the culture information is not available.
-	public CultureInfo GetCulture(int culture, bool useUserOverride)
-			{
-				// Create the hex version of the culture identifier.
-				StringBuilder builder = new StringBuilder();
-				builder.Append(hex[(culture >> 12) & 0x0F]);
-				builder.Append(hex[(culture >> 8) & 0x0F]);
-				builder.Append(hex[(culture >> 4) & 0x0F]);
-				builder.Append(hex[culture & 0x0F]);
-				String name = builder.ToString();
+        // e.g. Neither euc_jp nor shift-jis not allowed (Normalize() badness)
+        if (orgName.IndexOf ('_') > 0 && e.WebName.IndexOf ('-') > 0)
+            return null;
+        if (orgName.IndexOf ('-') > 0 && e.WebName.IndexOf ('_') > 0)
+            return null;
+        return e;
+    }
+    
+    // List of hex digits for use by "GetCulture".
+    private const String hex = "0123456789abcdef";
 
-				// Try looking for an override culture handler.
-				if(useUserOverride)
-				{
-					Object obj = Instantiate("CIDO" + name);
-					if(obj != null)
-					{
-						return (obj as CultureInfo);
-					}
-				}
+    // Get a specific culture by identifier.  Returns NULL
+    // if the culture information is not available.
+    public CultureInfo GetCulture(int culture, bool useUserOverride)
+    {
+        // Create the hex version of the culture identifier.
+        StringBuilder builder = new StringBuilder();
+        builder.Append(hex[(culture >> 12) & 0x0F]);
+        builder.Append(hex[(culture >> 8) & 0x0F]);
+        builder.Append(hex[(culture >> 4) & 0x0F]);
+        builder.Append(hex[culture & 0x0F]);
+        String name = builder.ToString();
 
-				// Look for the generic non-override culture.
-				return (Instantiate("CID" + name) as CultureInfo);
-			}
+        // Try looking for an override culture handler.
+        if(useUserOverride)
+        {
+            Object obj = Instantiate("CIDO" + name);
+            if(obj != null)
+            {
+                return (obj as CultureInfo);
+            }
+        }
 
-	// Get a specific culture by name.  Returns NULL if the
-	// culture informaion is not available.
-	public CultureInfo GetCulture(String name, bool useUserOverride)
-			{
-				// Validate the parameter.
-				if(name == null)
-				{
-					return null;
-				}
+        // Look for the generic non-override culture.
+        return (Instantiate("CID" + name) as CultureInfo);
+    }
 
-				// Normalize the culture name.
-				name = Normalize(name);
+    // Get a specific culture by name.  Returns NULL if the
+    // culture informaion is not available.
+    public CultureInfo GetCulture(String name, bool useUserOverride)
+    {
+        // Validate the parameter.
+        if(name == null)
+        {
+            return null;
+        }
 
-				// Try looking for an override culture handler.
-				if(useUserOverride)
-				{
-					Object obj = Instantiate("CNO" + name.ToString());
-					if(obj != null)
-					{
-						return (obj as CultureInfo);
-					}
-				}
+        // Normalize the culture name.
+        name = Normalize(name);
 
-				// Look for the generic non-override culture.
-				return (Instantiate("CN" + name.ToString()) as CultureInfo);
-			}
+        // Try looking for an override culture handler.
+        if(useUserOverride)
+        {
+            Object obj = Instantiate("CNO" + name.ToString());
+            if(obj != null)
+            {
+                return (obj as CultureInfo);
+            }
+        }
 
-	// Instantiate a handler class.  Returns null if it is not
-	// possible to instantiate the class.
-	internal Object Instantiate(String name)
-			{
-				Object handler;
-				String region;
-				Assembly assembly;
-				Type type;
+        // Look for the generic non-override culture.
+        return (Instantiate("CN" + name.ToString()) as CultureInfo);
+    }
 
-				lock(this)
-				{
-					// See if we already have an active handler by this name.
-					handler = active[name];
-					if(handler != null)
-					{
-						return handler;
-					}
+    // Instantiate a handler class.  Returns null if it is not
+    // possible to instantiate the class.
+    internal Object Instantiate(String name)
+    {
+        Object handler;
+        String region;
+        Assembly assembly;
+        Type type;
 
-					// Determine which region assembly handles the class.
-					region = (String)(handlers[name]);
-					if(region == null)
-					{
-						// The class does not exist in any region assembly.
-						return null;
-					}
+        // See if we already have an active handler by this name.
+        handler = active[name];
+        if(handler != null)
+        {
+            return handler;
+        }
 
-					// Find the region-specific assembly and load it.
-					assembly = (Assembly)(assemblies[region]);
-					if(assembly == null)
-					{
-						try
-						{
-							// we use the same strong name as I18N.dll except the assembly name
-							AssemblyName myName = typeof(Manager).Assembly.GetName();
-							myName.Name = region;
-							assembly = Assembly.Load(myName);
-						}
-						catch(SystemException)
-						{
-							assembly = null;
-						}
-						if(assembly == null)
-						{
-							return null;
-						}
-						assemblies[region] = assembly;
-					}
+        // Determine which region assembly handles the class.
+        region = (String)(handlers[name]);
+        if(region == null)
+        {
+            // The class does not exist in any region assembly.
+            return null;
+        }
 
-					// Look for the class within the region-specific assembly.
-					type = assembly.GetType(region + "." + name, false, true);
-					if(type == null)
-					{
-						return null;
-					}
+        // Find the region-specific assembly and load it.
+        assembly = (Assembly)(assemblies[region]);
+        if(assembly == null)
+        {
+            try
+            {
+                // we use the same strong name as I18N.dll except the assembly name
+                AssemblyName myName = typeof(Manager).Assembly.GetName();
+                myName.Name = region;
+                assembly = Assembly.Load(myName);
+            }
+            catch(SystemException)
+            {
+                assembly = null;
+            }
+            if(assembly == null)
+            {
+                return null;
+            }
+            lock(assemblies)
+            {
+                assemblies.Add(region, assembly);
+            }
+        }
 
-					// Invoke the constructor, which we assume is public
-					// and has zero arguments.
-					try
-					{
-						handler = Activator.CreateInstance (type);
-					}
-					catch(MissingMethodException)
-					{
-						// The constructor was not present.
-						return null;
-					}
-					catch(SecurityException)
-					{
-						// The constructor was inaccessible.
-						return null;
-					}
+        // Look for the class within the region-specific assembly.
+        type = assembly.GetType(region + "." + name, false, true);
+        if(type == null)
+        {
+            return null;
+        }
 
-					// Add the handler to the active handlers cache.
-					active.Add(name, handler);
+        // Invoke the constructor, which we assume is public
+        // and has zero arguments.
+        try
+        {
+            handler = Activator.CreateInstance (type);
+        }
+        catch(MissingMethodException)
+        {
+            // The constructor was not present.
+            return null;
+        }
+        catch(SecurityException)
+        {
+            // The constructor was inaccessible.
+            return null;
+        }
 
-					// Return the handler to the caller.
-					return handler;
-				}
-			}
+        // Add the handler to the active handlers cache.
+        lock(active)
+        {
+            active.Add(name, handler);
+        }
 
-	// Load the list of classes that are present in all region assemblies.
-	private void LoadClassList()
-			{
-				FileStream stream;
+        // Return the handler to the caller.
+        return handler;
+    }
 
-				// Look for "I18N-handlers.def" in the same directory
-				// as this assembly.  Note: this assumes that the
-				// "Assembly.GetFile" method can access files that
-				// aren't explicitly part of the assembly manifest.
-				//
-				// This is necessary because the "I18N-handlers.def"
-				// file is generated after the "i18n" assembly is
-				// compiled and linked.  So it cannot be embedded
-				// directly into the assembly manifest.
-				try
-				{
-					stream = Assembly.GetExecutingAssembly()
-								.GetFile("I18N-handlers.def");
-					if(stream == null)
-					{
-						LoadInternalClasses();
-						return;
-					}
-				}
-				catch(FileLoadException)
-				{
-					// The file does not exist, or the runtime engine
-					// refuses to implement the necessary semantics.
-					// Fall back to an internal list, which must be
-					// kept up to date manually.
-					LoadInternalClasses();
-					return;
-				}
+    // Load the list of classes that are present in all region assemblies.
+    private void LoadClassList()
+    {
+        FileStream stream;
 
-				// Load the class list from the stream.
-				StreamReader reader = new StreamReader(stream);
-				String line;
-				int posn;
-				while((line = reader.ReadLine()) != null)
-				{
-					// Skip comment lines in the input.
-					if(line.Length == 0 || line[0] == '#')
-					{
-						continue;
-					}
+        // Look for "I18N-handlers.def" in the same directory
+        // as this assembly.  Note: this assumes that the
+        // "Assembly.GetFile" method can access files that
+        // aren't explicitly part of the assembly manifest.
+        //
+        // This is necessary because the "I18N-handlers.def"
+        // file is generated after the "i18n" assembly is
+        // compiled and linked.  So it cannot be embedded
+        // directly into the assembly manifest.
+        try
+        {
+            stream = Assembly.GetExecutingAssembly()
+                        .GetFile("I18N-handlers.def");
+            if(stream == null)
+            {
+                LoadInternalClasses();
+                return;
+            }
+        }
+        catch(FileLoadException)
+        {
+            // The file does not exist, or the runtime engine
+            // refuses to implement the necessary semantics.
+            // Fall back to an internal list, which must be
+            // kept up to date manually.
+            LoadInternalClasses();
+            return;
+        }
 
-					// Split the line into namespace and name.  We assume
-					// that the line has the form "I18N.<Region>.<Name>".
-					posn = line.LastIndexOf('.');
-					if(posn != -1)
-					{
-						// Add the namespace to the "handlers" hash,
-						// attached to the name of the handler class.
-						String name = line.Substring(posn + 1);
-						if(!handlers.Contains(name))
-						{
-							handlers.Add(name, line.Substring(0, posn));
-						}
-					}
-				}
-				reader.Close();
-			}
+        // Load the class list from the stream.
+        StreamReader reader = new StreamReader(stream);
+        String line;
+        int posn;
+        while((line = reader.ReadLine()) != null)
+        {
+            // Skip comment lines in the input.
+            if(line.Length == 0 || line[0] == '#')
+            {
+                continue;
+            }
 
-	// Load the list of classes from the internal list.
-	private void LoadInternalClasses()
-			{
-				int posn;
-				foreach(String line in Handlers.List)
-				{
-					// Split the line into namespace and name.  We assume
-					// that the line has the form "I18N.<Region>.<Name>".
-					posn = line.LastIndexOf('.');
-					if(posn != -1)
-					{
-						// Add the namespace to the "handlers" hash,
-						// attached to the name of the handler class.
-						String name = line.Substring(posn + 1);
-						if(!handlers.Contains(name))
-						{
-							handlers.Add(name, line.Substring(0, posn));
-						}
-					}
-				}
-			}
+            // Split the line into namespace and name.  We assume
+            // that the line has the form "I18N.<Region>.<Name>".
+            posn = line.LastIndexOf('.');
+            if(posn != -1)
+            {
+                // Add the namespace to the "handlers" hash,
+                // attached to the name of the handler class.
+                String name = line.Substring(posn + 1);
+                if(!handlers.Contains(name))
+                {
+                    handlers.Add(name, line.Substring(0, posn));
+                }
+            }
+        }
+        reader.Close();
+    }
+
+    // Load the list of classes from the internal list.
+    private void LoadInternalClasses()
+    {
+        int posn;
+        foreach(String line in Handlers.List)
+        {
+            // Split the line into namespace and name.  We assume
+            // that the line has the form "I18N.<Region>.<Name>".
+            posn = line.LastIndexOf('.');
+            if(posn != -1)
+            {
+                // Add the namespace to the "handlers" hash,
+                // attached to the name of the handler class.
+                String name = line.Substring(posn + 1);
+                if(!handlers.Contains(name))
+                {
+                    handlers.Add(name, line.Substring(0, posn));
+                }
+            }
+        }
+    }
 
 }; // class Manager
 
