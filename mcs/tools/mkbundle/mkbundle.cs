@@ -715,9 +715,14 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		if (use_dos2unix == null) {
 			use_dos2unix = false;
 			try {
-				var dos2unix = Process.Start ("dos2unix");
+				var info = new ProcessStartInfo ("dos2unix");
+				info.CreateNoWindow = true;
+				info.RedirectStandardInput = true;
+				info.UseShellExecute = false;
+				var dos2unix = Process.Start (info);
 				dos2unix.StandardInput.WriteLine ("aaa");
 				dos2unix.StandardInput.WriteLine ("\u0004");
+				dos2unix.StandardInput.Close ();
 				dos2unix.WaitForExit ();
 				if (dos2unix.ExitCode == 0)
 					use_dos2unix = true;
