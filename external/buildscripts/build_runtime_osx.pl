@@ -101,7 +101,7 @@ for my $arch (@arches)
 			$ENV{CXXFLAGS} = $ENV{CFLAGS};
 			$ENV{LDFLAGS} = "-arch $arch";
 		}
-		my $sdkOptions = "-isysroot $sdkPath -mmacosx-version-min=$macversion";
+		my $sdkOptions = "-isysroot $sdkPath -mmacosx-version-min=$macversion $ENV{CFLAGS}";
 
 		if ($iphone_simulator)
 		{
