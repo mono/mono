@@ -197,6 +197,7 @@ GC_key_t GC_thread_key;
 #ifdef USE_COMPILER_TLS
 __thread MONO_TLS_FAST void* GC_thread_tls;
 
+#if !defined(USE_PTHREAD_SPECIFIC)
 /*
  * gcc errors out with /tmp/ccdPMFuq.s:2994: Error: symbol `.LTLS4' is already defined
  * if the inline is added on powerpc
@@ -208,6 +209,7 @@ static int GC_setspecific (GC_key_t key, void *value) {
 	GC_thread_tls = value;
 	return pthread_setspecific (key, value);
 }
+#endif
 #endif
 
 static GC_bool keys_initialized;
