@@ -788,6 +788,18 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (args == null && type.IsStruct) {
+				bool includes_empty = false;
+				foreach (MethodSpec ctor in ctors) {
+					if (ctor.Parameters.IsEmpty) {
+						includes_empty = true;
+					}
+				}
+
+				if (!includes_empty)
+					return null;
+			}
+
 			var r = new OverloadResolver (ctors, OverloadResolver.Restrictions.NoBaseMembers, loc);
 			if (!rc.HasSet (ResolveContext.Options.BaseInitializer)) {
 				r.InstanceQualifier = new ConstructorInstanceQualifier (type);
@@ -5373,13 +5385,6 @@ namespace Mono.CSharp {
 				//
 				if (best_candidate_rate == 0)
 					break;
-
-				//
-				// We don't include implicit struct constructors in member-cache. Hence
-				// we need explicit check during lookup 
-				//
-				if (args_count == 0 && (restrictions & Restrictions.NoBaseMembers) != 0 && best_candidate != null && best_candidate.Kind == MemberKind.Constructor && best_candidate.DeclaringType.IsStruct)
-					return null;
 
 				//
 				// Try extension methods lookup when no ordinary method match was found and provider enables it
