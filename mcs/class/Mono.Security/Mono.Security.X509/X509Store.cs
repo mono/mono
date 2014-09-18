@@ -236,8 +236,13 @@ namespace Mono.Security.X509 {
 				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
 			KeyPairPersistence kpp = new KeyPairPersistence (cspParams);
 
-			if (!kpp.Load ())
+			try {
+				if (!kpp.Load ())
+					return cert;
+			}
+			catch {
 				return cert;
+			}
 
 			if (cert.RSA != null)
 				cert.RSA = new RSACryptoServiceProvider (cspParams);
