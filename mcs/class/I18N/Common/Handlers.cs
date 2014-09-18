@@ -223,6 +223,7 @@ public sealed class Handlers
 
 	static void BuildHash ()
 	{
+        Dictionary<string, string> aliases;
 		aliases = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
 
 		aliases.Add ("arabic", "iso_8859_6");
@@ -322,6 +323,12 @@ public sealed class Handlers
 		aliases.Add ("DOS_874", "windows_874");
 		aliases.Add ("iso_8859_11", "windows_874");
 		aliases.Add ("TIS_620", "windows_874");
+
+        aliases.Add ("ks_c_5601_1987", "uhc");
+
+        aliases.Add ("csISO2022JP", "iso_2022_jp");
+
+        Handlers.aliases = aliases;
 	}
 
 	
