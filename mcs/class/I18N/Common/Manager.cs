@@ -123,6 +123,9 @@ public class Manager
         if (e == null)
             return null;
 
+        // very bad hack, name of CP949 contains both - and _
+        if (name == "ks_c_5601_1987" && e.WebName == "ks_c_5601-1987") return e;
+
         // e.g. Neither euc_jp nor shift-jis not allowed (Normalize() badness)
         if (orgName.IndexOf ('_') > 0 && e.WebName.IndexOf ('-') > 0)
             return null;
