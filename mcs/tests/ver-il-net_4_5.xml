@@ -27070,6 +27070,67 @@
       </method>
     </type>
   </test>
+  <test name="gtest-lambda-36.cs">
+    <type name="D`1[T]">
+      <method name="Void S[U,V](System.Func`1[U], System.Func`3[T,U,V])" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="D`1[V] Factory[V](V)" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>78</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__0()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="&lt;&gt;__AnonType1`1[System.String] &lt;Main&gt;m__1(&lt;&gt;__AnonType0`1[System.Int32], System.String)" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;q&gt;__T]">
+      <method name="&lt;q&gt;__T get_q()" attrs="2182">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)" attrs="198">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()" attrs="198">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()" attrs="198">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor(&lt;q&gt;__T)" attrs="6278">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType1`1[&lt;str&gt;__T]">
+      <method name="&lt;str&gt;__T get_str()" attrs="2182">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)" attrs="198">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()" attrs="198">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()" attrs="198">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor(&lt;str&gt;__T)" attrs="6278">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.C">
       <method name="Void Main()" attrs="150">
