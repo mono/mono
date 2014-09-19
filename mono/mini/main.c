@@ -117,6 +117,15 @@ main (void)
 int
 main (int argc, char* argv[])
 {
+
+if (getenv("WDS")) {
+	int i;
+	printf("EFI: mini/main.c, argc=%d, argv=%p\n", argc, argv);
+	for (i = 0; i < argc; i++) {
+		printf("EFI: argv[%2d]='%s'\n", i, argv[i]);
+	}
+}
+
 	mono_build_date = build_date;
 	
 	return mono_main_with_options (argc, argv);
