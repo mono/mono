@@ -7,7 +7,8 @@ export ANDROID_PLATFORM=android-5
 GCC_PREFIX=arm-linux-androideabi-
 GCC_VERSION=4.4.3
 OUTDIR=builds/embedruntimes/android
-PREFIX=`pwd`/builds/android
+CWD="$(pwd)"
+PREFIX="$CWD/builds/android"
 BUILDSCRIPTSDIR=external/buildscripts
 
 perl ${BUILDSCRIPTSDIR}/PrepareAndroidSDK.pl -ndk=r8e -env=envsetup.sh && source envsetup.sh
@@ -45,6 +46,7 @@ if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 	exit 1
 fi
 
+KRAIT_PATCH_PATH="${CWD}/external/android_krait_signal_handler"
 PATH="$TOOLCHAIN/bin:$PATH"
 CC="$TOOLCHAIN/bin/${GCC_PREFIX}gcc --sysroot=$PLATFORM_ROOT"
 CXX="$TOOLCHAIN/bin/${GCC_PREFIX}g++ --sysroot=$PLATFORM_ROOT"
@@ -65,6 +67,8 @@ CFLAGS="\
 -ffunction-sections -fdata-sections"
 CXXFLAGS=$CFLAGS
 LDFLAGS="\
+-Wl,--wrap,sigaction \
+-L${KRAIT_PATCH_PATH}/obj/local/armeabi -lkrait-signal-handler \
 -Wl,--no-undefined \
 -Wl,-rpath-link=$PLATFORM_ROOT/usr/lib \
 -ldl -lm -llog -lc"
@@ -86,6 +90,19 @@ if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
         echo "Erasing builds folder to make sure we start with a clean slate"
         rm -rf builds
 fi
+
+function clean_build_krait_patch
+{
+       local KRAIT_PATCH_REPO="git://github.com/Unity-Technologies/krait-signal-handler.git"
+       if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
+               echo "Trusting TC to have cloned krait patch repository for us"
+       elif [ -d "$KRAIT_PATCH_PATH" ]; then
+               echo "Krait patch repository already cloned"
+       else
+               git clone --branch "master" "$KRAIT_PATCH_REPO" "$KRAIT_PATCH_PATH"
+       fi
+       (cd "$KRAIT_PATCH_PATH" && ./build.pl)
+}
 
 function clean_build
 {
@@ -121,6 +138,8 @@ LDFLAGS_ARMv5=""
 LDFLAGS_ARMv7="-Wl,--fix-cortex-a8"
 
 rm -rf $OUTDIR
+
+clean_build_krait_patch
 
 clean_build "$CCFLAGS_ARMv5_CPU" "$LDFLAGS_ARMv5" "$OUTDIR/armv5"
 clean_build "$CCFLAGS_ARMv6_VFP" "$LDFLAGS_ARMv5" "$OUTDIR/armv6_vfp"

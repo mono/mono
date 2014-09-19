@@ -489,8 +489,7 @@ ptr_t cold_gc_frame;
 #   if defined(THREADS)
 	if (0 == cold_gc_frame) return;
 #       ifdef STACK_GROWS_DOWN
-    	  //GC_push_all_eager(GC_approx_sp(), cold_gc_frame);
-    	  GC_push_all(GC_approx_sp(), cold_gc_frame);
+    	  GC_push_all_eager(GC_approx_sp(), cold_gc_frame);
 	  /* For IA64, the register stack backing store is handled 	*/
 	  /* in the thread-specific code.				*/
 #       else

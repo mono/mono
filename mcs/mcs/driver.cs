@@ -109,7 +109,7 @@ namespace Mono.CSharp
 		private Driver (CompilerContext ctx)
 		{
 			this.ctx = ctx;
-			encoding = Encoding.Default;
+			encoding = Encoding.UTF8;
 		}
 
 		public static Driver Create (string[] args, bool require_files, ReportPrinter printer)
