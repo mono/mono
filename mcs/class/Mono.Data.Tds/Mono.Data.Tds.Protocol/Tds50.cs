@@ -31,6 +31,7 @@
 using Mono.Data.Tds;
 using System;
 using System.Text;
+using System.Security;
 
 namespace Mono.Data.Tds.Protocol
 {
@@ -118,7 +119,7 @@ namespace Mono.Data.Tds.Protocol
 
 			// password (offset 62 0x3e)
 			// 62-92
-			tmp = Comm.Append (connectionParameters.Password, 30, pad);
+			tmp = Comm.Append (GetPlainPassword(connectionParameters.Password), 30, pad);
 			Comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 			// hostproc (offset 93 0x5d)
@@ -187,7 +188,7 @@ namespace Mono.Data.Tds.Protocol
 			// remote passwords
 			// 202-457	
 			Comm.Append (empty, 2, pad);
-			tmp = Comm.Append (connectionParameters.Password, 253, pad);
+			tmp = Comm.Append (GetPlainPassword(connectionParameters.Password), 253, pad);
 			Comm.Append ((byte) (tmp.Length < 253 ? tmp.Length + 2 : 253 + 2));
 
 			// tds version

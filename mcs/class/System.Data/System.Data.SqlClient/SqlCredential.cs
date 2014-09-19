@@ -1,12 +1,10 @@
 //
-// Mono.Data.Tds.Protocol.TdsConnectionParameters.cs
+// System.Data.SqlClient.SqlCredential.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
-//   Daniel Morgan (danielmorgan@verizon.net)
+//   Neale Ferguson (neale@sinenomine.net)
 //
-// Copyright (C) 2002 Tim Coleman
-// Portions (C) 2003 Daniel Morgan
+// Copyright (C) Neale Ferguson, 2014
 //
 
 //
@@ -31,46 +29,48 @@
 //
 
 using System;
+using System.Data;
+using System.Runtime.InteropServices;
 using System.Security;
 
-namespace Mono.Data.Tds.Protocol
-{
-	public class TdsConnectionParameters
+namespace System.Data.SqlClient {
+	/// <summary>
+	/// Describes an error from a SQL database.
+	/// </summary>
+	[Serializable]
+	public sealed class SqlCredential
 	{
-		public string ApplicationName;
-		public string Database;
-		public string Charset;
-		public string Hostname;
-		public string Language;
-		public string LibraryName;
-		public SecureString Password;
-		public bool PasswordSet;
-		public string ProgName;
-		public string User;
-		public bool DomainLogin;
-		public string DefaultDomain;
-		public string AttachDBFileName;
+		#region Fields
 
-		public TdsConnectionParameters ()
+		string uid = "";
+		SecureString pwd = null;
+
+		#endregion // Fields
+
+		#region Constructors
+
+		public SqlCredential (string user, SecureString password)
 		{
-			Reset ();
+			if (user == null)
+				throw new ArgumentNullException("UserID");
+			if (password == null)
+				throw new ArgumentNullException("Password");
+			this.uid = user;
+			this.pwd = password;
 		}
 
-		public void Reset ()
-		{
-			ApplicationName = "Mono";
-			Database = String.Empty;
-			Charset = String.Empty;
-			Hostname = System.Net.Dns.GetHostName();
-			Language = String.Empty;
-			LibraryName = "Mono";
-			Password = new SecureString();
-			PasswordSet = false;
-			ProgName = "Mono";
-			User = String.Empty;
-			DomainLogin = false; 
-			DefaultDomain = String.Empty;
-			AttachDBFileName = String.Empty;
+		#endregion // Constructors
+		
+		#region Properties
+
+		public string UserId {
+			get { return uid; }
 		}
+
+		public SecureString Password {
+			get { return pwd; }
+		}
+
+		#endregion
 	}
 }

@@ -37,6 +37,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using System.Security;
 
 using Mono.Security.Protocol.Ntlm;
 
@@ -392,11 +393,12 @@ namespace Mono.Data.Tds.Protocol
 			return IsConnected;
 		}
 
-		private static string EncryptPassword (string pass)
+		private static string EncryptPassword (SecureString secPass)
 		{
 			int xormask = 0x5a5a;
-			int len = pass.Length;
+			int len = secPass.Length;
 			char[] chars = new char[len];
+			string pass = GetPlainPassword(secPass);
 
 			for (int i = 0; i < len; ++i) {
 				int c = ((int) (pass[i])) ^ xormask;
