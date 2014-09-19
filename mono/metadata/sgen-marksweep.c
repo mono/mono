@@ -45,8 +45,15 @@
 
 #define SGEN_HAVE_CONCURRENT_MARK
 
+/* MS_BLOCK_SIZE must be a multiple of the system pagesize, which for some
+   archs is 64k.  */
+#ifdef TARGET_POWERPC64
+#define MS_BLOCK_SIZE	(64*1024)
+#define MS_BLOCK_SIZE_SHIFT	16
+#else
 #define MS_BLOCK_SIZE	(16*1024)
 #define MS_BLOCK_SIZE_SHIFT	14
+#endif
 #define MAJOR_SECTION_SIZE	MS_BLOCK_SIZE
 #define CARDS_PER_BLOCK (MS_BLOCK_SIZE / CARD_SIZE_IN_BYTES)
 

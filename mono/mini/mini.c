@@ -2632,7 +2632,6 @@ MONO_FAST_TLS_DECLARE(mono_lmf_addr);
  */
 MONO_FAST_TLS_DECLARE(mono_lmf);
 #endif
-#endif
 
 gint32
 mono_get_jit_tls_offset (void)
@@ -2650,6 +2649,7 @@ mono_get_jit_tls_offset (void)
 #endif
 	return offset;
 }
+#endif
 
 gint32
 mono_get_lmf_tls_offset (void)
@@ -7084,7 +7084,7 @@ mini_get_debug_options (void)
 static gpointer
 mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 {
-#if !defined(__ia64__) && !defined(__ppc64__) && !defined(__powerpc64__)
+#if !defined(__ia64__) && (!defined(__ppc64__) && !defined(__powerpc64__) || _CALL_ELF == 2)
 	return addr;
 #else
 
@@ -7113,7 +7113,7 @@ mini_create_ftnptr (MonoDomain *domain, gpointer addr)
 static gpointer
 mini_get_addr_from_ftnptr (gpointer descr)
 {
-#if defined(__ia64__) || defined(__ppc64__) || defined(__powerpc64__)
+#if defined(__ia64__) || ((defined(__ppc64__) || defined(__powerpc64__)) && _CALL_ELF != 2)
 	return *(gpointer*)descr;
 #else
 	return descr;
