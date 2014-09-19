@@ -94,15 +94,22 @@ namespace Mono.Data.Tds.Protocol {
 				base.ProcessColumnInfo ();
 				return;
 			}
-			
-			// VARADHAN: TDS 8 Debugging
-			//Console.WriteLine ("Tds80.cs: In ProcessColumnInfo... entry");
 			int numColumns = Comm.GetTdsShort ();
+
+			int columnSize = 0;
+			string tableName = null;
+			byte[] collation = null;
+			int lcid = 0, sortId = 0;
+
+			byte precision = 0;
+			byte scale = 0;
+
 			//Console.WriteLine ("Column count={0}", numColumns); TDS 8 Debugging
 			for (int i = 0; i < numColumns; i += 1) {
 				byte[] flagData = new byte[4];
-				for (int j = 0; j < 4; j += 1) 
-					flagData[j] = Comm.GetByte ();
+				for (int j = 0; j < 4; j += 1) {
+					flagData [j] = Comm.GetByte ();
+				}
 
 				bool nullable = (flagData[2] & 0x01) > 0;
 				//bool caseSensitive = (flagData[2] & 0x02) > 0;
@@ -110,8 +117,11 @@ namespace Mono.Data.Tds.Protocol {
 				bool autoIncrement = (flagData[2] & 0x10) > 0;
 				bool isIdentity = (flagData[2] & 0x10) > 0;
 
-				TdsColumnType columnType = (TdsColumnType) (Comm.GetByte () & 0xff);
-				//Console.WriteLine ("Actual ColumnType: {0}", columnType);  TDS 8 Debugging
+				byte nextbyte = Comm.GetByte();
+				string columnName = "";
+
+				TdsColumnType columnType = (TdsColumnType) (nextbyte & 0xff);
+				//Console.WriteLine ("Actual ColumnType: {0}", columnType); // TDS 8 Debugging
 
 				if ((byte) columnType == 0xef)
 					columnType = TdsColumnType.NChar;
@@ -121,39 +131,33 @@ namespace Mono.Data.Tds.Protocol {
 					if (columnType != TdsColumnType.NChar)
 						columnType -= 128;
 				}
-
-				int columnSize;
-				string tableName = null;
-				byte[] collation = null;
-				int lcid = 0, sortId = 0;
-
+					
 				if (IsBlobType (columnType)) {
 					columnSize = Comm.GetTdsInt ();
 				} else if (IsFixedSizeColumn (columnType)) {
 					columnSize = LookupBufferSize (columnType);
 				} else if (IsLargeType (xColumnType)) {
 					columnSize = Comm.GetTdsShort ();
-				} else  {
-					columnSize = Comm.GetByte () & 0xff;
-				}
+				} else if (columnType == TdsColumnType.Variant) {
+					columnSize = Comm.GetTdsInt ();
+				} else {
+						columnSize = Comm.GetByte () & 0xff;
+					}
 
-				if (xColumnType == TdsColumnType.BigChar || xColumnType == TdsColumnType.BigNVarChar ||
-				    xColumnType == TdsColumnType.BigVarChar || xColumnType == TdsColumnType.NChar ||
-				    xColumnType == TdsColumnType.NVarChar ||   xColumnType == TdsColumnType.Text ||
-				    xColumnType == TdsColumnType.NText) {
-				    // Read collation for SqlServer 2000 and beyond
-				    collation = Comm.GetBytes (5, true);
-					lcid = TdsCollation.LCID (collation);
-					sortId = TdsCollation.SortId (collation);
-				}
+					if (xColumnType == TdsColumnType.BigChar || xColumnType == TdsColumnType.BigNVarChar ||
+					   xColumnType == TdsColumnType.BigVarChar || xColumnType == TdsColumnType.NChar ||
+					   xColumnType == TdsColumnType.NVarChar || xColumnType == TdsColumnType.Text ||
+					   xColumnType == TdsColumnType.NText) {
+						// Read collation for SqlServer 2000 and beyond
+						collation = Comm.GetBytes (5, true);
+						lcid = TdsCollation.LCID (collation);
+						sortId = TdsCollation.SortId (collation);
+					}
 
-				if (IsBlobType (columnType)) {
-					tableName = Comm.GetString (Comm.GetTdsShort ());
-					//Console.WriteLine ("Tablename: "+tableName);  TDS 8 Debugging
-				}
-
-				byte precision = 0;
-				byte scale = 0;
+					if (IsBlobType (columnType)) {
+						tableName = Comm.GetString (Comm.GetTdsShort ());
+						//Console.WriteLine ("Tablename: "+tableName);  TDS 8 Debugging
+					}
 
 				switch (columnType) {
 				case TdsColumnType.NText:
@@ -171,7 +175,7 @@ namespace Mono.Data.Tds.Protocol {
 					break;
 				}
 
-				string columnName = Comm.GetString (Comm.GetByte ());
+				columnName = Comm.GetString (Comm.GetByte ());
 
 				TdsDataColumn col = new TdsDataColumn ();
 				Columns.Add (col);

@@ -517,6 +517,17 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			return socket != null && socket.Connected && !(socket.Poll (0, SelectMode.SelectRead) && socket.Available == 0);
 		}
+
+		/* this two methods need to read sql variant type from database */
+		public int GetInBufferIndex()
+		{
+			return inBufferIndex;
+		}
+
+		public void SetInBufferIndex(int index)
+		{
+			inBufferIndex = index;
+		}
 		
 		public byte GetByte ()
 		{

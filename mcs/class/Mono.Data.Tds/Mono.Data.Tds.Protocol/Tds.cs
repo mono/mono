@@ -793,6 +793,31 @@ namespace Mono.Data.Tds.Protocol
 			}
 			
 			switch (colType) {
+			case TdsColumnType.Variant:
+				/* sql variant max size */
+				Comm.GetTdsInt ();
+				byte type = Comm.GetByte ();
+				byte propbyte = Comm.GetByte ();
+				TdsColumnType realType = (TdsColumnType)(type & 0xff);
+				if (realType == TdsColumnType.NVarChar ||
+				    realType == TdsColumnType.BigNVarChar ||
+				    realType == TdsColumnType.VarChar ||
+				    realType == TdsColumnType.BigVarChar) {
+					byte[] collation = null;
+					collation = Comm.GetBytes (5, true);
+					lcid = TdsCollation.LCID (collation);
+					sortId = TdsCollation.SortId (collation);
+#if NET_2_0
+					columns[ordinal].LCID = lcid;
+					columns[ordinal].SortOrder = sortId;
+#else
+					columns[ordinal]["LCID"] = lcid;
+					columns[ordinal]["SortOrder"] = sortId;
+#endif
+
+				}
+				element = GetColumnValue ((TdsColumnType)type, outParam, ordinal);
+				break;
 			case TdsColumnType.IntN :
 				if (outParam)
 					comm.Skip (1);
@@ -1269,6 +1294,116 @@ namespace Mono.Data.Tds.Protocol
 				return DBNull.Value;
 			}
 		}
+
+		/* this method check's if len is real and not MAX len
+		else this method return's real len */
+		//private int CheckStringLen(int len)
+		//{
+		//	int realLen = len;
+		//	int startIndex = Comm.GetInBufferIndex ();
+		//	while (true) {
+		//		byte nextByte = Comm.GetByte ();
+		//		/* check if end of data rows */
+		//		if (nextByte == 0xFF) {
+		//			nextByte = Comm.GetByte ();
+		//			if (nextByte == 0x11) {
+		//				realLen = Comm.GetInBufferIndex () - 2;
+		//				Comm.SetInBufferIndex (startIndex);
+		//				break;
+		//			} else {
+		//				Comm.SetInBufferIndex (Comm.GetInBufferIndex () - 1);
+		//			}
+		//		} else if (nextByte == 0xD1) {
+		//
+		//		}
+		//	}
+		//	return realLen;
+		//}
+
+		/* this method check's if next bytes contains metadata about data type */
+		/*private bool CheckIfNextIsDataType()
+		{
+			int startIndex = Comm.GetInBufferIndex ();
+			bool result = false;
+			byte nextByte = Comm.GetByte ();
+			TdsColumnType columnType = (TdsColumnType)nextByte;
+			switch (columnType) {
+			case TdsColumnType.Bit:
+			case TdsColumnType.Char:
+			case TdsColumnType.DateTime:
+			case TdsColumnType.DateTime4:
+			case TdsColumnType.DateTimeN:
+			case TdsColumnType.Decimal:
+			case TdsColumnType.Real:
+			case TdsColumnType.Float8:
+			case TdsColumnType.FloatN:
+			case TdsColumnType.Image:
+			case TdsColumnType.Int1:
+			case TdsColumnType.Int2:
+			case TdsColumnType.Int4:
+			case TdsColumnType.IntN:
+			case TdsColumnType.Void:
+			case TdsColumnType.Text:
+			case TdsColumnType.UniqueIdentifier:
+			case TdsColumnType.VarBinary:
+			case TdsColumnType.VarChar:
+			case TdsColumnType.Money:
+			case TdsColumnType.NText:
+			case TdsColumnType.NVarChar:
+			case TdsColumnType.BitN:
+			case TdsColumnType.Numeric:
+			case TdsColumnType.MoneyN:
+			case TdsColumnType.Money4:
+			case TdsColumnType.NChar:
+			case TdsColumnType.BigBinary:
+			case TdsColumnType.BigVarBinary:
+			case TdsColumnType.BigVarChar:
+			case TdsColumnType.BigNVarChar:
+			case TdsColumnType.BigChar:
+			case TdsColumnType.SmallMoney:
+			case TdsColumnType.Variant:
+			case TdsColumnType.BigInt:
+				break;*/
+			/*Binary = 0x2d,		// SYBBINARY
+			Bit = 0x32,		// SYBBIT
+			Char = 0x2f,		// SYBCHAR
+			DateTime = 0x3d,	// SYBDATETIME
+			DateTime4 = 0x3a,	// SYBDATETIME4
+			DateTimeN = 0x6f,	// SYBDATETIMN
+			Decimal = 0x6a,		// SYBDECIMAL
+			Real = 0x3b,		// SYBREAL
+			Float8 = 0x3e,		// SYBFLT8
+			FloatN = 0x6d,		// SYBFLTN
+			Image = 0x22,		// SYBIMAGE
+			Int1 = 0x30,		// SYBINT1
+			Int2 = 0x34,		// SYBINT2
+			Int4 = 0x38,		// SYBINT4
+			IntN = 0x26,		// SYBINTN
+			Void = 0x1f,		// SYBVOID
+			Text = 0x23,		// SYBTEXT
+			UniqueIdentifier = 0x24,// SYBUNIQUE
+			VarBinary = 0x25,	// SYBVARBINARY
+			VarChar = 0x27,		// SYBVARCHAR
+			Money = 0x3c,		// SYBMONEY
+			NText = 0x63,		// SYBNTEXT
+			NVarChar = 0x67,	// SYBNVARCHAR
+			BitN = 0x68,		// SYBBITN
+			Numeric = 0x6c,		// SYBNUMERIC
+			MoneyN = 0x6e,		// SYBMONEYN
+			Money4 = 0x70,
+			NChar = 0xef,		// XSYBNCHAR
+			BigBinary = 0xad,	// XSYBBINARY
+			BigVarBinary = 0xa5,	// XSYBVARBINARY
+			BigVarChar = 0xa7,	// XSYBVARCHAR
+			BigNVarChar = 0xe7,	// XSYBNVARCHAR
+			BigChar = 0xaf,		// XSYBCHAR
+			SmallMoney = 0x7a,	// SYBMONEY4
+			Variant = 0x62,		// SYBVARIANT
+			BigInt = 0x7F		// SYBINT8*/
+			//}
+			//Comm.SetInBufferIndex (startIndex);
+			//return result;
+		//}
 
 		protected object GetStringValue (
 #if NET_2_0
