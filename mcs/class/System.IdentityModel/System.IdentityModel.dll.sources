@@ -54,6 +54,7 @@ System.IdentityModel.Tokens/AudienceRestriction.cs
 System.IdentityModel.Tokens/AuthenticationContext.cs
 System.IdentityModel.Tokens/AuthenticationInformation.cs
 System.IdentityModel.Tokens/BinaryKeyIdentifierClause.cs
+System.IdentityModel.Tokens/BootstrapContext.cs
 System.IdentityModel.Tokens/EncryptedKeyIdentifierClause.cs
 System.IdentityModel.Tokens/EncryptingCredentials.cs
 System.IdentityModel.Tokens/GenericXmlSecurityToken.cs
