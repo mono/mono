@@ -236,9 +236,7 @@ extern void mono_context_get_current (void *);
 		: "rdx", "memory")
 #endif
 
-#if !defined(HOST_WIN32)
 #define MONO_ARCH_HAS_MONO_CONTEXT 1
-#endif
 
 #elif (defined(__arm__) && !defined(MONO_CROSS_COMPILE)) || (defined(TARGET_ARM)) /* defined(__x86_64__) */
 
@@ -280,6 +278,8 @@ typedef struct {
 	);								\
 	ctx.pc = ctx.regs [15];			\
 } while (0)
+
+#define MONO_ARCH_HAS_MONO_CONTEXT 1
 
 #elif (defined(__aarch64__) && !defined(MONO_CROSS_COMPILE)) || (defined(TARGET_ARM64))
 
@@ -546,7 +546,18 @@ typedef struct ucontext MonoContext;
 
 #endif
 
+/*
+ * The naming is misleading, the SIGCTX argument should be the platform's context
+ * structure (ucontext_c on posix, CONTEXT on windows).
+ */
 void mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx) MONO_INTERNAL;
+
+/*
+ * This will not completely initialize SIGCTX since MonoContext contains less
+ * information that the system context. The caller should obtain a SIGCTX from
+ * the system, and use this function to override the parts of it which are
+ * also in MonoContext.
+ */
 void mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx) MONO_INTERNAL;
 
 #endif /* __MONO_MONO_CONTEXT_H__ */

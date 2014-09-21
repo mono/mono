@@ -2363,10 +2363,24 @@ constructor_declarator
 		if (lt.Value != current_container.MemberName.Name) {
 			report.Error (1520, c.Location, "Class, struct, or interface method must have a return type");
 		} else if ((mods & Modifiers.STATIC) != 0) {
+			if (!current_local_parameters.IsEmpty) {
+				report.Error (132, c.Location, "`{0}': The static constructor must be parameterless",
+					c.GetSignatureForError ());
+			}
+
 			if ((mods & Modifiers.AccessibilityMask) != 0){
 				report.Error (515, c.Location,
 					"`{0}': static constructor cannot have an access modifier",
 					c.GetSignatureForError ());
+			}
+		} else {
+			if (current_type.Kind == MemberKind.Struct && current_local_parameters.IsEmpty) {
+				if (lang_version < LanguageVersion.V_6)
+					FeatureIsNotAvailable (GetLocation ($3), "struct parameterless instance constructor");
+
+				if ((mods & Modifiers.PUBLIC) == 0) {
+					report.Error (8075, c.Location, "`{0}': Structs parameterless instance constructor must be public", c.GetSignatureForError ());
+				}
 			}
 		}
 

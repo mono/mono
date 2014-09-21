@@ -12,6 +12,7 @@
 #if defined(HOST_WIN32)
 
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-compiler.h>
 #include <limits.h>
 
 
@@ -20,10 +21,23 @@ mono_threads_init_platform (void)
 {
 }
 
+static void CALLBACK
+interrupt_apc (ULONG_PTR param)
+{
+}
+
 void
 mono_threads_core_interrupt (MonoThreadInfo *info)
 {
-	g_assert (0);
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	QueueUserAPC ((PAPCFUNC)interrupt_apc, handle, (ULONG_PTR)NULL);
+
+	CloseHandle (handle);
 }
 
 void
@@ -46,13 +60,73 @@ mono_threads_core_self_suspend (MonoThreadInfo *info)
 gboolean
 mono_threads_core_suspend (MonoThreadInfo *info)
 {
-	g_assert_not_reached ();
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+	DWORD result;
+	gboolean res;
+
+	g_assert (id != GetCurrentThreadId ());
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	result = SuspendThread (handle);
+	if (result == (DWORD)-1) {
+		fprintf (stderr, "could not suspend thread %x (handle %p): %d\n", id, handle, GetLastError ()); fflush (stderr);
+		CloseHandle (handle);
+		return FALSE;
+	}
+
+	CloseHandle (handle);
+
+	res = mono_threads_get_runtime_callbacks ()->thread_state_init_from_handle (&info->suspend_state, info);
+	g_assert (res);
+
+	return TRUE;
 }
 
 gboolean
 mono_threads_core_resume (MonoThreadInfo *info)
 {
-	g_assert_not_reached ();
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+	DWORD result;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	if (info->async_target) {
+		MonoContext ctx;
+		CONTEXT context;
+		gboolean res;
+
+		ctx = info->suspend_state.ctx;
+		mono_threads_get_runtime_callbacks ()->setup_async_callback (&ctx, info->async_target, info->user_data);
+		info->async_target = info->user_data = NULL;
+
+		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+
+		if (!GetThreadContext (handle, &context)) {
+			CloseHandle (handle);
+			return FALSE;
+		}
+
+		g_assert (context.ContextFlags & CONTEXT_INTEGER);
+		g_assert (context.ContextFlags & CONTEXT_CONTROL);
+
+		mono_monoctx_to_sigctx (&ctx, &context);
+
+		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+		res = SetThreadContext (handle, &context);
+		g_assert (res);
+	}
+
+	result = ResumeThread (handle);
+	g_assert (result != (DWORD)-1);
+
+	CloseHandle (handle);
+
+	return result != (DWORD)-1;
 }
 
 void
@@ -175,8 +249,7 @@ mono_threads_core_resume_created (MonoThreadInfo *info, MonoNativeThreadId tid)
 }
 
 #if HAVE_DECL___READFSDWORD==0
-static __inline__ __attribute__((always_inline))
-unsigned long long
+static MONO_ALWAYS_INLINE unsigned long long
 __readfsdword (unsigned long offset)
 {
 	unsigned long value;
@@ -304,6 +377,27 @@ enum thread_priority
 mono_threads_get_priority(MonoNativeThreadId)
 {
     return thread_priority_normal;
+}
+
+gpointer
+mono_threads_core_prepare_interrupt (HANDLE thread_handle)
+{
+	return NULL;
+}
+
+void
+mono_threads_core_finish_interrupt (gpointer wait_handle)
+{
+}
+
+void
+mono_threads_core_self_interrupt (void)
+{
+}
+
+void
+mono_threads_core_clear_interruption (void)
+{
 }
 
 #endif

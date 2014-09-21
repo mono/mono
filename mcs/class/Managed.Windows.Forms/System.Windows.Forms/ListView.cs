@@ -3663,7 +3663,8 @@ namespace System.Windows.Forms
 			if (View != View.Details) {
 				if (bounds.Left < 0)
 					h_scroll.Value += bounds.Left;
-				else if (bounds.Right > view_rect.Right)
+				// Don't shift right unless right-to-left layout is active. (Xamarin bug 22483)
+				else if (this.RightToLeftLayout && bounds.Right > view_rect.Right)
 					h_scroll.Value += (bounds.Right - view_rect.Right);
 			}
 

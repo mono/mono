@@ -2758,7 +2758,7 @@ namespace Mono.CSharp {
 		//
 		// Tracks successful rate of type inference
 		//
-		int score = int.MaxValue;
+		int score;
 		readonly Arguments arguments;
 		readonly int arg_count;
 
@@ -2831,12 +2831,12 @@ namespace Mono.CSharp {
 				AnonymousMethodExpression am = a.Expr as AnonymousMethodExpression;
 				if (am != null) {
 					if (am.ExplicitTypeInference (tic, method_parameter))
-						--score; 
+						++score; 
 					continue;
 				}
 
 				if (a.IsByRef) {
-					score -= tic.ExactInference (a.Type, method_parameter);
+					score += tic.ExactInference (a.Type, method_parameter);
 					continue;
 				}
 
@@ -2844,14 +2844,14 @@ namespace Mono.CSharp {
 					continue;
 
 				if (TypeSpec.IsValueType (method_parameter)) {
-					score -= tic.LowerBoundInference (a.Type, method_parameter);
+					score += tic.LowerBoundInference (a.Type, method_parameter);
 					continue;
 				}
 
 				//
 				// Otherwise an output type inference is made
 				//
-				score -= tic.OutputTypeInference (ec, a.Expr, method_parameter);
+				score += tic.OutputTypeInference (ec, a.Expr, method_parameter);
 			}
 
 			//
@@ -2901,7 +2901,7 @@ namespace Mono.CSharp {
 					if (arguments[i] == null)
 						continue;
 
-					score -= tic.OutputTypeInference (ec, arguments[i].Expr, t_i);
+					score += tic.OutputTypeInference (ec, arguments[i].Expr, t_i);
 				}
 			}
 
@@ -3034,8 +3034,8 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (TypeManager.IsGenericType (t))
-					return AllTypesAreFixed (TypeManager.GetTypeArguments (t));
+				if (t.IsGeneric && !AllTypesAreFixed (t.TypeArguments))
+					return false;
 			}
 			
 			return true;

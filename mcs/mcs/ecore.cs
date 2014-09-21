@@ -764,6 +764,10 @@ namespace Mono.CSharp {
 			if (ctors == null) {
 				switch (type.Kind) {
 				case MemberKind.Struct:
+					// Every struct has implicit default constructor if not provided by user
+					if (args == null)
+						return null;
+
 					rc.Report.SymbolRelatedToPreviousError (type);
 					// Report meaningful error for struct as they always have default ctor in C# context
 					OverloadResolver.Error_ConstructorMismatch (rc, type, args == null ? 0 : args.Count, loc);
@@ -782,6 +786,18 @@ namespace Mono.CSharp {
 				}
 
 				return null;
+			}
+
+			if (args == null && type.IsStruct) {
+				bool includes_empty = false;
+				foreach (MethodSpec ctor in ctors) {
+					if (ctor.Parameters.IsEmpty) {
+						includes_empty = true;
+					}
+				}
+
+				if (!includes_empty)
+					return null;
 			}
 
 			var r = new OverloadResolver (ctors, OverloadResolver.Restrictions.NoBaseMembers, loc);
@@ -4719,11 +4735,23 @@ namespace Mono.CSharp {
 		// one being the virtual base for the parameter types and modifiers.
 		//
 		// A return value rates candidate method compatibility,
-		// 0 = the best, int.MaxValue = the worst
 		// -1 = fatal error
+		// 0 = the best, int.MaxValue = the worst
 		//
 		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, IParametersMember pm, ref bool params_expanded_form, ref bool dynamicArgument, ref TypeSpec returnType, bool errorMode)
 		{
+			//
+			// Each step has allocated 10 values, it can overflow for
+			// more than 10 arguments but that's ok as it's used for
+			// better error reporting only
+			//
+			const int ArgumentCountMismatch		= 1000000000;
+			const int NamedArgumentsMismatch	= 100000000;
+			const int DefaultArgumentMismatch	= 10000000;
+			const int UnexpectedTypeArguments	= 1000000;
+			const int TypeArgumentsMismatch		= 100000;
+			const int InflatedTypesMismatch		= 10000;
+
 			// Parameters of most-derived type used mainly for named and optional parameters
 			var pd = pm.Parameters;
 
@@ -4756,17 +4784,17 @@ namespace Mono.CSharp {
 							param_count--;
 					} else if (arg_count > param_count) {
 						int args_gap = System.Math.Abs (arg_count - param_count);
-						return int.MaxValue - 10000 + args_gap;
+						return ArgumentCountMismatch + args_gap;
 					} else if (arg_count < param_count - optional_count) {
 						int args_gap = System.Math.Abs (param_count - optional_count - arg_count);
-						return int.MaxValue - 10000 + args_gap;
+						return ArgumentCountMismatch + args_gap;
 					}
 				} else if (arg_count != param_count) {
 					int args_gap = System.Math.Abs (arg_count - param_count);
 					if (!cpd.HasParams)
-						return int.MaxValue - 10000 + args_gap;
+						return ArgumentCountMismatch + args_gap;
 					if (arg_count < param_count - 1)
-						return int.MaxValue - 10000 + args_gap;
+						return ArgumentCountMismatch + args_gap;
 				}
 
 				// Resize to fit optional arguments
@@ -4803,7 +4831,7 @@ namespace Mono.CSharp {
 
 							// Named parameter not found
 							if (index < 0)
-								return (i + 1) * 3;
+								return NamedArgumentsMismatch - i;
 
 							// already reordered
 							if (index == i)
@@ -4819,8 +4847,8 @@ namespace Mono.CSharp {
 								++arg_count;
 								temp = null;
 							} else {
-								if (index == arg_count) 
-									return (i + 1) * 3;
+								if (index == arg_count)
+									return NamedArgumentsMismatch - i - 1;
 
 								temp = arguments [index];
 
@@ -4857,7 +4885,7 @@ namespace Mono.CSharp {
 			// Don't do any expensive checks when the candidate cannot succeed
 			//
 			if (arg_count != param_count && !cpd.HasParams)
-				return (param_count - arg_count) * 2 + 1;
+				return DefaultArgumentMismatch - System.Math.Abs (param_count - arg_count);
 
 			var dep = candidate.GetMissingDependencies ();
 			if (dep != null) {
@@ -4874,7 +4902,7 @@ namespace Mono.CSharp {
 				if (type_arguments != null) {
 					var g_args_count = ms.Arity;
 					if (g_args_count != type_arguments.Count)
-						return int.MaxValue - 20000 + System.Math.Abs (type_arguments.Count - g_args_count);
+						return TypeArgumentsMismatch - System.Math.Abs (type_arguments.Count - g_args_count);
 
 					if (type_arguments.Arguments != null)
 						ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
@@ -4906,7 +4934,7 @@ namespace Mono.CSharp {
 					TypeSpec[] i_args = ti.InferMethodArguments (ec, ms);
 
 					if (i_args == null)
-						return ti.InferenceScore - 20000;
+						return TypeArgumentsMismatch - ti.InferenceScore;
 
 					//
 					// Clear any error messages when the result was success
@@ -4916,9 +4944,10 @@ namespace Mono.CSharp {
 
 					if (i_args.Length != 0) {
 						if (!errorMode) {
-							foreach (var ta in i_args) {
+							for (int i = 0; i < i_args.Length; ++i) {
+								var ta = i_args [i];
 								if (!ta.IsAccessible (ec))
-									return ti.InferenceScore - 10000;
+									return TypeArgumentsMismatch - i;
 							}
 						}
 
@@ -4931,7 +4960,7 @@ namespace Mono.CSharp {
 				//
 				if (!CheckInflatedArguments (ms)) {
 					candidate = ms;
-					return int.MaxValue - 25000;
+					return InflatedTypesMismatch;
 				}
 
 				//
@@ -4954,7 +4983,7 @@ namespace Mono.CSharp {
 				ptypes = pd.Types;
 			} else {
 				if (type_arguments != null)
-					return int.MaxValue - 15000;
+					return UnexpectedTypeArguments;
 
 				ptypes = cpd.Types;
 			}
