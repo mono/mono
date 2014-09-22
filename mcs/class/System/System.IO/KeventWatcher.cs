@@ -3,7 +3,7 @@
 //
 // Authors:
 //	Geoff Norton (gnorton@customerdna.com)
-//  Cody Russell (cody@xamarin.com)
+//	Cody Russell (cody@xamarin.com)
 //
 // (c) 2004 Geoff Norton
 // Copyright 2014 Xamarin Inc
@@ -29,7 +29,6 @@
 //
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -148,48 +147,291 @@ namespace System.IO {
 		public int tv_usec;
 	}
 
-	class KeventFileData {
-		public FileSystemInfo fsi;
-		public DateTime LastAccessTime;
-		public DateTime LastWriteTime;
-
-		public KeventFileData(FileSystemInfo fsi, DateTime LastAccessTime, DateTime LastWriteTime) {
-			this.fsi = fsi;
-			this.LastAccessTime = LastAccessTime;
-			this.LastWriteTime = LastWriteTime;
-		}
+	class PathData
+	{
+		public string Path;
+		public bool IsDirectory;
 	}
 
-	class KeventData {
-                public FileSystemWatcher FSW;
-                public string Path;
-                public string FileMask;
-                public bool IncludeSubdirs;
-                public bool Enabled;
-                public Hashtable DirEntries;
-                public kevent ev;
-                public int fd;
-                public bool IsDirectory;
+	class KqueueMonitor : IDisposable
+	{
+		public int Connection
+		{
+			get { return conn; }
+		}
+
+		public KqueueMonitor (FileSystemWatcher fsw)
+		{
+			this.fsw = fsw;
+			this.conn = -1;
+		}
+
+		public void Dispose ()
+		{
+			Stop ();
+		}
+
+		public void Start ()
+		{
+			conn = kqueue ();
+
+			if (thread == null) {
+				thread = new Thread (new ThreadStart (Monitor));
+				thread.IsBackground = true;
+				thread.Start ();
+			}
+
+			var pathData = Add (fsw.FullPath);
+
+			Scan (pathData);
+		}
+
+		public void Stop ()
+		{
+			stop = true;
+
+			if (thread != null)
+				thread.Interrupt ();
+
+			if (conn != -1)
+				close (conn);
+
+			conn = -1;
+		}
+
+		private PathData FindPath (string path)
+		{
+			foreach (KeyValuePair<PathData, int> kv in paths) {
+				if (kv.Key.Path == path)
+					return kv.Key;
+			}
+
+			return null;
+		}
+
+		private PathData FindPath (int fd)
+		{
+			foreach (KeyValuePair<PathData, int> kv in paths) {
+				if (kv.Value == fd)
+					return kv.Key;
+			}
+
+			return null;
+		}
+
+		private void Monitor ()
+		{
+			bool firstRun = true;
+
+			while (!stop) {
+				removeQueue.ForEach (Remove);
+
+				var changes = new List<kevent> ();
+				var outEvents = new List<kevent> ();
+
+				rescanQueue.ForEach (fd => {
+					var path = FindPath (fd);
+					Scan (path, !firstRun);
+				});
+				rescanQueue.Clear ();
+
+				foreach (KeyValuePair<PathData, int> kv in paths) {
+					var change = new kevent {
+						ident  = kv.Value,
+						filter = EventFilter.Vnode,
+						flags  = EventFlags.Add | EventFlags.Enable | EventFlags.Clear,
+						fflags = FilterFlags.VNodeDelete | FilterFlags.VNodeExtend |
+						         FilterFlags.VNodeRename | FilterFlags.VNodeAttrib |
+						         FilterFlags.VNodeLink | FilterFlags.VNodeRevoke |
+						         FilterFlags.VNodeWrite,
+						data   = IntPtr.Zero,
+						udata  = IntPtr.Zero
+					};
+
+					changes.Add (change);
+					outEvents.Add (new kevent ());
+				}
+
+				if (changes.Count > 0) {
+					var outArray = outEvents.ToArray ();
+					var changesArray = changes.ToArray ();
+					int numEvents = kevent (conn, changesArray, changesArray.Length, outArray, outArray.Length, IntPtr.Zero);
+
+					for (var i = 0; i < numEvents; i++) {
+						var kevt = outArray [i];
+						var pathData = FindPath (kevt.ident);
+
+						if ((kevt.fflags & FilterFlags.VNodeDelete) != 0) {
+							removeQueue.Add (kevt.ident);
+							PostEvent (FileAction.Removed, pathData.Path);
+						} else if (((kevt.fflags & FilterFlags.VNodeRename) != 0) || ((kevt.fflags & FilterFlags.VNodeRevoke) != 0) || ((kevt.fflags & FilterFlags.VNodeWrite) != 0)) {
+							if (pathData.IsDirectory && Directory.Exists (pathData.Path))
+								rescanQueue.Add (kevt.ident);
+
+							if ((kevt.fflags & FilterFlags.VNodeRename) != 0) {
+								var fd = paths [pathData];
+								var newFilename = GetFilenameFromFd (fd);
+								var oldFilename = pathData.Path;
+
+								Remove (pathData);
+								PostEvent (FileAction.RenamedNewName, oldFilename, newFilename);
+
+								Add (newFilename, false);
+							}
+						} else if ((kevt.fflags & FilterFlags.VNodeAttrib) != 0) {
+							PostEvent (FileAction.Modified, pathData.Path);
+						}
+					}
+				} else {
+					Thread.Sleep (500);
+				}
+
+				firstRun = false;
+			}
+		}
+
+		private PathData Add (string path, bool postEvents = false)
+		{
+			var fd = open (path, O_EVTONLY, 0);
+
+			if (fd == -1)
+				return null;
+
+			var attrs = File.GetAttributes (path);
+			bool isDir = false;
+			if ((attrs & FileAttributes.Directory) == FileAttributes.Directory)
+				isDir = true;
+
+			var pathData = new PathData {
+				Path = path,
+				IsDirectory = isDir
+			};
+
+			if (FindPath (path) == null) {
+				paths.Add (pathData, fd);
+
+				if (postEvents)
+					PostEvent (FileAction.Added, path);
+			}
+
+			return pathData;
+		}
+
+		private void Remove (int fd)
+		{
+			var path = FindPath (fd);
+			paths.Remove (path);
+			removeQueue.Remove (fd);
+
+			close (fd);
+		}
+
+		private void Remove (PathData pathData)
+		{
+			var fd = paths [pathData];
+			paths.Remove (pathData);
+			removeQueue.Remove (fd);
+
+			close (fd);
+		}
+
+		private void Scan (PathData pathData, bool postEvents = false)
+		{
+			var path = pathData.Path;
+
+			Add (path, postEvents);
+
+			if (!fsw.IncludeSubdirectories)
+				return;
+
+			var attrs = File.GetAttributes (path);
+			if ((attrs & FileAttributes.Directory) == FileAttributes.Directory) {
+				var dirsToProcess = new List<string> ();
+				dirsToProcess.Add (path);
+
+				while (dirsToProcess.Count > 0) {
+					var tmp = dirsToProcess [0];
+					dirsToProcess.RemoveAt (0);
+
+					var info = new DirectoryInfo (tmp);
+					foreach (var fsi in info.GetFileSystemInfos ()) {
+						if (Add (fsi.FullName, postEvents) == null)
+							continue;
+
+						var childAttrs = File.GetAttributes (fsi.FullName);
+						if ((childAttrs & FileAttributes.Directory) == FileAttributes.Directory)
+							dirsToProcess.Add (fsi.FullName);
+					}
+				}
+			}
+		}
+
+		private void PostEvent (FileAction action, string path, string newPath = null)
+		{
+			RenamedEventArgs renamed = null;
+
+			if (action == 0)
+				return;
+
+			if (action == FileAction.RenamedNewName)
+				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, "", newPath, path);
+
+			lock (fsw) {
+				fsw.DispatchEvents (action, path, ref renamed);
+
+				if (fsw.Waiting) {
+					fsw.Waiting = false;
+					System.Threading.Monitor.PulseAll (fsw);
+				}
+			}
+		}
+
+		private string GetFilenameFromFd (int fd)
+		{
+			var sb = new StringBuilder (1024);
+
+			if (fcntl (fd, F_GETPATH, sb) != -1)
+				return sb.ToString ();
+			else
+				return String.Empty;
+		}
+
+		private const int O_EVTONLY = 0x8000;
+		private const int F_GETPATH = 50;
+		private FileSystemWatcher fsw;
+		private int conn;
+		private Thread thread;
+		private bool stop;
+		private readonly List<int> removeQueue = new List<int> ();
+		private readonly List<int> rescanQueue = new List<int> ();
+		private readonly Dictionary<PathData, int> paths = new Dictionary<PathData, int> ();
+
+		[DllImport ("libc", EntryPoint="fcntl", CharSet=CharSet.Auto, SetLastError=true)]
+		static extern int fcntl (int file_names_by_descriptor, int cmd, StringBuilder sb);
+
+		[DllImport ("libc")]
+		extern static int open (string path, int flags, int mode_t);
+
+		[DllImport ("libc")]
+		extern static int close (int fd);
+
+		[DllImport ("libc")]
+		extern static int kqueue ();
+
+		[DllImport ("libc")]
+		extern static int kevent(int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents, IntPtr time);
 	}
 
 	class KeventWatcher : IFileWatcher
 	{
 		static bool failed;
 		static KeventWatcher instance;
-		static Hashtable watches;  // <FileSystemWatcher, KeventData>
-		static Thread thread;
-		static int conn;
-		static bool stop;
+		static Hashtable watches;  // <FileSystemWatcher, KqueueMonitor>
 
-		readonly Dictionary<string, KeventData> filenamesDict = new Dictionary<string, KeventData> ();
-		readonly Dictionary<int, KeventData> fdsDict = new Dictionary<int, KeventData> ();
-		readonly List<int> removeQueue = new List<int> ();
-		readonly List<int> rescanQueue = new List<int> ();
-		
 		private KeventWatcher ()
 		{
 		}
-		
+
 		// Locked by caller
 		public static bool GetInstance (out IFileWatcher watcher)
 		{
@@ -204,296 +446,49 @@ namespace System.IO {
 			}
 
 			watches = Hashtable.Synchronized (new Hashtable ());
-			conn = kqueue();
+			var conn = kqueue();
 			if (conn == -1) {
 				failed = true;
 				watcher = null;
 				return false;
 			}
+			close (conn);
 
 			instance = new KeventWatcher ();
 			watcher = instance;
 			return true;
 		}
-		
+
 		public void StartDispatching (FileSystemWatcher fsw)
 		{
-			KeventData data;
+			KqueueMonitor monitor;
 
-			lock (this) {
-				if (thread == null) {
-					thread = new Thread (new ThreadStart (Monitor));
-					thread.IsBackground = true;
-					thread.Start ();
-				}
-
-				data = (KeventData) watches [fsw];
-			}
-
-			if (data == null) {
-				data = new KeventData ();
-				data.FSW = fsw;
-				data.Path = fsw.FullPath;
-				data.FileMask = fsw.MangledFilter;
-				data.IncludeSubdirs = fsw.IncludeSubdirectories;
-
-				data.Enabled = true;
-				lock (this) {
-					Scan (data);
-					watches [fsw] = data;
-					stop = false;
-				}
-			}
-		}
-
-		bool Add (KeventData data, bool postEvents = false)
-		{
-			var path = data.Path;
-
-			if (filenamesDict.ContainsKey (path) || fdsDict.ContainsKey (data.fd) ) {
-				return false;
-			}
-
-			var fd = open (path, 0x8000 /* O_EVTONLY */, 0);
-
-			if (fd != -1) {
-				data.fd = fd;
-				filenamesDict.Add (path, data);
-				fdsDict.Add (fd, data);
-
-				var attrs = File.GetAttributes (data.Path);
-				data.IsDirectory = ((attrs & FileAttributes.Directory) == FileAttributes.Directory);
-
-				if (postEvents)
-					PostEvent (path, data.FSW, FileAction.Added, path);
-
-				return true;
+			if (watches.ContainsKey (fsw)) {
+				monitor = (KqueueMonitor)watches [fsw];
 			} else {
-				return false;
-			}
-		}
-
-		void Remove (int fd)
-		{
-			if (!fdsDict.ContainsKey (fd))
-				return;
-
-			var data = fdsDict [fd];
-			fdsDict.Remove (fd);
-			filenamesDict.Remove (data.Path);
-			removeQueue.Remove (fd);
-
-			close (fd);
-		}
-
-		void Remove (string path)
-		{
-			var data = filenamesDict [path];
-
-			filenamesDict.Remove (path);
-			fdsDict.Remove (data.fd);
-			close (data.fd);
-		}
-
-		bool Scan (KeventData data, bool postEvents = false)
-		{
-			var path = data.Path;
-
-			Add (data);
-			if (!data.IncludeSubdirs) {
-				return true;
+				monitor = new KqueueMonitor (fsw);
 			}
 
-			if (data.IsDirectory && !Directory.Exists (path))
-				return false;
+			watches.Add (fsw, monitor);
 
-			var attrs = File.GetAttributes (path);
-			if ((attrs & FileAttributes.Directory) == FileAttributes.Directory) {
-				var dirs_to_process = new List<string> ();
-				dirs_to_process.Add (path);
-
-				while (dirs_to_process.Count > 0) {
-					var tmp_path = dirs_to_process [0];
-					dirs_to_process.RemoveAt (0);
-					var dirinfo = new DirectoryInfo (tmp_path);
-					foreach (var fsi in dirinfo.GetFileSystemInfos ()) {
-						var newdata = new KeventData {
-							Path = fsi.FullName,
-							FileMask = data.FileMask,
-							FSW = data.FSW,
-							IncludeSubdirs = data.IncludeSubdirs
-						};
-
-						if (!Add (newdata, postEvents))
-							continue;
-
-						var childAttrs = File.GetAttributes (fsi.FullName);
-						if ((childAttrs & FileAttributes.Directory) == FileAttributes.Directory)
-							dirs_to_process.Add (fsi.FullName);
-					}
-				}
-			}
-
-			return true;
+			monitor.Start ();
 		}
 
 		public void StopDispatching (FileSystemWatcher fsw)
 		{
-			KeventData data;
-			lock (this) {
-				data = (KeventData) watches [fsw];
-				if (data == null)
-					return;
-
-				StopMonitoringDirectory (data);
-				watches.Remove (fsw);
-				if (watches.Count == 0)
-					stop = true;
-
-				if (!data.IncludeSubdirs)
-					return;
-
-			}
-		}
-
-		static void StopMonitoringDirectory (KeventData data)
-		{
-			close(data.ev.ident);
-		}
-
-		void Monitor ()
-		{
-			bool firstRun = true;
-
-			while (!stop) {
-				removeQueue.ForEach (Remove);
-
-				rescanQueue.ForEach (
-					fd => {
-						var data = fdsDict[fd];
-						Scan (data, !firstRun);
-
-						rescanQueue.Remove (fd);
-					}
-				);
-
-				foreach (KeventData data in watches.Values) {
-					Scan (data);
-				}
-
-				var changes = new List<kevent> ();
-				var outEvents = new List<kevent> ();
-
-				lock (this) {
-					foreach (KeyValuePair<int, KeventData> kv in fdsDict) {
-						var change = new kevent {
-							ident = kv.Key,
-							filter = EventFilter.Vnode,
-							flags = EventFlags.Add | EventFlags.Enable | EventFlags.Clear,
-							fflags = FilterFlags.VNodeDelete | FilterFlags.VNodeExtend | FilterFlags.VNodeRename | FilterFlags.VNodeAttrib | FilterFlags.VNodeLink | FilterFlags.VNodeRevoke | FilterFlags.VNodeWrite,
-							data = IntPtr.Zero,
-							udata = IntPtr.Zero
-						};
-
-						changes.Add (change);
-						outEvents.Add (new kevent());
-					}
-				}
-
-				if (changes.Count > 0) {
-					var out_array = outEvents.ToArray ();
-					kevent[] changes_array = changes.ToArray ();
-					int numEvents = kevent (conn, changes_array, changes_array.Length, out_array, out_array.Length, IntPtr.Zero);
-
-					for (var i = 0; i < numEvents; i++) {
-						var kevt = out_array [i];
-						if ((kevt.flags & EventFlags.Error) == EventFlags.Error)
-							throw new Exception ("kevent error");
-
-						if ((kevt.fflags & FilterFlags.VNodeDelete) != 0) {
-							removeQueue.Add (kevt.ident);
-							var data = fdsDict [kevt.ident];
-							PostEvent (data.Path, data.FSW, FileAction.Removed, data.Path);
-						} else if (((kevt.fflags & FilterFlags.VNodeRename) != 0) || ((kevt.fflags & FilterFlags.VNodeRevoke) != 0) || ((kevt.fflags & FilterFlags.VNodeWrite) != 0)) {
-							var data = fdsDict [kevt.ident];
-							if (data.IsDirectory && Directory.Exists (data.Path))
-								rescanQueue.Add (kevt.ident);
-
-							if ((kevt.fflags & FilterFlags.VNodeRename) != 0) {
-								var newFilename = GetFilenameFromFd (data.fd);
-								Remove (data.fd);
-								PostEvent (data.Path, data.FSW, FileAction.RenamedNewName, data.Path, newFilename);
-
-								var newEvent = new KeventData {
-									Path = newFilename,
-									FileMask = data.FileMask,
-									FSW = data.FSW,
-									IncludeSubdirs = data.IncludeSubdirs
-								};
-
-								Add (newEvent, false);
-							}
-						} else if ((kevt.fflags & FilterFlags.VNodeAttrib) != 0) {
-							var data = fdsDict[kevt.ident];
-							PostEvent (data.Path, data.FSW, FileAction.Modified, data.Path);
-						}
-					}
-				} else {
-					Thread.Sleep (500);
-				}
-
-				firstRun = false;
-			}
-
-			lock (this) {
-				thread = null;
-				stop = false;
-			}
-		}
-
-		private void PostEvent (string filename, FileSystemWatcher fsw, FileAction fa, string fullname, string newname = null)
-		{
-			RenamedEventArgs renamed = null;
-
-			if (fa == 0)
+			KqueueMonitor monitor = (KqueueMonitor)watches [fsw];
+			if (monitor == null)
 				return;
 
-			if (fa == FileAction.RenamedNewName)
-				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, "", newname, fullname);
-
-			lock (fsw) {
-				fsw.DispatchEvents (fa, filename, ref renamed);
-				if (fsw.Waiting) {
-					fsw.Waiting = false;
-					System.Threading.Monitor.PulseAll (fsw);
-				}
-			}
+			monitor.Stop ();
 		}
 
-		private string GetFilenameFromFd (int fd)
-		{
-			var sb = new StringBuilder (1024);
-
-			if (fcntl (fd, 50 /* F_GETPATH */, sb) != -1) {
-				return sb.ToString ();
-			} else {
-				return String.Empty;
-			}
-		}
-
-		[DllImport("libc", EntryPoint="fcntl", CharSet=CharSet.Auto, SetLastError=true)]
-		public static extern int fcntl (int file_names_by_descriptor, int cmd, StringBuilder sb);
 
 		[DllImport ("libc")]
-		extern static int open(string path, int flags, int mode_t);
-		
-		[DllImport ("libc")]
-		extern static int close(int fd);
+		extern static int close (int fd);
 
 		[DllImport ("libc")]
-		extern static int kqueue();
-
-		[DllImport ("libc")]
-		extern static int kevent(int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents, IntPtr time);
+		extern static int kqueue ();
 	}
 }
+
