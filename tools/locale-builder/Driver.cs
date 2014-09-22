@@ -1073,9 +1073,13 @@ namespace Mono.Tools.LocaleBuilder
 					// Apply global rule first <alias source="locale" path="../dayPeriodWidth[@type='wide']"/>
 					el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='wide']/dayPeriod[@type='am']");
 
+				// Manual edits for exact .net compatiblity
 				switch (ci.Name) {
 				case "en-AU":
 					df.AMDesignator = "AM";
+					break;
+				case "en-NZ":
+					df.AMDesignator = "a.m.";
 					break;
 				default:
 					if (el != null)
@@ -1091,6 +1095,9 @@ namespace Mono.Tools.LocaleBuilder
 				switch (ci.Name) {
 				case "en-AU":
 					df.PMDesignator = "PM";
+					break;
+				case "en-NZ":
+					df.AMDesignator = "p.m.";
 					break;
 				default:
 					if (el != null)
