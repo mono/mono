@@ -186,3 +186,15 @@ unsigned mono_unity_get_all_classes_with_name_case (MonoImage *image, const char
 		*length_ref = length;
 	return length;
 }
+
+gboolean
+unity_mono_method_is_inflated (MonoMethod* method)
+{
+	return method->is_inflated;
+}
+
+gboolean
+unity_mono_method_is_generic (MonoMethod* method)
+{
+	return method->is_generic;
+}
