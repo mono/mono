@@ -1515,12 +1515,11 @@ void GC_push_all_stack(bottom, top)
 ptr_t bottom;
 ptr_t top;
 {
-//  if (!NEED_FIXUP_POINTER && GC_all_interior_pointers) {
-//    GC_push_all(bottom, top);
-//  } else {
-//    GC_push_all_eager(bottom, top);
-//  }
+  if (!NEED_FIXUP_POINTER && GC_all_interior_pointers) {
     GC_push_all(bottom, top);
+  } else {
+    GC_push_all_eager(bottom, top);
+  }
 }
 
 #if !defined(SMALL_CONFIG) && !defined(USE_MARK_BYTES)
