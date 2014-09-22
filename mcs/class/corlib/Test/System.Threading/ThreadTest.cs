@@ -526,11 +526,40 @@ namespace MonoTests.System.Threading
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		public void ReName ()
+		public void Rename ()
 		{
-			Thread t = new Thread (new ThreadStart (ReName));
+			Thread t = new Thread (new ThreadStart (Rename));
 			t.Name = "a";
 			t.Name = "b";
+		}
+
+		bool rename_finished;
+		bool rename_failed;
+
+		[Test]
+		public void RenameTpThread ()
+		{
+			object monitor = new object ();
+			ThreadPool.QueueUserWorkItem (new WaitCallback (Rename_callback), monitor);
+			lock (monitor) {
+				if (!rename_finished)
+					Monitor.Wait (monitor);
+			}
+			Assert.IsFalse (rename_failed);
+		}
+
+		void Rename_callback (object o) {
+			Thread.CurrentThread.Name = "a";
+			try {
+				Thread.CurrentThread.Name = "b";
+			} catch (Exception) {
+				rename_failed = true;
+			}
+			object monitor = o;
+			lock (monitor) {
+				rename_finished = true;
+				Monitor.Pulse (monitor);
+			}
 		}
 
 		[Test]
@@ -1224,6 +1253,8 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (1, i, "ParametrizedThreadStart");
 			Assert.AreEqual (this, arg, "obj");	
 		}		
+
+		bool set_name_failed;
 
 		[Test]
 		public void SetNameTpThread () {
