@@ -1097,7 +1097,7 @@ namespace Mono.Tools.LocaleBuilder
 					df.PMDesignator = "PM";
 					break;
 				case "en-NZ":
-					df.AMDesignator = "p.m.";
+					df.PMDesignator = "p.m.";
 					break;
 				default:
 					if (el != null)
