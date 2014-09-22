@@ -592,6 +592,8 @@ mono_method_header_get_clauses
 mono_method_header_get_code
 mono_method_header_get_locals
 mono_method_header_get_num_clauses
+mono_method_is_generic
+mono_method_is_inflated
 mono_method_signature
 mono_method_verify
 mono_mlist_alloc

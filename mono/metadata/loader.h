@@ -87,6 +87,12 @@ mono_stack_walk         (MonoStackWalk func, gpointer user_data);
 void
 mono_stack_walk_no_il   (MonoStackWalk func, gpointer user_data);
 
+gboolean
+mono_method_is_inflated (MonoMethod* method);
+
+gboolean
+mono_method_is_generic (MonoMethod* method);
+
 G_END_DECLS
 
 #endif
