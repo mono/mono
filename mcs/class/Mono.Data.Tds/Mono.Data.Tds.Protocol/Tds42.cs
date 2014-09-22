@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Security;
 
 namespace Mono.Data.Tds.Protocol {
         public sealed class Tds42 : Tds
@@ -77,7 +78,7 @@ namespace Mono.Data.Tds.Protocol {
 			Comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 			// password (offset 62 0x3e)
-			tmp = Comm.Append (connectionParameters.Password, 30, pad);
+			tmp = Comm.Append (GetPlainPassword(connectionParameters.Password), 30, pad);
 			Comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 			// hostproc (offset 93 0x5d)
@@ -145,7 +146,7 @@ namespace Mono.Data.Tds.Protocol {
 
 			// remote passwords
 			Comm.Append (empty, 2, pad);
-			tmp = Comm.Append (connectionParameters.Password, 253, pad);
+			tmp = Comm.Append (GetPlainPassword(connectionParameters.Password), 253, pad);
 			Comm.Append ((byte) (tmp.Length < 253 ? tmp.Length + 2 : 253 + 2));
 
 			// tds version
