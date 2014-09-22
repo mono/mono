@@ -248,7 +248,18 @@ namespace Mono.Security.Cryptography {
 							Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
 							".mono");
 						_machinePath = Path.Combine (_machinePath, "keypairs");
-
+						if (Environment.OSVersion.Platform == PlatformID.Unix) {
+							string newMachinePath = Path.Combine (Directory.GetParent (Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile)).FullName, "keypairs");
+							if (Directory.Exists (_machinePath)) {
+								try {
+									Directory.Move (_machinePath, newMachinePath);
+								}
+								catch {
+									// migration failed
+								}
+							}
+							_machinePath = newMachinePath;
+						}
 						_machinePathExists = Directory.Exists (_machinePath);
 						if (!_machinePathExists) {
 							try {

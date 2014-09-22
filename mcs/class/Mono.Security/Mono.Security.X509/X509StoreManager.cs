@@ -71,6 +71,18 @@ namespace Mono.Security.X509 {
 						Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
 						".mono");
 					_localMachinePath = Path.Combine (_localMachinePath, "certs");
+					if (Environment.OSVersion.Platform == PlatformID.Unix) {
+						string newLocalMachinePath = Path.Combine (Directory.GetParent (Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile)).FullName, "certs");
+						if (Directory.Exists (_localMachinePath)) {
+							try {
+								Directory.Move (_localMachinePath, newLocalMachinePath);
+							}
+							catch {
+								// migration failed
+							}
+						}
+						_localMachinePath = newLocalMachinePath;
+					}
 				}
 				return _localMachinePath;
 			}
