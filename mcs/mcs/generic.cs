@@ -1325,15 +1325,21 @@ namespace Mono.CSharp {
 				foreach (var ta in targs) {
 					var tps = ta as TypeParameterSpec;
 					IList<TypeSpec> ifaces;
+					TypeSpec b_type;
 					if (tps != null) {
-						var b_type = tps.GetEffectiveBase ();
-						if (b_type != null && b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType)
-							cache.AddBaseType (b_type);
-
+						b_type = tps.GetEffectiveBase ();
 						ifaces = tps.InterfacesDefined;
 					} else {
+						b_type = ta;
 						ifaces = ta.Interfaces;
 					}
+
+					//
+					// Don't add base type which was inflated from base constraints but it's not valid
+					// in C# context
+					//
+					if (b_type != null && b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType && !b_type.IsStructOrEnum)
+						cache.AddBaseType (b_type);
 
 					if (ifaces != null) {
 						foreach (var iface_type in ifaces) {

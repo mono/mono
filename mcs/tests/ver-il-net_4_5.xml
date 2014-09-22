@@ -19415,6 +19415,48 @@
       </method>
     </type>
   </test>
+  <test name="gtest-624.cs">
+    <type name="Model">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C1`1[T1]">
+      <method name="Void Add(System.Func`2[T1,System.Int32])" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C2`1[TModel]">
+      <method name="Void ApplyImpl[U](C1`1[U])" attrs="1478">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C3">
+      <method name="Void ApplyImpl[Foo](C1`1[Foo])" attrs="198">
+        <size>20</size>
+      </method>
+      <method name="Int32 &lt;ApplyImpl`1&gt;m__0[Foo](Foo)" attrs="145">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Main()" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
