@@ -1,5 +1,5 @@
 // CS1501: No overload for method `Bar' takes `2' arguments
-// Line: 25
+// Line: 19
 
 using System;
 
@@ -10,14 +10,6 @@ class T
 	}
 
 	void Foo (string title, Action a)
-	{
-	}
-
-	static void Mismatch (string s)
-	{
-	}
-
-	public static void Main ()
 	{
 	}
 

@@ -65586,6 +65586,28 @@
       </method>
     </type>
   </test>
+  <test name="test-decl-expr-01.cs">
+    <type name="DeclarationExpression">
+      <method name="Int32 Main()" attrs="150">
+        <size>252</size>
+      </method>
+      <method name="Boolean Out(Int32 ByRef)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Boolean Out2(Int32 ByRef, System.String)" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void Out3[T](T ByRef)" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="Void Ref(Int32 ByRef)" attrs="145">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-dictinit-01.cs">
     <type name="Program">
       <method name="Int32 Main()" attrs="145">

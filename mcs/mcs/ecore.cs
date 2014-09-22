@@ -5144,29 +5144,34 @@ namespace Mono.CSharp {
 			// is used and argument is not of dynamic type
 			//
 			if (((argument.Modifier | param_mod) & Parameter.Modifier.RefOutMask) != 0) {
-				if (argument.Type != parameter) {
-					//
-					// Do full equality check after quick path
-					//
-					if (!TypeSpecComparer.IsEqual (argument.Type, parameter)) {
-						//
-						// Using dynamic for ref/out parameter can still succeed at runtime
-						//
-						if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
-							return -1;
-
-						return 2;
-					}
-				}
+				var arg_type = argument.Type;
 
 				if ((argument.Modifier & Parameter.Modifier.RefOutMask) != (param_mod & Parameter.Modifier.RefOutMask)) {
 					//
 					// Using dynamic for ref/out parameter can still succeed at runtime
 					//
-					if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+					if (arg_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 						return -1;
 
 					return 1;
+				}
+
+				if (arg_type != parameter) {
+					if (arg_type == InternalType.VarOutType)
+						return 0;
+
+					//
+					// Do full equality check after quick path
+					//
+					if (!TypeSpecComparer.IsEqual (arg_type, parameter)) {
+						//
+						// Using dynamic for ref/out parameter can still succeed at runtime
+						//
+						if (arg_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+							return -1;
+
+						return 2;
+					}
 				}
 
 			} else {
@@ -5741,10 +5746,20 @@ namespace Mono.CSharp {
 					if ((a.Modifier & Parameter.Modifier.RefOutMask) != (p_mod & Parameter.Modifier.RefOutMask))
 						break;
 
-					if (a.Expr.Type == pt || TypeSpecComparer.IsEqual (a.Expr.Type, pt))
+					var arg_type = a.Type;
+					if (arg_type == pt)
 						continue;
 
-					break;
+					if (arg_type == InternalType.VarOutType) {
+						//
+						// Set underlying variable type based on parameter type
+						//
+						((DeclarationExpression)a.Expr).Variable.Type = pt;
+						continue;
+					}
+
+					if (!TypeSpecComparer.IsEqual (arg_type, pt))
+						break;
 				}
 
 				NamedArgument na = a as NamedArgument;
@@ -5816,6 +5831,20 @@ namespace Mono.CSharp {
 			}
 
 			if (a_idx != arg_count) {
+				//
+				// Convert all var out argument to error type for less confusing error reporting
+				// when no matching overload is found
+				//
+				for (; a_idx < arg_count; a_idx++) {
+					var arg = args [a_idx];
+					if (arg == null)
+						continue;
+
+					if (arg.Type == InternalType.VarOutType) {
+						((DeclarationExpression)arg.Expr).Variable.Type = InternalType.ErrorType;
+					}
+				}
+
 				ReportArgumentMismatch (ec, a_pos, member, a, pd, pt);
 				return false;
 			}

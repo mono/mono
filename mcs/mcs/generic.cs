@@ -3008,7 +3008,7 @@ namespace Mono.CSharp {
 			// Some types cannot be used as type arguments
 			//
 			if ((bound.Type.Kind == MemberKind.Void && !voidAllowed) || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType ||
-				bound.Type == InternalType.MethodGroup || bound.Type == InternalType.AnonymousMethod)
+				bound.Type == InternalType.MethodGroup || bound.Type == InternalType.AnonymousMethod || bound.Type == InternalType.VarOutType)
 				return;
 
 			var a = bounds [index];

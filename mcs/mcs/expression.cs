@@ -2493,6 +2493,96 @@ namespace Mono.CSharp
 			return expr;
 		}
 	}
+
+	public class DeclarationExpression : Expression, IMemoryLocation
+	{
+		LocalVariableReference lvr;
+
+		public DeclarationExpression (FullNamedExpression variableType, LocalVariable variable)
+		{
+			VariableType = variableType;
+			Variable = variable;
+			this.loc = variable.Location;
+		}
+
+		public LocalVariable Variable { get; set; }
+		public Expression Initializer { get; set; }
+		public FullNamedExpression VariableType { get; set; }
+
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			Variable.CreateBuilder (ec);
+
+			if (Initializer != null) {
+				lvr.EmitAssign (ec, Initializer, false, false);
+			}
+
+			lvr.AddressOf (ec, mode);
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			var target = (DeclarationExpression) t;
+
+			target.VariableType = (FullNamedExpression) VariableType.Clone (clonectx);
+
+			if (Initializer != null)
+				target.Initializer = Initializer.Clone (clonectx);
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext rc)
+		{
+			rc.Report.Error (8046, loc, "An expression tree cannot contain a declaration expression");
+			return null;
+		}
+
+		bool DoResolveCommon (ResolveContext rc)
+		{
+			var var_expr = VariableType as VarExpr;
+			if (var_expr != null) {
+				type = InternalType.VarOutType;
+			} else {
+				type = VariableType.ResolveAsType (rc);
+				if (type == null)
+					return false;
+			}
+
+			if (Initializer != null) {
+				Initializer = Initializer.Resolve (rc);
+
+				if (var_expr != null && Initializer != null && var_expr.InferType (rc, Initializer)) {
+					type = var_expr.Type;
+				}
+			}
+
+			Variable.Type = type;
+			lvr = new LocalVariableReference (Variable, loc);
+
+			eclass = ExprClass.Variable;
+			return true;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			if (DoResolveCommon (rc))
+				lvr.Resolve (rc);
+
+			return this;
+		}
+
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			if (lvr == null && DoResolveCommon (rc))
+				lvr.ResolveLValue (rc, right_side);
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 	
 	//
 	// C# 2.0 Default value expression
@@ -6472,6 +6562,9 @@ namespace Mono.CSharp
 
 		void DoResolveBase (ResolveContext ec)
 		{
+			eclass = ExprClass.Variable;
+			type = local_info.Type;
+
 			//
 			// If we are referencing a variable from the external block
 			// flag it for capturing
@@ -6490,9 +6583,6 @@ namespace Mono.CSharp
 					storey.CaptureLocalVariable (ec, local_info);
 				}
 			}
-
-			eclass = ExprClass.Variable;
-			type = local_info.Type;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -6500,6 +6590,14 @@ namespace Mono.CSharp
 			local_info.SetIsUsed ();
 
 			DoResolveBase (ec);
+
+			if (local_info.Type == InternalType.VarOutType) {
+				ec.Report.Error (8048, loc, "Cannot use uninitialized variable `{0}'",
+					GetSignatureForError ());
+
+				type = InternalType.ErrorType;
+			}
+
 			return this;
 		}
 
