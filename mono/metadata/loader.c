@@ -2371,15 +2371,3 @@ mono_method_get_index (MonoMethod *method) {
 	}
 	return 0;
 }
-
-gboolean
-mono_method_is_inflated (MonoMethod* method)
-{
-	return method->is_inflated;
-}
-
-gboolean
-mono_method_is_generic (MonoMethod* method)
-{
-	return method->is_generic;
-}

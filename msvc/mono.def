@@ -25,6 +25,8 @@ mono_loader_error_prepare_exception
 unity_mono_install_memory_callbacks
 unity_mono_redirect_output
 unity_mono_close_output
+unity_mono_method_is_inflated
+unity_mono_method_is_generic
 mono_unity_liveness_allocate_struct
 mono_unity_liveness_stop_gc_world
 mono_unity_liveness_finalize
@@ -592,8 +594,6 @@ mono_method_header_get_clauses
 mono_method_header_get_code
 mono_method_header_get_locals
 mono_method_header_get_num_clauses
-mono_method_is_generic
-mono_method_is_inflated
 mono_method_signature
 mono_method_verify
 mono_mlist_alloc
