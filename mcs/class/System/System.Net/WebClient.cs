@@ -2044,7 +2044,9 @@ namespace System.Net
 							Path.GetFileName (fileName), fileCType);
 						byte [] partHeadersBytes = Encoding.UTF8.GetBytes (partHeaders);
 						ms.Write (partHeadersBytes, 0, partHeadersBytes.Length);
-						await ms.CopyToAsync (reqStream, (int)ms.Position, token).ConfigureAwait (false);
+						var msLength = (int)ms.Position;
+						ms.Seek (0, SeekOrigin.Begin);
+						await ms.CopyToAsync (reqStream, msLength, token).ConfigureAwait (false);
 					}
 				}
 				int nread;
@@ -2086,7 +2088,9 @@ namespace System.Net
 						ms.WriteByte ((byte) '-');
 						ms.WriteByte ((byte) '\r');
 						ms.WriteByte ((byte) '\n');
-						await ms.CopyToAsync (reqStream, (int)ms.Position, token).ConfigureAwait (false);
+						var msLength = (int)ms.Position;
+						ms.Seek (0, SeekOrigin.Begin);
+						await ms.CopyToAsync (reqStream, msLength, token).ConfigureAwait (false);
 					}
 				}
 				reqStream.Close ();
