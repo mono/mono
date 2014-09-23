@@ -337,6 +337,7 @@ namespace System {
 					if (!Uri.IsHexEncoding (part, index))
 						return false;
 					ch = Uri.HexUnescape (part, ref index);
+					index--;
 				}
 
 				if (Char.IsLetterOrDigit (ch) || IsUnreserved (ch) || IsSubDelim (ch) || ch == ':'){
