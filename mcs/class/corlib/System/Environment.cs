@@ -884,7 +884,7 @@ namespace System {
 		}
 
 		// private methods
-#if MOBILE 
+#if (MONOTOUCH || MONODROID || XAMMAC)
 		internal const bool IsRunningOnWindows = false;
 #else
 		internal static bool IsRunningOnWindows {
