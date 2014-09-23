@@ -2516,7 +2516,14 @@ case "x$gc" in
 		# The problem with this approach, is that during a reconfigure, the main
 		# configure scripts gets invoked with these arguments, so we use separate
 		# variables understood by libgc's configure to pass CPPFLAGS and CFLAGS.
-		LIBGC_CPPFLAGS="$CPPFLAGS $MACSDKOPTIONS"
+		case "$host" in
+			i*86-apple-darwin* | x86_64-*-darwin* | powerpc-apple-darwin* )
+				LIBGC_CPPFLAGS="$CPPFLAGS $MACSDKOPTIONS"
+			;;
+			*)
+				LIBGC_CPPFLAGS="$CPPFLAGS"
+			;;
+		esac
 		if test x$TARGET = xSPARC -o x$TARGET = xSPARC64; then
 			LIBGC_CPPFLAGS=`echo $LIBGC_CPPFLAGS | sed -e 's/-D_FILE_OFFSET_BITS=64//g'`
 		fi
