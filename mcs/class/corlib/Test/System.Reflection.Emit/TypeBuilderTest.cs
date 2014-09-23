@@ -92,8 +92,8 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		public class Tuple <A,B> {
-			A a;
-			B b;
+			public A a;
+			public B b;
 		}
 
 		private AssemblyBuilder assembly;

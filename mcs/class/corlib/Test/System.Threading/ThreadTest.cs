@@ -85,10 +85,10 @@ namespace MonoTests.System.Threading
 	[Category("MobileNotWorking")] // Abort #10240
 	public class ThreadTest
 	{
-		TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
+		//TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
 		TimeSpan SmallNegative = new TimeSpan (-2);	// between 0 and -1.0 (infinite) ms
 		TimeSpan Negative = new TimeSpan (-20000);	// really negative
-		TimeSpan MaxValue = TimeSpan.FromMilliseconds ((long) Int32.MaxValue);
+		//TimeSpan MaxValue = TimeSpan.FromMilliseconds ((long) Int32.MaxValue);
 		TimeSpan TooLarge = TimeSpan.FromMilliseconds ((long) Int32.MaxValue + 1);
 
 		static bool is_win32;
@@ -545,14 +545,16 @@ namespace MonoTests.System.Threading
 				if (!rename_finished)
 					Monitor.Wait (monitor);
 			}
-			Assert.IsFalse (rename_failed);
+			Assert.IsTrue (rename_failed);
 		}
 
 		void Rename_callback (object o) {
 			Thread.CurrentThread.Name = "a";
 			try {
 				Thread.CurrentThread.Name = "b";
-			} catch (Exception) {
+				Console.WriteLine ("Thread name is: {0}", Thread.CurrentThread.Name);
+			} catch (Exception e) {
+				Console.Error.WriteLine (e);
 				rename_failed = true;
 			}
 			object monitor = o;
@@ -1253,8 +1255,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (1, i, "ParametrizedThreadStart");
 			Assert.AreEqual (this, arg, "obj");	
 		}		
-
-		bool set_name_failed;
 
 		[Test]
 		public void SetNameTpThread () {

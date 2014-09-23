@@ -27,7 +27,6 @@ namespace MonoTests.System.Reflection.Emit
 	{
 		AssemblyBuilder assembly;
 		ModuleBuilder module;
-		int typeCount;
 		static string ASSEMBLY_NAME = "MonoTests.System.Reflection.Emit.TypeBuilderTest";
 
 		[SetUp]
@@ -46,7 +45,6 @@ namespace MonoTests.System.Reflection.Emit
 					assemblyName, mode, Path.GetTempPath ());
 
 			module = assembly.DefineDynamicModule ("module1");
-			typeCount = 0;
 		}
 
 		[Test]

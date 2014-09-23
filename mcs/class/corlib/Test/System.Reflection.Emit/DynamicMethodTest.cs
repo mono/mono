@@ -317,10 +317,12 @@ namespace MonoTests.System.Reflection.Emit
 			m1.Invoke(null, new object[] { 5 });
 		}
 
+		// Disabl known warning, the Field is never used directly from C#
+		#pragma warning disable 414
 		class Host {
 			static string Field = "foo";
 		}
-
+		#pragma warning restore 414
 		[Test]
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=297416
 		public void TestOwnerMemberAccess ()
