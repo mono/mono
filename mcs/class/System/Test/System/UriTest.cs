@@ -1975,6 +1975,14 @@ namespace MonoTests.System
 			var uri = new Uri ("https://first%61second@host");
 			Assert.AreEqual ("firstasecond", uri.UserInfo);
 		}
+
+		[Test]
+		public void UserInfo_EscapedAt ()
+		{
+			var userinfo =  "first%40second";
+			var uri = new Uri ("https://" + userinfo + "@host");
+			Assert.AreEqual (userinfo, uri.UserInfo);
+		}
 	}
 
 	// Tests non default IriParsing
