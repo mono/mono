@@ -1972,20 +1972,17 @@ namespace System.Net
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
 
-			WebRequest request = null;
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address, method, true).ConfigureAwait (false);
-				var result = await UploadFileTaskAsyncCore (request, method, fileName, cts.Token).ConfigureAwait (false);
+
+				var result = await UploadFileTaskAsyncCore (address, method, fileName, cts.Token).ConfigureAwait (false);
 				OnUploadFileCompleted (new UploadFileCompletedEventArgs (result, null, false, null));
 				return result;
 			} catch (WebException ex) {
 				OnUploadFileCompleted (new UploadFileCompletedEventArgs (null, ex, false, null));
 				throw;
 			} catch (OperationCanceledException) {
-				if (request != null)
-					request.Abort ();
 				OnUploadFileCompleted (new UploadFileCompletedEventArgs (null, null, true, null));
 				throw;
 			} catch (Exception ex) {
@@ -1994,8 +1991,7 @@ namespace System.Net
 			}
 		}
 
-		async Task<byte[]> UploadFileTaskAsyncCore (WebRequest request, string method,
-		                                            string fileName, CancellationToken token)
+		async Task<byte[]> UploadFileTaskAsyncCore (Uri address, string method, string fileName, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested ();
 
@@ -2018,8 +2014,14 @@ namespace System.Net
 			Stream reqStream = null;
 			Stream fStream = null;
 			WebResponse response = null;
+			WebRequest request = null;
 
 			fileName = Path.GetFullPath (fileName);
+
+			try {
+				request = await SetupRequestAsync (address, method, true).ConfigureAwait (false);
+			} catch (OperationCanceledException) {
+			}
 
 			try {
 				fStream = File.OpenRead (fileName);
