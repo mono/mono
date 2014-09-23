@@ -230,13 +230,8 @@ namespace MonoTests.System {
 			Assert.AreEqual ("~/SomeUri.txt", (o as Uri).ToString (), "CFS_02");
 			
 			o = converter.ConvertFrom ("/SomeUri.txt");
-			if (isWin32) {
-				Assert.IsFalse ((o as Uri).IsAbsoluteUri, "CFS_03_WIN");
-				Assert.AreEqual ("/SomeUri.txt", (o as Uri).ToString (), "CFS_04_WIN");
-			} else {
-				Assert.IsTrue ((o as Uri).IsAbsoluteUri, "CFS_03_UNIX");
-				Assert.AreEqual ("file:///SomeUri.txt", (o as Uri).ToString (), "CFS_04_UNIX");
-			}
+			Assert.IsFalse ((o as Uri).IsAbsoluteUri, "CFS_03");
+			Assert.AreEqual ("/SomeUri.txt", (o as Uri).ToString (), "CFS_04");
 		}
 		
 		[Test]
