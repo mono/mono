@@ -545,16 +545,16 @@ namespace MonoTests.System.Threading
 				if (!rename_finished)
 					Monitor.Wait (monitor);
 			}
-			Assert.IsTrue (rename_failed);
+			Assert.IsTrue (!rename_failed);
 		}
 
 		void Rename_callback (object o) {
 			Thread.CurrentThread.Name = "a";
 			try {
 				Thread.CurrentThread.Name = "b";
-				Console.WriteLine ("Thread name is: {0}", Thread.CurrentThread.Name);
+				//Console.WriteLine ("Thread name is: {0}", Thread.CurrentThread.Name);
 			} catch (Exception e) {
-				Console.Error.WriteLine (e);
+				//Console.Error.WriteLine (e);
 				rename_failed = true;
 			}
 			object monitor = o;
