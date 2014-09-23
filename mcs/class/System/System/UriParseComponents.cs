@@ -206,7 +206,7 @@ namespace System {
 			state.elements.scheme = Uri.UriSchemeFile;
 			state.elements.delimiter = "://";
 			state.elements.isUnixFilePath = true;
-			state.elements.isAbsoluteUri = (state.kind == UriKind.Relative)? false : true;
+			state.elements.isAbsoluteUri = state.kind == UriKind.Absolute;
 
 			if (part.Length >= 2 && part [0] == '/' && part [1] == '/') {
 				part = part.TrimStart (new char [] {'/'});
