@@ -1975,6 +1975,21 @@ namespace MonoTests.System
 			var uri = new Uri ("/relative/path", UriKind.Relative);
 			uri.GetComponents (UriComponents.SerializationInfoString  | UriComponents.Host, UriFormat.UriEscaped);
 		}
+
+		[Test]
+		public void UserInfo_EscapedLetter ()
+		{
+			var uri = new Uri ("https://first%61second@host");
+			Assert.AreEqual ("firstasecond", uri.UserInfo);
+		}
+
+		[Test]
+		public void UserInfo_EscapedAt ()
+		{
+			var userinfo =  "first%40second";
+			var uri = new Uri ("https://" + userinfo + "@host");
+			Assert.AreEqual (userinfo, uri.UserInfo);
+		}
 	}
 
 	// Tests non default IriParsing
