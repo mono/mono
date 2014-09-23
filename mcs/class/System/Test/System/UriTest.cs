@@ -1941,13 +1941,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void RelativeOrAbsoluteUnixPath ()
-		{
-			var uri = new Uri ("/abc", UriKind.RelativeOrAbsolute);
-			Assert.IsFalse (uri.IsAbsoluteUri);
-		}
-
-		[Test]
 		// Bug #12631
 		public void LocalPathWithBaseUrl ()
 		{
