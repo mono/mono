@@ -980,7 +980,7 @@ class MDocUpdater : MDocCommand
 		throw new ArgumentException ("Unknown kind for type: " + type.FullName);
 	}
 
-	private static bool IsPublic (TypeDefinition type)
+	public static bool IsPublic (TypeDefinition type)
 	{
 		TypeDefinition decl = type;
 		while (decl != null) {
@@ -1164,6 +1164,27 @@ class MDocUpdater : MDocCommand
 						string sig = memberFormatters [0].GetDeclaration (m);
 						if (sig == null) return false;
 						if (seenmembers.ContainsKey(sig)) return false;
+
+						// Verify that the member isn't an explicitly implemented 
+						// member of an internal interface, in which case we shouldn't return true.
+						MethodDefinition methdef = null;
+						if (m is MethodDefinition) 
+							methdef = m as MethodDefinition;
+						else if (m is PropertyDefinition) {
+							var prop = m as PropertyDefinition;
+							methdef = prop.GetMethod ?? prop.SetMethod;
+						}
+
+						if (methdef != null) {
+							TypeReference iface;
+							MethodReference imethod;
+
+							if (methdef.Overrides.Count == 1) {
+								DocUtils.GetInfoForExplicitlyImplementedMethod (methdef, out iface, out imethod);
+								if (!IsPublic (iface.Resolve ())) return false;
+							}
+						}
+
 						return true;
 					})
 					.ToArray();
@@ -3023,7 +3044,7 @@ static class DocUtils {
 			if (!inheritedInterfaces.Contains (GetQualifiedTypeName (lookup)))
 				userInterfaces.Add (iface);
 		}
-		return userInterfaces;
+		return userInterfaces.Where (i => MDocUpdater.IsPublic (i.Resolve ()));
 	}
 
 	private static string GetQualifiedTypeName (TypeReference type)
@@ -4351,7 +4372,7 @@ class ILFullMemberFormatter : MemberFormatter {
 				buf.Append (full.GetName (type.BaseType).Substring ("class ".Length));
 		}
 		bool first = true;
-		foreach (var name in type.Interfaces
+		foreach (var name in type.Interfaces.Where (i => MDocUpdater.IsPublic (i.Resolve ()))
 				.Select (i => full.GetName (i))
 				.OrderBy (n => n)) {
 			if (first) {
