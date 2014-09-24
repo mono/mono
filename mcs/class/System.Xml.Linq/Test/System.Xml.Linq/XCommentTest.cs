@@ -2,7 +2,7 @@
 // Authors:
 //   Atsushi Enomoto
 //
-// Copyright 2007 Novell (http://www.novell.com)
+// Copyright 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,39 +25,42 @@
 //
 
 using System;
-using System.Linq;
+using System.IO;
 using System.Xml;
+using System.Xml.Linq;
+using System.Linq;
 
-namespace System.Xml.Linq
+using NUnit.Framework;
+
+namespace MonoTests.System.Xml.Linq
 {
-	public class XComment : XNode
+	[TestFixture]
+	public class XCommentTest
 	{
-		string value;
-
-		public XComment (string value)
+		[Test]
+		public void EscapeSequentialDashes ()
 		{
-			this.value = value;
-		}
+			XComment c;
 
-		public XComment (XComment other)
-		{
-			this.value = other.value;
-		}
+			c = new XComment ("<--foo-->");
+			Assert.AreEqual ("<--foo-->", c.Value, "#1");
+			// bug #23318
+			// Unlike XmlWriter.WriteComment(), XComment.ToString() seems to accept "--" in the value.
+			Assert.AreEqual ("<!--<- -foo- ->-->", c.ToString (), "#2");
+			// make sure if it can be read...
+			XmlReader.Create (new StringReader (c.ToString ())).Read ();
 
-		public override XmlNodeType NodeType {
-			get { return XmlNodeType.Comment; }
-		}
+			// The last '-' causes some glitch...
+			c = new XComment ("--foo--");
+			Assert.AreEqual ("--foo--", c.Value, "#3");
+			Assert.AreEqual ("<!--- -foo- &#2D;-->", c.ToString (), "#4");
+			XmlReader.Create (new StringReader (c.ToString ())).Read ();
 
-		public string Value {
-			get { return value; }
-			set { this.value = value; }
-		}
-
-		public override void WriteTo (XmlWriter writer)
-		{
-			var v = value.Replace ("--", "- -");
-			v = v.LastOrDefault () == '-' ? v.Substring (0, v.Length - 1) +"&#2D;" : v;
-			writer.WriteComment (v);
+			// What if <!-- appears in the value?
+			c = new XComment ("<!--foo-->");
+			Assert.AreEqual ("<!--foo-->", c.Value, "#5");
+			Assert.AreEqual ("<!--<!- -foo- ->-->", c.ToString (), "#6");
+			XmlReader.Create (new StringReader (c.ToString ())).Read ();
 		}
 	}
 }

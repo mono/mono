@@ -1,5 +1,6 @@
 System.Xml.Linq/ExtensionsTest.cs
 System.Xml.Linq/XAttributeTest.cs
+System.Xml.Linq/XCommentTest.cs
 System.Xml.Linq/XDocumentTest.cs
 System.Xml.Linq/XElementTest.cs
 System.Xml.Linq/XNameTest.cs
