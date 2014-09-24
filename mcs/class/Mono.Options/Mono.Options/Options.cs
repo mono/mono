@@ -153,6 +153,16 @@ namespace NDesk.Options
 namespace Mono.Options
 #endif
 {
+	
+	public class OptionParsedEventArgs : EventArgs
+	{
+		public OptionContext Context { get; private set; }
+		public OptionParsedEventArgs(OptionContext ctx)
+		{
+			Context = ctx;
+		}
+	}
+	
 	static class StringCoda {
 
 		public static IEnumerable<string> WrappedLines (string self, params int[] widths)
@@ -546,8 +556,12 @@ namespace Mono.Options
 						"prototype");
 		}
 
+		public event EventHandler<OptionParsedEventArgs> Parsed;
+
 		public void Invoke (OptionContext c)
 		{
+			if (Parsed != null)
+				Parsed(this, new OptionParsedEventArgs(c));
 			OnParseComplete (c);
 			c.OptionName  = null;
 			c.Option      = null;
@@ -761,10 +775,19 @@ namespace Mono.Options
 			AddImpl (item);
 		}
 
+		public event EventHandler<OptionParsedEventArgs> OptionParsed;
+		private void optionParsedEventHandler(object sender, OptionParsedEventArgs e)
+		{
+			if (OptionParsed != null)
+				OptionParsed(this, e);
+		}
+
 		private void AddImpl (Option option)
 		{
 			if (option == null)
 				throw new ArgumentNullException ("option");
+			option.Parsed -= optionParsedEventHandler;
+			option.Parsed += optionParsedEventHandler;
 			List<string> added = new List<string> (option.Names.Length);
 			try {
 				// KeyedCollection.InsertItem/SetItem handle the 0th name.
