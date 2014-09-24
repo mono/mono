@@ -1268,6 +1268,7 @@ namespace Mono.CSharp
 			int next_token;
 			int parens = 0;
 			int generics = 0;
+			int brackets = 0;
 
 			var nt = xtoken ();
 			switch (nt) {
@@ -1333,6 +1334,11 @@ namespace Mono.CSharp
 					++parens;
 					goto default;
 
+				case Token.OPEN_BRACKET:
+				case Token.OPEN_BRACKET_EXPR:
+					++brackets;
+					goto default;
+
 				case Token.CLOSE_PARENS:
 					--parens;
 					goto default;
@@ -1348,7 +1354,6 @@ namespace Mono.CSharp
 					int interrs = 1;
 					int colons = 0;
 					int braces = 0;
-					int brackets = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
