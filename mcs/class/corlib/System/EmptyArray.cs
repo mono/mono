@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
+//	Mikhail Filimonov <mfilimonov@gmail.com>
 //
 // Copyright (C) 2012 Xamarin, Inc (http://www.xamarin.com)
 //
@@ -30,6 +31,11 @@ namespace System
 {
 	static class EmptyArray<T>
 	{
-		public static readonly T[] Value = new T [0];
+                static EmptyArray()
+                {
+                        Value = new T [0];
+                }
+
+		public static readonly T[] Value;
 	}
 }
