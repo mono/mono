@@ -217,28 +217,28 @@ namespace MonoTests.System {
 		public void GetComponents_Ftp2 ()
 		{
 			UnitTestUriParser p = new UnitTestUriParser ();
-			Assert.AreEqual ("ftp", p._GetComponents (ftp, UriComponents.Scheme, UriFormat.Unescaped), "ftp.Scheme");
-			Assert.AreEqual ("username:password", p._GetComponents (ftp, UriComponents.UserInfo, UriFormat.Unescaped), "ftp.UserInfo");
-			Assert.AreEqual ("ftp.go-mono.com", p._GetComponents (ftp, UriComponents.Host, UriFormat.Unescaped), "ftp.Host");
-			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.Port, UriFormat.Unescaped), "ftp.Port");
-			Assert.AreEqual ("with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path, UriFormat.Unescaped), "ftp.Path");
-			Assert.AreEqual ("with%20some%20spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path, UriFormat.UriEscaped), "ftp.Path-UriEscaped");
-			Assert.AreEqual ("with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path, UriFormat.SafeUnescaped), "ftp.Path-SafeUnescaped");
-			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.Query, UriFormat.Unescaped), "ftp.Query");
-			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.Fragment, UriFormat.Unescaped), "ftp.Fragment");
-			Assert.AreEqual ("21", p._GetComponents (ftp, UriComponents.StrongPort, UriFormat.Unescaped), "ftp.StrongPort");
-			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.KeepDelimiter, UriFormat.Unescaped), "http.KeepDelimiter");
-			Assert.AreEqual ("ftp.go-mono.com:21", p._GetComponents (ftp, UriComponents.HostAndPort, UriFormat.Unescaped), "http.HostAndPort");
-			Assert.AreEqual ("username:password@ftp.go-mono.com:21", p._GetComponents (ftp, UriComponents.StrongAuthority, UriFormat.Unescaped), "http.StrongAuthority");
-			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.AbsoluteUri, UriFormat.Unescaped), "http.AbsoluteUri");
-			Assert.AreEqual ("/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.PathAndQuery, UriFormat.Unescaped), "http.PathAndQuery");
-			Assert.AreEqual ("ftp://ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.HttpRequestUrl, UriFormat.Unescaped), "http.HttpRequestUrl");
-			Assert.AreEqual ("ftp://ftp.go-mono.com", p._GetComponents (ftp, UriComponents.SchemeAndServer, UriFormat.Unescaped), "http.SchemeAndServer");
-			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.SerializationInfoString, UriFormat.Unescaped), "http.SerializationInfoString");
+			Assert.AreEqual ("ftp", p._GetComponents (ftp2, UriComponents.Scheme, UriFormat.Unescaped), "ftp.Scheme");
+			Assert.AreEqual ("username:password", p._GetComponents (ftp2, UriComponents.UserInfo, UriFormat.Unescaped), "ftp.UserInfo");
+			Assert.AreEqual ("ftp.go-mono.com", p._GetComponents (ftp2, UriComponents.Host, UriFormat.Unescaped), "ftp.Host");
+			Assert.AreEqual (String.Empty, p._GetComponents (ftp2, UriComponents.Port, UriFormat.Unescaped), "ftp.Port");
+			Assert.AreEqual ("with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.Path, UriFormat.Unescaped), "ftp.Path");
+			Assert.AreEqual ("with%20some%20spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.Path, UriFormat.UriEscaped), "ftp.Path-UriEscaped");
+			Assert.AreEqual ("with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.Path, UriFormat.SafeUnescaped), "ftp.Path-SafeUnescaped");
+			Assert.AreEqual (String.Empty, p._GetComponents (ftp2, UriComponents.Query, UriFormat.Unescaped), "ftp.Query");
+			Assert.AreEqual (String.Empty, p._GetComponents (ftp2, UriComponents.Fragment, UriFormat.Unescaped), "ftp.Fragment");
+			Assert.AreEqual ("21", p._GetComponents (ftp2, UriComponents.StrongPort, UriFormat.Unescaped), "ftp.StrongPort");
+			Assert.AreEqual (String.Empty, p._GetComponents (ftp2, UriComponents.KeepDelimiter, UriFormat.Unescaped), "http.KeepDelimiter");
+			Assert.AreEqual ("ftp.go-mono.com:21", p._GetComponents (ftp2, UriComponents.HostAndPort, UriFormat.Unescaped), "http.HostAndPort");
+			Assert.AreEqual ("username:password@ftp.go-mono.com:21", p._GetComponents (ftp2, UriComponents.StrongAuthority, UriFormat.Unescaped), "http.StrongAuthority");
+			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.AbsoluteUri, UriFormat.Unescaped), "http.AbsoluteUri");
+			Assert.AreEqual ("/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.PathAndQuery, UriFormat.Unescaped), "http.PathAndQuery");
+			Assert.AreEqual ("ftp://ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.HttpRequestUrl, UriFormat.Unescaped), "http.HttpRequestUrl");
+			Assert.AreEqual ("ftp://ftp.go-mono.com", p._GetComponents (ftp2, UriComponents.SchemeAndServer, UriFormat.Unescaped), "http.SchemeAndServer");
+			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.SerializationInfoString, UriFormat.Unescaped), "http.SerializationInfoString");
 			Assert.AreSame (p, p._OnNewUri (), "OnNewUri");
 			// strange mixup
-			Assert.AreEqual ("ftp://username:password@", p._GetComponents (ftp, UriComponents.Scheme | UriComponents.UserInfo, UriFormat.Unescaped), "ftp.Scheme+UserInfo");
-			Assert.AreEqual (":21/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path | UriComponents.StrongPort, UriFormat.Unescaped), "ftp.Path+StrongPort");
+			Assert.AreEqual ("ftp://username:password@", p._GetComponents (ftp2, UriComponents.Scheme | UriComponents.UserInfo, UriFormat.Unescaped), "ftp.Scheme+UserInfo");
+			Assert.AreEqual (":21/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.Path | UriComponents.StrongPort, UriFormat.Unescaped), "ftp.Path+StrongPort");
 		}
 
 		// Test case for Xamarin#17665
