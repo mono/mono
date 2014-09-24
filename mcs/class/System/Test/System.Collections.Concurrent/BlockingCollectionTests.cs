@@ -237,7 +237,7 @@ namespace MonoTests.System.Collections.Concurrent
 			t = Task.Factory.StartNew (() => {
 				try {
 					return BlockingCollection<string>.TakeFromAny (arr, out res, cts.Token);
-				} catch (OperationCanceledException WE_GOT_CANCELED) {
+				} catch (OperationCanceledException) {
 					res = "canceled";
 					return -10;
 				}

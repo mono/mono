@@ -1993,7 +1993,7 @@ namespace MonoTests.System
 		private bool originalIriParsing;
 
 		[TestFixtureSetUp]
-		public void GetReady ()
+		public void GetReady2 ()
 		{
 			isWin32 = (Path.DirectorySeparatorChar == '\\');
 

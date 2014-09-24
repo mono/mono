@@ -936,7 +936,7 @@ namespace MonoTests.System.Net.Sockets {
 				try {
 					client = new UdpClient (port);
 					break;
-				} catch (Exception ex) {
+				} catch (Exception) {
 					if (i == 5)
 						throw;
 				}

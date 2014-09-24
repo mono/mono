@@ -115,7 +115,7 @@ namespace MonoTests.System.Net {
 					socket.Listen(1);
 				}
 			}
-			catch(Exception ex) {
+			catch(Exception) {
 				//Can be AccessDeniedException(ports 80/443 need root access) or
 				//SocketException because other application is listening
 				return false;
