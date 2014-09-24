@@ -170,6 +170,11 @@ typedef struct {
 
 #define domain_jit_info(domain) ((MonoJitDomainInfo*)((domain)->runtime_info))
 
+/* Contains a list of ips which needs to be patched when a method is compiled */
+typedef struct {
+	GSList *list;
+} MonoJumpList;
+
 /* Arch-specific */
 typedef struct {
 	int dummy;
@@ -1676,7 +1681,7 @@ GList    *mono_arch_get_global_fp_regs          (MonoCompile *cfg) MONO_INTERNAL
 GList    *mono_arch_get_iregs_clobbered_by_call (MonoCallInst *call) MONO_INTERNAL;
 GList    *mono_arch_get_fregs_clobbered_by_call (MonoCallInst *call) MONO_INTERNAL;
 guint32   mono_arch_regalloc_cost               (MonoCompile *cfg, MonoMethodVar *vmv) MONO_INTERNAL;
-void      mono_arch_patch_code                  (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors) MONO_INTERNAL;
+void      mono_arch_patch_code                  (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, MonoCodeManager *dyn_code_mp, gboolean run_cctors) MONO_INTERNAL;
 void      mono_arch_flush_icache                (guint8 *code, gint size) MONO_INTERNAL;
 int       mono_arch_max_epilog_size             (MonoCompile *cfg) MONO_INTERNAL;
 guint8   *mono_arch_emit_prolog                 (MonoCompile *cfg) MONO_INTERNAL;
