@@ -22,6 +22,59 @@ MONO_API MonoInst* mono_emit_native_call (MonoCompile *cfg, gconstpointer func, 
 void mini_emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, gboolean native);
 void mini_emit_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass *klass);
 
+struct mu {
+	guint32 M;
+	gboolean a;
+	int s;
+};
+
+/* http://www.hackersdelight.org/hdcodetxt/magicu.c.txt */
+static struct mu
+magic_unsigned (unsigned d)
+{
+	int p;
+	unsigned nc, delta, q1, r1, q2, r2;
+	struct mu magu;
+
+	magu.a = 0;
+	nc = -1 - (-d) % d;
+	p = 31;
+	q1 = 0x80000000 / nc;
+	r1 = 0x80000000 - q1 * nc;
+	q2 = 0x7FFFFFFF / d;
+	r2 = 0x7FFFFFFF - q2 * d;
+
+	do {
+		p++;
+		if (r1 >= nc - r1) {
+			q1 = 2 * q1 + 1;
+			r1 = 2 * r1 - nc;
+		} else {
+			q1 *= 2;
+			r1 *= 2;
+		}
+
+		if (r2 + 1 >= d - r2) {
+			if (q2 >= 0x7FFFFFFF)
+				magu.a = 1;
+			q2 = 2 * q2 + 1;
+			r2 = 2 * r2 + 1 - d;
+		} else {
+			if (q2 >= 0x80000000)
+				magu.a = 1;
+			q2 *= 2;
+			r2 = 2 * r2 + 1;
+		}
+
+		delta = d - 1 - r2;
+	} while (p < 64 && (q1 < delta || (q1 == delta && r1 == 0)));
+
+	magu.M = q2 + 1;
+	magu.s = p - 32;
+	return magu;
+}
+
+
 /*
  * Decompose complex long opcodes on 64 bit machines.
  * This is also used on 32 bit machines when using LLVM, so it needs to handle I/U correctly.
@@ -476,21 +529,14 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		}
 		break;
 #endif
-	case OP_IREM_UN_IMM:
-	case OP_IDIV_UN_IMM: {
+	case OP_IREM_UN_IMM: {
 		int c = ins->inst_imm;
 		int power2 = mono_is_power_of_two (c);
 
 		if (power2 >= 0) {
-			if (ins->opcode == OP_IREM_UN_IMM) {
-				ins->opcode = OP_IAND_IMM;
-				ins->sreg2 = -1;
-				ins->inst_imm = (1 << power2) - 1;
-			} else if (ins->opcode == OP_IDIV_UN_IMM) {
-				ins->opcode = OP_ISHR_UN_IMM;
-				ins->sreg2 = -1;
-				ins->inst_imm = power2;
-			}
+			ins->opcode = OP_IAND_IMM;
+			ins->sreg2 = -1;
+			ins->inst_imm = (1 << power2) - 1;
 		}
 		break;
 	}
@@ -558,6 +604,62 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 			MONO_EMIT_NEW_BIALU_IMM (cfg, is_long ? OP_LAND_IMM : OP_AND_IMM, ins->dreg, ins->dreg, (1 << power) - 1);
 			/* Remove compensation */
 			MONO_EMIT_NEW_BIALU (cfg, is_long ? OP_LSUB : OP_ISUB, ins->dreg, ins->dreg, compensator_reg);
+
+			NULLIFY_INS (ins);
+		}
+		break;
+	}
+
+	case OP_IDIV_UN_IMM: {
+		int power2 = mono_is_power_of_two (ins->inst_imm);
+
+		if (ins->inst_imm == 0) {
+			break;
+		} else if (ins->inst_imm == 1) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+			NULLIFY_INS (ins);
+		} else if (power2 >= 0) {
+			ins->opcode = OP_ISHR_UN_IMM;
+			ins->sreg2 = -1;
+			ins->inst_imm = power2;
+		} else {
+			MonoInst *magic_number;
+			MonoInst *mul, *conv;
+			int dividend = alloc_lreg (cfg);
+			int mul_reg = alloc_lreg (cfg);
+			int tmp_reg = alloc_lreg (cfg);
+			int dl_reg = alloc_lreg (cfg);
+			struct mu mag;
+
+			/* Replacement of unsigned division with multiplication, shifts and additions
+			   Hacker's Delight, chapter 10-10 */
+
+			mag = magic_unsigned (ins->inst_imm);
+
+			EMIT_NEW_I8CONST (cfg, magic_number, mag.M);
+
+#if SIZEOF_REGISTER == 8
+			MONO_EMIT_NEW_UNALU (cfg, OP_ZEXT_I4, dividend, ins->sreg1);
+#else
+			MONO_EMIT_NEW_BIALU (cfg, OP_IXOR, dividend + 2, ins->sreg1, ins->sreg1);
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, dividend + 1, ins->sreg1);
+#endif
+
+			EMIT_NEW_BIALU (cfg, mul, OP_LMUL, mul_reg, dividend, magic_number->dreg);
+			/* Decompose the newly added LMUL */
+			mono_decompose_opcode (cfg, mul);
+
+			if (mag.a) {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, tmp_reg, mul_reg, 32);
+				MONO_EMIT_NEW_BIALU (cfg, OP_LADD, tmp_reg, tmp_reg, dividend);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, dl_reg, tmp_reg, mag.s);
+			} else {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, dl_reg, mul_reg, 32 + mag.s);
+			}
+
+			EMIT_NEW_UNALU (cfg, conv, OP_LCONV_TO_U4, ins->dreg, dl_reg);
+			/* Decompose the newly added lconv */
+			mono_decompose_opcode (cfg, conv);
 
 			NULLIFY_INS (ins);
 		}
