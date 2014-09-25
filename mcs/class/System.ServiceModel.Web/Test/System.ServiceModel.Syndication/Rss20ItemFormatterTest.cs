@@ -351,6 +351,24 @@ namespace MonoTests.System.ServiceModel.Syndication
 		{
 			Assert.IsNull (((IXmlSerializable) new Rss20ItemFormatter ()).GetSchema ());
 		}
+
+		[Test]
+		public void ReadFromGuidPermaLink ()
+		{
+			const string xml1 = "<item><guid isPermaLink=\"false\">urn:myid</guid><description /></item>";
+			using (XmlReader r = CreateReader (xml1)) {
+				var rss = new Rss20ItemFormatter ();
+				rss.ReadFrom (r);
+				Assert.AreEqual ("urn:myid", rss.Item.Id);
+			}
+
+			const string xml2 = "<item><guid isPermaLink=\"true\">urn:myid</guid><description /></item>";
+			using (XmlReader r = CreateReader (xml2)) {
+				var rss = new Rss20ItemFormatter ();
+				rss.ReadFrom (r);
+				Assert.AreEqual ("urn:myid", rss.Item.Id);
+			}
+		}
 	}
 }
 #endif
