@@ -55,7 +55,13 @@ namespace MonoTests.System.IdentityModel.Tokens.net_4_5
 			using (var s = new MemoryStream())
 			{
 				binaryFormatter.Serialize(s, bootstrapContext);
-				Assert.AreEqual(SerializedBootstrapContextString, s.ToArray(), "#1");
+				s.Position = 0;
+				BootstrapContext bootstrapContext2 = binaryFormatter.Deserialize(s) as BootstrapContext;
+				Assert.IsNotNull(bootstrapContext2, "#1");
+				Assert.AreEqual(bootstrapContext.Token, bootstrapContext2.Token, "#2");
+				Assert.AreEqual(bootstrapContext.TokenBytes, bootstrapContext2.TokenBytes, "#3");
+				Assert.AreEqual(bootstrapContext.SecurityToken, bootstrapContext2.SecurityToken, "#4");
+				Assert.AreEqual(bootstrapContext.SecurityTokenHandler, bootstrapContext2.SecurityTokenHandler, "#5");
 			}
 		}
 
@@ -103,7 +109,13 @@ namespace MonoTests.System.IdentityModel.Tokens.net_4_5
 			using (var s = new MemoryStream())
 			{
 				binaryFormatter.Serialize(s, bootstrapContext);
-				Assert.AreEqual(SerializedBootstrapContextByteArray, s.ToArray(), "#1");
+				s.Position = 0;
+				BootstrapContext bootstrapContext2 = binaryFormatter.Deserialize(s) as BootstrapContext;
+				Assert.IsNotNull(bootstrapContext2, "#1");
+				Assert.AreEqual(bootstrapContext.Token, bootstrapContext2.Token, "#2");
+				Assert.AreEqual(bootstrapContext.TokenBytes, bootstrapContext2.TokenBytes, "#3");
+				Assert.AreEqual(bootstrapContext.SecurityToken, bootstrapContext2.SecurityToken, "#4");
+				Assert.AreEqual(bootstrapContext.SecurityTokenHandler, bootstrapContext2.SecurityTokenHandler, "#5");
 			}
 		}
 
@@ -167,7 +179,14 @@ namespace MonoTests.System.IdentityModel.Tokens.net_4_5
 			using (var s = new MemoryStream())
 			{
 				binaryFormatter.Serialize(s, bootstrapContext);
-				Assert.AreEqual(SerializedBootstrapContextSecurityToken, s.ToArray(), "#1");
+				s.Position = 0;
+				BootstrapContext bootstrapContext2 = binaryFormatter.Deserialize(s) as BootstrapContext;
+				Assert.IsNotNull(bootstrapContext2, "#1");
+				// Deserialize does not restore the SecurityToken, but restores into the Token.
+				Assert.AreEqual(SerializedBootstrapContextSecurityTokenString, bootstrapContext2.Token, "#2");
+				Assert.AreEqual(bootstrapContext.TokenBytes, bootstrapContext2.TokenBytes, "#3");
+				Assert.IsNull(bootstrapContext2.SecurityToken, "#4");
+				Assert.IsNull(bootstrapContext2.SecurityTokenHandler, "#5");
 			}
 		}
 
@@ -184,6 +203,11 @@ namespace MonoTests.System.IdentityModel.Tokens.net_4_5
 				Assert.IsNull(bootstrapContext.SecurityTokenHandler, "#4");
 				Assert.IsNull(bootstrapContext.TokenBytes, "#5");
 			}
+		}
+
+		private static void DumpAsText(byte[] data)
+		{
+			Console.WriteLine("{0}", Encoding.ASCII.GetString(data));
 		}
 
 		private static void Dump(byte[] data)
