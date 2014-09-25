@@ -22,11 +22,60 @@ MONO_API MonoInst* mono_emit_native_call (MonoCompile *cfg, gconstpointer func, 
 void mini_emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, gboolean native);
 void mini_emit_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass *klass);
 
+struct ms {
+	gint32 M;
+	int s;
+};
+
 struct mu {
 	guint32 M;
 	gboolean a;
 	int s;
 };
+
+/* http://www.hackersdelight.org/hdcodetxt/magic.c.txt */
+static struct ms
+magic_signed (int d)
+{
+	int p;
+	unsigned ad, anc, delta, q1, r1, q2, r2, t;
+	const unsigned two31 = 0x80000000;
+	struct ms mag;
+
+	ad = abs (d);
+	t = two31 + ((unsigned)d >> 31);
+	anc = t - 1 - t%ad;
+	p = 31;
+	q1 = two31 / anc;
+	r1 = two31 - q1 * anc;
+	q2 = two31 / ad;
+	r2 = two31 - q2 * ad;
+	do {
+		p++;
+		q1 *= 2;
+		r1 *= 2;
+		if (r1 >= anc) {
+			q1++;
+			r1 -= anc;
+		}
+
+		q2 *= 2;
+		r2 *= 2;
+
+		if (r2 >= ad) {
+			q2++;
+			r2 -= ad;
+		}
+
+		delta = ad - r2;
+	} while (q1 < delta || (q1 == delta && r1 == 0));
+
+	mag.M = q2 + 1;
+	if (d < 0)
+		mag.M = -mag.M;
+	mag.s = p - 32;
+	return mag;
+}
 
 /* http://www.hackersdelight.org/hdcodetxt/magicu.c.txt */
 static struct mu
@@ -540,12 +589,17 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		}
 		break;
 	}
-	case OP_IDIV_IMM: {
-		int c = ins->inst_imm;
-		int power2 = mono_is_power_of_two (c);
-		MonoInst *tmp1, *tmp2, *tmp3, *tmp4;
 
-		if (power2 == 1) {
+	case OP_IDIV_IMM: {
+		int power2 = mono_is_power_of_two (ins->inst_imm);
+
+		if (ins->inst_imm == 0 || ins->inst_imm == -1) {
+			break;
+		} else if (ins->inst_imm == 1) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
+			NULLIFY_INS (ins);
+		} else if (power2 == 1) {
+			MonoInst *tmp1, *tmp2, *tmp3;
 			int r1 = mono_alloc_ireg (cfg);
 
 			NEW_BIALU_IMM (cfg, tmp1, OP_ISHR_UN_IMM, r1, ins->sreg1, 31);
@@ -557,6 +611,7 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 
 			NULLIFY_INS (ins);
 		} else if (power2 > 0 && power2 < 31) {
+			MonoInst *tmp1, *tmp2, *tmp3, *tmp4;
 			int r1 = mono_alloc_ireg (cfg);
 
 			NEW_BIALU_IMM (cfg, tmp1, OP_ISHR_IMM, r1, ins->sreg1, 31);
@@ -567,6 +622,57 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 			MONO_ADD_INS (cfg->cbb, tmp3);
 			NEW_BIALU_IMM (cfg, tmp4, OP_ISHR_IMM, ins->dreg, r1, power2);
 			MONO_ADD_INS (cfg->cbb, tmp4);
+
+			NULLIFY_INS (ins);
+		} else {
+			MonoInst *magic_number;
+			MonoInst *mul, *conv;
+
+			int mul_reg = alloc_lreg (cfg);
+			int dl_reg = alloc_lreg (cfg);
+			int di_reg = alloc_ireg (cfg);
+			struct ms mag;
+
+			/* Replacement of signed division with multiplication, shifts and additions
+			   Hacker's Delight, chapter 10-6 */
+
+			mag = magic_signed (ins->inst_imm);
+
+#if SIZEOF_REGISTER == 8
+			EMIT_NEW_I8CONST (cfg, magic_number, mag.M);
+			MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, dl_reg, ins->sreg1);
+			EMIT_NEW_BIALU (cfg, mul, OP_LMUL, mul_reg, dl_reg, magic_number->dreg);
+			/* Decompose the newly added LMUL */
+			mono_decompose_opcode (cfg, mul);
+#else
+			EMIT_NEW_ICONST (cfg, magic_number, mag.M);
+			EMIT_NEW_BIALU (cfg, mul, OP_BIGMUL, mul_reg, ins->sreg1, magic_number->dreg);
+#endif
+
+			if ((ins->inst_imm > 0 && mag.M < 0) ||	(ins->inst_imm < 0 && mag.M > 0)) {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_IMM, dl_reg, mul_reg, 32);
+
+				EMIT_NEW_UNALU (cfg, conv, OP_LCONV_TO_I4, ins->dreg, dl_reg);
+				/* Decompose the newly added lconv */
+				mono_decompose_opcode (cfg, conv);
+
+				if (ins->inst_imm > 0 && mag.M < 0)
+					MONO_EMIT_NEW_BIALU (cfg, OP_IADD, ins->dreg, ins->dreg, ins->sreg1);
+				if (ins->inst_imm < 0 && mag.M > 0)
+					MONO_EMIT_NEW_BIALU (cfg, OP_ISUB, ins->dreg, ins->dreg, ins->sreg1);
+
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, ins->dreg, ins->dreg, mag.s);
+			} else {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_IMM, dl_reg, mul_reg, 32 + mag.s);
+
+				EMIT_NEW_UNALU (cfg, conv, OP_LCONV_TO_I4, ins->dreg, dl_reg);
+				/* Decompose the newly added lconv */
+				mono_decompose_opcode (cfg, conv);
+			}
+
+
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHR_UN_IMM, di_reg, ins->dreg, 31);
+			MONO_EMIT_NEW_BIALU (cfg, OP_IADD, ins->dreg, ins->dreg, di_reg);
 
 			NULLIFY_INS (ins);
 		}
