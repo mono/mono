@@ -157,6 +157,7 @@ BASE_TEST_CS_SRC=		\
 	long.cs			\
 	jit-ulong.cs		\
 	jit-float.cs		\
+	constant-division.cs	\
 	pop.cs			\
 	time.cs			\
 	appdomain.cs        \
