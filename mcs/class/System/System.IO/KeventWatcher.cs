@@ -339,6 +339,9 @@ namespace System.IO {
 		{
 			var path = pathData.Path;
 
+			if (stop)
+				return;
+
 			Add (path, postEvents);
 
 			if (!fsw.IncludeSubdirectories)
@@ -401,7 +404,7 @@ namespace System.IO {
 		private FileSystemWatcher fsw;
 		private int conn;
 		private Thread thread;
-		private bool stop;
+		private volatile bool stop = false;
 		private readonly List<int> removeQueue = new List<int> ();
 		private readonly List<int> rescanQueue = new List<int> ();
 		private readonly Dictionary<PathData, int> paths = new Dictionary<PathData, int> ();
@@ -419,7 +422,7 @@ namespace System.IO {
 		extern static int kqueue ();
 
 		[DllImport ("libc")]
-		extern static int kevent(int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents, IntPtr time);
+		extern static int kevent (int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents, IntPtr time);
 	}
 
 	class KeventWatcher : IFileWatcher

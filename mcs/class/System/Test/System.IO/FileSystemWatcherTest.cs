@@ -12,37 +12,32 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MonoTests.System.IO
 {
 	[TestFixture]
 	public class FileSystemWatcherTest
 	{
-		string base_path;
-		string path_a;
+		static string base_path = Path.Combine (Path.GetTempPath (), "FSWTest");
+		static string path_a = Path.Combine (base_path, "a.txt");
 
-		FileSystemWatcher SetupWatcher ()
+		AutoResetEvent eventFired = new AutoResetEvent (false);
+		WatcherChangeTypes lastChangeType;
+		string lastName, lastFullPath;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup ()
 		{
-			var fsw = new FileSystemWatcher ();
-			fsw.Path = base_path;
-			fsw.IncludeSubdirectories = true;
-			fsw.EnableRaisingEvents = true;
-
-			return fsw;
+			if (!Directory.Exists (base_path))
+			   Directory.CreateDirectory (base_path);
 		}
 
-		[SetUp]
-		public void Setup ()
+		[TestFixtureTearDown]
+		public void FixtureTearDown ()
 		{
-			base_path = Path.GetTempPath ();
-			path_a = Path.Combine (base_path, "a.txt");
-		}
-
-		[TearDown]
-		public void TearDown ()
-		{
-			if (File.Exists (path_a))
-				File.Delete (path_a);
+			if (Directory.Exists (base_path))
+			   Directory.Delete (base_path, true);
 		}
 
 		[Test]
@@ -112,25 +107,72 @@ namespace MonoTests.System.IO
 			fw.Path = "*";
 		}
 
+
 		[Test]
 		public void TestWatchPathForFileCreation ()
 		{
-			bool created = false;
-			var fsw = SetupWatcher ();
-
-			fsw.Created += (object sender, FileSystemEventArgs e) => {
-				created = true;
+			FileSystemEventHandler createdDelegate = delegate (object o, FileSystemEventArgs e) {
+				eventFired.Set ();
+				lastChangeType = WatcherChangeTypes.Created;
 			};
 
-			Assert.IsFalse (created);
+			var fsw = new FileSystemWatcher (base_path);
+			fsw.IncludeSubdirectories = true;
+			fsw.Created += createdDelegate;
+			fsw.EnableRaisingEvents = true;
+			Thread.Sleep (1000);
+
 			Assert.IsFalse (File.Exists (path_a));
 
-			// Since the file doesn't exist yet, this will create it.
-			Process.Start ("touch", path_a);
+			File.WriteAllText (path_a, "this should create the file");
+			bool gotEvent = eventFired.WaitOne (20000, true);
 
-			Thread.Sleep (20);
+			Assert.IsTrue (File.Exists (path_a));
 
-			Assert.IsTrue (created);
+			Assert.IsTrue (gotEvent);
+			Assert.IsTrue ((lastChangeType == WatcherChangeTypes.Created));
+
+			fsw.EnableRaisingEvents = false;
+			fsw.Created -= createdDelegate;
+			fsw.Dispose ();
+		}
+
+		[Test]
+		public void TestWatchPathForFileDelete ()
+		{
+			var basePath = Path.Combine (Path.GetTempPath (), "FSWTestDelete");
+			var fileToDelete = Path.Combine (basePath, "deleteMe.txt");
+
+			if (!Directory.Exists (basePath))
+			   Directory.CreateDirectory (basePath);
+
+			File.WriteAllText (fileToDelete, "this file will be deleted");
+			Thread.Sleep (500);
+
+			FileSystemEventHandler deletedDelegate = delegate (object o, FileSystemEventArgs e) {
+				eventFired.Set ();
+				lastChangeType = WatcherChangeTypes.Deleted;
+			};
+
+			var fsw = new FileSystemWatcher (basePath);
+			fsw.IncludeSubdirectories = true;
+			fsw.Deleted += deletedDelegate;
+			fsw.EnableRaisingEvents = true;
+			Thread.Sleep (1000);
+
+			Assert.IsTrue (File.Exists (fileToDelete));
+
+			File.Delete (fileToDelete);
+			bool gotEvent = eventFired.WaitOne (5000, true);
+
+			Assert.IsTrue (gotEvent);
+			Assert.IsTrue ((lastChangeType == WatcherChangeTypes.Deleted));
+
+			fsw.EnableRaisingEvents = false;
+			fsw.Deleted -= deletedDelegate;
+			fsw.Dispose ();
+
+			Directory.Delete (basePath);
 		}
 	}
 }
