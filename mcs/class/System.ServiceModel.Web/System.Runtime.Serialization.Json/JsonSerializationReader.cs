@@ -264,7 +264,7 @@ namespace System.Runtime.Serialization.Json
 				if (double.TryParse (v, NumberStyles.None, CultureInfo.InvariantCulture, out dbl))
 					return dbl;
 				decimal dec;
-				if (decimal.TryParse (v, NumberStyles.None, CultureInfo.InvariantCulture, out dec))
+				if (decimal.TryParse (v, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out dec))
 					return dec;
 				throw SerializationError (String.Format ("Invalid JSON input: {0}", v));
 			default:
