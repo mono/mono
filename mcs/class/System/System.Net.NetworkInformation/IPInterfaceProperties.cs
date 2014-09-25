@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
@@ -77,29 +78,67 @@ namespace System.Net.NetworkInformation {
 		void ParseRouteInfo (string iface)
 		{
 			try {
-				gateways = new IPAddressCollection ();
-				using (StreamReader reader = new StreamReader ("/proc/net/route")) {
-					string line;
-					reader.ReadLine (); // Ignore first line
-					while ((line = reader.ReadLine ()) != null) {
-						line = line.Trim ();
-						if (line.Length == 0)
-							continue;
+				if (File.Exists ("/proc/net/route")) {
+					gateways = new IPAddressCollection ();
+					using (StreamReader reader = new StreamReader ("/proc/net/route")) {
+						string line;
+						reader.ReadLine (); // Ignore first line
+						while ((line = reader.ReadLine ()) != null) {
+							line = line.Trim ();
+							if (line.Length == 0)
+								continue;
 
-						string [] parts = line.Split ('\t');
-						if (parts.Length < 3)
-							continue;
-						string gw_address = parts [2].Trim ();
-						byte [] ipbytes = new byte [4];  
-						if (gw_address.Length == 8 && iface.Equals (parts [0], StringComparison.OrdinalIgnoreCase)) {
-							for (int i = 0; i < 4; i++) {
-								if (!Byte.TryParse (gw_address.Substring (i * 2, 2), NumberStyles.HexNumber, null, out ipbytes [3 - i]))
-									continue;
+							string [] parts = line.Split ('\t');
+							if (parts.Length < 3)
+								continue;
+							string gw_address = parts [2].Trim ();
+							byte [] ipbytes = new byte [4];
+							if (gw_address.Length == 8 && iface.Equals (parts [0], StringComparison.OrdinalIgnoreCase)) {
+								for (int i = 0; i < 4; i++) {
+									if (!Byte.TryParse (gw_address.Substring (i * 2, 2), NumberStyles.HexNumber, null, out ipbytes [3 - i]))
+										continue;
+								}
+								IPAddress ip = new IPAddress (ipbytes);
+								if (!ip.Equals (IPAddress.Any))
+									gateways.Add (ip);
 							}
-							IPAddress ip = new IPAddress (ipbytes);
-							if (!ip.Equals (IPAddress.Any))
-								gateways.Add (ip);
 						}
+					}
+				} else {
+					ProcessStartInfo ps = new ProcessStartInfo ("netstat", "-rnW");
+					ps.UseShellExecute = false;
+					ps.RedirectStandardOutput = true;
+					using (Process p = Process.Start (ps)) {
+						string line;
+						int iface_part = 0;
+						int gw_part = 0;
+						while ((line = p.StandardOutput.ReadLine ()) != null) {
+							line = line.Trim ();
+							if (line.Length == 0)
+								continue;
+
+							string [] parts = line.Split (new char[0], StringSplitOptions.RemoveEmptyEntries);
+							if (parts.Length < 6)
+								continue;
+
+							if (iface_part == gw_part) {
+								for (int i = 0; i < parts.Length; i++) {
+									if (parts[i].Equals ("gateway", StringComparison.OrdinalIgnoreCase))
+										gw_part = i;
+									if (parts[i].Equals ("netif", StringComparison.OrdinalIgnoreCase))
+										iface_part = i;
+								}
+							}
+
+							if (iface.Equals (parts [iface_part], StringComparison.OrdinalIgnoreCase)) {
+								IPAddress ip;
+								if (IPAddress.TryParse (parts [gw_part], out ip)) {
+									if (!ip.Equals (IPAddress.Any))
+										gateways.Add (ip);
+								}
+							}
+						}
+						p.WaitForExit ();
 					}
 				}
 			} catch {
