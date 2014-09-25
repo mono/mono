@@ -183,7 +183,9 @@ namespace MonoTests.System.IdentityModel.Tokens.net_4_5
 				BootstrapContext bootstrapContext2 = binaryFormatter.Deserialize(s) as BootstrapContext;
 				Assert.IsNotNull(bootstrapContext2, "#1");
 				// Deserialize does not restore the SecurityToken, but restores into the Token.
-				Assert.AreEqual(SerializedBootstrapContextSecurityTokenString, bootstrapContext2.Token, "#2");
+				Assert.IsNotNull(bootstrapContext2.Token, "#3");
+				// We replace ' /' by '/' to accomodate the xml writer differences between mono and .net
+				Assert.AreEqual(SerializedBootstrapContextSecurityTokenString.Replace(" /","/"), bootstrapContext2.Token.Replace(" /","/"), "#2");
 				Assert.AreEqual(bootstrapContext.TokenBytes, bootstrapContext2.TokenBytes, "#3");
 				Assert.IsNull(bootstrapContext2.SecurityToken, "#4");
 				Assert.IsNull(bootstrapContext2.SecurityTokenHandler, "#5");

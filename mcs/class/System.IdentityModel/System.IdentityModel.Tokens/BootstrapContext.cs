@@ -44,19 +44,19 @@ namespace System.IdentityModel.Tokens
 		public SecurityTokenHandler SecurityTokenHandler { get; private set; }
 
 		/// <summary>Initializes a new instance of the <see cref="BootstrapContext"/> class by using the specified string.</summary>
-		public BoostrapContext (string token) {
+		public BootstrapContext (string token) {
 			if (token == null) throw new ArgumentNullException("token");
 			Token = token;
 		}
 
 		/// <summary>Initializes a new instance of the <see cref="BootstrapContext"/> class by using the specified array.</summary>
-		public BoostrapContext (byte[] token) {
+		public BootstrapContext (byte[] token) {
 			if (token == null) throw new ArgumentNullException("token");
 			TokenBytes = token;
 		}
 
 		/// <summary>Initializes a new instance of the <see cref="BootstrapContext"/> class by using the specified security token and token handler.</summary>
-		public BoostrapContext (SecurityToken token, SecurityTokenHandler handler) {
+		public BootstrapContext (SecurityToken token, SecurityTokenHandler handler) {
 			if (token == null) throw new ArgumentNullException("token");
 			if (handler == null) throw new ArgumentNullException("handler");
 			SecurityToken = token;
@@ -64,24 +64,24 @@ namespace System.IdentityModel.Tokens
 		}
 		
 		/// <summary>Initializes a new instance of the <see cref="BootstrapContext"/> class from a stream.</summary>
-		protected BootstrapContext(SerializationInfo info, SerializationContext context) {
+		protected BootstrapContext(SerializationInfo info, StreamingContext context) {
 			if (info == null) throw new ArgumentNullException("info");
 			char type = info.GetChar("K");
 			switch (type) {
 			case 'S':
-				Token = info.GetString("V");
+				Token = info.GetString("T");
 				break;
 			case 'B':
-				TokenBytes = (byte[])info.GetValue("V");
+				TokenBytes = (byte[])info.GetValue("T", typeof(byte[]));
 				break;
 			case 'T':
-				Token = Convert.FromBase64String(info.GetString("V"));
+				Token = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(info.GetString("T")));
 				break;
 			}
 		}
 		
 		/// <summary>Populates the <see cref="SerializationInfo"/> with data needed to serialize the current <see cref="BootstrapContext"/> object.</summary>
-		public void GetObjectData(SerializationInfo info, SerializationContext context) {
+		public void GetObjectData(SerializationInfo info, StreamingContext context) {
 			if (info == null) throw new ArgumentNullException("info");
 			if (Token != null) {
 				info.AddValue("K", 'S');
@@ -91,8 +91,13 @@ namespace System.IdentityModel.Tokens
 				info.AddValue("T", TokenBytes);
 			} else if (SecurityToken != null && SecurityTokenHandler != null) {
 				info.AddValue("K", 'T');
-				// Serialize SecurityToken using SecurityTokenHandler
-				info.AddValue("T", Token);
+				using(var ms = new System.IO.MemoryStream())
+				using(var streamWriter = new System.IO.StreamWriter(ms, new System.Text.UTF8Encoding(false)))
+				using(var writer = System.Xml.XmlWriter.Create(streamWriter, new System.Xml.XmlWriterSettings { OmitXmlDeclaration = true })) {
+					SecurityTokenHandler.WriteToken(writer, SecurityToken);
+					writer.Flush();
+					info.AddValue("T", Convert.ToBase64String(ms.ToArray()));
+				}
 			}
 		}
 
