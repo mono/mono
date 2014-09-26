@@ -185,7 +185,6 @@ namespace MonoTests.System.IO
 				Directory.CreateDirectory (basePath);
 
 			File.WriteAllText (fileToModify, "this file will be changed");
-			Thread.Sleep (1000);
 
 			FileSystemEventHandler changedDelegate = delegate (object o, FileSystemEventArgs e) {
 				eventFired.Set ();
@@ -241,7 +240,6 @@ namespace MonoTests.System.IO
 				Directory.CreateDirectory (basePath);
 
 			File.WriteAllText (sourceFile, "this file will be renamed");
-			Thread.Sleep (1000);
 
 			RenamedEventHandler renamedDelegate = delegate (object o, RenamedEventArgs e) {
 				eventFired.Set ();
