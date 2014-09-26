@@ -19460,6 +19460,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-625.cs">
+    <type name="S">
+      <method name="Boolean op_True(System.Nullable`1[S])" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Boolean op_False(System.Nullable`1[S])" attrs="2198">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="P">
+      <method name="Void Main()" attrs="145">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

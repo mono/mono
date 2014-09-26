@@ -1042,7 +1042,11 @@ namespace Mono.CSharp {
 		static Expression GetOperatorTrueOrFalse (ResolveContext ec, Expression e, bool is_true, Location loc)
 		{
 			var op = is_true ? Operator.OpType.True : Operator.OpType.False;
-			var methods = MemberCache.GetUserOperator (e.type, op, false);
+			var type = e.type;
+			if (type.IsNullableType)
+				type = Nullable.NullableInfo.GetUnderlyingType (type);
+
+			var methods = MemberCache.GetUserOperator (type, op, false);
 			if (methods == null)
 				return null;
 
