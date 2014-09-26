@@ -98,9 +98,23 @@ namespace Mono.Security.X509 {
 
 		public void Clear () 
 		{
+			/* 
+			 * Both _certificates and _crls extend CollectionBase, whose Clear() method calls OnClear() and 
+			 * OnClearComplete(), which should be overridden in derivative classes. So we should not worry about
+			 * other threads that might be holding references to _certificates or _crls. They should be smart enough
+			 * to handle this gracefully.  And if not, it's their own fault.
+			 */
+			ClearCertificates();
+			ClearCrls();
+		}
+		private void ClearCertificates()
+		{
 			if (_certificates != null)
 				_certificates.Clear ();
 			_certificates = null;
+		}
+		private void ClearCrls()
+		{
 			if (_crls != null)
 				_crls.Clear ();
 			_crls = null;
@@ -117,6 +131,7 @@ namespace Mono.Security.X509 {
 					fs.Write (data, 0, data.Length);
 					fs.Close ();
 				}
+				ClearCertificates();	// We have modified the store on disk.  So forget the old state.
 			}
 #if !NET_2_1
 			// Try to save privateKey if available..
@@ -141,6 +156,7 @@ namespace Mono.Security.X509 {
 					byte[] data = crl.RawData;
 					fs.Write (data, 0, data.Length);
 				}
+				ClearCrls();	// We have modified the store on disk.  So forget the old state.
 			}
 		}
 
@@ -149,6 +165,7 @@ namespace Mono.Security.X509 {
 			string filename = Path.Combine (_storePath, GetUniqueName (certificate));
 			if (File.Exists (filename)) {
 				File.Delete (filename);
+				ClearCertificates();	// We have modified the store on disk.  So forget the old state.
 			}
 		}
 
@@ -157,6 +174,7 @@ namespace Mono.Security.X509 {
 			string filename = Path.Combine (_storePath, GetUniqueName (crl));
 			if (File.Exists (filename)) {
 				File.Delete (filename);
+				ClearCrls();	// We have modified the store on disk.  So forget the old state.
 			}
 		}
 
