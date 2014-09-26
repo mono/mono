@@ -22,6 +22,10 @@ public class TestsBase
 	static string base_static_s = "C";
 #pragma warning restore 0414
 #pragma warning restore 0169
+
+	public virtual string virtual_method () {
+		return "V1";
+	}
 }
 
 public enum AnEnum {
@@ -1364,6 +1368,10 @@ public class Tests : TestsBase, ITest2
 		i = 5;
 		j = 5;
 		set_ip_2 ();
+	}
+
+	public override string virtual_method () {
+		return "V2";
 	}
 }
 
