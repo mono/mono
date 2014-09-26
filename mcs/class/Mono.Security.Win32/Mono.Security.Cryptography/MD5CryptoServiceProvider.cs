@@ -23,7 +23,7 @@ public class MD5CryptoServiceProvider : MD5 {
 
 	~MD5CryptoServiceProvider () 
 	{
-		Dispose (true);
+		Dispose (false);
 	}
 
 	// 2 cases:
@@ -39,11 +39,14 @@ public class MD5CryptoServiceProvider : MD5 {
 
 	protected override void Dispose (bool disposing) 
 	{
-		if (hash != null) {
-			hash.Dispose ();
-			hash = null;
-			// there's no unmanaged resources (so disposing isn't used)
+		if (disposing) {
+			if (hash != null) {
+				hash.Dispose ();
+				hash = null;
+			}
 		}
+		
+		base.Dispose(disposing);
 	}
 
 	protected override void HashCore (byte[] rgb, int ibStart, int cbSize) 

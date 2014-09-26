@@ -64,18 +64,22 @@ namespace System.Security.Cryptography {
 
 		protected override void Dispose (bool disposing) 
 		{
-			if (_ProcessingBuffer != null) {
-				Array.Clear (_ProcessingBuffer, 0, _ProcessingBuffer.Length);
-				_ProcessingBuffer = null;
+			if (disposing) {
+				if (_ProcessingBuffer != null) {
+					Array.Clear (_ProcessingBuffer, 0, _ProcessingBuffer.Length);
+					_ProcessingBuffer = null;
+				}
+				if (_H != null) {
+					Array.Clear (_H, 0, _H.Length);
+					_H = null;
+				}
+				if (buff != null) {
+					Array.Clear (buff, 0, buff.Length);
+					buff = null;
+				}
 			}
-			if (_H != null) {
-				Array.Clear (_H, 0, _H.Length);
-				_H = null;
-			}
-			if (buff != null) {
-				Array.Clear (buff, 0, buff.Length);
-				buff = null;
-			}
+
+			base.Dispose(disposing);
 		}
 
 		protected override void HashCore (byte[] rgb, int ibStart, int cbSize) 
