@@ -147,7 +147,6 @@ namespace MonoTests.System.IO
 			   Directory.CreateDirectory (basePath);
 
 			File.WriteAllText (fileToDelete, "this file will be deleted");
-			Thread.Sleep (500);
 
 			FileSystemEventHandler deletedDelegate = delegate (object o, FileSystemEventArgs e) {
 				eventFired.Set ();
