@@ -54,8 +54,6 @@ mono_local_cprop (MonoCompile *cfg)
 	gint32 *def_index;
 	int max;
 
-restart:
-
 	max = cfg->next_vreg;
 	defs = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * (cfg->next_vreg + 1));
 	def_index = mono_mempool_alloc (cfg->mempool, sizeof (guint32) * (cfg->next_vreg + 1));
@@ -326,64 +324,6 @@ restart:
 				}
 				spec = INS_INFO (ins->opcode);
 				break;
-			case OP_IREM_UN_IMM:
-			case OP_IDIV_UN_IMM: {
-				int c = ins->inst_imm;
-				int power2 = mono_is_power_of_two (c);
-
-				if (power2 >= 0) {
-					if (ins->opcode == OP_IREM_UN_IMM) {
-						ins->opcode = OP_IAND_IMM;
-						ins->sreg2 = -1;
-						ins->inst_imm = (1 << power2) - 1;
-					} else if (ins->opcode == OP_IDIV_UN_IMM) {
-						ins->opcode = OP_ISHR_UN_IMM;
-						ins->sreg2 = -1;
-						ins->inst_imm = power2;
-					}
-				}
-				spec = INS_INFO (ins->opcode);
-				break;
-			}
-			case OP_IDIV_IMM: {
-				int c = ins->inst_imm;
-				int power2 = mono_is_power_of_two (c);
-				MonoInst *tmp1, *tmp2, *tmp3, *tmp4;
-
-				/* FIXME: Move this elsewhere cause its hard to implement it here */
-				if (power2 == 1) {
-					int r1 = mono_alloc_ireg (cfg);
-
-					NEW_BIALU_IMM (cfg, tmp1, OP_ISHR_UN_IMM, r1, ins->sreg1, 31);
-					mono_bblock_insert_after_ins (bb, ins, tmp1);
-					NEW_BIALU (cfg, tmp2, OP_IADD, r1, r1, ins->sreg1);
-					mono_bblock_insert_after_ins (bb, tmp1, tmp2);
-					NEW_BIALU_IMM (cfg, tmp3, OP_ISHR_IMM, ins->dreg, r1, 1);
-					mono_bblock_insert_after_ins (bb, tmp2, tmp3);
-
-					NULLIFY_INS (ins);
-
-					// We allocated a new vreg, so need to restart
-					goto restart;
-				} else if (power2 > 0 && power2 < 31) {
-					int r1 = mono_alloc_ireg (cfg);
-
-					NEW_BIALU_IMM (cfg, tmp1, OP_ISHR_IMM, r1, ins->sreg1, 31);
-					mono_bblock_insert_after_ins (bb, ins, tmp1);
-					NEW_BIALU_IMM (cfg, tmp2, OP_ISHR_UN_IMM, r1, r1, (32 - power2));
-					mono_bblock_insert_after_ins (bb, tmp1, tmp2);
-					NEW_BIALU (cfg, tmp3, OP_IADD, r1, r1, ins->sreg1);
-					mono_bblock_insert_after_ins (bb, tmp2, tmp3);
-					NEW_BIALU_IMM (cfg, tmp4, OP_ISHR_IMM, ins->dreg, r1, power2);
-					mono_bblock_insert_after_ins (bb, tmp3, tmp4);
-
-					NULLIFY_INS (ins);
-
-					// We allocated a new vreg, so need to restart
-					goto restart;
-				}
-				break;
-			}
 			}
 			
 			if (spec [MONO_INST_DEST] != ' ') {

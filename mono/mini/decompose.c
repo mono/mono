@@ -476,6 +476,56 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		}
 		break;
 #endif
+	case OP_IREM_UN_IMM:
+	case OP_IDIV_UN_IMM: {
+		int c = ins->inst_imm;
+		int power2 = mono_is_power_of_two (c);
+
+		if (power2 >= 0) {
+			if (ins->opcode == OP_IREM_UN_IMM) {
+				ins->opcode = OP_IAND_IMM;
+				ins->sreg2 = -1;
+				ins->inst_imm = (1 << power2) - 1;
+			} else if (ins->opcode == OP_IDIV_UN_IMM) {
+				ins->opcode = OP_ISHR_UN_IMM;
+				ins->sreg2 = -1;
+				ins->inst_imm = power2;
+			}
+		}
+		break;
+	}
+	case OP_IDIV_IMM: {
+		int c = ins->inst_imm;
+		int power2 = mono_is_power_of_two (c);
+		MonoInst *tmp1, *tmp2, *tmp3, *tmp4;
+
+		if (power2 == 1) {
+			int r1 = mono_alloc_ireg (cfg);
+
+			NEW_BIALU_IMM (cfg, tmp1, OP_ISHR_UN_IMM, r1, ins->sreg1, 31);
+			MONO_ADD_INS (cfg->cbb, tmp1);
+			NEW_BIALU (cfg, tmp2, OP_IADD, r1, r1, ins->sreg1);
+			MONO_ADD_INS (cfg->cbb, tmp2);
+			NEW_BIALU_IMM (cfg, tmp3, OP_ISHR_IMM, ins->dreg, r1, 1);
+			MONO_ADD_INS (cfg->cbb, tmp3);
+
+			NULLIFY_INS (ins);
+		} else if (power2 > 0 && power2 < 31) {
+			int r1 = mono_alloc_ireg (cfg);
+
+			NEW_BIALU_IMM (cfg, tmp1, OP_ISHR_IMM, r1, ins->sreg1, 31);
+			MONO_ADD_INS (cfg->cbb, tmp1);
+			NEW_BIALU_IMM (cfg, tmp2, OP_ISHR_UN_IMM, r1, r1, (32 - power2));
+			MONO_ADD_INS (cfg->cbb, tmp2);
+			NEW_BIALU (cfg, tmp3, OP_IADD, r1, r1, ins->sreg1);
+			MONO_ADD_INS (cfg->cbb, tmp3);
+			NEW_BIALU_IMM (cfg, tmp4, OP_ISHR_IMM, ins->dreg, r1, power2);
+			MONO_ADD_INS (cfg->cbb, tmp4);
+
+			NULLIFY_INS (ins);
+		}
+		break;
+	}
 
 #if SIZEOF_REGISTER == 8
 	case OP_LREM_IMM:
