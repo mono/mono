@@ -7275,11 +7275,11 @@ namespace Mono.CSharp
 		}
 
 		//
-		// Returns true for resolved `new S()'
+		// Returns true for resolved `new S()' when S does not declare parameterless constructor
 		//
-		public bool IsDefaultStruct {
+		public bool IsGeneratedStructConstructor {
 			get {
-				return arguments == null && type.IsStruct && GetType () == typeof (New);
+				return arguments == null && method == null && type.IsStruct && GetType () == typeof (New);
 			}
 		}
 
