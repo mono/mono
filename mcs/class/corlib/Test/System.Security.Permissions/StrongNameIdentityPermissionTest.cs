@@ -39,7 +39,6 @@ namespace MonoTests.System.Security.Permissions {
 
 		static byte[] ecma = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-#if NET_2_0
 		private StrongNameIdentityPermission GetUnion ()
 		{
 			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (ecma);
@@ -48,7 +47,6 @@ namespace MonoTests.System.Security.Permissions {
 			StrongNameIdentityPermission diffPk = new StrongNameIdentityPermission (blob2, "mono", new Version (1, 2, 3, 4));
 			return (StrongNameIdentityPermission)snip.Union (diffPk);
 		}
-#endif
 
 		[Test]
 		public void PermissionStateNone ()
@@ -59,27 +57,17 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual ("0.0", snip.Version.ToString (), "Version");
 
 			SecurityElement se = snip.ToXml ();
-#if NET_2_0
 			Assert.IsNull (se.Attribute ("Name"), "Xml-Name");
 			Assert.IsNull (se.Attribute ("AssemblyVersion"), "Xml-AssemblyVersion");
-#else
-			Assert.AreEqual (String.Empty, se.Attribute ("Name"), "Xml-Name");
-			Assert.AreEqual ("0.0", se.Attribute ("AssemblyVersion"), "Xml-AssemblyVersion");
-#endif
 			Assert.IsNull (se.Attribute ("PublicKeyBlob"), "Xml-PublicKeyBlob");
 
 			// because Name == String.Empty, which is illegal using the other constructor
 			StrongNameIdentityPermission copy = (StrongNameIdentityPermission) snip.Copy ();
 			Assert.AreEqual (String.Empty, copy.Name, "Copy-Name");
-#if NET_2_0
 			// Strangely once copied the Name becomes equals to String.Empty in 2.0 [FDBK19351]
 			Assert.IsNull (se.Attribute ("AssemblyVersion"), "Copy-Version");
-#else
-			Assert.AreEqual ("0.0", copy.Version.ToString (), "Copy-Version");
-#endif
 			Assert.IsNull (copy.PublicKey, "Copy-PublicKey");
 		}
-#if NET_2_0
 		[Test]
 		public void PermissionStateUnrestricted ()
 		{
@@ -98,14 +86,6 @@ namespace MonoTests.System.Security.Permissions {
 			// and they aren't equals to None
 			Assert.IsFalse (snip.Equals (new StrongNameIdentityPermission (PermissionState.None)), "Not Equals None");
 		}
-#else
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void PermissionStateUnrestricted ()
-		{
-			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (PermissionState.Unrestricted);
-		}
-#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionStateInvalid ()
@@ -142,9 +122,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void StrongNameIdentityPermission_NameEmpty ()
 		{
 			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (ecma);
@@ -204,20 +182,14 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Name_Empty ()
 		{
 			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (ecma);
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (blob, "mono", new Version (1, 2, 3, 4));
 			snip.Name = String.Empty;
-#if !NET_2_0
-			Assert.AreEqual (String.Empty, snip.Name, "Name");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void Name_Multiple_Get ()
@@ -235,7 +207,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (union.PublicKey, "PublicKey");
 			Assert.AreEqual ("0.0", union.Version.ToString (), "Version");
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -245,7 +216,6 @@ namespace MonoTests.System.Security.Permissions {
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (blob, "mono", new Version (1, 2, 3, 4));
 			snip.PublicKey = null;
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void PublicKey_Multiple_Get ()
@@ -263,7 +233,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNotNull (union.PublicKey, "PublicKey");
 			Assert.AreEqual ("0.0", union.Version.ToString (), "Version");
 		}
-#endif
 		[Test]
 		public void Version ()
 		{
@@ -275,7 +244,6 @@ namespace MonoTests.System.Security.Permissions {
 			snip.Version = new Version (1, 2, 3);
 			Assert.AreEqual ("1.2.3", snip.Version.ToString (), "Version-3");
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void Version_Multiple_Get ()
@@ -293,7 +261,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (union.PublicKey, "PublicKey");
 			Assert.AreEqual ("1.2.3.4", union.Version.ToString (), "Version");
 		}
-#endif
 		[Test]
 		public void Copy_NameEmpty ()
 		{
@@ -304,11 +271,7 @@ namespace MonoTests.System.Security.Permissions {
 			// because Name == String.Empty, which is illegal using the other constructor
 			// but (somewhat) required to copy the teo other informations
 			StrongNameIdentityPermission copy = (StrongNameIdentityPermission)snip.Copy ();
-#if NET_2_0
 			Assert.IsTrue (copy.Equals (snip), "Equals");
-#else
-			Assert.AreEqual (copy.ToXml ().ToString (), snip.ToXml ().ToString (), "Equals-XML");
-#endif
 		}
 
 		private void Compare (StrongNameIdentityPermission p1, StrongNameIdentityPermission p2, string prefix)
@@ -330,11 +293,7 @@ namespace MonoTests.System.Security.Permissions {
 
 			StrongNameIdentityPermission empty = new StrongNameIdentityPermission (PermissionState.None);
 			intersect = (StrongNameIdentityPermission)snip.Intersect (empty);
-#if NET_2_0
 			Assert.IsNull (intersect, "snip N empty");
-#else
-			Compare (empty, intersect, "snip U empty");
-#endif
 			intersect = (StrongNameIdentityPermission)snip.Intersect (snip);
 			Compare (snip, intersect, "snip U snip");
 
@@ -345,9 +304,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Intersect_DifferentPermissions ()
 		{
 			StrongNameIdentityPermission a = new StrongNameIdentityPermission (PermissionState.None);
@@ -415,17 +372,9 @@ namespace MonoTests.System.Security.Permissions {
 
 			StrongNameIdentityPermission samePk = new StrongNameIdentityPermission (blob, null, null);
 			union = (StrongNameIdentityPermission)snip.Union (samePk);
-#if !NET_2_0
-			// can't compare the properties with multiple entries
-			Compare (snip, union, "snip U samePk");
-#endif
 			Assert.IsTrue (snip.IsSubsetOf (union), "snip.IsSubsetOf (union)");
 
 			union = (StrongNameIdentityPermission)samePk.Union (snip);
-#if !NET_2_0
-			// can't compare the properties with multiple entries
-			Compare (snip, union, "samePk U snip");
-#endif
 			Assert.IsTrue (samePk.IsSubsetOf (union), "snip.IsSubsetOf (union)");
 		}
 
@@ -437,7 +386,6 @@ namespace MonoTests.System.Security.Permissions {
 			StrongNamePublicKeyBlob blob2 = new StrongNamePublicKeyBlob (new byte [16]);
 			StrongNameIdentityPermission diffPk = new StrongNameIdentityPermission (blob2, "mono", new Version (1, 2, 3, 4));
 			StrongNameIdentityPermission result = (StrongNameIdentityPermission) snip.Union (diffPk);
-#if NET_2_0
 			Assert.IsNotNull (result, "DifferentPk");
 			// new XML format is used to contain more than one site
 			SecurityElement se = result.ToXml ();
@@ -446,9 +394,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual ("00000000000000000000000000000000", (se.Children [1] as SecurityElement).Attribute ("PublicKeyBlob"), "Blob#2");
 			// strangely it is still versioned as 'version="1"'.
 			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
-#else
-			Assert.IsNull (result, "DifferentPk");
-#endif
 		}
 
 		[Test]
@@ -458,7 +403,6 @@ namespace MonoTests.System.Security.Permissions {
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (blob, "mono", new Version (1, 2, 3, 4));
 			StrongNameIdentityPermission diffName = new StrongNameIdentityPermission (blob, "novell", null);
 			StrongNameIdentityPermission result = (StrongNameIdentityPermission) snip.Union (diffName);
-#if NET_2_0
 			Assert.IsNotNull (result, "DifferentName");
 			// new XML format is used to contain more than one site
 			SecurityElement se = result.ToXml ();
@@ -467,9 +411,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual ("novell", (se.Children [1] as SecurityElement).Attribute ("Name"), "Name#2");
 			// strangely it is still versioned as 'version="1"'.
 			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
-#else
-			Assert.IsNull (result, "DifferentName");
-#endif
 		}
 
 		[Test]
@@ -479,7 +420,6 @@ namespace MonoTests.System.Security.Permissions {
 			StrongNameIdentityPermission snip = new StrongNameIdentityPermission (blob, "mono", new Version (1, 2, 3, 4));
 			StrongNameIdentityPermission diffVersion = new StrongNameIdentityPermission (blob, null, new Version (1, 2));
 			StrongNameIdentityPermission result = (StrongNameIdentityPermission) snip.Union (diffVersion);
-#if NET_2_0
 			Assert.IsNotNull (result, "DifferentVersion");
 			// new XML format is used to contain more than one site
 			SecurityElement se = result.ToXml ();
@@ -488,9 +428,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual ("1.2", (se.Children [1] as SecurityElement).Attribute ("AssemblyVersion"), "AssemblyVersion#2");
 			// strangely it is still versioned as 'version="1"'.
 			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
-#else
-			Assert.IsNull (result, "DifferentVersion");
-#endif
 		}
 
 		[Test]

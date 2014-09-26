@@ -168,9 +168,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category ("NotDotNet")] // MS 1.x throws an ArgumentNullException in this case
-#endif
 		public void Stream_Unlocked ()
 		{
 			try {
@@ -195,9 +192,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category ("NotDotNet")] // MS 1.x throws an ArgumentNullException in this case
-#endif
 		public void Stream_Locked ()
 		{
 			Image img = null;
@@ -213,11 +207,7 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]	// http://bugzilla.ximian.com/show_bug.cgi?id=80558
-#else
-		[ExpectedException (typeof (InvalidOperationException))]
-#endif
 		public void XmlSerialize ()
 		{
 			new XmlSerializer (typeof (Image));
@@ -230,9 +220,7 @@ namespace MonoTests.System.Drawing{
 			// as Image
 			Assert.AreEqual (327683, img.Flags, "Flags");
 			Assert.IsTrue (img.RawFormat.Equals (ImageFormat.Wmf), "Wmf");
-#if NET_2_0
 			Assert.IsNull (img.Tag, "Tag");
-#endif
 		}
 
 		[Test]
@@ -274,9 +262,7 @@ namespace MonoTests.System.Drawing{
 			// as Image
 			Assert.AreEqual (327683, img.Flags, "Flags");
 			Assert.IsTrue (img.RawFormat.Equals (ImageFormat.Emf), "Emf");
-#if NET_2_0
 			Assert.IsNull (img.Tag, "Tag");
-#endif
 		}
 
 		[Test]
@@ -383,9 +369,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (InvalidOperationException))]
-#endif
 		public void XmlSerialization ()
 		{
 			new XmlSerializer (typeof (Image));

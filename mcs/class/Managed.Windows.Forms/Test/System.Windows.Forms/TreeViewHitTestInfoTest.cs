@@ -14,7 +14,6 @@ using System.Runtime.Remoting;
 
 using NUnit.Framework;
 
-#if NET_2_0
 namespace MonoTests.System.Windows.Forms {
 
 	[TestFixture]
@@ -51,4 +50,3 @@ namespace MonoTests.System.Windows.Forms {
 	}
 
 }
-#endif

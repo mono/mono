@@ -51,11 +51,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void LargeChangeTest ()
 		{
 			TrackBar myTrackBar = new TrackBar ();
@@ -63,11 +59,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void SmallChangeTest ()
 		{
 			TrackBar myTrackBar = new TrackBar ();

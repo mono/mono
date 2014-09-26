@@ -23,7 +23,6 @@
 //	Rolf Bjarne Kvinge  (RKvinge@novell.com)
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -53,4 +52,3 @@ namespace MonoTests.System.Windows.Forms.Layout
 	}
 }
 	
-#endif

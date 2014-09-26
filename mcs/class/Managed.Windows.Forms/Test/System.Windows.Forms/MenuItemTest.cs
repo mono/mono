@@ -234,10 +234,8 @@ namespace MonoTests.System.Windows.Forms
 			mi1.ShowShortcut = true;
 			mi1.Text = "text1";
 			mi1.Visible = true;
-#if NET_2_0
 			mi1.Name = "name1";
 			mi1.Tag = "tag1";
-#endif
 			
 			mi2 = mi1.CloneMenu();
 			
@@ -255,10 +253,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(mi1.Text, mi2.Text, "Text #1");
 			Assert.AreEqual(mi1.Visible, mi2.Visible, "Visible #1");
 			
-#if NET_2_0
 			Assert.AreEqual(mi1.Name, mi2.Name, "Name #1");
 			Assert.AreEqual(mi1.Tag, mi2.Tag, "Tag #1");
-#endif
 			
 			mi1.BarBreak = false;
 			mi1.Break = false;
@@ -274,10 +270,8 @@ namespace MonoTests.System.Windows.Forms
 			mi1.Text = "text2";
 			mi1.Visible = false;
 			
-#if NET_2_0
 			mi1.Name = "name2";
 			mi1.Tag = "tag2";
-#endif
 			
 			mi2 = mi1.CloneMenu();
 			
@@ -294,10 +288,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(mi1.ShowShortcut, mi2.ShowShortcut, "ShowShortcut #2");
 			Assert.AreEqual(mi1.Text, mi2.Text, "Text #2");
 			Assert.AreEqual(mi1.Visible, mi2.Visible, "Visible #2");
-#if NET_2_0
 			Assert.AreEqual(mi1.Name, mi2.Name, "Name #2");
 			Assert.AreEqual(mi1.Tag, mi2.Tag, "Tag #2");
-#endif
 		}
 	
 		[Test]

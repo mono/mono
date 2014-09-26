@@ -9,7 +9,6 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class NotifyIconTest : TestHelper
 	{
-#if NET_2_0
 		[Test]
 		public void PropertyTag ()
 		{
@@ -46,6 +45,5 @@ namespace MonoTests.System.Windows.Forms
 			ni.Visible = true;
 			ni.ShowBalloonTip (1);
 		}
-#endif
 	}
 }

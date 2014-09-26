@@ -5,7 +5,6 @@
 // (C) Carlo Kok
 // 
 
-#if NET_2_0
 using NUnit.Framework;
 using System;
 using System.Globalization;
@@ -222,4 +221,3 @@ namespace MonoTests.System.Collections.ObjectModel
 		}
 	}
 }
-#endif

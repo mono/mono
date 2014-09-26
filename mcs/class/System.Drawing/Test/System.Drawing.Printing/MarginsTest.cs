@@ -49,10 +49,8 @@ namespace MonoTests.System.Drawing.Printing {
 			Assert.AreEqual ("[Margins Left=100 Right=100 Top=100 Bottom=100]", m.ToString (), "ToString");
 			Margins clone = (Margins) m.Clone ();
 			Assert.AreEqual (m, clone, "clone");
-#if NET_2_0
 			Assert.IsTrue (m == clone, "==");
 			Assert.IsFalse (m != clone, "!=");
-#endif
 		}
 
 		[Test]
@@ -68,10 +66,8 @@ namespace MonoTests.System.Drawing.Printing {
 			// bottom smaller than top
 			Margins m3 = new Margins (10, 20, Int32.MaxValue, 0);
 			Assert.IsFalse (m2.GetHashCode () == m3.GetHashCode (), "GetHashCode");
-#if NET_2_0
 			Assert.IsTrue (m1 != m2, "m1 != m2");
 			Assert.IsFalse (m1 == m2, "m1 == m2");
-#endif
 		}
 
 		[Test]
@@ -115,10 +111,8 @@ namespace MonoTests.System.Drawing.Printing {
 		{
 			Margins m1 = null;
 			Margins m2 = null;
-#if NET_2_0
 			Assert.IsTrue (m1 == m2, "null==null");
 			Assert.IsFalse (m1 != m2, "null!=null");
-#endif
 		}
 	}
 }

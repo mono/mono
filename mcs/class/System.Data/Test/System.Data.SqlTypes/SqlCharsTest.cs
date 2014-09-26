@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -37,9 +36,7 @@ using System.Data.SqlTypes;
 using System.Threading;
 using System.Globalization;
 
-#if NET_2_0
 using System.Xml.Serialization;
-#endif 
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -540,4 +537,3 @@ namespace MonoTests.System.Data.SqlTypes
 	}
 }
 
-#endif

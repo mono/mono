@@ -37,7 +37,6 @@ namespace MonoTests.System.Web.Security
 			Assert.AreEqual ("/", FormsAuthentication.FormsCookiePath, "FormsCookiePath");
 			Assert.IsFalse (FormsAuthentication.RequireSSL, "RequireSSL");
 			Assert.IsTrue (FormsAuthentication.SlidingExpiration, "SlidingExpiration");
-#if NET_2_0
 			// MSDN: The default is an empty string ("") but null.
 			Assert.AreEqual ("", FormsAuthentication.CookieDomain, "CookieDomain");
 			Assert.AreEqual (HttpCookieMode.UseDeviceProfile, FormsAuthentication.CookieMode, "CookieMode");
@@ -45,7 +44,6 @@ namespace MonoTests.System.Web.Security
 			Assert.AreEqual ("/NunitWeb/default.aspx", FormsAuthentication.DefaultUrl);
 			Assert.IsFalse (FormsAuthentication.EnableCrossAppRedirects, "EnableCrossAppRedirects");
 			Assert.AreEqual ("/NunitWeb/login.aspx", FormsAuthentication.LoginUrl, "LoginUrl");
-#endif
 		}
 
 		[Test]
@@ -108,7 +106,6 @@ namespace MonoTests.System.Web.Security
 		{
 			FormsAuthentication.HashPasswordForStoringInConfigFile ("mono", "SHA256");
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void RedirectToLoginPage ()
@@ -139,7 +136,6 @@ namespace MonoTests.System.Web.Security
 			// not throwing
 			Assert.IsFalse (FormsAuthentication.Authenticate ("user", "password"), "string,string");
 		}
-#endif
 
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()

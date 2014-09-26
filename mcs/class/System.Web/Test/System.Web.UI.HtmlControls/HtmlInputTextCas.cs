@@ -55,10 +55,8 @@ namespace MonoCasTests.System.Web.UI.HtmlControls {
 			unit.RenderAttributes_Password ();
 			unit.IPostBackDataHandler_RaisePostBackEvent ();
 			unit.IPostBackDataHandler_LoadPostData ();
-#if NET_2_0
 			unit.RaisePostBackEvent ();
 			unit.LoadPostData ();
-#endif
 		}
 
 		public override Type Type {

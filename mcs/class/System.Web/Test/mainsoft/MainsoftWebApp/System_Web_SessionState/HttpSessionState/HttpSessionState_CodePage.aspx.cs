@@ -78,7 +78,6 @@ namespace GHTTests.System_Web_dll.System_Web_SessionState
 			 this.GHTSubTestAddResult(this.Session.CodePage.ToString());
 			 this.GHTSubTestExpectedExceptionNotCaught("ArgumentException");
 		 }
-#if NET_2_0
 		 catch (NotSupportedException exception7)
 		 {
 			 // ProjectData.SetProjectError(exception7);
@@ -86,7 +85,6 @@ namespace GHTTests.System_Web_dll.System_Web_SessionState
 			 this.GHTSubTestExpectedExceptionCaught(exception2);
 			 // ProjectData.ClearProjectError();
 		 }
-#endif
 		 catch (ArgumentException exception7)
 		 {
 			 // ProjectData.SetProjectError(exception7);

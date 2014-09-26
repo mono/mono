@@ -70,10 +70,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual(string.Empty, e.CancelText, "D2");
 			Assert.AreEqual(string.Empty, e.EditText, "D3");
 			Assert.AreEqual(string.Empty, e.UpdateText, "D4");
-#if NET_2_0
 			Assert.AreEqual (true, e.CausesValidation, "CausesValidation");
 			Assert.AreEqual (string.Empty, e.ValidationGroup, "ValidationGroup");
-#endif
 		}
 
 		[Test]
@@ -93,12 +91,10 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			e.UpdateText = "Update? What update?";
 			Assert.AreEqual("Update? What update?", e.UpdateText, "D4");
-#if NET_2_0
 			e.CausesValidation = false;
 			Assert.AreEqual (false, e.CausesValidation, "CausesValidation");
 			e.ValidationGroup = "test";
 			Assert.AreEqual ("test", e.ValidationGroup, "ValidationGroup");
-#endif
 		}
 
 		private string ControlMarkup(Control c) {
@@ -349,7 +345,6 @@ namespace MonoTests.System.Web.UI.WebControls
 				"</tr></table>", markup, "I2");
 		}
 
-#if NET_2_0
 		[Test]
 		[Category ("NunitWeb")]
 		public void Validation_ValidatingValid () 
@@ -615,11 +610,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			private Control[] templateControls;
 		}
-#endif
 	}
 }
 
-#if NET_2_0
 #region MyObjectDS
 public class MyObjectDS
 {
@@ -650,4 +643,3 @@ public class MyObjectDS
 	}
 }
 #endregion
-#endif

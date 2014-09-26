@@ -50,13 +50,11 @@ namespace MonoTests.System.Windows.Forms
 			clickRaised = true;
 		}
 		
-#if NET_2_0
 		[Test]
 		public void DefaultMarginTest ()
 		{
 			Assert.AreEqual (DefaultMargin.All, 9, "#01");
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -140,7 +138,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				myMonthCal1.MaxSelectionCount = 0; // value is less than 1
 				Assert.Fail ("#A1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
@@ -148,14 +145,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("MaxSelectionCount", ex.ParamName, "#A5");
 				Assert.IsNull (ex.InnerException, "#A6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNotNull (ex.Message, "#A3");
-				Assert.IsNull (ex.ParamName, "#A4");
-				Assert.IsNull (ex.InnerException, "#A5");
-			}
-#endif
 		}
 
 		[Test]
@@ -166,7 +155,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				myMonthCal1.MaxDate = new DateTime (1752, 1, 1, 0, 0, 0, 0); // value is less than min date (01/01/1753)
 				Assert.Fail ("#A1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
@@ -174,14 +162,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("MaxDate", ex.ParamName, "#A5");
 				Assert.IsNull (ex.InnerException, "#A6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNotNull (ex.Message, "#A3");
-				Assert.IsNull (ex.ParamName, "#A4");
-				Assert.IsNull (ex.InnerException, "#A5");
-			}
-#endif
 		}
 
 		[Test]
@@ -192,7 +172,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				myMonthCal1.MinDate = new DateTime (1752, 1, 1, 0, 0, 0, 0); // Date earlier than 01/01/1753
 				Assert.Fail ("#A1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
@@ -200,19 +179,10 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("MinDate", ex.ParamName, "#A5");
 				Assert.IsNull (ex.InnerException, "#A6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNotNull (ex.Message, "#A3");
-				Assert.IsNull (ex.ParamName, "#A4");
-				Assert.IsNull (ex.InnerException, "#A5");
-			}
-#endif
 
 			try {
 				myMonthCal1.MinDate = new DateTime (9999, 12, 31, 0, 0, 0, 0); // Date greater than max date
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
@@ -220,14 +190,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("MinDate", ex.ParamName, "#B5");
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNotNull (ex.Message, "#B3");
-				Assert.IsNull (ex.ParamName, "#B4");
-				Assert.IsNull (ex.InnerException, "#B5");
-			}
-#endif
 		}
 
 		[Test]

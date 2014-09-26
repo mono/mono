@@ -177,7 +177,6 @@ namespace MonoTests.System.Net
 			try {
 				p.IsBypassed (null);
 				Assert.Fail ("#A1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
@@ -185,16 +184,11 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("host", ex.ParamName, "#A5");
 				Assert.IsNull (ex.InnerException, "#A6");
 			}
-#else
-			} catch (NullReferenceException) {
-			}
-#endif
 
 			p = new WebProxy ((Uri) null);
 			try {
 				p.IsBypassed (null);
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
@@ -202,16 +196,11 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("host", ex.ParamName, "#B5");
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
-#else
-			} catch (NullReferenceException) {
-			}
-#endif
 
 			p = new WebProxy ((Uri) null, true);
 			try {
 				p.IsBypassed (null);
 				Assert.Fail ("#C1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");
 				Assert.IsNotNull (ex.Message, "#C3");
@@ -219,10 +208,6 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("host", ex.ParamName, "#C5");
 				Assert.IsNull (ex.InnerException, "#C6");
 			}
-#else
-			} catch (NullReferenceException) {
-			}
-#endif
 		}
 
 		[Test]
@@ -233,11 +218,7 @@ namespace MonoTests.System.Net
 
 			WebProxy proxy = new WebProxy ("proxy.ximian.com");
 			((ISerializable) proxy).GetObjectData (si, new StreamingContext ());
-#if NET_2_0
 			Assert.AreEqual (4, si.MemberCount, "#A1");
-#else
-			Assert.AreEqual (3, si.MemberCount, "#A1");
-#endif
 			int i = 0;
 			foreach (SerializationEntry entry in si) {
 				Assert.IsNotNull (entry.Name, "#A2:" + i);
@@ -260,14 +241,12 @@ namespace MonoTests.System.Net
 					Assert.AreEqual (typeof (object), entry.ObjectType, "#A5:" + i);
 					Assert.IsNull (entry.Value, "#A6:" + i);
 					break;
-#if NET_2_0
 				case 3:
 					Assert.AreEqual ("_UseDefaultCredentials", entry.Name, "#A4:" + i);
 					Assert.AreEqual (typeof (bool), entry.ObjectType, "#A5:" + i);
 					Assert.IsNotNull (entry.Value, "#A6:" + i);
 					Assert.AreEqual (false, entry.Value, "#A7:" + i);
 					break;
-#endif
 				}
 				i++;
 			}

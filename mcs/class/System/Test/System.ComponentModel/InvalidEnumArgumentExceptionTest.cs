@@ -54,7 +54,6 @@ namespace MonoTests.System.ComponentModel
 
 		// TODO: ctor (SerializationInfo, StreamingContext)
 
-#if NET_2_0
 		[Test] // ctor (string, Exception)
 		public void Constructor3 ()
 		{
@@ -79,7 +78,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsTrue (iea.Message.IndexOf (typeof (InvalidEnumArgumentException).FullName) != -1, "#C3");
 			Assert.IsNull (iea.ParamName, "#C4");
 		}
-#endif
 
 		[Test] // ctor (string, int, System.Type)
 		public void Constructor4 ()
@@ -92,15 +90,9 @@ namespace MonoTests.System.ComponentModel
 			iea = new InvalidEnumArgumentException ("arg", 667666, enumClass);
 			Assert.IsNull (iea.InnerException, "#A1");
 			Assert.IsNotNull (iea.Message, "#A2");
-#if NET_2_0
 			Assert.IsTrue (iea.Message.IndexOf ("'arg'") != -1, "#A3");
 			Assert.IsTrue (iea.Message.IndexOf ("(" + 667666.ToString (CultureInfo.CurrentCulture) + ")") != -1, "#A4");
 			Assert.IsTrue (iea.Message.IndexOf ("'" + enumClass.Name + "'") != -1, "#A5");
-#else
-			Assert.IsTrue (iea.Message.IndexOf ("arg") != -1, "#A3");
-			Assert.IsTrue (iea.Message.IndexOf (667666.ToString (CultureInfo.CurrentCulture)) != -1, "#A4");
-			Assert.IsTrue (iea.Message.IndexOf (enumClass.Name) != -1, "#A5");
-#endif
 			Assert.IsNotNull (iea.ParamName, "#A6");
 			Assert.AreEqual ("arg", iea.ParamName, "#A7");
 
@@ -109,15 +101,9 @@ namespace MonoTests.System.ComponentModel
 			iea = new InvalidEnumArgumentException (string.Empty, 0, enumClass);
 			Assert.IsNull (iea.InnerException, "#B1");
 			Assert.IsNotNull (iea.Message, "#B2");
-#if NET_2_0
 			Assert.IsTrue (iea.Message.IndexOf ("''") != -1, "#B3");
 			Assert.IsTrue (iea.Message.IndexOf ("(" + 0.ToString (CultureInfo.CurrentCulture) + ")") != -1, "#B4");
 			Assert.IsTrue (iea.Message.IndexOf ("'" + enumClass.Name + "'") != -1, "#B5");
-#else
-			Assert.IsTrue (iea.Message.IndexOf ("  ") != -1, "#B3");
-			Assert.IsTrue (iea.Message.IndexOf (0.ToString (CultureInfo.CurrentCulture)) != -1, "#B4");
-			Assert.IsTrue (iea.Message.IndexOf (enumClass.Name) != -1, "#B5");
-#endif
 			Assert.IsNotNull (iea.ParamName, "#B6");
 			Assert.AreEqual (string.Empty, iea.ParamName, "#B7");
 
@@ -126,15 +112,9 @@ namespace MonoTests.System.ComponentModel
 			iea = new InvalidEnumArgumentException ((string) null, -56776, enumClass);
 			Assert.IsNull (iea.InnerException, "#C1");
 			Assert.IsNotNull (iea.Message, "#C2");
-#if NET_2_0
 			Assert.IsTrue (iea.Message.IndexOf ("''") != -1, "#C3");
 			Assert.IsTrue (iea.Message.IndexOf ("(" + (-56776).ToString (CultureInfo.CurrentCulture) + ")") != -1, "#C4");
 			Assert.IsTrue (iea.Message.IndexOf ("'" + enumClass.Name + "'") != -1, "#C5");
-#else
-			Assert.IsTrue (iea.Message.IndexOf ("  ") != -1, "#C3");
-			Assert.IsTrue (iea.Message.IndexOf ((-56776).ToString (CultureInfo.CurrentCulture)) != -1, "#C4");
-			Assert.IsTrue (iea.Message.IndexOf (enumClass.Name) != -1, "#C5");
-#endif
 			Assert.IsNull (iea.ParamName, "#C6");
 
 			// The value of argument '' (0) is invalid for Enum type
@@ -142,15 +122,9 @@ namespace MonoTests.System.ComponentModel
 			iea = new InvalidEnumArgumentException ((string) null, 0, enumClass);
 			Assert.IsNull (iea.InnerException, "#D1");
 			Assert.IsNotNull (iea.Message, "#D2");
-#if NET_2_0
 			Assert.IsTrue (iea.Message.IndexOf ("''") != -1, "#D3");
 			Assert.IsTrue (iea.Message.IndexOf ("(" + 0.ToString (CultureInfo.CurrentCulture) + ")") != -1, "#D4");
 			Assert.IsTrue (iea.Message.IndexOf ("'" + enumClass.Name + "'") != -1, "#D5");
-#else
-			Assert.IsTrue (iea.Message.IndexOf ("  ") != -1, "#D3");
-			Assert.IsTrue (iea.Message.IndexOf (0.ToString (CultureInfo.CurrentCulture)) != -1, "#D4");
-			Assert.IsTrue (iea.Message.IndexOf (enumClass.Name) != -1, "#D5");
-#endif
 			Assert.IsNull (iea.ParamName, "#D6");
 		}
 

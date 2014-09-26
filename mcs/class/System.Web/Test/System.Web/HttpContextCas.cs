@@ -95,12 +95,10 @@ namespace MonoCasTests.System.Web {
 			Assert.IsNotNull (context.Trace, "Trace");
 			// note: only User setter is protected
 			Assert.IsNull (context.User, "User");
-#if NET_2_0
 			Assert.IsNotNull (context.Application, "Application");
 			Assert.IsNotNull (context.CurrentHandler, "CurrentHandler");
 			Assert.IsNull (context.PreviousHandler, "PreviousHandler");
 //			Assert.IsNull (context.Profile, "Profile");
-#endif
 			// static properties
 			Assert.IsNull (HttpContext.Current, "Current");
 		}
@@ -189,7 +187,6 @@ namespace MonoCasTests.System.Web {
 			catch (ArgumentNullException) {
 				// mono
 			}
-#if NET_2_0
 			context.GetSection (String.Empty);
 
 			try {
@@ -201,7 +198,6 @@ namespace MonoCasTests.System.Web {
 			catch (NotImplementedException) {
 				// mono
 			}
-#endif
 		}
 
 		[Test]
@@ -209,7 +205,6 @@ namespace MonoCasTests.System.Web {
 		public void StaticMethods_Deny_Unrestricted ()
 		{
 			HttpContext.GetAppConfig (String.Empty);
-#if NET_2_0
 			HttpContext.GetGlobalResourceObject (String.Empty, String.Empty);
 			HttpContext.GetGlobalResourceObject (String.Empty, String.Empty, CultureInfo.InvariantCulture);
 			try {
@@ -228,7 +223,6 @@ namespace MonoCasTests.System.Web {
 			}
 			catch (NullReferenceException) {
 			}
-#endif
 		}
 
 		// LinkDemand

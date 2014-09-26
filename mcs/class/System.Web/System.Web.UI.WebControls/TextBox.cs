@@ -370,7 +370,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 	
-#if NET_2_0 && HAVE_CONTROL_ADAPTERS
+#if HAVE_CONTROL_ADAPTERS
 		protected virtual new
 #else		
 		protected override

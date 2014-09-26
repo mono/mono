@@ -36,10 +36,8 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-#if NET_2_0
 using MonoTests.stand_alone.WebHarness;
 using MonoTests.SystemWeb.Framework;
-#endif
 
 namespace MonoTests.System.Web.UI.WebControls 
 {
@@ -83,7 +81,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			return IsTrackingViewState;
 		}
-#if NET_2_0
 		public HtmlTextWriterTag GetTagKey ()
 		{
 			return TagKey;
@@ -104,7 +101,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.VerifyMultiSelect ();
 		}
 
-#endif
 	}
 
 	[TestFixture]
@@ -142,7 +138,6 @@ namespace MonoTests.System.Web.UI.WebControls
 				base.Render (writer);
 				return writer.InnerWriter.ToString ();
 			}
-#if NET_2_0
 			ArrayList Databound ()
 			{
 				ArrayList list = new ArrayList ();
@@ -180,18 +175,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				base.SetPostDataSelection(selectedItem);
 			}
-#endif
 		}
 		#endregion
 		private Hashtable changed = new Hashtable ();
 
-#if NET_2_0
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
 			WebTest.CopyResource (GetType (), "ListControlPage.aspx", "ListControlPage.aspx");
 		}
-#endif
 
 		[Test]
 		public void DefaultProperties ()
@@ -208,15 +200,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (p.SelectedIndex, -1,"A8");
 			Assert.AreEqual (p.SelectedItem, null, "A9");
 			Assert.AreEqual (p.SelectedValue, String.Empty, "A10");
-#if NET_2_0
 			Assert.IsFalse (p.AppendDataBoundItems, "A11");
 			Assert.AreEqual (p.Text, "", "A12");
 			Assert.AreEqual (p.GetTagKey(), HtmlTextWriterTag.Select, "A13");
 			Assert.AreEqual (false, p.AppendDataBoundItems, "A14");
 			Assert.AreEqual (false, p.CausesValidation, "A15");
-#endif
 		}
-#if NET_2_0
 
 		[Test]
 		public void AddAttributesToRender ()
@@ -403,7 +392,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			#endregion
 			HtmlDiff.AssertAreEqual (orig, html, "MultipleSelect#3");
 		}
-#endif
 
 		[Test]
 		public void CleanProperties ()
@@ -490,7 +478,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (p.Items.Count, 2, "A9");
 		}
 
-#if NET_2_0
 		[Test]
 		// Tests Save/Load ControlState
 		public void ControlState ()
@@ -511,7 +498,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual (-1, b.SelectedIndex, "A1");
 		}
-#endif
 
 		[Test]
 		// Tests Save/Load/Track ViewState
@@ -585,10 +571,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.DataTextFormatString = "DataTextFormatString";
 			p.DataValueField = "DataValueField";
 			p.SelectedIndex = 1;
-#if NET_2_0
 			p.AppendDataBoundItems = true;
 			p.Text = "Text";
-#endif
 
 			Assert.AreEqual (p.ViewStateValue ("AutoPostBack"), false, "A1");
 			Assert.AreEqual (p.ViewStateValue ("DataMember"), "DataMember", "A2");
@@ -599,17 +583,13 @@ namespace MonoTests.System.Web.UI.WebControls
 					"DataTextFormatString", "A5");
 			Assert.AreEqual (p.ViewStateValue ("DataValueField"), "DataValueField", "A6");
 
-#if NET_2_0
 			Assert.AreEqual (p.ViewStateValue ("AppendDataBoundItems"), true, "A7");
-#endif
 
 			// None of these are saved
 			Assert.AreEqual (p.ViewStateValue ("SelectedIndex"), null, "A8");
 			Assert.AreEqual (p.ViewStateValue ("SelectedItem"), null, "A9");
 			Assert.AreEqual (p.ViewStateValue ("SelectedValue"), null, "A10");
-#if NET_2_0
 			Assert.AreEqual (p.ViewStateValue ("Text"), null, "A11");
-#endif
 
 		}
 
@@ -649,18 +629,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#endif
 		public void ItemsTooHigh ()
 		{
 			ListControlPoker l = new ListControlPoker ();
 
 			l.Items.Add ("foo");
 			l.SelectedIndex = 1;
-#if NET_2_0
 			Assert.AreEqual (-1, l.SelectedIndex, "#01");
-#endif
 		}
 
 		[Test]
@@ -760,7 +735,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (3, p.Items.Count, "#01");
 		}
 
-#if NET_2_0
 		[Test]
 		public void DataBinding7 () {
 			ListControlPoker p = new ListControlPoker ();
@@ -888,7 +862,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("5", p.SelectedValue, "#07");
 			Assert.AreEqual (4, p.SelectedIndex, "#08");
 		}
-#endif
 
 		class Data 
 		{
@@ -999,9 +972,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#endif
 		public void ValueNotFound1 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -1021,7 +991,6 @@ namespace MonoTests.System.Web.UI.WebControls
 	    Assert.AreEqual(null, p.SelectedItem, "SelectedItem");
 	    Assert.AreEqual(-1, p.SelectedIndex, "SelectedIndex");
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (HttpException))]
 		public void VerifyMultiSelect_Exception ()
@@ -1064,7 +1033,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest.Unload ();
 		}
-#endif
 
 	}
 }

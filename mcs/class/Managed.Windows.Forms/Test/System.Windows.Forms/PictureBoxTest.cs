@@ -42,7 +42,6 @@ namespace MonoTests.System.Windows.Forms
 			myForm.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
 		public void ImageLocation_Async ()
@@ -236,7 +235,6 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
-#endif
 
 		[Test]
 		public void ImagePropertyTest ()
@@ -255,7 +253,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (myPicBox.Image, "#6");
 		}
 
-#if NET_2_0
 		[Test] // Load ()
 		public void Load_ImageLocation_Empty ()
 		{
@@ -387,7 +384,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
-#endif
 
 		[Test]
 		public void ToStringMethodTest ()
@@ -396,7 +392,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("System.Windows.Forms.PictureBox, SizeMode: Normal", myPicBox.ToString (), "#T1");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Defaults ()
 		{
@@ -410,7 +405,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, pb.AutoSize, "A4");
 			
 		}
-#endif
 
 		[TestFixture]
 		public class PictureBoxSizeModeEventClass : TestHelper

@@ -109,13 +109,11 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.StaticConstructors), "#20");
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.TryCatchStatements), "#21");
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.Win32Resources), "#22");
-#if NET_2_0
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.DeclareIndexerProperties), "#23");
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.GenericTypeDeclaration), "#24");
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.GenericTypeReference), "#25");
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.PartialTypes), "#26");
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.Resources), "#27");
-#endif
 		}
 
 		[Test]
@@ -211,9 +209,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			options.GenerateExecutable = false;
 			options.GenerateInMemory = true;
 			options.TempFiles = new TempFileCollection (_tempDir);
-#if NET_2_0
 			options.EmbeddedResources.Add (sourceFile);
-#endif
 
 			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
 			CompilerResults results = compiler.CompileAssemblyFromFile (options,
@@ -234,14 +230,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (1, tempFiles.Length, "#5");
 			Assert.AreEqual (sourceFile, tempFiles[0], "#6");
 
-#if NET_2_0
 			string[] resources = compiledAssembly.GetManifestResourceNames();
 			Assert.IsNotNull (resources, "#7");
 			Assert.AreEqual (1, resources.Length, "#8");
 			Assert.AreEqual ("file.vb", resources[0], "#9");
 			Assert.IsNull (compiledAssembly.GetFile ("file.vb"), "#10");
 			Assert.IsNotNull (compiledAssembly.GetManifestResourceStream  ("file.vb"), "#11");
-#endif
 		}
 
 		[Test]
@@ -272,10 +266,8 @@ namespace MonoTests.Microsoft.VisualBasic
 			options.GenerateInMemory = true;
 			options.OutputAssembly = string.Empty;
 			options.TempFiles = new TempFileCollection (_tempDir);
-#if NET_2_0
 			options.EmbeddedResources.Add (sourceFile1);
 			options.LinkedResources.Add (sourceFile2);
-#endif
 
 			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
 			CompilerResults results = compiler.CompileAssemblyFromFileBatch (options,
@@ -303,7 +295,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.IsTrue (File.Exists (sourceFile1), "#C2");
 			Assert.IsTrue (File.Exists (sourceFile2), "#C3");
 
-#if NET_2_0
 			string[] resources = compiledAssembly.GetManifestResourceNames();
 			Assert.IsNotNull (resources, "#D1");
 			Assert.AreEqual (2, resources.Length, "#D2");
@@ -334,7 +325,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual ("file2.vb", info.FileName, "#F6");
 			Assert.IsNull (info.ReferencedAssembly, "#F7");
 			Assert.AreEqual ((ResourceLocation) 0, info.ResourceLocation, "#F8");
-#endif
 		}
 
 		[Test]
@@ -364,10 +354,8 @@ namespace MonoTests.Microsoft.VisualBasic
 			options.GenerateExecutable = false;
 			options.GenerateInMemory = true;
 			options.TempFiles = new TempFileCollection (_tempDir);
-#if NET_2_0
 			options.EmbeddedResources.Add (sourceFile1);
 			options.LinkedResources.Add (sourceFile2);
-#endif
 
 			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
 			CompilerResults results = compiler.CompileAssemblyFromFileBatch (options,
@@ -395,7 +383,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.IsTrue (File.Exists (sourceFile1), "#C2");
 			Assert.IsTrue (File.Exists (sourceFile2), "#C3");
 
-#if NET_2_0
 			string[] resources = compiledAssembly.GetManifestResourceNames();
 			Assert.IsNotNull (resources, "#D1");
 			Assert.AreEqual (2, resources.Length, "#D2");
@@ -426,7 +413,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual ("file2.vb", info.FileName, "#F6");
 			Assert.IsNull (info.ReferencedAssembly, "#F7");
 			Assert.AreEqual ((ResourceLocation) 0, info.ResourceLocation, "#F8");
-#endif
 		}
 
 		[Test]

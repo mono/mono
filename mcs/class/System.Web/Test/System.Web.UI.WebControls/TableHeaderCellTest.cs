@@ -64,11 +64,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TestTableHeaderCell th = new TestTableHeaderCell ();
 			Assert.AreEqual (0, th.Attributes.Count, "Attributes.Count");
 			Assert.AreEqual (0, th.StateBag.Count, "ViewState.Count");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, th.AbbreviatedText, "AbbreviatedText");
 			Assert.AreEqual (0, th.CategoryText.Length, "CategoryText");
 			Assert.AreEqual (TableHeaderScope.NotSet, th.Scope, "Scope");
-#endif
 			Assert.AreEqual ("th", th.Tag, "TagName");
 			Assert.AreEqual (0, th.Attributes.Count, "Attributes.Count-2");
 			Assert.AreEqual (0, th.StateBag.Count, "ViewState.Count-2");
@@ -78,7 +76,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void NullProperties ()
 		{
 			TestTableHeaderCell th = new TestTableHeaderCell ();
-#if NET_2_0
 			th.AbbreviatedText = null;
 			Assert.AreEqual (String.Empty, th.AbbreviatedText, "AbbreviatedText");
 
@@ -89,9 +86,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			th.Scope = TableHeaderScope.NotSet;
 			Assert.AreEqual (TableHeaderScope.NotSet, th.Scope, "Scope");
 			Assert.AreEqual (2, th.StateBag.Count, "ViewState.Count-2");
-#else
-			Assert.AreEqual (0, th.StateBag.Count, "ViewState.Count-1");
-#endif
 			Assert.AreEqual (0, th.Attributes.Count, "Attributes.Count");
 		}
 
@@ -99,7 +93,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void CleanProperties ()
 		{
 			TestTableHeaderCell th = new TestTableHeaderCell ();
-#if NET_2_0
 			th.AbbreviatedText = "header";
 			Assert.AreEqual ("header", th.AbbreviatedText, "AbbreviatedText");
 			th.AbbreviatedText = null;
@@ -117,9 +110,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			th.Scope = TableHeaderScope.NotSet;
 			Assert.AreEqual (TableHeaderScope.NotSet, th.Scope, "-Scope");
 			Assert.AreEqual (2, th.StateBag.Count, "ViewState.Count-2");
-#else
-			Assert.AreEqual (0, th.StateBag.Count, "ViewState.Count-1");
-#endif
 			Assert.AreEqual (0, th.Attributes.Count, "Attributes.Count");
 		}
 
@@ -134,7 +124,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TestTableHeaderCell th = new TestTableHeaderCell ();
 			string s = th.Render ();
 			Assert.AreEqual (AdjustLineEndings ("<th></th>"), s, "empty/default");
-#if NET_2_0
 			th.AbbreviatedText = "header";
 			s = th.Render ();
 			Assert.AreEqual (AdjustLineEndings ("<th abbr=\"header\"></th>"), s, "AbbreviatedText");
@@ -162,7 +151,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			th.Scope = TableHeaderScope.NotSet;
 			s = th.Render ();
 			Assert.AreEqual (AdjustLineEndings ("<th></th>"), s, "NotSet");
-#endif
 			th.Text = "test";
 			s = th.Render ();
 			Assert.AreEqual (AdjustLineEndings ("<th>test</th>"), s, "Text");

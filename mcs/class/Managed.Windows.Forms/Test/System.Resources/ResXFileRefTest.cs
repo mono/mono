@@ -24,16 +24,13 @@ namespace MonoTests.System.Resources
 		{
 			ResXFileRef r = new ResXFileRef ("mono.bmp", "Bitmap");
 			MonoTests.System.Windows.Forms.TestHelper.RemoveWarning (r);
-#if NET_2_0
 			Assert.AreEqual ("mono.bmp", r.FileName, "#1");
 			Assert.AreEqual ("Bitmap", r.TypeName, "#2");
-#endif
 		}
 
 		[Test]
 		public void Constructor1_FileName_Null ()
 		{
-#if NET_2_0
 			try {
 				new ResXFileRef ((string) null, "Bitmap");
 				Assert.Fail ("#1");
@@ -44,16 +41,11 @@ namespace MonoTests.System.Resources
 				Assert.AreEqual ("fileName", ex.ParamName, "#5");
 				Assert.IsNull (ex.InnerException, "#6");
 			}
-#else
-			ResXFileRef r = new ResXFileRef ((string) null, "Bitmap");
-			Assert.AreEqual (";Bitmap", r.ToString ());
-#endif
 		}
 
 		[Test]
 		public void Constructor1_TypeName_Null ()
 		{
-#if NET_2_0
 			try {
 				new ResXFileRef ("mono.bmp", (string) null);
 				Assert.Fail ("#1");
@@ -64,13 +56,8 @@ namespace MonoTests.System.Resources
 				Assert.AreEqual ("typeName", ex.ParamName, "#5");
 				Assert.IsNull (ex.InnerException, "#6");
 			}
-#else
-			ResXFileRef r = new ResXFileRef ("mono.bmp", (string) null);
-			Assert.AreEqual ("mono.bmp;", r.ToString ());
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void Constructor2 ()
 		{
@@ -116,7 +103,6 @@ namespace MonoTests.System.Resources
 				Assert.IsNull (ex.InnerException, "#6");
 			}
 		}
-#endif
 
 		[Test]
 		public void ToStringTest ()
@@ -124,13 +110,11 @@ namespace MonoTests.System.Resources
 			ResXFileRef r = new ResXFileRef ("mono.bmp", "Bitmap");
 			Assert.AreEqual ("mono.bmp;Bitmap", r.ToString (), "#1");
 
-#if NET_2_0
 			r = new ResXFileRef ("mono.bmp", "Bitmap", Encoding.UTF8);
 			Assert.AreEqual ("mono.bmp;Bitmap;utf-8", r.ToString (), "#2");
 
 			r = new ResXFileRef ("mono.bmp", "Bitmap", (Encoding) null);
 			Assert.AreEqual ("mono.bmp;Bitmap", r.ToString (), "#3");
-#endif
 		}
 	}
 
@@ -198,7 +182,6 @@ namespace MonoTests.System.Resources
 			try {
 				_converter.ConvertFrom (fileRef);
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
@@ -206,13 +189,6 @@ namespace MonoTests.System.Resources
 				Assert.AreEqual ("value", ex.Message, "#B5");
 				Assert.IsNull (ex.ParamName, "#B6");
 			}
-#else
-			} catch (IndexOutOfRangeException ex) {
-				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-			}
-#endif
 		}
 
 		[Test]
@@ -228,38 +204,21 @@ namespace MonoTests.System.Resources
 		{
 			// read UTF-7 content without setting encoding
 			string fileRef = _tempFileUTF7 + ";" + typeof (string).AssemblyQualifiedName;
-#if NET_2_0
 			string result = _converter.ConvertFrom (fileRef) as string;
 			Assert.IsNotNull (result, "#A1");
 			Assert.IsFalse (result == "\u0021\u0026\u002A\u003B", "#A2");
-#else
-			try {
-				_converter.ConvertFrom (fileRef);
-				Assert.Fail ("#A");
-			} catch (MissingMethodException) {
-			}
-#endif
 
 			// read UTF-7 content using UTF-7 encoding
 			fileRef = _tempFileUTF7 + ";" + typeof (string).AssemblyQualifiedName + ";utf-7";
-#if NET_2_0
 			result = _converter.ConvertFrom (fileRef) as string;
 			Assert.IsNotNull (result, "#B1");
 			Assert.AreEqual ("\u0021\u0026\u002A\u003B", result, "#B2");
-#else
-			try {
-				_converter.ConvertFrom (fileRef);
-				Assert.Fail ("#C");
-			} catch (MissingMethodException) {
-			}
-#endif
 
 			// invalid encoding
 			fileRef = _tempFileUTF7 + ";" + typeof (string).AssemblyQualifiedName + ";utf-99";
 			try {
 				_converter.ConvertFrom (fileRef);
 				Assert.Fail ("#D1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
 				Assert.IsNull (ex.InnerException, "#D3");
@@ -268,10 +227,6 @@ namespace MonoTests.System.Resources
 				Assert.IsNotNull (ex.ParamName, "#D6");
 				Assert.AreEqual ("name", ex.ParamName, "#D7");
 			}
-#else
-			} catch (MissingMethodException) {
-			}
-#endif
 		}
 
 		[Test]
@@ -306,17 +261,9 @@ namespace MonoTests.System.Resources
 		public void ConvertFrom_Type_MemoryStream ()
 		{
 			string fileRef = _tempFileUTF7 + ";" + typeof (MemoryStream).AssemblyQualifiedName;
-#if NET_2_0
 			using (MemoryStream ms = (MemoryStream) _converter.ConvertFrom (fileRef)) {
 				Assert.IsTrue (ms.Length > 0);
 			}
-#else
-			try {
-				_converter.ConvertFrom (fileRef);
-				Assert.Fail ("#1");
-			} catch (MissingMethodException) {
-			}
-#endif
 		}
 
 		[Test]
@@ -326,7 +273,6 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual ("mono.bmp;Bitmap", (string) _converter.ConvertTo (
 				r, typeof (string)), "#1");
 
-#if NET_2_0
 			r = new ResXFileRef ("mono.bmp", "Bitmap", Encoding.UTF8);
 			Assert.AreEqual ("mono.bmp;Bitmap;utf-8", (string) _converter.ConvertTo (
 				r, typeof (string)), "#2");
@@ -334,7 +280,6 @@ namespace MonoTests.System.Resources
 			r = new ResXFileRef ("mono.bmp", "Bitmap", (Encoding) null);
 			Assert.AreEqual ("mono.bmp;Bitmap", (string) _converter.ConvertTo (
 				r, typeof (string)), "#3");
-#endif
 		}
 
 		private TypeConverter _converter;

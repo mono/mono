@@ -66,7 +66,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 		static byte[] x509crl = { 0x30, 0x82, 0x01, 0x05, 0x30, 0x72, 0x02, 0x01, 0x01, 0x30, 0x0B, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x05, 0x30, 0x51, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13, 0x02, 0x55, 0x53, 0x31, 0x18, 0x30, 0x16, 0x06, 0x03, 0x55, 0x04, 0x0A, 0x13, 0x0F, 0x55, 0x2E, 0x53, 0x2E, 0x20, 0x47, 0x6F, 0x76, 0x65, 0x72, 0x6E, 0x6D, 0x65, 0x6E, 0x74, 0x31, 0x0C, 0x30, 0x0A, 0x06, 0x03, 0x55, 0x04, 0x0B, 0x13, 0x03, 0x44, 0x6F, 0x44, 0x31, 0x1A, 0x30, 0x18, 0x06, 0x03, 0x55, 0x04, 0x03, 0x13, 0x11, 0x41, 0x72, 0x6D, 0x65, 0x64, 0x20, 0x46, 0x6F, 0x72, 0x63, 0x65, 0x73, 0x20, 0x52, 0x6F, 0x6F, 0x74, 0x17, 0x0D, 0x30, 0x32, 0x31, 0x30, 0x31, 0x31, 0x31, 0x33, 0x31, 0x32, 0x35, 0x30, 0x5A, 0x30, 0x0B, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x05, 0x03, 0x81, 0x81, 0x00, 0x7D, 0xA2, 0xD1, 0x19, 0x6D, 0x0F, 0x0F, 0xCB, 0xE4, 0xA3, 0xBE, 0xE0, 0x36, 0x0A, 0xF3, 0x4C, 0x9B, 0xAF, 0xE6, 0x4F, 0xF6, 0xE3, 0xAF, 0xCF, 0x55, 0xF3, 0xC6, 0xDB, 0xAB, 0x4C, 0x16, 0x32, 0xAA, 0x73, 0xAD, 0xCC, 0xDC, 0x32, 0x33, 0x60, 0xDF, 0x8B, 0xCC, 0x93, 0xB5, 0x4F, 0x6A, 0xEC, 0x70, 0x53, 0xAF, 0xCF, 0x07, 0x0F, 0xA0, 0xCD, 0x66, 0xAC, 0x00, 0x57, 0xC6, 0x5C, 0x5D, 0x21, 0xB1, 0xBD, 0x30, 0x89, 0x8E, 0x77, 0x8D, 0xD4, 0x69, 0x7E, 0xC0, 0x36, 0x7E, 0xD2, 0xD8, 0x20, 0x71, 0x08, 0x80, 0xD2, 0xCB, 0x74, 0x8B, 0xD8, 0x42, 0x17, 0x04, 0x99, 0x80, 0xA4, 0x52, 0x70, 0x2E, 0xC0, 0xE3, 0x8C, 0x0B, 0xFF, 0x79, 0xB7, 0x45, 0x77, 0xDC, 0xC5, 0xCF, 0x43, 0x98, 0x91, 0x7D, 0xF1, 0x01, 0xF7, 0x53, 0xD7, 0xC6, 0x51, 0x35, 0xF0, 0x89, 0xCC, 0xC1, 0xFF, 0xE2, 0x89 };
 
-#if NET_2_0
 		[Test]
 		public void Constructor_Empty () 
 		{
@@ -85,40 +84,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			KeyInfoX509Data data = new KeyInfoX509Data ((X509Certificate)null);
 		}
-#else
-		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void Constructor_Empty () 
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ();
-			XmlElement invalid = data.GetXml ();
-		}
-
-		[Test]
-		public void Constructor_X509Certificate_Null () 
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ((X509Certificate)null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		[Category ("NotWorking")]
-		public void Constructor_X509Certificate_Null_GetXml () 
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ((X509Certificate)null);
-			XmlElement invalid = data.GetXml ();
-			// note: even if we add a check in GetXml this will makes another unit 
-			// test fails. We clearly are not doing this the same way as MS does.
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void Constructor_X509CertificateByteArray_Null_GetXml () 
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ((byte[])null);
-			XmlElement invalid = data.GetXml ();
-		}
-#endif
 		[Test]
 		public void Constructor_X509CertificateByteArray_Null ()
 		{
@@ -144,7 +109,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert.AreEqual ((data2.GetXml ().OuterXml), (data3.GetXml ().OuterXml), "data2==data3");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Constructor_X509Certificate_X509IncludeOption () 
 		{
@@ -199,42 +163,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoX509Data data = new KeyInfoX509Data ();
 			data.AddIssuerSerial ("issuer", null);
 		}
-#else
-		[Test]
-		public void AddCertificate_Null ()
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ();
-			data.AddCertificate (null);
-		}
-
-
-		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void AddCertificate_Null_GetXml ()
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ();
-			data.AddCertificate (null);
-			XmlElement empty = data.GetXml ();
-		}
-
-		[Test]
-		public void AddIssuerSerial_Null_Serial ()
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ();
-			data.AddIssuerSerial (null, "serial");
-			XmlElement empty = data.GetXml ();
-			Assert.AreEqual (empty.OuterXml, "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509IssuerSerial><X509IssuerName></X509IssuerName><X509SerialNumber>serial</X509SerialNumber></X509IssuerSerial></X509Data>");
-		}
-
-		[Test]
-		public void AddIssuerSerial_Issuer_Null ()
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ();
-			data.AddIssuerSerial ("issuer", null);
-			XmlElement empty = data.GetXml ();
-			Assert.AreEqual (empty.OuterXml, "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509IssuerSerial><X509IssuerName>issuer</X509IssuerName><X509SerialNumber></X509SerialNumber></X509IssuerSerial></X509Data>");
-		}
-#endif
 
 		[Test]
 		public void AddSubjectKeyId_Byte_Null ()
@@ -249,7 +177,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 // beta2 bug - throw an ArgumentNullException (a little too late)
 //			Assert.AreEqual ("<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", data.GetXml ().OuterXml);
 		}
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")] // beta2 bug
 		[ExpectedException (typeof (NullReferenceException))]
@@ -272,7 +199,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert.AreEqual (1, data.SubjectKeyIds.Count, "SubjectKeyIds");
 			Assert.IsNull (data.SubjectNames, "SubjectNames");
 		}
-#endif
 		[Test]
 		public void AddSubjectName_Null ()
 		{

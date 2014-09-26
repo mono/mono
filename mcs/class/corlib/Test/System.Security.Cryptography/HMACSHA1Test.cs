@@ -35,7 +35,6 @@ using System.Text;
 
 namespace MonoTests.System.Security.Cryptography {
 
-#if NET_2_0
 	public class HS160 : HMACSHA1 {
 
 		public int BlockSize {
@@ -43,7 +42,6 @@ namespace MonoTests.System.Security.Cryptography {
 			set { base.BlockSizeValue = value; }
 		}
 	}
-#endif
 
 // References:
 // a.	The Keyed-Hash Message Authentication Code (HMAC)
@@ -93,25 +91,12 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Assert.AreEqual ("System.Security.Cryptography.HMACSHA1", algo.ToString (), "HMACSHA1.ToString()"); 
 	}
 
-#if NET_2_0
 	[Test]
 	public void BlockSize ()
 	{
 		HS160 hmac = new HS160 ();
 		Assert.AreEqual (64, hmac.BlockSize, "BlockSizeValue");
 	}
-#else
-	// this is legal in .NET 2.0 because HMACSHA1 derives from HMAC
-	[Test]
-	[ExpectedException (typeof (InvalidCastException))]
-	public void InvalidHashName () 
-	{
-		algo = new HMACSHA1 ();
-		algo.HashName = "MD5";
-		byte[] data = Encoding.Default.GetBytes ("MD5");
-		byte[] hmac = algo.ComputeHash (data);
-	}
-#endif
 
 	public void Check (string testName, byte[] key, byte[] data, byte[] result) 
 	{
@@ -126,11 +111,7 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
 	public void CheckA (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-#if NET_2_0
 		algo = new HMACSHA1 (key, true);
-#else
-		algo = new HMACSHA1 (key);
-#endif
 		byte[] hmac = algo.ComputeHash (data);
 		Assert.AreEqual (result, hmac, testName + "a1");
 		Assert.AreEqual (result, algo.Hash, testName + "a2");
@@ -138,11 +119,7 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
 	public void CheckB (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-#if NET_2_0
 		algo = new HMACSHA1 (key, false);
-#else
-		algo = new HMACSHA1 (key);
-#endif
 		byte[] hmac = algo.ComputeHash (data, 0, data.Length);
 		Assert.AreEqual (result, hmac, testName + "b1");
 		Assert.AreEqual (result, algo.Hash, testName + "b2");

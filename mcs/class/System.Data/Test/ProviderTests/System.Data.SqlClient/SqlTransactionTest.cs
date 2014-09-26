@@ -101,11 +101,7 @@ namespace MonoTests.System.Data.SqlClient
 						// elapsed prior to completion of the
 						// operation or the server is not responding
 						Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
-#if NET_2_0
 						Assert.AreEqual ((byte) 11, ex.Class, "#B3");
-#else
-						Assert.AreEqual ((byte) 10, ex.Class, "#B3");
-#endif
 						Assert.IsNull (ex.InnerException, "#B4");
 						Assert.IsNotNull (ex.Message, "#B5");
 						Assert.AreEqual (-2, ex.Number, "#B6");
@@ -1011,20 +1007,7 @@ namespace MonoTests.System.Data.SqlClient
 					cmd.Dispose ();
 
 					trans.Dispose ();
-#if NET_2_0
 					trans.Rollback ();
-#else
-					try {
-						trans.Rollback ();
-						Assert.Fail ("#A1");
-					} catch (InvalidOperationException ex) {
-						// This SqlTransaction has completed; it is no
-						// longer usable
-						Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
-						Assert.IsNull (ex.InnerException, "#A3");
-						Assert.IsNotNull (ex.Message, "#A4");
-					}
-#endif
 
 					cmd = new SqlCommand ("SELECT fname FROM employee WHERE id=6666", conn);
 					using (SqlDataReader reader = cmd.ExecuteReader ()) {
@@ -1399,10 +1382,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // Rollback (String)
 		public void Rollback2_Transaction_Disposed ()
 		{
-#if NET_2_0
 			if (RunningOnMono)
 				Assert.Ignore ("NotWorking");
-#endif
 
 			try {
 				conn = new SqlConnection (connectionString);

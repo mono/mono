@@ -62,10 +62,8 @@ namespace MonoCasTests.System.CodeDom {
 			ctm.LinePragma = new CodeLinePragma (String.Empty, Int32.MaxValue);
 			Assert.AreEqual (String.Empty, ctm.Name, "Name");
 			ctm.Name = "mono";
-#if NET_2_0
 			Assert.AreEqual (0, ctm.StartDirectives.Count, "StartDirectives");
 			Assert.AreEqual (0, ctm.EndDirectives.Count, "EndDirectives");
-#endif
 		}
 
 		[Test]

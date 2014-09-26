@@ -126,7 +126,6 @@ namespace MonoTests.System.Windows.Forms
 			ep.SetError (tb, "arggggh");
 		}
 		
-#if NET_2_0
 		[Test]
 		public void ErrorProviderPropertyTag ()
 		{
@@ -161,6 +160,5 @@ namespace MonoTests.System.Windows.Forms
 			
 			myForm.Dispose ();
 		}
-#endif
 	}
 }

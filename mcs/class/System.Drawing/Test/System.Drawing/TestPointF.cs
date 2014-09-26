@@ -178,7 +178,6 @@ namespace MonoTests.System.Drawing
 				point.Y.ToString (culture));
 		}
 
-#if NET_2_0
 
 		[Test]
 		public void AddTest ()
@@ -193,7 +192,6 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (new PointF (2, 1), PointF.Subtract (new PointF (4, 4), new Size (2, 3)), "SUBTEST#1");
 			Assert.AreEqual (new PointF (3, 3), PointF.Subtract (new PointF (5, 6), new SizeF (2, 3)), "SUBTEST#2");						
 		}
-#endif
 
 
 	}

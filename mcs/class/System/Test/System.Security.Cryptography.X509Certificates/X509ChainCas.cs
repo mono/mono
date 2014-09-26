@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 
@@ -75,4 +74,3 @@ namespace MonoCasTests.System.Security.Cryptography.X509Certificates {
 	}
 }
 
-#endif

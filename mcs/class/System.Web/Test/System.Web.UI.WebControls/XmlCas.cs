@@ -85,11 +85,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 				unit.Xml_SourcePrecedence ();
 			}
 			catch (TypeInitializationException) {
-#if NET_2_0
 				throw;
-#else
-				Assert.Ignore ("exception when initializing HttpRuntime");
-#endif
 			}
 		}
 

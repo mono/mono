@@ -134,11 +134,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Element", column2.ColumnMapping.ToString (), "test#33");
 			Assert.AreEqual ("second", column2.ColumnName, "test#34");
 			Assert.AreEqual ("System.Data.SqlTypes.SqlGuid", column2.DataType.ToString (), "test#35");
-#if NET_2_0
 			Assert.AreEqual (SqlGuid.Null, column2.DefaultValue, "test#36");
-#else
-			Assert.AreEqual (DBNull.Value, column2.DefaultValue, "test#36");
-#endif
 			Assert.IsFalse (column2.DesignMode, "test#37");
 			Assert.AreEqual ("", column2.Expression, "test#38");
 			Assert.AreEqual (-1, column2.MaxLength, "test#39");
@@ -224,11 +220,7 @@ namespace MonoTests.System.Data
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			Assert.AreEqual ("  <xs:element name=\"test_dataset\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring, "test#03");
-#if !NET_2_0
-			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"test_dataset\">", substring, "test#03");
-#else
 			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\" name=\"test_dataset\">", substring, "test#03");
-#endif
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -287,10 +279,8 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
 #elif NET_4_0
 			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
-#elif NET_2_0
-			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
 #else
-			#error "Unknown profile"
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
 #endif
 			if (substring.IndexOf ("<xs:element") < 0)
 				Assert.Fail ("test#16: " + substring);
@@ -1053,11 +1043,7 @@ namespace MonoTests.System.Data
 			// see GetReady() for current culture
 
 			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' " + 
-#if !NET_2_0
-			  "msdata:Locale='fi-FI'"
-#else
 			  "msdata:UseCurrentLocale='true'"
-#endif
 			  + "><xs:complexType><xs:choice minOccurs='0' maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
 			DataSet ds = new DataSet ();
 			ds.DataSetName = "DS";
@@ -1513,11 +1499,7 @@ namespace MonoTests.System.Data
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
 <xs:schema id='myDataSet' targetNamespace='NetFrameWork' xmlns:mstns='NetFrameWork' xmlns='NetFrameWork' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' attributeFormDefault='qualified' elementFormDefault='qualified'>
   <xs:element name='myDataSet' msdata:IsDataSet='true' " +
-#if NET_2_0
 			"msdata:UseCurrentLocale='true'"
-#else
-			"msdata:Locale='fi-FI'"
-#endif
 			+ @">
     <xs:complexType>
       <xs:choice minOccurs='0' maxOccurs='unbounded'>
@@ -1576,11 +1558,7 @@ namespace MonoTests.System.Data
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""ExampleDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
   <xs:element name=""ExampleDataSet"" msdata:IsDataSet=""true"" ";
-#if NET_2_0
 			xmlschema = xmlschema + "msdata:UseCurrentLocale=\"true\"";
-#else
-			xmlschema = xmlschema + "msdata:Locale=\"fi-FI\"";
-#endif
 			xmlschema = xmlschema + @">
     <xs:complexType>
       <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
@@ -1625,11 +1603,7 @@ namespace MonoTests.System.Data
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
 ";
-#if NET_2_0
 			xmlschema = xmlschema + "  <xs:element name=\"Example\" msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\"";
-#else
-			xmlschema = xmlschema + "  <xs:element name=\"Example\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\"";
-#endif
 			xmlschema = xmlschema + @">
     <xs:complexType>
       <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
@@ -1673,11 +1647,7 @@ namespace MonoTests.System.Data
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
 "+
-#if NET_2_0
 "  <xs:element name=\"Example\" msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\""
-#else
-"  <xs:element name=\"Example\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\""
-#endif
 			  + @">
     <xs:complexType>
       <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
@@ -1787,11 +1757,7 @@ namespace MonoTests.System.Data
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
 "+
-#if NET_2_0
 			  @"  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:UseCurrentLocale=""true"""
-#else
-			  @"  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"""
-#endif
 			  + @">
     <xs:complexType>
       <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
@@ -1851,11 +1817,7 @@ namespace MonoTests.System.Data
 			string xml = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""NewDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:msprop=""urn:schemas-microsoft-com:xml-msprop"">
 " +
-#if NET_2_0
 @"  <xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:UseCurrentLocale=""true"" msprop:version=""version 2.1"">"
-#else
-@"  <xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" msprop:version=""version 2.1"">"
-#endif
 			  + @"
     <xs:complexType>
       <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
@@ -1893,11 +1855,7 @@ namespace MonoTests.System.Data
 			string xml = @"<Example>
   <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
 " +
-#if NET_2_0
 @"    <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:UseCurrentLocale=""true"">"
-#else
-@"    <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">"
-#endif
 			  + @"
       <xs:complexType>
         <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
@@ -2292,7 +2250,6 @@ namespace MonoTests.System.Data
 				writer.GetStringBuilder ().ToString ()));
 		}
 
-#if NET_2_0
 
 		// it is basically a test for XmlSerializer, but I need it
 		// here to not add dependency on sys.data.dll in sys.xml test.
@@ -2619,7 +2576,6 @@ namespace MonoTests.System.Data
 		}
 
 		#endregion // DataSet.CreateDataReader Tests and DataSet.Load Tests
-#endif
 
 	}
 

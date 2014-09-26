@@ -96,7 +96,6 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void ConvertFrom_String_InvalidCulture ()
 		{
-#if NET_2_0
 			try {
 				converter.ConvertFrom (null, CultureInfo.InvariantCulture,
 					"(default)");
@@ -111,7 +110,6 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsTrue (ex.Message.IndexOf ("(default)") != -1, "#A6");
 				Assert.IsNull (ex.ParamName, "#A7");
 			}
-#endif
 
 			try {
 				converter.ConvertFrom (null, CultureInfo.InvariantCulture,

@@ -57,11 +57,7 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void This_Null ()
 		{
 			StringDictionary sd = new StringDictionary ();
@@ -100,11 +96,7 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Add_NullKey ()
 		{
 			StringDictionary sd = new StringDictionary ();
@@ -112,11 +104,7 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void ContainsKey_Null ()
 		{
 			StringDictionary sd = new StringDictionary ();
@@ -124,11 +112,7 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Remove_Null ()
 		{
 			StringDictionary sd = new StringDictionary ();

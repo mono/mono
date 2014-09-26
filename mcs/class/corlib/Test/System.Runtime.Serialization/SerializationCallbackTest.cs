@@ -4,7 +4,6 @@
 // Author: Robert Jordan (robertj@gmx.net)
 //
 
-#if NET_2_0
 
 using System;
 using System.Diagnostics;
@@ -238,4 +237,3 @@ namespace MonoTests.System.Runtime.Serialization
         }
 }
 
-#endif

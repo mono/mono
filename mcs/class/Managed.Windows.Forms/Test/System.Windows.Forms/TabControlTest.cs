@@ -248,68 +248,36 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, tab.SelectedIndex, "#B1");
 			Assert.AreEqual (1, _selected_index_changed, "#B2");
 			tab.Controls.RemoveAt (2);
-#if NET_2_0
 			Assert.AreEqual (0, tab.SelectedIndex, "#B3");
-#else
-			Assert.AreEqual (1, tab.SelectedIndex, "#B3");
-#endif
 			Assert.AreEqual (5, tab.TabPages.Count, "#B4");
 			Assert.AreEqual (2, _selected_index_changed, "#B5");
 
 			// remove not-selected tab
-#if NET_2_0
 			Assert.AreEqual (0, tab.SelectedIndex, "#C1");
-#else
-			Assert.AreEqual (1, tab.SelectedIndex, "#C1");
-#endif
 			Assert.AreEqual (2, _selected_index_changed, "#C2");
 			tab.Controls.RemoveAt (3);
-#if NET_2_0
 			Assert.AreEqual (0, tab.SelectedIndex, "#C3");
-#else
-			Assert.AreEqual (2, tab.SelectedIndex, "#C3");
-#endif
 			Assert.AreEqual (4, tab.TabPages.Count, "#C4");
-#if NET_2_0
 			Assert.AreEqual (2, _selected_index_changed, "#C5");
-#else
-			Assert.AreEqual (3, _selected_index_changed, "#C5");
-#endif
 
 			// remove last tab
 			tab.Controls.RemoveAt (3);
-#if NET_2_0
 			Assert.AreEqual (0, tab.SelectedIndex, "#D1");
-#else
-			Assert.AreEqual (2, tab.SelectedIndex, "#D1");
-#endif
 			Assert.AreEqual (3, tab.TabPages.Count, "#D2");
-#if NET_2_0
 			Assert.AreEqual (2, _selected_index_changed, "#D3");
-#else
-			Assert.AreEqual (3, _selected_index_changed, "#D3");
-#endif
 
 			// remove first tab
 			tab.Controls.RemoveAt (0);
 			Assert.AreEqual (0, tab.SelectedIndex, "#E1");
 			Assert.AreEqual (2, tab.TabPages.Count, "#E2");
-#if NET_2_0
 			Assert.AreEqual (3, _selected_index_changed, "#E3");
-#else
-			Assert.AreEqual (4, _selected_index_changed, "#E3");
-#endif
 
 			// remove remaining tabs
 			tab.Controls.RemoveAt (1);
 			tab.Controls.RemoveAt (0);
 			Assert.AreEqual (-1, tab.SelectedIndex, "#F1");
 			Assert.AreEqual (0, tab.TabPages.Count, "#F2");
-#if NET_2_0
 			Assert.AreEqual (4, _selected_index_changed, "#F3");
-#else
-			Assert.AreEqual (5, _selected_index_changed, "#F3");
-#endif
 		}
 
 		[Test]
@@ -332,72 +300,36 @@ namespace MonoTests.System.Windows.Forms
 			// remove selected tab
 			tab.SelectedIndex = 2;
 			Assert.AreEqual (2, tab.SelectedIndex, "#B1");
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#B2");
-#else
-			Assert.AreEqual (1, _selected_index_changed, "#B2");
-#endif
 			tab.Controls.RemoveAt (2);
-#if NET_2_0
 			Assert.AreEqual (0, tab.SelectedIndex, "#B3");
-#else
-			Assert.AreEqual (1, tab.SelectedIndex, "#B3");
-#endif
 			Assert.AreEqual (5, tab.TabPages.Count, "#B4");
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#B5");
-#else
-			Assert.AreEqual (2, _selected_index_changed, "#B5");
-#endif
 
 			// remove not-selected tab
 			tab.Controls.RemoveAt (3);
-#if NET_2_0
 			Assert.AreEqual (0, tab.SelectedIndex, "#C3");
-#else
-			Assert.AreEqual (2, tab.SelectedIndex, "#C3");
-#endif
 			Assert.AreEqual (4, tab.TabPages.Count, "#C4");
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#C5");
-#else
-			Assert.AreEqual (3, _selected_index_changed, "#C5");
-#endif
 
 			// remove last tab
 			tab.Controls.RemoveAt (3);
-#if NET_2_0
 			Assert.AreEqual (0, tab.SelectedIndex, "#D1");
-#else
-			Assert.AreEqual (2, tab.SelectedIndex, "#D1");
-#endif
 			Assert.AreEqual (3, tab.TabPages.Count, "#D2");
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#D3");
-#else
-			Assert.AreEqual (3, _selected_index_changed, "#D3");
-#endif
 
 			// remove first tab
 			tab.Controls.RemoveAt (0);
 			Assert.AreEqual (0, tab.SelectedIndex, "#E1");
 			Assert.AreEqual (2, tab.TabPages.Count, "#E2");
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#E3");
-#else
-			Assert.AreEqual (4, _selected_index_changed, "#E3");
-#endif
 
 			// remove remaining tabs
 			tab.Controls.RemoveAt (1);
 			tab.Controls.RemoveAt (0);
 			Assert.AreEqual (0, tab.SelectedIndex, "#F1");
 			Assert.AreEqual (0, tab.TabPages.Count, "#F2");
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#F3");
-#else
-			Assert.AreEqual (4, _selected_index_changed, "#F3");
-#endif
 
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
@@ -405,11 +337,7 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 			Assert.AreEqual (-1, tab.SelectedIndex, "#G1");
 			Assert.AreEqual (0, tab.TabPages.Count, "#G2");
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#G3");
-#else
-			Assert.AreEqual (4, _selected_index_changed, "#G3");
-#endif
 		}
 
 		[Test]
@@ -421,52 +349,28 @@ namespace MonoTests.System.Windows.Forms
 			tab.Controls.Add (new TabPage ());
 
 			tab.SelectedIndex = 0;
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#A1");
-#else
-			Assert.AreEqual (1, _selected_index_changed, "#A1");
-#endif
 			Assert.AreEqual (0, tab.SelectedIndex, "#A2");
 
 			tab.SelectedIndex = -1;
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#B1");
-#else
-			Assert.AreEqual (2, _selected_index_changed, "#B1");
-#endif
 			Assert.AreEqual (-1, tab.SelectedIndex, "#B2");
 
 			tab.SelectedIndex = 1;
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#C1");
-#else
-			Assert.AreEqual (3, _selected_index_changed, "#C1");
-#endif
 			Assert.AreEqual (1, tab.SelectedIndex, "#C2");
 
 			tab.SelectedIndex = 1;
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#D1");
-#else
-			Assert.AreEqual (3, _selected_index_changed, "#D1");
-#endif
 			Assert.AreEqual (1, tab.SelectedIndex, "#D2");
 
 
 			tab.SelectedIndex = 6;
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#E1");
-#else
-			Assert.AreEqual (4, _selected_index_changed, "#E1");
-#endif
 			Assert.AreEqual (6, tab.SelectedIndex, "#E2");
 
 			tab.SelectedIndex = 6;
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#E31");
-#else
-			Assert.AreEqual (4, _selected_index_changed, "#E3");
-#endif
 			Assert.AreEqual (6, tab.SelectedIndex, "#E4");
 
 			Form form = new Form ();
@@ -478,35 +382,19 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, tab.SelectedIndex, "#E5");
 
 			tab.SelectedIndex = 0;
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#F1");
-#else
-			Assert.AreEqual (4, _selected_index_changed, "#F1");
-#endif
 			Assert.AreEqual (0, tab.SelectedIndex, "#F2");
 
 			tab.SelectedIndex = -1;
-#if NET_2_0
 			Assert.AreEqual (1, _selected_index_changed, "#G1");
-#else
-			Assert.AreEqual (5, _selected_index_changed, "#G1");
-#endif
 			Assert.AreEqual (-1, tab.SelectedIndex, "#G2");
 
 			tab.SelectedIndex = 1;
-#if NET_2_0
 			Assert.AreEqual (2, _selected_index_changed, "#H1");
-#else
-			Assert.AreEqual (6, _selected_index_changed, "#H1");
-#endif
 			Assert.AreEqual (1, tab.SelectedIndex, "#H2");
 
 			tab.SelectedIndex = 1;
-#if NET_2_0
 			Assert.AreEqual (2, _selected_index_changed, "#I1");
-#else
-			Assert.AreEqual (6, _selected_index_changed, "#I1");
-#endif
 			Assert.AreEqual (1, tab.SelectedIndex, "#I2");
 
 			form.Dispose ();
@@ -518,11 +406,7 @@ namespace MonoTests.System.Windows.Forms
 			TabControl c = new TabControl ();
 			c.SelectedIndexChanged += new EventHandler (SelectedIndexChanged);
 			c.SelectedIndex = 0;
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#1");
-#else
-			Assert.AreEqual (1, _selected_index_changed, "#1");
-#endif
 
 			c.TabPages.Add (new TabPage ());
 			c.TabPages.Add (new TabPage ());
@@ -531,17 +415,9 @@ namespace MonoTests.System.Windows.Forms
 			f.ShowInTaskbar = false;
 			f.Controls.Add (c);
 			f.Show ();
-#if NET_2_0
 			Assert.AreEqual (0, _selected_index_changed, "#3");
-#else
-			Assert.AreEqual (1, _selected_index_changed, "#3");
-#endif
 			c.SelectedIndex = 2; // beyond the pages - ignored
-#if NET_2_0
 			Assert.AreEqual (1, _selected_index_changed, "#4");
-#else
-			Assert.AreEqual (2, _selected_index_changed, "#4");
-#endif
 			Assert.AreEqual (0, c.SelectedIndex, "#4");
 			f.Dispose ();
 		}
@@ -563,7 +439,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				tab.SelectedIndex = -2;
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
@@ -573,16 +448,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.ParamName, "#B7");
 				Assert.AreEqual ("SelectedIndex", ex.ParamName, "#B8");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNotNull (ex.Message, "#B3");
-				Assert.IsTrue (ex.Message.IndexOf ("'-2'") != -1, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("'value'") != -1, "#B5");
-				Assert.IsTrue (ex.Message.IndexOf ("-1") != -1, "#B6");
-				Assert.IsNull (ex.ParamName, "#B7");
-			}
-#endif
 
 			Assert.AreEqual (0, _selected_index_changed, "#C1");
 			Assert.AreEqual (-1, tab.SelectedIndex, "#C2");
@@ -593,7 +458,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				tab.SelectedIndex = -5;
 				Assert.Fail ("#D1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#D2");
 				Assert.IsNotNull (ex.Message, "#D3");
@@ -603,16 +467,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.ParamName, "#D7");
 				Assert.AreEqual ("SelectedIndex", ex.ParamName, "#D8");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
-				Assert.IsNotNull (ex.Message, "#D3");
-				Assert.IsTrue (ex.Message.IndexOf ("'-5'") != -1, "#D4");
-				Assert.IsTrue (ex.Message.IndexOf ("'value'") != -1, "#D5");
-				Assert.IsTrue (ex.Message.IndexOf ("-1") != -1, "#D6");
-				Assert.IsNull (ex.ParamName, "#D7");
-			}
-#endif
 
 			Assert.AreEqual (-1, tab.SelectedIndex, "#E1");
 			tab.SelectedIndex = -1;
@@ -711,7 +565,6 @@ namespace MonoTests.System.Windows.Forms
 			_selected_index_changed++;
 		}
 		
-#if NET_2_0
 		[Test]
 		public void MethodSelectTab ()
 		{
@@ -897,7 +750,6 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (-1, tc.SelectedIndex, "#A0");
 		}
-#endif
 	}
 
 	[TestFixture]

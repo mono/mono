@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Browsable(false)]
-#if NET_2_0 && HAVE_CONTROL_ADAPTERS
+#if HAVE_CONTROL_ADAPTERS
 		public virtual new
 #else		
 		public override
@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Browsable(false)]
-#if NET_2_0 && HAVE_CONTROL_ADAPTERS
+#if HAVE_CONTROL_ADAPTERS
 		public virtual new
 #else		
 		public override
@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Browsable(false)]
-#if NET_2_0 && HAVE_CONTROL_ADAPTERS
+#if HAVE_CONTROL_ADAPTERS
 		public virtual new
 #else		
 		public override

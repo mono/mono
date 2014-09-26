@@ -48,12 +48,9 @@ namespace MonoCasTests.System.Web.UI {
 		{
 			TemplateContainerAttribute tca = new TemplateContainerAttribute (null);
 			Assert.IsNull (tca.ContainerType, "ContainerType");
-#if NET_2_0
 			Assert.AreEqual (BindingDirection.OneWay, tca.BindingDirection, "BindingDirection");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Ctor2_Deny_Unrestricted ()
@@ -62,7 +59,6 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.AreEqual (typeof (string), tca.ContainerType, "ContainerType");
 			Assert.AreEqual (BindingDirection.TwoWay, tca.BindingDirection, "BindingDirection");
 		}
-#endif
 
 		// LinkDemand
 

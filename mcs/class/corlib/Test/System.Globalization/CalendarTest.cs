@@ -133,12 +133,10 @@ public class CalendarTest {
 	private TaiwanCalendar tacal;
 	private KoreanCalendar kcal;
 	private ThaiBuddhistCalendar tbcal;
-#if NET_2_0
 	private ChineseLunisolarCalendar clcal;
 	private TaiwanLunisolarCalendar tlcal;
 	private JapaneseLunisolarCalendar jlcal;
 	private KoreanLunisolarCalendar klcal;
-#endif
 
 	[SetUp]
 	protected void SetUp() {
@@ -153,12 +151,10 @@ public class CalendarTest {
 		acal = new Calendar[] {
 			gcal, jucal, hical, hecal, jacal,
 			tacal, kcal, tbcal};
-#if NET_2_0
 		clcal = new ChineseLunisolarCalendar ();
 		tlcal = new TaiwanLunisolarCalendar ();
 		jlcal = new JapaneseLunisolarCalendar ();
 		klcal = new KoreanLunisolarCalendar ();
-#endif
 	}
 
 	private void RowCheck(params Date[] adate) {
@@ -468,11 +464,9 @@ public class CalendarTest {
 		Assert.AreEqual(1, KoreanCalendar.KoreanEra, "B05 KoreanEra");
 		Assert.AreEqual(1, ThaiBuddhistCalendar.ThaiBuddhistEra, "B06 ThaiBuddhistEra");
 			
-#if NET_2_0
 		Assert.AreEqual(1, ChineseLunisolarCalendar.ChineseEra, "CNLunisor");
 		Assert.AreEqual(1, JapaneseLunisolarCalendar.JapaneseEra, "JPLunisor");
 		Assert.AreEqual(1, KoreanLunisolarCalendar.GregorianEra, "KRLunisor");
-#endif
 	}
 
 	[Test]
@@ -508,7 +502,6 @@ public class CalendarTest {
 		}
 	}
 
-#if NET_2_0
 	[Category ("NotWorking")]
 	[Test]
 	public void TestErasProperty2() {
@@ -520,7 +513,6 @@ public class CalendarTest {
 		Assert.AreEqual(4, jlcal.Eras [0], "jp.1");
 		Assert.AreEqual(3, jlcal.Eras [1], "jp.2");
 	}
-#endif
 
 	[Test]
 	public void TestTwoDigitYearMax() {
@@ -606,7 +598,6 @@ public class CalendarTest {
 		Assert.AreEqual (2, next.Month, "next");
 	}
 
-#if NET_2_0
 	[Test]
 	[Category ("NotWorking")]
 	public void GetLeapMonth ()
@@ -699,7 +690,6 @@ public class CalendarTest {
 		Assert.AreEqual (52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday), "#5");
 		Assert.AreEqual (52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday), "#6");
 	}
-#endif
 
 	[Test]
 	public void TestToFourDigitYear() {

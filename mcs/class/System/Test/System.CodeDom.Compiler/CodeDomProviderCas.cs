@@ -92,7 +92,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 			Assert.IsNull (cdp.CreateGenerator (writer), "CreateGenerator(TextWriter)");
 			Assert.IsNull (cdp.CreateParser (), "CreateParser()");
 			Assert.IsNotNull (cdp.GetConverter (typeof (string)), "GetConverter");
-#if NET_2_0
 			Assert.IsNotNull (CodeDomProvider.GetAllCompilerInfo (), "GetAllCompilerInfo");
 
 			// mono returns null (missing config?)
@@ -101,10 +100,8 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 
 			Assert.IsFalse (CodeDomProvider.IsDefinedExtension (String.Empty), "String.Empty");
 			Assert.IsFalse (CodeDomProvider.IsDefinedLanguage (String.Empty), "String.Empty");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (NotImplementedException))]
@@ -333,7 +330,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 			Assert.IsFalse ((bool) mi.Invoke (null, new object[1] { String.Empty }), "IsDefinedLanguage('')");
 			// requires full trust (i.e. unrestricted permission set)
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void LinkDemand_Deny_Unrestricted ()

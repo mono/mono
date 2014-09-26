@@ -37,7 +37,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (tv.SelectedNode, null, "#4");
 		}
 
-#if NET_2_0
 		[Test] // bug #81424
 		public void DoubleBuffered ()
 		{
@@ -56,7 +55,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tv.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#B4");
 			Assert.IsFalse (tv.GetControlStyle (ControlStyles.UserPaint), "#B5");
 		}
-#endif
 
 		[Test]
 		public void SimpleShowTest ()
@@ -240,13 +238,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tv.Nodes [0].IsExpanded, "#E1");
 			Assert.IsTrue (tv.Nodes [99].IsExpanded, "#E2");
 
-#if NET_2_0
 			Assert.IsTrue (tv.Nodes [0].IsVisible, "#F1");
 			Assert.IsFalse (tv.Nodes [99].IsVisible, "#F2");
-#else
-			Assert.IsFalse (tv.Nodes [0].IsVisible, "#F1");
-			Assert.IsTrue (tv.Nodes [99].IsVisible, "#F2");
-#endif
 
 			form.Dispose ();
 		}
@@ -258,12 +251,10 @@ namespace MonoTests.System.Windows.Forms
 				return base.GetStyle (style);
 			}
 
-#if NET_2_0
 			public bool IsDoubleBuffered {
 				get { return DoubleBuffered; }
 				set { DoubleBuffered = value; }
 			}
-#endif
 		}
 
 		[Test]
@@ -287,7 +278,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		[Test]
 		public void SelectedNodeNullTest ()
 		{
@@ -346,7 +336,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("f", tv.Nodes [1].Text, "#A2");
 			Assert.AreEqual ("x", tv.Nodes [2].Text, "#A3");
 		}
-#endif
 
 		[Test]
 		public void MethodToString ()
@@ -621,7 +610,6 @@ namespace MonoTests.System.Windows.Forms
 		int afterSelect;
 	}
 
-#if NET_2_0
 	[TestFixture]
 	public class TreeViewNodeSorterTest : TestHelper {
 		static bool node_sorter_called;
@@ -821,5 +809,4 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 	}
-#endif
 }

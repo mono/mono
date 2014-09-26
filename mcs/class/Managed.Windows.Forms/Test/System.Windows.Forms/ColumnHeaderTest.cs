@@ -33,14 +33,12 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ColumnHeaderTest : TestHelper
 	{
-#if NET_2_0
 		[SetUp]
 		protected override void SetUp ()
 		{
 			columnReordered = 0;
 			base.SetUp ();
 		}
-#endif
 
 		[Test]
 		public void DefaultValuesTest ()
@@ -51,17 +49,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, col.Index, "2");
 			Assert.AreEqual ("ColumnHeader", col.Text, "3");
 			Assert.AreEqual (HorizontalAlignment.Left, col.TextAlign, "4");
-#if NET_2_0
 			Assert.AreEqual (-1, col.DisplayIndex, "5");
 			Assert.AreEqual (-1, col.ImageIndex, "6");
 			Assert.AreEqual (String.Empty, col.ImageKey, "7");
 			Assert.IsNull (col.ImageList, "8");
 			Assert.AreEqual (String.Empty, col.Name, "9");
 			Assert.IsNull (col.Tag, "10");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void DisplayIndex_ListView_Created ()
 		{
@@ -280,7 +275,6 @@ namespace MonoTests.System.Windows.Forms
 			lv.Dispose ();
 			Assert.IsNull (col.ImageList);
 		}
-#endif
 
 		[Test]
 		public void Index_ListView_Disposed ()
@@ -296,7 +290,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, colB.Index, "#2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Name ()
 		{
@@ -318,7 +311,6 @@ namespace MonoTests.System.Windows.Forms
 			col.Tag = null;
 			Assert.IsNull (col.Tag, "#3");
 		}
-#endif
 
 		[Test]
 		public void Text_ListView_Disposed ()
@@ -350,12 +342,10 @@ namespace MonoTests.System.Windows.Forms
 			ListView lv = new ListView ();
 			lv.SmallImageList = new ImageList ();
 			ColumnHeader col = new ColumnHeader ();
-#if NET_2_0
 			col.DisplayIndex = 3;
 			col.ImageIndex = 2;
 			col.Name = "address_col";
 			col.Tag = DateTime.Now;
-#endif
 			col.Text = "Address";
 			col.TextAlign = HorizontalAlignment.Right;
 			col.Width = 30;
@@ -389,7 +379,6 @@ namespace MonoTests.System.Windows.Forms
 			col.Width = -2;
 			Assert.IsTrue (col.Width > 0, "#2");
 
-#if NET_2_0
 			bool eventRaised = false;
 			lv.ColumnWidthChanged += delegate (object sender, ColumnWidthChangedEventArgs e) {
 				Assert.AreEqual (e.ColumnIndex, 0, "#3");
@@ -397,7 +386,6 @@ namespace MonoTests.System.Windows.Forms
 			};
 			col.Width = 100;
 			Assert.IsTrue (eventRaised, "#4");
-#endif
 		}
 
 		[Test]
@@ -436,13 +424,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, col2.Width == lv.ClientRectangle.Width - col1.Width, "#B1");
 		}
 
-#if NET_2_0
 		public void ColumnReordered (object sender, ColumnReorderedEventArgs  e)
 		{
 			columnReordered++;
 		}
 
 		private int columnReordered;
-#endif
 	}
 }

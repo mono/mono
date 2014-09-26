@@ -752,7 +752,6 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			dvr.Read ();	// &ent3;
 			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
-#if NET_2_0
 			// under .NET 2.0, an error is raised here.
 			// under .NET 1.1, the error is thrown on the next read.
 			try {
@@ -760,16 +759,6 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("Attempt to resolve undeclared entity should fail.");
 			} catch (XmlException) {
 			}
-#else
-			// ent3 does not exist in this dtd.
-			dvr.ResolveEntity ();
-			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
-			try {
-				dvr.Read ();
-				Assert.Fail ("Attempt to resolve undeclared entity should fail.");
-			} catch (XmlException) {
-			}
-#endif
 		}
 
 		[Test]
@@ -863,12 +852,6 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		//[NotWorking ("default namespace seems null, not String.Empty")]
-#if NET_2_0
-#else
-		// MS.NET 1.x does not consider cases that xmlns* attributes
-		// could be declared as default.
-		[Category ("NotDotNet")]
-#endif
 		public void DefaultXmlnsAttributeLookup ()
 		{
 			string xml = @"<!DOCTYPE X [
@@ -924,7 +907,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("urn:hoge", xvr.LookupNamespace ("bar"), "#8-2");
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (XmlSchemaException))]
 		public void Bug80231 ()
@@ -937,9 +919,7 @@ namespace MonoTests.System.Xml
 			while (!r.EOF)
 				r.Read ();
 		}
-#endif
 
-#if NET_2_0		
 		[Test]		
 		public void Bug501814 ()
 		{
@@ -987,9 +967,7 @@ namespace MonoTests.System.Xml
 			doc.Schemas.Add (schema);
 			doc.Validate (null);
 		}
-#endif
 		
-#if NET_2_0
 		[Test]		
 		public void Bug502168 ()
 		{
@@ -1072,6 +1050,5 @@ namespace MonoTests.System.Xml
 			doc.Schemas.Add(schema);
 			doc.Validate(null);
 		}
-#endif		
 	}
 }

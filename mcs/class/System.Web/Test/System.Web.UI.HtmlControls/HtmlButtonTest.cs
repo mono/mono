@@ -68,9 +68,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			HtmlButtonPoker p = new HtmlButtonPoker ();
 
 			Assert.IsTrue (p.CausesValidation, "A1");
-#if NET_2_0
 			Assert.AreEqual ("", p.ValidationGroup, "A2");
-#endif
 		}
 
 		[Test]
@@ -93,16 +91,12 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		{
 			HtmlButtonPoker p = new HtmlButtonPoker ();
 			p.CausesValidation = true;
-#if NET_2_0
 			p.ValidationGroup = "VG";
-#endif
 			object state = p.SaveState();
 
 			HtmlButtonPoker copy = new HtmlButtonPoker ();
 			copy.LoadState (state);
-#if NET_2_0
 			Assert.AreEqual ("VG", copy.ValidationGroup, "A1");
-#endif
 			Assert.IsTrue (copy.CausesValidation, "A2");
 		}
 

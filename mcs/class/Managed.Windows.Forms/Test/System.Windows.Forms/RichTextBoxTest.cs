@@ -227,11 +227,7 @@ namespace MonoTests.System.Windows.Forms
 			RichTextBox rtb = new RichTextBox ();
 			rtb.ReadOnly = true;
 			Assert.IsTrue (rtb.ReadOnly, "#A1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#A2");
-#else
-			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#A2");
-#endif
 
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
@@ -239,19 +235,11 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 
 			Assert.IsTrue (rtb.ReadOnly, "#B1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#B2");
-#else
-			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#B2");
-#endif
 
 			rtb.ResetBackColor ();
 			Assert.IsTrue (rtb.ReadOnly, "#C1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#C2");
-#else
-			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#C2");
-#endif
 
 			rtb.ReadOnly = false;
 			Assert.IsFalse (rtb.ReadOnly, "#D1");
@@ -259,11 +247,7 @@ namespace MonoTests.System.Windows.Forms
 
 			rtb.ReadOnly = true;
 			Assert.IsTrue (rtb.ReadOnly, "#E1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#E2");
-#else
-			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#E2");
-#endif
 
 			rtb.BackColor = Color.Red;
 			Assert.IsTrue (rtb.ReadOnly, "#F1");
@@ -279,11 +263,7 @@ namespace MonoTests.System.Windows.Forms
 
 			rtb.ResetBackColor ();
 			Assert.IsTrue (rtb.ReadOnly, "#I1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#I2");
-#else
-			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#I2");
-#endif
 			form.Close ();
 		}
 
@@ -340,11 +320,7 @@ namespace MonoTests.System.Windows.Forms
 			rtb.ReadOnly = true;
 			rtb.ResetBackColor ();
 			Assert.IsTrue (rtb.ReadOnly, "#G1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, rtb.BackColor, "#G2");
-#else
-			Assert.AreEqual (SystemColors.Window, rtb.BackColor, "#G2");
-#endif
 
 			form.Dispose ();
 
@@ -410,7 +386,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				rtb.SelectionLength = -1;
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -418,14 +393,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("SelectionLength", ex.ParamName, "#6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -435,7 +402,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				rtb.SelectionStart = -1;
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -443,14 +409,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("SelectionStart", ex.ParamName, "#6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 		
 		RichTextBox rtb;

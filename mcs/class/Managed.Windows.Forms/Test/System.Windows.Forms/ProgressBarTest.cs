@@ -60,11 +60,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ForeColorTest ()
 		{
 			ProgressBar progressBar = new ProgressBar ();
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Highlight, progressBar.ForeColor, "#A1");
-#else
-			Assert.AreEqual (SystemColors.ControlText, progressBar.ForeColor, "#A1");
-#endif
 			progressBar.ForeColor = Color.Red;
 			Assert.AreEqual (Color.Red, progressBar.ForeColor, "#A2");
 			progressBar.ForeColor = Color.White;
@@ -92,19 +88,11 @@ namespace MonoTests.System.Windows.Forms
 			ProgressBar progressBar = new ProgressBar ();
 			progressBar.ForeColor = Color.Red;
 			progressBar.ResetForeColor ();
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Highlight, progressBar.ForeColor);
-#else
-			Assert.AreEqual (SystemColors.ControlText, progressBar.ForeColor);
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void ValueTest ()
 		{
 			ProgressBar myProgressBar = new ProgressBar ();
@@ -116,11 +104,7 @@ namespace MonoTests.System.Windows.Forms
 		public void MinMax()
 		{
 			Type expectedArgExType;
-#if NET_2_0
 			expectedArgExType = typeof (ArgumentOutOfRangeException);
-#else
-			expectedArgExType = typeof (ArgumentException);
-#endif
 			//
 			ProgressBar c = new ProgressBar ();
 			Assert.AreEqual (0, c.Minimum, "default_min");
@@ -134,18 +118,14 @@ namespace MonoTests.System.Windows.Forms
 				// MSDN says ArgumentException, but really its *subtype* ArgumentOutOfRangeException.
 				// Actually it changed in FX2.
 				Assert.AreEqual (expectedArgExType, ex.GetType (), "Typeof Min-1");
-#if NET_2_0
 				Assert.AreEqual ("Minimum", ex.ParamName, "ParamName Min-1"); // (culture insensitive).
-#endif
 			}
 			try {
 				c.Maximum = -1;
 				Assert.Fail ("should have thrown -- Max-1");
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (expectedArgExType, ex.GetType (), "Typeof Max-1");
-#if NET_2_0
 				Assert.AreEqual ("Maximum", ex.ParamName, "ParamName Max-1"); // (culture insensitive).
-#endif
 			}
 			Assert.AreEqual (0, c.Minimum, "after Min/Max-1_min");
 			Assert.AreEqual (100, c.Maximum, "after Min/Max-1_max");
@@ -179,9 +159,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail ("should have thrown -- 29");
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (expectedArgExType, ex.GetType (), "Typeof 29");
-#if NET_2_0
 				Assert.AreEqual ("Value", ex.ParamName, "ParamName 29");
-#endif
 			}
 			Assert.AreEqual (45, c.Value, "after 29_value");
 			try {
@@ -189,9 +167,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail ("should have thrown -- 51");
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (expectedArgExType, ex.GetType (), "Typeof 51");
-#if NET_2_0
 				Assert.AreEqual ("Value", ex.ParamName, "ParamName 151");
-#endif
 			}
 			Assert.AreEqual (45, c.Value, "after 51_value");
 		}
@@ -254,7 +230,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (100, c.Value, "Increment30_4x");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Styles ()
 		{
@@ -298,7 +273,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("value", ex.ParamName, "ParamName bad style 99");
 			}
 		}
-#endif
 
 		[Test]
 		public void ToStringMethodTest () 

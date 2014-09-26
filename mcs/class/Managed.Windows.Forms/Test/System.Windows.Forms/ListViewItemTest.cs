@@ -194,7 +194,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, item.SubItems [0].Text, "#7");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Constructor9_Text_Null ()
 		{
@@ -326,7 +325,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (String.Empty, item2.ToolTipText, "#A19");
 			Assert.AreEqual (item.Group.Header, item2.Group.Header, "#A20");
 		}
-#endif
 
 		[Test]
 		public void ListViewItemDefaultValues ()
@@ -338,12 +336,10 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, item.Text, "DefaultValues#5");
 			Assert.IsTrue (item.UseItemStyleForSubItems, "DefaultValues#6");
 			Assert.AreEqual (-1, item.ImageIndex, "DefaultValues#7");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, item.Name, "DefaultValues#8");
 			Assert.AreEqual(String.Empty, item.ImageKey, "DefaultValues#9");
 			Assert.AreEqual (String.Empty, item.ToolTipText, "DefaultValues#10");
 			Assert.AreEqual (0, item.IndentCount, "DefaultValues#11");
-#endif
 		}
 
 		[Test]
@@ -433,7 +429,6 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void ListViewItemIndent ()
@@ -498,7 +493,6 @@ namespace MonoTests.System.Windows.Forms
 			itemB.Position = Point.Empty;
 			Assert.AreEqual (itemB_pos, itemB.Position, "#H1");
 		}
-#endif
 
 		[Test] // bug #330415 and #331643
 		public void RemoveFocusedItem ()
@@ -577,7 +571,6 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 	
-#if NET_2_0
 		[Test]
 		public void ListViewItemGroup ()
 		{
@@ -595,7 +588,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, lvg2.Items.Count, "#B2");
 			Assert.AreEqual (lvg2, lvi.Group, "#B3");
 		}
-#endif
 
 		[Test]
 		public void ListViewItemUseItemStyleForSubItems ()
@@ -635,9 +627,7 @@ namespace MonoTests.System.Windows.Forms
 			item1.BackColor = Color.Red;
 			item1.Font = new Font ("Arial", 14);
 			item1.SubItems.Add ("Element2");
-#if NET_2_0
 			item1.ToolTipText = item1.Text;
-#endif
 
 			f.Show ();
 
@@ -649,9 +639,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, item2.SubItems.Count, "#5");
 			Assert.AreEqual ("Hello", item2.SubItems [0].Text, "#6");
 			Assert.AreEqual ("Element2", item2.SubItems[1].Text, "#7");
-#if NET_2_0
 			Assert.AreEqual (item1.ToolTipText, item2.ToolTipText, "#8");
-#endif
 			// Focused is not copied
 			// These tests shoule be re-enabled when #333693
 			/*Assert.IsTrue (item1.Focused, "#9");
@@ -660,7 +648,6 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void ListViewItemTestImageIndex()
 		{
@@ -690,7 +677,6 @@ namespace MonoTests.System.Windows.Forms
 			item1.ToolTipText = null;
 			Assert.AreEqual (String.Empty, item1.ToolTipText, "ToolTipText#1");
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -703,9 +689,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, subItem.Text, "#1");
 			Assert.AreEqual (SystemColors.Window, subItem.BackColor, "#2");
 			Assert.AreEqual (SystemColors.WindowText, subItem.ForeColor, "#3");
-#if NET_2_0
 			Assert.AreEqual (SystemFonts.DefaultFont, subItem.Font, "#4");
-#endif
 		}
 
 		[Test] // ctor (ListViewItem, String)
@@ -716,18 +700,14 @@ namespace MonoTests.System.Windows.Forms
 			
 			subItem = new ListViewItem.ListViewSubItem (null, null);
 			Assert.IsNotNull (subItem.Font, "#A1");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, subItem.Name, "#A2");
 			Assert.IsNull (subItem.Tag, "#A3");
-#endif
 			Assert.AreEqual (String.Empty, subItem.Text, "#A4");
 
 			subItem = new ListViewItem.ListViewSubItem (item, "SubItem2");
 			Assert.IsNotNull (subItem.Font, "#B1");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, subItem.Name, "#B2");
 			Assert.IsNull (subItem.Tag, "#B3");
-#endif
 			Assert.AreEqual ("SubItem2", subItem.Text, "#B4");
 		}
 
@@ -743,10 +723,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Color.Red, subItem.BackColor, "#A1");
 			Assert.IsNotNull (subItem.Font, "#A2");
 			Assert.AreEqual (Color.Blue, subItem.ForeColor, "#A3");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, subItem.Name, "#A4");
 			Assert.IsNull (subItem.Tag, "#A5");
-#endif
 			Assert.AreEqual (string.Empty, subItem.Text, "#A6");
 
 			subItem = new ListViewItem.ListViewSubItem (item, "SubItem3",
@@ -754,14 +732,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Color.Green, subItem.BackColor, "#B1");
 			Assert.AreSame (font, subItem.Font, "#B2");
 			Assert.AreEqual (Color.Blue, subItem.ForeColor, "#B3");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, subItem.Name, "#B4");
 			Assert.IsNull (subItem.Tag, "#B5");
-#endif
 			Assert.AreEqual ("SubItem3", subItem.Text, "#B6");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Name ()
 		{
@@ -789,7 +764,6 @@ namespace MonoTests.System.Windows.Forms
 			subItem.Tag = 5;
 			Assert.AreEqual (5, subItem.Tag, "#3");
 		}
-#endif
 
 		[Test]
 		public void Text ()
@@ -817,10 +791,8 @@ namespace MonoTests.System.Windows.Forms
 			subItem = new ListViewItem.ListViewSubItem (item,
 				"SubItemText", Color.Yellow, Color.Green,
 				font);
-#if NET_2_0
 			subItem.Name = "foo";
 			subItem.Tag = "bar";
-#endif
 
 			MemoryStream ms = new MemoryStream ();
 			BinaryFormatter formatter = new BinaryFormatter ();
@@ -833,10 +805,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Color.Green, subItem.BackColor, "#A1");
 			Assert.AreEqual (font, subItem.Font, "#A2");
 			Assert.AreEqual (Color.Yellow, subItem.ForeColor, "#A3");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, subItem.Name, "#A4");
 			Assert.IsNull (subItem.Tag, "#A5");
-#endif
 			Assert.AreEqual ("SubItemText", subItem.Text, "#A6");
 
 			ms.Position = 0;
@@ -856,10 +826,8 @@ namespace MonoTests.System.Windows.Forms
 			subItem = new ListViewItem.ListViewSubItem (item,
 				"SubItemText", Color.Yellow, Color.Green,
 				font);
-#if NET_2_0
 			subItem.Name = "foo";
 			subItem.Tag = "bar";
-#endif
 
 			MemoryStream ms = new MemoryStream ();
 			BinaryFormatter formatter = new BinaryFormatter ();
@@ -870,11 +838,7 @@ namespace MonoTests.System.Windows.Forms
 			byte [] ser = new byte [ms.Length];
 			ms.Read (ser, 0, ser.Length);
 
-#if NET_2_0
 			Assert.AreEqual (_serializedV20_Mono, ser);
-#else
-			Assert.AreEqual (_serializedV11_Mono, ser);
-#endif
 		}
 
 		[Test]
@@ -888,10 +852,8 @@ namespace MonoTests.System.Windows.Forms
 			subItem = new ListViewItem.ListViewSubItem (item,
 				"SubItemText", Color.Yellow, Color.Green,
 				font);
-#if NET_2_0
 			subItem.Name = "foo";
 			subItem.Tag = "bar";
-#endif
 
 			MemoryStream ms = new MemoryStream ();
 			BinaryFormatter formatter = new BinaryFormatter ();
@@ -901,11 +863,7 @@ namespace MonoTests.System.Windows.Forms
 			byte [] ser = new byte [ms.Length];
 			ms.Read (ser, 0, ser.Length);
 
-#if NET_2_0
 			Assert.AreEqual (_serializedV20_MS, ser);
-#else
-			Assert.AreEqual (_serializedV11_MS, ser);
-#endif
 		}
 
 		[Test]
@@ -929,10 +887,8 @@ namespace MonoTests.System.Windows.Forms
 			// FIXME: bug #410693
 			//Assert.AreEqual (Color.Yellow, subItem.ForeColor, "#A3");
 			Assert.AreEqual ("Yellow", subItem.ForeColor.Name, "#A3");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, subItem.Name, "#A4");
 			Assert.IsNull (subItem.Tag, "#A5");
-#endif
 			Assert.AreEqual ("SubItemText", subItem.Text, "#A6");
 
 			ms = new MemoryStream ();
@@ -949,13 +905,10 @@ namespace MonoTests.System.Windows.Forms
 			// FIXME: bug #410693
 			//Assert.AreEqual (Color.Yellow, subItem.ForeColor, "#B3");
 			Assert.AreEqual ("Yellow", subItem.ForeColor.Name, "#B3");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, subItem.Name, "#B4");
 			Assert.IsNull (subItem.Tag, "#B5");
-#endif
 			Assert.AreEqual ("SubItemText", subItem.Text, "#B6");
 
-#if NET_2_0
 			ms = new MemoryStream ();
 			ms.Write (_serializedV20_Mono, 0, _serializedV20_Mono.Length);
 			ms.Position = 0;
@@ -991,7 +944,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, subItem.Name, "#D4");
 			Assert.IsNull (subItem.Tag, "#D5");
 			Assert.AreEqual ("SubItemText", subItem.Text, "#D6");
-#endif
 		}
 
 		static byte [] _serializedV11_MS = {

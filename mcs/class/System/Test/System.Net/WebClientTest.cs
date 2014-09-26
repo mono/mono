@@ -63,7 +63,6 @@ namespace MonoTests.System.Net
 			try {
 				wc.DownloadData ((string) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -71,24 +70,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // DownloadData (string)
@@ -114,7 +95,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_2_0
 		[Test] // DownloadData (Uri)
 		public void DownloadData2_Address_Null ()
 		{
@@ -153,7 +133,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (inner.Message, "#9");
 			}
 		}
-#endif
 
 		[Test]
 		public void DownloadFile1_Address_Null ()
@@ -162,7 +141,6 @@ namespace MonoTests.System.Net
 			try {
 				wc.DownloadFile ((string) null, "tmp.out");
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -170,24 +148,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // DownloadFile (string, string)
@@ -226,7 +186,6 @@ namespace MonoTests.System.Net
 				wc.DownloadFile ("tp://scheme.notsupported",
 					(string) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -234,27 +193,8 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("fileName", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("path", inner.ParamName, "#11");
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test] // DownloadFile (Uri, string)
 		public void DownloadFile2_Address_Null ()
 		{
@@ -417,7 +357,6 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("Encoding", ex.ParamName, "#6");
 			}
 		}
-#endif
 
 		[Test] // OpenRead (string)
 		public void OpenRead1_Address_Null ()
@@ -426,7 +365,6 @@ namespace MonoTests.System.Net
 			try {
 				wc.OpenRead ((string) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -434,24 +372,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // OpenRead (string)
@@ -477,7 +397,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_2_0
 		[Test] // OpenRead (Uri)
 		public void OpenRead2_Address_Null ()
 		{
@@ -516,7 +435,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (inner.Message, "#9");
 			}
 		}
-#endif
 
 		[Test] // OpenWrite (string)
 		public void OpenWrite1_Address_Null ()
@@ -525,7 +443,6 @@ namespace MonoTests.System.Net
 			try {
 				wc.OpenWrite ((string) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -533,24 +450,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // OpenWrite (string)
@@ -583,7 +482,6 @@ namespace MonoTests.System.Net
 			try {
 				wc.OpenWrite ((string) null, "PUT");
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -591,24 +489,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // OpenWrite (string, string)
@@ -634,7 +514,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_2_0
 		[Test] // OpenWrite (Uri)
 		public void OpenWrite3_Address_Null ()
 		{
@@ -713,7 +592,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (inner.Message, "#9");
 			}
 		}
-#endif
 
 		[Test] // UploadData (string, byte [])
 		public void UploadData1_Address_Null ()
@@ -722,7 +600,6 @@ namespace MonoTests.System.Net
 			try {
 				wc.UploadData ((string) null, new byte [] { 0x1a });
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -730,24 +607,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // UploadData (string, byte [])
@@ -784,7 +643,6 @@ namespace MonoTests.System.Net
 				wc.UploadData ("http://www.mono-project.com",
 					(byte []) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -792,27 +650,8 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("data", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("data", inner.ParamName, "#11");
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test] // UploadData (Uri, byte [])
 		public void UploadData2_Address_Null ()
 		{
@@ -869,7 +708,6 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("data", ex.ParamName, "#6");
 			}
 		}
-#endif
 
 		[Test] // UploadData (string, string, byte [])
 		public void UploadData3_Address_Null ()
@@ -879,7 +717,6 @@ namespace MonoTests.System.Net
 				wc.UploadData ((string) null, "POST",
 					new byte [] { 0x1a });
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -887,24 +724,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // UploadData (string, string, byte [])
@@ -942,7 +761,6 @@ namespace MonoTests.System.Net
 				wc.UploadData ("http://www.mono-project.com",
 					"POST", (byte []) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -950,27 +768,8 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("data", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("data", inner.ParamName, "#11");
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test] // UploadData (Uri, string, byte [])
 		public void UploadData4_Address_Null ()
 		{
@@ -1027,7 +826,6 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("data", ex.ParamName, "#6");
 			}
 		}
-#endif
 
 		[Test] // UploadFile (string, string)
 		public void UploadFile1_Address_Null ()
@@ -1039,7 +837,6 @@ namespace MonoTests.System.Net
 			try {
 				wc.UploadFile ((string) null, tempFile);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1047,24 +844,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // UploadFile (string, string)
@@ -1131,7 +910,6 @@ namespace MonoTests.System.Net
 				wc.UploadFile ("tp://scheme.notsupported",
 					(string) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1139,27 +917,8 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("fileName", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("path", inner.ParamName, "#11");
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test] // UploadFile (Uri, string)
 		public void UploadFile2_Address_Null ()
 		{
@@ -1250,7 +1009,6 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("fileName", ex.ParamName, "#6");
 			}
 		}
-#endif
 
 		[Test] // UploadFile (string, string, string)
 		public void UploadFile3_Address_Null ()
@@ -1262,7 +1020,6 @@ namespace MonoTests.System.Net
 			try {
 				wc.UploadFile ((string) null, "POST", tempFile);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1270,24 +1027,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("path", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // UploadFile (string, string, string)
@@ -1354,7 +1093,6 @@ namespace MonoTests.System.Net
 				wc.UploadFile ("tp://scheme.notsupported",
 					"POST", (string) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1362,27 +1100,8 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("fileName", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("path", inner.ParamName, "#11");
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test] // UploadFile (Uri, string, string)
 		public void UploadFile4_Address_Null ()
 		{
@@ -1700,7 +1419,6 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("data", ex.ParamName, "#6");
 			}
 		}
-#endif
 
 		[Test]
 		public void UploadValues1 ()
@@ -1712,9 +1430,7 @@ namespace MonoTests.System.Net
 				responder.Start ();
 
 				WebClient wc = new WebClient ();
-#if NET_2_0
 				wc.Encoding = Encoding.ASCII;
-#endif
 
 				NameValueCollection nvc = new NameValueCollection ();
 				nvc.Add ("Name", "\u0041\u2262\u0391\u002E");
@@ -1733,7 +1449,6 @@ namespace MonoTests.System.Net
 			try {
 				wc.UploadValues ((string) null, new NameValueCollection ());
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1741,24 +1456,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // UploadValues (string, NameValueCollection)
@@ -1796,7 +1493,6 @@ namespace MonoTests.System.Net
 				wc.UploadValues ("http://www.mono-project.com",
 					(NameValueCollection) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1804,27 +1500,8 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("data", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("data", inner.ParamName, "#11");
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test] // UploadValues (Uri, NameValueCollection)
 		public void UploadValues2_Address_Null ()
 		{
@@ -1881,7 +1558,6 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("data", ex.ParamName, "#6");
 			}
 		}
-#endif
 
 		[Test] // UploadValues (string, string, NameValueCollection)
 		public void UploadValues3_Address_Null ()
@@ -1891,7 +1567,6 @@ namespace MonoTests.System.Net
 				wc.UploadValues ((string) null, "POST",
 					new NameValueCollection ());
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1899,24 +1574,6 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("address", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("uriString", inner.ParamName, "#11");
-			}
-#endif
 		}
 
 		[Test] // UploadValues (string, string, NameValueCollection)
@@ -1954,7 +1611,6 @@ namespace MonoTests.System.Net
 				wc.UploadValues ("http://www.mono-project.com",
 					"POST", (NameValueCollection) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1962,27 +1618,8 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("data", ex.ParamName, "#6");
 			}
-#else
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
-
-				ArgumentNullException inner = ex.InnerException
-					as ArgumentNullException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (ArgumentNullException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-				Assert.IsNotNull (inner.ParamName, "#10");
-				Assert.AreEqual ("data", inner.ParamName, "#11");
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test] // UploadValues (Uri, string, NameValueCollection)
 		public void UploadValues4_Address_Null ()
 		{
@@ -2040,9 +1677,7 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("data", ex.ParamName, "#6");
 			}
 		}
-#endif
 
-#if NET_2_0
 		[Test]
 		public void GetWebRequestOverriding ()
 		{
@@ -2061,7 +1696,6 @@ namespace MonoTests.System.Net
 				return base.GetWebRequest (address);
 			}
 		}
-#endif
 
 		static byte [] EchoRequestHandler (Socket socket)
 		{

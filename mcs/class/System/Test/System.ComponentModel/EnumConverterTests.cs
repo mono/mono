@@ -30,11 +30,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsFalse (converter.CanConvertFrom (typeof (int)), "#A4");
 			Assert.IsTrue (converter.CanConvertFrom (typeof (InstanceDescriptor)), "#A5");
 			Assert.IsFalse (converter.CanConvertFrom (typeof (string [])), "#A6");
-#if NET_2_0
 			Assert.IsTrue (converter.CanConvertFrom (typeof (Enum [])), "#A7");
-#else
-			Assert.IsFalse (converter.CanConvertFrom (typeof (Enum [])), "#A7");
-#endif
 
 			converter = new EnumConverter (typeof (E2));
 			Assert.IsTrue (converter.CanConvertFrom (typeof (string)), "#B1");
@@ -43,11 +39,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsFalse (converter.CanConvertFrom (typeof (int)), "#B4");
 			Assert.IsTrue (converter.CanConvertFrom (typeof (InstanceDescriptor)), "#B5");
 			Assert.IsFalse (converter.CanConvertFrom (typeof (string [])), "#B6");
-#if NET_2_0
 			Assert.IsTrue (converter.CanConvertFrom (typeof (Enum [])), "#B7");
-#else
-			Assert.IsFalse (converter.CanConvertFrom (typeof (Enum [])), "#B7");
-#endif
 		}
 
 		[Test]
@@ -60,11 +52,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsFalse (converter.CanConvertTo (typeof (int)), "#A4");
 			Assert.IsTrue (converter.CanConvertTo (typeof (InstanceDescriptor)), "#A5");
 			Assert.IsFalse (converter.CanConvertTo (typeof (string [])), "#A6");
-#if NET_2_0
 			Assert.IsTrue (converter.CanConvertTo (typeof (Enum [])), "#A7");
-#else
-			Assert.IsFalse (converter.CanConvertTo (typeof (Enum [])), "#A7");
-#endif
 
 			converter = new EnumConverter (typeof (E2));
 			Assert.IsTrue (converter.CanConvertTo (typeof (string)), "#B1");
@@ -73,11 +61,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsFalse (converter.CanConvertTo (typeof (object)), "#B4");
 			Assert.IsTrue (converter.CanConvertTo (typeof (InstanceDescriptor)), "#B5");
 			Assert.IsFalse (converter.CanConvertTo (typeof (string [])), "#B6");
-#if NET_2_0
 			Assert.IsTrue (converter.CanConvertTo (typeof (Enum [])), "#B7");
-#else
-			Assert.IsFalse (converter.CanConvertTo (typeof (Enum [])), "#B7");
-#endif
 		}
 
 		[Test]
@@ -97,7 +81,6 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void ConvertFrom_EnumArray ()
 		{
@@ -132,7 +115,6 @@ namespace MonoTests.System.ComponentModel
 				CultureInfo.InvariantCulture,
 				(Enum []) new Enum [] { E2.Bb, E2.Dd }), "#B5");
 		}
-#endif
 
 		[Test]
 		public void ConvertFrom_String ()
@@ -150,7 +132,6 @@ namespace MonoTests.System.ComponentModel
 			try {
 				converter.ConvertFrom (null, CultureInfo.InvariantCulture, string.Empty);
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (FormatException ex) {
 				//  is not a valid value for E
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#B2");
@@ -164,19 +145,10 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsNull (inner.InnerException, "#B7");
 				Assert.IsNotNull (inner.Message, "#B8");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// Must specify valid information for parsing in the string
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-			}
-#endif
 
 			try {
 				converter.ConvertFrom (null, CultureInfo.InvariantCulture, "YY");
 				Assert.Fail ("#C1");
-#if NET_2_0
 			} catch (FormatException ex) {
 				// YY is not a valid value for E
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#C2");
@@ -193,16 +165,6 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsTrue (inner.Message.IndexOf ("YY") != -1, "#C10");
 				Assert.IsNull (inner.ParamName, "#C11");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// Requested value YY was not found
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				//Assert.IsNull (ex.InnerException, "#C3");
-				Assert.IsNotNull (ex.Message, "#C4");
-				Assert.IsTrue (ex.Message.IndexOf ("YY") != -1, "#C5");
-				Assert.IsNull (ex.ParamName, "#C6");
-			}
-#endif
 		}
 
 		[Test]
@@ -223,7 +185,6 @@ namespace MonoTests.System.ComponentModel
 			try {
 				converter.ConvertFrom (null, CultureInfo.InvariantCulture, string.Empty);
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (FormatException ex) {
 				//  is not a valid value for E2
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#B2");
@@ -237,19 +198,10 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsNull (inner.InnerException, "#B7");
 				Assert.IsNotNull (inner.Message, "#B8");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// Must specify valid information for parsing in the string
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-			}
-#endif
 
 			try {
 				converter.ConvertFrom (null, CultureInfo.InvariantCulture, "Aa Bb");
 				Assert.Fail ("#C1");
-#if NET_2_0
 			} catch (FormatException ex) {
 				// Aa Bb is not a valid value for E2
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#C2");
@@ -265,20 +217,10 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsTrue (inner.Message.IndexOf ("Aa Bb") != -1, "#C10");
 				Assert.IsNull (inner.ParamName, "#C11");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// Requested value Aa Bb was not found
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				Assert.IsNotNull (ex.Message, "#C3");
-				Assert.IsTrue (ex.Message.IndexOf ("Aa Bb") != -1, "#C4");
-				Assert.IsNull (ex.ParamName, "#C5");
-			}
-#endif
 
 			try {
 				converter.ConvertFrom (null, CultureInfo.InvariantCulture, "2,");
 				Assert.Fail ("#D1");
-#if NET_2_0
 			} catch (FormatException ex) {
 				// 2, is not a valid value for E2
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#D2");
@@ -294,18 +236,8 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsNotNull (inner.Message, "#D9");
 				Assert.IsFalse (inner.Message.IndexOf ("2,") != -1, "#D10");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// Must specify valid information for parsing in the string
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
-				Assert.IsNull (ex.InnerException, "#D3");
-				Assert.IsNotNull (ex.Message, "#D4");
-				Assert.IsFalse (ex.Message.IndexOf ("2,") != -1, "#D5");
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void ConvertTo_EnumArray ()
 		{
@@ -488,7 +420,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (typeof (E3), enums [0].GetType (), "#H2");
 			Assert.AreEqual (E3.Aa, enums[0], "#H3");
 		}
-#endif
 
 		[Test]
 		public void ConvertTo_InstanceDescriptor ()

@@ -101,7 +101,6 @@ namespace MonoCasTests.System.Web.UI {
 		{
 			DesignTimeTemplateParser.ParseTemplate (dtpd);
 		}
-#if NET_2_0
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlThread = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -145,7 +144,6 @@ namespace MonoCasTests.System.Web.UI {
 		{
 			DesignTimeTemplateParser.ParseTheme (null, "theme", "path");
 		}
-#endif
 
 		// LinkDemand
 

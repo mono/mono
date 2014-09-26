@@ -23,16 +23,13 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Panel p = new Panel ();
 
-#if NET_2_0
 			Assert.AreEqual (false, p.AutoSize, "A1");
 			Assert.AreEqual (AutoSizeMode.GrowOnly, p.AutoSizeMode, "A2");
-#endif
 			Assert.AreEqual (BorderStyle.None, p.BorderStyle, "A3");
 			Assert.AreEqual (false, p.TabStop, "A4");
 			Assert.AreEqual (string.Empty, p.Text, "A5");
 		}
 
-#if NET_2_0
 		[Test]
 		public void AutoSize ()
 		{
@@ -59,6 +56,5 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Size (0, 0), p.ClientSize, "A3");
 			f.Dispose ();
 		}
-#endif
 	}
 }

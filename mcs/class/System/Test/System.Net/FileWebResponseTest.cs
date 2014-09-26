@@ -122,13 +122,10 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (fsA, "#A1");
 				Assert.IsTrue (fsA.CanRead, "#A2");
 				Assert.IsTrue (fsA.CanSeek, "#A3");
-#if NET_2_0
 				Assert.IsFalse (fsA.CanTimeout, "#A4");
-#endif
 				Assert.IsFalse (fsA.CanWrite, "#A5");
 				Assert.AreEqual (3, fsA.Length, "#A6");
 				Assert.AreEqual (0, fsA.Position, "#A7");
-#if NET_2_0
 				try {
 					int i = fsA.ReadTimeout;
 					Assert.Fail ("#A8:" + i);
@@ -139,20 +136,16 @@ namespace MonoTests.System.Net
 					Assert.Fail ("#A9:" + i);
 				} catch (InvalidOperationException) {
 				}
-#endif
 
 				respB = (FileWebResponse) req.GetResponse ();
 				fsB = respB.GetResponseStream () as FileStream;
 				Assert.IsNotNull (fsB, "#B1");
 				Assert.IsTrue (fsB.CanRead, "#B2");
 				Assert.IsTrue (fsB.CanSeek, "#B3");
-#if NET_2_0
 				Assert.IsFalse (fsB.CanTimeout, "#B4");
-#endif
 				Assert.IsFalse (fsB.CanWrite, "#B5");
 				Assert.AreEqual (3, fsB.Length, "#B6");
 				Assert.AreEqual (0, fsB.Position, "#B7");
-#if NET_2_0
 				try {
 					int i = fsB.ReadTimeout;
 					Assert.Fail ("#B8:" + i);
@@ -163,7 +156,6 @@ namespace MonoTests.System.Net
 					Assert.Fail ("#B9:" + i);
 				} catch (InvalidOperationException) {
 				}
-#endif
 			} finally {
 				if (respA != null)
 					respA.Close ();

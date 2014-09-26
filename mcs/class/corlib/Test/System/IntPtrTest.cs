@@ -52,13 +52,11 @@ namespace MonoTests.System  {
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void ToStringWithFormat ()
 		{
 			Assert.AreEqual ("0", IntPtr.Zero.ToString ("x"), "#1");
 			Assert.AreEqual ("3b9aca00", new IntPtr (1000000000).ToString ("x"), "#2");
 		}
-#endif
 	}
 }

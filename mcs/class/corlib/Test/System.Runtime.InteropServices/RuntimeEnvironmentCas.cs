@@ -54,12 +54,7 @@ namespace MonoCasTests.System.Runtime.InteropServices {
 		public void PartialTrust_DenyUnrestricted_Success ()
 		{
 			Assembly corlib = typeof (int).Assembly;
-#if NET_2_0
 			Assert.IsTrue (RuntimeEnvironment.FromGlobalAccessCache (corlib), "corlib");
-#else
-			// note: mscorlib.dll wasn't in the GAC for 1.x
-			Assert.IsFalse (RuntimeEnvironment.FromGlobalAccessCache (corlib), "corlib");
-#endif
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
 			Assert.IsFalse (RuntimeEnvironment.FromGlobalAccessCache (corlib_test), "corlib_test");
 		}

@@ -7,7 +7,7 @@
 // (C) 2010 Pablo Ruiz.
 //
 
-#if NET_2_0 && !MOBILE
+#if !MOBILE
 
 using System;
 using System.Collections.Generic;

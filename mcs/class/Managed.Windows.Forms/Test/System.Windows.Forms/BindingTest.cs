@@ -53,13 +53,11 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreSame (b.PropertyName, prop, "ctor5");
 			Assert.AreSame (b.DataSource, data_source, "ctor6");
 
-#if NET_2_0
 			Assert.AreEqual (false, b.FormattingEnabled, "ctor7");
 			Assert.AreEqual (String.Empty, b.FormatString, "ctor8");
 			Assert.IsNull (b.FormatInfo, "ctor9");
 			Assert.IsNull (b.NullValue, "ctor10");
 			Assert.AreEqual (Convert.DBNull, b.DataSourceNullValue, "ctor11");
-#endif
 		}
 
 		[Test]
@@ -137,11 +135,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			c.BindingContextChanged += new EventHandler (Event_Handler1);
 			eventcount = 0;
 			f.Show ();
-#if NET_2_0
 			Assert.AreEqual (1, eventcount, "A1");
-#else
-			Assert.AreEqual (2, eventcount, "A1");
-#endif
 			f.Dispose();
 		}
 
@@ -181,11 +175,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 			eventcount = 0;
 			f.Show ();
-#if NET_2_0
 			Assert.AreEqual (5, eventcount, "A1");
-#else
-			Assert.AreEqual (8, eventcount, "A1");
-#endif
 			f.Dispose ();
 		}
 
@@ -446,7 +436,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			form.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void ReadValueTest ()
 		{
@@ -658,7 +647,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 			Assert.AreEqual (String.Empty, binding.FormatString, "#A1");
 		}
-#endif
 
 	}
 
@@ -684,7 +672,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 	}
 
-#if NET_2_0
 	class BindableToolStripItem : ToolStripItem, IBindableComponent
 	{
 		ControlBindingsCollection data_bindings;
@@ -709,7 +696,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			}
 		}
 	}
-#endif
 
 	class One
 	{

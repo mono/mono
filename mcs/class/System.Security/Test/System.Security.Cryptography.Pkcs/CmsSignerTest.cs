@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 
@@ -293,4 +292,3 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 	}
 }
 
-#endif

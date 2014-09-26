@@ -631,21 +631,15 @@ namespace MonoTests.System.Data.SqlClient
 				// System.OverflowException: Value was either too large or too
 				// small for an Int16
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-#if NET_2_0
 				Assert.IsNotNull (ex.InnerException, "#A3");
-#else
-				Assert.IsNull (ex.InnerException, "#A3");
-#endif
 				Assert.IsNotNull (ex.Message, "#A4");
 				Assert.IsNull (ex.ParamName, "#A5");
 
-#if NET_2_0
 				OverflowException inner = ex.InnerException as OverflowException;
 				Assert.IsNotNull (inner, "#A6");
 				Assert.AreEqual (typeof (OverflowException), inner.GetType (), "#A7");
 				Assert.IsNull (inner.InnerException, "#A8");
 				Assert.IsNotNull (inner.Message, "#A9");
-#endif
 			}
 			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#A10");
 
@@ -659,21 +653,15 @@ namespace MonoTests.System.Data.SqlClient
 				// System.OverflowException: Value was either too large or too
 				// small for an Int16
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-#if NET_2_0
 				Assert.IsNotNull (ex.InnerException, "#B3");
-#else
-				Assert.IsNull (ex.InnerException, "#B3");
-#endif
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.IsNull (ex.ParamName, "#B5");
 
-#if NET_2_0
 				OverflowException inner = ex.InnerException as OverflowException;
 				Assert.IsNotNull (inner, "#B6");
 				Assert.AreEqual (typeof (OverflowException), inner.GetType (), "#B7");
 				Assert.IsNull (inner.InnerException, "#B8");
 				Assert.IsNotNull (inner.Message, "#B9");
-#endif
 			}
 			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#B10");
 
@@ -838,15 +826,9 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				adapter.MissingSchemaAction = (MissingSchemaAction)(-5000);
 				Assert.Fail ("#10 Exception shud be thrown: Invalid Value");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#11");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#11");
-			}
-#endif
 
 			// Tests if Data is filled correctly if schema is defined 
 			// manually and MissingSchemaAction.Error is set 
@@ -894,16 +876,10 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				adapter.MissingMappingAction = (MissingMappingAction)(-5000);
 				Assert.Fail ("#7 Exception shud be thrown : Invalid Value");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (),
 					"#8");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#8");
-			}
-#endif
 
 			// Test if mapping the column and table names works correctly	
 			adapter.MissingMappingAction = MissingMappingAction.Error;
@@ -1088,7 +1064,6 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void UpdateBatchSizeTest ()
 		{
@@ -1105,7 +1080,6 @@ namespace MonoTests.System.Data.SqlClient
 			adapter = new SqlDataAdapter();
 			adapter.UpdateBatchSize = -2;
 		}
-#endif
 
 		int ClientVersion {
 			get {
@@ -1114,7 +1088,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 	}
 
-#if NET_2_0
 	[TestFixture]
 	[Category ("sqlserver")]
 	public class SqlDataAdapterInheritTest : DbDataAdapter
@@ -1140,5 +1113,4 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 	}
-#endif
 }

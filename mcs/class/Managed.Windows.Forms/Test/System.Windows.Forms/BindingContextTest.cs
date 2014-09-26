@@ -171,7 +171,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (0, d.Position, "INWM10");
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestIndexerICurrencyManagerProvider ()
 		{
@@ -185,7 +184,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (false, bc.Contains (source), "A2");
 			Assert.AreEqual (0, ((ICollection)bc).Count, "A3");
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]

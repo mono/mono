@@ -57,10 +57,8 @@ namespace MonoCasTests.System.Web.UI.HtmlControls {
 			unit.AddParsedSubObject_DataBoundLiteralControl ();
 			unit.IPostBackDataHandler_RaisePostBackEvent ();
 			unit.IPostBackDataHandler_LoadPostData ();
-#if NET_2_0
 			unit.RaisePostBackEvent ();
 			unit.LoadPostData ();
-#endif
 		}
 
 		public override Type Type {

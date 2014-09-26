@@ -90,12 +90,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		private void DataItemContainer (TestDataListItem dli, int index)
 		{
-#if NET_2_0
 			IDataItemContainer dic = (dli as IDataItemContainer);
 			Assert.IsNull (dic.DataItem, "IDataItemContainer-DataItem");
 			Assert.AreEqual (index, dic.DataItemIndex, "IDataItemContainer-DataItemIndex");
 			Assert.AreEqual (index, dic.DisplayIndex, "IDataItemContainer-DisplayIndex");
-#endif
 		}
 
 		[Test]

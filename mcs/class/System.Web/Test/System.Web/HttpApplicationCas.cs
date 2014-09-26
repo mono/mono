@@ -106,7 +106,6 @@ namespace MonoCasTests.System.Web {
 			app.ReleaseRequestState -= new EventHandler (Handler);
 			app.ResolveRequestCache -= new EventHandler (Handler);
 			app.UpdateRequestCache -= new EventHandler (Handler);
-#if NET_2_0
 			app.PostAuthenticateRequest += new EventHandler (Handler);
 			app.PostAuthorizeRequest += new EventHandler (Handler);
 			app.PostResolveRequestCache += new EventHandler (Handler);
@@ -148,7 +147,6 @@ namespace MonoCasTests.System.Web {
 			app.PostAcquireRequestState -= new EventHandler (Handler);
 			app.PostReleaseRequestState -= new EventHandler (Handler);
 			app.PostUpdateRequestCache -= new EventHandler (Handler);
-#endif
 		}
 
 		[Test]

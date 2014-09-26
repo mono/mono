@@ -55,31 +55,17 @@ namespace MonoTests.System.Security.Permissions {
 		public void PermissionState_None ()
 		{
 			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.None);
-#if NET_2_0
 			// that cause a NullReferenceException before 2.0
 			Assert.AreEqual (String.Empty, uip.Url, "Url");
-#endif
 			SecurityElement se = uip.ToXml ();
 			// only class and version are present
 			Assert.AreEqual (2, se.Attributes.Count, "Xml-Attributes");
 			Assert.IsNull (se.Children, "Xml-Children");
-#if NET_2_0
 			UrlIdentityPermission copy = (UrlIdentityPermission)uip.Copy ();
 			Assert.IsFalse (Object.ReferenceEquals (uip, copy), "ReferenceEquals");
-#endif
 		}
 
-#if !NET_2_0
-		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void PermissionState_None_Url ()
-		{
-			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.None);
-			Assert.IsNull (uip.Url, "Url");
-		}
-#endif
 
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
 		public void PermissionStateUnrestricted ()
@@ -94,14 +80,6 @@ namespace MonoTests.System.Security.Permissions {
 			// and they aren't equals to None
 			Assert.IsFalse (uip.Equals (new UrlIdentityPermission (PermissionState.None)));
 		}
-#else
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void PermissionState_Unrestricted ()
-		{
-			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.Unrestricted);
-		}
-#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionState_Bad ()
@@ -122,16 +100,10 @@ namespace MonoTests.System.Security.Permissions {
 			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.None);
 			foreach (string s in GoodUrls) {
 				uip.Url = s;
-#if NET_2_0
 				Assert.AreEqual (s, uip.Url, s);
-#else
-				// Fx 1.0/1.1 adds a '/' at the end, while 2.0 keeps the original format
-				// so we only compare the start of the url
-#endif
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void Url_Null ()
 		{
@@ -139,15 +111,6 @@ namespace MonoTests.System.Security.Permissions {
 			uip.Url = null;
 			Assert.AreEqual (String.Empty, uip.Url, "Url");
 		}
-#else
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void Url_Null ()
-		{
-			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.None);
-			uip.Url = null;
-		}
-#endif
 
 		[Test]
 		public void Copy ()
@@ -163,9 +126,6 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Copy_None ()
 		{
 			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.None);
@@ -182,9 +142,7 @@ namespace MonoTests.System.Security.Permissions {
 				Assert.IsNull (uip.Intersect (null), s);
 			}
 		}
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void Intersect_None ()
 		{
@@ -236,9 +194,7 @@ namespace MonoTests.System.Security.Permissions {
 			}
 		}
 
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void IsSubset_None ()
 		{
@@ -331,16 +287,13 @@ namespace MonoTests.System.Security.Permissions {
 				Assert.IsTrue (union.Url.StartsWith (uip.Url), s);
 			}
 		}
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void Union_Different ()
 		{
 			UrlIdentityPermission uip1 = new UrlIdentityPermission (GoodUrls [0]);
 			UrlIdentityPermission uip2 = new UrlIdentityPermission (GoodUrls [1]);
 			UrlIdentityPermission result = (UrlIdentityPermission)uip1.Union (uip2);
-#if NET_2_0
 			Assert.IsNotNull (result, "Mono U Novell");
 			// new XML format is used to contain more than one site
 			SecurityElement se = result.ToXml ();
@@ -349,9 +302,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (GoodUrls [1], (se.Children [1] as SecurityElement).Attribute ("Url"), "Url#2");
 			// strangely it is still versioned as 'version="1"'.
 			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
-#else
-			Assert.IsNull (result, "Mono U Novell");
-#endif
 		}
 
 		[Test]

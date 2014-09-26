@@ -74,18 +74,10 @@ public void Equality ()
 	X509Certificate x509 = new X509Certificate (cert);
 	Assert.IsFalse (x509.Equals (null), "#1");
 
-#if !NET_2_0
-	X509Certificate nullobj = new X509Certificate (IntPtr.Zero);
-	Assert.IsFalse (x509.Equals (nullobj), "#2");
-	Assert.IsFalse (nullobj.Equals (null), "#3");
-	Assert.IsFalse (nullobj.Equals (x509), "#4");
-#endif
 }
 
 [Test]
-#if NET_2_0
 [ExpectedException (typeof (ArgumentNullException))]
-#endif
 public void ConstructorX509CertificateNull ()
 {
 	X509Certificate nullcopy = new X509Certificate ((X509Certificate) null);
@@ -124,19 +116,11 @@ public void Certificate1 ()
 	byte[] hash = { 0xD6,0x2F,0x48,0xD0,0x13,0xEE,0x7F,0xB5,0x8B,0x79,0x07,0x45,0x12,0x67,0x0D,0x9C,0x5B,0x3A,0x5D,0xA9 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("D62F48D013EE7FB58B79074512670D9C5B3A5DA9", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("03/12/1996 18:38:47", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("03/12/1997 18:38:46", until.ToString (), "GetExpirationDateString");
 	Assert.AreEqual ("02720006E8", x509.GetSerialNumberString (), "GetSerialNumberString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("03/12/1996 10:38:47", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("03/12/1997 10:38:46", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-	Assert.AreEqual ("E806007202", x509.GetSerialNumberString (), "GetSerialNumberString");
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (-701544240, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", x509.GetIssuerName (), "GetIssuerName");
@@ -160,10 +144,8 @@ public void Certificate1 ()
 		0x30,0x31,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("OU=Secure Server Certification Authority, O=\"RSA Data Security, Inc.\", C=US", x509.Issuer, "Issuer");
 	Assert.AreEqual ("OU=Server Certification Authority, O=CommerceNet, S=California, C=US", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -197,17 +179,10 @@ public void Certificate2 ()
 	byte[] hash = { 0x9E,0x87,0x80,0x3E,0xC5,0x68,0x9A,0xEF,0xE7,0x7F,0x92,0xF9,0x1A,0xBF,0xA7,0x46,0x7C,0x76,0xED,0x02 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("9E87803EC5689AEFE77F92F91ABFA7467C76ED02", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("01/18/1996 21:03:52", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("01/16/2001 21:03:52", until.ToString (), "GetExpirationDateString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("01/18/1996 13:03:52", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("01/16/2001 13:03:52", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (-1635286978, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, O=AT&T, OU=Directory Services", x509.GetIssuerName (), "GetIssuerName");
@@ -233,10 +208,8 @@ public void Certificate2 ()
 		0x35,0x36,0x44,0x30,0x32,0x30,0x31,0x30,0x46,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("OU=Directory Services, O=AT&T, C=US", x509.Issuer, "Issuer");
 	Assert.AreEqual ("OU=Directory Services, O=AT&T, C=US", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -273,19 +246,11 @@ public void Certificate3 ()
 	byte[] hash = { 0x39,0x5F,0xBB,0xFC,0x14,0x89,0x33,0x27,0x76,0x89,0xB7,0x59,0x3A,0x7D,0x1C,0xFF,0xF1,0x56,0xF1,0x62 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("395FBBFC148933277689B7593A7D1CFFF156F162", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("08/07/1996 00:00:00", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("08/31/1996 23:59:59", until.ToString (), "GetExpirationDateString");
 	Assert.AreEqual ("0353D78BDB3E16158055C4054002734D0C20F80D88005F657AACBA86BD1CD7E4", x509.GetSerialNumberString (), "GetSerialNumberString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("08/06/1996 16:00:00", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("08/31/1996 15:59:59", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-	Assert.AreEqual ("E4D71CBD86BAAC7A655F00880DF8200C4D73024005C4558015163EDB8BD75303", x509.GetSerialNumberString (), "GetSerialNumberString");
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (962575356, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, O=CCA - Unique ID, CN=Brand Name:Product Type", x509.GetIssuerName (), "GetIssuerName");
@@ -309,10 +274,8 @@ public void Certificate3 ()
 		0x30,0x33,0x30,0x31,0x30,0x30,0x30,0x31,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("CN=Brand Name:Product Type, O=CCA - Unique ID, C=US", x509.Issuer, "Issuer");
 	Assert.AreEqual ("CN=\"0+WKJx+wYEZabSSPVX9kLsnx92s=\", OU=Issuing Financial Institution, O=BrandID, C=US", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -347,19 +310,11 @@ public void Certificate4 ()
 	byte[] hash = { 0x0D,0x97,0x44,0x61,0x70,0x37,0x13,0xCB,0x74,0x93,0x2D,0x2A,0x75,0xAC,0xBC,0x71,0x4B,0x28,0x12,0x66 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("0D974461703713CB74932D2A75ACBC714B281266", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("11/09/1994 23:54:17", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("12/31/1999 23:54:17", until.ToString (), "GetExpirationDateString");
 	Assert.AreEqual ("0241000001", x509.GetSerialNumberString (), "GetSerialNumberString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("11/09/1994 15:54:17", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("12/31/1999 15:54:17", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-	Assert.AreEqual ("0100004102", x509.GetSerialNumberString (), "GetSerialNumberString");
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (228017249, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", x509.GetIssuerName (), "GetIssuerName");
@@ -384,10 +339,8 @@ public void Certificate4 ()
 		0x33,0x35,0x30,0x38,0x39,0x35,0x36,0x39,0x38,0x34,0x38,0x42,0x39,0x31,0x44,0x41,0x37,0x32,0x39,0x31,0x41,0x31,0x33,0x32,0x45,0x34,0x41,0x31,0x31,0x35,0x39,0x39,0x43,0x31,0x45,0x31,0x35,0x44,0x35,0x34,0x39,0x35,0x34,0x32,0x43,0x37,0x33,0x33,0x41,0x36,0x39,0x38,0x32,0x42,0x31,0x39,0x37,0x33,0x39,0x39,0x43,0x36,0x44,0x37,0x30,0x36,0x37,0x34,0x38,0x45,0x35,0x44,0x44,0x32,0x44,0x44,0x36,0x43,0x38,0x31,0x45,0x37,0x42,0x30,0x32,0x30,0x33,0x30,0x31,0x30,0x30,0x30,0x31,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("OU=Secure Server Certification Authority, O=\"RSA Data Security, Inc.\", C=US", x509.Issuer, "Issuer");
 	Assert.AreEqual ("OU=Secure Server Certification Authority, O=\"RSA Data Security, Inc.\", C=US", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -431,17 +384,10 @@ public void Certificate5 ()
 	byte[] hash = { 0x63,0xDB,0x7A,0x42,0x67,0x39,0x75,0x39,0x2A,0xC6,0xA4,0xFA,0xE3,0xD7,0x84,0x46,0xB4,0x67,0xC3,0x26 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("63DB7A42673975392AC6A4FAE3D78446B467C326", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("07/15/1997 00:00:00", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("07/15/2004 00:00:00", until.ToString (), "GetExpirationDateString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("07/14/1997 16:00:00", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("07/14/2004 16:00:00", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (1675328066, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, O=SET Root", x509.GetIssuerName (), "GetIssuerName");
@@ -470,10 +416,8 @@ public void Certificate5 ()
 		0x45,0x37,0x43,0x33,0x30,0x33,0x33,0x37,0x37,0x46,0x44,0x35,0x44,0x45,0x30,0x35,0x37,0x30,0x44,0x36,0x43,0x31,0x39,0x33,0x39,0x30,0x32,0x30,0x33,0x30,0x31,0x30,0x30,0x30,0x31,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("O=SET Root, C=US", x509.Issuer, "Issuer");
 	Assert.AreEqual ("O=SET Root, C=US", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -506,17 +450,10 @@ public void Certificate6 ()
 	byte[] hash = { 0x95,0xD4,0xE2,0xEA,0x34,0x0B,0xBF,0x33,0x27,0x1C,0x1F,0xBA,0x8B,0x52,0x9F,0x17,0x72,0x1F,0x8A,0x99 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("95D4E2EA340BBF33271C1FBA8B529F17721F8A99", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("01/18/1996 21:03:52", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("01/16/2001 21:03:52", until.ToString (), "GetExpirationDateString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("01/18/1996 13:03:52", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("01/16/2001 13:03:52", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (-1781210390, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, O=AT&T, OU=Directory Services", x509.GetIssuerName (), "GetIssuerName");
@@ -542,10 +479,8 @@ public void Certificate6 ()
 		0x35,0x36,0x44,0x30,0x32,0x30,0x31,0x30,0x46,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("OU=Directory Services, O=AT&T, C=US", x509.Issuer, "Issuer");
 	Assert.AreEqual ("OU=Directory Services, O=AT&T, C=US", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -613,17 +548,10 @@ public void Certificate8 ()
 	byte[] hash = { 0xA3,0x0A,0x06,0xB1,0xB0,0xD4,0xF8,0x71,0x67,0x8A,0x60,0xC5,0x4E,0xE4,0xD8,0x66,0x36,0x06,0xCC,0xE6 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("A30A06B1B0D4F871678A60C54EE4D8663606CCE6", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("10/25/2000 00:00:00", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("01/01/2003 00:00:00", until.ToString (), "GetExpirationDateString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("10/24/2000 16:00:00", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("12/31/2002 16:00:00", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (-1559624015, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, O=U.S. Government, OU=DoD, CN=Armed Forces Root", x509.GetIssuerName (), "GetIssuerName");
@@ -657,10 +585,8 @@ public void Certificate8 ()
 		0x43,0x42,0x42,0x38,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("CN=Armed Forces Root, OU=DoD, O=U.S. Government, C=US", x509.Issuer, "Issuer");
 	Assert.AreEqual ("CN=Armed Forces Root, OU=DoD, O=U.S. Government, C=US", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -714,19 +640,11 @@ public void Certificate9 ()
 	byte[] hash = { 0x52,0xD1,0x84,0x8F,0x6A,0x16,0x1B,0xA5,0xC6,0xC1,0x90,0x07,0xF8,0x16,0x46,0x68,0xF5,0xA3,0xB2,0xCF };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("52D1848F6A161BA5C6C19007F8164668F5A3B2CF", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("08/21/1996 00:00:00", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("08/20/1997 23:59:59", until.ToString (), "GetExpirationDateString");
 	Assert.AreEqual ("200B355ECEC4B063B7DEC634B9703444", x509.GetSerialNumberString (), "GetSerialNumberString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("08/20/1996 16:00:00", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("08/20/1997 15:59:59", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-	Assert.AreEqual ("443470B934C6DEB763B0C4CE5E350B20", x509.GetSerialNumberString (), "GetSerialNumberString");
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (1389462671, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("L=Internet, O=\"VeriSign, Inc.\", OU=VeriSign Class 1 CA - Individual Subscriber", x509.GetIssuerName (), "GetIssuerName");
@@ -751,10 +669,8 @@ public void Certificate9 ()
 		0x34,0x34,0x34,0x41,0x43,0x34,0x38,0x39,0x43,0x39,0x38,0x33,0x43,0x46,0x38,0x38,0x39,0x46,0x36,0x46,0x45,0x32,0x33,0x32,0x33,0x35,0x30,0x32,0x30,0x33,0x30,0x31,0x30,0x30,0x30,0x31,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("OU=VeriSign Class 1 CA - Individual Subscriber, O=\"VeriSign, Inc.\", L=Internet", x509.Issuer, "Issuer");
 	Assert.AreEqual ("E=david@formal.ie, CN=David T. Gray, OU=Digital ID Class 1 - Netscape, OU=\"www.verisign.com/repository/CPS Incorp. by Ref.,LIAB.LTD(c)96\", OU=VeriSign Class 1 CA - Individual Subscriber, O=\"VeriSign, Inc.\", L=Internet", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -789,17 +705,10 @@ public void Certificate10 ()
 	byte[] hash = { 0xE0,0xA0,0x0A,0xBE,0xB2,0xCC,0xA8,0x45,0x40,0xC2,0x1A,0x75,0xE0,0xB3,0xA4,0x06,0xF9,0xA6,0x24,0xAC };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("E0A00ABEB2CCA84540C21A75E0B3A406F9A624AC", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("05/07/1996 00:00:00", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("05/07/1999 00:00:00", until.ToString (), "GetExpirationDateString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("05/06/1996 16:00:00", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("05/06/1999 16:00:00", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (-526382402, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=CA, CN=Keywitness Canada Inc., OID.1.3.6.1.4.1.42.2.11.2.1=keywitness@keywitness.ca", x509.GetIssuerName (), "GetIssuerName");
@@ -826,10 +735,8 @@ public void Certificate10 ()
 		0x39,0x39,0x33,0x30,0x32,0x30,0x31,0x30,0x33,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("OID.1.3.6.1.4.1.42.2.11.2.1=keywitness@keywitness.ca, CN=Keywitness Canada Inc., C=CA", x509.Issuer, "Issuer");
 	Assert.AreEqual ("OID.1.3.6.1.4.1.42.2.11.2.1=keywitness@keywitness.ca, CN=Keywitness Canada Inc., C=CA", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -864,17 +771,10 @@ public void Certificate11 ()
 	byte[] hash = { 0xA2,0x75,0xE0,0x26,0xAC,0xD8,0x54,0x79,0x4A,0x4A,0xA2,0xCB,0x53,0xF6,0x62,0x33,0x12,0x9C,0x55,0xB6 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("A275E026ACD854794A4AA2CB53F66233129C55B6", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("02/23/1996 19:15:00", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("12/31/1999 23:59:00", until.ToString (), "GetExpirationDateString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("02/23/1996 11:15:00", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("12/31/1999 15:59:00", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (-1569333210, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, O=GTE Corporation, CN=GTE CyberTrust Root", x509.GetIssuerName (), "GetIssuerName");
@@ -900,10 +800,8 @@ public void Certificate11 ()
 		0x31,0x32,0x37,0x34,0x41,0x42,0x35,0x36,0x44,0x30,0x36,0x38,0x30,0x36,0x33,0x33,0x39,0x43,0x34,0x41,0x32,0x35,0x45,0x33,0x38,0x30,0x33,0x30,0x32,0x30,0x33,0x30,0x31,0x30,0x30,0x30,0x31,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("CN=GTE CyberTrust Root, O=GTE Corporation, C=US", x509.Issuer, "Issuer");
 	Assert.AreEqual ("CN=GTE CyberTrust Root, O=GTE Corporation, C=US", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -943,19 +841,11 @@ public void Certificate12 ()
 	byte[] hash = { 0x28,0x2D,0x98,0x06,0xC3,0xDF,0x73,0x45,0x92,0x9F,0x64,0xF5,0x89,0x5E,0xF2,0xEA,0x4A,0xC2,0x93,0x02 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("282D9806C3DF7345929F64F5895EF2EA4AC29302", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("05/25/2002 00:55:48", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("11/25/2003 01:05:48", until.ToString (), "GetExpirationDateString");
 	Assert.AreEqual ("61071143000000000034", x509.GetSerialNumberString (), "GetSerialNumberString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual ("05/24/2002 16:55:48", x509.GetEffectiveDateString (), "GetEffectiveDateString");
-	Assert.AreEqual ("11/24/2003 17:05:48", x509.GetExpirationDateString (), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-	Assert.AreEqual ("34000000000043110761", x509.GetSerialNumberString (), "GetSerialNumberString");
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (674076678, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Copyright (c) 2000 Microsoft Corp., CN=Microsoft Code Signing PCA", x509.GetIssuerName (), "GetIssuerName");
@@ -985,10 +875,8 @@ public void Certificate12 ()
 		0x45,0x33,0x45,0x36,0x46,0x42,0x35,0x31,0x34,0x39,0x38,0x36,0x42,0x38,0x33,0x43,0x44,0x30,0x32,0x35,0x35,0x46,0x44,0x36,0x45,0x43,0x39,0x45,0x30,0x33,0x36,0x31,0x38,0x37,0x41,0x39,0x36,0x38,0x34,0x30,0x43,0x37,0x46,0x38,0x45,0x32,0x30,0x33,0x45,0x36,0x43,0x46,0x30,0x35,0x30,0x32,0x30,0x33,0x30,0x31,0x30,0x30,0x30,0x31,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("CN=Microsoft Code Signing PCA, OU=Copyright (c) 2000 Microsoft Corp., O=Microsoft Corporation, L=Redmond, S=Washington, C=US", x509.Issuer, "Issuer");
 	Assert.AreEqual ("CN=Microsoft Corporation, OU=Copyright (c) 2002 Microsoft Corp., O=Microsoft Corporation, L=Redmond, S=Washington, C=US", x509.Subject, "Subject");
-#endif
 }
 
 
@@ -998,9 +886,7 @@ public void Certificate12 ()
 // - has NO parameters (shared group is present in issuer certificate)
 // !!! MS bugs when using constructor X509Certificate(X509Certificate) !!!
 [Test]
-#if NET_2_0
 [ExpectedException (typeof (CryptographicException))]
-#endif
 public void Certificate13 ()
 {
 	// certificate can be loaded by constructor
@@ -1027,17 +913,10 @@ public void Certificate13 ()
 	byte[] hash = { 0x0E,0x29,0xCD,0xDC,0xA5,0xE7,0x32,0xA2,0x0D,0xCE,0xD8,0x7B,0x3D,0x00,0x24,0x46,0x85,0x3E,0xBB,0xD1 };
 	Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 	Assert.AreEqual ("0E29CDDCA5E732A20DCED87B3D002446853EBBD1", x509.GetCertHashString (), "GetCertHashString");
-#if NET_2_0
 	DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("04/19/2001 14:57:20", from.ToString (), "GetEffectiveDateString");
 	DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 	Assert.AreEqual ("04/19/2011 14:57:20", until.ToString (), "GetExpirationDateString");
-#else
-	// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-	Assert.AreEqual (DateTime.Parse ("04/19/2001 06:57:20"), DateTime.Parse (x509.GetEffectiveDateString ()), "GetEffectiveDateString");
-	Assert.AreEqual (DateTime.Parse ("04/19/2011 06:57:20"), DateTime.Parse (x509.GetExpirationDateString ()), "GetExpirationDateString");
-	// which was making it easier to test the dates ;-)
-#endif
 	Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 	Assert.AreEqual (237620700, x509.GetHashCode (), "GetHashCode");
 	Assert.AreEqual ("C=US, O=Test Certificates, CN=DSA CA", x509.GetIssuerName (), "GetIssuerName");
@@ -1062,10 +941,8 @@ public void Certificate13 ()
 		0x36,0x46,0x30,0x35,0x33,0x43,0x45,0x34,0x33,0x38,0x38,0x42,0x39,0x30,0x39,0x39,0x39,0x30,0x38,0x33,0x43,0x39,0x30,0x41,0x46,0x30,0x31,0x45,0x38,0x44,0x39,0x33,0x32,0x35,0x44,0x45,0x44,0x35,0x36,0x30,0x32,0x43,0x46,0x36,0x30,0x44,0x32,0x30,0x31,0x33,0x41,0x45,0x33,0x30,0x41,0x32,0x42,0x39,0x45,0x39,0x31,0x34,0x31,0x46,0x36,0x43,0x37,0x37,0x43,0x44,0x45,0x36,0x43,0x39,0x39,0x36,0x33,0x30,0x30,0x30,0x45,0x0D,0x0A,0x0D,0x0A };
 	string tsa = Encoding.Default.GetString (ToStringArray).Replace ("\r\n", Environment.NewLine);
 	//Assert.AreEqual (tsa, x509.ToString (true), "ToString(true)");
-#if NET_2_0
 	Assert.AreEqual ("C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", x509.Issuer, "Issuer");
 	Assert.AreEqual ("C=US, S=California, O=CommerceNet, OU=Server Certification Authority", x509.Subject, "Subject");
-#endif
 }
 
 

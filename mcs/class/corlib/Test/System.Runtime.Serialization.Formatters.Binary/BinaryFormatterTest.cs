@@ -311,11 +311,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		public void Constructor_Default ()
 		{
 			BinaryFormatter bf = new BinaryFormatter ();
-#if NET_2_0
 			Assert.AreEqual (FormatterAssemblyStyle.Simple, bf.AssemblyFormat, "AssemblyFormat");
-#else
-			Assert.AreEqual (FormatterAssemblyStyle.Full, bf.AssemblyFormat, "AssemblyFormat");
-#endif
 			Assert.IsNull (bf.Binder, "Binder");
 			Assert.AreEqual (StreamingContextStates.All, bf.Context.State, "Context");
 			Assert.AreEqual (TypeFilterLevel.Full, bf.FilterLevel, "FilterLevel");
@@ -328,11 +324,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		{
 			SurrogateSelector ss = new SurrogateSelector ();
 			BinaryFormatter bf = new BinaryFormatter (ss, new StreamingContext (StreamingContextStates.CrossMachine));
-#if NET_2_0
 			Assert.AreEqual (FormatterAssemblyStyle.Simple, bf.AssemblyFormat, "AssemblyFormat");
-#else
-			Assert.AreEqual (FormatterAssemblyStyle.Full, bf.AssemblyFormat, "AssemblyFormat");
-#endif
 			Assert.IsNull (bf.Binder, "Binder");
 			Assert.AreEqual (StreamingContextStates.CrossMachine, bf.Context.State, "Context");
 			Assert.AreEqual (TypeFilterLevel.Full, bf.FilterLevel, "FilterLevel");

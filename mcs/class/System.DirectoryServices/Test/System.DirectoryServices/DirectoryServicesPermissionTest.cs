@@ -86,9 +86,7 @@ namespace MonoTests.System.DirectoryServices {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PermissionState_Bad ()
 		{
 			PermissionState ps = (PermissionState)77;
@@ -211,11 +209,7 @@ namespace MonoTests.System.DirectoryServices {
 		public void IsSubset_Null ()
 		{
 			DirectoryServicesPermission dsp = new DirectoryServicesPermission (PermissionState.None);
-#if NET_2_0
 			Assert.IsTrue (dsp.IsSubsetOf (null), "null");
-#else
-			Assert.IsFalse (dsp.IsSubsetOf (null), "null");
-#endif
 		}
 
 		[Test]
@@ -317,12 +311,7 @@ namespace MonoTests.System.DirectoryServices {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		// Problem inherited from ResourcePermissionBase
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void FromXml_Null ()
 		{
 			DirectoryServicesPermission dsp = new DirectoryServicesPermission (PermissionState.None);
@@ -330,9 +319,7 @@ namespace MonoTests.System.DirectoryServices {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongTag ()
 		{
 			DirectoryServicesPermission dsp = new DirectoryServicesPermission (PermissionState.None);
@@ -344,9 +331,7 @@ namespace MonoTests.System.DirectoryServices {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongTagCase ()
 		{
 			DirectoryServicesPermission dsp = new DirectoryServicesPermission (PermissionState.None);

@@ -72,11 +72,7 @@ namespace MonoCasTests.System.Security {
 
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlPolicy = true)]
-#if NET_2_0
 		// it seems that this was removed in 2.0 - maybe because you can't turn CAS off ?!?
-#else
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void SecurityEnabled_DenyControlPolicy ()
 		{
 			SecurityManager.SecurityEnabled = false;
@@ -93,7 +89,6 @@ namespace MonoCasTests.System.Security {
 		// the Deny shows that IsGranted only checks for assembly 
 		// granted set (and not the stack modifiers)
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void IsGranted_GacIdentityPermission ()
@@ -101,17 +96,12 @@ namespace MonoCasTests.System.Security {
 			GacIdentityPermission gip = new GacIdentityPermission ();
 			Assert.IsTrue (SecurityManager.IsGranted (gip));
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void IsGranted_ZoneIdentityPermission ()
 		{
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.Internet);
-#if NET_2_0
 			Assert.IsTrue (SecurityManager.IsGranted (zip));
-#else
-			Assert.IsFalse (SecurityManager.IsGranted (zip));
-#endif
 		}
 
 		[Test]

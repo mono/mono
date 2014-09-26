@@ -773,7 +773,6 @@ namespace System.Xml {
 			return bufIndex - offset;
 		}
 
-#if NET_2_0 // actually NET_3_5
 
 		public static DateTimeOffset ToDateTimeOffset (string s)
 		{
@@ -810,7 +809,6 @@ namespace System.Xml {
 			return new Uri (s, UriKind.RelativeOrAbsolute);
 		}
 
-#endif
 
 		public static bool IsNCNameChar (char ch)
 		{

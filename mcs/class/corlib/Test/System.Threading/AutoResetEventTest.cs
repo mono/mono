@@ -12,9 +12,7 @@
 using NUnit.Framework;
 using System;
 using System.Threading;
-#if NET_2_0
 using Microsoft.Win32.SafeHandles;
-#endif
 
 namespace MonoTests.System.Threading
 {
@@ -32,7 +30,6 @@ namespace MonoTests.System.Threading
 			Assert.IsFalse (evt.WaitOne (1000, false), "#3");
 		}
 
-#if NET_2_0
 		[Test] // bug #81529
 		public void SafeWaitHandle ()
 		{
@@ -115,6 +112,5 @@ namespace MonoTests.System.Threading
 			are1.Close ();
 			swh1.Dispose ();
 		}
-#endif
 	}
 }
