@@ -229,6 +229,52 @@ namespace MonoTests.System.IO
 			File.Delete (fileToModify);
 			Directory.Delete (basePath);
 		}
+
+		[Test]
+		public void TestWatchPathForFileRename ()
+		{
+			var basePath = Path.Combine (Path.GetTempPath (), "FSWTestRename");
+			var sourceFile = Path.Combine (basePath, "renameMe-src.txt");
+			var destFile = Path.Combine (basePath, "renameMe-dest.txt");
+
+			if (!Directory.Exists (basePath))
+				Directory.CreateDirectory (basePath);
+
+			File.WriteAllText (sourceFile, "this file will be renamed");
+			Thread.Sleep (1000);
+
+			RenamedEventHandler renamedDelegate = delegate (object o, RenamedEventArgs e) {
+				eventFired.Set ();
+				lastChangeType = WatcherChangeTypes.Renamed;
+			};
+
+			var fsw = new FileSystemWatcher (basePath);
+			fsw.Renamed += renamedDelegate;
+			fsw.IncludeSubdirectories = true;
+			fsw.EnableRaisingEvents = true;
+			Thread.Sleep (1000);
+
+			Assert.IsTrue (File.Exists (sourceFile));
+			Assert.IsFalse (File.Exists (destFile));
+
+			// XXX
+			// This isn't portable to Windows.
+			Process.Start ("mv", sourceFile + " " + destFile);
+
+			bool gotEvent = eventFired.WaitOne (4000, true);
+
+			Assert.IsTrue (gotEvent);
+			Assert.IsTrue ((lastChangeType == WatcherChangeTypes.Renamed));
+			Assert.IsTrue (File.Exists (destFile));
+			Assert.IsFalse (File.Exists (sourceFile));
+
+			fsw.EnableRaisingEvents = false;
+			fsw.Renamed -= renamedDelegate;
+			fsw.Dispose ();
+
+			File.Delete (destFile);
+			Directory.Delete (basePath);
+		}
 	}
 }
 
