@@ -174,6 +174,61 @@ namespace MonoTests.System.IO
 
 			Directory.Delete (basePath);
 		}
+
+		[Test]
+		public void TestWatchPathForFileModify ()
+		{
+			var basePath = Path.Combine (Path.GetTempPath (), "FSWTestModify");
+			var fileToModify = Path.Combine (basePath, "modifyMe.txt");
+
+			if (!Directory.Exists (basePath))
+				Directory.CreateDirectory (basePath);
+
+			File.WriteAllText (fileToModify, "this file will be changed");
+			Thread.Sleep (1000);
+
+			FileSystemEventHandler changedDelegate = delegate (object o, FileSystemEventArgs e) {
+				eventFired.Set ();
+				lastChangeType = WatcherChangeTypes.Changed;
+			};
+
+			var fsw = new FileSystemWatcher (basePath);
+			fsw.Changed += changedDelegate;
+			fsw.IncludeSubdirectories = true;
+			fsw.EnableRaisingEvents = true;
+			Thread.Sleep (1000);
+
+			Assert.IsTrue (File.Exists (fileToModify));
+
+			// XXX
+			// This isn't portable to Windowws, but nothing else seems to work
+			// on OSX.
+			Process.Start ("touch", fileToModify);
+
+			//File.AppendAllText (fileToModify, "change is scary");
+
+			/* using (StreamWriter sw = File.AppendText (fileToModify)) */
+			/* { */
+			/*   sw.WriteLine("change is scary"); */
+			/*   sw.Flush (); */
+			/* } */
+
+			/* using (var sw = new StreamWriter (fileToModify, true)) { */
+			/*   sw.WriteLine ("change is scary"); */
+			/* } */
+
+			bool gotEvent = eventFired.WaitOne (4000, true);
+
+			Assert.IsTrue (gotEvent);
+			Assert.IsTrue ((lastChangeType == WatcherChangeTypes.Changed));
+
+			fsw.EnableRaisingEvents = false;
+			fsw.Changed -= changedDelegate;
+			fsw.Dispose ();
+
+			File.Delete (fileToModify);
+			Directory.Delete (basePath);
+		}
 	}
 }
 
