@@ -1955,14 +1955,12 @@ namespace System.Xml.Serialization
 						{
 							XmlTypeMapMemberElement mem = (XmlTypeMapMemberElement) map.XmlTextCollector;
 							XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) mem.ElementInfo [0];
+							string str = GetStrTempVar ();
+							WriteLine ("string " + str + " = Reader.ReadString();");
 							if (info.TypeData.Type == typeof (string))
-								GenerateSetMemberValue (mem, ob, "ReadString (" + GenerateGetMemberValue (mem, ob, isValueList) + ")", isValueList);
+								GenerateSetMemberValue (mem, ob, str, isValueList);
 							else {
-								WriteLineInd ("{");
-								string str = GetStrTempVar ();
-								WriteLine ("string " + str + " = Reader.ReadString();");
 								GenerateSetMemberValue (mem, ob, GenerateGetValueFromXmlString (str, info.TypeData, info.MappedType, info.IsNullable), isValueList);
-								WriteLineUni ("}");
 							}
 							GenerateEndHook ();
 						}

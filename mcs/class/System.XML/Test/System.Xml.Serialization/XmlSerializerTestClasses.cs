@@ -1178,5 +1178,22 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlArrayItem ("Element")]
 		public List<SimpleClass> Elements;
 	}
+
+	[Serializable]
+	public sealed class ClassWithDefaultTextNotNull
+	{
+		[XmlText]
+		public string Value;
+
+		public const string DefaultValue = "NotNull";
+
+		public ClassWithDefaultTextNotNull (string v) {
+			Value = v;
+		}
+
+		public ClassWithDefaultTextNotNull () {
+			Value = DefaultValue;
+		}
+    }
 }
 

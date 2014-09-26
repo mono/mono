@@ -505,7 +505,7 @@ namespace System.Xml.Serialization
 						XmlTypeMapMemberElement mem = (XmlTypeMapMemberElement) map.XmlTextCollector;
 						XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) mem.ElementInfo [0];
 						if (info.TypeData.Type == typeof (string))
-							SetMemberValue (mem, ob, ReadString ((string) GetMemberValue (mem, ob, isValueList)), isValueList);
+							SetMemberValue (mem, ob, Reader.ReadString (), isValueList);
 						else
 							SetMemberValue (mem, ob, GetValueFromXmlString (Reader.ReadString(), info.TypeData, info.MappedType), isValueList);
 					}
