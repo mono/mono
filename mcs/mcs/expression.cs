@@ -11134,6 +11134,9 @@ namespace Mono.CSharp
 			get {
 				return source;
 			}
+			set {
+				source = value;
+			}
 		}
 
 		public override bool ContainsEmitWithAwait ()
