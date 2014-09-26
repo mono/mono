@@ -3495,6 +3495,31 @@ namespace MonoTests.System.XmlSerialization
 				}
 			}
 		}
+
+		private static void TestClassWithDefaultTextNotNullAux (string value, string expected)
+		{
+			var obj = new ClassWithDefaultTextNotNull (value);
+			var ser = new XmlSerializer (typeof (ClassWithDefaultTextNotNull));
+
+			using (var mstream = new MemoryStream ())
+			using (var writer = new XmlTextWriter (mstream, Encoding.ASCII)) {
+				ser.Serialize (writer, obj);
+
+				mstream.Seek (0, SeekOrigin.Begin);
+				using (var reader = new XmlTextReader (mstream)) {
+					var result = (ClassWithDefaultTextNotNull) ser.Deserialize (reader);
+					Assert.AreEqual (expected, result.Value);
+				}
+			}
+		}
+
+		[Test]
+		public void TestClassWithDefaultTextNotNull ()
+		{
+			TestClassWithDefaultTextNotNullAux ("my_text", "my_text");
+			TestClassWithDefaultTextNotNullAux ("", ClassWithDefaultTextNotNull.DefaultValue);
+			TestClassWithDefaultTextNotNullAux (null, ClassWithDefaultTextNotNull.DefaultValue);
+		}
 	}
 
 	// Test generated serialization code.
