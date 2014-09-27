@@ -98,12 +98,10 @@ namespace System.IdentityModel.Tokens {
 			if (Token != null) {
 				info.AddValue ("K", 'S');
 				info.AddValue ("T", Token);
-			}
-			else if (TokenBytes != null) {
+			} else if (TokenBytes != null) {
 				info.AddValue ("K", 'B');
 				info.AddValue ("T", TokenBytes);
-			}
-			else if (SecurityToken != null && SecurityTokenHandler != null) {
+			} else if (SecurityToken != null && SecurityTokenHandler != null) {
 				info.AddValue ("K", 'T');
 				using (var ms = new MemoryStream ())
 				using (var streamWriter = new StreamWriter (ms, new UTF8Encoding (false)))
