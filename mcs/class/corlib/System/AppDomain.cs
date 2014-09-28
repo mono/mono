@@ -1405,6 +1405,10 @@ namespace System {
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public event UnhandledExceptionEventHandler UnhandledException;
 
+#if NET_4_5
+		public event EventHandler<FirstChanceExceptionEventArgs> FirstChanceException;
+#endif
+
 #if NET_4_0
 		[MonoTODO]
 		public bool IsHomogenous {

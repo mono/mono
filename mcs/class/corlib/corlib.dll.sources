@@ -160,6 +160,7 @@ System/EventHandler.cs
 System/Exception.cs
 System/ExecutionEngineException.cs
 System/FieldAccessException.cs
+System/FirstChanceExceptionEventArgs.cs
 System/FlagsAttribute.cs
 System/FormatException.cs
 System/Funcs.cs
