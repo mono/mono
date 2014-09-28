@@ -19,16 +19,17 @@ namespace MonoTests.System.IO
 	[TestFixture]
 	public class FileSystemWatcherTest
 	{
-		static string createPath = Path.Combine (Path.GetTempPath (), "FSWTest");
+		static string fswPath = Path.Combine (Path.GetTempPath (), "fsw");
+		static string createPath = Path.Combine (fswPath, "FSWTest");
 		static string fileToCreate = Path.Combine (createPath, "a.txt");
 
-		static string deletePath = Path.Combine (Path.GetTempPath (), "FSWTestDelete");
+		static string deletePath = Path.Combine (fswPath, "FSWTestDelete");
 		static string fileToDelete = Path.Combine (deletePath, "deleteMe.txt");
 
-		static string modifyPath = Path.Combine (Path.GetTempPath (), "FSWTestModify");
+		static string modifyPath = Path.Combine (fswPath, "FSWTestModify");
 		static string fileToModify = Path.Combine (modifyPath, "modifyMe.txt");
 
-		static string renamePath = Path.Combine (Path.GetTempPath (), "FSWTestRename");
+		static string renamePath = Path.Combine (fswPath, "FSWTestRename");
 		static string sourceFile = Path.Combine (renamePath, "renameMe-src.txt");
 		static string destFile = Path.Combine (renamePath, "renameMe-dest.txt");
 
@@ -72,6 +73,9 @@ namespace MonoTests.System.IO
 
 			if (Directory.Exists (renamePath))
 				Directory.Delete (renamePath);
+
+			if (Directory.Exists (fswPath))
+				Directory.Delete (fswPath);
 		}
 
 		[Test]
@@ -150,7 +154,7 @@ namespace MonoTests.System.IO
 				lastChangeType = WatcherChangeTypes.Created;
 			};
 
-			var fsw = new FileSystemWatcher (createPath);
+			var fsw = new FileSystemWatcher (fswPath);
 			fsw.IncludeSubdirectories = true;
 			fsw.Created += createdDelegate;
 			fsw.EnableRaisingEvents = true;
@@ -181,7 +185,7 @@ namespace MonoTests.System.IO
 				lastChangeType = WatcherChangeTypes.Deleted;
 			};
 
-			var fsw = new FileSystemWatcher (deletePath);
+			var fsw = new FileSystemWatcher (fswPath);
 			fsw.IncludeSubdirectories = true;
 			fsw.Deleted += deletedDelegate;
 			fsw.EnableRaisingEvents = true;
@@ -210,7 +214,7 @@ namespace MonoTests.System.IO
 				lastChangeType = WatcherChangeTypes.Changed;
 			};
 
-			var fsw = new FileSystemWatcher (modifyPath);
+			var fsw = new FileSystemWatcher (fswPath);
 			fsw.Changed += changedDelegate;
 			fsw.IncludeSubdirectories = true;
 			fsw.EnableRaisingEvents = true;
@@ -255,7 +259,7 @@ namespace MonoTests.System.IO
 				lastChangeType = WatcherChangeTypes.Renamed;
 			};
 
-			var fsw = new FileSystemWatcher (renamePath);
+			var fsw = new FileSystemWatcher (fswPath);
 			fsw.Renamed += renamedDelegate;
 			fsw.IncludeSubdirectories = true;
 			fsw.EnableRaisingEvents = true;
