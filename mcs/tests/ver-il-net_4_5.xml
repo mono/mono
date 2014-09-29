@@ -67710,6 +67710,30 @@
       </method>
     </type>
   </test>
+  <test name="test-null-operator-010.cs">
+    <type name="Test">
+      <method name="Void Main()" attrs="145">
+        <size>79</size>
+      </method>
+      <method name="Void Test_1[T](T)" attrs="145">
+        <size>22</size>
+      </method>
+      <method name="Void Test_2[T](T)" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="Void Test_3[T](T[])" attrs="145">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Ext">
+      <method name="Void Call[T](T)" attrs="150">
+        <size>17</size>
+      </method>
+    </type>
+  </test>
   <test name="test-null-operator-02.cs">
     <type name="CI">
       <method name="Int32 get_Prop()" attrs="2182">

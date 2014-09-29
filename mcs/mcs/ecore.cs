@@ -457,6 +457,8 @@ namespace Mono.CSharp {
 				return false;
 			case MemberKind.InternalCompilerType:
 				return type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
+			case MemberKind.TypeParameter:
+				return !((TypeParameterSpec) type).IsValueType;
 			default:
 				return true;
 			}

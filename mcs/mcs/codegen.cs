@@ -1066,7 +1066,7 @@ namespace Mono.CSharp
 					var ie = new InstanceEmitter (instance_copy, IsAddressCall (instance_copy, call_op, method.DeclaringType));
 
 					if (Arguments == null) {
-						ie.EmitLoad (ec);
+						ie.EmitLoad (ec, true);
 					}
 				} else if (!InstanceExpressionOnStack) {
 					var ie = new InstanceEmitter (InstanceExpression, IsAddressCall (InstanceExpression, call_op, method.DeclaringType));
@@ -1228,7 +1228,7 @@ namespace Mono.CSharp
 						instance_address = instance as LocalTemporary;
 
 					if (instance_address == null) {
-						EmitLoad (ec);
+						EmitLoad (ec, false);
 						ec.Emit (OpCodes.Dup);
 						ec.EmitLoadFromPtr (instance.Type);
 
@@ -1236,11 +1236,8 @@ namespace Mono.CSharp
 					} else {
 						instance.Emit (ec);
 					}
-
-					if (instance.Type.Kind == MemberKind.TypeParameter)
-						ec.Emit (OpCodes.Box, instance.Type);
 				} else {
-					EmitLoad (ec);
+					EmitLoad (ec, !conditionalAccess);
 
 					if (conditionalAccess) {
 						conditional_access_dup = !IsInexpensiveLoad ();
@@ -1250,6 +1247,9 @@ namespace Mono.CSharp
 				}
 
 				if (conditionalAccess) {
+					if (instance.Type.Kind == MemberKind.TypeParameter)
+						ec.Emit (OpCodes.Box, instance.Type);
+
 					ec.Emit (OpCodes.Brtrue_S, NullOperatorLabel);
 
 					if (conditional_access_dup)
@@ -1282,7 +1282,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public void EmitLoad (EmitContext ec)
+		public void EmitLoad (EmitContext ec, bool boxInstance)
 		{
 			var instance_type = instance.Type;
 
@@ -1313,8 +1313,9 @@ namespace Mono.CSharp
 			instance.Emit (ec);
 
 			// Only to make verifier happy
-			if (RequiresBoxing ())
+			if (boxInstance && RequiresBoxing ()) {
 				ec.Emit (OpCodes.Box, instance_type);
+			}
 		}
 
 		public TypeSpec GetStackType (EmitContext ec)
