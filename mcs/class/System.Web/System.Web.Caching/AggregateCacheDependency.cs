@@ -66,7 +66,7 @@ namespace System.Web.Caching
 						dep.DependencyChanged += new EventHandler (OnAnyChanged);
 				
 				this.dependencies.AddRange (dependencies);
-				base.Start = DateTime.UtcNow;
+				base.Start = DateTime.Now;
 			}
 			if (somethingChanged)
 				base.NotifyDependencyChanged (this, null);
