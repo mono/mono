@@ -1075,19 +1075,10 @@ first generation (of two).  A larger nursery will usually speed up the
 program but will obviously use more memory.  The default nursery size
 4 MB.
 .TP
-\fBmajor=\fIcollector\fR
-Specifies which major collector to use.  Options are `marksweep' for
-the Mark&Sweep collector, `marksweep-conc' for concurrent Mark&Sweep,
-`marksweep-par' for parallel Mark&Sweep, `marksweep-fixed' for
-Mark&Sweep with a fixed heap, and `marksweep-fixed-par' for parallel
-Mark&Sweep with a fixed heap. The Mark&Sweep collector is the default.
-.TP
-\fBmajor-heap-size=\fIsize\fR
-Sets the size of the major heap (not including the large object space)
-for the fixed-heap Mark&Sweep collector (i.e. `marksweep-fixed' and
-`marksweep-fixed-par').  The size is in bytes, with optional suffixes
-`k', `m' and `g' to specify kilo-, mega- and gigabytes, respectively.
-The default is 512 megabytes.
+\fBmajor=\fIcollector\fR Specifies which major collector to use.
+Options are `marksweep' for the Mark&Sweep collector, and
+`marksweep-conc' for concurrent Mark&Sweep.  The non-concurrent
+Mark&Sweep collector is the default.
 .TP
 \fBsoft-heap-limit=\fIsize\fR
 Once the heap size gets larger than this size, ignore what the default
