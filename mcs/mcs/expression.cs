@@ -4601,7 +4601,15 @@ namespace Mono.CSharp
 					return expr;
 				}
 
-				enum_type = rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { enum_type });
+				var nullable = rc.Module.PredefinedTypes.Nullable;
+
+				//
+				// Don't try nullable version when nullable type is undefined
+				//
+				if (!nullable.IsDefined)
+					return null;
+
+				enum_type = nullable.TypeSpec.MakeGenericType (rc.Module, new[] { enum_type });
 			}
 
 			expr = ResolveOperatorPredefined (rc, rc.Module.GetPredefinedEnumAritmeticOperators (enum_type, true), false);
