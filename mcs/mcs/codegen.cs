@@ -1343,6 +1343,9 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		//
+		// Returns true for cheap race-free load, where we can avoid using dup
+		//
 		bool IsInexpensiveLoad ()
 		{
 			if (instance is Constant)
@@ -1352,8 +1355,10 @@ namespace Mono.CSharp
 				return false;
 
 			var vr = instance as VariableReference;
-			if (vr != null)
-				return !vr.IsRef;
+			if (vr != null) {
+				// Load from captured local would be racy without dup
+				return !vr.IsRef && !vr.IsHoisted;
+			}
 
 			if (instance is LocalTemporary)
 				return true;
