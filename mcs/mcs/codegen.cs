@@ -549,13 +549,10 @@ namespace Mono.CSharp
 			switch (type.BuiltinType) {
 			case BuiltinTypeSpec.Type.Bool:
 				//
-				// Workaround MSIL limitation. Load bool element as single bit,
-				// bool array can actually store any byte value
+				// bool array can actually store any byte value in underlying byte slot
+				// and C# spec does not specify any normalization rule, except the result
+				// is undefined
 				//
-				ig.Emit (OpCodes.Ldelem_U1);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Cgt_Un);
-				break;
 			case BuiltinTypeSpec.Type.Byte:
 				ig.Emit (OpCodes.Ldelem_U1);
 				break;
@@ -771,12 +768,8 @@ namespace Mono.CSharp
 				ig.Emit (OpCodes.Ldind_U1);
 				break;
 			case BuiltinTypeSpec.Type.SByte:
-				ig.Emit (OpCodes.Ldind_I1);
-				break;
 			case BuiltinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Ldind_I1);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Cgt_Un);
 				break;
 			case BuiltinTypeSpec.Type.ULong:
 			case BuiltinTypeSpec.Type.Long:

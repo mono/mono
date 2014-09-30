@@ -32277,7 +32277,7 @@
   <test name="test-146.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>355</size>
+        <size>352</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -46953,7 +46953,7 @@
   <test name="test-729.cs">
     <type name="Primes.MainClass">
       <method name="Int32 Main()" attrs="150">
-        <size>149</size>
+        <size>146</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -50680,22 +50680,6 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-898.cs">
-    <type name="BoolArrayWithByteValues">
-      <method name="Int32 Foo(Boolean ByRef)" attrs="145">
-        <size>58</size>
-      </method>
-      <method name="Int32 Main()" attrs="145">
-        <size>191</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-      <method name="Boolean Ptr()" attrs="145">
-        <size>167</size>
       </method>
     </type>
   </test>
@@ -60106,7 +60090,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>338</size>
+        <size>335</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_2&gt;c__async1">
@@ -60226,7 +60210,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_10&gt;c__async9">
       <method name="Void MoveNext()" attrs="486">
-        <size>235</size>
+        <size>232</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
