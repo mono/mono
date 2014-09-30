@@ -976,8 +976,11 @@ namespace Mono.CSharp
 
 				initialized_static_fields.Add (expression);
 			} else {
-				if (Kind == MemberKind.Struct && Compiler.Settings.Version < LanguageVersion.V_6) {
-					Report.FeatureIsNotAvailable (Compiler, expression.Location, "struct instance member initializer");
+				if (Kind == MemberKind.Struct) {
+					if (Compiler.Settings.Version != LanguageVersion.Experimental) {
+						Report.Error (573, expression.Location, "'{0}': Structs cannot have instance property or field initializers",
+							GetSignatureForError ());
+					}
 				}
 
 				if (initialized_fields == null)

@@ -1,3 +1,4 @@
+// Compiler options: -langversion:experimental
 struct S
 {
 	public decimal P { get; } = -3;

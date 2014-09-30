@@ -3,7 +3,9 @@
 
 struct S
 {
-	public int i = 8;
+	public S ()
+	{		
+	}
 }
 
 class X
