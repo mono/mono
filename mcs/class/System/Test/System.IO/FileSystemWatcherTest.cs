@@ -223,7 +223,7 @@ namespace MonoTests.System.IO
 			Assert.IsTrue (File.Exists (fileToModify));
 
 			// XXX
-			// This isn't portable to Windowws, but nothing else seems to work
+			// This isn't portable to Windows, but nothing else seems to work
 			// on OSX.
 			Process.Start ("touch", fileToModify);
 
