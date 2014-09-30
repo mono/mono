@@ -251,8 +251,7 @@ public class RSACryptoServiceProviderTest {
 	}
 
 	[Test]
-	//[ExpectedException (typeof (ArgumentNullException))]
-	[ExpectedException (typeof (NullReferenceException))]
+	[ExpectedException (typeof (ArgumentNullException))]
 	public void SignDataStreamNull () 
 	{
 		rsa = new RSACryptoServiceProvider (minKeySize);
