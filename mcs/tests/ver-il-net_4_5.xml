@@ -50865,6 +50865,16 @@
       </method>
     </type>
   </test>
+  <test name="test-907.cs">
+    <type name="MainClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>37</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-91.cs">
     <type name="Abstract">
       <method name="Void .ctor()" attrs="6276">

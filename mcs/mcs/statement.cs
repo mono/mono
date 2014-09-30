@@ -5044,7 +5044,17 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return sl;
+			if (sl == null || sl.SectionStart)
+				return sl;
+
+			//
+			// Always return section start, it simplifies handling of switch labels
+			//
+			for (int idx = case_labels.IndexOf (sl); ; --idx) {
+				var cs = case_labels [idx];
+				if (cs.SectionStart)
+					return cs;
+			}
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
