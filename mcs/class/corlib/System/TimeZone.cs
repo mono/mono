@@ -252,17 +252,6 @@ namespace System
 		// A yearwise cache of DaylightTime.
 		private Dictionary<int, DaylightTime> m_CachedDaylightChanges = new Dictionary<int, DaylightTime> (1);
 
-		// the offset when daylightsaving is not on (in ticks)
-		private long m_ticksOffset;
-
-		// the offset when daylightsaving is not on.
-		[NonSerialized]
-		private TimeSpan utcOffsetWithOutDLS;
-  
-		// the offset when daylightsaving is on.
-		[NonSerialized]
-		private TimeSpan utcOffsetWithDLS;
-
 		internal enum TimeZoneData
 		{
 			DaylightSavingStartIdx,
@@ -314,8 +303,6 @@ namespace System
 
 			m_standardName = Locale.GetText (names[(int)TimeZoneNames.StandardNameIdx]);
 			m_daylightName = Locale.GetText (names[(int)TimeZoneNames.DaylightNameIdx]);
-
-			m_ticksOffset = data[(int)TimeZoneData.UtcOffsetIdx];
 
 			DaylightTime dlt = GetDaylightTimeFromData (data);
 			m_CachedDaylightChanges.Add (now.Year, dlt);
@@ -369,16 +356,6 @@ namespace System
 			return TimeZoneInfo.Local.GetUtcOffset (time);
 		}
 
-		private bool IsAmbiguousTime (DateTime time)
-		{
-			if (time.Kind == DateTimeKind.Utc)
-				return false;
-
-			DaylightTime changes = GetDaylightChanges (time.Year);
-
-			return time < changes.End && time >= changes.End - changes.Delta;
-		}
-
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
 			OnDeserialization (null);
@@ -397,8 +374,6 @@ namespace System
 			} else
 				this_year = dlt.Start.Year;
 			
-			utcOffsetWithOutDLS = new TimeSpan (m_ticksOffset);
-			utcOffsetWithDLS = new TimeSpan (m_ticksOffset + dlt.Delta.Ticks);
 			this_year_dlt = dlt;
 		}
 
