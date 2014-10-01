@@ -104,6 +104,9 @@ Test/DocTest-DropNS-unified.dll:
 Test/DocTest.dll: 
 	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest.cs
 
+Test/DocTest-InternalInterface.dll: 
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-InternalInterface.cs
+
 Test/DocTest.dll-v1: 
 	-rm -f Test/DocTest.cs
 	cp Test/DocTest-v1.cs Test/DocTest.cs
@@ -145,7 +148,13 @@ update-monodocer-dropns-unified-withsecondary: $(PROGRAM)
 update-monodocer-dropns-classic-secondary: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-classic-secondary.dll
 	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-secondary.dll
-		
+
+check-monodocer-internal-interface: $(PROGRAM)
+	# Tests to make sure internal interfaces that are explicitly implemented are not documented
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-InternalInterface.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-InternalInterface.dll
+	diff --exclude=.svn -rup Test/en.expected-internal-interface Test/en.actual
 
 check-monodocer-update: $(PROGRAM)
 	find Test/en.expected -name \*.xml -exec rm "{}" \;
@@ -305,6 +314,7 @@ check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-update \
 	check-monodocer-dropns-classic \
 	check-monodocer-dropns-classic-withsecondary \
+	check-monodocer-internal-interface \
 	check-monodocer-delete-update \
 	check-mdoc-export-html-update \
 	check-mdoc-export-msxdoc-update \
