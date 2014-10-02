@@ -232,7 +232,7 @@ namespace MonoTests.System
 				DateTime afterDST = new DateTime (2007, 10, 28, 2, 0, 0, DateTimeKind.Unspecified);
 				Assert.IsFalse (london.IsDaylightSavingTime (beforeDST), "Just before DST");
 				Assert.IsTrue (london.IsDaylightSavingTime (startDST), "the first seconds of DST");
-				Assert.IsTrue (london.IsDaylightSavingTime (endDST), "The last seconds of DST");
+				Assert.IsFalse (london.IsDaylightSavingTime (endDST), "The last seconds of DST");
 				Assert.IsFalse (london.IsDaylightSavingTime (afterDST), "Just after DST");
 			}
 		
