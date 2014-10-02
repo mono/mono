@@ -144,22 +144,7 @@ namespace System
 					return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Local);
 			}
 
-			DateTime local = DateTime.SpecifyKind (time.Add (utcOffset), DateTimeKind.Local);
-			DaylightTime dlt = GetDaylightChanges (time.Year);
-			if (dlt.Delta.Ticks == 0)
-				return DateTime.SpecifyKind (local, DateTimeKind.Local);
-
-			// FIXME: check all of the combination of
-			//	- basis: local-based or UTC-based
-			//	- hemisphere: Northern or Southern
-			//	- offset: positive or negative
-
-			// PST should work fine here.
-			if (local < dlt.End && dlt.End.Subtract (dlt.Delta) <= local)
-				return DateTime.SpecifyKind (local, DateTimeKind.Local);
-
-			TimeSpan localOffset = GetUtcOffset (local);
-			return DateTime.SpecifyKind (time.Add (localOffset), DateTimeKind.Local);
+			return DateTime.SpecifyKind (time.Add (utcOffset), DateTimeKind.Local);
 		}
 
 		public virtual DateTime ToUniversalTime (DateTime time)
