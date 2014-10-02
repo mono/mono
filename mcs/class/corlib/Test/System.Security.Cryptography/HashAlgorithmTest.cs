@@ -138,7 +138,7 @@ public class HashAlgorithmTest {
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
+	[ExpectedException (typeof (NullReferenceException))]
 	public void NullStream () 
 	{
 		Stream s = null;
