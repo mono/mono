@@ -352,9 +352,6 @@ namespace System
 			if (sourceTimeZone.IsInvalidTime (dateTime))
 				throw new ArgumentException ("dateTime parameter is an invalid time");
 
-			if (dateTime.Kind == DateTimeKind.Utc && sourceTimeZone == TimeZoneInfo.Utc)
-				return dateTime;
-
 			if (dateTime.Kind == DateTimeKind.Utc)
 				return dateTime;
 
