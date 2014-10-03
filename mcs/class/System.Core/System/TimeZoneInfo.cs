@@ -748,6 +748,16 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
+		private bool IsInDST (AdjustmentRule rule, DateTime dateTime)
+		{
+			// Check whether we're in the dateTime year's DST period
+			if (IsInDSTForYear (rule, dateTime, dateTime.Year))
+				return true;
+
+			// We might be in the dateTime previous year's DST period
+			return IsInDSTForYear (rule, dateTime, dateTime.Year - 1);
+		}
+
 		bool IsInDSTForYear (AdjustmentRule rule, DateTime dateTime, int year)
 		{
 			DateTime DST_start = TransitionPoint (rule.DaylightTransitionStart, year);
