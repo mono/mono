@@ -812,17 +812,8 @@ namespace System
 			
 			if (!SupportsDaylightSavingTime)
 				return false;
-			
-			AdjustmentRule rule = GetApplicableRule (dateTime.Date);
-			if (rule == null)
-				return false;
 
-			// Check whether we're in the dateTime year's DST period
-			if (IsInDSTForYear (rule, dateTime, dateTime.Year))
-				return true;
-
-			// We might be in the dateTime previous year's DST period
-			return IsInDSTForYear (rule, dateTime, dateTime.Year - 1);
+			return GetUtcOffset (dateTime) != BaseUtcOffset;
 		}
 
 		public bool IsDaylightSavingTime (DateTimeOffset dateTimeOffset)
