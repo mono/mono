@@ -36,6 +36,14 @@ using NUnit.Framework;
 namespace MonoTests.System.Net {
 	[TestFixture]
 	public class HttpListenerTest {
+
+		int port;
+
+		[SetUp]
+		public void SetUp () {
+			port = new Random ().Next (7777, 8000);
+		}
+
 		[Test]
 		public void DefaultProperties ()
 		{
@@ -152,10 +160,12 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void TwoListeners_SameAddress ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener1 = new HttpListener ();
-			listener1.Prefixes.Add ("http://127.0.0.1:7777/");
+			listener1.Prefixes.Add ("http://127.0.0.1:" + port + "/");
 			HttpListener listener2 = new HttpListener ();
-			listener2.Prefixes.Add ("http://127.0.0.1:7777/hola/");
+			listener2.Prefixes.Add ("http://127.0.0.1:" + port + "/hola/");
 			listener1.Start ();
 			listener2.Start ();
 		}
@@ -164,10 +174,12 @@ namespace MonoTests.System.Net {
 		[ExpectedException (typeof (HttpListenerException))]
 		public void TwoListeners_SameURL ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener1 = new HttpListener ();
-			listener1.Prefixes.Add ("http://127.0.0.1:7777/hola/");
+			listener1.Prefixes.Add ("http://127.0.0.1:" + port + "/hola/");
 			HttpListener listener2 = new HttpListener ();
-			listener2.Prefixes.Add ("http://127.0.0.1:7777/hola/");
+			listener2.Prefixes.Add ("http://127.0.0.1:" + port + "/hola/");
 			listener1.Start ();
 			listener2.Start ();
 		}
@@ -176,8 +188,10 @@ namespace MonoTests.System.Net {
 		[ExpectedException (typeof (HttpListenerException))]
 		public void MultipleSlashes ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola////");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola////");
 			// this one throws on Start(), not when adding it.
 			listener.Start ();
 		}
@@ -186,8 +200,10 @@ namespace MonoTests.System.Net {
 		[ExpectedException (typeof (HttpListenerException))]
 		public void PercentSign ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola%3E/");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola%3E/");
 			// this one throws on Start(), not when adding it.
 			listener.Start ();
 		}
@@ -202,8 +218,10 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void CloseTwice ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola/");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
 			listener.Start ();
 			listener.Close ();
 			listener.Close ();
@@ -212,8 +230,10 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void StartStopStart ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola/");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
 			listener.Start ();
 			listener.Stop ();
 			listener.Start ();
@@ -223,8 +243,10 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void StartStopDispose ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			using (HttpListener listener = new HttpListener ()){
-				listener.Prefixes.Add ("http://localhost:7777/hola/");
+				listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
 				listener.Start ();
 				listener.Stop ();
 			}
@@ -240,8 +262,10 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void AbortTwice ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola/");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
 			listener.Start ();
 			listener.Abort ();
 			listener.Abort ();
