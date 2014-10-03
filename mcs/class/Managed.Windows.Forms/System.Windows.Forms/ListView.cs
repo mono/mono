@@ -2668,6 +2668,11 @@ namespace System.Windows.Forms
 							owner.UpdateMultiSelection (clicked_item.DisplayIndex, reselect);
 					} else {
 						clicked_item.Selected = true;
+						// Side-effects to setting Selected can possibly result in ItemsMouseUp() being called
+						// and clicked_item being set to null.  (See Xamarin bug 23591.)  In such a case, assume
+						// that there's nothing more we can do here.
+						if (clicked_item == null)
+							return;
 					}
 
 					if (owner.VirtualMode && changed) {
