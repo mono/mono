@@ -680,6 +680,19 @@ namespace System
 
 		public TimeSpan GetUtcOffset (DateTime dateTime)
 		{
+			bool isDST;
+			return GetUtcOffset (dateTime, out isDST);
+		}
+
+		public TimeSpan GetUtcOffset (DateTimeOffset dateTimeOffset)
+		{
+			throw new NotImplementedException ();
+		}
+
+		private TimeSpan GetUtcOffset (DateTime dateTime, out bool isDST)
+		{
+			isDST = false;
+
 			TimeZoneInfo tz = this;
 			if (dateTime.Kind == DateTimeKind.Utc)
 				tz = TimeZoneInfo.Utc;
@@ -687,43 +700,65 @@ namespace System
 			if (dateTime.Kind == DateTimeKind.Local)
 				tz = TimeZoneInfo.Local;
 
-			var utcDateTimeTicks = dateTime.Ticks - tz.BaseUtcOffset.Ticks;
-			if (utcDateTimeTicks < 0 || utcDateTimeTicks > DateTime.MaxValue.Ticks)
-				return BaseUtcOffset;
+			bool isTzDst;
+			var tzOffset = GetUtcOffset (dateTime, tz, out isTzDst);
 
-			var utcDateTime = new DateTime (utcDateTimeTicks, DateTimeKind.Utc);
-
-			var tzRule = tz.GetApplicableRule (utcDateTime);
-			DateTime dst = DateTime.MinValue;
-			if (tzRule != null) {
-				var dstTicks = utcDateTime.Ticks - tzRule.DaylightDelta.Ticks;
-				if (dstTicks < 0 || dstTicks > DateTime.MaxValue.Ticks)
-					return BaseUtcOffset;
-
-				dst = new DateTime (dstTicks, DateTimeKind.Utc);
+			if (tz == this) {
+				isDST = isTzDst;
+				return tzOffset;
 			}
 
-			if (dateTime.Kind == DateTimeKind.Unspecified)
-			{
-				if (tzRule != null && IsInDST (tzRule, utcDateTime) && IsInDST (tzRule, dst))
-					return BaseUtcOffset + tzRule.DaylightDelta;
-
+			var utcTicks = dateTime.Ticks - tzOffset.Ticks;
+			if (utcTicks < 0 || utcTicks > DateTime.MaxValue.Ticks)
 				return BaseUtcOffset;
-			}
 
-			if (tzRule != null && tz.IsInDST (tzRule, dst))
-				utcDateTime -= tzRule.DaylightDelta;
+			var utcDateTime = new DateTime (utcTicks, DateTimeKind.Utc);
 
-			var rule = GetApplicableRule (utcDateTime);
-			if (rule != null && IsInDST (rule, utcDateTime))
-				return  BaseUtcOffset + rule.DaylightDelta;
-
-			return BaseUtcOffset;
+			return GetUtcOffset (utcDateTime, this, out isDST);
 		}
 
-		public TimeSpan GetUtcOffset (DateTimeOffset dateTimeOffset)
+		private static TimeSpan GetUtcOffset (DateTime dateTime, TimeZoneInfo tz, out bool isDST)
 		{
-			throw new NotImplementedException ();
+			if (dateTime.Kind == DateTimeKind.Local && tz != TimeZoneInfo.Local)
+				throw new Exception ();
+
+			isDST = false;
+
+			if (tz == TimeZoneInfo.Utc)
+				return TimeSpan.Zero;
+
+			if (dateTime.Kind == DateTimeKind.Utc) {
+				var utcRule = tz.GetApplicableRule (dateTime);
+				if (utcRule != null && tz.IsInDST (utcRule, dateTime)) {
+					isDST = true;
+					return tz.BaseUtcOffset + utcRule.DaylightDelta;
+				}
+
+				return tz.BaseUtcOffset;
+			}
+
+			var stdTicks = dateTime.Ticks - tz.BaseUtcOffset.Ticks;
+			if (stdTicks < 0 || stdTicks > DateTime.MaxValue.Ticks)
+				return tz.BaseUtcOffset;
+
+			var stdUtcDateTime = new DateTime (stdTicks, DateTimeKind.Utc);
+			var tzRule = tz.GetApplicableRule (stdUtcDateTime);
+
+			DateTime dstUtcDateTime = DateTime.MinValue;
+			if (tzRule != null) {
+				var dstTicks = stdUtcDateTime.Ticks - tzRule.DaylightDelta.Ticks;
+				if (dstTicks < 0 || dstTicks > DateTime.MaxValue.Ticks)
+					return tz.BaseUtcOffset;
+
+				dstUtcDateTime = new DateTime (dstTicks, DateTimeKind.Utc);
+			}
+
+			if (tzRule != null && tz.IsInDST (tzRule, stdUtcDateTime) && tz.IsInDST (tzRule, dstUtcDateTime)) {
+				isDST = true;
+				return tz.BaseUtcOffset + tzRule.DaylightDelta;
+			}
+
+			return tz.BaseUtcOffset;
 		}
 
 		public bool HasSameRules (TimeZoneInfo other)
@@ -813,7 +848,10 @@ namespace System
 			if (!SupportsDaylightSavingTime)
 				return false;
 
-			return GetUtcOffset (dateTime) != BaseUtcOffset;
+			bool isDst;
+			GetUtcOffset (dateTime, out isDst);
+
+			return isDst;
 		}
 
 		public bool IsDaylightSavingTime (DateTimeOffset dateTimeOffset)
