@@ -103,6 +103,11 @@ namespace System
 			}
 		}
 
+		/*
+			TimeZone transitions are stored when there is a change on the base offset.
+		*/
+		private List<KeyValuePair<DateTime, TimeType>> transitions;
+
 		static TimeZoneInfo CreateLocal ()
 		{
 #if MONODROID
@@ -727,6 +732,10 @@ namespace System
 			if (tz == TimeZoneInfo.Utc)
 				return TimeSpan.Zero;
 
+			TimeSpan offset;
+			if (tz.TryGetTransitionOffset(dateTime, out offset, out isDST))
+				return offset;
+
 			if (dateTime.Kind == DateTimeKind.Utc) {
 				var utcRule = tz.GetApplicableRule (dateTime);
 				if (utcRule != null && tz.IsInDST (utcRule, dateTime)) {
@@ -1028,6 +1037,40 @@ namespace System
 			return null;
 		}
 
+		private bool TryGetTransitionOffset (DateTime dateTime, out TimeSpan offset,out bool isDst)
+		{
+			offset = BaseUtcOffset;
+			isDst = false;
+
+			if (transitions == null)
+				return false;
+
+			//Transitions are always in standard time
+			DateTime date = dateTime;
+
+			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Local)
+				date = date.ToUniversalTime () + BaseUtcOffset;
+
+			if (dateTime.Kind == DateTimeKind.Utc && this != TimeZoneInfo.Utc)
+				date = date + BaseUtcOffset;
+
+			for (var i =  transitions.Count - 1; i >= 0; i--) {
+				var pair = transitions [i];
+				DateTime ttime = pair.Key;
+				TimeType ttype = pair.Value;
+
+				if (ttime > date)
+					continue;
+
+				offset =  new TimeSpan (0, 0, ttype.Offset);
+				isDst = ttype.IsDst;
+
+				return true;
+			}
+
+			return false;
+		}
+
 		private static DateTime TransitionPoint (TransitionTime transition, int year)
 		{
 			if (transition.IsFixedDateRule)
@@ -1118,6 +1161,7 @@ namespace System
 			bool dst_observed = false;
 			DateTime dst_start = DateTime.MinValue;
 			List<AdjustmentRule> adjustmentRules = new List<AdjustmentRule> ();
+			bool storeTransition = false;
 
 			for (int i = 0; i < transitions.Count; i++) {
 				var pair = transitions [i];
@@ -1128,6 +1172,8 @@ namespace System
 						standardDisplayName = ttype.Name;
 						daylightDisplayName = null;
 						baseUtcOffset = new TimeSpan (0, 0, ttype.Offset);
+						if (adjustmentRules.Count > 0) // We ignore AdjustmentRules but store transitions.
+							storeTransition = true;
 						adjustmentRules = new List<AdjustmentRule> ();
 						dst_observed = false;
 					}
@@ -1169,16 +1215,22 @@ namespace System
 				}
 			}
 
-			if (adjustmentRules.Count == 0) {
+			TimeZoneInfo tz;
+			if (adjustmentRules.Count == 0 && !storeTransition) {
 				TimeType t = (TimeType)time_types [0];
 				if (standardDisplayName == null) {
 					standardDisplayName = t.Name;
 					baseUtcOffset = new TimeSpan (0, 0, t.Offset);
 				}
-				return CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName);
+				tz = CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName);
 			} else {
-				return CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName, ValidateRules (adjustmentRules).ToArray ());
+				tz = CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName, ValidateRules (adjustmentRules).ToArray ());
 			}
+
+			if (storeTransition)
+				tz.transitions = transitions;
+
+			return tz;
 		}
 
 		static Dictionary<int, string> ParseAbbreviations (byte [] buffer, int index, int count)
