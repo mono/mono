@@ -88,6 +88,10 @@ namespace Mono.Security.Cryptography {
 		// block size (which isn't their real internal block size)
 		public BlockProcessor (ICryptoTransform transform, int blockSize)
 		{
+			if (transform == null)
+				throw new ArgumentNullException ("transform");
+			if (blockSize <= 0)
+				throw new ArgumentOutOfRangeException ("blockSize");
 			this.transform = transform;
 			this.blockSize = blockSize;
 			block = new byte [blockSize];
