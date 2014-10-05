@@ -616,18 +616,18 @@ namespace MonoTests.System.Threading.Tasks
 		public void ContinueWithChildren ()
 		{
 			ParallelTestHelper.Repeat (delegate {
-			    bool result = false;
+				bool result = false;
 
-			    var t = Task.Factory.StartNew (() => Task.Factory.StartNew (() => {}, TaskCreationOptions.AttachedToParent));
+				var t = Task.Factory.StartNew (() => Task.Factory.StartNew (() => {}, TaskCreationOptions.AttachedToParent));
 
 				var mre = new ManualResetEvent (false);
-			    t.ContinueWith (l => {
+				t.ContinueWith (l => {
 					result = true;
 					mre.Set ();
 				});
 
 				Assert.IsTrue (mre.WaitOne (1000), "#1");
-			    Assert.IsTrue (result, "#2");
+				Assert.IsTrue (result, "#2");
 			}, 2);
 		}
 
@@ -1094,7 +1094,7 @@ namespace MonoTests.System.Threading.Tasks
 			var t = new Task (() => {
 				new Task (() => { r1 = true; }, TaskCreationOptions.AttachedToParent).RunSynchronously ();
 				Task.Factory.StartNew (() => { Thread.Sleep (100); r2 = true; }, TaskCreationOptions.AttachedToParent);
-		    });
+			});
 			t.RunSynchronously ();
 
 			Assert.IsTrue (r1);
@@ -1930,6 +1930,24 @@ namespace MonoTests.System.Threading.Tasks
 			} catch (AggregateException ex) {
 				Assert.That (ex.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#3");
 			}
+		}
+
+		[Test]
+		public void ChildTaskWithUnscheduledContinuationAttachedToParent ()
+		{
+			Task inner = null;
+			var child = Task.Factory.StartNew (() => {
+				inner  = Task.Run (() => {
+					throw new ApplicationException ();
+				}).ContinueWith (task => { }, TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.NotOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+			});
+
+			int counter = 0;
+			var t = child.ContinueWith (t2 => ++counter, TaskContinuationOptions.ExecuteSynchronously);
+			Assert.IsTrue (t.Wait (5000), "#1");
+			Assert.AreEqual (1, counter, "#2");
+			Assert.AreEqual (TaskStatus.RanToCompletion, child.Status, "#3");
+			Assert.AreEqual (TaskStatus.Canceled, inner.Status, "#4");
 		}
 
 		[Test]

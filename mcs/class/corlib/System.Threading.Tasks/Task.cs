@@ -635,7 +635,7 @@ namespace System.Threading.Tasks
 		
 		#region Cancel and Wait related method
 		
-		internal void CancelReal ()
+		internal void CancelReal (bool notifyParent = false)
 		{
 			Status = TaskStatus.Canceled;
 
@@ -643,6 +643,9 @@ namespace System.Threading.Tasks
 				wait_handle.Set ();
 
 			ProcessCompleteDelegates ();
+
+			if (notifyParent && parent != null && NotifyParentOnFinish ())
+				parent = null;
 		}
 
 		void HandleGenericException (Exception e)
