@@ -117,6 +117,17 @@ namespace System
 				return BuildFromStream ("Local", stream);
 			}
 #elif LIBC
+			var tz = Environment.GetEnvironmentVariable ("TZ");
+			if (tz != null) {
+				if (tz == String.Empty)
+					return Utc;
+				try {
+					return FindSystemTimeZoneByFileName (tz, Path.Combine (TimeZoneDirectory, tz));
+				} catch {
+					return Utc;
+				}
+			}
+
 			try {
 				return FindSystemTimeZoneByFileName ("Local", "/etc/localtime");	
 			} catch {
