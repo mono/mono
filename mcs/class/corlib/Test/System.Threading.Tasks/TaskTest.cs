@@ -905,7 +905,7 @@ namespace MonoTests.System.Threading.Tasks
 			};
 			var inner = new ApplicationException ();
 			Thread t = new Thread (delegate () {
-					Task.Factory.StartNew (() => { Console.WriteLine ("HIT!"); throw inner; });
+					Task.Factory.StartNew (() => { throw inner; });
 				});
 			t.Start ();
 			t.Join ();
