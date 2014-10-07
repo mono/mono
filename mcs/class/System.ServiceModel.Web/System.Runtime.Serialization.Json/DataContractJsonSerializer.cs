@@ -84,7 +84,17 @@ namespace System.Runtime.Serialization.Json
 				throw new ArgumentOutOfRangeException ("maxItemsInObjectGraph");
 
 			this.type = type;
-			known_types = new ReadOnlyCollection<Type> (knownTypes != null ? knownTypes.ToArray () : Type.EmptyTypes);
+
+			var knownTypesFromAttributes = new List<Type> ();
+
+			foreach (var attr in type.GetCustomAttributes (typeof(KnownTypeAttribute)))
+				knownTypesFromAttributes.Add ((attr as KnownTypeAttribute).Type);
+
+			if (knownTypes != null)
+				knownTypesFromAttributes.AddRange (knownTypes);
+
+			known_types = new ReadOnlyCollection<Type> (knownTypesFromAttributes);
+
 			root = rootName;
 			max_items = maxItemsInObjectGraph;
 			ignore_extension = ignoreExtensionDataObject;
@@ -134,8 +144,6 @@ namespace System.Runtime.Serialization.Json
 		public bool IgnoreExtensionDataObject {
 			get { return ignore_extension; }
 		}
-
-		[MonoTODO]
 		public ReadOnlyCollection<Type> KnownTypes {
 			get { return known_types; }
 		}
