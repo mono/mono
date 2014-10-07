@@ -239,6 +239,8 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -DGetCurrentProcess=MonoGetCurrentProcess -DGetCurrentThread=MonoGetCurrentThread -DCreateEvent=MonoCreateEvent"
 		
 		if [[ "$host" != "arm-apple-darwin9" ]]; then 
+			CFLAGS="$CPPFLAGS $MACSDKOPTIONS"
+			CXXFLAGS="$CPPFLAGS $MACSDKOPTIONS"
 			CPPFLAGS="$CPPFLAGS $MACSDKOPTIONS"
 			LDFLAGS="$LDFLAGS $MACSDKOPTIONS"
 		fi
@@ -568,7 +570,7 @@ embedded)
   case "$host" in
     i*86-apple-darwin* | x86_64-*-darwin* | powerpc-apple-darwin* )
       EGLIB_CPPFLAGS="$MACSDKOPTIONS"
-      CLAGS_FOR_EGLIB="$EGLIB_CPPFLAGS"
+      CFLAGS_FOR_EGLIB="$EGLIB_CPPFLAGS"
   esac
 
   ac_configure_args="$ac_configure_args \"CPPFLAGS_FOR_EGLIB=$EGLIB_CPPFLAGS\" \"CFLAGS_FOR_EGLIB=$CFLAGS_FOR_EGLIB\""
@@ -2514,11 +2516,18 @@ case "x$gc" in
 		# The problem with this approach, is that during a reconfigure, the main
 		# configure scripts gets invoked with these arguments, so we use separate
 		# variables understood by libgc's configure to pass CPPFLAGS and CFLAGS.
-		LIBGC_CPPFLAGS=$CPPFLAGS
+		case "$host" in
+			i*86-apple-darwin* | x86_64-*-darwin* | powerpc-apple-darwin* )
+				LIBGC_CPPFLAGS="$CPPFLAGS $MACSDKOPTIONS"
+			;;
+			*)
+				LIBGC_CPPFLAGS="$CPPFLAGS"
+			;;
+		esac
 		if test x$TARGET = xSPARC -o x$TARGET = xSPARC64; then
 			LIBGC_CPPFLAGS=`echo $LIBGC_CPPFLAGS | sed -e 's/-D_FILE_OFFSET_BITS=64//g'`
 		fi
-		ac_configure_args="$ac_configure_args --disable-embed-check --with-libgc-threads=$libgc_threads $libgc_configure_args \"CPPFLAGS_FOR_LIBGC=$LIBGC_CPPFLAGS\" \"CFLAGS_FOR_LIBGC=$CFLAGS_FOR_LIBGC\""
+		ac_configure_args="$ac_configure_args --disable-embed-check --with-libgc-threads=$libgc_threads $libgc_configure_args \"CPPFLAGS_FOR_LIBGC=$LIBGC_CPPFLAGS\" \"CFLAGS_FOR_LIBGC=$LIBGC_CPPFLAGS\""
 		AC_CONFIG_SUBDIRS(libgc)
 		;;
 esac

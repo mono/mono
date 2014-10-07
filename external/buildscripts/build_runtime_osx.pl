@@ -87,30 +87,29 @@ for my $arch (@arches)
 	{
 		$stackrealign = '-mstackrealign';
 
-		if ($debug)
-		{
-			$ENV{CFLAGS} = "-arch $arch -g -O0 -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1 $stackrealign";
-			$ENV{CXXFLAGS} = $ENV{CFLAGS};
-			$ENV{LDFLAGS} = "-arch $arch";
-		}
-		else
-		{
-			# Switch -fomit-frame-pointer to -fno-omit-frame-pointer as omitting frame pointer screws up stack traces
-			my $Os = '-Os -fno-omit-frame-pointer';
-			$ENV{CFLAGS} = "-arch $arch -Os -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1 $stackrealign";  #optimize for size
-			$ENV{CXXFLAGS} = $ENV{CFLAGS};
-			$ENV{LDFLAGS} = "-arch $arch";
-		}
-		my $sdkOptions = "-isysroot $sdkPath -mmacosx-version-min=$macversion";
-
 		if ($iphone_simulator)
 		{
 			$ENV{CFLAGS} = "-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0";
 			$macversion = "10.6";
 			$sdkversion = "10.6";
 		} else {
-			$ENV{'MACSDKOPTIONS'} = $sdkOptions;
+			if ($debug)
+			{
+				$ENV{CFLAGS} = "-arch $arch -g -O0 -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1 $stackrealign";
+				$ENV{CXXFLAGS} = $ENV{CFLAGS};
+				$ENV{LDFLAGS} = "-arch $arch";
+			}
+			else
+			{
+				# Switch -fomit-frame-pointer to -fno-omit-frame-pointer as omitting frame pointer screws up stack traces
+				my $Os = '-Os -fno-omit-frame-pointer';
+				$ENV{CFLAGS} = "-arch $arch -Os -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1 $stackrealign";  #optimize for size
+				$ENV{CXXFLAGS} = $ENV{CFLAGS};
+				$ENV{LDFLAGS} = "-arch $arch";
+			}
 		}
+		my $sdkOptions = "-isysroot $sdkPath -mmacosx-version-min=$macversion $ENV{CFLAGS}";
+		$ENV{'MACSDKOPTIONS'} = $sdkOptions;
 		
 		#this will fail on a fresh working copy, so don't die on it.
 		system("make distclean");

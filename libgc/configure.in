@@ -25,6 +25,15 @@ AC_CANONICAL_HOST
 AC_SUBST(PACKAGE)
 AC_SUBST(GC_VERSION)
 
+# We use a separate variable to pass down CPPFLAGS and CFLAGS from the main mono 
+# configure, because of autoconf brokeness
+if test "x$CPPFLAGS_FOR_LIBGC" != "x"; then
+   CPPFLAGS=$CPPFLAGS_FOR_LIBGC
+fi
+if test "x$CFLAGS_FOR_LIBGC" != "x"; then
+   CFLAGS=$CFLAGS_FOR_LIBGC
+fi
+
 AC_PROG_CC
 AC_PROG_CXX
 
@@ -38,15 +47,6 @@ AC_PROG_INSTALL
 AM_MAINTAINER_MODE
 
 . [$]{srcdir}/configure.host
-
-# We use a separate variable to pass down CPPFLAGS and CFLAGS from the main mono 
-# configure, because of autoconf brokeness
-if test "x$CPPFLAGS_FOR_LIBGC" != "x"; then
-   CPPFLAGS=$CPPFLAGS_FOR_LIBGC
-fi
-if test "x$CFLAGS_FOR_LIBGC" != "x"; then
-   CFLAGS=$CFLAGS_FOR_LIBGC
-fi
 
 GC_CFLAGS=${gc_cflags}
 AC_SUBST(GC_CFLAGS)

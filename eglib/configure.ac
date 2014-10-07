@@ -1,13 +1,22 @@
 AC_INIT(README)
 AC_CANONICAL_SYSTEM
 
+CFLAGS="$CFLAGS -g -O0 -D_GNU_SOURCE"
+# We use a separate variable to pass down CPPFLAGS and CFLAGS from the main mono 
+# configure, because of autoconf brokeness
+if test "x$CPPFLAGS_FOR_EGLIB" != "x"; then
+   CPPFLAGS=$CPPFLAGS_FOR_EGLIB
+fi
+if test "x$CFLAGS_FOR_EGLIB" != "x"; then
+   CFLAGS=$CFLAGS_FOR_EGLIB
+fi
+
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(eglib,0.3)
 AM_MAINTAINER_MODE
 AM_PROG_CC_C_O
 
 AM_PROG_LIBTOOL
-CFLAGS="$CFLAGS -g -O0 -D_GNU_SOURCE"
 GNUC_PRETTY=
 GNUC_UNUSED=
 BREAKPOINT="G_STMT_START { raise (SIGTRAP); } G_STMT_END"
@@ -24,15 +33,6 @@ AC_SUBST(GNUC_UNUSED)
 AC_SUBST(GNUC_NORETURN)
 AC_SUBST(BREAKPOINT)
 WANT_ICONV=1
-
-# We use a separate variable to pass down CPPFLAGS and CFLAGS from the main mono 
-# configure, because of autoconf brokeness
-if test "x$CPPFLAGS_FOR_EGLIB" != "x"; then
-   CPPFLAGS=$CPPFLAGS_FOR_EGLIB
-fi
-if test "x$CFLAGS_FOR_EGLIB" != "x"; then
-   CFLAGS=$CFLAGS_FOR_EGLIB
-fi
 
 AM_CONDITIONAL(CROSS_COMPILING, [test x$cross_compiling = xyes])
 AC_C_BIGENDIAN([ORDER=G_BIG_ENDIAN],[ORDER=G_LITTLE_ENDIAN])

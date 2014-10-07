@@ -69,7 +69,7 @@ if (not $skipbuild)
 	$ENV{LDFLAGS}  = "$ENV{LDFLAGS} -arch i386";
 	if ($^O eq 'darwin')
 	{
-		$ENV{'MACSDKOPTIONS'} = "-mmacosx-version-min=$macversion -isysroot $xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
+		$ENV{'MACSDKOPTIONS'} = "$ENV{CFLAGS} -mmacosx-version-min=$macversion -isysroot $xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
 	}
 
 	if ($cleanbuild)

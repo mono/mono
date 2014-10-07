@@ -583,14 +583,8 @@ namespace System.Net.NetworkInformation {
 		struct Win32_IN6_ADDR
 		{
 			[FieldOffset (0)]
-			[MarshalAs ((short) UnmanagedType.U1, SizeConst = 16)]
+			[MarshalAs ( UnmanagedType.ByValArray, SizeConst = 16)]
 			public byte [] Bytes;
-			[FieldOffset (0)]
-			[MarshalAs ((short) UnmanagedType.U2, SizeConst = 8)]
-			public byte [] UInt16Array;
-			[FieldOffset (0)]
-			[MarshalAs ((short) UnmanagedType.U4, SizeConst = 4)]
-			public byte [] UInt32Array;
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
