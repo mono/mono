@@ -2314,6 +2314,8 @@ log_shutdown (MonoProfiler *prof)
 {
 	in_shutdown = 1;
 #ifndef DISABLE_HELPER_THREAD
+	counters_and_perfcounters_sample (prof);
+
 	if (prof->command_port) {
 		char c = 1;
 		void *res;
