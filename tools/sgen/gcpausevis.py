@@ -39,33 +39,61 @@ if len (files) != 1:
     sys.exit (1)
 
 data = []
-minor_pausetimes = []
-major_pausetimes = []
 
 grep_input = open (files [0])
 proc = subprocess.Popen ([sgen_grep_path, '--pause-times'], stdin = grep_input, stdout = subprocess.PIPE)
 for line in iter (proc.stdout.readline, ''):
-    m = re.match ('^pause-time (\d+) (\d+) (\d+) (\d+)', line)
+    m = re.match ('^pause-time (\d+) (\d+) (\d+) (\d+) (\d+)', line)
     if m:
+        minor_work = major_work = False
         generation = int (m.group (1))
-        concurrent = int (m.group (2))
-        msecs = int (m.group (3)) / 10.0 / 1000.0
-        start = int (m.group (4)) / 10.0 / 1000.0
-        if generation == 0:
-            generation = "minor"
-            minor_pausetimes.append (msecs)
-        else:
-            generation = "major"
-            major_pausetimes.append (msecs)
-        if concurrent == 1:
+        concurrent = int (m.group (2)) != 0
+        finish = int (m.group (3)) != 0
+        msecs = int (m.group (4)) / 10.0 / 1000.0
+        start = int (m.group (5)) / 10.0 / 1000.0
+
+        if concurrent:
             kind = "CONC"
         else:
             kind = "SYNC"
-        rec = (generation, start, start + msecs, kind)
+
+        if generation == 0:
+            minor_work = True
+            if concurrent:
+                major_work = True
+                gctype = "nursery+update"
+            else:
+                gctype = "nursery"
+        else:
+            major_work = True
+            if concurrent:
+                if finish:
+                    minor_work = True
+                    gctype = "nursery+finish"
+                else:
+                    gctype = "start"
+            else:
+                gctype = "full"
+
+        rec = (minor_work, major_work, start, start + msecs, kind, gctype)
         print rec
         data.append (rec)
 
 if show_histogram:
+    minor_pausetimes = []
+    major_pausetimes = []
+
+    for rec in data:
+        (minor_work, major_work, start_ts, finish_ts, kind, gctype) = rec
+        pause = finish_ts - start_ts
+        if minor_work and major_work and show_minor and show_major:
+            major_pausetimes.append (pause)
+        else:
+            if minor_work:
+                minor_pausetimes.append (pause)
+            if major_work:
+                major_pausetimes.append (pause)
+
     pausetimes = []
     if show_minor:
         pausetimes += minor_pausetimes
