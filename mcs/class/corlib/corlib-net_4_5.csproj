@@ -1587,6 +1587,7 @@
     <Compile Include="System\Exception.cs" />
     <Compile Include="System\ExecutionEngineException.cs" />
     <Compile Include="System\FieldAccessException.cs" />
+    <Compile Include="System\FirstChanceExceptionEventArgs.cs" />
     <Compile Include="System\FlagsAttribute.cs" />
     <Compile Include="System\FormatException.cs" />
     <Compile Include="System\Funcs.cs" />
