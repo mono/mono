@@ -26,7 +26,8 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollectionBegin); break;
 	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollectionEnd); break;
 	case SGEN_PROTOCOL_CONCURRENT_START: size = 0; break;
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: size = 0; break;
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE: size = 0; break;
+	case SGEN_PROTOCOL_CONCURRENT_FINISH: size = 0; break;
 	case SGEN_PROTOCOL_WORLD_STOPPING: size = sizeof (SGenProtocolWorldStopping); break;
 	case SGEN_PROTOCOL_WORLD_STOPPED: size = sizeof (SGenProtocolWorldStopped); break;
 	case SGEN_PROTOCOL_WORLD_RESTARTING: size = sizeof (SGenProtocolWorldRestarting); break;
@@ -83,7 +84,8 @@ is_always_match (int type)
 	case SGEN_PROTOCOL_COLLECTION_BEGIN:
 	case SGEN_PROTOCOL_COLLECTION_END:
 	case SGEN_PROTOCOL_CONCURRENT_START:
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH:
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE:
+	case SGEN_PROTOCOL_CONCURRENT_FINISH:
 	case SGEN_PROTOCOL_WORLD_STOPPING:
 	case SGEN_PROTOCOL_WORLD_STOPPED:
 	case SGEN_PROTOCOL_WORLD_RESTARTING:
@@ -131,8 +133,12 @@ print_entry (int type, void *data)
 		printf ("concurrent start\n");
 		break;
 	}
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: {
-		printf ("concurrent update or finish\n");
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE: {
+		printf ("concurrent update\n");
+		break;
+	}
+	case SGEN_PROTOCOL_CONCURRENT_FINISH: {
+		printf ("concurrent finish\n");
 		break;
 	}
 	case SGEN_PROTOCOL_WORLD_STOPPING: {
@@ -494,6 +500,7 @@ main (int argc, char *argv[])
 	gboolean pause_times = FALSE;
 	gboolean pause_times_stopped = FALSE;
 	gboolean pause_times_concurrent = FALSE;
+	gboolean pause_times_finish = FALSE;
 	long long pause_times_ts = 0;
 
 	for (i = 0; i < num_args; ++i) {
@@ -523,20 +530,24 @@ main (int argc, char *argv[])
 				SGenProtocolWorldStopping *entry = data;
 				assert (!pause_times_stopped);
 				pause_times_concurrent = FALSE;
+				pause_times_finish = FALSE;
 				pause_times_ts = entry->timestamp;
 				pause_times_stopped = TRUE;
 				break;
 			}
+			case SGEN_PROTOCOL_CONCURRENT_FINISH:
+				pause_times_finish = TRUE;
 			case SGEN_PROTOCOL_CONCURRENT_START:
-			case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH:
+			case SGEN_PROTOCOL_CONCURRENT_UPDATE:
 				pause_times_concurrent = TRUE;
 				break;
 			case SGEN_PROTOCOL_WORLD_RESTARTED: {
 				SGenProtocolWorldRestarted *entry = data;
 				assert (pause_times_stopped);
-				printf ("pause-time %d %d %lld %lld\n",
+				printf ("pause-time %d %d %d %lld %lld\n",
 						entry->generation,
 						pause_times_concurrent,
+						pause_times_finish,
 						entry->timestamp - pause_times_ts,
 						pause_times_ts);
 				pause_times_stopped = FALSE;
