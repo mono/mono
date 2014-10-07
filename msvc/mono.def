@@ -264,7 +264,6 @@ mono_debugger_method_has_breakpoint
 mono_debugger_remove_breakpoint
 mono_debugger_run_finally
 mono_debugger_unlock
-mono_is_debugger_attached
 mono_declsec_flags_from_assembly
 mono_declsec_flags_from_class
 mono_declsec_flags_from_method
