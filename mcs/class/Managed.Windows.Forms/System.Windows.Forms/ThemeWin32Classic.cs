@@ -364,12 +364,14 @@ namespace System.Windows.Forms
 			return ret_size;
 		}
 
-		public override void CalculateButtonTextAndImageLayout (ButtonBase button, out Rectangle textRectangle, out Rectangle imageRectangle)
+		public override void CalculateButtonTextAndImageLayout (Graphics g, ButtonBase button, out Rectangle textRectangle, out Rectangle imageRectangle)
 		{
 			Image image = button.Image;
 			string text = button.Text;
 			Rectangle content_rect = button.PaddingClientRectangle;
-			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, content_rect.Size, button.TextFormatFlags, button.UseCompatibleTextRendering);
+			if (button.TextImageRelation != TextImageRelation.Overlay)
+				content_rect.Inflate(-4, -4);
+			Size text_size = TextRenderer.MeasureTextInternal (g, text, button.Font, content_rect.Size, button.TextFormatFlags, button.UseCompatibleTextRendering);
 			Size image_size = image == null ? Size.Empty : image.Size;
 
 			textRectangle = Rectangle.Empty;
@@ -438,19 +440,15 @@ namespace System.Windows.Forms
 					imageRectangle = new Rectangle (image_x, image_y, image_width, image_height);
 					break;
 				case TextImageRelation.ImageAboveText:
-					content_rect.Inflate (-4, -4);
 					LayoutTextAboveOrBelowImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
 					break;
 				case TextImageRelation.TextAboveImage:
-					content_rect.Inflate (-4, -4);
 					LayoutTextAboveOrBelowImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
 					break;
 				case TextImageRelation.ImageBeforeText:
-					content_rect.Inflate (-4, -4);
 					LayoutTextBeforeOrAfterImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
 					break;
 				case TextImageRelation.TextBeforeImage:
-					content_rect.Inflate (-4, -4);
 					LayoutTextBeforeOrAfterImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
 					break;
 			}
