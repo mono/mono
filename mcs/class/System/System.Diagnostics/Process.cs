@@ -940,7 +940,7 @@ namespace System.Diagnostics {
 							       ref proc_info);
 			} finally {
 				if (proc_info.Password != IntPtr.Zero)
-					Marshal.FreeBSTR (proc_info.Password);
+					Marshal.ZeroFreeBSTR (proc_info.Password);
 				proc_info.Password = IntPtr.Zero;
 			}
 			if (!ret) {
@@ -1080,7 +1080,7 @@ namespace System.Diagnostics {
 							      ref proc_info);
 			} finally {
 				if (proc_info.Password != IntPtr.Zero)
-					Marshal.FreeBSTR (proc_info.Password);
+					Marshal.ZeroFreeBSTR (proc_info.Password);
 				proc_info.Password = IntPtr.Zero;
 			}
 			if (!ret) {
