@@ -260,6 +260,27 @@ namespace MonoTests.System.Collections.Concurrent
 				c.Add (1, token.Token);
 			}
 		}
+
+		[Test]
+		public void AddAnyCancellable ()
+		{
+			const int elNumber = 5;
+			const int colNumber = 5;
+
+			var cols = new BlockingCollection <int> [colNumber];
+			for (var i = 0; i < colNumber; i++) {
+				cols[i] = new BlockingCollection <int> (elNumber);
+			}
+
+			var token = new CancellationTokenSource (100);
+			for (var i = 0; i < colNumber * elNumber; i++) {
+				BlockingCollection <int>.AddToAny (cols, 1, token.Token);
+			}
+
+			foreach (var col in cols) {
+				Assert.AreEqual (elNumber, col.Count);
+			}
+		}
 	}
 }
 #endif
