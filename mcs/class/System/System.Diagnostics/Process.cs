@@ -39,7 +39,7 @@ using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
-using System.Collections;
+using System.Collections.Generic;
 using System.Security;
 using System.Threading;
 
@@ -832,13 +832,13 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int[] GetProcesses_internal();
 
-		public static Process[] GetProcesses()
+		public static Process[] GetProcesses ()
 		{
 			int [] pids = GetProcesses_internal ();
 			if (pids == null)
 				return new Process [0];
 
-			ArrayList proclist = new ArrayList (pids.Length);
+			var proclist = new List<Process> (pids.Length);
 			for (int i = 0; i < pids.Length; i++) {
 				try {
 					proclist.Add (GetProcessById (pids [i]));
@@ -851,7 +851,7 @@ namespace System.Diagnostics {
 				}
 			}
 
-			return ((Process []) proclist.ToArray (typeof (Process)));
+			return proclist.ToArray ();
 		}
 
 		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
@@ -871,7 +871,7 @@ namespace System.Diagnostics {
 			if (pids == null)
 				return new Process [0];
 			
-			ArrayList proclist = new ArrayList (pids.Length);
+			var proclist = new List<Process> (pids.Length);
 			for (int i = 0; i < pids.Length; i++) {
 				try {
 					Process p = GetProcessById (pids [i]);
@@ -886,7 +886,7 @@ namespace System.Diagnostics {
 				}
 			}
 
-			return ((Process []) proclist.ToArray (typeof (Process)));
+			return proclist.ToArray ();
 		}
 
 		[MonoTODO]
