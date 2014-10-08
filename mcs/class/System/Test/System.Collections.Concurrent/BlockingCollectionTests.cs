@@ -247,6 +247,19 @@ namespace MonoTests.System.Collections.Concurrent
 			Assert.AreEqual (-10, t.Result, "#5");
 			Assert.AreEqual ("canceled", res, "#6");
 		}
+
+		[Test, ExpectedException (typeof(OperationCanceledException))]
+		public void BoundedAddLimit ()
+		{
+			const int elNumber = 5;
+
+			var c = new BlockingCollection <int> (elNumber);
+			var token = new CancellationTokenSource (100);
+
+			for (var i = 0; i < elNumber + 1; i++) {
+				c.Add (1, token.Token);
+			}
+		}
 	}
 }
 #endif
