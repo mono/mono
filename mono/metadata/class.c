@@ -3543,7 +3543,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 {
 	MonoError error;
 	MonoClass *k, *ic;
-	MonoMethod **vtable;
+	MonoMethod **vtable = NULL;
 	int i, max_vtsize = 0, max_iid, cur_slot = 0;
 	GPtrArray *ifaces = NULL;
 	GHashTable *override_map = NULL;
@@ -3594,9 +3594,6 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 
 	max_vtsize += class->method.count;
 
-	vtable = alloca (sizeof (gpointer) * max_vtsize);
-	memset (vtable, 0, sizeof (gpointer) * max_vtsize);
-
 	/* printf ("METAINIT %s.%s\n", class->name_space, class->name); */
 
 	cur_slot = setup_interface_offsets (class, cur_slot);
@@ -3646,6 +3643,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 		return;
 	}
 
+	vtable = g_malloc0 (sizeof (gpointer) * max_vtsize);
+
 	if (class->parent && class->parent->vtable_size) {
 		MonoClass *parent = class->parent;
 		int i;
@@ -3689,6 +3688,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 			dslot = mono_method_get_vtable_slot (decl);
 			if (dslot == -1) {
 				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+				g_free (vtable);
 				return;
 			}
 
@@ -3867,6 +3867,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 
 					if (!cmsig || !m1sig) {
 						mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+						g_free (vtable);
 						return;
 					}
 
@@ -3957,6 +3958,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Type %s has invalid vtable method slot %d with method %s", type_name, i, method_name));
 				g_free (type_name);
 				g_free (method_name);
+				g_free (vtable);
 				return;
 			}
 		}
@@ -4033,6 +4035,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	}
 
 	VERIFY_INTERFACE_VTABLE (mono_class_verify_vtable (class));
+	g_free (vtable);
 	return;
 
 fail:
@@ -4040,6 +4043,7 @@ fail:
 	char *name = mono_type_get_full_name (class);
 	mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("VTable setup of type %s failed", name));
 	g_free (name);
+	g_free (vtable);
 	if (override_map)
 		g_hash_table_destroy (override_map);
 	if (virt_methods)

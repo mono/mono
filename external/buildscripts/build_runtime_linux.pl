@@ -73,7 +73,7 @@ if (not $skipbuild)
 	{
 		$ENV{CFLAGS} = "$archflags -Os";  #optimize for size
 	}
-	$ENV{CXXFLAGS} = $ENV{CFLAGS};
+	$ENV{CPPFLAGS} = $ENV{CXXFLAGS} = $ENV{CFLAGS};
 	$ENV{LDFLAGS} = "$archflags";
 
 	#this will fail on a fresh working copy, so don't die on it.

@@ -2371,4 +2371,3 @@ mono_method_get_index (MonoMethod *method) {
 	}
 	return 0;
 }
-
