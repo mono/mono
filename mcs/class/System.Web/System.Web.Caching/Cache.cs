@@ -127,7 +127,7 @@ namespace System.Web.Caching
 		
 		public Cache ()
 		{
-			cacheLock = new ReaderWriterLockSlim ();
+			cacheLock = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
 			cache = new CacheItemLRU (this, HIGH_WATER_MARK, LOW_WATER_MARK);
 		}
 
