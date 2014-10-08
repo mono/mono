@@ -124,8 +124,12 @@ namespace System.Collections.Concurrent
 				int cachedRemoveId = removeId;
 				int itemsIn = cachedAddId - cachedRemoveId;
 
+				// Check our transaction id against completed stored one
+				if (isComplete.Value && cachedAddId >= completeId)
+					ThrowCompleteException ();
+
 				// If needed, we check and wait that the collection isn't full
-				if (upperBound != -1 && itemsIn > upperBound) {
+				if (upperBound != -1 && itemsIn >= upperBound) {
 					if (millisecondsTimeout == 0)
 						return false;
 
@@ -143,10 +147,6 @@ namespace System.Collections.Concurrent
 
 					continue;
 				}
-
-				// Check our transaction id against completed stored one
-				if (isComplete.Value && cachedAddId >= completeId)
-					ThrowCompleteException ();
 
 				// Validate the steps we have been doing until now
 				if (Interlocked.CompareExchange (ref addId, cachedAddId + 1, cachedAddId) != cachedAddId)
