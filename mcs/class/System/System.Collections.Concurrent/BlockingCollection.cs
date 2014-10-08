@@ -291,20 +291,7 @@ namespace System.Collections.Concurrent
 
 		public static int AddToAny (BlockingCollection<T>[] collections, T item)
 		{
-			CheckArray (collections);
-			WaitHandle[] wait_table = null;
-			while (true) {
-				for (int i = 0; i < collections.Length; ++i) {
-					if (collections [i].TryAdd (item))
-						return i;
-				}
-				if (wait_table == null) {
-					wait_table = new WaitHandle [collections.Length];
-					for (int i = 0; i < collections.Length; ++i)
-						wait_table [i] = collections [i].mreAdd.WaitHandle;
-				}
-				WaitHandle.WaitAny (wait_table);
-			}
+			return AddToAny (collections, item, CancellationToken.None);
 		}
 
 		public static int AddToAny (BlockingCollection<T>[] collections, T item, CancellationToken cancellationToken)
@@ -379,21 +366,7 @@ namespace System.Collections.Concurrent
 
 		public static int TakeFromAny (BlockingCollection<T>[] collections, out T item)
 		{
-			item = default (T);
-			CheckArray (collections);
-			WaitHandle[] wait_table = null;
-			while (true) {
-				for (int i = 0; i < collections.Length; ++i) {
-					if (collections [i].TryTake (out item))
-						return i;
-				}
-				if (wait_table == null) {
-					wait_table = new WaitHandle [collections.Length];
-					for (int i = 0; i < collections.Length; ++i)
-						wait_table [i] = collections [i].mreRemove.WaitHandle;
-				}
-				WaitHandle.WaitAny (wait_table);
-			}
+			return TakeFromAny (collections, out item, CancellationToken.None);
 		}
 
 		public static int TakeFromAny (BlockingCollection<T>[] collections, out T item, CancellationToken cancellationToken)
