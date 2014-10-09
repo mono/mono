@@ -1918,6 +1918,15 @@ namespace System.Windows.Forms {
 			
 			UpdateBounds();
 
+			// Moving SetIcon() in front of SetWindowMinMax() fixes Xamarin bug #20886.  There must
+			// be something subtle going on inside the X11 code.  For safety, I'm moving it in
+			// front of the conditional call to SetWindowTransparency() as well in case it has
+			// something to do with calls to SetWindow*() in general.  I would think this change
+			// should be safe on the Mac (or Windows) as well even if it may not be needed there.
+			if (show_icon && (FormBorderStyle != FormBorderStyle.FixedDialog) && (icon != null)) {
+				XplatUI.SetIcon(window.Handle, icon);
+			}
+
 			if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
 				if (allow_transparency) {
 					XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
@@ -1925,10 +1934,6 @@ namespace System.Windows.Forms {
 			}
 
 			XplatUI.SetWindowMinMax(window.Handle, maximized_bounds, minimum_size, maximum_size);
-			
-			if (show_icon && (FormBorderStyle != FormBorderStyle.FixedDialog) && (icon != null)) {
-				XplatUI.SetIcon(window.Handle, icon);
-			}
 
 			if ((owner != null) && (owner.IsHandleCreated)) {
 				XplatUI.SetOwner(window.Handle, owner.window.Handle);
