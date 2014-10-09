@@ -307,10 +307,16 @@ webForm.ToString = function (s, validator)
 
 webForm.ToDouble = function (s, validator)
 {
-	if ((v = parseFloat(s)) != s - 0)
-		return null;
-	else
-		return v;
+	exp = new RegExp("^\\s*([-\\+])?(\\d*)\\" + validator.decimalchar + "?(\\d*)\\s*$");
+        m = s.match(exp);
+        if (m == null)
+            return null;
+        if (m[2].length == 0 && m[3].length == 0)
+            return null;
+        cleanInput = (m[1] != null ? m[1] : "") + (m[2].length>0 ? m[2] : "0") + (m[3].length>0 ? "." + m[3] : "");
+        num = parseFloat(cleanInput);
+        return (isNaN(num) ? null : num);
+
 }
 
 webForm.ToDate = function (s, validator)
