@@ -183,7 +183,10 @@ namespace System.IO {
 		internal SearchPattern2 Pattern {
 			get {
 				if (pattern == null) {
-					pattern = new SearchPattern2 (MangledFilter);
+					if (watcher.GetType () == typeof (KeventWatcher))
+						pattern = new SearchPattern2 (MangledFilter, true); //assume we want to ignore case (OS X)
+					else
+						pattern = new SearchPattern2 (MangledFilter);
 				}
 				return pattern;
 			}
@@ -372,52 +375,60 @@ namespace System.IO {
 			ErrorEvent,
 			RenameEvent
 		}
-		private void RaiseEvent (Delegate ev, EventArgs arg, EventType evtype)
-		{
-			if (ev == null)
-				return;
-
-			if (synchronizingObject == null) {
-				switch (evtype) {
-				case EventType.RenameEvent:
-					((RenamedEventHandler)ev).BeginInvoke (this, (RenamedEventArgs) arg, null, null);
-					break;
-				case EventType.ErrorEvent:
-					((ErrorEventHandler)ev).BeginInvoke (this, (ErrorEventArgs) arg, null, null);
-					break;
-				case EventType.FileSystemEvent:
-					((FileSystemEventHandler)ev).BeginInvoke (this, (FileSystemEventArgs) arg, null, null);
-					break;
-				}
-				return;
-			}
 			
-			synchronizingObject.BeginInvoke (ev, new object [] {this, arg});
-		}
-
 		protected void OnChanged (FileSystemEventArgs e)
 		{
-			RaiseEvent (Changed, e, EventType.FileSystemEvent);
+			if (Changed == null)
+				return;
+
+			if (synchronizingObject == null)
+				Changed (this, e);
+			else
+				synchronizingObject.BeginInvoke (Changed, new object[] { this, e });
 		}
 
 		protected void OnCreated (FileSystemEventArgs e)
 		{
-			RaiseEvent (Created, e, EventType.FileSystemEvent);
+			if (Created == null)
+				return;
+
+			if (synchronizingObject == null)
+				Created (this, e);
+			else
+				synchronizingObject.BeginInvoke (Created, new object[] { this, e });
 		}
 
 		protected void OnDeleted (FileSystemEventArgs e)
 		{
-			RaiseEvent (Deleted, e, EventType.FileSystemEvent);
+			if (Deleted == null)
+				return;
+
+			if (synchronizingObject == null)
+				Deleted (this, e);
+			else
+				synchronizingObject.BeginInvoke (Deleted, new object[] { this, e });
 		}
 
-		protected void OnError (ErrorEventArgs e)
+		internal void OnError (ErrorEventArgs e)
 		{
-			RaiseEvent (Error, e, EventType.ErrorEvent);
+			if (Error == null)
+				return;
+
+			if (synchronizingObject == null)
+				Error (this, e);
+			else
+				synchronizingObject.BeginInvoke (Error, new object[] { this, e });
 		}
 
 		protected void OnRenamed (RenamedEventArgs e)
 		{
-			RaiseEvent (Renamed, e, EventType.RenameEvent);
+			if (Renamed == null)
+				return;
+
+			if (synchronizingObject == null)
+				Renamed (this, e);
+			else
+				synchronizingObject.BeginInvoke (Renamed, new object[] { this, e });
 		}
 
 		public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType)
