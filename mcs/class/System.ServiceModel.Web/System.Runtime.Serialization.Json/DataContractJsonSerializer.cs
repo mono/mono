@@ -87,7 +87,7 @@ namespace System.Runtime.Serialization.Json
 
 			var knownTypesFromAttributes = new List<Type> ();
 
-			foreach (var attr in type.GetCustomAttributes (typeof(KnownTypeAttribute)))
+			foreach (var attr in type.GetCustomAttributes (typeof (KnownTypeAttribute), false))
 				knownTypesFromAttributes.Add ((attr as KnownTypeAttribute).Type);
 
 			if (knownTypes != null)

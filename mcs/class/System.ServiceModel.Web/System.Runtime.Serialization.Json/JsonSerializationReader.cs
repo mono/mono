@@ -221,7 +221,7 @@ namespace System.Runtime.Serialization.Json
 						return t;
 
 			if (baseType != null)
-				foreach (var attr in baseType.GetCustomAttributes (typeof(KnownTypeAttribute)))
+				foreach (var attr in baseType.GetCustomAttributes (typeof (KnownTypeAttribute), false))
 					if ((attr as KnownTypeAttribute).Type.FullName.Equals (properName))
 						return (attr as KnownTypeAttribute).Type;
 
