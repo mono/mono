@@ -246,6 +246,7 @@ namespace System.Web.UI.WebControls
 						value = DateTime.Parse(text, dateFormatProvider);
 						return true;
 
+					case ValidationDataType.Double:
 					case ValidationDataType.Currency:
 						IFormatProvider currencyFormatProvider = (cultureInvariant) ? NumberFormatInfo.InvariantInfo :
 						NumberFormatInfo.CurrentInfo;
