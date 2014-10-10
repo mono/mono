@@ -170,7 +170,7 @@ namespace System.Net.Http.Headers
 				} else {
 					value.From = nvalue;
 
-					t = lexer.Scan ();
+					t = lexer.Scan (false);
 					if (t != Token.Type.SeparatorDash)
 						return false;
 

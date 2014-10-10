@@ -247,7 +247,7 @@ namespace System.Net.Http.Headers
 			return false;
 		}
 
-		public Token Scan ()
+		public Token Scan (bool ignoreDash = true)
 		{
 			int start = pos;
 			if (s == null)
@@ -278,9 +278,6 @@ namespace System.Net.Http.Headers
 				case '/':
 					ttype = Token.Type.SeparatorSlash;
 					break;
-				case '-':
-					ttype = Token.Type.SeparatorDash;
-					break;
 				case ',':
 					ttype = Token.Type.SeparatorComma;
 					break;
@@ -308,6 +305,12 @@ namespace System.Net.Http.Headers
 					ttype = Token.Type.OpenParens;
 					break;
 				default:
+					if (!ignoreDash) {
+						if (ch == '-') {
+							ttype = Token.Type.SeparatorDash;
+							break;
+						}
+					}
 					if (ch <= last_token_char && token_chars[ch]) {
 						start = pos - 1;
 

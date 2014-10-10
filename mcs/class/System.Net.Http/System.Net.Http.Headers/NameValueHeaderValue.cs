@@ -126,7 +126,7 @@ namespace System.Net.Http.Headers
 			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
 		}
 
-		internal static bool TryParseParameters (Lexer lexer, out List<NameValueHeaderValue> result, out Token t)
+		internal static bool TryParseParameters (Lexer lexer, out List<NameValueHeaderValue> result, out Token t, bool ignoreDash = true)
 		{		
 			var list = new List<NameValueHeaderValue> ();
 			result = null;
@@ -142,7 +142,7 @@ namespace System.Net.Http.Headers
 
 				t = lexer.Scan ();
 				if (t == Token.Type.SeparatorEqual) {
-					t = lexer.Scan ();
+					t = lexer.Scan (ignoreDash);
 					if (t != Token.Type.Token && t != Token.Type.QuotedString)
 						return false;
 
