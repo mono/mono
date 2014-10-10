@@ -132,7 +132,8 @@ namespace System.Net.Http.Headers
 				HeaderInfo.CreateMulti<string> ("Vary", CollectionParser.TryParse, HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<ViaHeaderValue> ("Via", ViaHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<WarningHeaderValue> ("Warning", WarningHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
-				HeaderInfo.CreateMulti<AuthenticationHeaderValue> ("WWW-Authenticate", AuthenticationHeaderValue.TryParse, HttpHeaderKind.Response)
+				HeaderInfo.CreateMulti<AuthenticationHeaderValue> ("WWW-Authenticate", AuthenticationHeaderValue.TryParse, HttpHeaderKind.Response),
+				HeaderInfo.CreateSingle<ContentDispositionHeaderValue> ("Content-Disposition", ContentDispositionHeaderValue.TryParse, HttpHeaderKind.Content)
 			};
 
 			known_headers = new Dictionary<string, HeaderInfo> (StringComparer.OrdinalIgnoreCase);
