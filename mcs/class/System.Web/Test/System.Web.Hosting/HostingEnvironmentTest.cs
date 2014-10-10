@@ -35,6 +35,10 @@ using System.Web.UI;
 using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web.Hosting {
+	public class MyRegisteredObject : IRegisteredObject {
+		public void Stop(bool immediate) {}
+	}
+
 	[TestFixture]
 	public class HostingEnvironmentTest {
 		[Test]
@@ -104,6 +108,15 @@ namespace MonoTests.System.Web.Hosting {
 		public void MapPath3 ()
 		{
 			Assert.IsNull (HostingEnvironment.MapPath ("hola"));
+		}
+
+		[Test]
+		public void RegisterAndUnregisterObject ()
+		{
+			var registered = new MyRegisteredObject ();
+
+			HostingEnvironment.RegisterObject (registered);
+			HostingEnvironment.UnregisterObject (registered);
 		}
 	}
 }
