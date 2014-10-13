@@ -1998,12 +1998,41 @@ namespace System.Data {
 			}
 		}
 
+		private bool ReadSchemaElement (XmlReader reader)
+		{
+			var insideElement = false;
+			reader.MoveToElement ();
+			while (reader.Read ())
+			{
+				if (reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.EndElement)
+				{
+					if (reader.NamespaceURI != XmlSchema.Namespace)
+					{
+						if (reader.LocalName == "schema" || insideElement)
+							throw new ArgumentException ("The schema namespace is invalid. Please use this one instead: " + XmlSchema.Namespace);
+
+						insideElement = true;
+						reader.MoveToElement ();
+					}
+					else
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
 		public void ReadXmlSchema (XmlReader reader)
 		{
 			if (this.Columns.Count > 0)
 				return;
 
 			DataSet ds = new DataSet ();
+
+			if (reader.ReadState == ReadState.Initial && !ReadSchemaElement (reader))
+				return;
+
 			new XmlSchemaDataImporter (ds, reader, false).Process ();
 			DataTable target = null;
 			if (TableName == String.Empty) {
