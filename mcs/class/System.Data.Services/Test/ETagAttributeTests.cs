@@ -26,10 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Data.Services;
 using System.Linq;
 using NUnit.Framework;
 
-namespace System.Data.Services.Tests {
+namespace MonoTests.System.Data.Services {
 	[TestFixture]
 	public class ETagAttributeTests {
 		[Test]

@@ -855,5 +855,16 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			r.ReadStartElement ();
 			r.Read ();
 		}
+
+		[Test]
+		public void ReadNumberAsObject ()
+		{
+			const double testValue = 42.42D;
+			var serializer = new DataContractJsonSerializer (typeof (object));
+			var serializedStream = GetInput (testValue.ToString (CultureInfo.InvariantCulture));
+			var deserializedValue = serializer.ReadObject (serializedStream);
+			Assert.AreEqual (typeof (decimal), deserializedValue.GetType ());
+			Assert.AreEqual (testValue, (decimal) deserializedValue);
+		}
 	}
 }

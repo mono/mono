@@ -36,9 +36,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging
 {
-#if TARGET_JVM
-	[MonoTODO]
-#endif
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed class ColorMatrix
 	{

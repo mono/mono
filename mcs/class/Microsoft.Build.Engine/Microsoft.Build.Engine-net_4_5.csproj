@@ -112,6 +112,7 @@
     <Compile Include="Microsoft.Build.BuildEngine\TaskBatchingImpl.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\TaskDatabase.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\TaskEngine.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TaskExecutionMode.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Token.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Toolset.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ToolsetCollection.cs" />

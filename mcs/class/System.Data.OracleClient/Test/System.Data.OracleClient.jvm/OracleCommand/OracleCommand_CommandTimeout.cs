@@ -50,9 +50,7 @@ public class OracleCommand_CommandTimeout : GHTBase
 	}
 
 	[Test]
-#if !TARGET_JVM
 	[Category("NotWorking")]
-#endif
 	public void run()
 	{
 		OracleCommand cmd = new OracleCommand();

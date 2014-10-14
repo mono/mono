@@ -33,9 +33,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.OracleClient
 {
 	[TestFixture]
-#if !TARGET_JVM
 	[Category("NotWorking")]
-#endif
 	public class OracleTransaction_Rollback : ADONetTesterClass
 	{
 		public static void Main()

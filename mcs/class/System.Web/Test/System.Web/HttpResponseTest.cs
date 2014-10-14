@@ -263,9 +263,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // char output stream in gh make this test fail
-#endif
 		public void Test_Response ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -287,9 +284,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // char output stream in gh make this test fail
-#endif
 		public void TestResponse_Chunked ()
 		{
 			FakeHttpWorkerRequest2 f;

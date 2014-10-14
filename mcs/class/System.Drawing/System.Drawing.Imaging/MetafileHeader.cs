@@ -88,9 +88,7 @@ namespace System.Drawing.Imaging {
 	}
 
 	[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
-#if !TARGET_JVM
 	[StructLayout(LayoutKind.Sequential)]
-#endif
 	public sealed class MetafileHeader {
 
 		private MonoMetafileHeader header;

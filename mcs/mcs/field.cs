@@ -605,8 +605,22 @@ namespace Mono.CSharp
 			if (TypeSpec.IsReferenceType (MemberType))
 				return true;
 
-			if (MemberType.IsEnum)
+			if (MemberType.IsPointer)
 				return true;
+
+			if (MemberType.IsEnum) {
+				switch (EnumSpec.GetUnderlyingType (MemberType).BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
+				case BuiltinTypeSpec.Type.Byte:
+				case BuiltinTypeSpec.Type.Short:
+				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.Int:
+				case BuiltinTypeSpec.Type.UInt:
+					return true;
+				default:
+					return false;
+				}
+			}
 
 			return false;
 		}

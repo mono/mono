@@ -182,6 +182,7 @@ System.Diagnostics/DelimitedListTraceListenerTest.cs
 System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
 System.Diagnostics/SourceSwitchTest.cs
+System.Diagnostics/TextWriterTraceListenerHelper.cs
 System.Diagnostics/TextWriterTraceListenerTest.cs
 System.Diagnostics/TraceSourceTest.cs
 System.Diagnostics/TraceListenerTest.cs

@@ -155,11 +155,12 @@ namespace Mono.Debugger.Soft
 
 	[Flags]
 	enum InvokeFlags {
-		NONE = 0x0,
-		DISABLE_BREAKPOINTS = 0x1,
-		SINGLE_THREADED = 0x2,
-		OUT_THIS = 0x4,
-		OUT_ARGS = 0x8,
+		NONE = 0,
+		DISABLE_BREAKPOINTS = 1,
+		SINGLE_THREADED = 2,
+		OUT_THIS = 4,
+		OUT_ARGS = 8,
+		VIRTUAL = 16,
 	}
 
 	enum ElementType {
@@ -416,7 +417,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 35;
+		internal const int MINOR_VERSION = 37;
 
 		enum WPSuspendPolicy {
 			NONE = 0,

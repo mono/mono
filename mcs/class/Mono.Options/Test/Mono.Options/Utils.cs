@@ -31,7 +31,7 @@ using System;
 #if NDESK_OPTIONS
 namespace Tests.NDesk.Options
 #else
-namespace Tests.Mono.Options
+namespace MonoTests.Mono.Options
 #endif
 {
 	static class Utils {

@@ -18,6 +18,9 @@
  * License 2.0 along with this library; if not, write to the Free
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+#include "mono/utils/mono-compiler.h"
+
 extern long long stat_copy_object_called_nursery;
 extern long long stat_objects_copied_nursery;
 
@@ -31,13 +34,9 @@ extern long long stat_slots_allocated_in_vain;
  * This function can be used even if the vtable of obj is not valid
  * anymore, which is the case in the parallel collector.
  */
-static inline void
+static MONO_ALWAYS_INLINE void
 par_copy_object_no_checks (char *destination, MonoVTable *vt, void *obj, mword objsize, SgenGrayQueue *queue)
 {
-#ifdef __GNUC__
-	static const void *copy_labels [] = { &&LAB_0, &&LAB_1, &&LAB_2, &&LAB_3, &&LAB_4, &&LAB_5, &&LAB_6, &&LAB_7, &&LAB_8 };
-#endif
-
 	SGEN_ASSERT (9, vt->klass->inited, "vtable %p for class %s:%s was not initialized", vt, vt->klass->name_space, vt->klass->name);
 	SGEN_LOG (9, " (to %p, %s size: %lu)", destination, ((MonoObject*)obj)->vtable->klass->name, (unsigned long)objsize);
 	binary_protocol_copy (obj, destination, vt, objsize);
@@ -50,35 +49,8 @@ par_copy_object_no_checks (char *destination, MonoVTable *vt, void *obj, mword o
 	}
 #endif
 
-#ifdef __GNUC__
-	if (objsize <= sizeof (gpointer) * 8) {
-		mword *dest = (mword*)destination;
-		goto *copy_labels [objsize / sizeof (gpointer)];
-	LAB_8:
-		(dest) [7] = ((mword*)obj) [7];
-	LAB_7:
-		(dest) [6] = ((mword*)obj) [6];
-	LAB_6:
-		(dest) [5] = ((mword*)obj) [5];
-	LAB_5:
-		(dest) [4] = ((mword*)obj) [4];
-	LAB_4:
-		(dest) [3] = ((mword*)obj) [3];
-	LAB_3:
-		(dest) [2] = ((mword*)obj) [2];
-	LAB_2:
-		(dest) [1] = ((mword*)obj) [1];
-	LAB_1:
-		;
-	LAB_0:
-		;
-	} else {
-		/*can't trust memcpy doing word copies */
-		mono_gc_memmove_aligned (destination + sizeof (mword), (char*)obj + sizeof (mword), objsize - sizeof (mword));
-	}
-#else
-		mono_gc_memmove_aligned (destination + sizeof (mword), (char*)obj + sizeof (mword), objsize - sizeof (mword));
-#endif
+	memcpy (destination + sizeof (mword), (char*)obj + sizeof (mword), objsize - sizeof (mword));
+
 	/* adjust array->bounds */
 	SGEN_ASSERT (9, vt->gc_descr, "vtable %p for class %s:%s has no gc descriptor", vt, vt->klass->name_space, vt->klass->name);
 
@@ -92,18 +64,14 @@ par_copy_object_no_checks (char *destination, MonoVTable *vt, void *obj, mword o
 	obj = destination;
 	if (queue) {
 		SGEN_LOG (9, "Enqueuing gray object %p (%s)", obj, sgen_safe_name (obj));
-		GRAY_OBJECT_ENQUEUE (queue, obj);
+		GRAY_OBJECT_ENQUEUE (queue, obj, sgen_vtable_get_descriptor (vt));
 	}
 }
 
 /*
  * This can return OBJ itself on OOM.
  */
-#ifdef _MSC_VER
-static __declspec(noinline) void*
-#else
-static G_GNUC_UNUSED void* __attribute__((noinline))
-#endif
+static MONO_NEVER_INLINE void*
 copy_object_no_checks (void *obj, SgenGrayQueue *queue)
 {
 	MonoVTable *vt = ((MonoObject*)obj)->vtable;

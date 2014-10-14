@@ -43,6 +43,7 @@ STRESS_TESTS_SRC=	\
 	monitor-stress.cs	\
 	thread-stress.cs	\
 	gc-stress.cs		\
+	gc-copy-stress.cs	\
 	gc-graystack-stress.cs		\
 	exit-stress.cs		\
 	process-stress.cs	\
@@ -435,7 +436,8 @@ endif
 if X86
 
 if HOST_WIN32
-PLATFORM_DISABLED_TESTS=async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe
+PLATFORM_DISABLED_TESTS=async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
+	bug-18026.exe monitor.exe threadpool-exceptions5.exe
 endif
 
 endif
@@ -695,7 +697,7 @@ tests: $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_
 #
 # Test that no symbols are missed in eglib-remap.h
 #
-OK_G_SYMBOLS='g_list\|g_slist\|g_concat_dir_and_file'
+OK_G_SYMBOLS='g_list\|g_slist\|g_concat_dir_and_file\|g_Ctoc'
 if NACL_CODEGEN
 test-eglib-remap:
 else
@@ -934,13 +936,11 @@ SGEN_TESTS =	\
 
 SGEN_CONFIGURATIONS =	\
 	"|plain"	\
-	"major=marksweep-par|ms-par"	\
 	"major=marksweep-conc|ms-conc"	\
 	"major=marksweep-conc,minor=split|ms-conc-split"	\
 	"minor=split|ms-split"	\
 	"minor=split,alloc-ratio=95|ms-split-95"	\
 	"|plain-clear-at-gc|clear-at-gc"	\
-	"major=marksweep-par|ms-par-clear-at-gc|clear-at-gc"	\
 	"major=marksweep-conc|ms-conc-clear-at-gc|clear-at-gc"	\
 	"minor=split|ms-split-clear-at-gc|clear-at-gc"
 
@@ -1319,7 +1319,6 @@ OOM_TESTS =	\
 test-oom: $(OOM_TESTS)
 	@for fn in $+ ; do	\
 		echo "Testing $$fn ...";	\
-		MONO_GC_PARAMS=max-heap-size=16m,major=marksweep-par MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
 		MONO_GC_PARAMS=max-heap-size=16m MONO_ENV_OPTIONS="--gc=sgen"                     $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
 		MONO_GC_PARAMS=max-heap-size=16m                                                  $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
 	done

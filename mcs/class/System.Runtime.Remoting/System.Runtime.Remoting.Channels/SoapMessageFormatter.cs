@@ -74,34 +74,6 @@ namespace System.Runtime.Remoting.Channels {
 			if (sf != null) {
 				if(_serverFaultExceptionField != null)
 					e = (Exception) _serverFaultExceptionField.GetValue(sf);
-#if TARGET_JVM				
-				if (e == null && sf.ExceptionType != null)
-				{
-					try
-					{
-						Type te = Type.GetType(sf.ExceptionType);
-						if (te != null)
-						{
-							ConstructorInfo ce = te.GetConstructor(
-								BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance,
-								null, new Type[] {typeof(string)}, null);
-
-							if (ce != null)
-							{
-								e = (Exception) ce.Invoke(new object[] {sf.ExceptionMessage});
-							}
-							else
-							{
-								e = (Exception) Activator.CreateInstance(te);
-							}
-						}
-					}
-					catch
-					{
-						e = null;
-					}
-				}
-#endif
 			}
 			if (e == null)
 				e = new RemotingException (fault.FaultString);
@@ -431,12 +403,6 @@ namespace System.Runtime.Remoting.Channels {
 		
 		object GetNullValue (Type paramType)
 		{
-#if TARGET_JVM			
-			if (paramType.IsEnum)
-			{
-				return Activator.CreateInstance(paramType);
-			}
-#endif
 			switch (Type.GetTypeCode (paramType))
 			{
 				case TypeCode.Boolean: return false;
@@ -453,12 +419,6 @@ namespace System.Runtime.Remoting.Channels {
 				case TypeCode.UInt32: return (uint)0;
 				case TypeCode.UInt64: return (ulong)0;
 				default: 
-#if TARGET_JVM			
-					if (paramType.IsValueType)
-					{
-						return Activator.CreateInstance(paramType);
-					}
-#endif					
 					return null;
 			}
 		}

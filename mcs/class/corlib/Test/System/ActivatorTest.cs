@@ -13,7 +13,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !TARGET_JVM && !MONOTOUCH // Reflection.Emit not supported for TARGET_JVM
+#if !MONOTOUCH
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -311,7 +311,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (7, objCOMTest.Id, "#A05");
 		}
 
-#if !TARGET_JVM && !MONOTOUCH // Reflection.Emit not supported for TARGET_JVM
+#if !MONOTOUCH
 		[Test]
 		[ExpectedException (typeof (MissingMethodException))]
 		public void CreateInstance_TypeBuilder ()
@@ -334,7 +334,7 @@ namespace MonoTests.System {
 		{
 			Activator.CreateInstance (typeof (ArgIterator), null);
 		}
-#endif // TARGET_JVM
+#endif
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
@@ -343,14 +343,12 @@ namespace MonoTests.System {
 			Activator.CreateInstance (typeof (void), null);
 		}
 
-#if !TARGET_JVM // RuntimeArgumentHandle not supported for TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CreateInstance_RuntimeArgumentHandle ()
 		{
 			Activator.CreateInstance (typeof (RuntimeArgumentHandle), null);
 		}
-#endif // TARGET_JVM
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
@@ -370,7 +368,6 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException(typeof(MissingMethodException))]
-		[Category ("TargetJvmNotWorking")]
 		public void CreateInstanceAbstract2 () 
 		{
 			Activator.CreateInstance (typeof (Type), true);
@@ -392,14 +389,12 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (MissingMethodException))]
-		[Category ("TargetJvmNotWorking")]
 		public void CreateInstanceAbstract5 () 
 		{
 			Activator.CreateInstance (typeof (Type), BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture, null);
 		}
 
 		[Test]
-		[Category ("TargetJvmNotWorking")]
 		public void CreateInstance_Nullable ()
 		{
 			Assert.AreEqual (5, Activator.CreateInstance (typeof (Nullable<int>), new object [] { 5 }));
@@ -419,7 +414,6 @@ namespace MonoTests.System {
 #if !MOBILE
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		[Category ("TargetJvmNotWorking")]
 		public void GetObject_UrlNull ()
 		{
 			Activator.GetObject (typeof (COMTest), null);
@@ -477,7 +471,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		public void Unification_FromFx10 ()
 		{
 			Unification (String.Format (CorlibPermissionPattern, fx10version));
@@ -485,7 +478,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		public void Unification_FromFx11 ()
 		{
 			Unification (String.Format (CorlibPermissionPattern, fx11version));
@@ -493,7 +485,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		public void Unification_FromFx20 ()
 		{
 			Unification (String.Format (CorlibPermissionPattern, fx20version));
@@ -501,14 +492,12 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		public void Unification_FromFx99_Corlib ()
 		{
 			Unification (String.Format (CorlibPermissionPattern, "9.99.999.9999"));
 		}
 
 		[Test]
-		[Category ("TargetJvmNotSupported")] // No support under TARGET_JVM for assemlies versioning
 		[Category ("NotWorking")]
 		public void Unification_FromFx99_System ()
 		{

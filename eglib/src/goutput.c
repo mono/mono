@@ -74,7 +74,7 @@ g_printerr (const gchar *format, ...)
 	if (!stderr_handler)
 		stderr_handler = default_stderr_handler;
 
-	stdout_handler (msg);
+	stderr_handler (msg);
 	free (msg);
 }
 
@@ -176,7 +176,7 @@ default_stderr_handler (const gchar *message)
 }
 
 
-#elif MONOTOUCH
+#elif defined(HOST_IOS)
 #include <asl.h>
 
 static int
@@ -197,7 +197,7 @@ to_asl_priority (GLogLevelFlags log_level)
 void
 g_log_default_handler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data)
 {
-	asl_vlog (NULL, NULL, to_asl_priority (log_level), "%s", message);
+	asl_log (NULL, NULL, to_asl_priority (log_level), "%s", message);
 	if (log_level & fatal)
 		abort ();
 }
@@ -205,13 +205,13 @@ g_log_default_handler (const gchar *log_domain, GLogLevelFlags log_level, const 
 static void
 default_stdout_handler (const gchar *message)
 {
-	asl_vlog (NULL, NULL, ASL_LEVEL_WARNING, "%s", message);
+	asl_log (NULL, NULL, ASL_LEVEL_WARNING, "%s", message);
 }
 
 static void
 default_stderr_handler (const gchar *message)
 {
-	asl_vlog (NULL, NULL, ASL_LEVEL_WARNING, "%s", message);
+	asl_log (NULL, NULL, ASL_LEVEL_WARNING, "%s", message);
 }
 
 #else
@@ -268,7 +268,7 @@ GPrintFunc
 g_set_printerr_handler (GPrintFunc func)
 {
 	GPrintFunc old = stderr_handler;
-	stdout_handler = func;
+	stderr_handler = func;
 	return old;
 }
 

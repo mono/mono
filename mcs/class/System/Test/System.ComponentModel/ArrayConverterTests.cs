@@ -45,9 +45,7 @@ namespace MonoTests.System.ComponentModel
 					numbers, (Type) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-#if !TARGET_JVM
 				Assert.AreEqual ("destinationType", ex.ParamName, "#2");
-#endif
 			}
 		}
 

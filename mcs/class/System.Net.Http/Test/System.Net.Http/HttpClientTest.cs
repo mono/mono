@@ -801,6 +801,30 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void RequestUriAfterRedirect ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				var response = l.Response;
+
+				response.StatusCode = (int)HttpStatusCode.Moved;
+				response.RedirectLocation = "http://xamarin.com/";
+			});
+
+			try {
+				var chandler = new HttpClientHandler ();
+				chandler.AllowAutoRedirect = true;
+				var client = new HttpClient (chandler);
+
+				var resp = client.GetAsync (LocalServer).Result;
+				Assert.AreEqual ("http://xamarin.com/", resp.RequestMessage.RequestUri.AbsoluteUri, "#1");
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
+		[Test]
 		/*
 		 * Properties may only be modified before sending the first request.
 		 */

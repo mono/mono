@@ -58,7 +58,6 @@ namespace System.Drawing.Imaging
 			// Nothing
 			GC.SuppressFinalize(this);
 		}
-#if !TARGET_JVM
 		internal IntPtr ToNativePtr () {
 			IntPtr result;
 			IntPtr ptr;
@@ -106,6 +105,5 @@ namespace System.Drawing.Imaging
 
 			return result;
 		}
-#endif
 	}
 }

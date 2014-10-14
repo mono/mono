@@ -247,7 +247,7 @@ namespace System.Net.Http.Headers
 			return false;
 		}
 
-		public Token Scan ()
+		public Token Scan (bool recognizeDash = false)
 		{
 			int start = pos;
 			if (s == null)
@@ -279,8 +279,12 @@ namespace System.Net.Http.Headers
 					ttype = Token.Type.SeparatorSlash;
 					break;
 				case '-':
-					ttype = Token.Type.SeparatorDash;
-					break;
+					if (recognizeDash) {
+						ttype = Token.Type.SeparatorDash;
+						break;
+					}
+
+					goto default;
 				case ',':
 					ttype = Token.Type.SeparatorComma;
 					break;

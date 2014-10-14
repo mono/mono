@@ -53,7 +53,6 @@ namespace Microsoft.Build.Tasks {
 		bool		findRelatedFiles;
 		bool		findSatellites;
 		bool		findSerializationAssemblies;
-		string[]	installedAssemblyTables;
 		ITaskItem[]	relatedFiles;
 		ITaskItem[]	resolvedDependencyFiles;
 		ITaskItem[]	resolvedFiles;
@@ -626,12 +625,15 @@ namespace Microsoft.Build.Tasks {
 			get { return findSerializationAssemblies; }
 			set { findSerializationAssemblies = value; }
 		}
-/*		
-		public string[] InstalledAssemblyTables {
-			get { return installedAssemblyTables; }
-			set { installedAssemblyTables = value; }
-		}
-*/		
+
+		public
+#if NET_4_0
+		ITaskItem[]
+#else
+		string[]
+#endif
+		InstalledAssemblyTables { get; set; }
+
 		[Output]
 		public ITaskItem[] RelatedFiles {
 			get { return relatedFiles; }

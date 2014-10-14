@@ -33,7 +33,7 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace MonoTest.System.Xml {
+namespace MonoTests.System.Xml {
 
 	[TestFixture]
 	public class XmlResolverTest {

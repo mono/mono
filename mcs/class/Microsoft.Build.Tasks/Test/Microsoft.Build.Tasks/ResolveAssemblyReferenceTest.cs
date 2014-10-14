@@ -230,6 +230,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		[Test]
 		public void TestSystemDll ()
 		{
+			var gacDir = GetGacDir ();
+
+			if (gacDir == null || !System.IO.Directory.Exists (gacDir))
+				Assert.Ignore ("GAC not found.");
+
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>

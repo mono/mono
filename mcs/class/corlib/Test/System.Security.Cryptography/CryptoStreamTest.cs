@@ -144,7 +144,6 @@ namespace MonoTests.System.Security.Cryptography {
 		Stream readStream;
 		Stream writeStream;
 		ICryptoTransform encryptor;
-		ICryptoTransform decryptor;
 		CryptoStream cs;
 		SymmetricAlgorithm aes;
 
@@ -156,7 +155,6 @@ namespace MonoTests.System.Security.Cryptography {
 				writeStream = new MemoryStream (new byte [0], true);
 				aes = SymmetricAlgorithm.Create ();
 				encryptor = aes.CreateEncryptor ();
-				decryptor = aes.CreateEncryptor ();
 			}
 		}
 

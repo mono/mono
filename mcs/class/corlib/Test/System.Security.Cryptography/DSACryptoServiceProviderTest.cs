@@ -112,7 +112,6 @@ public class DSACryptoServiceProviderTest {
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")]
 	public void ConstructorCspParameters () 
 	{
 		CspParameters csp = new CspParameters (13, null, "Mono1024");
@@ -125,7 +124,6 @@ public class DSACryptoServiceProviderTest {
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")]
 	public void ConstructorKeySizeCspParameters () 
 	{
 		CspParameters csp = new CspParameters (13, null, "Mono512");
@@ -733,7 +731,6 @@ public class DSACryptoServiceProviderTest {
 	//	http://msdn.microsoft.com/library/en-us/cpguide/html/cpcongeneratingkeysforencryptiondecryption.asp
 
 	[Test]
-	[Category ("TargetJvmNotSupported")]
 	public void Persistence_PersistKeyInCsp_False () 
 	{
 		CspParameters csp = new CspParameters (3, null, "Persistence_PersistKeyInCsp_False");
@@ -758,7 +755,6 @@ public class DSACryptoServiceProviderTest {
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")]
 	public void Persistence_PersistKeyInCsp_True () 
 	{
 		CspParameters csp = new CspParameters (3, null, "Persistence_PersistKeyInCsp_True");
@@ -779,7 +775,6 @@ public class DSACryptoServiceProviderTest {
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")]
 	public void Persistence_Delete () 
 	{
 		CspParameters csp = new CspParameters (3, null, "Persistence_Delete");
@@ -836,7 +831,6 @@ public class DSACryptoServiceProviderTest {
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")]
 	public void UseMachineKeyStore () 
 	{
 		// note only applicable when CspParameters isn't used - which don't

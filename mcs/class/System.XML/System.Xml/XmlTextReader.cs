@@ -164,11 +164,6 @@ namespace Mono.Xml2
 			InitializeContext (url, context, fragment, fragType);
 		}
 
-		Uri ResolveUri (string url)
-		{
-			return resolver == null ? null : resolver.ResolveUri (null, url);
-		}
-
 		Stream GetStreamFromUrl (string url, out string absoluteUriString)
 		{
 #if NET_2_1
@@ -177,9 +172,13 @@ namespace Mono.Xml2
 			if (url.Length == 0)
 				throw new ArgumentException ("url");
 #endif
-			Uri uri = ResolveUri (url);
+			//
+			// This needs to work even if resolver is explicitly set to null
+			//
+			var res = resolver ?? new XmlUrlResolver ();
+			var uri = res.ResolveUri (null, url);
 			absoluteUriString = uri != null ? uri.ToString () : String.Empty;
-			return resolver == null ? null : resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
+			return res.GetEntity (uri, null, typeof (Stream)) as Stream;
 		}
 
 		#endregion

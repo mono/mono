@@ -40,8 +40,6 @@ typedef enum {
 	ThreadApartmentState_Unknown = 0x00000002
 } MonoThreadApartmentState;
 
-typedef void (*MonoThreadNotifyPendingExcFunc) (void);
-
 #define SPECIAL_STATIC_NONE 0
 #define SPECIAL_STATIC_THREAD 1
 #define SPECIAL_STATIC_CONTEXT 2
@@ -54,6 +52,8 @@ typedef LPTHREAD_START_ROUTINE WapiThreadStart;
 typedef struct _MonoInternalThread MonoInternalThread;
 
 typedef void (*MonoThreadCleanupFunc) (MonoInternalThread* thread);
+/* INFO has type MonoThreadInfo* */
+typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
 
 MonoInternalThread* mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, guint32 stack_size) MONO_INTERNAL;
 

@@ -78,7 +78,6 @@ namespace MonoCasTests.System.Drawing.Design {
 			unit.DefaultValues ();
 		}
 
-#if !TARGET_JVM
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void UnitTests_PaintValue ()
@@ -87,7 +86,6 @@ namespace MonoCasTests.System.Drawing.Design {
 			unit.PaintValue_PaintValueEventArgs ();
 			unit.PaintValue ();
 		}
-#endif
 
 		// we use reflection to call UITypeEditor class as it's protected by a 
 		// LinkDemand (which will be converted into full demand, i.e. a stack 

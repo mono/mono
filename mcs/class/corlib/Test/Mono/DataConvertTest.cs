@@ -8,7 +8,7 @@ using Mono;
 using NUnit.Framework.SyntaxHelpers;
 #endif
 
-namespace MonoTests {
+namespace MonoTests.Mono {
 
 	[TestFixture]
 	public class DataConverterTest
@@ -50,9 +50,9 @@ namespace MonoTests {
 		[Test]
 		public void StringAlignment ()
 		{
-			byte[] packed = Mono.DataConverter.Pack ("bz8", 1, TEST_STRING);
+			byte[] packed = global::Mono.DataConverter.Pack ("bz8", 1, TEST_STRING);
 				
-			IList unpacked = Mono.DataConverter.Unpack ("bz8", packed, 0);
+			IList unpacked = global::Mono.DataConverter.Unpack ("bz8", packed, 0);
 			
 			Assert.AreEqual(1, (byte) unpacked[0]);
 			Assert.AreEqual(TEST_STRING, new string((char[]) unpacked[1]));

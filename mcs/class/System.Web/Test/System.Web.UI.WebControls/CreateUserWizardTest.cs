@@ -144,9 +144,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-#if TARGET_JVM
-		[Ignore ("TD #7024")]
-#endif
 		public void ActiveStepIndex () {
 			new WebTest (PageInvoker.CreateOnLoad (ActiveStepIndex_Load)).Run ();
 		}

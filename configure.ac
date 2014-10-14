@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [3.8.1],
+AC_INIT(mono, [3.10.1],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -115,7 +115,7 @@ case "$host" in
 			AC_DEFINE(MINGW_CROSS_COMPILE,1,[Cross-compiling using MinGW])
 		fi
 		HOST_CC="gcc"
-		# Windows 2000 is required that includes Internet Explorer 5.01
+		# Windows XP SP2 is required
 		CPPFLAGS="$CPPFLAGS -DWINVER=0x0502 -D_WIN32_WINNT=0x0502 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
 		LDFLAGS="$LDFLAGS -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32"
 		libmono_cflags="-mms-bitfields -mwindows"
@@ -2499,7 +2499,6 @@ TARGET="unknown"
 ACCESS_UNALIGNED="yes"
 
 JIT_SUPPORTED=no
-INTERP_SUPPORTED=no
 LIBC="libc.so.6"
 INTL="libc.so.6"
 SQLITE="libsqlite.so.0"
@@ -2512,7 +2511,6 @@ XINERAMA="libXinerama.so.1"
 sizeof_register="SIZEOF_VOID_P"
 
 jit_wanted=true
-interp_wanted=false
 sgen_supported=false
 boehm_supported=true
 case "$host" in
@@ -2808,6 +2806,20 @@ if test "x$host" != "x$target"; then
 			;;
 		esac
 		;;
+   i686*-linux-*)
+		TARGET=X86;
+		arch_target=x86;
+		AC_DEFINE(TARGET_X86, 1, [...])
+		AC_DEFINE(TARGET_ANDROID, 1, [...])
+		JIT_SUPPORTED=yes
+		CPPFLAGS="$CPPFLAGS"
+		jit_wanted=true
+		sgen_supported=true
+		# Can't use tls, since it depends on the runtime detection of tls offsets
+		# in mono-compiler.h		
+		with_tls=pthread
+		target_mach=no
+		;;			
 	aarch64-*)
 		TARGET=ARM64
 		JIT_SUPPORTED=yes
@@ -2940,18 +2952,10 @@ if test x$JIT_SUPPORTED = xyes; then
       USEJIT=true
       jit_status="Building and using the JIT"
    else
-      if $interp_wanted; then
-         jit_status="Building the JIT, defaulting to the interpreter"
-      else
-         AC_ERROR(No JIT or interpreter support available or selected.)
-      fi
+      AC_ERROR(No JIT support available or selected.)
    fi
 else
-   if test x$interp_wanted = xtrue; then
-      jit_status="interpreter"
-   else
-      AC_ERROR(No JIT or interpreter support available or selected.)
-   fi
+   AC_ERROR(No JIT support available or selected.)
 fi
 
 AM_CONDITIONAL(USE_JIT, test x$USEJIT = xtrue)
@@ -3358,7 +3362,6 @@ AM_CONDITIONAL(HOST_ARM64, test x$HOST = xARM64)
 AM_CONDITIONAL(CROSS_COMPILE, test "x$host" != "x$target")
 
 AM_CONDITIONAL(JIT_SUPPORTED, test x$JIT_SUPPORTED = xyes)
-AM_CONDITIONAL(INTERP_SUPPORTED, test x$interp_wanted = xtrue)
 AM_CONDITIONAL(INCLUDED_LIBGC, test x$libgc = xincluded)
 
 AC_SUBST(LIBC)
@@ -3378,11 +3381,7 @@ AC_SUBST(LDFLAGS)
 mono_build_root=`pwd`
 AC_SUBST(mono_build_root)
 
-if test x$USEJIT = xtrue; then
-  mono_runtime=mono/mini/mono
-else
-  mono_runtime=mono/interpreter/mint
-fi
+mono_runtime=mono/mini/mono
 AC_SUBST(mono_runtime)
 
 mono_cfg_root=$mono_build_root/runtime
@@ -3579,7 +3578,6 @@ mono/arch/arm/Makefile
 mono/arch/arm64/Makefile
 mono/arch/ia64/Makefile
 mono/arch/mips/Makefile
-mono/interpreter/Makefile
 mono/tests/Makefile
 mono/tests/tests-config
 mono/tests/assemblyresolve/Makefile

@@ -37,7 +37,7 @@ using System.Data.Common;
 using System.EnterpriseServices;
 using System.Runtime.InteropServices;
 using System.Text;
-#if NET_2_0 && !TARGET_JVM
+#if NET_2_0
 using System.Transactions;
 #endif
 

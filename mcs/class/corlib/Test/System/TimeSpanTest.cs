@@ -1430,6 +1430,18 @@ public class TimeSpanTest {
 		ts = new TimeSpan (123456789);
 		Assert.AreEqual ("12.3", ts.ToString ("s\\.f"), "#F0");
 		Assert.AreEqual ("12.3", ts.ToString ("s\\.F"), "#F1");
+		Assert.AreEqual ("12.3456789", ts.ToString ("s\\.fffffff"), "#F2");
+		Assert.AreEqual ("12.345678", ts.ToString ("s\\.ffffff"), "#F3");
+
+		ts = new TimeSpan (1234);
+		Assert.AreEqual ("0.000123", ts.ToString ("s\\.ffffff"), "#G0");
+		Assert.AreEqual ("0.0001", ts.ToString ("s\\.ffff"), "#G1");
+		Assert.AreEqual ("0.", ts.ToString ("s\\.F"), "#G2");
+		Assert.AreEqual ("0.", ts.ToString ("s\\.FFF"), "#G3");
+
+		ts = TimeSpan.FromSeconds (0.05);
+		Assert.AreEqual (".0", ts.ToString ("\\.f"), "#H0");
+		Assert.AreEqual (".", ts.ToString ("\\.F"), "#H1");
 	}
 
 	[Test]

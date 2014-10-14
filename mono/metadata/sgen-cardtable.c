@@ -455,6 +455,9 @@ sgen_card_table_finish_scan_remsets (void *start_nursery, void *end_nursery, Sge
 guint8*
 mono_gc_get_card_table (int *shift_bits, gpointer *mask)
 {
+#ifndef MANAGED_WBARRIER
+	return NULL;
+#else
 	if (!sgen_cardtable)
 		return NULL;
 
@@ -466,6 +469,7 @@ mono_gc_get_card_table (int *shift_bits, gpointer *mask)
 #endif
 
 	return sgen_cardtable;
+#endif
 }
 
 gboolean
@@ -683,9 +687,9 @@ LOOP_HEAD:
 		HEAVY_STAT (++bloby_objects);
 		if (cards) {
 			if (sgen_card_table_is_range_marked (cards, (mword)obj, block_obj_size))
-				sgen_get_current_object_ops ()->scan_object (obj, queue);
+				sgen_get_current_object_ops ()->scan_object (obj, sgen_obj_get_descriptor (obj), queue);
 		} else if (sgen_card_table_region_begin_scanning ((mword)obj, block_obj_size)) {
-			sgen_get_current_object_ops ()->scan_object (obj, queue);
+			sgen_get_current_object_ops ()->scan_object (obj, sgen_obj_get_descriptor (obj), queue);
 		}
 
 		binary_protocol_card_scan (obj, sgen_safe_object_get_size ((MonoObject*)obj));

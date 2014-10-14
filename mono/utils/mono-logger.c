@@ -16,6 +16,7 @@ static MonoTraceMask current_mask		= MONO_TRACE_ALL;
 
 static const char	*mono_log_domain	= "Mono";
 static GQueue		*level_stack		= NULL;
+static MonoPrintCallback print_callback, printerr_callback;
 
 /**
  * mono_trace_init:
@@ -255,9 +256,7 @@ mono_trace_is_traced (GLogLevelFlags level, MonoTraceMask mask)
 	return (level <= current_level && mask & current_mask);
 }
 
-
 static MonoLogCallback log_callback;
-static MonoPrintfCallback printf_callback;
 
 static const char*
 log_level_get_name (GLogLevelFlags log_level)
@@ -279,18 +278,6 @@ log_adapter (const gchar *log_domain, GLogLevelFlags log_level, const gchar *mes
 	log_callback (log_domain, log_level_get_name (log_level), message, log_level & G_LOG_LEVEL_ERROR, user_data);
 }
 
-static void
-stdout_adapter (const gchar *message)
-{
-	printf_callback (message, TRUE);
-}
-
-static void
-stderr_adapter (const gchar *message)
-{
-	printf_callback (message, FALSE);
-}
-
 /**
  * mono_trace_set_log_handler:
  *
@@ -304,24 +291,51 @@ stderr_adapter (const gchar *message)
 void
 mono_trace_set_log_handler (MonoLogCallback callback, void *user_data)
 {
+	g_assert (callback);
 	log_callback = callback;
 	g_log_set_default_handler (log_adapter, user_data);
 }
 
+static void
+print_handler (const char *string)
+{
+	print_callback (string, TRUE);
+}
+
+static void
+printerr_handler (const char *string)
+{
+	printerr_callback (string, FALSE);
+}
 
 /**
- * mono_trace_set_printf_handler:
+ * mono_trace_set_print_handler:
  *
- * @callback The callback that will replace the default runtime behavior.
+ * @callback The callback that will replace the default runtime behavior for stdout output.
  *
- * The printf handler replaces the default runtime output handler. This is used by free form output done by the runtime.
- * If is_stdout is false, the callback is expected to flush the stream after writing to it.
+ * The print handler replaces the default runtime stdout output handler. This is used by free form output done by the runtime.
  *
  */
-MONO_API void
-mono_trace_set_printf_handler (MonoPrintfCallback callback)
+void
+mono_trace_set_print_handler (MonoPrintCallback callback)
 {
-	printf_callback = callback;
-	g_set_print_handler (stdout_adapter);
-	g_set_printerr_handler (stderr_adapter);
+	g_assert (callback);
+	print_callback = callback;
+	g_set_print_handler (print_handler);
+}
+
+/**
+ * mono_trace_set_printerr_handler:
+ *
+ * @callback The callback that will replace the default runtime behavior for stderr output.
+ *
+ * The print handler replaces the default runtime stderr output handler. This is used by free form output done by the runtime.
+ *
+ */
+void
+mono_trace_set_printerr_handler (MonoPrintCallback callback)
+{
+	g_assert (callback);
+	printerr_callback = callback;
+	g_set_print_handler (printerr_handler);
 }

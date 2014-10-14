@@ -59,15 +59,11 @@ namespace System.Diagnostics
 		{
 			switch (eventType) {
 			case TraceEventType.Critical:
-				return (Level & SourceLevels.Critical) != 0;
 			case TraceEventType.Error:
-				return (Level & SourceLevels.Error) != 0;
 			case TraceEventType.Warning:
-				return (Level & SourceLevels.Warning) != 0;
 			case TraceEventType.Information:
-				return (Level & SourceLevels.Information) != 0;
 			case TraceEventType.Verbose:
-				return (Level & SourceLevels.Verbose) != 0;
+				return (Level & (SourceLevels)eventType) != 0;
 			case TraceEventType.Start:
 			case TraceEventType.Stop:
 			case TraceEventType.Suspend:
@@ -77,6 +73,7 @@ namespace System.Diagnostics
 				return (Level & SourceLevels.ActivityTracing) != 0;
 			}
 		}
+
 
 		protected override void OnValueChanged ()
 		{

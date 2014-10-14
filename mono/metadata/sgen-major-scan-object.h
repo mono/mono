@@ -37,12 +37,23 @@ extern long long stat_scan_object_called_major;
 #define CONCURRENT_NAME(x)	x
 #endif
 
+/*
+ * FIXME: We use the same scanning function in the concurrent collector whether we scan
+ * during the starting/finishing collection pause (with the world stopped) or from the
+ * concurrent worker thread.
+ *
+ * As long as the world is stopped, we should just follow pointers into the nursery and
+ * evict if possible.  In that case we also don't need the ALWAYS_ADD_TO_GLOBAL_REMSET case,
+ * which only seems to make sense for when the world is stopped, in which case we only need
+ * it because we don't follow into the nursery.
+ */
+
 #undef HANDLE_PTR
 #define HANDLE_PTR(ptr,obj)	do {					\
 		void *__old = *(ptr);					\
-		void *__copy;						\
 		SGEN_OBJECT_LAYOUT_STATISTICS_MARK_BITMAP ((obj), (ptr)); \
 		if (__old && FOLLOW_OBJECT (__old)) {			\
+			void *__copy;					\
 			PREFETCH_DYNAMIC_HEAP (__old);			\
 			CONCURRENT_NAME (major_copy_or_mark_object) ((ptr), __old, queue); \
 			__copy = *(ptr);				\
@@ -56,9 +67,13 @@ extern long long stat_scan_object_called_major;
 	} while (0)
 
 static void
-CONCURRENT_NAME (major_scan_object) (char *start, SgenGrayQueue *queue)
+CONCURRENT_NAME (major_scan_object) (char *start, mword desc, SgenGrayQueue *queue)
 {
 	SGEN_OBJECT_LAYOUT_STATISTICS_DECLARE_BITMAP;
+
+#ifdef HEAVY_STATISTICS
+	sgen_descriptor_count_scanned_object (desc);
+#endif
 
 #define SCAN_OBJECT_PROTOCOL
 #include "sgen-scan-object.h"

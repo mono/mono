@@ -1198,5 +1198,88 @@ namespace MonoTests.System.Text
 			int charactersWritten = Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 0, chars, 10, false);
 			Assert.AreEqual (0, charactersWritten, "#3");
 		}
+
+		[Test]
+		public void EncodingFallback ()
+		{
+		/*  Legal UTF-8 Byte Sequences
+			 *	1st		2nd		3rd		4th
+			 *	00..7F
+			 *	C2..DF	80..BF
+			 *	E0		A0..BF	80..BF
+			 *	E1..EF  80..BF	80..BF
+			 *	F0		90..BF	80..BF	80..BF
+			 *	F1..F3	80..BF	80..BF	80..BF
+			 *	F4		80..8F	80..BF	80..BF
+			 */
+
+			var t = new EncodingTester ("utf-8");
+			byte [] data;
+
+			// Invalid 1st byte
+			for (byte b = 0x80; b <= 0xC1; b++)	{
+				data = new byte [] { b };
+				t.TestDecoderFallback (data, "?", new byte [] { b });
+			}
+
+			///Invalid 2nd byte
+			//	C2..DF	80..BF
+			for (byte b = 0xC2; b <= 0xDF; b++)	{
+				data = new byte [] { b, 0x61 };
+				t.TestDecoderFallback (data, "?a", new byte [] { b });
+			}
+
+			//	E0		A0..BF
+			data =  new byte [] { 0xE0, 0x99};
+			t.TestDecoderFallback (data, "?", new byte [] { 0xE0,  0x99});
+
+			//	E1..EF  80..BF
+			for (byte b = 0xE1; b <= 0xEF; b++)	{
+				data = new byte [] { b, 0x61 };
+				t.TestDecoderFallback (data, "?a", new byte [] { b });
+			}
+
+			//	F0		90..BF
+			data =  new byte [] { 0xF0, 0x8F};
+			t.TestDecoderFallback (data, "?", new byte [] { 0xF0, 0x8F });
+
+			//	F1..F4	80..XX
+			for (byte b = 0xF1; b <= 0xF4; b++)	{
+				data = new byte [] { b, 0x61 };
+				t.TestDecoderFallback (data, "?a", new byte [] { b });
+			}
+
+			//	C2..F3	XX..BF
+			for (byte b = 0xC2; b <= 0xF3; b++)	{
+				data = new byte [] { b, 0xC0 };
+				t.TestDecoderFallback (data, "??", new byte [] { b }, new byte [] { 0xC0 });
+			}
+
+			// Invalid 3rd byte
+			//	E0..F3	90..BF	80..BF
+			for (byte b = 0xE0; b <= 0xF3; b++)	{
+				data = new byte [] { b, 0xB0, 0x61 };
+				t.TestDecoderFallback (data, "?a", new byte [] { b, 0xB0 });
+				data = new byte [] { b, 0xB0, 0xC0 };
+				t.TestDecoderFallback (data, "??", new byte [] { b, 0xB0 }, new byte [] { 0xC0 });
+			}
+
+			//	F4		80..8F	80..BF
+			data = new byte [] { 0xF4, 0x8F, 0xC0 };
+			t.TestDecoderFallback (data, "??", new byte [] { 0xF4, 0x8F }, new byte [] { 0xC0 });
+
+			// Invalid 4th byte
+			//	F0..F3	90..BF	80..BF	80..BF
+			for (byte b = 0xF0; b <= 0xF3; b++)	{
+				data = new byte [] { b, 0xB0, 0xB0, 0x61 };
+				t.TestDecoderFallback (data, "?a", new byte [] { b, 0xB0, 0xB0 });
+				data = new byte [] { b, 0xB0, 0xB0, 0xC0 };
+				t.TestDecoderFallback (data, "??", new byte [] { b, 0xB0, 0xB0 }, new byte [] { 0xC0 });
+			}
+
+			//	F4		80..8F	80..BF 80..BF
+			data = new byte [] { 0xF4, 0x8F, 0xB0, 0xC0 };
+			t.TestDecoderFallback (data, "??", new byte [] { 0xF4, 0x8F, 0xB0 }, new byte [] { 0xC0 });
+		}
 	}
 }

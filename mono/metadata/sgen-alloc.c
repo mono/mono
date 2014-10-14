@@ -189,9 +189,12 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 	void **p;
 	char *new_next;
 	TLAB_ACCESS_INIT;
+	size_t real_size = size;
+	
+	CANARIFY_SIZE(size);
 
 	HEAVY_STAT (++stat_objects_alloced);
-	if (size <= SGEN_MAX_SMALL_OBJ_SIZE)
+	if (real_size <= SGEN_MAX_SMALL_OBJ_SIZE)
 		HEAVY_STAT (stat_bytes_alloced += size);
 	else
 		HEAVY_STAT (stat_bytes_alloced_los += size);
@@ -207,7 +210,7 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 		if (collect_before_allocs) {
 			if (((current_alloc % collect_before_allocs) == 0) && nursery_section) {
 				sgen_perform_collection (0, GENERATION_NURSERY, "collect-before-alloc-triggered", TRUE);
-				if (!degraded_mode && sgen_can_alloc_size (size) && size <= SGEN_MAX_SMALL_OBJ_SIZE) {
+				if (!degraded_mode && sgen_can_alloc_size (size) && real_size <= SGEN_MAX_SMALL_OBJ_SIZE) {
 					// FIXME:
 					g_assert_not_reached ();
 				}
@@ -229,8 +232,8 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 	 * specially by the world-stopping code.
 	 */
 
-	if (size > SGEN_MAX_SMALL_OBJ_SIZE) {
-		p = sgen_los_alloc_large_inner (vtable, size);
+	if (real_size > SGEN_MAX_SMALL_OBJ_SIZE) {
+		p = sgen_los_alloc_large_inner (vtable, ALIGN_UP (real_size));
 	} else {
 		/* tlab_next and tlab_temp_end are TLS vars so accessing them might be expensive */
 
@@ -247,6 +250,7 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 			 * visible before the vtable store.
 			 */
 
+			CANARIFY_ALLOC(p,real_size);
 			SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, vtable->klass->name, size);
 			binary_protocol_alloc (p , vtable, size);
 			if (G_UNLIKELY (MONO_GC_NURSERY_OBJ_ALLOC_ENABLED ()))
@@ -290,7 +294,7 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 				do {
 					p = sgen_nursery_alloc (size);
 					if (!p) {
-						sgen_ensure_free_space (size);
+						sgen_ensure_free_space (real_size);
 						if (degraded_mode)
 							return alloc_degraded (vtable, size, FALSE);
 						else
@@ -347,13 +351,14 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 			TLAB_TEMP_END = MIN (TLAB_REAL_END, TLAB_NEXT + SGEN_SCAN_START_SIZE);
 			SGEN_LOG (5, "Expanding local alloc: %p-%p", TLAB_NEXT, TLAB_TEMP_END);
 		}
+		CANARIFY_ALLOC(p,real_size);
 	}
 
 	if (G_LIKELY (p)) {
 		SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, vtable->klass->name, size);
 		binary_protocol_alloc (p, vtable, size);
 		if (G_UNLIKELY (MONO_GC_MAJOR_OBJ_ALLOC_LARGE_ENABLED ()|| MONO_GC_NURSERY_OBJ_ALLOC_ENABLED ())) {
-			if (size > SGEN_MAX_SMALL_OBJ_SIZE)
+			if (real_size > SGEN_MAX_SMALL_OBJ_SIZE)
 				MONO_GC_MAJOR_OBJ_ALLOC_LARGE ((mword)p, size, vtable->klass->name_space, vtable->klass->name);
 			else
 				MONO_GC_NURSERY_OBJ_ALLOC ((mword)p, size, vtable->klass->name_space, vtable->klass->name);
@@ -370,12 +375,15 @@ mono_gc_try_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 	void **p;
 	char *new_next;
 	TLAB_ACCESS_INIT;
+	size_t real_size = size;
+
+	CANARIFY_SIZE(size);
 
 	size = ALIGN_UP (size);
-	SGEN_ASSERT (9, size >= sizeof (MonoObject), "Object too small");
+	SGEN_ASSERT (9, real_size >= sizeof (MonoObject), "Object too small");
 
 	g_assert (vtable->gc_descr);
-	if (size > SGEN_MAX_SMALL_OBJ_SIZE)
+	if (real_size > SGEN_MAX_SMALL_OBJ_SIZE)
 		return NULL;
 
 	if (G_UNLIKELY (size > tlab_size)) {
@@ -440,6 +448,7 @@ mono_gc_try_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 	HEAVY_STAT (++stat_objects_alloced);
 	HEAVY_STAT (stat_bytes_alloced += size);
 
+	CANARIFY_ALLOC(p,real_size);
 	SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, vtable->klass->name, size);
 	binary_protocol_alloc (p, vtable, size);
 	if (G_UNLIKELY (MONO_GC_NURSERY_OBJ_ALLOC_ENABLED ()))
@@ -887,7 +896,7 @@ create_allocator (int atype)
 		/*
 		 * a string allocator method takes the args: (vtable, len)
 		 *
-		 * bytes = sizeof (MonoString) + ((len + 1) * 2)
+		 * bytes = offsetof (MonoString, chars) + ((len + 1) * 2)
 		 *
 		 * condition:
 		 *
@@ -895,11 +904,11 @@ create_allocator (int atype)
 		 *
 		 * therefore:
 		 *
-		 * sizeof (MonoString) + ((len + 1) * 2) <= INT32_MAX - (SGEN_ALLOC_ALIGN - 1)
-		 * len <= (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - sizeof (MonoString)) / 2 - 1
+		 * offsetof (MonoString, chars) + ((len + 1) * 2) <= INT32_MAX - (SGEN_ALLOC_ALIGN - 1)
+		 * len <= (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - offsetof (MonoString, chars)) / 2 - 1
 		 */
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_icon (mb, (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - sizeof (MonoString)) / 2 - 1);
+		mono_mb_emit_icon (mb, (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - MONO_STRUCT_OFFSET (MonoString, chars)) / 2 - 1);
 		pos = mono_mb_emit_short_branch (mb, MONO_CEE_BLE_UN_S);
 
 		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
@@ -911,7 +920,7 @@ create_allocator (int atype)
 		mono_mb_emit_icon (mb, 1);
 		mono_mb_emit_byte (mb, MONO_CEE_SHL);
 		//WE manually fold the above + 2 here
-		mono_mb_emit_icon (mb, sizeof (MonoString) + 2);
+		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoString, chars) + 2);
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_stloc (mb, size_var);
 	} else {

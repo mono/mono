@@ -567,12 +567,10 @@ namespace MonoTests.System
 			Assert.AreEqual ("/", uri.AbsolutePath, "#7e");
 			Assert.AreEqual ("/", uri.PathAndQuery, "#7f");
 			Assert.AreEqual ("file://one_file.txt/", uri.GetLeftPart (UriPartial.Path), "#7g");
-#if !TARGET_JVM
 			if (isWin32)
 				Assert.AreEqual ("\\\\one_file.txt\\", uri.LocalPath, "#7b");
 			else
 				Assert.AreEqual ("/", uri.LocalPath, "#7b");
-#endif
 			Assert.AreEqual ("file", uri.Scheme, "#7c");
 			Assert.AreEqual ("one_file.txt", uri.Host, "#7d");
 		}
@@ -1953,6 +1951,38 @@ namespace MonoTests.System
 			Assert.IsTrue (Uri.TryCreate (mainUri, uriPath, out result), "#1");
 			Assert.AreEqual ("http://www.imdb.com/title/tt0106521", result.ToString (), "#2");
 		}
+
+		[Test]
+		public void GetSerializationInfoStringOnRelativeUri ()
+		{
+			var uri = new Uri ("/relative/path", UriKind.Relative);
+			var result = uri.GetComponents (UriComponents.SerializationInfoString, UriFormat.UriEscaped);
+
+			Assert.AreEqual (uri.OriginalString, result);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void GetSerializationInfoStringException ()
+		{
+			var uri = new Uri ("/relative/path", UriKind.Relative);
+			uri.GetComponents (UriComponents.SerializationInfoString  | UriComponents.Host, UriFormat.UriEscaped);
+		}
+
+		[Test]
+		public void UserInfo_EscapedLetter ()
+		{
+			var uri = new Uri ("https://first%61second@host");
+			Assert.AreEqual ("firstasecond", uri.UserInfo);
+		}
+
+		[Test]
+		public void UserInfo_EscapedAt ()
+		{
+			var userinfo =  "first%40second";
+			var uri = new Uri ("https://" + userinfo + "@host");
+			Assert.AreEqual (userinfo, uri.UserInfo);
+		}
 	}
 
 	// Tests non default IriParsing
@@ -1963,7 +1993,7 @@ namespace MonoTests.System
 		private bool originalIriParsing;
 
 		[TestFixtureSetUp]
-		public void GetReady ()
+		public void GetReady2 ()
 		{
 			isWin32 = (Path.DirectorySeparatorChar == '\\');
 

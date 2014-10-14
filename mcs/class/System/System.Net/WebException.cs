@@ -88,12 +88,10 @@ namespace System.Net
 		}
 		
 		// Methods
-#if !TARGET_JVM
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
 		}
-#endif	
 
 		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{

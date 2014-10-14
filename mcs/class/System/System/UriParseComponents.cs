@@ -336,7 +336,13 @@ namespace System {
 				if (ch == '%'){
 					if (!Uri.IsHexEncoding (part, index))
 						return false;
+					var oldIndex = index;
 					ch = Uri.HexUnescape (part, ref index);
+					index--;
+					if (ch == '@') {
+						sb.Append (part.Substring (oldIndex, index - oldIndex + 1));
+						continue;
+					}
 				}
 
 				if (Char.IsLetterOrDigit (ch) || IsUnreserved (ch) || IsSubDelim (ch) || ch == ':'){

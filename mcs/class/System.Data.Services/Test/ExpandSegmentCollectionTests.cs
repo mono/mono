@@ -26,10 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Data.Services;
 using System.Linq.Expressions;
 using NUnit.Framework;
 
-namespace System.Data.Services.Tests {
+namespace MonoTests.System.Data.Services {
 	[TestFixture]
 	public class ExpandSegmentCollectionTests {
 		[Test]

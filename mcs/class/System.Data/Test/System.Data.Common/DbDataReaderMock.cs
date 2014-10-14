@@ -31,7 +31,7 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 
-namespace Test.System.Data.Common
+namespace MonoTests.System.Data.Common
 {
 	internal class DbDataReaderMock : DbDataReader
 	{

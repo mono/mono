@@ -137,11 +137,7 @@ namespace System.Net
 		private static bool _checkCRL = false;
 		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
 
-#if TARGET_JVM
-		static bool expectContinue = false;
-#else
 		static bool expectContinue = true;
-#endif
 		static bool useNagle;
 		static RemoteCertificateValidationCallback server_cert_cb;
 		static bool tcp_keepalive;
@@ -372,6 +368,15 @@ namespace System.Net
 			}
 			
 			return sp;
+		}
+
+		internal static void CloseConnectionGroup (string connectionGroupName)
+		{
+			lock (servicePoints) {
+				foreach (ServicePoint sp in servicePoints.Values) {
+					sp.CloseConnectionGroup (connectionGroupName);
+				}
+			}
 		}
 		
 #if SECURITY_DEP

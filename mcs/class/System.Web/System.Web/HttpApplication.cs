@@ -1277,10 +1277,6 @@ namespace System.Web
 				context.Handler = handler;
 				context.PushHandler (handler);
 			} catch (FileNotFoundException fnf){
-#if TARGET_JVM
-				Console.WriteLine ("$$$$$$$$$$:Sys.Web Pipeline");
-				Console.WriteLine (fnf.ToString ());
-#endif
 				if (context.Request.IsLocal)
 					ProcessError (HttpException.NewWithCode (404,
 										 String.Format ("File not found {0}", fnf.FileName),
@@ -1510,9 +1506,7 @@ namespace System.Web
 					th.CurrentUICulture = new_app_culture;
 			}
 
-#if !TARGET_JVM
 			prev_user = Thread.CurrentPrincipal;
-#endif
 		}
 
 		void PostDone ()
@@ -1523,10 +1517,8 @@ namespace System.Web
 			}
 
 			Thread th = Thread.CurrentThread;
-#if !TARGET_JVM
 			if (Thread.CurrentPrincipal != prev_user)
 				Thread.CurrentPrincipal = prev_user;
-#endif
 			if (prev_appui_culture != null && prev_appui_culture != th.CurrentUICulture)
 				th.CurrentUICulture = prev_appui_culture;
 			if (prev_app_culture != null && prev_app_culture != th.CurrentCulture)
@@ -1672,11 +1664,7 @@ namespace System.Web
 			cultures [0] = Thread.CurrentThread.CurrentCulture;
 			cultures [1] = Thread.CurrentThread.CurrentUICulture;
 			
-#if TARGET_JVM
-			if (true)
-#else
 			if (Thread.CurrentThread.IsThreadPoolThread)
-#endif
 				Start (null);
 			else
 				ThreadPool.QueueUserWorkItem (x => {
@@ -1816,7 +1804,6 @@ namespace System.Web
 			if (type != null)
 				return type;
 
-#if !TARGET_JVM
 			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
 			foreach (Assembly ass in assemblies) {
 				type = ass.GetType (typeName, false);
@@ -1845,7 +1832,6 @@ namespace System.Web
 			
 			if (type != null)
 				return type;
-#endif
 			if (throwOnMissing)
 				throw new TypeLoadException (String.Format ("Type '{0}' cannot be found", typeName), loadException);
 			

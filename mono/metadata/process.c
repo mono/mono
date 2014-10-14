@@ -23,18 +23,7 @@
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-proclib.h>
 #include <mono/io-layer/io-layer.h>
-#ifndef HAVE_GETPROCESSID
-#if defined(_MSC_VER) || defined(HAVE_WINTERNL_H)
-#include <winternl.h>
-#ifndef NT_SUCCESS
-#define NT_SUCCESS(status) ((NTSTATUS) (status) >= 0)
-#endif /* !NT_SUCCESS */
-#else /* ! (defined(_MSC_VER) || defined(HAVE_WINTERNL_H)) */
-#include <ddk/ntddk.h>
-#include <ddk/ntapi.h>
-#endif /* (defined(_MSC_VER) || defined(HAVE_WINTERNL_H)) */
-#endif /* !HAVE_GETPROCESSID */
-/* FIXME: fix this code to not depend so much on the inetrnals */
+/* FIXME: fix this code to not depend so much on the internals */
 #include <mono/metadata/class-internals.h>
 
 #define LOGDEBUG(...)  
@@ -60,11 +49,12 @@ HANDLE ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 	return(handle);
 }
 
-guint32 ves_icall_System_Diagnostics_Process_GetPid_internal (void)
+guint32
+ves_icall_System_Diagnostics_Process_GetPid_internal (void)
 {
 	MONO_ARCH_SAVE_REGS;
 
-	return(GetCurrentProcessId ());
+	return mono_process_current_pid ();
 }
 
 void ves_icall_System_Diagnostics_Process_Process_free_internal (MonoObject *this,
@@ -525,76 +515,6 @@ complete_path (const gunichar2 *appname, gchar **completed)
 	return TRUE;
 }
 
-#ifndef HAVE_GETPROCESSID
-/* Run-time GetProcessId detection for Windows */
-#ifdef TARGET_WIN32
-#define HAVE_GETPROCESSID
-
-typedef DWORD (WINAPI *GETPROCESSID_PROC) (HANDLE);
-typedef DWORD (WINAPI *NTQUERYINFORMATIONPROCESS_PROC) (HANDLE, PROCESSINFOCLASS, PVOID, ULONG, PULONG);
-typedef DWORD (WINAPI *RTLNTSTATUSTODOSERROR_PROC) (NTSTATUS);
-
-static DWORD WINAPI GetProcessId_detect (HANDLE process);
-
-static GETPROCESSID_PROC GetProcessId = &GetProcessId_detect;
-static NTQUERYINFORMATIONPROCESS_PROC NtQueryInformationProcess_proc = NULL;
-static RTLNTSTATUSTODOSERROR_PROC RtlNtStatusToDosError_proc = NULL;
-
-static DWORD WINAPI GetProcessId_ntdll (HANDLE process)
-{
-	PROCESS_BASIC_INFORMATION pi;
-	NTSTATUS status;
-
-	status = NtQueryInformationProcess_proc (process, ProcessBasicInformation, &pi, sizeof (pi), NULL);
-	if (NT_SUCCESS (status)) {
-		return pi.UniqueProcessId;
-	} else {
-		SetLastError (RtlNtStatusToDosError_proc (status));
-		return 0;
-	}
-}
-
-static DWORD WINAPI GetProcessId_stub (HANDLE process)
-{
-	SetLastError (ERROR_CALL_NOT_IMPLEMENTED);
-	return 0;
-}
-
-static DWORD WINAPI GetProcessId_detect (HANDLE process)
-{
-	HMODULE module_handle;
-	GETPROCESSID_PROC GetProcessId_kernel;
-
-	/* Windows XP SP1 and above have GetProcessId API */
-	module_handle = GetModuleHandle (L"kernel32.dll");
-	if (module_handle != NULL) {
-		GetProcessId_kernel = (GETPROCESSID_PROC) GetProcAddress (module_handle, "GetProcessId");
-		if (GetProcessId_kernel != NULL) {
-			GetProcessId = GetProcessId_kernel;
-			return GetProcessId (process);
-		}
-	}
-
-	/* Windows 2000 and above have deprecated NtQueryInformationProcess API */
-	module_handle = GetModuleHandle (L"ntdll.dll");
-	if (module_handle != NULL) {
-		NtQueryInformationProcess_proc = (NTQUERYINFORMATIONPROCESS_PROC) GetProcAddress (module_handle, "NtQueryInformationProcess");
-		if (NtQueryInformationProcess_proc != NULL) {
-			RtlNtStatusToDosError_proc = (RTLNTSTATUSTODOSERROR_PROC) GetProcAddress (module_handle, "RtlNtStatusToDosError");
-			if (RtlNtStatusToDosError_proc != NULL) {
-				GetProcessId = &GetProcessId_ntdll;
-				return GetProcessId (process);
-			}
-		}
-	}
-
-	/* Fall back to ERROR_CALL_NOT_IMPLEMENTED */
-	GetProcessId = &GetProcessId_stub;
-	return GetProcessId (process);
-}
-#endif /* HOST_WIN32 */
-#endif /* !HAVE_GETPROCESSID */
-
 MonoBoolean ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoProcessStartInfo *proc_start_info, MonoProcInfo *process_info)
 {
 	SHELLEXECUTEINFO shellex = {0};
@@ -891,13 +811,32 @@ MonoString *ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE pr
 /* Returns an array of pids */
 MonoArray *ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 {
+#if !defined(HOST_WIN32)
+	MonoArray *procs;
+	gpointer *pidarray;
+	int i, count;
+
+	MONO_ARCH_SAVE_REGS;
+
+	pidarray = mono_process_list (&count);
+	if (!pidarray)
+		mono_raise_exception (mono_get_exception_not_supported ("This system does not support EnumProcesses"));
+	procs = mono_array_new (mono_domain_get (), mono_get_int32_class (), count);
+	if (sizeof (guint32) == sizeof (gpointer)) {
+		memcpy (mono_array_addr (procs, guint32, 0), pidarray, count);
+	} else {
+		for (i = 0; i < count; ++i)
+			*(mono_array_addr (procs, guint32, i)) = GPOINTER_TO_UINT (pidarray [i]);
+	}
+	g_free (pidarray);
+
+	return procs;
+#else
 	MonoArray *procs;
 	gboolean ret;
 	DWORD needed;
-	guint32 count;
+	int count;
 	guint32 *pids;
-
-	MONO_ARCH_SAVE_REGS;
 
 	count = 512;
 	do {
@@ -926,6 +865,7 @@ MonoArray *ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	pids = NULL;
 	
 	return procs;
+#endif
 }
 
 MonoBoolean ves_icall_System_Diagnostics_Process_GetWorkingSet_internal (HANDLE process, guint32 *min, guint32 *max)

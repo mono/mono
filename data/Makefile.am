@@ -27,13 +27,8 @@ SGENPCFILE=
 endif
 
 if JIT_SUPPORTED
-if INTERP_SUPPORTED
-pkgconfig_DATA= mono.pc mono-2.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc monodoc.pc mono-lineeditor.pc system.web.extensions_1.0.pc \
-		system.web.extensions.design_1.0.pc system.web.mvc.pc system.web.mvc2.pc system.web.mvc3.pc aspnetwebstack.pc reactive.pc xbuild12.pc $(SGENPCFILE)
-else
 pkgconfig_DATA= mono.pc mono-2.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc monodoc.pc mono-lineeditor.pc system.web.extensions_1.0.pc \
 		system.web.extensions.design_1.0.pc system.web.mvc.pc system.web.mvc2.pc system.web.mvc3.pc aspnetwebstack.pc reactive.pc xbuild12.pc $(SGENPCFILE)
-endif
 else
 pkgconfig_DATA= mint.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc monodoc.pc mono-lineeditor.pc
 endif

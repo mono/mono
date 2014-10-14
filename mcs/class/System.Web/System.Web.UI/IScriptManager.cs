@@ -34,7 +34,7 @@ using System.Text;
 
 namespace System.Web.UI
 {
-#if (TARGET_JVM || TARGET_DOTNET)
+#if (TARGET_DOTNET)
 	public
 #endif
 	interface IScriptManager

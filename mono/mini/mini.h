@@ -123,7 +123,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 101
+#define MONO_AOT_FILE_VERSION 103
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -1237,6 +1237,7 @@ struct MonoJumpInfo {
 #else
 		int             offset;
 #endif
+		int index;
 		MonoBasicBlock *bb;
 		MonoInst       *inst;
 		MonoMethod     *method;
@@ -1320,7 +1321,9 @@ typedef enum {
 	/* Whenever this is an AOT compilation */
 	JIT_FLAG_AOT = (1 << 1),
 	/* Whenever this is a full AOT compilation */
-	JIT_FLAG_FULL_AOT = (1 << 2)
+	JIT_FLAG_FULL_AOT = (1 << 2),
+	/* Whenever to compile with LLVM */
+	JIT_FLAG_LLVM = (1 << 3),
 } JitFlags;
 
 /* Bit-fields in the MonoBasicBlock.region */
@@ -1423,8 +1426,6 @@ typedef struct {
 	MonoGenericSharingContext gsctx;
 	MonoGenericContext *gsctx_context;
 
-	gboolean gsharedvt;
-
 	MonoGSharedVtMethodInfo *gsharedvt_info;
 
 	/* Points to the gsharedvt locals area at runtime */
@@ -1521,6 +1522,9 @@ typedef struct {
 	guint            has_atomic_cas_i4 : 1;
 	guint            check_pinvoke_callconv : 1;
 	guint            has_unwind_info_for_epilog : 1;
+	guint            disable_inline : 1;
+	guint            gshared : 1;
+	guint            gsharedvt : 1;
 	gpointer         debug_info;
 	guint32          lmf_offset;
     guint16          *intvars;
@@ -1536,6 +1540,8 @@ typedef struct {
 	guint8 *         encoded_unwind_ops;
 	guint32          encoded_unwind_ops_len;
 	GSList*          unwind_ops;
+
+	GList*           dont_inline;
 
 	/* Fields used by the local reg allocator */
 	void*            reginfo;
@@ -1611,6 +1617,7 @@ typedef struct {
 	/* Symbol used to refer to this method in generated assembly */
 	char *asm_symbol;
 	char *llvm_method_name;
+	int castclass_cache_index;
 
 	MonoJitExceptionInfo *llvm_ex_info;
 	guint32 llvm_ex_info_len;
@@ -2052,7 +2059,6 @@ void      mono_set_lmf                      (MonoLMF *lmf) MONO_INTERNAL;
 MonoJitTlsData* mono_get_jit_tls            (void) MONO_INTERNAL;
 MONO_API MonoDomain *mono_jit_thread_attach          (MonoDomain *domain);
 MONO_API void      mono_jit_set_domain               (MonoDomain *domain);
-MonoNativeTlsKey mono_get_jit_tls_key       (void) MONO_INTERNAL;
 gint32    mono_get_jit_tls_offset           (void) MONO_INTERNAL;
 gint32    mono_get_lmf_tls_offset           (void) MONO_INTERNAL;
 gint32    mono_get_lmf_addr_tls_offset      (void) MONO_INTERNAL;
@@ -2201,6 +2207,8 @@ void     mono_llvm_emit_aot_module          (const char *filename, int got_size)
 void     mono_llvm_check_method_supported   (MonoCompile *cfg) MONO_LLVM_INTERNAL;
 void     mono_llvm_free_domain_info         (MonoDomain *domain) MONO_LLVM_INTERNAL;
 
+gboolean mini_llvm_init                     (void);
+
 gboolean  mono_method_blittable             (MonoMethod *method) MONO_INTERNAL;
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee) MONO_INTERNAL;
 
@@ -2290,7 +2298,7 @@ void              mono_tramp_info_register (MonoTrampInfo *info) MONO_INTERNAL;
 int               mini_exception_id_by_name (const char *name) MONO_INTERNAL;
 
 int               mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 
-									 MonoInst *return_var, GList *dont_inline, MonoInst **inline_args, 
+									 MonoInst *return_var, MonoInst **inline_args,
 									 guint inline_offset, gboolean is_virtual_call) MONO_INTERNAL;
 
 MonoInst         *mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins) MONO_INTERNAL;
@@ -2462,7 +2470,7 @@ void        mono_arch_emit_imt_argument         (MonoCompile *cfg, MonoCallInst 
 MonoMethod* mono_arch_find_imt_method           (mgreg_t *regs, guint8 *code) MONO_INTERNAL;
 MonoVTable* mono_arch_find_static_call_vtable   (mgreg_t *regs, guint8 *code) MONO_INTERNAL;
 gpointer    mono_arch_build_imt_thunk           (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count, gpointer fail_tramp) MONO_INTERNAL;
-void    mono_arch_notify_pending_exc            (void) MONO_INTERNAL;
+void    mono_arch_notify_pending_exc            (MonoThreadInfo *info) MONO_INTERNAL;
 guint8* mono_arch_get_call_target               (guint8 *code) MONO_INTERNAL;
 guint32 mono_arch_get_plt_info_offset           (guint8 *plt_entry, mgreg_t *regs, guint8 *code) MONO_INTERNAL;
 GSList *mono_arch_get_trampolines               (gboolean aot) MONO_INTERNAL;
@@ -2511,6 +2519,7 @@ typedef gboolean (*MonoExceptionFrameWalk)      (MonoMethod *method, gpointer ip
 gboolean mono_exception_walk_trace              (MonoException *ex, MonoExceptionFrameWalk func, gpointer user_data);
 void mono_restore_context                       (MonoContext *ctx) MONO_INTERNAL;
 guint8* mono_jinfo_get_unwind_info              (MonoJitInfo *ji, guint32 *unwind_info_len) MONO_INTERNAL;
+int  mono_jinfo_get_epilog_size                 (MonoJitInfo *ji) MONO_INTERNAL;
 
 gboolean
 mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls, 
@@ -2821,6 +2830,7 @@ void mono_cross_helpers_run (void) MONO_INTERNAL;
 
 #ifndef GET_CONTEXT
 #ifdef HOST_WIN32
+/* seh_vectored_exception_handler () passes in a CONTEXT* */
 #define GET_CONTEXT \
     void *ctx = context;
 #else

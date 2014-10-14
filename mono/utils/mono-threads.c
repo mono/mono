@@ -14,6 +14,7 @@
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-memory-model.h>
+#include <mono/utils/mono-mmap.h>
 
 #include <errno.h>
 
@@ -143,7 +144,7 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 
 	if (threads_callbacks.thread_register) {
 		if (threads_callbacks.thread_register (info, baseptr) == NULL) {
-			g_warning ("thread registation failed\n");
+			// g_warning ("thread registation failed\n");
 			g_free (info);
 			return NULL;
 		}
@@ -604,7 +605,7 @@ mono_thread_info_safe_suspend_sync (MonoNativeThreadId id, gboolean interrupt_ke
 	for (;;) {
 		const char *suspend_error = "Unknown error";
 		if (!(info = mono_thread_info_suspend_sync (id, interrupt_kernel, &suspend_error))) {
-			g_warning ("failed to suspend thread %p due to %s, hopefully it is dead", (gpointer)id, suspend_error);
+			// g_warning ("failed to suspend thread %p due to %s, hopefully it is dead", (gpointer)id, suspend_error);
 			mono_thread_info_suspend_unlock ();
 			return NULL;
 		}
@@ -613,7 +614,7 @@ mono_thread_info_safe_suspend_sync (MonoNativeThreadId id, gboolean interrupt_ke
 			break;
 
 		if (!mono_thread_info_core_resume (info)) {
-			g_warning ("failed to resume thread %p, hopefully it is dead", (gpointer)id);
+			// g_warning ("failed to resume thread %p, hopefully it is dead", (gpointer)id);
 			mono_hazard_pointer_clear (mono_hazard_pointer_get (), 1);
 			mono_thread_info_suspend_unlock ();
 			return NULL;
@@ -730,11 +731,13 @@ mono_thread_info_new_interrupt_enabled (void)
 #if defined (HAVE_BOEHM_GC) && !defined (USE_INCLUDED_LIBGC)
 	return FALSE;
 #endif
-	/*port not done*/
 #if defined(HOST_WIN32)
-	return FALSE;
+	return !disable_new_interrupt;
 #endif
-#if defined (__i386__)
+#if defined (__i386__) || defined(__x86_64__)
+	return !disable_new_interrupt;
+#endif
+#if defined(__arm__)
 	return !disable_new_interrupt;
 #endif
 	return FALSE;
@@ -787,7 +790,16 @@ mono_threads_create_thread (LPTHREAD_START_ROUTINE start, gpointer arg, guint32 
 void
 mono_thread_info_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
+	guint8 *current = (guint8 *)&stsize;
 	mono_threads_core_get_stack_bounds (staddr, stsize);
+	if (!*staddr)
+		return;
+
+	/* Sanity check the result */
+	g_assert ((current > *staddr) && (current < *staddr + *stsize));
+
+	/* When running under emacs, sometimes staddr is not aligned to a page size */
+	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
 }
 
 gboolean
@@ -842,7 +854,7 @@ mono_thread_info_open_handle (void)
 }
 
 /*
- * mono_thread_info_open_handle:
+ * mono_threads_open_thread_handle:
  *
  *   Return a io-layer/win32 handle for the thread identified by HANDLE/TID.
  * The handle need to be closed by calling CloseHandle () when it is no
@@ -858,4 +870,42 @@ void
 mono_thread_info_set_name (MonoNativeThreadId tid, const char *name)
 {
 	mono_threads_core_set_name (tid, name);
+}
+
+/*
+ * mono_thread_info_prepare_interrupt:
+ *
+ *   See wapi_prepare_interrupt ().
+ */
+gpointer
+mono_thread_info_prepare_interrupt (HANDLE thread_handle)
+{
+	return mono_threads_core_prepare_interrupt (thread_handle);
+}
+
+void
+mono_thread_info_finish_interrupt (gpointer wait_handle)
+{
+	mono_threads_core_finish_interrupt (wait_handle);
+}
+
+void
+mono_thread_info_interrupt (HANDLE thread_handle)
+{
+	gpointer wait_handle;
+
+	wait_handle = mono_thread_info_prepare_interrupt (thread_handle);
+	mono_thread_info_finish_interrupt (wait_handle);
+}
+	
+void
+mono_thread_info_self_interrupt (void)
+{
+	mono_threads_core_self_interrupt ();
+}
+
+void
+mono_thread_info_clear_interruption (void)
+{
+	mono_threads_core_clear_interruption ();
 }

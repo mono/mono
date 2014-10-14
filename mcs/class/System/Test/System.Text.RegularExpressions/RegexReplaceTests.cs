@@ -22,7 +22,7 @@ namespace MonoTests.System.Text.RegularExpressions
 				try {
 					result = Regex.Replace (original, pattern, replacement);
 				}
-				catch (Exception e) {
+				catch (Exception) {
 					result = "Error.";
 				}
 				Assert.AreEqual (expected, result, "rr#: {0} ~ s,{1},{2},",

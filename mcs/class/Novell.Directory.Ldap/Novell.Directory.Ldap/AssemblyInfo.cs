@@ -48,9 +48,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright(" (C) 2003 Novell, Inc")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
-#if !TARGET_JVM 
 [assembly: CLSCompliant(true)]
-#endif
 
 //
 // Version information for an assembly consists of the following four values:
@@ -65,8 +63,6 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 
-#if (!TARGET_JVM)
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../mono.pub")]
-#endif
 

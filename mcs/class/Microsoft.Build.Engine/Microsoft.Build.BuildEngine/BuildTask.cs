@@ -144,7 +144,7 @@ namespace Microsoft.Build.BuildEngine {
 				var pv = GetParameterValue (l.Name);
 
 				Expression exp = new Expression ();
-				exp.Parse (pv, ParseOptions.AllowItemsNoMetadataAndSplit);
+				exp.Parse (pv, ParseOptions.AllowItemsMetadataAndSplit);
 				return exp.ConvertTo (parentTarget.Project, l.PropertyType);
 			});
 

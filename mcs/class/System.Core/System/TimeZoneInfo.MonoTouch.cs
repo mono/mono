@@ -64,12 +64,15 @@ namespace System {
 		[DllImport ("__Internal")]
 		extern static IntPtr monotouch_timezone_get_data (string name, ref int size);
 
-		static Stream GetMonoTouchData (string name)
+		static Stream GetMonoTouchData (string name, bool throw_on_error = true)
 		{
 			int size = 0;
 			IntPtr data = monotouch_timezone_get_data (name, ref size);
-			if (size <= 0)
-				throw new TimeZoneNotFoundException ();
+			if (size <= 0) {
+				if (throw_on_error)
+					throw new TimeZoneNotFoundException ();
+				return null;
+			}
 
 			unsafe {
 				var s = new UnmanagedMemoryStream ((byte*) data, size);

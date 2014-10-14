@@ -753,7 +753,7 @@ create_allocator (int atype, int tls_key)
 	bytes_var = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
 	if (atype == ATYPE_STRING) {
 		/* a string alloator method takes the args: (vtable, len) */
-		/* bytes = (sizeof (MonoString) + ((len + 1) * 2)); */
+		/* bytes = (offsetof (MonoString, chars) + ((len + 1) * 2)); */
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icon (mb, 1);
 		mono_mb_emit_byte (mb, MONO_CEE_ADD);
@@ -1289,6 +1289,18 @@ int
 mono_gc_get_los_limit (void)
 {
 	return G_MAXINT;
+}
+
+void
+mono_gc_set_string_length (MonoString *str, gint32 new_length)
+{
+	mono_unichar2 *new_end = str->chars + new_length;
+	
+	/* zero the discarded string. This null-delimits the string and allows 
+	 * the space to be reclaimed by SGen. */
+	 
+	memset (new_end, 0, (str->length - new_length + 1) * sizeof (mono_unichar2));
+	str->length = new_length;
 }
 
 gboolean
