@@ -168,7 +168,6 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectRootElement Xml { get; private set; }
 
-		string dir_path;
 		Dictionary<string, ProjectItemDefinition> item_definitions;
 		List<ResolvedImport> raw_imports;
 		List<ProjectItem> raw_items;
@@ -178,7 +177,6 @@ namespace Microsoft.Build.Evaluation
 
 		void Initialize ()
 		{
-			dir_path = Directory.GetCurrentDirectory ();
 			raw_imports = new List<ResolvedImport> ();
 			item_definitions = new Dictionary<string, ProjectItemDefinition> ();
 			targets = new Dictionary<string, ProjectTargetInstance> ();
@@ -648,7 +646,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public string DirectoryPath {
-			get { return dir_path; }
+			get { return Xml.DirectoryPath; }
 		}
 
 		public bool DisableMarkDirty { get; set; }
