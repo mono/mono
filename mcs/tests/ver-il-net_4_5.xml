@@ -14466,11 +14466,11 @@
       <method name="Void Test_18(Boolean, System.Action)" attrs="129">
         <size>44</size>
       </method>
-      <method name="Void &lt;Test_18&gt;m__1(System.Object)" attrs="145">
-        <size>2</size>
-      </method>
       <method name="Void Test_19(Int32[,])" attrs="129">
         <size>11</size>
+      </method>
+      <method name="Void &lt;Test_18&gt;m__1()" attrs="145">
+        <size>2</size>
       </method>
     </type>
   </test>
