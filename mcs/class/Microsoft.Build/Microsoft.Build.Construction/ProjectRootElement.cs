@@ -211,6 +211,8 @@ namespace Microsoft.Build.Construction
                 public static ProjectRootElement Create (string path, ProjectCollection projectCollection)
                 {
                         var result = Create (projectCollection);
+                        using (var reader = XmlReader.Create (path))
+                                result.Load (reader);
                         result.FullPath = path;
                         return result;
                 }
@@ -461,10 +463,7 @@ namespace Microsoft.Build.Construction
 
                 public static ProjectRootElement Open (string path, ProjectCollection projectCollection)
                 {
-                        var result = Create (path, projectCollection);
-                        using (var reader = XmlReader.Create (path))
-                                result.Load (reader);
-                        return result;
+                        return Create (path, projectCollection);
                 }
 
                 public void Save ()
