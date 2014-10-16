@@ -1672,6 +1672,16 @@ static gboolean process_open_compare (gpointer handle, gpointer user_data)
 	}
 }
 
+gboolean CloseProcess(gpointer handle)
+{
+	if ((GPOINTER_TO_UINT (handle) & _WAPI_PROCESS_UNHANDLED) == _WAPI_PROCESS_UNHANDLED) {
+		/* This is a pseudo handle */
+		return(TRUE);
+	}
+
+	return CloseHandle (handle);
+}
+
 gpointer OpenProcess (guint32 req_access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED, guint32 pid)
 {
 	/* Find the process handle that corresponds to pid */

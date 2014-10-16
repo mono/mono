@@ -7381,7 +7381,15 @@ debugger_thread (void *arg)
 
 		/* This will break if the socket is closed during shutdown too */
 		if (res != HEADER_LENGTH)
+		{
+			DEBUG (1, fprintf (log_file, "[dbg] Socket closed.\n"));
+
+			command_set = CMD_SET_VM;
+			command = CMD_VM_DISPOSE;
+			vm_commands(CMD_VM_DISPOSE, 0, NULL, NULL, NULL);
+
 			break;
+		}
 
 		p = header;
 		end = header + HEADER_LENGTH;
