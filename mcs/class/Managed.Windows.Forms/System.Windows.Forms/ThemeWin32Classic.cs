@@ -532,12 +532,14 @@ namespace System.Windows.Forms
 				offset += (int)(2 * (excess_height / 3));
 
 			if (textFirst) {
-				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, totalArea.Top + offset, textSize.Width, textSize.Height);
+				var textHeight = excess_height >= 0 ? totalArea.Height - imageSize.Height - element_spacing: textSize.Height;
+				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, totalArea.Top + offset, textSize.Width, textHeight);
 				final_image_rect = new Rectangle (AlignInRectangle (totalArea, imageSize, imageAlign).Left, final_text_rect.Bottom + element_spacing, imageSize.Width, imageSize.Height);
 			}
 			else {
 				final_image_rect = new Rectangle (AlignInRectangle (totalArea, imageSize, imageAlign).Left, totalArea.Top + offset, imageSize.Width, imageSize.Height);
-				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, final_image_rect.Bottom + element_spacing, textSize.Width, textSize.Height);
+				var textHeight = excess_height >= 0 ? totalArea.Height - final_image_rect.Height : textSize.Height;
+				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, final_image_rect.Bottom + element_spacing, textSize.Width, textHeight);
 				
 				if (final_text_rect.Bottom > totalArea.Bottom)
 					final_text_rect.Y = totalArea.Top;
