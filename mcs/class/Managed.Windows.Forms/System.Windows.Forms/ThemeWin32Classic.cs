@@ -379,12 +379,12 @@ namespace System.Windows.Forms
 				case TextImageRelation.Overlay:
 					// Overlay is easy, text always goes here
 
-						if (button.Pressed)
-							textRectangle.Offset (1, 1);
-						
 					// Image is dependent on ImageAlign
-					if (image == null)
+					if (image == null) {
+					if (button.Pressed)
+						textRectangle.Offset (1, 1);
 						return;
+					}
 						
 					int image_x = 0;
 					int image_y = 0;
@@ -449,6 +449,8 @@ namespace System.Windows.Forms
 					LayoutTextBeforeOrAfterImage (textRectangle, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
 					break;
 			}
+			if (button.Pressed)
+				textRectangle.Offset (1, 1);
 		}
 
 		private void LayoutTextBeforeOrAfterImage (Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, System.Drawing.ContentAlignment textAlign, System.Drawing.ContentAlignment imageAlign, out Rectangle textRect, out Rectangle imageRect)
