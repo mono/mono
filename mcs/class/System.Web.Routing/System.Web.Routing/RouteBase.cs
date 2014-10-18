@@ -41,6 +41,9 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class RouteBase
 	{
+#if NET_4_5
+		public bool RouteExistingFiles { get; set; }
+#endif
 		public abstract RouteData GetRouteData (HttpContextBase httpContext);
 		public abstract VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values);
 	}

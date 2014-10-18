@@ -95,6 +95,10 @@ namespace System.Web.Routing
 		}
 
 		public bool RouteExistingFiles { get; set; }
+#if NET_4_5
+		public bool AppendTrailingSlash { get; set; }
+		public bool LowercaseUrls { get; set; }
+#endif
 
 		public void Add (string name, RouteBase item)
 		{

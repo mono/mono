@@ -1805,5 +1805,17 @@ namespace MonoTests.System.Web.Routing
 				"#6"
 			);
 		}
+
+#if NET_4_5
+		[Test]
+		public void RouteExistingFiles ()
+		{
+			var route = new Route ("foo", null);
+			route.RouteExistingFiles = true;
+			Assert.IsTrue (route.RouteExistingFiles);
+			route.RouteExistingFiles = false;
+			Assert.IsFalse (route.RouteExistingFiles);
+		}
+#endif
 	}
 }
