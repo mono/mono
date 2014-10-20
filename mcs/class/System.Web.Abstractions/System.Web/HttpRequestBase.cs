@@ -153,6 +153,12 @@ namespace System.Web
 
 		public virtual string [] UserLanguages { get { NotImplemented (); return null; } }
 
+#if NET_4_5
+		public virtual void Abort ()
+		{
+			NotImplemented();
+		}
+#endif
 
 		public virtual byte [] BinaryRead (int count)
 		{
