@@ -894,10 +894,16 @@ namespace System.Diagnostics {
 			
 			for (int i = 0; i < procs.Length; i++) {
 				/* Ignore case */
-				if (String.Compare (processName,
-						    procs [i].ProcessName,
-						    true) == 0) {
-					proclist.Add (procs [i]);
+				try {
+					if (String.Compare (processName,
+							    procs [i].ProcessName,
+							    true) == 0) {
+						proclist.Add (procs [i]);
+					}
+				}
+				catch (Exception) { 
+					//do nothing, if the process is invalid then we probably 
+					//don't want it in the list.
 				}
 			}
 
