@@ -111,6 +111,8 @@ namespace MonoTests.System.Threading.Tasks
 		[SetUp]
 		public void Setup()
 		{
+			ThreadPool.SetMinThreads (1, 1);
+
 			tasks = new Task[max];			
 		}
 		
