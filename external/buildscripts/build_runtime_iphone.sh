@@ -32,6 +32,7 @@ setenv () {
 	export CPLUS_INCLUDE_PATH="$ASPEN_SDK/usr/lib/gcc/arm-apple-darwin9/4.2.1/include:$ASPEN_SDK/usr/include"
 	#export CFLAGS="-DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -g -O0"
 	export CFLAGS="-DHAVE_ARMV6=1 -DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -Os"
+	export CPPFLAGS="$CFLAGS"
 	export CXXFLAGS="$CFLAGS"
 	export CC="gcc -arch $1"
 	export CXX="g++ -arch $1"
@@ -54,6 +55,7 @@ unsetenv () {
 	unset LDFLAGS
 	unset PLATFORM_IPHONE_XCOMP
 	unset CFLAGS
+	unset CPPFLAGS
 	unset CXXFLAGS
 }
 
@@ -109,6 +111,7 @@ build_iphone_crosscompiler ()
 {
 	echo "Building iPhone cross compiler";
 	export CFLAGS="-DARM_FPU_VFP=1 -DUSE_MUNMAP -DPLATFORM_IPHONE_XCOMP"	
+	export CPPFLAGS="$CFLAGS"
 	export CC="gcc -arch i386"
 	export CXX="g++ -arch i386"
 	export CPP="$CC -E"
