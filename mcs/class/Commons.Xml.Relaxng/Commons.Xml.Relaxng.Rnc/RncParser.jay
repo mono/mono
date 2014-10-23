@@ -107,7 +107,7 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public RelaxngPattern Parse (TextReader source, string baseUri, string defaultNamespace)
 		{
-			this.defaultNamespace = defaultNamespace;
+			this.defaultNamespace = defaultNamespace ?? string.Empty;
 			if (defaultNamespace != null && defaultNamespace.Length != 0)
 				nsmgr.AddNamespace (String.Empty, defaultNamespace);
 			try {
