@@ -104,6 +104,8 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
+		int workerThreads;
+		int completionPortThreads;
 
 		Task[] tasks;
 		const int max = 6;
@@ -111,9 +113,16 @@ namespace MonoTests.System.Threading.Tasks
 		[SetUp]
 		public void Setup()
 		{
+			ThreadPool.GetMinThreads (out workerThreads, out completionPortThreads);
 			ThreadPool.SetMinThreads (1, 1);
 
 			tasks = new Task[max];			
+		}
+		
+		[TearDown]
+		public void Teardown()
+		{
+			ThreadPool.SetMinThreads (workerThreads, completionPortThreads);
 		}
 		
 		void InitWithDelegate(Action action)
