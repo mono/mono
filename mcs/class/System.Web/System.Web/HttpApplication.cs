@@ -230,6 +230,10 @@ namespace System.Web
 					}
 				} catch (Exception e) {
 					initialization_exception = e;
+					Console.Error.WriteLine("Exception while initOnce: "+e.ToString());
+					// Once initialization_exception != null, we always respond with this exception
+					// You have to restart the HttpApplication to "unlock" it
+					Console.Error.WriteLine("Please restart your app to unlock it");
 				} finally {
 					if (mustNullContext)
 						context = null;
