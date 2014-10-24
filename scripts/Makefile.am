@@ -165,11 +165,7 @@ EXTRA_DIST =			\
 	get-cygwin-deps.sh	\
 	mono-configuration-crypto.in
 
-if USE_JIT
 mono_interp = mono
-else
-mono_interp = mint
-endif
 
 if HOST_WIN32
 if CROSS_COMPILING
