@@ -103,7 +103,7 @@ namespace System
 		static TimeZoneInfo CreateLocal ()
 		{
 #if MONODROID
-			return AndroidTimeZones.Default;
+			return AndroidTimeZones.Local;
 #elif MONOTOUCH
 			using (Stream stream = GetMonoTouchData (null)) {
 				return BuildFromStream ("Local", stream);
@@ -415,7 +415,7 @@ namespace System
 			}
 #endif
 #if MONODROID
-			var timeZoneInfo = AndroidTimeZones.GetTimeZone (id);
+			var timeZoneInfo = AndroidTimeZones.GetTimeZone (id, id);
 			if (timeZoneInfo == null)
 				throw new TimeZoneNotFoundException ();
 			return timeZoneInfo;
@@ -644,7 +644,7 @@ namespace System
 #endif
 #if MONODROID
 			foreach (string id in AndroidTimeZones.GetAvailableIds ()) {
-				var tz = AndroidTimeZones.GetTimeZone (id);
+				var tz = AndroidTimeZones.GetTimeZone (id, id);
 				if (tz != null)
 					systemTimeZones.Add (tz);
 			}

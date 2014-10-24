@@ -453,29 +453,29 @@ namespace System {
 					: db.GetAvailableIds ();
 			}
 
-			static TimeZoneInfo _GetTimeZone (string name)
+			static TimeZoneInfo _GetTimeZone (string id, string name)
 			{
 				if (db == null)
 					return null;
 				byte[] buffer = db.GetTimeZoneData (name);
 				if (buffer == null)
 					return null;
-				return TimeZoneInfo.ParseTZBuffer (name, buffer, buffer.Length);
+				return TimeZoneInfo.ParseTZBuffer (id, buffer, buffer.Length);
 			}
 
-			internal static TimeZoneInfo GetTimeZone (string id)
+			internal static TimeZoneInfo GetTimeZone (string id, string name)
 			{
-				if (id != null) {
-					if (id == "GMT" || id == "UTC")
-						return new TimeZoneInfo (id, TimeSpan.FromSeconds (0), id, id, id, null, true);
-					if (id.StartsWith ("GMT"))
+				if (name != null) {
+					if (name == "GMT" || name == "UTC")
+						return new TimeZoneInfo (id, TimeSpan.FromSeconds (0), id, name, name, null, disableDaylightSavingTime:true);
+					if (name.StartsWith ("GMT"))
 						return new TimeZoneInfo (id,
-								TimeSpan.FromSeconds (ParseNumericZone (id)),
-								id, id, id, null, true);
+								TimeSpan.FromSeconds (ParseNumericZone (name)),
+								id, name, name, null, disableDaylightSavingTime:true);
 				}
 
 				try {
-					return _GetTimeZone (id);
+					return _GetTimeZone (id, name);
 				} catch (Exception) {
 					return null;
 				}
@@ -533,12 +533,12 @@ namespace System {
 			static readonly object _lock = new object ();
 
 			static TimeZoneInfo defaultZone;
-			internal static TimeZoneInfo Default {
+			internal static TimeZoneInfo Local {
 				get {
 					lock (_lock) {
 						if (defaultZone != null)
 							return defaultZone;
-						return defaultZone = GetTimeZone (GetDefaultTimeZoneName ());
+						return defaultZone = GetTimeZone ("Local", GetDefaultTimeZoneName ());
 					}
 				}
 			}
@@ -617,7 +617,7 @@ namespace System {
 				foreach (var id in GetAvailableIds ()) {
 					Console.Write ("name={0,-40}", id);
 					try {
-						TimeZoneInfo zone = _GetTimeZone (id);
+						TimeZoneInfo zone = _GetTimeZone (id, id);
 						if (zone != null) {
 							Console.Write (" {0,-40}", zone);
 							if (offset.HasValue) {
