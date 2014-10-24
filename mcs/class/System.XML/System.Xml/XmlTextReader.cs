@@ -716,7 +716,6 @@ namespace Mono.Xml2
 					if (valueCache != null)
 						return valueCache;
 					if (ValueBufferStart >= 0) {
-//Console.WriteLine (NodeType + " / " + ValueBuffer.Length + " / " + ValueBufferStart + " / " + ValueBufferEnd);
 						valueCache = Reader.valueBuffer.ToString (ValueBufferStart, ValueBufferEnd - ValueBufferStart);
 						return valueCache;
 					}
@@ -1800,6 +1799,7 @@ namespace Mono.Xml2
 				value,
 				false);
 			ati.Value = value;
+			ati.ValueTokenStartIndex = ati.ValueTokenEndIndex = currentAttributeValue;
 			attributeCount++;
 		}
 

@@ -1382,5 +1382,56 @@ namespace MonoTests.System.Xml
 			var xtr = new XmlTextReader (ms);
 			xtr.Read ();
 		}
+		
+		[Test]
+		public void XmlDeclarationReadAttributeValue ()
+		{
+			const string input = "<?xml version=\"1.0\" encoding=\"utf-8\"?><hello />";
+			var reader = new XmlTextReader (new StringReader (input));
+			reader.WhitespaceHandling = WhitespaceHandling.All;
+			reader.Read ();
+			
+			Assert.AreEqual ("1.0", reader.GetAttribute ("version"), "#0");
+			Assert.AreEqual ("utf-8", reader.GetAttribute ("encoding"), "#0-2");
+
+			Assert.IsTrue (reader.MoveToNextAttribute (), "#1");
+			Assert.AreEqual ("1.0", reader.Value, "#1-1");
+			Assert.IsTrue (reader.ReadAttributeValue (), "#2");
+			Assert.AreEqual ("1.0", reader.Value, "#3");
+			Assert.IsFalse (reader.ReadAttributeValue (), "#4");
+
+			Assert.IsTrue (reader.MoveToNextAttribute (), "#5");
+			Assert.AreEqual ("utf-8", reader.Value, "#5-1");
+			Assert.IsTrue (reader.ReadAttributeValue (), "#6");
+			Assert.AreEqual ("utf-8", reader.Value, "#7");
+			Assert.IsFalse (reader.ReadAttributeValue (), "#8");
+
+			Assert.IsFalse (reader.MoveToNextAttribute (), "#9");
+			Assert.IsFalse (reader.ReadAttributeValue (), "#10");
+		}
+		
+		[Test]
+		public void XmlDeclarationReadAttributeValue2 ()
+		{
+			const string input = "<?xml version=\"1.0\" encoding=\"utf-8\"?><hello />";
+			var reader = new XmlTextReader (new StringReader (input));
+			reader.WhitespaceHandling = WhitespaceHandling.All;
+			reader.Read ();
+			Assert.IsTrue (reader.MoveToNextAttribute (), "#1a");
+			Assert.IsTrue (reader.ReadAttributeValue (), "#1b");
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#1c");
+			Assert.AreEqual ("1.0", reader.Value, "#1d");
+			Assert.IsFalse (reader.ReadAttributeValue(), "#1e");
+
+			Assert.IsTrue (reader.MoveToNextAttribute(), "#2a");
+			Assert.IsTrue (reader.ReadAttributeValue(), "#2b");
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#2c");
+			Assert.AreEqual ("utf-8", reader.Value, "#2d");
+			Assert.IsFalse (reader.ReadAttributeValue(), "#2e");
+
+			Assert.IsFalse (reader.MoveToNextAttribute(), "#3");
+			Assert.IsFalse (reader.ReadAttributeValue(), "#4");
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#5");
+		}
 	}
 }
