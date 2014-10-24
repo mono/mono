@@ -533,7 +533,7 @@ namespace System.Web.Configuration {
 				value = collection;
 			}
 #else
-			object value = SettingsMappingManager.MapSection (get_runtime_object.Invoke (section, new object [0]));
+			object value = SettingsMappingManager.MapSection (section.GetRuntimeObject ());
 #endif
 			if (cachePath != null)
 				cacheKey = baseCacheKey ^ cachePath.GetHashCode ();
@@ -681,7 +681,9 @@ namespace System.Web.Configuration {
 			configurations.Remove (GetCurrentPath (ctx));
 		}
 
+#if TARGET_J2EE
 		readonly static MethodInfo get_runtime_object = typeof (ConfigurationSection).GetMethod ("GetRuntimeObject", BindingFlags.NonPublic | BindingFlags.Instance);
+#endif
 
 		public static object GetWebApplicationSection (string sectionName)
 		{
