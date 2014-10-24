@@ -255,6 +255,7 @@ LIB_MCS_FLAGS = \
 	-r:System.Xml.dll		\
 	-r:System.EnterpriseServices.dll \
 	-r:System.Runtime.Serialization.Formatters.Soap \
+	-r:System.ComponentModel.DataAnnotations.dll \
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)

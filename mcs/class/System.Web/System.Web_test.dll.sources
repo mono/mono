@@ -106,6 +106,7 @@ System.Web.Profile/ProfileInfoTest.cs
 System.Web.Security/FormsAuthenticationTest.cs
 System.Web.Security/FormsIdentityTest.cs
 System.Web.Security/MembershipTest.cs
+System.Web.Security/MembershipPasswordAttributeTest.cs
 System.Web.Security/MembershipProviderCollectionTest.cs
 System.Web.Security/MembershipProviderTest.cs
 System.Web.Security/MembershipUserCollectionTest.cs
