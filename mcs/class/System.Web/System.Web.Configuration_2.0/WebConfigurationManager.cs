@@ -67,6 +67,7 @@ namespace System.Web.Configuration {
 		static readonly char[] pathTrimChars = { '/' };
 		static readonly object suppressAppReloadLock = new object ();
 		static readonly object saveLocationsCacheLock = new object ();
+		static readonly object getSectionLock = new object ();
 		
 		// See comment for the cacheLock field at top of System.Web.Caching/Cache.cs
 		static readonly ReaderWriterLockSlim sectionCacheLock;
@@ -517,7 +518,10 @@ namespace System.Web.Configuration {
 					cachePath = path;
 			}
 
-			ConfigurationSection section = c.GetSection (sectionName);
+			ConfigurationSection section;
+			lock (getSectionLock) {
+				section = c.GetSection (sectionName);
+			}
 			if (section == null)
 				return null;
 
