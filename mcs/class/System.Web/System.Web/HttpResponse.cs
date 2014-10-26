@@ -400,6 +400,13 @@ namespace System.Web
 			set;
 		}
 
+#if NET_4_5
+		public bool SuppressFormsAuthenticationRedirect {
+			get;
+			set;
+		}
+#endif
+
 		public bool TrySkipIisCustomErrors {
 			get;
 			set;
