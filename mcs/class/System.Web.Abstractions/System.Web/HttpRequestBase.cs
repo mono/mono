@@ -164,6 +164,20 @@ namespace System.Web
 			return null;
 		}
 
+#if NET_4_5
+		public virtual Stream GetBufferlessInputStream ()
+		{
+			NotImplemented ();
+			return null;
+		}
+
+		public virtual Stream GetBufferedInputStream ()
+		{
+			NotImplemented ();
+			return null;
+		}
+#endif
+
 		public virtual int [] MapImageCoordinates (string imageFieldName)
 		{
 			NotImplemented ();
