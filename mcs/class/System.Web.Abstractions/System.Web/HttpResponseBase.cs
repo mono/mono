@@ -39,6 +39,7 @@ using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Web.Caching;
+using System.Threading;
 
 #if NET_4_0
 using System.Web.Routing;
@@ -68,6 +69,10 @@ namespace System.Web
 		public virtual string CacheControl { get { NotImplemented (); return null; } set { NotImplemented (); } }
 
 		public virtual string Charset { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+#if NET_4_5
+		public virtual CancellationToken ClientDisconnectedToken { get { NotImplemented (); return CancellationToken.None; } }
+#endif
 
 		public virtual Encoding ContentEncoding { get { NotImplemented (); return null; } set { NotImplemented (); } }
 
