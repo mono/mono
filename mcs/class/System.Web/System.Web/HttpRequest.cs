@@ -80,13 +80,17 @@ namespace System.Web
 		string unescaped_path;
 		string original_path;
 		string path_info;
+        	string path_info_unvalidated;
 		string raw_url;
+        	string raw_url_unvalidated;
 		WebROCollection all_params;
-		WebROCollection headers;
+		NameValueCollection headers;
+        	WebROCollection headers_unvalidated;
 		Stream input_stream;
 		InputFilterStream input_filter;
 		Stream filter;
 		HttpCookieCollection cookies;
+        	HttpCookieCollection cookies_unvalidated;
 		string http_method;
 
 		WebROCollection form;
@@ -440,15 +444,25 @@ namespace System.Web
 			}
 		}
 
+		internal HttpCookieCollection CookiesNoValidation {
+			get {
+				if (cookies_unvalidated == null) {
+					if (worker_request == null) {
+						cookies_unvalidated = new HttpCookieCollection ();
+					} else {
+						string cookie_hv = worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderCookie);
+						cookies_unvalidated = new HttpCookieCollection (cookie_hv);
+					}
+				}
+
+				return cookies_unvalidated;
+			}
+		}
+
 		public HttpCookieCollection Cookies {
 			get {
 				if (cookies == null) {
-					if (worker_request == null) {
-						cookies = new HttpCookieCollection ();
-					} else {
-						string cookie_hv = worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderCookie);
-						cookies = new HttpCookieCollection (cookie_hv);
-					}
+					cookies = CookiesNoValidation;
 				}
 
 #if TARGET_J2EE
@@ -737,10 +751,20 @@ namespace System.Web
 			}
 		}
 
+        	internal NameValueCollection HeadersNoValidation {
+			get {
+				if (headers_unvalidated == null) {
+					headers_unvalidated = new HeadersCollection (this);
+				}
+			
+                		return headers_unvalidated;
+			}
+		}
+
 		public NameValueCollection Headers {
 			get {
 				if (headers == null) {
-					headers = new HeadersCollection (this);
+					headers = HeadersNoValidation;
 #if NET_4_0
 					if (validateRequestNewMode) {
 						RequestValidator validator = RequestValidator.Current;
@@ -1226,12 +1250,23 @@ namespace System.Web
 			}
 		}
 
+        	internal string PathInfoNoValidation {
+        		get {
+        			if (path_info_unvalidated == null) {
+					if (worker_request == null)
+						return String.Empty;
+
+					path_info_unvalidated = worker_request.GetPathInfo () ?? String.Empty;
+                		}
+
+                		return path_info_unvalidated;
+        		}
+        	}
+
 		public string PathInfo {
 			get {
 				if (path_info == null) {
-					if (worker_request == null)
-						return String.Empty;
-					path_info = worker_request.GetPathInfo () ?? String.Empty;
+					path_info = PathInfoNoValidation;
 #if NET_4_0
 					if (validateRequestNewMode) {
 						RequestValidator validator = RequestValidator.Current;
@@ -1335,16 +1370,26 @@ namespace System.Web
 			}
 		}
 
+		internal string RawUrlUnvalidated {
+			get {
+				if (raw_url_unvalidated == null) {
+					if (worker_request != null)
+						raw_url_unvalidated = worker_request.GetRawUrl ();
+					else
+						raw_url_unvalidated = UrlComponents.Path + UrlComponents.Query;
+					
+					if (raw_url_unvalidated == null)
+						raw_url_unvalidated = String.Empty;
+				}
+
+				return raw_url_unvalidated;
+			}
+		}
+
 		public string RawUrl {
 			get {
 				if (raw_url == null) {
-					if (worker_request != null)
-						raw_url = worker_request.GetRawUrl ();
-					else
-						raw_url = UrlComponents.Path + UrlComponents.Query;
-					
-					if (raw_url == null)
-						raw_url = String.Empty;
+					raw_url = RawUrlUnvalidated;
 #if NET_4_0
 					if (validateRequestNewMode) {
 						RequestValidator validator = RequestValidator.Current;
@@ -1397,6 +1442,26 @@ namespace System.Web
 				return (int) ins.Length;
 			}
 		}
+
+#if NET_4_5
+		public UnvalidatedRequestValues Unvalidated { 
+			get {
+				var vals = new UnvalidatedRequestValues ();
+				
+				vals.Cookies = CookiesNoValidation;
+				vals.Files = Files;
+				vals.Form = FormUnvalidated;
+				vals.Headers = HeadersNoValidation;
+				vals.Path = PathNoValidation;
+				vals.PathInfo = PathInfoNoValidation;
+				vals.QueryString = QueryStringUnvalidated;
+				vals.RawUrl = RawUrlUnvalidated;
+				vals.Url = Url;
+				
+				return vals;
+			}
+		}
+#endif
 
 		public Uri Url {
 			get {

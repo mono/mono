@@ -208,6 +208,12 @@ namespace System.Web
 			get { return w.TotalBytes; }
 		}
 
+#if NET_4_5
+		public override UnvalidatedRequestValuesBase Unvalidated { 
+			get { return new UnvalidatedRequestValuesWrapper (w.Unvalidated); } 
+		}
+#endif
+
 		public override Uri Url {
 			get { return w.Url; }
 		}
