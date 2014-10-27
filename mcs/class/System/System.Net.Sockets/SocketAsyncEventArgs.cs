@@ -260,6 +260,8 @@ namespace System.Net.Sockets
 				curSocket.EndConnect (ares);
  			} catch (SocketException se) {
 				SocketError = se.SocketErrorCode;
+			} catch (ObjectDisposedException) {
+				SocketError = SocketError.OperationAborted;
 			} finally {
 				OnCompleted (this);
 			}
