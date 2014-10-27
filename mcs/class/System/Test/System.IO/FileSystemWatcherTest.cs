@@ -11,12 +11,73 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Threading;
+using System.Diagnostics;
 
 namespace MonoTests.System.IO
 {
 	[TestFixture]
 	public class FileSystemWatcherTest
 	{
+		static string fswPath = Path.Combine (Path.GetTempPath (), "fsw");
+		static string createPath = Path.Combine (fswPath, "FSWTest");
+		static string fileToCreate = Path.Combine (createPath, "a.txt");
+
+		static string deletePath = Path.Combine (fswPath, "FSWTestDelete");
+		static string fileToDelete = Path.Combine (deletePath, "deleteMe.txt");
+
+		static string modifyPath = Path.Combine (fswPath, "FSWTestModify");
+		static string fileToModify = Path.Combine (modifyPath, "modifyMe.txt");
+
+		static string renamePath = Path.Combine (fswPath, "FSWTestRename");
+		static string sourceFile = Path.Combine (renamePath, "renameMe-src.txt");
+		static string destFile = Path.Combine (renamePath, "renameMe-dest.txt");
+
+		AutoResetEvent eventFired = new AutoResetEvent (false);
+		WatcherChangeTypes lastChangeType;
+		string lastName, lastFullPath;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup ()
+		{
+			if (!Directory.Exists (createPath))
+				Directory.CreateDirectory (createPath);
+
+			if (!Directory.Exists (deletePath))
+				Directory.CreateDirectory (deletePath);
+
+			if (!Directory.Exists (modifyPath))
+				Directory.CreateDirectory (modifyPath);
+
+			if (!Directory.Exists (renamePath))
+				Directory.CreateDirectory (renamePath);
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown ()
+		{
+			if (Directory.Exists (createPath))
+				Directory.Delete (createPath, true);
+
+			if (Directory.Exists (deletePath))
+				Directory.Delete (deletePath);
+
+			if (File.Exists (fileToModify))
+				File.Delete (fileToModify);
+
+			if (Directory.Exists (modifyPath))
+				Directory.Delete (modifyPath);
+
+			if (File.Exists (destFile))
+				File.Delete (destFile);
+
+			if (Directory.Exists (renamePath))
+				Directory.Delete (renamePath);
+
+			if (Directory.Exists (fswPath))
+				Directory.Delete (fswPath);
+		}
+
 		[Test]
 		public void CheckDefaults ()
 		{
@@ -82,6 +143,145 @@ namespace MonoTests.System.IO
 		{
 			FileSystemWatcher fw = new FileSystemWatcher (Path.GetTempPath (), "*");
 			fw.Path = "*";
+		}
+
+
+		[Test]
+		public void TestWatchPathForFileCreation ()
+		{
+			FileSystemEventHandler createdDelegate = delegate (object o, FileSystemEventArgs e) {
+				eventFired.Set ();
+				lastChangeType = WatcherChangeTypes.Created;
+			};
+
+			var fsw = new FileSystemWatcher (fswPath);
+			fsw.IncludeSubdirectories = true;
+			fsw.Created += createdDelegate;
+			fsw.EnableRaisingEvents = true;
+			Thread.Sleep (1000);
+
+			Assert.IsFalse (File.Exists (fileToCreate));
+
+			File.WriteAllText (fileToCreate, "this should create the file");
+			bool gotEvent = eventFired.WaitOne (20000, true);
+
+			Assert.IsTrue (File.Exists (fileToCreate));
+
+			Assert.IsTrue (gotEvent);
+			Assert.IsTrue ((lastChangeType == WatcherChangeTypes.Created));
+
+			fsw.EnableRaisingEvents = false;
+			fsw.Created -= createdDelegate;
+			fsw.Dispose ();
+		}
+
+		[Test]
+		public void TestWatchPathForFileDelete ()
+		{
+			File.WriteAllText (fileToDelete, "this file will be deleted");
+
+			FileSystemEventHandler deletedDelegate = delegate (object o, FileSystemEventArgs e) {
+				eventFired.Set ();
+				lastChangeType = WatcherChangeTypes.Deleted;
+			};
+
+			var fsw = new FileSystemWatcher (fswPath);
+			fsw.IncludeSubdirectories = true;
+			fsw.Deleted += deletedDelegate;
+			fsw.EnableRaisingEvents = true;
+			Thread.Sleep (1000);
+
+			Assert.IsTrue (File.Exists (fileToDelete));
+
+			File.Delete (fileToDelete);
+			bool gotEvent = eventFired.WaitOne (5000, true);
+
+			Assert.IsTrue (gotEvent);
+			Assert.IsTrue ((lastChangeType == WatcherChangeTypes.Deleted));
+
+			fsw.EnableRaisingEvents = false;
+			fsw.Deleted -= deletedDelegate;
+			fsw.Dispose ();
+		}
+
+		[Test]
+		public void TestWatchPathForFileModify ()
+		{
+			File.WriteAllText (fileToModify, "this file will be changed");
+
+			FileSystemEventHandler changedDelegate = delegate (object o, FileSystemEventArgs e) {
+				eventFired.Set ();
+				lastChangeType = WatcherChangeTypes.Changed;
+			};
+
+			var fsw = new FileSystemWatcher (fswPath);
+			fsw.Changed += changedDelegate;
+			fsw.IncludeSubdirectories = true;
+			fsw.EnableRaisingEvents = true;
+			Thread.Sleep (1000);
+
+			Assert.IsTrue (File.Exists (fileToModify));
+
+			// XXX
+			// This isn't portable to Windows, but nothing else seems to work
+			// on OSX.
+			Process.Start ("touch", fileToModify);
+
+			//File.AppendAllText (fileToModify, "change is scary");
+
+			/* using (StreamWriter sw = File.AppendText (fileToModify)) */
+			/* { */
+			/*   sw.WriteLine("change is scary"); */
+			/*   sw.Flush (); */
+			/* } */
+
+			/* using (var sw = new StreamWriter (fileToModify, true)) { */
+			/*   sw.WriteLine ("change is scary"); */
+			/* } */
+
+			bool gotEvent = eventFired.WaitOne (4000, true);
+
+			Assert.IsTrue (gotEvent);
+			Assert.IsTrue ((lastChangeType == WatcherChangeTypes.Changed));
+
+			fsw.EnableRaisingEvents = false;
+			fsw.Changed -= changedDelegate;
+			fsw.Dispose ();
+		}
+
+		[Test]
+		public void TestWatchPathForFileRename ()
+		{
+			File.WriteAllText (sourceFile, "this file will be renamed");
+
+			RenamedEventHandler renamedDelegate = delegate (object o, RenamedEventArgs e) {
+				eventFired.Set ();
+				lastChangeType = WatcherChangeTypes.Renamed;
+			};
+
+			var fsw = new FileSystemWatcher (fswPath);
+			fsw.Renamed += renamedDelegate;
+			fsw.IncludeSubdirectories = true;
+			fsw.EnableRaisingEvents = true;
+			Thread.Sleep (1000);
+
+			Assert.IsTrue (File.Exists (sourceFile));
+			Assert.IsFalse (File.Exists (destFile));
+
+			// XXX
+			// This isn't portable to Windows.
+			Process.Start ("mv", sourceFile + " " + destFile);
+
+			bool gotEvent = eventFired.WaitOne (4000, true);
+
+			Assert.IsTrue (gotEvent);
+			Assert.IsTrue ((lastChangeType == WatcherChangeTypes.Renamed));
+			Assert.IsTrue (File.Exists (destFile));
+			Assert.IsFalse (File.Exists (sourceFile));
+
+			fsw.EnableRaisingEvents = false;
+			fsw.Renamed -= renamedDelegate;
+			fsw.Dispose ();
 		}
 	}
 }
