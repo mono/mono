@@ -88,16 +88,6 @@ namespace System.Web.Configuration {
 			}
 		}
 
-		static bool hasConfigErrors = false;
-		static object hasConfigErrorsLock = new object ();
-		static internal bool HasConfigErrors {
-			get {
-				lock (hasConfigErrorsLock) {
-					return hasConfigErrors;
-				}
-			}
-		}
-
 		const int DEFAULT_SECTION_CACHE_SIZE = 100;
 		const string CACHE_SIZE_OVERRIDING_KEY = "MONO_ASPNET_WEBCONFIG_CACHESIZE";
 		static LruCache<int, object> sectionCache;
@@ -275,15 +265,8 @@ namespace System.Web.Configuration {
 			_Configuration conf = null;
 			conf = (_Configuration) configurations [confKey];
 			if (conf == null) {
-				try {
-					conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password, inAnotherApp);
-					configurations [confKey] = conf;
-				} catch (Exception ex) {
-					lock (hasConfigErrorsLock) {
-						hasConfigErrors = true;
-					}
-					throw ex;
-				}
+				conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password, inAnotherApp);
+				configurations [confKey] = conf;
 			}
 			return conf;
 		}
