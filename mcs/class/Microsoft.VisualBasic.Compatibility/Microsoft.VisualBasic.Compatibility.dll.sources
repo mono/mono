@@ -2,4 +2,5 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs.in
 ../../build/common/Locale.cs
 
+Microsoft.VisualBasic.Compatibility.VB6/ScaleMode.cs
 Microsoft.VisualBasic.Compatibility.VB6/ZOrderConstants.cs
