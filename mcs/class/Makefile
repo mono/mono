@@ -46,6 +46,7 @@ net_2_0_dirs := \
 	System.Management		\
 	System.Data.OracleClient	\
 	Microsoft.VisualC		\
+	Microsoft.VisualBasic.Compatibility \
 	Cscompmgd			\
 	PEAPI				\
 	Npgsql				\
