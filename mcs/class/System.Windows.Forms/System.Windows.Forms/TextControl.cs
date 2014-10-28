@@ -4153,6 +4153,8 @@ namespace System.Windows.Forms {
 			Draw (dc, color, xoff, y, start, end);
 			if (measureText) {
 				measuredText = new Rectangle(Point.Round (new PointF (xoff + Line.widths [start], y)), Size.Round (picture.Size));
+			} else {
+				measuredText = new Rectangle();
 			}
 		}
 
