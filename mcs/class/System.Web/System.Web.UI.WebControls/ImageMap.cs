@@ -183,11 +183,7 @@ namespace System.Web.UI.WebControls
 #if NET_4_0
 							if (enabled) {
 #endif
-#if TARGET_J2EE
-								string navUrl = ResolveClientUrl (spot.NavigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
-#else
 								string navUrl = ResolveClientUrl (spot.NavigateUrl);
-#endif
 								writer.AddAttribute (HtmlTextWriterAttribute.Href, navUrl);
 #if NET_4_0
 							}

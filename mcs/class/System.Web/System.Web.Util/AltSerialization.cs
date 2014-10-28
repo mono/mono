@@ -78,12 +78,6 @@ namespace System.Web.Util {
 				w.Write ((long) value);
 				break;
 			case TypeCode.Object:
-#if TARGET_J2EE
-				if (w.BaseStream is java.io.ObjectOutput) {
-					((java.io.ObjectOutput) w.BaseStream).writeObject (value);
-					return;
-				}
-#endif
 				BinaryFormatter bf = new BinaryFormatter ();
 				bf.Serialize (w.BaseStream, value);
 				break;
@@ -136,10 +130,6 @@ namespace System.Web.Util {
 			case TypeCode.Int64:
 				return r.ReadInt64 ();
 			case TypeCode.Object:
-#if TARGET_J2EE
-				if (r.BaseStream is java.io.ObjectInput)
-					return ((java.io.ObjectInput) r.BaseStream).readObject ();
-#endif
 				BinaryFormatter bf = new BinaryFormatter ();
 				return bf.Deserialize (r.BaseStream);
 			case TypeCode.SByte:

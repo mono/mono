@@ -59,11 +59,7 @@ namespace System.Web.UI.WebControls
 			string t = Target;
 			string s = NavigateUrl;
 			if (s.Length > 0)
-#if TARGET_J2EE
-				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveClientUrl (s, String.Compare (t, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0));
-#else
 				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveClientUrl (s));
-#endif
 			if (t.Length > 0)
 				w.AddAttribute (HtmlTextWriterAttribute.Target, t);
 		}

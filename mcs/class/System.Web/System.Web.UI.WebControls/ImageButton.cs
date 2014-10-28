@@ -189,11 +189,7 @@ namespace System.Web.UI.WebControls
 			Page page = Page;
 			
 			options.ActionUrl = (PostBackUrl.Length > 0 ?
-#if TARGET_J2EE
-					     CreateActionUrl (PostBackUrl)
-#else
 					     (page != null ? page.ResolveClientUrl (PostBackUrl) : null)
-#endif
 					     : null);
 
 			options.Argument = String.Empty;

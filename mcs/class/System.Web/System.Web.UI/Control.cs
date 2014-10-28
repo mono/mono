@@ -619,7 +619,6 @@ namespace System.Web.UI
 			}
 		}
 
-#if !TARGET_J2EE
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("A virtual directory containing the parent of the control.")]
@@ -655,7 +654,6 @@ namespace System.Web.UI
 				return _templateSourceDirectory;
 			}
 		}
-#endif
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -673,10 +671,6 @@ namespace System.Web.UI
 				string prefix = container.UniqueID;
 				if (container == Page || prefix == null) {
 					uniqueID = _userId;
-#if TARGET_J2EE
-					if (getFacesContext () != null)
-						uniqueID = getFacesContext ().getExternalContext ().encodeNamespace (uniqueID);
-#endif
 					return uniqueID;
 				}
 
@@ -1553,37 +1547,6 @@ namespace System.Web.UI
 			if (relativeUrl.Length == 0)
 				return String.Empty;
 
-#if TARGET_J2EE
-			relativeUrl = ResolveClientUrlInternal (relativeUrl);
-
-			javax.faces.context.FacesContext faces = getFacesContext ();
-			if (faces == null)
-				return relativeUrl;
-
-			string url;
-			if (relativeUrl.IndexOf (':') >= 0)
-				url = ResolveAppRelativeFromFullPath (relativeUrl);
-			else if (VirtualPathUtility.IsAbsolute (relativeUrl))
-				url = VirtualPathUtility.ToAppRelative (relativeUrl);
-			else
-				return faces.getApplication ().getViewHandler ().getResourceURL (faces, relativeUrl);
-
-			if (VirtualPathUtility.IsAppRelative (url)) {
-				url = url.Substring (1);
-				url = url.Length == 0 ? "/" : url;
-				return faces.getApplication ().getViewHandler ().getResourceURL (faces, url);
-			}
-			return relativeUrl;
-		}
-		
-		string ResolveClientUrlInternal (string relativeUrl) {
-			if (relativeUrl.StartsWith (J2EE.J2EEConsts.ACTION_URL_PREFIX, StringComparison.Ordinal))
-				return CreateActionUrl (relativeUrl.Substring (J2EE.J2EEConsts.ACTION_URL_PREFIX.Length));
-
-			if (relativeUrl.StartsWith (J2EE.J2EEConsts.RENDER_URL_PREFIX, StringComparison.Ordinal))
-				return ResolveClientUrl (relativeUrl.Substring (J2EE.J2EEConsts.RENDER_URL_PREFIX.Length));
-
-#endif
 			if (VirtualPathUtility.IsAbsolute (relativeUrl) || relativeUrl.IndexOf (':') >= 0)
 				return relativeUrl;
 

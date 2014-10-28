@@ -130,15 +130,6 @@ namespace System.Web.SessionState
 					break;
 				case SessionStateMode.Off:
 					return;
-#if TARGET_J2EE
-				default:
-					config = new SessionStateSection ();
-					config.Mode = SessionStateMode.Custom;
-					config.CustomProvider = "ServletSessionStateStore";
-					config.SessionIDManagerType = "Mainsoft.Web.SessionState.ServletSessionIDManager";
-					config.Providers.Add (new ProviderSettings ("ServletSessionStateStore", "Mainsoft.Web.SessionState.ServletSessionStateStoreProvider"));
-					goto case SessionStateMode.Custom;
-#else
 				case SessionStateMode.InProc:
 					settings = new ProviderSettings (null, typeof (SessionInProcHandler).AssemblyQualifiedName);
 					break;
@@ -154,7 +145,6 @@ namespace System.Web.SessionState
 				default:
 					throw new NotImplementedException (String.Format ("The mode '{0}' is not implemented.", config.Mode));
 			
-#endif
 			}
 
 			handler = (SessionStateStoreProviderBase) ProvidersHelper.InstantiateProvider (settings, typeof (SessionStateStoreProviderBase));
@@ -304,14 +294,9 @@ namespace System.Web.SessionState
 					handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
 					handler.RemoveItem (context, container.SessionID, storeLockId, storeData);
 					if (supportsExpiration)
-#if TARGET_J2EE
-						;
-					else
-#else
 						// Make sure the expiration handler is not called after we will have raised
 						// the session end event.
 						handler.SetItemExpireCallback (null);
-#endif
 					SessionStateUtility.RaiseSessionEnd (container, this, args);
 				}
 				SessionStateUtility.RemoveHttpSessionStateFromContext (context);

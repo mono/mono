@@ -145,24 +145,7 @@ return this._invoke({0}.get_path(), '{1}',{2},{{{3}}},succeededCallback,failedCa
 			public abstract void Invoke (HttpRequest request, HttpResponse response);
 		}
 
-#if !TARGET_J2EE
 		static Hashtable _type_to_logical_type = Hashtable.Synchronized (new Hashtable ());
-#else
-		const string type_to_logical_type_key = "System.Web.Script.Services.LogicalTypeInfo";
-		static Hashtable _type_to_logical_type {
-			get {
-				Hashtable hash = (Hashtable) AppDomain.CurrentDomain.GetData (type_to_logical_type_key);
-
-				if (hash != null)
-					return hash;
-
-				AppDomain.CurrentDomain.SetData (type_to_logical_type_key, Hashtable.Synchronized (new Hashtable ()));
-
-
-				return (Hashtable) AppDomain.CurrentDomain.GetData (type_to_logical_type_key);
-			}
-		}
-#endif
 
 		static internal LogicalTypeInfo GetLogicalTypeInfo (Type t, string filePath) {
 			Hashtable type_to_manager = _type_to_logical_type;

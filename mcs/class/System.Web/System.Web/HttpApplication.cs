@@ -80,9 +80,6 @@ using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.Util;
 
-#if TARGET_J2EE
-using Mainsoft.Web;
-#endif
 	
 namespace System.Web
 {
@@ -161,15 +158,7 @@ namespace System.Web
 
 		static string binDirectory;
 		
-#if TARGET_J2EE
-		const string initialization_exception_key = "System.Web.HttpApplication.initialization_exception";
-		static Exception initialization_exception {
-			get { return (Exception) AppDomain.CurrentDomain.GetData (initialization_exception_key); }
-			set { AppDomain.CurrentDomain.SetData (initialization_exception_key, value); }
-		}
-#else
 		static volatile Exception initialization_exception;
-#endif
 		bool removeConfigurationFromCache;
 		bool fullInitComplete = false;
 		
@@ -925,33 +914,10 @@ namespace System.Web
 		internal void Tick ()
 		{
 			try {
-#if TARGET_J2EE
-				if (context.Error is UnifyRequestException) {
-					Exception ex = context.Error.InnerException;
-					context.ClearError ();
-					vmw.common.TypeUtils.Throw (ex);
-				}
-				try {
-#endif		
 				if (pipeline.MoveNext ()){
 					if ((bool)pipeline.Current)
 						PipelineDone ();
 				}
-#if TARGET_J2EE
-				}
-				catch (Exception ex) {
-					if (ex is ThreadAbortException && 
-						((ThreadAbortException) ex).ExceptionState == FlagEnd.Value)
-						throw;
-					if (context.WorkerRequest is IHttpUnifyWorkerRequest) {
-						context.ClearError ();
-						context.AddError (new UnifyRequestException (ex));
-						return;
-					}
-					else
-						throw;
-				}
-#endif
 			} catch (ThreadAbortException taex) {
 				object obj = taex.ExceptionState;
 				Thread.ResetAbort ();
@@ -1341,10 +1307,6 @@ namespace System.Web
 			StopTimer ();
 			
 				
-#if TARGET_J2EE
-		processHandler:
-			bool doProcessHandler = false;
-#endif
 			
 			IHttpHandler ctxHandler = context.Handler;
 			if (ctxHandler != null && handler != ctxHandler) {
@@ -1366,10 +1328,6 @@ namespace System.Web
 					} else {
 						must_yield = false;
 						handler.ProcessRequest (context);
-#if TARGET_J2EE
-						IHttpExtendedHandler extHandler=handler as IHttpExtendedHandler;
-						doProcessHandler = extHandler != null && !extHandler.IsCompleted;
-#endif
 					}
 				} else
 					throw new InvalidOperationException ("No handler for the current request.");
@@ -1380,12 +1338,6 @@ namespace System.Web
 				context.EndTimeoutPossible ();
 			}
 			StopTimer ();
-#if TARGET_J2EE
-			if (doProcessHandler) {
-				yield return false;
-				goto processHandler;
-			}
-#endif
 			if (must_yield)
 				yield return stop_processing;
 			else if (stop_processing)
@@ -1492,9 +1444,7 @@ namespace System.Web
 			autoCulture = cfg.IsAutoCulture;
 			appui_culture = cfg.GetUICulture ();
 			autoUICulture = cfg.IsAutoUICulture;
-#if !TARGET_J2EE
 			context.StartTimeoutTimer ();
-#endif
 			Thread th = Thread.CurrentThread;
 			if (app_culture != null) {
 				prev_app_culture = th.CurrentCulture;
@@ -1528,11 +1478,9 @@ namespace System.Web
 			if (prev_app_culture != null && prev_app_culture != th.CurrentCulture)
 				th.CurrentCulture = prev_app_culture;
 
-#if !TARGET_J2EE
 			if (context == null)
 				context = HttpContext.Current;
 			context.StopTimeoutTimer ();
-#endif
 			context.Request.ReleaseResources ();
 			context.Response.ReleaseResources ();
 			context = null;
@@ -1685,10 +1633,6 @@ namespace System.Web
 
 		void IHttpAsyncHandler.EndProcessRequest (IAsyncResult result)
 		{
-#if TARGET_J2EE
-			if (result == null)
-				result = begin_iar;
-#endif
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne ();
 			begin_iar = null;

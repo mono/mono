@@ -307,13 +307,8 @@ namespace System.Web
 
 		void FillHtmlizedErrorValues (ExceptionPageTemplateValues values, HtmlizedException exc, ref ExceptionPageTemplateType pageType)
 		{
-#if TARGET_J2EE
-			bool isParseException = false;
-			bool isCompileException = false;
-#else
 			bool isParseException = exc is ParseException;
 			bool isCompileException = (!isParseException && exc is CompilationException);
-#endif
 			values.Add (ExceptionPageTemplate.Template_PageTitleName, HtmlEncode (exc.Title));
 			values.Add (ExceptionPageTemplate.Template_DescriptionName, HtmlEncode (exc.Description));
 			values.Add (ExceptionPageTemplate.Template_StackTraceName, HtmlEncode (exc.StackTrace));
@@ -360,7 +355,6 @@ namespace System.Web
 			} else
 				values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionSourceFileName, FormatSourceFile (exc.FileName));
 
-#if !TARGET_J2EE
 			if (isCompileException) {
 				CompilationException cex = exc as CompilationException;
 				StringCollection output = cex.CompilerOutput;
@@ -381,7 +375,6 @@ namespace System.Web
 					values.Add (ExceptionPageTemplate.Template_HtmlizedExceptionCompilerOutputName, sb.ToString ());
 				}
 			}
-#endif
 		}
 		
 		void FillDefaultCustomErrorValues (ExceptionPageTemplateValues values)
@@ -454,11 +447,9 @@ namespace System.Web
 		
 		static void FormatSource (StringBuilder builder, StringBuilder longVersion, HtmlizedException e)
 		{
-#if !TARGET_J2EE
 			if (e is CompilationException)
 				WriteCompilationSource (builder, longVersion, e);
 			else
-#endif
 				WritePageSource (builder, e);
 		}
 
