@@ -63,7 +63,7 @@ namespace System.Collections.Concurrent
 		{
 			Node node = new Node ();
 			node.Value = item;
-			
+
 			Node oldTail = null;
 			Node oldNext = null;
 			
@@ -71,6 +71,8 @@ namespace System.Collections.Concurrent
 			while (!update) {
 				oldTail = tail;
 				oldNext = oldTail.Next;
+
+				Thread.MemoryBarrier ();
 				
 				// Did tail was already updated ?
 				if (tail == oldTail) {
@@ -104,6 +106,8 @@ namespace System.Collections.Concurrent
 				Node oldHead = head;
 				Node oldTail = tail;
 				oldNext = oldHead.Next;
+
+				Thread.MemoryBarrier ();
 				
 				if (oldHead == head) {
 					// Empty case ?
@@ -146,6 +150,8 @@ namespace System.Collections.Concurrent
 				}
 
 				result = oldNext.Value;
+
+				Thread.MemoryBarrier ();
 				
 				//check if head has been updated
 				update = head != oldHead;
