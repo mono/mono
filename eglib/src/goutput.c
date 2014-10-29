@@ -76,6 +76,30 @@ out_vfprintf (FILE *ignore, const gchar *format, va_list args)
 	/* TODO: provide a proper app name */
 	__android_log_vprint (ANDROID_LOG_ERROR, "mono", format, args);
 }
+#elif TIZEN
+#include <dlog/dlog.h>
+
+static log_priority
+to_tizen_priority (GLogLevelFlags log_level)
+{
+	switch (log_level & G_LOG_LEVEL_MASK)
+	{
+		case G_LOG_LEVEL_ERROR:     return DLOG_FATAL;
+		case G_LOG_LEVEL_CRITICAL:  return DLOG_ERROR;
+		case G_LOG_LEVEL_WARNING:   return DLOG_WARN;
+		case G_LOG_LEVEL_MESSAGE:   return DLOG_INFO;
+		case G_LOG_LEVEL_INFO:      return DLOG_DEBUG;
+		case G_LOG_LEVEL_DEBUG:     return DLOG_VERBOSE;
+	}
+	return DLOG_UNKNOWN;
+}
+
+static void 
+out_vfprintf (FILE *ignore, const gchar *format, va_list args)
+{
+	/* TODO: provide a proper app name */
+	dlog_print(DLOG_ERROR, "Unity", format, args);
+}
 #else
 static void 
 out_vfprintf (FILE *file, const gchar *format, va_list args)
@@ -150,6 +174,13 @@ g_logv (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, 
 	vasprintf (&msg, format, args);
 #if PLATFORM_ANDROID
 	__android_log_print (to_android_priority (log_level), 
+		/* TODO: provide a proper app name */
+		"mono", "%s%s%s",
+		log_domain != NULL ? log_domain : "",
+		log_domain != NULL ? ": " : "",
+		msg);
+#elif TIZEN
+	dlog_print (to_tizen_priority (log_level), 
 		/* TODO: provide a proper app name */
 		"mono", "%s%s%s",
 		log_domain != NULL ? log_domain : "",
