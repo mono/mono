@@ -7,5 +7,5 @@
  * (C) 2002 Ximian, Inc.
  */
 
-extern char *_mono_iolayer_dummylib;
-char *_mono_iolayer_dummylib="This is a dummy library that isn't needed on Windows";
+extern const char *_mono_iolayer_dummylib;
+const char *_mono_iolayer_dummylib="This is a dummy library that isn't needed on Windows";
