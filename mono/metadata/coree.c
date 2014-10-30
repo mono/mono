@@ -31,6 +31,14 @@ HMODULE coree_module_handle = NULL;
 
 static gboolean init_from_coree = FALSE;
 
+BOOL STDMETHODCALLTYPE _CorDllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpReserved);
+__int32 STDMETHODCALLTYPE _CorExeMain(void);
+void STDMETHODCALLTYPE CorExitProcess(int exitCode);
+STDAPI _CorValidateImage(PVOID *ImageBase, LPCWSTR FileName);
+STDAPI_(VOID) _CorImageUnloading(PVOID ImageBase);
+STDAPI CorBindToRuntimeEx(LPCWSTR pwszVersion, LPCWSTR pwszBuildFlavor, DWORD startupFlags, REFCLSID rclsid, REFIID riid, LPVOID FAR *ppv);
+STDAPI CorBindToRuntime(LPCWSTR pwszVersion, LPCWSTR pwszBuildFlavor, REFCLSID rclsid, REFIID riid, LPVOID FAR *ppv);
+
 gchar*
 mono_get_module_file_name (HMODULE module_handle)
 {
@@ -492,14 +500,14 @@ typedef struct _EXPORT_FIXUP
 
 /* Has to be binary ordered. */
 static const EXPORT_FIXUP ExportFixups[] = {
-	{"CorBindToRuntime", &CorBindToRuntime},
-	{"CorBindToRuntimeEx", &CorBindToRuntimeEx},
-	{"CorExitProcess", &CorExitProcess},
-	{"_CorDllMain", &_CorDllMain},
-	{"_CorExeMain", &_CorExeMain},
-	{"_CorImageUnloading", &_CorImageUnloading},
-	{"_CorValidateImage", &_CorValidateImage},
-	{NULL, NULL}
+	{"CorBindToRuntime", {&CorBindToRuntime}},
+	{"CorBindToRuntimeEx", {&CorBindToRuntimeEx}},
+	{"CorExitProcess", {&CorExitProcess}},
+	{"_CorDllMain", {&_CorDllMain}},
+	{"_CorExeMain", {&_CorExeMain}},
+	{"_CorImageUnloading", {&_CorImageUnloading}},
+	{"_CorValidateImage", {&_CorValidateImage}},
+	{NULL, {NULL}}
 };
 
 #define EXPORT_FIXUP_COUNT (sizeof(ExportFixups) / sizeof(EXPORT_FIXUP) - 1)
@@ -800,7 +808,7 @@ STDAPI MonoFixupExe(HMODULE ModuleHandle)
 					else
 					{
 						IMAGE_IMPORT_BY_NAME* ImportByName = (IMAGE_IMPORT_BY_NAME*)((DWORD_PTR)DosHeader + ImportThunkData->u1.AddressOfData);
-						ProcAddress = (DWORD_PTR)GetProcAddress(ImportModuleHandle, ImportByName->Name);
+						ProcAddress = (DWORD_PTR)GetProcAddress(ImportModuleHandle, (LPCSTR)ImportByName->Name);
 					}
 					if (ProcAddress == 0)
 						return E_FAIL;
