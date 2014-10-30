@@ -190,7 +190,6 @@ create_pipe (int *fds, GError **error)
 	}
 	return TRUE;
 }
-#endif /* G_OS_WIN32 */
 
 static int
 write_all (int fd, const void *vbuf, size_t n)
@@ -212,6 +211,7 @@ write_all (int fd, const void *vbuf, size_t n)
 	
 	return nwritten;
 }
+#endif /* G_OS_WIN32 */
 
 gboolean
 g_spawn_command_line_sync (const gchar *command_line,
