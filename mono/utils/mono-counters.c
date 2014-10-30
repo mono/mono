@@ -13,6 +13,10 @@
 #include <unistd.h>
 #endif
 
+#ifdef HOST_WIN32
+#include "inttypes.h"
+#endif
+
 struct _MonoCounter {
 	MonoCounter *next;
 	const char *name;
@@ -250,13 +254,26 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 		if ((counter->type & MONO_COUNTER_UNIT_MASK) == MONO_COUNTER_TIME)
 			fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)(*(gint64*)buffer) / 10000.0);
 		else
+#if defined(HOST_WIN32)
+			fprintf (outfile, ENTRY_FMT "%I64d\n", counter->name, *(long long *)buffer);
+#else
 			fprintf (outfile, ENTRY_FMT "%lld\n", counter->name, *(long long *)buffer);
+#endif
 		break;
 	case MONO_COUNTER_ULONG:
+#if defined(HOST_WIN32)
+		fprintf (outfile, ENTRY_FMT "%I64u\n", counter->name, *(unsigned long long *)buffer);
+#else
 		fprintf (outfile, ENTRY_FMT "%llu\n", counter->name, *(unsigned long long *)buffer);
+#endif
 		break;
 	case MONO_COUNTER_WORD:
+
+#if defined(HOST_WIN32)
+		fprintf (outfile, ENTRY_FMT "%I64u\n", counter->name, (unsigned long long)*(gssize*)buffer);
+#else
 		fprintf (outfile, ENTRY_FMT "%zd\n", counter->name, *(gssize*)buffer);
+#endif
 		break;
 	case MONO_COUNTER_DOUBLE:
 		fprintf (outfile, ENTRY_FMT "%.4f\n", counter->name, *(double*)buffer);
