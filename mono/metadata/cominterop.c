@@ -2487,11 +2487,11 @@ typedef gpointer (STDCALL *SysAllocStringLenFunc)(gunichar* str, guint32 len);
 typedef guint32 (STDCALL *SysStringLenFunc)(gpointer bstr);
 typedef void (STDCALL *SysFreeStringFunc)(gunichar* str);
 
+#ifndef HOST_WIN32
+
 static SysAllocStringLenFunc sys_alloc_string_len_ms = NULL;
 static SysStringLenFunc sys_string_len_ms = NULL;
 static SysFreeStringFunc sys_free_string_ms = NULL;
-
-#ifndef HOST_WIN32
 
 typedef struct tagSAFEARRAYBOUND {
 	ULONG cElements;
@@ -2508,6 +2508,8 @@ typedef int (STDCALL *SafeArrayPtrOfIndexFunc)(gpointer psa, glong* rgIndices, g
 typedef int (STDCALL *SafeArrayDestroyFunc)(gpointer psa);
 typedef int (STDCALL *SafeArrayPutElementFunc)(gpointer psa, glong* rgIndices, gpointer* ppvData);
 typedef gpointer (STDCALL *SafeArrayCreateFunc)(int vt, guint32 cDims, SAFEARRAYBOUND* rgsabound);
+
+#if !defined(HOST_WIN32)
 
 static SafeArrayGetDimFunc safe_array_get_dim_ms = NULL;
 static SafeArrayGetLBoundFunc safe_array_get_lbound_ms = NULL;
@@ -2607,6 +2609,7 @@ init_com_provider_ms (void)
 	initialized = TRUE;
 	return TRUE;
 }
+#endif
 
 gpointer
 mono_string_to_bstr (MonoString *string_obj)
