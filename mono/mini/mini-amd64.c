@@ -920,7 +920,7 @@ mono_arch_init (void)
 	breakpoint_size = 13;
 	breakpoint_fault_size = 3;
 	/* amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4); */
-	single_step_fault_size = 5;
+	single_step_fault_size = 4;
 #else
 	flags = MONO_MMAP_READ|MONO_MMAP_32BIT;
 	/* amd64_mov_reg_mem () */
