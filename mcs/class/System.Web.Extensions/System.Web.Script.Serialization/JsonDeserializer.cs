@@ -833,7 +833,7 @@ namespace System.Web.Script.Serialization
 
 		void CreateArray ()
 		{
-			var arr = new ArrayList ();
+			var arr = new List <object> ();
 			PushObject (arr);
 		}
 		
@@ -865,7 +865,7 @@ namespace System.Web.Script.Serialization
 		{
 			Dictionary <string, object> dict = PeekObject () as Dictionary <string, object>;
 			if (dict == null) {
-				ArrayList arr = PeekObject () as ArrayList;
+				List <object> arr = PeekObject () as List <object>;
 				if (arr == null)
 					throw new InvalidOperationException ("Internal error: current object is not a dictionary or an array.");
 				arr.Add (o);

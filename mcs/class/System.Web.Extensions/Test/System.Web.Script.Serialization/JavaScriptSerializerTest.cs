@@ -416,6 +416,22 @@ namespace MonoTests.System.Web.Script.Serialization
 		}
 
 		[Test]
+		public void TestDeserializeNonGenericOverload()
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer();
+			Assert.IsNull(ser.Deserialize("", typeof(X)));
+
+			X s = new X();
+			s.Init();
+			string x = ser.Serialize(s);
+
+			Assert.AreEqual("{\"z\":8,\"ch\":\"ｖ\",\"ch_null\":null,\"str\":\"ｖｗF59g\",\"b\":253,\"sb\":-48,\"sh\":-32740,\"ush\":65511,\"i\":-234235453,\"ui\":4294733061,\"l\":-9223372036854775780,\"ul\":18446744073709551612,\"f\":NaN,\"f1\":-Infinity,\"f2\":Infinity,\"f3\":-3.40282347E+38,\"f4\":3.40282347E+38,\"d\":NaN,\"d1\":-Infinity,\"d2\":Infinity,\"d3\":-1.7976931348623157E+308,\"d4\":1.7976931348623157E+308,\"de\":-1,\"de1\":0,\"de2\":1,\"de3\":-79228162514264337593543950335,\"de4\":79228162514264337593543950335,\"g\":\"000000ea-0002-0162-0102-030405060708\",\"nb\":null,\"dbn\":null,\"uri\":\"http://kostat@mainsoft/adfasdf/asdfasdf.aspx/asda/ads?a=b&c=d\",\"hash\":{\"mykey\":{\"BB\":10}},\"point\":{\"IsEmpty\":false,\"X\":150,\"Y\":150},\"MyEnum\":[1,10,345],\"MyEnum1\":[1,10,345],\"AA\":5,\"AA1\":[{\"BB\":10},{\"BB\":10}],\"BB\":18446744073709551610,\"YY\":[{\"BB\":10},{\"BB\":10}]}", x, "#A1");
+
+			X n = ser.Deserialize(x, typeof(X)) as X;
+			Assert.AreEqual(s, n, "#A2");
+		}
+
+		[Test]
 		public void TestDeserializeTypeResolver () 
 		{
 #if NET_4_5
