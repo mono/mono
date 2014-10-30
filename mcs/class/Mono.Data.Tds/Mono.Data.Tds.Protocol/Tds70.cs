@@ -489,6 +489,19 @@ namespace Mono.Data.Tds.Protocol
 			
 			Comm.Append ((byte) 0x00); // no param meta data name
 			Comm.Append ((byte) 0x00); // no status flags
+
+			// Convert BigNVarChar values larger than 4000 chars to nvarchar(max)
+			// Need to do this here so WritePreparedParameterInfo emit the
+			// correct data type
+			foreach (TdsMetaParameter param2 in parameters) {
+				var colType = param2.GetMetaType ();
+
+				if (colType == TdsColumnType.BigNVarChar) {
+					int size = param2.GetActualSize ();
+					if ((size >> 1) > 4000)
+						param2.Size = -1;
+				}
+			}
 			
 			// Write sql as a parameter value - UCS2
 			TdsMetaParameter param = new TdsMetaParameter ("sql", 
