@@ -533,7 +533,9 @@ mono_process_current_pid ()
 int
 mono_cpu_count (void)
 {
+#if defined(PLATFORM_ANDROID) || defined(_SC_NPROCESSORS_ONLN)
 	int count = 0;
+#endif
 #ifdef PLATFORM_ANDROID
 	/* Android tries really hard to save power by powering off CPUs on SMP phones which
 	 * means the normal way to query cpu count returns a wrong value with userspace API.
