@@ -3,7 +3,6 @@
 Assembly/AssemblyInfo.cs
 System.IdentityModel/CookieTransform.cs
 System.IdentityModel/OpenObject.cs
-System.IdentityModel/SignatureVerificationFailedException.cs
 System.IdentityModel.Claims/Claim.cs
 System.IdentityModel.Claims/ClaimSet.cs
 System.IdentityModel.Claims/ClaimTypes.cs
@@ -101,12 +100,9 @@ System.IdentityModel.Tokens/SecurityKeyUsage.cs
 System.IdentityModel.Tokens/SecurityToken.cs
 System.IdentityModel.Tokens/SecurityTokenDescriptor.cs
 System.IdentityModel.Tokens/SecurityTokenException.cs
-System.IdentityModel.Tokens/SecurityTokenExpiredException.cs
 System.IdentityModel.Tokens/SecurityTokenHandler.cs
 System.IdentityModel.Tokens/SecurityTokenHandlerCollection.cs
 System.IdentityModel.Tokens/SecurityTokenHandlerConfiguration.cs
-System.IdentityModel.Tokens/SecurityTokenNotYetValidException.cs
-System.IdentityModel.Tokens/SecurityTokenReplayDetectedException.cs
 System.IdentityModel.Tokens/SecurityTokenTypes.cs
 System.IdentityModel.Tokens/SecurityTokenValidationException.cs
 System.IdentityModel.Tokens/SessionSecurityToken.cs
