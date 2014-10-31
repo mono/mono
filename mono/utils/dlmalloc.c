@@ -1164,7 +1164,7 @@ int mspace_mallopt(int, int);
 
 /*------------------------------ internal #includes ---------------------- */
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(_MSC_VER)
 #pragma warning( disable : 4146 ) /* no "unsigned" warnings */
 #endif /* WIN32 */
 
