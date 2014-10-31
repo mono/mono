@@ -920,14 +920,14 @@ mono_arch_init (void)
 	breakpoint_size = 13;
 	breakpoint_fault_size = 3;
 	/* amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4); */
-	single_step_fault_size = 4;
 #else
 	flags = MONO_MMAP_READ|MONO_MMAP_32BIT;
 	/* amd64_mov_reg_mem () */
 	breakpoint_size = 8;
 	breakpoint_fault_size = 8;
-	single_step_fault_size = 8;
 #endif
+
+	single_step_fault_size = 4;
 
 	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
 	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
@@ -3539,14 +3539,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * a breakpoint is hit will step to the next IL offset.
 			 */
 			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
-				if (((guint64)ss_trigger_page >> 32) == 0)
-					amd64_mov_reg_mem (code, AMD64_R11, (guint64)ss_trigger_page, 4);
-				else {
-					MonoInst *var = cfg->arch.ss_trigger_page_var;
+				MonoInst *var = cfg->arch.ss_trigger_page_var;
 
-					amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
-					amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4);
-				}
+				amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
+				amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4);
 			}
 
 			/* 
