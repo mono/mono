@@ -1,5 +1,8 @@
 #include net_4_0_System.Web.dll.sources
 
+System.Web/EventHandlerTaskAsyncHelper.cs
+System.Web/HttpTaskAsyncHandler.cs
 System.Web/MimeMapping.cs
 System.Web/ReadEntityBodyMode.cs
-
+System.Web/TaskAsyncResult.cs
+System.Web/TaskEventHandler.cs
