@@ -269,15 +269,6 @@ namespace System {
 				return state.remaining.Length > 0;
 			}
 
-			if (state.elements.scheme == Uri.UriSchemeFile) {
-				// under Windows all file:// URI are considered UNC, which is not the case other MacOS (e.g. Silverlight)
-#if BOOTSTRAP_BASIC
-				state.elements.isUnc = (Path.DirectorySeparatorChar == '\\');
-#else
-				state.elements.isUnc = Environment.IsRunningOnWindows;
-#endif
-			}
-
 			return ParseDelimiter (state);
 		}
 
@@ -430,7 +421,17 @@ namespace System {
 			state.elements.host = state.elements.host.ToLowerInvariant ();
 
 			state.remaining = part.Substring (state.elements.host.Length);
-				
+
+			if (state.elements.scheme == Uri.UriSchemeFile &&
+				state.elements.host != "") {
+				// under Windows all file://host URI are considered UNC, which is not the case other MacOS (e.g. Silverlight)
+#if BOOTSTRAP_BASIC
+				state.elements.isUnc = (Path.DirectorySeparatorChar == '\\');
+#else
+				state.elements.isUnc = Environment.IsRunningOnWindows;
+#endif
+			}
+
 			return state.remaining.Length > 0;
 		}
 		
