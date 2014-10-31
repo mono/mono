@@ -74,7 +74,7 @@ mono_threads_core_suspend (MonoThreadInfo *info)
 
 	result = SuspendThread (handle);
 	if (result == (DWORD)-1) {
-		fprintf (stderr, "could not suspend thread %x (handle %p): %d\n", (unsigned int)id, handle, (int)GetLastError ()); fflush (stderr);
+		fprintf (stderr, "could not suspend thread %x (handle %p): %lu\n", (unsigned int)id, handle, GetLastError ()); fflush (stderr);
 		CloseHandle (handle);
 		return FALSE;
 	}
