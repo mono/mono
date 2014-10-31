@@ -48,7 +48,14 @@
  * array and another 1 for the actual value in the array.
  */
 
-#define SGEN_GRAY_QUEUE_SECTION_SIZE	(128 - 3)
+/* SGEN_GRAY_QUEUE_HEADER_SIZE is number of machine words */
+#ifdef SGEN_CHECK_GRAY_OBJECT_SECTIONS
+#define SGEN_GRAY_QUEUE_HEADER_SIZE	4
+#else
+#define SGEN_GRAY_QUEUE_HEADER_SIZE	2
+#endif
+
+#define SGEN_GRAY_QUEUE_SECTION_SIZE	(128 - SGEN_GRAY_QUEUE_HEADER_SIZE)
 
 #ifdef SGEN_CHECK_GRAY_OBJECT_SECTIONS
 typedef enum {
@@ -58,6 +65,12 @@ typedef enum {
  	GRAY_QUEUE_SECTION_STATE_FREED
 } GrayQueueSectionState;
 #endif
+
+typedef struct _GrayQueueEntry GrayQueueEntry;
+struct _GrayQueueEntry {
+	char *obj;
+	mword desc;
+};
 
 /*
  * This is a stack now instead of a queue, so the most recently added items are removed
@@ -75,7 +88,7 @@ struct _GrayQueueSection {
 #endif
 	int size;
 	GrayQueueSection *next;
-	char *objects [SGEN_GRAY_QUEUE_SECTION_SIZE];
+	GrayQueueEntry entries [SGEN_GRAY_QUEUE_SECTION_SIZE];
 };
 
 typedef struct _SgenGrayQueue SgenGrayQueue;
@@ -84,7 +97,7 @@ typedef void (*GrayQueueAllocPrepareFunc) (SgenGrayQueue*);
 typedef void (*GrayQueueEnqueueCheckFunc) (char*);
 
 struct _SgenGrayQueue {
-	char **cursor;
+	GrayQueueEntry *cursor;
 	GrayQueueSection *first;
 	GrayQueueSection *free_list;
 	GrayQueueAllocPrepareFunc alloc_prepare_func;
@@ -105,13 +118,25 @@ struct _SgenSectionGrayQueue {
 #endif
 };
 
-#define GRAY_LAST_CURSOR_POSITION(s) ((char**)(s)->objects + SGEN_GRAY_QUEUE_SECTION_SIZE - 1)
-#define GRAY_FIRST_CURSOR_POSITION(s) ((char**)(s)->objects)
+#define GRAY_LAST_CURSOR_POSITION(s) ((s)->entries + SGEN_GRAY_QUEUE_SECTION_SIZE - 1)
+#define GRAY_FIRST_CURSOR_POSITION(s) ((s)->entries)
 
-void sgen_gray_object_enqueue (SgenGrayQueue *queue, char *obj) MONO_INTERNAL;
-char* sgen_gray_object_dequeue (SgenGrayQueue *queue) MONO_INTERNAL;
+#ifdef HEAVY_STATISTICS
+extern unsigned long long stat_gray_queue_section_alloc;
+extern unsigned long long stat_gray_queue_section_free;
+extern unsigned long long stat_gray_queue_enqueue_fast_path;
+extern unsigned long long stat_gray_queue_dequeue_fast_path;
+extern unsigned long long stat_gray_queue_enqueue_slow_path;
+extern unsigned long long stat_gray_queue_dequeue_slow_path;
+#endif
+
+void sgen_init_gray_queues (void) MONO_INTERNAL;
+
+void sgen_gray_object_enqueue (SgenGrayQueue *queue, char *obj, mword desc) MONO_INTERNAL;
+GrayQueueEntry sgen_gray_object_dequeue (SgenGrayQueue *queue) MONO_INTERNAL;
 GrayQueueSection* sgen_gray_object_dequeue_section (SgenGrayQueue *queue) MONO_INTERNAL;
 void sgen_gray_object_enqueue_section (SgenGrayQueue *queue, GrayQueueSection *section) MONO_INTERNAL;
+void sgen_gray_object_queue_trim_free_list (SgenGrayQueue *queue) MONO_INTERNAL;
 void sgen_gray_object_queue_init (SgenGrayQueue *queue, GrayQueueEnqueueCheckFunc enqueue_check_func) MONO_INTERNAL;
 void sgen_gray_object_queue_init_invalid (SgenGrayQueue *queue) MONO_INTERNAL;
 void sgen_gray_object_queue_init_with_alloc_prepare (SgenGrayQueue *queue, GrayQueueEnqueueCheckFunc enqueue_check_func,
@@ -131,6 +156,60 @@ static inline gboolean
 sgen_gray_object_queue_is_empty (SgenGrayQueue *queue)
 {
 	return queue->first == NULL;
+}
+
+static inline MONO_ALWAYS_INLINE void
+GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, char* obj, mword desc)
+{
+#if SGEN_MAX_DEBUG_LEVEL >= 9
+	sgen_gray_object_enqueue (queue, obj, desc);
+#else
+	if (G_UNLIKELY (!queue->first || queue->cursor == GRAY_LAST_CURSOR_POSITION (queue->first))) {
+		sgen_gray_object_enqueue (queue, obj, desc);
+	} else {
+		GrayQueueEntry entry = { obj, desc };
+
+		HEAVY_STAT (stat_gray_queue_enqueue_fast_path ++);
+
+		*++queue->cursor = entry;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_enqueue (queue, queue->cursor, obj);
+#endif
+	}
+#endif
+}
+
+static inline MONO_ALWAYS_INLINE void
+GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, char** obj, mword *desc)
+{
+	GrayQueueEntry entry;
+#if SGEN_MAX_DEBUG_LEVEL >= 9
+	entry = sgen_gray_object_enqueue (queue);
+	*obj = entry.obj;
+	*desc = entry.desc;
+#else
+	if (!queue->first) {
+		HEAVY_STAT (stat_gray_queue_dequeue_fast_path ++);
+
+		*obj = NULL;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_dequeue (queue, queue->cursor, *obj);
+#endif
+	} else if (G_UNLIKELY (queue->cursor == GRAY_FIRST_CURSOR_POSITION (queue->first))) {
+		entry = sgen_gray_object_dequeue (queue);
+		*obj = entry.obj;
+		*desc = entry.desc;
+	} else {
+		HEAVY_STAT (stat_gray_queue_dequeue_fast_path ++);
+
+		entry = *queue->cursor--;
+		*obj = entry.obj;
+		*desc = entry.desc;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_dequeue (queue, queue->cursor + 1, *obj);
+#endif
+	}
+#endif
 }
 
 #endif

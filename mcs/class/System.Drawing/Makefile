@@ -13,13 +13,6 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -define:TEST -resource:Test/resources/indexed.
 	 -r:System.Drawing.dll -r:System.Runtime.Serialization.Formatters.Soap.dll -r:System.Xml.dll \
 	-nowarn:0618 -nowarn:219 -nowarn:169 -nowarn:1595
 
-ifeq (net_1_1_java, $(PROFILE))
-LIB_MCS_FLAGS +=				\
-	-r:System.Xml.dll			\
-	-r:rt.dll				\
-	-r:J2SE.Helpers.dll
-endif
-
 include ../../build/library.make
 
 EXTRA_DISTFILES = Test/resources/indexed.png	\

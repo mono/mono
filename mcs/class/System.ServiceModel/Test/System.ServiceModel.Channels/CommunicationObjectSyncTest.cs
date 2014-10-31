@@ -35,7 +35,7 @@ using System.ServiceModel.Channels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mono.Moonlight.UnitTesting;
 
-namespace MoonTest.ServiceModel {
+namespace MonoTests.System.ServiceModel.Channels {
 
 	[TestClass]
 	public class CommunicationObjectSyncTest {

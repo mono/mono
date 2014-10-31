@@ -37,6 +37,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using System.Security;
 
 using Mono.Security.Protocol.Ntlm;
 
@@ -392,11 +393,12 @@ namespace Mono.Data.Tds.Protocol
 			return IsConnected;
 		}
 
-		private static string EncryptPassword (string pass)
+		private static string EncryptPassword (SecureString secPass)
 		{
 			int xormask = 0x5a5a;
-			int len = pass.Length;
+			int len = secPass.Length;
 			char[] chars = new char[len];
+			string pass = GetPlainPassword(secPass);
 
 			for (int i = 0; i < len; ++i) {
 				int c = ((int) (pass[i])) ^ xormask;
@@ -487,6 +489,19 @@ namespace Mono.Data.Tds.Protocol
 			
 			Comm.Append ((byte) 0x00); // no param meta data name
 			Comm.Append ((byte) 0x00); // no status flags
+
+			// Convert BigNVarChar values larger than 4000 chars to nvarchar(max)
+			// Need to do this here so WritePreparedParameterInfo emit the
+			// correct data type
+			foreach (TdsMetaParameter param2 in parameters) {
+				var colType = param2.GetMetaType ();
+
+				if (colType == TdsColumnType.BigNVarChar) {
+					int size = param2.GetActualSize ();
+					if ((size >> 1) > 4000)
+						param2.Size = -1;
+				}
+			}
 			
 			// Write sql as a parameter value - UCS2
 			TdsMetaParameter param = new TdsMetaParameter ("sql", 

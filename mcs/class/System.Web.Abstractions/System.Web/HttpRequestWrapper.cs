@@ -232,6 +232,13 @@ namespace System.Web
 			get { return w.UserLanguages; }
 		}
 
+#if NET_4_5
+		public void Abort ()
+		{
+			w.WorkerRequest.CloseConnection();
+		}
+#endif
+
 		public override byte [] BinaryRead (int count)
 		{
 			return w.BinaryRead (count);

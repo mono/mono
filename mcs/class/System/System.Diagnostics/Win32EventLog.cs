@@ -28,7 +28,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -177,12 +177,11 @@ namespace System.Diagnostics
 
 				string [] sources = (string []) logKey.GetValue ("Sources");
 				if (sources != null) {
-					ArrayList temp = new ArrayList ();
+					var temp = new List<string> ();
 					for (int i = 0; i < sources.Length; i++)
 						if (sources [i] != source)
 							temp.Add (sources [i]);
-					string [] newSources = new string [temp.Count];
-					temp.CopyTo (newSources, 0);
+					string [] newSources = temp.ToArray ();
 					logKey.SetValue ("Sources", newSources);
 				}
 			}

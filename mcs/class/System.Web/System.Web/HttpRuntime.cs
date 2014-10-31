@@ -601,13 +601,6 @@ namespace System.Web
 		}
 #endif
 		
-#if TARGET_JVM
-		[MonoNotSupported ("UnloadAppDomain is not supported")]
-		public static void UnloadAppDomain ()
-		{
-			throw new NotImplementedException ("UnloadAppDomain is not supported");
-		}
-#else
 		//
 		// Called when we are shutting down or we need to reload an application
 		// that has been modified (touch global.asax) 
@@ -628,7 +621,6 @@ namespace System.Web
 				}
 			});
 		}
-#endif
 		//
 		// Shuts down the AppDomain
 		//

@@ -3240,6 +3240,7 @@ namespace MonoTests.System
 		}
 #endif
 
+
 		public class StuffToPick
 		{
 			public StuffToPick () {}
@@ -3248,6 +3249,11 @@ namespace MonoTests.System
 			public event Action Event;
 			public int Field;
 			public void GenericMethod<T> () {}
+
+			public void Dummy ()
+			{
+				Event += delegate {};
+			}
 		}
 
 		public class StuffToPick<T>
@@ -3257,7 +3263,12 @@ namespace MonoTests.System
 			public int Property { get; set; }
 			public event Action Event;
 			public int Field;
-			public void GenericMethod<T> () {}
+			public void GenericMethod<U> () {}
+
+			public void Dummy ()
+			{
+				Event += delegate {};
+			}
 		}
 
 		static void TestSerialization (CrossDomainTester tester, object o)

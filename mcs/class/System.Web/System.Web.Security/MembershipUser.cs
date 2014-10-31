@@ -94,7 +94,7 @@ namespace System.Web.Security
 
 		internal void UpdateUser ()
 		{
-			MembershipUser newUser = Provider.GetUser (name, false);
+			MembershipUser newUser = Provider.GetUser (UserName, false);
 			UpdateSelf (newUser);
 		}
 

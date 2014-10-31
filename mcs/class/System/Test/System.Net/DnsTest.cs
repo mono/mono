@@ -252,9 +252,6 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[ExpectedException (typeof (SocketException))]
-#if TARGET_JVM
-		[Ignore ("Ignore failures in Sys.Net")]
-#endif
 		public void GetHostByAddressString2 ()
 		{
 			Dns.GetHostByAddress ("123.255.23");

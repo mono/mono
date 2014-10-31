@@ -41,11 +41,9 @@ namespace System.Text.RegularExpressions {
 		}
 
 		internal static Group Fail = new Group ();
-#if !TARGET_JVM
 		public CaptureCollection Captures {
 			get { return captures; }
 		}
-#endif
 		public bool Success {
 			get { return success; }
 		}

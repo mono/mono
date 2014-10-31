@@ -1446,6 +1446,7 @@ namespace Mono.CSharp
 		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
 		public static readonly InternalType Namespace = new InternalType ("<namespace>");
 		public static readonly InternalType ErrorType = new InternalType ("<error>");
+		public static readonly InternalType VarOutType = new InternalType ("var out");
 
 		readonly string name;
 

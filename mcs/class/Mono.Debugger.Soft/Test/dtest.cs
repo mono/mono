@@ -2137,6 +2137,11 @@ public class DebuggerTests
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		AssertValue (42, v);
 
+		// virtual call
+		m = t.BaseType.GetMethod ("virtual_method");
+		v = this_obj.InvokeMethod (e.Thread, m, null, InvokeOptions.Virtual);
+		AssertValue ("V2", v);
+
 #if NET_4_5
 		// instance
 		m = t.GetMethod ("invoke_pass_ref");

@@ -287,8 +287,19 @@ mono_runtime_class_init_full (MonoVTable *vtable, gboolean raise_exception)
 	if (!klass->image->checked_module_cctor) {
 		mono_image_check_for_module_cctor (klass->image);
 		if (klass->image->has_module_cctor) {
-			MonoClass *module_klass = mono_class_get (klass->image, MONO_TOKEN_TYPE_DEF | 1);
-			MonoVTable *module_vtable = mono_class_vtable_full (vtable->domain, module_klass, raise_exception);
+			MonoError error;
+			MonoClass *module_klass;
+			MonoVTable *module_vtable;
+
+			module_klass = mono_class_get_checked (klass->image, MONO_TOKEN_TYPE_DEF | 1, &error);
+			if (!module_klass) {
+				exc = mono_error_convert_to_exception (&error);
+				if (raise_exception)
+					mono_raise_exception (exc);
+				return exc; 
+			}
+				
+			module_vtable = mono_class_vtable_full (vtable->domain, module_klass, raise_exception);
 			if (!module_vtable)
 				return NULL;
 			exc = mono_runtime_class_init_full (module_vtable, raise_exception);
@@ -4615,9 +4626,11 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 MonoObject *
 mono_object_new_from_token  (MonoDomain *domain, MonoImage *image, guint32 token)
 {
+	MonoError error;
 	MonoClass *class;
 
-	class = mono_class_get (image, token);
+	class = mono_class_get_checked (image, token, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 
 	return mono_object_new (domain, class);
 }
@@ -5047,10 +5060,10 @@ mono_string_new_size (MonoDomain *domain, gint32 len)
 	size_t size;
 
 	/* check for overflow */
-	if (len < 0 || len > ((SIZE_MAX - sizeof (MonoString) - 2) / 2))
+	if (len < 0 || len > ((SIZE_MAX - offsetof (MonoString, chars) - 2) / 2))
 		mono_gc_out_of_memory (-1);
 
-	size = (sizeof (MonoString) + ((len + 1) * 2));
+	size = (offsetof (MonoString, chars) + ((len + 1) * 2));
 	g_assert (size > 0);
 
 	vtable = mono_class_vtable (domain, mono_defaults.string_class);
@@ -5787,6 +5800,37 @@ mono_string_from_utf16 (gunichar2 *data)
 	return mono_string_new_utf16 (domain, data, len);
 }
 
+/**
+ * mono_string_from_utf32:
+ * @data: the UTF32 string (LPWSTR) to convert
+ *
+ * Converts a UTF32 (UCS-4)to a MonoString.
+ *
+ * Returns: a MonoString.
+ */
+MonoString *
+mono_string_from_utf32 (mono_unichar4 *data)
+{
+	MonoString* result = NULL;
+	mono_unichar2 *utf16_output = NULL;
+	GError *error = NULL;
+	glong items_written;
+	int len = 0;
+
+	if (!data)
+		return NULL;
+
+	while (data [len]) len++;
+
+	utf16_output = g_ucs4_to_utf16 (data, len, NULL, &items_written, &error);
+
+	if (error)
+		g_error_free (error);
+
+	result = mono_string_from_utf16 (utf16_output);
+	g_free (utf16_output);
+	return result;
+}
 
 static char *
 mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, gboolean ignore_error, MonoError *error)

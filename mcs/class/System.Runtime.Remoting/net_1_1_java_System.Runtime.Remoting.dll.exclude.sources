@@ -1,4 +1,0 @@
-System.Runtime.Remoting.Channels.Http/HttpRemotingHandlerFactory.cs
-System.Runtime.Remoting.Channels.Ipc/*.cs
-System.Runtime.Remoting.Channels.Ipc.Unix/*.cs
-System.Runtime.Remoting.Channels.Ipc.Win32/*.cs

@@ -55,7 +55,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			}
 		}
 
-#if NET_2_0 && !TARGET_JVM
+#if NET_2_0
 		public void SetContext ()
 		{            
 			SetContext (Context);
@@ -201,7 +201,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 #if NET_2_0
-#if !TARGET_DOTNET && !TARGET_JVM
+#if !TARGET_DOTNET
 		[Test]
 		public void ActionStringWithQuery ()
 		{

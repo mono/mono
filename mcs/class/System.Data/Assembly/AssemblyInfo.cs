@@ -51,18 +51,14 @@ using System.Runtime.InteropServices;
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-#if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
-#endif
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
 [assembly: AllowPartiallyTrustedCallers]
 
 [assembly: AssemblyDelaySign (true)]
-#if !TARGET_JVM
 	[assembly: AssemblyKeyFile("../ecma.pub")]
-#endif
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]

@@ -160,7 +160,9 @@ namespace System.Web.Hosting {
 		{
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
-			Host.RegisterObject (obj, false);
+
+			if (Host != null)
+				Host.RegisterObject (obj, false);
 		}
 
 		public static void RegisterVirtualPathProvider (VirtualPathProvider virtualPathProvider)
@@ -200,7 +202,9 @@ namespace System.Web.Hosting {
 		{
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
-			Host.UnregisterObject (obj);
+
+			if (Host != null)
+				Host.UnregisterObject (obj);
 		}
 	}
 }

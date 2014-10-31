@@ -239,6 +239,33 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual (new NameValueHeaderValue ("filename*", "utf-8''%C4%8D"), value.Parameters.First (), "#12");
 		}
 
+
+		[Test]
+		public void Properties_Name ()
+		{
+			var value = new ContentDispositionHeaderValue ("a");
+
+			value.Name = "aa";
+			Assert.AreEqual ("aa", value.Name, "#1");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "aa"), value.Parameters.First (), "#2");
+
+			value.Name = "č";
+			Assert.AreEqual ("č", value.Name, "#11");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "\"=?utf-8?B?xI0=?=\""), value.Parameters.First (), "#12");
+
+			value.Name = "(@)";
+			Assert.AreEqual ("\"(@)\"", value.Name, "#21");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "\"(@)\""), value.Parameters.First (), "#22");
+
+			value.Name = "\"č\"";
+			Assert.AreEqual ("č", value.Name, "#31");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "\"=?utf-8?B?xI0=?=\""), value.Parameters.First (), "#32");
+
+			value.Name = "\"quoted\"";
+			Assert.AreEqual ("\"quoted\"", value.Name, "#41");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "\"quoted\""), value.Parameters.First (), "#42");
+		}
+
 		[Test]
 		public void Properties_ModificationDate ()
 		{

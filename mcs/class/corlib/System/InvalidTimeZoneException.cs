@@ -24,8 +24,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if NET_4_0
-
 using System.Runtime.CompilerServices;
 
 namespace System
@@ -36,7 +34,10 @@ namespace System
 #elif NET_4_0
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
-	public class InvalidTimeZoneException : Exception
+#if NET_4_0
+	public
+#endif
+	class InvalidTimeZoneException : Exception
 	{
 		public InvalidTimeZoneException () : base ()
 		{}
@@ -51,5 +52,3 @@ namespace System
 		{}
 	}
 }
-
-#endif

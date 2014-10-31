@@ -10,6 +10,7 @@
 #include <mono/metadata/mempool-internals.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-dl.h>
+#include <mono/utils/mono-time.h>
 
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS
@@ -35,6 +36,8 @@ typedef struct {
 	LLVMValueRef got_var;
 	const char *got_symbol;
 	GHashTable *plt_entries;
+	GHashTable *plt_entries_ji;
+	GHashTable *method_to_lmethod;
 	char **bb_names;
 	int bb_names_len;
 	GPtrArray *used;
@@ -417,6 +420,7 @@ type_is_unsigned (EmitContext *ctx, MonoType *t)
 	switch (t->type) {
 	case MONO_TYPE_U1:
 	case MONO_TYPE_U2:
+	case MONO_TYPE_CHAR:
 	case MONO_TYPE_U4:
 	case MONO_TYPE_U8:
 		return TRUE;
@@ -434,7 +438,12 @@ static LLVMTypeRef
 type_to_llvm_arg_type (EmitContext *ctx, MonoType *t)
 {
 	LLVMTypeRef ptype = type_to_llvm_type (ctx, t);
-	
+
+	/*
+	 * This works on all abis except arm64/ios which passes multiple
+	 * arguments in one stack slot.
+	 */
+#ifndef TARGET_ARM64
 	if (ptype == LLVMInt8Type () || ptype == LLVMInt16Type ()) {
 		/* 
 		 * LLVM generates code which only sets the lower bits, while JITted
@@ -442,6 +451,7 @@ type_to_llvm_arg_type (EmitContext *ctx, MonoType *t)
 		 */
 		ptype = LLVMInt32Type ();
 	}
+#endif
 
 	return ptype;
 }
@@ -1272,6 +1282,7 @@ get_plt_entry (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gc
 {
 	char *callee_name = mono_aot_get_plt_symbol (type, data);
 	LLVMValueRef callee;
+	MonoJumpInfo *ji = NULL;
 
 	if (!callee_name)
 		return NULL;
@@ -1288,6 +1299,14 @@ get_plt_entry (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gc
 		LLVMSetVisibility (callee, LLVMHiddenVisibility);
 
 		g_hash_table_insert (ctx->lmodule->plt_entries, (char*)callee_name, callee);
+	}
+
+	if (ctx->cfg->compile_aot) {
+		ji = g_new0 (MonoJumpInfo, 1);
+		ji->type = type;
+		ji->data.target = data;
+
+		g_hash_table_insert (ctx->lmodule->plt_entries_ji, ji, callee);
 	}
 
 	return callee;
@@ -1805,7 +1824,7 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 				ctx->values [reg] = LLVMBuildLoad (builder, ctx->addresses [reg], "");
 			}
 		} else {
-			ctx->values [reg] = convert (ctx, ctx->values [reg], llvm_type_to_stack_type (type_to_llvm_type (ctx, sig->params [i])));
+			ctx->values [reg] = convert_full (ctx, ctx->values [reg], llvm_type_to_stack_type (type_to_llvm_type (ctx, sig->params [i])), type_is_unsigned (ctx, sig->params [i]));
 		}
 	}
 
@@ -3156,7 +3175,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				index = LLVMConstInt (LLVMInt32Type (), ins->inst_offset / size, FALSE);				
 				addr = LLVMBuildGEP (builder, convert (ctx, values [ins->inst_destbasereg], LLVMPointerType (t, 0)), &index, 1, "");
 			}
-			emit_store (ctx, bb, &builder, size, convert (ctx, LLVMConstInt (IntPtrType (), ins->inst_imm, FALSE), t), addr, is_volatile);
+			emit_store (ctx, bb, &builder, size, convert (ctx, LLVMConstInt (IntPtrType (), ins->inst_imm, FALSE), t), convert (ctx, addr, LLVMPointerType (t, 0)), is_volatile);
 			break;
 		}
 
@@ -4675,6 +4694,9 @@ mono_llvm_emit_method (MonoCompile *cfg)
 		/* FIXME: Free the LLVM IL for the function */
 	}
 
+	if (ctx->lmodule->method_to_lmethod)
+		g_hash_table_insert (ctx->lmodule->method_to_lmethod, cfg->method, method);
+
 	goto CLEANUP;
 
  FAILURE:
@@ -5331,6 +5353,8 @@ mono_llvm_create_aot_module (const char *got_symbol)
 
 	aot_module.llvm_types = g_hash_table_new (NULL, NULL);
 	aot_module.plt_entries = g_hash_table_new (g_str_hash, g_str_equal);
+	aot_module.plt_entries_ji = g_hash_table_new (NULL, NULL);
+	aot_module.method_to_lmethod = g_hash_table_new (NULL, NULL);
 }
 
 /*
@@ -5341,6 +5365,7 @@ mono_llvm_emit_aot_module (const char *filename, int got_size)
 {
 	LLVMTypeRef got_type;
 	LLVMValueRef real_got;
+	MonoLLVMModule *module = &aot_module;
 
 	/* 
 	 * Create the real got variable and replace all uses of the dummy variable with
@@ -5359,6 +5384,27 @@ mono_llvm_emit_aot_module (const char *filename, int got_size)
 	LLVMDeleteGlobal (aot_module.got_var);
 
 	emit_llvm_used (&aot_module);
+
+	/* Replace PLT entries for directly callable methods with the methods themselves */
+	{
+		GHashTableIter iter;
+		MonoJumpInfo *ji;
+		LLVMValueRef callee;
+
+		g_hash_table_iter_init (&iter, aot_module.plt_entries_ji);
+		while (g_hash_table_iter_next (&iter, (void**)&ji, (void**)&callee)) {
+			if (mono_aot_is_direct_callable (ji)) {
+				LLVMValueRef lmethod;
+
+				lmethod = g_hash_table_lookup (module->method_to_lmethod, ji->data.method);
+				/* The types might not match because the caller might pass an rgctx */
+				if (lmethod && LLVMTypeOf (callee) == LLVMTypeOf (lmethod)) {
+					mono_llvm_replace_uses_of (callee, lmethod);
+					mono_aot_mark_unused_llvm_plt_entry (ji);
+				}
+			}
+		}
+	}
 
 #if 0
 	{

@@ -33,7 +33,7 @@ using System.IO;
 using System.Data;
 using MonoTests.System.Data.Utils;
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture] public class NoNullAllowedExceptionTest
 	{

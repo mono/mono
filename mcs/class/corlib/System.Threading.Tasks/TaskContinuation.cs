@@ -94,7 +94,7 @@ namespace System.Threading.Tasks
 		public void Execute ()
 		{
 			if (!ContinuationStatusCheck (continuationOptions)) {
-				task.CancelReal ();
+				task.CancelReal (notifyParent : true);
 				task.Dispose ();
 				return;
 			}

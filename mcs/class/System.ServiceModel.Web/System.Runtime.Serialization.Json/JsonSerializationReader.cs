@@ -182,8 +182,18 @@ namespace System.Runtime.Serialization.Json
 					if (ct != null) {
 						return DeserializeGenericCollection (type, ct, instance);
 					} else {
-						TypeMap map = GetTypeMap (type);
-						return map.Deserialize (this, instance);
+						string typeHint = reader.GetAttribute ("__type");
+						if (typeHint != null) {
+							// this might be a derived & known type. We allow it when it's both.
+							Type exactType = GetRuntimeType (typeHint, type);
+							if (exactType == null)
+								throw SerializationError (String.Format ("Cannot load type '{0}'", typeHint));
+							 TypeMap map = GetTypeMap (exactType);
+							 return map.Deserialize (this, instance);
+						} else { // no type hint
+							TypeMap map = GetTypeMap (type);
+							 return map.Deserialize (this, instance);
+						}
 					}
 				}
 				else
@@ -198,24 +208,22 @@ namespace System.Runtime.Serialization.Json
 		}
 		
 
-		Type GetRuntimeType (string name)
+		Type GetRuntimeType (string name, Type baseType)
 		{
-			name = ToRuntimeTypeName (name);
+			string properName = ToRuntimeTypeName (name);
+
+			if (baseType != null && baseType.FullName.Equals (properName))
+				return baseType;
+
 			if (serializer.KnownTypes != null)
 				foreach (Type t in serializer.KnownTypes)
-					if (t.FullName == name)
+					if (t.FullName.Equals (properName)) 
 						return t;
-			var ret = root_type.Assembly.GetType (name, false) ?? Type.GetType (name, false);
-			if (ret != null)
-				return ret;
 
-			// We probably have to iterate all the existing
-			// assemblies that are loaded in current domain.
-			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
-				ret = ass.GetType (name, false);
-				if (ret != null)
-					return ret;
-			}
+			if (baseType != null)
+				foreach (var attr in baseType.GetCustomAttributes (typeof (KnownTypeAttribute), false))
+					if ((attr as KnownTypeAttribute).Type.FullName.Equals (properName))
+						return (attr as KnownTypeAttribute).Type;
 
 			return null;
 		}
@@ -230,7 +238,7 @@ namespace System.Runtime.Serialization.Json
 			case "object":
 				string runtimeType = reader.GetAttribute ("__type");
 				if (runtimeType != null) {
-					Type t = GetRuntimeType (runtimeType);
+					Type t = GetRuntimeType (runtimeType, null);
 					if (t == null)
 						throw SerializationError (String.Format ("Cannot load type '{0}'", runtimeType));
 					return ReadObject (t);
@@ -264,7 +272,7 @@ namespace System.Runtime.Serialization.Json
 				if (double.TryParse (v, NumberStyles.None, CultureInfo.InvariantCulture, out dbl))
 					return dbl;
 				decimal dec;
-				if (decimal.TryParse (v, NumberStyles.None, CultureInfo.InvariantCulture, out dec))
+				if (decimal.TryParse (v, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out dec))
 					return dec;
 				throw SerializationError (String.Format ("Invalid JSON input: {0}", v));
 			default:

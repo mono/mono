@@ -69,15 +69,11 @@ namespace System.Web
 		public override string Get (string name)
 		{
 			if (!_loaded) {
-#if TARGET_JVM
-				return InternalGet (name);
-#else
 				string s = InternalGet (name);
 				if (s != null && s.Length > 0)
 					return s;
 
 				LoadInfo ();
-#endif
 			}
 				
 			return base.Get (name);		

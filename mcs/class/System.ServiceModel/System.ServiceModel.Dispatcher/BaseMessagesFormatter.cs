@@ -281,9 +281,10 @@ namespace System.ServiceModel.Dispatcher
 			}
 			else {
 				int index = ParamsOffset (md.Body);
-				foreach (ParameterInfo pi in requestMethodParams)
+				foreach (ParameterInfo pi in replyMethodParams) {
 					if (pi.IsOut || pi.ParameterType.IsByRef)
 						parameters [pi.Position] = parts [index++];
+				}
 				return HasReturnValue (md.Body) ? parts [0] : null;
 			}
 		}

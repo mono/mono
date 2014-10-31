@@ -24,7 +24,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if (INSIDE_CORLIB && NET_4_0) || (!INSIDE_CORLIB && (NET_3_5 && !NET_4_0 && !MOBILE))
+#if INSIDE_CORLIB || (NET_3_5 && !NET_4_0 && !MOBILE)
 
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,7 +33,10 @@ using System.Text;
 
 namespace System
 {
-	public partial class TimeZoneInfo
+#if NET_4_0 || !INSIDE_CORLIB
+	public
+#endif
+	partial class TimeZoneInfo
 	{
 		public static TimeZoneInfo FromSerializedString (string source)
 		{

@@ -24,9 +24,11 @@
 //
 
 using System;
+using System.IO;
+using System.IO.Packaging;
 using System.Collections.Generic;
 
-namespace System.IO.Packaging.Tests {
+namespace MonoTests.System.IO.Packaging {
     
     class FakePackagePart : PackagePart {
 

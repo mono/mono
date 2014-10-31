@@ -90,11 +90,7 @@ namespace Tests.System.Web.UI
 			scd.AddComponentProperty ("myName2", "myCompId2");
 
 			string script = scd.DoGetScript ();
-#if TARGET_JVM
-			Assert.AreEqual ("$create(My.Type, null, null, {\"myName2\":\"myCompId2\",\"myName1\":\"myCompId1\"}, $get(\"Element1\"));", script);
-#else
 			Assert.AreEqual ("$create(My.Type, null, null, {\"myName1\":\"myCompId1\",\"myName2\":\"myCompId2\"}, $get(\"Element1\"));", script);
-#endif
 		}
 
 		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
@@ -105,11 +101,7 @@ namespace Tests.System.Web.UI
 			scd.AddElementProperty ("myName2", "myElemId2");
 
 			string script = scd.DoGetScript ();
-#if TARGET_JVM
-			Assert.AreEqual ("$create(My.Type, {\"myName2\":$get(\"myElemId2\"),\"myName1\":$get(\"myElemId1\")}, null, null, $get(\"Element1\"));", script);
-#else
 			Assert.AreEqual ("$create(My.Type, {\"myName1\":$get(\"myElemId1\"),\"myName2\":$get(\"myElemId2\")}, null, null, $get(\"Element1\"));", script);
-#endif
 		}
 
 		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
@@ -120,11 +112,7 @@ namespace Tests.System.Web.UI
 			scd.AddProperty ("myName2", "myValue2");
 
 			string script = scd.DoGetScript ();
-#if TARGET_JVM
-			Assert.AreEqual ("$create(My.Type, {\"myName2\":\"myValue2\",\"myName1\":\"myValue1\"}, null, null, $get(\"Element1\"));", script);
-#else
 			Assert.AreEqual ("$create(My.Type, {\"myName1\":\"myValue1\",\"myName2\":\"myValue2\"}, null, null, $get(\"Element1\"));", script);
-#endif
 		}
 
 		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
@@ -135,11 +123,7 @@ namespace Tests.System.Web.UI
 			scd.AddProperty ("myName2", null);
 
 			string script = scd.DoGetScript ();
-#if TARGET_JVM
-			Assert.AreEqual ("$create(My.Type, {\"myName2\":null,\"myName1\":null}, null, null, $get(\"Element1\"));", script);
-#else
 			Assert.AreEqual ("$create(My.Type, {\"myName1\":null,\"myName2\":null}, null, null, $get(\"Element1\"));", script);
-#endif
 		}
 
 		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
@@ -150,11 +134,7 @@ namespace Tests.System.Web.UI
 			scd.AddEvent ("myName2", "myHandler2");
 
 			string script = scd.DoGetScript ();
-#if TARGET_JVM
-			Assert.AreEqual ("$create(My.Type, null, {\"myName2\":myHandler2,\"myName1\":myHandler1}, null, $get(\"Element1\"));", script);
-#else
 			Assert.AreEqual ("$create(My.Type, null, {\"myName1\":myHandler1,\"myName2\":myHandler2}, null, $get(\"Element1\"));", script);
-#endif
 		}
 
 		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
@@ -165,11 +145,7 @@ namespace Tests.System.Web.UI
 			scd.AddScriptProperty ("myName2", "myScript2");
 
 			string script = scd.DoGetScript ();
-#if TARGET_JVM
-			Assert.AreEqual ("$create(My.Type, {\"myName2\":myScript2,\"myName1\":myScript1}, null, null, $get(\"Element1\"));", script);
-#else
 			Assert.AreEqual ("$create(My.Type, {\"myName1\":myScript1,\"myName2\":myScript2}, null, null, $get(\"Element1\"));", script);
-#endif
 		}
 
 		[Test]

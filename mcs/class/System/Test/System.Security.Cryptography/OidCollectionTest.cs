@@ -17,11 +17,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-#if TARGET_JVM
-	[Ignore ("The class System.Security.Cryptography.OidCollection - is not supported")]
-#endif
 	public class OidCollectionTest {
-#if !TARGET_JVM
 
 		[Test]
 		public void Constructor () 
@@ -73,7 +69,6 @@ namespace MonoTests.System.Security.Cryptography {
 			Oid[] array = null;
 			oc.CopyTo (array, 0);
 		}
-#endif
 	}
 }
 

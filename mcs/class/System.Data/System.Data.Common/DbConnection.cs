@@ -32,7 +32,7 @@
 
 using System.ComponentModel;
 using System.Data;
-#if NET_2_0 && !TARGET_JVM
+#if NET_2_0
 using System.Transactions;
 #endif
 
@@ -97,7 +97,7 @@ namespace System.Data.Common {
 
 		protected abstract DbCommand CreateDbCommand ();
 
-#if NET_2_0 && !TARGET_JVM
+#if NET_2_0
 		public virtual void EnlistTransaction (Transaction transaction)
 		{
 			throw new NotSupportedException ();                        

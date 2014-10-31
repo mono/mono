@@ -65,10 +65,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public static void Shutdown ()
 		{
-#if !TARGET_JVM
 			if (_poolThread != null)
 				_poolThread.Abort();
-#endif
 		}
 
 		public static int MaxOpenConnections

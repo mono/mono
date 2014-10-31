@@ -1,7 +1,7 @@
 Mono is a software platform designed to allow developers to easily create cross platform applications.
 Mono is an open source implementation of Microsoft's .NET Framework based on the ECMA standards for C# and the Common Language Runtime.
 
-[![Build Status](http://jenkins.mono-project.com/job/test-mono-mainline/badge/icon)](http://jenkins.mono-project.com/job/test-mono-mainline/)
+[![Build Status](http://jenkins.mono-project.com/job/test-mono-mainline/badge/icon/)](http://jenkins.mono-project.com/job/test-mono-mainline/)
 
 1. [Installation](#compilation-and-installation)
 2. [Using Mono](#using-mono)
@@ -494,15 +494,11 @@ Directory Roadmap
 
   * `dis/` - CIL executable Disassembler
 
-  * `cli/` - Common code for the JIT and the interpreter.
-
   * `io-layer/` - The I/O layer and system abstraction for 
 emulating the .NET IO model.
 
   * `cil/` - Common Intermediate Representation, XML
 definition of the CIL bytecodes.
-
- * `interp/` - Interpreter for CLI executables (obsolete).
 
  * `arch/` - Architecture specific portions.
 

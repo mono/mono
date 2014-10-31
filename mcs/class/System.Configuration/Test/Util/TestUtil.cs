@@ -85,13 +85,9 @@ namespace MonoTests.System.Configuration.Util {
 
 		public static string ThisConfigFileName {
 			get {
-#if TARGET_JVM
-				return "System.Configuration.Test20.jar.config";
-#else
 				var asm = Assembly.GetCallingAssembly ();
 				var exe = Path.GetFileName (asm.Location);
 				return exe + ".config";
-#endif
 			}
 		}
 	}

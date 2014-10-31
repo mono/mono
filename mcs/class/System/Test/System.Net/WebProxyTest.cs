@@ -171,9 +171,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD BUG ID: 7213")]
-#endif		
 		public void IsByPassed_Host_Null ()
 		{
 			WebProxy p = new WebProxy ("http://proxy.contoso.com", true);
@@ -229,9 +226,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("The MS compliant binary serialization is not supported")]
-#endif		
 		public void GetObjectData ()
 		{
 			SerializationInfo si = new SerializationInfo (typeof (WebHeaderCollection),

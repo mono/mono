@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -424,6 +425,53 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			Assert.AreEqual (a.ToolPath, "Bar", "#5");
 			a.ToolPath = "";
 			Assert.AreEqual (a.ToolPath, "", "#6");
+
+			a.Execute ();
+		}
+
+		[Test]
+		public void Execute_1 ()
+		{
+			var t = new TestExecuteToolTask ();
+			t.OnExecuteTool = delegate { Assert.Fail ("#1"); };
+			t.BuildEngine = new MockBuildEngine ();
+			Assert.IsFalse (t.Execute (), "result");
+		}
+
+		[Test]
+		public void Execute_2 ()
+		{
+			var t = new TestExecuteToolTask ();
+			t.BuildEngine = new MockBuildEngine ();
+			t.ToolPath = Directory.GetCurrentDirectory ();
+			t.ToolExe = "Makefile";
+
+			t.OnExecuteTool = (pathToTool, responseFileCommands, commandLineCommands) => {
+				Assert.AreEqual (Path.Combine (Directory.GetCurrentDirectory (), "Makefile"), pathToTool, "#1");
+				Assert.AreEqual ("", responseFileCommands, "#2");
+				Assert.AreEqual ("", commandLineCommands, "#3");
+
+			};
+
+			Assert.IsTrue (t.Execute (), "result");
+		}
+
+		[Test]
+		public void Execute_3 ()
+		{
+			var t = new TestExecuteToolTask ();
+			t.FullPathToTool = "fpt";
+			t.BuildEngine = new MockBuildEngine ();
+			t.ToolExe = "Makefile.mk";
+
+			t.OnExecuteTool = (pathToTool, responseFileCommands, commandLineCommands) => {
+				Assert.AreEqual ("Makefile.mk", pathToTool, "#1");
+				Assert.AreEqual ("", responseFileCommands, "#2");
+				Assert.AreEqual ("", commandLineCommands, "#3");
+
+			};
+
+			Assert.IsFalse (t.Execute (), "result");
 		}
 	}
 
@@ -549,7 +597,84 @@ namespace MonoTests.Microsoft.Build.Utilities {
 
 		protected override string GenerateFullPathToTool ()
 		{
+			return "";
+		}
+	}
+
+	class MockBuildEngine : IBuildEngine
+	{
+		public int ColumnNumberOfTaskNode {
+			get {
+				return 0;
+			}
+		}
+
+		public bool ContinueOnError {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public int LineNumberOfTaskNode {
+			get {
+				return 0;
+			}
+		}
+
+		public string ProjectFileOfTaskNode {
+			get {
+				return "ProjectFileOfTaskNode";
+			}
+		}
+
+		public bool BuildProjectFile (string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs)
+		{
 			throw new NotImplementedException ();
+		}
+
+		public void LogCustomEvent (CustomBuildEventArgs e)
+		{
+		}
+
+		public void LogErrorEvent (BuildErrorEventArgs e)
+		{
+			Console.WriteLine (e.Message);
+		}
+
+		public void LogMessageEvent (BuildMessageEventArgs e)
+		{
+		}
+
+		public void LogWarningEvent (BuildWarningEventArgs e)
+		{
+		}
+	}
+
+	class TestExecuteToolTask : ToolTask
+	{
+		public Action<string, string, string> OnExecuteTool;
+		public string FullPathToTool;
+
+		protected override string ToolName {
+			get { return "TestTool.exe"; }
+		}
+
+		protected override bool CallHostObjectToExecute ()
+		{
+			return base.CallHostObjectToExecute ();
+		}
+
+		protected override string GenerateFullPathToTool ()
+		{
+			return FullPathToTool;
+		}
+
+		protected override int ExecuteTool (string pathToTool, string responseFileCommands, string commandLineCommands)
+		{
+			if (OnExecuteTool != null)
+				OnExecuteTool (pathToTool, responseFileCommands, commandLineCommands);
+
+			return 0;
 		}
 	}
 }

@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_4_5
-using System;
+
 using System.Collections.Generic;
 using System.Security.Principal;
 using System.Runtime.Serialization;
@@ -68,7 +68,7 @@ namespace System.Security.Claims {
 				throw new ArgumentNullException ("identity");
 
 			identities = new List<ClaimsIdentity> ();
-			identities.Add (new ClaimsIdentity (identity));
+			identities.Add (identity as ClaimsIdentity ?? new ClaimsIdentity (identity));
 		}
 
 		public ClaimsPrincipal (IPrincipal principal)

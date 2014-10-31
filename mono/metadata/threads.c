@@ -30,9 +30,6 @@
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/runtime.h>
 #include <mono/io-layer/io-layer.h>
-#ifndef HOST_WIN32
-#include <mono/io-layer/threads.h>
-#endif
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/mono-debug-debugger.h>
 #include <mono/utils/mono-compiler.h>
@@ -651,7 +648,7 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 
 	/* if the name was set before starting, we didn't invoke the profiler callback */
 	if (internal->name && (internal->flags & MONO_THREAD_FLAG_NAME_SET)) {
-		char *tname = g_utf16_to_utf8 (internal->name, -1, NULL, NULL, NULL);
+		char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
 		mono_profiler_thread_name (internal->tid, tname);
 		g_free (tname);
 	}
@@ -1210,11 +1207,15 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 {
 	LOCK_THREAD (this_obj);
 
-	if (this_obj->flags & MONO_THREAD_FLAG_NAME_SET) {
+	if ((this_obj->flags & MONO_THREAD_FLAG_NAME_SET) && !this_obj->threadpool_thread) {
 		UNLOCK_THREAD (this_obj);
 		
 		mono_raise_exception (mono_get_exception_invalid_operation ("Thread.Name can only be set once."));
 		return;
+	}
+	if (this_obj->name) {
+		g_free (this_obj->name);
+		this_obj->name_len = 0;
 	}
 	if (name) {
 		this_obj->name = g_new (gunichar2, mono_string_length (name));
@@ -2028,12 +2029,12 @@ static void signal_thread_state_change (MonoInternalThread *thread)
 	 * functions in the io-layer until the signal handler calls QueueUserAPC which will
 	 * make it return.
 	 */
-	wait_handle = wapi_prepare_interrupt_thread (thread->handle);
+	wait_handle = mono_thread_info_prepare_interrupt (thread->handle);
 
 	/* fixme: store the state somewhere */
 	mono_thread_kill (thread, mono_thread_get_abort_signal ());
 
-	wapi_finish_interrupt_thread (wait_handle);
+	mono_thread_info_finish_interrupt (wait_handle);
 #endif /* HOST_WIN32 */
 }
 
@@ -2956,9 +2957,7 @@ void mono_thread_manage (void)
 	 * to get correct user and system times from getrusage/wait/time(1)).
 	 * This could be removed if we avoid pthread_detach() and use pthread_join().
 	 */
-#ifndef HOST_WIN32
 	mono_thread_info_yield ();
-#endif
 }
 
 static void terminate_thread (gpointer key, gpointer value, gpointer user)
@@ -3265,13 +3264,18 @@ mono_threads_perform_thread_dump (void)
 
 	printf ("Full thread dump:\n");
 
-	/* 
-	 * Make a copy of the hashtable since we can't do anything with
-	 * threads while threads_mutex is held.
-	 */
+	/* We take the loader lock and the root domain lock as to increase our odds of not deadlocking if
+	something needs then in the process.
+	*/
+	mono_loader_lock ();
+	mono_domain_lock (mono_get_root_domain ());
+
 	mono_threads_lock ();
 	mono_g_hash_table_foreach (threads, dump_thread, NULL);
 	mono_threads_unlock ();
+
+	mono_domain_unlock (mono_get_root_domain ());
+	mono_loader_unlock ();
 
 	thread_dump_requested = FALSE;
 }
@@ -4110,10 +4114,8 @@ static MonoException* mono_thread_execute_interruption (MonoInternalThread *thre
 		WaitForSingleObjectEx (GetCurrentThread(), 0, TRUE);
 #endif
 		InterlockedDecrement (&thread_interruption_requested);
-#ifndef HOST_WIN32
 		/* Clear the interrupted flag of the thread so it can wait again */
-		wapi_clear_interruption ();
-#endif
+		mono_thread_info_clear_interruption ();
 	}
 
 	if ((thread->state & ThreadState_AbortRequested) != 0) {
@@ -4195,7 +4197,7 @@ mono_thread_request_interruption (gboolean running_managed)
 		if (mono_thread_notify_pending_exc_fn && !running_managed)
 			/* The JIT will notify the thread about the interruption */
 			/* This shouldn't take any locks */
-			mono_thread_notify_pending_exc_fn ();
+			mono_thread_notify_pending_exc_fn (NULL);
 
 		/* this will awake the thread if it is in WaitForSingleObject 
 		   or similar */
@@ -4203,7 +4205,7 @@ mono_thread_request_interruption (gboolean running_managed)
 #ifdef HOST_WIN32
 		QueueUserAPC ((PAPCFUNC)dummy_apc, thread->handle, (ULONG_PTR)NULL);
 #else
-		wapi_self_interrupt ();
+		mono_thread_info_self_interrupt ();
 #endif
 		return NULL;
 	}
@@ -4236,9 +4238,8 @@ mono_thread_resume_interruption (void)
 		return NULL;
 	InterlockedIncrement (&thread_interruption_requested);
 
-#ifndef HOST_WIN32
-	wapi_self_interrupt ();
-#endif
+	mono_thread_info_self_interrupt ();
+
 	return mono_thread_execute_interruption (thread);
 }
 
@@ -4555,9 +4556,7 @@ abort_thread_internal (MonoInternalThread *thread, gboolean can_raise_exception,
 		MonoException *exc = mono_thread_request_interruption (can_raise_exception); 
 		if (exc)
 			mono_raise_exception (exc);
-#ifndef HOST_WIN32
-		wapi_interrupt_thread (thread->handle);
-#endif
+		mono_thread_info_interrupt (thread->handle);
 		return;
 	}
 
@@ -4596,14 +4595,15 @@ abort_thread_internal (MonoInternalThread *thread, gboolean can_raise_exception,
 		 * functions in the io-layer until the signal handler calls QueueUserAPC which will
 		 * make it return.
 		 */
-#ifndef HOST_WIN32
 		gpointer interrupt_handle;
-		interrupt_handle = wapi_prepare_interrupt_thread (thread->handle);
-#endif
+
+		if (mono_thread_notify_pending_exc_fn)
+			/* The JIT will notify the thread about the interruption */
+			mono_thread_notify_pending_exc_fn (info);
+
+		interrupt_handle = mono_thread_info_prepare_interrupt (thread->handle);
 		mono_thread_info_finish_suspend_and_resume (info);
-#ifndef HOST_WIN32
-		wapi_finish_interrupt_thread (interrupt_handle);
-#endif
+		mono_thread_info_finish_interrupt (interrupt_handle);
 	}
 	/*FIXME we need to wait for interruption to complete -- figure out how much into interruption we should wait for here*/
 }
@@ -4656,21 +4656,18 @@ suspend_thread_internal (MonoInternalThread *thread, gboolean interrupt)
 		if (running_managed && !protected_wrapper) {
 			transition_to_suspended (thread, info);
 		} else {
-#ifndef HOST_WIN32
 			gpointer interrupt_handle;
-#endif
 
 			if (InterlockedCompareExchange (&thread->interruption_requested, 1, 0) == 0)
 				InterlockedIncrement (&thread_interruption_requested);
-#ifndef HOST_WIN32
 			if (interrupt)
-				interrupt_handle = wapi_prepare_interrupt_thread (thread->handle);
-#endif
+				interrupt_handle = mono_thread_info_prepare_interrupt (thread->handle);
+			if (mono_thread_notify_pending_exc_fn && !running_managed)
+				/* The JIT will notify the thread about the interruption */
+				mono_thread_notify_pending_exc_fn (info);
 			mono_thread_info_finish_suspend_and_resume (info);
-#ifndef HOST_WIN32
 			if (interrupt)
-				wapi_finish_interrupt_thread (interrupt_handle);
-#endif
+				mono_thread_info_finish_interrupt (interrupt_handle);
 			UNLOCK_THREAD (thread);
 		}
 	}

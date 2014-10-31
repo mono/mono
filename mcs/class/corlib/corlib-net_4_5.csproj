@@ -1399,6 +1399,8 @@
     <Compile Include="System.Text\EncoderReplacementFallback.cs" />
     <Compile Include="System.Text\EncoderReplacementFallbackBuffer.cs" />
     <Compile Include="System.Text\Encoding.cs" />
+    <Compile Include="System.Text\EncodingDecoder.cs" />
+    <Compile Include="System.Text\EncodingEncoder.cs" />
     <Compile Include="System.Text\EncodingInfo.cs" />
     <Compile Include="System.Text\Latin1Encoding.cs" />
     <Compile Include="System.Text\MLangCodePageEncoding.cs" />
@@ -1585,6 +1587,7 @@
     <Compile Include="System\Exception.cs" />
     <Compile Include="System\ExecutionEngineException.cs" />
     <Compile Include="System\FieldAccessException.cs" />
+    <Compile Include="System\FirstChanceExceptionEventArgs.cs" />
     <Compile Include="System\FlagsAttribute.cs" />
     <Compile Include="System\FormatException.cs" />
     <Compile Include="System\Funcs.cs" />

@@ -4,6 +4,9 @@
 #include <config.h>
 #if defined(PLATFORM_ANDROID)
 #include <asm/sigcontext.h>
+#ifdef HAVE_UCONTEXT_H
+#include <ucontext.h>
+#endif
 #endif
 
 #ifdef HAVE_UNISTD_H
@@ -16,9 +19,6 @@
 
 #if defined(TARGET_X86)
 
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__APPLE__) || defined(__DragonFly__)
-#include <ucontext.h>
-#endif
 #if defined(__APPLE__)
 #include <AvailabilityMacros.h>
 #endif
@@ -87,7 +87,7 @@
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [EIP])
 #else
 
-#if defined(TARGET_ANDROID)
+#if defined(PLATFORM_ANDROID) && !defined(HAVE_UCONTEXT_H)
 /* No ucontext.h as of NDK v6b */
 typedef int greg_t;
 #define NGREG 19

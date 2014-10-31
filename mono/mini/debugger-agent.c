@@ -289,7 +289,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 36
+#define MINOR_VERSION 37
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -403,7 +403,8 @@ typedef enum {
 	INVOKE_FLAG_DISABLE_BREAKPOINTS = 1,
 	INVOKE_FLAG_SINGLE_THREADED = 2,
 	INVOKE_FLAG_RETURN_OUT_THIS = 4,
-	INVOKE_FLAG_RETURN_OUT_ARGS = 8
+	INVOKE_FLAG_RETURN_OUT_ARGS = 8,
+	INVOKE_FLAG_VIRTUAL = 16
 } InvokeFlags;
 
 typedef enum {
@@ -1581,7 +1582,7 @@ transport_handshake (void)
 
 	/* Read answer */
 	res = transport_recv (buf, strlen (handshake_msg));
-	if ((res != strlen (handshake_msg)) || (memcmp (buf, handshake_msg, strlen (handshake_msg) != 0))) {
+	if ((res != strlen (handshake_msg)) || (memcmp (buf, handshake_msg, strlen (handshake_msg)) != 0)) {
 		fprintf (stderr, "debugger-agent: DWP handshake failed.\n");
 		return FALSE;
 	}
@@ -2776,9 +2777,6 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 #endif
 
 	/* This is _not_ equivalent to ves_icall_System_Threading_Thread_Abort () */
-#ifdef HOST_WIN32
-	QueueUserAPC (notify_thread_apc, thread->handle, (ULONG_PTR)NULL);
-#else
 	if (mono_thread_info_new_interrupt_enabled ()) {
 		MonoThreadInfo *info;
 		MonoJitInfo *ji;
@@ -2798,6 +2796,10 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 			mono_thread_info_finish_suspend_and_resume (info);
 		}
 	} else {
+#ifdef HOST_WIN32
+		// FIXME: Remove this since new interrupt is used on win32 now
+		QueueUserAPC (notify_thread_apc, thread->handle, (ULONG_PTR)NULL);
+#else
 		res = mono_thread_kill (thread, mono_thread_get_abort_signal ());
 		if (res) {
 			DEBUG(1, fprintf (log_file, "[%p] mono_thread_kill () failed for %p: %d...\n", (gpointer)GetCurrentThreadId (), (gpointer)tid, res));
@@ -2806,8 +2808,8 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 			 */
 			tls->terminated = TRUE;
 		}
-	}
 #endif
+	}
 }
 
 static void
@@ -6561,6 +6563,12 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 	if (MONO_CLASS_IS_INTERFACE (m->klass)) {
 		if (!this) {
 			DEBUG (1, fprintf (log_file, "[%p] Error: Interface method invoked without this argument.\n", (gpointer)GetCurrentThreadId ()));
+			return ERR_INVALID_ARGUMENT;
+		}
+		m = mono_object_get_virtual_method (this, m);
+	} else if (invoke->flags & INVOKE_FLAG_VIRTUAL) {
+		if (!this) {
+			DEBUG (1, fprintf (log_file, "[%p] Error: invoke with INVOKE_FLAG_VIRTUAL flag set without this argument.\n", (gpointer)GetCurrentThreadId ()));
 			return ERR_INVALID_ARGUMENT;
 		}
 		m = mono_object_get_virtual_method (this, m);

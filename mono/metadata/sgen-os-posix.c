@@ -56,17 +56,30 @@ suspend_thread (SgenThreadInfo *info, void *context)
 #ifndef USE_MONO_CTX
 	gpointer regs [ARCH_NUM_REGS];
 #endif
+	MonoContext ctx;
 	gpointer stack_start;
 
 	info->stopped_domain = mono_domain_get ();
-	info->stopped_ip = context ? (gpointer) ARCH_SIGCTX_IP (context) : NULL;
 	info->signal = 0;
 	stop_count = sgen_global_stop_count;
 	/* duplicate signal */
 	if (0 && info->stop_count == stop_count)
 		return;
 
+#ifdef USE_MONO_CTX
+	if (context) {
+		mono_sigctx_to_monoctx (context, &ctx);
+		info->stopped_ip = MONO_CONTEXT_GET_IP (&ctx);
+		stack_start = MONO_CONTEXT_GET_SP (&ctx) - REDZONE_SIZE;
+	} else {
+		info->stopped_ip = NULL;
+		stack_start = NULL;
+	}
+#else
+	info->stopped_ip = context ? (gpointer) ARCH_SIGCTX_IP (context) : NULL;
 	stack_start = context ? (char*) ARCH_SIGCTX_SP (context) - REDZONE_SIZE : NULL;
+#endif
+
 	/* If stack_start is not within the limits, then don't set it
 	   in info and we will be restarted. */
 	if (stack_start >= info->stack_start_limit && info->stack_start <= info->stack_end) {
@@ -74,7 +87,7 @@ suspend_thread (SgenThreadInfo *info, void *context)
 
 #ifdef USE_MONO_CTX
 		if (context) {
-			mono_sigctx_to_monoctx (context, &info->ctx);
+			memcpy (&info->ctx, &ctx, sizeof (MonoContext));
 		} else {
 			memset (&info->ctx, 0, sizeof (MonoContext));
 		}
@@ -122,7 +135,7 @@ suspend_thread (SgenThreadInfo *info, void *context)
 }
 
 /* LOCKING: assumes the GC lock is held (by the stopping thread) */
-MONO_SIGNAL_HANDLER_FUNC (static, suspend_handler, (int sig, siginfo_t *siginfo, void *context))
+MONO_SIG_HANDLER_FUNC (static, suspend_handler)
 {
 	/*
 	 * The suspend signal handler potentially uses syscalls that
@@ -131,19 +144,19 @@ MONO_SIGNAL_HANDLER_FUNC (static, suspend_handler, (int sig, siginfo_t *siginfo,
 	 * must restore those to the values they had when we
 	 * interrupted.
 	 */
-
 	SgenThreadInfo *info;
 	int old_errno = errno;
 	int hp_save_index = mono_hazard_pointer_save_for_signal_handler ();
+	MONO_SIG_HANDLER_GET_CONTEXT;
 
 	info = mono_thread_info_current ();
-	suspend_thread (info, context);
+	suspend_thread (info, ctx);
 
 	mono_hazard_pointer_restore_for_signal_handler (hp_save_index);
 	errno = old_errno;
 }
 
-MONO_SIGNAL_HANDLER_FUNC (static, restart_handler, (int sig))
+MONO_SIG_HANDLER_FUNC (static, restart_handler)
 {
 	SgenThreadInfo *info;
 	int old_errno = errno;

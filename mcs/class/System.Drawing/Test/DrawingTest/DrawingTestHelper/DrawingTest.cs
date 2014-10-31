@@ -13,15 +13,7 @@ using System.Drawing.Imaging;
 
 #if MONOTOUCH
 #else
-#if TARGET_JVM
-using awt = java.awt;
-using javax.imageio;
-using java.lang;
-using java.security;
-using java.awt.image;
-#else
 using System.Windows.Forms;
-#endif
 #endif
 
 using NUnit.Framework;
@@ -115,13 +107,8 @@ namespace DrawingTestHelper
 		Hashtable _hash;
 		CachedResults _results;
 
-#if TARGET_JVM
-		public const string FileName = "CachedResults.xml";
-		public const string NewFileName = "NewCachedResults.xml";
-#else
 		public const string FileName = "dotnet.CachedResults.xml";
 		public const string NewFileName = "dotnet.NewCachedResults.xml";
-#endif
 		public readonly static XmlSerializer TestSuiteSerializer =
 			new XmlSerializer(typeof(CachedResults));
 
@@ -437,11 +424,7 @@ namespace DrawingTestHelper
 		}
 		public static DrawingTest Create (int width, int height, string ownerClass) {
 			DrawingTest test;
-#if TARGET_JVM
-			test = new JavaDrawingTest ();
-#else
 			test = new NetDrawingTest ();
-#endif
 			test.Init (width, height);
 			test.OwnerClass = ownerClass;
 			return test;
@@ -460,144 +443,6 @@ namespace DrawingTestHelper
 		#endregion
 	}
 
-#if TARGET_JVM
-	internal class JavaDrawingTest:DrawingTest {
-		java.awt.image.BufferedImage _image;
-		java.awt.image.BufferedImage Image {
-			get {
-				if (_image != null)
-					return _image;
-				Type imageType = typeof (Bitmap);
-				PropertyInfo [] props = imageType.GetProperties (
-					BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-
-				PropertyInfo prop = null;
-				foreach (PropertyInfo p in props) {
-					if (p.Name == "NativeObject")
-						if (p.PropertyType == typeof(java.awt.image.BufferedImage))
-							prop = p;
-				}
-
-				MethodInfo method = prop.GetGetMethod (true);
-				_image = (java.awt.image.BufferedImage) method.Invoke (_bitmap, new object [0]);
-				return _image;
-			}
-		}
-
-		public JavaDrawingTest () {}
-
-		protected override double GetExpectedNorm (double myNorm) {
-			return ExpectedResults.GetNorm(TestName);
-		}
-
-		protected override Bitmap GetReferenceImage(string testName) {
-			try{
-				string dotNetResultsFolder = @"";
-				string fileName = dotNetResultsFolder + testName.Replace(":", "_") + ".png";
-				return new Bitmap(fileName);
-			}
-			catch(System.Exception e) {
-				throw new System.Exception("Error creating .Net reference image");
-			}
-		}
-
-		private class JavaForm:java.awt.Dialog,IMyForm {
-			class EventListener : java.awt.@event.WindowListener {
-				#region WindowListener Members
-
-				public void windowOpened(java.awt.@event.WindowEvent arg_0) {
-					// TODO:  Add ttt.windowOpened implementation
-				}
-
-				public void windowActivated(java.awt.@event.WindowEvent arg_0) {
-					// TODO:  Add ttt.windowActivated implementation
-				}
-
-				public void windowClosed(java.awt.@event.WindowEvent arg_0) {
-					// TODO:  Add ttt.windowClosed implementation
-				}
-
-				public void windowDeiconified(java.awt.@event.WindowEvent arg_0) {
-					// TODO:  Add ttt.windowDeiconified implementation
-				}
-
-				public void windowIconified(java.awt.@event.WindowEvent arg_0) {
-					// TODO:  Add ttt.windowIconified implementation
-				}
-
-				public void windowClosing(java.awt.@event.WindowEvent arg_0) {
-					// TODO:  Add ttt.windowClosing implementation
-					java.awt.Window w = arg_0.getWindow();
-					java.awt.Window par = w.getOwner ();
-					w.dispose();
-					par.dispose ();
-				}
-
-				public void windowDeactivated(java.awt.@event.WindowEvent arg_0) {
-					// TODO:  Add ttt.windowDeactivated implementation
-				}
-
-				#endregion
-			}
-
-			java.awt.Image _image;
-			Size _s;
-
-			public JavaForm (string title, java.awt.Image anImage, Size s)
-				: base(new java.awt.Frame(), title, true) {
-				_image = anImage;
-				_s = s;
-				
-				addWindowListener(new EventListener());
-			}
-			public override void paint (java.awt.Graphics g) {
-				base.paint (g);
-				awt.Insets insets = this.getInsets ();
-				g.drawImage (_image, insets.left, insets.top, null);
-			}
-			void IMyForm.Show () {
-				awt.Insets insets = this.getInsets ();
-				base.setSize (_s.Width + insets.left + insets.right,
-					_s.Width + insets.top + insets.bottom);
-				this.show ();
-				//save the image
-				//ImageIO.write((java.awt.image.RenderedImage)_image, "png", new java.io.File("test.java.png"));
-			}
-		}
-
-		protected override IMyForm CreateForm(string title) {
-			return new JavaForm (title, Image, _bitmap.Size);
-		}
-		
-		protected override string DetermineCallingFunction() {
-			System.Exception e = new System.Exception ();
-			java.lang.Class c = vmw.common.TypeUtils.ToClass (e);
-			java.lang.reflect.Method m = c.getMethod ("getStackTrace",
-				new java.lang.Class [0]);
-			java.lang.StackTraceElement [] els = (java.lang.StackTraceElement [])
-				m.invoke (e, new object [0]);
-			java.lang.StackTraceElement el = els [4];
-			return el.getClassName () + "." + _ownerClass + "." + el.getMethodName ();
-		}
-
-		public override string CalculateSHA1() {
-			MessageDigest md = MessageDigest.getInstance ("SHA");
-			DataBufferInt dbi = (DataBufferInt) Image.getRaster ().getDataBuffer ();
-			for (int i=0; i<dbi.getNumBanks (); i++) {
-				int [] curBank = dbi.getData (i);
-				for (int j=0; j<curBank.Length; j++) {
-					int x = curBank[j];
-					md.update ((sbyte) (x & 0xFF));
-					md.update ((sbyte) ((x>>8) & 0xFF));
-					md.update ((sbyte) ((x>>16) & 0xFF));
-					md.update ((sbyte) ((x>>24) & 0xFF));
-				}
-			}
-			byte [] resdata = (byte[])vmw.common.TypeUtils.ToByteArray(md.digest());
-			return Convert.ToBase64String (resdata);
-		}
-	}
-#else
 	internal class NetDrawingTest:DrawingTest {
 		public NetDrawingTest () {}
 
@@ -680,6 +525,5 @@ namespace DrawingTestHelper
 		}
 
 	}
-#endif
 
 }

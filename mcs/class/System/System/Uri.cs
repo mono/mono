@@ -1725,7 +1725,7 @@ namespace System {
 		private UriParser Parser {
 			get {
 				if (parser == null) {
-					parser = UriParser.GetParser (Scheme);
+					parser = UriParser.GetParser (scheme);
 					// no specific parser ? then use a default one
 					if (parser == null)
 						parser = new DefaultUriParser ("*");
@@ -1737,6 +1737,9 @@ namespace System {
 
 		public string GetComponents (UriComponents components, UriFormat format)
 		{
+			if ((components & UriComponents.SerializationInfoString) == 0)
+				EnsureAbsoluteUri ();
+
 			return Parser.GetComponents (this, components, format);
 		}
 

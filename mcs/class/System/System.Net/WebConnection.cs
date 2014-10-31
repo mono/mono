@@ -490,11 +490,7 @@ namespace System.Net
 
 			if (e == null) { // At least we now where it comes from
 				try {
-#if TARGET_JVM
-					throw new Exception ();
-#else
 					throw new Exception (new System.Diagnostics.StackTrace ().ToString ());
-#endif
 				} catch (Exception e2) {
 					e = e2;
 				}

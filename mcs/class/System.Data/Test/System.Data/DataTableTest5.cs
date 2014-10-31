@@ -34,7 +34,7 @@ using System.Xml.Serialization;
 
 using NUnit.Framework;
 
-namespace Monotests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class DataTableTest5

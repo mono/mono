@@ -280,28 +280,7 @@ namespace System.Web.Services.Protocols {
 	//
 	internal class TypeStubManager 
 	{
-#if !TARGET_JVM
 		static Hashtable type_to_manager;
-#else
-		const string type_to_manager_key = "TypeStubManager.type_to_manager";
-		static Hashtable type_to_manager {
-			get {
-				Hashtable hash = (Hashtable)AppDomain.CurrentDomain.GetData(type_to_manager_key);
-
-				if (hash != null)
-					return hash;
-
-				lock(type_to_manager_key) {
-					AppDomain.CurrentDomain.SetData(type_to_manager_key, new Hashtable());
-				}
-
-				return (Hashtable)AppDomain.CurrentDomain.GetData(type_to_manager_key);
-			}
-			set {
-				//do nothing: we manage our type_to_manager per domain
-			}
-		}
-#endif
 		
 		static TypeStubManager ()
 		{

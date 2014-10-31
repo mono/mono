@@ -56,9 +56,6 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		
 		RemotingThreadPool threadPool;
 		
-#if TARGET_JVM
-		private volatile bool stopped = false;
-#endif
 
 		void Init (IServerChannelSinkProvider serverSinkProvider)
 		{
@@ -207,11 +204,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			try
 			{
-#if !TARGET_JVM
 				while(true)
-#else
-				while(!stopped)
-#endif
 				{
 					Socket socket = listener.AcceptSocket ();
 					ClientConnection reader = new ClientConnection (this, socket, sink);
@@ -236,9 +229,6 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public void StartListening (object data)
 		{
-#if TARGET_JVM
-			stopped = false;
-#endif 
 			listener = new TcpListener (bindAddress, port);
 			if (server_thread == null) 
 			{
@@ -261,16 +251,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public void StopListening (object data)
 		{
-#if TARGET_JVM
-			stopped = true;
-#endif 
 			if (server_thread == null) return;
 			
-#if !TARGET_JVM
 			server_thread.Abort ();
-#else
-			server_thread.Interrupt ();
-#endif
 			listener.Stop ();
 			threadPool.Free ();
 			server_thread.Join ();

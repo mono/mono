@@ -26,6 +26,21 @@
   }
 }
 
+.class public auto ansi beforefieldinit A2
+       extends [mscorlib]System.Attribute
+{
+
+  .custom instance void class [mscorlib]System.AttributeUsageAttribute::'.ctor'(valuetype ['missing-lib']System.AttributeTargets) =  (01 00 80 00 00 00 00 00 ) // ........
+
+  .method public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  {
+    ldarg.0
+    call       instance void [mscorlib]System.Attribute::.ctor()
+    ret
+  }
+}
+
 .class public auto ansi beforefieldinit X extends [mscorlib]System.Object
 {
   .custom instance void A::.ctor(class [mscorlib]System.Type) = ( 01 00 44 58 58 2C 20 62 75 67 2D 31 2D 6C 69 62   // ..DXX, missing-lib

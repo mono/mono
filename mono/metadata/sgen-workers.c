@@ -140,7 +140,7 @@ workers_wait (void)
 static gboolean
 collection_needs_workers (void)
 {
-	return sgen_collection_is_parallel () || sgen_collection_is_concurrent ();
+	return sgen_collection_is_concurrent ();
 }
 
 void
@@ -243,9 +243,9 @@ workers_steal (WorkerData *data, WorkerData *victim_data, gboolean lock)
 		n -= m;
 
 		sgen_gray_object_alloc_queue_section (queue);
-		memcpy (queue->first->objects,
+		memcpy (queue->first->entries,
 				victim_data->stealable_stack + victim_data->stealable_stack_fill - num + n,
-				sizeof (char*) * m);
+				sizeof (GrayQueueEntry) * m);
 		queue->first->size = m;
 
 		/*
@@ -253,10 +253,10 @@ workers_steal (WorkerData *data, WorkerData *victim_data, gboolean lock)
 		 * Doing so trigger "assert not reached" in sgen-scan-object.h : we use the queue->cursor
 		 * to compute the size of the first section during section allocation (via alloc_prepare_func
 		 * -> workers_gray_queue_share_redirect -> sgen_gray_object_dequeue_section) which will be then
-		 * set to 0, because queue->cursor is still pointing to queue->first->objects [-1], thus
+		 * set to 0, because queue->cursor is still pointing to queue->first->entries [-1], thus
 		 * losing objects in the gray queue.
 		 */
-		queue->cursor = (char**)queue->first->objects + queue->first->size - 1;
+		queue->cursor = queue->first->entries + queue->first->size - 1;
 	}
 
 	victim_data->stealable_stack_fill -= num;
@@ -301,7 +301,7 @@ workers_get_work (WorkerData *data)
 	 * distribute gray queue.
 	 */
 	major = sgen_get_major_collector ();
-	if (major->is_concurrent || major->is_parallel) {
+	if (major->is_concurrent) {
 		GrayQueueSection *section = sgen_section_gray_queue_dequeue (&workers_distribute_gray_queue);
 		if (section) {
 			sgen_gray_object_enqueue_section (&data->private_gray_queue, section);
@@ -338,8 +338,8 @@ workers_gray_queue_share_redirect (SgenGrayQueue *queue)
 		int num = MIN (section->size, STEALABLE_STACK_SIZE - data->stealable_stack_fill);
 
 		memcpy (data->stealable_stack + data->stealable_stack_fill,
-				section->objects + section->size - num,
-				sizeof (char*) * num);
+				section->entries + section->size - num,
+				sizeof (GrayQueueEntry) * num);
 
 		section->size -= num;
 		data->stealable_stack_fill += num;
@@ -441,7 +441,7 @@ sgen_workers_init_distribute_gray_queue (void)
 	if (!collection_needs_workers ())
 		return;
 
-	init_distribute_gray_queue (sgen_get_major_collector ()->is_concurrent || sgen_get_major_collector ()->is_parallel);
+	init_distribute_gray_queue (sgen_get_major_collector ()->is_concurrent);
 }
 
 void
@@ -449,7 +449,7 @@ sgen_workers_init (int num_workers)
 {
 	int i;
 
-	if (!sgen_get_major_collector ()->is_parallel && !sgen_get_major_collector ()->is_concurrent)
+	if (!sgen_get_major_collector ()->is_concurrent)
 		return;
 
 	//g_print ("initing %d workers\n", num_workers);
@@ -462,7 +462,7 @@ sgen_workers_init (int num_workers)
 	MONO_SEM_INIT (&workers_waiting_sem, 0);
 	MONO_SEM_INIT (&workers_done_sem, 0);
 
-	init_distribute_gray_queue (sgen_get_major_collector ()->is_concurrent || sgen_get_major_collector ()->is_parallel);
+	init_distribute_gray_queue (sgen_get_major_collector ()->is_concurrent);
 
 	if (sgen_get_major_collector ()->alloc_worker_data)
 		workers_gc_thread_major_collector_data = sgen_get_major_collector ()->alloc_worker_data ();

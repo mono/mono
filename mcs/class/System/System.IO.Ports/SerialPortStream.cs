@@ -211,7 +211,10 @@ namespace System.IO.Ports
 
 		~SerialPortStream ()
 		{
-			Dispose (false);
+			try {
+				Dispose (false);
+			} catch (IOException) {
+			}
 		}
 
 		void CheckDisposed ()

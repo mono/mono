@@ -118,11 +118,11 @@ namespace System.Data {
 		/// </summary>
 		public bool HasErrors {
 			get {
-				if (RowError != string.Empty)
+				if (!string.IsNullOrEmpty (RowError))
 					return true;
 
 				foreach (String columnError in ColumnErrors) {
-					if (columnError != null && columnError != string.Empty)
+					if (!string.IsNullOrEmpty (columnError))
 						return true;
 				}
 				return false;
@@ -509,7 +509,7 @@ namespace System.Data {
 		/// </summary>
 		public string RowError {
 			get { return rowError; }
-			set { rowError = value; }
+			set { rowError = value ?? string.Empty; }
 		}
 
 		internal int IndexFromVersion (DataRowVersion version)

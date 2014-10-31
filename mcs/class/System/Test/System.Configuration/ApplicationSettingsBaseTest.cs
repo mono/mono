@@ -288,9 +288,7 @@ namespace MonoTests.System.Configuration {
 			// This test will fail when there are newer versions
 			// of the test assemblies - so conditionalize it in
 			// such cases.
-#if TARGET_JVM
-			string expected = "MonoTests.System.Configuration.ProviderPoker, System.Test, Version=0.0.0.0";
-#elif NET_4_5
+#if   NET_4_5
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_5, Version=0.0.0.0";
 #elif NET_4_0
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_0, Version=0.0.0.0";

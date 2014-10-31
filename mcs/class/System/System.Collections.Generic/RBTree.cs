@@ -114,17 +114,8 @@ namespace System.Collections.Generic
 		uint version;
 
 #if ONE_MEMBER_CACHE
-#if TARGET_JVM
-		static readonly LocalDataStoreSlot _cachedPathStore = System.Threading.Thread.AllocateDataSlot ();
-
-		static List<Node> cached_path {
-			get { return (List<Node>) System.Threading.Thread.GetData (_cachedPathStore); }
-			set { System.Threading.Thread.SetData (_cachedPathStore, value); }
-		}
-#else
 		[ThreadStatic]
 		static List<Node> cached_path;
-#endif
 
 		static List<Node> alloc_path ()
 		{

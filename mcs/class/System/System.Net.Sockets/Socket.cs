@@ -68,12 +68,10 @@ namespace System.Net.Sockets
 
 			sockets.Add (null);
 		}
-#if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Select_internal (ref Socket [] sockets,
 							int microSeconds,
 							out int error);
-#endif
 		public static void Select (IList checkRead, IList checkWrite, IList checkError, int microSeconds)
 		{
 			var list = new List<Socket> ();
@@ -200,11 +198,9 @@ namespace System.Net.Sockets
 		}
 #endif
 	
-#if !TARGET_JVM
 		// Returns the amount of data waiting to be read on socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int Available_internal(IntPtr socket, out int error);
-#endif
 
 		public int Available {
 			get {
@@ -404,11 +400,9 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if !TARGET_JVM
 		// Returns the local endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, int family, out int error);
-#endif
 
 		// Wish:  support non-IP endpoints.
 		public EndPoint LocalEndPoint {

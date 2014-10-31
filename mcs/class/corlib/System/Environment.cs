@@ -44,7 +44,7 @@ using System.Threading;
 namespace System {
 
 	[ComVisible (true)]
-	public static class Environment {
+	public static partial class Environment {
 
 		/*
 		 * This is the version number of the corlib-runtime interface. When
@@ -475,9 +475,6 @@ namespace System {
 		}
 #endif
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string GetWindowsFolderPath (int folder);
-
 		/// <summary>
 		/// Returns the fully qualified path of the
 		/// folder specified by the "folder" parameter
@@ -486,6 +483,12 @@ namespace System {
 		{
 			return GetFolderPath (folder, SpecialFolderOption.None);
 		}
+
+// for monotouch, not monotouch_runtime
+#if !(MONOTOUCH && FULL_AOT_RUNTIME)
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static string GetWindowsFolderPath (int folder);
+
 #if NET_4_0
 		public
 #endif
@@ -577,38 +580,15 @@ namespace System {
 
 			// personal == ~
 			case SpecialFolder.Personal:
-#if MONOTOUCH
-				return Path.Combine (home, "Documents");
-#else
 				return home;
-#endif
+
 			// use FDO's CONFIG_HOME. This data will be synced across a network like the windows counterpart.
 			case SpecialFolder.ApplicationData:
-#if MONOTOUCH
-			{
-				string dir = Path.Combine (Path.Combine (home, "Documents"), ".config");
-				if (option == SpecialFolderOption.Create){
-					if (!Directory.Exists (dir))
-						Directory.CreateDirectory (dir);
-				}
-				return dir;
-			}
-#else
 				return config;
-#endif
+
 			//use FDO's DATA_HOME. This is *NOT* synced
 			case SpecialFolder.LocalApplicationData:
-#if MONOTOUCH
-			{
-				string dir = Path.Combine (home, "Documents");
-				if (!Directory.Exists (dir))
-					Directory.CreateDirectory (dir);
-
-				return dir;
-			}
-#else
 				return data;
-#endif
 
 			case SpecialFolder.Desktop:
 			case SpecialFolder.DesktopDirectory:
@@ -705,8 +685,9 @@ namespace System {
 				return "/usr/share";
 			default:
 				throw new ArgumentException ("Invalid SpecialFolder");
-                        }
-                }
+			}
+		}
+#endif
 
 		
 		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
@@ -884,7 +865,7 @@ namespace System {
 		}
 
 		// private methods
-#if MOBILE 
+#if (MONOTOUCH || MONODROID || XAMMAC)
 		internal const bool IsRunningOnWindows = false;
 #else
 		internal static bool IsRunningOnWindows {

@@ -661,16 +661,8 @@ namespace System.Net.Mail {
 					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.Bcc [i].Address));
 			}
 
-#if TARGET_JVM // List<T>.ToArray () is not supported
-			if (sfre.Count > 0) {
-				SmtpFailedRecipientException[] xs = new SmtpFailedRecipientException[sfre.Count];
-				sfre.CopyTo (xs);
-				throw new SmtpFailedRecipientsException ("failed recipients", xs);
-			}
-#else
 			if (sfre.Count >0)
 				throw new SmtpFailedRecipientsException ("failed recipients", sfre.ToArray ());
-#endif
 
 			// DATA
 			status = SendCommand ("DATA");
@@ -978,11 +970,7 @@ try {
 				case TransferEncoding.Base64:
 					byte [] content = new byte [av.ContentStream.Length];
 					av.ContentStream.Read (content, 0, content.Length);
-#if TARGET_JVM
-					SendData (Convert.ToBase64String (content));
-#else
 					    SendData (Convert.ToBase64String (content, Base64FormattingOptions.InsertLineBreaks));
-#endif
 					break;
 				case TransferEncoding.QuotedPrintable:
 					byte [] bytes = new byte [av.ContentStream.Length];
@@ -1022,11 +1010,7 @@ try {
 				case TransferEncoding.Base64:
 					byte [] content = new byte [lr.ContentStream.Length];
 					lr.ContentStream.Read (content, 0, content.Length);
-#if TARGET_JVM
-					SendData (Convert.ToBase64String (content));
-#else
 					    SendData (Convert.ToBase64String (content, Base64FormattingOptions.InsertLineBreaks));
-#endif
 					break;
 				case TransferEncoding.QuotedPrintable:
 					byte [] bytes = new byte [lr.ContentStream.Length];
@@ -1058,11 +1042,7 @@ try {
 				att.ContentStream.Read (content, 0, content.Length);
 				switch (att.TransferEncoding) {
 				case TransferEncoding.Base64:
-#if TARGET_JVM
-					SendData (Convert.ToBase64String (content));
-#else
 					SendData (Convert.ToBase64String (content, Base64FormattingOptions.InsertLineBreaks));
-#endif
 					break;
 				case TransferEncoding.QuotedPrintable:
 					SendData (ToQuotedPrintable (content));
@@ -1198,9 +1178,7 @@ try {
 				throw new SmtpException (SmtpStatusCode.GeneralFailure, "Server does not support secure connections.");
 			}
 
-#if TARGET_JVM
-			((NetworkStream) stream).ChangeToSSLSocket ();
-#elif SECURITY_DEP
+#if   SECURITY_DEP
 			SslStream sslStream = new SslStream (stream, false, callback, null);
 			CheckCancellation ();
 			sslStream.AuthenticateAsClient (Host, this.ClientCertificates, SslProtocols.Default, false);

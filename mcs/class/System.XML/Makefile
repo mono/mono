@@ -13,7 +13,7 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac, $(PROFILE))
+PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
 
 LOCAL_MCS_FLAGS = -r:$(corlib) -nowarn:0618,0612,0642
 ifeq (2.1, $(FRAMEWORK_VERSION))

@@ -504,12 +504,7 @@ namespace System.Web.UI.WebControls
 		
 		public void ToggleExpandState ()
 		{
-#if TARGET_JVM //No support for Nullable<bool>.GetValueOrDefault() yet
-			bool? value = Expanded;
-			Expanded = value.HasValue ? !value.Value : true;
-#else
 			Expanded = !Expanded.GetValueOrDefault(false);
-#endif
 		}
 
 		void IStateManager.LoadViewState (object savedState)

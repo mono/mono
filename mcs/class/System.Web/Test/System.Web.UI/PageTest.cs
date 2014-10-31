@@ -784,9 +784,7 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NunitWeb")]
-#if !TARGET_JVM
 		[Category ("NotWorking")] // Mono PageParser does not handle @Page Async=true
-#endif
 		public void AddOnPreRenderCompleteAsync ()
 		{
 			WebTest t = new WebTest ("AsyncPage.aspx");
@@ -801,9 +799,7 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-#if !TARGET_JVM
 		[Category ("NotWorking")] // Mono PageParser does not handle @Page Async=true
-#endif
 		[Category ("NunitWeb")]
 		public void ExecuteRegisteredAsyncTasks ()
 		{
@@ -820,9 +816,7 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NunitWeb")]
-#if !TARGET_JVM
 		[Category ("NotWorking")] // Mono PageParser does not handle @Page Async=true
-#endif
 		[ExpectedException (typeof (Exception))]
 		public void AddOnPreRenderCompleteAsyncBeginThrows () 
 		{
@@ -833,9 +827,7 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NunitWeb")]
-#if !TARGET_JVM
 		[Category ("NotWorking")] // Mono PageParser does not handle @Page Async=true
-#endif
 		[ExpectedException (typeof (Exception))]
 		public void AddOnPreRenderCompleteAsyncEndThrows () 
 		{

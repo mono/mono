@@ -76,6 +76,7 @@ scripts_4_0 = \
 	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
 	caspol$(SCRIPT_SUFFIX)			\
+	cert-sync$(SCRIPT_SUFFIX)		\
 	cert2spc$(SCRIPT_SUFFIX)		\
 	certmgr$(SCRIPT_SUFFIX)			\
 	chktrust$(SCRIPT_SUFFIX)		\
@@ -164,11 +165,7 @@ EXTRA_DIST =			\
 	get-cygwin-deps.sh	\
 	mono-configuration-crypto.in
 
-if USE_JIT
 mono_interp = mono
-else
-mono_interp = mint
-endif
 
 if HOST_WIN32
 if CROSS_COMPILING
