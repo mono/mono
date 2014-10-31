@@ -1433,5 +1433,43 @@ namespace MonoTests.System.Xml
 			Assert.IsFalse (reader.ReadAttributeValue(), "#4");
 			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#5");
 		}
+		
+		[Test]
+		public void Whitespaces ()
+		{
+			const string xml = "<?xml version=\"1.0\"?><test> <foo name=\"Hello\"> <value>World</value> </foo> <foo name=\"Foo\"><value>Bar</value></foo></test>";
+			var reader = new XmlTextReader (new StringReader (xml));
+			//reader.WhitespaceHandling = WhitespaceHandling.All;
+
+			reader.Read ();
+			Assert.AreEqual  (XmlNodeType.XmlDeclaration, reader.NodeType, "#1a");
+			reader.Read ();
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#1b");
+			Assert.AreEqual ("test", reader.Name, "#1c");
+
+			reader.Read ();
+			if  (reader.NodeType == XmlNodeType.Whitespace)
+				reader.Read ();
+
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#2a");
+			Assert.AreEqual ("foo", reader.Name, "#2b");
+
+			var doc = new XmlDocument ();
+			//doc.PreserveWhitespace = true;
+			doc.ReadNode (reader);
+
+			Assert.AreEqual (XmlNodeType.Whitespace, reader.NodeType, "#3");
+
+			reader.Read ();
+			if  (reader.NodeType == XmlNodeType.Whitespace)
+				reader.Read ();
+
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#4");
+			Assert.AreEqual ("foo", reader.Name, "#4b");
+
+			doc.ReadNode (reader);
+
+			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "#5");
+		}
 	}
 }
