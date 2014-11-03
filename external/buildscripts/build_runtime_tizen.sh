@@ -17,6 +17,7 @@ CC="${TIZEN_PREFIX}gcc --sysroot=${TIZEN_SDK}/platforms/${TIZEN_PLATFORM}/rootst
 CXX="${TIZEN_PREFIX}g++ --sysroot=${TIZEN_SDK}/platforms/${TIZEN_PLATFORM}/rootstraps/${TIZEN_ROOTSTRAP} -I${TIZEN_SDK}/platforms/${TIZEN_PLATFORM}/rootstraps/${TIZEN_ROOTSTRAP}/usr/include -DTIZEN"
 AR="${TIZEN_PREFIX}ar"
 LD="${TIZEN_PREFIX}ld"
+RANLIB="${TIZEN_PREFIX}ranlib"
 
 CONFIG_OPTS="\
 --prefix=$PREFIX \
@@ -43,7 +44,7 @@ popd
 autoreconf -i
 
 # Run configure
-./configure $CONFIG_OPTS CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" CC="$CC" CXX="$CXX" AR="$AR" LD="$LD"
+./configure $CONFIG_OPTS CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" CC="$CC" CXX="$CXX" AR="$AR" LD="$LD" RANLIB="$RANLIB"
 
 # Run Make
 make -j6 && echo "Build SUCCESS!" || exit 1

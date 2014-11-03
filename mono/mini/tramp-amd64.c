@@ -566,11 +566,10 @@ mono_arch_create_trampoline_code_full (MonoTrampolineType tramp_type, guint32 *c
 	 */
 	amd64_mov_membase_reg (code, AMD64_RBP, rax_offset, AMD64_RAX, 8);
 
-	/* Restore argument registers, r10 (needed to pass rgctx to
-	   static shared generic methods), r11 (imt register for
-	   interface calls), and rax (needed for direct calls to C vararg functions). */
+	/* Restore argument registers, r10 (imt method/rgxtx)
+	   and rax (needed for direct calls to C vararg functions). */
 	for (i = 0; i < AMD64_NREG; ++i)
-		if (AMD64_IS_ARGUMENT_REG (i) || i == AMD64_R10 || i == AMD64_R11 || i == AMD64_RAX)
+		if (AMD64_IS_ARGUMENT_REG (i) || i == AMD64_R10 || i == AMD64_RAX)
 			amd64_mov_reg_membase (code, i, AMD64_RBP, saved_regs_offset + (i * 8), 8);
 
 	for (i = 0; i < 8; ++i)
@@ -626,6 +625,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 {
 	guint8 *code, *buf, *tramp;
 	int size;
+	gboolean far_addr = FALSE;
 
 	tramp = mono_get_trampoline_code (tramp_type);
 
@@ -636,7 +636,23 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 
 	code = buf = mono_domain_code_reserve_align (domain, size, 1);
 
-	amd64_call_code (code, tramp);
+
+	if (((gint64)tramp - (gint64)code) >> 31 != 0 && ((gint64)tramp - (gint64)code) >> 31 != -1) {
+#ifndef MONO_ARCH_NOMAP32BIT
+		g_assert_not_reached ();
+#endif
+		far_addr = TRUE;
+		size += 16;
+		code = buf = mono_domain_code_reserve_align (domain, size, 1);
+	}
+
+	if (far_addr) {
+		amd64_mov_reg_imm (code, AMD64_R11, tramp);
+		amd64_call_reg (code, AMD64_R11);
+	} else {
+		amd64_call_code (code, tramp);
+	}
+
 	/* The trampoline code will obtain the argument from the instruction stream */
 	if ((((guint64)arg1) >> 32) == 0) {
 		*code = 0x4;

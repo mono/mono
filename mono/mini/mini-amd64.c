@@ -32,12 +32,6 @@
 #include "cpu-amd64.h"
 #include "debugger-agent.h"
 
-/* 
- * Can't define this in mini-amd64.h cause that would turn on the generic code in
- * method-to-ir.c.
- */
-#define MONO_ARCH_IMT_REG AMD64_R11
-
 static gint lmf_tls_offset = -1;
 static gint lmf_addr_tls_offset = -1;
 static gint appdomain_tls_offset = -1;
@@ -926,14 +920,14 @@ mono_arch_init (void)
 	breakpoint_size = 13;
 	breakpoint_fault_size = 3;
 	/* amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4); */
-	single_step_fault_size = 5;
 #else
 	flags = MONO_MMAP_READ|MONO_MMAP_32BIT;
 	/* amd64_mov_reg_mem () */
 	breakpoint_size = 8;
 	breakpoint_fault_size = 8;
-	single_step_fault_size = 8;
 #endif
+
+	single_step_fault_size = 4;
 
 	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
 	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
@@ -3545,14 +3539,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * a breakpoint is hit will step to the next IL offset.
 			 */
 			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
-				if (((guint64)ss_trigger_page >> 32) == 0)
-					amd64_mov_reg_mem (code, AMD64_R11, (guint64)ss_trigger_page, 4);
-				else {
-					MonoInst *var = cfg->arch.ss_trigger_page_var;
+				MonoInst *var = cfg->arch.ss_trigger_page_var;
 
-					amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
-					amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4);
-				}
+				amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
+				amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4);
 			}
 
 			/* 
@@ -7237,25 +7227,24 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 					if (amd64_is_imm32 (item->key))
 						amd64_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)(gssize)item->key);
 					else {
-						amd64_mov_reg_imm (code, AMD64_R10, item->key);
-						amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, AMD64_R10);
+						amd64_mov_reg_imm (code, AMD64_R11, item->key);
+						amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, AMD64_R11);
 					}
 				}
 				item->jmp_code = code;
 				amd64_branch8 (code, X86_CC_NE, 0, FALSE);
-				/* See the comment below about R10 */
 				if (item->has_target_code) {
-					amd64_mov_reg_imm (code, AMD64_R10, item->value.target_code);
-					amd64_jump_reg (code, AMD64_R10);
+					amd64_mov_reg_imm (code, AMD64_R11, item->value.target_code);
+					amd64_jump_reg (code, AMD64_R11);
 				} else {
-					amd64_mov_reg_imm (code, AMD64_R10, & (vtable->vtable [item->value.vtable_slot]));
-					amd64_jump_membase (code, AMD64_R10, 0);
+					amd64_mov_reg_imm (code, AMD64_R11, & (vtable->vtable [item->value.vtable_slot]));
+					amd64_jump_membase (code, AMD64_R11, 0);
 				}
 
 				if (fail_case) {
 					amd64_patch (item->jmp_code, code);
-					amd64_mov_reg_imm (code, AMD64_R10, fail_tramp);
-					amd64_jump_reg (code, AMD64_R10);
+					amd64_mov_reg_imm (code, AMD64_R11, fail_tramp);
+					amd64_jump_reg (code, AMD64_R11);
 					item->jmp_code = NULL;
 				}
 			} else {
@@ -7264,33 +7253,27 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 				if (amd64_is_imm32 (item->key))
 					amd64_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)(gssize)item->key);
 				else {
-					amd64_mov_reg_imm (code, AMD64_R10, item->key);
-					amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, AMD64_R10);
+					amd64_mov_reg_imm (code, AMD64_R11, item->key);
+					amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, AMD64_R11);
 				}
 				item->jmp_code = code;
 				amd64_branch8 (code, X86_CC_NE, 0, FALSE);
-				/* See the comment below about R10 */
-				amd64_mov_reg_imm (code, AMD64_R10, & (vtable->vtable [item->value.vtable_slot]));
-				amd64_jump_membase (code, AMD64_R10, 0);
+				amd64_mov_reg_imm (code, AMD64_R11, & (vtable->vtable [item->value.vtable_slot]));
+				amd64_jump_membase (code, AMD64_R11, 0);
 				amd64_patch (item->jmp_code, code);
 				amd64_breakpoint (code);
 				item->jmp_code = NULL;
 #else
-				/* We're using R10 here because R11
-				   needs to be preserved.  R10 needs
-				   to be preserved for calls which
-				   require a runtime generic context,
-				   but interface calls don't. */
-				amd64_mov_reg_imm (code, AMD64_R10, & (vtable->vtable [item->value.vtable_slot]));
-				amd64_jump_membase (code, AMD64_R10, 0);
+				amd64_mov_reg_imm (code, AMD64_R11, & (vtable->vtable [item->value.vtable_slot]));
+				amd64_jump_membase (code, AMD64_R11, 0);
 #endif
 			}
 		} else {
 			if (amd64_is_imm32 (item->key))
 				amd64_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)(gssize)item->key);
 			else {
-				amd64_mov_reg_imm (code, AMD64_R10, item->key);
-				amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, AMD64_R10);
+				amd64_mov_reg_imm (code, AMD64_R11, item->key);
+				amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, AMD64_R11);
 			}
 			item->jmp_code = code;
 			if (x86_is_imm8 (imt_branch_distance (imt_entries, i, item->check_target_idx)))
