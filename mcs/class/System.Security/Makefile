@@ -3,14 +3,14 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Security.dll
-LOCAL_MCS_FLAGS = -nowarn:618 \
+LIB_MCS_FLAGS = -nowarn:618 \
 	-d:SECURITY_DEP \
-	-r:$(corlib) \
-	-r:$(the_libdir_base)Mono.Security.dll -nowarn:414
+	-r:$(corlib) -r:System.dll -r:System.Xml.dll \
+	-r:Mono.Security.dll -nowarn:414
 
-LIB_MCS_FLAGS = -r:$(secxml_libdir)/System.dll -r:$(bare_libdir)/System.Xml.dll
+LOCAL_MCS_FLAGS = -lib:$(secxml_libdir) -lib:$(bare_libdir)
 
-TEST_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -nowarn:168,169,183,219,414,1595
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:168,169,183,219,414,1595
 
 VALID_PROFILE := $(filter net_1_1 net_2_0 moonlight_raw net_4_0 net_4_5, $(PROFILE))
 

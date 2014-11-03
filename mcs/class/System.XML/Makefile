@@ -15,11 +15,11 @@ endif
 
 PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
 
-LOCAL_MCS_FLAGS = -r:$(corlib) -nowarn:0618,0612,0642
+LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0618,0612,0642
 ifeq (2.1, $(FRAMEWORK_VERSION))
-LOCAL_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK
+LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK
 endif
-TEST_MCS_FLAGS = -r:System.dll -nowarn:0618 -nowarn:219 -nowarn:169 -r:System.Data.dll -r:System.Core.dll
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 -r:System.Data.dll -r:System.Core.dll
 
 ifndef PROFILE_ANY_MOBILE
 FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
@@ -29,7 +29,7 @@ ifneq (bare/,$(intermediate))
 LIB_MCS_FLAGS += $(FINAL_MCS_FLAGS)
 endif
 
-LIB_MCS_FLAGS += -r:$(bare_libdir)/System.dll
+LOCAL_MCS_FLAGS += -lib:$(bare_libdir)
 
 nist_dom_files = \
 	ChangeLog ITest.cs readme.txt util.cs \
