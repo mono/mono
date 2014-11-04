@@ -1583,33 +1583,33 @@ namespace System.Runtime.InteropServices
 			return GetExceptionForHR (errorCode, IntPtr.Zero);
 		}
 
-		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfoPtr)
+		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo)
 		{
-			IErrorInfo errorInfo = null;
-			if (errorInfoPtr != (IntPtr)(-1)) {
-				if (errorInfoPtr == IntPtr.Zero) {
-					if (GetErrorInfo (0, out errorInfo) != 0) {
-						errorInfo = null;
+			IErrorInfo info = null;
+			if (errorInfo != (IntPtr)(-1)) {
+				if (errorInfo == IntPtr.Zero) {
+					if (GetErrorInfo (0, out info) != 0) {
+						info  = null;
 					}
 				} else {
-					errorInfo = Marshal.GetObjectForIUnknown (errorInfoPtr) as IErrorInfo;
+					info  = Marshal.GetObjectForIUnknown (errorInfo) as IErrorInfo;
 				}
 			}
 
-			if (errorInfo is ManagedErrorInfo && ((ManagedErrorInfo)errorInfo).Exception.hresult == errorCode) {
-				return ((ManagedErrorInfo)errorInfo).Exception;
+			if (info is ManagedErrorInfo && ((ManagedErrorInfo) info).Exception.hresult == errorCode) {
+				return ((ManagedErrorInfo) info).Exception;
 			}
 
 			Exception e = ConvertHrToException (errorCode);
-			if (errorInfo != null && e != null) {
+			if (info != null && e != null) {
 				uint helpContext;
-				errorInfo.GetHelpContext (out helpContext);
+				info.GetHelpContext (out helpContext);
 				string str;
-				errorInfo.GetSource (out str);
+				info.GetSource (out str);
 				e.Source = str;
-				errorInfo.GetDescription (out str);
+				info.GetDescription (out str);
 				e.SetMessage (str);
-				errorInfo.GetHelpFile (out str);
+				info.GetHelpFile (out str);
 
 				if (helpContext == 0) {
 					e.HelpLink = str;
