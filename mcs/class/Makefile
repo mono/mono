@@ -33,6 +33,7 @@ net_2_0_dirs := \
 	System.EnterpriseServices	\
 	Mono.Data.Tds			\
 	System.Data			\
+	System.ComponentModel.DataAnnotations	\
 	Accessibility			\
 	Mono.WebBrowser			\
 	System.Runtime.Serialization.Formatters.Soap \
@@ -81,7 +82,6 @@ net_2_0_dirs := \
 	System.ServiceModel		\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
-	System.ComponentModel.DataAnnotations	\
 	System.Web.DynamicData		\
 	System.Web.Mvc2			\
 	Mono.C5				\
