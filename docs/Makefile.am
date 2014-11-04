@@ -99,14 +99,14 @@ mono-file-formats.tree: $(srcdir)/docs.make $(srcdir)/Makefile.am $(srcdir)/depl
 deploy/.stamp: convert.exe Makefile.am 
 	$(mkdir_p) html
 	runtimedir=`cd ../runtime && pwd`; export runtimedir; \
-	MONO_PATH=../mcs/class/lib/net_2_0 perl $(srcdir)/exdoc -h $(srcdir) -t . $(srcdir)/../mono/*/*.c
+	MONO_PATH=../mcs/class/lib/net_4_5 perl $(srcdir)/exdoc -h $(srcdir) -t . $(srcdir)/../mono/*/*.c
 	touch $@
 
 extract: deploy/.stamp
 
 convert.exe: convert.cs AgilityPack.dll
-	$(TOOL_MAKE) PROFILE=net_2_0 convert.exe
+	$(TOOL_MAKE) PROFILE=net_4_5 convert.exe
 
 AgilityPack.dll: 
-	$(TOOL_MAKE) PROFILE=net_2_0 AgilityPack.dll
+	$(TOOL_MAKE) PROFILE=net_4_5 AgilityPack.dll
 
