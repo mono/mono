@@ -328,6 +328,8 @@ typedef struct {
 #define MONO_AMD64_ARG_REG2 AMD64_RSI
 #endif
 
+#define MONO_ARCH_NOMAP32BIT 1
+
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
 #define MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
 
@@ -346,10 +348,10 @@ typedef struct {
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_IMT 1
 #define MONO_ARCH_HAVE_TLS_GET 1
-#define MONO_ARCH_IMT_REG AMD64_R11
+#define MONO_ARCH_IMT_REG AMD64_R10
 #define MONO_ARCH_VTABLE_REG MONO_AMD64_ARG_REG1
 /*
- * We use r10 for the rgctx register rather than r11 because r11 is
+ * We use r10 for the imt/rgctx register rather than r11 because r11 is
  * used by the trampoline as a scratch register and hence might be
  * clobbered across method call boundaries.
  */
