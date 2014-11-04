@@ -78,8 +78,8 @@ namespace System.Net.NetworkInformation {
 		void ParseRouteInfo (string iface)
 		{
 			try {
+				gateways = new IPAddressCollection ();
 				if (File.Exists ("/proc/net/route")) {
-					gateways = new IPAddressCollection ();
 					using (StreamReader reader = new StreamReader ("/proc/net/route")) {
 						string line;
 						reader.ReadLine (); // Ignore first line
