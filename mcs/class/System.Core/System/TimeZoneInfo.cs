@@ -1179,9 +1179,9 @@ namespace System
 				DateTime ttime = pair.Key;
 				TimeType ttype = pair.Value;
 				if (!ttype.IsDst) {
-					if (standardDisplayName != ttype.Name || baseUtcOffset.TotalSeconds != ttype.Offset) {
+					if (standardDisplayName != ttype.Name)
 						standardDisplayName = ttype.Name;
-						daylightDisplayName = null;
+					if (baseUtcOffset.TotalSeconds != ttype.Offset) {
 						baseUtcOffset = new TimeSpan (0, 0, ttype.Offset);
 						if (adjustmentRules.Count > 0) // We ignore AdjustmentRules but store transitions.
 							storeTransition = true;
@@ -1217,10 +1217,11 @@ namespace System
 					}
 					dst_observed = false;
 				} else {
-					if (daylightDisplayName != ttype.Name || dstDelta.TotalSeconds != ttype.Offset - baseUtcOffset.TotalSeconds) {
+					if (daylightDisplayName != ttype.Name)
 						daylightDisplayName = ttype.Name;
+					if (dstDelta.TotalSeconds != ttype.Offset - baseUtcOffset.TotalSeconds)
 						dstDelta = new TimeSpan(0, 0, ttype.Offset) - baseUtcOffset;
-					}
+
 					dst_start = ttime;
 					dst_observed = true;
 				}
