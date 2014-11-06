@@ -98,13 +98,13 @@ namespace System.Threading {
 		private IntPtr android_tid;
 		private IntPtr thread_pinning_ref;
 		private int ignore_next_signal;
+		private int thread_priority;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
 		private IntPtr unused0;
 		private IntPtr unused1;
-		private IntPtr unused2;
 		#endregion
 #pragma warning restore 169, 414, 649
 
@@ -585,13 +585,19 @@ namespace System.Threading {
 			}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static ThreadPriority GetPriority_internal (InternalThread thread);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void SetPriority_internal (InternalThread thread, ThreadPriority priority);
+
 		public ThreadPriority Priority {
 			get {
-				return(ThreadPriority.Lowest);
+				return GetPriority_internal (Internal);
 			}
 			
 			set {
-				// FIXME: Implement setter.
+				SetPriority_internal (Internal, value);
 			}
 		}
 

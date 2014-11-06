@@ -68,6 +68,8 @@ gint32 ves_icall_System_Threading_Thread_GetDomainID (void) MONO_INTERNAL;
 gboolean ves_icall_System_Threading_Thread_Yield (void) MONO_INTERNAL;
 MonoString* ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name) MONO_INTERNAL;
+gint32 ves_icall_System_Threading_Thread_GetPriority_internal (MonoInternalThread *this_obj) MONO_INTERNAL;
+void ves_icall_System_Threading_Thread_SetPriority_internal (MonoInternalThread *this_obj, gint32 priority) MONO_INTERNAL;
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInternalThread *this_obj) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_SetCachedCurrentCulture (MonoThread *this_obj, MonoObject *culture) MONO_INTERNAL;
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentUICulture (MonoInternalThread *this_obj) MONO_INTERNAL;

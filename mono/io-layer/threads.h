@@ -30,6 +30,9 @@ extern gsize GetCurrentThreadId(void); /* NB return is 32bit in MS API */
 extern void Sleep(guint32 ms);
 extern guint32 SleepEx(guint32 ms, gboolean alertable);
 
+extern gint32 GetThreadPriority (gpointer handle, gint32 *thread_priority);
+extern gboolean SetThreadPriority (gpointer handle, gint32 *thread_priorit, gint32 priority);
+
 void wapi_interrupt_thread (gpointer handle);
 void wapi_clear_interruption (void);
 gboolean wapi_thread_set_wait_handle (gpointer handle);

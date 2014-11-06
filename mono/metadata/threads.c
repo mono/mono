@@ -42,6 +42,14 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-memory-model.h>
 
+#ifndef HOST_WIN32
+#include <mono/io-layer/wapi-private.h>
+#include <mono/io-layer/handles-private.h>
+#include <sys/syscall.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#endif
+
 #include <mono/metadata/gc-internal.h>
 
 #ifdef PLATFORM_ANDROID
@@ -558,6 +566,11 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	guint32 (*start_func)(void *);
 	void *start_arg;
 	gsize tid;
+#ifndef HOST_WIN32
+	gboolean ok;
+	struct _WapiHandle_thread *thread_handle;
+	int ret;
+#endif
 	/* 
 	 * We don't create a local to hold start_info->obj, so hopefully it won't get pinned during a
 	 * GC stack walk.
@@ -613,6 +626,23 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	LIBGC_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT",%d) Setting thread stack to %p", __func__, GetCurrentThreadId (), getpid (), thread->stack_ptr));
 
 	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Setting current_object_key to %p", __func__, GetCurrentThreadId (), internal));
+
+#ifndef HOST_WIN32
+	ok = _wapi_lookup_handle (internal->handle, WAPI_HANDLE_THREAD, (gpointer *)&thread_handle);
+
+	if (ok != FALSE) {
+		thread_handle->pid = syscall(SYS_gettid);
+
+		if(internal->thread_priority != 0) {
+			/* Thread running; set priority now. */
+			errno = 0;
+			ret = setpriority (PRIO_PROCESS, thread_handle->pid,internal->thread_priority);
+			if (ret == -1) {
+				g_warning ("%s: setpriority could not set priority %d: %s", __func__, internal->thread_priority, strerror (errno));
+			}
+		}
+	}
+#endif
 
 	/* On 2.0 profile (and higher), set explicitly since state might have been
 	   Unknown */
@@ -862,7 +892,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gb
 
 	/* Check that the managed and unmanaged layout of MonoInternalThread matches */
 	if (mono_check_corlib_version () == NULL)
-		g_assert (((char*)&internal->unused2 - (char*)internal) == mono_defaults.internal_thread_class->fields [mono_defaults.internal_thread_class->field.count - 1].offset);
+		g_assert (((char*)&internal->unused1 - (char*)internal) == mono_defaults.internal_thread_class->fields [mono_defaults.internal_thread_class->field.count - 1].offset);
 
 	return internal;
 }
@@ -1242,6 +1272,41 @@ void
 ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name)
 {
 	mono_thread_set_name_internal (this_obj, name, TRUE);
+}
+
+/*
+ * ves_icall_System_Threading_Thread_GetPriority_internal:
+ * @param this_obj: The MonoInternalThread on which to operate.
+ *
+ * Gets the priority of the given thread.
+ * @return: The priority of the given thread.
+ */
+gint32
+ves_icall_System_Threading_Thread_GetPriority_internal (MonoInternalThread *this_obj)
+{
+	gint32 priority;
+
+	ensure_synch_cs_set (this_obj);
+	//	EnterCriticalSection (this_obj->synch_cs);
+	priority = GetThreadPriority (this_obj->handle, &this_obj->thread_priority) + 2; /* convert to [-2; 2] range to [0;4] */
+	//	LeaveCriticalSection (this_obj->synch_cs);
+	return priority;
+}
+
+/*
+ * ves_icall_System_Threading_Thread_SetPriority_internal:
+ * @param this_obj: The MonoInternalThread on which to operate.
+ * @param priority: The priority to set.
+ *
+ * Sets the priority of the given thread.
+ */
+void
+ves_icall_System_Threading_Thread_SetPriority_internal (MonoInternalThread *this_obj, gint32 priority)
+{
+	ensure_synch_cs_set (this_obj);
+	//	EnterCriticalSection (this_obj->synch_cs);
+	SetThreadPriority (this_obj->handle, &this_obj->thread_priority, priority - 2); /* convert from [0; 4] range to [-2; 2]. */
+	//	LeaveCriticalSection (this_obj->synch_cs);
 }
 
 /* If the array is already in the requested domain, we just return it,
