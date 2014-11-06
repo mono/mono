@@ -436,6 +436,7 @@ struct _MonoInternalThread {
 	gpointer thread_pinning_ref;
 	gint32 ignore_next_signal;
 	MonoMethod *async_invoke_method;
+	int thread_priority; /* Used by Get/SetThreadPriority */
 	/* 
 	 * These fields are used to avoid having to increment corlib versions
 	 * when a new field is added to this structure.
@@ -443,7 +444,6 @@ struct _MonoInternalThread {
 	 * same field there.
 	 */
 	gpointer unused1;
-	gpointer unused2;
 };
 
 struct _MonoThread {

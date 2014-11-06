@@ -25,6 +25,7 @@ extern struct _WapiHandleOps _wapi_thread_ops;
 struct _WapiHandle_thread
 {
 	pthread_t id;
+	pid_t pid;
 	GPtrArray *owned_mutexes;
 	/* 
      * Handle this thread waits on. If this is INTERRUPTION_REQUESTED_HANDLE,

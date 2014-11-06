@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/resource.h>
 
 #include <mono/io-layer/wapi.h>
 #include <mono/io-layer/wapi-private.h>
@@ -56,6 +57,14 @@ struct _WapiHandleOps _wapi_thread_ops = {
 	NULL,				/* special_wait */
 	NULL				/* prewait */
 };
+
+typedef enum {
+	THREAD_PRIORITY_LOWEST = -2,
+	THREAD_PRIORITY_BELOW_NORMAL = -1,
+	THREAD_PRIORITY_NORMAL = 0,
+	THREAD_PRIORITY_ABOVE_NORMAL = 1,
+	THREAD_PRIORITY_HIGHEST = 2
+} WapiThreadPriority;
 
 static mono_once_t thread_ops_once = MONO_ONCE_INIT;
 
@@ -564,4 +573,119 @@ wapi_current_thread_desc (void)
 	res = text->str;
 	g_string_free (text, FALSE);
 	return res;
+}
+
+/**
+ * _wapi_posix_priority_to_thread_priority:
+ *
+ *   Convert a POSIX priority to a WapiThreadPriority.
+ * @sched_priority The POSIX priority to covert ( see getpriority(2) )
+ * Returns the corresponding WapiThreadPriority.
+ */
+static WapiThreadPriority _wapi_posix_priority_to_thread_priority (int sched_priority)
+{
+/* Necessary to get valid priority range */
+#ifdef _POSIX_PRIORITY_SCHEDULING
+	switch(sched_priority) {
+	case -20 ... -11: return (THREAD_PRIORITY_HIGHEST);
+	case -10 ...  -1: return (THREAD_PRIORITY_ABOVE_NORMAL);
+	case   0:         return (THREAD_PRIORITY_NORMAL);
+	case   1 ...  10: return (THREAD_PRIORITY_BELOW_NORMAL);
+	case  11 ...  19: return (THREAD_PRIORITY_LOWEST);
+	default: break;
+	}
+#endif
+
+	return (THREAD_PRIORITY_NORMAL);
+}
+
+/**
+ * _wapi_thread_priority_to_posix_priority:
+ *
+ *   Convert a WapiThreadPriority to a POSIX priority.
+ *
+ * @sched_priority The WapiThreadPriorityThe covert.
+ *
+ * Returns the corresponding POSIX priority ( see getpriority(2) )
+ */
+static int _wapi_thread_priority_to_posix_priority (WapiThreadPriority priority)
+{
+/* Necessary to get valid priority range */
+#ifdef _POSIX_PRIORITY_SCHEDULING
+	switch(priority) {
+	case THREAD_PRIORITY_HIGHEST:      return (-20);
+	case THREAD_PRIORITY_ABOVE_NORMAL: return (-10);
+	case THREAD_PRIORITY_NORMAL:       return (  0);
+	case THREAD_PRIORITY_BELOW_NORMAL: return ( 10);
+	case THREAD_PRIORITY_LOWEST:       return ( 19);
+	}
+
+#endif
+	return (0);
+}
+
+/**
+ * GetThreadPriority:
+ *   Gets the priority of the given thread.
+ *
+ * @handle: The thread handle to query.
+ *
+ * Returns a MonoThreadPriority approximating the current POSIX
+ * thread priority, or THREAD_PRIORITY_NORMAL on error.
+ */
+gint32 GetThreadPriority (gpointer handle, gint32 *thread_priority)
+{
+	struct _WapiHandle_thread *thread_handle;
+	int prio;
+	gboolean ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD, (gpointer *)&thread_handle);
+
+	if (ok == FALSE) return (THREAD_PRIORITY_NORMAL);
+
+	if (thread_handle->pid == 0) {
+		/* Thread not yet started; return intended priority. */
+		return *thread_priority;
+	}
+
+	errno = 0;
+	prio = getpriority (PRIO_PROCESS, thread_handle->pid);
+	if (prio == -1) {
+		g_warning ("%s: getpriority could not get priority: %s", __func__, strerror (errno));
+		return (THREAD_PRIORITY_NORMAL);
+	}
+
+	return _wapi_posix_priority_to_thread_priority (prio);
+}
+
+/**
+ * SetThreadPriority:
+ *   Sets the priority of the given thread.
+ *
+ * @handle: The thread handle to query.
+ * @priority: The priority to give to the thread.
+ *
+ * Returns TRUE on success, FALSE on failure or error.
+ */
+gboolean SetThreadPriority (gpointer handle, gint32 *thread_priority, gint32 priority)
+{
+	struct _WapiHandle_thread *thread_handle;
+	int ret;
+	gboolean ok;
+
+	*thread_priority = _wapi_thread_priority_to_posix_priority (priority);
+
+	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD, (gpointer *)&thread_handle);
+
+	if (ok == FALSE) return (FALSE);
+
+	if (thread_handle->pid != 0) {
+		/* Thread already running; set priority now. */
+		errno = 0;
+		ret = setpriority (PRIO_PROCESS, thread_handle->pid, *thread_priority);
+		if (ret == -1) {
+			g_warning ("%s: setpriority could not set priority %d: %s", __func__, *thread_priority, strerror (errno));
+			return (FALSE);
+		}
+	}
+
+	return (TRUE);
 }
