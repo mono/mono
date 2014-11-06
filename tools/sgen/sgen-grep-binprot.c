@@ -35,6 +35,7 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_ALLOC_PINNED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_DEGRADED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_COPY: size = sizeof (SGenProtocolCopy); break;
+	case SGEN_PROTOCOL_PIN_STAGE: size = sizeof (SGenProtocolPinStage); break;
 	case SGEN_PROTOCOL_PIN: size = sizeof (SGenProtocolPin); break;
 	case SGEN_PROTOCOL_MARK: size = sizeof (SGenProtocolMark); break;
 	case SGEN_PROTOCOL_SCAN_BEGIN: size = sizeof (SGenProtocolScanBegin); break;
@@ -175,6 +176,11 @@ print_entry (int type, void *data)
 	case SGEN_PROTOCOL_COPY: {
 		SGenProtocolCopy *entry = data;
 		printf ("copy from %p to %p vtable %p size %d\n", entry->from, entry->to, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_PIN_STAGE: {
+		SGenProtocolPinStage *entry = data;
+		printf ("pin stage addr ptr %p addr %p thread %p\n", entry->addr_ptr, entry->addr, entry->thread);
 		break;
 	}
 	case SGEN_PROTOCOL_PIN: {
@@ -330,6 +336,10 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_COPY: {
 		SGenProtocolCopy *entry = data;
 		return matches_interval (ptr, entry->from, entry->size) || matches_interval (ptr, entry->to, entry->size);
+	}
+	case SGEN_PROTOCOL_PIN_STAGE: {
+		SGenProtocolPinStage *entry = data;
+		return ptr == entry->addr_ptr || ptr == entry->addr || ptr == entry->thread;
 	}
 	case SGEN_PROTOCOL_PIN: {
 		SGenProtocolPin *entry = data;
