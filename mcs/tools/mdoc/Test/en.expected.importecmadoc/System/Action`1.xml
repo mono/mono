@@ -21,12 +21,13 @@
     <typeparam name="T">To be added.</typeparam>
     <param name="obj">The object on which to perform an action.</param>
     <summary>
-      <para> Represents the method that performs an action on the specified object.</para>
-    </summary>
+					<para> Represents the method that performs an action on the specified object.</para>
+				</summary>
     <remarks>
-      <block subset="none" type="note">
-        <para>This delegate is used by the method <see cref="M:System.Array.ForEach" /><see langword="(T[], Action&lt;T&gt;)" />, and in <see cref="T:System.Collections.Generic.List&lt;T&gt;" /> to perform an action on each element of the collection.</para>
-      </block>
-    </remarks>
+					<block subset="none" type="note">
+						<para>This delegate is used by the method <see cref="M:System.Array.ForEach" />
+							<see langword="(T[], Action&lt;T&gt;)" />, and in <see cref="T:System.Collections.Generic.List&lt;T&gt;" /> to perform an action on each element of the collection.</para>
+					</block>
+				</remarks>
   </Docs>
 </Type>
