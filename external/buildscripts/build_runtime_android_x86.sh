@@ -5,7 +5,7 @@
 
 export ANDROID_PLATFORM=android-9
 GCC_PREFIX=i686-linux-android-
-GCC_VERSION=4.4.3
+GCC_VERSION=4.8
 OUTDIR=builds/embedruntimes/android
 PREFIX=`pwd`/builds/android
 
