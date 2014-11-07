@@ -2630,9 +2630,22 @@ namespace System
 			
 			if (ptr < max && str[ptr] == ':') {
 				int start = ++ ptr;
-				while (ptr < max && str[ptr] != '}')
-					++ ptr;
-				
+				while (ptr < max) {
+					if (str [ptr] == '}') {
+						if (ptr + 1 < max && str [ptr + 1] == '}') {
+							++ptr;
+							format += str.Substring (start, ptr - start);
+							++ptr;
+							start = ptr;
+							continue;
+						}
+
+						break;
+					}
+
+					++ptr;
+				}
+
 				format += str.Substring (start, ptr - start);
 			}
 			else
@@ -2675,24 +2688,8 @@ namespace System
 			}
 		}
 
-		internal unsafe void InternalSetLength (int newLength)
-		{
-			if (newLength > length)
-				throw new ArgumentOutOfRangeException ("newLength", "newLength as to be <= length");
-
-			// zero terminate, we can pass string objects directly via pinvoke
-			// we also zero the rest of the string, since the new GC needs to be
-			// able to handle the changing size (it will skip the 0 bytes).
-			fixed (char * pStr = &start_char) {
-				char *p = pStr + newLength;
-				char *end = pStr + length;
-				while (p < end) {
-					p [0] = '\0';
-					p++;
-				}
-			}
-			length = newLength;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern void InternalSetLength (int newLength);
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		// When modifying it, GetCaseInsensitiveHashCode() should be modified as well.

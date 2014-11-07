@@ -26,11 +26,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace System.IO.Packaging.Tests {
+namespace MonoTests.System.IO.Packaging {
 
     [TestFixture]
     public class PackageTest : TestBase {
@@ -411,7 +413,7 @@ namespace System.IO.Packaging.Tests {
         [ExpectedException (typeof (FileFormatException))]
         public void WriteOnlyAccessExists ()
         {
-            System.IO.File.Create (path).Close ();
+            File.Create (path).Close ();
             package = Package.Open (path, FileMode.OpenOrCreate, FileAccess.Write);
         }
     }

@@ -45,7 +45,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER mono_old_win_toplevel_exception_filter;
 void *mono_win_vectored_exception_handle;
 
 #define W32_SEH_HANDLE_EX(_ex) \
-	if (_ex##_handler) _ex##_handler(0, ep, sctx)
+	if (_ex##_handler) _ex##_handler(0, ep, ctx)
 
 static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 {
@@ -68,7 +68,6 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
-	MonoContext* sctx;
 	LONG res;
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 
@@ -81,22 +80,6 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 	er = ep->ExceptionRecord;
 	ctx = ep->ContextRecord;
-	sctx = g_malloc(sizeof(MonoContext));
-
-	/* Copy Win32 context to UNIX style context */
-	sctx->rax = ctx->Rax;
-	sctx->rbx = ctx->Rbx;
-	sctx->rcx = ctx->Rcx;
-	sctx->rdx = ctx->Rdx;
-	sctx->rbp = ctx->Rbp;
-	sctx->rsp = ctx->Rsp;
-	sctx->rsi = ctx->Rsi;
-	sctx->rdi = ctx->Rdi;
-	sctx->rip = ctx->Rip;
-	sctx->r12 = ctx->R12;
-	sctx->r13 = ctx->R13;
-	sctx->r14 = ctx->R14;
-	sctx->r15 = ctx->R15;
 
 	switch (er->ExceptionCode) {
 	case EXCEPTION_ACCESS_VIOLATION:
@@ -126,29 +109,7 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		* can correctly chain the exception.
 		*/
 		res = EXCEPTION_CONTINUE_SEARCH;
-	} else {
-		/* Copy context back */
-		/* Nonvolatile */
-		ctx->Rsp = sctx->rsp;
-		ctx->Rdi = sctx->rdi;
-		ctx->Rsi = sctx->rsi;
-		ctx->Rbx = sctx->rbx;
-		ctx->Rbp = sctx->rbp;
-		ctx->R12 = sctx->r12;
-		ctx->R13 = sctx->r13;
-		ctx->R14 = sctx->r14;
-		ctx->R15 = sctx->r15;
-		ctx->Rip = sctx->rip;
-
-		/* Volatile But should not matter?*/
-		ctx->Rax = sctx->rax;
-		ctx->Rcx = sctx->rcx;
-		ctx->Rdx = sctx->rdx;
 	}
-
-	/* TODO: Find right place to free this in stack overflow case */
-	if (er->ExceptionCode != EXCEPTION_STACK_OVERFLOW)
-		g_free (sctx);
 
 	return res;
 }
@@ -591,7 +552,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		guint8 *cfa;
 		guint32 unwind_info_len;
 		guint8 *unwind_info;
-		guint8 *epilog;
+		guint8 *epilog = NULL;
 
 		frame->type = FRAME_TYPE_MANAGED;
 
@@ -604,7 +565,9 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		printf ("%s %p %p\n", ji->d.method->name, ji->code_start, ip);
 		mono_print_unwind_info (unwind_info, unwind_info_len);
 		*/
-		epilog = (guint8*)ji->code_start + ji->code_size - (ji->unwind_info >> 16);
+		/* LLVM compiled code doesn't have this info */
+		if (ji->has_arch_eh_info)
+			epilog = (guint8*)ji->code_start + ji->code_size - mono_jinfo_get_epilog_size (ji);
  
 		regs [AMD64_RAX] = new_ctx->rax;
 		regs [AMD64_RBX] = new_ctx->rbx;
@@ -622,7 +585,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
 						   (guint8*)ji->code_start + ji->code_size,
-						   ip, &epilog, regs, MONO_MAX_IREGS + 1,
+						   ip, epilog ? &epilog : NULL, regs, MONO_MAX_IREGS + 1,
 						   save_locations, MONO_MAX_IREGS, &cfa);
 
 		new_ctx->rax = regs [AMD64_RAX];
@@ -644,12 +607,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		/* Adjust IP */
 		new_ctx->rip --;
-
-#ifndef MONO_AMD64_NO_PUSHES
-		/* Pop arguments off the stack */
-		if (ji->has_arch_eh_info)
-			new_ctx->rsp += mono_jit_info_get_arch_eh_info (ji)->stack_size;
-#endif
 
 		return TRUE;
 	} else if (*lmf) {
@@ -841,6 +798,8 @@ mono_arch_ip_from_context (void *sigctx)
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 
 	return (gpointer)UCONTEXT_REG_RIP (ctx);
+#elif defined(HOST_WIN32)
+	return ((CONTEXT*)sigctx)->Rip;
 #else
 	MonoContext *ctx = sigctx;
 	return (gpointer)ctx->rip;
@@ -1062,9 +1021,16 @@ static gpointer throw_pending_exception;
  * exception.
  */
 void
-mono_arch_notify_pending_exc (void)
+mono_arch_notify_pending_exc (MonoThreadInfo *info)
 {
 	MonoLMF *lmf = mono_get_lmf ();
+
+	if (!info) {
+		lmf = mono_get_lmf ();
+	} else {
+		g_assert (info->suspend_state.valid);
+		lmf = info->suspend_state.unwind_data [MONO_UNWIND_DATA_LMF];
+	}
 
 	if (!lmf)
 		/* Not yet started */

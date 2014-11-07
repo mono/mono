@@ -32,7 +32,7 @@ using System.Text;
 using System.IO;
 using System.Data;
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture] public class SyntaxErrorExceptionTest
 	{

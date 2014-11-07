@@ -3,6 +3,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 public class Test
 {
@@ -14,10 +15,12 @@ public class Test
 		if (!(fields.Length > 0))
 			return 1;
 		object [] field_atts = fields[0].GetCustomAttributes (false);
-		if (!(field_atts.Length > 0))
+		if (field_atts.Length != 2)
 			return 2;
-		if (field_atts[0].GetType() != typeof (CompilerGeneratedAttribute))
+		if (field_atts[0].GetType() != typeof (DebuggerBrowsableAttribute))
 			return 3;
+		if (field_atts[1].GetType() != typeof (CompilerGeneratedAttribute))
+			return 4;
 			
 		if (fields [0].Name != "<Foo>k__BackingField")
 			return 10;

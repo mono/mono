@@ -556,6 +556,7 @@
     <Compile Include="Test\System.Web.Util\UrlUtilsTest.cs" />
     <Compile Include="Test\System.Web.Util\WorkItemCas.cs" />
     <Compile Include="Test\System.Web\AppBrowsersTest.cs" />
+    <Compile Include="Test\System.Web\EventHandlerTaskAsyncHelperTest.cs" />
     <Compile Include="Test\System.Web\HttpApplicationCas.cs" />
     <Compile Include="Test\System.Web\HttpApplicationStateCas.cs" />
     <Compile Include="Test\System.Web\HttpApplicationTest.cs" />
@@ -591,6 +592,7 @@
     <Compile Include="Test\System.Web\HttpServerUtilityCas.cs" />
     <Compile Include="Test\System.Web\HttpServerUtilityTest.cs" />
     <Compile Include="Test\System.Web\HttpStaticObjectsCollectionCas.cs" />
+    <Compile Include="Test\System.Web\HttpTaskAsyncHandlerTest.cs" />
     <Compile Include="Test\System.Web\HttpUnhandledExceptionCas.cs" />
     <Compile Include="Test\System.Web\HttpUtilityCas.cs" />
     <Compile Include="Test\System.Web\HttpUtilityTest.cs" />
@@ -602,6 +604,7 @@
     <Compile Include="Test\System.Web\SiteMapNodeTest.cs" />
     <Compile Include="Test\System.Web\SiteMapProviderTest.cs" />
     <Compile Include="Test\System.Web\StaticSiteMapProviderTest.cs" />
+    <Compile Include="Test\System.Web\TaskAsyncResultTest.cs" />
     <Compile Include="Test\System.Web\TraceContextCas.cs" />
     <Compile Include="Test\System.Web\TraceContextRecordTest.cs" />
     <Compile Include="Test\System.Web\VirtualPathUtilityTest.cs" />

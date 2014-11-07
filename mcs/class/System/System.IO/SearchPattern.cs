@@ -47,7 +47,7 @@ namespace System.IO {
 			Compile (pattern);
 		}
 
-		// OSX has a retarded case-insensitive yet case-aware filesystem
+		// OSX has a case-insensitive yet case-aware filesystem
 		// so we need a overload in here for the Kqueue watcher
 		public bool IsMatch (string text, bool ignorecase)
 		{
@@ -55,20 +55,17 @@ namespace System.IO {
 				bool match = String.Compare (pattern, text, ignorecase) == 0;
 				if (match)
 					return true;
-				
-				// This is a special case for FSW. It needs to match e.g. subdir/file.txt
-				// when the pattern is "file.txt"
-				int idx = text.LastIndexOf ('/');
-				if (idx == -1)
-					return false;
-				idx++;
-				if (idx == text.Length)
-					return false;
-				
-				return (String.Compare (pattern, text.Substring (idx), ignorecase) == 0);
 			}
+				
+			// This is a special case for FSW. It needs to match e.g. subdir/file.txt
+			// when the pattern is "file.txt"
+			var fileName = Path.GetFileName (text);
 			
-			return Match (ops, text, 0);
+			if (!hasWildcard)
+				return (String.Compare (pattern, fileName, ignorecase) == 0);
+			
+			
+			return Match (ops, fileName, 0);
 		}
 
 		public bool IsMatch (string text)

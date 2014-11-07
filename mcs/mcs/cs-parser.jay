@@ -871,7 +871,7 @@ named_attribute_argument
 	;
 	
 named_argument
-	: identifier_inside_body COLON opt_named_modifier expression_or_error
+	: identifier_inside_body COLON opt_named_modifier named_argument_expr
 	  {
 		if (lang_version <= LanguageVersion.V_3)
 			FeatureIsNotAvailable (GetLocation ($1), "named argument");
@@ -883,6 +883,11 @@ named_argument
 		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4, arg_mod);
 		lbag.AddLocation ($$, GetLocation($2));
 	  }
+	;
+
+named_argument_expr
+	: expression_or_error
+	| declaration_expression
 	;
 	
 opt_named_modifier
@@ -2179,6 +2184,8 @@ operator_declarator
 	: operator_type OPERATOR overloadable_operator OPEN_PARENS
 	  {
 		valid_param_mod = ParameterModifierType.DefaultValue;
+		if ((Operator.OpType) $3 == Operator.OpType.Is)
+			valid_param_mod |= ParameterModifierType.Out;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
@@ -2203,6 +2210,8 @@ operator_declarator
 				report.Error (1535, loc, "Overloaded unary operator `{0}' takes one parameter",
 					Operator.GetName (op));
 			}
+		} else if (op == Operator.OpType.Is) {
+			// TODO: Special checks for is operator
 		} else {
 			if (p_count == 1) {
 				report.Error (1019, loc, "Overloadable unary operator expected");
@@ -2249,6 +2258,13 @@ overloadable_operator
         | OP_LT { $$ = Operator.OpType.LessThan; }
         | OP_GE { $$ = Operator.OpType.GreaterThanOrEqual; }
         | OP_LE { $$ = Operator.OpType.LessThanOrEqual; }
+	| IS
+	  {
+		if (lang_version != LanguageVersion.Experimental)
+			FeatureIsNotAvailable (GetLocation ($1), "is user operator");
+
+		$$ = Operator.OpType.Is;
+	  }
 	;
 
 conversion_operator_declarator
@@ -2352,10 +2368,24 @@ constructor_declarator
 		if (lt.Value != current_container.MemberName.Name) {
 			report.Error (1520, c.Location, "Class, struct, or interface method must have a return type");
 		} else if ((mods & Modifiers.STATIC) != 0) {
+			if (!current_local_parameters.IsEmpty) {
+				report.Error (132, c.Location, "`{0}': The static constructor must be parameterless",
+					c.GetSignatureForError ());
+			}
+
 			if ((mods & Modifiers.AccessibilityMask) != 0){
 				report.Error (515, c.Location,
 					"`{0}': static constructor cannot have an access modifier",
 					c.GetSignatureForError ());
+			}
+		} else {
+			if (current_type.Kind == MemberKind.Struct && current_local_parameters.IsEmpty) {
+				if (lang_version < LanguageVersion.V_6)
+					FeatureIsNotAvailable (GetLocation ($3), "struct parameterless instance constructor");
+
+				if ((mods & Modifiers.PUBLIC) == 0) {
+					report.Error (8075, c.Location, "`{0}': Structs parameterless instance constructor must be public", c.GetSignatureForError ());
+				}
 			}
 		}
 
@@ -2754,10 +2784,6 @@ opt_enum_base
 	: /* empty */
 	| COLON type
 	 {
-	 	var te = $2 as TypeExpression;
-		if (te == null || !EnumSpec.IsValidUnderlyingType (te.Type)) {
-			Enum.Error_1008 (GetLocation ($2), report);
-		}
 		$$ = $2;
 	 }
 	| COLON error
@@ -3118,29 +3144,21 @@ member_type
 //
 type
 	: type_expression_or_array
-	| VOID
-	  {
-	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), report);
-		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
-	  }	
+	| void_invalid
 	;
 	
 simple_type
 	: type_expression
-	| VOID
-	  {
-	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), report);
-		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
-	  }	
+	| void_invalid
 	;
 	
 parameter_type
 	: type_expression_or_array
 	| VOID
 	  {
-	  	report.Error (1536, GetLocation ($1), "Invalid parameter type `void'");
+		report.Error (1536, GetLocation ($1), "Invalid parameter type `void'");
 		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
-	  }	
+	  }
 	;
 
 type_expression_or_array
@@ -3168,7 +3186,19 @@ type_expression
 	  {
 		$$ = new ComposedCast ((ATypeNameExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
-	| builtin_types opt_nullable
+	| builtin_type_expression
+	;
+
+void_invalid
+	: VOID
+	  {
+		Expression.Error_VoidInvalidInTheContext (GetLocation ($1), report);
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
+	  }
+	;
+
+builtin_type_expression
+	: builtin_types opt_nullable
 	  {
 		if ($2 != null)
 			$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
@@ -3240,7 +3270,7 @@ integral_type
 
 
 primary_expression
-	: primary_expression_or_type
+	: type_name_expression
 	| literal
 	| array_creation_expression
 	| parenthesized_expression
@@ -3262,7 +3292,7 @@ primary_expression
 	| undocumented_expressions
 	;
 
-primary_expression_or_type
+type_name_expression
 	: simple_name_expr
 	| IDENTIFIER GENERATE_COMPLETION {
 		var lt = (LocatedToken) $1;
@@ -3581,10 +3611,18 @@ non_simple_argument
 		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
 		lbag.AddLocation ($$, GetLocation ($1));
 	  }
+	| REF declaration_expression
+	  {
+		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
+	  }
 	| OUT variable_reference 
 	  { 
 		$$ = new Argument ((Expression) $2, Argument.AType.Out);
 		lbag.AddLocation ($$, GetLocation ($1));
+	  }
+	| OUT declaration_expression
+	  {
+		$$ = new Argument ((Expression) $2, Argument.AType.Out);
 	  }
 	| ARGLIST OPEN_PARENS argument_list CLOSE_PARENS
 	  {
@@ -3596,6 +3634,48 @@ non_simple_argument
 		$$ = new Argument (new Arglist (GetLocation ($1)));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($3));
 	  }	  
+	;
+
+declaration_expression
+	: OPEN_PARENS declaration_expression CLOSE_PARENS
+	  {
+		$$ = new ParenthesizedExpression ((Expression) $2, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
+	  }
+/*
+	| CHECKED open_parens_any declaration_expression CLOSE_PARENS
+	  {
+		$$ = new CheckedExpr ((Expression) $3, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+	  }
+	| UNCHECKED open_parens_any declaration_expression CLOSE_PARENS
+	  {
+		$$ = new UnCheckedExpr ((Expression) $3, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+	  }
+*/
+	| variable_type identifier_inside_body
+	  {
+		if (lang_version < LanguageVersion.V_6)
+			FeatureIsNotAvailable (GetLocation ($1), "declaration expression");
+
+		var lt = (LocatedToken) $2;
+		var lv = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (lv);
+		$$ = new DeclarationExpression ((FullNamedExpression) $1, lv);
+	  }
+	| variable_type identifier_inside_body ASSIGN expression
+	  {
+		if (lang_version < LanguageVersion.V_6)
+			FeatureIsNotAvailable (GetLocation ($1), "declaration expression");
+
+		var lt = (LocatedToken) $2;
+		var lv = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (lv);
+		$$ = new DeclarationExpression ((FullNamedExpression) $1, lv) {
+			Initializer = (Expression) $4
+		};
+	  }
 	;
 
 variable_reference
@@ -4262,15 +4342,7 @@ additive_expression
 		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
-	| additive_expression AS type
-	  {
-		$$ = new As ((Expression) $1, (Expression) $3, GetLocation ($2));
-	  }
-	| additive_expression IS type
-	  {
-		$$ = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
-	  }	  
-	| additive_expression PLUS error 
+	| additive_expression PLUS error
 	  {
 		Error_SyntaxError (yyToken);
 
@@ -4283,6 +4355,32 @@ additive_expression
 
 		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, null);
 		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| additive_expression AS type
+	  {
+		$$ = new As ((Expression) $1, (Expression) $3, GetLocation ($2));
+	  }
+	| additive_expression IS pattern_type_expr opt_identifier
+	  {
+		var is_expr = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
+		if ($4 != null) {
+			if (lang_version != LanguageVersion.Experimental)
+				FeatureIsNotAvailable (GetLocation ($4), "type pattern matching");
+
+			var lt = (LocatedToken) $4;
+			is_expr.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
+			current_block.AddLocalName (is_expr.Variable);
+		}
+
+		$$ = is_expr;
+	  }
+	| additive_expression IS pattern_expr
+	  {
+		var is_expr = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
+		if (lang_version != LanguageVersion.Experimental)
+			FeatureIsNotAvailable (GetLocation ($2), "pattern matching");
+
+		$$ = is_expr;
 	  }
 	| additive_expression AS error
 	  {
@@ -4305,6 +4403,122 @@ additive_expression
 	  {
 		var lt = (LocatedToken) $1;
 		$$ = new As (new SimpleName (lt.Value, lt.Location), (Expression) $3, GetLocation ($2));
+	  }
+	;
+
+pattern_type_expr
+	: variable_type
+	;
+
+pattern_expr
+	: literal
+	| PLUS prefixed_unary_expression
+	  {
+		$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, GetLocation ($1));
+	  }
+	| MINUS prefixed_unary_expression
+	  {
+		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, GetLocation ($1));
+	  }
+	| sizeof_expression
+	| default_value_expression
+	| OPEN_PARENS_CAST type CLOSE_PARENS prefixed_unary_expression
+	  {
+		$$ = new Cast ((FullNamedExpression) $2, (Expression) $4, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3));
+	  }
+	| STAR
+	  {
+		$$ = new WildcardPattern (GetLocation ($1));
+	  }
+	| pattern_expr_invocation
+	| pattern_property
+	;
+
+pattern_expr_invocation
+	: type_name_expression OPEN_PARENS opt_pattern_list CLOSE_PARENS
+	  {
+		$$ = new RecursivePattern ((ATypeNameExpression) $1, (Arguments) $3, GetLocation ($2));
+	  }
+	;
+
+pattern_property
+	: type_name_expression OPEN_BRACE pattern_property_list CLOSE_BRACE
+	  {
+		$$ = new PropertyPattern ((ATypeNameExpression) $1, (List<PropertyPatternMember>) $3, GetLocation ($2));
+	  }
+	;
+
+pattern_property_list
+	: pattern_property_entry
+	  {
+		var list = new List<PropertyPatternMember> ();
+		list.Add ((PropertyPatternMember) $1);
+		$$ = list;
+	  }
+	| pattern_property_list COMMA pattern_property_entry
+	  {
+		var list = (List<PropertyPatternMember>) $1;
+		list.Add ((PropertyPatternMember) $3);
+		$$ = list;
+	  }
+	;
+
+pattern_property_entry
+	: identifier_inside_body IS pattern
+	  {
+		var lt = (LocatedToken) $1;
+		$$ = new PropertyPatternMember (lt.Value, (Expression) $3, lt.Location);
+	  }
+	;
+
+pattern
+	: pattern_expr
+	| pattern_type_expr opt_identifier
+	  {
+	  	if ($2 != null) {
+			var lt = (LocatedToken) $2;
+			var variable = new LocalVariable (current_block, lt.Value, lt.Location);
+			current_block.AddLocalName (variable);
+		}
+	  }
+	;
+
+opt_pattern_list
+	: /* empty */
+	  {
+		$$ = new Arguments (0);
+	  }
+	| pattern_list
+	;
+
+pattern_list
+	: pattern_argument
+	  {
+		Arguments args = new Arguments (4);
+		args.Add ((Argument) $1);
+		$$ = args;
+	  }
+	| pattern_list COMMA pattern_argument
+	  {
+		Arguments args = (Arguments) $1;
+		if (args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
+			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
+
+		args.Add ((Argument) $3);
+		$$ = args;
+	  }
+	;
+
+pattern_argument
+	: pattern
+	  {
+		$$ = new Argument ((Expression) $1);
+	  }
+	| IDENTIFIER COLON pattern
+	  {
+		var lt = (LocatedToken) $1;
+		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $3);
 	  }
 	;
 
@@ -5364,7 +5578,7 @@ variable_type
  * > The expressions are converted into types during semantic analysis.
  */
 variable_type_simple
-	: primary_expression_or_type opt_nullable
+	: type_name_expression opt_nullable
 	  { 
 		// Ok, the above "primary_expression" is there to get rid of
 		// both reduce/reduce and shift/reduces in the grammar, it should
@@ -5380,51 +5594,23 @@ variable_type_simple
 		// SimpleName is when you have
 		// Blah i;
 		
-		Expression expr = (Expression) $1;
+		var expr = (ATypeNameExpression) $1;
 		if ($2 == null) {
-			SimpleName sn = expr as SimpleName;
-			if (sn != null && sn.Name == "var")
-				$$ = new VarExpr (sn.Location);
+			if (expr.Name == "var" && expr is SimpleName)
+				$$ = new VarExpr (expr.Location);
 			else
 				$$ = $1;
-		} else if (expr is ATypeNameExpression) {
-			$$ = new ComposedCast ((ATypeNameExpression)expr, (ComposedTypeSpecifier) $2);
 		} else {
-			Error_ExpectingTypeName (expr);
-			$$ = null;
-		}
-	  }
-	| primary_expression_or_type pointer_stars
-	  {
-		ATypeNameExpression expr = $1 as ATypeNameExpression;
-
-		if (expr != null) {
 			$$ = new ComposedCast (expr, (ComposedTypeSpecifier) $2);
-		} else {
-			Error_ExpectingTypeName ((Expression)$1);
-			$$ = expr;
 		}
 	  }
-	| builtin_types opt_nullable
+	| type_name_expression pointer_stars
 	  {
-		if ($2 == null)
-			$$ = $1;
-		else
-			$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
+		var expr = (ATypeNameExpression) $1;
+		$$ = new ComposedCast (expr, (ComposedTypeSpecifier) $2);
 	  }
-	| builtin_types pointer_stars
-	  {
-		$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
-	  }
-	| VOID pointer_stars
-	  {
-		$$ = new ComposedCast (new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
-	  }	  
-	| VOID
-	  {
-		Expression.Error_VoidInvalidInTheContext (GetLocation ($1), report);
-		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
-	  }
+	| builtin_type_expression
+	| void_invalid
 	;
 	
 pointer_stars
@@ -5740,6 +5926,16 @@ switch_label
 	  {
 		Error_SyntaxError (yyToken);
 		$$ = new SwitchLabel ((Expression) $2, GetLocation ($1));
+	  }
+	| CASE pattern_expr_invocation COLON
+	  {
+		if (lang_version != LanguageVersion.Experimental)
+			FeatureIsNotAvailable (GetLocation ($2), "pattern matching");
+
+		$$ = new SwitchLabel ((Expression) $2, GetLocation ($1)) {
+			PatternMatching = true
+		};
+		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 	| DEFAULT_COLON
 	  {
@@ -7890,6 +8086,7 @@ static string GetTokenName (int token)
 	case Token.OP_AND_ASSIGN:
 	case Token.OP_XOR_ASSIGN:
 	case Token.OP_OR_ASSIGN:
+	case Token.INTERR_OPERATOR:
 		return "<operator>";
 
 	case Token.BOOL:

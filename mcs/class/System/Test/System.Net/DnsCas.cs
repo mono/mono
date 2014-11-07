@@ -30,14 +30,13 @@ namespace MonoCasTests.System.Net {
 		static ManualResetEvent reset;
 		private string message;
 		private string hostname;
-		private IPAddress ip;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
 			reset = new ManualResetEvent (false);
 			hostname = Dns.GetHostName ();
-			ip = Dns.Resolve (site).AddressList[0];
+			var ip = Dns.Resolve (site).AddressList[0];
 		}
 
 		[TestFixtureTearDown]

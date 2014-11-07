@@ -1296,7 +1296,7 @@ namespace System.Windows.Forms {
 						buffer [i] = Marshal.ReadByte (prop, i);
 					Clipboard.Item = Encoding.UTF8.GetString (buffer);
 				} else if (property == UTF16_STRING) {
-					Clipboard.Item = Marshal.PtrToStringUni (prop, Encoding.Unicode.GetMaxCharCount ((int)nitems));
+					Clipboard.Item = Marshal.PtrToStringUni (prop);
 				} else if (property == RICHTEXTFORMAT)
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
 				else if (DataFormats.ContainsFormat (property.ToInt32 ())) {

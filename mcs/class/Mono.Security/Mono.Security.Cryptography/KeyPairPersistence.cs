@@ -221,14 +221,12 @@ namespace Mono.Security.Cryptography {
 								string msg = Locale.GetText ("Could not create user key store '{0}'.");
 								throw new CryptographicException (String.Format (msg, _userPath), e);
 							}
-
-							if (!ProtectUser (_userPath)) {
-								string msg = Locale.GetText ("Could not secure user key store '{0}'.");
-								throw new IOException (String.Format (msg, _userPath));
-							} 
-
 							_userPathExists = true;
 						}
+					}
+					if (!IsUserProtected (_userPath) && !ProtectUser (_userPath)) {
+						string msg = Locale.GetText ("Could not secure user key store '{0}'.");
+						throw new IOException (String.Format (msg, _userPath));
 					}
 				}
 				// is it properly protected ?
@@ -258,14 +256,12 @@ namespace Mono.Security.Cryptography {
 								string msg = Locale.GetText ("Could not create machine key store '{0}'.");
 								throw new CryptographicException (String.Format (msg, _machinePath), e);
 							}
-
-							if (!ProtectMachine (_machinePath)) {
-								string msg = Locale.GetText ("Could not secure machine key store '{0}'.");
-								throw new IOException (String.Format (msg, _machinePath));
-							}
-
 							_machinePathExists = true;
 						}
+					}
+					if (!IsMachineProtected (_machinePath) && !ProtectMachine (_machinePath)) {
+						string msg = Locale.GetText ("Could not secure machine key store '{0}'.");
+						throw new IOException (String.Format (msg, _machinePath));
 					}
 				}
 				// is it properly protected ?

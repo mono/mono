@@ -46,9 +46,7 @@ namespace System.ServiceModel.MonoInternal
 	{
 		ContractDescription Contract { get; }
 
-		OperationContext Context { set; }
-
-		object Process (MethodBase method, string operationName, object [] parameters);
+		object Process (MethodBase method, string operationName, object [] parameters, OperationContext context);
 
 		IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState);
 
@@ -69,12 +67,11 @@ namespace System.ServiceModel.MonoInternal
 		TimeSpan default_open_timeout, default_close_timeout;
 		IChannel channel;
 		IChannelFactory factory;
-		OperationContext context;
 
 		#region delegates
 		readonly ProcessDelegate _processDelegate;
 
-		delegate object ProcessDelegate (MethodBase method, string operationName, object [] parameters);
+		delegate object ProcessDelegate (MethodBase method, string operationName, bool isAsync, ref object [] parameters, OperationContext context);
 
 		readonly RequestDelegate requestDelegate;
 
@@ -147,10 +144,6 @@ namespace System.ServiceModel.MonoInternal
 
 		internal IDuplexChannel DuplexChannel {
 			get { return channel as IDuplexChannel; }
-		}
-
-		public OperationContext Context {
-			set { context = value; }
 		}
 
 		#region IClientChannel
@@ -445,36 +438,48 @@ namespace System.ServiceModel.MonoInternal
 
 		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState)
 		{
-			if (context != null)
-				throw new InvalidOperationException ("another operation is in progress");
-			context = OperationContext.Current;
-
-			return _processDelegate.BeginInvoke (method, operationName, parameters, callback, asyncState);
+			var p = parameters;
+			var retval = _processDelegate.BeginInvoke (method, operationName, true, ref p, OperationContext.Current, callback, asyncState);
+			if (p != parameters)
+				throw new InvalidOperationException ();
+			return retval;
 		}
 
 		public object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result)
 		{
-				
 			if (result == null)
 				throw new ArgumentNullException ("result");
 			if (parameters == null)
 				throw new ArgumentNullException ("parameters");
-			// FIXME: the method arguments should be verified to be 
-			// identical to the arguments in the corresponding begin method.
-			object asyncResult = _processDelegate.EndInvoke (result);
-			context = null;
-			return asyncResult;
+
+			object[] p = parameters;
+			var retval = _processDelegate.EndInvoke (ref p, result);
+			if (p == parameters)
+				return retval;
+
+			if (p.Length != parameters.Length)
+				throw new InvalidOperationException ();
+			Array.Copy (p, parameters, p.Length);
+			return retval;
 		}
 
-		public object Process (MethodBase method, string operationName, object [] parameters)
+		public object Process (MethodBase method, string operationName, object [] parameters, OperationContext context)
+		{
+			var p = parameters;
+			var retval = Process (method, operationName, false, ref p, context);
+			if (p != parameters)
+				throw new InvalidOperationException ();
+			return retval;
+		}
+
+		object Process (MethodBase method, string operationName, bool isAsync, ref object [] parameters, OperationContext context)
 		{
 			var previousContext = OperationContext.Current;
 			try {
 				// Inherit the context from the calling thread
-				if (this.context != null) 
-					OperationContext.Current = this.context;
+				OperationContext.Current = context;
 
-				return DoProcess (method, operationName, parameters);
+				return DoProcess (method, operationName, isAsync, ref parameters, context);
 			} catch (Exception ex) {
 				throw;
 			} finally {
@@ -483,7 +488,7 @@ namespace System.ServiceModel.MonoInternal
 			}
 		}
 
-		object DoProcess (MethodBase method, string operationName, object [] parameters)
+		object DoProcess (MethodBase method, string operationName, bool isAsync, ref object [] parameters, OperationContext context)
 		{
 			if (AllowInitializationUI)
 				DisplayInitializationUI ();
@@ -493,9 +498,9 @@ namespace System.ServiceModel.MonoInternal
 				Open ();
 
 			if (!od.IsOneWay)
-				return Request (od, parameters);
+				return Request (od, isAsync, ref parameters, context);
 			else {
-				Output (od, parameters);
+				Output (od, parameters, context);
 				return null;
 			}
 		}
@@ -513,17 +518,17 @@ namespace System.ServiceModel.MonoInternal
 			return od;
 		}
 
-		void Output (OperationDescription od, object [] parameters)
+		void Output (OperationDescription od, object [] parameters, OperationContext context)
 		{
 			ClientOperation op = runtime.Operations [od.Name];
-			Send (CreateRequest (op, parameters), OperationTimeout);
+			Send (CreateRequest (op, parameters, context), OperationTimeout);
 		}
 
-		object Request (OperationDescription od, object [] parameters)
+		object Request (OperationDescription od, bool isAsync, ref object [] parameters, OperationContext context)
 		{
 			ClientOperation op = runtime.Operations [od.Name];
 			object [] inspections = new object [runtime.MessageInspectors.Count];
-			Message req = CreateRequest (op, parameters);
+			Message req = CreateRequest (op, parameters, context);
 
 			for (int i = 0; i < inspections.Length; i++)
 				inspections [i] = runtime.MessageInspectors [i].BeforeSendRequest (ref req, this);
@@ -560,10 +565,15 @@ namespace System.ServiceModel.MonoInternal
 			for (int i = 0; i < inspections.Length; i++)
 				runtime.MessageInspectors [i].AfterReceiveReply (ref res, inspections [i]);
 
-			if (op.DeserializeReply)
-				return op.Formatter.DeserializeReply (res, parameters);
-			else
+			if (!op.DeserializeReply)
 				return res;
+
+			if (isAsync && od.EndMethod != null) {
+				var endParams = od.EndMethod.GetParameters ();
+				parameters = new object [endParams.Length - 1];
+			}
+
+			return op.Formatter.DeserializeReply (res, parameters);
 		}
 
 		#region Message-based Request() and Send()
@@ -615,7 +625,7 @@ namespace System.ServiceModel.MonoInternal
 		}
 		#endregion
 
-		Message CreateRequest (ClientOperation op, object [] parameters)
+		Message CreateRequest (ClientOperation op, object [] parameters, OperationContext context)
 		{
 			MessageVersion version = message_version;
 			if (version == null)

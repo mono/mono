@@ -14,6 +14,7 @@
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-memory-model.h>
+#include <mono/utils/mono-mmap.h>
 
 #include <errno.h>
 
@@ -41,7 +42,7 @@ static MonoSemType global_suspend_semaphore;
 static size_t thread_info_size;
 static MonoThreadInfoCallbacks threads_callbacks;
 static MonoThreadInfoRuntimeCallbacks runtime_callbacks;
-static MonoNativeTlsKey thread_info_key, small_id_key;
+static MonoNativeTlsKey thread_info_key, thread_exited_key, small_id_key;
 static MonoLinkedListSet thread_list;
 static gboolean disable_new_interrupt = FALSE;
 static gboolean mono_threads_inited = FALSE;
@@ -143,7 +144,7 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 
 	if (threads_callbacks.thread_register) {
 		if (threads_callbacks.thread_register (info, baseptr) == NULL) {
-			g_warning ("thread registation failed\n");
+			// g_warning ("thread registation failed\n");
 			g_free (info);
 			return NULL;
 		}
@@ -167,6 +168,8 @@ unregister_thread (void *arg)
 	g_assert (info);
 
 	THREADS_DEBUG ("unregistering info %p\n", info);
+
+	mono_native_tls_set_value (thread_exited_key, GUINT_TO_POINTER (1));
 
 	mono_threads_core_unregister (info);
 
@@ -204,6 +207,27 @@ unregister_thread (void *arg)
 	/*now it's safe to free the thread info.*/
 	mono_thread_hazardous_free_or_queue (info, free_thread_info, TRUE, FALSE);
 	mono_thread_small_id_free (small_id);
+}
+
+static void
+thread_exited_dtor (void *arg)
+{
+#if defined(__MACH__)
+	/*
+	 * Since we use pthread dtors to clean up thread data, if a thread
+	 * is attached to the runtime by another pthread dtor after our dtor
+	 * has ran, it will never be detached, leading to various problems
+	 * since the thread ids etc. will be reused while they are still in
+	 * the threads hashtables etc.
+	 * Dtors are called in a loop until all user tls entries are 0,
+	 * but the loop has a maximum count (4), so if we set the tls
+	 * variable every time, it will remain set when system tls dtors
+	 * are ran. This allows mono_thread_info_is_exiting () to detect
+	 * whenever the thread is exiting, even if it is executed from a
+	 * system tls dtor (i.e. obj-c dealloc methods).
+	 */
+	mono_native_tls_set_value (thread_exited_key, GUINT_TO_POINTER (1));
+#endif
 }
 
 /**
@@ -304,6 +328,22 @@ mono_thread_info_detach (void)
 	}
 }
 
+/*
+ * mono_thread_info_is_exiting:
+ *
+ *   Return whenever the current thread is exiting, i.e. it is running pthread
+ * dtors.
+ */
+gboolean
+mono_thread_info_is_exiting (void)
+{
+#if defined(__MACH__)
+	if (mono_native_tls_get_value (thread_exited_key) == GUINT_TO_POINTER (1))
+		return TRUE;
+#endif
+	return FALSE;
+}
+
 void
 mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 {
@@ -312,8 +352,10 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	thread_info_size = info_size;
 #ifdef HOST_WIN32
 	res = mono_native_tls_alloc (&thread_info_key, NULL);
+	res = mono_native_tls_alloc (&thread_exited_key, NULL);
 #else
 	res = mono_native_tls_alloc (&thread_info_key, unregister_thread);
+	res = mono_native_tls_alloc (&thread_exited_key, thread_exited_dtor);
 #endif
 	g_assert (res);
 
@@ -563,7 +605,7 @@ mono_thread_info_safe_suspend_sync (MonoNativeThreadId id, gboolean interrupt_ke
 	for (;;) {
 		const char *suspend_error = "Unknown error";
 		if (!(info = mono_thread_info_suspend_sync (id, interrupt_kernel, &suspend_error))) {
-			g_warning ("failed to suspend thread %p due to %s, hopefully it is dead", (gpointer)id, suspend_error);
+			// g_warning ("failed to suspend thread %p due to %s, hopefully it is dead", (gpointer)id, suspend_error);
 			mono_thread_info_suspend_unlock ();
 			return NULL;
 		}
@@ -572,7 +614,7 @@ mono_thread_info_safe_suspend_sync (MonoNativeThreadId id, gboolean interrupt_ke
 			break;
 
 		if (!mono_thread_info_core_resume (info)) {
-			g_warning ("failed to resume thread %p, hopefully it is dead", (gpointer)id);
+			// g_warning ("failed to resume thread %p, hopefully it is dead", (gpointer)id);
 			mono_hazard_pointer_clear (mono_hazard_pointer_get (), 1);
 			mono_thread_info_suspend_unlock ();
 			return NULL;
@@ -689,11 +731,13 @@ mono_thread_info_new_interrupt_enabled (void)
 #if defined (HAVE_BOEHM_GC) && !defined (USE_INCLUDED_LIBGC)
 	return FALSE;
 #endif
-	/*port not done*/
 #if defined(HOST_WIN32)
-	return FALSE;
+	return !disable_new_interrupt;
 #endif
-#if defined (__i386__)
+#if defined (__i386__) || defined(__x86_64__)
+	return !disable_new_interrupt;
+#endif
+#if defined(__arm__)
 	return !disable_new_interrupt;
 #endif
 	return FALSE;
@@ -746,7 +790,16 @@ mono_threads_create_thread (LPTHREAD_START_ROUTINE start, gpointer arg, guint32 
 void
 mono_thread_info_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
+	guint8 *current = (guint8 *)&stsize;
 	mono_threads_core_get_stack_bounds (staddr, stsize);
+	if (!*staddr)
+		return;
+
+	/* Sanity check the result */
+	g_assert ((current > *staddr) && (current < *staddr + *stsize));
+
+	/* When running under emacs, sometimes staddr is not aligned to a page size */
+	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
 }
 
 gboolean
@@ -801,7 +854,7 @@ mono_thread_info_open_handle (void)
 }
 
 /*
- * mono_thread_info_open_handle:
+ * mono_threads_open_thread_handle:
  *
  *   Return a io-layer/win32 handle for the thread identified by HANDLE/TID.
  * The handle need to be closed by calling CloseHandle () when it is no
@@ -817,4 +870,42 @@ void
 mono_thread_info_set_name (MonoNativeThreadId tid, const char *name)
 {
 	mono_threads_core_set_name (tid, name);
+}
+
+/*
+ * mono_thread_info_prepare_interrupt:
+ *
+ *   See wapi_prepare_interrupt ().
+ */
+gpointer
+mono_thread_info_prepare_interrupt (HANDLE thread_handle)
+{
+	return mono_threads_core_prepare_interrupt (thread_handle);
+}
+
+void
+mono_thread_info_finish_interrupt (gpointer wait_handle)
+{
+	mono_threads_core_finish_interrupt (wait_handle);
+}
+
+void
+mono_thread_info_interrupt (HANDLE thread_handle)
+{
+	gpointer wait_handle;
+
+	wait_handle = mono_thread_info_prepare_interrupt (thread_handle);
+	mono_thread_info_finish_interrupt (wait_handle);
+}
+	
+void
+mono_thread_info_self_interrupt (void)
+{
+	mono_threads_core_self_interrupt ();
+}
+
+void
+mono_thread_info_clear_interruption (void)
+{
+	mono_threads_core_clear_interruption ();
 }

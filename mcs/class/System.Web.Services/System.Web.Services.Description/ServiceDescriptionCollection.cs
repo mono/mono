@@ -35,9 +35,7 @@ using System.Xml;
 namespace System.Web.Services.Description {
 	public sealed class ServiceDescriptionCollection : ServiceDescriptionBaseCollection {
 
-#if !TARGET_JVM //code generation is not supported
 		ServiceDescriptionImporter importer;
-#endif
 		
 		#region Constructors
 	
@@ -69,12 +67,10 @@ namespace System.Web.Services.Description {
 		#endregion // Properties
 
 		#region Methods
-#if !TARGET_JVM //code generation is not supported
 		internal void SetImporter (ServiceDescriptionImporter i)
 		{
 			importer = i;
 		}
-#endif
 		public int Add (ServiceDescription serviceDescription) 
 		{
 			Insert (Count, serviceDescription);

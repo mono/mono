@@ -314,16 +314,12 @@ namespace System.Web.Handlers
 			extra = QueryParamSeparator + "n=" + (notifyScriptLoaded ? "t" : "f");
 #endif
 
-#if TARGET_JVM
-			atime = QueryParamSeparator + "t=" + assemblyName.GetHashCode ();
-#else
 			if (includeTimeStamp) {
 				if (!String.IsNullOrEmpty (assemblyPath) && File.Exists (assemblyPath))
 					atime = QueryParamSeparator + "t=" + File.GetLastWriteTimeUtc (assemblyPath).Ticks;
 				else
 					atime = QueryParamSeparator + "t=" + DateTime.UtcNow.Ticks;
 			}
-#endif
 			string d = HttpUtility.UrlEncode (assemblyNameHash + "_" + resourceNameHash +  (debug ? "_t" : "_f"));
 			string href = HandlerFileName + "?d=" + d + atime + extra;
 			HttpContext ctx = HttpContext.Current;

@@ -50,6 +50,16 @@ namespace System {
 			if ((format < UriFormat.UriEscaped) || (format > UriFormat.SafeUnescaped))
 				throw new ArgumentOutOfRangeException ("format");
 
+			if ((components & UriComponents.SerializationInfoString) != 0) {
+				if (components != UriComponents.SerializationInfoString)
+					throw new ArgumentOutOfRangeException ("components", "UriComponents.SerializationInfoString must not be combined with other UriComponents.");
+
+				if (!uri.IsAbsoluteUri)
+					return UriHelper.FormatRelative (uri.OriginalString, "", format);
+
+				components |= UriComponents.AbsoluteUri;
+			}
+
 			return GetComponentsHelper (uri, components, format);
 		}
 
@@ -189,6 +199,11 @@ namespace System {
 
 		protected internal virtual bool IsBaseOf (Uri baseUri, Uri relativeUri)
 		{
+			if (baseUri == null)
+				throw new ArgumentNullException ("baseUri");
+			if (relativeUri == null)
+				throw new ArgumentNullException ("relativeUri");
+
 			// compare, not case sensitive, the scheme, host and port (+ user informations)
 			if (Uri.Compare (baseUri, relativeUri, UriComponents.SchemeAndServer | UriComponents.UserInfo, UriFormat.Unescaped, StringComparison.InvariantCultureIgnoreCase) != 0)
 				return false;

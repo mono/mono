@@ -36,7 +36,6 @@ using System.Xml;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.BuildEngine {
-
 	internal class TargetBatchingImpl : BatchingImplBase
 	{
 		string		inputs;
@@ -58,17 +57,6 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			executeOnErrors = false;
 			try {
-				string reason;
-				if (!BuildTargetNeeded (out reason)) {
-					LogTargetStarted (target);
-					LogTargetSkipped (target, reason);
-					LogTargetFinished (target, true);
-					return true;
-				}
-
-				if (!String.IsNullOrEmpty (reason))
-					target.Engine.LogMessage (MessageImportance.Low, reason);
-
 				Init ();
 
 				ParseTargetAttributes (target);
@@ -104,24 +92,52 @@ namespace Microsoft.Build.BuildEngine {
 			executeOnErrors = false;
 
 			LogTargetStarted (target);
+
 			if (bucket != null)
 				project.PushBatch (bucket, commonItemsByName);
-			try {
-				string reason;
-				if (!BuildTargetNeeded (out reason)) {
-					LogTargetSkipped (target, reason);
-					return true;
-				}
 
-				if (!String.IsNullOrEmpty (reason))
-					target.Engine.LogMessage (MessageImportance.Low, reason);
+			try {
+				TaskExecutionMode taskExecutionMode;
+				string reason;
+				bool skip_completely;
+				if (!BuildTargetNeeded (out reason, out skip_completely)) {
+					LogTargetSkipped (target, reason);
+					if (skip_completely)
+						return true;
+
+					taskExecutionMode = TaskExecutionMode.SkipAndSetOutput;
+				} else {
+					taskExecutionMode = TaskExecutionMode.Complete;
+
+					if (!String.IsNullOrEmpty (reason))
+						target.Engine.LogMessage (MessageImportance.Low, reason);
+				}
 
 				for (int i = 0; i < target.BuildTasks.Count; i ++) {
 					//FIXME: parsing attributes repeatedly
 					IBuildTask bt = target.BuildTasks [i];
 
+					// HACK: need some form of cross references checks
+					var tem = taskExecutionMode;
+					if (tem == TaskExecutionMode.SkipAndSetOutput) {
+						var bti = bt as BuildTask;
+
+						//
+						// BuildTargetNeeded checks only files timestamps but ignores any metadata dependencies
+						// that way we can end up in the situation when output metadata are populated but from
+						// incomplete dependencies.
+						//
+						// E.g.
+						// <CreateItem Include="$(IntermediateOutputPath)%(_PngImage.LogicalName)" AdditionalMetadata="LogicalName=%(_PngImage.LogicalName)">
+						//		<Output TaskParameter="Include" />
+						// </CreateItem>
+						//
+						if (bti != null && bti.Name == "CreateItem")
+							tem = TaskExecutionMode.Complete;
+					}
+
 					TaskBatchingImpl batchingImpl = new TaskBatchingImpl (project);
-					bool task_result = batchingImpl.Build (bt, out executeOnErrors);
+					bool task_result = batchingImpl.Build (bt, tem, out executeOnErrors);
 					if (task_result)
 						continue;
 
@@ -138,6 +154,7 @@ namespace Microsoft.Build.BuildEngine {
 			} finally {
 				if (bucket != null)
 					project.PopBatch ();
+
 				LogTargetFinished (target, target_result);
 			}
 
@@ -155,15 +172,17 @@ namespace Microsoft.Build.BuildEngine {
 				ParseAttribute (outputs);
 		}
 
-		bool BuildTargetNeeded (out string reason)
+		bool BuildTargetNeeded (out string reason, out bool skipCompletely)
 		{
 			reason = String.Empty;
 			ITaskItem [] inputFiles;
 			ITaskItem [] outputFiles;
 			DateTime youngestInput, oldestOutput;
+			skipCompletely = false;
 
-			if (String.IsNullOrEmpty (inputs.Trim ()))
+			if (String.IsNullOrEmpty (inputs.Trim ())) {
 				return true;
+			}
 
 			if (String.IsNullOrEmpty (outputs.Trim ())) {
 				project.ParentEngine.LogError ("Target {0} has inputs but no outputs specified.", name);
@@ -184,6 +203,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 
 			if (inputFiles == null || inputFiles.Length == 0) {
+				skipCompletely = true;
 				reason = String.Format ("No input files were specified for target {0}, skipping.", name);
 				return false;
 			}

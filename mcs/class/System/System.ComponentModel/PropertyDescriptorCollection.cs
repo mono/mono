@@ -92,7 +92,6 @@ namespace System.ComponentModel
 			properties.Clear ();
 		}
 
-#if !TARGET_JVM // DUAL_IFACE_CONFLICT
 		void IList.Clear ()
 		{
 			Clear ();
@@ -102,19 +101,12 @@ namespace System.ComponentModel
 		{
 			Clear ();
 		}
-#endif
 
 		public bool Contains (PropertyDescriptor value)
 		{
 			return properties.Contains (value);
 		}
 
-#if TARGET_JVM // DUAL_IFACE_CONFLICT
-		public bool Contains (object value)
-		{
-			return Contains ((PropertyDescriptor) value);
-		}
-#else
 
 		bool IList.Contains (object value)
 		{
@@ -125,7 +117,6 @@ namespace System.ComponentModel
 		{
 			return Contains ((PropertyDescriptor) value);
 		}
-#endif
 
 		public void CopyTo (Array array, int index)
 		{
@@ -198,12 +189,6 @@ namespace System.ComponentModel
 			properties.Remove (value);
 		}
 
-#if TARGET_JVM// DUAL_IFACE_CONFLICT
-		public void Remove (object value)
-		{
-			Remove ((PropertyDescriptor) value);
-		}
-#else
 		void IDictionary.Remove (object value)
 		{
 			Remove ((PropertyDescriptor) value);
@@ -213,7 +198,6 @@ namespace System.ComponentModel
 		{
 			Remove ((PropertyDescriptor) value);
 		}
-#endif
 		public void RemoveAt (int index)
 		{
 			if (readOnly) {
@@ -322,30 +306,22 @@ namespace System.ComponentModel
 			return new PropertyDescriptorCollection (descriptors, true);
 		}
 
-#if TARGET_JVM //DUAL_IFACE_CONFLICT
-		public bool IsFixedSize
-#else
 		bool IDictionary.IsFixedSize
 		{
 			get {return ((IList)this).IsFixedSize;}
 		}
 		bool IList.IsFixedSize
-#endif
 		{
 			get 
 			{
 				return readOnly;
 			}
 		}
-#if TARGET_JVM //DUAL_IFACE_CONFLICT
-		public bool IsReadOnly
-#else
 		bool IDictionary.IsReadOnly
 		{
 			get {return ((IList)this).IsReadOnly;}
 		}
 		bool IList.IsReadOnly
-#endif
 		{
 			get 
 			{

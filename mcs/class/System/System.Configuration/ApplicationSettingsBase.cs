@@ -20,7 +20,7 @@
 // Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 
-#if CONFIGURATION_DEP && !TARGET_JVM
+#if CONFIGURATION_DEP
 extern alias PrebuiltSystem;
 using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
 #endif

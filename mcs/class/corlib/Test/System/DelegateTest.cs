@@ -851,7 +851,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("TargetJvmNotWorking")]
 		public void CoContraVariance ()
 		{
 			CoContraVariantDelegate d = (CoContraVariantDelegate)

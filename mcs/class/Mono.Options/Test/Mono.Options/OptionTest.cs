@@ -39,7 +39,7 @@ using NUnit.Framework;
 #if NDESK_OPTIONS
 namespace Tests.NDesk.Options
 #else
-namespace Tests.Mono.Options
+namespace MonoTests.Mono.Options
 #endif
 {
 	class DefaultOption : Option {

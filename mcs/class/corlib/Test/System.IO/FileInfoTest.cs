@@ -1147,7 +1147,6 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
-		[Category("TargetJvmNotSupported")] // File sharing not supported for TARGET_JVM
 		public void OpenRead_FileLock ()
 		{
 			string path = TempFolder + DSC + "FIT.OpenReadIOException.Test";

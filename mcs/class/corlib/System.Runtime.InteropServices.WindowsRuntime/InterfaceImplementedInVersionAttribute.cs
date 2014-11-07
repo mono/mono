@@ -1,4 +1,3 @@
-#if NET_4_5
 //
 // InterfaceImplementedInVersionAttribute.cs
 //
@@ -24,12 +23,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
+#if NET_4_5
 using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	[AttributeUsageAttribute(AttributeTargets.Class|AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
+	[AttributeUsageAttribute(AttributeTargets.Class|AttributeTargets.Interface, AllowMultiple = true, Inherited = false)]
 	public sealed class InterfaceImplementedInVersionAttribute : Attribute
 	{
 		public InterfaceImplementedInVersionAttribute (Type interfaceType, byte majorVersion, byte minorVersion,

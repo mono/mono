@@ -32,16 +32,16 @@ namespace System.Data.OracleClient.Oci
 
 		//IntPtr handle;
 		IntPtr value;
-		short indicator;
+		IntPtr indicator;
 		//OracleType type;
 		OciDataType ociType;
 		OciDataType definedType;
 		int definedSize;
-		short rlenp = 0;
+		IntPtr rlenp;
 		//short precision;
 		short scale;
 		Type fieldType;
-		//string name;
+		string name;
 
 		// Oracle defines the LONG VARCHAR and LONG VARRAW to have a size of 2 to the 31 power - 5
 		// see DefineLongVarChar and DefineLongVarRaw
@@ -70,11 +70,13 @@ namespace System.Data.OracleClient.Oci
 		{
 			OciParameterDescriptor parameter = ((OciStatementHandle) Parent).GetParameter (position);
 
-			//name = parameter.GetName ();
+			name = parameter.GetName ();
 			definedType = parameter.GetDataType ();
 			definedSize = parameter.GetDataSize ();
 			//precision = parameter.GetPrecision ();
 			scale = parameter.GetScale ();
+			rlenp = OciCalls.AllocateClear (sizeof(short));
+			indicator = OciCalls.AllocateClear (sizeof(short));
 
 			Define (position, connection);
 
@@ -103,7 +105,7 @@ namespace System.Data.OracleClient.Oci
 		}
 
 		internal bool IsNull {
-			get { return (indicator == -1); }
+			get { return (Indicator == -1); }
 		}
 
 		internal short Scale {
@@ -111,7 +113,13 @@ namespace System.Data.OracleClient.Oci
 		}
 
 		internal short Size {
-			get { return rlenp; }
+			get { return(Marshal.ReadInt16(rlenp)); }
+			set { Marshal.WriteInt16(rlenp, value); }
+		}
+
+		internal short Indicator {
+			get { return(Marshal.ReadInt16(indicator)); }
+			set { Marshal.WriteInt16(indicator, value); }
 		}
 
 		internal IntPtr Value {
@@ -192,8 +200,8 @@ namespace System.Data.OracleClient.Oci
 				ref value,
 				definedSize,
 				ociType,
-				ref indicator,
-				ref rlenp,
+				indicator,
+				rlenp,
 				IntPtr.Zero,
 				0);
 
@@ -222,8 +230,8 @@ namespace System.Data.OracleClient.Oci
 						value,
 						definedSize,
 						ociType,
-						ref indicator,
-						ref rlenp,
+						indicator,
+						rlenp,
 						IntPtr.Zero,
 						0);
 
@@ -261,11 +269,11 @@ namespace System.Data.OracleClient.Oci
 				value,
 				definedSize,
 				ociType,
-				ref indicator,
-				ref rlenp,
+				indicator,
+				rlenp,
 				IntPtr.Zero, 0);
 
-			rlenp = (short) definedSize;
+			Size = (short) definedSize;
 
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
@@ -291,8 +299,8 @@ namespace System.Data.OracleClient.Oci
 						value,
 						maxByteCount,
 						ociType,
-						ref indicator,
-						ref rlenp,
+						indicator,
+						rlenp,
 						IntPtr.Zero,
 						0);
 			OciErrorHandle.ThrowExceptionIfError (ErrorHandle, status);
@@ -312,10 +320,10 @@ namespace System.Data.OracleClient.Oci
 				ErrorHandle,
 				position + 1,
 				value,
-				definedSize * 2,
+				definedSize,
 				ociType,
-				ref indicator,
-				ref rlenp,
+				indicator,
+				rlenp,
 				IntPtr.Zero,
 				0);
 
@@ -357,8 +365,8 @@ namespace System.Data.OracleClient.Oci
 							ref value,
 							definedSize,
 							ociType,
-							ref indicator,
-							ref rlenp,
+							indicator,
+							rlenp,
 							IntPtr.Zero,
 							0);
 
@@ -386,8 +394,8 @@ namespace System.Data.OracleClient.Oci
 							value,
 							definedSize,
 							ociType,
-							ref indicator,
-							ref rlenp,
+							indicator,
+							rlenp,
 							IntPtr.Zero, 0);
 
 			if (status != 0) {
@@ -415,8 +423,8 @@ namespace System.Data.OracleClient.Oci
 							value,
 							definedSize,
 							ociType,
-							ref indicator,
-							ref rlenp,
+							indicator,
+							rlenp,
 							IntPtr.Zero, 0);
 
 			if (status != 0) {
@@ -459,8 +467,8 @@ namespace System.Data.OracleClient.Oci
 				ref value,
 				definedSize,
 				ociType,
-				ref indicator,
-				ref rlenp,
+				indicator,
+				rlenp,
 				IntPtr.Zero,
 				0);
 
@@ -487,6 +495,8 @@ namespace System.Data.OracleClient.Oci
 					}
 					disposed = true;
 				} finally {
+					Marshal.FreeHGlobal (indicator);
+					Marshal.FreeHGlobal (rlenp);
 					base.Dispose (disposing);
 					value = IntPtr.Zero;
 				}

@@ -1018,13 +1018,27 @@ namespace Microsoft.Build.BuildEngine
 			if (!StartHandlerHasExecuted)
 				return;
 
-			if (EventArgs is ProjectStartedEventArgs)
-				ConsoleLogger.ProjectFinishedHandler (Sender, finished_args as ProjectFinishedEventArgs);
-			else if (EventArgs is TargetStartedEventArgs)
-				ConsoleLogger.TargetFinishedHandler (Sender, finished_args as TargetFinishedEventArgs);
-			else if (EventArgs is TaskStartedEventArgs)
-				ConsoleLogger.TaskFinishedHandler (Sender, finished_args as TaskFinishedEventArgs);
-			else if (!(EventArgs is BuildStartedEventArgs))
+			if (EventArgs is ProjectStartedEventArgs) {
+				var pfa = finished_args as ProjectFinishedEventArgs;
+				// FIXME: BuildFinishedHandlerActual sends us BuildFinishedEventArgs via PopEvent
+				if (pfa == null)
+					return;
+
+				ConsoleLogger.ProjectFinishedHandler (Sender, pfa);
+			} else if (EventArgs is TargetStartedEventArgs) {
+				var fa = finished_args as TargetFinishedEventArgs;
+				// FIXME: BuildFinishedHandlerActual sends us BuildFinishedEventArgs via PopEvent
+				if (fa == null)
+					return;
+
+				ConsoleLogger.TargetFinishedHandler (Sender, fa);
+			} else if (EventArgs is TaskStartedEventArgs) {
+				// FIXME: BuildFinishedHandlerActual sends us BuildFinishedEventArgs via PopEvent
+				if (!(finished_args is TaskFinishedEventArgs))
+					return;
+
+				ConsoleLogger.TaskFinishedHandler (Sender, (TaskFinishedEventArgs) finished_args);
+			} else if (!(EventArgs is BuildStartedEventArgs))
 				throw new InvalidOperationException ("Unexpected event on the stack, type: " + EventArgs.GetType ());
 		}
 	}

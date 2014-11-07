@@ -106,9 +106,7 @@ namespace System.Net
 		{
 			throw new NotSupportedException ();
 		}
-#if TARGET_JVM //enable overrides for extenders
-		public virtual void Dispose()
-#elif NET_4_0
+#if   NET_4_0
 		public void Dispose ()
 #else
 		void IDisposable.Dispose()

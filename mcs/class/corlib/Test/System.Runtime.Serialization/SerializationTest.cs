@@ -637,6 +637,8 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (_char, obj._char, context + "._char");
 			Assert.AreEqual (_dateTime, obj._dateTime, context + "._dateTime");
 			Assert.AreEqual (_decimal, obj._decimal, context + "._decimal");
+			Assert.AreEqual (_double, obj._double, context + "._double");
+			Assert.AreEqual (_short, obj._short, context = "._short");
 			Assert.AreEqual (_int, obj._int, context + "._int");
 			Assert.AreEqual (_long, obj._long, context + "._long");
 			Assert.AreEqual (_sbyte, obj._sbyte, context + "._sbyte");

@@ -10,17 +10,16 @@ ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif
 
-ifeq (monodroid, $(PROFILE))
-LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT,ANDROID
-endif
+MOBILE_DYNAMIC := $(filter monodroid xammac mobile, $(PROFILE))
+MOBILE_STATIC := $(filter mobile_static monotouch monotouch_runtime, $(PROFILE))
 
-ifeq (xammac, $(PROFILE))
+ifdef MOBILE_DYNAMIC
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT
 endif
 
 system_core_plain_libdir = $(the_libdir_base)plaincore
 
-ifeq (monotouch, $(subst _runtime,,$(PROFILE)))
+ifdef MOBILE_STATIC
 extra_test_flags := -exclude:NotWorkingInterpreter
 system_core_library_deps = $(the_libdir_base)Mono.Dynamic.Interpreter.dll $(system_core_plain_libdir)/System.Core.dll
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR
@@ -73,3 +72,22 @@ csproj-local:
 	$(MAKE) csproj-local intermediate=plaincore/
 endif
 endif
+
+#
+# Android TimeZoneInfo testing....
+#
+
+tzi.exe: ../corlib/System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/common/Consts.cs ../Mono.Options/Mono.Options/Options.cs
+	mcs /debug+ /out:$@ /unsafe "/d:INSIDE_CORLIB;MONODROID;NET_4_0;LIBC;SELF_TEST" $^
+
+android-pull-tzdb:
+	mkdir -p android/tzdb/usr/share/zoneinfo
+	mkdir -p android/tzdb/misc/zoneinfo/zoneinfo
+	android_root=`adb shell echo '$$ANDROID_ROOT' | tr -d "\r"` ; \
+	android_data=`adb shell echo '$$ANDROID_DATA' | tr -d "\r"` ; \
+	adb $(ADB_TARGET) pull $$android_root/usr/share/zoneinfo    android/tzdb/usr/share/zoneinfo ; \
+	adb $(ADB_TARGET) pull $$android_data/misc/zoneinfo/tzdata  android/tzdb/misc/zoneinfo
+	mkdir -p android/tzdb/
+
+android-dump-tzdata: tzi.exe android-pull-tzdb
+	__XA_OVERRIDE_TIMEZONE_ID__=America/New_York ANDROID_ROOT=`pwd` ANDROID_DATA=`pwd` mono --debug tzi.exe -o android/tzdata

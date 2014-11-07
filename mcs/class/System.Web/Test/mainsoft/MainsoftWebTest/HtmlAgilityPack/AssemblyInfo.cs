@@ -62,7 +62,7 @@ using System.Runtime.CompilerServices;
 //   (*) Delay Signing is an advanced option - see the Microsoft .NET Framework
 //       documentation for more information on this.
 //
-#if !(TARGET_JVM || TARGET_DOTNET)
+#if !(TARGET_DOTNET)
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../winfx.pub")]
 #endif

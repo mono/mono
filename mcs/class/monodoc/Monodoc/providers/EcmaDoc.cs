@@ -18,6 +18,8 @@ namespace Monodoc.Providers
 		Meta, // A node that's here to serve as a header for other node
 	}
 
+
+
 	// Common functionality between ecma-provider and ecmauncompiled-provider
 	internal class EcmaDoc
 	{
@@ -28,8 +30,10 @@ namespace Monodoc.Providers
 		                                              Tree tree,
 		                                              IDocStorage storage,
 		                                              Dictionary<string, XElement> nsSummaries,
-		                                              Func<XElement, string> indexGenerator = null)
+		                                              Func<XElement, string> indexGenerator = null,
+		                                              IEcmaProviderFileSource fileSource = null)
 		{
+			fileSource = fileSource ?? DefaultEcmaProviderFileSource.Default;
 			var root = tree.RootNode;
 			int resID = 0;
 			var asm = Path.GetDirectoryName (indexFilePath);
@@ -40,7 +44,7 @@ namespace Monodoc.Providers
 			// default index generator uses a counter
 			indexGenerator = indexGenerator ?? (_ => resID++.ToString ());
 
-			using (var reader = XmlReader.Create (File.OpenRead (indexFilePath))) {
+			using (var reader = fileSource.GetIndexReader (indexFilePath)) {
 				reader.ReadToFollowing ("Types");
 				var types = XElement.Load (reader.ReadSubtree ());
 
@@ -55,26 +59,34 @@ namespace Monodoc.Providers
 						                                                 new XElement ("summary"),
 						                                                 new XElement ("remarks"));
 			        //Add namespace summary and remarks data from file, if available
-					var nsFileName = Path.Combine(asm, String.Format("ns-{0}.xml", nsName));
+					var nsFileName = fileSource.GetNamespaceXmlPath(asm, nsName);
+					
 					if(File.Exists(nsFileName)){
-						var nsEl = XElement.Load (nsFileName);
+						var nsEl = fileSource.GetNamespaceElement (nsFileName);
 
 						nsElements.Element ("summary").ReplaceWith (nsEl.Descendants ("summary").First ());
 						nsElements.Element ("remarks").ReplaceWith (nsEl.Descendants ("remarks").First ());
 					}else{
-						Console.WriteLine ("Error reading namespace XML for " + nsName);
+						Console.WriteLine ("Error reading namespace XML for {0} at {1}", nsName, nsFileName);
 					}
 			       
 					foreach (var type in ns.Elements ("Type")) {
 						// Add the XML file corresponding to the type to our storage
 						var id = indexGenerator (type);
 						string typeFilePath;
-						var typeDocument = EcmaDoc.LoadTypeDocument (asm, nsName, type.Attribute ("Name").Value, out typeFilePath);
+						var typeDocument = EcmaDoc.LoadTypeDocument (asm, nsName, type.Attribute ("Name").Value, out typeFilePath, fileSource);
 						if (typeDocument == null)
 							continue;
-						using (var file = File.OpenRead (typeFilePath))
-							storage.Store (id, file);
-						nsElements.Add (ExtractClassSummary (typeFilePath));
+
+						// write the document (which may have been modified by the fileSource) to the storage
+						MemoryStream io = new MemoryStream ();
+						using (var writer = XmlWriter.Create (io)) {
+							typeDocument.WriteTo (writer);
+						}
+						io.Seek (0, SeekOrigin.Begin);
+						storage.Store (id, io);
+
+						nsElements.Add (ExtractClassSummary (typeDocument));
 
 						var typeCaption = EcmaDoc.GetTypeCaptionFromIndex (type);
 						var url = idPrefix + id + '#' + typeCaption + '/';
@@ -123,15 +135,17 @@ namespace Monodoc.Providers
 
 		// Utility methods
 
-		public static XDocument LoadTypeDocument (string basePath, string nsName, string typeName)
+		public static XDocument LoadTypeDocument (string basePath, string nsName, string typeName, IEcmaProviderFileSource fileSource = null)
 		{
 			string dummy;
-			return LoadTypeDocument (basePath, nsName, typeName, out dummy);
+			return LoadTypeDocument (basePath, nsName, typeName, out dummy, fileSource ?? DefaultEcmaProviderFileSource.Default);
 		}
 
-		public static XDocument LoadTypeDocument (string basePath, string nsName, string typeName, out string finalPath)
+		public static XDocument LoadTypeDocument (string basePath, string nsName, string typeName, out string finalPath, IEcmaProviderFileSource fileSource = null)
 		{
-			finalPath = Path.Combine (basePath, nsName, Path.ChangeExtension (typeName, ".xml"));
+			fileSource = fileSource ?? DefaultEcmaProviderFileSource.Default;
+
+			finalPath = fileSource.GetTypeXmlPath (basePath, nsName, typeName);
 			if (!File.Exists (finalPath)) {
 				Console.Error.WriteLine ("Warning: couldn't process type file `{0}' as it doesn't exist", finalPath);
 				return null;
@@ -139,7 +153,7 @@ namespace Monodoc.Providers
 
 			XDocument doc = null;
 			try {
-				doc = XDocument.Load (finalPath);
+				doc = fileSource.GetTypeDocument(finalPath);
 			} catch (Exception e) {
 				Console.WriteLine ("Document `{0}' is unparsable, {1}", finalPath, e.ToString ());
 			}
@@ -562,24 +576,20 @@ namespace Monodoc.Providers
 			return nicename;
 		}
 
-		static XElement ExtractClassSummary (string typeFilePath)
+		static XElement ExtractClassSummary (XDocument typeDoc)
 		{
-			using (var reader = XmlReader.Create (typeFilePath)) {
-				reader.ReadToFollowing ("Type");
-				var name = reader.GetAttribute ("Name");
-				var fullName = reader.GetAttribute ("FullName");
-				reader.ReadToFollowing ("AssemblyName");
-				var assemblyName = reader.ReadElementString ();
-				var summary = reader.ReadToFollowing ("summary") ? XElement.Load (reader.ReadSubtree ()) : new XElement ("summary");
-				var remarks = reader.ReadToFollowing ("remarks") ? XElement.Load (reader.ReadSubtree ()) : new XElement ("remarks");
-
-				return new XElement ("class",
-				                     new XAttribute ("name", name ?? string.Empty),
-				                     new XAttribute ("fullname", fullName ?? string.Empty),
-				                     new XAttribute ("assembly", assemblyName ?? string.Empty),
-				                     summary,
-				                     remarks);
-			}
+			string name = typeDoc.Root.Attribute("Name").Value;
+			string fullName = typeDoc.Root.Attribute("FullName").Value;
+			string assemblyName = typeDoc.Root.Element("AssemblyInfo") != null ? typeDoc.Root.Element("AssemblyInfo").Element("AssemblyName").Value : string.Empty;
+			var docs = typeDoc.Root.Element("Docs");
+			var summary = docs.Element("summary") ?? new XElement("summary");
+			var remarks = docs.Element("remarks") ?? new XElement("remarks");
+			return new XElement ("class",
+				 new XAttribute ("name", name ?? string.Empty),
+				 new XAttribute ("fullname", fullName ?? string.Empty),
+				 new XAttribute ("assembly", assemblyName ?? string.Empty),
+				 summary,
+				 remarks);
 		}
 	}
 }

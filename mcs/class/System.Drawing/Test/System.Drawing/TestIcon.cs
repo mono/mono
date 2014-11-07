@@ -94,18 +94,12 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[Ignore ("Check parameters")]
-#endif
 		public void Constructor_IconNull_Int_Int ()
 		{
 			new Icon ((Icon)null, 32, 32);
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Constructor_Icon_IntNegative_Int Not Working")]
-#endif
 		public void Constructor_Icon_IntNegative_Int ()
 		{
 			Icon neg = new Icon (icon, -32, 32);
@@ -115,18 +109,12 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[Ignore ("Check parameters")]
-#endif
 		public void Constructor_IconNull_Size ()
 		{
 			new Icon ((Icon) null, new Size (32, 32));
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Constructor_Icon_Size_Negative Not Working")]
-#endif
 		public void Constructor_Icon_Size_Negative ()
 		{
 			Icon neg = new Icon (icon, new Size (-32, -32));
@@ -135,9 +123,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Constructor_Icon_Int_Int_NonSquare Not Working")]
-#endif
 		public void Constructor_Icon_Int_Int_NonSquare ()
 		{
 			Icon non_square = new Icon (icon, 32, 16);
@@ -217,9 +202,6 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[Ignore ("Check parameters")]
-#endif
 		public void Constructor_Type_StringNull ()
 		{
 			new Icon (typeof (Icon), null);
@@ -227,38 +209,23 @@ namespace MonoTests.System.Drawing {
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[Ignore ("Constructor_StreamNull_Size Not Implemented")]
-#endif
 		public void Constructor_StreamNull_Size ()
 		{
-#if !TARGET_JVM
 			new Icon ((Stream) null, new Size (32, 32));
-#endif
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-#if TARGET_JVM
-		[Ignore ("Constructor_StringNull_Size Not Implemented")]
-#endif
 		public void Constructor_StringNull_Size ()
 		{
-#if !TARGET_JVM
 			new Icon ((string) null, new Size (32, 32));
-#endif
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-#if TARGET_JVM
-		[Ignore ("Constructor_StringNull_Int_Int Not Implemented")]
-#endif
 		public void Constructor_StringNull_Int_Int ()
 		{
-#if !TARGET_JVM
 			new Icon ((string) null, 32, 32);
-#endif
 		}
 #endif
 
@@ -281,7 +248,6 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (32, clone.Size.Height, "Size.Height");
 		}
 
-#if !TARGET_JVM
 		[Test]
 		public void CloneHandleIcon ()
 		{
@@ -291,7 +257,6 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (SystemIcons.Hand.Size.Width, clone.Size.Width, "Size.Width");
 			Assert.AreEqual (SystemIcons.Hand.Size.Height, clone.Size.Height, "Size.Height");
 		}
-#endif
 
 		private void XPIcon (int size)
 		{
@@ -331,9 +296,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("SelectFromUnusualSize_Small16 Not Working")]
-#endif
 		public void SelectFromUnusualSize_Small16 ()
 		{
 			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/80509.ico"))) {
@@ -421,18 +383,12 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
-#if TARGET_JVM
-		[Ignore ("Throws NullReference, do we need to follow?")]
-#endif
 		public void Save_Null ()
 		{
 			icon.Save (null);
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Icon16ToBitmap Not Working")]
-#endif
 		public void Icon16ToBitmap ()
 		{
 			using (Bitmap b = icon16.ToBitmap ()) {
@@ -447,9 +403,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Icon32ToBitmap Not Working")]
-#endif
 		public void Icon32ToBitmap ()
 		{
 			using (Bitmap b = icon32.ToBitmap ()) {
@@ -464,9 +417,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Icon48ToBitmap Not Working")]
-#endif
 		public void Icon48ToBitmap ()
 		{
 			using (Bitmap b = icon48.ToBitmap ()) {
@@ -481,9 +431,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Icon64ToBitmap Not Working")]
-#endif
 		public void Icon64ToBitmap ()
 		{
 			using (Bitmap b = icon64.ToBitmap ()) {
@@ -498,9 +445,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Icon96ToBitmap Not Working")]
-#endif
 		public void Icon96ToBitmap ()
 		{
 			using (Bitmap b = icon96.ToBitmap ()) {
@@ -515,9 +459,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test] // bug #415581
-#if TARGET_JVM
-		[Ignore ("Icon256ToBitmap Not Working")]
-#endif
 		public void Icon256ToBitmap ()
 		{
 			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/415581.ico"))) {
@@ -572,38 +513,23 @@ namespace MonoTests.System.Drawing {
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[Ignore ("ExtractAssociatedIcon is not implemented")]
-#endif
 		public void ExtractAssociatedIcon_Null ()
 		{
-#if !TARGET_JVM
 			Icon.ExtractAssociatedIcon (null);
-#endif
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[Ignore ("ExtractAssociatedIcon is not implemented")]
-#endif
 		public void ExtractAssociatedIcon_Empty ()
 		{
-#if !TARGET_JVM
 			Icon.ExtractAssociatedIcon (String.Empty);
-#endif
 		}
 
 		[Test]
 		[ExpectedException (typeof (FileNotFoundException))]
-#if TARGET_JVM
-		[Ignore ("ExtractAssociatedIcon is not implemented")]
-#endif
 		public void ExtractAssociatedIcon_DoesNotExists ()
 		{
-#if !TARGET_JVM
 			Icon.ExtractAssociatedIcon ("does-not-exists.png");
-#endif
 		}
 #endif
 
@@ -617,11 +543,7 @@ namespace MonoTests.System.Drawing {
 	}
 
 	[TestFixture]
-#if TARGET_JVM
-	[Ignore ("Unsafe code is not supported")]
-#endif	
 	public class IconFullTrustTest {
-#if !TARGET_JVM
 #if NET_2_0
 		[Test]
 		public void ExtractAssociatedIcon ()
@@ -721,6 +643,5 @@ namespace MonoTests.System.Drawing {
 				IconTest.SaveAndCompare ("HICON", icon3, false);
 			}
 		}
-#endif
 	}
 }

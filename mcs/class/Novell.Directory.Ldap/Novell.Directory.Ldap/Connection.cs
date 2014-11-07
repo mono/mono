@@ -34,10 +34,8 @@ using System.Threading;
 using Novell.Directory.Ldap.Asn1;
 using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Utilclass;
-#if !TARGET_JVM
 using Mono.Security.Protocol.Tls;
 using Mono.Security.X509.Extensions;
-#endif
 using Syscert = System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Net;
@@ -45,9 +43,7 @@ using System.Net.Sockets;
 using System.Collections;
 using System.IO;
 using System.Text;
-#if !TARGET_JVM
 using Mono.Security.X509;
-#endif
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Reflection;
@@ -735,7 +731,6 @@ namespace Novell.Directory.Ldap
 				{
 					if ((in_Renamed == null) || (out_Renamed == null))
 					{
-#if !TARGET_JVM
 						if(Ssl)
 						{
 							this.host = host;
@@ -796,13 +791,10 @@ namespace Novell.Directory.Ldap
 							out_Renamed = (System.IO.Stream) sslstream;*/
 						}
 						else{
-#endif
 							socket = new System.Net.Sockets.TcpClient(host, port);				
 							in_Renamed = (System.IO.Stream) socket.GetStream();
 							out_Renamed = (System.IO.Stream) socket.GetStream();
-#if !TARGET_JVM
 						}
-#endif
 					}
 					else
 					{
@@ -1140,11 +1132,9 @@ namespace Novell.Directory.Ldap
 			
 			if (socket != null || sock != null)
 			{
-#if !TARGET_JVM
 				// Just before closing the sockets, abort the reader thread
 				if ((reader != null) && (reason != "reader: thread stopping")) 
 				reader.Abort();
-#endif
 				// Close the socket
 				try
 				{
@@ -1264,7 +1254,6 @@ namespace Novell.Directory.Ldap
 		/* package */
 		internal void  startTLS()
 		{
-#if !TARGET_JVM			
 			try
 			{
 				waitForReader(null);
@@ -1333,7 +1322,6 @@ namespace Novell.Directory.Ldap
 				throw new LdapException("The host is unknown", LdapException.CONNECT_ERROR, null, uhe);
 			}
 			return ;
-#endif
 		}
 		
 		/*
@@ -1544,15 +1532,6 @@ namespace Novell.Directory.Ldap
 					// before closing sockets, from shutdown
 					return;
 				}
-#if TARGET_JVM
-				catch (ObjectDisposedException)
-				{
-					// we do not support Thread.Abort under java
-					// so we close the stream and the working thread
-					// catches ObjectDisposedException exception
-					return;
-				}
-#endif
 				catch (System.IO.IOException ioe)
 				{
 					

@@ -455,6 +455,9 @@ sgen_card_table_finish_scan_remsets (void *start_nursery, void *end_nursery, Sge
 guint8*
 mono_gc_get_card_table (int *shift_bits, gpointer *mask)
 {
+#ifndef MANAGED_WBARRIER
+	return NULL;
+#else
 	if (!sgen_cardtable)
 		return NULL;
 
@@ -466,6 +469,7 @@ mono_gc_get_card_table (int *shift_bits, gpointer *mask)
 #endif
 
 	return sgen_cardtable;
+#endif
 }
 
 gboolean
@@ -475,22 +479,6 @@ mono_gc_card_table_nursery_check (void)
 }
 
 #if 0
-static void
-collect_faulted_cards (void)
-{
-#define CARD_PAGES (CARD_COUNT_IN_BYTES / 4096)
-	int i, count = 0;
-	unsigned char faulted [CARD_PAGES] = { 0 };
-	mincore (sgen_cardtable, CARD_COUNT_IN_BYTES, faulted);
-
-	for (i = 0; i < CARD_PAGES; ++i) {
-		if (faulted [i])
-			++count;
-	}
-
-	printf ("TOTAL card pages %d faulted %d\n", CARD_PAGES, count);
-}
-
 void
 sgen_card_table_dump_obj_card (char *object, size_t size, void *dummy)
 {
@@ -683,9 +671,9 @@ LOOP_HEAD:
 		HEAVY_STAT (++bloby_objects);
 		if (cards) {
 			if (sgen_card_table_is_range_marked (cards, (mword)obj, block_obj_size))
-				sgen_get_current_object_ops ()->scan_object (obj, queue);
+				sgen_get_current_object_ops ()->scan_object (obj, sgen_obj_get_descriptor (obj), queue);
 		} else if (sgen_card_table_region_begin_scanning ((mword)obj, block_obj_size)) {
-			sgen_get_current_object_ops ()->scan_object (obj, queue);
+			sgen_get_current_object_ops ()->scan_object (obj, sgen_obj_get_descriptor (obj), queue);
 		}
 
 		binary_protocol_card_scan (obj, sgen_safe_object_get_size ((MonoObject*)obj));

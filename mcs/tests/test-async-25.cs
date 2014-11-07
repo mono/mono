@@ -1,4 +1,3 @@
-// Compiler options: -langversion:future
 using System;
 using System.Threading.Tasks;
 

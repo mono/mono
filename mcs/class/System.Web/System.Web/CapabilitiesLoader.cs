@@ -51,11 +51,7 @@ namespace System.Web
 		BrowserData parent;
 		string text;
 		string pattern;
-#if TARGET_JVM
-		java.util.regex.Pattern regex;
-#else
 		Regex regex;
-#endif
 		ListDictionary data;
 
 		public BrowserData (string pattern)
@@ -153,17 +149,9 @@ namespace System.Web
 
 			lock (this_lock) {
 				if (regex == null)
-#if TARGET_JVM
-					regex = java.util.regex.Pattern.compile (pattern);
-#else
 				regex = new Regex (pattern);
-#endif
 			}
-#if TARGET_JVM
-			return regex.matcher ((java.lang.CharSequence) (object) expression).matches ();
-#else
 			return regex.Match (expression).Success;
-#endif
 		}
 	}
 	
@@ -173,46 +161,9 @@ namespace System.Web
 		static Hashtable defaultCaps;
 		static readonly object lockobj = new object ();
 
-#if TARGET_JVM
-		static bool loaded {
-			get {
-				return alldata != null;
-			}
-			set {
-				if (alldata == null)
-					alldata = new ArrayList ();
-			}
-		}
-
- 		const string alldataKey = "System.Web.CapabilitiesLoader.alldata";
-		static ICollection alldata {
-			get {
-				return (ICollection) AppDomain.CurrentDomain.GetData (alldataKey);
-			}
-			set {
-				AppDomain.CurrentDomain.SetData (alldataKey, value);
-			}
-		}
-
- 		const string userAgentsCacheKey = "System.Web.CapabilitiesLoader.userAgentsCache";
-		static Hashtable userAgentsCache {
-			get {
-				lock (typeof (CapabilitiesLoader)) {
-					Hashtable agentsCache = (Hashtable) AppDomain.CurrentDomain.GetData (userAgentsCacheKey);
-					if (agentsCache == null) {
-						agentsCache = Hashtable.Synchronized (new Hashtable (userAgentsCacheSize + 10));
-						AppDomain.CurrentDomain.SetData (userAgentsCacheKey, agentsCache);
-					}
-
-					return agentsCache;
-				}
-			}
-		}
-#else
 		static volatile bool loaded;
 		static ICollection alldata;
 		static Hashtable userAgentsCache = Hashtable.Synchronized(new Hashtable(userAgentsCacheSize+10));
-#endif
 
 		CapabilitiesLoader () {}
 

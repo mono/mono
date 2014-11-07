@@ -292,9 +292,6 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif // TARGET_JVM
 		public void DeserializeTest ()
 		{
 			MemoryStream ms = new MemoryStream ();

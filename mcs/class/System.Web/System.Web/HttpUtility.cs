@@ -56,7 +56,7 @@ namespace System.Web {
 				StringBuilder sb = new StringBuilder ();
 				string [] keys = AllKeys;
 				for (int i = 0; i < count; i++) {
-					sb.AppendFormat ("{0}={1}&", keys [i], this [keys [i]]);
+					sb.AppendFormat ("{0}={1}&", keys [i], UrlEncode (this [keys [i]]));
 				}
 				if (sb.Length > 0)
 					sb.Length--;

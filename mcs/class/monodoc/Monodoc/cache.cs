@@ -35,7 +35,9 @@ namespace Monodoc
 		static DocCacheHelper ()
 		{
 			try {
-				var cacheValues = Config.Get ("cache").Split (',');
+				var cacheConfig = Config.Get ("cache");
+				if (cacheConfig == null) return;
+				var cacheValues = cacheConfig.Split (',');
 				if (cacheValues.Length == 2 && cacheValues[0].Equals ("file", StringComparison.Ordinal))
 					cacheBaseDirectory = cacheValues[1].Replace ("~", Environment.GetFolderPath (Environment.SpecialFolder.Personal));
 			} catch {}

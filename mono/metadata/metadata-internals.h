@@ -228,7 +228,7 @@ struct _MonoImage {
 	MonoConcurrentHashTable *field_cache; /*protected by the image lock*/
 
 	/* indexed by typespec tokens. */
-	GHashTable *typespec_cache;
+	GHashTable *typespec_cache; /* protected by the image lock */
 	/* indexed by token */
 	GHashTable *memberref_signatures;
 	GHashTable *helper_signatures;
@@ -317,6 +317,7 @@ struct _MonoImage {
 	MonoDllMap *dll_map;
 
 	/* interfaces IDs from this image */
+	/* protected by the classes lock */
 	MonoBitSet *interface_bitset;
 
 	/* when the image is being closed, this is abused as a list of
@@ -522,6 +523,20 @@ struct _MonoMethodSignature {
 	unsigned int  has_type_parameters : 1;
 	MonoType     *params [MONO_ZERO_LEN_ARRAY];
 };
+
+/*
+ * AOT cache configuration loaded from config files.
+ * Doesn't really belong here.
+ */
+typedef struct {
+	/*
+	 * Enable aot caching for applications whose main assemblies are in
+	 * this list.
+	 */
+	GSList *apps;
+	GSList *assemblies;
+	char *aot_options;
+} MonoAotCacheConfig;
 
 #define MONO_SIZEOF_METHOD_SIGNATURE (sizeof (struct _MonoMethodSignature) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
@@ -784,6 +799,10 @@ MonoMethod* method_from_method_def_or_ref (MonoImage *m, guint32 tok, MonoGeneri
 MonoMethod *mono_get_method_constrained_with_method (MonoImage *image, MonoMethod *method, MonoClass *constrained_class, MonoGenericContext *context) MONO_INTERNAL;
 
 void mono_type_set_alignment (MonoTypeEnum type, int align) MONO_INTERNAL;
+
+MonoAotCacheConfig *mono_get_aot_cache_config (void) MONO_INTERNAL;
+MonoType *
+mono_type_create_from_typespec_checked (MonoImage *image, guint32 type_spec, MonoError *error) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

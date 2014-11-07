@@ -20,7 +20,6 @@ using System.Text;
 using NUnit.Framework;
 
 namespace MonoTests.System.Security.Permissions {
-#if !TARGET_JVM
 	public class FilePathUtil {
 		[DllImport("kernel32.dll")]
 		private static extern uint GetLongPathName (string shortPath, 
@@ -48,7 +47,6 @@ namespace MonoTests.System.Security.Permissions {
 				return null;
 		}
 	}
-#endif
 
 	[TestFixture]
 	public class FileIOPermissionTest {
@@ -428,7 +426,6 @@ namespace MonoTests.System.Security.Permissions {
 			pathsInPermission = read.Split(';');
 			Assert.IsTrue(pathsInPermission.Length == 2, "Path list should have 2 for Read");
 		}
-#if !TARGET_JVM
 		[Test]
 		[Ignore("should compatibility go that far ?")]
 		public void ShortToLong () 
@@ -443,7 +440,6 @@ namespace MonoTests.System.Security.Permissions {
 			// note: this will fail on Linux as kernel32.dll isn't available
 			Assert.AreEqual (FilePathUtil.GetLongPathName (filename), files [0], "GetLongPathName(GetTempFileName)==GetPathList[0]");
 		}
-#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void FileUrl ()

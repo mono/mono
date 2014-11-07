@@ -90,6 +90,7 @@ static int do_mono_sample = 0;
 static int in_shutdown = 0;
 static int do_debug = 0;
 static int do_counters = 0;
+static MonoProfileSamplingMode sampling_mode = MONO_PROFILER_STAT_MODE_PROCESS;
 
 /* For linux compile with:
  * gcc -fPIC -shared -o libmono-profiler-log.so proflog.c utils.c -Wall -g -lz `pkg-config --cflags --libs mono-2`
@@ -831,10 +832,13 @@ walk_stack (MonoMethod *method, int32_t native_offset, int32_t il_offset, mono_b
  * event, hence the collect_bt/emit_bt split.
  */
 static void
-collect_bt (FrameData *data)
+collect_bt (FrameData *data, gboolean async_safe)
 {
 	data->count = 0;
-	mono_stack_walk_no_il (walk_stack, data);
+	if (async_safe)
+		mono_stack_walk_async_safe (walk_stack, data);
+	else
+		mono_stack_walk_no_il (walk_stack, data);
 }
 
 static void
@@ -867,7 +871,7 @@ gc_alloc (MonoProfiler *prof, MonoObject *obj, MonoClass *klass)
 	len += 7;
 	len &= ~7;
 	if (do_bt)
-		collect_bt (&data);
+		collect_bt (&data, FALSE);
 	logbuffer = ensure_logbuf (32 + MAX_FRAMES * 8);
 	now = current_time ();
 	ENTER_LOG (logbuffer, "gcalloc");
@@ -1132,7 +1136,7 @@ throw_exc (MonoProfiler *prof, MonoObject *object)
 	FrameData data;
 	LogBuffer *logbuffer;
 	if (do_bt)
-		collect_bt (&data);
+		collect_bt (&data, FALSE);
 	logbuffer = ensure_logbuf (16 + MAX_FRAMES * 8);
 	now = current_time ();
 	ENTER_LOG (logbuffer, "throw");
@@ -1168,7 +1172,7 @@ monitor_event (MonoProfiler *profiler, MonoObject *object, MonoProfilerMonitorEv
 	FrameData data;
 	LogBuffer *logbuffer;
 	if (do_bt)
-		collect_bt (&data);
+		collect_bt (&data, FALSE);
 	logbuffer = ensure_logbuf (16 + MAX_FRAMES * 8);
 	now = current_time ();
 	ENTER_LOG (logbuffer, "monitor");
@@ -1230,7 +1234,7 @@ mono_sample_hit (MonoProfiler *profiler, unsigned char *ip, void *context)
 	if (in_shutdown)
 		return;
 	now = current_time ();
-	collect_bt (&bt_data);
+	collect_bt (&bt_data, TRUE);
 	elapsed = (now - profiler->startup_time) / 10000;
 	if (do_debug) {
 		int len;
@@ -1481,6 +1485,8 @@ elf_dl_callback (struct dl_phdr_info *info, size_t size, void *data)
 			return 0;
 	}
 	filename = info->dlpi_name;
+	if (!filename)
+		return 0;
 	if (!info->dlpi_addr && !filename [0]) {
 		int l = readlink ("/proc/self/exe", buf, sizeof (buf) - 1);
 		if (l > 0) {
@@ -2687,6 +2693,14 @@ mono_profiler_startup (const char *desc)
 			do_debug = 1;
 			continue;
 		}
+		if ((opt = match_option (p, "sampling-real", NULL)) != p) {
+			sampling_mode = MONO_PROFILER_STAT_MODE_REAL;
+			continue;
+		}
+		if ((opt = match_option (p, "sampling-process", NULL)) != p) {
+			sampling_mode = MONO_PROFILER_STAT_MODE_PROCESS;
+			continue;
+		}
 		if ((opt = match_option (p, "heapshot", &val)) != p) {
 			events &= ~MONO_PROFILE_ALLOCATIONS;
 			events &= ~MONO_PROFILE_ENTER_LEAVE;
@@ -2776,6 +2790,7 @@ mono_profiler_startup (const char *desc)
 	
 	if (do_mono_sample && sample_type == SAMPLE_CYCLES) {
 		events |= MONO_PROFILE_STATISTICAL;
+		mono_profiler_set_statistical_mode (sampling_mode, 1000000 / sample_freq);
 		mono_profiler_install_statistical (mono_sample_hit);
 	}
 

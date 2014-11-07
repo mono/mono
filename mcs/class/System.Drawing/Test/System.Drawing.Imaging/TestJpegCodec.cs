@@ -72,9 +72,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("#8853")]
-#endif
 		public void Bitmap8bbpIndexedGreyscaleFeatures ()
 		{
 			string sInFile = getInFile ("bitmaps/nature-greyscale.jpg");
@@ -116,9 +113,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Bitmap8bbpIndexedGreyscalePixels ()
 		{
 			string sInFile = getInFile ("bitmaps/nature-greyscale.jpg");
@@ -150,7 +144,6 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
-#if !TARGET_JVM
 		[Test]
 		public void Bitmap8bbpIndexedGreyscaleData ()
 		{
@@ -212,13 +205,9 @@ namespace MonoTests.System.Drawing.Imaging {
 				}
 			}
 		}
-#endif
 
 		/* Checks bitmap features on a known 24-bits bitmap */
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void Bitmap24bitFeatures ()
 		{
 			string sInFile = getInFile ("bitmaps/nature24bits.jpg");
@@ -283,7 +272,6 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
-#if !TARGET_JVM
 		[Test]
 		public void Bitmap24bitData ()
 		{
@@ -408,7 +396,6 @@ namespace MonoTests.System.Drawing.Imaging {
 				}
 			}
 		}
-#endif
 
 		private void Save (PixelFormat original, PixelFormat expected)
 		{				
@@ -449,36 +436,24 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void Save_24bppRgb ()
 		{
 			Save (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb);
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void Save_32bppRgb ()
 		{
 			Save (PixelFormat.Format32bppRgb, PixelFormat.Format24bppRgb);
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void Save_32bppArgb ()
 		{
 			Save (PixelFormat.Format32bppArgb, PixelFormat.Format24bppRgb);
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")]
-#endif
 		public void Save_32bppPArgb ()
 		{
 			Save (PixelFormat.Format32bppPArgb, PixelFormat.Format24bppRgb);

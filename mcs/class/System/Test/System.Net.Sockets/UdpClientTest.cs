@@ -13,9 +13,6 @@ using System.Threading;
 using NUnit.Framework;
 
 namespace MonoTests.System.Net.Sockets {
-#if TARGET_JVM
-	[Ignore("UdpClient is not supported - since UDP sockets are not supported")]
-#endif
 	[TestFixture]
 	public class UdpClientTest {
 		[Test] // .ctor ()
@@ -939,7 +936,7 @@ namespace MonoTests.System.Net.Sockets {
 				try {
 					client = new UdpClient (port);
 					break;
-				} catch (Exception ex) {
+				} catch (Exception) {
 					if (i == 5)
 						throw;
 				}

@@ -230,10 +230,10 @@ namespace Mono.CSharp {
 		//
 		public virtual TypeSpec ResolveAsType (IMemberContext mc, bool allowUnboundTypeArguments = false)
 		{
-			ResolveContext ec = new ResolveContext (mc);
-			Expression e = Resolve (ec);
+			var rc = mc as ResolveContext ?? new ResolveContext (mc);
+			Expression e = Resolve (rc);
 			if (e != null)
-				e.Error_UnexpectedKind (ec, ResolveFlags.Type, loc);
+				e.Error_UnexpectedKind (rc, ResolveFlags.Type, loc);
 
 			return null;
 		}
@@ -457,6 +457,8 @@ namespace Mono.CSharp {
 				return false;
 			case MemberKind.InternalCompilerType:
 				return type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
+			case MemberKind.TypeParameter:
+				return !((TypeParameterSpec) type).IsValueType;
 			default:
 				return true;
 			}
@@ -764,6 +766,10 @@ namespace Mono.CSharp {
 			if (ctors == null) {
 				switch (type.Kind) {
 				case MemberKind.Struct:
+					// Every struct has implicit default constructor if not provided by user
+					if (args == null)
+						return null;
+
 					rc.Report.SymbolRelatedToPreviousError (type);
 					// Report meaningful error for struct as they always have default ctor in C# context
 					OverloadResolver.Error_ConstructorMismatch (rc, type, args == null ? 0 : args.Count, loc);
@@ -782,6 +788,18 @@ namespace Mono.CSharp {
 				}
 
 				return null;
+			}
+
+			if (args == null && type.IsStruct) {
+				bool includes_empty = false;
+				foreach (MethodSpec ctor in ctors) {
+					if (ctor.Parameters.IsEmpty) {
+						includes_empty = true;
+					}
+				}
+
+				if (!includes_empty)
+					return null;
 			}
 
 			var r = new OverloadResolver (ctors, OverloadResolver.Restrictions.NoBaseMembers, loc);
@@ -995,6 +1013,16 @@ namespace Mono.CSharp {
 		{
 		}
 
+		//
+		// Special version of flow analysis for expressions which can return different
+		// on-true and on-false result. Used by &&, ||, ?: expressions
+		//
+		public virtual void FlowAnalysisConditional (FlowAnalysisContext fc)
+		{
+			FlowAnalysis (fc);
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
+		}
+
 		/// <summary>
 		///   Returns an expression that can be used to invoke operator true
 		///   on the expression if it exists.
@@ -1016,7 +1044,11 @@ namespace Mono.CSharp {
 		static Expression GetOperatorTrueOrFalse (ResolveContext ec, Expression e, bool is_true, Location loc)
 		{
 			var op = is_true ? Operator.OpType.True : Operator.OpType.False;
-			var methods = MemberCache.GetUserOperator (e.type, op, false);
+			var type = e.type;
+			if (type.IsNullableType)
+				type = Nullable.NullableInfo.GetUnderlyingType (type);
+
+			var methods = MemberCache.GetUserOperator (type, op, false);
 			if (methods == null)
 				return null;
 
@@ -3424,8 +3456,13 @@ namespace Mono.CSharp {
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
-			if (InstanceExpression != null)
+			if (InstanceExpression != null) {
 				InstanceExpression.FlowAnalysis (fc);
+
+				if (ConditionalAccess) {
+					fc.BranchConditionalAccessDefiniteAssignment ();
+				}
+			}
 		}
 
 		protected void ResolveConditionalAccessReceiver (ResolveContext rc)
@@ -3662,6 +3699,13 @@ namespace Mono.CSharp {
 
 		public override bool IsStatic {
 			get { return true; }
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (ConditionalAccess) {
+				fc.BranchConditionalAccessDefiniteAssignment ();
+			}
 		}
 
 		//
@@ -4697,11 +4741,23 @@ namespace Mono.CSharp {
 		// one being the virtual base for the parameter types and modifiers.
 		//
 		// A return value rates candidate method compatibility,
-		// 0 = the best, int.MaxValue = the worst
 		// -1 = fatal error
+		// 0 = the best, int.MaxValue = the worst
 		//
 		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, IParametersMember pm, ref bool params_expanded_form, ref bool dynamicArgument, ref TypeSpec returnType, bool errorMode)
 		{
+			//
+			// Each step has allocated 10 values, it can overflow for
+			// more than 10 arguments but that's ok as it's used for
+			// better error reporting only
+			//
+			const int ArgumentCountMismatch		= 1000000000;
+			const int NamedArgumentsMismatch	= 100000000;
+			const int DefaultArgumentMismatch	= 10000000;
+			const int UnexpectedTypeArguments	= 1000000;
+			const int TypeArgumentsMismatch		= 100000;
+			const int InflatedTypesMismatch		= 10000;
+
 			// Parameters of most-derived type used mainly for named and optional parameters
 			var pd = pm.Parameters;
 
@@ -4734,17 +4790,17 @@ namespace Mono.CSharp {
 							param_count--;
 					} else if (arg_count > param_count) {
 						int args_gap = System.Math.Abs (arg_count - param_count);
-						return int.MaxValue - 10000 + args_gap;
+						return ArgumentCountMismatch + args_gap;
 					} else if (arg_count < param_count - optional_count) {
 						int args_gap = System.Math.Abs (param_count - optional_count - arg_count);
-						return int.MaxValue - 10000 + args_gap;
+						return ArgumentCountMismatch + args_gap;
 					}
 				} else if (arg_count != param_count) {
 					int args_gap = System.Math.Abs (arg_count - param_count);
 					if (!cpd.HasParams)
-						return int.MaxValue - 10000 + args_gap;
+						return ArgumentCountMismatch + args_gap;
 					if (arg_count < param_count - 1)
-						return int.MaxValue - 10000 + args_gap;
+						return ArgumentCountMismatch + args_gap;
 				}
 
 				// Resize to fit optional arguments
@@ -4781,7 +4837,7 @@ namespace Mono.CSharp {
 
 							// Named parameter not found
 							if (index < 0)
-								return (i + 1) * 3;
+								return NamedArgumentsMismatch - i;
 
 							// already reordered
 							if (index == i)
@@ -4797,8 +4853,8 @@ namespace Mono.CSharp {
 								++arg_count;
 								temp = null;
 							} else {
-								if (index == arg_count) 
-									return (i + 1) * 3;
+								if (index == arg_count)
+									return NamedArgumentsMismatch - i - 1;
 
 								temp = arguments [index];
 
@@ -4835,7 +4891,7 @@ namespace Mono.CSharp {
 			// Don't do any expensive checks when the candidate cannot succeed
 			//
 			if (arg_count != param_count && !cpd.HasParams)
-				return (param_count - arg_count) * 2 + 1;
+				return DefaultArgumentMismatch - System.Math.Abs (param_count - arg_count);
 
 			var dep = candidate.GetMissingDependencies ();
 			if (dep != null) {
@@ -4852,7 +4908,7 @@ namespace Mono.CSharp {
 				if (type_arguments != null) {
 					var g_args_count = ms.Arity;
 					if (g_args_count != type_arguments.Count)
-						return int.MaxValue - 20000 + System.Math.Abs (type_arguments.Count - g_args_count);
+						return TypeArgumentsMismatch - System.Math.Abs (type_arguments.Count - g_args_count);
 
 					if (type_arguments.Arguments != null)
 						ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
@@ -4884,7 +4940,7 @@ namespace Mono.CSharp {
 					TypeSpec[] i_args = ti.InferMethodArguments (ec, ms);
 
 					if (i_args == null)
-						return ti.InferenceScore - 20000;
+						return TypeArgumentsMismatch - ti.InferenceScore;
 
 					//
 					// Clear any error messages when the result was success
@@ -4894,9 +4950,10 @@ namespace Mono.CSharp {
 
 					if (i_args.Length != 0) {
 						if (!errorMode) {
-							foreach (var ta in i_args) {
+							for (int i = 0; i < i_args.Length; ++i) {
+								var ta = i_args [i];
 								if (!ta.IsAccessible (ec))
-									return ti.InferenceScore - 10000;
+									return TypeArgumentsMismatch - i;
 							}
 						}
 
@@ -4909,7 +4966,7 @@ namespace Mono.CSharp {
 				//
 				if (!CheckInflatedArguments (ms)) {
 					candidate = ms;
-					return int.MaxValue - 25000;
+					return InflatedTypesMismatch;
 				}
 
 				//
@@ -4932,7 +4989,7 @@ namespace Mono.CSharp {
 				ptypes = pd.Types;
 			} else {
 				if (type_arguments != null)
-					return int.MaxValue - 15000;
+					return UnexpectedTypeArguments;
 
 				ptypes = cpd.Types;
 			}
@@ -5093,29 +5150,34 @@ namespace Mono.CSharp {
 			// is used and argument is not of dynamic type
 			//
 			if (((argument.Modifier | param_mod) & Parameter.Modifier.RefOutMask) != 0) {
-				if (argument.Type != parameter) {
-					//
-					// Do full equality check after quick path
-					//
-					if (!TypeSpecComparer.IsEqual (argument.Type, parameter)) {
-						//
-						// Using dynamic for ref/out parameter can still succeed at runtime
-						//
-						if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
-							return -1;
-
-						return 2;
-					}
-				}
+				var arg_type = argument.Type;
 
 				if ((argument.Modifier & Parameter.Modifier.RefOutMask) != (param_mod & Parameter.Modifier.RefOutMask)) {
 					//
 					// Using dynamic for ref/out parameter can still succeed at runtime
 					//
-					if (argument.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+					if (arg_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
 						return -1;
 
 					return 1;
+				}
+
+				if (arg_type != parameter) {
+					if (arg_type == InternalType.VarOutType)
+						return 0;
+
+					//
+					// Do full equality check after quick path
+					//
+					if (!TypeSpecComparer.IsEqual (arg_type, parameter)) {
+						//
+						// Using dynamic for ref/out parameter can still succeed at runtime
+						//
+						if (arg_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && (argument.Modifier & Parameter.Modifier.RefOutMask) == 0 && (restrictions & Restrictions.CovariantDelegate) == 0)
+							return -1;
+
+						return 2;
+					}
 				}
 
 			} else {
@@ -5690,10 +5752,20 @@ namespace Mono.CSharp {
 					if ((a.Modifier & Parameter.Modifier.RefOutMask) != (p_mod & Parameter.Modifier.RefOutMask))
 						break;
 
-					if (a.Expr.Type == pt || TypeSpecComparer.IsEqual (a.Expr.Type, pt))
+					var arg_type = a.Type;
+					if (arg_type == pt)
 						continue;
 
-					break;
+					if (arg_type == InternalType.VarOutType) {
+						//
+						// Set underlying variable type based on parameter type
+						//
+						((DeclarationExpression)a.Expr).Variable.Type = pt;
+						continue;
+					}
+
+					if (!TypeSpecComparer.IsEqual (arg_type, pt))
+						break;
 				}
 
 				NamedArgument na = a as NamedArgument;
@@ -5765,6 +5837,20 @@ namespace Mono.CSharp {
 			}
 
 			if (a_idx != arg_count) {
+				//
+				// Convert all var out argument to error type for less confusing error reporting
+				// when no matching overload is found
+				//
+				for (; a_idx < arg_count; a_idx++) {
+					var arg = args [a_idx];
+					if (arg == null)
+						continue;
+
+					if (arg.Type == InternalType.VarOutType) {
+						((DeclarationExpression)arg.Expr).Variable.Type = InternalType.ErrorType;
+					}
+				}
+
 				ReportArgumentMismatch (ec, a_pos, member, a, pd, pt);
 				return false;
 			}
@@ -6259,6 +6345,9 @@ namespace Mono.CSharp {
 			}
 
 			base.FlowAnalysis (fc);
+
+			if (conditional_access_receiver)
+				fc.ConditionalAccessEnd ();
 		}
 
 		public override int GetHashCode ()
@@ -6732,6 +6821,14 @@ namespace Mono.CSharp {
 			if (await_source_arg != null) {
 				await_source_arg.Release (ec);
 			}
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			base.FlowAnalysis (fc);
+
+			if (conditional_access_receiver)
+				fc.ConditionalAccessEnd ();
 		}
 
 		protected override Expression OverloadResolve (ResolveContext rc, Expression right_side)

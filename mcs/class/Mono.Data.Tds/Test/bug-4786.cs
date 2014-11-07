@@ -27,11 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace bug4786test
+namespace MonoTests.Mono.Data.Tds
 {
 	
   using NUnit.Framework;
-  using Mono.Data.Tds.Protocol;
+  using global::Mono.Data.Tds.Protocol;
   using System;
   using System.Net;
   using System.Net.Sockets;

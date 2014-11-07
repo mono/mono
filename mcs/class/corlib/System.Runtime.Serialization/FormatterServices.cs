@@ -40,16 +40,23 @@ using System.Globalization;
 namespace System.Runtime.Serialization
 {
 	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
-	public sealed class FormatterServices
+#if NET_4_5
+	static
+#else
+	sealed
+#endif
+	public class FormatterServices
 	{
 		private const BindingFlags fieldFlags = BindingFlags.Public |
 							BindingFlags.Instance |
 							BindingFlags.NonPublic |
 							BindingFlags.DeclaredOnly;
 
+#if !NET_4_5
 		private FormatterServices ()
 		{
 		}
+#endif
 
 		public static object [] GetObjectData (object obj, MemberInfo [] members)
 		{

@@ -106,7 +106,7 @@ namespace System.Web.Services.Protocols
 #endif
 
 			Type type;
-#if NET_2_0 && !TARGET_JVM
+#if NET_2_0
 			type = BuildManager.GetCompiledType (url);
 #else
 			type = WebServiceParser.GetCompiledType (fp, context);

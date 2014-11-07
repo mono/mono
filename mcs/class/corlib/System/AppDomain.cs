@@ -1354,6 +1354,11 @@ namespace System {
 				DomainUnload(this, null);
 		}
 
+		internal void DoUnhandledException (UnhandledExceptionEventArgs args) {
+			if (UnhandledException != null)
+				UnhandledException (this, args);
+		}
+
 		internal byte[] GetMarshalledDomainObjRef ()
 		{
 			ObjRef oref = RemotingServices.Marshal (AppDomain.CurrentDomain, null, typeof (AppDomain));
@@ -1404,6 +1409,10 @@ namespace System {
 
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public event UnhandledExceptionEventHandler UnhandledException;
+
+#if NET_4_5
+		public event EventHandler<FirstChanceExceptionEventArgs> FirstChanceException;
+#endif
 
 #if NET_4_0
 		[MonoTODO]

@@ -25,9 +25,7 @@ namespace MonoTests.System.Threading
 	{
 		public static void NoPrincipal () 
 		{
-#if !TARGET_JVM // AppDomain.SetPrincipalPolicy not supported for TARGET_JVM
 			AppDomain.CurrentDomain.SetPrincipalPolicy (PrincipalPolicy.NoPrincipal);
-#endif
 			IPrincipal p = Thread.CurrentPrincipal;
 			Assert.IsNull (p, "#1");
 
@@ -39,7 +37,6 @@ namespace MonoTests.System.Threading
 			// in this case we can return to null
 		}
 
-#if !TARGET_JVM // AppDomain.SetPrincipalPolicy not supported for TARGET_JVM
 		public static void UnauthenticatedPrincipal () 
 		{
 			AppDomain.CurrentDomain.SetPrincipalPolicy (PrincipalPolicy.UnauthenticatedPrincipal);
@@ -76,7 +73,6 @@ namespace MonoTests.System.Threading
 			Assert.IsNotNull (Thread.CurrentPrincipal, "#7");
 			// in this case we can't return to null
 		}
-#endif // TARGET_JVM
 
 		public static void CopyOnNewThread ()
 		{
@@ -89,10 +85,10 @@ namespace MonoTests.System.Threading
 	[Category("MobileNotWorking")] // Abort #10240
 	public class ThreadTest
 	{
-		TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
+		//TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
 		TimeSpan SmallNegative = new TimeSpan (-2);	// between 0 and -1.0 (infinite) ms
 		TimeSpan Negative = new TimeSpan (-20000);	// really negative
-		TimeSpan MaxValue = TimeSpan.FromMilliseconds ((long) Int32.MaxValue);
+		//TimeSpan MaxValue = TimeSpan.FromMilliseconds ((long) Int32.MaxValue);
 		TimeSpan TooLarge = TimeSpan.FromMilliseconds ((long) Int32.MaxValue + 1);
 
 		static bool is_win32;
@@ -530,11 +526,42 @@ namespace MonoTests.System.Threading
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		public void ReName ()
+		public void Rename ()
 		{
-			Thread t = new Thread (new ThreadStart (ReName));
+			Thread t = new Thread (new ThreadStart (Rename));
 			t.Name = "a";
 			t.Name = "b";
+		}
+
+		bool rename_finished;
+		bool rename_failed;
+
+		[Test]
+		public void RenameTpThread ()
+		{
+			object monitor = new object ();
+			ThreadPool.QueueUserWorkItem (new WaitCallback (Rename_callback), monitor);
+			lock (monitor) {
+				if (!rename_finished)
+					Monitor.Wait (monitor);
+			}
+			Assert.IsTrue (!rename_failed);
+		}
+
+		void Rename_callback (object o) {
+			Thread.CurrentThread.Name = "a";
+			try {
+				Thread.CurrentThread.Name = "b";
+				//Console.WriteLine ("Thread name is: {0}", Thread.CurrentThread.Name);
+			} catch (Exception e) {
+				//Console.Error.WriteLine (e);
+				rename_failed = true;
+			}
+			object monitor = o;
+			lock (monitor) {
+				rename_finished = true;
+				Monitor.Pulse (monitor);
+			}
 		}
 
 		[Test]
@@ -684,7 +711,6 @@ namespace MonoTests.System.Threading
 			}
 		}
 
-#if !TARGET_JVM // AppDomain.SetPrincipalPolicy not supported for TARGET_JVM
 		[Test]
 		[Ignore ("see comment below.")]
 		public void CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal () 
@@ -713,7 +739,6 @@ namespace MonoTests.System.Threading
 				t.Abort ();
 			}
 		}
-#endif // TARGET_JVM
 		
 		[Test]
 		public void IPrincipal_CopyOnNewThread () 

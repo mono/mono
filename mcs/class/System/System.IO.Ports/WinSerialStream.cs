@@ -238,7 +238,6 @@ namespace System.IO.Ports
 			throw new NotSupportedException();
 		}
 
-#if !TARGET_JVM
 		[DllImport("kernel32", SetLastError = true)]
 			static extern unsafe bool ReadFile (int handle, byte* buffer, int bytes_to_read,
 					out int bytes_read, IntPtr overlapped);
@@ -246,7 +245,6 @@ namespace System.IO.Ports
 		[DllImport("kernel32", SetLastError = true)]
 			static extern unsafe bool GetOverlappedResult (int handle, IntPtr overlapped,
 					ref int bytes_transfered, bool wait);
-#endif
 
 		public override int Read ([In, Out] byte [] buffer, int offset, int count)
 		{
@@ -283,11 +281,9 @@ namespace System.IO.Ports
 			return bytes_read;
 		}
 
-#if !TARGET_JVM
 		[DllImport("kernel32", SetLastError = true)]
 		static extern unsafe bool WriteFile (int handle, byte* buffer, int bytes_to_write,
 				out int bytes_written, IntPtr overlapped);
-#endif
 
 		public override void Write (byte [] buffer, int offset, int count)
 		{

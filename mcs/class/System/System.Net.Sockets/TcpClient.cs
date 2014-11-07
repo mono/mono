@@ -130,9 +130,6 @@ namespace System.Net.Sockets
 			get { return client.Connected; }
 		}
 
-#if TARGET_JVM
-		[MonoNotSupported ("Not supported as Socket.ExclusiveAddressUse is not supported")]
-#endif
 		public bool ExclusiveAddressUse {
 			get {
 				return(client.ExclusiveAddressUse);
@@ -372,25 +369,16 @@ namespace System.Net.Sockets
 			client.EndConnect (asyncResult);
 		}
 		
-#if TARGET_JVM
-		[MonoNotSupported ("Not supported as Socket.BeginConnect is not supported")]
-#endif
 		public IAsyncResult BeginConnect (IPAddress address, int port, AsyncCallback requestCallback, object state)
 		{
 			return client.BeginConnect (address, port, requestCallback, state);
 		}
 		
-#if TARGET_JVM
-		[MonoNotSupported ("Not supported as Socket.BeginConnect is not supported")]
-#endif
 		public IAsyncResult BeginConnect (IPAddress[] addresses, int port, AsyncCallback requestCallback, object state)
 		{
 			return client.BeginConnect (addresses, port, requestCallback, state);
 		}
 		
-#if TARGET_JVM
-		[MonoNotSupported ("Not supported as Socket.BeginConnect is not supported")]
-#endif
 		public IAsyncResult BeginConnect (string host, int port, AsyncCallback requestCallback, object state)
 		{
 			return client.BeginConnect (host, port, requestCallback, state);

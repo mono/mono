@@ -416,9 +416,6 @@ public class IPAddressTest
 	}
 
 	[Test]
-#if TARGET_JVM
-	[Ignore ("TD BUG ID: 7213")]
-#endif
 	public void Constructor0_Address_Invalid ()
 	{
 		try {
@@ -473,9 +470,6 @@ public class IPAddressTest
 	}
 
 	[Test]
-#if TARGET_JVM
-	[Ignore ("TD BUG ID: 7213")]
-#endif
 	public void Constructor1_Address_4Byte ()
 	{
 		byte [] bytes = new byte [4] { 192, 202, 112, 37 };

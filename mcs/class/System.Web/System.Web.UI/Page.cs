@@ -544,15 +544,11 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (ps != null)
 				_styleSheetTheme = ps.StyleSheetTheme;
 		}
-#if TARGET_JVM
-		if (_styleSheetTheme != null && _styleSheetTheme != "")
-			_styleSheetPageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_styleSheetTheme, Context);
-#else
+
 		if (!String.IsNullOrEmpty (_styleSheetTheme)) {
 			string virtualPath = "~/App_Themes/" + _styleSheetTheme;
 			_styleSheetPageTheme = BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (PageTheme)) as PageTheme;
 		}
-#endif	
 	}
 
 	void InitializeTheme ()
@@ -562,19 +558,13 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (ps != null)
 				_theme = ps.Theme;
 		}
-#if TARGET_JVM
-		if (_theme != null && _theme != "") {
-			_pageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_theme, Context);
-			_pageTheme.SetPage (this);
-		}
-#else
+
 		if (!String.IsNullOrEmpty (_theme)) {
 			string virtualPath = "~/App_Themes/" + _theme;
 			_pageTheme = BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (PageTheme)) as PageTheme;
 			if (_pageTheme != null)
 				_pageTheme.SetPage (this);
 		}
-#endif	
 	}
 #if NET_4_0
 	public Control AutoPostBackControl {
@@ -1298,11 +1288,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		OnError (EventArgs.Empty);
 		if (_context.HasError (e)) {
 			_context.ClearError (e);
-#if TARGET_JVM
-			vmw.common.TypeUtils.Throw (e);
-#else
 			throw new HttpUnhandledException (null, e);
-#endif
 		}
 	}
 
@@ -2277,26 +2263,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			}
 
 			if (asyncResults.Count > 0) {
-#if TARGET_JVM
-				TimeSpan timeout = AsyncTimeout;
-				long t1 = DateTime.Now.Ticks;
-				bool signalled = true;
-				for (int i = 0; i < asyncResults.Count; i++) {
-					if (asyncResults [i].IsCompleted)
-						continue;
-
-					if (signalled)
-						signalled = asyncResults [i].AsyncWaitHandle.WaitOne (timeout, false);
-
-					if (signalled) {
-						long t2 = DateTime.Now.Ticks;
-						timeout = AsyncTimeout - TimeSpan.FromTicks (t2 - t1);
-						if (timeout.Ticks <= 0)
-							signalled = false;
-					} else
-						localParallelTasks [i].TimeoutHandler (asyncResults [i]);
-				}
-#else
 				WaitHandle [] waitArray = new WaitHandle [asyncResults.Count];
 				int i = 0;
 				for (i = 0; i < asyncResults.Count; i++) {
@@ -2311,7 +2277,6 @@ public partial class Page : TemplateControl, IHttpHandler
 						}
 					}
 				}
-#endif
 			}
 			DateTime endWait = DateTime.Now;
 			TimeSpan elapsed = endWait - startExecution;

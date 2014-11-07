@@ -49,7 +49,10 @@ namespace MonoTests.System.Net.WebSockets
 		[Test]
 		public void ServerHandshakeReturnCrapStatusCodeTest ()
 		{
+			// On purpose, 
+			#pragma warning disable 4014
 			HandleHttpRequestAsync ((req, resp) => resp.StatusCode = 418);
+			#pragma warning restore 4014
 			try {
 				Assert.IsTrue (socket.ConnectAsync (new Uri ("ws://localhost:" + Port), CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
@@ -62,10 +65,12 @@ namespace MonoTests.System.Net.WebSockets
 		[Test]
 		public void ServerHandshakeReturnWrongUpgradeHeader ()
 		{
+			#pragma warning disable 4014
 			HandleHttpRequestAsync ((req, resp) => {
 					resp.StatusCode = 101;
 					resp.Headers["Upgrade"] = "gtfo";
 				});
+			#pragma warning restore 4014
 			try {
 				Assert.IsTrue (socket.ConnectAsync (new Uri ("ws://localhost:" + Port), CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
@@ -78,12 +83,14 @@ namespace MonoTests.System.Net.WebSockets
 		[Test]
 		public void ServerHandshakeReturnWrongConnectionHeader ()
 		{
+			#pragma warning disable 4014
 			HandleHttpRequestAsync ((req, resp) => {
 					resp.StatusCode = 101;
 					resp.Headers["Upgrade"] = "websocket";
 					// Mono http request doesn't like the forcing, test still valid since the default connection header value is empty
 					//ForceSetHeader (resp.Headers, "Connection", "Foo");
 				});
+			#pragma warning restore 4014
 			try {
 				Assert.IsTrue (socket.ConnectAsync (new Uri ("ws://localhost:" + Port), CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {

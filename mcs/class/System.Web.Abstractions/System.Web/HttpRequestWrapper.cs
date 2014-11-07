@@ -208,6 +208,18 @@ namespace System.Web
 			get { return w.TotalBytes; }
 		}
 
+#if NET_4_5
+		public override UnvalidatedRequestValuesBase Unvalidated { 
+			get { return new UnvalidatedRequestValuesWrapper (w.Unvalidated); } 
+		}
+#endif
+
+#if NET_4_5
+		public override ReadEntityBodyMode ReadEntityBodyMode {
+			get { return ReadEntityBodyMode.Classic; }
+		}
+#endif
+
 		public override Uri Url {
 			get { return w.Url; }
 		}
@@ -231,6 +243,13 @@ namespace System.Web
 		public override string [] UserLanguages {
 			get { return w.UserLanguages; }
 		}
+
+#if NET_4_5
+		public void Abort ()
+		{
+			w.WorkerRequest.CloseConnection();
+		}
+#endif
 
 		public override byte [] BinaryRead (int count)
 		{

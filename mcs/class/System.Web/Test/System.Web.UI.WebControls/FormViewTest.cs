@@ -1567,9 +1567,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-//#if TARGET_JVM //BUG #6518
-//                [Category ("NotWorking")]
-//#endif
 		public void FormView_RenderSimpleTemplate()
 		{
 			string renderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1585,9 +1582,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-//#if TARGET_JVM //BUG #6518
-//                [Category ("NotWorking")]
-//#endif
 		public void FormView_RenderFooterAndPager()
 		{
 			string renderedPageHtml = new WebTest ("FormViewTest1_2.aspx").Run ();
@@ -1602,9 +1596,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-//#if TARGET_JVM //BUG #6518
-//                [Category ("NotWorking")]
-//#endif
 		public void FormView_RenderWithHeader()
 		{
 			string renderedPageHtml = new WebTest ("FormViewTest1_4.aspx").Run ();
@@ -1620,9 +1611,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-//#if TARGET_JVM //BUG #6518
-//                [Category ("NotWorking")]
-//#endif
 		public void FormView_Render ()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1_3.aspx").Run ();

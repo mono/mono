@@ -233,6 +233,7 @@ namespace System.Web
 			mimeTypes.Add ("la", "audio/nspaudio");
 			mimeTypes.Add ("lam", "audio/x-liveaudio");
 			mimeTypes.Add ("latex", "application/x-latex");
+			mimeTypes.Add ("less", "text/css");
 			mimeTypes.Add ("list", "text/plain");
 			mimeTypes.Add ("lma", "audio/nspaudio");
 			mimeTypes.Add ("log", "text/plain");
@@ -529,7 +530,7 @@ namespace System.Web
 			mimeTypes.Add ("wmls", "text/vnd.wap.wmlscript");
 			mimeTypes.Add ("wml", "text/vnd.wap.wml");
 			mimeTypes.Add ("wmp", "video/x-ms-wmp");
-			mimeTypes.Add ("woff", "application/x-woff");
+			mimeTypes.Add ("woff", "application/font-woff");
 			mimeTypes.Add ("word", "application/msword");
 			mimeTypes.Add ("wp5", "application/wordperfect");
 			mimeTypes.Add ("wp6", "application/wordperfect");

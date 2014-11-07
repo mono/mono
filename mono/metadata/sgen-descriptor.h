@@ -82,13 +82,14 @@ enum {
 	 * copy_object_no_checks(), without having to fetch the
 	 * object's class.
 	 */
-	DESC_TYPE_RUN_LENGTH = 1, /* 16 bits aligned byte size | 1-3 (offset, numptr) bytes tuples */
-	DESC_TYPE_SMALL_BITMAP,   /* 16 bits aligned byte size | 16-48 bit bitmap */
-	DESC_TYPE_COMPLEX,      /* index for bitmap into complex_descriptors */
-	DESC_TYPE_VECTOR,       /* 10 bits element size | 1 bit kind | 2 bits desc | element desc */
-	DESC_TYPE_LARGE_BITMAP, /* | 29-61 bitmap bits */
-	DESC_TYPE_COMPLEX_ARR,  /* index for bitmap into complex_descriptors */
-	DESC_TYPE_COMPLEX_PTRFREE, /*Nothing, used to encode large ptr objects. */
+	DESC_TYPE_RUN_LENGTH = 1,   /* 16 bits aligned byte size | 1-3 (offset, numptr) bytes tuples */
+	DESC_TYPE_SMALL_BITMAP = 2, /* 16 bits aligned byte size | 16-48 bit bitmap */
+	DESC_TYPE_COMPLEX = 3,      /* index for bitmap into complex_descriptors */
+	DESC_TYPE_VECTOR = 4,       /* 10 bits element size | 1 bit kind | 2 bits desc | element desc */
+	DESC_TYPE_LARGE_BITMAP = 5, /* | 29-61 bitmap bits */
+	DESC_TYPE_COMPLEX_ARR = 6,  /* index for bitmap into complex_descriptors */
+	DESC_TYPE_COMPLEX_PTRFREE = 7, /*Nothing, used to encode large ptr objects. */
+	DESC_TYPE_MAX = 7,
 	/* values for array kind */
 	DESC_TYPE_V_SZARRAY = 0, /*vector with no bounds data */
 	DESC_TYPE_V_ARRAY = 1, /* array with bounds data */
@@ -117,6 +118,11 @@ gsize* sgen_get_complex_descriptor (mword desc) MONO_INTERNAL;
 void* sgen_get_complex_descriptor_bitmap (mword desc) MONO_INTERNAL;
 MonoGCRootMarkFunc sgen_get_user_descriptor_func (mword desc) MONO_INTERNAL;
 
+void sgen_init_descriptors (void) MONO_INTERNAL;
+
+#ifdef HEAVY_STATISTICS
+void sgen_descriptor_count_scanned_object (mword desc) MONO_INTERNAL;
+#endif
 
 static inline gboolean
 sgen_gc_descr_has_references (mword desc)
@@ -168,8 +174,6 @@ sgen_gc_descr_has_references (mword desc)
 			void **_objptr = (void**)(obj);	\
 			_objptr += ((desc) >> 16) & 0xff;	\
 			_objptr_end = _objptr + (((desc) >> 24) & 0xff);	\
-			HANDLE_PTR (_objptr, (obj)); \
-			_objptr ++; \
 			while (_objptr < _objptr_end) {	\
 				HANDLE_PTR (_objptr, (obj));	\
 				_objptr++;	\
@@ -183,20 +187,13 @@ sgen_gc_descr_has_references (mword desc)
 		void **_objptr = (void**)(obj); \
 		gsize _bmap = (desc) >> 16;     \
 		_objptr += OBJECT_HEADER_WORDS; \
-		{ \
+		do { \
 			int _index = GNUC_BUILTIN_CTZ (_bmap);		\
 			_objptr += _index; \
 			_bmap >>= (_index + 1);				\
 			HANDLE_PTR (_objptr, (obj));		\
 			_objptr ++;							\
-			} \
-		while (_bmap) { \
-			int _index = GNUC_BUILTIN_CTZ (_bmap);		\
-			_objptr += _index; \
-			_bmap >>= (_index + 1);				\
-			HANDLE_PTR (_objptr, (obj));		\
-			_objptr ++;							\
-		}										\
+		} while (_bmap);					\
 	} while (0)
 #else
 #define OBJ_BITMAP_FOREACH_PTR(desc,obj)       do {    \
@@ -258,15 +255,16 @@ sgen_gc_descr_has_references (mword desc)
 	} while (0)
 
 /* this one is untested */
-#define OBJ_COMPLEX_ARR_FOREACH_PTR(vt,obj)	do {	\
+#define OBJ_COMPLEX_ARR_FOREACH_PTR(desc,obj)	do {	\
 		/* there are pointers */	\
-		gsize *mbitmap_data = sgen_get_complex_descriptor ((vt)->desc); \
+		GCVTable *vt = (GCVTable*)SGEN_LOAD_VTABLE (obj); \
+		gsize *mbitmap_data = sgen_get_complex_descriptor ((desc)); \
 		gsize mbwords = (*mbitmap_data++) - 1;	\
 		gsize el_size = mono_array_element_size (vt->klass);	\
 		char *e_start = (char*)(obj) +  G_STRUCT_OFFSET (MonoArray, vector);	\
 		char *e_end = e_start + el_size * mono_array_length_fast ((MonoArray*)(obj));	\
 		if (0)							\
-                        g_print ("found %d at %p (0x%zx): %s.%s\n", mbwords, (obj), (vt)->desc, vt->klass->name_space, vt->klass->name); \
+                        g_print ("found %d at %p (0x%zx): %s.%s\n", mbwords, (obj), (desc), (vt)->klass->name_space, (vt)->klass->name); \
 		while (e_start < e_end) {	\
 			void **_objptr = (void**)e_start;	\
 			gsize *bitmap_data = mbitmap_data;	\

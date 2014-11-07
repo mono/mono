@@ -67,9 +67,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void Default_Dispose ()
 		{
 			StringFormat sf = new StringFormat ();
@@ -93,9 +90,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void ctor_StringFormatFlags ()
 		{
 			using (StringFormat sf = new StringFormat ((StringFormatFlags)Int32.MinValue)) {
@@ -104,9 +98,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void ctor_StringFormatFlags_Int32 ()
 		{
 			using (StringFormat sf = new StringFormat ((StringFormatFlags) Int32.MinValue, Int32.MinValue)) {
@@ -130,9 +121,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void GenericDefault_Local_Dispose ()
 		{
 			StringFormat sf = StringFormat.GenericDefault;
@@ -168,9 +156,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void GenericTypographic_Local_Dispose ()
 		{
 			StringFormat sf = StringFormat.GenericTypographic;
@@ -191,9 +176,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (InvalidEnumArgumentException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void Alignment_Invalid ()
 		{
 			using (StringFormat sf = new StringFormat ()) {
@@ -214,9 +196,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (InvalidEnumArgumentException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void HotkeyPrefix_Invalid ()
 		{
 			using (StringFormat sf = new StringFormat ()) {
@@ -237,9 +216,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (InvalidEnumArgumentException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void LineAlignment_Invalid ()
 		{
 			using (StringFormat sf = new StringFormat ()) {
@@ -260,9 +236,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (InvalidEnumArgumentException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void Trimming_Invalid ()
 		{
 			using (StringFormat sf = new StringFormat ()) {
@@ -281,9 +254,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void Clone_Complex ()
 		{
 			using (StringFormat sf = new StringFormat ()) {
@@ -321,9 +291,6 @@ namespace MonoTests.System.Drawing{
 		}		
 		
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void TabsStops() 
 		{
 			using (StringFormat smf = new StringFormat ()) {
@@ -345,9 +312,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void SetTabStops_Null ()
 		{
 			using (StringFormat sf = new StringFormat ()) {
@@ -356,9 +320,6 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void SetDigitSubstitution ()
 		{
 			using (StringFormat sf = new StringFormat ()) {
@@ -370,9 +331,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void SetMeasurableCharacterRanges_Null ()
 		{
 			using (StringFormat sf = new StringFormat ()) {
@@ -400,9 +358,6 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (OverflowException))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void SetMeasurableCharacterRanges_TooBig ()
 		{
 			using (StringFormat sf = new StringFormat ()) {

@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Net.Http.Headers;
+using System.Linq;
 
 namespace MonoTests.System.Net.Http.Headers
 {
@@ -81,6 +82,13 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual ("mu/m", res.MediaType, "#2");
 			Assert.AreEqual ("jj'", res.CharSet, "#2b");
 			Assert.AreEqual ("mu/m; CHarset=jj'", res.ToString (), "#2c");
+
+			res = MediaTypeHeaderValue.Parse ("multipart/form-data; boundary=----Wk");
+			Assert.AreEqual ("multipart/form-data", res.MediaType, "#3");
+			Assert.IsNull (res.CharSet, "#3b");
+			Assert.AreEqual (1, res.Parameters.Count, "#3c");
+			Assert.AreEqual (new NameValueHeaderValue ("boundary", "----Wk"), res.Parameters.First (), "#3d");
+			Assert.AreEqual ("multipart/form-data; boundary=----Wk", res.ToString (), "#3e");
 		}
 
 		[Test]

@@ -211,18 +211,12 @@ namespace System.Web.Handlers
 						rset = new ResourceManager (scriptResourceName, assembly).GetResourceSet (Threading.Thread.CurrentThread.CurrentUICulture, true, true);
 					}
 					catch (MissingManifestResourceException) {
-#if TARGET_JVM // GetResourceSet does not throw  MissingManifestResourceException if ressource is not exists
-					}
-					if (rset == null) {
-#endif
 						if (scriptResourceName.EndsWith (".resources", RuntimeHelpers.StringComparison)) {
 							scriptResourceName = scriptResourceName.Substring (0, scriptResourceName.Length - 10);
 							rset = new ResourceManager (scriptResourceName, assembly).GetResourceSet (Threading.Thread.CurrentThread.CurrentUICulture, true, true);
 						}
-#if !TARGET_JVM
 						else
 							throw;
-#endif
 					}
 					if (rset == null)
 						break;

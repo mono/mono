@@ -161,6 +161,30 @@ namespace MonoTests.System.Diagnostics
 
 		[Test]
 		[Category ("NotDotNet")]
+		public void PerformanceCountersTag ()
+		{
+			string[] goodAttributes = {
+				"",
+				"filemappingsize=\"1048576\"",
+				"filemappingsize=\"0\""
+			};
+			ValidateSuccess ("#PCT:Good", "<performanceCounters {0}/>", goodAttributes);
+
+			string[] badAttributes = {
+				"FileMappingSize=\"1048576\"",
+				"filemappingsize=\"\"",
+				"filemappingsize=\"non-int-value\""
+			};
+			ValidateExceptions ("#PCT:BadAttrs", "<performanceCounters {0}/>", badAttributes);
+
+			string[] badChildren = {
+				"<any element=\"here\"/>"
+			};
+			ValidateExceptions ("#PCT:BadChildren", "<performanceCounters>{0}</performanceCounters>", badChildren);
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
 		public void TraceTag_Attributes ()
 		{
 			string[] good = {

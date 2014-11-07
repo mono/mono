@@ -376,9 +376,6 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
-#if TARGET_JVM
-		[Ignore ("Does not work with TARGET_JVM")]
-#endif
 		public void ToStringTest()
 		{
 			Assert.AreEqual ("System.Data.Common.DataColumnMappingCollection", columnMapCollection.ToString(), "test1");

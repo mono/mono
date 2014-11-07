@@ -41,16 +41,7 @@ namespace System.Web
 	public class SiteMapNodeCollection : IList, IHierarchicalEnumerable
 	{
 		ArrayList list;
-#if TARGET_JVM
-		const string _siteMapNodeCollection_EmptyList = "SiteMapNodeCollection.EmptyList";
-		internal static SiteMapNodeCollection EmptyList
-		{
-			get { return (SiteMapNodeCollection) AppDomain.CurrentDomain.GetData (_siteMapNodeCollection_EmptyList); }
-			set { AppDomain.CurrentDomain.SetData (_siteMapNodeCollection_EmptyList, value); }
-		}
-#else
 		internal static SiteMapNodeCollection EmptyList;
-#endif
 		
 		static SiteMapNodeCollection ()
 		{
