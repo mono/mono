@@ -256,6 +256,18 @@ namespace System.Web
 			return w.BinaryRead (count);
 		}
 
+#if NET_4_5
+		public override Stream GetBufferedInputStream()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Stream GetBufferlessInputStream()
+		{
+			return w.GetBufferlessInputStream ();
+		}
+#endif
+
 		public override int [] MapImageCoordinates (string imageFieldName)
 		{
 			return w.MapImageCoordinates (imageFieldName);
