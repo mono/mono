@@ -1698,7 +1698,6 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute FieldOffset;
 		public readonly PredefinedAttribute AssemblyProduct;
 		public readonly PredefinedAttribute AssemblyCompany;
-		public readonly PredefinedAttribute AssemblyDescription;
 		public readonly PredefinedAttribute AssemblyCopyright;
 		public readonly PredefinedAttribute AssemblyTrademark;
 		public readonly PredefinedAttribute CallerMemberNameAttribute;
@@ -1758,7 +1757,6 @@ namespace Mono.CSharp {
 			FieldOffset = new PredefinedAttribute (module, "System.Runtime.InteropServices", "FieldOffsetAttribute");
 			AssemblyProduct = new PredefinedAttribute (module, "System.Reflection", "AssemblyProductAttribute");
 			AssemblyCompany = new PredefinedAttribute (module, "System.Reflection", "AssemblyCompanyAttribute");
-			AssemblyDescription = new PredefinedAttribute (module, "System.Reflection", "AssemblyDescriptionAttribute");
 			AssemblyCopyright = new PredefinedAttribute (module, "System.Reflection", "AssemblyCopyrightAttribute");
 			AssemblyTrademark = new PredefinedAttribute (module, "System.Reflection", "AssemblyTrademarkAttribute");
 
