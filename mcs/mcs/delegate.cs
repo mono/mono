@@ -294,6 +294,9 @@ namespace Mono.CSharp {
 
 		public override void PrepareEmit ()
 		{
+			if ((caching_flags & Flags.CloseTypeCreated) != 0)
+				return;
+
 			if (!Parameters.IsEmpty) {
 				parameters.ResolveDefaultValues (this);
 			}
