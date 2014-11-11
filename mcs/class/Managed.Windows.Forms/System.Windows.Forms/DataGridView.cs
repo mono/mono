@@ -5133,7 +5133,14 @@ namespace System.Windows.Forms {
 					SetSelectedRowCore (rowIndex, false);
 			}
 
-			if (Rows.Count - e.RowCount <= 0) {
+			int RowsLeft = Rows.Count - e.RowCount;
+			if (RowsLeft < 0)
+				RowsLeft = 0;
+
+			if (first_row_index > RowsLeft)
+				first_row_index = RowsLeft;
+
+			if (RowsLeft == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
 				hover_cell = null;
 			} else if (Columns.Count == 0) {
@@ -5141,8 +5148,8 @@ namespace System.Windows.Forms {
 				hover_cell = null;
 			} else if (currentCell != null && currentCell.RowIndex == e.RowIndex) {
 				int nextRowIndex = e.RowIndex;
-				if (nextRowIndex >= Rows.Count - e.RowCount)
-					nextRowIndex = Rows.Count - 1 - e.RowCount;
+				if (nextRowIndex >= RowsLeft)
+					nextRowIndex = RowsLeft - 1;
 				MoveCurrentCell (currentCell != null ? currentCell.ColumnIndex : 0, nextRowIndex, 
 						 true, false, false, true);
 				if (hover_cell != null && hover_cell.RowIndex >= e.RowIndex)
