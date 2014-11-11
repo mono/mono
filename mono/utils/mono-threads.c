@@ -210,6 +210,7 @@ unregister_thread (void *arg)
 	mono_thread_small_id_free (small_id);
 }
 
+#if !defined(HOST_WIN32)
 static void
 thread_exited_dtor (void *arg)
 {
@@ -230,6 +231,7 @@ thread_exited_dtor (void *arg)
 	mono_native_tls_set_value (thread_exited_key, GUINT_TO_POINTER (1));
 #endif
 }
+#endif
 
 /**
  * Removes the current thread from the thread list.

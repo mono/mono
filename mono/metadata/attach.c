@@ -13,6 +13,13 @@
 #ifdef HOST_WIN32
 #define DISABLE_ATTACH
 #endif
+
+void mono_attach_parse_options (char *options);
+void mono_attach_init (void);
+gboolean mono_attach_start (void);
+void mono_attach_maybe_start (void);
+void mono_attach_cleanup (void);
+
 #ifndef DISABLE_ATTACH
 
 #include <stdio.h>
@@ -602,3 +609,5 @@ mono_attach_cleanup (void)
 }
 
 #endif /* DISABLE_ATTACH */
+
+

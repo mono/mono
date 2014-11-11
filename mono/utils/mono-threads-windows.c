@@ -15,6 +15,8 @@
 #include <mono/utils/mono-compiler.h>
 #include <limits.h>
 
+void
+mono_threads_core_self_suspend (MonoThreadInfo *info);
 
 void
 mono_threads_init_platform (void)
@@ -72,7 +74,7 @@ mono_threads_core_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
 
 	result = SuspendThread (handle);
 	if (result == (DWORD)-1) {
-		fprintf (stderr, "could not suspend thread %x (handle %p): %d\n", id, handle, GetLastError ()); fflush (stderr);
+		fprintf (stderr, "could not suspend thread %x (handle %p): %lu\n", (unsigned int)id, handle, GetLastError ()); fflush (stderr);
 		CloseHandle (handle);
 		return FALSE;
 	}
