@@ -48,9 +48,10 @@
 #define MS_BLOCK_SIZE	ARCH_MIN_MS_BLOCK_SIZE
 #define MS_BLOCK_SIZE_SHIFT	ARCH_MIN_MS_BLOCK_SIZE_SHIFT
 #else
-#define MS_BLOCK_SIZE_SHIFT     14      /* INT FASTENABLE */
+#define MS_BLOCK_SIZE_SHIFT     16      /* INT FASTENABLE */
 #define MS_BLOCK_SIZE           (1 << MS_BLOCK_SIZE_SHIFT)
 #endif
+
 #define MAJOR_SECTION_SIZE	MS_BLOCK_SIZE
 #define CARDS_PER_BLOCK (MS_BLOCK_SIZE / CARD_SIZE_IN_BYTES)
 
@@ -817,25 +818,29 @@ major_dump_heap (FILE *heap_dump_file)
 
 #define LOAD_VTABLE	SGEN_LOAD_VTABLE
 
-#define MS_MARK_OBJECT_AND_ENQUEUE_CHECKED(obj,desc,block,queue) do {	\
-		int __word, __bit;					\
-		MS_CALC_MARK_BIT (__word, __bit, (obj));		\
-		if (!MS_MARK_BIT ((block), __word, __bit) && MS_OBJ_ALLOCED ((obj), (block))) {	\
-			MS_SET_MARK_BIT ((block), __word, __bit);	\
-			if (sgen_gc_descr_has_references (desc))			\
+#define MS_MARK_OBJECT_AND_ENQUEUE_CHECKED(obj,desc,block,queue) do { \
+		int __word, __bit; \
+		MS_CALC_MARK_BIT (__word, __bit, (obj)); \
+		if (!MS_MARK_BIT ((block), __word, __bit) && MS_OBJ_ALLOCED ((obj), (block))) { \
+			MS_SET_MARK_BIT ((block), __word, __bit); \
+			if (sgen_gc_descr_has_references (desc)) \
 				GRAY_OBJECT_ENQUEUE ((queue), (obj), (desc)); \
 			binary_protocol_mark ((obj), (gpointer)LOAD_VTABLE ((obj)), sgen_safe_object_get_size ((MonoObject*)(obj))); \
-			INC_NUM_MAJOR_OBJECTS_MARKED ();		\
-		}							\
+			INC_NUM_MAJOR_OBJECTS_MARKED (); \
+		} \
 	} while (0)
-#define MS_MARK_OBJECT_AND_ENQUEUE(obj,desc,block,queue) do {		\
-		int __word, __bit;					\
-		MS_CALC_MARK_BIT (__word, __bit, (obj));		\
+#define MS_MARK_OBJECT_AND_ENQUEUE(obj,desc,block,queue,high_priority) do { \
+		int __word, __bit; \
+		MS_CALC_MARK_BIT (__word, __bit, (obj)); \
 		SGEN_ASSERT (9, MS_OBJ_ALLOCED ((obj), (block)), "object %p not allocated", obj); \
-		if (!MS_MARK_BIT ((block), __word, __bit)) {		\
-			MS_SET_MARK_BIT ((block), __word, __bit);	\
-			if (sgen_gc_descr_has_references (desc))			\
-				GRAY_OBJECT_ENQUEUE ((queue), (obj), (desc)); \
+		if (!MS_MARK_BIT ((block), __word, __bit)) { \
+			MS_SET_MARK_BIT ((block), __word, __bit); \
+			if (sgen_gc_descr_has_references (desc)) { \
+				if ((high_priority)) \
+					GRAY_OBJECT_ENQUEUE_HIGH_PRIORITY ((queue), (obj), (desc)); \
+				else \
+					GRAY_OBJECT_ENQUEUE ((queue), (obj), (desc)); \
+			} \
 			binary_protocol_mark ((obj), (gpointer)LOAD_VTABLE ((obj)), sgen_safe_object_get_size ((MonoObject*)(obj))); \
 			INC_NUM_MAJOR_OBJECTS_MARKED ();		\
 		}							\
@@ -851,7 +856,7 @@ pin_major_object (char *obj, SgenGrayQueue *queue)
 
 	block = MS_BLOCK_FOR_OBJ (obj);
 	block->has_pinned = TRUE;
-	MS_MARK_OBJECT_AND_ENQUEUE (obj, sgen_obj_get_descriptor (obj), block, queue);
+	MS_MARK_OBJECT_AND_ENQUEUE (obj, sgen_obj_get_descriptor (obj), block, queue, FALSE);
 }
 
 #include "sgen-major-copy-object.h"
@@ -871,7 +876,7 @@ major_copy_or_mark_object_with_evacuation_concurrent (void **ptr, void *obj, Sge
 
 		if (objsize <= SGEN_MAX_SMALL_OBJ_SIZE) {
 			MSBlockInfo *block = MS_BLOCK_FOR_OBJ (obj);
-			MS_MARK_OBJECT_AND_ENQUEUE (obj, sgen_obj_get_descriptor (obj), block, queue);
+			MS_MARK_OBJECT_AND_ENQUEUE (obj, sgen_obj_get_descriptor (obj), block, queue, FALSE);
 		} else {
 			if (sgen_los_object_is_pinned (obj))
 				return;
@@ -921,6 +926,8 @@ static guint64 stat_optimized_copy_major_forwarded;
 static guint64 stat_optimized_copy_major_small_evacuate;
 static guint64 stat_optimized_major_scan;
 static guint64 stat_optimized_major_scan_no_refs;
+static guint64 stat_optimized_major_scan_local;
+static guint64 stat_optimized_major_scan_nonlocal;
 
 static guint64 stat_drain_prefetch_fills;
 static guint64 stat_drain_prefetch_fill_failures;
@@ -963,7 +970,7 @@ drain_gray_stack (ScanCopyContext ctx)
 static void
 major_copy_or_mark_object_canonical (void **ptr, SgenGrayQueue *queue)
 {
-	major_copy_or_mark_object_with_evacuation (ptr, *ptr, queue);
+	major_copy_or_mark_object_with_evacuation (ptr, *ptr, queue, FALSE);
 }
 
 static void
@@ -2006,6 +2013,9 @@ sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurr
 	mono_counters_register ("Optimized copy major large", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_optimized_copy_major_large);
 	mono_counters_register ("Optimized major scan", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_optimized_major_scan);
 	mono_counters_register ("Optimized major scan no refs", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_optimized_major_scan_no_refs);
+
+	mono_counters_register ("Optimized major scan local", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_optimized_major_scan_local);
+	mono_counters_register ("Optimized major scan nonlocal", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_optimized_major_scan_nonlocal);
 
 	mono_counters_register ("Gray stack drain loops", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_drain_loops);
 	mono_counters_register ("Gray stack prefetch fills", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_drain_prefetch_fills);

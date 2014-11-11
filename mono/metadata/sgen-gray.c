@@ -51,7 +51,7 @@ guint64 stat_gray_queue_dequeue_slow_path;
 #endif
 
 void
-sgen_gray_object_alloc_queue_section (SgenGrayQueue *queue)
+sgen_gray_object_alloc_queue_section (SgenGrayQueue *queue, GrayQueueEntry **cursor, GrayQueueSection **first)
 {
 	GrayQueueSection *section;
 
@@ -76,9 +76,9 @@ sgen_gray_object_alloc_queue_section (SgenGrayQueue *queue)
 	STATE_TRANSITION (section, GRAY_QUEUE_SECTION_STATE_FLOATING, GRAY_QUEUE_SECTION_STATE_ENQUEUED);
 
 	/* Link it with the others */
-	section->next = queue->first;
-	queue->first = section;
-	queue->cursor = section->entries - 1;
+	section->next = *first;
+	*first = section;
+	*cursor = section->entries - 1;
 }
 
 void
@@ -91,40 +91,59 @@ sgen_gray_object_free_queue_section (GrayQueueSection *section)
 }
 
 /*
- * The following two functions are called in the inner loops of the
- * collector, so they need to be as fast as possible.  We have macros
- * for them in sgen-gc.h.
+ * 'sgen_gray_object_enqueue' and 'sgen_gray_object_dequeue' are called in the
+ * inner loops of the collector, so they need to be as fast as possible. We have
+ * macros for them in sgen-gc.h.
  */
 
 void
 sgen_gray_object_enqueue (SgenGrayQueue *queue, char *obj, mword desc)
 {
 	GrayQueueEntry entry = SGEN_GRAY_QUEUE_ENTRY (obj, desc);
-
 	HEAVY_STAT (stat_gray_queue_enqueue_slow_path ++);
-
 	SGEN_ASSERT (9, obj, "enqueueing a null object");
 	//sgen_check_objref (obj);
-
 #ifdef SGEN_CHECK_GRAY_OBJECT_ENQUEUE
 	if (queue->enqueue_check_func)
 		queue->enqueue_check_func (obj);
 #endif
-
 	if (G_UNLIKELY (!queue->first || queue->cursor == GRAY_LAST_CURSOR_POSITION (queue->first))) {
 		if (queue->first) {
 			/* Set the current section size back to default, might have been changed by sgen_gray_object_dequeue_section */
 			queue->first->size = SGEN_GRAY_QUEUE_SECTION_SIZE;
 		}
-
-		sgen_gray_object_alloc_queue_section (queue);
+		sgen_gray_object_alloc_queue_section (queue, &queue->cursor, &queue->first);
 	}
 	STATE_ASSERT (queue->first, GRAY_QUEUE_SECTION_STATE_ENQUEUED);
 	SGEN_ASSERT (9, queue->cursor <= GRAY_LAST_CURSOR_POSITION (queue->first), "gray queue %p overflow, first %p, cursor %p", queue, queue->first, queue->cursor);
 	*++queue->cursor = entry;
-
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL
 	binary_protocol_gray_enqueue (queue, queue->cursor, obj);
+#endif
+}
+
+void
+sgen_gray_object_enqueue_high_priority (SgenGrayQueue *queue, char *obj, mword desc)
+{
+	GrayQueueEntry entry = SGEN_GRAY_QUEUE_ENTRY (obj, desc);
+	SGEN_ASSERT (9, obj, "enqueueing a null object");
+	//sgen_check_objref (obj);
+#ifdef SGEN_CHECK_GRAY_OBJECT_ENQUEUE
+	if (queue->enqueue_check_func)
+		queue->enqueue_check_func (obj);
+#endif
+	if (G_UNLIKELY (!queue->priority_first || queue->priority_cursor == GRAY_LAST_CURSOR_POSITION (queue->priority_first))) {
+		if (queue->priority_first) {
+			/* Set the current section size back to default, might have been changed by sgen_gray_object_dequeue_section */
+			queue->priority_first->size = SGEN_GRAY_QUEUE_SECTION_SIZE;
+		}
+		sgen_gray_object_alloc_queue_section (queue, &queue->priority_cursor, &queue->priority_first);
+	}
+	STATE_ASSERT (queue->priority_first, GRAY_QUEUE_SECTION_STATE_ENQUEUED);
+	SGEN_ASSERT (9, queue->priority_cursor <= GRAY_LAST_CURSOR_POSITION (queue->priority_first), "gray queue %p overflow, first %p, cursor %p", queue, queue->priority_first, queue->priority_cursor);
+	*++queue->priority_cursor = entry;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+	binary_protocol_gray_enqueue (queue, queue->priority_cursor, obj);
 #endif
 }
 
@@ -132,32 +151,45 @@ GrayQueueEntry
 sgen_gray_object_dequeue (SgenGrayQueue *queue)
 {
 	GrayQueueEntry entry;
+	GrayQueueEntry **cursor;
+	GrayQueueSection **first;
 
 	HEAVY_STAT (stat_gray_queue_dequeue_slow_path ++);
 
-	if (sgen_gray_object_queue_is_empty (queue)) {
+	if (sgen_gray_object_queue_has_high_priority_elements (queue)) {
+		cursor = &queue->priority_cursor;
+		first = &queue->priority_first;
+	} else if (sgen_gray_object_queue_has_low_priority_elements (queue)) {
+		cursor = &queue->cursor;
+		first = &queue->first;
+	} else {
+		cursor = NULL;
+		first = NULL;
+	}
+
+	if (!first) {
 		entry.obj = NULL;
 		return entry;
 	}
 
-	STATE_ASSERT (queue->first, GRAY_QUEUE_SECTION_STATE_ENQUEUED);
-	SGEN_ASSERT (9, queue->cursor >= GRAY_FIRST_CURSOR_POSITION (queue->first), "gray queue %p underflow, first %p, cursor %d", queue, queue->first, queue->cursor);
+	STATE_ASSERT (*first, GRAY_QUEUE_SECTION_STATE_ENQUEUED);
+	SGEN_ASSERT (9, *cursor >= GRAY_FIRST_CURSOR_POSITION (*first), "gray queue %p underflow, first %p, cursor %d", queue, *first, *cursor);
 
-	entry = *queue->cursor--;
+	entry = *(*cursor)--;
 
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	binary_protocol_gray_dequeue (queue, queue->cursor + 1, entry.obj);
+	binary_protocol_gray_dequeue (queue, *cursor + 1, entry.obj);
 #endif
 
-	if (G_UNLIKELY (queue->cursor < GRAY_FIRST_CURSOR_POSITION (queue->first))) {
-		GrayQueueSection *section = queue->first;
-		queue->first = section->next;
+	if (G_UNLIKELY (*cursor < GRAY_FIRST_CURSOR_POSITION (*first))) {
+		GrayQueueSection *section = *first;
+		*first = section->next;
 		section->next = queue->free_list;
 
 		STATE_TRANSITION (section, GRAY_QUEUE_SECTION_STATE_ENQUEUED, GRAY_QUEUE_SECTION_STATE_FREE_LIST);
 
 		queue->free_list = section;
-		queue->cursor = queue->first ? queue->first->entries + queue->first->size - 1 : NULL;
+		*cursor = *first ? (*first)->entries + (*first)->size - 1 : NULL;
 	}
 
 	return entry;

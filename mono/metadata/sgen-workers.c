@@ -356,7 +356,8 @@ workers_steal (WorkerData *data, WorkerData *victim_data, gboolean lock)
 		int m = MIN (SGEN_GRAY_QUEUE_SECTION_SIZE, n);
 		n -= m;
 
-		sgen_gray_object_alloc_queue_section (queue);
+		/* FIXME: Which priority should be used here? */
+		sgen_gray_object_alloc_queue_section (queue, &queue->cursor, &queue->first);
 		memcpy (queue->first->entries,
 				victim_data->stealable_stack + victim_data->stealable_stack_fill - num + n,
 				sizeof (GrayQueueEntry) * m);

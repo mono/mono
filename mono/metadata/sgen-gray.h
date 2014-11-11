@@ -102,7 +102,9 @@ typedef void (*GrayQueueEnqueueCheckFunc) (char*);
 
 struct _SgenGrayQueue {
 	GrayQueueEntry *cursor;
+	GrayQueueEntry *priority_cursor;
 	GrayQueueSection *first;
+	GrayQueueSection *priority_first;
 	GrayQueueSection *free_list;
 	GrayQueueAllocPrepareFunc alloc_prepare_func;
 #ifdef SGEN_CHECK_GRAY_OBJECT_ENQUEUE
@@ -137,6 +139,7 @@ extern guint64 stat_gray_queue_dequeue_slow_path;
 void sgen_init_gray_queues (void) MONO_INTERNAL;
 
 void sgen_gray_object_enqueue (SgenGrayQueue *queue, char *obj, mword desc) MONO_INTERNAL;
+void sgen_gray_object_enqueue_high_priority (SgenGrayQueue *queue, char *obj, mword desc) MONO_INTERNAL;
 GrayQueueEntry sgen_gray_object_dequeue (SgenGrayQueue *queue) MONO_INTERNAL;
 GrayQueueSection* sgen_gray_object_dequeue_section (SgenGrayQueue *queue) MONO_INTERNAL;
 void sgen_gray_object_enqueue_section (SgenGrayQueue *queue, GrayQueueSection *section) MONO_INTERNAL;
@@ -148,7 +151,7 @@ void sgen_gray_object_queue_init_with_alloc_prepare (SgenGrayQueue *queue, GrayQ
 		GrayQueueAllocPrepareFunc func, void *data) MONO_INTERNAL;
 void sgen_gray_object_queue_deinit (SgenGrayQueue *queue) MONO_INTERNAL;
 void sgen_gray_object_queue_disable_alloc_prepare (SgenGrayQueue *queue) MONO_INTERNAL;
-void sgen_gray_object_alloc_queue_section (SgenGrayQueue *queue) MONO_INTERNAL;
+void sgen_gray_object_alloc_queue_section (SgenGrayQueue *queue, GrayQueueEntry **cursor, GrayQueueSection **first) MONO_INTERNAL;
 void sgen_gray_object_free_queue_section (GrayQueueSection *section) MONO_INTERNAL;
 
 void sgen_section_gray_queue_init (SgenSectionGrayQueue *queue, gboolean locked,
@@ -162,7 +165,19 @@ gboolean sgen_gray_object_fill_prefetch (SgenGrayQueue *queue);
 static inline gboolean
 sgen_gray_object_queue_is_empty (SgenGrayQueue *queue)
 {
-	return queue->first == NULL;
+	return queue->priority_first == NULL && queue->first == NULL;
+}
+
+static inline gboolean
+sgen_gray_object_queue_has_high_priority_elements (SgenGrayQueue *queue)
+{
+	return queue->priority_first != NULL;
+}
+
+static inline gboolean
+sgen_gray_object_queue_has_low_priority_elements (SgenGrayQueue *queue)
+{
+	return queue->first != NULL;
 }
 
 static inline MONO_ALWAYS_INLINE void
@@ -187,6 +202,27 @@ GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, char* obj, mword desc)
 }
 
 static inline MONO_ALWAYS_INLINE void
+GRAY_OBJECT_ENQUEUE_HIGH_PRIORITY (SgenGrayQueue *queue, char* obj, mword desc)
+{
+#if SGEN_MAX_DEBUG_LEVEL >= 9
+	sgen_gray_object_enqueue (queue, obj, desc);
+#else
+	if (G_UNLIKELY (!queue->priority_first || queue->priority_cursor == GRAY_LAST_CURSOR_POSITION (queue->priority_first))) {
+		sgen_gray_object_enqueue_high_priority (queue, obj, desc);
+	} else {
+		GrayQueueEntry entry = SGEN_GRAY_QUEUE_ENTRY (obj, desc);
+
+		HEAVY_STAT (stat_gray_queue_enqueue_fast_path ++);
+
+		*++queue->priority_cursor = entry;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_enqueue (queue, queue->priority_cursor, obj);
+#endif
+	}
+#endif
+}
+
+static inline MONO_ALWAYS_INLINE void
 GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, char** obj, mword *desc)
 {
 	GrayQueueEntry entry;
@@ -195,23 +231,31 @@ GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, char** obj, mword *desc)
 	*obj = entry.obj;
 	*desc = entry.desc;
 #else
-	if (!queue->first) {
+	if (!queue->priority_first && !queue->first) {
 		HEAVY_STAT (stat_gray_queue_dequeue_fast_path ++);
-
 		*obj = NULL;
-	} else if (G_UNLIKELY (queue->cursor == GRAY_FIRST_CURSOR_POSITION (queue->first))) {
+	} else if (G_UNLIKELY (queue->priority_cursor == GRAY_FIRST_CURSOR_POSITION (queue->priority_first) || queue->cursor == GRAY_FIRST_CURSOR_POSITION (queue->first))) {
 		entry = sgen_gray_object_dequeue (queue);
 		*obj = entry.obj;
 		*desc = entry.desc;
-	} else {
+	} else if (G_LIKELY (queue->priority_first)) {
 		HEAVY_STAT (stat_gray_queue_dequeue_fast_path ++);
-
+		entry = *queue->priority_cursor--;
+		*obj = entry.obj;
+		*desc = entry.desc;
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+		binary_protocol_gray_dequeue (queue, queue->priority_cursor + 1, *obj);
+#endif
+	} else if (queue->first) {
+		HEAVY_STAT (stat_gray_queue_dequeue_fast_path ++);
 		entry = *queue->cursor--;
 		*obj = entry.obj;
 		*desc = entry.desc;
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL
 		binary_protocol_gray_dequeue (queue, queue->cursor + 1, *obj);
 #endif
+	} else {
+		g_assert_not_reached ();
 	}
 #endif
 }
