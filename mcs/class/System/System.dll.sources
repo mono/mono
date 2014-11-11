@@ -824,6 +824,7 @@ System.Net/RequestStream.cs
 System.Net/ResponseStream.cs
 System.Net.Security/AuthenticatedStream.cs
 System.Net.Security/AuthenticationLevel.cs
+System.Net.Security/EncryptionPolicy.cs
 System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
 System.Net.Security/ProtectionLevel.cs
