@@ -1989,7 +1989,7 @@ namespace Mono.CSharp
 			return current_token;
 		}
 
-		int TokenizePreprocessorIdentifier (out int c)
+		int TokenizePreprocessorKeyword (out int c)
 		{
 			// skip over white space
 			do {
@@ -2026,7 +2026,7 @@ namespace Mono.CSharp
 			tokens_seen = false;
 			arg = "";
 
-			var cmd = GetPreprocessorDirective (id_builder, TokenizePreprocessorIdentifier (out c));
+			var cmd = GetPreprocessorDirective (id_builder, TokenizePreprocessorKeyword (out c));
 
 			if ((cmd & PreprocessorDirective.CustomArgumentsParsing) != 0)
 				return cmd;
@@ -2098,7 +2098,7 @@ namespace Mono.CSharp
 
 			int c;
 
-			int length = TokenizePreprocessorIdentifier (out c);
+			int length = TokenizePreprocessorKeyword (out c);
 			if (length == line_default.Length) {
 				if (!IsTokenIdentifierEqual (line_default))
 					return false;
@@ -2431,16 +2431,60 @@ namespace Mono.CSharp
 			return string_builder.ToString ();
 		}
 
-		int TokenizePragmaNumber (ref int c)
+		int TokenizePragmaWarningIdentifier (ref int c, ref bool identifier)
 		{
-			number_pos = 0;
 
-			int number;
+			if ((c >= '0' && c <= '9') || is_identifier_start_character (c)) {
+				int number;
 
-			if (c >= '0' && c <= '9') {
-				number = TokenizeNumber (c);
+				if (c >= '0' && c <= '9') {
+					number_pos = 0;
+					number = TokenizeNumber (c);
 
-				c = get_char ();
+					c = get_char ();
+
+					if (c != ' ' && c != '\t' && c != ',' && c != '\n' && c != -1 && c != UnicodeLS && c != UnicodePS) {
+						return ReadPragmaWarningComment (c);
+					}
+				} else {
+					//
+					// LAMESPEC v6: No spec what identifier really is in this context, it seems keywords are allowed too
+					//
+					int pos = 0;
+					number = -1;
+					id_builder [pos++] = (char)c;
+					while (c < MaxIdentifierLength) {
+						c = reader.Read ();
+						id_builder [pos] = (char)c;
+
+						if (c >= '0' && c <= '9') {
+							if (pos == 6 && id_builder [0] == 'C' && id_builder [1] == 'S') {
+								// Recognize CSXXXX as C# XXXX warning
+								number = 0;
+								int pow = 1000;
+								for (int i = 0; i < 4; ++i) {
+									var ch = id_builder [i + 2];
+									if (ch < '0' || ch > '9') {
+										number = -1;
+										break;
+									}
+
+									number += (ch - '0') * pow;
+									pow /= 10;
+								}
+							}
+						} else if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_') {
+							break;
+						}
+
+						++pos;
+					}
+
+					if (number < 0) {
+						identifier = true;
+						number = pos;
+					}
+				}
 
 				// skip over white space
 				while (c == ' ' || c == '\t')
@@ -2453,19 +2497,25 @@ namespace Mono.CSharp
 				// skip over white space
 				while (c == ' ' || c == '\t')
 					c = get_char ();
-			} else {
-				number = -1;
-				if (c == '/') {
-					ReadSingleLineComment ();
-				} else {
-					Report.Warning (1692, 1, Location, "Invalid number");
 
-					// Read everything till the end of the line or file
-					ReadToEndOfLine ();
-				}
+				return number;
 			}
 
-			return number;
+			return ReadPragmaWarningComment (c);
+		}
+
+		int ReadPragmaWarningComment (int c)
+		{
+			if (c == '/') {
+				ReadSingleLineComment ();
+			} else {
+				Report.Warning (1692, 1, Location, "Invalid number");
+
+				// Read everything till the end of the line or file
+				ReadToEndOfLine ();
+			}
+
+			return -1;
 		}
 
 		void ReadToEndOfLine ()
@@ -2491,9 +2541,9 @@ namespace Mono.CSharp
 		void ParsePragmaDirective ()
 		{
 			int c;
-			int length = TokenizePreprocessorIdentifier (out c);
+			int length = TokenizePreprocessorKeyword (out c);
 			if (length == pragma_warning.Length && IsTokenIdentifierEqual (pragma_warning)) {
-				length = TokenizePreprocessorIdentifier (out c);
+				length = TokenizePreprocessorKeyword (out c);
 
 				//
 				// #pragma warning disable
@@ -2526,9 +2576,12 @@ namespace Mono.CSharp
 							//
 							int code;
 							do {
-								code = TokenizePragmaNumber (ref c);
+								bool identifier = false;
+								code = TokenizePragmaWarningIdentifier (ref c, ref identifier);
 								if (code > 0) {
-									if (disable) {
+									if (identifier) {
+										// no-op, custom warnings cannot occur in mcs
+									} else if (disable) {
 										Report.RegisterWarningRegion (loc).WarningDisable (loc, code, context.Report);
 									} else {
 										Report.RegisterWarningRegion (loc).WarningEnable (loc, code, context);
