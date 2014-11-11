@@ -951,22 +951,18 @@ namespace Mono.CSharp {
 						candidates.AddRange (a);
 				}
 
-				if (candidates != null)
-					return new ExtensionMethodCandidates (invocationContext, candidates, this, position);
-			}
+				if (types_using_table != null) {
+					foreach (var t in types_using_table) {
 
-			// LAMESPEC: TODO no spec about priority over normal extension methods yet
-			if (types_using_table != null) {
-				foreach (var t in types_using_table) {
+						var res = t.MemberCache.FindExtensionMethods (invocationContext, name, arity);
+						if (res == null)
+							continue;
 
-					var res = t.MemberCache.FindExtensionMethods (invocationContext, name, arity);
-					if (res == null)
-						continue;
-
-					if (candidates == null)
-						candidates = res;
-					else
-						candidates.AddRange (res);
+						if (candidates == null)
+							candidates = res;
+						else
+							candidates.AddRange (res);
+					}
 				}
 
 				if (candidates != null)
