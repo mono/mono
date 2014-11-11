@@ -114,6 +114,14 @@ namespace System.Net.Security
 			validation_callback = userCertificateValidationCallback;
 			selection_callback = userCertificateSelectionCallback;
 		}
+
+		[MonoTODO ("EncryptionPolicy is not enforced")]
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
+			: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback)
+		{
+			if (encryptionPolicy != EncryptionPolicy.AllowNoEncryption)
+				throw new NotImplementedException();
+		}
 		#endregion // Constructors
 
 		#region Properties
