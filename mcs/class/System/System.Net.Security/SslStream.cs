@@ -106,15 +106,23 @@ namespace System.Net.Security
 		{
 		}
 
-		[MonoTODO ("userCertificateValidationCallback is not passed X509Chain and SslPolicyErrors correctly")]
-		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
-			: base (innerStream, leaveInnerStreamOpen)
-		{
-			// they are nullable.
-			validation_callback = userCertificateValidationCallback;
-			selection_callback = userCertificateSelectionCallback;
-		}
-		#endregion // Constructors
+        [MonoTODO ("userCertificateValidationCallback is not passed X509Chain and SslPolicyErrors correctly")]
+        public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
+            : base (innerStream, leaveInnerStreamOpen)
+        {
+            // they are nullable.
+            validation_callback = userCertificateValidationCallback;
+            selection_callback = userCertificateSelectionCallback;
+        }
+
+        [MonoTODO ("EncryptionPolicy is not enforced")]
+        public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
+            : this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback)
+        {
+            if (encryptionPolicy != EncryptionPolicy.AllowNoEncryption)
+                throw new NotImplementedException();
+        }
+        #endregion // Constructors
 
 		#region Properties
 
