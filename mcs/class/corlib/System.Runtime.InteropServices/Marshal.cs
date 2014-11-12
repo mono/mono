@@ -1585,6 +1585,7 @@ namespace System.Runtime.InteropServices
 
 		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo)
 		{
+#if !MOBILE
 			IErrorInfo info = null;
 			if (errorInfo != (IntPtr)(-1)) {
 				if (errorInfo == IntPtr.Zero) {
@@ -1618,6 +1619,9 @@ namespace System.Runtime.InteropServices
 				}
 			}
 			return e;
+#else
+			return ConvertHrToException (errorCode);
+#endif
 		}
 
 #if !FULL_AOT_RUNTIME
