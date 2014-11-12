@@ -77,7 +77,7 @@ namespace Xamarin.ApiDiff {
 			var sb = new StringBuilder ();
 
 			sb.Append (family ? "protected " : "public ");
-			if (virt)
+			if (virt && !State.IgnoreVirtualChanges)
 				sb.Append (over ? "override " : "virtual ");
 			else if (stat)
 				sb.Append ("static ");
