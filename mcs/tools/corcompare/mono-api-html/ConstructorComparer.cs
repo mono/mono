@@ -62,7 +62,7 @@ namespace Xamarin.ApiDiff {
 
 				if ((attr & MethodAttributes.Static) != 0) {
 					sb.Append ("static ");
-				} else if ((attr & MethodAttributes.Virtual) != 0) {
+				} else if ((attr & MethodAttributes.Virtual) != 0 && !State.IgnoreVirtualChanges) {
 					if ((attr & MethodAttributes.VtableLayoutMask) == 0)
 						sb.Append ("override ");
 					else
@@ -99,7 +99,10 @@ namespace Xamarin.ApiDiff {
 			if (parameters != null) {
 				var list = new List<string> ();
 				foreach (var p in parameters.Elements ("parameter")) {
-					list.Add (p.GetTypeName ("type") + " " + p.GetAttribute ("name"));
+					var pTypeName   = p.GetTypeName ("type");
+					list.Add (State.IgnoreParameterNameChanges
+						? pTypeName
+						: pTypeName + " " + p.GetAttribute ("name"));
 				}
 				sb.Append (String.Join (", ", list));
 			}
