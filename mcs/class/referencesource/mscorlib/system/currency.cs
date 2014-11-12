@@ -1,0 +1,69 @@
+// ==++==
+// 
+//   Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// ==--==
+namespace System {
+    
+    using System;
+    using System.Globalization;
+    using System.Runtime.CompilerServices;
+    using System.Runtime.Versioning;
+
+    #if !FEATURE_CORECLR
+    [System.Runtime.ForceTokenStabilization]
+    #endif //!FEATURE_CORECLR
+    [Serializable]
+    internal struct Currency
+    {
+        internal long m_value;
+        
+        // Constructs a Currency from a Decimal value.
+        //
+        #if !FEATURE_CORECLR
+        [System.Runtime.ForceTokenStabilization]
+        #endif //!FEATURE_CORECLR
+        public Currency(Decimal value) {
+            m_value = Decimal.ToCurrency(value).m_value;
+        }
+    
+        // Constructs a Currency from a long value without scaling. The
+        // ignored parameter exists only to distinguish this constructor
+        // from the constructor that takes a long.  Used only in the System 
+        // package, especially in Variant.
+        internal Currency(long value, int ignored) {
+            m_value = value;
+        }
+    
+        // Creates a Currency from an OLE Automation Currency.  This method
+        // applies no scaling to the Currency value, essentially doing a bitwise
+        // copy.
+        // 
+        public static Currency FromOACurrency(long cy){
+            return new Currency(cy, 0);
+        }
+
+        //Creates an OLE Automation Currency from a Currency instance.  This 
+        // method applies no scaling to the Currency value, essentially doing 
+        // a bitwise copy.
+        // 
+        public long ToOACurrency() {
+            return m_value;
+        }
+    
+        // Converts a Currency to a Decimal.
+        //
+        [System.Security.SecuritySafeCritical]  // auto-generated
+        public static Decimal ToDecimal(Currency c)
+        {
+            Decimal result = new Decimal ();
+            FCallToDecimal (ref result, c);
+            return result;
+        }
+
+        [System.Security.SecurityCritical]  // auto-generated
+        [ResourceExposure(ResourceScope.None)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private static extern void FCallToDecimal(ref Decimal result,Currency c);
+    }
+}
