@@ -1258,7 +1258,7 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoThread *this_obj)
 	return str;
 }
 
-gint32 ves_icall_System_Threading_Thread_GetNewManagedId()
+gint32 ves_icall_System_Threading_Thread_GetNewManagedId_internal()
 {
     return InterlockedIncrement(&next_managed_thread_id);
 }
