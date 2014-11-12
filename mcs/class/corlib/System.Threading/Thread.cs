@@ -971,9 +971,8 @@ namespace System.Threading {
 #endif
 
 #if NET_2_0
-		private static int GetNewManagedId() {
-			return Interlocked.Increment(ref _managed_id_counter);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern private static int GetNewManagedId();
 
 		public Thread (ThreadStart start, int maxStackSize)
 		{

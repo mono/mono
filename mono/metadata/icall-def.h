@@ -853,6 +853,7 @@ ICALL(THREAD_5, "GetCachedCurrentCulture", ves_icall_System_Threading_Thread_Get
 ICALL(THREAD_6, "GetCachedCurrentUICulture", ves_icall_System_Threading_Thread_GetCachedCurrentUICulture)
 ICALL(THREAD_7, "GetDomainID", ves_icall_System_Threading_Thread_GetDomainID)
 ICALL(THREAD_8, "GetName_internal", ves_icall_System_Threading_Thread_GetName_internal)
+ICALL(THREAD_8a, "GetNewManagedId", ves_icall_System_Threading_Thread_GetNewManagedId)
 ICALL(THREAD_9, "GetSerializedCurrentCulture", ves_icall_System_Threading_Thread_GetSerializedCurrentCulture)
 ICALL(THREAD_10, "GetSerializedCurrentUICulture", ves_icall_System_Threading_Thread_GetSerializedCurrentUICulture)
 ICALL(THREAD_11, "GetState", ves_icall_System_Threading_Thread_GetState)

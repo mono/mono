@@ -62,6 +62,7 @@ void ves_icall_System_Threading_Thread_Sleep_internal(int ms) MONO_INTERNAL;
 gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms, HANDLE thread) MONO_INTERNAL;
 gint32 ves_icall_System_Threading_Thread_GetDomainID (void) MONO_INTERNAL;
 MonoString* ves_icall_System_Threading_Thread_GetName_internal (MonoThread *this_obj) MONO_INTERNAL;
+gint32 ves_icall_System_Threading_Thread_GetNewManagedId (void) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_SetName_internal (MonoThread *this_obj, MonoString *name) MONO_INTERNAL;
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoThread *this_obj) MONO_INTERNAL;
 MonoArray* ves_icall_System_Threading_Thread_GetSerializedCurrentCulture (MonoThread *this_obj) MONO_INTERNAL;
