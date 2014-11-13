@@ -177,7 +177,18 @@ namespace Xamarin.ApiDiff {
 			if (base.Equals (source, target))
 				return true;
 
-			return GetDescription (source) == GetDescription (target);
+			string sourceDescription = GetDescription (source);
+			string targetDescription = GetDescription (target);
+
+			return (sourceDescription == targetDescription) ||
+				// *adding* virtual or override to target is acceptable; *removing* them is NOT
+				(State.IgnoreVirtualChanges &&
+					// non-virtual to virtual is fine
+					(sourceDescription == targetDescription.Replace ("virtual ", "")) ||
+					// non-virtual to override is fine
+					(sourceDescription == targetDescription.Replace ("override ", "")) ||
+					// virtual to override is fine
+					(sourceDescription.Replace (" virtual ", " override ") == targetDescription));
 		}
 
 		bool IsNowObsoleted (XElement source, XElement target)
