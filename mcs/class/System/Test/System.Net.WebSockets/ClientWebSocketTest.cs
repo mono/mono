@@ -101,6 +101,7 @@ namespace MonoTests.System.Net.WebSockets
 		}
 
 		[Test]
+		[Ignore ("See bug #24340")]
 		public void EchoTest ()
 		{
 			const string Payload = "This is a websocket test";
@@ -125,6 +126,7 @@ namespace MonoTests.System.Net.WebSockets
 		}
 
 		[Test]
+		[Ignore ("See bug #24340")]
 		public void CloseOutputAsyncTest ()
 		{
 			Assert.IsTrue (socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait (5000));
