@@ -76,6 +76,7 @@ namespace Xamarin.ApiDiff {
 
 		public  static  bool    IgnoreParameterNameChanges  { get; set; }
 		public  static  bool    IgnoreVirtualChanges        { get; set; }
+		public  static  bool    IgnoreAddedPropertySetters  { get; set; }
 
 		public static bool Lax;
 	}
@@ -110,6 +111,9 @@ namespace Xamarin.ApiDiff {
 				},
 				{ "ignore-changes-parameter-names", "Ignore changes to parameter names for identically prototyped methods.",
 					v => State.IgnoreParameterNameChanges   = v != null
+				},
+				{ "ignore-changes-property-setters", "Ignore adding setters to properties.",
+					v => State.IgnoreAddedPropertySetters = v != null
 				},
 				{ "ignore-changes-virtual", "Ignore changing non-`virtual` to `virtual` or adding `override`.",
 					v => State.IgnoreVirtualChanges = v != null
