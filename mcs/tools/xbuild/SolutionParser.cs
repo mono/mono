@@ -121,7 +121,9 @@ namespace Mono.XBuild.CommandLine {
 			string slnVersion = GetSlnFileVersion (reader);
 
 			if (slnVersion == "12.00")
-#if XBUILD_12
+#if XBUILD_14
+				p.DefaultToolsVersion = "14.0";
+#elif XBUILD_12
 				p.DefaultToolsVersion = "12.0";
 #else
 				p.DefaultToolsVersion = "4.0";

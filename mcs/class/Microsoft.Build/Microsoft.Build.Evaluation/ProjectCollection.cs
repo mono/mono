@@ -264,6 +264,9 @@ namespace Microsoft.Build.Evaluation
 #if XBUILD_12
 			AddToolset (new Toolset ("12.0", ToolLocationHelper.GetPathToBuildTools ("12.0"), this, null));
 #endif
+#if XBUILD_14
+			AddToolset (new Toolset ("14.0", ToolLocationHelper.GetPathToBuildTools ("14.0"), this, null));
+#endif
 			default_tools_version = toolsets.First ().ToolsVersion;
 		}
 		

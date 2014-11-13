@@ -17,6 +17,7 @@ net_3_5_SUBDIRS := build class tools/xbuild
 net_4_0_SUBDIRS := build class
 net_4_5_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
 xbuild_12_SUBDIRS := build class tools/xbuild
+xbuild_14_SUBDIRS := build class tools/xbuild
 
 # List of test subdirs that should pass 100%
 centum_tests := \
@@ -87,7 +88,7 @@ dir-check:
 
 # fun specialty targets
 
-PROFILES = net_2_0 net_3_5 net_4_0 net_4_5 xbuild_12
+PROFILES = net_2_0 net_3_5 net_4_0 net_4_5 xbuild_12 xbuild_14
 
 .PHONY: all-profiles $(STD_TARGETS:=-profiles)
 all-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
@@ -106,6 +107,7 @@ profiles-do--run-test:
 
 # Orchestrate the bootstrap here.
 _boot_ = all clean install
+$(_boot_:%=profile-do--xbuild_14--%):         profile-do--xbuild_14--%:         profile-do--net_4_5--%
 $(_boot_:%=profile-do--xbuild_12--%):         profile-do--xbuild_12--%:         profile-do--net_4_5--%
 $(_boot_:%=profile-do--net_4_5--%):           profile-do--net_4_5--%:           profile-do--build--%
 $(_boot_:%=profile-do--net_4_0--%):           profile-do--net_4_0--%:           profile-do--build--%

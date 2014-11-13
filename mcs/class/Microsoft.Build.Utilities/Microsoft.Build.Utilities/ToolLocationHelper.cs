@@ -233,11 +233,20 @@ namespace Microsoft.Build.Utilities
 
 		public static string GetPathToBuildTools (string toolsVersion)
 		{
-			if (toolsVersion != "12.0")
+			string path;
+			switch (toolsVersion) {
+			case "12.0":
+				path = "xbuild_12";
+				break;
+			case "14.0":
+				path = "xbuild_14";
+				break;
+			default:
 				return null;
+			}
 
 			if (Environment.GetEnvironmentVariable ("TESTING_MONO") != null)
-				return Path.Combine (lib_mono_dir, "xbuild_12");
+				return Path.Combine (lib_mono_dir, path);
 
 			if (runningOnDotNet) {
 				//see http://msdn.microsoft.com/en-us/library/vstudio/bb397428(v=vs.120).aspx

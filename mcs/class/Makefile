@@ -242,6 +242,7 @@ net_3_5_SUBDIRS := $(xbuild_2_0_dirs)
 net_4_0_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(xbuild_4_0_dirs)
 net_4_5_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
+xbuild_14_SUBDIRS := $(xbuild_4_0_dirs)
 
 include ../build/rules.make
 

@@ -22,7 +22,8 @@ PROFILES = \
 	net_3_5	\
 	net_4_0	\
 	net_4_5 \
-	xbuild_12
+	xbuild_12 \
+	xbuild_14
 
 COMMON_SRCS = \
 	Consts.cs.in			\

@@ -39,7 +39,9 @@ public static class Consts {
 	public static string BinPath {
 		get {
 			if (RunningOnMono ()) {
-#if XBUILD_12
+#if XBUILD_14
+				string profile = "xbuild_14";
+#elif XBUILD_12
 				string profile = "xbuild_12";
 #elif NET_4_5
 				string profile = "net_4_5";
@@ -54,7 +56,9 @@ public static class Consts {
 				var lib = Path.GetDirectoryName (Path.GetDirectoryName (corlib));
 				return Path.Combine (lib, profile);
 			} else {
-#if XBUILD_12
+#if XBUILD_14
+				return ToolLocationHelper.GetPathToBuildTools ("14.0");
+#elif XBUILD_12
 				return ToolLocationHelper.GetPathToBuildTools ("12.0");
 #elif NET_4_5
 				return ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version45);
@@ -71,7 +75,9 @@ public static class Consts {
 
 	public static string ToolsVersionString {
 		get {
-#if XBUILD_12
+#if XBUILD_14
+			return " ToolsVersion='14.0'";
+#elif XBUILD_12
 			return " ToolsVersion='12.0'";
 #elif NET_4_0
 			return " ToolsVersion='4.0'";
@@ -85,7 +91,9 @@ public static class Consts {
 
 	public static string GetTasksAsmPath ()
 	{
-#if XBUILD_12
+#if XBUILD_14
+		return Path.Combine (BinPath, "Microsoft.Build.Tasks.Core.dll");
+#elif XBUILD_12
 		return Path.Combine (BinPath, "Microsoft.Build.Tasks.v12.0.dll");
 #elif NET_4_0
 		return Path.Combine (BinPath, "Microsoft.Build.Tasks.v4.0.dll");
