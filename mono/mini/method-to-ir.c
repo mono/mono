@@ -4141,12 +4141,14 @@ emit_castclass_with_cache_nonshared (MonoCompile *cfg, MonoInst *obj, MonoClass 
  * Returns NULL and set the cfg exception on error.
  */
 static MonoInst*
-handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context_used)
+handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context_used, MonoBasicBlock **out_bb)
 {
 	MonoBasicBlock *is_null_bb;
 	int obj_reg = src->dreg;
 	int vtable_reg = alloc_preg (cfg);
 	MonoInst *klass_inst = NULL;
+
+	*out_bb = cfg->cbb;
 
 	if (context_used) {
 		MonoInst *args [3];
@@ -4210,6 +4212,8 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context
 	MONO_START_BB (cfg, is_null_bb);
 
 	reset_cast_details (cfg);
+
+	*out_bb = cfg->cbb;
 
 	return src;
 }
@@ -9874,7 +9878,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				inline_costs += costs;
 			}
 			else {
-				ins = handle_castclass (cfg, klass, *sp, context_used);
+				ins = handle_castclass (cfg, klass, *sp, context_used, &bblock);
 				CHECK_CFG_EXCEPTION;
 				bblock = cfg->cbb;
 				*sp ++ = ins;
@@ -9988,7 +9992,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					*sp++ = iargs [0];
 					inline_costs += costs;
 				} else {
-					ins = handle_castclass (cfg, klass, *sp, context_used);
+					ins = handle_castclass (cfg, klass, *sp, context_used, &bblock);
 					CHECK_CFG_EXCEPTION;
 					bblock = cfg->cbb;
 					*sp ++ = ins;
