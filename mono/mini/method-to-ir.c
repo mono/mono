@@ -4095,6 +4095,7 @@ emit_castclass_with_cache (MonoCompile *cfg, MonoClass *klass, MonoInst **args, 
 	save_cast_details (cfg, klass, args [0]->dreg, TRUE, out_bblock);
 	res = mono_emit_method_call (cfg, mono_castclass, args, NULL);
 	reset_cast_details (cfg);
+	*out_bblock = cfg->cbb;
 
 	return res;
 }
@@ -4154,7 +4155,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context
 			/* cache */
 			args [2] = cache_ins;
 
-			return emit_castclass_with_cache (cfg, klass, args, NULL);
+			return emit_castclass_with_cache (cfg, klass, args, out_bb);
 		}
 
 		klass_inst = emit_get_rgctx_klass (cfg, context_used, klass, MONO_RGCTX_INFO_KLASS);
