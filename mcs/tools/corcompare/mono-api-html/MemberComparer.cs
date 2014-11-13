@@ -180,6 +180,13 @@ namespace Xamarin.ApiDiff {
 			string sourceDescription = GetDescription (source);
 			string targetDescription = GetDescription (target);
 
+			return CheckVirtualChanges (sourceDescription, targetDescription) ||
+				(State.IgnoreAddedPropertySetters &&
+					CheckVirtualChanges (sourceDescription, targetDescription.Replace (" set; ", " ")));
+		}
+
+		static bool CheckVirtualChanges (string sourceDescription, string targetDescription)
+		{
 			return (sourceDescription == targetDescription) ||
 				// *adding* virtual or override to target is acceptable; *removing* them is NOT
 				(State.IgnoreVirtualChanges &&
