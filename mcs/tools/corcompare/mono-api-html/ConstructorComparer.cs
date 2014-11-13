@@ -62,7 +62,7 @@ namespace Xamarin.ApiDiff {
 
 				if ((attr & MethodAttributes.Static) != 0) {
 					sb.Append ("static ");
-				} else if ((attr & MethodAttributes.Virtual) != 0 && !State.IgnoreVirtualChanges) {
+				} else if ((attr & MethodAttributes.Virtual) != 0) {
 					if ((attr & MethodAttributes.VtableLayoutMask) == 0)
 						sb.Append ("override ");
 					else
