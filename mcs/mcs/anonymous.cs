@@ -352,6 +352,14 @@ namespace Mono.CSharp {
 				hoisted_locals.Add (hoisted);
 			}
 
+			//
+			// Variable is already hoisted but does not have a storey
+			// e.g. when a HoistedEvaluatorVariable 
+			//
+			if (hoisted.Storey == null) {
+				hoisted = new HoistedLocalVariable (this, hoisted.Field);
+			}
+
 			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit && !(hoisted.Storey is StateMachine))
 				hoisted.Storey.AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 		}
@@ -905,6 +913,11 @@ namespace Mono.CSharp {
 	{
 		public HoistedLocalVariable (AnonymousMethodStorey storey, LocalVariable local, string name)
 			: base (storey, name, local.Type)
+		{
+		}
+
+		public HoistedLocalVariable (AnonymousMethodStorey storey, Field field)
+			: base (storey, field)
 		{
 		}
 	}
