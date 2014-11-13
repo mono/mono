@@ -3,15 +3,15 @@
 # NB! Prereq : ANDROID_NDK_ROOT=/usr/local/android-ndk-xxx or similar
 # Todo: set appropriate ARM flags for hard floats
 
-export ANDROID_PLATFORM=android-5
+export ANDROID_PLATFORM=android-9
 GCC_PREFIX=arm-linux-androideabi-
-GCC_VERSION=4.4.3
+GCC_VERSION=4.8
 OUTDIR=builds/embedruntimes/android
 CWD="$(pwd)"
 PREFIX="$CWD/builds/android"
 BUILDSCRIPTSDIR=external/buildscripts
 
-perl ${BUILDSCRIPTSDIR}/PrepareAndroidSDK.pl -ndk=r8e -env=envsetup.sh && source envsetup.sh
+perl ${BUILDSCRIPTSDIR}/PrepareAndroidSDK.pl -ndk=r9 -env=envsetup.sh && source envsetup.sh
 
 NDK_ROOT=`cd $ANDROID_NDK_ROOT && pwd`
 

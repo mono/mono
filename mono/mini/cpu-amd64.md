@@ -162,7 +162,7 @@ amd64_loadi8_memindex: dest:i src1:i src2:i len:10
 move: dest:i src1:i len:3
 add_imm: dest:i src1:i len:8 clob:1
 sub_imm: dest:i src1:i len:8 clob:1
-mul_imm: dest:i src1:i len:11
+mul_imm: dest:i src1:i len:12
 and_imm: dest:i src1:i len:8 clob:1
 or_imm: dest:i src1:i len:8 clob:1
 xor_imm: dest:i src1:i len:8 clob:1
