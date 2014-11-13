@@ -1,7 +1,7 @@
-// CS8052: Auto-implemented property `V.P' must have get accessor
+// CS8052: `I.P': Properties inside interfaces cannot have initializers
 // Line: 6
 
-class V
+interface I
 {
-	public object P { set; } = 1;
+	int P { get; } = 4;
 }

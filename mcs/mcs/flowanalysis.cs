@@ -139,7 +139,7 @@ namespace Mono.CSharp
 				var field = struct_info.Fields[i];
 
 				if (!fc.IsStructFieldDefinitelyAssigned (vi, field.Name)) {
-					var bf = field.MemberDefinition as Property.BackingField;
+					var bf = field.MemberDefinition as Property.BackingFieldDeclaration;
 					if (bf != null) {
 						if (bf.Initializer != null)
 							continue;

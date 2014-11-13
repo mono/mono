@@ -1125,7 +1125,7 @@ namespace Mono.CSharp {
 
 		public virtual string GetSignatureForError ()
 		{
-			var bf = MemberDefinition as Property.BackingField;
+			var bf = MemberDefinition as Property.BackingFieldDeclaration;
 			string name;
 			if (bf == null) {
 				name = Name;

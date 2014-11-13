@@ -6589,6 +6589,7 @@ namespace Mono.CSharp {
 	sealed class PropertyExpr : PropertyOrIndexerExpr<PropertySpec>
 	{
 		Arguments arguments;
+		FieldExpr backing_field;
 
 		public PropertyExpr (PropertySpec spec, Location l)
 			: base (l)
@@ -6617,6 +6618,13 @@ namespace Mono.CSharp {
 		public override string Name {
 			get {
 				return best_candidate.Name;
+			}
+		}
+
+		public bool IsAutoPropertyAccess {
+			get {
+				var prop = best_candidate.MemberDefinition as Property;
+				return prop != null && prop.BackingField != null;
 			}
 		}
 
@@ -6761,6 +6769,11 @@ namespace Mono.CSharp {
 
 		public override void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
+			if (backing_field != null) {
+				backing_field.EmitAssign (ec, source, false, false);
+				return;
+			}
+
 			Arguments args;
 			LocalTemporary await_source_arg = null;
 
@@ -6830,6 +6843,21 @@ namespace Mono.CSharp {
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
+			var prop = best_candidate.MemberDefinition as Property;
+			if (prop != null && prop.BackingField != null) {
+				var var = InstanceExpression as IVariableReference;
+				if (var != null) {
+					var vi = var.VariableInfo;
+					if (vi != null && !fc.IsStructFieldDefinitelyAssigned (vi, prop.BackingField.Name)) {
+						fc.Report.Error (8079, loc, "Use of possibly unassigned auto-implemented property `{0}'", Name);
+						return;
+					}
+
+					if (TypeSpec.IsValueType (InstanceExpression.Type) && InstanceExpression is VariableReference)
+						return;
+				}
+			}
+
 			base.FlowAnalysis (fc);
 
 			if (conditional_access_receiver)
@@ -6872,6 +6900,52 @@ namespace Mono.CSharp {
 			}
 
 			return this;
+		}
+
+		protected override bool ResolveAutopropertyAssignment (ResolveContext rc, Expression rhs)
+		{
+			var prop = best_candidate.MemberDefinition as Property;
+			if (prop == null)
+				return false;
+
+			if (!rc.HasSet (ResolveContext.Options.ConstructorScope))
+				return false;
+
+			var spec = prop.BackingField;
+			if (spec == null)
+				return false;
+
+			if (rc.IsStatic != spec.IsStatic)
+				return false;
+
+			if (!spec.IsStatic && (!(InstanceExpression is This) || InstanceExpression is BaseThis))
+				return false;
+
+			backing_field = new FieldExpr (prop.BackingField, loc);
+			backing_field.ResolveLValue (rc, rhs);
+			return true;
+		}
+
+		public void SetBackingFieldAssigned (FlowAnalysisContext fc)
+		{
+			if (backing_field != null) {
+				backing_field.SetFieldAssigned (fc);
+				return;
+			}
+
+			if (!IsAutoPropertyAccess)
+				return;
+
+			var prop = best_candidate.MemberDefinition as Property;
+			if (prop != null && prop.BackingField != null) {
+				bool lvalue_instance = best_candidate.DeclaringType.IsStruct;
+				if (lvalue_instance) {
+					var var = InstanceExpression as IVariableReference;
+					if (var != null && var.VariableInfo != null) {
+						fc.SetStructFieldAssigned (var.VariableInfo, prop.BackingField.Name);
+					}
+				}
+			}
 		}
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
@@ -6943,7 +7017,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
 			if (ConditionalAccess)
 				throw new NotSupportedException ("null propagating operator assignment");
@@ -6951,29 +7025,50 @@ namespace Mono.CSharp {
 			if (right_side == EmptyExpression.OutAccess) {
 				// TODO: best_candidate can be null at this point
 				INamedBlockVariable variable = null;
-				if (best_candidate != null && ec.CurrentBlock.ParametersBlock.TopBlock.GetLocalName (best_candidate.Name, ec.CurrentBlock, ref variable) && variable is Linq.RangeVariable) {
-					ec.Report.Error (1939, loc, "A range variable `{0}' may not be passes as `ref' or `out' parameter",
+				if (best_candidate != null && rc.CurrentBlock.ParametersBlock.TopBlock.GetLocalName (best_candidate.Name, rc.CurrentBlock, ref variable) && variable is Linq.RangeVariable) {
+					rc.Report.Error (1939, loc, "A range variable `{0}' may not be passes as `ref' or `out' parameter",
 						best_candidate.Name);
 				} else {
-					right_side.DoResolveLValue (ec, this);
+					right_side.DoResolveLValue (rc, this);
 				}
 				return null;
 			}
 
 			if (eclass == ExprClass.Unresolved) {
-				var expr = OverloadResolve (ec, right_side);
+				var expr = OverloadResolve (rc, right_side);
 				if (expr == null)
 					return null;
 
 				if (expr != this)
-					return expr.ResolveLValue (ec, right_side);
+					return expr.ResolveLValue (rc, right_side);
 			} else {
-				ResolveInstanceExpression (ec, right_side);
+				ResolveInstanceExpression (rc, right_side);
 			}
 
-			if (!ResolveSetter (ec))
-				return null;
+			if (!best_candidate.HasSet) {
+				if (ResolveAutopropertyAssignment (rc, right_side))
+					return this;
 
+				rc.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read-only)",
+					GetSignatureForError ());
+				return null;
+			}
+
+			if (!best_candidate.Set.IsAccessible (rc) || !best_candidate.Set.DeclaringType.IsAccessible (rc)) {
+				if (best_candidate.HasDifferentAccessibility) {
+					rc.Report.SymbolRelatedToPreviousError (best_candidate.Set);
+					rc.Report.Error (272, loc, "The property or indexer `{0}' cannot be used in this context because the set accessor is inaccessible",
+						GetSignatureForError ());
+				} else {
+					rc.Report.SymbolRelatedToPreviousError (best_candidate.Set);
+					ErrorIsInaccesible (rc, best_candidate.GetSignatureForError (), loc);
+				}
+			}
+
+			if (best_candidate.HasDifferentAccessibility)
+				CheckProtectedMemberAccess (rc, best_candidate.Set);
+
+			setter = CandidateToBaseOverride (rc, best_candidate.Set);
 			return this;
 		}
 
@@ -7063,30 +7158,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool ResolveSetter (ResolveContext rc)
+		protected virtual bool ResolveAutopropertyAssignment (ResolveContext rc, Expression rhs)
 		{
-			if (!best_candidate.HasSet) {
-				rc.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read-only)",
-					GetSignatureForError ());
-				return false;
-			}
-
-			if (!best_candidate.Set.IsAccessible (rc) || !best_candidate.Set.DeclaringType.IsAccessible (rc)) {
-				if (best_candidate.HasDifferentAccessibility) {
-					rc.Report.SymbolRelatedToPreviousError (best_candidate.Set);
-					rc.Report.Error (272, loc, "The property or indexer `{0}' cannot be used in this context because the set accessor is inaccessible",
-						GetSignatureForError ());
-				} else {
-					rc.Report.SymbolRelatedToPreviousError (best_candidate.Set);
-					ErrorIsInaccesible (rc, best_candidate.GetSignatureForError (), loc);
-				}
-			}
-
-			if (best_candidate.HasDifferentAccessibility)
-				CheckProtectedMemberAccess (rc, best_candidate.Set);
-
-			setter = CandidateToBaseOverride (rc, best_candidate.Set);
-			return true;
+			return false;
 		}
 	}
 
