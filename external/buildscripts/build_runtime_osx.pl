@@ -71,6 +71,7 @@ for my $arch (@arches)
 	# Make architecture-specific targets and lipo at the end
 	my $bintarget = "$root/builds/monodistribution/bin-$arch";
 	my $libtarget = "$root/builds/embedruntimes/osx-$arch";
+	my $sdkoptions = '';
 
 	if ($minimal)
 	{
@@ -108,7 +109,7 @@ for my $arch (@arches)
 				$ENV{LDFLAGS} = "-arch $arch";
 			}
 		}
-		my $sdkOptions = "-isysroot $sdkPath -mmacosx-version-min=$macversion $ENV{CFLAGS}";
+		$sdkOptions = "-isysroot $sdkPath -mmacosx-version-min=$macversion $ENV{CFLAGS}";
 		$ENV{'MACSDKOPTIONS'} = $sdkOptions;
 		
 		#this will fail on a fresh working copy, so don't die on it.
@@ -166,7 +167,7 @@ for my $arch (@arches)
 
 	if (!$iphone_simulator)
 	{
-		my $cmdline = "gcc -arch $arch -bundle -Wl,-reexport_library mono/mini/.libs/libmono.a $sdkOptions -all_load -liconv -o $libtarget/MonoBundleBinary";
+		my $cmdline = "gcc -arch $arch $sdkoptions -bundle -Wl,-reexport_library mono/mini/.libs/libmono.a $sdkOptions -all_load -liconv -o $libtarget/MonoBundleBinary";
 		print "About to call this cmdline to make a bundle:\n$cmdline\n";
 		system($cmdline) eq 0 or die("failed to link libmono.a into mono bundle");
 
