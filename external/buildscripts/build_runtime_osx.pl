@@ -62,7 +62,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	$ENV{'LIBTOOL'} = $libtool;
 }
 
-my @arches = ('x86_64','i386');
+my @arches = ('i386','x86_64');
 if ($iphone_simulator || $minimal) {
 	@arches = ('i386');
 }
