@@ -93,7 +93,11 @@ definition correctly.
       <!-- MSIE, Netscape 4.0, Opera -->
       <except positions="13-28" match="ActiveTouristBot"/>
     </group>
-
+    <!-- IE9 or newer -->
+    <group positions="7-10" match="/5.0" javascript="true">
+      <!-- MSIE 10, MSIE 11 -->
+	    <except positions="13-28" match="ActiveTouristBot"/>
+    </group>
     <group scanfrom="12" skip="4" match=") Gecko/" javascript="true">
       <!-- All the Gecko-based browsers -->
     </group>
