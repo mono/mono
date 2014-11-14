@@ -1942,6 +1942,7 @@ System.Array System.Array::CreateInstance(System.Type,System.Int32[],System.Int3
 System.Void System.Array::Sort<TKey,TValue>(TKey[],TValue[],System.Int32,System.Int32,System.Collections.Generic.IComparer`1<TKey>)
 System.Void System.Array::Sort(System.Array,System.Array,System.Int32,System.Int32,System.Collections.IComparer)
 
+System.Void System.Console::SetEncodings(System.Text.Encoding,System.Text.Encoding)
 System.Void System.Console::Write(System.String,System.Object,System.Object,System.Object,System.Object)
 System.Void System.Console::WriteLine(System.String,System.Object,System.Object,System.Object,System.Object)
 
