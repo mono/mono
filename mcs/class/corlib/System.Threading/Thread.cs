@@ -142,8 +142,7 @@ namespace System.Threading {
 		private MulticastDelegate threadstart;
 		//private string thread_name=null;
 
-#if NET_2_0		
-		private static int _managed_id_counter;
+#if NET_2_0
 		private int managed_id;
 #endif		
 		
@@ -971,9 +970,13 @@ namespace System.Threading {
 #endif
 
 #if NET_2_0
-		private static int GetNewManagedId() {
-			return Interlocked.Increment(ref _managed_id_counter);
+		private static int GetNewManagedId()
+		{
+			return GetNewManagedId_internal();
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern private static int GetNewManagedId_internal();
 
 		public Thread (ThreadStart start, int maxStackSize)
 		{

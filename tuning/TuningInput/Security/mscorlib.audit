@@ -2010,6 +2010,7 @@ System.Void System.Threading.Thread::Interrupt()
 System.AppDomain System.Threading.Thread::GetDomain()
 System.Boolean System.Threading.Thread::Join(System.TimeSpan)
 System.Threading.ExecutionContext System.Threading.Thread::get_ExecutionContext()
+System.Int32 System.Threading.Thread::GetNewManagedId()
 
 System.Boolean System.Threading.ThreadPool::SetMaxThreads(System.Int32,System.Int32)
 System.Boolean System.Threading.ThreadPool::SetMinThreads(System.Int32,System.Int32)
