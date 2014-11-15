@@ -2798,7 +2798,11 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 			mono_thread_info_finish_suspend_and_resume (info);
 		}
 	} else {
+#ifdef PLATFORM_ANDROID
+		res = mono_thread_kill (thread, SIGUSR2);
+#else
 		res = mono_thread_kill (thread, mono_thread_get_abort_signal ());
+#endif
 		if (res) {
 			DEBUG(1, fprintf (log_file, "[%p] mono_thread_kill () failed for %p: %d...\n", (gpointer)GetCurrentThreadId (), (gpointer)tid, res));
 			/* 
