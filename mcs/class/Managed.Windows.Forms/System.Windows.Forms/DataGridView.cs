@@ -5137,8 +5137,11 @@ namespace System.Windows.Forms {
 			if (RowsLeft < 0)
 				RowsLeft = 0;
 
-			if (first_row_index > RowsLeft)
-				first_row_index = RowsLeft;
+			if (first_row_index > RowsLeft - 1)
+				first_row_index = RowsLeft - 1;
+
+			if (first_row_index < 0)
+				first_row_index = 0;
 
 			if (RowsLeft == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
