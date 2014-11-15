@@ -637,7 +637,7 @@ namespace Mono.Xml {
 			else if (n2 == null) 
 				return 1;
 	    		else if (n1.Prefix == n2.Prefix) 
-				return string.Compare (n1.LocalName, n2.LocalName);
+				return string.CompareOrdinal (n1.LocalName, n2.LocalName);
 	
     			// Attributes in the default namespace are first
 			// because the default namespace is not applied to

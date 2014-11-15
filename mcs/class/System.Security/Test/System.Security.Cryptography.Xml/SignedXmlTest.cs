@@ -213,6 +213,87 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert.IsTrue (vrfy.CheckSignature (), "RSA-Compute/Verify");
 		}
 
+		// The same as MSDNSample(), but adding a few attributes
+		public SignedXml MSDNSampleMixedCaseAttributes ()
+		{
+			// Create example data to sign.
+			XmlDocument document = new XmlDocument ();
+			XmlNode node = document.CreateNode (XmlNodeType.Element, "", "MyElement", "samples");
+			node.InnerText = "This is some text";
+			XmlAttribute a1 = document.CreateAttribute ("Aa");
+			XmlAttribute a2 = document.CreateAttribute ("Bb");
+			XmlAttribute a3 = document.CreateAttribute ("aa");
+			XmlAttribute a4 = document.CreateAttribute ("bb");
+			a1.Value = "one";
+			a2.Value = "two";
+			a3.Value = "three";
+			a4.Value = "four";
+			node.Attributes.Append (a1);
+			node.Attributes.Append (a2);
+			node.Attributes.Append (a3);
+			node.Attributes.Append (a4);
+			document.AppendChild (node);
+
+			// Create the SignedXml message.
+			SignedXml signedXml = new SignedXml ();
+
+			// Create a data object to hold the data to sign.
+			DataObject dataObject = new DataObject ();
+			dataObject.Data = document.ChildNodes;
+			dataObject.Id = "MyObjectId";
+
+			// Add the data object to the signature.
+			signedXml.AddObject (dataObject);
+
+			// Create a reference to be able to package everything into the
+			// message.
+			Reference reference = new Reference ();
+			reference.Uri = "#MyObjectId";
+
+			// Add it to the message.
+			signedXml.AddReference (reference);
+
+			return signedXml;
+		}
+
+		public string AsymmetricRSAMixedCaseAttributes ()
+		{
+			SignedXml signedXml = MSDNSampleMixedCaseAttributes ();
+
+			RSA key = RSA.Create ();
+			signedXml.SigningKey = key;
+
+			// Add a KeyInfo.
+			KeyInfo keyInfo = new KeyInfo ();
+			keyInfo.AddClause (new RSAKeyValue (key));
+			signedXml.KeyInfo = keyInfo;
+
+			// Compute the signature.
+			signedXml.ComputeSignature ();
+
+			// Get the XML representation of the signature.
+			XmlElement xmlSignature = signedXml.GetXml ();
+
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = new XmlTextWriter (sw);
+			xmlSignature.WriteTo (w);
+			return sw.ToString ();
+		}
+
+		// Example output from Windows for AsymmetricRSAMixedCaseAttributes()
+		private const string AsymmetricRSAMixedCaseAttributesResult = "<Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\" /><Reference URI=\"#MyObjectId\"><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\" /><DigestValue>0j1xLsePFtuRHfXEnVdTSLWtAm4=</DigestValue></Reference></SignedInfo><SignatureValue>hmrEBgns5Xx14aDhzqOyIh0qLNMUldtW8+fNPcvtD/2KtEhNZQGctnhs90CRa1NZ08TqzW2pUaEwmqvMAtF4v8KtWzC/zTuc1jH6nxQvQSQo0ABhuXdu7/hknZkXJ4yKBbdgbKjAsKfULwbWrP/PacLPoYfCO+wXSrt+wLMTTWU=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>4h/rHDr54r6SZWk2IPCeHX7N+wR1za0VBLshuS6tq3RSWap4PY2BM8VdbKH2T9RzyZoiHufjng+1seUx430iMsXisOLUkPP+yGtMQOSZ3CQHAa+IYA+fplXipixI0rV1J1wJNXQm3HxXQqKWpIv5fkwBtj8o2k6CWMgPNgFCnxc=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue></KeyInfo><Object Id=\"MyObjectId\"><MyElement Aa=\"one\" Bb=\"two\" aa=\"three\" bb=\"four\" xmlns=\"samples\">This is some text</MyElement></Object></Signature>";
+
+		[Test]
+		public void AsymmetricRSAMixedCaseAttributesVerifyWindows ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (AsymmetricRSAMixedCaseAttributesResult);
+
+			SignedXml v1 = new SignedXml ();
+			v1.LoadXml (doc.DocumentElement);
+			Assert.IsTrue (v1.CheckSignature ());
+		}
+
 		[Test]
 		public void AsymmetricDSASignature () 
 		{
