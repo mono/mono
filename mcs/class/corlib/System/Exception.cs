@@ -208,12 +208,12 @@ namespace System
 					if (internal_name != null)
 						sb.Append (internal_name);
 					else
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
+						sb.AppendFormat ("<0x{0:x5}> {1}", frame.GetNativeOffset (), unknown);
 				} else {
 					GetFullNameForStackTrace (sb, frame.GetMethod ());
 
 					if (frame.GetILOffset () == -1)
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> ", frame.GetMethodAddress (), frame.GetNativeOffset ());
+						sb.AppendFormat (" <0x{0:x5}> ", frame.GetNativeOffset ());
 					else
 						sb.AppendFormat (" [0x{0:x5}] ", frame.GetILOffset ());
 
