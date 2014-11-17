@@ -222,58 +222,29 @@ workers_dequeue_and_do_job (WorkerData *data)
 }
 
 static gboolean
-workers_steal (WorkerData *data, WorkerData *victim_data, gboolean lock)
+workers_steal (WorkerData *data, WorkerData *victim_data)
 {
 	SgenGrayQueue *queue = &data->private_gray_queue;
-	int num, n;
+	GrayQueueSection *section;
 
 	g_assert (!queue->first);
 
-	if (!victim_data->stealable_stack_fill)
+	if(mono_mutex_trylock (&victim_data->stealable_stack_mutex))
+		return FALSE;
+	section = sgen_gray_object_dequeue_section(&victim_data->stealable_stack);
+	mono_mutex_unlock (&victim_data->stealable_stack_mutex);
+
+	if(!section)
 		return FALSE;
 
-	if (lock && mono_mutex_trylock (&victim_data->stealable_stack_mutex))
-		return FALSE;
+	sgen_gray_object_enqueue_section(queue, section);
 
-	n = num = (victim_data->stealable_stack_fill + 1) / 2;
-	/* We're stealing num entries. */
+	if (data == victim_data)
+		stat_workers_stolen_from_self_lock += section->size;
+	else
+		stat_workers_stolen_from_others += section->size;
 
-	while (n > 0) {
-		int m = MIN (SGEN_GRAY_QUEUE_SECTION_SIZE, n);
-		n -= m;
-
-		sgen_gray_object_alloc_queue_section (queue);
-		memcpy (queue->first->entries,
-				victim_data->stealable_stack + victim_data->stealable_stack_fill - num + n,
-				sizeof (GrayQueueEntry) * m);
-		queue->first->size = m;
-
-		/*
-		 * DO NOT move outside this loop
-		 * Doing so trigger "assert not reached" in sgen-scan-object.h : we use the queue->cursor
-		 * to compute the size of the first section during section allocation (via alloc_prepare_func
-		 * -> workers_gray_queue_share_redirect -> sgen_gray_object_dequeue_section) which will be then
-		 * set to 0, because queue->cursor is still pointing to queue->first->entries [-1], thus
-		 * losing objects in the gray queue.
-		 */
-		queue->cursor = queue->first->entries + queue->first->size - 1;
-	}
-
-	victim_data->stealable_stack_fill -= num;
-
-	if (lock)
-		mono_mutex_unlock (&victim_data->stealable_stack_mutex);
-
-	if (data == victim_data) {
-		if (lock)
-			stat_workers_stolen_from_self_lock += num;
-		else
-			stat_workers_stolen_from_self_no_lock += num;
-	} else {
-		stat_workers_stolen_from_others += num;
-	}
-
-	return num != 0;
+	return section->size != 0;
 }
 
 static gboolean
@@ -285,14 +256,14 @@ workers_get_work (WorkerData *data)
 	g_assert (sgen_gray_object_queue_is_empty (&data->private_gray_queue));
 
 	/* Try to steal from our own stack. */
-	if (workers_steal (data, data, TRUE))
+	if (workers_steal (data, data))
 		return TRUE;
 
 	/* From another worker. */
 	for (i = data->index + 1; i < workers_num + data->index; ++i) {
 		WorkerData *victim_data = &workers_data [i % workers_num];
 		g_assert (data != victim_data);
-		if (workers_steal (data, victim_data, TRUE))
+		if (workers_steal (data, victim_data))
 			return TRUE;
 	}
 
@@ -317,10 +288,9 @@ workers_get_work (WorkerData *data)
 static void
 workers_gray_queue_share_redirect (SgenGrayQueue *queue)
 {
-	GrayQueueSection *section;
 	WorkerData *data = queue->alloc_prepare_data;
 
-	if (data->stealable_stack_fill) {
+	if (!sgen_gray_object_queue_is_empty(&data->stealable_stack)) {
 		/*
 		 * There are still objects in the stealable stack, so
 		 * wake up any workers that might be sleeping
@@ -330,30 +300,20 @@ workers_gray_queue_share_redirect (SgenGrayQueue *queue)
 		return;
 	}
 
-	/* The stealable stack is empty, so fill it. */
-	mono_mutex_lock (&data->stealable_stack_mutex);
+	if(!sgen_gray_object_queue_is_empty(queue)){
+		/* We transfert all the private queue sections to the stealable stack
+		 * except the first one. This way we can avoid the steal from the worker's
+		 * stealable stack and reduce the number of race conditions.
+		 */
+		mono_mutex_lock (&data->stealable_stack_mutex);
 
-	while (data->stealable_stack_fill < STEALABLE_STACK_SIZE &&
-			(section = sgen_gray_object_dequeue_section (queue))) {
-		int num = MIN (section->size, STEALABLE_STACK_SIZE - data->stealable_stack_fill);
+		g_assert(sgen_gray_object_queue_is_empty(&data->stealable_stack));
+		data->stealable_stack.first = queue->first->next;
+		data->stealable_stack.cursor = data->stealable_stack.first ? data->stealable_stack.first->entries + data->stealable_stack.first->size - 1 : NULL;
 
-		memcpy (data->stealable_stack + data->stealable_stack_fill,
-				section->entries + section->size - num,
-				sizeof (GrayQueueEntry) * num);
-
-		section->size -= num;
-		data->stealable_stack_fill += num;
-
-		if (section->size)
-			sgen_gray_object_enqueue_section (queue, section);
-		else
-			sgen_gray_object_free_queue_section (section);
+		mono_mutex_unlock (&data->stealable_stack_mutex);
+		queue->first->next = NULL;
 	}
-
-	if (sgen_gray_object_queue_is_empty (queue))
-		workers_steal (data, data, FALSE);
-
-	mono_mutex_unlock (&data->stealable_stack_mutex);
 
 	if (workers_state.data.gc_in_progress)
 		workers_wake_up_all ();
@@ -472,7 +432,6 @@ sgen_workers_init (int num_workers)
 
 		/* private gray queue is inited by the thread itself */
 		mono_mutex_init (&workers_data [i].stealable_stack_mutex);
-		workers_data [i].stealable_stack_fill = 0;
 
 		if (sgen_get_major_collector ()->alloc_worker_data)
 			workers_data [i].major_collector_data = sgen_get_major_collector ()->alloc_worker_data ();
@@ -637,7 +596,6 @@ sgen_workers_join (void)
 	g_assert (workers_job_queue_num_entries == 0);
 	g_assert (sgen_section_gray_queue_is_empty (&workers_distribute_gray_queue));
 	for (i = 0; i < workers_num; ++i) {
-		g_assert (!workers_data [i].stealable_stack_fill);
 		g_assert (sgen_gray_object_queue_is_empty (&workers_data [i].private_gray_queue));
 	}
 }
