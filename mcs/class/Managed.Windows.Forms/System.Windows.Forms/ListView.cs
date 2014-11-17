@@ -1031,6 +1031,7 @@ namespace System.Windows.Forms
 
 				virtual_list_size = value;
 				if (virtual_mode) {
+					focused_item_index = -1;
 					selected_indices.Reset ();
 					Redraw (true);
 				}
