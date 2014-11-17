@@ -617,6 +617,10 @@ namespace System.Resources
 				throw new InvalidOperationException ("The resource is already generated.");
 
 			written = true;
+			
+			if (writer == null)
+				InitWriter();
+			
 			writer.WriteEndElement ();
 			writer.Flush ();
 		}
