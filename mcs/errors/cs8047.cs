@@ -1,5 +1,6 @@
 // CS8047: Declaration expression cannot be used in this context
 // Line: 8
+// Compiler options: -langversion:experimental
 
 public class C
 {

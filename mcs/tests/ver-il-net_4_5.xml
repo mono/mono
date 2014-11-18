@@ -65769,6 +65769,22 @@
       </method>
     </type>
   </test>
+  <test name="test-decl-expr-02.cs">
+    <type name="DeclarationExpressions">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void M2()" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Int32 Test(Int32)" attrs="145">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-dictinit-01.cs">
     <type name="Program">
       <method name="Int32 Main()" attrs="145">
