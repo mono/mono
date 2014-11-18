@@ -159,7 +159,7 @@ namespace Mono.CSharp
 				if (invocation != null && invocation.MethodGroup != null && (invocation.MethodGroup.BestCandidate.Modifiers & Modifiers.ASYNC) != 0) {
 					rc.Report.Error (4008, loc, "Cannot await void method `{0}'. Consider changing method return type to `Task'",
 						invocation.GetSignatureForError ());
-				} else {
+				} else if (type != InternalType.ErrorType) {
 					rc.Report.Error (4001, loc, "Cannot await `{0}' expression", type.GetSignatureForError ());
 				}
 			}
