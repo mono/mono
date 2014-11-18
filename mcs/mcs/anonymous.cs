@@ -352,7 +352,7 @@ namespace Mono.CSharp {
 				hoisted_locals.Add (hoisted);
 			}
 
-			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit && !(hoisted.Storey is StateMachine))
+			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit && !(hoisted.Storey is StateMachine) && hoisted.Storey != null)
 				hoisted.Storey.AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 		}
 

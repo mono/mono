@@ -146,6 +146,15 @@ namespace MonoTests.EvaluatorTest
 			Assert.IsTrue (Evaluator.Run ("x();"), "#2");
 		}
 
+		[Test]
+		public void CapturedLocalVariable ()
+		{
+			Evaluator.Run ("using System;");
+
+			var res = Evaluator.Evaluate("var x = 123; Action a = () => x++; a(); x;");
+			Assert.AreEqual (124, res);	
+		}
+
 #if NET_4_0
 		[Test]
 		public void DynamicStatement ()
