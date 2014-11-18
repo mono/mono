@@ -741,7 +741,9 @@ attribute_section_cont
 	  }
 	| error
 	  {
- 		CheckAttributeTarget (yyToken, GetTokenName (yyToken), GetLocation ($1)); 
+		if (CheckAttributeTarget (yyToken, GetTokenName (yyToken), GetLocation ($1)).Length > 0)
+			Error_SyntaxError (yyToken);
+
  		$$ = null;
 	  }
 	;	
