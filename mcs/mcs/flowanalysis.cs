@@ -669,7 +669,7 @@ namespace Mono.CSharp
 				large_bits[index >> 5] |= (1 << (index & 31));
 		}
 
-		static bool AreEqual (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
+		public static bool AreEqual (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
 		{
 			if (a.large_bits == null)
 				return (a.bits & ~copy_on_write_flag) == (b.bits & ~copy_on_write_flag);

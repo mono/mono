@@ -6271,11 +6271,11 @@ namespace Mono.CSharp
 			var expr_true = fc.DefiniteAssignmentOnTrue;
 			var expr_false = fc.DefiniteAssignmentOnFalse;
 
-			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_true);
+			fc.BranchDefiniteAssignment (expr_true);
 			true_expr.FlowAnalysis (fc);
 			var true_fc = fc.DefiniteAssignment;
 
-			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_false);
+			fc.BranchDefiniteAssignment (expr_false);
 			false_expr.FlowAnalysis (fc);
 
 			fc.DefiniteAssignment &= true_fc;

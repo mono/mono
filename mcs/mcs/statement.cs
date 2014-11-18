@@ -1408,15 +1408,10 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			if (fc.LabelStack == null) {
-				fc.LabelStack = new List<LabeledStatement> ();
-			} else if (fc.LabelStack.Contains (label)) {
+			if (fc.AddReachedLabel (label))
 				return true;
-			}
 
-			fc.LabelStack.Add (label);
 			label.Block.ScanGotoJump (label, fc);
-			fc.LabelStack.Remove (label);
 			return true;
 		}
 
@@ -2966,6 +2961,7 @@ namespace Mono.CSharp {
 		bool DoFlowAnalysis (FlowAnalysisContext fc, int startIndex)
 		{
 			bool end_unreachable = !reachable;
+			bool goto_flow_analysis = startIndex != 0;
 			for (; startIndex < statements.Count; ++startIndex) {
 				var s = statements[startIndex];
 
@@ -2989,10 +2985,14 @@ namespace Mono.CSharp {
 				// this for flow-analysis only to carry variable info correctly.
 				//
 				if (end_unreachable) {
+					bool after_goto_case = goto_flow_analysis && s is GotoCase;
+
 					for (++startIndex; startIndex < statements.Count; ++startIndex) {
 						s = statements[startIndex];
 						if (s is SwitchLabel) {
-							s.FlowAnalysis (fc);
+							if (!after_goto_case)
+								s.FlowAnalysis (fc);
+
 							break;
 						}
 
@@ -3001,7 +3001,20 @@ namespace Mono.CSharp {
 							statements [startIndex] = RewriteUnreachableStatement (s);
 						}
 					}
+
+					//
+					// Idea is to stop after goto case because goto case will always have at least same
+					// variable assigned as switch case label. This saves a lot for complex goto case tests
+					//
+					if (after_goto_case)
+						break;
+
+					continue;
 				}
+
+				var lb = s as LabeledStatement;
+				if (lb != null && fc.AddReachedLabel (lb))
+					break;
 			}
 
 			//
@@ -3025,7 +3038,7 @@ namespace Mono.CSharp {
 			// L:
 			//	v = 1;
 
-			if (s is BlockVariable)
+			if (s is BlockVariable || s is EmptyStatement)
 				return s;
 
 			return new EmptyStatement (s.loc);
@@ -4494,7 +4507,7 @@ namespace Mono.CSharp {
 			if (!SectionStart)
 				return false;
 
-			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (fc.SwitchInitialDefinitiveAssignment);
+			fc.BranchDefiniteAssignment (fc.SwitchInitialDefinitiveAssignment);
 			return false;
 		}
 
@@ -7193,7 +7206,7 @@ namespace Mono.CSharp {
 			DefiniteAssignmentBitSet try_fc = res ? null : fc.DefiniteAssignment;
 
 			foreach (var c in clauses) {
-				fc.DefiniteAssignment = new DefiniteAssignmentBitSet (start_fc);
+				fc.BranchDefiniteAssignment (start_fc);
 				if (!c.FlowAnalysis (fc)) {
 					if (try_fc == null)
 						try_fc = fc.DefiniteAssignment;

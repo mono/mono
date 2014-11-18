@@ -464,7 +464,7 @@ namespace Mono.CSharp
 
 		public DefiniteAssignmentBitSet DefiniteAssignmentOnFalse { get; set; }
 
-		public List<LabeledStatement> LabelStack { get; set; }
+		Dictionary<Statement, List<DefiniteAssignmentBitSet>> LabelStack { get; set; }
 
 		public ParametersBlock ParametersBlock { get; set; }
 
@@ -480,12 +480,48 @@ namespace Mono.CSharp
 
 		public bool UnreachableReported { get; set; }
 
+		public bool AddReachedLabel (Statement label)
+		{
+			List<DefiniteAssignmentBitSet> das;
+			if (LabelStack == null) {
+				LabelStack = new Dictionary<Statement, List<DefiniteAssignmentBitSet>> ();
+				das = null;
+			} else {
+				LabelStack.TryGetValue (label, out das);
+			}
+
+			if (das == null) {
+				das = new List<DefiniteAssignmentBitSet> ();
+				das.Add (new DefiniteAssignmentBitSet (DefiniteAssignment));
+				LabelStack.Add (label, das);
+				return false;
+			}
+
+			foreach (var existing in das) {
+				if (DefiniteAssignmentBitSet.AreEqual (existing, DefiniteAssignment))
+					return true;
+			}
+
+			if (DefiniteAssignment == DefiniteAssignmentBitSet.Empty)
+				das.Add (DefiniteAssignment);
+			else
+				das.Add (new DefiniteAssignmentBitSet (DefiniteAssignment));
+
+			return false;
+		}
+
 		public DefiniteAssignmentBitSet BranchDefiniteAssignment ()
 		{
-			var dat = DefiniteAssignment;
-			if (dat != DefiniteAssignmentBitSet.Empty)
-				DefiniteAssignment = new DefiniteAssignmentBitSet (dat);
-			return dat;
+			return BranchDefiniteAssignment (DefiniteAssignment);
+		}
+
+		public DefiniteAssignmentBitSet BranchDefiniteAssignment (DefiniteAssignmentBitSet da)
+		{
+			if (da != DefiniteAssignmentBitSet.Empty) {
+				DefiniteAssignment = new DefiniteAssignmentBitSet (da);
+			}
+
+			return da;
 		}
 
 		public void BranchConditionalAccessDefiniteAssignment ()
