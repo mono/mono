@@ -166,5 +166,14 @@ namespace MonoTests.EvaluatorTest
 			Assert.AreEqual (3, res, "#1");
 		}
 #endif
+		
+		[Test]
+		public void CaptureLocalVariableTest()
+		{
+			Evaluator.Run ("using System;");
+
+			var res = Evaluator.Evaluate("var x = 123;Action a = () => x++;a();x;");
+			Assert.AreEqual (124, res);	
+		}
 	}
 }
