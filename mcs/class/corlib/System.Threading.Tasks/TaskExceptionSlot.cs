@@ -32,20 +32,41 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Runtime.ExceptionServices;
 
 namespace System.Threading.Tasks
 {
 	internal class TaskExceptionSlot
 	{
-		public volatile AggregateException  Exception;
 		public volatile bool                Observed;
 		public ConcurrentQueue<AggregateException> ChildExceptions;
 
-		Task parent;
+		volatile AggregateException exception;
+		volatile ExceptionDispatchInfo dispatchInfo;
+		readonly Task parent;
 
 		public TaskExceptionSlot (Task parent)
 		{
 			this.parent = parent;
+		}
+
+		public AggregateException Exception {
+			get {
+				return exception;
+			}
+		}
+
+		public void SetException (AggregateException exception)
+		{
+			if (dispatchInfo == null) {
+				//
+				// Used by task awaiter to rethrow an exception with original call stack, it's
+				// needed for first exception only
+				//
+				dispatchInfo = ExceptionDispatchInfo.Capture (exception.InnerException);
+			}
+
+			this.exception = exception;
 		}
 
 		~TaskExceptionSlot ()

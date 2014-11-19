@@ -486,9 +486,7 @@ namespace System.Threading.Tasks
 			}
 
 			if (cancellation) {
-				ExceptionSlot.Exception = aggregate;
-				Thread.MemoryBarrier ();
-
+				ExceptionSlot.SetException (aggregate);
 				CancelReal ();
 			} else {
 				HandleGenericException (aggregate);
@@ -619,12 +617,15 @@ namespace System.Threading.Tasks
 			if (exSlot == null || exSlot.ChildExceptions == null)
 				return;
 
-			if (ExceptionSlot.Exception == null)
-				exSlot.Exception = new AggregateException ();
+			var exceptions = new List<Exception> ();
+			if (exSlot.Exception != null)
+				exceptions.AddRange (exSlot.Exception.InnerExceptions);
 
 			AggregateException childEx;
 			while (exSlot.ChildExceptions.TryDequeue (out childEx))
-				exSlot.Exception.AddChildException (childEx);
+				exceptions.Add (childEx);
+
+			exSlot.SetException (new AggregateException (exceptions));
 
 			if (isParent) {
 				Status = TaskStatus.Faulted;
@@ -655,7 +656,7 @@ namespace System.Threading.Tasks
 
 		void HandleGenericException (AggregateException e)
 		{
-			ExceptionSlot.Exception = e;
+			ExceptionSlot.SetException (e);
 			Thread.MemoryBarrier ();
 			Status = TaskStatus.Faulted;
 
