@@ -117,6 +117,11 @@ namespace System
 					inputEncoding = outputEncoding = Encoding.Default;
 			}
 
+			SetEncodings(inputEncoding, outputEncoding);			
+		}
+
+		private static void SetEncodings(Encoding inputEncoding, Encoding outputEncoding)
+		{
 			stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
 			((StreamWriter)stderr).AutoFlush = true;
 			stderr = TextWriter.Synchronized (stderr, true);
@@ -517,18 +522,25 @@ namespace System
 #endif
 
 #if NET2_API && !NET_2_1 || UNITY
-		// FIXME: Console should use these encodings when changed
 		static Encoding inputEncoding;
 		static Encoding outputEncoding;
 
 		public static Encoding InputEncoding {
 			get { return inputEncoding; }
-			set { inputEncoding = value; }
+			set 
+			{ 
+				inputEncoding = value; 
+				SetEncodings(inputEncoding, outputEncoding);
+			}
 		}
 
 		public static Encoding OutputEncoding {
 			get { return outputEncoding; }
-			set { outputEncoding = value; }
+			set 
+			{ 
+				outputEncoding = value; 
+				SetEncodings(inputEncoding, outputEncoding);
+			}
 		}
 #endif
 #if NET2_API && !NET_2_1
