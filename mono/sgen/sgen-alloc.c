@@ -329,7 +329,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 	return (GCObject*)p;
 }
 
-GCObject*
+GCObject* MONO_HOT
 sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 {
 	void **p;

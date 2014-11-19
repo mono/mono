@@ -45,7 +45,7 @@ extern guint64 stat_scan_object_called_nursery;
 		}	\
 	} while (0)
 
-static void
+static void MONO_HOT
 SERIAL_SCAN_OBJECT (GCObject *full_object, SgenDescriptor desc, SgenGrayQueue *queue)
 {
 	char *start = (char*)full_object;
