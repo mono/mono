@@ -180,7 +180,7 @@ print_entry (int type, void *data)
 	}
 	case SGEN_PROTOCOL_PIN_STAGE: {
 		SGenProtocolPinStage *entry = data;
-		printf ("pin stage addr ptr %p addr %p thread %p\n", entry->addr_ptr, entry->addr, entry->thread);
+		printf ("pin stage addr ptr %p addr %p\n", entry->addr_ptr, entry->addr);
 		break;
 	}
 	case SGEN_PROTOCOL_PIN: {
@@ -339,7 +339,7 @@ is_match (gpointer ptr, int type, void *data)
 	}
 	case SGEN_PROTOCOL_PIN_STAGE: {
 		SGenProtocolPinStage *entry = data;
-		return ptr == entry->addr_ptr || ptr == entry->addr || ptr == entry->thread;
+		return ptr == entry->addr_ptr || ptr == entry->addr;
 	}
 	case SGEN_PROTOCOL_PIN: {
 		SGenProtocolPin *entry = data;
