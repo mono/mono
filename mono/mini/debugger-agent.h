@@ -59,4 +59,7 @@ mono_debugger_agent_debug_log_is_enabled (void) MONO_INTERNAL;
 gboolean
 mono_debugger_agent_transport_handshake (void) MONO_INTERNAL;
 
+int
+mono_debugger_agent_get_interrupt_signal (void) MONO_INTERNAL;
+
 #endif

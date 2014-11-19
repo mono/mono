@@ -437,10 +437,8 @@ add_signal_handler (int signo, gpointer handler)
 	sa.sa_sigaction = handler;
 	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO;
-#ifdef PLATFORM_ANDROID
-	if (signo == SIGUSR2)
+	if (signo == mono_debugger_agent_get_interrupt_signal ())
 		sa.sa_flags |= SA_RESTART;
-#endif
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 
 /*Apple likes to deliver SIGBUS for *0 */
@@ -506,7 +504,6 @@ remove_signal_handler (int signo)
 void
 mono_runtime_posix_install_handlers (void)
 {
-
 	sigset_t signal_set;
 
 	if (mini_get_debug_options ()->handle_sigint)
@@ -522,9 +519,8 @@ mono_runtime_posix_install_handlers (void)
 	if (!mono_thread_info_new_interrupt_enabled ())
 		add_signal_handler (mono_thread_get_abort_signal (), sigusr1_signal_handler);
 
-#ifdef PLATFORM_ANDROID
-	add_signal_handler (SIGUSR2, sigusr1_signal_handler);
-#endif
+	if (mono_debugger_agent_get_interrupt_signal () != -1)
+		add_signal_handler (mono_debugger_agent_get_interrupt_signal (), sigusr1_signal_handler);
 
 	/* it seems to have become a common bug for some programs that run as parents
 	 * of many processes to block signal delivery for real time signals.

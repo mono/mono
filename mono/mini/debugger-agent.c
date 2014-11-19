@@ -1105,6 +1105,16 @@ mono_debugger_agent_cleanup (void)
 	mono_cond_destroy (&debugger_thread_exited_cond);
 }
 
+int
+mono_debugger_agent_get_interrupt_signal (void)
+{
+#ifdef PLATFORM_ANDROID
+	return SIGWINCH;
+#else
+	return -1;
+#endif
+}
+
 /*
  * SOCKET TRANSPORT
  */
@@ -2799,7 +2809,7 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 		}
 	} else {
 #ifdef PLATFORM_ANDROID
-		res = mono_thread_kill (thread, SIGUSR2);
+		res = mono_thread_kill (thread, SIGWINCH);
 #else
 		res = mono_thread_kill (thread, mono_thread_get_abort_signal ());
 #endif
@@ -9777,6 +9787,12 @@ void
 mono_debugger_agent_unhandled_exception (MonoException *exc)
 {
 	g_assert_not_reached ();
+}
+
+int
+mono_debugger_agent_get_interrupt_signal (void)
+{
+	return -1;
 }
 
 #endif
