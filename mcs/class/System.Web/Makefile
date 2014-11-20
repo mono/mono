@@ -272,10 +272,6 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,159
 	$(foreach file,$(NUNIT_APP_CODE_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_Code/\2 ;g')) \
 	$(foreach file,$(NUNIT_APP_GLOBALRESOURCES_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_GlobalResources/\2 ;g'))
 
-ifeq (net_2_0, $(PROFILE))
-TEST_MCS_FLAGS += -r:System.Web.Extensions.dll -d:TEST
-endif
-
 EXTRA_DISTFILES = \
 	$(RESOURCE_FILES_4) \
 	$(RESOURCE_FILES_2) \
