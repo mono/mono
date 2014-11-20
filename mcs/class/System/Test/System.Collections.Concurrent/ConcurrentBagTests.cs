@@ -261,7 +261,7 @@ namespace MonoTests.System.Collections.Concurrent
 			Assert.AreEqual (size, array.Length);
 
 			for (int i = 0; i < size; i++)
-				Assert.AreEqual (i, bag.ToArray () [i]);
+				Assert.AreEqual (i, array [i]);
 		}
 	}
 }
