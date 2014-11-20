@@ -11,6 +11,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using NUnit.Framework;
@@ -451,6 +452,62 @@ namespace MonoTests.System.Reflection.Emit
 		    MethodInfo res = (MethodInfo)del();
 			Assert.AreEqual (dm.Name, res.Name, "#1");
 
+		}
+
+		[StructLayout (LayoutKind.Explicit)]
+		struct SizeOfTarget {
+			[FieldOffset (0)] public int X;
+			[FieldOffset (4)] public int Y;
+		}
+
+		[Test]
+		public void SizeOf ()
+		{
+			var method = new DynamicMethod ("", typeof (int), Type.EmptyTypes);
+			var il = method.GetILGenerator ();
+			il.Emit (OpCodes.Sizeof, typeof (SizeOfTarget));
+			il.Emit (OpCodes.Ret);
+
+			var func = (Func<int>) method.CreateDelegate (typeof (Func<int>));
+			var point_size = func ();
+
+			Assert.AreEqual (8, point_size);
+		}
+
+		class TypedRefTarget {
+			public string Name;
+		}
+
+		[Test]
+		public void TypedRef ()
+		{
+			var method = new DynamicMethod ("", typeof (TypedRefTarget), new [] {typeof (TypedRefTarget)}, true);
+			var il = method.GetILGenerator ();
+			var tr = il.DeclareLocal (typeof (TypedReference));
+
+			il.Emit (OpCodes.Ldarga, 0);
+			il.Emit (OpCodes.Mkrefany, typeof (TypedRefTarget));
+			il.Emit (OpCodes.Stloc, tr);
+
+			il.Emit (OpCodes.Ldloc, tr);
+			il.Emit (OpCodes.Call, GetType ().GetMethod ("AssertTypedRef", BindingFlags.NonPublic | BindingFlags.Static));
+
+			il.Emit (OpCodes.Ldloc, tr);
+			il.Emit (OpCodes.Refanyval, typeof (TypedRefTarget));
+			il.Emit (OpCodes.Ldobj, typeof (TypedRefTarget));
+			il.Emit (OpCodes.Ret);
+
+			var f = (Func<TypedRefTarget, TypedRefTarget>) method.CreateDelegate (typeof (Func<TypedRefTarget, TypedRefTarget>));
+
+			var target = new TypedRefTarget { Name = "Foo" };
+			var rt = f (target);
+
+			Assert.AreEqual (target, rt);
+		}
+
+		private static void AssertTypedRef (TypedReference tr)
+		{
+			Assert.AreEqual (typeof (TypedRefTarget), TypedReference.GetTargetType (tr));
 		}
 	}
 }
