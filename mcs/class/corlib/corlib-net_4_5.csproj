@@ -737,6 +737,7 @@
     <Compile Include="System.Runtime.InteropServices\IDispatchImplType.cs" />
     <Compile Include="System.Runtime.InteropServices\IDLDESC.cs" />
     <Compile Include="System.Runtime.InteropServices\IDLFLAG.cs" />
+    <Compile Include="System.Runtime.InteropServices\IErrorInfo.cs" />
     <Compile Include="System.Runtime.InteropServices\IMPLTYPEFLAGS.cs" />
     <Compile Include="System.Runtime.InteropServices\ImportedFromTypeLibAttribute.cs" />
     <Compile Include="System.Runtime.InteropServices\ImporterEventKind.cs" />
@@ -753,6 +754,7 @@
     <Compile Include="System.Runtime.InteropServices\LayoutKind.cs" />
     <Compile Include="System.Runtime.InteropServices\LCIDConversionAttribute.cs" />
     <Compile Include="System.Runtime.InteropServices\LIBFLAGS.cs" />
+    <Compile Include="System.Runtime.InteropServices\ManagedErrorInfo.cs " />
     <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
     <Compile Include="System.Runtime.InteropServices\MarshalAsAttribute.cs" />
     <Compile Include="System.Runtime.InteropServices\MarshalDirectiveException.cs" />
