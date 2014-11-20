@@ -25,3 +25,6 @@
 [submodule "external/ikdasm"]
 	path = external/ikdasm
 	url = git://github.com/mono/ikdasm.git
+[submodule "external/referencesource"]
+	path = external/referencesource
+	url = git://github.com/mono/referencesource
