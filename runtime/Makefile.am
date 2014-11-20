@@ -129,7 +129,7 @@ mcs-compileall: mono-wrapper etc/mono/config
 	  if [ "net_4_0" = "$$profile" ]; then \
           continue; \
       fi; \
-	  elif [ "xbuild_12" = "$$profile" ]; then \
+	  if [ "xbuild_12" = "$$profile" ]; then \
 		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$mcs_topdir/class/lib/net_4_5$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
 	  elif [ "xbuild_14" = "$$profile" ]; then \
 		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$mcs_topdir/class/lib/net_4_5$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
