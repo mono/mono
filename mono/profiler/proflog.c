@@ -2237,6 +2237,10 @@ new_filename (const char* filename)
 }
 
 #ifndef DISABLE_HELPER_THREAD
+
+//this is exposed by the JIT, but it's not meant to be a supported API for now.
+extern void mono_threads_attach_tools_thread (void);
+
 static void*
 helper_thread (void* arg)
 {
@@ -2247,6 +2251,7 @@ helper_thread (void* arg)
 	MonoThread *thread = NULL;
 	uint64_t start, now;
 
+	mono_threads_attach_tools_thread ();
 	//fprintf (stderr, "Server listening\n");
 	start = current_time ();
 	command_socket = -1;
