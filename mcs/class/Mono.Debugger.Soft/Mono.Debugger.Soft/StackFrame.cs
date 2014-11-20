@@ -7,6 +7,7 @@ namespace Mono.Debugger.Soft
 	public class StackFrame : Mirror
 	{
 		ThreadMirror thread;
+		AppDomainMirror domain;
 		MethodMirror method;
 		int il_offset;
 		Location location;
@@ -29,6 +30,16 @@ namespace Mono.Debugger.Soft
 		public ThreadMirror Thread {
 			get {
 				return thread;
+			}
+		}
+
+		public AppDomainMirror Domain {
+			get {
+				vm.CheckProtocolVersion (2, 38);
+				if (domain == null)
+					domain = vm.GetDomain (vm.conn.StackFrame_GetDomain (thread.Id, Id));
+
+				return domain;
 			}
 		}
 
