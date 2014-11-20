@@ -417,7 +417,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 37;
+		internal const int MINOR_VERSION = 38;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -585,7 +585,8 @@ namespace Mono.Debugger.Soft
 		enum CmdStackFrame {
 			GET_VALUES = 1,
 			GET_THIS = 2,
-			SET_VALUES = 3
+			SET_VALUES = 3,
+			GET_DOMAIN = 4,
 		}
 
 		enum CmdArrayRef {
@@ -2376,6 +2377,10 @@ namespace Mono.Debugger.Soft
 			/* pos >= 0 -> local at pos */
 			int len = pos.Length;
 			SendReceive (CommandSet.STACK_FRAME, (int)CmdStackFrame.SET_VALUES, new PacketWriter ().WriteId (thread_id).WriteId (id).WriteInt (len).WriteInts (pos).WriteValues (values));
+		}
+
+		internal long StackFrame_GetDomain (long thread_id, long id) {
+			return SendReceive (CommandSet.STACK_FRAME, (int)CmdStackFrame.GET_DOMAIN, new PacketWriter ().WriteId (thread_id).WriteId (id)).ReadId ();
 		}
 
 		/*

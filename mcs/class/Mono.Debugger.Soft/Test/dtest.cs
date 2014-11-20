@@ -2869,8 +2869,10 @@ public class DebuggerTests
 
 		var frames = e.Thread.GetFrames ();
 		Assert.AreEqual ("invoke_in_domain", frames [0].Method.Name);
+		Assert.AreEqual (domain, frames [0].Domain);
 		Assert.AreEqual ("invoke", frames [1].Method.Name);
 		Assert.AreEqual ("domains", frames [2].Method.Name);
+		Assert.AreEqual (vm.RootDomain, frames [2].Domain);
 
 		// Test breakpoints on already JITted methods in other domains
 		m = entry_point.DeclaringType.GetMethod ("invoke_in_domain_2");
