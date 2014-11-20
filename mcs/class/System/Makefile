@@ -44,15 +44,17 @@ endif
 #
 ifeq (secxml/, $(intermediate))
 LOCAL_MCS_FLAGS = -lib:$(bare_libdir) 
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll -r:System.Xml.dll -r:MonoSecurity=Mono.Security.dll
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll -r:$(bare_libdir)/System.Xml.dll -r:MonoSecurity=$(the_libdir_base)Mono.Security.dll
 endif
 
 #
 # Flags used to build the final version of System (when intermediate is not defined)
 #
 ifndef intermediate
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll -r:System.Xml.dll -r:MonoSecurity=Mono.Security.dll $(FINAL_MCS_FLAGS)
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll -r:$(the_libdir_base)System.Xml.dll -r:MonoSecurity=$(the_libdir_base)Mono.Security.dll $(FINAL_MCS_FLAGS)
 endif
+
+LIB_MCS_FLAGS += -r:$(corlib)
 
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\

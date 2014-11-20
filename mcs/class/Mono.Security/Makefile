@@ -3,9 +3,9 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Security.dll
-LOCAL_MCS_FLAGS = -lib:$(the_libdir_base)bare
-LIB_MCS_FLAGS = -r:System.dll -unsafe -nowarn:1030 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:169,219,618,672
+LIB_MCS_FLAGS = -r:$(the_libdir_base)bare/System.dll
+LOCAL_MCS_FLAGS = -r:$(corlib) -unsafe -nowarn:1030 
+TEST_MCS_FLAGS = -r:System.dll -nowarn:169,219,618,672
 
 include ../../build/library.make
 
