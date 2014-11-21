@@ -1,6 +1,6 @@
 // CS1993: Cannot find compiler required types for asynchronous functions support. Are you targeting the wrong framework version?
 // Line: 38
-// Compiler options: -sdk:2
+// Compiler options: -nostdlib CS1993-corlib.cs
 
 using System.Threading.Tasks;
 
