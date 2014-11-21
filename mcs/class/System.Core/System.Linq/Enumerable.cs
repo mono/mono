@@ -2765,14 +2765,14 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			if (count <= 0)
+				return EmptyOf<TSource>.Instance;
+
 			return CreateTakeIterator (source, count);
 		}
 
 		static IEnumerable<TSource> CreateTakeIterator<TSource> (IEnumerable<TSource> source, int count)
 		{
-			if (count <= 0)
-				yield break;
-
 			int counter = 0;
 			foreach (TSource element in source) {
 				yield return element;
