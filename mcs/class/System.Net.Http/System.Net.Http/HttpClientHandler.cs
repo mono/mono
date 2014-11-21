@@ -314,38 +314,38 @@ namespace System.Net.Http
 
 			Volatile.Write (ref sentRequest, true);
 			var wrequest = CreateWebRequest (request);
+			HttpWebResponse wresponse = null;
 
-			if (request.Content != null) {
-				var headers = wrequest.Headers;
-				foreach (var header in request.Content.Headers) {
-					foreach (var value in header.Value) {
-						headers.AddValue (header.Key, value);
+			try {
+				using (cancellationToken.Register (l => ((HttpWebRequest)l).Abort (), wrequest)) {
+					if (request.Content != null) {
+						var headers = wrequest.Headers;
+						foreach (var header in request.Content.Headers) {
+							foreach (var value in header.Value) {
+								headers.AddValue (header.Key, value);
+							}
+						}
+
+						var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
+						await request.Content.CopyToAsync (stream).ConfigureAwait (false);
+					} else if (HttpMethod.Post.Equals (request.Method) || HttpMethod.Put.Equals (request.Method) || HttpMethod.Delete.Equals (request.Method)) {
+						// Explicitly set this to make sure we're sending a "Content-Length: 0" header.
+						// This fixes the issue that's been reported on the forums:
+						// http://forums.xamarin.com/discussion/17770/length-required-error-in-http-post-since-latest-release
+						wrequest.ContentLength = 0;
 					}
-				}
 
-				var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
-				await request.Content.CopyToAsync (stream).ConfigureAwait (false);
-			} else if (HttpMethod.Post.Equals (request.Method) || HttpMethod.Put.Equals (request.Method) || HttpMethod.Delete.Equals (request.Method)) {
-				// Explicitly set this to make sure we're sending a "Content-Length: 0" header.
-				// This fixes the issue that's been reported on the forums:
-				// http://forums.xamarin.com/discussion/17770/length-required-error-in-http-post-since-latest-release
-				wrequest.ContentLength = 0;
+					wresponse = (HttpWebResponse)await wrequest.GetResponseAsync ().ConfigureAwait (false);
+				}
+			} catch (WebException we) {
+				if (we.Status != WebExceptionStatus.RequestCanceled)
+					throw;
 			}
 
-			HttpWebResponse wresponse = null;
-			using (cancellationToken.Register (l => ((HttpWebRequest) l).Abort (), wrequest)) {
-				try {
-					wresponse = (HttpWebResponse) await wrequest.GetResponseAsync ().ConfigureAwait (false);
-				} catch (WebException we) {
-					if (we.Status != WebExceptionStatus.RequestCanceled)
-						throw;
-				}
-
-				if (cancellationToken.IsCancellationRequested) {
-					var cancelled = new TaskCompletionSource<HttpResponseMessage> ();
-					cancelled.SetCanceled ();
-					return await cancelled.Task;
-				}
+			if (cancellationToken.IsCancellationRequested) {
+				var cancelled = new TaskCompletionSource<HttpResponseMessage> ();
+				cancelled.SetCanceled ();
+				return await cancelled.Task;
 			}
 			
 			return CreateResponseMessage (wresponse, request, cancellationToken);
