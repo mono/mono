@@ -48,8 +48,18 @@ namespace System.Net.Http
 		}
 
 		public HttpRequestMessage (HttpMethod method, string requestUri)
-			: this (method, string.IsNullOrEmpty (requestUri) ? (Uri) null : new Uri (requestUri, System.UriKind.RelativeOrAbsolute))
+			: this (method, null as Uri)
 		{
+			if (!string.IsNullOrEmpty (requestUri)) {
+				UriKind kind = IsHttpUriString (requestUri) ? UriKind.Absolute : UriKind.Relative;
+				RequestUri = new Uri (requestUri, kind);
+			}
+		}
+
+		internal static bool IsHttpUriString (string uri)
+		{
+			StringComparison option = StringComparison.OrdinalIgnoreCase;
+			return uri.StartsWith ("http://", option) || uri.StartsWith ("https://", option);
 		}
 
 		public HttpRequestMessage (HttpMethod method, Uri requestUri)

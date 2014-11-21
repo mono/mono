@@ -107,6 +107,9 @@ namespace MonoTests.System.Net.Http
 			var req = new HttpRequestMessage (HttpMethod.Get, "Computer");
 			// HttpRequestMessage does not rewrite it here.
 			Assert.IsFalse (req.RequestUri.IsAbsoluteUri);
+
+			req = new HttpRequestMessage (HttpMethod.Get, "/");
+			Assert.IsFalse (req.RequestUri.IsAbsoluteUri);
 		}
 
 		[Test]
