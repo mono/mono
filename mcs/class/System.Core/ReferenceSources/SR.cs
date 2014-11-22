@@ -1,5 +1,5 @@
 //
-// SR.cs: Manually collected resource strings for ReferenceSouurces
+// SR.cs: Manually collected resource strings for ReferenceSources
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
