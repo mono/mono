@@ -596,7 +596,6 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Deadlocks randomly
 		public void TestGroupBy ()
 		{
 			int num = 100;
