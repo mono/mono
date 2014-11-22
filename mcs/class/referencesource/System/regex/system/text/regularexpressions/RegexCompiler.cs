@@ -130,8 +130,10 @@ namespace System.Text.RegularExpressions {
         static RegexCompiler() {
             // <SECREVIEW> Regex only generates string manipulation, so this is ok.
             // </SECREVIEW>      
-           
+
+#if !DISABLE_CAS_USE
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
+#endif
             try {
                 // note some fields
                 _textbegF       = RegexRunnerField("runtextbeg");
@@ -193,7 +195,9 @@ namespace System.Text.RegularExpressions {
 
             // <SECREVIEW> Regex only generates string manipulation, so this is ok.
             // </SECREVIEW>         
+#if !DISABLE_CAS_USE
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
+#endif
             try {
                 factory = c.FactoryInstanceFromCode(code, options);
             }
@@ -231,7 +235,9 @@ namespace System.Text.RegularExpressions {
         
                 Type factory;
         
+#if !DISABLE_CAS_USE
                 new ReflectionPermission(PermissionState.Unrestricted).Assert();
+#endif
                 try {
                     factory = c.FactoryTypeFromCode(code, options, fullname);
                     c.GenerateRegexType(pattern, options, fullname, regexes[i].IsPublic, code, tree, factory, mTimeout);
@@ -1015,7 +1021,9 @@ namespace System.Text.RegularExpressions {
          * grouping stack when they get too full.
          */
         internal void GenerateMiddleSection() {
+#pragma warning disable 219
             Label l1 = DefineLabel();
+#pragma warning restore 219
             Label[] table;
             int i;
 
@@ -1211,7 +1219,9 @@ namespace System.Text.RegularExpressions {
                 Label      lAdvance         = DefineLabel();
                 Label      lFail            = DefineLabel();
                 Label      lStart           = DefineLabel();
+#pragma warning disable 219
                 Label      lOutOfRange      = DefineLabel();
+#pragma warning restore 219
                 Label      lPartialMatch    = DefineLabel();
 
 
@@ -1372,7 +1382,9 @@ namespace System.Text.RegularExpressions {
             }
             else {
                 LocalBuilder cV   = _temp2V;
+#pragma warning disable 219
                 LocalBuilder chV  = _tempV;
+#pragma warning restore 219
                 Label      l1   = DefineLabel();
                 Label      l2   = DefineLabel();
                 Label      l3   = DefineLabel();
@@ -2087,8 +2099,10 @@ namespace System.Text.RegularExpressions {
                         LocalBuilder count = _tempV;
                         LocalBuilder mark  = _temp2V;
                         Label      l1    = DefineLabel();
+#pragma warning disable 219
                         Label      l2    = DefineLabel();
                         Label      l3    = _labels[NextCodepos()];
+#pragma warning restore 219
 
                         PopStack();
                         Stloc(count);                           // count -> temp
@@ -3029,7 +3043,9 @@ namespace System.Text.RegularExpressions {
             // SECREVIEW : Regex only generates string manipulation, so this is
             //           : ok.
             //
+#if !DISABLE_CAS_USE
             new ReflectionPermission(PermissionState.Unrestricted).Assert();
+#endif
             try {
                 Debug.Assert(an != null, "AssemblyName should not be null");
 
@@ -3039,11 +3055,13 @@ namespace System.Text.RegularExpressions {
                 CustomAttributeBuilder transparencyAttribute = new CustomAttributeBuilder(transparencyCtor, new object[0]);
                 assemblyAttributes.Add(transparencyAttribute);
 
+#if !DISABLE_CAS_USE
                 ConstructorInfo securityRulesCtor = typeof(SecurityRulesAttribute).GetConstructor(new Type[] { typeof(SecurityRuleSet) });
                 CustomAttributeBuilder securityRulesAttribute =
                     new CustomAttributeBuilder(securityRulesCtor, new object[] { SecurityRuleSet.Level2 });
                 assemblyAttributes.Add(securityRulesAttribute);
-
+#endif
+	
                 _assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(an, AssemblyBuilderAccess.RunAndSave, assemblyAttributes);
                 _module = _assembly.DefineDynamicModule(an.Name + ".dll");
 

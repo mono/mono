@@ -74,7 +74,12 @@ namespace System.Text.RegularExpressions {
         #if !FEATURE_NETCORE
         [NonSerialized()]
         #endif
-        public static readonly TimeSpan InfiniteMatchTimeout = Timeout.InfiniteTimeSpan;
+        public static readonly TimeSpan InfiniteMatchTimeout =
+#if BOOTSTRAP_BASIC
+		new TimeSpan (0, 0, 0, 0, Timeout.Infinite);	
+#else
+		Timeout.InfiniteTimeSpan;
+#endif
         #else
         internal static readonly TimeSpan InfiniteMatchTimeout = new TimeSpan(0, 0, 0, 0, Timeout.Infinite);
         #endif                              
@@ -398,7 +403,9 @@ namespace System.Text.RegularExpressions {
         * This method is internal virtual so the jit does not inline it.
         */
         [
+#if !DISABLE_CAS_USE
             HostProtection(MayLeakOnAbort=true),
+#endif
             MethodImplAttribute(MethodImplOptions.NoInlining)
         ]
         internal RegexRunnerFactory Compile(RegexCode code, RegexOptions roptions) {
@@ -1186,7 +1193,9 @@ namespace System.Text.RegularExpressions {
 #if !SILVERLIGHT
         /// <devdoc>
         /// </devdoc>
+#if !DISABLE_CAS_USE
         [HostProtection(MayLeakOnAbort=true)]
+#endif
         [ResourceExposure(ResourceScope.Machine)] // The AssemblyName is interesting.
         [ResourceConsumption(ResourceScope.Machine)]
         [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="assemblyname", Justification="[....]: already shipped since v1 - can't fix without causing a breaking change")]
@@ -1197,7 +1206,9 @@ namespace System.Text.RegularExpressions {
 
         /// <devdoc>
         /// </devdoc>
+#if !DISABLE_CAS_USE
         [HostProtection(MayLeakOnAbort=true)]
+#endif
         [ResourceExposure(ResourceScope.Machine)] // The AssemblyName is interesting.
         [ResourceConsumption(ResourceScope.Machine)]
         [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="assemblyname", Justification="[....]: already shipped since v1 - can't fix without causing a breaking change")]
@@ -1205,7 +1216,9 @@ namespace System.Text.RegularExpressions {
             CompileToAssemblyInternal(regexinfos, assemblyname, attributes, null);
         }
 
+#if !DISABLE_CAS_USE
         [HostProtection(MayLeakOnAbort=true)]
+#endif
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="assemblyname", Justification="[....]: already shipped since v1 - can't fix without causing a breaking change")]

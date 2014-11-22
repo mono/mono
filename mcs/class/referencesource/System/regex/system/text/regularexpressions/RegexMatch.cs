@@ -201,7 +201,9 @@ namespace System.Text.RegularExpressions {
         /// </devdoc>
 
 #if !SILVERLIGHT
+#if !DISABLE_CAS_USE
         [HostProtection(Synchronization=true)]
+#endif
         static public Match Synchronized(Match inner) {
 #else
         static internal Match Synchronized(Match inner) {
