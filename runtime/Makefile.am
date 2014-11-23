@@ -94,13 +94,6 @@ endif BUILD_MCS
 
 TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/mcs $(tmpinst)/bin/gmcs $(tmpinst)/bin/dmcs $(tmpinst)/bin/al2 $(tmpinst)/bin/al
 
-# now a misnomer, but it'll go away soon enough.
-if ENABLE_NUNIT_TESTS
-test_select =
-else
-test_select = ONLY_CENTUM_TESTS=yes
-endif
-
 mcs-do-test-profiles:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' test-profiles
 
@@ -152,7 +145,7 @@ if NACL_CODEGEN
 check-local:
 else
 check-local: mcs-compileall mcs-do-test-profiles
-	$(MAKE) $(test_select) mcs-do-run-test-profiles
+	$(MAKE) ONLY_CENTUM_TESTS=yes mcs-do-run-test-profiles
 endif
 
 # Compile all mcs tests
