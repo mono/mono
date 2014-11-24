@@ -27,6 +27,7 @@
 static pthread_t collection_thread_id;
 static pthread_cond_t collection_thread_wait_cond;
 static pthread_mutex_t collection_thread_wait_mutex;
+static gboolean collection_thread_enabled;
 
 static gpointer collection_thread (gpointer unused G_GNUC_UNUSED)
 {
@@ -39,7 +40,9 @@ static gpointer collection_thread (gpointer unused G_GNUC_UNUSED)
 	}
 
 	pthread_mutex_lock (&collection_thread_wait_mutex);
-	while (pthread_cond_timedwait (&collection_thread_wait_cond, &collection_thread_wait_mutex, &sleepytime) == ETIMEDOUT) {
+	while (collection_thread_enabled)
+	{
+		pthread_cond_timedwait (&collection_thread_wait_cond, &collection_thread_wait_mutex, &sleepytime);
 
 		//_wapi_handle_dump ();
 		_wapi_handle_update_refs ();
@@ -66,6 +69,8 @@ void _wapi_collection_init (void)
 
         pthread_mutex_init(&collection_thread_wait_mutex, NULL);
         pthread_cond_init(&collection_thread_wait_cond, NULL);
+
+		collection_thread_enabled = TRUE;
 
  retry:
         ret = pthread_attr_init (&attr);
@@ -97,6 +102,9 @@ extern void _wapi_collection_shutdown (void)
 {
 	// signal and wait for collection thread to fininsh
 	pthread_mutex_lock (&collection_thread_wait_mutex);
+
+	collection_thread_enabled = FALSE;
+
 	pthread_cond_signal (&collection_thread_wait_cond);
 	pthread_mutex_unlock (&collection_thread_wait_mutex);
 	pthread_join (collection_thread_id, NULL);
