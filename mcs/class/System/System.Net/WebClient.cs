@@ -318,7 +318,7 @@ namespace System.Net
 			try {
 				request = SetupRequest (address);
 				WebResponse response = GetWebResponse (request);
-			    using (FileStream f = new FileStream (fileName, FileMode.Create)) {
+				using (FileStream f = new FileStream (fileName, FileMode.Create)) {
 					Stream st = response.GetResponseStream ();
 					
 					int cLength = (int) response.ContentLength;
@@ -337,7 +337,7 @@ namespace System.Net
 
 					if (cLength > 0 && notify_total < cLength)
 						throw new WebException ("Download aborted prematurely.", WebExceptionStatus.ReceiveFailure);
-			    }
+				}
 			} catch (ThreadInterruptedException){
 				if (request != null)
 					request.Abort ();
