@@ -6,9 +6,9 @@
 
 using System;
 using System.Diagnostics;
-using System.Reflection.Emit;
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !FULL_AOT_RUNTIME
+using System.Reflection.Emit;
 
 namespace System.Text.RegularExpressions {
 

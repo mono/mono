@@ -13,7 +13,9 @@ namespace System.Text.RegularExpressions {
     using System.Threading;
     using System.Collections;
     using System.Reflection;
+#if !FULL_AOT_RUNTIME
     using System.Reflection.Emit;
+#endif
     using System.Globalization;
     using System.Security.Permissions;
     using System.Runtime.CompilerServices;
@@ -210,7 +212,7 @@ namespace System.Text.RegularExpressions {
              && (options & ~(RegexOptions.ECMAScript | 
                              RegexOptions.IgnoreCase | 
                              RegexOptions.Multiline |
-#if !SILVERLIGHT || FEATURE_LEGACYNETCF
+#if !(SILVERLIGHT) || FEATURE_LEGACYNETCF 
                              RegexOptions.Compiled | 
 #endif
                              RegexOptions.CultureInvariant
@@ -219,7 +221,7 @@ namespace System.Text.RegularExpressions {
 #endif
                                                )) != 0)
                 throw new ArgumentOutOfRangeException("options");
-        
+
             ValidateMatchTimeout(matchTimeout);
 
             // Try to look up this regex in the cache.  We do this regardless of whether useCache is true since there's
@@ -266,7 +268,7 @@ namespace System.Text.RegularExpressions {
                 refsInitialized = true;
             }
 
-#if !SILVERLIGHT
+#if !(SILVERLIGHT || FULL_AOT_RUNTIME)
             // if the compile option is set, then compile the code if it's not already
             if (UseOptionC() && factory == null) {
                 factory = Compile(code, roptions);
@@ -395,7 +397,7 @@ namespace System.Text.RegularExpressions {
         }  // private static TimeSpan InitDefaultMatchTimeout
 #endif  // !SILVERLIGHT
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !FULL_AOT_RUNTIME
         /* 
         * This method is here for perf reasons: if the call to RegexCompiler is NOT in the 
         * Regex constructor, we don't load RegexCompiler and its reflection classes when
@@ -1190,7 +1192,7 @@ namespace System.Text.RegularExpressions {
 
 
         
-#if !SILVERLIGHT
+#if !SILVERLIGHT || FULL_AOT_RUNTIME
         /// <devdoc>
         /// </devdoc>
 #if !DISABLE_CAS_USE
@@ -1341,7 +1343,7 @@ namespace System.Text.RegularExpressions {
             return newcached;
         }
 
-#if !SILVERLIGHT
+#if !(SILVERLIGHT||FULL_AOT_RUNTIME)
         /*
          * True if the O option was set
          */

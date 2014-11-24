@@ -9,7 +9,7 @@
 // subclass of the RegexRunner type.
 
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !FULL_AOT_RUNTIME
 
 namespace System.Text.RegularExpressions {
 
@@ -3273,7 +3273,7 @@ namespace System.Text.RegularExpressions {
             _typebuilder = null;
         }
 
-#if SILVERLIGHT        
+#if SILVERLIGHT
         internal void GenerateCreateType<TKey>(Type myCollectionType, FieldInfo field, Dictionary<TKey,int> ht) {
             MethodInfo addMethod = myCollectionType.GetMethod("Add", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             

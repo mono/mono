@@ -1336,7 +1336,7 @@ namespace System.Text.RegularExpressions {
          */
         internal bool IsOnlyTopOption(RegexOptions option) {
             return(option == RegexOptions.RightToLeft
-#if !SILVERLIGHT
+#if !(SILVERLIGHT||FULL_AOT_RUNTIME)
                 || option == RegexOptions.Compiled
 #endif
                 || option == RegexOptions.CultureInvariant
@@ -1476,7 +1476,7 @@ namespace System.Text.RegularExpressions {
                 ch += (char)('a' - 'A');
 
             switch (ch) {
-#if !SILVERLIGHT
+#if !(SILVERLIGHT||FULL_AOT_RUNTIME)
                 case 'c':
                     return RegexOptions.Compiled;
 #endif

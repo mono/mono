@@ -4,11 +4,11 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-using System.Reflection.Emit;
 using System.Diagnostics;
 using System.Security.Permissions;
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !FULL_AOT_RUNTIME
+using System.Reflection.Emit;
 
 namespace System.Text.RegularExpressions {
 
