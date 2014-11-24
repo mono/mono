@@ -1072,7 +1072,7 @@ System.Windows.Input/ICommand.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/RegexInterpreter.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/RegexMatch.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/RegexMatchCollection.cs
-../../../external/referencesource/System/regex/System/Text/RegularExpressions/RegexMatchTimeoutException.cs
+../../../external/referencesource/System/regex/system/text/regularexpressions/RegexMatchTimeoutException.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/RegexNode.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/RegexOptions.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/RegexParser.cs
