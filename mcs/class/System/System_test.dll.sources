@@ -321,6 +321,7 @@ System.Text.RegularExpressions/RegexReplaceTests.cs
 System.Text.RegularExpressions/RegexTrial.cs
 System.Text.RegularExpressions/RegexTest.cs
 System.Text.RegularExpressions/RegexBugs.cs
+System.Text.RegularExpressions/RegexBugs_Long.cs
 System.Text.RegularExpressions/RegexMatchTests.cs
 System.Text.RegularExpressions/RegexReplace.cs
 System.Text.RegularExpressions/RegexResultTests.cs
