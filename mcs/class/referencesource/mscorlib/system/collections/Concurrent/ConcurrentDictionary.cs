@@ -1699,7 +1699,7 @@ namespace System.Collections.Concurrent
 
                         Assert(newLength % 2 != 0);
 
-                        if (newLength > Array.MaxArrayLength)
+                        if (newLength > Array_ReferenceSources.MaxArrayLength)
                         {
                             maximizeTableSize = true;
                         }
@@ -1712,7 +1712,7 @@ namespace System.Collections.Concurrent
 
                 if (maximizeTableSize)
                 {
-                    newLength = Array.MaxArrayLength;
+                    newLength = Array_ReferenceSources.MaxArrayLength;
 
                     // We want to make sure that GrowTable will not be called again, since table is at the maximum size.
                     // To achieve that, we set the budget to int.MaxValue.

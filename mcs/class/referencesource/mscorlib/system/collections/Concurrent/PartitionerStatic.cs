@@ -906,7 +906,9 @@ namespace System.Collections.Concurrent
                 // the values of the following two fields are passed in from
                 // outside(already initialized) by the constructor, 
                 private readonly SharedBool m_hasNoElementsLeft;
+#pragma warning disable 414
                 private readonly object m_sharedLock;
+#pragma warning restore 414
                 private readonly SharedInt m_activePartitionCount;
                 private InternalPartitionEnumerable m_enumerable;
 
