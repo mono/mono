@@ -17,7 +17,7 @@ static partial class SR
 
 	internal static string GetString(CultureInfo culture, string name, params object[] args)
 	{
-		return string.Format (name, args);
+		return string.Format (culture, name, args);
 	}
 
 	internal static string GetString(string name)

@@ -148,8 +148,6 @@ System.Collections.Generic/SortedDictionary.cs
 System.Collections.Generic/SortedList.cs
 System.Collections.Generic/SortedSet.cs
 System.Collections.Generic/Stack.cs
-System.Collections.Concurrent/BlockingCollection.cs
-System.Collections.Concurrent/ConcurrentBag.cs
 System.Collections.ObjectModel/ObservableCollection.cs
 System.Collections.ObjectModel/ReadOnlyObservableCollection.cs
 System.Collections.Specialized/BitVector32.cs
@@ -1083,4 +1081,7 @@ System.Windows.Input/ICommand.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/RegexWriter.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/compiledregexrunner.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/compiledregexrunnerfactory.cs
+
+../../../external/referencesource/System/sys/system/collections/concurrent/BlockingCollection.cs
+../../../external/referencesource/System/sys/system/collections/concurrent/ConcurrentBag.cs
 
