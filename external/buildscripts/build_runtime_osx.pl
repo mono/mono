@@ -232,7 +232,8 @@ if (!$iphone_simulator)
 	for $file ('libmono.0.dylib','libmono.a','libMonoPosixHelper.dylib') {
 		system ('lipo', "$root/builds/embedruntimes/osx-i386/$file", "$root/builds/embedruntimes/osx-x86_64/$file", '-create', '-output', "$root/builds/embedruntimes/osx/$file");
 	}
-	system('cp', "$root/builds/embedruntimes/osx-i386/MonoBundleBinary", "$root/builds/embedruntimes/osx/MonoBundleBinary");
+	system('cp', "$root/builds/embedruntimes/osx-i386/MonoBundleBinary", "$root/builds/embedruntimes/osx/MonoBundleBinary-i386");
+	system('cp', "$root/builds/embedruntimes/osx-x86_64/MonoBundleBinary", "$root/builds/embedruntimes/osx/MonoBundleBinary-x86_64");
 
 	mkpath ("$root/builds/monodistribution/bin");
 	for $file ('mono','pedump') {
