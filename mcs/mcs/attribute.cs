@@ -832,9 +832,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		bool IsSecurityActionValid ()
 		{
-			SecurityAction action = GetSecurityActionValue ();
+			Constant c = null;
+			var action = GetSecurityActionValue (ref c);
 			bool for_assembly = Target == AttributeTargets.Assembly || Target == AttributeTargets.Module;
-			var c = (Constant)pos_args [0].Expr;
 
 			switch (action) {
 #pragma warning disable 618
@@ -855,6 +855,10 @@ namespace Mono.CSharp {
 					return true;
 				break;
 #pragma warning restore 618
+			case null:
+				Report.Error (7048, loc, "First argument of a security attribute `{0}' must be a valid SecurityAction",
+					Type.GetSignatureForError ());
+				return false;
 
 			default:
 				Report.Error (7049, c.Location, "Security attribute `{0}' has an invalid SecurityAction value `{1}'",
@@ -876,9 +880,25 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		System.Security.Permissions.SecurityAction GetSecurityActionValue ()
+		SecurityAction? GetSecurityActionValue (ref Constant value)
 		{
-			return (SecurityAction) ((Constant) pos_args[0].Expr).GetValue ();
+			if (pos_args == null) {
+				var predefined = context.Module.PredefinedAttributes;
+
+				//
+				// BCL defines System.Security.Permissions.HostProtectionAttribute with parameterless
+				// contructor which should not be valid but it's already part of the framework
+				//
+				if (Type == predefined.HostProtection.TypeSpec) {
+					value = new IntConstant (context.Module.Compiler.BuiltinTypes, (int)SecurityAction.LinkDemand, loc);
+					return SecurityAction.LinkDemand;
+				}
+
+				return null;
+			}
+
+			value = (Constant) pos_args [0].Expr;
+			return (SecurityAction) value.GetValue ();
 		}
 
 		/// <summary>
@@ -888,9 +908,14 @@ namespace Mono.CSharp {
 		public void ExtractSecurityPermissionSet (MethodSpec ctor, ref SecurityType permissions)
 		{
 #if STATIC
-			object[] values = new object[pos_args.Count];
-			for (int i = 0; i < values.Length; ++i)
-				values[i] = ((Constant) pos_args[i].Expr).GetValue ();
+			object[] values;
+			if (pos_args != null) {
+				values = new object[pos_args.Count];
+				for (int i = 0; i < values.Length; ++i)
+					values[i] = ((Constant) pos_args[i].Expr).GetValue ();
+			} else {
+				values = null;
+			}
 
 			PropertyInfo[] prop;
 			object[] prop_values;
@@ -1679,6 +1704,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedDebuggerBrowsableAttribute DebuggerBrowsable;
 		public readonly PredefinedAttribute DebuggerStepThrough;
 		public readonly PredefinedDebuggableAttribute Debuggable;
+		public readonly PredefinedAttribute HostProtection;
 
 		// New in .NET 3.5
 		public readonly PredefinedAttribute Extension;
@@ -1733,6 +1759,7 @@ namespace Mono.CSharp {
 			DefaultParameterValue = new PredefinedAttribute (module, "System.Runtime.InteropServices", "DefaultParameterValueAttribute");
 			OptionalParameter = new PredefinedAttribute (module, "System.Runtime.InteropServices", "OptionalAttribute");
 			UnverifiableCode = new PredefinedAttribute (module, "System.Security", "UnverifiableCodeAttribute");
+			HostProtection = new PredefinedAttribute (module, "System.Security.Permissions", "HostProtectionAttribute");
 
 			DefaultCharset = new PredefinedAttribute (module, "System.Runtime.InteropServices", "DefaultCharSetAttribute");
 			TypeForwarder = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "TypeForwardedToAttribute");
