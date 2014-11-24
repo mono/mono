@@ -26,13 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-static class SR
+partial class SR
 {
-	public static string GetString (string value)
-	{
-		return value;
-	}
-
 	public const string MoreThanOneMatch = "MoreThanOneMatch";
 	public const string NoElements = "NoElements";
 	public const string PLINQ_CommonEnumerator_Current_NotStarted = "PLINQ_CommonEnumerator_Current_NotStarted";

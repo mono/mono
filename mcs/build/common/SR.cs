@@ -8,7 +8,7 @@ internal sealed class AssemblyRef
 	internal const string SystemWeb = "System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 }
 
-internal sealed partial class SR
+static partial class SR
 {
 	internal static string GetString(string name, params object[] args)
 	{
