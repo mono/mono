@@ -27,7 +27,8 @@ COMMON_SRCS = \
 	Consts.cs.in			\
 	Locale.cs			\
 	MonoTODOAttribute.cs \
-	basic-profile-check.cs
+	basic-profile-check.cs		\
+	SR.cs
 
 DISTFILES = \
 	README.makefiles		\
