@@ -79,6 +79,7 @@ namespace Xamarin.ApiDiff {
 		public  static  bool    IgnoreAddedPropertySetters  { get; set; }
 
 		public static bool Lax;
+		public static bool Colorize = true;
 	}
 
 	class Program {
@@ -118,6 +119,7 @@ namespace Xamarin.ApiDiff {
 				{ "ignore-changes-virtual", "Ignore changing non-`virtual` to `virtual` or adding `override`.",
 					v => State.IgnoreVirtualChanges = v != null
 				},
+				{ "c|colorize:", "Colorize HTML output", v => State.Colorize = string.IsNullOrEmpty (v) ? true : bool.Parse (v) },
 				{ "x|lax", "Ignore duplicate XML entries", v => State.Lax = true }
 			};
 
