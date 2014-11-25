@@ -38,7 +38,7 @@ using System.Collections.Generic;
 
 namespace System.Threading {
 	[Serializable]
-	public sealed class ExecutionContext : ISerializable
+	public sealed partial class ExecutionContext : ISerializable
 #if NET_4_0
 		, IDisposable
 #endif
