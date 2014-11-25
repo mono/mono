@@ -93,7 +93,7 @@ namespace System
 				if (l == null) {
 					l = CreateLocal ();
 					if (l == null)
-						throw new TimeZoneNotFoundException ();
+						return null;
 
 					if (Interlocked.CompareExchange (ref local, l, null) != null)
 						l = local;
