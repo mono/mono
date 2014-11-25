@@ -807,15 +807,20 @@ namespace MonoTests.System.Threading.Tasks
 							finished ++;
 							Monitor.Pulse (monitor);
 						}
-						return r;
+						return r ? 1 : 10; //1 -> ok, 10 -> evt wait failed
 					});
 				var cntd = new CountdownEvent (2);
 				var cntd2 = new CountdownEvent (2);
 
-				bool r1 = false, r2 = false;
+				int r1 = 0, r2 = 0;
 				ThreadPool.QueueUserWorkItem (delegate {
 						cntd.Signal ();
-						r1 = t.Wait (1000) && t.Result;
+						if (!t.Wait (1000))
+							r1 = 20; // 20 -> task wait failed
+						else if (t.Result != 1)
+							r1 = 30 + t.Result; // 30 -> task result is bad
+						else
+							r1 = 2; //2 -> ok
 						cntd2.Signal ();
 						lock (monitor) {
 							finished ++;
@@ -824,7 +829,13 @@ namespace MonoTests.System.Threading.Tasks
 					});
 				ThreadPool.QueueUserWorkItem (delegate {
 						cntd.Signal ();
-						r2 = t.Wait (1000) && t.Result;
+						if (!t.Wait (1000))
+							r2 = 40; // 40 -> task wait failed
+						else if (t.Result != 1)
+							r2 = 50 + t.Result; // 50 -> task result is bad
+						else
+							r2 = 3; //3 -> ok
+
 						cntd2.Signal ();
 						lock (monitor) {
 							finished ++;
@@ -834,8 +845,8 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.IsTrue (cntd.Wait (2000), "#1");
 				evt.Set ();
 				Assert.IsTrue (cntd2.Wait (2000), "#2");
-				Assert.IsTrue (r1, "r1");
-				Assert.IsTrue (r2, "r2");
+				Assert.AreEqual (2, r1, "r1");
+				Assert.AreEqual (3, r2, "r2");
 
 				// Wait for everything to finish to avoid overloading the tpool
 				lock (monitor) {
