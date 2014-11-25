@@ -624,6 +624,16 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
+		public void ForEach_Modified ()
+		{
+			try {
+				_list1.ForEach (l => _list1.Add (0));
+				Assert.Fail ();
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
 		public void FindLastIndexTest ()
 		{
 			int i = _list1.FindLastIndex (FindMultipleOfFour);
