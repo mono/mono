@@ -247,7 +247,7 @@
       inline static void GC_clear(volatile unsigned int *addr) {
 #ifdef HAVE_ARMV6
 		  /* Memory barrier */
-		  __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r" (0) : "memory");
+		  __sync_synchronize();
 #endif
 		  *(addr) = 0;
       }
