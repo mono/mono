@@ -341,6 +341,14 @@ namespace System.Threading.Tasks
             }
         }
 
+        internal static bool IsDefault
+        {
+            get
+            {
+                return Current == Default;
+            }
+        }
+
         /// <summary>
         /// Gets the <see cref="System.Threading.Tasks.TaskScheduler">TaskScheduler</see>
         /// associated with the currently executing task.

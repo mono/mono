@@ -851,14 +851,15 @@ namespace System.Threading.Tasks
                 // change will likely brake 4.5 behavior so if possible never touch this code again.
                 if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                 {
+                    var invoked = new AtomicBoolean ();
                     //This is 4.5 behaviour
                     //if we don't require synchronization, a faster set result path is taken
                     var asyncResult = beginMethod(iar =>
                     {
-                        if (!iar.CompletedSynchronously)
+                        if (invoked.TryRelaxedSet ())
                             FromAsyncCoreLogic(iar, endFunction, endAction, promise, requiresSynchronization: true);
                     }, state);
-                    if (asyncResult.CompletedSynchronously)
+                    if (asyncResult != null && asyncResult.CompletedSynchronously && invoked.TryRelaxedSet ())
                     {
                         Contract.Assert(asyncResult.IsCompleted, "If the operation completed synchronously, it must be completed.");
                         FromAsyncCoreLogic(asyncResult, endFunction, endAction, promise, requiresSynchronization: false);
@@ -991,13 +992,14 @@ namespace System.Threading.Tasks
                 // change will likely brake 4.5 behavior so if possible never touch this code again.
                 if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                 {
+                    var invoked = new AtomicBoolean ();
                     //if we don't require synchronization, a faster set result path is taken
                     var asyncResult = beginMethod(arg1, iar =>
                     {
-                        if (!iar.CompletedSynchronously)
+                        if (invoked.TryRelaxedSet ())
                             FromAsyncCoreLogic(iar, endFunction, endAction, promise, requiresSynchronization: true);
                     }, state);
-                    if (asyncResult.CompletedSynchronously)
+                    if (asyncResult != null && asyncResult.CompletedSynchronously && invoked.TryRelaxedSet ())
                     {
                         Contract.Assert(asyncResult.IsCompleted, "If the operation completed synchronously, it must be completed.");
                         FromAsyncCoreLogic(asyncResult, endFunction, endAction, promise, requiresSynchronization: false);
@@ -1138,13 +1140,14 @@ namespace System.Threading.Tasks
                 // change will likely brake 4.5 behavior so if possible never touch this code again.
                 if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                 {
+                    var invoked = new AtomicBoolean ();
                     //if we don't require synchronization, a faster set result path is taken
                     var asyncResult = beginMethod(arg1, arg2, iar =>
                     {
-                        if (!iar.CompletedSynchronously)
+                        if (invoked.TryRelaxedSet ())
                             FromAsyncCoreLogic(iar, endFunction, endAction, promise, requiresSynchronization: true);
                     }, state);
-                    if (asyncResult.CompletedSynchronously)
+                    if (asyncResult != null && asyncResult.CompletedSynchronously && invoked.TryRelaxedSet ())
                     {
                         Contract.Assert(asyncResult.IsCompleted, "If the operation completed synchronously, it must be completed.");
                         FromAsyncCoreLogic(asyncResult, endFunction, endAction, promise, requiresSynchronization: false);
@@ -1293,13 +1296,14 @@ namespace System.Threading.Tasks
                 // change will likely brake 4.5 behavior so if possible never touch this code again.
                 if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                 {
+                    var invoked = new AtomicBoolean ();
                     //if we don't require synchronization, a faster set result path is taken
                     var asyncResult = beginMethod(arg1, arg2, arg3, iar =>
                     {
-                        if (!iar.CompletedSynchronously)
+                        if (invoked.TryRelaxedSet ())
                             FromAsyncCoreLogic(iar, endFunction, endAction, promise, requiresSynchronization: true);
                     }, state);
-                    if (asyncResult.CompletedSynchronously)
+                    if (asyncResult != null && asyncResult.CompletedSynchronously && invoked.TryRelaxedSet ())
                     {
                         Contract.Assert(asyncResult.IsCompleted, "If the operation completed synchronously, it must be completed.");
                         FromAsyncCoreLogic(asyncResult, endFunction, endAction, promise, requiresSynchronization: false);
@@ -1365,7 +1369,7 @@ namespace System.Threading.Tasks
 
             // If the IAsyncResult completed asynchronously, completing the promise will be handled by the callback.
             // If it completed synchronously, we'll handle that here.
-            if (asyncResult.CompletedSynchronously)
+            if (asyncResult != null && asyncResult.CompletedSynchronously)
             {
                 Contract.Assert(asyncResult.IsCompleted, "If the operation completed synchronously, it must be completed.");
                 promise.Complete(thisRef, endMethod, asyncResult, requiresSynchronization: false);

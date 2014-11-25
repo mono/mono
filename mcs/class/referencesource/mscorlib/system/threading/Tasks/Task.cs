@@ -594,10 +594,10 @@ namespace System.Threading.Tasks
                     ~(TaskCreationOptions.AttachedToParent |
                       TaskCreationOptions.LongRunning |
 #if !FEATURE_CORECLR ||  FEATURE_NETCORE
- TaskCreationOptions.DenyChildAttach |
+                      TaskCreationOptions.DenyChildAttach |
                       TaskCreationOptions.HideScheduler |
 #endif
- TaskCreationOptions.PreferFairness)) != 0)
+                      TaskCreationOptions.PreferFairness)) != 0)
             {
                 throw new ArgumentOutOfRangeException("creationOptions");
             }
@@ -644,9 +644,9 @@ namespace System.Threading.Tasks
             if (m_parent != null
                 && ((creationOptions & TaskCreationOptions.AttachedToParent) != 0)
 #if !FEATURE_CORECLR ||  FEATURE_NETCORE
- && ((m_parent.CreationOptions & TaskCreationOptions.DenyChildAttach) == 0)
+                && ((m_parent.CreationOptions & TaskCreationOptions.DenyChildAttach) == 0)
 #endif
-)
+            )
             {
                 m_parent.AddNewChild();
             }
@@ -681,13 +681,13 @@ namespace System.Threading.Tasks
                 // If an unstarted task has a valid CancellationToken that gets signalled while the task is still not queued
                 // we need to proactively cancel it, because it may never execute to transition itself. 
                 // The only way to accomplish this is to register a callback on the CT.
-                // We exclude Promise tasks from this, because TaskCompletionSource needs to fully control the inner tasks's lifetime (i.e. not allow external cancellations)                
+                // We exclude Promise tasks from this, because TaskCompletionSource needs to fully control the inner tasks's lifetime (i.e. not allow external cancellations)
                 if ((((InternalTaskOptions)Options &
                     (InternalTaskOptions.QueuedByRuntime | InternalTaskOptions.PromiseTask
 #if !FEATURE_CORECLR ||  FEATURE_NETCORE
- | InternalTaskOptions.LazyCancellation
+                    | InternalTaskOptions.LazyCancellation
 #endif
-)) == 0))
+                    )) == 0))
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -720,12 +720,12 @@ namespace System.Threading.Tasks
             {
                 // If we have an exception related to our CancellationToken, then we need to subtract ourselves
                 // from our parent before throwing it.
-                if ((m_parent != null) &&
-                    ((Options & TaskCreationOptions.AttachedToParent) != 0)
+                if ((m_parent != null) 
+                    && ((Options & TaskCreationOptions.AttachedToParent) != 0)
 #if !FEATURE_CORECLR ||  FEATURE_NETCORE
- && ((m_parent.Options & TaskCreationOptions.DenyChildAttach) == 0)
+                    && ((m_parent.Options & TaskCreationOptions.DenyChildAttach) == 0)
 #endif
-)
+                )
                 {
                     m_parent.DisregardChild();
                 }
@@ -6682,8 +6682,6 @@ namespace System.Threading.Tasks
 #endif
             return tasks;
         }
-
-
     }
 
     // Proxy class for better debugging experience
