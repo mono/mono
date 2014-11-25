@@ -47,11 +47,11 @@ namespace System.Diagnostics
 	public sealed class ProcessStartInfo 
 	{
 		/* keep these fields in this order and in sync with metadata/process.h */
-		private string arguments = "";
+		private string arguments;
 		private IntPtr error_dialog_parent_handle = (IntPtr)0;
-		private string filename = "";
-		private string verb = "";
-		private string working_directory = "";
+		private string filename;
+		private string verb;
+		private string working_directory;
 		private ProcessStringDictionary envVars;
 		private bool create_no_window = false;
 		private bool error_dialog = false;
@@ -87,7 +87,7 @@ namespace System.Diagnostics
 		[NotifyParentPropertyAttribute (true)]
 		public string Arguments {
 			get {
-				return(arguments);
+				return arguments ?? string.Empty;
 			}
 			set {
 				arguments = value;
@@ -155,7 +155,7 @@ namespace System.Diagnostics
 		[NotifyParentPropertyAttribute (true)]
 		public string FileName {
 			get {
-				return(filename);
+				return filename ?? string.Empty;
 			}
 			set {
 				filename = value;
@@ -187,7 +187,7 @@ namespace System.Diagnostics
 		}
 		
 		[DefaultValue (false)]
-		[MonitoringDescription ("Standart output of this process is redirected.")]
+		[MonitoringDescription ("Standard output of this process is redirected.")]
 		[NotifyParentPropertyAttribute (true)]
 		public bool RedirectStandardOutput {
 			get {
@@ -226,7 +226,7 @@ namespace System.Diagnostics
 		[NotifyParentPropertyAttribute (true)]
 		public string Verb {
 			get {
-				return(verb);
+				return verb ?? string.Empty;
 			}
 			set {
 				verb = value;
@@ -292,10 +292,10 @@ namespace System.Diagnostics
 		[NotifyParentPropertyAttribute (true)]
 		public string WorkingDirectory {
 			get {
-				return(working_directory);
+				return working_directory ?? string.Empty;
 			}
 			set {
-				working_directory = value == null ? String.Empty : value;
+				working_directory = value;
 			}
 		}
 
@@ -307,13 +307,13 @@ namespace System.Diagnostics
 
 		[NotifyParentPropertyAttribute (true)]
 		public string UserName {
-			get { return username; }
+			get { return username ?? string.Empty; }
 			set { username = value; }
 		}
 
 		[NotifyParentPropertyAttribute (true)]
 		public string Domain {
-			get { return domain; }
+			get { return domain ?? string.Empty; }
 			set { domain = value; }
 		}
 
