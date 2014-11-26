@@ -268,9 +268,9 @@ namespace System.Windows.Forms
 
 				row.SetDataGridView (null);
 				list.Remove (row);
-				ReIndex ();
 			}
 
+			ReIndex ();
 			DataGridView.OnRowsPostRemovedInternal (new DataGridViewRowsRemovedEventArgs (0, total));
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 		}
