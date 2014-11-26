@@ -1192,7 +1192,7 @@ namespace System.Text.RegularExpressions {
 
 
         
-#if !SILVERLIGHT || FULL_AOT_RUNTIME
+#if !(SILVERLIGHT || FULL_AOT_RUNTIME)
         /// <devdoc>
         /// </devdoc>
 #if !DISABLE_CAS_USE
