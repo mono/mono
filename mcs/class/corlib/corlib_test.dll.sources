@@ -177,6 +177,7 @@ System.Runtime.CompilerServices/ConditionalWeakTableTest.cs
 System.Runtime.CompilerServices/InternalsVisibleToAttributeTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
 System.Runtime.CompilerServices/RuntimeWrappedExceptionTest.cs
+System.Runtime.CompilerServices/AsyncTaskMethodBuilderTest.cs
 System.Runtime.CompilerServices/AsyncVoidMethodBuilderTest.cs
 System.Runtime.CompilerServices/TaskAwaiterTest.cs
 System.Runtime.CompilerServices/TaskAwaiterTest_T.cs

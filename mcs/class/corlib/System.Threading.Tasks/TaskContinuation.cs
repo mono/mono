@@ -27,8 +27,6 @@
 //
 //
 
-#if NET_4_0
-
 using System.Collections.Generic;
 
 namespace System.Threading.Tasks
@@ -113,10 +111,16 @@ namespace System.Threading.Tasks
 	class AwaiterActionContinuation : IContinuation
 	{
 		readonly Action action;
+		readonly ExecutionContext ec;
 
 		public AwaiterActionContinuation (Action action)
 		{
 			this.action = action;
+
+			// Capture execution context because the continuation can be inlined
+			// and we still need to run in original exection context regardless
+			// of UnsafeOnCompleted/OnCompleted entry
+			ec = ExecutionContext.Capture (false, true);			
 		}
 
 		public void Execute ()
@@ -126,7 +130,10 @@ namespace System.Threading.Tasks
 			// because the context where the awaiter task is set to completed can be anywhere (due to TaskCompletionSource)
 			//
 			if ((SynchronizationContext.Current == null || SynchronizationContext.Current.GetType () == typeof (SynchronizationContext)) && TaskScheduler.IsDefault) {
-				action ();
+				if (ec != null)
+					ExecutionContext.Run (ec, l => ((Action)l) (), action);
+				else
+					action ();
 			} else {
 				ThreadPool.UnsafeQueueUserWorkItem (l => ((Action) l) (), action);
 			}
@@ -388,5 +395,3 @@ namespace System.Threading.Tasks
 		}
 	}
 }
-
-#endif

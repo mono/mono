@@ -1,12 +1,10 @@
-// 
-// System.Threading.ExecutionContextSwitcher.cs
 //
-// Author:
-//   Lluis Sanchez (lluis@novell.com)
+// AsyncTaskMethodBuilderTest.cs
 //
-// Copyright (C) Novell, Inc., 2004
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
 //
-
+// Copyright (C) 2014 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -15,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,51 +26,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_4_5
 
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using NUnit.Framework;
+using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 
-namespace System.Threading 
+namespace MonoTests.System.Runtime.CompilerServices
 {
-	[ComVisible (false)]
-	public struct ExecutionContextSwitcher : IDisposable
+	[TestFixture]
+	public class AsyncTaskMethodBuilderTest
 	{
-		[MonoTODO]
-		public override bool Equals (object ob)
+		[Test]
+		public void CallContextFlow ()
 		{
-			throw new NotImplementedException ();
+			CallContext.LogicalSetData ("name0", "0");
+
+			Task.WhenAll (Work ("A"), Work ("B")).Wait ();
+			Assert.IsNull (CallContext.LogicalGetData ("A"), "#A");
+			Assert.IsNull (CallContext.LogicalGetData ("B"), "#B");
 		}
-		
-		[MonoTODO]
-		public override int GetHashCode ()
+
+		static async Task Work (string name)
 		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static bool operator == (ExecutionContextSwitcher c1, ExecutionContextSwitcher c2)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static bool operator != (ExecutionContextSwitcher c1, ExecutionContextSwitcher c2)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public void Undo ()
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		void IDisposable.Dispose()
-		{
-			throw new NotImplementedException ();
+			Assert.AreEqual ("0", CallContext.LogicalGetData ("name0"), "#1" + name);
+			CallContext.LogicalSetData ("name", name);
+
+			await Task.Delay (10);
+
+			var found = CallContext.LogicalGetData ("name");
+			Assert.AreEqual (name, found, "#2" + name);
 		}
 	}
 }
 
+#endif
