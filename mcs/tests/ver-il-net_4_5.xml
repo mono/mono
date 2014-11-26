@@ -29335,6 +29335,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-named-06.cs">
+    <type name="X">
+      <method name="Int32 T1(Int32)" attrs="150">
+        <size>21</size>
+      </method>
+      <method name="Int32 T1_Foo(Int32)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-optional-01.cs">
     <type name="C">
       <method name="Void TestA(Int32)" attrs="150">
@@ -65763,7 +65779,7 @@
   <test name="test-decl-expr-01.cs">
     <type name="DeclarationExpression">
       <method name="Int32 Main()" attrs="150">
-        <size>252</size>
+        <size>223</size>
       </method>
       <method name="Boolean Out(Int32 ByRef)" attrs="145">
         <size>13</size>
