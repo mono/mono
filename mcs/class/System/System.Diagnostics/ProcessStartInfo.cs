@@ -238,21 +238,20 @@ namespace System.Diagnostics
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
 		public string[] Verbs {
 			get {
-				string ext = filename == null | filename.Length == 0 ? 
-					null : Path.GetExtension (filename);
-				if (ext == null)
-					return empty;
-
 #if MOBILE
 				return empty;
 #else
-
 				switch (Environment.OSVersion.Platform) {
 				case (PlatformID)4:
 				case (PlatformID)6:
 				case (PlatformID)128:
 					return empty; // no verb on non-Windows
 				default:
+					string ext = filename == null | filename.Length == 0 ?
+						null : Path.GetExtension (filename);
+					if (ext == null)
+						return empty;
+
 					RegistryKey rk = null, rk2 = null, rk3 = null;
 					try {
 						rk = Registry.ClassesRoot.OpenSubKey (ext);
