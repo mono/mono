@@ -887,7 +887,7 @@ named_argument
 
 named_argument_expr
 	: expression_or_error
-	| declaration_expression
+//	| declaration_expression
 	;
 	
 opt_named_modifier
