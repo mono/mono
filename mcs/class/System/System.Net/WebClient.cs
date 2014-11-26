@@ -315,10 +315,10 @@ namespace System.Net
 		{
 			WebRequest request = null;
 			
-			using (FileStream f = new FileStream (fileName, FileMode.Create)) {
-				try {
-					request = SetupRequest (address);
-					WebResponse response = GetWebResponse (request);
+			try {
+				request = SetupRequest (address);
+				WebResponse response = GetWebResponse (request);
+				using (FileStream f = new FileStream (fileName, FileMode.Create)) {
 					Stream st = response.GetResponseStream ();
 					
 					int cLength = (int) response.ContentLength;
@@ -337,11 +337,11 @@ namespace System.Net
 
 					if (cLength > 0 && notify_total < cLength)
 						throw new WebException ("Download aborted prematurely.", WebExceptionStatus.ReceiveFailure);
-				} catch (ThreadInterruptedException){
-					if (request != null)
-						request.Abort ();
-					throw;
 				}
+			} catch (ThreadInterruptedException){
+				if (request != null)
+					request.Abort ();
+				throw;
 			}
 		}
 
@@ -1713,8 +1713,8 @@ namespace System.Net
 		async Task DownloadFileTaskAsyncCore (WebRequest request, WebResponse response,
 		                                      string fileName, CancellationToken token)
 		{
+			Stream st = response.GetResponseStream ();
 			using (FileStream f = new FileStream (fileName, FileMode.Create)) {
-				Stream st = response.GetResponseStream ();
 					
 				int cLength = (int)response.ContentLength;
 				int length = (cLength <= -1 || cLength > 32 * 1024) ? 32 * 1024 : cLength;
