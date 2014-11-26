@@ -7,7 +7,6 @@ namespace System.ComponentModel.DataAnnotations {
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Web;
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
     public sealed class FileExtensionsAttribute : DataTypeAttribute {
