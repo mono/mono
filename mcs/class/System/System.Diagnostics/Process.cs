@@ -1133,7 +1133,7 @@ namespace System.Diagnostics {
 		// Note that ProcInfo.Password must be freed.
 		private static void FillUserInfo (ProcessStartInfo startInfo, ref ProcInfo proc_info)
 		{
-			if (startInfo.UserName != null) {
+			if (startInfo.UserName.Length != 0) {
 				proc_info.UserName = startInfo.UserName;
 				proc_info.Domain = startInfo.Domain;
 				if (startInfo.Password != null)
@@ -1147,7 +1147,7 @@ namespace System.Diagnostics {
 		private static bool Start_common (ProcessStartInfo startInfo,
 						  Process process)
 		{
-			if (startInfo.FileName == null || startInfo.FileName.Length == 0)
+			if (startInfo.FileName.Length == 0)
 				throw new InvalidOperationException("File name has not been set");
 			
 			if (startInfo.StandardErrorEncoding != null && !startInfo.RedirectStandardError)
@@ -1156,7 +1156,7 @@ namespace System.Diagnostics {
 				throw new InvalidOperationException ("StandardOutputEncoding is only supported when standard output is redirected");
 			
 			if (startInfo.UseShellExecute) {
-				if (!String.IsNullOrEmpty (startInfo.UserName))
+				if (startInfo.UserName.Length != 0)
 					throw new InvalidOperationException ("UseShellExecute must be false if an explicit UserName is specified when starting a process");
 				return (Start_shell (startInfo, process));
 			} else {
