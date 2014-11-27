@@ -261,7 +261,8 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < total; i++) {
 				DataGridViewRow row = (DataGridViewRow)list[0];
-				
+				row.SetIndex(0);
+
 				// We can exit because the NewRow is always last
 				if (row.IsNewRow)
 					break;
@@ -270,7 +271,6 @@ namespace System.Windows.Forms
 				list.Remove (row);
 			}
 
-			ReIndex ();
 			DataGridView.OnRowsPostRemovedInternal (new DataGridViewRowsRemovedEventArgs (0, total));
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 		}
