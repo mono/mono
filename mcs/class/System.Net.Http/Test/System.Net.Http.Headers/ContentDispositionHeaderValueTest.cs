@@ -237,8 +237,11 @@ namespace MonoTests.System.Net.Http.Headers
 			value.FileNameStar = "č";
 			Assert.AreEqual ("č", value.FileNameStar, "#11");
 			Assert.AreEqual (new NameValueHeaderValue ("filename*", "utf-8''%C4%8D"), value.Parameters.First (), "#12");
-		}
 
+			value.FileNameStar = "@x*\\%?.txt";
+			Assert.AreEqual ("@x*\\%?.txt", value.FileNameStar, "#21");
+			Assert.AreEqual (new NameValueHeaderValue ("filename*", "utf-8''%40x%2A%5C%25%3F.txt"), value.Parameters.First (), "#22");
+		}
 
 		[Test]
 		public void Properties_Name ()

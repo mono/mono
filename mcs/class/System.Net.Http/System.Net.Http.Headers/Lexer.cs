@@ -193,11 +193,16 @@ namespace System.Net.Http.Headers
 			//
 			for (; i < input.Length; ++i) {
 				char s = input[i];
-				if (s > last_token_char || !token_chars[s])
+				if (!IsValidCharacter (s))
 					return false;
 			}
 
 			return i > 0;
+		}
+
+		public static bool IsValidCharacter (char input)
+		{
+			return input <= last_token_char && token_chars[input];
 		}
 
 		public void EatChar ()
