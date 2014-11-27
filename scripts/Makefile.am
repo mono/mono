@@ -264,7 +264,7 @@ $(scripts_defaults): $(SCRIPT_IN) Makefile
 
 $(scripts_2_0): $(SCRIPT_IN) Makefile
 	n=`echo $@ | sed 's,$(COMPAT_2_0_SUFFIX)$$,,'`; \
-	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE4) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv -f $@.tmp $@
 
 $(scripts_4_0): $(SCRIPT_IN) Makefile
