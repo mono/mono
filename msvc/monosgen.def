@@ -172,8 +172,6 @@ mono_counters_cleanup
 mono_counters_dump
 mono_counters_enable
 mono_counters_foreach
-mono_counters_init
-mono_counters_on_register
 mono_counters_register
 mono_counters_register_with_size
 mono_counters_sample
@@ -670,7 +668,6 @@ mono_parse_default_optimizations
 mono_path_canonicalize
 mono_path_resolve_symlinks
 mono_pe_file_open
-mono_perfcounter_foreach
 mono_perfcounters_init
 mono_pmip
 mono_poll
