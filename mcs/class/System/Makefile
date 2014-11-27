@@ -56,7 +56,6 @@ LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/S
 endif
 
 EXTRA_DISTFILES = \
-	System.Text.RegularExpressions/notes.txt	\
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file				\
 	Test/test-config-file-net-2.0			\
