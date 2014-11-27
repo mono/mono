@@ -54,7 +54,7 @@ namespace Microsoft.Build.Tasks {
 			Hashtable targets_table = new Hashtable ();
 
 			if (!RunEachTargetSeparately) {
-				bool ret = BuildEngine.BuildProjectFile (BuildEngine.ProjectFileOfTaskNode,
+				bool ret = BuildEngine.BuildProjectFile (null,
 						targets, null, targets_table);
 				foreach (ITaskItem[] items in targets_table.Values) {
 					if (items != null)
