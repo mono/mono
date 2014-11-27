@@ -996,6 +996,10 @@ namespace System.Runtime.Serialization
 				string s = null;
 				foreach (EnumMemberInfo emi in enum_members) {
 					long f = Convert.ToInt64 (emi.Value);
+					if (f == val) {
+						s = emi.XmlName;
+						break;
+					}
 					if ((f & val) == f)
 						s += (s != null ? " " : String.Empty) + emi.XmlName;
 				}
