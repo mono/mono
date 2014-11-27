@@ -448,7 +448,7 @@ namespace System.Threading.Tasks
 			return ForEach<TSource, object> (Partitioner.Create (source),
 			                                 ParallelOptions.Default,
 			                                 () => null,
-			                                 (e, s, l) => { body (e, s, -1); return null; },
+			                                 (e, s, i, l) => { body (e, s, i); return null; },
 			                                 _ => {});
 		}
 
