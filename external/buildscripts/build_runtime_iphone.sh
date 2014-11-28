@@ -17,7 +17,7 @@ SIMULATOR_ASPEN_SDK=$SIMULATOR_ASPEN_ROOT/SDKs/iPhoneSimulator${SDK_VERSION}.sdk
 
 ORIG_PATH=$PATH
 PRFX=$PWD/tmp 
-
+MAKE_JOBS=4
 
 
 if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
@@ -28,6 +28,9 @@ if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
 	elif test -e /usr/local/bin/glibtool; then
 		LIBTOOL=/usr/local/bin/glibtool
 	fi
+	MAKE_JOBS=""
+else
+	MAKE_JOBS="-j$MAKE_JOBS"
 fi
 
 setenv () {
@@ -88,7 +91,7 @@ build_arm_mono ()
 		#perl -pi -e 's/#define HAVE_MMAP 1//' config.h
 		perl -pi -e 's/#define HAVE_CURSES_H 1//' config.h
 		perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
-		make
+		make $MAKE_JOBS
 	else
 		echo "Skipping autogen.sh for incremental build"
 	fi
@@ -137,7 +140,7 @@ build_iphone_crosscompiler ()
 		echo "Skipping autogen.sh for incremental build"
 	fi
 
-	make || exit 1
+	make $MAKE_JOBS || exit 1
 	mkdir -p builds/crosscompiler/iphone
 	cp mono/mini/mono builds/crosscompiler/iphone/mono-xcompiler
 	unsetenv
@@ -155,12 +158,8 @@ build_iphone_simulator ()
 	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
 	export LIBTOOLIZE=`which glibtoolize`
 
-	if [ ${UNITY_THISISABUILDMACHINE:+1} ]
-	then
-		jobs=""
+	if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
 		export PATH="/usr/local/bin:$PATH"
-	else
-		jobs="-j$jobs"
 	fi
 	arch="i386"
 	macversion="10.6"
@@ -204,7 +203,7 @@ build_iphone_simulator ()
 
 	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
 
-	make $jobs || { echo "failing running make for mono"; exit 1; }
+	make $MAKE_JOBS || { echo "failing running make for mono"; exit 1; }
 
 	echo "Copying iPhone simulator static lib to final destination";
 	mkdir -p builds/embedruntimes/iphone
