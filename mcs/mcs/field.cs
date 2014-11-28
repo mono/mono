@@ -425,7 +425,7 @@ namespace Mono.CSharp
 			}
 			
 			// Create nested fixed buffer container
-			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
+			string name = String.Format ("<{0}>__FixedBuffer{1}", TypeDefinition.FilterNestedName (Name), GlobalCounter++);
 			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name,
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
 				Compiler.BuiltinTypes.ValueType.GetMetaInfo ());

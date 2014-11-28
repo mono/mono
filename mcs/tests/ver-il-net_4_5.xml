@@ -10959,15 +10959,23 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Qux`2+GetEnumerator&gt;c__Iterator0[X,V]">
+    <type name="Qux`2[X,V]">
+      <method name="System.Collections.Generic.IEnumerator`1[V] GetEnumerator()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="Qux`2+&lt;System_Collections_IEnumerable_GetEnumerator&gt;c__Iterator0[X,V]">
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>26</size>
+      </method>
       <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()" attrs="2529">
         <size>14</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
         <size>14</size>
-      </method>
-      <method name="Boolean MoveNext()" attrs="486">
-        <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
         <size>1</size>
@@ -10977,14 +10985,6 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-    </type>
-    <type name="Qux`2[X,V]">
-      <method name="System.Collections.Generic.IEnumerator`1[V] GetEnumerator()" attrs="486">
-        <size>15</size>
-      </method>
-      <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
-        <size>15</size>
       </method>
     </type>
   </test>
@@ -11736,15 +11736,23 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Test+GetEnumerator&gt;c__Iterator0">
+    <type name="Test">
+      <method name="System.Collections.Generic.IEnumerator`1[System.Int32] System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>15</size>
+      </method>
+      <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;System_Collections_Generic_IEnumerable&lt;int&gt;_GetEnumerator&gt;c__Iterator0">
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>26</size>
+      </method>
       <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
         <size>14</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
         <size>19</size>
-      </method>
-      <method name="Boolean MoveNext()" attrs="486">
-        <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
         <size>1</size>
@@ -11753,14 +11761,6 @@
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="System.Collections.Generic.IEnumerator`1[System.Int32] System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
-        <size>15</size>
-      </method>
-      <method name="System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
         <size>7</size>
       </method>
     </type>
@@ -62090,11 +62090,6 @@
         <size>285</size>
       </method>
     </type>
-    <type name="A+async&gt;c__async0">
-      <method name="Void MoveNext()" attrs="486">
-        <size>61</size>
-      </method>
-    </type>
     <type name="D">
       <method name="System.Threading.Tasks.Task M()" attrs="129">
         <size>33</size>
@@ -62142,11 +62137,6 @@
         <size>13</size>
       </method>
     </type>
-    <type name="A+async&gt;c__async0">
-      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
     <type name="D+&lt;M&gt;c__async0">
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -62177,6 +62167,14 @@
       </method>
       <method name="Void &lt;M1&gt;m__2(Int32)" attrs="145">
         <size>2</size>
+      </method>
+    </type>
+    <type name="A+&lt;Iasync_async&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>61</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
       </method>
     </type>
   </test>
@@ -64207,6 +64205,35 @@
     <type name="CorrectEncodingOfNestedTypes+&lt;GetAsync&gt;c__async0`1+&lt;GetAsync&gt;c__AnonStorey5+&lt;GetAsync&gt;c__async4[T]">
       <method name="Void MoveNext()" attrs="486">
         <size>190</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-76.cs">
+    <type name="N.C">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.X">
+      <method name="Void N.I&lt;N.C&gt;.Foo(N.C)" attrs="481">
+        <size>27</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>99</size>
+      </method>
+      <method name="Void PrintType(Mono.Cecil.TypeDefinition, Int32)" attrs="145">
+        <size>138</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.X+&lt;N_I&lt;N_C&gt;_Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>157</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
