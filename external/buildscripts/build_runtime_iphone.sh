@@ -154,9 +154,71 @@ build_iphone_simulator ()
 	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc -arch i386"
 	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
 	export LIBTOOLIZE=`which glibtoolize`
-	perl ${BUILDSCRIPTSDIR}/build_runtime_osx.pl -iphone_simulator=1 || exit 1
+
+	if [ ${UNITY_THISISABUILDMACHINE:+1} ]
+	then
+		jobs=""
+		export PATH="/usr/local/bin:$PATH"
+	else
+		jobs="-j$jobs"
+	fi
+	arch="i386"
+	macversion="10.6"
+	sdkversion="10.6"
+	export CFLAGS="-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0"
+
+	bintarget="builds/monodistribution/bin-$arch"
+	libtarget="builds/embedruntimes/osx-$arch"
+	echo "libtarget: $libtarget"
+
+	rm "$bintarget/mono"
+	rm "$libtarget/libmono.0.dylib"
+	rm "$libtarget/libMonoPosixHelper.dylib"
+	rm -rf "$libtarget/libmono.0.dylib.dSYM"
+
+
+	make distclean
+
+	#were going to tell autogen to use a specific cache file, that we purposely remove before starting.
+	#that way, autogen is forced to do all its config stuff again, which should make this buildscript
+	#more robust if other targetplatforms have been built from this same workincopy
+	rm osx.cache
+
+	pushd eglib
+	make distclean
+	autoreconf -i
+	popd
+
+	autoreconf -i
+
+	autogenparams="--cache-file=osx.cache"
+	autogenparams="$autogenparams --disable-mcs-build"
+	autogenparams="$autogenparams --with-glib=embedded"
+	autogenparams="$autogenparams --disable-nls"  #this removes the dependency on gettext package
+
+	# From Massi: I was getting failures in install_name_tool about space
+	# for the commands being too small, and adding here things like
+	# $ENV{LDFLAGS} = '-headerpad_max_install_names' and
+	# $ENV{LDFLAGS} = '-headerpad=0x40000' did not help at all (and also
+	# adding them to our final gcc invocation to make the bundle).
+	# Lucas noticed that I was lacking a Mono prefix, and having a long
+	# one would give us space, so here is this silly looong prefix.
+	autogenparams="$autogenparams --prefix=/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting"
+
+	echo -e "\n\n\n\nCalling configure with these parameters: "
+	echo "$autogenparams"
+	echo -e "\n\n\n\n\n"
+	echo -e "calling ./configure $autogenparams"
+	./configure $autogenparams || { echo "failing configuring mono"; exit 1; }
+	make clean || echo "failed make cleaning"
+
+	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
+
+	make $jobs || { echo "failing running make for mono"; exit 1; }
+
 	echo "Copying iPhone simulator static lib to final destination";
 	mkdir -p builds/embedruntimes/iphone
+
 	cp mono/mini/.libs/libmono.a builds/embedruntimes/iphone/libmono-i386.a
 	unsetenv
 }
