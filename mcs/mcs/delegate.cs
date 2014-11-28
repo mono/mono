@@ -649,8 +649,8 @@ namespace Mono.CSharp {
 			var invoke = Delegate.GetInvokeMethod (target_type);
 
 			Arguments arguments = CreateDelegateMethodArguments (ec, invoke.Parameters, invoke.Parameters.Types, mg.Location);
-			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.CovariantDelegate | OverloadResolver.Restrictions.ProbingOnly) != null &&
-				Delegate.IsTypeCovariant (ec, mg.BestCandidateReturnType, invoke.ReturnType);
+			mg = mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.CovariantDelegate | OverloadResolver.Restrictions.ProbingOnly);
+			return mg != null && Delegate.IsTypeCovariant (ec, mg.BestCandidateReturnType, invoke.ReturnType);
 		}
 
 		#region IErrorHandler Members
