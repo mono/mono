@@ -6212,9 +6212,11 @@ namespace Mono.CSharp
 				} else if ((conv = Convert.ImplicitConversion (ec, false_expr, true_type, loc)) != null) {
 					false_expr = conv;
 				} else {
-					ec.Report.Error (173, true_expr.Location,
-						"Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
-						true_type.GetSignatureForError (), false_type.GetSignatureForError ());
+					if (false_type != InternalType.ErrorType) {
+						ec.Report.Error (173, true_expr.Location,
+							"Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
+							true_type.GetSignatureForError (), false_type.GetSignatureForError ());
+					}
 					return null;
 				}
 			}
