@@ -157,24 +157,11 @@ build_iphone_simulator ()
 	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc -arch i386"
 	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
 	export LIBTOOLIZE=`which glibtoolize`
+	export CFLAGS="-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0"
 
 	if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
 		export PATH="/usr/local/bin:$PATH"
 	fi
-	arch="i386"
-	macversion="10.6"
-	sdkversion="10.6"
-	export CFLAGS="-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0"
-
-	bintarget="builds/monodistribution/bin-$arch"
-	libtarget="builds/embedruntimes/osx-$arch"
-	echo "libtarget: $libtarget"
-
-	rm "$bintarget/mono"
-	rm "$libtarget/libmono.0.dylib"
-	rm "$libtarget/libMonoPosixHelper.dylib"
-	rm -rf "$libtarget/libmono.0.dylib.dSYM"
-
 
 	make distclean
 
