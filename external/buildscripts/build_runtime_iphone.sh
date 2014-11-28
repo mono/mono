@@ -147,8 +147,10 @@ build_iphone_crosscompiler ()
 build_iphone_simulator ()
 {
 	echo "Building iPhone simulator static lib";
+	export CFLAGS="-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0";
+	export CPPFLAGS="$CFLAGS"
 	export MACSYSROOT="-isysroot $SIMULATOR_ASPEN_SDK"
-	export MACSDKOPTIONS="-miphoneos-version-min=3.0 $MACSYSROOT"
+	export MACSDKOPTIONS="-mios-simulator-version-min=4.3 $MACSYSROOT $CFLAGS"
 	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc -arch i386"
 	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
 	export LIBTOOLIZE=`which glibtoolize`
