@@ -19481,6 +19481,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-626.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="145">
+        <size>37</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+Foo">
+      <method name="Boolean MG(Foo)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+Bar`1[T]">
+      <method name="Bar`1 Create(System.Func`2[T,System.Boolean])" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Bar`1 Create(System.Func`2[T,System.Double], System.Func`2[T,System.Boolean])" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
