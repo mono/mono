@@ -1298,7 +1298,7 @@ namespace Mono.CSharp
 				CreateMetadataName (sb);
 				TypeBuilder = Module.CreateBuilder (sb.ToString (), TypeAttr, type_size);
 			} else {
-				TypeBuilder = parent_def.TypeBuilder.DefineNestedType (MemberName.Basename, TypeAttr, null, type_size);
+				TypeBuilder = parent_def.TypeBuilder.DefineNestedType (FilterNestedName (MemberName.Basename), TypeAttr, null, type_size);
 			}
 
 			if (DeclaringAssembly.Importer != null)
@@ -1326,6 +1326,18 @@ namespace Mono.CSharp
 			}
 
 			return true;
+		}
+
+		public static string FilterNestedName (string name)
+		{
+			//
+			// SRE API does not handle namespaces and types separately but
+			// determine that from '.' in name. That's problematic because 
+			// dot is valid character for type name. By replacing any '.'
+			// in name we avoid any ambiguities and never emit metadata
+			// namespace for nested types
+			//
+			return name.Replace ('.', '_');
 		}
 
 		string[] CreateTypeParameters (TypeParameters parentAllTypeParameters)
