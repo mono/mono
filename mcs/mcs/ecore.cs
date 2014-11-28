@@ -4618,8 +4618,17 @@ namespace Mono.CSharp {
 			//
 			// Tie-breaking rules are applied only for equivalent parameter types
 			//
-			if (!are_equivalent)
+			if (!are_equivalent) {
+				//
+				// LAMESPEC: A candidate with less default parameters is still better when there
+				// is no better expression conversion
+				//
+				if (candidate_pd.Count < best_pd.Count && !candidate_params && best_pd.FixedParameters [j].HasDefaultValue) {
+					return true;
+				}
+
 				return false;
+			}
 
 			//
 			// If candidate is applicable in its normal form and best has a params array and is applicable

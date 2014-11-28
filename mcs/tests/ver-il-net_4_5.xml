@@ -19503,7 +19503,26 @@
         <size>10</size>
       </method>
       <method name="Bar`1 Create(System.Func`2[T,System.Double], System.Func`2[T,System.Boolean])" attrs="150">
-        <size>10</size>
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-627.cs">
+    <type name="X">
+      <method name="U Foo[U](System.Nullable`1[System.Double], System.Func`2[System.Nullable`1[System.Double],U], Int32)" attrs="150">
+        <size>7</size>
+      </method>
+      <method name="U Foo[T,U](System.Nullable`1[T], System.Func`2[T,U])" attrs="150">
+        <size>18</size>
+      </method>
+      <method name="Void Main(System.String[])" attrs="145">
+        <size>46</size>
+      </method>
+      <method name="Double &lt;Main&gt;m__0(Double)" attrs="145">
+        <size>19</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

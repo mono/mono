@@ -19,7 +19,7 @@ class Program
 
 		public static Bar<T> Create (Func<T, double> a, Func<T, bool> b = null)
 		{
-			return null;
+			throw new ApplicationException ();
 		}
 	}
 
