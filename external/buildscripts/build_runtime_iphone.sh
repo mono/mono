@@ -189,13 +189,6 @@ build_iphone_simulator ()
 	autoreconf -i
 	popd
 
-	autoreconf -i
-
-	autogenparams="--cache-file=osx.cache"
-	autogenparams="$autogenparams --disable-mcs-build"
-	autogenparams="$autogenparams --with-glib=embedded"
-	autogenparams="$autogenparams --disable-nls"  #this removes the dependency on gettext package
-
 	# From Massi: I was getting failures in install_name_tool about space
 	# for the commands being too small, and adding here things like
 	# $ENV{LDFLAGS} = '-headerpad_max_install_names' and
@@ -203,13 +196,10 @@ build_iphone_simulator ()
 	# adding them to our final gcc invocation to make the bundle).
 	# Lucas noticed that I was lacking a Mono prefix, and having a long
 	# one would give us space, so here is this silly looong prefix.
-	autogenparams="$autogenparams --prefix=/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting"
+	LONG_PREFIX="/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting"
 
-	echo -e "\n\n\n\nCalling configure with these parameters: "
-	echo "$autogenparams"
-	echo -e "\n\n\n\n\n"
-	echo -e "calling ./configure $autogenparams"
-	./configure $autogenparams || { echo "failing configuring mono"; exit 1; }
+	./autogen.sh --cache-file=osx.cache --disable-mcs-build --with-glib=embedded --disable-nls \
+		--prefix=$LONG_PREFIX || { echo "failing configuring mono"; exit 1; }
 	make clean || echo "failed make cleaning"
 
 	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
