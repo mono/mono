@@ -517,12 +517,12 @@ namespace System.Numerics {
 
             bool decimalFmt = (fmt == 'g' || fmt == 'G' || fmt == 'd' || fmt == 'D' || fmt == 'r' || fmt == 'R');           
 
-#if SILVERLIGHT ||FEATURE_NETCORE
+#if SILVERLIGHT ||FEATURE_NETCORE || MONO
             if (!decimalFmt) {
                 // Silverlight supports invariant formats only
                 throw new FormatException(SR.GetString(SR.Format_InvalidFormatSpecifier));
             }
-#endif //SILVERLIGHT ||FEATURE_NETCORE
+#endif //SILVERLIGHT ||FEATURE_NETCORE || MONO
 
             if (value._bits == null) {
                 if (fmt == 'g' || fmt == 'G' || fmt == 'r' || fmt == 'R') {

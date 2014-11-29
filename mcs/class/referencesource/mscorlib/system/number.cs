@@ -768,9 +768,11 @@ namespace System {
             Boolean parsingCurrency = false; 
             if ((options & NumberStyles.AllowCurrencySymbol) != 0) {
                 currSymbol = numfmt.CurrencySymbol;
+#if !MONO
                 if (numfmt.ansiCurrencySymbol != null) {
                     ansicurrSymbol = numfmt.ansiCurrencySymbol;
                 }
+#endif
                 // The idea here is to match the currency separators and on failure match the number separators to keep the perf of VB's IsNumeric fast.
                 // The values of decSep are setup to use the correct relevant separator (currency in the if part and decimal in the else part).
                 altdecSep = numfmt.NumberDecimalSeparator;
@@ -797,13 +799,13 @@ namespace System {
             while (true) {
                 // Eat whitespace unless we've found a sign which isn't followed by a currency symbol.
                 // "-Kr 1231.47" is legal but "- 1231.47" is not.
-                if (IsWhite(ch) && ((options & NumberStyles.AllowLeadingWhite) != 0) && (((state & StateSign) == 0) || (((state & StateSign) != 0) && (((state & StateCurrency) != 0) || numfmt.numberNegativePattern == 2)))) {
+                if (IsWhite(ch) && ((options & NumberStyles.AllowLeadingWhite) != 0) && (((state & StateSign) == 0) || (((state & StateSign) != 0) && (((state & StateCurrency) != 0) || numfmt.NumberNegativePattern == 2)))) {
                     // Do nothing here. We will increase p at the end of the loop.
                 }
-                else if ((signflag = (((options & NumberStyles.AllowLeadingSign) != 0) && ((state & StateSign) == 0))) && ((next = MatchChars(p, numfmt.positiveSign)) != null)) {
+                else if ((signflag = (((options & NumberStyles.AllowLeadingSign) != 0) && ((state & StateSign) == 0))) && ((next = MatchChars(p, numfmt.PositiveSign)) != null)) {
                     state |= StateSign;
                     p = next - 1;
-                } else if (signflag && (next = MatchChars(p, numfmt.negativeSign)) != null) {
+                } else if (signflag && (next = MatchChars(p, numfmt.NegativeSign)) != null) {
                     state |= StateSign;
                     number.sign = true;
                     p = next - 1;
@@ -873,10 +875,10 @@ namespace System {
                 if ((ch == 'E' || ch == 'e') && ((options & NumberStyles.AllowExponent) != 0)) {
                     char* temp = p;
                     ch = *++p;
-                    if ((next = MatchChars(p, numfmt.positiveSign)) != null) {
+                    if ((next = MatchChars(p, numfmt.PositiveSign)) != null) {
                         ch = *(p = next);
                     }
-                    else if ((next = MatchChars(p, numfmt.negativeSign)) != null) {
+                    else if ((next = MatchChars(p, numfmt.NegativeSign)) != null) {
                         ch = *(p = next);
                         negExp = true;
                     }
@@ -905,10 +907,10 @@ namespace System {
                 while (true) {
                     if (IsWhite(ch) && ((options & NumberStyles.AllowTrailingWhite) != 0)) {
                     }
-                    else if ((signflag = (((options & NumberStyles.AllowTrailingSign) != 0) && ((state & StateSign) == 0))) && (next = MatchChars(p, numfmt.positiveSign)) != null) {
+                    else if ((signflag = (((options & NumberStyles.AllowTrailingSign) != 0) && ((state & StateSign) == 0))) && (next = MatchChars(p, numfmt.PositiveSign)) != null) {
                         state |= StateSign;
                         p = next - 1;
-                    } else if (signflag && (next = MatchChars(p, numfmt.negativeSign)) != null) {
+                    } else if (signflag && (next = MatchChars(p, numfmt.NegativeSign)) != null) {
                         state |= StateSign;
                         number.sign = true;
                         p = next - 1;
