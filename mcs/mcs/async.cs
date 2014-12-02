@@ -145,7 +145,7 @@ namespace Mono.CSharp
 
 			public bool ProbingMode { get; set; }
 
-			protected override void Error_TypeDoesNotContainDefinition (ResolveContext rc, TypeSpec type, string name)
+			public override void Error_TypeDoesNotContainDefinition (ResolveContext rc, TypeSpec type, string name)
 			{
 				Error_OperatorCannotBeApplied (rc, type);
 			}

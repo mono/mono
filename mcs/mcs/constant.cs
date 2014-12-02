@@ -2158,63 +2158,26 @@ namespace Mono.CSharp {
 				if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_6)
 					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
 
-				if (sn.HasTypeArguments) {
-					// TODO: csc compatible but unhelpful error message
-					rc.Report.Error (1001, loc, "Identifier expected");
-					return true;
-				}
-
-				sn.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreArity | MemberLookupRestrictions.IgnoreAmbiguity);
+				sn.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity);
 				return true;
 			}
 
 			var ma = expr as MemberAccess;
 			if (ma != null) {
-				FullNamedExpression fne = ma.LeftExpression as ATypeNameExpression;
-				if (fne == null) {
-					var qam = ma as QualifiedAliasMember;
-					if (qam == null)
-						return false;
+				var res = ma.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity);
 
-					fne = qam.CreateExpressionFromAlias (rc);
-					if (fne == null)
-						return true;
-				}
-
-				Value = ma.Name;
+				if (res == null)
+					return false;
 
 				if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_6)
 					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
 
-				if (ma.HasTypeArguments) {
-					// TODO: csc compatible but unhelpful error message
-					rc.Report.Error (1001, loc, "Identifier expected");
-					return true;
-				}
-					
-				var left = fne.ResolveAsTypeOrNamespace (rc, true);
-				if (left == null)
-					return true;
-
-				var ns = left as NamespaceExpression;
-				if (ns != null) {
-					FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, ma.Name, 0, LookupMode.NameOf, loc);
-					if (retval == null)
-						ns.Error_NamespaceDoesNotExist (rc, ma.Name, 0);
-
+				var emg = res as ExtensionMethodGroupExpr;
+				if (emg != null && !emg.ResolveNameOf (rc, ma)) {
 					return true;
 				}
 
-				if (left.Type.IsGenericOrParentIsGeneric && left.Type.GetDefinition () != left.Type) {
-					rc.Report.Error (8071, loc, "Type arguments are not allowed in the nameof operator");
-				}
-
-				var mexpr = MemberLookup (rc, false, left.Type, ma.Name, 0, MemberLookupRestrictions.IgnoreArity | MemberLookupRestrictions.IgnoreAmbiguity, loc);
-				if (mexpr == null) {
-					ma.Error_IdentifierNotFound (rc, left.Type);
-					return true;
-				}
-
+				Value = ma.Name;
 				return true;
 			}
 

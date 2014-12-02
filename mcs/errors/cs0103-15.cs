@@ -1,4 +1,4 @@
-// CS1001: Identifier expected
+// CS0103: The name `List' does not exist in the current context
 // Line: 8
 
 class X

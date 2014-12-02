@@ -67881,6 +67881,29 @@
       </method>
     </type>
   </test>
+  <test name="test-nameof-05.cs">
+    <type name="A">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N1.X">
+      <method name="System.String Extension(A, Int64)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="System.String Extension(A, Int32)" attrs="150">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="N2.Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-null-operator-01.cs">
     <type name="S">
       <method name="Int32 get_Prop()" attrs="2182">

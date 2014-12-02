@@ -345,7 +345,7 @@ namespace Mono.CSharp {
 				exprType, name);
 		}
 
-		protected virtual void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
+		public virtual void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
 		{
 			Error_TypeDoesNotContainDefinition (ec, loc, type, name);
 		}
@@ -2527,7 +2527,7 @@ namespace Mono.CSharp {
 
 		#region Properties
 
-		protected int Arity {
+		public int Arity {
 			get {
 				return targs == null ? 0 : targs.Count;
 			}
@@ -3731,6 +3731,37 @@ namespace Mono.CSharp {
 				return null;
 
 			return candidates.Methods.Cast<MemberSpec> ().ToList ();
+		}
+
+		public static bool IsExtensionTypeCompatible (TypeSpec argType, TypeSpec extensionType)
+		{
+			//
+			// Indentity, implicit reference or boxing conversion must exist for the extension parameter
+			//
+			// LAMESPEC: or implicit type parameter conversion
+			//
+			return argType == extensionType ||
+				TypeSpecComparer.IsEqual (argType, extensionType) ||
+				Convert.ImplicitReferenceConversionExists (argType, extensionType, false) ||
+				Convert.ImplicitBoxingConversion (null, argType, extensionType) != null;
+		}
+
+		public bool ResolveNameOf (ResolveContext rc, MemberAccess ma)
+		{
+			ExtensionExpression = ExtensionExpression.Resolve (rc);
+			if (ExtensionExpression == null)
+				return false;
+
+			var argType = ExtensionExpression.Type;
+			foreach (MethodSpec candidate in Candidates) {
+				if (ExtensionMethodGroupExpr.IsExtensionTypeCompatible (argType, candidate.Parameters.ExtensionMethodType))
+					return true;
+			}
+
+			// TODO: Scan full hierarchy
+
+			ma.Error_TypeDoesNotContainDefinition (rc, argType, ma.Name);
+			return false;
 		}
 
 		public override MethodGroupExpr LookupExtensionMethod (ResolveContext rc)
@@ -5069,15 +5100,7 @@ namespace Mono.CSharp {
 				score = 1;
 				if (!params_expanded_form) {
 					if (a.IsExtensionType) {
-						//
-						// Indentity, implicit reference or boxing conversion must exist for the extension parameter
-						//
-						// LAMESPEC: or implicit type parameter conversion
-						//
-						var at = a.Type;
-						if (at == pt || TypeSpecComparer.IsEqual (at, pt) ||
-							Convert.ImplicitReferenceConversionExists (at, pt, false) ||
-							Convert.ImplicitBoxingConversion (null, at, pt) != null) {
+						if (ExtensionMethodGroupExpr.IsExtensionTypeCompatible (a.Type, pt)) {
 							score = 0;
 							continue;
 						}

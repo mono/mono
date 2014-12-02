@@ -1,4 +1,4 @@
-// CS0426: The nested type `WriteLINE' does not exist in the type `System.Console'
+// CS0117: `System.Console' does not contain a definition for `WriteLINE'
 // Line: 10
 
 using System;
