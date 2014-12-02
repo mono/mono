@@ -155,7 +155,9 @@ namespace System.Threading
             lockID = Interlocked.Increment(ref s_nextLockID);
         }
 
+#if NET_4_5
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static bool IsRWEntryEmpty(ReaderWriterCount rwc)
         {
             if (rwc.lockID == 0)
@@ -179,7 +181,9 @@ namespace System.Threading
         /// entry for this thread, but doesn't want to add one if an existing one
         /// could not be found.
         /// </summary>
+#if NET_4_5
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private ReaderWriterCount GetThreadRWCount(bool dontAllocate)
         {
 			ReaderWriterCount rwc = t_rwc;
@@ -1113,7 +1117,9 @@ namespace System.Threading
             return owners & READER_MASK;
         }
 
+#if NET_4_5
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private void EnterMyLock()
         {
             if (Interlocked.CompareExchange(ref myLock, 1, 0) != 0)
@@ -1146,7 +1152,11 @@ namespace System.Threading
         private void ExitMyLock()
         {
             Debug.Assert(myLock != 0, "Exiting spin lock that is not held");
+#if NET_4_5
             Volatile.Write(ref myLock, 0);
+#else
+            Thread.VolatileWrite(ref myLock, 0);
+#endif
         }
 
 #if DEBUG
