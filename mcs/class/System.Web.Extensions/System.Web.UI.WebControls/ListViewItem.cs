@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.ListView
+// System.Web.UI.WebControls.ListViewItem
 //
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
@@ -35,6 +35,9 @@ namespace System.Web.UI.WebControls
 {
 	[ToolboxItemAttribute (false)]
 	public class ListViewItem : Control, INamingContainer
+#if NET_4_0
+	, IDataItemContainer
+#endif
 	{
 		internal ListViewItem ()
 			: this (ListViewItemType.DataItem)
@@ -61,6 +64,23 @@ namespace System.Web.UI.WebControls
 			get;
 			private set;
 		}
+		
+#if NET_4_0
+		public virtual object DataItem {
+			get;
+			set;
+		}
+		
+		public virtual int DataItemIndex {
+			get;
+			protected set;
+		}
+		
+		public virtual int DisplayIndex {
+			get;
+			protected set;
+		}
+#endif
 	}
 }
 #endif
