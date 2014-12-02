@@ -36,8 +36,6 @@ System.Linq/SortSequenceContext.cs
 System.Linq/IQueryProvider.cs
 System.Collections.Generic/HashSet.cs
 System.Security.Cryptography/Aes.cs
-System.Threading/LockRecursionPolicy.cs
-System.Threading/ReaderWriterLockSlim.cs
 System.Threading/ThreadLockState.cs
 System.Threading/ReaderWriterLockSlimExtensions.cs
 System.Linq/EnumerableExecutor.cs
@@ -57,6 +55,10 @@ System.IO/HandleInheritability.cs
 System.Threading.Tasks/TaskExtensions.cs
 System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/ExpressionTransformer.cs
+ReferenceSources/SR.cs
+ReferenceSources/Set.cs
+../../build/common/SR.cs
+../../../external/referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/DynamicExpression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Compiler/Closure.cs
 System.Linq.Expressions/DynamicExpressionVisitor.cs
