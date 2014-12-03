@@ -116,7 +116,14 @@ namespace System
 			using (Stream stream = GetMonoTouchData (null)) {
 				return BuildFromStream ("Local", stream);
 			}
-#elif LIBC
+#else
+			if (IsWindows && LocalZoneKey != null) {
+				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
+				name = TrimSpecial (name);
+				if (name != null)
+					return TimeZoneInfo.FindSystemTimeZoneById (name);
+			}
+
 			var tz = Environment.GetEnvironmentVariable ("TZ");
 			if (tz != null) {
 				if (tz == String.Empty)
@@ -137,15 +144,6 @@ namespace System
 					return null;
 				}
 			}
-#else
-			if (IsWindows && LocalZoneKey != null) {
-				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
-				name = TrimSpecial (name);
-				if (name != null)
-					return TimeZoneInfo.FindSystemTimeZoneById (name);
-			}
-
-			return null;
 #endif
 		}
 
