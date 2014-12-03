@@ -166,7 +166,7 @@ namespace System.Threading
 
 				SpinWait wait = new SpinWait ();
 
-				while (Thread.VolatileRead (ref currCount) <= 0) {
+				while (Volatile.Read (ref currCount) <= 0) {
 					cancellationToken.ThrowIfCancellationRequested ();
 					if (stopCondition ())
 						return false;

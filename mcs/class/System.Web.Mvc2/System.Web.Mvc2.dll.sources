@@ -1,5 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+../corlib/System.Threading/Volatile.cs
 
 GlobalSuppressions.cs
 Properties/AssemblyInfo.cs

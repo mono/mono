@@ -20,7 +20,7 @@ namespace System.Web.Mvc.Async {
 
         public int Count {
             get {
-                return Thread.VolatileRead(ref _count);
+                return Volatile.Read(ref _count);
             }
         }
 

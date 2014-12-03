@@ -1,3 +1,5 @@
+../corlib/System.Threading/Volatile.cs
+
 ./GlobalSuppressions.cs
 ./GlobalAssemblyInfo.cs
 ./Mvc/AcceptVerbsAttribute.cs
