@@ -3726,7 +3726,7 @@ namespace Mono.CSharp {
 
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
 
-			candidates = candidates.Container.LookupExtensionMethod (candidates.Context, ExtensionExpression.Type, Name, arity, candidates.LookupIndex);
+			candidates = candidates.Container.LookupExtensionMethod (candidates.Context, Name, arity, candidates.LookupIndex);
 			if (candidates == null)
 				return null;
 
@@ -3816,14 +3816,15 @@ namespace Mono.CSharp {
 		bool OverloadResolver.IErrorHandler.ArgumentMismatch (ResolveContext rc, MemberSpec best, Argument arg, int index)
 		{
 			rc.Report.SymbolRelatedToPreviousError (best);
-			rc.Report.Error (1928, loc,
-				"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' has some invalid arguments",
-				queried_type.GetSignatureForError (), Name, best.GetSignatureForError ());
 
 			if (index == 0) {
 				rc.Report.Error (1929, loc,
-					"Extension method instance type `{0}' cannot be converted to `{1}'",
-					arg.Type.GetSignatureForError (), ((MethodSpec)best).Parameters.ExtensionMethodType.GetSignatureForError ());
+					"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' requires an instance of type `{3}'",
+					queried_type.GetSignatureForError (), Name, best.GetSignatureForError (), ((MethodSpec)best).Parameters.ExtensionMethodType.GetSignatureForError ());
+			} else {
+				rc.Report.Error (1928, loc,
+					"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' has some invalid arguments",
+					queried_type.GetSignatureForError (), Name, best.GetSignatureForError ());
 			}
 
 			return true;
@@ -4190,7 +4191,7 @@ namespace Mono.CSharp {
 				return null;
 
 			int arity = type_arguments == null ? 0 : type_arguments.Count;
-			var methods = rc.LookupExtensionMethod (InstanceExpression.Type, Methods[0].Name, arity);
+			var methods = rc.LookupExtensionMethod (Methods[0].Name, arity);
 			if (methods == null)
 				return null;
 
@@ -5846,7 +5847,14 @@ namespace Mono.CSharp {
 					continue;
 
 				if ((restrictions & Restrictions.CovariantDelegate) != 0 && !Delegate.IsTypeCovariant (ec, a.Expr.Type, pt)) {
-					custom_errors.NoArgumentMatch (ec, member);
+					if (a.IsExtensionType) {
+						// TODO: Should report better message type, something similar to CS1928/1929 instead of
+						// CS1061 but that still better than confusing CS0123
+						var ma = new MemberAccess (a.Expr, member.Name, loc);
+						ma.Error_TypeDoesNotContainDefinition (ec, a.Expr.Type, ma.Name);
+					} else {
+						custom_errors.NoArgumentMatch (ec, member);
+					}
 					return false;
 				}
 
