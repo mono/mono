@@ -2172,9 +2172,16 @@ namespace Mono.CSharp {
 				if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_6)
 					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
 
-				var emg = res as ExtensionMethodGroupExpr;
-				if (emg != null && !emg.ResolveNameOf (rc, ma)) {
-					return true;
+				var mg = res as MethodGroupExpr;
+				if (mg != null) {
+					var emg = res as ExtensionMethodGroupExpr;
+					if (emg != null && !emg.ResolveNameOf (rc, ma)) {
+						return true;
+					}
+
+					if (!mg.HasAccessibleCandidate (rc)) {
+						ErrorIsInaccesible (rc, ma.GetSignatureForError (), loc);
+					}
 				}
 
 				Value = ma.Name;
