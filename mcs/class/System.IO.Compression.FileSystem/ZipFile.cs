@@ -43,7 +43,7 @@ namespace System.IO.Compression
 			CompressionLevel compressionLevel, bool includeBaseDirectory)
 		{
 			CreateFromDirectory (sourceDirectoryName, destinationArchiveFileName,
-				CompressionLevel.Fastest, includeBaseDirectory, Encoding.UTF8);
+				compressionLevel, includeBaseDirectory, Encoding.UTF8);
 		}
 
 		public static void CreateFromDirectory (
