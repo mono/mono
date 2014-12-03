@@ -266,12 +266,19 @@ namespace System.ComponentModel {
 			
 			public bool FilledIn {
 				get {
-					return Input != char.MinValue;
+					if (Type == EditType.Literal) {
+						return true;
+					} else {
+						return Input != char.MinValue;
+					}
 				}
 			}
 			
 			public bool Required {
 				get {
+					if (Type == EditType.Literal) {
+						return false;
+					}
 					switch (MaskCharacter) {
 					case '0':
 					case 'L':
@@ -286,6 +293,9 @@ namespace System.ComponentModel {
 			
 			public bool Editable {
 				get {
+					if (Type == EditType.Literal) {
+						return false;
+					}
 					switch (MaskCharacter) {
 					case '0':
 					case '9':
