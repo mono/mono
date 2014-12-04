@@ -1152,11 +1152,7 @@ namespace System.Threading
         private void ExitMyLock()
         {
             Debug.Assert(myLock != 0, "Exiting spin lock that is not held");
-#if NET_4_5
             Volatile.Write(ref myLock, 0);
-#else
-            Thread.VolatileWrite(ref myLock, 0);
-#endif
         }
 
 #if DEBUG
