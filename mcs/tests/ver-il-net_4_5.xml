@@ -67820,6 +67820,16 @@
       </method>
     </type>
   </test>
+  <test name="test-named-09.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-nameof-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
@@ -69101,10 +69111,10 @@
   <test name="test-pattern-06.cs">
     <type name="RecursiveNamedPattern">
       <method name="Int32 Main()" attrs="150">
-        <size>182</size>
+        <size>159</size>
       </method>
       <method name="Int32 Switch_1(System.Object)" attrs="145">
-        <size>149</size>
+        <size>53</size>
       </method>
       <method name="Int32 Switch_2(C1)" attrs="145">
         <size>28</size>

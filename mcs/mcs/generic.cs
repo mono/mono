@@ -2186,7 +2186,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolve the type arguments.
 		/// </summary>
-		public virtual bool Resolve (IMemberContext ec)
+		public virtual bool Resolve (IMemberContext ec, bool allowUnbound)
 		{
 			if (atypes != null)
 			    return true;
@@ -2239,9 +2239,12 @@ namespace Mono.CSharp {
 
 	public class UnboundTypeArguments : TypeArguments
 	{
-		public UnboundTypeArguments (int arity)
+		Location loc;
+
+		public UnboundTypeArguments (int arity, Location loc)
 			: base (new FullNamedExpression[arity])
 		{
+			this.loc = loc;
 		}
 
 		public override bool IsEmpty {
@@ -2250,8 +2253,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool Resolve (IMemberContext ec)
+		public override bool Resolve (IMemberContext mc, bool allowUnbound)
 		{
+			if (!allowUnbound) {
+				mc.Module.Compiler.Report.Error (7003, loc, "Unbound generic name is not valid in this context");
+			}
+
 			// Nothing to be resolved
 			return true;
 		}
@@ -2437,7 +2444,7 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Unresolved)
 				return type;
 
-			if (!args.Resolve (mc))
+			if (!args.Resolve (mc, allowUnboundTypeArguments))
 				return null;
 
 			TypeSpec[] atypes = args.Arguments;

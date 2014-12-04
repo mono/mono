@@ -819,7 +819,8 @@ namespace Mono.CSharp {
 			ReadAccess = 1 << 3,
 			EmptyArguments = 1 << 4,
 			IgnoreArity = 1 << 5,
-			IgnoreAmbiguity = 1 << 6
+			IgnoreAmbiguity = 1 << 6,
+			NameOfExcluded = 1 << 7,
 		}
 
 		//
@@ -2521,7 +2522,7 @@ namespace Mono.CSharp {
 		}
 
 		protected ATypeNameExpression (string name, int arity, Location l)
-			: this (name, new UnboundTypeArguments (arity), l)
+			: this (name, new UnboundTypeArguments (arity, l), l)
 		{
 		}
 
@@ -2561,11 +2562,6 @@ namespace Mono.CSharp {
 			ATypeNameExpression atne = obj as ATypeNameExpression;
 			return atne != null && atne.Name == Name &&
 				(targs == null || targs.Equals (atne.targs));
-		}
-
-		protected void Error_OpenGenericTypeIsNotAllowed (IMemberContext mc)
-		{
-			mc.Module.Compiler.Report.Error (7003, Location, "Unbound generic name is not valid in this context");
 		}
 
 		public override int GetHashCode ()
@@ -2703,8 +2699,7 @@ namespace Mono.CSharp {
 						return ct;
 					}
 
-					if (!allowUnboundTypeArguments)
-						Error_OpenGenericTypeIsNotAllowed (mc);
+					targs.Resolve (mc, allowUnboundTypeArguments);
 
 					return new GenericOpenTypeExpr (fne.Type, loc);
 				}
@@ -2839,7 +2834,7 @@ namespace Mono.CSharp {
 					me = me.ResolveMemberAccess (rc, null, null);
 
 					if (Arity > 0) {
-						targs.Resolve (rc);
+						targs.Resolve (rc, false);
 						me.SetTypeArguments (rc, targs);
 					}
 
@@ -2863,13 +2858,13 @@ namespace Mono.CSharp {
 				var mg = NamespaceContainer.LookupStaticUsings (rc, Name, Arity, loc);
 				if (mg != null) {
 					if (Arity > 0) {
-						targs.Resolve (rc);
+						targs.Resolve (rc, false);
 						mg.SetTypeArguments (rc, targs);
 					}
 					return mg;
 				}
 
-				if (Name == "nameof")
+				if ((restrictions & MemberLookupRestrictions.NameOfExcluded) == 0 && Name == "nameof")
 					return new NameOf (this);
 
 				if (errorMode) {
@@ -3130,7 +3125,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public void Error_NamespaceDoesNotExist (IMemberContext ctx, string name, int arity)
+		public void Error_NamespaceDoesNotExist (IMemberContext ctx, string name, int arity, Location loc)
 		{
 			var retval = Namespace.LookupType (ctx, name, arity, LookupMode.IgnoreAccessibility, loc);
 			if (retval != null) {

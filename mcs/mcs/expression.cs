@@ -9666,12 +9666,16 @@ namespace Mono.CSharp
 				var retval = ns.LookupTypeOrNamespace (rc, Name, Arity, LookupMode.Normal, loc);
 
 				if (retval == null) {
-					ns.Error_NamespaceDoesNotExist (rc, Name, Arity);
+					ns.Error_NamespaceDoesNotExist (rc, Name, Arity, loc);
 					return null;
 				}
 
-				if (HasTypeArguments)
-					return new GenericTypeExpr (retval.Type, targs, loc);
+				if (Arity > 0) {
+					if (HasTypeArguments)
+						return new GenericTypeExpr (retval.Type, targs, loc);
+
+					targs.Resolve (rc, false);
+				}
 
 				return retval;
 			}
@@ -9720,7 +9724,7 @@ namespace Mono.CSharp
 						if (methods != null) {
 							var emg = new ExtensionMethodGroupExpr (methods, expr, loc);
 							if (HasTypeArguments) {
-								if (!targs.Resolve (rc))
+								if (!targs.Resolve (rc, false))
 									return null;
 
 								emg.SetTypeArguments (rc, targs);
@@ -9799,7 +9803,7 @@ namespace Mono.CSharp
 			me = me.ResolveMemberAccess (rc, expr, sn);
 
 			if (Arity > 0) {
-				if (!targs.Resolve (rc))
+				if (!targs.Resolve (rc, false))
 					return null;
 
 				me.SetTypeArguments (rc, targs);
@@ -9826,15 +9830,14 @@ namespace Mono.CSharp
 				FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, Name, Arity, LookupMode.Normal, loc);
 
 				if (retval == null) {
-					ns.Error_NamespaceDoesNotExist (rc, Name, Arity);
+					ns.Error_NamespaceDoesNotExist (rc, Name, Arity, loc);
 				} else if (Arity > 0) {
 					if (HasTypeArguments) {
 						retval = new GenericTypeExpr (retval.Type, targs, loc);
 						if (retval.ResolveAsType (rc) == null)
 							return null;
 					} else {
-						if (!allowUnboundTypeArguments)
-							Error_OpenGenericTypeIsNotAllowed (rc);
+						targs.Resolve (rc, allowUnboundTypeArguments);
 
 						retval = new GenericOpenTypeExpr (retval.Type, loc);
 					}
@@ -9895,8 +9898,7 @@ namespace Mono.CSharp
 				if (HasTypeArguments) {
 					texpr = new GenericTypeExpr (nested, targs, loc);
 				} else {
-					if (!allowUnboundTypeArguments || expr_resolved is GenericTypeExpr) // && HasTypeArguments
-						Error_OpenGenericTypeIsNotAllowed (rc);
+					targs.Resolve (rc, allowUnboundTypeArguments && !(expr_resolved is GenericTypeExpr));
 
 					texpr = new GenericOpenTypeExpr (nested, loc);
 				}

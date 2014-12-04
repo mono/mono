@@ -5929,6 +5929,7 @@ switch_label
 		Error_SyntaxError (yyToken);
 		$$ = new SwitchLabel ((Expression) $2, GetLocation ($1));
 	  }
+/*	  
 	| CASE pattern_expr_invocation COLON
 	  {
 		if (lang_version != LanguageVersion.Experimental)
@@ -5939,6 +5940,7 @@ switch_label
 		};
 		lbag.AddLocation ($$, GetLocation ($3));
 	  }
+*/
 	| DEFAULT_COLON
 	  {
 		$$ = new SwitchLabel (null, GetLocation ($1));
