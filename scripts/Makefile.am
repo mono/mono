@@ -40,12 +40,9 @@ bin_SCRIPTS = \
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
-if INSTALL_4_0
+if INSTALL_4_5
 bin_SCRIPTS += $(scripts_4_0)
 bin_SCRIPTS += dmcs
-endif
-
-if INSTALL_4_5
 bin_SCRIPTS += xbuild
 endif
 
@@ -196,14 +193,6 @@ REWRITE2_1 = $(REWRITE) -e 's,@''framework_version@,2.1,g'
 if INSTALL_4_5
 REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.5,g'
 REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.5,g'
-else 
-if INSTALL_4_0
-REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.0,g'
-REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.0,g'
-else
-REWRITE4 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
-REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
-endif
 endif
 
 peverify: peverify.in Makefile

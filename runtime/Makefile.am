@@ -5,7 +5,7 @@ noinst_SCRIPTS = mono-wrapper monodis-wrapper
 etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
-if INSTALL_4_0
+if INSTALL_4_5
 symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.5/machine.config etc/mono/4.0/Browsers/Compat.browser etc/mono/4.5/Browsers/Compat.browser
 endif
 
@@ -32,11 +32,6 @@ if ONLY_XAMMAC
 build_profiles = xammac
 else
 build_profiles = 
-
-if INSTALL_4_0
-build_profiles += net_4_0
-al_profile = net_4_0
-endif
 
 if INSTALL_4_5
 build_profiles += net_4_5 xbuild_12 xbuild_14
@@ -115,13 +110,9 @@ endif
 
 # Compile all assemblies with the verifier turned on. Code must be valid but not verifiable.
 # TODO it would be nice to split assemblies without unsafe code to use the verifier with verifiable mode.
-# Skip net 4.0 assemblies because the contain metadata only
 mcs-compileall: mono-wrapper etc/mono/config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(test_profiles); do \
-	  if [ "net_4_0" = "$$profile" ]; then \
-          continue; \
-      fi; \
 	  if [ "xbuild_12" = "$$profile" ]; then \
 		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$mcs_topdir/class/lib/net_4_5$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
 	  elif [ "xbuild_14" = "$$profile" ]; then \
