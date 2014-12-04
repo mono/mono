@@ -150,7 +150,9 @@ build_iphone_simulator ()
 	export CFLAGS="-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0";
 	export CPPFLAGS="$CFLAGS"
 	export MACSYSROOT="-isysroot $SIMULATOR_ASPEN_SDK"
-	export MACSDKOPTIONS="-mios-simulator-version-min=4.3 $MACSYSROOT $CFLAGS"
+	# we should add something like -mios-simulator-version-min=4.3 to MACSDKOPTIONS
+	# however Xcode 4.x does not support that.
+	export MACSDKOPTIONS="$MACSYSROOT $CFLAGS"
 	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc -arch i386"
 	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
 	export LIBTOOLIZE=`which glibtoolize`
