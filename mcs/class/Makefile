@@ -190,6 +190,7 @@ net_4_0_dirs := \
 	System.Data.Services.Client	\
 	System.Data.Services \
 	System.Json.Microsoft \
+	System.Data.Entity \
 	monodoc
 
 net_4_5_dirs := \
