@@ -83,7 +83,6 @@ net_2_0_dirs := \
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
 	System.Web.DynamicData		\
-	System.Web.Mvc2			\
 	Mono.C5				\
 	Mono.Management			\
 	Mono.Options 			\
@@ -102,7 +101,6 @@ net_2_0_only_dirs := \
 	System.ServiceModel.Web 	\
 	System.Data.Services.Client	\
 	System.Data.Services		\
-	System.Web.Mvc \
 
 pcl_facade_dirs := Facades
 
