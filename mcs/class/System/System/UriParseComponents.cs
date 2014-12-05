@@ -323,25 +323,28 @@ namespace System {
 			int index;
 			for (index = 0; index < part.Length; index++) {
 				char ch = part [index];
+				bool isEscapedChar = false;
+				var oldIndex = index;
 
 				if (ch == '%'){
 					if (!Uri.IsHexEncoding (part, index))
 						return false;
-					var oldIndex = index;
 					ch = Uri.HexUnescape (part, ref index);
 					index--;
-					if (ch == '@') {
-						sb.Append (part.Substring (oldIndex, index - oldIndex + 1));
-						continue;
-					}
+					isEscapedChar = true;
 				}
 
-				if (Char.IsLetterOrDigit (ch) || IsUnreserved (ch) || IsSubDelim (ch) || ch == ':'){
-					if (sb == null)
-					        sb = new StringBuilder ();
-					sb.Append (ch);
-				} else
-					break;
+				if (!Char.IsLetterOrDigit (ch) && !IsUnreserved (ch) && !IsSubDelim (ch) && ch != ':'){
+					if (!isEscapedChar)
+						break;
+
+					ch = '%';
+					index = oldIndex;
+				}
+
+				if (sb == null)
+					sb = new StringBuilder ();
+				sb.Append (ch);
 			}
 
 			if (index + 1 <= part.Length && part [index] == '@') {
