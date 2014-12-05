@@ -538,7 +538,8 @@ namespace System {
 					lock (_lock) {
 						if (defaultZone != null)
 							return defaultZone;
-						return defaultZone = GetTimeZone ("Local", GetDefaultTimeZoneName ());
+						var id  = GetDefaultTimeZoneName ();
+						return defaultZone = GetTimeZone (id, id);
 					}
 				}
 			}
