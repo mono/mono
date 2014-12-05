@@ -11780,6 +11780,11 @@ namespace Mono.CSharp
 			var init = rc.CurrentInitializerVariable;
 			var type = init.Type;
 
+			if (type.IsArray) {
+				target = new ArrayAccess (new ElementAccess (init, args, loc), loc);
+				return true;
+			}
+
 			var indexers = MemberCache.FindMembers (type, MemberCache.IndexerNameAlias, false);
 			if (indexers == null && type.BuiltinType != BuiltinTypeSpec.Type.Dynamic) {
 				ElementAccess.Error_CannotApplyIndexing (rc, type, loc);

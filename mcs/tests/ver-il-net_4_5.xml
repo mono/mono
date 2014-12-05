@@ -65949,6 +65949,16 @@
       </method>
     </type>
   </test>
+  <test name="test-dictinit-03.cs">
+    <type name="C">
+      <method name="Int32 Main()" attrs="145">
+        <size>135</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>20</size>
+      </method>
+    </type>
+  </test>
   <test name="test-ex-filter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
