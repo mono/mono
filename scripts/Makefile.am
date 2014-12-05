@@ -220,7 +220,7 @@ mono-service2: mono-service.in Makefile
 	mv -f $@.tmp $@
 
 nunit-console$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
-	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE4_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv -f $@.tmp $@
 
 nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
