@@ -233,6 +233,7 @@ monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_static_SUBDIRS := $(mobile_static_dirs)
 mobile_SUBDIRS := $(mobile_dynamic_dirs)
 xammac_SUBDIRS := $(xammac_dirs)
+net_4_0_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(xbuild_4_0_dirs)
 net_4_5_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs)
