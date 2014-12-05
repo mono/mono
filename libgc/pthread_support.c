@@ -355,14 +355,14 @@ GC_PTR GC_local_malloc(size_t bytes)
 #	endif
 	my_fl = ((GC_thread)tsd) -> normal_freelists + index;
 	my_entry = *my_fl;
-	if (EXPECT((word)my_entry >= HBLKSIZE, 1)) {
+	if (EXPECT((size_t)my_entry >= HBLKSIZE, 1)) {
 	    ptr_t next = obj_link(my_entry);
 	    GC_PTR result = (GC_PTR)my_entry;
 	    *my_fl = next;
 	    obj_link(my_entry) = 0;
 	    PREFETCH_FOR_WRITE(next);
 	    return result;
-	} else if ((word)my_entry - 1 < DIRECT_GRANULES) {
+	} else if ((size_t)my_entry - 1 < DIRECT_GRANULES) {
 	    *my_fl = my_entry + index + 1;
             return GC_malloc(bytes);
 	} else {
@@ -383,11 +383,11 @@ GC_PTR GC_local_malloc_atomic(size_t bytes)
 		        -> ptrfree_freelists + index;
 	ptr_t my_entry = *my_fl;
     
-	if (EXPECT((word)my_entry >= HBLKSIZE, 1)) {
+	if (EXPECT((size_t)my_entry >= HBLKSIZE, 1)) {
 	    GC_PTR result = (GC_PTR)my_entry;
 	    *my_fl = obj_link(my_entry);
 	    return result;
-	} else if ((word)my_entry - 1 < DIRECT_GRANULES) {
+	} else if ((size_t)my_entry - 1 < DIRECT_GRANULES) {
 	    *my_fl = my_entry + index + 1;
         return GC_malloc_atomic(bytes);
 	} else {
@@ -422,7 +422,7 @@ GC_PTR GC_local_gcj_malloc(size_t bytes,
 	ptr_t * my_fl = ((GC_thread)GC_getspecific(GC_thread_key))
 	                -> gcj_freelists + index;
 	ptr_t my_entry = *my_fl;
-	if (EXPECT((word)my_entry >= HBLKSIZE, 1)) {
+	if (EXPECT((size_t)my_entry >= HBLKSIZE, 1)) {
 	    GC_PTR result = (GC_PTR)my_entry;
 	    GC_ASSERT(!GC_incremental);
 	    /* We assert that any concurrent marker will stop us.	*/
@@ -440,7 +440,7 @@ GC_PTR GC_local_gcj_malloc(size_t bytes,
 	    GC_ASSERT(((void * volatile *)result)[1] == 0); 
 	    *(void * volatile *)result = ptr_to_struct_containing_descr; 
 	    return result;
-	} else if ((word)my_entry - 1 < DIRECT_GRANULES) {
+	} else if ((size_t)my_entry - 1 < DIRECT_GRANULES) {
 	    if (!GC_incremental) *my_fl = my_entry + index + 1;
 	    	/* In the incremental case, we always have to take this */
 	    	/* path.  Thus we leave the counter alone.		*/
@@ -464,7 +464,7 @@ void * GC_local_gcj_fast_malloc(size_t lw, void * ptr_to_struct_containing_descr
 
     GC_ASSERT(GC_gcj_malloc_initialized);
 
-	if (EXPECT((word)my_entry >= HBLKSIZE, 1)) {
+	if (EXPECT((size_t)my_entry >= HBLKSIZE, 1)) {
 	    GC_PTR result = (GC_PTR)my_entry;
 	    GC_ASSERT(!GC_incremental);
 	    /* We assert that any concurrent marker will stop us.	*/
@@ -482,7 +482,7 @@ void * GC_local_gcj_fast_malloc(size_t lw, void * ptr_to_struct_containing_descr
 	    GC_ASSERT(((void * volatile *)result)[1] == 0); 
 	    *(void * volatile *)result = ptr_to_struct_containing_descr; 
 	    return result;
-	} else if ((word)my_entry - 1 < DIRECT_GRANULES) {
+	} else if ((size_t)my_entry - 1 < DIRECT_GRANULES) {
 	    if (!GC_incremental) *my_fl = my_entry + lw + 1;
 	    	/* In the incremental case, we always have to take this */
 	    	/* path.  Thus we leave the counter alone.		*/
@@ -663,12 +663,12 @@ void GC_mark_thread_local_free_lists(void)
       for (p = GC_threads[i]; 0 != p; p = p -> next) {
 	for (j = 1; j < NFREELISTS; ++j) {
 	  q = p -> ptrfree_freelists[j];
-	  if ((word)q > HBLKSIZE) GC_set_fl_marks(q);
+	  if ((size_t)q > HBLKSIZE) GC_set_fl_marks(q);
 	  q = p -> normal_freelists[j];
-	  if ((word)q > HBLKSIZE) GC_set_fl_marks(q);
+	  if ((size_t)q > HBLKSIZE) GC_set_fl_marks(q);
 #	  ifdef GC_GCJ_SUPPORT
 	    q = p -> gcj_freelists[j];
-	    if ((word)q > HBLKSIZE) GC_set_fl_marks(q);
+	    if ((size_t)q > HBLKSIZE) GC_set_fl_marks(q);
 #	  endif /* GC_GCJ_SUPPORT */
 	}
       }
@@ -683,7 +683,7 @@ static GC_bool first_thread_used = FALSE;
 /* Caller holds allocation lock.					*/
 GC_thread GC_new_thread(pthread_t id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((size_t)id) % THREAD_TABLE_SZ;
     GC_thread result;
     
     if (!first_thread_used) {
@@ -709,7 +709,7 @@ GC_thread GC_new_thread(pthread_t id)
 /* Caller holds allocation lock.				*/
 void GC_delete_thread(pthread_t id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((size_t)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     register GC_thread prev = 0;
     
@@ -745,7 +745,7 @@ void GC_delete_thread(pthread_t id)
 /* This is OK, but we need a way to delete a specific one.	*/
 void GC_delete_gc_thread(pthread_t id, GC_thread gc_id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((size_t)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     register GC_thread prev = 0;
 
@@ -774,7 +774,7 @@ void GC_delete_gc_thread(pthread_t id, GC_thread gc_id)
 /* return the most recent one.					*/
 GC_thread GC_lookup_thread(pthread_t id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((size_t)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     
     while (p != 0 && !pthread_equal(p -> id, id)) p = p -> next;
@@ -1318,7 +1318,7 @@ void * GC_start_routine_head(void * arg, void *base_addr,
     /* one for the main thread.  There is a strong argument that that's	*/
     /* a kernel bug, but a pervasive one.				*/
 #   ifdef STACK_GROWS_DOWN
-      me -> stack_end = (ptr_t)(((word)(base_addr) + (GC_page_size - 1))
+      me -> stack_end = (ptr_t)(((size_t)(base_addr) + (GC_page_size - 1))
 		                & ~(GC_page_size - 1));
 #	  ifndef GC_DARWIN_THREADS
         me -> stop_info.stack_ptr = me -> stack_end - 0x10;
@@ -1326,7 +1326,7 @@ void * GC_start_routine_head(void * arg, void *base_addr,
 	/* Needs to be plausible, since an asynchronous stack mark	*/
 	/* should not crash.						*/
 #   else
-      me -> stack_end = (ptr_t)((word)(base_addr) & ~(GC_page_size - 1));
+      me -> stack_end = (ptr_t)((size_t)(base_addr) & ~(GC_page_size - 1));
       me -> stop_info.stack_ptr = me -> stack_end + 0x10;
 #   endif
     /* This is dubious, since we may be more than a page into the stack, */
