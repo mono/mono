@@ -10439,6 +10439,11 @@ namespace Mono.CSharp
 			ea.FlowAnalysis (fc);
 		}
 
+		public override bool HasConditionalAccess ()
+		{
+			return ConditionalAccess || ea.Expr.HasConditionalAccess ();
+		}
+
 		//
 		// Load the array arguments into the stack.
 		//
