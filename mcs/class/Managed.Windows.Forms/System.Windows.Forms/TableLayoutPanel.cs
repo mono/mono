@@ -28,6 +28,7 @@
 
 using System;
 using System.Drawing;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms.Layout;
@@ -514,29 +515,67 @@ namespace System.Windows.Forms
 			int actual_cols = actual_positions.GetLength (0);
 			int actual_rows = actual_positions.GetLength (1);
 			
+			// Find the largest column-span/row-span values.  A table entry that spans more than one
+			// column (row) should not be treated as though it's width (height) all belongs to the
+			// first column (row), but should be spread out across all the columns (rows) that are
+			// spanned.  So we need to keep track of the widths (heights) of spans as well as
+			// individual columns (rows).
+			int max_colspan = 1, max_rowspan = 1;
+			foreach (Control c in Controls)
+			{
+				max_colspan = Math.Max(max_colspan, GetColumnSpan(c));
+				max_rowspan = Math.Max(max_rowspan, GetRowSpan(c));
+			}
+
 			// Figure out how wide the owner needs to be
 			int[] column_widths = new int[actual_cols];
+			// Keep track of widths for spans as well as columns. column_span_widths[i,j] stores
+			// the maximum width for items column i than have a span of j+1 (ie, covers columns
+			// i through i+j).
+			int[,] column_span_widths = new int[actual_cols, max_colspan];
+			int[] biggest = new int[max_colspan];
 			float total_column_percentage = 0f;
 			
-			// Figure out how tall each column wants to be
+			// Figure out how wide each column wants to be
 			for (int i = 0; i < actual_cols; i++) {
 				if (i < ColumnStyles.Count && ColumnStyles[i].SizeType == SizeType.Percent)
 					total_column_percentage += ColumnStyles[i].Width;
-					
-				int biggest = 0;
+				int absolute_width = -1;
+				if (i < ColumnStyles.Count && ColumnStyles[i].SizeType == SizeType.Absolute)
+					absolute_width = (int)ColumnStyles[i].Width;	// use the absolute width if it's absolute!
+
+				for (int s = 0; s < max_colspan; ++s)
+					biggest[s] = 0;
 
 				for (int j = 0; j < actual_rows; j++) {
 					Control c = actual_positions[i, j];
 
 					if (c != null) {
-						if (!c.AutoSize)
-							biggest = Math.Max (biggest, c.ExplicitBounds.Width + c.Margin.Horizontal + Padding.Horizontal);
+						int colspan = GetColumnSpan (c);
+						if (colspan == 0)
+							continue;
+						if (colspan == 1 && absolute_width > -1)
+							biggest[0] = absolute_width;	// use the absolute width if the column has absolute width assigned!
+						else if (!c.AutoSize)
+							biggest[colspan-1] = Math.Max (biggest[colspan-1], c.ExplicitBounds.Width + c.Margin.Horizontal + Padding.Horizontal);
 						else
-							biggest = Math.Max (biggest, c.PreferredSize.Width + c.Margin.Horizontal + Padding.Horizontal);
+							biggest[colspan-1] = Math.Max (biggest[colspan-1], c.PreferredSize.Width + c.Margin.Horizontal + Padding.Horizontal);
+					}
+					else if (absolute_width > -1) {
+						biggest[0] = absolute_width;
 					}
 				}
 
-				column_widths[i] = biggest;
+				for (int s = 0; s < max_colspan; ++s)
+					column_span_widths[i,s] = biggest[s];
+			}
+
+			for (int i = 0; i < actual_cols; ++i) {
+				for (int s = 1; s < max_colspan; ++s) {
+					if (column_span_widths[i,s] > 0)
+						AdjustWidthsForSpans (column_span_widths, i, s);
+				}
+				column_widths[i] = column_span_widths[i,0];
 			}
 
 			// Because percentage based rows divy up the remaining space,
@@ -552,30 +591,55 @@ namespace System.Windows.Forms
 					non_percent_total_width += column_widths[i];
 			}
 
+			int border_width = GetCellBorderWidth (CellBorderStyle);
+			int needed_width = non_percent_total_width + percent_total_width + (border_width * (actual_cols + 1));
 
 			// Figure out how tall the owner needs to be
 			int[] row_heights = new int[actual_rows];
+			int[,] row_span_heights = new int[actual_rows, max_rowspan];
+			biggest = new int[max_rowspan];
 			float total_row_percentage = 0f;
 		
 			// Figure out how tall each row wants to be
 			for (int j = 0; j < actual_rows; j++) {
 				if (j < RowStyles.Count && RowStyles[j].SizeType == SizeType.Percent)
 					total_row_percentage += RowStyles[j].Height;
+				int absolute_height = -1;
+				if (j < RowStyles.Count && RowStyles[j].SizeType == SizeType.Absolute)
+					absolute_height = (int)RowStyles[j].Height;	// use the absolute height if it's absolute!
 					
-				int biggest = 0;
+				for (int s = 0; s < max_rowspan; ++s)
+					biggest[s] = 0;
 				
 				for (int i = 0; i < actual_cols; i++) {
 					Control c = actual_positions[i, j];
 
 					if (c != null) {
-						if (!c.AutoSize)
-							biggest = Math.Max (biggest, c.ExplicitBounds.Height + c.Margin.Vertical + Padding.Vertical);
+						int rowspan = GetRowSpan (c);
+						if (rowspan == 0)
+							continue;
+						if (rowspan == 1 && absolute_height > -1)
+							biggest[0] = absolute_height;    // use the absolute height if the row has absolute height assigned!
+						else if (!c.AutoSize)
+							biggest[rowspan-1] = Math.Max (biggest[rowspan-1], c.ExplicitBounds.Height + c.Margin.Vertical + Padding.Vertical);
 						else
-							biggest = Math.Max (biggest, c.PreferredSize.Height + c.Margin.Vertical + Padding.Vertical);
+							biggest[rowspan-1] = Math.Max (biggest[rowspan-1], c.PreferredSize.Height + c.Margin.Vertical + Padding.Vertical);
+					}
+					else if (absolute_height > -1) {
+						biggest[0] = absolute_height;
 					}
 				}
 
-				row_heights[j] = biggest;
+				for (int s = 0; s < max_rowspan; ++s)
+					row_span_heights[j,s] = biggest[s];
+			}
+
+			for (int j = 0; j < actual_rows; ++j) {
+				for (int s = 1; s < max_rowspan; ++s) {
+					if (row_span_heights[j,s] > 0)
+						AdjustHeightsForSpans (row_span_heights, j, s);
+				}
+				row_heights[j] = row_span_heights[j,0];
 			}
 			
 			// Because percentage based rows divy up the remaining space,
@@ -591,8 +655,111 @@ namespace System.Windows.Forms
 					non_percent_total_height += row_heights[j];
 			}
 
-			int border_width = GetCellBorderWidth (CellBorderStyle);
-			return new Size (non_percent_total_width + percent_total_width + (border_width * (actual_cols + 1)), non_percent_total_height + percent_total_height + (border_width * (actual_rows + 1)));
+			int needed_height = non_percent_total_height + percent_total_height + (border_width * (actual_rows + 1));
+
+			return new Size (needed_width, needed_height);
+		}
+
+		/// <summary>
+		/// Adjust the widths of the columns underlying a span if necessary.
+		/// </summary>
+		private void AdjustWidthsForSpans (int[,] widths, int col, int span)
+		{
+			// Get the combined width of the columns underlying the span.
+			int existing_width = 0;
+			for (int i = col; i <= col+span; ++i)
+				existing_width += widths[i,0];
+			if (widths[col,span] > existing_width)
+			{
+				// We need to expand one or more of the underlying columns to fit the span,
+				// preferably ones that are not Absolute style.
+				int excess = widths[col,span] - existing_width;
+				int remaining = excess;
+				List<int> adjusting = new List<int>();
+				List<float> adjusting_widths = new List<float>();
+				for (int i = col; i <= col+span; ++i) {
+					if (i < ColumnStyles.Count && ColumnStyles[i].SizeType != SizeType.Absolute) {
+						adjusting.Add(i);
+						adjusting_widths.Add((float)widths[i,0]);
+					}
+				}
+				if (adjusting.Count == 0) {
+					// if every column is Absolute, spread the gain across every column
+					for (int i = col; i <= col+span; ++i) {
+						adjusting.Add(i);
+						adjusting_widths.Add((float)widths[i,0]);
+					}
+				}
+				float original_total = 0f;
+				foreach (var w in adjusting_widths)
+					original_total += w;
+				// Divide up the needed additional width proportionally.
+				for (int i = 0; i < adjusting.Count; ++i) {
+					var idx = adjusting[i];
+					var percent = adjusting_widths[i] / original_total;
+					var adjust = (int)(percent * excess);
+					widths[idx,0] += adjust;
+					remaining -= adjust;
+				}
+				// Any remaining fragment (1 or 2 pixels?) is divided evenly.
+				while (remaining > 0) {
+					for (int i = 0; i < adjusting.Count && remaining > 0; ++i) {
+						++widths[adjusting[i],0];
+						--remaining;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Adjust the heights of the rows underlying a span if necessary.
+		/// </summary>
+		private void AdjustHeightsForSpans (int[,] heights, int row, int span)
+		{
+			// Get the combined height of the rows underlying the span.
+			int existing_height = 0;
+			for (int i = row; i <= row+span; ++i)
+				existing_height += heights[i,0];
+			if (heights[row,span] > existing_height)
+			{
+				// We need to expand one or more of the underlying rows to fit the span,
+				// preferably ones that are not Absolute style.
+				int excess = heights[row,span] - existing_height;
+				int remaining = excess;
+				List<int> adjusting = new List<int>();
+				List<float> adjusting_heights = new List<float>();
+				for (int i = row; i <= row+span; ++i) {
+					if (i < RowStyles.Count && RowStyles[i].SizeType != SizeType.Absolute) {
+						adjusting.Add(i);
+						adjusting_heights.Add((float)heights[i,0]);
+					}
+				}
+				if (adjusting.Count == 0) {
+					// if every row is Absolute, spread the gain across every row
+					for (int i = row; i <= row+span; ++i) {
+						adjusting.Add(i);
+						adjusting_heights.Add((float)heights[i,0]);
+					}
+				}
+				float original_total = 0f;
+				foreach (var w in adjusting_heights)
+					original_total += w;
+				// Divide up the needed additional height proportionally.
+				for (int i = 0; i < adjusting.Count; ++i) {
+					var idx = adjusting[i];
+					var percent = adjusting_heights[i] / original_total;
+					var adjust = (int)(percent * excess);
+					heights[idx,0] += adjust;
+					remaining -= adjust;
+				}
+				// Any remaining fragment (1 or 2 pixels?) is divided evenly.
+				while (remaining > 0) {
+					for (int i = 0; i < adjusting.Count && remaining > 0; ++i) {
+						++heights[adjusting[i],0];
+						--remaining;
+					}
+				}
+			}
 		}
 		#endregion
 		
