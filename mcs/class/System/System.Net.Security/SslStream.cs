@@ -71,6 +71,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Security.Cryptography;
 
+
 #if NET_4_5
 using System.Threading.Tasks;
 #endif
@@ -102,7 +103,7 @@ namespace System.Net.Security
 
 		[MonoTODO ("userCertificateValidationCallback is not passed X509Chain and SslPolicyErrors correctly")]
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
-			: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, null)
+			: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, LocalCertificateSelectionCallbackDefault)
 		{
 		}
 
@@ -596,6 +597,24 @@ namespace System.Net.Security
 			if (!IsAuthenticated)
 				throw new InvalidOperationException ("This operation is invalid until it is successfully authenticated");
 		}
+
+		private static X509Certificate LocalCertificateSelectionCallbackDefault (
+			object sender,
+			string targetHost,
+			X509CertificateCollection localCertificates,
+			X509Certificate remoteCertificate,
+			string [] acceptableIssuers)
+		{
+			if (localCertificates.Count == 0) {
+				return null;
+			}
+
+			else {
+				// Default implementation to return the first certificate out of the given collection.
+				return localCertificates[0];
+			}
+		}
+
 
 #if NET_4_5
 		public virtual Task AuthenticateAsClientAsync (string targetHost)
