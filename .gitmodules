@@ -30,4 +30,4 @@
 	url = git://github.com/mono/referencesource
 [submodule "external/reference-assemblies"]
 	path = external/reference-assemblies
-	url = git://github.com/mono/reference-assemblies.git
+	url = git@github.com:mono/reference-assemblies.git
