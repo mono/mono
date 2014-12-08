@@ -62,7 +62,7 @@ namespace System.Runtime.InteropServices
 		//
 		protected IntPtr handle;
 		IntPtr invalid_handle_value;
-		int refcount = 0;
+		int refcount;
 		bool owns_handle;
 		
 #if NET_2_1
@@ -75,7 +75,13 @@ namespace System.Runtime.InteropServices
 		protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle)
 		{
 			invalid_handle_value = invalidHandleValue;
-			owns_handle = ownsHandle;
+
+			if (!ownsHandle) {
+				GC.SuppressFinalize (this);
+			} else {
+				owns_handle = true;
+			}
+
 			refcount = 1;
 		}
 
@@ -198,15 +204,13 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
+			if (disposing) {
 				Close ();
-			else {
-				//
-				// The docs say `never call this with disposing=false',
-				// the question is whether:
-				//   * The runtime will ever call Dipose(false) for SafeHandles (special runtime case)
-				//   * Whether we should just call ReleaseHandle regardless?
-				//
+			} else {
+				if (owns_handle && !IsInvalid){
+					ReleaseHandle ();
+					handle = invalid_handle_value;
+				}
 			}
 		}
 
@@ -233,10 +237,7 @@ namespace System.Runtime.InteropServices
 
 		~SafeHandle ()
 		{
-			if (owns_handle && !IsInvalid){
-				ReleaseHandle ();
-				handle = invalid_handle_value;
-			}
+			Dispose (false);
 		}
 	}
 }
