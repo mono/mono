@@ -121,6 +121,15 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
+		public void ReverseView ()
+		{
+			var set = new SortedSet<int> { 1, 2, 3, 4, 5, 6 };
+			var subset = set.GetViewBetween (3, 5);
+			Assert.AreEqual (3, subset.Count, "#1");
+			Assert.AreEqual (3, subset.Reverse ().Count (), "#2");
+		}
+
+		[Test]
 		public void RemoveWhere ()
 		{
 			var set = new SortedSet<int> { 1, 2, 3, 4, 5, 6 };
