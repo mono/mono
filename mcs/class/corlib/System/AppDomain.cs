@@ -41,6 +41,7 @@ using System.Reflection.Emit;
 #endif
 using System.Threading;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Contexts;
