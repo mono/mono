@@ -1244,6 +1244,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsTrue (TypeDescriptor.GetConverter (new Component()) is ComponentConverter, "#30");
 #endif
 			Assert.AreEqual (typeof (NullableConverter), TypeDescriptor.GetConverter (typeof (int?)).GetType (), "#31");
+			Assert.AreEqual (typeof (DateTimeOffsetConverter), TypeDescriptor.GetConverter (typeof (DateTimeOffset)).GetType (), "#32");
 		}
 		
 		[Test]
