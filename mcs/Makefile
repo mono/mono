@@ -107,7 +107,7 @@ profiles-do--run-test:
 _boot_ = all clean install
 $(_boot_:%=profile-do--xbuild_14--%):         profile-do--xbuild_14--%:         profile-do--net_4_5--%
 $(_boot_:%=profile-do--xbuild_12--%):         profile-do--xbuild_12--%:         profile-do--net_4_5--%
-$(_boot_:%=profile-do--net_4_0--%):           profile-do--net_4_0--%:           profile-do--net_4_5--%
+$(_boot_:%=profile-do--net_4_0--%):           profile-do--net_4_0--%:           profile-do--build--%
 $(_boot_:%=profile-do--net_4_5--%):           profile-do--net_4_5--%:           profile-do--build--%
 $(_boot_:%=profile-do--monodroid--%):         profile-do--monodroid--%:         profile-do--build--%
 $(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--build--%

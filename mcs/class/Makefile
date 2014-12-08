@@ -233,7 +233,7 @@ monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_static_SUBDIRS := $(mobile_static_dirs)
 mobile_SUBDIRS := $(mobile_dynamic_dirs)
 xammac_SUBDIRS := $(xammac_dirs)
-net_4_0_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(xbuild_4_0_dirs)
+net_4_0_SUBDIRS := reference-assemblies
 net_4_5_SUBDIRS := $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs)
@@ -242,7 +242,7 @@ include ../build/rules.make
 
 SUBDIRS = $(net_2_0_dirs) $(net_2_0_only_dirs) $(mobile_static_dirs) $(mobile_dynamic_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_0_dirs) $(net_4_5_dirs)
 
-DIST_ONLY_SUBDIRS = dlr aot-compiler $(xbuild_4_0_dirs)
+DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs)
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
