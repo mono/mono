@@ -36,7 +36,6 @@ bin_SCRIPTS = \
 	mono-test-install	\
 	peverify			\
 	mcs					\
-	gmcs				\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
@@ -154,7 +153,6 @@ EXTRA_DIST =			\
 	xbuild.in			\
 	update_submodules		\
 	mcs.in				\
-	gmcs.in				\
 	dmcs.in				\
 	mono-test-install	\
 	mono-heapviz		\
@@ -201,10 +199,6 @@ peverify: peverify.in Makefile
 
 mcs: mcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
-	mv -f $@.tmp $@
-
-gmcs: gmcs.in Makefile
-	$(REWRITE_COMMON) $(srcdir)/gmcs.in > $@.tmp
 	mv -f $@.tmp $@
 
 dmcs: dmcs.in Makefile
