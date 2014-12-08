@@ -1795,16 +1795,7 @@ namespace MonoTests.System.Net.Sockets
 			}
 			*/
 
-			var sw = new global::System.Diagnostics.Stopwatch ();
-			sw.Start ();
-
-			BCCalledBack.WaitOne ();
-
-			sw.Stop ();
-			Console.WriteLine (sw.ElapsedMilliseconds);
-
-			if (sw.ElapsedMilliseconds > 30000)
-				Assert.Fail ("BeginConnectMultiple wait failed");
+			Assert.IsTrue (BCCalledBack.WaitOne (30000), "#0");
 			
 			Assert.AreEqual (true, BCConnected, "BeginConnectMultiple #1");
 			Assert.AreEqual (AddressFamily.InterNetwork, sock.RemoteEndPoint.AddressFamily, "BeginConnectMultiple #2");
