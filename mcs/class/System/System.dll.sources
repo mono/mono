@@ -139,15 +139,6 @@ System.CodeDom.Compiler/LanguageOptions.cs
 System.CodeDom.Compiler/TempFileCollection.cs
 System.CodeDom/FieldDirection.cs
 System.CodeDom/MemberAttributes.cs
-System.Collections.Generic/ISet.cs
-System.Collections.Generic/LinkedList.cs
-System.Collections.Generic/LinkedListNode.cs
-System.Collections.Generic/RBTree.cs
-System.Collections.Generic/Queue.cs
-System.Collections.Generic/SortedDictionary.cs
-System.Collections.Generic/SortedList.cs
-System.Collections.Generic/SortedSet.cs
-System.Collections.Generic/Stack.cs
 System.Collections.ObjectModel/ObservableCollection.cs
 System.Collections.ObjectModel/ReadOnlyObservableCollection.cs
 System.Collections.Specialized/BitVector32.cs
@@ -1085,3 +1076,14 @@ System.Windows.Input/ICommand.cs
 ../../../external/referencesource/System/sys/system/collections/concurrent/BlockingCollection.cs
 ../../../external/referencesource/System/sys/system/collections/concurrent/ConcurrentBag.cs
 
+../../../external/referencesource/System/compmod/system/collections/generic/bithelper.cs
+../../../external/referencesource/System/compmod/system/collections/generic/debugview.cs
+../../../external/referencesource/System/compmod/system/collections/generic/iset.cs
+../../../external/referencesource/System/compmod/system/collections/generic/linkedlist.cs
+../../../external/referencesource/System/compmod/system/collections/generic/queue.cs
+../../../external/referencesource/System/compmod/system/collections/generic/sorteddictionary.cs
+../../../external/referencesource/System/compmod/system/collections/generic/sortedlist.cs
+../../../external/referencesource/System/compmod/system/collections/generic/sortedset.cs
+../../../external/referencesource/System/compmod/system/collections/generic/sortedsetdebugview.cs
+../../../external/referencesource/System/compmod/system/collections/generic/stack.cs
+../../../external/referencesource/System/compmod/system/collections/generic/throwhelper.cs

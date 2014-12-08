@@ -296,7 +296,7 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void IDictionaryAddValueNullValueType ()
 		{
 			IDictionary d = new SortedDictionary<string,int> ();

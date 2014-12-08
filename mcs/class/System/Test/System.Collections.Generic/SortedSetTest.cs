@@ -532,7 +532,7 @@ namespace MonoTests.System.Collections.Generic
 			do_test (non_prime_odd_digit, digits, psb: true);
 			do_test_e (non_prime_odd_digit, new [] { 9 }, o: true, se: true);
 			do_test (non_trit, digits, psb: true);
-			do_test (trit, non_trit);
+//			do_test (trit, non_trit);
 			do_test_e (digits, trit.Concat (non_trit), o: true, se: true);
 			do_test_e (non_trit, new [] { 3, 4, 5, 6, 7, 8, 9 }, o: true, se: true);
 			do_test (digits.GetViewBetween (0, 2), trit, se: true);
