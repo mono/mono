@@ -67,6 +67,7 @@ do-profile-check: $(depsdir)/.stamp
 		echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2; \
                 echo "*** You need Mono version 3.2 or better installed to build MCS" 1>&2 ; \
                 echo "*** Check mono README for information on how to bootstrap a Mono installation." 1>&2 ; \
+		echo "*** The version of '$(BOOTSTRAP_MCS)' is: `$(BOOTSTRAP_MCS) --version`." 1>&2 ; \
 	        exit 1; fi; fi
 
 
