@@ -2027,7 +2027,7 @@ namespace MonoTests.System.Data
 			//write xml  schema only
 			ds1.WriteXmlSchema(ms);
 
-			System.IO.MemoryStream ms1 = new System.IO.MemoryStream (ms.ToArray ());
+			MemoryStream ms1 = new MemoryStream (ms.ToArray ());
 			//copy schema
 			DataSet ds2 = new DataSet();
 			ds2.ReadXmlSchema(ms1);
@@ -2147,13 +2147,13 @@ namespace MonoTests.System.Data
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
 			ds1.Tables.Add(DataProvider.CreateChildDataTable());
 
-			System.IO.StringWriter sw = new System.IO.StringWriter();
+			StringWriter sw = new StringWriter();
 			XmlWriter xmlTW = XmlWriter.Create (sw);
 			//write xml file, schema only
 			ds1.WriteXmlSchema(xmlTW);
 			xmlTW.Flush();
 
-			System.IO.StringReader sr = new System.IO.StringReader(sw.ToString());
+			StringReader sr = new StringReader(sw.ToString());
 			XmlReader xmlTR = XmlReader.Create (sr);
 
 			//copy both data and schema
@@ -2470,7 +2470,7 @@ namespace MonoTests.System.Data
 			#region "TestCase 1 - Empty string"
 			// Empty string
 			DataSet ds = new DataSet();
-			System.IO.StringReader sr = new System.IO.StringReader (string.Empty);
+			StringReader sr = new StringReader (string.Empty);
 			XmlReader xReader = XmlReader.Create (sr);
 			try
 			{
@@ -2661,7 +2661,7 @@ namespace MonoTests.System.Data
 		private void PrivateTestCase(string a_name, string a_expected, string a_xmlData)
 		{
 			DataSet ds = new DataSet();
-			System.IO.StringReader sr = new System.IO.StringReader(a_xmlData) ;
+			StringReader sr = new StringReader(a_xmlData) ;
 			XmlReader xReader = XmlReader.Create (sr);
 			ds.ReadXml (xReader);
 			Assert.AreEqual(a_expected, this.dataSetDescription(ds), "DS337");
@@ -2707,7 +2707,7 @@ namespace MonoTests.System.Data
 			xmlData += 		"<c>3</c>";
 			xmlData +=    "</b>";
 			xmlData += 	"</a>";
-			System.IO.StringReader sr = new System.IO.StringReader(xmlData) ;
+			StringReader sr = new StringReader(xmlData) ;
 			XmlReader xReader = XmlReader.Create (sr);
 			ds.ReadXml (xReader);
 			Assert.AreEqual(3, ds.Tables["c"].Rows.Count, "DS338");
@@ -2803,7 +2803,7 @@ namespace MonoTests.System.Data
 			ds1.Tables[1].Rows.Add(new object[] {7,2," ","		",new DateTime(2000,1,1,0,0,0,0),35});
 			ds1.Tables[1].Rows.Add(new object[] {7,3,"","",new DateTime(2000,1,1,0,0,0,0),35});
 
-			System.IO.StringWriter sw = new System.IO.StringWriter();
+			StringWriter sw = new StringWriter();
 			XmlWriter xmlTW = XmlWriter.Create (sw);
 
 			//write xml file, data only
@@ -2814,7 +2814,7 @@ namespace MonoTests.System.Data
 			DataSet ds2 = ds1.Copy();
 			//clear the data
 			ds2.Clear();
-			System.IO.StringReader sr = new System.IO.StringReader(sw.ToString());
+			StringReader sr = new StringReader(sw.ToString());
 			XmlReader xmlTR = XmlReader.Create (sr);
 			ds2.ReadXml(xmlTR);
 
@@ -2913,7 +2913,7 @@ namespace MonoTests.System.Data
 			ms = new MemoryStream();
 			ds1.WriteXmlSchema (ms);
 
-			ms1 = new System.IO.MemoryStream (ms.ToArray ());
+			ms1 = new MemoryStream (ms.ToArray ());
 			DataSet ds2 = new DataSet();
 			ds2.ReadXmlSchema(ms1);
 		
@@ -3303,12 +3303,12 @@ namespace MonoTests.System.Data
 			{
 			DataSet ds = new DataSet();
 			string input = "<a><b><c>2</c></b></a>";
-			System.IO.StringReader sr = new System.IO.StringReader(input) ;
+			StringReader sr = new StringReader(input) ;
 			XmlReader xReader = XmlReader.Create (sr);
 			ds.ReadXml (xReader);
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
+			StringBuilder sb = new StringBuilder();
+			StringWriter sw = new StringWriter(sb);
 			XmlWriter xWriter = XmlWriter.Create (sw, new XmlWriterSettings {OmitXmlDeclaration=true});
 			ds.WriteXml(xWriter);
 			string output = sb.ToString();
@@ -3318,12 +3318,12 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet();
 			string input = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><a><b><c>2</c></b></a>";
 			string expectedOutput = "<a><b><c>2</c></b></a>";
-			System.IO.StringReader sr = new System.IO.StringReader(input) ;
+			StringReader sr = new StringReader(input) ;
 			XmlReader xReader = XmlReader.Create (sr);
 			ds.ReadXml (xReader);
 			
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			System.IO.StringWriter sw = new System.IO.StringWriter(sb);
+			StringBuilder sb = new StringBuilder();
+			StringWriter sw = new StringWriter(sb);
 			XmlWriter xWriter = XmlWriter.Create (sw, new XmlWriterSettings {OmitXmlDeclaration=true});
 			ds.WriteXml(xWriter);
 			string output = sb.ToString();
