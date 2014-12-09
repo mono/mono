@@ -25,13 +25,15 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
 namespace Xamarin.ApiDiff {
 
 	public static class Helper {
-
 		public static bool IsTrue (this XElement self, string name)
 		{
 			return (self.GetAttribute (name) == "true");
@@ -65,6 +67,28 @@ namespace Xamarin.ApiDiff {
 				}
 			}
 			return null;
+		}
+
+		public static IEnumerable<XElement> Descendants (this XElement self, params string[] names)
+		{
+			XElement el = self;
+			if (el == null)
+				return null;
+
+			for (int i = 0; i < names.Length - 1; i++) {
+				el = el.Element (names [i]);
+				if (el == null)
+					return null;
+			}
+			return el.Elements (names [names.Length - 1]);
+		}
+
+		public static List<XElement> DescendantList (this XElement self, params string[] names)
+		{
+			var descendants = self.Descendants (names);
+			if (descendants == null)
+				return null;
+			return descendants.ToList ();
 		}
 
 		// make it beautiful (.NET -> C#)
@@ -153,11 +177,31 @@ namespace Xamarin.ApiDiff {
 				return "ushort";
 			case "System.Char":
 				return "char";
+			case "System.nint":
+				return "nint";
+			case "System.nuint":
+				return "uint";
+			case "System.nfloat":
+				return "nfloat";
+			case "System.IntPtr":
+				return "IntPtr";
 			default:
 				if (type.StartsWith (State.Namespace, StringComparison.Ordinal))
 					type = type.Substring (State.Namespace.Length + 1);
 				return type;
 			}
+		}
+
+		public static MethodAttributes GetMethodAttributes (this XElement element)
+		{
+			var srcAttribs = element.Attribute ("attrib");
+			return (MethodAttributes) (srcAttribs != null ? Int32.Parse (srcAttribs.Value) : 0);
+		}
+
+		public static FieldAttributes GetFieldAttributes (this XElement element)
+		{
+			var srcAttribs = element.Attribute ("attrib");
+			return (FieldAttributes) (srcAttribs != null ? Int32.Parse (srcAttribs.Value) : 0);
 		}
 	}
 }

@@ -345,7 +345,7 @@ public class UnicodeEncoding : Encoding
 		if (charCount < 0) {
 			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_NonNegative"));
 		}
-		return charCount * 2;
+		return charCount * 2 + 2;
 	}
 
 	// Get the maximum number of characters needed to decode a
@@ -356,7 +356,7 @@ public class UnicodeEncoding : Encoding
 			throw new ArgumentOutOfRangeException
 				("byteCount", _("ArgRange_NonNegative"));
 		}
-		return byteCount / 2;
+		return (byteCount + 1) / 2 + 1;
 	}
 
 	// Get a Unicode-specific decoder that is attached to this instance.

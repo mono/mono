@@ -76,14 +76,17 @@ EXTRA_DISTFILES = \
 	data/3.5/Microsoft.Common.tasks \
 	data/4.0/Microsoft.Common.tasks \
 	data/12.0/Microsoft.Common.tasks \
+	data/14.0/Microsoft.Common.tasks \
 	data/2.0/Microsoft.Common.targets \
 	data/3.5/Microsoft.Common.targets \
 	data/4.0/Microsoft.Common.targets \
 	data/12.0/Microsoft.Common.targets \
+	data/14.0/Microsoft.Common.targets \
 	data/2.0/Microsoft.CSharp.targets \
 	data/3.5/Microsoft.CSharp.targets \
 	data/4.0/Microsoft.CSharp.targets \
 	data/12.0/Microsoft.CSharp.targets \
+	data/14.0/Microsoft.CSharp.targets \
 	data/Microsoft.VisualBasic.targets \
 	data/MSBuild/Microsoft.Build.CommonTypes.xsd \
 	data/MSBuild/Microsoft.Build.Core.xsd \

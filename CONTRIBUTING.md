@@ -5,7 +5,7 @@ When contributing to the Mono project, please follow the [Mono Coding
 Guidelines][1].  We have been using a coding style for many years,
 please make your patches conform to these guidelines.
 
-[1] http://www.mono-project.com/Coding_Guidelines
+[1]: http://www.mono-project.com/community/contributing/coding-guidelines/
 
 Etiquette
 =========
@@ -68,7 +68,7 @@ status of your pull request. If it succeeded and we like the changes,
 a maintainer will likely merge it. Otherwise, you can amend your pull
 request to fix build breakage and Jenkins will test it again.
 
-[2] http://monojenkins.cloudapp.net
+[2]: http://jenkins.mono-project.com/
 
 # Inactivity
 

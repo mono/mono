@@ -41,7 +41,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Globalization;
+using System.Security;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Mono.Data.Tds.Protocol
 {
@@ -1468,7 +1470,7 @@ namespace Mono.Data.Tds.Protocol
 			t3.Domain = this.connectionParms.DefaultDomain;
 			t3.Host = this.connectionParms.Hostname;
 			t3.Username = this.connectionParms.User;
-			t3.Password = this.connectionParms.Password;
+			t3.Password = GetPlainPassword(this.connectionParms.Password);
 
 			Comm.StartPacket (TdsPacketType.SspAuth); // 0x11
 			Comm.Append (t3.GetBytes ());
@@ -1917,6 +1919,20 @@ namespace Mono.Data.Tds.Protocol
 		protected virtual void ProcessReturnStatus () 
 		{
 			comm.Skip(4);
+		}
+
+		public static string GetPlainPassword(SecureString secPass)
+		{
+			IntPtr plainString = IntPtr.Zero;
+			try
+			{
+				plainString = Marshal.SecureStringToGlobalAllocUnicode(secPass);
+				return Marshal.PtrToStringUni(plainString);
+			}
+			finally
+			{
+				Marshal.ZeroFreeGlobalAllocUnicode(plainString);
+			}
 		}
 
 		#endregion // Private Methods

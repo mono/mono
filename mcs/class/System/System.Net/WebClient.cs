@@ -315,10 +315,10 @@ namespace System.Net
 		{
 			WebRequest request = null;
 			
-			using (FileStream f = new FileStream (fileName, FileMode.Create)) {
-				try {
-					request = SetupRequest (address);
-					WebResponse response = GetWebResponse (request);
+			try {
+				request = SetupRequest (address);
+				WebResponse response = GetWebResponse (request);
+				using (FileStream f = new FileStream (fileName, FileMode.Create)) {
 					Stream st = response.GetResponseStream ();
 					
 					int cLength = (int) response.ContentLength;
@@ -337,11 +337,11 @@ namespace System.Net
 
 					if (cLength > 0 && notify_total < cLength)
 						throw new WebException ("Download aborted prematurely.", WebExceptionStatus.ReceiveFailure);
-				} catch (ThreadInterruptedException){
-					if (request != null)
-						request.Abort ();
-					throw;
 				}
+			} catch (ThreadInterruptedException){
+				if (request != null)
+					request.Abort ();
+				throw;
 			}
 		}
 
@@ -1713,8 +1713,8 @@ namespace System.Net
 		async Task DownloadFileTaskAsyncCore (WebRequest request, WebResponse response,
 		                                      string fileName, CancellationToken token)
 		{
+			Stream st = response.GetResponseStream ();
 			using (FileStream f = new FileStream (fileName, FileMode.Create)) {
-				Stream st = response.GetResponseStream ();
 					
 				int cLength = (int)response.ContentLength;
 				int length = (cLength <= -1 || cLength > 32 * 1024) ? 32 * 1024 : cLength;
@@ -1972,20 +1972,17 @@ namespace System.Net
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
 
-			WebRequest request = null;
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address, method, true).ConfigureAwait (false);
-				var result = await UploadFileTaskAsyncCore (request, method, fileName, cts.Token).ConfigureAwait (false);
+
+				var result = await UploadFileTaskAsyncCore (address, method, fileName, cts.Token).ConfigureAwait (false);
 				OnUploadFileCompleted (new UploadFileCompletedEventArgs (result, null, false, null));
 				return result;
 			} catch (WebException ex) {
 				OnUploadFileCompleted (new UploadFileCompletedEventArgs (null, ex, false, null));
 				throw;
 			} catch (OperationCanceledException) {
-				if (request != null)
-					request.Abort ();
 				OnUploadFileCompleted (new UploadFileCompletedEventArgs (null, null, true, null));
 				throw;
 			} catch (Exception ex) {
@@ -1994,8 +1991,7 @@ namespace System.Net
 			}
 		}
 
-		async Task<byte[]> UploadFileTaskAsyncCore (WebRequest request, string method,
-		                                            string fileName, CancellationToken token)
+		async Task<byte[]> UploadFileTaskAsyncCore (Uri address, string method, string fileName, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested ();
 
@@ -2018,8 +2014,14 @@ namespace System.Net
 			Stream reqStream = null;
 			Stream fStream = null;
 			WebResponse response = null;
+			WebRequest request = null;
 
 			fileName = Path.GetFullPath (fileName);
+
+			try {
+				request = await SetupRequestAsync (address, method, true).ConfigureAwait (false);
+			} catch (OperationCanceledException) {
+			}
 
 			try {
 				fStream = File.OpenRead (fileName);
@@ -2042,7 +2044,9 @@ namespace System.Net
 							Path.GetFileName (fileName), fileCType);
 						byte [] partHeadersBytes = Encoding.UTF8.GetBytes (partHeaders);
 						ms.Write (partHeadersBytes, 0, partHeadersBytes.Length);
-						await ms.CopyToAsync (reqStream, (int)ms.Position, token).ConfigureAwait (false);
+						var msLength = (int)ms.Position;
+						ms.Seek (0, SeekOrigin.Begin);
+						await ms.CopyToAsync (reqStream, msLength, token).ConfigureAwait (false);
 					}
 				}
 				int nread;
@@ -2084,7 +2088,9 @@ namespace System.Net
 						ms.WriteByte ((byte) '-');
 						ms.WriteByte ((byte) '\r');
 						ms.WriteByte ((byte) '\n');
-						await ms.CopyToAsync (reqStream, (int)ms.Position, token).ConfigureAwait (false);
+						var msLength = (int)ms.Position;
+						ms.Seek (0, SeekOrigin.Begin);
+						await ms.CopyToAsync (reqStream, msLength, token).ConfigureAwait (false);
 					}
 				}
 				reqStream.Close ();

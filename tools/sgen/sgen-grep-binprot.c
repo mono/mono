@@ -23,10 +23,11 @@ read_entry (FILE *in, void **data)
 		return SGEN_PROTOCOL_EOF;
 	switch (TYPE (type)) {
 	case SGEN_PROTOCOL_COLLECTION_FORCE: size = sizeof (SGenProtocolCollectionForce); break;
-	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollection); break;
-	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollection); break;
+	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollectionBegin); break;
+	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollectionEnd); break;
 	case SGEN_PROTOCOL_CONCURRENT_START: size = 0; break;
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: size = 0; break;
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE: size = 0; break;
+	case SGEN_PROTOCOL_CONCURRENT_FINISH: size = 0; break;
 	case SGEN_PROTOCOL_WORLD_STOPPING: size = sizeof (SGenProtocolWorldStopping); break;
 	case SGEN_PROTOCOL_WORLD_STOPPED: size = sizeof (SGenProtocolWorldStopped); break;
 	case SGEN_PROTOCOL_WORLD_RESTARTING: size = sizeof (SGenProtocolWorldRestarting); break;
@@ -35,10 +36,12 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_ALLOC_PINNED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_DEGRADED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_COPY: size = sizeof (SGenProtocolCopy); break;
+	case SGEN_PROTOCOL_PIN_STAGE: size = sizeof (SGenProtocolPinStage); break;
 	case SGEN_PROTOCOL_PIN: size = sizeof (SGenProtocolPin); break;
 	case SGEN_PROTOCOL_MARK: size = sizeof (SGenProtocolMark); break;
 	case SGEN_PROTOCOL_SCAN_BEGIN: size = sizeof (SGenProtocolScanBegin); break;
 	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: size = sizeof (SGenProtocolScanVTypeBegin); break;
+	case SGEN_PROTOCOL_SCAN_PROCESS_REFERENCE: size = sizeof (SGenProtocolScanProcessReference); break;
 	case SGEN_PROTOCOL_WBARRIER: size = sizeof (SGenProtocolWBarrier); break;
 	case SGEN_PROTOCOL_GLOBAL_REMSET: size = sizeof (SGenProtocolGlobalRemset); break;
 	case SGEN_PROTOCOL_PTR_UPDATE: size = sizeof (SGenProtocolPtrUpdate); break;
@@ -81,7 +84,8 @@ is_always_match (int type)
 	case SGEN_PROTOCOL_COLLECTION_BEGIN:
 	case SGEN_PROTOCOL_COLLECTION_END:
 	case SGEN_PROTOCOL_CONCURRENT_START:
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH:
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE:
+	case SGEN_PROTOCOL_CONCURRENT_FINISH:
 	case SGEN_PROTOCOL_WORLD_STOPPING:
 	case SGEN_PROTOCOL_WORLD_STOPPED:
 	case SGEN_PROTOCOL_WORLD_RESTARTING:
@@ -93,8 +97,6 @@ is_always_match (int type)
 	case SGEN_PROTOCOL_CEMENT_RESET:
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN:
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END:
-	case SGEN_PROTOCOL_GRAY_ENQUEUE:
-	case SGEN_PROTOCOL_GRAY_DEQUEUE:
 		return TRUE;
 	default:
 		return FALSE;
@@ -116,21 +118,27 @@ print_entry (int type, void *data)
 		break;
 	}
 	case SGEN_PROTOCOL_COLLECTION_BEGIN: {
-		SGenProtocolCollection *entry = data;
+		SGenProtocolCollectionBegin *entry = data;
 		printf ("collection begin %d generation %d\n", entry->index, entry->generation);
 		break;
 	}
 	case SGEN_PROTOCOL_COLLECTION_END: {
-		SGenProtocolCollection *entry = data;
-		printf ("collection end %d generation %d\n", entry->index, entry->generation);
+		SGenProtocolCollectionEnd *entry = data;
+		long long scanned = entry->num_scanned_objects;
+		long long unique = entry->num_unique_scanned_objects;
+		printf ("collection end %d generation %d scanned %lld unique %lld %0.2f%%\n", entry->index, entry->generation, scanned, unique, unique ? 100.0 * (double) scanned / (double) unique : 0.0);
 		break;
 	}
 	case SGEN_PROTOCOL_CONCURRENT_START: {
 		printf ("concurrent start\n");
 		break;
 	}
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: {
-		printf ("concurrent update or finish\n");
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE: {
+		printf ("concurrent update\n");
+		break;
+	}
+	case SGEN_PROTOCOL_CONCURRENT_FINISH: {
+		printf ("concurrent finish\n");
 		break;
 	}
 	case SGEN_PROTOCOL_WORLD_STOPPING: {
@@ -177,6 +185,11 @@ print_entry (int type, void *data)
 		printf ("copy from %p to %p vtable %p size %d\n", entry->from, entry->to, entry->vtable, entry->size);
 		break;
 	}
+	case SGEN_PROTOCOL_PIN_STAGE: {
+		SGenProtocolPinStage *entry = data;
+		printf ("pin stage addr ptr %p addr %p\n", entry->addr_ptr, entry->addr);
+		break;
+	}
 	case SGEN_PROTOCOL_PIN: {
 		SGenProtocolPin *entry = data;
 		printf ("pin obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
@@ -195,6 +208,11 @@ print_entry (int type, void *data)
 	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
 		SGenProtocolScanVTypeBegin *entry = data;
 		printf ("scan_vtype_begin obj %p size %d\n", entry->obj, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_SCAN_PROCESS_REFERENCE: {
+		SGenProtocolScanProcessReference *entry = data;
+		printf ("scan_process_reference obj %p ptr %p value %p\n", entry->obj, entry->ptr, entry->value);
 		break;
 	}
 	case SGEN_PROTOCOL_WBARRIER: {
@@ -331,6 +349,10 @@ is_match (gpointer ptr, int type, void *data)
 		SGenProtocolCopy *entry = data;
 		return matches_interval (ptr, entry->from, entry->size) || matches_interval (ptr, entry->to, entry->size);
 	}
+	case SGEN_PROTOCOL_PIN_STAGE: {
+		SGenProtocolPinStage *entry = data;
+		return ptr == entry->addr_ptr || ptr == entry->addr;
+	}
 	case SGEN_PROTOCOL_PIN: {
 		SGenProtocolPin *entry = data;
 		return matches_interval (ptr, entry->obj, entry->size);
@@ -346,6 +368,10 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
 		SGenProtocolScanVTypeBegin *entry = data;
 		return matches_interval (ptr, entry->obj, entry->size);
+	}
+	case SGEN_PROTOCOL_SCAN_PROCESS_REFERENCE: {
+		SGenProtocolScanProcessReference *entry = data;
+		return ptr == entry->obj || ptr == entry->ptr || ptr == entry->value;
 	}
 	case SGEN_PROTOCOL_WBARRIER: {
 		SGenProtocolWBarrier *entry = data;
@@ -474,6 +500,7 @@ main (int argc, char *argv[])
 	gboolean pause_times = FALSE;
 	gboolean pause_times_stopped = FALSE;
 	gboolean pause_times_concurrent = FALSE;
+	gboolean pause_times_finish = FALSE;
 	long long pause_times_ts = 0;
 
 	for (i = 0; i < num_args; ++i) {
@@ -503,20 +530,24 @@ main (int argc, char *argv[])
 				SGenProtocolWorldStopping *entry = data;
 				assert (!pause_times_stopped);
 				pause_times_concurrent = FALSE;
+				pause_times_finish = FALSE;
 				pause_times_ts = entry->timestamp;
 				pause_times_stopped = TRUE;
 				break;
 			}
+			case SGEN_PROTOCOL_CONCURRENT_FINISH:
+				pause_times_finish = TRUE;
 			case SGEN_PROTOCOL_CONCURRENT_START:
-			case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH:
+			case SGEN_PROTOCOL_CONCURRENT_UPDATE:
 				pause_times_concurrent = TRUE;
 				break;
 			case SGEN_PROTOCOL_WORLD_RESTARTED: {
 				SGenProtocolWorldRestarted *entry = data;
 				assert (pause_times_stopped);
-				printf ("pause-time %d %d %lld %lld\n",
+				printf ("pause-time %d %d %d %lld %lld\n",
 						entry->generation,
 						pause_times_concurrent,
+						pause_times_finish,
 						entry->timestamp - pause_times_ts,
 						pause_times_ts);
 				pause_times_stopped = FALSE;

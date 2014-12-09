@@ -28,6 +28,9 @@ namespace MonoTests.System.Security.Cryptography {
 
 	public class SelectableHmacSha384: HMAC {
 
+		// legacy parameter:
+		//      http://blogs.msdn.com/shawnfa/archive/2007/01/31/please-do-not-use-the-net-2-0-hmacsha512-and-hmacsha384-classes.aspx
+		
 		public SelectableHmacSha384 (byte[] key, bool legacy)
 		{
 			HashName = "SHA384";
@@ -45,7 +48,6 @@ namespace MonoTests.System.Security.Cryptography {
 	public class HMACSHA384Test : KeyedHashAlgorithmTest {
 
 		protected HMACSHA384 algo;
-		private bool legacy;
 
 		[SetUp]
 		public override void SetUp () 
@@ -53,8 +55,6 @@ namespace MonoTests.System.Security.Cryptography {
 			algo = new HMACSHA384 ();
 			algo.Key = new byte [8];
 			hash = algo;
-			// http://blogs.msdn.com/shawnfa/archive/2007/01/31/please-do-not-use-the-net-2-0-hmacsha512-and-hmacsha384-classes.aspx
-			legacy = (new HS384 ().BlockSize == 64);
 		}
 
 		// the hash algorithm only exists as a managed implementation

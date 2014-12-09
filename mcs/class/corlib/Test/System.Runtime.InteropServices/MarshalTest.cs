@@ -28,7 +28,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			public int field;
 		}
 
-		class ClsNoLayout {
+		public class ClsNoLayout {
 			public int field;
 		}
 
@@ -173,12 +173,12 @@ namespace MonoTests.System.Runtime.InteropServices
 			Marshal.FreeHGlobal (ptr);
 		}
 
-		struct Foo {
-			int a;
-			static int b;
-			long c;
-			static char d;
-			int e;
+		public struct Foo {
+			public int a;
+			public static int b;
+			public long c;
+			public static char d;
+			public int e;
 		}
 
 		[Test]

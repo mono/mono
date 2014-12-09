@@ -57,6 +57,7 @@
     <ClCompile Include="..\mono\metadata\gc.c" />
     <ClCompile Include="..\mono\metadata\icall.c" />
     <ClCompile Include="..\mono\metadata\image.c" />
+    <ClCompile Include="..\mono\metadata\jit-info.c" />
     <ClCompile Include="..\mono\metadata\loader.c" />
     <ClCompile Include="..\mono\metadata\locales.c" />
     <ClCompile Include="..\mono\metadata\lock-tracer.c" />
@@ -69,7 +70,6 @@
     <ClCompile Include="..\mono\metadata\mono-basic-block.c" />
     <ClCompile Include="..\mono\metadata\mono-config.c" />
     <ClCompile Include="..\mono\metadata\mono-cq.c" />
-    <ClCompile Include="..\mono\metadata\mono-debug-debugger.c" />
     <ClCompile Include="..\mono\metadata\mono-debug.c" />
     <ClCompile Include="..\mono\metadata\mono-endian.c" />
     <ClCompile Include="..\mono\metadata\mono-hash.c" />
@@ -98,9 +98,6 @@
     <ClCompile Include="..\mono\metadata\sgen-hash-table.c" />
     <ClCompile Include="..\mono\metadata\sgen-internal.c" />
     <ClCompile Include="..\mono\metadata\sgen-los.c" />
-    <ClCompile Include="..\mono\metadata\sgen-marksweep-fixed-par.c" />
-    <ClCompile Include="..\mono\metadata\sgen-marksweep-fixed.c" />
-    <ClCompile Include="..\mono\metadata\sgen-marksweep-par.c" />
     <ClCompile Include="..\mono\metadata\sgen-marksweep.c" />
     <ClCompile Include="..\mono\metadata\sgen-memory-governor.c" />
     <ClCompile Include="..\mono\metadata\sgen-new-bridge.c" />
@@ -111,7 +108,9 @@
     <ClCompile Include="..\mono\metadata\sgen-os-win32.c" />
     <ClCompile Include="..\mono\metadata\sgen-pinning-stats.c" />
     <ClCompile Include="..\mono\metadata\sgen-pinning.c" />
+    <ClCompile Include="..\mono\metadata\sgen-pointer-queue.c" />
     <ClCompile Include="..\mono\metadata\sgen-protocol.c" />
+    <ClCompile Include="..\mono\metadata\sgen-qsort.c" />
     <ClCompile Include="..\mono\metadata\sgen-simple-nursery.c" />
     <ClCompile Include="..\mono\metadata\sgen-split-nursery.c" />
     <ClCompile Include="..\mono\metadata\sgen-tarjan-bridge.c" />
@@ -256,7 +255,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>

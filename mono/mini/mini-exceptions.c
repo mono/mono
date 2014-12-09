@@ -52,6 +52,7 @@
 #include "mini.h"
 #include "trace.h"
 #include "debugger-agent.h"
+#include "seq-points.h"
 
 #ifndef MONO_ARCH_CONTEXT_DEF
 #define MONO_ARCH_CONTEXT_DEF
@@ -690,6 +691,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		}
 		else
 			MONO_OBJECT_SETREF (sf, method, mono_method_get_object (domain, method, NULL));
+		sf->method_address = (gint64) ji->code_start;
 		sf->native_offset = (char *)ip - (char *)ji->code_start;
 
 		/*
@@ -698,10 +700,15 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		 * operation, so we shouldn't call this method twice.
 		 */
 		location = mono_debug_lookup_source_location (jinfo_get_method (ji), sf->native_offset, domain);
-		if (location)
+		if (location) {
 			sf->il_offset = location->il_offset;
-		else
-			sf->il_offset = 0;
+		} else {
+			SeqPoint sp;
+			if (find_prev_seq_point_for_native_offset (domain, jinfo_get_method (ji), sf->native_offset, NULL, &sp))
+				sf->il_offset = sp.il_offset;
+			else
+				sf->il_offset = 0;
+		}
 
 		if (need_file_info) {
 			if (location && location->source_file) {
@@ -852,7 +859,15 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 			MonoDebugSourceLocation *source;
 
 			source = mono_debug_lookup_source_location (jinfo_get_method (frame.ji), frame.native_offset, domain);
-			il_offset = source ? source->il_offset : -1;
+			if (source) {
+				il_offset = source->il_offset;
+			} else {
+				SeqPoint sp;
+				if (find_prev_seq_point_for_native_offset (domain, jinfo_get_method (frame.ji), frame.native_offset, NULL, &sp))
+					il_offset = sp.il_offset;
+				else
+					il_offset = -1;
+			}
 			mono_debug_free_source_location (source);
 		} else
 			il_offset = -1;
@@ -2183,7 +2198,7 @@ mono_handle_hard_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 	mono_runtime_printf_err ("Stack overflow: IP: %p, fault addr: %p", mono_arch_ip_from_context (ctx), fault_addr);
 
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
-	mono_arch_sigctx_to_monoctx (ctx, &mctx);
+	mono_sigctx_to_monoctx (ctx, &mctx);
 			
 	mono_runtime_printf_err ("Stacktrace:");
 
@@ -2227,8 +2242,8 @@ print_stack_frame_to_string (StackFrameInfo *frame, MonoContext *ctx, gpointer d
 	if (frame->ji)
 		method = jinfo_get_method (frame->ji);
 
-	if (method) {
-		gchar *location = mono_debug_print_stack_frame (method, frame->native_offset, mono_domain_get ());
+	if (method && frame->domain) {
+		gchar *location = mono_debug_print_stack_frame (method, frame->native_offset, frame->domain);
 		g_string_append_printf (p, "  %s\n", location);
 		g_free (location);
 	} else
@@ -2379,13 +2394,17 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 	MonoContext ctx;
 #endif
-	GString* text = g_string_new (0);
+	GString* text;
 	char *name;
 #ifndef HOST_WIN32
 	char *wapi_desc;
 #endif
 	GError *error = NULL;
 
+	if (!thread)
+		return;
+
+	text = g_string_new (0);
 	if (thread->name) {
 		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &error);
 		g_assert (!error);
@@ -2409,7 +2428,7 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 	} else if (!sigctx)
 		MONO_INIT_CONTEXT_FROM_FUNC (&ctx, mono_print_thread_dump);
 	else
-		mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+		mono_sigctx_to_monoctx (sigctx, &ctx);
 
 	mono_walk_stack_with_ctx (print_stack_frame_to_string, &ctx, MONO_UNWIND_LOOKUP_ALL, text);
 #else
@@ -2606,7 +2625,7 @@ mono_thread_state_init_from_sigctx (MonoThreadUnwindState *ctx, void *sigctx)
 	}
 
 	if (sigctx)
-		mono_arch_sigctx_to_monoctx (sigctx, &ctx->ctx);
+		mono_sigctx_to_monoctx (sigctx, &ctx->ctx);
 	else
 #if MONO_ARCH_HAS_MONO_CONTEXT && !defined(MONO_CROSS_COMPILE)
 		MONO_CONTEXT_GET_CURRENT (ctx->ctx);
@@ -2759,6 +2778,16 @@ mono_jinfo_get_unwind_info (MonoJitInfo *ji, guint32 *unwind_info_len)
 	if (ji->from_aot)
 		return mono_aot_get_unwind_info (ji, unwind_info_len);
 	else
-		/* The upper 16 bits of ji->unwind_info might contain the epilog offset */
-		return mono_get_cached_unwind_info (ji->unwind_info & 0xffff, unwind_info_len);
+		return mono_get_cached_unwind_info (ji->unwind_info, unwind_info_len);
+}
+
+int
+mono_jinfo_get_epilog_size (MonoJitInfo *ji)
+{
+	MonoArchEHJitInfo *info;
+
+	info = mono_jit_info_get_arch_eh_info (ji);
+	g_assert (info);
+
+	return info->epilog_size;
 }

@@ -208,7 +208,9 @@ enum {
 	MONO_EXCEPTION_GENERIC_SHARING_FAILED = 11,
 	MONO_EXCEPTION_BAD_IMAGE = 12,
 	MONO_EXCEPTION_OBJECT_SUPPLIED = 13, /*The exception object is already created.*/
-	MONO_EXCEPTION_OUT_OF_MEMORY = 14
+	MONO_EXCEPTION_OUT_OF_MEMORY = 14,
+	MONO_EXCEPTION_INLINE_FAILED = 15,
+	MONO_EXCEPTION_MONO_ERROR = 16,
 	/* add other exception type */
 };
 
@@ -1228,13 +1230,9 @@ MONO_API MonoGenericContainer *
 mono_metadata_load_generic_params (MonoImage *image, guint32 token,
 				   MonoGenericContainer *parent_container);
 
-MONO_API void
-mono_metadata_load_generic_param_constraints (MonoImage *image, guint32 token,
-					      MonoGenericContainer *container);
-
-gboolean
-mono_metadata_load_generic_param_constraints_full (MonoImage *image, guint32 token,
-					      MonoGenericContainer *container) MONO_INTERNAL;
+MONO_API gboolean
+mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 token,
+					      MonoGenericContainer *container, MonoError *error);
 
 MonoMethodSignature*
 mono_create_icall_signature (const char *sigstr) MONO_INTERNAL;
@@ -1298,7 +1296,7 @@ MONO_API gboolean
 mono_class_is_valid_enum (MonoClass *klass);
 
 MonoType *
-mono_type_get_full        (MonoImage *image, guint32 type_token, MonoGenericContext *context) MONO_INTERNAL;
+mono_type_get_checked        (MonoImage *image, guint32 type_token, MonoGenericContext *context, MonoError *error) MONO_INTERNAL;
 
 gboolean
 mono_generic_class_is_generic_type_definition (MonoGenericClass *gklass) MONO_INTERNAL;
@@ -1385,5 +1383,20 @@ mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bfla
 
 char*
 mono_class_full_name (MonoClass *klass) MONO_INTERNAL;
+
+MonoClass*
+mono_class_inflate_generic_class_checked (MonoClass *gklass, MonoGenericContext *context, MonoError *error) MONO_INTERNAL;
+
+MonoClass *
+mono_class_get_checked (MonoImage *image, guint32 type_token, MonoError *error) MONO_INTERNAL;
+
+MonoClass *
+mono_class_get_and_inflate_typespec_checked (MonoImage *image, guint32 type_token, MonoGenericContext *context, MonoError *error) MONO_INTERNAL;
+
+MonoClass *
+mono_class_from_name_case_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error) MONO_INTERNAL;
+
+MonoClassField*
+mono_field_from_token_checked (MonoImage *image, uint32_t token, MonoClass **retklass, MonoGenericContext *context, MonoError *error) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */

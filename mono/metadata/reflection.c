@@ -1702,8 +1702,10 @@ fieldref_encode_signature (MonoDynamicImage *assembly, MonoImage *field_image, M
 	if (type->num_mods) {
 		for (i = 0; i < type->num_mods; ++i) {
 			if (field_image) {
-				MonoClass *class = mono_class_get (field_image, type->modifiers [i].token);
-				g_assert (class);
+				MonoError error;
+				MonoClass *class = mono_class_get_checked (field_image, type->modifiers [i].token, &error);
+				g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+
 				token = mono_image_typedef_or_ref (assembly, &class->byval_arg);
 			} else {
 				token = type->modifiers [i].token;
@@ -2254,8 +2256,8 @@ resolution_scope_from_image (MonoDynamicImage *assembly, MonoImage *image)
 		values = table->values + token * MONO_MODULEREF_SIZE;
 		values [MONO_MODULEREF_NAME] = string_heap_insert (&assembly->sheap, image->module_name);
 
-		token <<= MONO_RESOLTION_SCOPE_BITS;
-		token |= MONO_RESOLTION_SCOPE_MODULEREF;
+		token <<= MONO_RESOLUTION_SCOPE_BITS;
+		token |= MONO_RESOLUTION_SCOPE_MODULEREF;
 		g_hash_table_insert (assembly->handleref, image, GUINT_TO_POINTER (token));
 
 		return token;
@@ -2297,8 +2299,8 @@ resolution_scope_from_image (MonoDynamicImage *assembly, MonoImage *image)
 	} else {
 		values [MONO_ASSEMBLYREF_PUBLIC_KEY] = 0;
 	}
-	token <<= MONO_RESOLTION_SCOPE_BITS;
-	token |= MONO_RESOLTION_SCOPE_ASSEMBLYREF;
+	token <<= MONO_RESOLUTION_SCOPE_BITS;
+	token |= MONO_RESOLUTION_SCOPE_ASSEMBLYREF;
 	g_hash_table_insert (assembly->handleref, image, GUINT_TO_POINTER (token));
 	return token;
 }
@@ -2388,7 +2390,7 @@ mono_image_typedef_or_ref_full (MonoDynamicImage *assembly, MonoType *type, gboo
 		enclosing = mono_image_typedef_or_ref_full (assembly, &klass->nested_in->byval_arg, FALSE);
 		/* get the typeref idx of the enclosing type */
 		enclosing >>= MONO_TYPEDEFORREF_BITS;
-		scope = (enclosing << MONO_RESOLTION_SCOPE_BITS) | MONO_RESOLTION_SCOPE_TYPEREF;
+		scope = (enclosing << MONO_RESOLUTION_SCOPE_BITS) | MONO_RESOLUTION_SCOPE_TYPEREF;
 	} else {
 		scope = resolution_scope_from_image (assembly, klass->image);
 	}
@@ -3798,7 +3800,9 @@ mono_image_fill_export_table_from_module (MonoDomain *domain, MonoReflectionModu
 	t = &image->tables [MONO_TABLE_TYPEDEF];
 
 	for (i = 0; i < t->rows; ++i) {
-		MonoClass *klass = mono_class_get (image, mono_metadata_make_token (MONO_TABLE_TYPEDEF, i + 1));
+		MonoError error;
+		MonoClass *klass = mono_class_get_checked (image, mono_metadata_make_token (MONO_TABLE_TYPEDEF, i + 1), &error);
+		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 
 		if (klass->flags & TYPE_ATTRIBUTE_PUBLIC)
 			mono_image_fill_export_table_from_class (domain, klass, module_index, 0, assembly);
@@ -3820,8 +3824,8 @@ add_exported_type (MonoReflectionAssemblyBuilder *assemblyb, MonoDynamicImage *a
 		forwarder = FALSE;
 	} else {
 		scope = resolution_scope_from_image (assembly, klass->image);
-		g_assert ((scope & MONO_RESOLTION_SCOPE_MASK) == MONO_RESOLTION_SCOPE_ASSEMBLYREF);
-		scope_idx = scope >> MONO_RESOLTION_SCOPE_BITS;
+		g_assert ((scope & MONO_RESOLUTION_SCOPE_MASK) == MONO_RESOLUTION_SCOPE_ASSEMBLYREF);
+		scope_idx = scope >> MONO_RESOLUTION_SCOPE_BITS;
 		impl = (scope_idx << MONO_IMPLEMENTATION_BITS) + MONO_IMPLEMENTATION_ASSEMBLYREF;
 	}
 
@@ -7487,10 +7491,13 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 	if (!image)
 		image = mono_defaults.corlib;
 
-	if (ignorecase)
-		klass = mono_class_from_name_case (image, info->name_space, info->name);
-	else
+	if (ignorecase) {
+		MonoError error;
+		klass = mono_class_from_name_case_checked (image, info->name_space, info->name, &error);
+		g_assert (mono_error_ok (&error)); /* FIXME Don't swallow the error */
+	} else {
 		klass = mono_class_from_name (image, info->name_space, info->name);
+	}
 	if (!klass)
 		return NULL;
 	for (mod = info->nested; mod; mod = mod->next) {
@@ -7501,14 +7508,52 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 		mono_class_init (parent);
 
 		while ((klass = mono_class_get_nested_types (parent, &iter))) {
-			if (ignorecase) {
-				if (mono_utf8_strcasecmp (klass->name, mod->data) == 0)
-					break;
+			char *lastp;
+			char *nested_name, *nested_nspace;
+			gboolean match = TRUE;
+
+			lastp = strrchr (mod->data, '.');
+			if (lastp) {
+				/* Nested classes can have namespaces */
+				int nspace_len;
+
+				nested_name = g_strdup (lastp + 1);
+				nspace_len = lastp - (char*)mod->data;
+				nested_nspace = g_malloc (nspace_len + 1);
+				memcpy (nested_nspace, mod->data, nspace_len);
+				nested_nspace [nspace_len] = '\0';
+
 			} else {
-				if (strcmp (klass->name, mod->data) == 0)
-					break;
+				nested_name = mod->data;
+				nested_nspace = NULL;
 			}
+
+			if (nested_nspace) {
+				if (ignorecase) {
+					if (!(klass->name_space && mono_utf8_strcasecmp (klass->name_space, nested_nspace) == 0))
+						match = FALSE;
+				} else {
+					if (!(klass->name_space && strcmp (klass->name_space, nested_nspace) == 0))
+						match = FALSE;
+				}
+			}
+			if (match) {
+				if (ignorecase) {
+					if (mono_utf8_strcasecmp (klass->name, nested_name) != 0)
+						match = FALSE;
+				} else {
+					if (strcmp (klass->name, nested_name) != 0)
+						match = FALSE;
+				}
+			}
+			if (lastp) {
+				g_free (nested_name);
+				g_free (nested_nspace);
+			}
+			if (match)
+				break;
 		}
+
 		if (!klass)
 			break;
 	}
@@ -7757,12 +7802,15 @@ mono_reflection_get_token (MonoObject *obj)
 
 		if (is_field_on_inst (f->field)) {
 			MonoDynamicGenericClass *dgclass = (MonoDynamicGenericClass*)f->field->parent->generic_class;
-			int field_index = f->field - dgclass->fields;
-			MonoObject *obj;
 
-			g_assert (field_index >= 0 && field_index < dgclass->count_fields);
-			obj = dgclass->field_objects [field_index];
-			return mono_reflection_get_token (obj);
+			if (f->field >= dgclass->fields && f->field < dgclass->fields + dgclass->count_fields) {
+				int field_index = f->field - dgclass->fields;
+				MonoObject *obj;
+
+				g_assert (field_index >= 0 && field_index < dgclass->count_fields);
+				obj = dgclass->field_objects [field_index];
+				return mono_reflection_get_token (obj);
+			}
 		}
 		token = mono_class_get_field_token (f->field);
 	} else if (strcmp (klass->name, "MonoProperty") == 0) {
@@ -9970,7 +10018,7 @@ mono_reflection_setup_internal_class (MonoReflectionTypeBuilder *tb)
 
 		mono_class_set_ref_info (klass, tb);
 
-		/* Put into cache so mono_class_get () will find it.
+		/* Put into cache so mono_class_get_checked () will find it.
 		Skip nested types as those should not be available on the global scope. */
 		if (!tb->nesting_type)
 			mono_image_add_to_name_cache (klass->image, klass->name_space, klass->name, tb->table_idx);
@@ -11799,16 +11847,18 @@ mono_reflection_is_valid_dynamic_token (MonoDynamicImage *image, guint32 token)
 }
 
 MonoMethodSignature *
-mono_reflection_lookup_signature (MonoImage *image, MonoMethod *method, guint32 token)
+mono_reflection_lookup_signature (MonoImage *image, MonoMethod *method, guint32 token, MonoError *error)
 {
 	MonoMethodSignature *sig;
 	g_assert (image_is_dynamic (image));
+
+	mono_error_init (error);
 
 	sig = g_hash_table_lookup (((MonoDynamicImage*)image)->vararg_aux_hash, GUINT_TO_POINTER (token));
 	if (sig)
 		return sig;
 
-	return mono_method_signature (method);
+	return mono_method_signature_checked (method, error);
 }
 
 #ifndef DISABLE_REFLECTION_EMIT

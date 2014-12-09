@@ -29,7 +29,6 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		static ManualResetEvent reset;
 		private string message;
-		private string uri = "http://www.google.com";
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()

@@ -1498,15 +1498,6 @@ namespace Mono.CSharp {
 							"`{0}': Struct constructors cannot call base constructors", caller_builder.GetSignatureForError ());
 						return this;
 					}
-				} else {
-					//
-					// It is legal to have "this" initializers that take no arguments
-					// in structs
-					//
-					// struct D { public D (int a) : this () {}
-					//
-					if (ec.CurrentType.IsStruct && argument_list == null)
-						return this;
 				}
 
 				base_ctor = ConstructorLookup (ec, type, ref argument_list, loc);
@@ -1663,12 +1654,6 @@ namespace Mono.CSharp {
 		protected override bool CheckBase ()
 		{
 			if ((ModFlags & Modifiers.STATIC) != 0) {
-				if (!parameters.IsEmpty) {
-					Report.Error (132, Location, "`{0}': The static constructor must be parameterless",
-						GetSignatureForError ());
-					return false;
-				}
-
 				if ((caching_flags & Flags.MethodOverloadsExist) != 0)
 					Parent.MemberCache.CheckExistingMembersOverloads (this, parameters);
 
@@ -1682,12 +1667,6 @@ namespace Mono.CSharp {
 
 			if ((caching_flags & Flags.MethodOverloadsExist) != 0)
 				Parent.MemberCache.CheckExistingMembersOverloads (this, parameters);
-
-			if (Parent.PartialContainer.Kind == MemberKind.Struct && parameters.IsEmpty) {
-				Report.Error (568, Location, 
-					"Structs cannot contain explicit parameterless constructors");
-				return false;
-			}
 
 			CheckProtectedModifier ();
 			
@@ -2571,6 +2550,9 @@ namespace Mono.CSharp {
 			Implicit,
 			Explicit,
 
+			// Pattern matching
+			Is,
+
 			// Just because of enum
 			TOP
 		};
@@ -2608,6 +2590,7 @@ namespace Mono.CSharp {
 			names [(int) OpType.LessThanOrEqual] = new string [] { "<=", "op_LessThanOrEqual" };
 			names [(int) OpType.Implicit] = new string [] { "implicit", "op_Implicit" };
 			names [(int) OpType.Explicit] = new string [] { "explicit", "op_Explicit" };
+			names [(int) OpType.Is] = new string[] { "is", "op_Is" };
 		}
 
 		public Operator (TypeDefinition parent, OpType type, FullNamedExpression ret_type, Modifiers mod_flags, ParametersCompiled parameters,

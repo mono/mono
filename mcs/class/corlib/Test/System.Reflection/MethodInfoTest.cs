@@ -42,9 +42,12 @@ using System.Collections.Generic;
 #endif
 
 namespace A.B.C {
+	// Disable expected warning
+#pragma warning disable 169
 	public struct MethodInfoTestStruct {
 		int p;
 	}
+#pragma warning restore 169
 }
 namespace MonoTests.System.Reflection
 {
@@ -253,7 +256,7 @@ namespace MonoTests.System.Reflection
 
 		public struct SimpleStruct
 		{
-			int a;
+			public int a;
 		}
 
 		public static unsafe SimpleStruct* PtrFunc2 (SimpleStruct* a, A.B.C.MethodInfoTestStruct *b)

@@ -831,7 +831,6 @@ fail_no_space:
 		uint leftOverBits = 0;
 		uint leftOverCount = 0;
 		DecoderFallbackBuffer buf = null;
-		byte [] bufferArg = null;
 		return InternalGetChars (bytes, byteIndex, byteCount, chars, 
 				charIndex, ref leftOverBits, ref leftOverCount, DecoderFallback, ref buf, true);
 	}

@@ -246,6 +246,7 @@ namespace System {
 								tzdataPath, offset, length, r, buffer.Length));
 			}
 
+			TimeZoneInfo.DumpTimeZoneDataToFile (id, buffer);
 			return buffer;
 		}
 	}
@@ -453,29 +454,29 @@ namespace System {
 					: db.GetAvailableIds ();
 			}
 
-			static TimeZoneInfo _GetTimeZone (string name)
+			static TimeZoneInfo _GetTimeZone (string id, string name)
 			{
 				if (db == null)
 					return null;
 				byte[] buffer = db.GetTimeZoneData (name);
 				if (buffer == null)
 					return null;
-				return TimeZoneInfo.ParseTZBuffer (name, buffer, buffer.Length);
+				return TimeZoneInfo.ParseTZBuffer (id, buffer, buffer.Length);
 			}
 
-			internal static TimeZoneInfo GetTimeZone (string id)
+			internal static TimeZoneInfo GetTimeZone (string id, string name)
 			{
-				if (id != null) {
-					if (id == "GMT" || id == "UTC")
-						return new TimeZoneInfo (id, TimeSpan.FromSeconds (0), id, id, id, null, true);
-					if (id.StartsWith ("GMT"))
+				if (name != null) {
+					if (name == "GMT" || name == "UTC")
+						return new TimeZoneInfo (id, TimeSpan.FromSeconds (0), id, name, name, null, disableDaylightSavingTime:true);
+					if (name.StartsWith ("GMT"))
 						return new TimeZoneInfo (id,
-								TimeSpan.FromSeconds (ParseNumericZone (id)),
-								id, id, id, null, true);
+								TimeSpan.FromSeconds (ParseNumericZone (name)),
+								id, name, name, null, disableDaylightSavingTime:true);
 				}
 
 				try {
-					return _GetTimeZone (id);
+					return _GetTimeZone (id, name);
 				} catch (Exception) {
 					return null;
 				}
@@ -533,12 +534,13 @@ namespace System {
 			static readonly object _lock = new object ();
 
 			static TimeZoneInfo defaultZone;
-			internal static TimeZoneInfo Default {
+			internal static TimeZoneInfo Local {
 				get {
 					lock (_lock) {
 						if (defaultZone != null)
 							return defaultZone;
-						return defaultZone = GetTimeZone (GetDefaultTimeZoneName ());
+						var id  = GetDefaultTimeZoneName ();
+						return defaultZone = GetTimeZone (id, id);
 					}
 				}
 			}
@@ -553,7 +555,10 @@ namespace System {
 			{
 				IntPtr value = IntPtr.Zero;
 				int n = 0;
-				string defaultTimeZone;
+				string defaultTimeZone  = Environment.GetEnvironmentVariable ("__XA_OVERRIDE_TIMEZONE_ID__");
+
+				if (!string.IsNullOrEmpty (defaultTimeZone))
+					return defaultTimeZone;
 
 				// Used by the tests
 				if (Environment.GetEnvironmentVariable ("__XA_USE_JAVA_DEFAULT_TIMEZONE_ID__") == null)
@@ -576,25 +581,52 @@ namespace System {
 #if SELF_TEST
 			/*
 			 * Compile:
-			 *    mcs  /out:tzi.exe /unsafe "/d:INSIDE_CORLIB;MONODROID;NET_4_0;LIBC;SELF_TEST" System/TimeZone*.cs ../../build/common/Consts.cs ../Mono.Options/Mono.Options/Options.cs
+			 *    mcs /debug+ /out:tzi.exe /unsafe "/d:INSIDE_CORLIB;MONODROID;NET_4_0;LIBC;SELF_TEST" ../corlib/System/AndroidPlatform.cs System/TimeZone*.cs ../../build/common/Consts.cs ../Mono.Options/Mono.Options/Options.cs
 			 * Prep:
-			 *    mkdir -p usr/share/zoneinfo
+			 *    mkdir -p android/tzdb/usr/share/zoneinfo
+			 *    mkdir -p android/tzdb/misc/zoneinfo/zoneinfo
 			 *    android_root=`adb shell echo '$ANDROID_ROOT' | tr -d "\r"`
-			 *    adb pull $android_root/usr/share/zoneinfo usr/share/zoneinfo
+			 *    android_data=`adb shell echo '$ANDROID_DATA' | tr -d "\r"`
+			 *    adb pull $android_root/usr/share/zoneinfo   android/tzdb/usr/share/zoneinfo
+			 *    adb pull $android_data/misc/zoneinfo/tzdata android/tzdb/misc/zoneinfo
 			 * Run:
-			 *    ANDROID_ROOT=`pwd` mono tzi.exe
+			 *    # Dump all timezone names
+			 *    __XA_OVERRIDE_TIMEZONE_ID__=America/New_York ANDROID_ROOT=`pwd` ANDROID_DATA=`pwd` mono --debug tzi.exe --offset=1969-01-01
+			 *
+			 *    # Dump TimeZone data to files under path `tzdata`
+			 *    __XA_OVERRIDE_TIMEZONE_ID__=America/New_York ANDROID_ROOT=`pwd` ANDROID_DATA=`pwd` mono --debug tzi.exe -o android/tzdata
+			 *
+			 *    # Dump TimeZone rules for specific timezone data (as dumped above)
+			 *    mono tzi.exe --offset=2012-10-24 -i=tzdata/Asia/Amman
 			 */
 			static void Main (string[] args)
 			{
+				DateTime? offset           = null;
 				Func<IAndroidTimeZoneDB> c = () => GetDefaultTimeZoneDB ();
+				bool dump_rules            = false;
 				Mono.Options.OptionSet p = null;
 				p = new Mono.Options.OptionSet () {
+					{ "i=",
+					  "TimeZone data {FILE} to parse and dump",
+					  v => DumpTimeZoneFile (v, offset)
+					},
+					{ "o=",
+					  "Write TimeZone data files to {PATH}",
+					  v => TimeZoneInfo.TimeZoneDataExportPath = v
+					},
 					{ "T=", "Create AndroidTzData from {PATH}.", v => {
 							c = () => new AndroidTzData (v);
 					} },
 					{ "Z=", "Create ZoneInfoDB from {DIR}.", v => {
 							c = () => new ZoneInfoDB (v);
 					} },
+					{ "offset=", "Show timezone info offset for DateTime {OFFSET}.", v => {
+						offset = DateTime.Parse (v);
+						Console.WriteLine ("Using DateTime Offset: {0}", offset);
+					} },
+					{ "R|dump-rules",
+					  "Show timezone info offset for DateTime {OFFSET}.",
+					  v => dump_rules = v != null },
 					{ "help", "Show this message and exit", v => {
 							p.WriteOptionDescriptions (Console.Out);
 							Environment.Exit (0);
@@ -606,9 +638,16 @@ namespace System {
 				foreach (var id in GetAvailableIds ()) {
 					Console.Write ("name={0,-40}", id);
 					try {
-						TimeZoneInfo zone = _GetTimeZone (id);
-						if (zone != null)
-							Console.Write (" {0}", zone);
+						TimeZoneInfo zone = _GetTimeZone (id, id);
+						if (zone != null) {
+							Console.Write (" {0,-40}", zone);
+							if (offset.HasValue) {
+								Console.Write ("From Offset: {0}", zone.GetUtcOffset (offset.Value));
+							}
+							if (dump_rules) {
+								WriteZoneRules (zone);
+							}
+						}
 						else {
 							Console.Write (" ERROR:null");
 						}
@@ -619,6 +658,53 @@ namespace System {
 					Console.WriteLine ();
 				}
 			}
+
+			static void WriteZoneRules (TimeZoneInfo zone)
+			{
+				var rules = zone.GetAdjustmentRules ();
+				for (int i = 0; i < rules.Length; ++i) {
+					var rule = rules [i];
+					Console.WriteLine ();
+					Console.Write ("\tAdjustmentRules[{0,3}]: DaylightDelta={1}; DateStart={2:yyyy-MM}; DateEnd={3:yyyy-MM}; DaylightTransitionStart={4:D2}-{5:D2}T{6}; DaylightTransitionEnd={7:D2}-{8:D2}T{9}",
+						i,
+						rule.DaylightDelta,
+						rule.DateStart, rule.DateEnd,
+						rule.DaylightTransitionStart.Month, rule.DaylightTransitionStart.Day, rule.DaylightTransitionStart.TimeOfDay.TimeOfDay,
+						rule.DaylightTransitionEnd.Month, rule.DaylightTransitionEnd.Day, rule.DaylightTransitionEnd.TimeOfDay.TimeOfDay);
+				}
+			}
+
+			static void DumpTimeZoneFile (string path, DateTime? time)
+			{
+				var buffer = File.ReadAllBytes (path);
+				var zone = ParseTZBuffer (path, buffer, buffer.Length);
+				Console.Write ("Rules for: {0}", path);
+				WriteZoneRules (zone);
+				Console.WriteLine ();
+				if (time.HasValue) {
+					var offset = zone.GetUtcOffset (time.Value);
+					var isDst  = zone.IsDaylightSavingTime (time.Value);
+					Console.WriteLine ("\tDate({0}): Offset({1}) IsDST({2})", time.Value, offset, isDst);
+				}
+			}
+#endif
+		}
+
+#if SELF_TEST
+		static string TimeZoneDataExportPath;
+#endif
+
+		internal static void DumpTimeZoneDataToFile (string id, byte[] buffer)
+		{
+#if SELF_TEST
+			int p = id.LastIndexOf ('/');
+			var o = Path.Combine (TimeZoneDataExportPath,
+					p >= 0 ? id.Substring (0, p) : id);
+			if (p >= 0)
+				o = Path.Combine (o, id.Substring (p+1));
+			Directory.CreateDirectory (Path.GetDirectoryName (o));
+			using (var f = File.OpenWrite (o))
+				f.Write (buffer, 0, buffer.Length);
 #endif
 		}
 	}

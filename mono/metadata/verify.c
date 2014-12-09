@@ -934,6 +934,7 @@ mono_method_is_valid_in_context (VerifyContext *ctx, MonoMethod *method)
 	
 static MonoClassField*
 verifier_load_field (VerifyContext *ctx, int token, MonoClass **out_klass, const char *opcode) {
+	MonoError error;
 	MonoClassField *field;
 	MonoClass *klass = NULL;
 
@@ -946,12 +947,12 @@ verifier_load_field (VerifyContext *ctx, int token, MonoClass **out_klass, const
 			return NULL;
 		}
 
-		field = mono_field_from_token (ctx->image, token, &klass, ctx->generic_context);
+		field = mono_field_from_token_checked (ctx->image, token, &klass, ctx->generic_context, &error);
+		mono_error_cleanup (&error); /*FIXME don't swallow the error */
 	}
 
-	if (!field || !field->parent || !klass || mono_loader_get_last_error ()) {
+	if (!field || !field->parent || !klass) {
 		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Cannot load field from token 0x%08x for %s at 0x%04x", token, opcode, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
-		mono_loader_clear_error ();
 		return NULL;
 	}
 
@@ -1004,11 +1005,13 @@ verifier_load_type (VerifyContext *ctx, int token, const char *opcode) {
 		MonoClass *class = mono_method_get_wrapper_data (ctx->method, (guint32)token);
 		type = class ? &class->byval_arg : NULL;
 	} else {
+		MonoError error;
 		if (!IS_TYPE_DEF_OR_REF_OR_SPEC (token) || !token_bounds_check (ctx->image, token)) {
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid type token 0x%08x at 0x%04x", token, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 			return NULL;
 		}
-		type = mono_type_get_full (ctx->image, token, ctx->generic_context);
+		type = mono_type_get_checked (ctx->image, token, ctx->generic_context, &error);
+		mono_error_cleanup (&error); /*FIXME don't swallow the error */
 	}
 
 	if (!type || mono_loader_get_last_error ()) {
@@ -3124,6 +3127,7 @@ do_ret (VerifyContext *ctx)
 static void
 do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 {
+	MonoError error;
 	int param_count, i;
 	MonoMethodSignature *sig;
 	ILStackDesc *value;
@@ -3153,12 +3157,15 @@ do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 		}
 	}
 
-	if (!(sig = mono_method_get_signature_full (method, ctx->image, method_token, ctx->generic_context)))
-		sig = mono_method_get_signature (method, ctx->image, method_token);
+	if (!(sig = mono_method_get_signature_checked (method, ctx->image, method_token, ctx->generic_context, &error))) {
+		mono_error_cleanup (&error);
+		sig = mono_method_get_signature_checked (method, ctx->image, method_token, NULL, &error);
+	}
 
 	if (!sig) {
 		char *name = mono_type_get_full_name (method->klass);
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Could not resolve signature of %s:%s at 0x%04x", name, method->name, ctx->ip_offset));
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Could not resolve signature of %s:%s at 0x%04x due to: %s", name, method->name, ctx->ip_offset, mono_error_get_message (&error)));
+		mono_error_cleanup (&error);
 		g_free (name);
 		return;
 	}

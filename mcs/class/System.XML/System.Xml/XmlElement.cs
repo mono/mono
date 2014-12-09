@@ -152,11 +152,17 @@ namespace System.Xml
 				XmlTextReader xmlReader = new XmlTextReader (value, XmlNodeType.Element, ctx);
 				xmlReader.XmlResolver = OwnerDocument.Resolver;
 
-				do {
-					XmlNode n = OwnerDocument.ReadNode (xmlReader);
-					if(n == null) break;
-					AppendChild (n);
-				} while (true);
+				bool pw = OwnerDocument.PreserveWhitespace;
+				OwnerDocument.PreserveWhitespace = true;
+				try {
+					do {
+						XmlNode n = OwnerDocument.ReadNode (xmlReader);
+						if(n == null) break;
+						AppendChild (n);
+					} while (true);
+				} finally {
+					OwnerDocument.PreserveWhitespace = pw;
+				}
 			}
 		}
 

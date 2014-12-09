@@ -7,9 +7,12 @@
 
 #include "mini.h"
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/debug-mono-symfile.h>
 #include <mono/metadata/mempool-internals.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-dl.h>
+#include <mono/utils/mono-time.h>
+#include <mono/utils/freebsd-dwarf.h>
 
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS
@@ -35,10 +38,13 @@ typedef struct {
 	LLVMValueRef got_var;
 	const char *got_symbol;
 	GHashTable *plt_entries;
+	GHashTable *plt_entries_ji;
+	GHashTable *method_to_lmethod;
 	char **bb_names;
 	int bb_names_len;
 	GPtrArray *used;
 	LLVMTypeRef ptr_type;
+	GPtrArray *subprogram_mds;
 	MonoEERef *mono_ee;
 	LLVMExecutionEngineRef ee;
 } MonoLLVMModule;
@@ -96,7 +102,8 @@ typedef struct {
 	int *pindexes;
 	LLVMValueRef imt_rgctx_loc;
 	GHashTable *llvm_types;
-
+	LLVMValueRef dbg_md;
+	MonoDebugMethodInfo *minfo;
 	char temp_name [32];
 } EmitContext;
 
@@ -205,6 +212,10 @@ static const char *memset_func_name;
 static const char *memcpy_func_name;
 
 static void init_jit_module (MonoDomain *domain);
+
+static void emit_dbg_loc (EmitContext *ctx, LLVMBuilderRef builder, const unsigned char *cil_code);
+static LLVMValueRef emit_dbg_subprogram (EmitContext *ctx, MonoCompile *cfg, LLVMValueRef method, const char *name);
+static void emit_dbg_info (MonoLLVMModule *lmodule, const char *filename, const char *cu_name);
 
 /*
  * IntPtrType:
@@ -417,6 +428,7 @@ type_is_unsigned (EmitContext *ctx, MonoType *t)
 	switch (t->type) {
 	case MONO_TYPE_U1:
 	case MONO_TYPE_U2:
+	case MONO_TYPE_CHAR:
 	case MONO_TYPE_U4:
 	case MONO_TYPE_U8:
 		return TRUE;
@@ -434,7 +446,12 @@ static LLVMTypeRef
 type_to_llvm_arg_type (EmitContext *ctx, MonoType *t)
 {
 	LLVMTypeRef ptype = type_to_llvm_type (ctx, t);
-	
+
+	/*
+	 * This works on all abis except arm64/ios which passes multiple
+	 * arguments in one stack slot.
+	 */
+#ifndef TARGET_ARM64
 	if (ptype == LLVMInt8Type () || ptype == LLVMInt16Type ()) {
 		/* 
 		 * LLVM generates code which only sets the lower bits, while JITted
@@ -442,6 +459,7 @@ type_to_llvm_arg_type (EmitContext *ctx, MonoType *t)
 		 */
 		ptype = LLVMInt32Type ();
 	}
+#endif
 
 	return ptype;
 }
@@ -1272,6 +1290,7 @@ get_plt_entry (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gc
 {
 	char *callee_name = mono_aot_get_plt_symbol (type, data);
 	LLVMValueRef callee;
+	MonoJumpInfo *ji = NULL;
 
 	if (!callee_name)
 		return NULL;
@@ -1288,6 +1307,14 @@ get_plt_entry (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gc
 		LLVMSetVisibility (callee, LLVMHiddenVisibility);
 
 		g_hash_table_insert (ctx->lmodule->plt_entries, (char*)callee_name, callee);
+	}
+
+	if (ctx->cfg->compile_aot) {
+		ji = g_new0 (MonoJumpInfo, 1);
+		ji->type = type;
+		ji->data.target = data;
+
+		g_hash_table_insert (ctx->lmodule->plt_entries_ji, ji, callee);
 	}
 
 	return callee;
@@ -1805,7 +1832,7 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 				ctx->values [reg] = LLVMBuildLoad (builder, ctx->addresses [reg], "");
 			}
 		} else {
-			ctx->values [reg] = convert (ctx, ctx->values [reg], llvm_type_to_stack_type (type_to_llvm_type (ctx, sig->params [i])));
+			ctx->values [reg] = convert_full (ctx, ctx->values [reg], llvm_type_to_stack_type (type_to_llvm_type (ctx, sig->params [i])), type_is_unsigned (ctx, sig->params [i]));
 		}
 	}
 
@@ -2326,6 +2353,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		const char *spec = LLVM_INS_INFO (ins->opcode);
 		char *dname = NULL;
 		char dname_buf [128];
+
+		emit_dbg_loc (ctx, builder, ins->cil_code);
 
 		nins ++;
 		if (nins > 5000 && builder == starting_builder) {
@@ -3156,7 +3185,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				index = LLVMConstInt (LLVMInt32Type (), ins->inst_offset / size, FALSE);				
 				addr = LLVMBuildGEP (builder, convert (ctx, values [ins->inst_destbasereg], LLVMPointerType (t, 0)), &index, 1, "");
 			}
-			emit_store (ctx, bb, &builder, size, convert (ctx, LLVMConstInt (IntPtrType (), ins->inst_imm, FALSE), t), addr, is_volatile);
+			emit_store (ctx, bb, &builder, size, convert (ctx, LLVMConstInt (IntPtrType (), ins->inst_imm, FALSE), t), convert (ctx, addr, LLVMPointerType (t, 0)), is_volatile);
 			break;
 		}
 
@@ -4226,8 +4255,10 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 	if (!has_terminator && bb->next_bb && (bb == cfg->bb_entry || bb->in_count > 0))
 		LLVMBuildBr (builder, get_bb (ctx, bb->next_bb));
 
-	if (bb == cfg->bb_exit && sig->ret->type == MONO_TYPE_VOID)
+	if (bb == cfg->bb_exit && sig->ret->type == MONO_TYPE_VOID) {
+		emit_dbg_loc (ctx, builder, cfg->header->code + cfg->header->code_size - 1);
 		LLVMBuildRetVoid (builder);
+	}
 
 	if (bb == cfg->bb_entry)
 		ctx->last_alloca = LLVMGetLastInstruction (get_bb (ctx, cfg->bb_entry));
@@ -4465,6 +4496,12 @@ mono_llvm_emit_method (MonoCompile *cfg)
 	}
 	g_free (names);
 
+	// See emit_dbg_info ()
+	if (FALSE && cfg->compile_aot && mono_debug_enabled ()) {
+		ctx->minfo = mono_debug_lookup_method (cfg->method);
+		ctx->dbg_md = emit_dbg_subprogram (ctx, cfg, method, method_name);
+	}
+
 	max_block_num = 0;
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
 		max_block_num = MAX (max_block_num, bb->block_num);
@@ -4674,6 +4711,9 @@ mono_llvm_emit_method (MonoCompile *cfg)
 
 		/* FIXME: Free the LLVM IL for the function */
 	}
+
+	if (ctx->lmodule->method_to_lmethod)
+		g_hash_table_insert (ctx->lmodule->method_to_lmethod, cfg->method, method);
 
 	goto CLEANUP;
 
@@ -5331,16 +5371,19 @@ mono_llvm_create_aot_module (const char *got_symbol)
 
 	aot_module.llvm_types = g_hash_table_new (NULL, NULL);
 	aot_module.plt_entries = g_hash_table_new (g_str_hash, g_str_equal);
+	aot_module.plt_entries_ji = g_hash_table_new (NULL, NULL);
+	aot_module.method_to_lmethod = g_hash_table_new (NULL, NULL);
 }
 
 /*
  * Emit the aot module into the LLVM bitcode file FILENAME.
  */
 void
-mono_llvm_emit_aot_module (const char *filename, int got_size)
+mono_llvm_emit_aot_module (const char *filename, const char *cu_name, int got_size)
 {
 	LLVMTypeRef got_type;
 	LLVMValueRef real_got;
+	MonoLLVMModule *module = &aot_module;
 
 	/* 
 	 * Create the real got variable and replace all uses of the dummy variable with
@@ -5359,6 +5402,28 @@ mono_llvm_emit_aot_module (const char *filename, int got_size)
 	LLVMDeleteGlobal (aot_module.got_var);
 
 	emit_llvm_used (&aot_module);
+	emit_dbg_info (&aot_module, filename, cu_name);
+
+	/* Replace PLT entries for directly callable methods with the methods themselves */
+	{
+		GHashTableIter iter;
+		MonoJumpInfo *ji;
+		LLVMValueRef callee;
+
+		g_hash_table_iter_init (&iter, aot_module.plt_entries_ji);
+		while (g_hash_table_iter_next (&iter, (void**)&ji, (void**)&callee)) {
+			if (mono_aot_is_direct_callable (ji)) {
+				LLVMValueRef lmethod;
+
+				lmethod = g_hash_table_lookup (module->method_to_lmethod, ji->data.method);
+				/* The types might not match because the caller might pass an rgctx */
+				if (lmethod && LLVMTypeOf (callee) == LLVMTypeOf (lmethod)) {
+					mono_llvm_replace_uses_of (callee, lmethod);
+					mono_aot_mark_unused_llvm_plt_entry (ji);
+				}
+			}
+		}
+	}
 
 #if 0
 	{
@@ -5371,6 +5436,221 @@ mono_llvm_emit_aot_module (const char *filename, int got_size)
 #endif
 
 	LLVMWriteBitcodeToFile (aot_module.module, filename);
+}
+
+
+static LLVMValueRef
+md_string (const char *s)
+{
+	return LLVMMDString (s, strlen (s));
+}
+
+/* Debugging support */
+
+static void
+emit_dbg_info (MonoLLVMModule *lmodule, const char *filename, const char *cu_name)
+{
+	LLVMModuleRef module = lmodule->module;
+	LLVMValueRef args [16], cu_args [16], cu, ver;
+	int n_cuargs;
+	char *build_info, *s, *dir;
+
+	//
+	// FIXME: This cannot be enabled, since the AOT compiler also emits dwarf info,
+	// and the abbrev indexes will not be correct since llvm has added its own
+	// abbrevs.
+	//
+	return;
+
+	/*
+	 * Emit dwarf info in the form of LLVM metadata. There is some
+	 * out-of-date documentation at:
+	 * http://llvm.org/docs/SourceLevelDebugging.html
+	 * but most of this was gathered from the llvm and
+	 * clang sources.
+	 */
+
+	n_cuargs = 0;
+	cu_args [n_cuargs ++] = LLVMConstInt (LLVMInt32Type (), DW_TAG_compile_unit, FALSE);
+	/* CU name/compilation dir */
+	dir = g_path_get_dirname (filename);
+	args [0] = LLVMMDString (cu_name, strlen (cu_name));
+	args [1] = LLVMMDString (dir, strlen (dir));
+	cu_args [n_cuargs ++] = LLVMMDNode (args, 2);
+	g_free (dir);
+	/* Language */
+	cu_args [n_cuargs ++] = LLVMConstInt (LLVMInt32Type (), DW_LANG_C99, FALSE);
+	/* Producer */
+	build_info = mono_get_runtime_build_info ();
+	s = g_strdup_printf ("Mono AOT Compiler %s (LLVM)", build_info);
+	cu_args [n_cuargs ++] = LLVMMDString (s, strlen (s));
+	g_free (build_info);
+	/* Optimized */
+	cu_args [n_cuargs ++] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+	/* Flags */
+	cu_args [n_cuargs ++] = LLVMMDString ("", strlen (""));
+	/* Runtime version */
+	cu_args [n_cuargs ++] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+	/* Enums */
+	cu_args [n_cuargs ++] = LLVMMDNode (args, 0);
+	cu_args [n_cuargs ++] = LLVMMDNode (args, 0);
+	/* Subprograms */
+	if (lmodule->subprogram_mds) {
+		LLVMValueRef *mds;
+		int i;
+
+		mds = g_new0 (LLVMValueRef, lmodule->subprogram_mds->len);
+		for (i = 0; i < lmodule->subprogram_mds->len; ++i)
+			mds [i] = g_ptr_array_index (lmodule->subprogram_mds, i);
+		cu_args [n_cuargs ++] = LLVMMDNode (mds, lmodule->subprogram_mds->len);
+	} else {
+		cu_args [n_cuargs ++] = LLVMMDNode (args, 0);
+	}
+	/* GVs */
+	cu_args [n_cuargs ++] = LLVMMDNode (args, 0);
+	/* Imported modules */
+	cu_args [n_cuargs ++] = LLVMMDNode (args, 0);
+	/* SplitName */
+	cu_args [n_cuargs ++] = LLVMMDString ("", strlen (""));
+	/* DebugEmissionKind = FullDebug */
+	cu_args [n_cuargs ++] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+	cu = LLVMMDNode (cu_args, n_cuargs);
+	LLVMAddNamedMetadataOperand (module, "llvm.dbg.cu", cu);
+
+	args [0] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+	args [1] = LLVMMDString ("Dwarf Version", strlen ("Dwarf Version"));
+	args [2] = LLVMConstInt (LLVMInt32Type (), 2, FALSE);
+	ver = LLVMMDNode (args, 3);
+	LLVMAddNamedMetadataOperand (module, "llvm.module.flags", ver);
+
+	args [0] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+	args [1] = LLVMMDString ("Debug Info Version", strlen ("Debug Info Version"));
+	args [2] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+	ver = LLVMMDNode (args, 3);
+	LLVMAddNamedMetadataOperand (module, "llvm.module.flags", ver);
+}
+
+static LLVMValueRef
+emit_dbg_subprogram (EmitContext *ctx, MonoCompile *cfg, LLVMValueRef method, const char *name)
+{
+	MonoLLVMModule *module = ctx->lmodule;
+	MonoDebugMethodInfo *minfo = ctx->minfo;
+	char *source_file, *dir, *filename;
+	LLVMValueRef md, args [16], ctx_args [16], md_args [64], type_args [16], ctx_md, type_md;
+	int n_il_offsets;
+	int *il_offsets;
+	int *line_numbers;
+
+	if (!minfo)
+		return NULL;
+
+	mono_debug_symfile_get_line_numbers_full (minfo, &source_file, NULL, &n_il_offsets, &il_offsets, &line_numbers, NULL, NULL, NULL, NULL);
+	if (!source_file)
+		source_file = g_strdup ("<unknown>");
+	dir = g_path_get_dirname (source_file);
+	filename = g_path_get_basename (source_file);
+
+	ctx_args [0] = LLVMConstInt (LLVMInt32Type (), 0x29, FALSE);
+	args [0] = md_string (filename);
+	args [1] = md_string (dir);
+	ctx_args [1] = LLVMMDNode (args, 2);
+	ctx_md = LLVMMDNode (ctx_args, 2);
+
+	type_args [0] = LLVMConstInt (LLVMInt32Type (), DW_TAG_subroutine_type, FALSE);
+	type_args [1] = NULL;
+	type_args [2] = NULL;
+	type_args [3] = LLVMMDString ("", 0);
+	type_args [4] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+	type_args [5] = LLVMConstInt (LLVMInt64Type (), 0, FALSE);
+	type_args [6] = LLVMConstInt (LLVMInt64Type (), 0, FALSE);
+	type_args [7] = LLVMConstInt (LLVMInt64Type (), 0, FALSE);
+	type_args [8] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+	type_args [9] = NULL;
+	type_args [10] = NULL;
+	type_args [11] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+	type_args [12] = NULL;
+	type_args [13] = NULL;
+	type_args [14] = NULL;
+	type_md = LLVMMDNode (type_args, 14);
+
+	/* http://llvm.org/docs/SourceLevelDebugging.html#subprogram-descriptors */
+	md_args [0] = LLVMConstInt (LLVMInt32Type (), DW_TAG_subprogram, FALSE);
+	/* Source directory + file pair */
+	args [0] = md_string (filename);
+	args [1] = md_string (dir);
+	md_args [1] = LLVMMDNode (args ,2);
+	md_args [2] = ctx_md;
+	md_args [3] = md_string (cfg->method->name);
+	md_args [4] = md_string (name);
+	md_args [5] = md_string (name);
+	/* Line number */
+	if (n_il_offsets)
+		md_args [6] = LLVMConstInt (LLVMInt32Type (), line_numbers [0], FALSE);
+	else
+		md_args [6] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+	/* Type */
+	md_args [7] = type_md;
+	/* static */
+	md_args [8] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);
+	/* not extern */
+	md_args [9] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
+	/* Virtuality */
+	md_args [10] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+	/* Index into a virtual function */
+	md_args [11] = NULL;
+	md_args [12] = NULL;
+	/* Flags */
+	md_args [13] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);
+	/* isOptimized */
+	md_args [14] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
+	/* Pointer to LLVM function */
+	md_args [15] = method;
+	/* Function template parameter */
+	md_args [16] = NULL;
+	/* Function declaration descriptor */
+	md_args [17] = NULL;
+	/* List of function variables */
+	md_args [18] = LLVMMDNode (args, 0);
+	/* Line number */
+	md_args [19] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
+	md = LLVMMDNode (md_args, 20);
+
+	if (!module->subprogram_mds)
+		module->subprogram_mds = g_ptr_array_new ();
+	g_ptr_array_add (module->subprogram_mds, md);
+
+	g_free (dir);
+	g_free (filename);
+	g_free (source_file);
+	g_free (il_offsets);
+	g_free (line_numbers);
+
+	return md;
+}
+
+static void
+emit_dbg_loc (EmitContext *ctx, LLVMBuilderRef builder, const unsigned char *cil_code)
+{
+	MonoCompile *cfg = ctx->cfg;
+
+	if (ctx->minfo && cil_code && cil_code >= cfg->header->code && cil_code < cfg->header->code + cfg->header->code_size) {
+		MonoDebugSourceLocation *loc;
+		LLVMValueRef loc_md, md_args [16];
+		int nmd_args;
+
+		loc = mono_debug_symfile_lookup_location (ctx->minfo, cil_code - cfg->header->code);
+
+		if (loc) {
+			nmd_args = 0;
+			md_args [nmd_args ++] = LLVMConstInt (LLVMInt32Type (), loc->row, FALSE);
+			md_args [nmd_args ++] = LLVMConstInt (LLVMInt32Type (), loc->column, FALSE);
+			md_args [nmd_args ++] = ctx->dbg_md;
+			md_args [nmd_args ++] = NULL;
+			loc_md = LLVMMDNode (md_args, nmd_args);
+			LLVMSetCurrentDebugLocation (builder, loc_md);
+			mono_debug_symfile_free_location (loc);
+		}
+	}
 }
 
 /*

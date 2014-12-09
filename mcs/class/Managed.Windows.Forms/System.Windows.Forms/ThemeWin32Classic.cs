@@ -364,28 +364,29 @@ namespace System.Windows.Forms
 			return ret_size;
 		}
 
-		public override void CalculateButtonTextAndImageLayout (ButtonBase button, out Rectangle textRectangle, out Rectangle imageRectangle)
+		public override void CalculateButtonTextAndImageLayout (Graphics g, ButtonBase button, out Rectangle textRectangle, out Rectangle imageRectangle)
 		{
 			Image image = button.Image;
 			string text = button.Text;
 			Rectangle content_rect = button.PaddingClientRectangle;
-			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, content_rect.Size, button.TextFormatFlags, button.UseCompatibleTextRendering);
+			Size text_size = TextRenderer.MeasureTextInternal (g, text, button.Font, content_rect.Size, button.TextFormatFlags, button.UseCompatibleTextRendering);
 			Size image_size = image == null ? Size.Empty : image.Size;
 
-			textRectangle = Rectangle.Empty;
+			textRectangle = Rectangle.Inflate (content_rect, -4, -4);
 			imageRectangle = Rectangle.Empty;
 			
+			bool displayEllipsis = (button.TextFormatFlags & (TextFormatFlags.EndEllipsis | TextFormatFlags.PathEllipsis | TextFormatFlags.WordEllipsis)) != 0;
+
 			switch (button.TextImageRelation) {
 				case TextImageRelation.Overlay:
 					// Overlay is easy, text always goes here
-					textRectangle = Rectangle.Inflate (content_rect, -4, -4);
 
-					if (button.Pressed)
-						textRectangle.Offset (1, 1);
-						
 					// Image is dependent on ImageAlign
-					if (image == null)
+					if (image == null) {
+						if (button.Pressed)
+							textRectangle.Offset (1, 1);
 						return;
+					}
 						
 					int image_x = 0;
 					int image_y = 0;
@@ -438,22 +439,20 @@ namespace System.Windows.Forms
 					imageRectangle = new Rectangle (image_x, image_y, image_width, image_height);
 					break;
 				case TextImageRelation.ImageAboveText:
-					content_rect.Inflate (-4, -4);
-					LayoutTextAboveOrBelowImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					LayoutTextAboveOrBelowImage (textRectangle, false, text_size, image_size, button.TextAlign, button.ImageAlign, displayEllipsis, out textRectangle, out imageRectangle);
 					break;
 				case TextImageRelation.TextAboveImage:
-					content_rect.Inflate (-4, -4);
-					LayoutTextAboveOrBelowImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					LayoutTextAboveOrBelowImage (textRectangle, true, text_size, image_size, button.TextAlign, button.ImageAlign, displayEllipsis, out textRectangle, out imageRectangle);
 					break;
 				case TextImageRelation.ImageBeforeText:
-					content_rect.Inflate (-4, -4);
-					LayoutTextBeforeOrAfterImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					LayoutTextBeforeOrAfterImage (textRectangle, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
 					break;
 				case TextImageRelation.TextBeforeImage:
-					content_rect.Inflate (-4, -4);
-					LayoutTextBeforeOrAfterImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					LayoutTextBeforeOrAfterImage (textRectangle, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
 					break;
 			}
+			if (button.Pressed)
+				textRectangle.Offset (1, 1);
 		}
 
 		private void LayoutTextBeforeOrAfterImage (Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, System.Drawing.ContentAlignment textAlign, System.Drawing.ContentAlignment imageAlign, out Rectangle textRect, out Rectangle imageRect)
@@ -501,7 +500,7 @@ namespace System.Windows.Forms
 			imageRect = final_image_rect;
 		}
 
-		private void LayoutTextAboveOrBelowImage (Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, System.Drawing.ContentAlignment textAlign, System.Drawing.ContentAlignment imageAlign, out Rectangle textRect, out Rectangle imageRect)
+		private void LayoutTextAboveOrBelowImage (Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, System.Drawing.ContentAlignment textAlign, System.Drawing.ContentAlignment imageAlign, bool displayEllipsis, out Rectangle textRect, out Rectangle imageRect)
 		{
 			int element_spacing = 0;	// Spacing between the Text and the Image
 			int total_height = textSize.Height + element_spacing + imageSize.Height;
@@ -537,15 +536,26 @@ namespace System.Windows.Forms
 				offset += (int)(2 * (excess_height / 3));
 
 			if (textFirst) {
-				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, totalArea.Top + offset, textSize.Width, textSize.Height);
+				var textHeight = excess_height >= 0 ? totalArea.Height - imageSize.Height - element_spacing: textSize.Height;
+				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, totalArea.Top + offset, textSize.Width, textHeight);
 				final_image_rect = new Rectangle (AlignInRectangle (totalArea, imageSize, imageAlign).Left, final_text_rect.Bottom + element_spacing, imageSize.Width, imageSize.Height);
 			}
 			else {
 				final_image_rect = new Rectangle (AlignInRectangle (totalArea, imageSize, imageAlign).Left, totalArea.Top + offset, imageSize.Width, imageSize.Height);
-				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, final_image_rect.Bottom + element_spacing, textSize.Width, textSize.Height);
+				var textHeight = excess_height >= 0 ? totalArea.Height - final_image_rect.Height : textSize.Height;
+				final_text_rect = new Rectangle (AlignInRectangle (totalArea, textSize, textAlign).Left, final_image_rect.Bottom + element_spacing, textSize.Width, textHeight);
 				
-				if (final_text_rect.Bottom > totalArea.Bottom)
-					final_text_rect.Y = totalArea.Top;
+				if (final_text_rect.Bottom > totalArea.Bottom) {
+					final_text_rect.Y -= (final_text_rect.Bottom - totalArea.Bottom);
+					if (final_text_rect.Y < totalArea.Top)
+						final_text_rect.Y = totalArea.Top;
+				}
+			}
+
+			if (displayEllipsis) {
+				// Don't use more space than is available otherwise ellipsis won't show
+				if (final_text_rect.Height > totalArea.Bottom)
+					final_text_rect.Height = totalArea.Bottom - final_text_rect.Top;
 			}
 
 			textRect = final_text_rect;
@@ -1095,11 +1105,11 @@ namespace System.Windows.Forms
 					break;
 				case TextImageRelation.ImageAboveText:
 					content_rect.Inflate (-4, -4);
-					LayoutTextAboveOrBelowImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					LayoutTextAboveOrBelowImage (content_rect, false, text_size, image_size, button.TextAlign, button.ImageAlign, false, out textRectangle, out imageRectangle);
 					break;
 				case TextImageRelation.TextAboveImage:
 					content_rect.Inflate (-4, -4);
-					LayoutTextAboveOrBelowImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, out textRectangle, out imageRectangle);
+					LayoutTextAboveOrBelowImage (content_rect, true, text_size, image_size, button.TextAlign, button.ImageAlign, false, out textRectangle, out imageRectangle);
 					break;
 				case TextImageRelation.ImageBeforeText:
 					content_rect.Inflate (-4, -4);

@@ -27,9 +27,9 @@
 //
 
 using System;
-using System.IO;
-using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel;
+using System.IO;
 using System.Data;
 using System.Linq;
 using MonoTests.System.Data.Utils;
@@ -46,7 +46,7 @@ using ArrayList = System.Collections.Generic.List<System.Object>;
 using NUnit.Framework;
 #endif
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture] public class DataViewTest2
 	{
@@ -54,7 +54,7 @@ namespace MonoTests_System.Data
 
 		class EventProperties  //hold the event properties to be checked
 		{
-			public System.ComponentModel.ListChangedType lstType ;
+			public ListChangedType lstType ;
 			public int NewIndex;
 			public int OldIndex;
 		}
@@ -521,7 +521,7 @@ namespace MonoTests_System.Data
 			//create the dataview for the table
 			DataView dv = new DataView(dt);
 
-			System.Collections.IEnumerator ienm = null;
+			IEnumerator ienm = null;
 
 			// GetEnumerator != null
 			ienm = dv.GetEnumerator();
@@ -562,7 +562,7 @@ namespace MonoTests_System.Data
 			DataView dv = new DataView(dt);
 
 			//add event handler
-			dv.ListChanged +=new System.ComponentModel.ListChangedEventHandler(dv_ListChanged);
+			dv.ListChanged +=new ListChangedEventHandler(dv_ListChanged);
 
 			// ----- Change Value ---------
 			evProp = null;
@@ -570,7 +570,7 @@ namespace MonoTests_System.Data
 			dv[1]["String1"] = "something";
 			Assert.AreEqual(true , evProp!=null , "DV58");
 			// change value - ListChangedType
-			Assert.AreEqual(System.ComponentModel.ListChangedType.ItemChanged, evProp.lstType , "DV59");
+			Assert.AreEqual(ListChangedType.ItemChanged, evProp.lstType , "DV59");
 			// change value - NewIndex
 			Assert.AreEqual(1, evProp.NewIndex, "DV60");
 			// change value - OldIndex
@@ -582,7 +582,7 @@ namespace MonoTests_System.Data
 			dv.AddNew();
 			Assert.AreEqual(true , evProp!=null , "DV62");
 			// Add New  - ListChangedType
-			Assert.AreEqual(System.ComponentModel.ListChangedType.ItemAdded , evProp.lstType , "DV63");
+			Assert.AreEqual(ListChangedType.ItemAdded , evProp.lstType , "DV63");
 			// Add New  - NewIndex
 			Assert.AreEqual(6, evProp.NewIndex, "DV64");
 			// Add New  - OldIndex
@@ -594,7 +594,7 @@ namespace MonoTests_System.Data
 			dv.Sort = "ParentId Desc";
 			Assert.AreEqual(true , evProp!=null , "DV66");
 			// sort - ListChangedType
-			Assert.AreEqual(System.ComponentModel.ListChangedType.Reset , evProp.lstType , "DV67");
+			Assert.AreEqual(ListChangedType.Reset , evProp.lstType , "DV67");
 			// sort - NewIndex
 			Assert.AreEqual(-1, evProp.NewIndex, "DV68");
 			// sort - OldIndex
@@ -648,12 +648,12 @@ namespace MonoTests_System.Data
 
                         Assert.AreEqual(true , evProp != null , "DV168");
                         // Clear DataTable - should emit ListChangedType.Reset
-                        Assert.AreEqual(System.ComponentModel.ListChangedType.Reset , evProp.lstType , "DV169");
+                        Assert.AreEqual(ListChangedType.Reset , evProp.lstType , "DV169");
                         // Clear DataTable - should clear view count
                         Assert.AreEqual(0, dt.DefaultView.Count , "DV169");
                 }
 
-		private void dv_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
+		private void dv_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			evProp = new EventProperties();	
 			evProp.lstType = e.ListChangedType;

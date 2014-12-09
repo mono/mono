@@ -32,6 +32,7 @@ monoutils_sources = \
 	mono-math.c  		\
 	mono-mmap.c  		\
 	mono-mmap.h  		\
+	mono-mmap-internal.h	\
 	mono-mutex.c  		\
 	mono-mutex.h  		\
 	mono-networkinterfaces.c		\
@@ -99,6 +100,10 @@ monoutils_sources = \
 	mono-threads-mach.c	\
 	mono-threads-mach-helper.c	\
 	mono-threads-windows.c	\
+	mono-threads-linux.c	\
+	mono-threads-freebsd.c	\
+	mono-threads-openbsd.c	\
+	mono-threads-android.c	\
 	mono-threads.h	\
 	mono-tls.h	\
 	mono-tls.c	\

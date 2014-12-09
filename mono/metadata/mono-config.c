@@ -371,6 +371,14 @@ aot_cache_start (gpointer user_data,
 
 	config = mono_get_aot_cache_config ();
 
+	/* Per-app configuration */
+	for (i = 0; attribute_names [i]; ++i) {
+		if (!strcmp (attribute_names [i], "app")) {
+			config->apps = g_slist_prepend (config->apps, g_strdup (attribute_values [i]));
+		}
+	}
+
+	/* Global configuration */
 	for (i = 0; attribute_names [i]; ++i) {
 		if (!strcmp (attribute_names [i], "assemblies")) {
 			char **parts, **ptr;
@@ -382,6 +390,8 @@ aot_cache_start (gpointer user_data,
 				config->assemblies = g_slist_prepend (config->assemblies, g_strdup (part));
 			}
 			g_strfreev (parts);
+		} else if (!strcmp (attribute_names [i], "options")) {
+			config->aot_options = g_strdup (attribute_values [i]);
 		}
 	}
 }

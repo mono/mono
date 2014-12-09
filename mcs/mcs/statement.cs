@@ -1408,15 +1408,10 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			if (fc.LabelStack == null) {
-				fc.LabelStack = new List<LabeledStatement> ();
-			} else if (fc.LabelStack.Contains (label)) {
+			if (fc.AddReachedLabel (label))
 				return true;
-			}
 
-			fc.LabelStack.Add (label);
 			label.Block.ScanGotoJump (label, fc);
-			fc.LabelStack.Remove (label);
 			return true;
 		}
 
@@ -2966,6 +2961,7 @@ namespace Mono.CSharp {
 		bool DoFlowAnalysis (FlowAnalysisContext fc, int startIndex)
 		{
 			bool end_unreachable = !reachable;
+			bool goto_flow_analysis = startIndex != 0;
 			for (; startIndex < statements.Count; ++startIndex) {
 				var s = statements[startIndex];
 
@@ -2989,10 +2985,14 @@ namespace Mono.CSharp {
 				// this for flow-analysis only to carry variable info correctly.
 				//
 				if (end_unreachable) {
+					bool after_goto_case = goto_flow_analysis && s is GotoCase;
+
 					for (++startIndex; startIndex < statements.Count; ++startIndex) {
 						s = statements[startIndex];
 						if (s is SwitchLabel) {
-							s.FlowAnalysis (fc);
+							if (!after_goto_case)
+								s.FlowAnalysis (fc);
+
 							break;
 						}
 
@@ -3001,7 +3001,20 @@ namespace Mono.CSharp {
 							statements [startIndex] = RewriteUnreachableStatement (s);
 						}
 					}
+
+					//
+					// Idea is to stop after goto case because goto case will always have at least same
+					// variable assigned as switch case label. This saves a lot for complex goto case tests
+					//
+					if (after_goto_case)
+						break;
+
+					continue;
 				}
+
+				var lb = s as LabeledStatement;
+				if (lb != null && fc.AddReachedLabel (lb))
+					break;
 			}
 
 			//
@@ -3025,7 +3038,7 @@ namespace Mono.CSharp {
 			// L:
 			//	v = 1;
 
-			if (s is BlockVariable)
+			if (s is BlockVariable || s is EmptyStatement)
 				return s;
 
 			return new EmptyStatement (s.loc);
@@ -4471,6 +4484,8 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool PatternMatching { get; set; }
+
 		public bool SectionStart { get; set; }
 
 		public Label GetILLabel (EmitContext ec)
@@ -4492,7 +4507,7 @@ namespace Mono.CSharp {
 			if (!SectionStart)
 				return false;
 
-			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (fc.SwitchInitialDefinitiveAssignment);
+			fc.BranchDefiniteAssignment (fc.SwitchInitialDefinitiveAssignment);
 			return false;
 		}
 
@@ -4508,21 +4523,33 @@ namespace Mono.CSharp {
 		// Resolves the expression, reduces it to a literal if possible
 		// and then converts it to the requested type.
 		//
-		bool ResolveAndReduce (BlockContext rc)
+		bool ResolveAndReduce (BlockContext bc)
 		{
 			if (IsDefault)
 				return true;
 
-			var c = label.ResolveLabelConstant (rc);
+			var switch_statement = bc.Switch;
+
+			if (PatternMatching) {
+				label = new Is (switch_statement.ExpressionValue, label, loc).Resolve (bc);
+				return label != null;
+			}
+
+			var c = label.ResolveLabelConstant (bc);
 			if (c == null)
 				return false;
 
-			if (rc.Switch.IsNullable && c is NullLiteral) {
+			if (switch_statement.IsNullable && c is NullLiteral) {
 				converted = c;
 				return true;
 			}
 
-			converted = c.ImplicitConversionRequired (rc, rc.Switch.SwitchType);
+			if (switch_statement.IsPatternMatching) {
+				label = new Is (switch_statement.ExpressionValue, label, loc).Resolve (bc);
+				return true;
+			}
+
+			converted = c.ImplicitConversionRequired (bc, switch_statement.SwitchType);
 			return converted != null;
 		}
 
@@ -4728,9 +4755,21 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsPatternMatching {
+			get {
+				return new_expr == null && SwitchType != null;
+			}
+		}
+
 		public List<SwitchLabel> RegisteredLabels {
 			get {
 				return case_labels;
+			}
+		}
+
+		public VariableReference ExpressionValue {
+			get {
+				return value;
 			}
 		}
 
@@ -4843,6 +4882,9 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (sl.Converted == null)
+				return;
+
 			try {
 				if (string_labels != null) {
 					string string_value = sl.Converted.GetValue () as string;
@@ -4851,7 +4893,7 @@ namespace Mono.CSharp {
 					else
 						string_labels.Add (string_value, sl);
 				} else {
-					if (sl.Converted is NullLiteral) {
+					if (sl.Converted.IsNull) {
 						case_null = sl;
 					} else {
 						labels.Add (sl.Converted.GetValueAsLong (), sl);
@@ -5015,7 +5057,17 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return sl;
+			if (sl == null || sl.SectionStart)
+				return sl;
+
+			//
+			// Always return section start, it simplifies handling of switch labels
+			//
+			for (int idx = case_labels.IndexOf (sl); ; --idx) {
+				var cs = case_labels [idx];
+				if (cs.SectionStart)
+					return cs;
+			}
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
@@ -5066,39 +5118,44 @@ namespace Mono.CSharp {
 				}
 			}
 
+			Expression switch_expr;
 			if (new_expr == null) {
-				if (Expr.Type != InternalType.ErrorType) {
-					ec.Report.Error (151, loc,
-						"A switch expression of type `{0}' cannot be converted to an integral type, bool, char, string, enum or nullable type",
-						Expr.Type.GetSignatureForError ());
+				if (ec.Module.Compiler.Settings.Version != LanguageVersion.Experimental) {
+					if (Expr.Type != InternalType.ErrorType) {
+						ec.Report.Error (151, loc,
+							"A switch expression of type `{0}' cannot be converted to an integral type, bool, char, string, enum or nullable type",
+							Expr.Type.GetSignatureForError ());
+					}
+
+					return false;
 				}
 
-				return false;
-			}
-
-			SwitchType = new_expr.Type;
-			if (SwitchType.IsNullableType) {
-				new_expr = unwrap = Nullable.Unwrap.Create (new_expr, true);
-				SwitchType = Nullable.NullableInfo.GetUnderlyingType (SwitchType);
-			}
-
-			if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.Bool && ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
-				ec.Report.FeatureIsNotAvailable (ec.Module.Compiler, loc, "switch expression of boolean type");
-				return false;
-			}
-
-			if (block.Statements.Count == 0)
-				return true;
-
-			if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.String) {
-				string_labels = new Dictionary<string, SwitchLabel> ();
+				switch_expr = Expr;
+				SwitchType = Expr.Type;
 			} else {
-				labels = new Dictionary<long, SwitchLabel> ();
+				switch_expr = new_expr;
+				SwitchType = new_expr.Type;
+				if (SwitchType.IsNullableType) {
+					new_expr = unwrap = Nullable.Unwrap.Create (new_expr, true);
+					SwitchType = Nullable.NullableInfo.GetUnderlyingType (SwitchType);
+				}
+
+				if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.Bool && ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
+					ec.Report.FeatureIsNotAvailable (ec.Module.Compiler, loc, "switch expression of boolean type");
+					return false;
+				}
+
+				if (block.Statements.Count == 0)
+					return true;
+
+				if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.String) {
+					string_labels = new Dictionary<string, SwitchLabel> ();
+				} else {
+					labels = new Dictionary<long, SwitchLabel> ();
+				}
 			}
 
-			case_labels = new List<SwitchLabel> ();
-
-			var constant = new_expr as Constant;
+			var constant = switch_expr as Constant;
 
 			//
 			// Don't need extra variable for constant switch or switch with
@@ -5108,7 +5165,7 @@ namespace Mono.CSharp {
 				//
 				// Store switch expression for comparison purposes
 				//
-				value = new_expr as VariableReference;
+				value = switch_expr as VariableReference;
 				if (value == null && !HasOnlyDefaultSection ()) {
 					var current_block = ec.CurrentBlock;
 					ec.CurrentBlock = Block;
@@ -5118,6 +5175,8 @@ namespace Mono.CSharp {
 					ec.CurrentBlock = current_block;
 				}
 			}
+
+			case_labels = new List<SwitchLabel> ();
 
 			Switch old_switch = ec.Switch;
 			ec.Switch = this;
@@ -5411,6 +5470,11 @@ namespace Mono.CSharp {
 
 				var constant = label.Converted;
 
+				if (constant == null) {
+					label.Label.EmitBranchable (ec, label.GetILLabel (ec), true);
+					continue;
+				}
+
 				if (equal_method != null) {
 					value.Emit (ec);
 					constant.Emit (ec);
@@ -5436,6 +5500,11 @@ namespace Mono.CSharp {
 
 		void EmitDispatch (EmitContext ec)
 		{
+			if (IsPatternMatching) {
+				EmitShortSwitch (ec);
+				return;
+			}
+
 			if (value == null) {
 				//
 				// Constant switch, we've already done the work if there is only 1 label
@@ -5483,12 +5552,14 @@ namespace Mono.CSharp {
 
 			if (value != null) {
 				ec.Mark (loc);
+
+				var switch_expr = new_expr ?? Expr;
 				if (IsNullable) {
 					unwrap.EmitCheck (ec);
 					ec.Emit (OpCodes.Brfalse, nullLabel);
-					value.EmitAssign (ec, new_expr, false, false);
-				} else if (new_expr != value) {
-					value.EmitAssign (ec, new_expr, false, false);
+					value.EmitAssign (ec, switch_expr, false, false);
+				} else if (switch_expr != value) {
+					value.EmitAssign (ec, switch_expr, false, false);
 				}
 
 
@@ -7135,7 +7206,7 @@ namespace Mono.CSharp {
 			DefiniteAssignmentBitSet try_fc = res ? null : fc.DefiniteAssignment;
 
 			foreach (var c in clauses) {
-				fc.DefiniteAssignment = new DefiniteAssignmentBitSet (start_fc);
+				fc.BranchDefiniteAssignment (start_fc);
 				if (!c.FlowAnalysis (fc)) {
 					if (try_fc == null)
 						try_fc = fc.DefiniteAssignment;

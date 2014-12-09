@@ -204,7 +204,11 @@ namespace System.Web.Script.Serialization
 		}
 
 		public object Deserialize (string input, Type targetType) {
-			return DeserializeObjectInternal (input);
+			object obj = DeserializeObjectInternal (input);
+
+			if (obj == null) return null;
+
+			return ConvertToType (obj, targetType);
 		}
 
 		static object Evaluate (object value) {

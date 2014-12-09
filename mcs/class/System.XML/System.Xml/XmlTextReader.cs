@@ -164,11 +164,6 @@ namespace Mono.Xml2
 			InitializeContext (url, context, fragment, fragType);
 		}
 
-		Uri ResolveUri (string url)
-		{
-			return resolver == null ? null : resolver.ResolveUri (null, url);
-		}
-
 		Stream GetStreamFromUrl (string url, out string absoluteUriString)
 		{
 #if NET_2_1
@@ -177,9 +172,13 @@ namespace Mono.Xml2
 			if (url.Length == 0)
 				throw new ArgumentException ("url");
 #endif
-			Uri uri = ResolveUri (url);
+			//
+			// This needs to work even if resolver is explicitly set to null
+			//
+			var res = resolver ?? new XmlUrlResolver ();
+			var uri = res.ResolveUri (null, url);
 			absoluteUriString = uri != null ? uri.ToString () : String.Empty;
-			return resolver == null ? null : resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
+			return res.GetEntity (uri, null, typeof (Stream)) as Stream;
 		}
 
 		#endregion
@@ -717,7 +716,6 @@ namespace Mono.Xml2
 					if (valueCache != null)
 						return valueCache;
 					if (ValueBufferStart >= 0) {
-//Console.WriteLine (NodeType + " / " + ValueBuffer.Length + " / " + ValueBufferStart + " / " + ValueBufferEnd);
 						valueCache = Reader.valueBuffer.ToString (ValueBufferStart, ValueBufferEnd - ValueBufferStart);
 						return valueCache;
 					}
@@ -1801,6 +1799,7 @@ namespace Mono.Xml2
 				value,
 				false);
 			ati.Value = value;
+			ati.ValueTokenStartIndex = ati.ValueTokenEndIndex = currentAttributeValue;
 			attributeCount++;
 		}
 

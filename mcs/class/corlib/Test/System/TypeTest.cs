@@ -143,6 +143,10 @@ namespace MonoTests.System
 		}
 
 		public event EventHandler E;
+		public void Dummy ()
+		{
+			E += delegate {};
+		}
 	}
 
 	class Derived1 : Base1
@@ -159,7 +163,11 @@ namespace MonoTests.System
 			set { }
 		}
 
-		public event Action E;
+		public new event Action E;
+		public new void Dummy ()
+		{
+			E += delegate {};
+		}
 	}
 
 	public class Foo<T>
@@ -1860,7 +1868,9 @@ PublicKeyToken=b77a5c561934e089"));
 
 		struct B
 		{
+			#pragma warning disable 169
 			int value;
+			#pragma warning restore 169
 		}
 
 		[Test]
@@ -2153,7 +2163,7 @@ PublicKeyToken=b77a5c561934e089"));
 			a1 = new string [10];
 		}
 
-		class X
+		public class X
 		{
 			public static int Value;
 		}

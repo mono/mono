@@ -698,7 +698,7 @@ namespace System.Windows.Forms
 
 		#region Button
 		public abstract Size CalculateButtonAutoSize (Button button);
-		public abstract void CalculateButtonTextAndImageLayout (ButtonBase b, out Rectangle textRectangle, out Rectangle imageRectangle);
+		public abstract void CalculateButtonTextAndImageLayout (Graphics g, ButtonBase b, out Rectangle textRectangle, out Rectangle imageRectangle);
 		public abstract void DrawButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
 		public abstract void DrawFlatButton (Graphics g, ButtonBase b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
 		public abstract void DrawPopupButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);

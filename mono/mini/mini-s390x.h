@@ -53,8 +53,6 @@ typedef struct
 #define MONO_ARCH_IMT_REG				s390_r9
 #define MONO_ARCH_VTABLE_REG				MONO_ARCH_IMT_REG
 #define MONO_ARCH_RGCTX_REG				MONO_ARCH_IMT_REG
-#define MONO_ARCH_THIS_AS_FIRST_ARG     		1
-#define MONO_ARCH_HAVE_XP_UNWIND			1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX		1
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED			1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG		1
@@ -70,11 +68,6 @@ typedef struct
 #define S390_LAST_ARG_REG 		s390_r6
 #define S390_FIRST_FPARG_REG 		s390_f0
 #define S390_LAST_FPARG_REG 		s390_f6
-#define S390_PASS_STRUCTS_BY_VALUE 	 1
-#define S390_SMALL_RET_STRUCT_IN_REG	 1
-
-#define S390_NUM_REG_ARGS (S390_LAST_ARG_REG-S390_FIRST_ARG_REG+1)
-#define S390_NUM_REG_FPARGS ((S390_LAST_FPARG_REG-S390_FIRST_FPARG_REG)/2)
 
 /*===============================================*/
 /* Definitions used by mini-codegen.c            */
@@ -116,8 +109,6 @@ typedef struct
 
 #define MONO_ARCH_FRAME_ALIGNMENT 8
 #define MONO_ARCH_CODE_ALIGNMENT 32
-
-#define MONO_ARCH_RETREG1 s390_r2
 
 /*-----------------------------------------------*/
 /* Macros used to generate instructions          */

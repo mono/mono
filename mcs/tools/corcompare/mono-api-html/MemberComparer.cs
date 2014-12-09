@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
@@ -75,7 +76,7 @@ namespace Xamarin.ApiDiff {
 		public override void Compare (IEnumerable<XElement> source, IEnumerable<XElement> target)
 		{
 			removed.Clear ();
-			obsoleted.Clear ();
+			modified.Clear ();
 
 			foreach (var s in source) {
 				SetContext (s);
@@ -85,40 +86,21 @@ namespace Xamarin.ApiDiff {
 					// not in target, it was removed
 					removed.Add (s);
 				} else {
+					t.Remove ();
 					// possibly modified
-					if (Equals (s, t)) {
-						if (IsNowObsoleted (s, t)) {
-							obsoleted.Add (t);
-						}
-						t.Remove ();
+					if (Equals (s, t, modified))
 						continue;
-					}
 
-					// still in target so will be part of Added
-					removed.Add (s);
-					Modified (s, t);
+					Modified (s, t, modified);
 				}
 			}
 			// delayed, that way we show "Modified", "Added" and then "Removed"
 			Remove (removed);
 
+			Modify (modified);
+
 			// remaining == newly added in target
 			Add (target);
-
-			// obsolete (considering as added, they were not obsolete before, wrt regex)
-			bool o = false;
-			foreach (var item in obsoleted) {
-				SetContext (item);
-				if (State.IgnoreAdded.Any (re => re.IsMatch (GetDescription (item))))
-					continue;
-				if (!o) {
-					BeforeObsoleting (obsoleted);
-					o = true;
-				}
-				Obsoleted (item);
-			}
-			if (o)
-				AfterObsoleting ();
 		}
 
 		void Add (IEnumerable<XElement> elements)
@@ -138,6 +120,20 @@ namespace Xamarin.ApiDiff {
 				AfterAdding ();
 		}
 
+		void Modify (ApiChanges modified)
+		{
+			foreach (var changes in modified) {
+				Output.WriteLine ("<p>{0}:</p>", changes.Key);
+				Output.WriteLine ("<pre>");
+				foreach (var element in changes.Value) {
+					foreach (var line in element.Member.ToString ().Split ('\n'))
+						Output.WriteLine ("\t{0}", line);
+
+				}
+				Output.WriteLine ("</pre>");
+			}
+		}
+
 		void Remove (IEnumerable<XElement> elements)
 		{
 			bool r = false;
@@ -154,7 +150,7 @@ namespace Xamarin.ApiDiff {
 			if (r)
 				AfterRemoving ();
 		}
-
+			
 		public abstract string GetDescription (XElement e);
 
 		protected StringBuilder GetObsoleteMessage (XElement e)
@@ -172,26 +168,23 @@ namespace Xamarin.ApiDiff {
 			return sb;
 		}
 
-		public override bool Equals (XElement source, XElement target)
+		public override bool Equals (XElement source, XElement target, ApiChanges changes)
 		{
-			if (base.Equals (source, target))
-				return true;
+			RenderAttributes (source, target, changes);
 
-			return GetDescription (source) == GetDescription (target);
-		}
+			// We don't want to compare attributes.
+			RemoveAttributes (source);
+			RemoveAttributes (target);
 
-		bool IsNowObsoleted (XElement source, XElement target)
-		{
-			var s = GetObsoleteMessage (source).ToString ();
-			var t = GetObsoleteMessage (target).ToString ();
-			// true if it was no [Obsolete] in the source but now is [Obsolete] in the target
-			return (s.Length == 0 && t.Length > 0);
+			return base.Equals (source, target, changes);
 		}
 
 		public virtual void BeforeAdding (IEnumerable<XElement> list)
 		{
 			first = true;
 			Output.WriteLine ("<p>Added {0}:</p><pre>", list.Count () > 1 ? GroupName : ElementName);
+			if (State.Colorize)
+				Output.Write ("<font color='green'>");
 		}
 
 		public override void Added (XElement target)
@@ -205,32 +198,21 @@ namespace Xamarin.ApiDiff {
 
 		public virtual void AfterAdding ()
 		{
+			if (State.Colorize)
+				Output.Write ("</font>");
 			Output.WriteLine ("</pre>");
 		}
 
-		public virtual void BeforeObsoleting (IEnumerable<XElement> list)
-		{
-			Output.WriteLine ("<p>Obsoleted {0}:</p><pre>", list.Count () > 1 ? GroupName : ElementName);
-		}
-
-		public void Obsoleted (XElement target)
-		{
-			Indent ().WriteLine ("\t{0}{1}{2}", GetObsoleteMessage (target), GetDescription (target), Environment.NewLine);
-		}
-
-		public virtual void AfterObsoleting ()
-		{
-			Output.WriteLine ("</pre>");
-		}
-
-		public override void Modified (XElement source, XElement target)
+		public override void Modified (XElement source, XElement target, ApiChanges change)
 		{
 		}
 
 		public virtual void BeforeRemoving (IEnumerable<XElement> list)
 		{
 			first = true;
-			Output.WriteLine ("<p>Removed {0}:</p><pre>", list.Count () > 1 ? GroupName : ElementName);
+			Output.WriteLine ("<p>Removed {0}:</p>\n<pre>", list.Count () > 1 ? GroupName : ElementName);
+			if (State.Colorize)
+				Output.Write ("<font color='red'>");
 		}
 
 		public override void Removed (XElement source)
@@ -244,7 +226,334 @@ namespace Xamarin.ApiDiff {
 
 		public virtual void AfterRemoving ()
 		{
+			if (State.Colorize)
+				Output.Write ("</font>");
 			Output.WriteLine ("</pre>");
 		}
+
+		protected void RenderGenericParameters (XElement source, XElement target, ApiChange change)
+		{
+			var src = source.DescendantList ("generic-parameters", "generic-parameter");
+			var tgt = target.DescendantList ("generic-parameters", "generic-parameter");
+			var srcCount = src == null ? 0 : src.Count;
+			var tgtCount = tgt == null ? 0 : tgt.Count;
+
+			if (srcCount == 0 && tgtCount == 0)
+				return;
+
+			change.Append ("&lt;");
+			for (int i = 0; i < Math.Max (srcCount, tgtCount); i++) {
+				if (i > 0)
+					change.Append (", ");
+				if (i >= srcCount) {
+					change.AppendAdded (tgt [i].GetTypeName ("name"), true);
+				} else if (i >= tgtCount) {
+					change.AppendRemoved (src [i].GetTypeName ("name"), true);
+				} else {
+					var srcName = src [i].GetTypeName ("name");
+					var tgtName = tgt [i].GetTypeName ("name");
+
+					if (srcName != tgtName) {
+						change.AppendModified (srcName, tgtName, true);
+					} else {
+						change.Append (srcName);
+					}
+					}
+				}
+			change.Append ("&gt;");
+		}
+
+		protected string FormatValue (string type, string value)
+		{
+			if (value == null)
+				return "null";
+
+			if (type == "string")
+				return "\"" + value + "\"";
+			else if (type == "bool") {
+				switch (value) {
+				case "True":
+					return "true";
+				case "False":
+					return "false";
+				default:
+					return value;
+				}
+			}
+
+			return value;
+		}
+
+		protected void RenderParameters (XElement source, XElement target, ApiChange change)
+		{
+			var src = source.DescendantList ("parameters", "parameter");
+			var tgt = target.DescendantList ("parameters", "parameter");
+			var srcCount = src == null ? 0 : src.Count;
+			var tgtCount = tgt == null ? 0 : tgt.Count;
+
+			change.Append (" (");
+			for (int i = 0; i < Math.Max (srcCount, tgtCount); i++) {
+				if (i > 0)
+					change.Append (", ");
+
+				if (i >= srcCount) {
+					change.AppendAdded (tgt [i].GetTypeName ("type") + " " + tgt [i].GetAttribute ("name"), true);
+				} else if (i >= tgtCount) {
+					change.AppendRemoved (src [i].GetTypeName ("type") + " " + src [i].GetAttribute ("name"), true);
+				} else {
+					var paramSourceType = src [i].GetTypeName ("type");
+					var paramTargetType = tgt [i].GetTypeName ("type");
+
+					var paramSourceName = src [i].GetAttribute ("name");
+					var paramTargetName = tgt [i].GetAttribute ("name");
+
+					if (paramSourceType != paramTargetType) {
+						change.AppendModified (paramSourceType, paramTargetType, true);
+					} else {
+						change.Append (paramSourceType);
+					}
+					change.Append (" ");
+					if (paramSourceName != paramTargetName) {
+						change.AppendModified (paramSourceName, paramTargetName, false);
+					} else {
+						change.Append (paramSourceName);
+					}
+
+					var optSource = src [i].Attribute ("optional");
+					var optTarget = tgt [i].Attribute ("optional");
+					var srcValue = FormatValue (paramSourceType, src [i].GetAttribute ("defaultValue"));
+					var tgtValue = FormatValue (paramTargetType, tgt [i].GetAttribute ("defaultValue"));
+
+					if (optSource != null) {
+						if (optTarget != null) {
+							change.Append (" = ");
+							if (srcValue != tgtValue) {
+								change.AppendModified (srcValue, tgtValue, false);
+							} else {
+								change.Append (tgtValue);
+							}
+						} else {
+							change.AppendRemoved (" = " + srcValue);
+						}
+					} else {
+						if (optTarget != null)
+							change.AppendAdded (" = " + tgtValue);
+					}
+				}
+			}
+
+			change.Append (")");
+
+			// Ignore any parameter name changes if requested.
+			if (State.IgnoreParameterNameChanges && !change.Breaking) {
+				change.AnyChange = false;
+				change.HasIgnoredChanges = true;
+			}
+		}
+
+		void RenderVTable (MethodAttributes source, MethodAttributes target, ApiChange change)
+		{
+			var srcAbstract = (source & MethodAttributes.Abstract) == MethodAttributes.Abstract;
+			var tgtAbstract = (target & MethodAttributes.Abstract) == MethodAttributes.Abstract;
+			var srcFinal = (source & MethodAttributes.Final) == MethodAttributes.Final;
+			var tgtFinal = (target & MethodAttributes.Final) == MethodAttributes.Final;
+			var srcVirtual = (source & MethodAttributes.Virtual) == MethodAttributes.Virtual;
+			var tgtVirtual = (target & MethodAttributes.Virtual) == MethodAttributes.Virtual;
+			var srcOverride = (source & MethodAttributes.VtableLayoutMask) != MethodAttributes.NewSlot;
+			var tgtOverride = (target & MethodAttributes.VtableLayoutMask) != MethodAttributes.NewSlot;
+
+			var srcWord = srcVirtual ? (srcOverride ? "override" : "virtual") : string.Empty;
+			var tgtWord = tgtVirtual ? (tgtOverride ? "override" : "virtual") : string.Empty;
+			var breaking = srcWord.Length > 0 && tgtWord.Length == 0;
+
+			if (srcAbstract) {
+				if (tgtAbstract) {
+					change.Append ("abstract ");
+				} else if (tgtVirtual) {
+					change.AppendModified ("abstract", tgtWord, false).Append (" ");
+				} else {
+					change.AppendRemoved ("abstract").Append (" ");
+				}
+			} else {
+				if (tgtAbstract) {
+					change.AppendAdded ("abstract", true).Append (" ");
+				} else if (srcWord != tgtWord) {
+					if (!tgtFinal)
+						change.AppendModified (srcWord, tgtWord, breaking).Append (" ");
+				} else if (tgtWord.Length > 0) {
+					change.Append (tgtWord).Append (" ");
+				} else if (srcWord.Length > 0) {
+					change.AppendRemoved (srcWord, breaking).Append (" ");
+				}
+			}
+
+			if (srcFinal) {
+				if (tgtFinal) {
+					change.Append ("final ");
+				} else {
+					change.AppendRemoved ("final", false).Append (" "); // removing 'final' is not a breaking change.
+				}
+			} else {
+				if (tgtFinal && srcVirtual) {
+					change.AppendModified ("virtual", "final", true).Append (" "); // adding 'final' is a breaking change if the member was virtual
+				}
+			}
+
+			if (!srcVirtual && !srcFinal && tgtVirtual && tgtFinal) {
+				// existing member implements a member from a new interface
+				// this would show up as 'virtual final', which is redundant, so show nothing at all.
+				change.HasIgnoredChanges = true;
+			}
+
+			// Ignore non-breaking virtual changes.
+			if (State.IgnoreVirtualChanges && !change.Breaking) {
+				change.AnyChange = false;
+				change.HasIgnoredChanges = true;
+			}
+		}
+
+		protected string GetVisibility (MethodAttributes attr)
+		{
+			switch (attr) {
+			case MethodAttributes.Private:
+			case MethodAttributes.PrivateScope:
+				return "private";
+			case MethodAttributes.Assembly:
+				return "internal";
+			case MethodAttributes.FamANDAssem:
+				return "private internal";
+			case MethodAttributes.FamORAssem:
+				return "protected"; // customers don't care about 'internal';
+			case MethodAttributes.Family:
+				return "protected";
+			case MethodAttributes.Public:
+				return "public";
+			default:
+				throw new NotImplementedException ();
+			}
+		}
+
+		protected void RenderVisibility (MethodAttributes source, MethodAttributes target, ApiChange diff)
+		{
+			source = source & MethodAttributes.MemberAccessMask;
+			target = target & MethodAttributes.MemberAccessMask;
+
+			if (source == target) {
+				diff.Append (GetVisibility (target));
+			} else {
+				var breaking = false;
+				switch (source) {
+				case MethodAttributes.Private:
+				case MethodAttributes.Assembly:
+				case MethodAttributes.FamANDAssem:
+					break; // these are not publicly visible, thus not breaking
+				case MethodAttributes.FamORAssem:
+				case MethodAttributes.Family:
+					switch (target) {
+					case MethodAttributes.Public:
+						// to public is not a breaking change
+						break;
+					case MethodAttributes.Family:
+					case MethodAttributes.FamORAssem:
+						// not a breaking change, but should still show up in diff
+						break;
+					default:
+						// anything else is a breaking change
+						breaking = true;
+						break;
+					}
+					break;
+				case MethodAttributes.Public:
+				default:
+					// any change from public is breaking.
+					breaking = true;
+					break;
+				}
+
+				diff.AppendModified (GetVisibility (source), GetVisibility (target), breaking);
+			}
+			diff.Append (" ");
+		}
+
+		protected void RenderStatic (MethodAttributes src, MethodAttributes tgt, ApiChange diff)
+		{
+			var srcStatic = (src & MethodAttributes.Static) == MethodAttributes.Static;
+			var tgtStatic = (tgt & MethodAttributes.Static) == MethodAttributes.Static;
+
+			if (srcStatic != tgtStatic) {
+				if (srcStatic) {
+					diff.AppendRemoved ("static", true).Append (" ");
+				} else {
+					diff.AppendAdded ("static", true).Append (" ");
+				}
+			}
+		}
+
+		protected void RenderMethodAttributes (MethodAttributes src, MethodAttributes tgt, ApiChange diff)
+		{
+			RenderStatic (src, tgt, diff);
+			RenderVisibility (src & MethodAttributes.MemberAccessMask, tgt & MethodAttributes.MemberAccessMask, diff);
+			RenderVTable (src, tgt, diff);
+		}
+
+		protected void RenderMethodAttributes (XElement source, XElement target, ApiChange diff)
+		{
+			RenderMethodAttributes (source.GetMethodAttributes (), target.GetMethodAttributes (), diff);
+		}
+
+		protected void RemoveAttributes (XElement element)
+		{
+			var srcAttributes = element.Element ("attributes");
+			if (srcAttributes != null)
+				srcAttributes.Remove ();
+
+			foreach (var el in element.Elements ())
+				RemoveAttributes (el);
+		}
+
+		protected void RenderAttributes (XElement source, XElement target, ApiChanges changes)
+		{
+			var srcObsolete = source.GetObsoleteMessage ();
+			var tgtObsolete = target.GetObsoleteMessage ();
+
+			if (srcObsolete == tgtObsolete)
+				return; // nothing changed
+
+			if (srcObsolete == null) {
+				if (tgtObsolete == null)
+					return; // neither is obsolete
+				var change = new ApiChange ();
+				change.Header = "Obsoleted " + GroupName;
+				if (State.Colorize)
+					change.Append ("<font color='gray'>");
+				change.Append ("[Obsolete (");
+				if (tgtObsolete != string.Empty)
+					change.Append ("\"").Append (tgtObsolete).Append ("\"");
+				change.Append ("]\n");
+				change.Append (GetDescription (target));
+				if (State.Colorize)
+					change.Append ("</font>");
+				change.AnyChange = true;
+				changes.Add (source, target, change);
+			} else if (tgtObsolete == null) {
+				// Made non-obsolete. Do we care to report this?
+			} else {
+				// Obsolete message changed. Do we care to report this?
+			}
+		}
+
+		protected void RenderName (XElement source, XElement target, ApiChange change)
+		{
+			var name = target.GetAttribute ("name");
+			// show the constructor as it would be defined in C#
+			name = name.Replace (".ctor", State.Type);
+
+			var p = name.IndexOf ('(');
+			if (p >= 0)
+				name = name.Substring (0, p);
+
+			change.Append (name);
+		}
+
 	}
 }

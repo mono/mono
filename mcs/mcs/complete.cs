@@ -142,7 +142,7 @@ namespace Mono.CSharp {
 			}
 
 			if (targs != null) {
-				if (!targs.Resolve (rc))
+				if (!targs.Resolve (rc, true))
 					return null;
 			}
 

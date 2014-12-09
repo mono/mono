@@ -49,7 +49,7 @@ extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 #endif
 
 #define W32_SEH_HANDLE_EX(_ex) \
-	if (_ex##_handler) _ex##_handler(0, ep, sctx)
+	if (_ex##_handler) _ex##_handler(0, ep, ctx)
 
 LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 {
@@ -139,8 +139,7 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
 	guint32 free_stack = 0;
 	StackFrameInfo frame;
 
-	/* convert sigcontext to MonoContext (due to reuse of stack walking helpers */
-	mono_arch_sigctx_to_monoctx (sctx, &ctx);
+	mono_sigctx_to_monoctx (sctx, &ctx);
 	
 	/* get our os page size */
 	GetSystemInfo(&si);
@@ -172,8 +171,7 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
 		ctx = new_ctx;
 	} while (free_stack < 64 * 1024 && frame.ji != (gpointer) -1);
 
-	/* convert into sigcontext to be used in mono_arch_handle_exception */
-	mono_arch_monoctx_to_sigctx (&ctx, sctx);
+	mono_monoctx_to_sigctx (&ctx, sctx);
 
 	/* todo: install new stack-guard page */
 
@@ -189,7 +187,6 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
-	struct sigcontext* sctx;
 	LONG res;
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 
@@ -202,22 +199,10 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 	er = ep->ExceptionRecord;
 	ctx = ep->ContextRecord;
-	sctx = g_malloc(sizeof(struct sigcontext));
-
-	/* Copy Win32 context to UNIX style context */
-	sctx->eax = ctx->Eax;
-	sctx->ebx = ctx->Ebx;
-	sctx->ecx = ctx->Ecx;
-	sctx->edx = ctx->Edx;
-	sctx->ebp = ctx->Ebp;
-	sctx->esp = ctx->Esp;
-	sctx->esi = ctx->Esi;
-	sctx->edi = ctx->Edi;
-	sctx->eip = ctx->Eip;
 
 	switch (er->ExceptionCode) {
 	case EXCEPTION_STACK_OVERFLOW:
-		win32_handle_stack_overflow (ep, sctx);
+		win32_handle_stack_overflow (ep, ctx);
 		break;
 	case EXCEPTION_ACCESS_VIOLATION:
 		W32_SEH_HANDLE_EX(segv);
@@ -246,22 +231,7 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		* can correctly chain the exception.
 		*/
 		res = EXCEPTION_CONTINUE_SEARCH;
-	} else {
-		/* Copy context back */
-		ctx->Eax = sctx->eax;
-		ctx->Ebx = sctx->ebx;
-		ctx->Ecx = sctx->ecx;
-		ctx->Edx = sctx->edx;
-		ctx->Ebp = sctx->ebp;
-		ctx->Esp = sctx->esp;
-		ctx->Esi = sctx->esi;
-		ctx->Edi = sctx->edi;
-		ctx->Eip = sctx->eip;
 	}
-
-	/* TODO: Find right place to free this in stack overflow case */
-	if (er->ExceptionCode != EXCEPTION_STACK_OVERFLOW)
-		g_free (sctx);
 
 	return res;
 }
@@ -278,8 +248,9 @@ void win32_seh_init()
 
 void win32_seh_cleanup()
 {
-	if (mono_old_win_toplevel_exception_filter) SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
-	RemoveVectoredExceptionHandler (seh_unhandled_exception_filter);
+	if (mono_old_win_toplevel_exception_filter)
+		SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
+	RemoveVectoredExceptionHandler (mono_win_vectored_exception_handle);
 }
 
 void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
@@ -835,29 +806,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		/* Adjust IP */
 		new_ctx->eip --;
 
-
-#ifndef MONO_X86_NO_PUSHES
-		/* Pop arguments off the stack */
-		if (ji->has_arch_eh_info) {
-			int stack_size;
-
-			stack_size = mono_jit_info_get_arch_eh_info (ji)->stack_size;
-
-			if (stack_size) {
-#ifdef ENABLE_LLVM
-				MonoJitInfo *caller_ji;
-
-				caller_ji = mini_jit_info_table_find (domain, (char*)new_ctx->eip, NULL);
-				/* LLVM doesn't push the arguments */
-				if (caller_ji && !caller_ji->from_llvm)
-					new_ctx->esp += stack_size;
-#else
-					new_ctx->esp += stack_size;
-#endif
-			}
-		}
-#endif
-
 		return TRUE;
 	} else if (*lmf) {
 
@@ -878,14 +826,12 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 			return TRUE;
 		}
-		
+
 		if ((ji = mini_jit_info_table_find (domain, (gpointer)(*lmf)->eip, NULL))) {
+			frame->ji = ji;
 		} else {
-			if (!((guint32)((*lmf)->previous_lmf) & 1))
-				/* Top LMF entry */
+			if (!(*lmf)->method)
 				return FALSE;
-			g_assert_not_reached ();
-			/* Trampoline lmf frame */
 			frame->method = (*lmf)->method;
 		}
 
@@ -898,28 +844,12 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		/* Adjust IP */
 		new_ctx->eip --;
 
-		frame->ji = ji;
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 
 		/* Check if we are in a trampoline LMF frame */
 		if ((guint32)((*lmf)->previous_lmf) & 1) {
 			/* lmf->esp is set by the trampoline code */
 			new_ctx->esp = (*lmf)->esp;
-
-			/* Pop arguments off the stack */
-			/* FIXME: Handle the delegate case too ((*lmf)->method == NULL) */
-			/* FIXME: Handle the IMT/vtable case too */
-#if 0
-#ifndef ENABLE_LLVM
-			if ((*lmf)->method) {
-				MonoMethod *method = (*lmf)->method;
-				MonoJitArgumentInfo *arg_info = g_newa (MonoJitArgumentInfo, mono_method_signature (method)->param_count + 1);
-
-				guint32 stack_to_pop = mono_arch_get_argument_info (NULL, mono_method_signature (method), mono_method_signature (method)->param_count, arg_info);
-				new_ctx->esp += stack_to_pop;
-			}
-#endif
-#endif
 		}
 		else
 			/* the lmf is always stored on the stack, so the following
@@ -934,33 +864,21 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	return FALSE;
 }
 
-void
-mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
-{
-	mono_sigctx_to_monoctx (sigctx, mctx);
-}
-
-void
-mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
-{
-	mono_monoctx_to_sigctx (mctx, sigctx);
-}
-
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
 #if defined(__native_client__)
 	printf("WARNING: mono_arch_ip_from_context() called!\n");
 	return (NULL);
-#else
-#ifdef MONO_ARCH_USE_SIGACTION
+#elif defined(MONO_ARCH_USE_SIGACTION)
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 	return (gpointer)UCONTEXT_REG_EIP (ctx);
+#elif defined(HOST_WIN32)
+	return ((CONTEXT*)sigctx)->Eip;
 #else
 	struct sigcontext *ctx = sigctx;
 	return (gpointer)ctx->SC_EIP;
 #endif
-#endif	/* __native_client__ */
 }
 
 /*
@@ -1062,7 +980,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 
 	/* Pass the ctx parameter in TLS */
-	mono_arch_sigctx_to_monoctx (ctx, &jit_tls->ex_ctx);
+	mono_sigctx_to_monoctx (ctx, &jit_tls->ex_ctx);
 
 	mctx = jit_tls->ex_ctx;
 	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
@@ -1074,7 +992,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	struct sigcontext *ctx = (struct sigcontext *)sigctx;
 
-	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
+	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 
 	mctx = jit_tls->ex_ctx;
 	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
@@ -1084,11 +1002,11 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 #else
 	MonoContext mctx;
 
-	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
+	mono_sigctx_to_monoctx (sigctx, &mctx);
 
 	mono_handle_exception (&mctx, obj);
 
-	mono_arch_monoctx_to_sigctx (&mctx, sigctx);
+	mono_monoctx_to_sigctx (&mctx, sigctx);
 
 	return TRUE;
 #endif

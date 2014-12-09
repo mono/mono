@@ -28,7 +28,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using NUnit.Framework;
 using System.Drawing;
 
-namespace ChartingTests
+namespace MonoTests.System.Windows.Forms.DataVisualization.Charting
 {
 	[TestFixture]
 	public class AxisScaleBreakStyleTest

@@ -94,8 +94,10 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			RuntimeHelpers.RunClassConstructor (rth);
 		}
 
+		// Expected the handle here is that way, because we are going to test for an ArgumentException being thrown
+#pragma warning disable 649
 		static RuntimeTypeHandle handle;
-
+#pragma warning restore 649
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void RunClassConstructor_Uninitialized ()
@@ -122,7 +124,11 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		}
 
 		static RuntimeFieldHandle rfh = typeof (Fielder).GetField ("array").FieldHandle;
+
+		// Disable expected warning: the point of the test is to validate that an exception is thrown for something with a null (the default value in this case)
+		#pragma warning disable  649
 		static RuntimeFieldHandle static_rfh;
+		#pragma warning restore 649
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]

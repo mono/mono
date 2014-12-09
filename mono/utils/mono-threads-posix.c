@@ -9,17 +9,6 @@
 
 #include <config.h>
 
-#if defined(TARGET_OSX)
-/* For pthread_main_np () */
-#define _DARWIN_C_SOURCE 1
-#include <pthread.h>
-#endif
-
-#if defined(__OpenBSD__) || defined(__FreeBSD__)
-#include <pthread.h>
-#include <pthread_np.h>
-#endif
-
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-semaphore.h>
 #include <mono/utils/mono-threads.h>
@@ -30,13 +19,12 @@
 
 #include <errno.h>
 
-#if defined(PLATFORM_ANDROID)
-extern int tkill (pid_t tid, int signal);
+#if defined(PLATFORM_ANDROID) && !defined(TARGET_ARM64)
+#define USE_TKILL_ON_ANDROID 1
 #endif
 
-#if defined(PLATFORM_MACOSX) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
-void *pthread_get_stackaddr_np(pthread_t);
-size_t pthread_get_stacksize_np(pthread_t);
+#ifdef USE_TKILL_ON_ANDROID
+extern int tkill (pid_t tid, int signal);
 #endif
 
 #if defined(_POSIX_VERSION) || defined(__native_client__)
@@ -54,6 +42,10 @@ typedef struct {
 	MonoSemType registered;
 	HANDLE handle;
 } StartInfo;
+
+#ifdef PLATFORM_ANDROID
+static int no_interrupt_signo;
+#endif
 
 static void*
 inner_start_thread (void *arg)
@@ -185,113 +177,6 @@ mono_threads_core_resume_created (MonoThreadInfo *info, MonoNativeThreadId tid)
 	MONO_SEM_POST (&info->create_suspended_sem);
 }
 
-void
-mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
-{
-#if defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
-	/* Mac OS X */
-	*staddr = (guint8*)pthread_get_stackaddr_np (pthread_self());
-	*stsize = pthread_get_stacksize_np (pthread_self());
-
-#ifdef TARGET_OSX
-	/*
-	 * Mavericks reports stack sizes as 512kb:
-	 * http://permalink.gmane.org/gmane.comp.java.openjdk.hotspot.devel/11590
-	 * https://bugs.openjdk.java.net/browse/JDK-8020753
-	 */
-	if (pthread_main_np () && *stsize == 512 * 1024)
-		*stsize = 2048 * mono_pagesize ();
-#endif
-
-	/* staddr points to the start of the stack, not the end */
-	*staddr -= *stsize;
-
-	/* When running under emacs, sometimes staddr is not aligned to a page size */
-	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize() - 1));
-	return;
-
-#elif (defined(HAVE_PTHREAD_GETATTR_NP) || defined(HAVE_PTHREAD_ATTR_GET_NP)) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
-	/* Linux, BSD */
-
-	pthread_attr_t attr;
-	guint8 *current = (guint8*)&attr;
-
-	*staddr = NULL;
-	*stsize = (size_t)-1;
-
-	pthread_attr_init (&attr);
-
-#if     defined(HAVE_PTHREAD_GETATTR_NP)
-	/* Linux */
-	pthread_getattr_np (pthread_self(), &attr);
-
-#elif   defined(HAVE_PTHREAD_ATTR_GET_NP)
-	/* BSD */
-	pthread_attr_get_np (pthread_self(), &attr);
-
-#else
-#error 	Cannot determine which API is needed to retrieve pthread attributes.
-#endif
-
-	pthread_attr_getstack (&attr, (void**)staddr, stsize);
-	pthread_attr_destroy (&attr);
-
-	if (*staddr)
-		g_assert ((current > *staddr) && (current < *staddr + *stsize));
-
-	/* When running under emacs, sometimes staddr is not aligned to a page size */
-	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
-	return;
-
-#elif defined(__OpenBSD__)
-	/* OpenBSD */
-	/* TODO :   Determine if this code is actually still needed. It may already be covered by the case above. */
-
-	pthread_attr_t attr;
-	guint8 *current = (guint8*)&attr;
-
-	*staddr = NULL;
-	*stsize = (size_t)-1;
-
-	pthread_attr_init (&attr);
-
-	stack_t ss;
-	int rslt;
-
-	rslt = pthread_stackseg_np(pthread_self(), &ss);
-	g_assert (rslt == 0);
-
-	*staddr = (guint8*)((size_t)ss.ss_sp - ss.ss_size);
-	*stsize = ss.ss_size;
-
-	pthread_attr_destroy (&attr);
-
-	if (*staddr)
-		g_assert ((current > *staddr) && (current < *staddr + *stsize));
-
-	/* When running under emacs, sometimes staddr is not aligned to a page size */
-	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
-	return;
-
-#elif defined(sun) || defined(__native_client__)
-	/* Solaris/Illumos, NaCl */
-	pthread_attr_t attr;
-	pthread_attr_init (&attr);
-	pthread_attr_getstacksize (&attr, &stsize);
-	pthread_attr_destroy (&attr);
-	*staddr = NULL;
-	return;
-
-#else
-	/* FIXME:   It'd be better to use the 'error' preprocessor macro here so we know
-		    at compile-time if the target platform isn't supported. */
-#warning "Unable to determine how to retrieve a thread's stack-bounds for this platform in 'mono_thread_get_stack_bounds()'."
-	*staddr = NULL;
-	*stsize = 0;
-	return;
-#endif
-}
-
 gboolean
 mono_threads_core_yield (void)
 {
@@ -359,6 +244,50 @@ mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
 	return handle;
 }
 
+gpointer
+mono_threads_core_prepare_interrupt (HANDLE thread_handle)
+{
+	return wapi_prepare_interrupt_thread (thread_handle);
+}
+
+void
+mono_threads_core_finish_interrupt (gpointer wait_handle)
+{
+	wapi_finish_interrupt_thread (wait_handle);
+}
+
+void
+mono_threads_core_self_interrupt (void)
+{
+	wapi_self_interrupt ();
+}
+
+void
+mono_threads_core_clear_interruption (void)
+{
+	wapi_clear_interruption ();
+}
+
+int
+mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
+{
+#ifdef USE_TKILL_ON_ANDROID
+	int result, old_errno = errno;
+	result = tkill (info->native_handle, signum);
+	if (result < 0) {
+		result = errno;
+		errno = old_errno;
+	}
+	return result;
+#elif defined(__native_client__)
+	/* Workaround pthread_kill abort() in NaCl glibc. */
+	return 0;
+#else
+	return pthread_kill (mono_thread_info_get_tid (info), signum);
+#endif
+
+}
+
 #if !defined (__MACH__)
 
 #if !defined(__native_client__)
@@ -404,7 +333,7 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 #endif
 
 static void
-mono_posix_add_signal_handler (int signo, gpointer handler)
+mono_posix_add_signal_handler (int signo, gpointer handler, int flags)
 {
 #if !defined(__native_client__)
 	/*FIXME, move the code from mini to utils and do the right thing!*/
@@ -414,7 +343,7 @@ mono_posix_add_signal_handler (int signo, gpointer handler)
 
 	sa.sa_sigaction = handler;
 	sigemptyset (&sa.sa_mask);
-	sa.sa_flags = SA_SIGINFO;
+	sa.sa_flags = SA_SIGINFO | flags;
 	ret = sigaction (signo, &sa, &previous_sa);
 
 	g_assert (ret != -1);
@@ -425,39 +354,36 @@ void
 mono_threads_init_platform (void)
 {
 #if !defined(__native_client__)
+	int abort_signo;
+
 	/*
 	FIXME we should use all macros from mini to make this more portable
 	FIXME it would be very sweet if sgen could end up using this too.
 	*/
-	if (mono_thread_info_new_interrupt_enabled ())
-		mono_posix_add_signal_handler (mono_thread_get_abort_signal (), suspend_signal_handler);
+	if (!mono_thread_info_new_interrupt_enabled ())
+		return;
+	abort_signo = mono_thread_get_abort_signal ();
+	mono_posix_add_signal_handler (abort_signo, suspend_signal_handler, 0);
+
+#ifdef PLATFORM_ANDROID
+	/*
+	 * Lots of android native code can't handle the EINTR caused by
+	 * the normal abort signal, so use a different signal for the
+	 * no interruption case, which is used by sdb.
+	 * FIXME: Use this on all platforms.
+	 * SIGUSR1 is used by dalvik/art.
+	 */
+	no_interrupt_signo = SIGWINCH;
+	g_assert (abort_signo != no_interrupt_signo);
+	mono_posix_add_signal_handler (no_interrupt_signo, suspend_signal_handler, SA_RESTART);
+#endif
 #endif
 }
 
-/*nothing to be done here since suspend always abort syscalls due using signals*/
 void
 mono_threads_core_interrupt (MonoThreadInfo *info)
 {
-}
-
-int
-mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
-{
-#if defined (PLATFORM_ANDROID)
-	int result, old_errno = errno;
-	result = tkill (info->native_handle, signum);
-	if (result < 0) {
-		result = errno;
-		errno = old_errno;
-	}
-	return result;
-#elif defined(__native_client__)
-	/* Workaround pthread_kill abort() in NaCl glibc. */
-	return 0;
-#else
-	return pthread_kill (mono_thread_info_get_tid (info), signum);
-#endif
-
+	/* Handled in mono_threads_core_suspend () */
 }
 
 void
@@ -478,10 +404,17 @@ mono_threads_core_needs_abort_syscall (void)
 }
 
 gboolean
-mono_threads_core_suspend (MonoThreadInfo *info)
+mono_threads_core_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
 {
 	/*FIXME, check return value*/
-	mono_threads_pthread_kill (info, mono_thread_get_abort_signal ());
+#ifdef PLATFORM_ANDROID
+	if (!interrupt_kernel)
+		mono_threads_pthread_kill (info, no_interrupt_signo);
+	else
+		mono_threads_pthread_kill (info, mono_thread_get_abort_signal ());
+#else
+		mono_threads_pthread_kill (info, mono_thread_get_abort_signal ());
+#endif
 	while (MONO_SEM_WAIT (&info->begin_suspend_semaphore) != 0) {
 		/* g_assert (errno == EINTR); */
 	}
@@ -505,7 +438,7 @@ mono_threads_platform_register (MonoThreadInfo *info)
 	MONO_SEM_INIT (&info->begin_suspend_semaphore, 0);
 
 #if defined (PLATFORM_ANDROID)
-	info->native_handle = (gpointer) gettid ();
+	info->native_handle = gettid ();
 #endif
 }
 

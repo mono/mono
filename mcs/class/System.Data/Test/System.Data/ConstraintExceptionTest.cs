@@ -43,7 +43,7 @@ using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework
 using NUnit.Framework;
 #endif
 
-namespace MonoTests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture] public class ConstraintExceptionTest
 	{

@@ -869,6 +869,32 @@ namespace System.Threading {
 			}
 		}
 
+		internal bool HasExecutionContext {
+			get {
+				return _ec != null;
+			}
+		}
+
+		internal void BranchExecutionContext (out ExecutionContext.Switcher switcher)
+		{
+			if (_ec == null) {
+				switcher =  new ExecutionContext.Switcher ();
+			} else {
+				switcher = new ExecutionContext.Switcher (_ec);
+				_ec.CopyOnWrite = true;
+			}
+		}
+
+		internal void RestoreExecutionContext (ref ExecutionContext.Switcher switcher)
+		{
+			if (switcher.IsEmpty) {
+				_ec = null;
+				return;
+			}
+
+			switcher.Restore (_ec);
+		}
+
 		public int ManagedThreadId {
 			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 			get {

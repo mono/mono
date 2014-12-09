@@ -516,7 +516,7 @@ namespace System.Xml.Serialization {
 				elem.Form = att.Form;
 				if (att.Form == XmlSchemaForm.Unqualified)
 					elem.Namespace = string.Empty;
-				elem.IsNullable = att.IsNullable && CanBeNull (elem.TypeData);
+				elem.IsNullable = (!att.IsNullableSpecified || att.IsNullable) && CanBeNull (elem.TypeData);
 				elem.NestingLevel = att.NestingLevel;
 
 				if (isMultiArray) {

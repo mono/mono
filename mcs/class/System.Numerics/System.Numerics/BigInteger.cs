@@ -1,10 +1,12 @@
 //
 // System.Numerics.BigInteger
 //
-// Rodrigo Kumpera (rkumpera@novell.com)
-
+// Authors:
+//	Rodrigo Kumpera (rkumpera@novell.com)
+//	Marek Safar  <marek.safar@gmail.com>
 //
 // Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -68,7 +70,6 @@ namespace System.Numerics {
 		readonly uint[] data;
 		readonly short sign;
 
-		static readonly uint[] ZERO = new uint [1];
 		static readonly uint[] ONE = new uint [1] { 1 };
 
 		BigInteger (short sign, uint[] data)
@@ -81,7 +82,7 @@ namespace System.Numerics {
 		{
 			if (value == 0) {
 				sign = 0;
-				data = ZERO;
+				data = null;
 			} else if (value > 0) {
 				sign = 1;
 				data = new uint[] { (uint) value };
@@ -96,7 +97,7 @@ namespace System.Numerics {
 		{
 			if (value == 0) {
 				sign = 0;
-				data = ZERO;
+				data = null;
 			} else {
 				sign = 1;
 				data = new uint [1] { value };
@@ -107,7 +108,7 @@ namespace System.Numerics {
 		{
 			if (value == 0) {
 				sign = 0;
-				data = ZERO;
+				data = null;
 			} else if (value > 0) {
 				sign = 1;
 				uint low = (uint)value;
@@ -135,7 +136,7 @@ namespace System.Numerics {
 		{
 			if (value == 0) {
 				sign = 0;
-				data = ZERO;
+				data = null;
 			} else {
 				sign = 1;
 				uint low = (uint)value;
@@ -180,7 +181,7 @@ namespace System.Numerics {
 				int exponent = Exponent (bytes);
 				if (exponent == 0) {
 					sign = 0;
-					data = ZERO;
+					data = null;
 					return;
 				}
 
@@ -217,7 +218,7 @@ namespace System.Numerics {
 
 			if (size == 0) {
 				sign = 0;
-				data = ZERO;
+				data = null;
 				return;
 			}
 
@@ -241,7 +242,7 @@ namespace System.Numerics {
 
 			if (len == 0 || (len == 1 && value [0] == 0)) {
 				sign = 0;
-				data = ZERO;
+				data = null;
 				return;
 			}
 
@@ -254,7 +255,7 @@ namespace System.Numerics {
 				while (value [len - 1] == 0) {
 					if (--len == 0) {
 						sign = 0;
-						data = ZERO;
+						data = null;
 						return;
 					}
 				}
@@ -456,12 +457,12 @@ namespace System.Numerics {
 		}
 
 		public static BigInteger Zero {
-			get { return new BigInteger (0, ZERO); }
+			get { return new BigInteger (0); }
 		}
 
 		public static explicit operator int (BigInteger value)
 		{
-			if (value.sign == 0)
+			if (value.data == null)
 				return 0;
 			if (value.data.Length > 1)
 				throw new OverflowException ();
@@ -483,7 +484,7 @@ namespace System.Numerics {
 		[CLSCompliantAttribute (false)]
 		public static explicit operator uint (BigInteger value)
 		{
-			if (value.sign == 0)
+			if (value.data == null)
 				return 0;
 			if (value.data.Length > 1 || value.sign == -1)
 				throw new OverflowException ();
@@ -527,7 +528,7 @@ namespace System.Numerics {
 
 		public static explicit operator long (BigInteger value)
 		{
-			if (value.sign == 0)
+			if (value.data == null)
 				return 0;
 
 			if (value.data.Length > 2)
@@ -569,7 +570,7 @@ namespace System.Numerics {
 		[CLSCompliantAttribute (false)]
 		public static explicit operator ulong (BigInteger value)
 		{
-			if (value.sign == 0)
+			if (value.data == null)
 				return 0;
 			if (value.data.Length > 2 || value.sign == -1)
 				throw new OverflowException ();
@@ -584,9 +585,10 @@ namespace System.Numerics {
 
 		public static explicit operator double (BigInteger value)
 		{
-			switch (value.data.Length) {
-			case 0:
+			if (value.data == null)
 				return 0.0;
+
+			switch (value.data.Length) {
 			case 1:
 				return BuildDouble (value.sign, value.data [0], 0);
 			case 2:
@@ -613,7 +615,7 @@ namespace System.Numerics {
 
 		public static explicit operator decimal (BigInteger value)
 		{
-			if (value.sign == 0)
+			if (value.data == null)
 			return Decimal.Zero;
 
 			uint[] data = value.data;
@@ -703,7 +705,7 @@ namespace System.Numerics {
 			int r = CoreCompare (left.data, right.data);
 
 			if (r == 0)	
-				return new BigInteger (0, ZERO);
+				return Zero;
 
 			if (r > 0) //left > right
 				return new BigInteger (left.sign, CoreSub (left.data, right.data));
@@ -722,7 +724,7 @@ namespace System.Numerics {
 				int r = CoreCompare (left.data, right.data);
 
 				if (r == 0)	
-					return new BigInteger (0, ZERO);
+					return Zero;
 
 				if (r > 0) //left > right
 					return new BigInteger (left.sign, CoreSub (left.data, right.data));
@@ -736,7 +738,7 @@ namespace System.Numerics {
 		public static BigInteger operator* (BigInteger left, BigInteger right)
 		{
 			if (left.sign == 0 || right.sign == 0)
-				return new BigInteger (0, ZERO);
+				return Zero;
 
 			if (left.data [0] == 1 && left.data.Length == 1) {
 				if (left.sign == 1)
@@ -797,7 +799,7 @@ namespace System.Numerics {
 			int i;
 			for (i = quotient.Length - 1; i >= 0 && quotient [i] == 0; --i) ;
 			if (i == -1)
-				return new BigInteger (0, ZERO);
+				return Zero;
 			if (i < quotient.Length - 1)
 				quotient = Resize (quotient, i + 1);
 
@@ -820,7 +822,7 @@ namespace System.Numerics {
 			int i;
 			for (i = remainder_value.Length - 1; i >= 0 && remainder_value [i] == 0; --i) ;
 			if (i == -1)
-				return new BigInteger (0, ZERO);
+				return Zero;
 
 			if (i < remainder_value.Length - 1)
 				remainder_value = Resize (remainder_value, i + 1);
@@ -829,7 +831,7 @@ namespace System.Numerics {
 
 		public static BigInteger operator- (BigInteger value)
 		{
-			if (value.sign == 0)
+			if (value.data == null)
 				return value;
 			return new BigInteger ((short)-value.sign, value.data);
 		}
@@ -841,14 +843,14 @@ namespace System.Numerics {
 
 		public static BigInteger operator++ (BigInteger value)
 		{
-			if (value.sign == 0)
+			if (value.data == null)
 				return One;
 
 			short sign = value.sign;
 			uint[] data = value.data;
 			if (data.Length == 1) {
 				if (sign == -1 && data [0] == 1)
-					return new BigInteger (0, ZERO);
+					return Zero;
 				if (sign == 0)
 					return new BigInteger (1, ONE);
 			}
@@ -863,14 +865,14 @@ namespace System.Numerics {
 
 		public static BigInteger operator-- (BigInteger value)
 		{
-			if (value.sign == 0)
+			if (value.data == null)
 				return MinusOne;
 
 			short sign = value.sign;
 			uint[] data = value.data;
 			if (data.Length == 1) {
 				if (sign == 1 && data [0] == 1)
-					return new BigInteger (0, ZERO);
+					return Zero;
 				if (sign == 0)
 					return new BigInteger (-1, ONE);
 			}
@@ -935,7 +937,7 @@ namespace System.Numerics {
 
 			for (i = result.Length - 1; i >= 0 && result [i] == 0; --i) ;
 			if (i == -1)
-				return new BigInteger (0, ZERO);
+				return Zero;
 	
 			if (i < result.Length - 1)
 				result = Resize (result, i + 1);
@@ -995,7 +997,7 @@ namespace System.Numerics {
 
 			for (i = result.Length - 1; i >= 0 && result [i] == 0; --i) ;
 			if (i == -1)
-				return new BigInteger (0, ZERO);
+				return Zero;
 	
 			if (i < result.Length - 1)
 				result = Resize (result, i + 1);
@@ -1055,7 +1057,7 @@ namespace System.Numerics {
 
 			for (i = result.Length - 1; i >= 0 && result [i] == 0; --i) ;
 			if (i == -1)
-				return new BigInteger (0, ZERO);
+				return Zero;
 	
 			if (i < result.Length - 1)
 				result = Resize (result, i + 1);
@@ -1065,7 +1067,7 @@ namespace System.Numerics {
 
 		public static BigInteger operator~ (BigInteger value)
 		{
-			if (value.sign == 0)
+			if (value.data == null)
 				return new BigInteger (-1, ONE);
 
 			uint[] data = value.data;
@@ -1099,7 +1101,7 @@ namespace System.Numerics {
 
 			for (i = result.Length - 1; i >= 0 && result [i] == 0; --i) ;
 			if (i == -1)
-				return new BigInteger (0, ZERO);
+				return Zero;
 	
 			if (i < result.Length - 1)
 				result = Resize (result, i + 1);
@@ -1121,7 +1123,7 @@ namespace System.Numerics {
 
 		public static BigInteger operator<< (BigInteger value, int shift)
 		{
-			if (shift == 0 || value.sign == 0)
+			if (shift == 0 || value.data == null)
 				return value;
 			if (shift < 0)
 				return value >> -shift;
@@ -1177,7 +1179,7 @@ namespace System.Numerics {
 
 			if (size <= 0) {
 				if (sign == 1)
-					return new BigInteger (0, ZERO);
+					return Zero;
 				return new BigInteger (-1, ONE);
 			}
 
@@ -2142,7 +2144,7 @@ namespace System.Numerics {
 			int i;
 			for (i = remainder_value.Length - 1; i >= 0 && remainder_value [i] == 0; --i) ;
 			if (i == -1) {
-				remainder = new BigInteger (0, ZERO);
+				remainder = Zero;
 			} else {
 				if (i < remainder_value.Length - 1)
 					remainder_value = Resize (remainder_value, i + 1);
@@ -2151,7 +2153,7 @@ namespace System.Numerics {
 
 			for (i = quotient.Length - 1; i >= 0 && quotient [i] == 0; --i) ;
 			if (i == -1)
-				return new BigInteger (0, ZERO);
+				return Zero;
 			if (i < quotient.Length - 1)
 				quotient = Resize (quotient, i + 1);
 
@@ -2264,7 +2266,7 @@ namespace System.Numerics {
 			if (baseValue == 0.0d || baseValue == Double.PositiveInfinity)
 				return value.IsOne ? 0 : double.NaN;
 	
-			if (value.sign == 0)
+			if (value.data == null)
 				return double.NegativeInfinity;
 
 			int length = value.data.Length - 1;

@@ -22,6 +22,11 @@ namespace Mono.Debugger.Soft
 		/*
 		 * Return the values of out arguments
 		 */
-		ReturnOutArgs = 8
+		ReturnOutArgs = 8,
+		/*
+		 * Do a virtual invoke
+		 * Since protocol version 2.37
+		 */
+		Virtual = 16
 	}
 }

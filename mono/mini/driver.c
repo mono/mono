@@ -408,8 +408,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 
 			} else {
 				cfailed++;
-				if (verbose)
-					g_print ("Test '%s' failed compilation.\n", method->name);
+				g_print ("Test '%s' failed compilation.\n", method->name);
 			}
 			if (mini_stats_fd)
 				fprintf (mini_stats_fd, "%f, ",
@@ -1869,6 +1868,8 @@ mono_main (int argc, char* argv[])
 		g_set_prgname (argv[i]);
 	}
 
+	mono_counters_init ();
+
 	if (enable_profile)
 		mono_profiler_load (profile_options);
 
@@ -1902,6 +1903,14 @@ mono_main (int argc, char* argv[])
 	if (mixed_mode)
 		mono_load_coree (argv [i]);
 #endif
+
+	/* Set rootdir before loading config */
+	mono_set_rootdir ();
+
+	/* Parse gac loading options before loading assemblies. */
+	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER) {
+		mono_config_parse (config_file);
+	}
 
 	mono_set_defaults (mini_verbose, opt);
 	domain = mini_init (argv [i], forced_version);
@@ -1968,11 +1977,6 @@ mono_main (int argc, char* argv[])
 		break;
 	}
 
-	/* Parse gac loading options before loading assemblies. */
-	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER) {
-		mono_config_parse (config_file);
-	}
-
 #ifdef MONO_JIT_INFO_TABLE_TEST
 	if (test_jit_info_table)
 		jit_info_table_test (domain);
@@ -1998,7 +2002,7 @@ mono_main (int argc, char* argv[])
 			fprintf (stderr, "Corlib not in sync with this runtime: %s\n", error);
 			fprintf (stderr, "Loaded from: %s\n",
 				mono_defaults.corlib? mono_image_get_filename (mono_defaults.corlib): "unknown");
-			fprintf (stderr, "Download a newer corlib or a newer runtime at http://www.go-mono.com/daily.\n");
+			fprintf (stderr, "Download a newer corlib or a newer runtime at http://www.mono-project.com/download.\n");
 			exit (1);
 		}
 

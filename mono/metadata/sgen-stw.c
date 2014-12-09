@@ -38,7 +38,6 @@
 #define TV_DECLARE SGEN_TV_DECLARE
 #define TV_GETTIME SGEN_TV_GETTIME
 #define TV_ELAPSED SGEN_TV_ELAPSED
-#define TV_ELAPSED_MS SGEN_TV_ELAPSED_MS
 
 inline static void*
 align_pointer (void *ptr)
@@ -52,7 +51,7 @@ align_pointer (void *ptr)
 #ifdef USE_MONO_CTX
 static MonoContext cur_thread_ctx;
 #else
-static mword cur_thread_regs [ARCH_NUM_REGS] = {0};
+static mword cur_thread_regs [ARCH_NUM_REGS];
 #endif
 
 static void
@@ -202,8 +201,8 @@ count_cards (long long *major_total, long long *major_marked, long long *los_tot
 static TV_DECLARE (stop_world_time);
 static unsigned long max_pause_usec = 0;
 
-static long long time_stop_world;
-static long long time_restart_world;
+static guint64 time_stop_world;
+static guint64 time_restart_world;
 
 /* LOCKING: assumes the GC lock is held */
 int
@@ -235,8 +234,9 @@ sgen_stop_world (int generation)
 	mono_profiler_gc_event (MONO_GC_EVENT_POST_STOP_WORLD, generation);
 	MONO_GC_WORLD_STOP_END ();
 	if (binary_protocol_is_enabled ()) {
-		long long major_total, major_marked, los_total, los_marked;
-		count_cards (&major_total, &major_marked, &los_total, &los_marked);
+		long long major_total = -1, major_marked = -1, los_total = -1, los_marked = -1;
+		if (binary_protocol_is_heavy_enabled ())
+			count_cards (&major_total, &major_marked, &los_total, &los_marked);
 		binary_protocol_world_stopped (sgen_timestamp (), major_total, major_marked, los_total, los_marked);
 	}
 
@@ -262,8 +262,9 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 	unsigned long usec, bridge_usec;
 
 	if (binary_protocol_is_enabled ()) {
-		long long major_total, major_marked, los_total, los_marked;
-		count_cards (&major_total, &major_marked, &los_total, &los_marked);
+		long long major_total = -1, major_marked = -1, los_total = -1, los_marked = -1;
+		if (binary_protocol_is_heavy_enabled ())
+			count_cards (&major_total, &major_marked, &los_total, &los_marked);
 		binary_protocol_world_restarting (generation, sgen_timestamp (), major_total, major_marked, los_total, los_marked);
 	}
 
@@ -326,8 +327,8 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 void
 sgen_init_stw (void)
 {
-	mono_counters_register ("World stop", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_stop_world);
-	mono_counters_register ("World restart", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_restart_world);
+	mono_counters_register ("World stop", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_stop_world);
+	mono_counters_register ("World restart", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &time_restart_world);
 }
 
 #endif

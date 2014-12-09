@@ -1,3 +1,3 @@
-#include mobile_System.Core.dll.sources
+#include mobile_common_System.Core.dll.sources
 #include interpreter_System.Core.dll.sources
 System/TimeZoneInfo.MonoTouch.cs

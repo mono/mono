@@ -68,7 +68,13 @@ typedef struct MonoCompileArch {
 #ifdef __mono_ppc64__
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
 #define MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
+
+/* ELFv2 ABI doesn't use function descriptors.  */
+#if _CALL_ELF == 2
+#undef PPC_USES_FUNCTION_DESCRIPTOR
+#else
 #define PPC_USES_FUNCTION_DESCRIPTOR
+#endif
 
 #ifndef __mono_ilp32__
 #define MONO_ARCH_HAVE_TLS_GET 1
@@ -93,11 +99,10 @@ typedef struct MonoCompileArch {
 
 #define MONO_ARCH_EMULATE_LCONV_TO_R8_UN 1
 #define MONO_ARCH_EMULATE_FREM 1
-#define MONO_ARCH_BIGMUL_INTRINS 1
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
 
 /* Parameters used by the register allocator */
-#define MONO_ARCH_CALLEE_REGS ((0xff << ppc_r3) | (1 << ppc_r11) | (1 << ppc_r12))
+#define MONO_ARCH_CALLEE_REGS ((0xff << ppc_r3) | (1 << ppc_r12) | (1 << ppc_r11))
 #define MONO_ARCH_CALLEE_SAVED_REGS (0xfffff << ppc_r13) /* ppc_13 - ppc_31 */
 
 #if defined(__APPLE__) || defined(__mono_ppc64__)
@@ -147,7 +152,6 @@ typedef struct MonoCompileArch {
 #define PPC_MINIMAL_PARAM_AREA_SIZE 64
 #define PPC_LAST_FPARG_REG ppc_f13
 #define PPC_PASS_STRUCTS_BY_VALUE 1
-#define PPC_SMALL_RET_STRUCT_IN_REG 0
 #define PPC_THREAD_PTR_REG ppc_r13
 #else
 #define PPC_RET_ADDR_OFFSET 4
@@ -156,7 +160,6 @@ typedef struct MonoCompileArch {
 #define PPC_MINIMAL_PARAM_AREA_SIZE 0
 #define PPC_LAST_FPARG_REG ppc_f8
 #define PPC_PASS_STRUCTS_BY_VALUE 0
-#define PPC_SMALL_RET_STRUCT_IN_REG 1
 #define PPC_THREAD_PTR_REG ppc_r2
 #endif
 #define PPC_FIRST_ARG_REG ppc_r3
@@ -164,15 +167,17 @@ typedef struct MonoCompileArch {
 #define PPC_FIRST_FPARG_REG ppc_f1
 #endif
 
+#define PPC_CALL_REG ppc_r12
+
 #if defined(HAVE_WORKING_SIGALTSTACK) && !defined(__APPLE__)
 #define MONO_ARCH_SIGSEGV_ON_ALTSTACK 1
 #define MONO_ARCH_SIGNAL_STACK_SIZE (12 * 1024)
 #endif /* HAVE_WORKING_SIGALTSTACK */
 
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
-#define MONO_ARCH_IMT_REG ppc_r12
+#define MONO_ARCH_IMT_REG ppc_r11
 
-#define MONO_ARCH_VTABLE_REG	ppc_r12
+#define MONO_ARCH_VTABLE_REG	ppc_r11
 #define MONO_ARCH_RGCTX_REG	MONO_ARCH_IMT_REG
 
 #define MONO_ARCH_NO_IOV_CHECK 1
@@ -182,7 +187,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
 
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
-#define MONO_ARCH_HAVE_XP_UNWIND 1
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 
@@ -192,11 +196,9 @@ typedef struct MonoCompileArch {
 #if !defined(MONO_CROSS_COMPILE) && !defined(TARGET_PS3)
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #endif
-#define MONO_ARCH_THIS_AS_FIRST_ARG 1
 #define MONO_ARCH_HAVE_OP_TAIL_CALL 1
 
 #define PPC_NUM_REG_ARGS (PPC_LAST_ARG_REG-PPC_FIRST_ARG_REG+1)
-#define PPC_NUM_REG_FPARGS (PPC_LAST_FPARG_REG-PPC_FIRST_FPARG_REG+1)
 
 #ifdef MONO_CROSS_COMPILE
 

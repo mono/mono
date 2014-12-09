@@ -44,7 +44,6 @@ namespace Mono.CSharp
 	public abstract class TypeContainer : MemberCore
 	{
 		public readonly MemberKind Kind;
-		public readonly string Basename;
 
 		protected List<TypeContainer> containers;
 
@@ -62,9 +61,6 @@ namespace Mono.CSharp
 			: base (parent, name, attrs)
 		{
 			this.Kind = kind;
-			if (name != null)
-				this.Basename = name.Basename;
-
 			defined_names = new Dictionary<string, MemberCore> ();
 		}
 
@@ -111,7 +107,7 @@ namespace Mono.CSharp
 		public virtual void AddPartial (TypeDefinition next_part)
 		{
 			MemberCore mc;
-			(PartialContainer ?? this).defined_names.TryGetValue (next_part.Basename, out mc);
+			(PartialContainer ?? this).defined_names.TryGetValue (next_part.MemberName.Basename, out mc);
 
 			AddPartial (next_part, mc as TypeDefinition);
 		}
@@ -380,7 +376,7 @@ namespace Mono.CSharp
 				containers.Remove (cont);
 
 			var tc = Parent == Module ? Module : this;
-			tc.defined_names.Remove (cont.Basename);
+			tc.defined_names.Remove (cont.MemberName.Basename);
 		}
 
 		public virtual void VerifyMembers ()
@@ -456,7 +452,7 @@ namespace Mono.CSharp
 				return tc.GetSignatureForError ();
 			}
 
-			public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
+			public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity)
 			{
 				return null;
 			}
@@ -772,7 +768,7 @@ namespace Mono.CSharp
 
 		public override void AddTypeContainer (TypeContainer tc)
 		{
-			AddNameToContainer (tc, tc.Basename);
+			AddNameToContainer (tc, tc.MemberName.Basename);
 
 			base.AddTypeContainer (tc);
 		}
@@ -967,7 +963,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public virtual void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
+		public void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
 		{
 			if (IsPartialPart)
 				PartialContainer.RegisterFieldForInitialization (field, expression);
@@ -980,6 +976,13 @@ namespace Mono.CSharp
 
 				initialized_static_fields.Add (expression);
 			} else {
+				if (Kind == MemberKind.Struct) {
+					if (Compiler.Settings.Version != LanguageVersion.Experimental) {
+						Report.Error (573, expression.Location, "'{0}': Structs cannot have instance property or field initializers",
+							GetSignatureForError ());
+					}
+				}
+
 				if (initialized_fields == null)
 					initialized_fields = new List<FieldInitializer> (4);
 
@@ -1050,7 +1053,7 @@ namespace Mono.CSharp
 				//
 				// Field is re-initialized to its default value => removed
 				//
-				if (fi.IsDefaultInitializer && ec.Module.Compiler.Settings.Optimize)
+				if (fi.IsDefaultInitializer && Kind != MemberKind.Struct && ec.Module.Compiler.Settings.Optimize)
 					continue;
 
 				ec.AssignmentInfoOffset += fi.AssignmentOffset;
@@ -1295,7 +1298,7 @@ namespace Mono.CSharp
 				CreateMetadataName (sb);
 				TypeBuilder = Module.CreateBuilder (sb.ToString (), TypeAttr, type_size);
 			} else {
-				TypeBuilder = parent_def.TypeBuilder.DefineNestedType (Basename, TypeAttr, null, type_size);
+				TypeBuilder = parent_def.TypeBuilder.DefineNestedType (FilterNestedName (MemberName.Basename), TypeAttr, null, type_size);
 			}
 
 			if (DeclaringAssembly.Importer != null)
@@ -1323,6 +1326,18 @@ namespace Mono.CSharp
 			}
 
 			return true;
+		}
+
+		public static string FilterNestedName (string name)
+		{
+			//
+			// SRE API does not handle namespaces and types separately but
+			// determine that from '.' in name. That's problematic because 
+			// dot is valid character for type name. By replacing any '.'
+			// in name we avoid any ambiguities and never emit metadata
+			// namespace for nested types
+			//
+			return name.Replace ('.', '_');
 		}
 
 		string[] CreateTypeParameters (TypeParameters parentAllTypeParameters)
@@ -1795,7 +1810,7 @@ namespace Mono.CSharp
 		{
 			base.RemoveContainer (cont);
 			Members.Remove (cont);
-			Cache.Remove (cont.Basename);
+			Cache.Remove (cont.MemberName.Basename);
 		}
 
 		protected virtual bool DoResolveTypeParameters ()
@@ -2664,8 +2679,10 @@ namespace Mono.CSharp
 			if (Kind == MemberKind.Class)
 				c.Initializer = new GeneratedBaseInitializer (Location, PrimaryConstructorBaseArguments);
 
-			if (PrimaryConstructorParameters != null && !is_static)
+			if (PrimaryConstructorParameters != null && !is_static) {
 				c.IsPrimaryConstructor = true;
+				c.caching_flags |= Flags.MethodOverloadsExist;
+			}
 			
 			AddConstructor (c, true);
 			if (PrimaryConstructorBlock == null) {
@@ -2684,6 +2701,7 @@ namespace Mono.CSharp
 			CheckProtectedModifier ();
 
 			if (PrimaryConstructorParameters != null) {
+
 				foreach (Parameter p in PrimaryConstructorParameters.FixedParameters) {
 					if (p.Name == MemberName.Name) {
 						Report.Error (8039, p.Location, "Primary constructor of type `{0}' has parameter of same name as containing type",
@@ -3068,10 +3086,14 @@ namespace Mono.CSharp
 
 		protected override bool DoDefineMembers ()
 		{
-			if (PrimaryConstructorParameters != null)
-				generated_primary_constructor = DefineDefaultConstructor (false);
+			var res = base.DoDefineMembers ();
 
-			return base.DoDefineMembers ();
+			if (PrimaryConstructorParameters != null || (initialized_fields != null && !HasUserDefaultConstructor ())) {
+				generated_primary_constructor = DefineDefaultConstructor (false);
+				generated_primary_constructor.Define ();
+			}
+
+			return res;
 		}
 
 		public override void Emit ()
@@ -3081,14 +3103,14 @@ namespace Mono.CSharp
 			base.Emit ();
 		}
 
-		bool HasExplicitConstructor ()
+		bool HasUserDefaultConstructor ()
 		{
-			foreach (var m in Members) {
+			foreach (var m in PartialContainer.Members) {
 				var c = m as Constructor;
 				if (c == null)
 					continue;
 
-				if (!c.ParameterInfo.IsEmpty)
+				if (!c.IsStatic && c.ParameterInfo.IsEmpty)
 					return true;
 			}
 
@@ -3146,18 +3168,6 @@ namespace Mono.CSharp
 			var ifaces = base.ResolveBaseTypes (out base_class);
 			base_type = Compiler.BuiltinTypes.ValueType;
 			return ifaces;
-		}
-
-		public override void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
-		{
-			if ((field.ModFlags & Modifiers.STATIC) == 0 && !HasExplicitConstructor ()) {
-				Report.Error (8054, field.Location, "`{0}': Structs without explicit constructors cannot contain members with initializers",
-					field.GetSignatureForError ());
-
-				return;
-			}
-
-			base.RegisterFieldForInitialization (field, expression);
 		}
 	}
 

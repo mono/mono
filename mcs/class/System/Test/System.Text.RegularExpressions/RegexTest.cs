@@ -189,7 +189,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			           AddOptions( RegexOptions.None )).Match ("foobar", 5, -1);
 		}
 
-		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		[Test, ExpectedException (typeof (IndexOutOfRangeException))]
 		public void Match_BadLength2 ()
 		{
 			new Regex (@"foo",

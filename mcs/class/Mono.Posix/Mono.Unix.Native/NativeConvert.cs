@@ -195,6 +195,11 @@ namespace Mono.Unix.Native {
 			return FromTimeT (time);
 		}
 
+		public static DateTime ToDateTime (long time, long nanoTime)
+		{
+			return FromTimeT (time).AddMilliseconds (nanoTime / 1000);
+		}
+
 		public static long FromDateTime (DateTime time)
 		{
 			return ToTimeT (time);

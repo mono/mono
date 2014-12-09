@@ -670,7 +670,7 @@ namespace System.Globalization
 				//
 				// Be careful not to cause recursive CultureInfo initialization
 				//
-				var msg = string.Format (InvariantCulture, "Culture ID {0} (0x{0:X4}) is not a supported culture.", culture.ToString (InvariantCulture));
+				var msg = string.Format (InvariantCulture, "Culture ID {0} (0x{1}) is not a supported culture.", culture.ToString (InvariantCulture), culture.ToString ("X4", InvariantCulture));
 #if NET_4_0
 				throw new CultureNotFoundException ("culture", msg);
 #else

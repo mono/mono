@@ -30,6 +30,7 @@
 #include "metadata/sgen-gc.h"
 #include "metadata/sgen-gray.h"
 #include "metadata/sgen-protocol.h"
+#include "metadata/sgen-pointer-queue.h"
 #include "utils/dtrace.h"
 #include "utils/mono-counters.h"
 
@@ -73,7 +74,7 @@ tagged_object_apply (void *object, int tag_bits)
 static int
 tagged_object_hash (MonoObject *o)
 {
-	return mono_object_hash (tagged_object_get_object (o));
+	return mono_aligned_addr_hash (tagged_object_get_object (o));
 }
 
 static gboolean
@@ -116,6 +117,9 @@ sgen_collect_bridge_objects (int generation, ScanCopyContext ctx)
 	MonoObject *object;
 	gpointer dummy;
 	char *copy;
+	SgenPointerQueue moved_fin_objects;
+
+	sgen_pointer_queue_init (&moved_fin_objects, INTERNAL_MEM_TEMPORARY);
 
 	if (no_finalize)
 		return;
@@ -154,12 +158,24 @@ sgen_collect_bridge_objects (int generation, ScanCopyContext ctx)
 			SGEN_LOG (5, "Promoting finalization of object %p (%s) (was at %p) to major table", copy, sgen_safe_name (copy), object);
 
 			continue;
-		} else {
+		} else if (copy != (char*)object) {
 			/* update pointer */
+			SGEN_HASH_TABLE_FOREACH_REMOVE (TRUE);
+
+			/* register for reinsertion */
+			sgen_pointer_queue_add (&moved_fin_objects, tagged_object_apply (copy, tag));
+
 			SGEN_LOG (5, "Updating object for finalization: %p (%s) (was at %p)", copy, sgen_safe_name (copy), object);
-			SGEN_HASH_TABLE_FOREACH_SET_KEY (tagged_object_apply (copy, tag));
+
+			continue;
 		}
 	} SGEN_HASH_TABLE_FOREACH_END;
+
+	while (!sgen_pointer_queue_is_empty (&moved_fin_objects)) {
+		sgen_hash_table_replace (hash_table, sgen_pointer_queue_pop (&moved_fin_objects), NULL, NULL);
+	}
+
+	sgen_pointer_queue_free (&moved_fin_objects);
 }
 
 
@@ -172,6 +188,9 @@ sgen_finalize_in_range (int generation, ScanCopyContext ctx)
 	SgenHashTable *hash_table = get_finalize_entry_hash_table (generation);
 	MonoObject *object;
 	gpointer dummy;
+	SgenPointerQueue moved_fin_objects;
+
+	sgen_pointer_queue_init (&moved_fin_objects, INTERNAL_MEM_TEMPORARY);
 
 	if (no_finalize)
 		return;
@@ -201,14 +220,26 @@ sgen_finalize_in_range (int generation, ScanCopyContext ctx)
 					SGEN_LOG (5, "Promoting finalization of object %p (%s) (was at %p) to major table", copy, sgen_safe_name (copy), object);
 
 					continue;
-				} else {
+				} else if (copy != object) {
 					/* update pointer */
+					SGEN_HASH_TABLE_FOREACH_REMOVE (TRUE);
+
+					/* register for reinsertion */
+					sgen_pointer_queue_add (&moved_fin_objects, tagged_object_apply (copy, tag));
+
 					SGEN_LOG (5, "Updating object for finalization: %p (%s) (was at %p)", copy, sgen_safe_name (copy), object);
-					SGEN_HASH_TABLE_FOREACH_SET_KEY (tagged_object_apply (copy, tag));
+
+					continue;
 				}
 			}
 		}
 	} SGEN_HASH_TABLE_FOREACH_END;
+
+	while (!sgen_pointer_queue_is_empty (&moved_fin_objects)) {
+		sgen_hash_table_replace (hash_table, sgen_pointer_queue_pop (&moved_fin_objects), NULL, NULL);
+	}
+
+	sgen_pointer_queue_free (&moved_fin_objects);
 }
 
 /* LOCKING: requires that the GC lock is held */
@@ -391,12 +422,12 @@ process_stage_entries (int num_entries, volatile gint32 *next_entry, StageEntry 
 }
 
 #ifdef HEAVY_STATISTICS
-static long long stat_overflow_abort = 0;
-static long long stat_wait_for_processing = 0;
-static long long stat_increment_other_thread = 0;
-static long long stat_index_decremented = 0;
-static long long stat_entry_invalidated = 0;
-static long long stat_success = 0;
+static guint64 stat_overflow_abort = 0;
+static guint64 stat_wait_for_processing = 0;
+static guint64 stat_increment_other_thread = 0;
+static guint64 stat_index_decremented = 0;
+static guint64 stat_entry_invalidated = 0;
+static guint64 stat_success = 0;
 #endif
 
 static int
@@ -874,12 +905,12 @@ void
 sgen_init_fin_weak_hash (void)
 {
 #ifdef HEAVY_STATISTICS
-	mono_counters_register ("FinWeak Successes", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_success);
-	mono_counters_register ("FinWeak Overflow aborts", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_overflow_abort);
-	mono_counters_register ("FinWeak Wait for processing", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_wait_for_processing);
-	mono_counters_register ("FinWeak Increment other thread", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_increment_other_thread);
-	mono_counters_register ("FinWeak Index decremented", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_index_decremented);
-	mono_counters_register ("FinWeak Entry invalidated", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_entry_invalidated);
+	mono_counters_register ("FinWeak Successes", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_success);
+	mono_counters_register ("FinWeak Overflow aborts", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_overflow_abort);
+	mono_counters_register ("FinWeak Wait for processing", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_wait_for_processing);
+	mono_counters_register ("FinWeak Increment other thread", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_increment_other_thread);
+	mono_counters_register ("FinWeak Index decremented", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_index_decremented);
+	mono_counters_register ("FinWeak Entry invalidated", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_entry_invalidated);
 #endif
 }
 

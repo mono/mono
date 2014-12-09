@@ -115,6 +115,16 @@ namespace MonoTests.System.Threading.Tasks
 			});
 		}
 
+		[Test]
+		public void ParallelForEachTestCaseWithIndex ()
+		{
+			var list = new List<int> { 0, 1, 2, 3, 4 };
+
+			Parallel.ForEach (list, (l, s, i) => {
+				Assert.AreEqual (l, i, "#1");
+			});
+		}
+
 		class ValueAndSquare
 		{ 
 			public float Value { get; set; }

@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Xamarin.ApiDiff {
@@ -68,10 +69,17 @@ namespace Xamarin.ApiDiff {
 
 		public override void Added (XElement target)
 		{
-			Output.WriteLine ("<h3>New Type {0}.{1}</h3>", State.Namespace, target.Attribute ("name").Value);
+			string name = target.Attribute ("name").Value;
+			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
+				return;
+			Output.WriteLine ("<h3>New Type {0}.{1}</h3>", State.Namespace, name);
 			Output.WriteLine ("<pre>");
+			if (State.Colorize)
+				Output.WriteLine ("<font color='green'>");
 			State.Indent = 0;
 			AddedInner (target);
+			if (State.Colorize)
+				Output.WriteLine ("</font>");
 			Output.WriteLine ("</pre>");
 		}
 
@@ -192,7 +200,7 @@ namespace Xamarin.ApiDiff {
 			Indent ().WriteLine ("}");
 		}
 
-		public override void Modified (XElement source, XElement target)
+		public override void Modified (XElement source, XElement target, ApiChanges diff)
 		{
 			// hack - there could be changes that we're not monitoring (e.g. attributes properties)
 			var output = Output;

@@ -37,12 +37,13 @@ using System.Text;
 namespace System.Data.OracleClient
 {
 	[TypeConverter (typeof(OracleParameter.OracleParameterConverter))]
-	public sealed class OracleParameter :
+	public sealed class OracleParameter : 
 #if NET_2_0
-		DbParameter, IDbDataParameter, ICloneable
+		DbParameter, IDbDataParameter, ICloneable,
 #else
-		MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
+		MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable,
 #endif
+		IDisposable
 	{
 		#region Fields
 
@@ -66,6 +67,7 @@ namespace System.Data.OracleClient
 		object value = DBNull.Value;
 		OciLobLocator lobLocator;  // only if Blob or Clob
 		IntPtr bindOutValue = IntPtr.Zero;
+		IntPtr indicator = IntPtr.Zero;
 		OciDateTimeDescriptor dateTimeDesc;
 		IntPtr cursor = IntPtr.Zero;
 
@@ -77,7 +79,6 @@ namespace System.Data.OracleClient
 		bool useRef;
 		OciDataType bindType;
 
-		short indicator; 
 		int bindSize;
 		bool sizeManuallySet;
 
@@ -104,6 +105,7 @@ namespace System.Data.OracleClient
 			this.value = value.value;
 			this.lobLocator = value.lobLocator;
 			this.oracleTypeSet = value.oracleTypeSet;
+			this.indicator = OciCalls.AllocateClear (sizeof(short));
 		}
 
 		public OracleParameter ()
@@ -119,6 +121,7 @@ namespace System.Data.OracleClient
 			this.srcVersion = DataRowVersion.Current;
 			this.value = null;
 			this.oracleTypeSet = false;
+			this.indicator = OciCalls.AllocateClear (sizeof(short));
 		}
 
 		public OracleParameter (string name, object value)
@@ -129,6 +132,7 @@ namespace System.Data.OracleClient
 			srcColumn = string.Empty;
 			SourceVersion = DataRowVersion.Current;
 			InferOracleType (value);			
+			this.indicator = OciCalls.AllocateClear (sizeof(short));
 #if NET_2_0
 			// Find the OciType before inferring for the size
 			if (value != null && value != DBNull.Value) {
@@ -173,6 +177,7 @@ namespace System.Data.OracleClient
 			OracleType = oracleType;
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
+			this.indicator = OciCalls.AllocateClear (sizeof(short));
 		}
 #endif
 
@@ -199,6 +204,12 @@ namespace System.Data.OracleClient
 			OracleType = oracleType;
 			SourceColumn = srcColumn;
 			SourceVersion = srcVersion;
+			this.indicator = OciCalls.AllocateClear (sizeof(short));
+		}
+	
+		~OracleParameter ()
+		{
+			Dispose(false);
 		}
 
 		#endregion // Constructors
@@ -208,6 +219,11 @@ namespace System.Data.OracleClient
 		internal OracleParameterCollection Container {
 			get { return container; }
 			set { container = value; }
+		}
+
+		internal short Indicator {
+			get { return (Marshal.ReadInt16(indicator)); }
+			set { Marshal.WriteInt16(indicator, value); }
 		}
 
 #if !NET_2_0
@@ -453,7 +469,6 @@ namespace System.Data.OracleClient
 			} 
 
 			if (isnull == true && direction == ParameterDirection.Input) {
-				indicator = 0;
 				bindType = OciDataType.VarChar2;
 				bindSize = 0;
 			} else {
@@ -465,7 +480,6 @@ namespace System.Data.OracleClient
 				case OciDataType.CharZ:
 				case OciDataType.OciString:
 					bindType = OciDataType.String;
-					indicator = 0;
 					svalue = "\0";
 					// convert value from managed type to type to marshal
 					if (direction == ParameterDirection.Input || 
@@ -558,7 +572,7 @@ namespace System.Data.OracleClient
 						dt = DateTime.MinValue;
 						sDate = "";
 						if (isnull)
-							indicator = -1;
+							Indicator = -1;
 						else if (v is String) {
 							sDate = (string) v;
 							dt = DateTime.Parse (sDate);
@@ -594,7 +608,7 @@ namespace System.Data.OracleClient
 				case OciDataType.Float:
 				case OciDataType.Number:
 					bindType = OciDataType.String;
-					indicator = 0;
+					Indicator = 0;
 					svalue = "\0";
 					// convert value from managed type to type to marshal
 					if (direction == ParameterDirection.Input || 
@@ -638,7 +652,7 @@ namespace System.Data.OracleClient
 					
 					bindSize = Size + 5; // 4 bytes prepended for length, bytes, 1 byte NUL character
 
-					indicator = 0;
+					Indicator = 0;
 					svalue = "\0";
 					// convert value from managed type to type to marshal
 					if (direction == ParameterDirection.Input || 
@@ -758,7 +772,7 @@ namespace System.Data.OracleClient
 				case OciDataType.VarRaw:
 					bindType = OciDataType.VarRaw;
 					bindSize = Size + 2; // include 2 bytes prepended to hold the length
-					indicator = 0;
+					Indicator = 0;
 					bytes = new byte [bindSize];
 					if (direction == ParameterDirection.Input || 
 						direction == ParameterDirection.InputOutput) {
@@ -784,7 +798,7 @@ namespace System.Data.OracleClient
 				case OciDataType.LongVarRaw:
 					bindType = OciDataType.LongVarRaw;
 					bindSize = Size + 4; // include 4 bytes prepended to hold the length
-					indicator = 0;
+					Indicator = 0;
 					bytes = new byte [bindSize];
 					if (direction == ParameterDirection.Input || 
 						direction == ParameterDirection.InputOutput) {
@@ -854,7 +868,7 @@ namespace System.Data.OracleClient
 						ref bindValue,
 						bindSize,
 						bindType,
-						ref indicator,
+						indicator,
 						IntPtr.Zero,
 						IntPtr.Zero,
 						0,
@@ -870,7 +884,7 @@ namespace System.Data.OracleClient
 						ref bindValue,
 						bindSize,
 						bindType,
-						ref indicator,
+						indicator,
 						IntPtr.Zero,
 						IntPtr.Zero,
 						0,
@@ -887,7 +901,7 @@ namespace System.Data.OracleClient
 					ref cursor,
 					bindSize,
 					bindType,
-					ref indicator,
+					indicator,
 					IntPtr.Zero,
 					IntPtr.Zero,
 					0,
@@ -903,7 +917,7 @@ namespace System.Data.OracleClient
 					bytes,
 					bindSize,
 					bindType,
-					ref indicator,
+					indicator,
 					IntPtr.Zero,
 					IntPtr.Zero,
 					0,
@@ -919,7 +933,7 @@ namespace System.Data.OracleClient
 					bindValue,
 					bindSize,
 					bindType,
-					ref indicator,
+					indicator,
 					IntPtr.Zero,
 					IntPtr.Zero,
 					0,
@@ -1251,7 +1265,7 @@ namespace System.Data.OracleClient
 			// used to update the parameter value
 			// for Output, the output of InputOutput, and Return parameters
 			value = DBNull.Value;
-			if (indicator == -1)
+			if (Indicator == -1)
 				return;
 
 			int rsize = 0;
@@ -1451,6 +1465,22 @@ namespace System.Data.OracleClient
 			buffer[6] = (byte)(dateValue.Second+1);
 
 			return buffer;
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		void Dispose (bool disposing) 
+		{
+			if (disposing) {
+				GC.SuppressFinalize(this);
+			}
+			if (indicator != IntPtr.Zero) {
+				Marshal.FreeHGlobal (indicator);
+				indicator = IntPtr.Zero;
+			}
 		}
 
 		#endregion // Methods

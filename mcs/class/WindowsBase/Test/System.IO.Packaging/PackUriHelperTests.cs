@@ -8,7 +8,7 @@ using System;
 using System.IO.Packaging;
 using NUnit.Framework;
 
-namespace System.IO.Packaging.Tests {
+namespace MonoTests.System.IO.Packaging {
     
     [TestFixture]
     public class PackUriHelperTests {

@@ -85,10 +85,10 @@ namespace MonoTests.System.Threading
 	[Category("MobileNotWorking")] // Abort #10240
 	public class ThreadTest
 	{
-		TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
+		//TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
 		TimeSpan SmallNegative = new TimeSpan (-2);	// between 0 and -1.0 (infinite) ms
 		TimeSpan Negative = new TimeSpan (-20000);	// really negative
-		TimeSpan MaxValue = TimeSpan.FromMilliseconds ((long) Int32.MaxValue);
+		//TimeSpan MaxValue = TimeSpan.FromMilliseconds ((long) Int32.MaxValue);
 		TimeSpan TooLarge = TimeSpan.FromMilliseconds ((long) Int32.MaxValue + 1);
 
 		static bool is_win32;
@@ -526,11 +526,42 @@ namespace MonoTests.System.Threading
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		public void ReName ()
+		public void Rename ()
 		{
-			Thread t = new Thread (new ThreadStart (ReName));
+			Thread t = new Thread (new ThreadStart (Rename));
 			t.Name = "a";
 			t.Name = "b";
+		}
+
+		bool rename_finished;
+		bool rename_failed;
+
+		[Test]
+		public void RenameTpThread ()
+		{
+			object monitor = new object ();
+			ThreadPool.QueueUserWorkItem (new WaitCallback (Rename_callback), monitor);
+			lock (monitor) {
+				if (!rename_finished)
+					Monitor.Wait (monitor);
+			}
+			Assert.IsTrue (!rename_failed);
+		}
+
+		void Rename_callback (object o) {
+			Thread.CurrentThread.Name = "a";
+			try {
+				Thread.CurrentThread.Name = "b";
+				//Console.WriteLine ("Thread name is: {0}", Thread.CurrentThread.Name);
+			} catch (Exception e) {
+				//Console.Error.WriteLine (e);
+				rename_failed = true;
+			}
+			object monitor = o;
+			lock (monitor) {
+				rename_finished = true;
+				Monitor.Pulse (monitor);
+			}
 		}
 
 		[Test]

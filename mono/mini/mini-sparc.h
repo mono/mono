@@ -57,8 +57,6 @@
 
 #define MONO_ARCH_CODE_ALIGNMENT 32
 
-#define MONO_ARCH_RETREG1 sparc_i0
-
 #ifdef SPARCV9
 #define MONO_SPARC_STACK_BIAS 2047
 #else
@@ -111,8 +109,6 @@ void mono_arch_tls_init (void);
 #ifdef SPARCV9
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
 #endif
-
-#define MONO_ARCH_THIS_AS_FIRST_ARG 1
 
 #ifndef __GNUC__
 /* assume Sun compiler if not GCC */

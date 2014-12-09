@@ -16,7 +16,7 @@
 /SendKeysTest.cs -crlf
 /SplitContainerTests.cs -crlf
 /StatusStripTest.cs -crlf
-/TableLayoutTest.cs -crlf
+/TableLayoutTest.cs -crlf -whitespace
 /TimerTest.cs -crlf
 /ToolStripContainerTest.cs -crlf
 /ToolStripContentPanelTest.cs -crlf

@@ -3305,8 +3305,8 @@ emit_reserve_param_area (MonoCompile *cfg, guint8 *code)
 	if (ppc_is_imm16 (-size)) {
 		ppc_stwu (code, ppc_r0, -size, ppc_sp);
 	} else {
-		ppc_load (code, ppc_r11, -size);
-		ppc_stwux (code, ppc_r0, ppc_sp, ppc_r11);
+		ppc_load (code, ppc_r12, -size);
+		ppc_stwux (code, ppc_r0, ppc_sp, ppc_r12);
 	}
 #endif
 	return code;
@@ -3327,8 +3327,8 @@ emit_unreserve_param_area (MonoCompile *cfg, guint8 *code)
 	if (ppc_is_imm16 (size)) {
 		ppc_stwu (code, ppc_r0, size, ppc_sp);
 	} else {
-		ppc_load (code, ppc_r11, size);
-		ppc_stwux (code, ppc_r0, ppc_sp, ppc_r11);
+		ppc_load (code, ppc_r12, size);
+		ppc_stwux (code, ppc_r0, ppc_sp, ppc_r12);
 	}
 #endif
 	return code;
@@ -3393,6 +3393,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_DUMMY_STORE:
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL:
+			break;
+		case OP_IL_SEQ_POINT:
+			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
 			break;
 		case OP_SEQ_POINT: {
 			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
@@ -3719,8 +3722,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_DIV_IMM:
 			g_assert_not_reached ();
 #if 0
-			ppc_load (code, ppc_r11, ins->inst_imm);
-			ppc_divwod (code, ins->dreg, ins->sreg1, ppc_r11);
+			ppc_load (code, ppc_r12, ins->inst_imm);
+			ppc_divwod (code, ins->dreg, ins->sreg1, ppc_r12);
 			ppc_mfspr (code, ppc_r0, ppc_xer);
 			ppc_andisd (code, ppc_r0, ppc_r0, (1<<14));
 			/* FIXME: use OverflowException for 0x80000000/-1 */

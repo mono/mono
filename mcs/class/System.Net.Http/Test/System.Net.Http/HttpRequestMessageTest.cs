@@ -100,6 +100,20 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Ctor_RelativeOrAbsoluteUri ()
+		{
+			var uri = new Uri ("/", UriKind.RelativeOrAbsolute);
+			new HttpRequestMessage (HttpMethod.Get, uri);
+
+			uri = new Uri ("file://", UriKind.RelativeOrAbsolute);
+			try {
+				new HttpRequestMessage (HttpMethod.Get, uri);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
 		public void Ctor_RelativeUriString ()
 		{
 			var client = new HttpClient ();
@@ -107,6 +121,18 @@ namespace MonoTests.System.Net.Http
 			var req = new HttpRequestMessage (HttpMethod.Get, "Computer");
 			// HttpRequestMessage does not rewrite it here.
 			Assert.IsFalse (req.RequestUri.IsAbsoluteUri);
+		}
+
+		[Test]
+		public void Ctor_RelativeOrAbsoluteUriString ()
+		{
+			new HttpRequestMessage (HttpMethod.Get, "/");
+
+			try {
+				new HttpRequestMessage (HttpMethod.Get, "file://");
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
 		}
 
 		[Test]

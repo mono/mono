@@ -204,7 +204,7 @@ struct _MonoImage {
 	guint32 module_count;
 	gboolean *modules_loaded;
 
-	MonoImage **files;
+	MonoImage **files; /*protected by the image lock*/
 
 	gpointer aot_module;
 
@@ -529,7 +529,13 @@ struct _MonoMethodSignature {
  * Doesn't really belong here.
  */
 typedef struct {
+	/*
+	 * Enable aot caching for applications whose main assemblies are in
+	 * this list.
+	 */
+	GSList *apps;
 	GSList *assemblies;
+	char *aot_options;
 } MonoAotCacheConfig;
 
 #define MONO_SIZEOF_METHOD_SIGNATURE (sizeof (struct _MonoMethodSignature) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
@@ -795,6 +801,12 @@ MonoMethod *mono_get_method_constrained_with_method (MonoImage *image, MonoMetho
 void mono_type_set_alignment (MonoTypeEnum type, int align) MONO_INTERNAL;
 
 MonoAotCacheConfig *mono_get_aot_cache_config (void) MONO_INTERNAL;
+MonoType *
+mono_type_create_from_typespec_checked (MonoImage *image, guint32 type_spec, MonoError *error) MONO_INTERNAL;
+
+MonoMethodSignature*
+mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32 token, MonoGenericContext *context, MonoError *error) MONO_INTERNAL;
+	
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

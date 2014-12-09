@@ -38,7 +38,7 @@ using System.Security.Permissions;
 using System.Security.Policy;
 using System.Xml;
 
-using MonoTestsXml;
+using MonoTests.System.Xml;
 
 namespace MonoCasTests.System.Xml {
 

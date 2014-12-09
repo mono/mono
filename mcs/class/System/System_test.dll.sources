@@ -182,6 +182,7 @@ System.Diagnostics/DelimitedListTraceListenerTest.cs
 System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
 System.Diagnostics/SourceSwitchTest.cs
+System.Diagnostics/TextWriterTraceListenerHelper.cs
 System.Diagnostics/TextWriterTraceListenerTest.cs
 System.Diagnostics/TraceSourceTest.cs
 System.Diagnostics/TraceListenerTest.cs
@@ -320,6 +321,7 @@ System.Text.RegularExpressions/RegexReplaceTests.cs
 System.Text.RegularExpressions/RegexTrial.cs
 System.Text.RegularExpressions/RegexTest.cs
 System.Text.RegularExpressions/RegexBugs.cs
+System.Text.RegularExpressions/RegexBugs_Long.cs
 System.Text.RegularExpressions/RegexMatchTests.cs
 System.Text.RegularExpressions/RegexReplace.cs
 System.Text.RegularExpressions/RegexResultTests.cs

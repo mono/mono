@@ -352,7 +352,7 @@ namespace Mono.CSharp {
 				hoisted_locals.Add (hoisted);
 			}
 
-			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit && !(hoisted.Storey is StateMachine))
+			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit && !(hoisted.Storey is StateMachine) && hoisted.Storey != null)
 				hoisted.Storey.AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 		}
 
@@ -1792,8 +1792,10 @@ namespace Mono.CSharp {
 				// this argument is generated during compilation which speeds up dispatch
 				// by about 25%
 				//
-				method_parameters = ParametersCompiled.Prefix (method_parameters,
-					new Parameter (null, null, 0, null, loc), ec.Module.Compiler.BuiltinTypes.Object);
+				// Unused as it breaks compatibility
+				//
+				// method_parameters = ParametersCompiled.Prefix (method_parameters,
+				//	new Parameter (null, null, 0, null, loc), ec.Module.Compiler.BuiltinTypes.Object);
 			}
 
 			if (storey == null && hoisted_tparams == null)

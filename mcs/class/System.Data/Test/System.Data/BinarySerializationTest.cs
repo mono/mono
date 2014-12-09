@@ -12,6 +12,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using NUnit.Framework;
 
+namespace MonoTests.System.Data
+{
 [TestFixture]
 public class BinarySerializationTest
 {
@@ -750,5 +752,6 @@ public class BinarySerializationTest
 	}
 }
 
+}
 #endif
 #endif

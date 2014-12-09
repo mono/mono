@@ -222,6 +222,7 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (330, scm.Headers.ContentLength, "#2");
 
 			headers.Allow.Add ("a1");
+			headers.ContentDisposition = new ContentDispositionHeaderValue ("cd1");
 			headers.ContentEncoding.Add ("ce1");
 			headers.ContentLanguage.Add ("cl1");
 			headers.ContentLength = 23;
@@ -234,6 +235,12 @@ namespace MonoTests.System.Net.Http
 
 
 			headers.Add ("allow", "a2");
+			try {
+				headers.Add ("content-disposition", "cd2");
+				Assert.Fail ("content-disposition");
+			} catch (FormatException) {
+			}
+
 			headers.Add ("content-encoding", "ce3");
 			headers.Add ("content-language", "cl2");
 
@@ -307,6 +314,7 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (new MediaTypeHeaderValue ("multipart/*"), headers.ContentType);
 			Assert.AreEqual (new DateTimeOffset (DateTime.Today), headers.Expires);
 			Assert.AreEqual (new DateTimeOffset (DateTime.Today), headers.LastModified);
+			Assert.AreEqual (new ContentDispositionHeaderValue ("cd1"), headers.ContentDisposition);
 		}
 
 		[Test]

@@ -258,11 +258,19 @@ namespace System.Windows.Forms
 			StringFormat sf = FlagsToStringFormat (flags);
 
 				Size retval;
-				
+
+				int proposedWidth;
+				if (proposedSize.Width == 0)
+					proposedWidth = Int32.MaxValue;
+				else {
+					proposedWidth = proposedSize.Width;
+					if ((flags & TextFormatFlags.NoPadding) == 0)
+						proposedWidth -= 9;
+				}
 				if (dc is Graphics)
-					retval = (dc as Graphics).MeasureString (text, font, proposedSize.Width == 0 ? Int32.MaxValue : proposedSize.Width, sf).ToSize ();
+					retval = (dc as Graphics).MeasureString (text, font, proposedWidth, sf).ToSize ();
 				else
-					retval = TextRenderer.MeasureString (text, font, proposedSize.Width == 0 ? Int32.MaxValue : proposedSize.Width, sf).ToSize ();
+					retval = TextRenderer.MeasureString (text, font, proposedWidth, sf).ToSize ();
 
 				if (retval.Width > 0 && (flags & TextFormatFlags.NoPadding) == 0)
 					retval.Width += 9;
@@ -483,9 +491,6 @@ namespace System.Windows.Forms
 			if ((flags & TextFormatFlags.LeftAndRightPadding) == TextFormatFlags.LeftAndRightPadding) {
 				r.X += 2;
 				r.Width -= 2;
-			}
-			if ((flags & TextFormatFlags.WordEllipsis) == TextFormatFlags.WordEllipsis || (flags & TextFormatFlags.EndEllipsis) == TextFormatFlags.EndEllipsis || (flags & TextFormatFlags.WordBreak) == TextFormatFlags.WordBreak) {
-				r.Width -= 4;
 			}
 			if ((flags & TextFormatFlags.VerticalCenter) == TextFormatFlags.VerticalCenter && XplatUI.RunningOnUnix) {
 				r.Y -= 1;

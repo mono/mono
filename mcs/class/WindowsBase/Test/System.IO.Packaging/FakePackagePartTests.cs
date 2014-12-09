@@ -26,9 +26,12 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Packaging;
+using System.Xml;
 using NUnit.Framework;
 
-namespace System.IO.Packaging.Tests {
+namespace MonoTests.System.IO.Packaging {
 
     [TestFixture]
     public class FakePackagePartTests : TestBase {
@@ -146,7 +149,7 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [ExpectedException (typeof (Xml.XmlException))]
+        [ExpectedException (typeof (XmlException))]
         public void CreateDupeRelationship ()
         {
             part.CreateRelationship (uris [1], TargetMode.External, "blah", "asda");
@@ -154,7 +157,7 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [ExpectedException (typeof (Xml.XmlException))]
+        [ExpectedException (typeof (XmlException))]
         public void CreateDupeRelationshipId ()
         {
             part.CreateRelationship (uris [1], TargetMode.External, "blah", "asda");

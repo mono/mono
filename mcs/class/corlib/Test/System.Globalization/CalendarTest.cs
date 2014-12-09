@@ -3,6 +3,7 @@
 // (C) 2002 Ulrich Kunitz
 //
 
+using System.Collections.Generic;
 using NUnit.Framework;
 using System;
 using System.Globalization;
@@ -795,6 +796,44 @@ public class CalendarTest {
 		Assert.AreEqual (4263, kc.ToFourDigitYear (63), "#4-2");
 		Assert.AreEqual (4362, kc.ToFourDigitYear (4362), "#4-3");
 		Assert.AreEqual (4363, kc.ToFourDigitYear (4363), "#4-4");
+	}
+
+	public void TestDaysInYear (Calendar calendar, int year)
+	{
+		var daysInYear = calendar.GetDaysInYear (year);
+		var daysInMonths = 0;
+		var monthInYear = calendar.GetMonthsInYear (year);
+		for (var m = 1; m <= monthInYear; m++)
+			daysInMonths += calendar.GetDaysInMonth (year, m);
+
+		Assert.AreEqual (daysInYear, daysInMonths, string.Format("Calendar:{0} Year:{1}",calendar.GetType(), year));
+	}
+
+	[Test]
+	public void DaysInYear ()
+	{
+		var calendars = new List<Calendar> (acal) {
+			new UmAlQuraCalendar ()
+		};
+
+		foreach (var calendar in calendars) {
+			var minYear = calendar.GetYear (calendar.MinSupportedDateTime);
+			var maxYear = calendar.GetYear (calendar.MaxSupportedDateTime) - 1 ;
+			var midYear = calendar.GetYear (DateTime.Now);
+			var yearsTested = Math.Min (1000, (maxYear - minYear) / 2);
+
+			midYear -= yearsTested / 2;
+
+			int y1 = minYear, y2 = maxYear, y3 = midYear;
+			for (var i = 0; i < yearsTested; i++) {
+				TestDaysInYear (calendar, y1);
+				TestDaysInYear (calendar, y2);
+				if (y3 > minYear && y3 < maxYear)
+					TestDaysInYear (calendar, y3);
+
+				y1++; y2--; y3++;
+			}
+		}
 	}
 
 	// TODO: more tests :-)

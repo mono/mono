@@ -12,7 +12,7 @@ LOCAL_MCS_FLAGS = -lib:$(secxml_libdir) -lib:$(bare_libdir)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:168,169,183,219,414,1595
 
-VALID_PROFILE := $(filter net_1_1 net_2_0 moonlight_raw net_4_0 net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter moonlight_raw net_4_0 net_4_5, $(PROFILE))
 
 EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.Xml/sample.pfx \

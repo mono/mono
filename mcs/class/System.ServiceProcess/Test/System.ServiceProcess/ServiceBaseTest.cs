@@ -27,10 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.ServiceProcess;
 using NUnit.Framework;
 
-namespace Test
+namespace MonoTests.System.ServiceProcess
 {
 	[TestFixture]
 	public class ServiceBaseTest
@@ -84,7 +85,7 @@ namespace Test
 			/// <summary>
 			/// Required designer variable.
 			/// </summary>
-			private System.ComponentModel.IContainer components = null;
+			private IContainer components = null;
 
 			/// <summary>
 			/// Clean up any resources being used.
@@ -107,7 +108,7 @@ namespace Test
 			/// </summary>
 			private void InitializeComponent()
 			{
-				components = new System.ComponentModel.Container();
+				components = new Container();
 				this.ServiceName = "ServiceFoo";
 			}
 

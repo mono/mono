@@ -203,7 +203,7 @@ namespace System.Threading.Tasks
 								long old;
 								StealValue64 val = new StealValue64 ();
 
-								old = Thread.VolatileRead (ref range.V64.Value);
+								old = Volatile.Read (ref range.V64.Value);
 								val.Value = old;
 
 								if (val.Actual >= stopIndex - val.Stolen - 2)
@@ -448,7 +448,7 @@ namespace System.Threading.Tasks
 			return ForEach<TSource, object> (Partitioner.Create (source),
 			                                 ParallelOptions.Default,
 			                                 () => null,
-			                                 (e, s, l) => { body (e, s, -1); return null; },
+			                                 (e, s, i, l) => { body (e, s, i); return null; },
 			                                 _ => {});
 		}
 

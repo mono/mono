@@ -39,81 +39,222 @@ if len (files) != 1:
     sys.exit (1)
 
 data = []
-minor_pausetimes = []
-major_pausetimes = []
+
+class Event:
+    def __init__(self, **kwargs):
+        self.minor_work = kwargs['minor_work']
+        self.major_work = kwargs['major_work']
+        self.start = kwargs['start']
+        self.stop = kwargs['stop']
+        self.gc_type = kwargs['gc_type']
+    def __repr__(self):
+        return 'Event(minor_work={}, major_work={}, start={}, stop={}, gc_type={})'.format(
+            self.minor_work,
+            self.major_work,
+            self.start,
+            self.stop,
+            self.gc_type,
+        )
 
 grep_input = open (files [0])
 proc = subprocess.Popen ([sgen_grep_path, '--pause-times'], stdin = grep_input, stdout = subprocess.PIPE)
 for line in iter (proc.stdout.readline, ''):
-    m = re.match ('^pause-time (\d+) (\d+) (\d+) (\d+)', line)
+    m = re.match ('^pause-time (\d+) (\d+) (\d+) (\d+) (\d+)', line)
     if m:
+        minor_work = major_work = False
         generation = int (m.group (1))
-        concurrent = int (m.group (2))
-        msecs = int (m.group (3)) / 10.0 / 1000.0
-        start = int (m.group (4)) / 10.0 / 1000.0
-        if generation == 0:
-            generation = "minor"
-            minor_pausetimes.append (msecs)
-        else:
-            generation = "major"
-            major_pausetimes.append (msecs)
-        if concurrent == 1:
+        concurrent = int (m.group (2)) != 0
+        finish = int (m.group (3)) != 0
+        msecs = int (m.group (4)) / 10.0 / 1000.0
+        start = int (m.group (5)) / 10.0 / 1000.0
+
+        if concurrent:
             kind = "CONC"
         else:
             kind = "SYNC"
-        rec = (generation, start, start + msecs, kind)
+
+        if generation == 0:
+            minor_work = True
+            if concurrent:
+                major_work = True
+                gc_type = "nursery+update"
+            else:
+                gc_type = "nursery"
+        else:
+            major_work = True
+            if concurrent:
+                if finish:
+                    minor_work = True
+                    gc_type = "nursery+finish"
+                else:
+                    gc_type = "start"
+            else:
+                gc_type = "full"
+
+        rec = Event(
+            minor_work=minor_work,
+            major_work=major_work,
+            start=start,
+            stop=start + msecs,
+            kind=kind,
+            gc_type=gc_type,
+        )
         print rec
         data.append (rec)
 
+class MajorGCEventGroup:
+    pass
+
+class FullMajorGCEventGroup(MajorGCEventGroup):
+    def __init__(self, event):
+        self.event = event
+    def __repr__(self):
+        return 'FullMajorGCEventGroup({})'.format(
+            self.event,
+        )
+
+class ConcurrentMajorGCEventGroup(MajorGCEventGroup):
+    def __init__(self, start, updates, finish):
+        self.start = start
+        self.updates = updates
+        self.finish = finish
+    def __repr__(self):
+        return 'ConcurrentMajorEventGroup({}, {}, {})'.format(
+            self.start,
+            self.updates,
+            self.finish,
+        )
+
+# ([Event], int) -> (MajorGCEventGroup, int) | None
+def parse_next_major_gc(data, i):
+    assert i >= 0
+    # Find start or full event.
+    while i < len(data) and data[i].gc_type not in ['start', 'full']:
+        i += 1
+    if i == len(data):
+        return None
+    # If full event, done.
+    if data[i].gc_type == 'full':
+        return (FullMajorGCEventGroup(data[i]), i + 1)
+    start_event = data[i]
+    update_events = []
+    # Filter update events and find finish event.
+    while i < len(data) and data[i].gc_type != 'nursery+finish':
+        if data[i].gc_type == 'nursery+update':
+            update_events.append(data[i])
+        i += 1
+    if i == len(data):
+        return None
+    finish_event = data[i]
+    i += 1
+    return (ConcurrentMajorGCEventGroup(start_event, update_events, finish_event), i)
+
+# [Event] -> [MajorGCEventGroup]
+def parse_major_gcs(data):
+    major_gc_events = []
+    i = 0
+    while True:
+        maybe_event_group = parse_next_major_gc(data, i)
+        if maybe_event_group is None:
+            return major_gc_events
+        event_group, i = maybe_event_group
+        major_gc_events.append(event_group)
+
 if show_histogram:
+    minor_pausetimes = []
+    major_pausetimes = []
+
+    for rec in data:
+        pause = rec.stop - rec.start
+        if rec.minor_work and rec.major_work and show_minor and show_major:
+            major_pausetimes.append (pause)
+        else:
+            if rec.minor_work:
+                minor_pausetimes.append (pause)
+            if rec.major_work:
+                major_pausetimes.append (pause)
+
     pausetimes = []
+    colors = []
     if show_minor:
-        pausetimes += minor_pausetimes
+        pausetimes.append(minor_pausetimes)
+        colors.append('blue')
     if show_major:
-        pausetimes += major_pausetimes
-    plt.hist (pausetimes, 100)
+        pausetimes.append(major_pausetimes)
+        colors.append('red')
+
+    plt.hist (pausetimes, 100, stacked=True, log=True, color=colors)
     plt.xlabel ('Pause time in msec')
 else:
-    data = np.array (data, dtype = [('caption', '|S20'), ('start', int), ('stop', int), ('kind', '|S20')])
-    cap, start, stop=data['caption'], data['start'], data['stop']
+    major_gc_event_groups = parse_major_gcs(data)
 
-    #Check the status, because we paint all lines with the same color
-    #together
-    is_sync= (data['kind']=='SYNC')
-    not_sync=np.logical_not(is_sync)
+    def bar(**kwargs):
+        indices = kwargs['indices']
+        pauses = kwargs['pauses']
+        color = kwargs['color']
+        if 'bottom' in kwargs:
+            bottom = kwargs['bottom']
+        else:
+            bottom = 0
+        plt.bar(
+            [index for index in indices if pauses[index] is not None],
+            np.array([pause for pause in pauses if pause is not None]),
+            color=color,
+            bottom=bottom,
+        )
 
-    #Get unique captions and there indices and the inverse mapping
-    captions, unique_idx, caption_inv=np.unique(cap, 1,1)
-    print captions
+    indices = np.arange(len(major_gc_event_groups))
+    start_pauses = [
+        event_group.start.stop - event_group.start.start
+        if isinstance(event_group, ConcurrentMajorGCEventGroup) else None
+        for event_group in major_gc_event_groups
+    ]
+    bar(
+        indices=indices,
+        pauses=start_pauses,
+        color='red',
+    )
+    update_pauses = [
+        sum([
+            update_event.stop - update_event.start
+            for update_event in event_group.updates
+        ]) if isinstance(event_group, ConcurrentMajorGCEventGroup) else None
+        for event_group in major_gc_event_groups
+    ]
+    bar(
+        indices=indices,
+        pauses=update_pauses,
+        color='green',
+        bottom=[pause for pause in start_pauses if pause is not None],
+    )
+    finish_pauses = [
+        event_group.finish.stop - event_group.finish.start
+        if isinstance(event_group, ConcurrentMajorGCEventGroup) else None
+        for event_group in major_gc_event_groups
+    ]
+    start_update_pauses = [
+        a + b
+        for a, b in zip(start_pauses, update_pauses)
+        if a is not None and b is not None
+    ]
+    bar(
+        indices=indices,
+        pauses=finish_pauses,
+        color='blue',
+        bottom=start_update_pauses,
+    )
+    full_pauses = [
+        event_group.event.stop - event_group.event.start
+        if isinstance(event_group, FullMajorGCEventGroup) else None
+        for event_group in major_gc_event_groups
+    ]
+    bar(
+        indices=indices,
+        pauses=full_pauses,
+        color='black',
+    )
 
-    #Build y values from the number of unique captions.
-    y=(caption_inv+1)/float(len(captions)+1)
-
-    #Plot function
-    def timelines(y, xstart, xstop,color='b'):
-        """Plot timelines at y from xstart to xstop with given color."""
-        plt.hlines(y,xstart,xstop,color,lw=4)
-        plt.vlines(xstart, y+0.03,y-0.03,color,lw=2)
-        plt.vlines(xstop, y+0.03,y-0.03,color,lw=2)
-
-    #Plot ok tl black
-    timelines(y[is_sync],start[is_sync],stop[is_sync],'r')
-    #Plot fail tl red
-    timelines(y[not_sync],start[not_sync],stop[not_sync],'k')
-
-    #Setup the plot
-    ax=plt.gca()
-    #ax.xaxis_date()
-    #myFmt = DateFormatter('%H:%M:%S')
-    #ax.xaxis.set_major_formatter(myFmt)
-    #ax.xaxis.set_major_locator(SecondLocator(0,interval=20))
-
-    #To adjust the xlimits a timedelta is needed.
-    delta=(stop.max()-start.min())/10
-
-    plt.yticks(y[unique_idx],captions)
-    plt.ylim(0,1)
-    plt.xlim(start.min()-delta, stop.max()+delta)
-    plt.xlabel('Time')
+    plt.ylabel("Pause Time (ms)")
+    plt.xlabel("Collection")
 
 plt.show()

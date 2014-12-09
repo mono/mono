@@ -614,41 +614,76 @@ namespace System
 
 				element = parser.GetNextElement ();
 				switch (element.Type) {
-					case FormatElementType.Days:
-						value = Math.Abs (Days);
-						break;
-					case FormatElementType.Hours:
-						value = Math.Abs (Hours);
-						break;
-					case FormatElementType.Minutes:
-						value = Math.Abs (Minutes);
-						break;
-					case FormatElementType.Seconds:
-						value = Math.Abs (Seconds);
-						break;
-					case FormatElementType.Ticks:
-					case FormatElementType.TicksUppercase:
-						value = Math.Abs (Milliseconds);
-						if (value == 0) {
-							if (element.Type == FormatElementType.Ticks)
-								break;
+				case FormatElementType.Days:
+					value = Math.Abs (Days);
+					break;
+				case FormatElementType.Hours:
+					value = Math.Abs (Hours);
+					break;
+				case FormatElementType.Minutes:
+					value = Math.Abs (Minutes);
+					break;
+				case FormatElementType.Seconds:
+					value = Math.Abs (Seconds);
+					break;
+				case FormatElementType.Ticks:
+				case FormatElementType.TicksUppercase:
+					//
+					// TODO: Unify with datetime ticks formatting
+					//
+					value = (int)(_ticks % TicksPerSecond);
+					if (value == 0) {
+						if (element.Type == FormatElementType.Ticks)
+							break;
 
-							continue;
-						}
+						continue;
+					}
 
-						int threshold = (int)Math.Pow (10, element.IntValue);
-						while (value >= threshold)
+					int total_length = element.IntValue;
+					const int max_length = 7;
+					int digits = max_length;
+					for (var dv = (int)Math.Pow (10, max_length - 1); dv > value; dv /= 10, --digits)
+						;
+
+					//
+					// Skip only leading zeros in F format
+					//
+					if (element.Type == FormatElementType.TicksUppercase && max_length - digits >= total_length)
+						continue;
+
+					//
+					// Add leading zeros
+					//
+					int leading = 0;
+					for (; leading < total_length && leading < max_length - digits; ++leading) {
+						sb.Append ("0");
+					}
+
+					if (total_length == leading)
+						continue;
+
+					//
+					// Remove trailing zeros
+					//
+					if (element.Type == FormatElementType.TicksUppercase) {
+						while (value % 10 == 0)
 							value /= 10;
-						sb.Append (value.ToString ());
-						continue;
-					case FormatElementType.EscapedChar:
-						sb.Append (element.CharValue);
-						continue;
-					case FormatElementType.Literal:
-						sb.Append (element.StringValue);
-						continue;
-					default:
-						throw new FormatException ("The format is not recognized.");
+					}
+
+					var max_value = (int)Math.Pow (10, total_length - leading);
+					while (value >= max_value)
+						value /= 10;
+
+					sb.Append (value.ToString (CultureInfo.InvariantCulture));
+					continue;
+				case FormatElementType.EscapedChar:
+					sb.Append (element.CharValue);
+					continue;
+				case FormatElementType.Literal:
+					sb.Append (element.StringValue);
+					continue;
+				default:
+					throw new FormatException ("The format is not recognized.");
 				}
 
 				sb.Append (value.ToString ("D" + element.IntValue.ToString ()));

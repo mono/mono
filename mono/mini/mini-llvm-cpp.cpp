@@ -60,10 +60,6 @@
 
 #include "mini-llvm-cpp.h"
 
-#define LLVM_CHECK_VERSION(major,minor) \
-	((LLVM_MAJOR_VERSION > (major)) ||									\
-	 ((LLVM_MAJOR_VERSION == (major)) && (LLVM_MINOR_VERSION >= (minor))))
-
 // extern "C" void LLVMInitializeARMTargetInfo();
 // extern "C" void LLVMInitializeARMTarget ();
 // extern "C" void LLVMInitializeARMTargetMC ();
@@ -606,7 +602,6 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   // EngineBuilder no longer has a copy assignment operator (?)
   std::unique_ptr<Module> Owner(unwrap(MP));
   EngineBuilder b (std::move(Owner));
-  EngineBuilder &eb = b;
 #ifdef TARGET_AMD64
   ExecutionEngine *EE = b.setJITMemoryManager (mono_mm).setTargetOptions (opts).setAllocateGVsWithCode (true).setMCPU (cpu_name).setCodeModel (CodeModel::Large).create ();
 #else

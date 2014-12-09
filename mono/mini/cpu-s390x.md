@@ -174,6 +174,7 @@ s390_setf4ret: dest:f src1:f len:4
 sbb: dest:i src1:i src2:i len:6
 sbb_imm: dest:i src1:i len:14
 seq_point: len:54
+il_seq_point: len:0
 sext_i4: dest:i src1:i len:4
 zext_i4: dest:i src1:i len:4
 shl_imm: dest:i src1:i len:10
@@ -283,6 +284,7 @@ long_xor: dest:i src1:i src2:i len:8
 long_neg: dest:i src1:i len:6
 long_not: dest:i src1:i len:12
 long_rem: dest:i src1:i src2:i len:12
+long_rem_imm: dest:i src1:i src2:i len:12
 long_rem_un: dest:i src1:i src2:i len:16
 long_shl: dest:i src1:i src2:i len:14
 long_shl_imm: dest:i src1:i len:14

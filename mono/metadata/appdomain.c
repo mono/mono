@@ -78,7 +78,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 111
+#define MONO_CORLIB_VERSION 113
 
 typedef struct
 {
@@ -2321,7 +2321,7 @@ unload_thread_main (void *arg)
 	 * class->runtime_info.
 	 */
 
-	mono_loader_lock ();
+	mono_loader_lock (); //FIXME why do we need the loader lock here?
 	mono_domain_lock (domain);
 #ifdef HAVE_SGEN_GC
 	/*
@@ -2415,6 +2415,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	unload_data *thread_data;
 	MonoNativeThreadId tid;
 	MonoDomain *caller_domain = mono_domain_get ();
+	char *name;
 
 	/* printf ("UNLOAD STARTING FOR %s (%p) IN THREAD 0x%x.\n", domain->friendly_name, domain, GetCurrentThreadId ()); */
 
@@ -2466,7 +2467,10 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	thread_handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)unload_thread_main, thread_data, 0, CREATE_SUSPENDED, &tid);
 	if (thread_handle == NULL)
 		return;
+	name = g_strdup_printf ("Unload thread for domain %x", domain);
+	mono_thread_info_set_name (tid, name);
 	mono_thread_info_resume (tid);
+	g_free (name);
 
 	/* Wait for the thread */	
 	while (!thread_data->done && WaitForSingleObjectEx (thread_handle, INFINITE, TRUE) == WAIT_IO_COMPLETION) {

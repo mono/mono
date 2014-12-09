@@ -234,6 +234,9 @@ namespace System.ServiceModel.Description
 			foreach (var fd in od.Faults)
 				o.FaultContractInfos.Add (new FaultContractInfo (fd.Action, fd.DetailType));
 
+			o.BeginMethod = od.BeginMethod;
+			o.EndMethod = od.EndMethod;
+
 			// FIXME: at initialization time it does not seem to 
 			// fill default formatter. It should be filled after
 			// applying all behaviors. (Tthat causes regression, so

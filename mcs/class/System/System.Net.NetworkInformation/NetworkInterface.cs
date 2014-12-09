@@ -58,7 +58,7 @@ namespace System.Net.NetworkInformation {
 #else
 			if (runningOnUnix) {
 				try {
-					if (Platform.IsMacOS)
+					if (Platform.IsMacOS || Platform.IsFreeBSD)
 						return MacOsNetworkInterface.ImplGetAllNetworkInterfaces ();
 					else
 						return LinuxNetworkInterface.ImplGetAllNetworkInterfaces ();

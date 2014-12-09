@@ -1242,8 +1242,15 @@ namespace System.Xml.Serialization
 				else 
 					return mem + " != " + GetLiteral (member.DefaultValue);
 			}
-			else if (member.IsOptionalValueType)
-				return ob + ".@" + member.Name + "Specified";
+			else if (member.HasSpecified) {
+				var sb = new StringBuilder ();
+				sb.AppendFormat ("{0}.@{1}Specified", ob, member.Name);
+				if (member.HasShouldSerialize)
+					sb.AppendFormat (" && {0}.@ShouldSerialize{1} ()", ob, member.Name);
+				return sb.ToString ();
+			} else if (member.HasShouldSerialize)
+				return ob + ".@ShouldSerialize" + member.Name + " ()";
+
 			return null;
 		}
 
@@ -1948,14 +1955,12 @@ namespace System.Xml.Serialization
 						{
 							XmlTypeMapMemberElement mem = (XmlTypeMapMemberElement) map.XmlTextCollector;
 							XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) mem.ElementInfo [0];
+							string str = GetStrTempVar ();
+							WriteLine ("string " + str + " = Reader.ReadString();");
 							if (info.TypeData.Type == typeof (string))
-								GenerateSetMemberValue (mem, ob, "ReadString (" + GenerateGetMemberValue (mem, ob, isValueList) + ")", isValueList);
+								GenerateSetMemberValue (mem, ob, str, isValueList);
 							else {
-								WriteLineInd ("{");
-								string str = GetStrTempVar ();
-								WriteLine ("string " + str + " = Reader.ReadString();");
 								GenerateSetMemberValue (mem, ob, GenerateGetValueFromXmlString (str, info.TypeData, info.MappedType, info.IsNullable), isValueList);
-								WriteLineUni ("}");
 							}
 							GenerateEndHook ();
 						}
@@ -2137,7 +2142,7 @@ namespace System.Xml.Serialization
 			}
 			else {
 				WriteLine (ob + ".@" + member.Name + " = " + value + ";");
-				if (member.IsOptionalValueType) {
+				if (member.IsOptionalValueType && member.IsValueSpecifiedSettable ()) {
 					string val = initializingMember ? "false" : "true";
 					WriteLine (ob + "." + member.Name + "Specified = " + val + ";");
 				}

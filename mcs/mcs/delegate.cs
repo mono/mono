@@ -294,6 +294,9 @@ namespace Mono.CSharp {
 
 		public override void PrepareEmit ()
 		{
+			if ((caching_flags & Flags.CloseTypeCreated) != 0)
+				return;
+
 			if (!Parameters.IsEmpty) {
 				parameters.ResolveDefaultValues (this);
 			}
@@ -646,7 +649,8 @@ namespace Mono.CSharp {
 			var invoke = Delegate.GetInvokeMethod (target_type);
 
 			Arguments arguments = CreateDelegateMethodArguments (ec, invoke.Parameters, invoke.Parameters.Types, mg.Location);
-			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.CovariantDelegate | OverloadResolver.Restrictions.ProbingOnly) != null;
+			mg = mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.CovariantDelegate | OverloadResolver.Restrictions.ProbingOnly);
+			return mg != null && Delegate.IsTypeCovariant (ec, mg.BestCandidateReturnType, invoke.ReturnType);
 		}
 
 		#region IErrorHandler Members

@@ -177,30 +177,7 @@ int mono_exc_esp_offset = 0;
 #define LDR_PC_VAL ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 26) | (0 << 22) | (1 << 20) | (15 << 12))
 #define IS_LDR_PC(val) (((val) & LDR_MASK) == LDR_PC_VAL)
 
-#define ADD_LR_PC_4 ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 25) | (1 << 23) | (ARMREG_PC << 16) | (ARMREG_LR << 12) | 4)
-#define MOV_LR_PC ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 24) | (0xa << 20) |  (ARMREG_LR << 12) | ARMREG_PC)
 //#define DEBUG_IMT 0
- 
-/* A variant of ARM_LDR_IMM which can handle large offsets */
-#define ARM_LDR_IMM_GENERAL(code, dreg, basereg, offset, scratch_reg) do { \
-	if (arm_is_imm12 ((offset))) { \
-		ARM_LDR_IMM (code, (dreg), (basereg), (offset));	\
-	} else {												\
-		g_assert ((scratch_reg) != (basereg));					   \
-		code = mono_arm_emit_load_imm (code, (scratch_reg), (offset));	\
-		ARM_LDR_REG_REG (code, (dreg), (basereg), (scratch_reg));		\
-	}																	\
-	} while (0)
-
-#define ARM_STR_IMM_GENERAL(code, dreg, basereg, offset, scratch_reg) do {	\
-	if (arm_is_imm12 ((offset))) { \
-		ARM_STR_IMM (code, (dreg), (basereg), (offset));	\
-	} else {												\
-		g_assert ((scratch_reg) != (basereg));					   \
-		code = mono_arm_emit_load_imm (code, (scratch_reg), (offset));	\
-		ARM_STR_REG_REG (code, (dreg), (basereg), (scratch_reg));		\
-	}																	\
-	} while (0)
 
 #ifndef DISABLE_JIT
 static void mono_arch_compute_omit_fp (MonoCompile *cfg);
@@ -247,9 +224,32 @@ emit_big_add (guint8 *code, int dreg, int sreg, int imm)
 		ARM_ADD_REG_IMM (code, dreg, sreg, imm8, rot_amount);
 		return code;
 	}
-	g_assert (dreg != sreg);
-	code = mono_arm_emit_load_imm (code, dreg, imm);
-	ARM_ADD_REG_REG (code, dreg, dreg, sreg);
+	if (dreg == sreg) {
+		code = mono_arm_emit_load_imm (code, ARMREG_IP, imm);
+		ARM_ADD_REG_REG (code, dreg, sreg, ARMREG_IP);
+	} else {
+		code = mono_arm_emit_load_imm (code, dreg, imm);
+		ARM_ADD_REG_REG (code, dreg, dreg, sreg);
+	}
+	return code;
+}
+
+/* If dreg == sreg, this clobbers IP */
+static guint8*
+emit_sub_imm (guint8 *code, int dreg, int sreg, int imm)
+{
+	int imm8, rot_amount;
+	if ((imm8 = mono_arm_is_rotated_imm8 (imm, &rot_amount)) >= 0) {
+		ARM_SUB_REG_IMM (code, dreg, sreg, imm8, rot_amount);
+		return code;
+	}
+	if (dreg == sreg) {
+		code = mono_arm_emit_load_imm (code, ARMREG_IP, imm);
+		ARM_SUB_REG_REG (code, dreg, sreg, ARMREG_IP);
+	} else {
+		code = mono_arm_emit_load_imm (code, dreg, imm);
+		ARM_SUB_REG_REG (code, dreg, dreg, sreg);
+	}
 	return code;
 }
 
@@ -1093,8 +1093,6 @@ mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 	return vars;
 }
 
-#define USE_EXTRA_TEMPS 0
-
 GList *
 mono_arch_get_global_int_regs (MonoCompile *cfg)
 {
@@ -1160,6 +1158,8 @@ mono_arch_flush_icache (guint8 *code, gint size)
 #ifdef MONO_CROSS_COMPILE
 #elif __APPLE__
 	sys_icache_invalidate (code, size);
+#elif __GNUC_PREREQ(4, 3)
+    __builtin___clear_cache (code, code + size);
 #elif __GNUC_PREREQ(4, 1)
 	__clear_cache (code, code + size);
 #elif defined(PLATFORM_ANDROID)
@@ -4377,6 +4377,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL:
 			break;
+		case OP_IL_SEQ_POINT:
+			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
+			break;
 		case OP_SEQ_POINT: {
 			int i;
 			MonoInst *info_var = cfg->arch.seq_point_info_var;
@@ -4945,15 +4948,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_LOCALLOC: {
-			/* keep alignment */
-			int alloca_waste = cfg->param_area;
-			alloca_waste += 7;
-			alloca_waste &= ~7;
 			/* round the size to 8 bytes */
 			ARM_ADD_REG_IMM8 (code, ins->dreg, ins->sreg1, 7);
 			ARM_BIC_REG_IMM8 (code, ins->dreg, ins->dreg, 7);
-			if (alloca_waste)
-				ARM_ADD_REG_IMM8 (code, ins->dreg, ins->dreg, alloca_waste);
 			ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ins->dreg);
 			/* memzero the area: dreg holds the size, sp is the pointer */
 			if (ins->flags & MONO_INST_INIT) {
@@ -4969,7 +4966,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ARM_B_COND (code, ARMCOND_GE, 0);
 				arm_patch (code - 4, start_loop);
 			}
-			ARM_ADD_REG_IMM8 (code, ins->dreg, ARMREG_SP, alloca_waste);
+			ARM_MOV_REG_REG (code, ins->dreg, ARMREG_SP);
+			if (cfg->param_area)
+				code = emit_sub_imm (code, ARMREG_SP, ARMREG_SP, ALIGN_TO (cfg->param_area, MONO_ARCH_FRAME_ALIGNMENT));
 			break;
 		}
 		case OP_DYN_CALL: {
@@ -6927,6 +6926,26 @@ GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
 	return mono_arm_get_exception_trampolines (aot);
+}
+
+gpointer
+mono_arch_install_handler_block_guard (MonoJitInfo *ji, MonoJitExceptionInfo *clause, MonoContext *ctx, gpointer new_value)
+{
+	gpointer *lr_loc;
+	char *old_value;
+	char *bp;
+
+	/*Load the spvar*/
+	bp = MONO_CONTEXT_GET_BP (ctx);
+	lr_loc = (gpointer*)(bp + clause->exvar_offset);
+
+	old_value = *lr_loc;
+	if ((char*)old_value < (char*)ji->code_start || (char*)old_value > ((char*)ji->code_start + ji->code_size))
+		return old_value;
+
+	*lr_loc = new_value;
+
+	return old_value;
 }
 
 #if defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED)

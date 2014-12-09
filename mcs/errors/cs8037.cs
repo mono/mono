@@ -1,5 +1,6 @@
-// CS9002: `S.S(long)': Instance constructor of type with primary constructor must specify `this' constructor initializer
+// CS8037: `S.S(long)': Instance constructor of type with primary constructor must specify `this' constructor initializer
 // Line: 6
+// Compiler options: -langversion:experimental
 
 class S (int arg)
 {

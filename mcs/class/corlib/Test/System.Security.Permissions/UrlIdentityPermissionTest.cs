@@ -51,12 +51,6 @@ namespace MonoTests.System.Security.Permissions {
 			"*",
 		};
 
-		// accepted as Url but fails to work (as expected) in some methods
-		static string[] SemiBadUrls = {
-			"www.mono-project.com:80",
-			String.Empty,
-		};
-
 		[Test]
 		public void PermissionState_None ()
 		{

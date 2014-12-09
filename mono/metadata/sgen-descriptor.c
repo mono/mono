@@ -43,6 +43,7 @@
 #define _XOPEN_SOURCE
 #endif
 
+#include "utils/mono-counters.h"
 #include "metadata/sgen-gc.h"
 
 #define MAX_USER_DESCRIPTORS 16
@@ -58,6 +59,10 @@ static MonoGCRootMarkFunc user_descriptors [MAX_USER_DESCRIPTORS];
 static int user_descriptors_next = 0;
 static void *all_ref_root_descrs [32];
 
+#ifdef HEAVY_STATISTICS
+static guint64 stat_scanned_count_per_descriptor [DESC_TYPE_MAX];
+static guint64 stat_copied_count_per_descriptor [DESC_TYPE_MAX];
+#endif
 
 static int
 alloc_complex_descriptor (gsize *bitmap, int numbits)
@@ -117,7 +122,7 @@ sgen_get_complex_descriptor (mword desc)
 void*
 mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
 {
-	return (void*) DESC_TYPE_RUN_LENGTH;
+	return (void*)SGEN_DESC_STRING;
 }
 
 void*
@@ -141,14 +146,23 @@ mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
 
 	if (first_set < 0) {
 		SGEN_LOG (6, "Ptrfree descriptor %p, size: %zd", (void*)desc, stored_size);
-		if (stored_size <= MAX_RUNLEN_OBJECT_SIZE)
-			return (void*)(DESC_TYPE_RUN_LENGTH | stored_size);
+		if (stored_size <= MAX_RUNLEN_OBJECT_SIZE && stored_size <= SGEN_MAX_SMALL_OBJ_SIZE)
+			return (void*)(DESC_TYPE_SMALL_PTRFREE | stored_size);
 		return (void*)DESC_TYPE_COMPLEX_PTRFREE;
 	}
 
 	g_assert (!(stored_size & 0x7));
 
-	if (stored_size <= MAX_RUNLEN_OBJECT_SIZE) {
+	SGEN_ASSERT (5, stored_size == SGEN_ALIGN_UP (stored_size), "Size is not aligned");
+
+	/* we know the 2-word header is ptr-free */
+	if (last_set < BITMAP_NUM_BITS + OBJECT_HEADER_WORDS && stored_size <= SGEN_MAX_SMALL_OBJ_SIZE) {
+		desc = DESC_TYPE_BITMAP | ((*bitmap >> OBJECT_HEADER_WORDS) << LOW_TYPE_BITS);
+		SGEN_LOG (6, "Largebitmap descriptor %p, size: %zd, last set: %d", (void*)desc, stored_size, last_set);
+		return (void*) desc;
+	}
+
+	if (stored_size <= MAX_RUNLEN_OBJECT_SIZE && stored_size <= SGEN_MAX_SMALL_OBJ_SIZE) {
 		/* check run-length encoding first: one byte offset, one byte number of pointers
 		 * on 64 bit archs, we can have 3 runs, just one on 32.
 		 * It may be better to use nibbles.
@@ -160,19 +174,6 @@ mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
 		}
 	}
 
-	/* we know the 2-word header is ptr-free */
-	if (last_set < SMALL_BITMAP_SIZE + OBJECT_HEADER_WORDS && stored_size < (1 << SMALL_BITMAP_SHIFT)) {
-		desc = DESC_TYPE_SMALL_BITMAP | stored_size | ((*bitmap >> OBJECT_HEADER_WORDS) << SMALL_BITMAP_SHIFT);
-		SGEN_LOG (6, "Smallbitmap descriptor %p, size: %zd, last set: %d", (void*)desc, stored_size, last_set);
-		return (void*) desc;
-	}
-
-	/* we know the 2-word header is ptr-free */
-	if (last_set < LARGE_BITMAP_SIZE + OBJECT_HEADER_WORDS) {
-		desc = DESC_TYPE_LARGE_BITMAP | ((*bitmap >> OBJECT_HEADER_WORDS) << LOW_TYPE_BITS);
-		SGEN_LOG (6, "Largebitmap descriptor %p, size: %zd, last set: %d", (void*)desc, stored_size, last_set);
-		return (void*) desc;
-	}
 	/* it's a complex object ... */
 	desc = DESC_TYPE_COMPLEX | (alloc_complex_descriptor (bitmap, last_set + 1) << LOW_TYPE_BITS);
 	return (void*) desc;
@@ -210,7 +211,7 @@ mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_
 		}
 		/* FIXME: try run-len first */
 		/* Note: we can't skip the object header here, because it's not present */
-		if (last_set < SMALL_BITMAP_SIZE) {
+		if (last_set < VECTOR_BITMAP_SIZE) {
 			return (void*)(desc | VECTOR_SUBTYPE_BITMAP | (*elem_bitmap << 16));
 		}
 	}
@@ -227,7 +228,7 @@ mono_gc_get_bitmap_for_descr (void *descr, int *numbits)
 	mword d = (mword)descr;
 	gsize *bitmap;
 
-	switch (d & 0x7) {
+	switch (d & DESC_TYPE_MASK) {
 	case DESC_TYPE_RUN_LENGTH: {		
 		int first_set = (d >> 16) & 0xff;
 		int num_set = (d >> 24) & 0xff;
@@ -243,15 +244,7 @@ mono_gc_get_bitmap_for_descr (void *descr, int *numbits)
 		return bitmap;
 	}
 
-	case DESC_TYPE_SMALL_BITMAP:
-		bitmap = g_new0 (gsize, 1);
-
-		bitmap [0] = (d >> SMALL_BITMAP_SHIFT) << OBJECT_HEADER_WORDS;
-
-		*numbits = GC_BITS_PER_WORD;
-		return bitmap;
-
-	case DESC_TYPE_LARGE_BITMAP: {
+	case DESC_TYPE_BITMAP: {
 		gsize bmap = (d >> LOW_TYPE_BITS) << OBJECT_HEADER_WORDS;
 
 		bitmap = g_new0 (gsize, 1);
@@ -346,6 +339,46 @@ MonoGCRootMarkFunc
 sgen_get_user_descriptor_func (mword desc)
 {
 	return user_descriptors [desc >> ROOT_DESC_TYPE_SHIFT];
+}
+
+#ifdef HEAVY_STATISTICS
+void
+sgen_descriptor_count_scanned_object (mword desc)
+{
+	int type = desc & DESC_TYPE_MASK;
+	SGEN_ASSERT (0, type, "Descriptor type can't be zero");
+	++stat_scanned_count_per_descriptor [type - 1];
+}
+
+void
+sgen_descriptor_count_copied_object (mword desc)
+{
+	int type = desc & DESC_TYPE_MASK;
+	SGEN_ASSERT (0, type, "Descriptor type can't be zero");
+	++stat_copied_count_per_descriptor [type - 1];
+}
+#endif
+
+void
+sgen_init_descriptors (void)
+{
+#ifdef HEAVY_STATISTICS
+	mono_counters_register ("# scanned RUN_LENGTH", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_scanned_count_per_descriptor [DESC_TYPE_RUN_LENGTH - 1]);
+	mono_counters_register ("# scanned SMALL_PTRFREE", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_scanned_count_per_descriptor [DESC_TYPE_SMALL_PTRFREE - 1]);
+	mono_counters_register ("# scanned COMPLEX", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_scanned_count_per_descriptor [DESC_TYPE_COMPLEX - 1]);
+	mono_counters_register ("# scanned VECTOR", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_scanned_count_per_descriptor [DESC_TYPE_VECTOR - 1]);
+	mono_counters_register ("# scanned BITMAP", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_scanned_count_per_descriptor [DESC_TYPE_BITMAP - 1]);
+	mono_counters_register ("# scanned COMPLEX_ARR", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_scanned_count_per_descriptor [DESC_TYPE_COMPLEX_ARR - 1]);
+	mono_counters_register ("# scanned COMPLEX_PTRFREE", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_scanned_count_per_descriptor [DESC_TYPE_COMPLEX_PTRFREE - 1]);
+
+	mono_counters_register ("# copied RUN_LENGTH", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_copied_count_per_descriptor [DESC_TYPE_RUN_LENGTH - 1]);
+	mono_counters_register ("# copied SMALL_PTRFREE", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_copied_count_per_descriptor [DESC_TYPE_SMALL_PTRFREE - 1]);
+	mono_counters_register ("# copied COMPLEX", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_copied_count_per_descriptor [DESC_TYPE_COMPLEX - 1]);
+	mono_counters_register ("# copied VECTOR", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_copied_count_per_descriptor [DESC_TYPE_VECTOR - 1]);
+	mono_counters_register ("# copied BITMAP", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_copied_count_per_descriptor [DESC_TYPE_BITMAP - 1]);
+	mono_counters_register ("# copied COMPLEX_ARR", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_copied_count_per_descriptor [DESC_TYPE_COMPLEX_ARR - 1]);
+	mono_counters_register ("# copied COMPLEX_PTRFREE", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_copied_count_per_descriptor [DESC_TYPE_COMPLEX_PTRFREE - 1]);
+#endif
 }
 
 #endif

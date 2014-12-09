@@ -733,10 +733,6 @@ namespace MonoTests.System.ComponentModel
 				container.Add (this);
 				return container;
 			}
-
-			public Container Container {
-				get { return container; }
-			}
 		}
 
 		class MyContainer : IContainer

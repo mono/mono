@@ -12,7 +12,7 @@ using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework
 using NUnit.Framework;
 #endif
 
-namespace Monotests_Mono.Data.SqlExpressions
+namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class ComparisonTest {
@@ -20,7 +20,7 @@ namespace Monotests_Mono.Data.SqlExpressions
 		[Test]
 		public void TestStringTrailingSpaceHandling () {
 			// test for bug 79695 - does not ignore certain trailing whitespace chars when comparing strings
-			System.Data.DataTable dataTable = new System.Data.DataTable ("Person");
+			DataTable dataTable = new DataTable ("Person");
 			dataTable.Columns.Add ("Name", typeof (string));
 			dataTable.Rows.Add (new object[] {"Mike   "}); 
 			DataRow[] selectedRows = dataTable.Select ("Name = 'Mike'");

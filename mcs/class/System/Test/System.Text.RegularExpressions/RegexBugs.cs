@@ -18,6 +18,119 @@ namespace MonoTests.System.Text.RegularExpressions
 	[TestFixture]
 	public class RegexBugs
 	{
+		[Test] // bug xamarin#3866
+		public void BugXamarin3866 ()
+		{
+			Assert.AreEqual (new Regex(@"(?<A>a)+(?<-A>b)+(?(A)(?!))b").Match("aaaaaabbb").ToString (), "aabbb");
+		}
+
+		[Test]
+		public void BugXamarin2663 ()
+		{
+			var r = new Regex ("^(S|SW)?$"); 
+			Assert.AreEqual (r.Match ("SW").ToString (), "SW");
+		}
+
+		[Test]
+		public void BugXamarin4523 ()
+		{
+			Assert.AreEqual (new Regex("A(?i)b(?-i)C").Match("ABC").ToString (), "ABC");
+		}
+
+		[Test]
+		public void BugXamarin7587 ()
+		{
+			var pattern = @"(^)a";
+			var regex = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+						
+			var match = regex.Match("  a", 2, 1);
+			Assert.AreEqual (match.Success, true);
+			Assert.AreEqual (match.Index, 2);
+		}
+
+		[Test]
+		public void BugXamarin12612 ()
+		{
+			const string r_Header = @"citrd";
+
+			// Terminals
+			const string r_begin = @"^";
+			const string r_end = @"$";
+			const string r_open = @"\[";
+			const string r_close = @"\]";
+			const string r_letter = @"[a-zA-Z]";
+			const string r_non_letter = @"[^a-zA-Z]";
+			const string r_alphaNumericChar = @"[a-zA-Z0-9_]";
+			const string r_space = @"(//)";
+
+			// Simple Composition
+			const string r_alphaNumericString = r_alphaNumericChar + @"+";
+
+			const string r_alphaNumericSpaceString = r_alphaNumericChar
+				+ @"("
+				+ @"(" + r_alphaNumericChar + @"|" + r_space + @")*"
+				+ r_alphaNumericChar
+				+ @")?";
+
+			const string r_Identifier = r_letter + r_alphaNumericChar + @"*";
+
+			const string r_scalar = r_open  //[
+				+ r_alphaNumericSpaceString
+				+ r_close; //]
+
+			const string r_array = r_open  //[
+				+ @"("
+				+ r_scalar
+				+ @")+"
+				+ r_close; //]
+
+			const string r_data = @"(" + r_scalar + @"|" + r_array + @")";
+
+			// Complex Compositions
+			const string r_uncased_Header = @"(?i)" + r_Header + @"(?-i)";
+
+			const string r_permissable_Identifier = r_Identifier
+				+ @"(?<!"
+				+ r_non_letter + r_uncased_Header
+				+ @")";
+
+			const string r_captured_Identifier = @"(?<Id>" + r_permissable_Identifier + @")";
+
+
+			const string r_param = @"("
+				+ @"(?<p>"
+				+ r_permissable_Identifier
+				+ r_data
+				+ @")"
+				+ @")";
+
+			const string r_paramList = r_param + @"*";
+
+
+			const string r_Encoder_string = r_begin
+				+ r_uncased_Header
+				+ r_open //[
+				+ r_captured_Identifier
+				+ r_close //]
+				+ r_paramList
+				+ r_end;
+
+
+
+
+			Regex Decoder = new Regex(r_Encoder_string);
+
+         
+			Assert.IsFalse(Decoder.IsMatch("citrd[bag]CITRD[1]"));
+		}
+
+		[Test]
+		public void BugXamarin11616 ()
+		{
+			
+			Assert.AreEqual(Regex.Match("Test", @"^[\w-[\d]]\w*$").Success, true);
+		}
+		
 		[Test] // bug #51146
 		public void SplitGroup ()
 		{

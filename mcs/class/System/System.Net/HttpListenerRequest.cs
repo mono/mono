@@ -329,6 +329,9 @@ namespace System.Net {
 						return false;
 					if (InputStream.EndRead (ares) <= 0)
 						return true;
+				} catch (ObjectDisposedException e) {
+					input_stream = null;
+					return true;
 				} catch {
 					return false;
 				}

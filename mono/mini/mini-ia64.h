@@ -41,9 +41,6 @@
 
 #define MONO_ARCH_CODE_ALIGNMENT 16
 
-#define MONO_ARCH_RETREG1 IA64_R8
-#define MONO_ARCH_FRETREG1 8
-
 #define MONO_ARCH_SIGNAL_STACK_SIZE SIGSTKSZ
 
 struct MonoLMF {
@@ -106,7 +103,6 @@ unw_dyn_region_info_t* mono_ia64_create_unwind_region (Ia64CodegenState *code);
 #define MONO_ARCH_EMULATE_LCONV_TO_R8_UN 1
 #define MONO_ARCH_EMULATE_FREM           1
 #define MONO_ARCH_EMULATE_MUL_DIV        1
-#define MONO_ARCH_EMULATE_LONG_MUL_OPTS  1
 #define MONO_ARCH_NEED_DIV_CHECK         1
 
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
@@ -115,6 +111,5 @@ unw_dyn_region_info_t* mono_ia64_create_unwind_region (Ia64CodegenState *code);
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_SAVE_UNWIND_INFO 1
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
-#define MONO_ARCH_THIS_AS_FIRST_ARG 1
 
 #endif /* __MONO_MINI_IA64_H__ */  

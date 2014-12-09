@@ -8,10 +8,6 @@ LIBRARY_NAME = mscorlib.dll
 LIB_MCS_FLAGS = $(RESOURCE_FILES:%=-resource:%)
 #LIBRARY_USE_INTERMEDIATE_FILE = yes
 
-ifeq (basic, $(PROFILE))
-
-else
-
 ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += --runtime:v2
 else
@@ -20,8 +16,6 @@ LIB_MCS_FLAGS += --runtime:v4
 else
 $(error Unknown framework version)
 endif
-endif
-
 endif
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
@@ -36,7 +30,8 @@ RESOURCE_FILES = \
 	resources/collation.cjkKO.bin \
 	resources/collation.cjkKOlv2.bin
 
-LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
+REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL
+LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC $(REFERENCE_SOURCES_FLAGS)
 DEFAULT_REFERENCES =
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix

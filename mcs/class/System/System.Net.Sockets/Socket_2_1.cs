@@ -952,6 +952,14 @@ namespace System.Net.Sockets {
 #endif
 		}
 
+#if NET_4_5
+		[MonoTODO ("Currently hardcoded to IPv4. Ideally, support v4/v6 dual-stack.")]
+		public Socket (SocketType socketType, ProtocolType protocolType)
+			: this (AddressFamily.InterNetwork, socketType, protocolType)
+		{
+		}
+#endif
+
 		~Socket ()
 		{
 			Dispose (false);

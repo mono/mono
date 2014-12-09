@@ -161,7 +161,7 @@
 #define MONO_THREAD_VAR_OFFSET(var,offset) (offset) = -1
 #endif
 
-#elif defined(__APPLE__) && (defined(__i386__) || defined(__x86_64__))
+#elif defined(TARGET_MACH) && (defined(__i386__) || defined(__x86_64__))
 
 #define MONO_HAVE_FAST_TLS
 #define MONO_FAST_TLS_SET(x,y) pthread_setspecific(x, y)
@@ -198,10 +198,12 @@
 #endif
 
 #include <float.h>
-#define isnan(x)	_isnan(x)
 #define trunc(x)	(((x) < 0) ? ceil((x)) : floor((x)))
+#if _MSC_VER < 1800 /* VS 2013 */
+#define isnan(x)	_isnan(x)
 #define isinf(x)	(_isnan(x) ? 0 : (_fpclass(x) == _FPCLASS_NINF) ? -1 : (_fpclass(x) == _FPCLASS_PINF) ? 1 : 0)
 #define isnormal(x)	_finite(x)
+#endif
 
 #define popen		_popen
 #define pclose		_pclose
@@ -216,6 +218,20 @@
 
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
+
+/*
+ * SSIZE_MAX is not defined in MSVC, so define it here.
+ *
+ * These values come from MinGW64, and are public domain.
+ *
+ */
+#ifndef SSIZE_MAX
+#ifdef _WIN64
+#define SSIZE_MAX _I64_MAX
+#else
+#define SSIZE_MAX INT_MAX
+#endif
+#endif
 
 #endif /* _MSC_VER */
 
@@ -243,6 +259,14 @@ typedef SSIZE_T ssize_t;
 #define MONO_ALWAYS_INLINE __forceinline
 #else
 #define MONO_ALWAYS_INLINE
+#endif
+
+#ifdef __GNUC__
+#define MONO_NEVER_INLINE __attribute__((noinline))
+#elif defined(_MSC_VER)
+#define MONO_NEVER_INLINE __declspec(noinline)
+#else
+#define MONO_NEVER_INLINE
 #endif
 
 #endif /* __UTILS_MONO_COMPILER_H__*/

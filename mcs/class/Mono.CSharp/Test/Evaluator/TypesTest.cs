@@ -104,7 +104,15 @@ namespace MonoTests.EvaluatorTest
 		{
 			Evaluator.Run ("class A { class B { } }");
 			Evaluator.Run ("var x = new A ();");
+		}
 
+		[Test]
+		public void DelegateType ()
+		{
+			Evaluator.Run ("public delegate int D();");
+			Evaluator.Run ("D d = delegate () { return 7; };");
+			object res = Evaluator.Evaluate ("d();");
+			Assert.AreEqual (7, res);
 		}
 	}
 }

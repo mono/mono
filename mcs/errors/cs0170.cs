@@ -1,7 +1,5 @@
 // CS0170: Use of possibly unassigned field `a'
-// Line: 23
-
-using System;
+// Line: 21
 
 namespace CS0170
 {
@@ -21,7 +19,6 @@ namespace CS0170
 			Foo f;
 			Bar b = new Bar();
 			b.Inc (f.a);
-			Console.WriteLine (f.a);
 		}
 	}
 }

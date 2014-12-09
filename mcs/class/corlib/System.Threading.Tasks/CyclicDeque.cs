@@ -55,7 +55,7 @@ namespace System.Threading.Tasks
 			
 			// Take care of growing
 			var size = b - top - upperBound;
-			if (size > a.Size) {
+			if (size >= a.Size) {
 				upperBound = top;
 				a = a.Grow (b, upperBound);
 				array = a;
