@@ -1,13 +1,19 @@
+// Compiler options: -langversion:experimental
 using System;
 
 struct S
 {
 	public static int P { get; } = 4;
 
+	public static int[] PA { get; } = { 0, 2 };
+
 	public static int Main ()
 	{
 		if (P != 4)
 			return 1;
+
+		if (PA [1] != 2)
+			return 10;
 
 		var c = new C ();
 		if (c.P != -3)

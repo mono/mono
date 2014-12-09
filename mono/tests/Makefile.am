@@ -43,6 +43,7 @@ STRESS_TESTS_SRC=	\
 	monitor-stress.cs	\
 	thread-stress.cs	\
 	gc-stress.cs		\
+	gc-copy-stress.cs	\
 	gc-graystack-stress.cs		\
 	exit-stress.cs		\
 	process-stress.cs	\
@@ -213,6 +214,7 @@ BASE_TEST_CS_SRC=		\
 	array3.cs		\
 	classinit.cs		\
 	classinit2.cs		\
+	classinit3.cs		\
 	synchronized.cs		\
 	async_read.cs		\
 	threadpool.cs		\
@@ -379,6 +381,7 @@ BASE_TEST_CS_SRC=		\
 	bug-599469.cs	\
 	bug-389886-3.cs \
 	monitor.cs	\
+	monitor-resurrection.cs	\
 	dynamic-method-resurrection.cs	\
 	bug-666008.cs	\
 	bug-685908.cs	\
@@ -435,7 +438,8 @@ endif
 if X86
 
 if HOST_WIN32
-PLATFORM_DISABLED_TESTS=async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe
+PLATFORM_DISABLED_TESTS=async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
+	bug-18026.exe monitor.exe threadpool-exceptions5.exe
 endif
 
 endif
@@ -695,7 +699,7 @@ tests: $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_
 #
 # Test that no symbols are missed in eglib-remap.h
 #
-OK_G_SYMBOLS='g_list\|g_slist\|g_concat_dir_and_file'
+OK_G_SYMBOLS='g_list\|g_slist\|g_concat_dir_and_file\|g_Ctoc'
 if NACL_CODEGEN
 test-eglib-remap:
 else
@@ -934,13 +938,11 @@ SGEN_TESTS =	\
 
 SGEN_CONFIGURATIONS =	\
 	"|plain"	\
-	"major=marksweep-par|ms-par"	\
 	"major=marksweep-conc|ms-conc"	\
 	"major=marksweep-conc,minor=split|ms-conc-split"	\
 	"minor=split|ms-split"	\
 	"minor=split,alloc-ratio=95|ms-split-95"	\
 	"|plain-clear-at-gc|clear-at-gc"	\
-	"major=marksweep-par|ms-par-clear-at-gc|clear-at-gc"	\
 	"major=marksweep-conc|ms-conc-clear-at-gc|clear-at-gc"	\
 	"minor=split|ms-split-clear-at-gc|clear-at-gc"
 
@@ -1299,12 +1301,8 @@ patch-libtool:
 if NACL_CODEGEN
 test-process-exit:
 else
-EXTRA_DIST += bug-438454.cs bug-438454.exe.stdout.expected threadpool-in-processexit.cs threadpool-in-processexit.exe.stdout.expected
+EXTRA_DIST += threadpool-in-processexit.cs threadpool-in-processexit.exe.stdout.expected
 test-process-exit:
-	@$(MCS) $(srcdir)/bug-438454.cs -out:bug-438454.exe
-	@echo "Testing bug-438454.exe..."
-	@$(RUNTIME) bug-438454.exe > bug-438454.exe.stdout
-	@diff -w bug-438454.exe.stdout $(srcdir)/bug-438454.exe.stdout.expected
 	@$(MCS) $(srcdir)/threadpool-in-processexit.cs -out:threadpool-in-processexit.exe
 	@echo "Testing threadpool-in-processexit.exe..."
 	@$(RUNTIME) threadpool-in-processexit.exe > threadpool-in-processexit.exe.stdout
@@ -1319,7 +1317,6 @@ OOM_TESTS =	\
 test-oom: $(OOM_TESTS)
 	@for fn in $+ ; do	\
 		echo "Testing $$fn ...";	\
-		MONO_GC_PARAMS=max-heap-size=16m,major=marksweep-par MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
 		MONO_GC_PARAMS=max-heap-size=16m MONO_ENV_OPTIONS="--gc=sgen"                     $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
 		MONO_GC_PARAMS=max-heap-size=16m                                                  $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
 	done

@@ -545,5 +545,25 @@ namespace MonoTests.Mono.Security.Cryptography {
         	        byte [] bytes = Convert.FromBase64String (b64);
 	                rsa.DecryptValue (bytes);
 		}
+		
+		[Test]
+		public void Bug18482 ()
+		{
+			RSAManaged privateRsa = new RSAManaged ();
+			privateRsa.FromXmlString (MonoXml384);
+			
+			var rsaParameters = privateRsa.ExportParameters (false);
+			
+			RSAManaged publicRsa = new RSAManaged ();
+			
+			//Generates a key pair with private key values
+			publicRsa.ExportParameters (false);
+			
+			//Sets public key values and should reset private key values
+			publicRsa.ImportParameters (rsaParameters);
+			
+			//Should export valid parameters without throwing an exception.
+			publicRsa.ExportParameters (false);
+		}
 	}
 }

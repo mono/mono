@@ -175,7 +175,7 @@ namespace System.Windows.Forms {
 			Rectangle text_rectangle;
 			Rectangle image_rectangle;
 
-			ThemeEngine.Current.CalculateButtonTextAndImageLayout (this, out text_rectangle, out image_rectangle);
+			ThemeEngine.Current.CalculateButtonTextAndImageLayout (pevent.Graphics, this, out text_rectangle, out image_rectangle);
 
 			// Draw our button
 			if (this.FlatStyle == FlatStyle.Standard)

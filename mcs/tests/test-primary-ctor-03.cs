@@ -1,3 +1,4 @@
+// Compiler options: -langversion:experimental
 class D(string arg) : Base (arg)
 {
 }

@@ -1187,7 +1187,8 @@ namespace Mono.CSharp {
 
 					// Using container location because the interface can be implemented
 					// by base class
-					container.Compiler.Report.Error (425, container.Location,
+					var tp = (tparams [i].MemberDefinition as MemberCore) ?? container;
+					container.Compiler.Report.Error (425, tp.Location,
 						"The constraints for type parameter `{0}' of method `{1}' must match the constraints for type parameter `{2}' of interface method `{3}'. Consider using an explicit interface implementation instead",
 						tparams[i].GetSignatureForError (), method.GetSignatureForError (),
 						base_tparams[i].GetSignatureForError (), baseMethod.GetSignatureForError ());
@@ -1284,7 +1285,7 @@ namespace Mono.CSharp {
 			// This is used to track the Entry Point,
 			//
 			var settings = Compiler.Settings;
-			if (settings.NeedsEntryPoint && MemberName.Name == "Main" && (settings.MainClass == null || settings.MainClass == Parent.TypeBuilder.FullName)) {
+			if (settings.NeedsEntryPoint && MemberName.Name == "Main" && !IsPartialDefinition && (settings.MainClass == null || settings.MainClass == Parent.TypeBuilder.FullName)) {
 				if (IsEntryPoint ()) {
 					if (Parent.DeclaringAssembly.EntryPoint == null) {
 						if (Parent.IsGenericOrParentIsGeneric || MemberName.IsGeneric) {
@@ -1497,15 +1498,6 @@ namespace Mono.CSharp {
 							"`{0}': Struct constructors cannot call base constructors", caller_builder.GetSignatureForError ());
 						return this;
 					}
-				} else {
-					//
-					// It is legal to have "this" initializers that take no arguments
-					// in structs
-					//
-					// struct D { public D (int a) : this () {}
-					//
-					if (ec.CurrentType.IsStruct && argument_list == null)
-						return this;
 				}
 
 				base_ctor = ConstructorLookup (ec, type, ref argument_list, loc);
@@ -1535,7 +1527,7 @@ namespace Mono.CSharp {
 			
 			var call = new CallEmitter ();
 			call.InstanceExpression = new CompilerGeneratedThis (type, loc); 
-			call.EmitPredefined (ec, base_ctor, argument_list);
+			call.EmitPredefined (ec, base_ctor, argument_list, false);
 		}
 
 		public override void EmitStatement (EmitContext ec)
@@ -1662,12 +1654,6 @@ namespace Mono.CSharp {
 		protected override bool CheckBase ()
 		{
 			if ((ModFlags & Modifiers.STATIC) != 0) {
-				if (!parameters.IsEmpty) {
-					Report.Error (132, Location, "`{0}': The static constructor must be parameterless",
-						GetSignatureForError ());
-					return false;
-				}
-
 				if ((caching_flags & Flags.MethodOverloadsExist) != 0)
 					Parent.MemberCache.CheckExistingMembersOverloads (this, parameters);
 
@@ -1681,12 +1667,6 @@ namespace Mono.CSharp {
 
 			if ((caching_flags & Flags.MethodOverloadsExist) != 0)
 				Parent.MemberCache.CheckExistingMembersOverloads (this, parameters);
-
-			if (Parent.PartialContainer.Kind == MemberKind.Struct && parameters.IsEmpty) {
-				Report.Error (568, Location, 
-					"Structs cannot contain explicit parameterless constructors");
-				return false;
-			}
 
 			CheckProtectedModifier ();
 			
@@ -2251,6 +2231,9 @@ namespace Mono.CSharp {
 
 		protected override bool CheckBase ()
 		{
+			if ((caching_flags & Flags.MethodOverloadsExist) != 0)
+				CheckForDuplications ();
+
 			// Don't check base, destructors have special syntax
 			return true;
 		}
@@ -2567,6 +2550,9 @@ namespace Mono.CSharp {
 			Implicit,
 			Explicit,
 
+			// Pattern matching
+			Is,
+
 			// Just because of enum
 			TOP
 		};
@@ -2604,6 +2590,7 @@ namespace Mono.CSharp {
 			names [(int) OpType.LessThanOrEqual] = new string [] { "<=", "op_LessThanOrEqual" };
 			names [(int) OpType.Implicit] = new string [] { "implicit", "op_Implicit" };
 			names [(int) OpType.Explicit] = new string [] { "explicit", "op_Explicit" };
+			names [(int) OpType.Is] = new string[] { "is", "op_Is" };
 		}
 
 		public Operator (TypeDefinition parent, OpType type, FullNamedExpression ret_type, Modifiers mod_flags, ParametersCompiled parameters,

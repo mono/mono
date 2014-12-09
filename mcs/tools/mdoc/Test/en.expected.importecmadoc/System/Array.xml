@@ -11,76 +11,76 @@
   <Interfaces />
   <Docs>
     <summary>
-      <para> Serves as the base class for arrays. Provides methods for creating,
+					<para> Serves as the base class for arrays. Provides methods for creating,
       copying, manipulating, searching, and sorting arrays.</para>
-    </summary>
+				</summary>
     <remarks>
-      <para>This class is intended to be used as a base class by
+					<para>This class is intended to be used as a base class by
       language implementations that support arrays. Only the system can derive from
       this type: derived classes of <see cref="T:System.Array" /> are not to be created by the developer.</para>
-      <block subset="none" type="note">
-        <para>An array is a collection of
+					<block subset="none" type="note">
+						<para>An array is a collection of
          identically typed data <paramref name="elements" /> that are accessed and referenced by
          sets of integral <paramref name="indices" />. </para>
-        <para>The <paramref name="rank" /> of an array is the number
+						<para>The <paramref name="rank" /> of an array is the number
       of dimensions in the array. Each dimension has its own set of indices. An array
       with a rank greater than one can have a different lower
       bound and a different number of elements for each dimension. Multidimensional
       arrays (i.e. arrays with a rank greater than one) are processed in row-major
       order. </para>
-        <para>The <paramref name="lower bound" /> of a dimension
+						<para>The <paramref name="lower bound" /> of a dimension
    is the starting index of that dimension. </para>
-        <para>The <paramref name="length" /> of an array is the total number of elements contained in all of its
+						<para>The <paramref name="length" /> of an array is the total number of elements contained in all of its
 dimensions. </para>
-        <para>A <paramref name="vector" /> is a
+						<para>A <paramref name="vector" /> is a
 one-dimensional array with a <paramref name="lower bound" /> of '0'. </para>
-        <para>If the implementer creates a derived class of <see cref="T:System.Array" />, expected <see cref="T:System.Array" /> behavior
+						<para>If the implementer creates a derived class of <see cref="T:System.Array" />, expected <see cref="T:System.Array" /> behavior
 cannot be guaranteed. For information on array-like objects with increased
 functionality, see the <see cref="T:System.Collections.IList" /> and <see cref="T:System.Collections.Generic.IList&lt;T&gt;" /> interfaces. For more information regarding the use of arrays versus the use
 of collections, see Partition V of the CLI Specification. </para>
-      </block>
-      <para>Every specific <see cref="T:System.Array" /> type has three instance methods defined on it.
+					</block>
+					<para>Every specific <see cref="T:System.Array" /> type has three instance methods defined on it.
    While some programming languages allow direct access to these methods, they are
    primarily intended to be called by the output of compilers based on language
    syntax that deals with arrays. </para>
-      <list type="bullet">
-        <item>
-          <term>
-            <para>
-              <c>Get</c>: Takes as many <see cref="T:System.Int32" /> arguments as the array
+					<list type="bullet">
+						<item>
+							<term>
+								<para>
+									<c>Get</c>: Takes as many <see cref="T:System.Int32" /> arguments as the array
    has dimensions and returns the value stored at the given index. It throws a
 <see cref="T:System.IndexOutOfRangeException" /> 
 exception for invalid indices. </para>
-          </term>
-        </item>
-        <item>
-          <term>
-            <para>
-              <c>Set</c>: Takes as many <see cref="T:System.Int32" /> arguments as the array
+							</term>
+						</item>
+						<item>
+							<term>
+								<para>
+									<c>Set</c>: Takes as many <see cref="T:System.Int32" /> arguments as the array
    has dimensions, plus one additional argument (the last argument) which has the
    same type as an array element. It stores the final value in the specified
    index of the array. It throws a <see cref="T:System.IndexOutOfRangeException" />
    exception for invalid indices. </para>
-          </term>
-        </item>
-        <item>
-          <term>
-            <para>
-              <c>Address</c>: Takes as many <see cref="T:System.Int32" /> arguments as the
+							</term>
+						</item>
+						<item>
+							<term>
+								<para>
+									<c>Address</c>: Takes as many <see cref="T:System.Int32" /> arguments as the
    array has dimensions and returns the address of the element at the given index.
    It throws a <see cref="T:System.IndexOutOfRangeException" />
    exception for invalid indices. </para>
-          </term>
-        </item>
-      </list>
-      <para>In addition, every specific <see cref="T:System.Array" /> type has a constructor on it that takes as many non-negative 
+							</term>
+						</item>
+					</list>
+					<para>In addition, every specific <see cref="T:System.Array" /> type has a constructor on it that takes as many non-negative 
 <see cref="T:System.Int32" /> 
 arguments as the array has dimensions. The arguments specify the
 number of elements in each dimension, and a lower bound of 0. Thus, a
 two-dimensional array of <see cref="T:System.Int32" /> objects would have a constructor that could be called with
 <c>(2, 4)</c> as its arguments to create an array of eight zeros with the first dimension indexed
 with 0 and 1 and the second dimension indexed with 0, 1, 2, and 3. </para>
-      <para>For all specific array types except vectors (i.e. those
+					<para>For all specific array types except vectors (i.e. those
    permitted to have non-zero lower bounds and those with more than one dimension)
    there is an additional constructor. It takes twice as many arguments as the
    array has dimensions. The arguments are considered in pairs, with the first of
@@ -91,9 +91,9 @@ with 0 and 1 and the second dimension indexed with 0, 1, 2, and 3. </para>
    objects would also have a constructor that could be called with <c>(-1, 2, 1, 3)</c> as its arguments,
 specifying an array of 6 zeros, with the first dimension indexed by -1 and 0,
 and the second dimension indexed by 1, 2, and 3. </para>
-      <para>Enumeration over an array occurs in ascending row-major order, starting from the first element. (For example, a 2x3 array is traversed in the order [0,0], [0,1], [0,2], [1,0], [1,1], and [1,2].)</para>
-      <para>Parallel implementation of methods taking a <see cref="T:System.Predicate" /> argument are not permitted.</para>
-    </remarks>
+					<para>Enumeration over an array occurs in ascending row-major order, starting from the first element. (For example, a 2x3 array is traversed in the order [0,0], [0,1], [0,2], [1,0], [1,1], and [1,2].)</para>
+					<para>Parallel implementation of methods taking a <see cref="T:System.Predicate" /> argument are not permitted.</para>
+				</remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -158,21 +158,21 @@ and the second dimension indexed by 1, 2, and 3. </para>
         <typeparam name="TOutput">To be added.</typeparam>
         <param name="array">The one-dimensional array to convert.</param>
         <param name="converter">
-          <para>A <see cref="T:System.Converter&lt;T,U&gt;" /> that converts each element from one type to another type.</para>
-        </param>
+							<para>A <see cref="T:System.Converter&lt;T,U&gt;" /> that converts each element from one type to another type.</para>
+						</param>
         <summary>
-          <para>Converts an array of one type to an array of another type.</para>
-        </summary>
+							<para>Converts an array of one type to an array of another type.</para>
+						</summary>
         <returns>
-          <para>A new array of the target type containing the converted elements from <paramref name="array" />.</para>
-        </returns>
+							<para>A new array of the target type containing the converted elements from <paramref name="array" />.</para>
+						</returns>
         <remarks>
-          <para>The <see cref="T:System.Converter&lt;T,U&gt;" /> is a delegate that converts an array element to the target type.  The elements of  <paramref name="array" /> are individually passed to this converter, and the converted elements are saved in the new array. The source array remains unchanged.</para>
-        </remarks>
+							<para>The <see cref="T:System.Converter&lt;T,U&gt;" /> is a delegate that converts an array element to the target type.  The elements of  <paramref name="array" /> are individually passed to this converter, and the converted elements are saved in the new array. The source array remains unchanged.</para>
+						</remarks>
         <exception cref="T:System.InvalidOperationException">To be added; from:
           <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
         <exception cref="T:System.ArgumentNullException">
-          <paramref name="array" /> is <see langword="null" /> or <paramref name="converter" /> is <see langword="null" />.</exception>
+							<paramref name="array" /> is <see langword="null" /> or <paramref name="converter" /> is <see langword="null" />.</exception>
       </Docs>
     </Member>
     <Member MemberName="Resize&lt;T&gt;">

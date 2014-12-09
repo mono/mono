@@ -38,7 +38,6 @@ namespace MonoTests.System.Security.Permissions {
 
 		private static string className = "System.Security.Permissions.RegistryPermission, ";
 		private static string keyCurrentUser = @"HKEY_CURRENT_USER\Software\Novell iFolder\spouliot\Home";
-		private static string keyCurrentUserSubset = @"HKEY_CURRENT_USER\Software\Novell iFolder\";
 		private static string keyLocalMachine = @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000";
 		private static string keyLocalMachineSubset = @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\";
 

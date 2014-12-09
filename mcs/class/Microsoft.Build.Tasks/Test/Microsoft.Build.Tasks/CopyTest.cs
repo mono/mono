@@ -319,7 +319,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual (FileAttributes.ReadOnly, File.GetAttributes (target_file), "A1");
 			
 			string documentString = @"
-				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""4.0"">
 					<PropertyGroup><DestFile>" + target_file + @"</DestFile></PropertyGroup>
 					<ItemGroup>
 						<SFiles Include='" + file_path + @"'><Md>1</Md></SFiles>

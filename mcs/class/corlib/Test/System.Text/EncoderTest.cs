@@ -44,7 +44,7 @@ namespace MonoTests.System.Text
 			byte [] bytes = new byte [10000];
 			char [] chars = new char [10000];
 
-			Encoder conv = Encoding.UTF8.GetEncoder ();
+			Encoder conv = new ExposedEncoder ();
 			int bytesUsed, charsUsed;
 			bool done;
 
@@ -54,6 +54,25 @@ namespace MonoTests.System.Text
 			Assert.IsFalse (done, "#1");
 			Assert.AreEqual (625, bytesUsed, "#2");
 			Assert.AreEqual (625, charsUsed, "#3");
+		}
+
+		[Test]
+		public void ConvertLimitedDestinationUTF8 ()
+		{
+			byte [] bytes = new byte [10000];
+			char [] chars = new char [10000];
+
+			Encoder conv = Encoding.UTF8.GetEncoder ();
+			var type = conv.GetType ();
+			int bytesUsed, charsUsed;
+			bool done;
+
+			conv.Convert (chars, 0, 10000, bytes, 0, 1000, true,
+				      out bytesUsed, out charsUsed, out done);
+
+			Assert.IsFalse (done, "#1");
+			Assert.AreEqual (1000, bytesUsed, "#2");
+			Assert.AreEqual (1000, charsUsed, "#3");
 		}
 
 		[Test]
@@ -78,6 +97,18 @@ namespace MonoTests.System.Text
 			Assert.IsTrue (completed, "#1");
 			Assert.AreEqual (0, charsUsed, "#2");
 			Assert.AreEqual (0, bytesUsed, "#3");
+		}
+
+		class ExposedEncoder : Encoder {
+			public override int GetByteCount (char [] chars, int index, int count, bool flush)
+			{
+				return Encoding.UTF8.GetEncoder ().GetByteCount (chars, index, count, flush);
+			}
+
+			public override int GetBytes (char [] chars, int charIndex, int charCount, byte [] bytes, int byteIndex, bool flush)
+			{
+				return Encoding.UTF8.GetEncoder ().GetBytes (chars, charIndex, charCount, bytes, byteIndex, flush);
+			}
 		}
 
 		class CustomEncoding : Encoding {

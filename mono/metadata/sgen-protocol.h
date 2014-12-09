@@ -30,17 +30,20 @@ enum {
 	SGEN_PROTOCOL_COLLECTION_BEGIN,
 	SGEN_PROTOCOL_COLLECTION_END,
 	SGEN_PROTOCOL_CONCURRENT_START,
-	SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH,
+	SGEN_PROTOCOL_CONCURRENT_UPDATE,
+	SGEN_PROTOCOL_CONCURRENT_FINISH,
 	SGEN_PROTOCOL_WORLD_STOPPING,
 	SGEN_PROTOCOL_WORLD_STOPPED,
 	SGEN_PROTOCOL_WORLD_RESTARTING,
 	SGEN_PROTOCOL_WORLD_RESTARTED,
 	SGEN_PROTOCOL_ALLOC,
 	SGEN_PROTOCOL_COPY,
+	SGEN_PROTOCOL_PIN_STAGE,
 	SGEN_PROTOCOL_PIN,
 	SGEN_PROTOCOL_MARK,
 	SGEN_PROTOCOL_SCAN_BEGIN,
 	SGEN_PROTOCOL_SCAN_VTYPE_BEGIN,
+	SGEN_PROTOCOL_SCAN_PROCESS_REFERENCE,
 	SGEN_PROTOCOL_WBARRIER,
 	SGEN_PROTOCOL_GLOBAL_REMSET,
 	SGEN_PROTOCOL_PTR_UPDATE,
@@ -71,7 +74,13 @@ typedef struct {
 
 typedef struct {
 	int index, generation;
-} SGenProtocolCollection;
+} SGenProtocolCollectionBegin;
+
+typedef struct {
+	int index, generation;
+	long long num_scanned_objects;
+	long long num_unique_scanned_objects;
+} SGenProtocolCollectionEnd;
 
 typedef struct {
 	long long timestamp;
@@ -113,6 +122,11 @@ typedef struct {
 } SGenProtocolCopy;
 
 typedef struct {
+	gpointer addr_ptr;
+	gpointer addr;
+} SGenProtocolPinStage;
+
+typedef struct {
 	gpointer obj;
 	gpointer vtable;
 	int size;
@@ -134,6 +148,12 @@ typedef struct {
 	gpointer obj;
 	int size;
 } SGenProtocolScanVTypeBegin;
+
+typedef struct {
+	gpointer obj;
+	gpointer ptr;
+	gpointer value;
+} SGenProtocolScanProcessReference;
 
 typedef struct {
 	gpointer ptr;
@@ -234,16 +254,17 @@ typedef struct {
 
 /* missing: finalizers, roots, non-store wbarriers */
 
-void binary_protocol_init (const char *filename) MONO_INTERNAL;
+void binary_protocol_init (const char *filename, long long limit) MONO_INTERNAL;
 gboolean binary_protocol_is_enabled (void) MONO_INTERNAL;
 
 void binary_protocol_flush_buffers (gboolean force) MONO_INTERNAL;
 
 void binary_protocol_collection_force (int generation) MONO_INTERNAL;
 void binary_protocol_collection_begin (int index, int generation) MONO_INTERNAL;
-void binary_protocol_collection_end (int index, int generation) MONO_INTERNAL;
+void binary_protocol_collection_end (int index, int generation, long long num_objects_scanned, long long num_unique_objects_scanned) MONO_INTERNAL;
 void binary_protocol_concurrent_start (void) MONO_INTERNAL;
-void binary_protocol_concurrent_update_finish (void) MONO_INTERNAL;
+void binary_protocol_concurrent_update (void) MONO_INTERNAL;
+void binary_protocol_concurrent_finish (void) MONO_INTERNAL;
 void binary_protocol_world_stopping (long long timestamp) MONO_INTERNAL;
 void binary_protocol_world_stopped (long long timestamp, long long total_major_cards,
 		long long marked_major_cards, long long total_los_cards, long long marked_los_cards) MONO_INTERNAL;
@@ -272,10 +293,12 @@ void binary_protocol_alloc (gpointer obj, gpointer vtable, int size) MONO_INTERN
 void binary_protocol_alloc_pinned (gpointer obj, gpointer vtable, int size) MONO_INTERNAL;
 void binary_protocol_alloc_degraded (gpointer obj, gpointer vtable, int size) MONO_INTERNAL;
 void binary_protocol_copy (gpointer from, gpointer to, gpointer vtable, int size) MONO_INTERNAL;
+void binary_protocol_pin_stage (gpointer addr_ptr, gpointer addr) MONO_INTERNAL;
 void binary_protocol_pin (gpointer obj, gpointer vtable, int size) MONO_INTERNAL;
 void binary_protocol_mark (gpointer obj, gpointer vtable, int size) MONO_INTERNAL;
 void binary_protocol_scan_begin (gpointer obj, gpointer vtable, int size) MONO_INTERNAL;
 void binary_protocol_scan_vtype_begin (gpointer start, int size) MONO_INTERNAL;
+void binary_protocol_scan_process_reference (gpointer obj, gpointer ptr, gpointer value) MONO_INTERNAL;
 void binary_protocol_wbarrier (gpointer ptr, gpointer value, gpointer value_vtable) MONO_INTERNAL;
 void binary_protocol_global_remset (gpointer ptr, gpointer value, gpointer value_vtable) MONO_INTERNAL;
 void binary_protocol_ptr_update (gpointer ptr, gpointer old_value, gpointer new_value, gpointer vtable, int size) MONO_INTERNAL;
@@ -296,10 +319,12 @@ void binary_protocol_gray_dequeue (gpointer queue, gpointer cursor, gpointer val
 #define binary_protocol_alloc_pinned(obj, vtable, size)
 #define binary_protocol_alloc_degraded(obj, vtable, size)
 #define binary_protocol_copy(from, to, vtable, size)
+#define binary_protocol_pin_stage(addr_ptr, addr)
 #define binary_protocol_pin(obj, vtable, size)
 #define binary_protocol_mark(obj, vtable, size)
 #define binary_protocol_scan_begin(obj, vtable, size)
 #define binary_protocol_scan_vtype_begin(obj, size)
+#define binary_protocol_scan_process_reference(obj, ptr, value)
 #define binary_protocol_wbarrier(ptr, value, value_vtable)
 #define binary_protocol_global_remset(ptr, value, value_vtable)
 #define binary_protocol_ptr_update(ptr, old_value, new_value, vtable, size)

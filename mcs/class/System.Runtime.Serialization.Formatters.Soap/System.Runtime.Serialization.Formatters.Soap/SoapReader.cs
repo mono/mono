@@ -499,7 +499,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			object objReturn = 
 				FormatterServices.GetUninitializedObject(type);
 
-#if NET_2_0 && !TARGET_JVM
+#if NET_2_0
 			objMgr.RaiseOnDeserializingEvent (objReturn);
 #endif
 			if(objReturn is ISerializable)

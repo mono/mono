@@ -61,9 +61,7 @@ namespace MonoTests.System.Data.Common
 		public void Default ()
 		{
 			DBDataPermissionAttribute a = new NonAbstractDBDataPermissionAttribute (SecurityAction.Assert);
-#if !TARGET_JVM
 			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
-#endif			
 			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 			Assert.IsFalse (a.AllowBlankPassword, "AllowBlankPassword");
 			Assert.AreEqual (String.Empty, a.ConnectionString, "ConnectionString");

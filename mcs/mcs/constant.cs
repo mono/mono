@@ -2031,8 +2031,6 @@ namespace Mono.CSharp {
 	}
 
 	public class StringConstant : Constant {
-		public readonly string Value;
-
 		public StringConstant (BuiltinTypes types, string s, Location loc)
 			: this (types.String, s, loc)
 		{
@@ -2046,6 +2044,13 @@ namespace Mono.CSharp {
 
 			Value = s;
 		}
+
+		protected StringConstant (Location loc)
+			: base (loc)
+		{
+		}
+
+		public string Value { get; protected set; }
 
 		public override object GetValue ()
 		{
@@ -2126,6 +2131,132 @@ namespace Mono.CSharp {
 				return new NullConstant (type, loc);
 
 			return base.ConvertImplicitly (type);
+		}
+	}
+
+	class NameOf : StringConstant
+	{
+		readonly SimpleName name;
+
+		public NameOf (SimpleName name)
+			: base (name.Location)
+		{
+			this.name = name;
+		}
+
+		static void Error_MethodGroupWithTypeArguments (ResolveContext rc, Location loc)
+		{
+			rc.Report.Error (8084, loc, "An argument to nameof operator cannot be method group with type arguments");
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			throw new NotSupportedException ();
+		}
+
+		bool ResolveArgumentExpression (ResolveContext rc, Expression expr)
+		{
+			var sn = expr as SimpleName;
+			if (sn != null) {
+				Value = sn.Name;
+
+				if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_6)
+					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
+
+				var res = sn.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity | MemberLookupRestrictions.NameOfExcluded);
+				if (sn.HasTypeArguments && res is MethodGroupExpr) {
+					Error_MethodGroupWithTypeArguments (rc, expr.Location);
+				}
+
+				return true;
+			}
+
+			var ma = expr as MemberAccess;
+			if (ma != null) {
+				var lexpr = ma.LeftExpression;
+
+				var res = ma.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity);
+
+				if (res == null) {
+					return false;
+				}
+
+				if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_6)
+					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
+
+				if (ma is QualifiedAliasMember) {
+					rc.Report.Error (8083, loc, "An alias-qualified name is not an expression");
+					return false;
+				}
+
+				if (!IsLeftExpressionValid (lexpr)) {
+					rc.Report.Error (8082, lexpr.Location, "An argument to nameof operator cannot include sub-expression");
+					return false;
+				}
+
+				var mg = res as MethodGroupExpr;
+				if (mg != null) {
+					var emg = res as ExtensionMethodGroupExpr;
+					if (emg != null && !emg.ResolveNameOf (rc, ma)) {
+						return true;
+					}
+
+					if (!mg.HasAccessibleCandidate (rc)) {
+						ErrorIsInaccesible (rc, ma.GetSignatureForError (), loc);
+					}
+
+					if (ma.HasTypeArguments) {
+						Error_MethodGroupWithTypeArguments (rc, ma.Location);
+					}
+				}
+
+				Value = ma.Name;
+				return true;
+			}
+
+			rc.Report.Error (8081, loc, "Expression does not have a name");
+			return false;
+		}
+
+		static bool IsLeftExpressionValid (Expression expr)
+		{
+			if (expr is SimpleName)
+				return true;
+
+			if (expr is This)
+				return true;
+
+			if (expr is NamespaceExpression)
+				return true;
+
+			if (expr is TypeExpr)
+				return true;
+
+			var ma = expr as MemberAccess;
+			if (ma != null) {
+				// TODO: Will conditional access be allowed?
+				return IsLeftExpressionValid (ma.LeftExpression);
+			}
+
+			return false;
+		}
+
+		public Expression ResolveOverload (ResolveContext rc, Arguments args)
+		{
+			if (args == null || args.Count != 1) {
+				name.Error_NameDoesNotExist (rc);
+				return null;
+			}
+
+			var arg = args [0];
+			var res = ResolveArgumentExpression (rc, arg.Expr);
+			if (!res) {
+				return null;
+			}
+
+			type = rc.BuiltinTypes.String;
+			eclass = ExprClass.Value;
+			return this;
 		}
 	}
 

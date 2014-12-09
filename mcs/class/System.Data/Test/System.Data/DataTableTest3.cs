@@ -41,7 +41,7 @@ using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework
 using NUnit.Framework;
 #endif
 
-namespace Monotests_System.Data
+namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class DataTableTest3

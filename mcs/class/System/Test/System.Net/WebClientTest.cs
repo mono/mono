@@ -2221,6 +2221,28 @@ namespace MonoTests.System.Net
 				webClient.UploadFileAsync (uri, "PUT", tempFile);
 			});
 		}
+
+		[Test]
+		public void UploadFileAsyncContentType ()
+		{
+			var serverUri = "http://localhost:13370/";
+			var filename = Path.GetTempFileName ();
+
+			HttpListener listener = new HttpListener ();
+			listener.Prefixes.Add (serverUri);
+			listener.Start ();
+
+			using (var client = new WebClient ())
+			{
+				client.UploadFileTaskAsync (new Uri (serverUri), filename);
+				var request = listener.GetContext ().Request;
+
+				var expected = "multipart/form-data; boundary=------------";
+				Assert.AreEqual (expected.Length + 15, request.ContentType.Length);
+				Assert.AreEqual (expected, request.ContentType.Substring (0, expected.Length));
+			}
+			listener.Close ();
+		}
 #endif
 
 #if NET_4_0

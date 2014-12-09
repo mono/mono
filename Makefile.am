@@ -8,7 +8,7 @@ if CROSS_COMPILING
 SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples msvc $(docs_dir)
 # Keep in sync with SUBDIRS
 ## 'tools' is not normally built
-DIST_SUBDIRS = m4 po libgc eglib mono ikvm-native support data runtime scripts man samples tools msvc docs
+DIST_SUBDIRS = m4 po $(libgc_dir) eglib mono ikvm-native support data runtime scripts man samples tools msvc docs
 else
 if ONLY_MONOTOUCH
 SUBDIRS = $(MONOTOUCH_SUBDIRS) runtime
@@ -19,7 +19,7 @@ else
 SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples msvc $(docs_dir)
 # Keep in sync with SUBDIRS
 ## 'tools' is not normally built
-DIST_SUBDIRS = m4 po libgc eglib mono ikvm-native support data runtime scripts man samples tools msvc docs
+DIST_SUBDIRS = m4 po $(libgc_dir) eglib mono ikvm-native support data runtime scripts man samples tools msvc docs
 endif
 endif
 endif
@@ -51,6 +51,8 @@ dist-hook:
 	test -d $(distdir)/mcs || mkdir $(distdir)/mcs
 	d=`cd $(distdir)/mcs && pwd`; cd $(mcs_topdir) && $(MAKE) distdir=$$d dist-recursive
 	rm -rf `find $(top_distdir)/external -path '*\.git'`
+	rm -f `find $(top_distdir)/external -path '*\.exe'`
+	rm -f `find $(top_distdir)/external -path '*\.dll'`
 	cp mcs/class/lib/basic/System.Configuration.dll mcs/class/lib/monolite/
 	cp mcs/class/lib/basic/System.Security.dll mcs/class/lib/monolite/
 # Disable this for now because it is very slow and causes wrench to timeout:

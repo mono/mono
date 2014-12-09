@@ -135,7 +135,6 @@ namespace System.Xml.Linq
 			return element.Value == null ? (DateTime?) null : XUtil.ToDateTime (element.Value);
 		}
 
-#if !TARGET_JVM // Same as for System.Xml.XmlConvert.ToDateTimeOffset
 
 		[CLSCompliant (false)]
 		public static explicit operator DateTimeOffset (XElement element)
@@ -154,7 +153,6 @@ namespace System.Xml.Linq
 			return element.Value == null ? (DateTimeOffset?) null : XmlConvert.ToDateTimeOffset (element.Value);
 		}
 
-#endif
 
 		[CLSCompliant (false)]
 		public static explicit operator decimal (XElement element)

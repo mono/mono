@@ -1,3 +1,5 @@
+using System;
+
 class X {
 	// Check installed compiler
 	static void Generic<T> ()
@@ -19,6 +21,21 @@ class X {
 		// It should crash but double check it in case of very old old runtime
 		if (o == null)
 			return 1;
+
+		var consts = o.GetType ().Assembly.GetType ("Consts");
+		if (consts == null)
+			return 2;
+
+		var field = consts.GetField ("MonoVersion");
+		if (field == null)
+			return 3;
+
+		Version version;
+		if (!Version.TryParse (field.GetValue (null) as string, out version))
+			return 4;
+
+		if (version < new Version (3, 2))
+			return 5;
 
 		return 0;
 	}

@@ -37,12 +37,8 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-#if TARGET_JVM
-	[Ignore ("The class System.Security.Cryptography.Oid - is not supported")]
-#endif
 
 	public class OidTest {
-#if !TARGET_JVM
 
 		static string invalidOid = "1.0";
 		static string invalidName = "friendlyName";
@@ -185,7 +181,6 @@ namespace MonoTests.System.Security.Cryptography {
 
 			// TODO: add other well known oid as we find them
 		}
-#endif
 	}
 }
 

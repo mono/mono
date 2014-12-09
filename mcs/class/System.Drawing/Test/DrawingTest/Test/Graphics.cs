@@ -438,9 +438,6 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			Assert.That(t.Compare(), Is.True);
 		}
 		[Test]
-#if TARGET_JVM
-		[Category("NotWorking")] // defect 6145
-#endif
 		public void DrawImageWithResolution() {
 			t.Graphics.DrawImage(bmp2, 0, 0);
 			t.Show();
@@ -454,9 +451,6 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			Assert.That(t.Compare(), Is.True);
 		}
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // defect 6145
-#endif
 		public void DrawImageInContainer2() {
 			t.Graphics.BeginContainer(new Rectangle(10, 10, 50, 50), new Rectangle(70, 70, 100, 100), GraphicsUnit.Pixel);
 			t.Graphics.DrawImage(bmp2, 0, 0);

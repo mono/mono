@@ -2265,11 +2265,9 @@ namespace System.Linq.Expressions {
 
 		internal static bool IsUnsigned (Type t)
 		{
-#if !TARGET_JVM
 			if (t.IsPointer)
 				return IsUnsigned (t.GetElementType ());
 
-#endif
 			return t == typeof (ushort) ||
 				t == typeof (uint) ||
 				t == typeof (ulong) ||

@@ -59,9 +59,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void CanConvertFrom () {
 			Assert.IsTrue (colconv.CanConvertFrom (typeof (String)), "CCF#1");
 			Assert.IsTrue (colconv.CanConvertFrom (null, typeof (String)), "CCF#1a");
@@ -92,9 +89,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void ConvertFrom ()
 		{
 			Color color = (Color) colconv.ConvertFrom (null, CultureInfo.InvariantCulture,
@@ -196,9 +190,6 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[ExpectedException (typeof (Exception))]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void ConvertFrom_x4 ()
 		{
 			colconv.ConvertFrom (null, CultureInfo.InvariantCulture,
@@ -367,9 +358,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void ConvertFromInvariantString_InvalidNumber ()
 		{
 			try {
@@ -399,9 +387,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void ConvertFromString_InvalidNumber ()
 		{
 			try {

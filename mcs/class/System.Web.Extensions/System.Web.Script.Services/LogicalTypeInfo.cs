@@ -411,7 +411,7 @@ if (typeof({0}) === 'undefined') {{", className);
 				var ret = new Dictionary <string, object> ();
 
 				for (int i = nvc.Count - 1; i >= 0; i--)
-					ret.Add (nvc.GetKey (i), JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal (nvc.Get (i)));
+					ret.Add (nvc.GetKey (i), nvc.Get (i));
 
 				return ret;
 			}

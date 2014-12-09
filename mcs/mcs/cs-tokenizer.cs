@@ -202,7 +202,6 @@ namespace Mono.CSharp
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_where;
-		bool handle_typeof = false;
 		bool lambda_arguments_parsing;
 		List<Location> escaped_identifiers;
 		int parsing_generic_less_than;
@@ -319,11 +318,6 @@ namespace Mono.CSharp
 		public bool ConstraintsParsing {
 			get { return handle_where; }
 			set { handle_where = value; }
-		}
-
-		public bool TypeOfParsing {
-			get { return handle_typeof; }
-			set { handle_typeof = value; }
 		}
 	
 		public XmlCommentState doc_state {
@@ -729,6 +723,7 @@ namespace Mono.CSharp
 					case Token.BYTE:
 					case Token.CHAR:
 					case Token.DECIMAL:
+					case Token.DOUBLE:
 					case Token.FLOAT:
 					case Token.LONG:
 					case Token.OBJECT:
@@ -1040,6 +1035,7 @@ namespace Mono.CSharp
 						case Token.BYTE:
 						case Token.DECIMAL:
 						case Token.BOOL:
+						case Token.STRING:
 							return Token.OPEN_PARENS_CAST;
 						}
 					}
@@ -1144,7 +1140,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		bool parse_less_than ()
+		bool parse_less_than (ref int genericDimension)
 		{
 		start:
 			int the_token = token ();
@@ -1181,10 +1177,23 @@ namespace Mono.CSharp
 			case Token.VOID:
 				break;
 			case Token.OP_GENERICS_GT:
+				genericDimension = 1;
+				return true;
 			case Token.IN:
 			case Token.OUT:
 				return true;
+			case Token.COMMA:
+				do {
+					++genericDimension;
+					the_token = token ();
+				} while (the_token == Token.COMMA);
 
+				if (the_token == Token.OP_GENERICS_GT) {
+					++genericDimension;
+					return true;
+				}
+
+				return false;
 			default:
 				return false;
 			}
@@ -1198,7 +1207,7 @@ namespace Mono.CSharp
 			else if (the_token == Token.INTERR_NULLABLE || the_token == Token.STAR)
 				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
-				if (!parse_less_than ())
+				if (!parse_less_than (ref genericDimension))
 					return false;
 				goto again;
 			} else if (the_token == Token.OPEN_BRACKET) {
@@ -1214,22 +1223,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		bool parse_generic_dimension (out int dimension)
-		{
-			dimension = 1;
-
-		again:
-			int the_token = token ();
-			if (the_token == Token.OP_GENERICS_GT)
-				return true;
-			else if (the_token == Token.COMMA) {
-				dimension++;
-				goto again;
-			}
-
-			return false;
-		}
-		
 		public int peek_token ()
 		{
 			int the_token;
@@ -1260,13 +1253,8 @@ namespace Mono.CSharp
 				return Token.OP_COALESCING;
 			}
 
-			switch (current_token) {
-			case Token.CLOSE_PARENS:
-			case Token.TRUE:
-			case Token.FALSE:
-			case Token.NULL:
-			case Token.LITERAL:
-				return Token.INTERR;
+			if (d == '.') {
+				return Token.INTERR_OPERATOR;
 			}
 
 			if (d != ' ') {
@@ -1280,8 +1268,15 @@ namespace Mono.CSharp
 			current_token = Token.NONE;
 			int next_token;
 			int parens = 0;
+			int generics = 0;
+			int brackets = 0;
 
-			switch (xtoken ()) {
+			var nt = xtoken ();
+			switch (nt) {
+			case Token.DOT:
+			case Token.OPEN_BRACKET_EXPR:
+				next_token = Token.INTERR_OPERATOR;
+				break;
 			case Token.LITERAL:
 			case Token.TRUE:
 			case Token.FALSE:
@@ -1308,7 +1303,14 @@ namespace Mono.CSharp
 				next_token = -1;
 				++parens;
 				break;
-				
+
+			case Token.OP_GENERICS_LT:
+			case Token.OP_GENERICS_LT_DECL:
+			case Token.GENERIC_DIMENSION:
+				next_token = -1;
+				++generics;
+				break;
+
 			default:
 				next_token = -1;
 				break;
@@ -1319,7 +1321,6 @@ namespace Mono.CSharp
 				case Token.COMMA:
 				case Token.SEMICOLON:
 				case Token.OPEN_BRACE:
-				case Token.CLOSE_PARENS:
 				case Token.IN:
 					next_token = Token.INTERR_NULLABLE;
 					break;
@@ -1332,6 +1333,21 @@ namespace Mono.CSharp
 				case Token.OPEN_PARENS_CAST:
 				case Token.OPEN_PARENS_LAMBDA:
 					++parens;
+					goto default;
+
+				case Token.OPEN_BRACKET:
+				case Token.OPEN_BRACKET_EXPR:
+					++brackets;
+					goto default;
+
+				case Token.CLOSE_PARENS:
+					--parens;
+					goto default;
+
+				case Token.OP_GENERICS_LT:
+				case Token.OP_GENERICS_LT_DECL:
+				case Token.GENERIC_DIMENSION:
+					++generics;
 					goto default;
 
 				default:
@@ -1355,9 +1371,30 @@ namespace Mono.CSharp
 						case Token.CLOSE_BRACE:
 							--braces;
 							continue;
+						case Token.OP_GENERICS_LT:
+						case Token.OP_GENERICS_LT_DECL:
+						case Token.GENERIC_DIMENSION:
+							++generics;
+							continue;
+						case Token.OPEN_BRACKET:
+						case Token.OPEN_BRACKET_EXPR:
+							++brackets;
+							continue;
+						case Token.CLOSE_BRACKET:
+							--brackets;
+							continue;
 						case Token.CLOSE_PARENS:
 							if (parens > 0) {
 								--parens;
+								continue;
+							}
+
+							PopPosition ();
+							return Token.INTERR_NULLABLE;
+
+						case Token.OP_GENERICS_GT:
+							if (generics > 0) {
+								--generics;
 								continue;
 							}
 
@@ -1373,6 +1410,14 @@ namespace Mono.CSharp
 
 						if (parens != 0)
 							continue;
+
+						if (ntoken == Token.COMMA) {
+							if (generics != 0 || brackets != 0)
+								continue;
+
+							PopPosition ();
+							return Token.INTERR_NULLABLE;
+						}
 						
 						if (ntoken == Token.COLON) {
 							if (++colons == interrs)
@@ -1945,7 +1990,7 @@ namespace Mono.CSharp
 			return current_token;
 		}
 
-		int TokenizePreprocessorIdentifier (out int c)
+		int TokenizePreprocessorKeyword (out int c)
 		{
 			// skip over white space
 			do {
@@ -1982,7 +2027,7 @@ namespace Mono.CSharp
 			tokens_seen = false;
 			arg = "";
 
-			var cmd = GetPreprocessorDirective (id_builder, TokenizePreprocessorIdentifier (out c));
+			var cmd = GetPreprocessorDirective (id_builder, TokenizePreprocessorKeyword (out c));
 
 			if ((cmd & PreprocessorDirective.CustomArgumentsParsing) != 0)
 				return cmd;
@@ -2054,7 +2099,7 @@ namespace Mono.CSharp
 
 			int c;
 
-			int length = TokenizePreprocessorIdentifier (out c);
+			int length = TokenizePreprocessorKeyword (out c);
 			if (length == line_default.Length) {
 				if (!IsTokenIdentifierEqual (line_default))
 					return false;
@@ -2387,16 +2432,60 @@ namespace Mono.CSharp
 			return string_builder.ToString ();
 		}
 
-		int TokenizePragmaNumber (ref int c)
+		int TokenizePragmaWarningIdentifier (ref int c, ref bool identifier)
 		{
-			number_pos = 0;
 
-			int number;
+			if ((c >= '0' && c <= '9') || is_identifier_start_character (c)) {
+				int number;
 
-			if (c >= '0' && c <= '9') {
-				number = TokenizeNumber (c);
+				if (c >= '0' && c <= '9') {
+					number_pos = 0;
+					number = TokenizeNumber (c);
 
-				c = get_char ();
+					c = get_char ();
+
+					if (c != ' ' && c != '\t' && c != ',' && c != '\n' && c != -1 && c != UnicodeLS && c != UnicodePS) {
+						return ReadPragmaWarningComment (c);
+					}
+				} else {
+					//
+					// LAMESPEC v6: No spec what identifier really is in this context, it seems keywords are allowed too
+					//
+					int pos = 0;
+					number = -1;
+					id_builder [pos++] = (char)c;
+					while (c < MaxIdentifierLength) {
+						c = reader.Read ();
+						id_builder [pos] = (char)c;
+
+						if (c >= '0' && c <= '9') {
+							if (pos == 6 && id_builder [0] == 'C' && id_builder [1] == 'S') {
+								// Recognize CSXXXX as C# XXXX warning
+								number = 0;
+								int pow = 1000;
+								for (int i = 0; i < 4; ++i) {
+									var ch = id_builder [i + 2];
+									if (ch < '0' || ch > '9') {
+										number = -1;
+										break;
+									}
+
+									number += (ch - '0') * pow;
+									pow /= 10;
+								}
+							}
+						} else if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_') {
+							break;
+						}
+
+						++pos;
+					}
+
+					if (number < 0) {
+						identifier = true;
+						number = pos;
+					}
+				}
 
 				// skip over white space
 				while (c == ' ' || c == '\t')
@@ -2409,19 +2498,25 @@ namespace Mono.CSharp
 				// skip over white space
 				while (c == ' ' || c == '\t')
 					c = get_char ();
-			} else {
-				number = -1;
-				if (c == '/') {
-					ReadSingleLineComment ();
-				} else {
-					Report.Warning (1692, 1, Location, "Invalid number");
 
-					// Read everything till the end of the line or file
-					ReadToEndOfLine ();
-				}
+				return number;
 			}
 
-			return number;
+			return ReadPragmaWarningComment (c);
+		}
+
+		int ReadPragmaWarningComment (int c)
+		{
+			if (c == '/') {
+				ReadSingleLineComment ();
+			} else {
+				Report.Warning (1692, 1, Location, "Invalid number");
+
+				// Read everything till the end of the line or file
+				ReadToEndOfLine ();
+			}
+
+			return -1;
 		}
 
 		void ReadToEndOfLine ()
@@ -2447,9 +2542,9 @@ namespace Mono.CSharp
 		void ParsePragmaDirective ()
 		{
 			int c;
-			int length = TokenizePreprocessorIdentifier (out c);
+			int length = TokenizePreprocessorKeyword (out c);
 			if (length == pragma_warning.Length && IsTokenIdentifierEqual (pragma_warning)) {
-				length = TokenizePreprocessorIdentifier (out c);
+				length = TokenizePreprocessorKeyword (out c);
 
 				//
 				// #pragma warning disable
@@ -2482,9 +2577,12 @@ namespace Mono.CSharp
 							//
 							int code;
 							do {
-								code = TokenizePragmaNumber (ref c);
+								bool identifier = false;
+								code = TokenizePragmaWarningIdentifier (ref c, ref identifier);
 								if (code > 0) {
-									if (disable) {
+									if (identifier) {
+										// no-op, custom warnings cannot occur in mcs
+									} else if (disable) {
 										Report.RegisterWarningRegion (loc).WarningDisable (loc, code, context.Report);
 									} else {
 										Report.RegisterWarningRegion (loc).WarningEnable (loc, code, context);
@@ -3669,22 +3767,20 @@ namespace Mono.CSharp
 		int TokenizeLessThan ()
 		{
 			int d;
-			if (handle_typeof) {
-				PushPosition ();
-				if (parse_generic_dimension (out d)) {
-					val = d;
-					DiscardPosition ();
-					return Token.GENERIC_DIMENSION;
-				}
-				PopPosition ();
-			}
 
 			// Save current position and parse next token.
 			PushPosition ();
-			if (parse_less_than ()) {
+			int generic_dimension = 0;
+			if (parse_less_than (ref generic_dimension)) {
 				if (parsing_generic_declaration && (parsing_generic_declaration_doc || token () != Token.DOT)) {
 					d = Token.OP_GENERICS_LT_DECL;
 				} else {
+					if (generic_dimension > 0) {
+						val = generic_dimension;
+						DiscardPosition ();
+						return Token.GENERIC_DIMENSION;
+					}
+
 					d = Token.OP_GENERICS_LT;
 				}
 				PopPosition ();

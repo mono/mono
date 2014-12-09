@@ -106,7 +106,7 @@ namespace Mono.CSharp {
 			throw new NotImplementedException ();
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc, bool allowUnboundTypeArguments)
 		{
 			throw new NotImplementedException ();
 		}
@@ -1052,7 +1052,8 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				types [i] = ((TypeParameterSpec)t).GetEffectiveBase ();
+				var tps = t as TypeParameterSpec;
+				types [i] = tps != null ? tps.GetEffectiveBase () : t;
 			}
 
 			if (HasTypeConstraint)
@@ -1146,7 +1147,7 @@ namespace Mono.CSharp {
 
 					if (other.targs != null) {
 						foreach (var otarg in other.targs) {
-							if (TypeSpecComparer.Override.IsEqual (BaseType, otarg)) {
+							if (TypeSpecComparer.Override.IsEqual (iface, otarg)) {
 								found = true;
 								break;
 							}
@@ -1324,15 +1325,21 @@ namespace Mono.CSharp {
 				foreach (var ta in targs) {
 					var tps = ta as TypeParameterSpec;
 					IList<TypeSpec> ifaces;
+					TypeSpec b_type;
 					if (tps != null) {
-						var b_type = tps.GetEffectiveBase ();
-						if (b_type != null && b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType)
-							cache.AddBaseType (b_type);
-
+						b_type = tps.GetEffectiveBase ();
 						ifaces = tps.InterfacesDefined;
 					} else {
+						b_type = ta;
 						ifaces = ta.Interfaces;
 					}
+
+					//
+					// Don't add base type which was inflated from base constraints but it's not valid
+					// in C# context
+					//
+					if (b_type != null && b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType && !b_type.IsStructOrEnum)
+						cache.AddBaseType (b_type);
 
 					if (ifaces != null) {
 						foreach (var iface_type in ifaces) {
@@ -1477,6 +1484,9 @@ namespace Mono.CSharp {
 					var ac = ec as ArrayContainer;
 					if (ac != null)
 						return ArrayContainer.MakeType (context.Module, et, ac.Rank);
+
+					if (ec is PointerContainer)
+						return PointerContainer.MakeType (context.Module, et);
 
 					throw new NotImplementedException ();
 				}
@@ -2176,7 +2186,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolve the type arguments.
 		/// </summary>
-		public virtual bool Resolve (IMemberContext ec)
+		public virtual bool Resolve (IMemberContext ec, bool allowUnbound)
 		{
 			if (atypes != null)
 			    return true;
@@ -2229,9 +2239,12 @@ namespace Mono.CSharp {
 
 	public class UnboundTypeArguments : TypeArguments
 	{
-		public UnboundTypeArguments (int arity)
+		Location loc;
+
+		public UnboundTypeArguments (int arity, Location loc)
 			: base (new FullNamedExpression[arity])
 		{
+			this.loc = loc;
 		}
 
 		public override bool IsEmpty {
@@ -2240,8 +2253,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool Resolve (IMemberContext ec)
+		public override bool Resolve (IMemberContext mc, bool allowUnbound)
 		{
+			if (!allowUnbound) {
+				mc.Module.Compiler.Report.Error (7003, loc, "Unbound generic name is not valid in this context");
+			}
+
 			// Nothing to be resolved
 			return true;
 		}
@@ -2422,12 +2439,12 @@ namespace Mono.CSharp {
 			return type.GetSignatureForError ();
 		}
 
-		public override TypeSpec ResolveAsType (IMemberContext mc)
+		public override TypeSpec ResolveAsType (IMemberContext mc, bool allowUnboundTypeArguments = false)
 		{
 			if (eclass != ExprClass.Unresolved)
 				return type;
 
-			if (!args.Resolve (mc))
+			if (!args.Resolve (mc, allowUnboundTypeArguments))
 				return null;
 
 			TypeSpec[] atypes = args.Arguments;
@@ -2754,7 +2771,7 @@ namespace Mono.CSharp {
 		//
 		// Tracks successful rate of type inference
 		//
-		int score = int.MaxValue;
+		int score;
 		readonly Arguments arguments;
 		readonly int arg_count;
 
@@ -2827,12 +2844,12 @@ namespace Mono.CSharp {
 				AnonymousMethodExpression am = a.Expr as AnonymousMethodExpression;
 				if (am != null) {
 					if (am.ExplicitTypeInference (tic, method_parameter))
-						--score; 
+						++score; 
 					continue;
 				}
 
 				if (a.IsByRef) {
-					score -= tic.ExactInference (a.Type, method_parameter);
+					score += tic.ExactInference (a.Type, method_parameter);
 					continue;
 				}
 
@@ -2840,14 +2857,14 @@ namespace Mono.CSharp {
 					continue;
 
 				if (TypeSpec.IsValueType (method_parameter)) {
-					score -= tic.LowerBoundInference (a.Type, method_parameter);
+					score += tic.LowerBoundInference (a.Type, method_parameter);
 					continue;
 				}
 
 				//
 				// Otherwise an output type inference is made
 				//
-				score -= tic.OutputTypeInference (ec, a.Expr, method_parameter);
+				score += tic.OutputTypeInference (ec, a.Expr, method_parameter);
 			}
 
 			//
@@ -2897,7 +2914,7 @@ namespace Mono.CSharp {
 					if (arguments[i] == null)
 						continue;
 
-					score -= tic.OutputTypeInference (ec, arguments[i].Expr, t_i);
+					score += tic.OutputTypeInference (ec, arguments[i].Expr, t_i);
 				}
 			}
 
@@ -3004,7 +3021,7 @@ namespace Mono.CSharp {
 			// Some types cannot be used as type arguments
 			//
 			if ((bound.Type.Kind == MemberKind.Void && !voidAllowed) || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType ||
-				bound.Type == InternalType.MethodGroup || bound.Type == InternalType.AnonymousMethod)
+				bound.Type == InternalType.MethodGroup || bound.Type == InternalType.AnonymousMethod || bound.Type == InternalType.VarOutType)
 				return;
 
 			var a = bounds [index];
@@ -3030,8 +3047,8 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (TypeManager.IsGenericType (t))
-					return AllTypesAreFixed (TypeManager.GetTypeArguments (t));
+				if (t.IsGeneric && !AllTypesAreFixed (t.TypeArguments))
+					return false;
 			}
 			
 			return true;

@@ -1,152 +1,61 @@
 Mono is a software platform designed to allow developers to easily create cross platform applications.
-Mono is an open source implementation of Microsoft's .NET Framework based on the ECMA standards for C# and the Common Language Runtime.
+It is an open source implementation of Microsoft's .NET Framework based on the ECMA standards for C# and the Common Language Runtime.
 
-[![Build Status](http://monojenkins.cloudapp.net/job/Mono/badge/icon)](http://monojenkins.cloudapp.net/job/Mono/)
-
-1. [Installation](#compilation-and-installation)
+1. [Compilation and Installation](#compilation-and-installation)
 2. [Using Mono](#using-mono)
 3. [Directory Roadmap](#directory-roadmap)
-4. [Contributing to Mono] (#contributing-to-mono) 
-5. [Git submodules maintenance](#git-submodules-maintenance)
-6. [Reporting bugs](#reporting-bugs)
+4. [Contributing to Mono](#contributing-to-mono)
+5. [Reporting bugs](#reporting-bugs)
+6. [Configuration Options](#configuration-options)
+
+**Build Status**
+
+| debian-amd64 | debian-i386 | centos-s390x | windows-amd64 |
+|:------------:|:-----------:|:------------:|:-------------:|
+| [![debian-amd64](http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/badge/icon)](http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/) | [![debian-i386](http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/badge/icon)](http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/) | [![centos-s390x](http://jenkins.mono-project.com/job/test-mono-mainline/label=centos-s390x/badge/icon)](http://jenkins.mono-project.com/job/test-mono-mainline/label=centos-s390x/) | [![windows-amd64](https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true)](https://ci.appveyor.com/project/ajlennon/mono-817/branch/master) |
 
 Compilation and Installation
 ============================
 
-a. Build Requirements
+Building the Software
 ---------------------
 
-* On Itanium, you must obtain libunwind: http://www.hpl.hp.com/research/linux/libunwind/download.php4
+Please see our guides for building Mono on
+[Mac OS X](http://www.mono-project.com/docs/compiling-mono/mac/),
+[Linux](http://www.mono-project.com/docs/compiling-mono/linux/) and 
+[Windows](http://www.mono-project.com/docs/compiling-mono/windows/).
 
-* On Solaris
-
- 1. Make sure that you used GNU tar to unpack this package, as
- Solaris tar will not unpack this correctly, and you will get strange errors.
-
- 2. Make sure that you use the GNU toolchain to build the software.
-
- 3. Optional dependencies
-
-  * libgdiplus - Required for System.Drawing. This library in turn requires glib and pkg-config
-
-  * pkg-config - Available at: http://www.freedesktop.org/Software/pkgconfig
-
-  * glib 2.4 - Available at: http://www.gtk.org/
-
-  * libzlib - This library and the development headers are required for compression
-file support in the 2.0 profile.
-
- 4. Mono is required to build Mono. Use a system package or monolite (explained further below)
- 
- 5. If you have a system Mono (not monolite), you will need to read this: http://mono-project.com/Parallel_Mono_Environments#Setting_up_a_Build_Environment
-
-b. Building the Software
-------------------------
-
-If you obtained this package as an officially released tarball,
-this is very simple, use configure and make:
-
-`./configure --prefix=/usr/local ; make ; make install`
-
-Mono supports a JIT engine on x86, SPARC, SPARCv9, S/390,
-S/390x, AMD64, ARM and PowerPC systems.   
-
-If you obtained this as a snapshot, you will need an existing
-Mono installation.  To upgrade your installation, unpack both
-mono and mcs:
-
-	tar xzf mcs-XXXX.tar.gz
-	tar xzf mono-XXXX.tar.gz
-	mv mono-XXX mono
-	mv mcs-XXX mcs
-	cd mono
-	./autogen.sh --prefix=/usr/local
-	make
-
-The Mono build system is silent for most compilation commands.
-To enable a more verbose compile (for example, to pinpoint
-problems in your makefiles or your system) pass the V=1 flag to make, like this:
-
-` make V=1`
-
-
-c. Building the software from GIT
----------------------------------
-
-If you are building the software from GIT, make sure that you
-have up-to-date mcs and mono sources:
-
- * If you are an anonymous user: `git clone git://github.com/mono/mono.git`
-
- * If you are a Mono contributor with read/write privileges: `git clone git@github.com:mono/mono.git`
-
-Then, go into the mono directory, and configure:
-
-	cd mono
-	./autogen.sh --prefix=/usr/local
-	make
-
-For people with non-standard installations of the auto* utils and of
-pkg-config (common on misconfigured OSX and windows boxes), you could get
-an error like this:
-
-	./configure: line 19176: syntax error near unexpected token 'PKG_CHECK_MODULES(BASE_DEPENDENCIES,' ...
-
-This means that you need to set the ACLOCAL_FLAGS environment variable
-when invoking autogen.sh, like this: 
-
-        ACLOCAL_FLAGS="-I $acprefix/share/aclocal" ./autogen.sh --prefix=/usr/local
-
-where $acprefix is the prefix where aclocal has been installed.
-This will automatically go into the mcs/ tree and build the
-binaries there.
-
-This assumes that you have a working mono installation, and that
-there's a C# compiler named 'mcs', and a corresponding IL
-runtime called 'mono'.  You can use two make variables
-EXTERNAL_MCS and EXTERNAL_RUNTIME to override these.  e.g., you
-can say:
-
-	make EXTERNAL_MCS=/foo/bar/mcs EXTERNAL_RUNTIME=/somewhere/else/mono
+Note that building from Git assumes that you already have Mono installed,
+so please download and [install the latest Mono release](http://www.mono-project.com/download/)
+before trying to build from Git. This is required because the Mono build
+relies on a working Mono C# compiler to compile itself
+(also known as [bootstrapping](http://en.wikipedia.org/wiki/Bootstrapping_(compilers))).
 
 If you don't have a working Mono installation
 ---------------------------------------------
 
-If you don't have a working Mono installation, an obvious choice
-is to install the latest released packages of 'mono' for your
-distribution and running `autogen.sh; make; make install` in the
-mono module directory.
+If you don't have a working Mono installation, you can try a slightly
+more risky approach: getting the latest version of the 'monolite' distribution,
+which contains just enough to run the 'mcs' compiler. You do this with:
 
-You can also try a slightly more risky approach: this may not work,
-so start from the released tarball as detailed above.
+    # Run the following line after ./autogen.sh
+    make get-monolite-latest
 
-This works by first getting the latest version of the 'monolite'
-distribution, which contains just enough to run the 'mcs'
-compiler. You do this with:
+This will download and place the files appropriately so that you can then
+just run:
 
-	# Run the following line after ./autogen.sh
-	make get-monolite-latest
+    make EXTERNAL_MCS=${PWD}/mcs/class/lib/monolite/basic.exe
 
-This will download and automatically gunzip and untar the
-tarball, and place the files appropriately so that you can then
-just run: `make EXTERNAL_MCS=${PWD}/mcs/class/lib/monolite/gmcs.exe`
-
-That will use the files downloaded by 'make get-monolite-latest.
+The build will then use the files downloaded by `make get-monolite-latest`.
 
 Testing and Installation
 ------------------------
 
-You can run *(part of)* the mono and mcs test suites with the command: `make check`.
-All tests should pass.  
-
-If you want more *extensive* tests, including those that test the
-class libraries, you need to re-run 'configure' with the
-'--enable-nunit-tests' flag, and try: `make -k check`
+You can run the mono and mcs test suites with the command: `make check`.
 
 Expect to find a few test suite failures. As a sanity check, you
-can compare the failures you got with
-
-    https://wrench.mono-project.com/Wrench/
+can compare the failures you got with [https://wrench.mono-project.com/Wrench/](https://wrench.mono-project.com/Wrench/)
+and [http://jenkins.mono-project.com/](http://jenkins.mono-project.com/).
 
 You can now install mono with: `make install`
 
@@ -154,8 +63,86 @@ You can verify your installation by using the mono-test-install
 script, it can diagnose some common problems with Mono's install.
 Failure to follow these steps may result in a broken installation. 
 
-d. Configuration Options
-------------------------
+Using Mono
+==========
+
+Once you have installed the software, you can run a few programs:
+
+* `mono program.exe` runtime engine
+
+* `mcs program.cs` C# compiler 
+
+* `monodis program.exe` CIL Disassembler
+
+See the man pages for mono(1), mcs(1) and monodis(1) for further details.
+
+Directory Roadmap
+=================
+
+* `data/` - Configuration files installed as part of the Mono runtime.
+
+* `docs/` - Technical documents about the Mono runtime.
+
+* `external/` - Git submodules for external libraries (Newtonsoft.Json, ikvm, etc).
+
+* `man/` - Manual pages for the various Mono commands and programs.
+
+* `mcs/` - The class libraries, compiler and tools
+
+  * `class/` - The class libraries (like System.*, Microsoft.Build, etc.)
+
+  * `mcs/` - The Mono C# compiler written in C#
+
+  * `tools/` - Tools like gacutil, ikdasm, mdoc, etc.
+
+* `mono/` - The core of the Mono Runtime.
+
+  * `arch/` - Architecture specific portions.
+
+  * `cil/` - Common Intermediate Representation, XML
+definition of the CIL bytecodes.
+
+  * `dis/` - CIL executable Disassembler
+
+  * `io-layer/` - The I/O layer and system abstraction for 
+emulating the .NET IO model.
+
+  * `metadata/` - The object system and metadata reader.
+
+  * `mini/` - The Just in Time Compiler.
+
+* `runtime/` - A directory that contains the Makefiles that link the
+mono/ and mcs/ build systems.
+
+* `samples/` -Some simple sample programs on uses of the Mono
+runtime as an embedded library.   
+
+* `scripts/` - Scripts used to invoke Mono and the corresponding program.
+
+* `../olive/` - Incubation code from [Olive](https://github.com/mono/olive).
+
+  * If the directory ../olive is present (as an
+independent checkout) from the Mono module, that
+directory is automatically configured to share the
+same prefix than this module gets.
+
+Contributing to Mono
+====================
+
+Before submitting changes to Mono, please review the [contribution guidelines](http://www.mono-project.com/community/contributing/).
+Please pay particular attention to the [Important Rules](http://www.mono-project.com/community/contributing/#important-rules) section.
+
+Reporting bugs
+==============
+
+To submit bug reports, please use [Xamarin's Bugzilla](https://bugzilla.xamarin.com/)
+
+Please use the search facility to ensure the same bug hasn't already
+been submitted and follow our [guidelines](http://www.mono-project.com/community/bugs/make-a-good-bug-report/)
+on how to make a good bug report.
+
+Configuration Options
+=====================
 
 The following are the configuration options that someone
 building Mono might want to use:
@@ -164,17 +151,16 @@ building Mono might want to use:
 compilation of a Mono runtime with the SGen garbage collector.
 
   * On platforms that support it, after building Mono, you will have
-both a mono binary and a mono-sgen binary.  Mono uses Boehm, while
-mono-sgen uses the Simple Generational GC.
+both a `mono` binary and a `mono-sgen` binary. `mono` uses Boehm, while
+`mono-sgen` uses the Simple Generational GC.
 
-* `--with-gc=[boehm, included, sgen, none]` - Selects the default Boehm garbage
+* `--with-gc=[included, boehm,  none]` - Selects the default Boehm garbage
 collector engine to use.
 
   * *included*: (*slighty modified Boehm GC*)
-This is the default value, and its
-the most feature complete, it will allow Mono
-to use typed allocations and support the
-debugger.
+This is the default value for the Boehm GC, and it's 
+the most feature complete, it will allow Mono 
+to use typed allocations and support the debugger. 
 
   * *boehm*:
 This is used to use a system-install Boehm GC,
@@ -267,30 +253,6 @@ and runtime.
 
   * This defaults to `yes`.
 
-* `--with-moonlight=yes,no`
-
-  * Whether you want to generate the Silverlight/Moonlight
-libraries and toolchain in addition to the default
-(1.1 and 2.0 APIs).
-
-  * This will produce the `smcs` compiler which will reference
-the Silverlight modified assemblies (mscorlib.dll,
-System.dll, System.Code.dll and System.Xml.Core.dll) and turn
-on the LINQ extensions for the compiler.
-
-* `--with-moon-gc=boehm,sgen` - Select the GC to use for Moonlight.
-
-  * *boehm*:
-Selects the Boehm Garbage Collector, with the same flags
-as the regular Mono build. This is the default.
-
-  * *sgen*:
-Selects the new SGen Garbage Collector, which provides
-Generational GC support, using the same flags as the
-mono-sgen build.
-
-  * This defaults to `boehm`.
-
 * `--with-libgdiplus=installed,sibling,<path>` - Configure where Mono
 searches for libgdiplus when running System.Drawing tests.
 
@@ -298,7 +260,7 @@ searches for libgdiplus when running System.Drawing tests.
 library is available to Mono through the regular
 system setup.
 
-  * `sibling' can be used to specify that a libgdiplus
+  * `sibling` can be used to specify that a libgdiplus
 that resides as a sibling of this directory (mono)
 should be used.
 
@@ -405,13 +367,13 @@ for Mono.  The LLVM code generator and optimizer will be
 used instead of Mono's built-in code generator for both
 Just in Time and Ahead of Time compilations.
 
-  * See the http://www.mono-project.com/Mono_LLVM for the 
+  * See http://www.mono-project.com/docs/advanced/mono-llvm/ for the 
 full details and up-to-date information on this feature.
 
   * You will need to have an LLVM built that Mono can link
 against.
 
-  * The --enable-loadedllvm variant will make the LLVM backend
+  * The `--enable-loadedllvm` variant will make the LLVM backend
 into a runtime-loadable module instead of linking it directly
 into the main mono binary.
 
@@ -445,7 +407,6 @@ not done much testing with Mono.
 runtime that contains DTrace probes and can
 participate in the system profiling using DTrace.
 
-
 * `--disable-dev-random`
 
   * Mono uses /dev/random to obtain good random data for
@@ -464,89 +425,3 @@ http://code.google.com/p/nativeclient/
 
   * Currently this is used with Mono's AOT engine as
 Native Client does not support JIT engines yet.
-
-Using Mono
-==========
-
-Once you have installed the software, you can run a few programs:
-
-* `mono program.exe` runtime engine
-
-* `mcs program.cs` C# compiler 
-
-* `monodis program.exe` CIL Disassembler
-
-See the man pages for mono(1), mint(1), monodis(1) and mcs(2)
-for further details.
-
-Directory Roadmap
-=================
-
-* `docs/` - Technical documents about the Mono runtime.
-
-* `data/` - Configuration files installed as part of the Mono runtime.
-
-* `mono/` - The core of the Mono Runtime.
-
-  * `metadata/` - The object system and metadata reader.
-
-  * `mini/` - The Just in Time Compiler.
-
-  * `dis/` - CIL executable Disassembler
-
-  * `cli/` - Common code for the JIT and the interpreter.
-
-  * `io-layer/` - The I/O layer and system abstraction for 
-emulating the .NET IO model.
-
-  * `cil/` - Common Intermediate Representation, XML
-definition of the CIL bytecodes.
-
- * `interp/` - Interpreter for CLI executables (obsolete).
-
- * `arch/` - Architecture specific portions.
-
-* `man/` - Manual pages for the various Mono commands and programs.
-
-* `samples/` -Some simple sample programs on uses of the Mono
-runtime as an embedded library.   
-
-* `scripts/` - Scripts used to invoke Mono and the corresponding program.
-
-* `runtime/` - A directory that contains the Makefiles that link the
-mono/ and mcs/ build systems.
-
-* `../olive/`
-
-  * If the directory ../olive is present (as an
-independent checkout) from the Mono module, that
-directory is automatically configured to share the
-same prefix than this module gets.
-
-Contributing to Mono
-====================
-Before submitting changes to Mono, please review the contribution guidelines at http://mono-project.com/Contributing. Please pay particular attention to the [Important Rules](http://mono-project.com/Contributing#Important_Rules) section.
-
-
-Git submodules maintenance
-==========================
-
-Read documentation at http://mono-project.com/Git_Submodule_Maintenance
-
-Maintainer
-==========
-
-Mono is maintained by miguel@xamarin.com
-
-Reporting bugs
-==============
-
-To submit bug reports, please use Xamarin's Bugzilla:
-
-https://bugzilla.xamarin.com/
-
-Please use the search facility to ensure the same bug hasn't already
-been submitted and follow our guidelines on how to make a good bug
-report:
-
-http://mono-project.com/Bugs#How_to_make_a_good_bug_report

@@ -1,12 +1,14 @@
 //
 // ToolTask.cs: Base class for command line tool tasks. 
 //
-// Author:
+// Authors:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
 //   Ankit Jain (jankit@novell.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2005 Marek Sieradzki
 // Copyright 2009 Novell, Inc (http://www.novell.com)
+// Copyright 2014 Xamarin Inc
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -90,12 +92,45 @@ namespace Microsoft.Build.Utilities
 			return true;
 		}
 
+		string CreateToolPath ()
+		{
+			string tp;
+			if (string.IsNullOrEmpty (ToolPath)) {
+				tp = GenerateFullPathToTool ();
+				if (string.IsNullOrEmpty (tp))
+					return null;
+
+				//
+				// GenerateFullPathToTool can return path including tool name
+				//
+				if (string.IsNullOrEmpty (ToolExe))
+					return tp;
+
+				tp = Path.GetDirectoryName (tp);
+			} else {
+				tp = ToolPath;
+			}
+
+			var	path = Path.Combine (tp, ToolExe);
+			if (!File.Exists (path)) {
+				if (Log != null)
+					Log.LogError ("Tool executable '{0}' could not be found", path);
+				return null;
+			}
+
+			return path;
+		}
+
 		public override bool Execute ()
 		{
 			if (SkipTaskExecution ())
 				return true;
 
-			exitCode = ExecuteTool (GenerateFullPathToTool (), GenerateResponseFileCommands (),
+			var tool_path = CreateToolPath ();
+			if (tool_path == null)
+				return false;
+
+			exitCode = ExecuteTool (tool_path, GenerateResponseFileCommands (),
 				GenerateCommandLineCommands ());
 
 			// HandleTaskExecutionErrors is called only if exitCode != 0
@@ -233,10 +268,10 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
+		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance messageImportance)
 		{
 			if (singleLine.Length == 0) {
-				Log.LogMessage (singleLine, importance);
+				Log.LogMessage (singleLine, messageImportance);
 				return;
 			}
 
@@ -254,7 +289,7 @@ namespace Microsoft.Build.Utilities
 
 			var result = MSBuildErrorParser.TryParseLine (singleLine);
 			if (result == null) {
-				Log.LogMessage (importance, singleLine);
+				Log.LogMessage (messageImportance, singleLine);
 				return;
 			}
 
@@ -289,14 +324,14 @@ namespace Microsoft.Build.Utilities
 
 		protected virtual string GenerateCommandLineCommands ()
 		{
-			return null;
+			return "";
 		}
 
 		protected abstract string GenerateFullPathToTool ();
 
 		protected virtual string GenerateResponseFileCommands ()
 		{
-			return null;
+			return "";
 		}
 
 		protected virtual string GetResponseFileSwitch (string responseFilePath)
@@ -304,7 +339,7 @@ namespace Microsoft.Build.Utilities
 			return String.Format ("@{0}", responseFilePath);
 		}
 
-		protected virtual ProcessStartInfo GetProcessStartInfo (string pathToTool, string commandLineCommands, string responseFileSwitch)
+		protected ProcessStartInfo GetProcessStartInfo (string pathToTool, string commandLineCommands, string responseFileSwitch)
 		{
 			var pinfo = new ProcessStartInfo (pathToTool, String.Format ("{0} {1}", commandLineCommands, responseFileSwitch));
 

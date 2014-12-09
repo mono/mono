@@ -1031,6 +1031,7 @@ namespace System.Windows.Forms
 
 				virtual_list_size = value;
 				if (virtual_mode) {
+					focused_item_index = -1;
 					selected_indices.Reset ();
 					Redraw (true);
 				}
@@ -2668,6 +2669,11 @@ namespace System.Windows.Forms
 							owner.UpdateMultiSelection (clicked_item.DisplayIndex, reselect);
 					} else {
 						clicked_item.Selected = true;
+						// Side-effects to setting Selected can possibly result in ItemsMouseUp() being called
+						// and clicked_item being set to null.  (See Xamarin bug 23591.)  In such a case, assume
+						// that there's nothing more we can do here.
+						if (clicked_item == null)
+							return;
 					}
 
 					if (owner.VirtualMode && changed) {
@@ -3663,7 +3669,8 @@ namespace System.Windows.Forms
 			if (View != View.Details) {
 				if (bounds.Left < 0)
 					h_scroll.Value += bounds.Left;
-				else if (bounds.Right > view_rect.Right)
+				// Don't shift right unless right-to-left layout is active. (Xamarin bug 22483)
+				else if (this.RightToLeftLayout && bounds.Right > view_rect.Right)
 					h_scroll.Value += (bounds.Right - view_rect.Right);
 			}
 

@@ -383,7 +383,11 @@ namespace System.IO {
 						canonicalize = start > 0;
 					}
 
-					path = Directory.InsecureGetCurrentDirectory() + DirectorySeparatorStr + path;
+					var cwd = Directory.InsecureGetCurrentDirectory();
+					if (cwd [cwd.Length - 1] == DirectorySeparatorChar)
+						path = cwd + path;
+					else
+						path = cwd + DirectorySeparatorChar + path;					
 				} else if (DirectorySeparatorChar == '\\' &&
 					path.Length >= 2 &&
 					IsDsc (path [0]) &&

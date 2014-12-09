@@ -57,7 +57,18 @@ public class A
 	{
 		int f = 1;
 		int g;
-        return f > 1 && OutCall (out g) && g > 1;
+		return f > 1 && OutCall (out g) && g > 1;
+	}
+
+	static void Test8 ()
+	{
+		bool x = true;
+
+		int a;
+		if (x ? OutCall (out a) : OutCall (out a))
+			System.Console.WriteLine (a);
+		else
+			System.Console.WriteLine (a);
 	}
 
 	static bool OutCall (out int arg)

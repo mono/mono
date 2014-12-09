@@ -1,3 +1,4 @@
+// Compiler options: -langversion:experimental
 class Derived (int arg, ref byte b, out int o) : Base (out o)
 {
 	public long field = arg;

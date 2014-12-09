@@ -48,7 +48,9 @@ namespace System.Drawing.Design
 			editors [typeof (IList)] = "System.ComponentModel.Design.CollectionEditor, " + Consts.AssemblySystem_Design;
 			editors [typeof (ICollection)] = "System.ComponentModel.Design.CollectionEditor, " + Consts.AssemblySystem_Design;
 			editors [typeof (string[])] = "System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design;
+#if !MOBILE
 			TypeDescriptor.AddEditorTable (typeof (UITypeEditor), editors);
+#endif
 		}
 		
 		public UITypeEditor()
@@ -86,7 +88,6 @@ namespace System.Drawing.Design
 		{
 			return false;
 		}
-#if !TARGET_JVM
 		public void PaintValue (object value, Graphics canvas, Rectangle rectangle)
 		{
 			PaintValue (new PaintValueEventArgs (null, value, canvas, rectangle));
@@ -99,7 +100,6 @@ namespace System.Drawing.Design
 			// but on the other hand the class is not abstract. Could never observe it did paint anything
 			return;
 		}
-#endif
 #if NET_2_0
 		public virtual bool IsDropDownResizable {
 			get { return false; }

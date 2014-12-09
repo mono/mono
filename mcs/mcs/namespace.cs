@@ -70,6 +70,9 @@ namespace Mono.CSharp {
 			List<string> res = null;
 
 			foreach (var ns in all_namespaces) {
+				if (ns.Key.Length == 0)
+					continue;
+
 				var methods = ns.Value.LookupExtensionMethod (ctx, name, arity);
 				if (methods != null) {
 					if (res == null)
@@ -311,6 +314,12 @@ namespace Mono.CSharp {
 			if (arity == 0 && mode == LookupMode.Normal)
 				cached_types.Add (name, best);
 
+			if (best != null) {
+				var dep = best.GetMissingDependencies ();
+				if (dep != null)
+					ImportedTypeDefinition.Error_MissingDependency (ctx, dep, loc);
+			}
+
 			return best;
 		}
 
@@ -482,8 +491,22 @@ namespace Mono.CSharp {
 
 		public void RemoveContainer (TypeContainer tc)
 		{
-			types.Remove (tc.Basename);
-			cached_types.Remove (tc.Basename);
+			IList<TypeSpec> found;
+			if (types.TryGetValue (tc.MemberName.Name, out found)) {
+				for (int i = 0; i < found.Count; ++i) {
+					if (tc.MemberName.Arity != found [i].Arity)
+						continue;
+
+					if (found.Count == 1)
+						types.Remove (tc.MemberName.Name);
+					else
+						found.RemoveAt (i);
+
+					break;
+				}
+			}
+
+			cached_types.Remove (tc.MemberName.Basename);
 		}
 
 		public void SetBuiltinType (BuiltinTypeSpec pts)
@@ -784,9 +807,8 @@ namespace Mono.CSharp {
 
 		public override void AddTypeContainer (TypeContainer tc)
 		{
-			string name = tc.Basename;
-
 			var mn = tc.MemberName;
+			var name = mn.Basename;
 			while (mn.Left != null) {
 				mn = mn.Left;
 				name = mn.Name;
@@ -851,7 +873,7 @@ namespace Mono.CSharp {
 			base.EmitContainer ();
 		}
 
-		public ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity, int position)
+		public ExtensionMethodCandidates LookupExtensionMethod (IMemberContext invocationContext, string name, int arity, int position)
 		{
 			//
 			// Here we try to resume the search for extension method at the point
@@ -932,22 +954,18 @@ namespace Mono.CSharp {
 						candidates.AddRange (a);
 				}
 
-				if (candidates != null)
-					return new ExtensionMethodCandidates (invocationContext, candidates, this, position);
-			}
+				if (types_using_table != null) {
+					foreach (var t in types_using_table) {
 
-			// LAMESPEC: TODO no spec about priority over normal extension methods yet
-			if (types_using_table != null) {
-				foreach (var t in types_using_table) {
+						var res = t.MemberCache.FindExtensionMethods (invocationContext, name, arity);
+						if (res == null)
+							continue;
 
-					var res = t.MemberCache.FindExtensionMethods (invocationContext, name, arity);
-					if (res == null)
-						continue;
-
-					if (candidates == null)
-						candidates = res;
-					else
-						candidates.AddRange (res);
+						if (candidates == null)
+							candidates = res;
+						else
+							candidates.AddRange (res);
+					}
 				}
 
 				if (candidates != null)
@@ -1371,7 +1389,7 @@ namespace Mono.CSharp {
 
 		public virtual void Define (NamespaceContainer ctx)
 		{
-			resolved = expr.ResolveAsTypeOrNamespace (ctx);
+			resolved = expr.ResolveAsTypeOrNamespace (ctx, false);
 			var ns = resolved as NamespaceExpression;
 			if (ns != null)
 				return;
@@ -1484,7 +1502,7 @@ namespace Mono.CSharp {
 				throw new NotImplementedException ();
 			}
 
-			public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
+			public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity)
 			{
 				return null;
 			}
@@ -1549,7 +1567,7 @@ namespace Mono.CSharp {
 			// We achieve that by introducing alias-context which redirect any local
 			// namespace or type resolve calls to parent namespace
 			//
-			resolved = NamespaceExpression.ResolveAsTypeOrNamespace (new AliasContext (ctx));
+			resolved = NamespaceExpression.ResolveAsTypeOrNamespace (new AliasContext (ctx), false);
 		}
 	}
 }

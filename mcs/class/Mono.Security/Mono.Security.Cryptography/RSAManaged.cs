@@ -303,6 +303,10 @@ namespace Mono.Security.Cryptography {
 	
 			e = new BigInteger (parameters.Exponent);
 			n = new BigInteger (parameters.Modulus);
+			
+			//reset all private key values to null
+			d = dp = dq = qInv = p = q = null;
+			
 			// only if the private key is present
 			if (parameters.D != null)
 				d = new BigInteger (parameters.D);

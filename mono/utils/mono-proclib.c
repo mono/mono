@@ -105,6 +105,10 @@ mono_process_list (int *size)
 	if (size)
 		*size = res;
 	return buf;
+#elif defined(__HAIKU__)
+	/* FIXME: Add back the code from 9185fcc305e43428d0f40f3ee37c8a405d41c9ae */
+	g_assert_not_reached ();
+	return NULL;
 #else
 	const char *name;
 	void **buf = NULL;
@@ -408,11 +412,17 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	struct task_basic_info t_info;
 	mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
 
-	if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
-		RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	if (pid == getpid ()) {
+		/* task_for_pid () doesn't work on ios, even for the current process */
+		task = mach_task_self ();
+	} else {
+		if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+			RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	}
 	
 	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count) != KERN_SUCCESS) {
-		mach_port_deallocate (mach_task_self (), task);
+		if (pid != getpid ())
+			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 
@@ -425,7 +435,8 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	else
 		ret = 0;
 
-	mach_port_deallocate (mach_task_self (), task);
+	if (pid != getpid ())
+		mach_port_deallocate (mach_task_self (), task);
 	
 	return ret;
 #else
@@ -487,6 +498,8 @@ mono_process_get_data_with_error (gpointer pid, MonoProcessData data, MonoProces
 		return get_process_stat_item (rpid, 18, FALSE, error) / get_user_hz ();
 	case MONO_PROCESS_PPID:
 		return get_process_stat_time (rpid, 0, FALSE, error);
+	case MONO_PROCESS_PAGED_BYTES:
+		return get_pid_status_item (rpid, "VmSwap", error, 1024);
 
 		/* Nothing yet */
 	case MONO_PROCESS_END:
@@ -653,3 +666,13 @@ mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *error)
 	return value;
 }
 
+int
+mono_atexit (void (*func)(void))
+{
+#ifdef PLATFORM_ANDROID
+	/* Some versions of android libc doesn't define atexit () */
+	return 0;
+#else
+	return atexit (func);
+#endif
+}

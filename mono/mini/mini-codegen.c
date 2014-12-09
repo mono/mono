@@ -686,6 +686,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_GC_LIVENESS_USE:
 		printf (" R%d", (int)ins->inst_c1);
 		break;
+	case OP_IL_SEQ_POINT:
 	case OP_SEQ_POINT:
 		printf (" il: %x", (int)ins->inst_imm);
 		break;
@@ -1173,6 +1174,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	 * bblock.
 	 */
 	for (ins = bb->code; ins; ins = ins->next) {
+		gboolean modify = FALSE;
+
 		spec = ins_get_spec (ins->opcode);
 
 		if ((ins->dreg != -1) && (ins->dreg < max)) {
@@ -1198,12 +1201,14 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 #if SIZEOF_REGISTER == 4
 				if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1 + j])) {
 					sregs [j]++;
+					modify = TRUE;
 					memset (&reginfo [sregs [j] + 1], 0, sizeof (RegTrack));
 				}
 #endif
 			}
 		}
-		mono_inst_set_src_registers (ins, sregs);
+		if (modify)
+			mono_inst_set_src_registers (ins, sregs);
 	}
 
 	/*if (cfg->opt & MONO_OPT_COPYPROP)

@@ -33,7 +33,7 @@ void amd64_nacl_membase_handler (guint8** code, gint8 basereg, gint32 offset, gi
 #include <signal.h>
 #endif
 
-
+#if !defined(_MSC_VER)
 /* sigcontext surrogate */
 struct sigcontext {
 	guint64 eax;
@@ -46,6 +46,7 @@ struct sigcontext {
 	guint64 edi;
 	guint64 eip;
 };
+#endif
 
 typedef void (* MonoW32ExceptionHandler) (int _dummy, EXCEPTION_POINTERS *info, void *context);
 void win32_seh_init(void);
@@ -121,14 +122,23 @@ struct sigcontext {
 
 #define MONO_ARCH_FP_RETURN_REG AMD64_XMM0
 
-/* xmm15 is reserved for use by some opcodes */
+#ifdef TARGET_WIN32
+/* xmm5 is used as a scratch register */
+#define MONO_ARCH_CALLEE_FREGS 0x1f
+/* xmm6:xmm15 */
+#define MONO_ARCH_CALLEE_SAVED_FREGS (0xffff - 0x3f)
+#define MONO_ARCH_FP_SCRATCH_REG AMD64_XMM5
+#else
+/* xmm15 is used as a scratch register */
 #define MONO_ARCH_CALLEE_FREGS 0x7fff
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0
+#define MONO_ARCH_FP_SCRATCH_REG AMD64_XMM15
+#endif
 
 #define MONO_MAX_XREGS MONO_MAX_FREGS
 
-#define MONO_ARCH_CALLEE_XREGS 0x7fff
-#define MONO_ARCH_CALLEE_SAVED_XREGS 0
+#define MONO_ARCH_CALLEE_XREGS MONO_ARCH_CALLEE_FREGS
+#define MONO_ARCH_CALLEE_SAVED_XREGS MONO_ARCH_CALLEE_SAVED_FREGS
 
 
 #define MONO_ARCH_CALLEE_REGS AMD64_CALLEE_REGS
@@ -150,9 +160,6 @@ struct sigcontext {
 /* fixme: align to 16byte instead of 32byte (we align to 32byte to get 
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
-
-#define MONO_ARCH_RETREG1 X86_EAX
-#define MONO_ARCH_RETREG2 X86_EDX
 
 /*This is the max size of the locals area of a given frame. I think 1MB is a safe default for now*/
 #define MONO_ARCH_MAX_FRAME_SIZE 0x100000
@@ -191,7 +198,7 @@ typedef struct MonoCompileArch {
 	gint32 stack_alloc_size;
 	gint32 sp_fp_offset;
 	guint32 saved_iregs;
-	gboolean omit_fp, omit_fp_computed, no_pushes;
+	gboolean omit_fp, omit_fp_computed;
 	gpointer cinfo;
 	gint32 async_point_count;
 	gpointer vret_addr_loc;
@@ -275,74 +282,18 @@ typedef struct {
 
 #endif /* !HOST_WIN32 && !__native_client__ */
 
-#if defined (__APPLE__)
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__NetBSD__)
-
-#define REG_RAX 14
-#define REG_RCX 3
-#define REG_RDX 2
-#define REG_RBX 13
-#define REG_RSP 24
-#define REG_RBP 12
-#define REG_RSI 1
-#define REG_RDI 0
-#define REG_R8 4
-#define REG_R9 5
-#define REG_R10 6
-#define REG_R11 7
-#define REG_R12 8
-#define REG_R13 9
-#define REG_R14 10
-#define REG_R15 11
-#define REG_RIP 21
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__OpenBSD__)
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__DragonFly__)
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__FreeBSD__)
-
-#define REG_RAX 7
-#define REG_RCX 4
-#define REG_RDX 3
-#define REG_RBX 8
-#define REG_RSP 23
-#define REG_RBP 9
-#define REG_RSI 2
-#define REG_RDI 1
-#define REG_R8  5
-#define REG_R9  6
-#define REG_R10 10
-#define REG_R11 11
-#define REG_R12 12
-#define REG_R13 13
-#define REG_R14 14
-#define REG_R15 15
-#define REG_RIP 20
-
-/* 
- * FreeBSD does not have MAP_32BIT, so code allocated by the code manager might not have a
- * 32 bit address.
- */
-#define MONO_ARCH_NOMAP32BIT
-
-#endif /* __FreeBSD__ */
+#if !defined(__linux__)
+#define MONO_ARCH_NOMAP32BIT 1
+#endif
 
 #ifdef HOST_WIN32
 #define MONO_AMD64_ARG_REG1 AMD64_RCX
 #define MONO_AMD64_ARG_REG2 AMD64_RDX
+#define MONO_AMD64_ARG_REG3 AMD64_R8
 #else
 #define MONO_AMD64_ARG_REG1 AMD64_RDI
 #define MONO_AMD64_ARG_REG2 AMD64_RSI
+#define MONO_AMD64_ARG_REG3 AMD64_RDX
 #endif
 
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
@@ -352,7 +303,6 @@ typedef struct {
 #define MONO_ARCH_EMULATE_FREM 1
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
 
-#define MONO_ARCH_ENABLE_REGALLOC_IN_EH_BLOCKS 1
 #define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
@@ -373,27 +323,18 @@ typedef struct {
 #define MONO_ARCH_ENABLE_GLOBAL_RA 1
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
 #define MONO_ARCH_HAVE_LIVERANGE_OPS 1
-#define MONO_ARCH_HAVE_XP_UNWIND 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
-#if !defined(HOST_WIN32)
 #define MONO_ARCH_MONITOR_OBJECT_REG MONO_AMD64_ARG_REG1
-#endif
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
 
 #define MONO_ARCH_AOT_SUPPORTED 1
-#if !defined( HOST_WIN32 ) && !defined( __native_client__ )
+#if !defined( __native_client__ )
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #endif
 
-#if !defined(HOST_WIN32) || defined(__sun)
 #define MONO_ARCH_ENABLE_MONITOR_IL_FASTPATH 1
-#endif
 
 #define MONO_ARCH_SUPPORT_TASKLETS 1
-
-#ifndef HOST_WIN32
-#define MONO_AMD64_NO_PUSHES 1
-#endif
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
@@ -401,7 +342,6 @@ typedef struct {
 
 #define MONO_ARCH_HAVE_LLVM_IMT_TRAMPOLINE 1
 #define MONO_ARCH_LLVM_SUPPORTED 1
-#define MONO_ARCH_THIS_AS_FIRST_ARG 1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1

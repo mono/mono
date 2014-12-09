@@ -1165,10 +1165,7 @@ namespace System.Net
 #endif
 
 		internal bool ChangeToSSLSocket (ref Stream stream) {
-#if TARGET_JVM
-			stream.ChangeToSSLSocket ();
-			return true;
-#elif SECURITY_DEP
+#if   SECURITY_DEP
 			SslStream sslStream = new SslStream (stream, true, callback, null);
 			//sslStream.AuthenticateAsClient (Host, this.ClientCertificates, SslProtocols.Default, false);
 			//TODO: client certificates

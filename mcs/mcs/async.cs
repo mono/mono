@@ -145,7 +145,7 @@ namespace Mono.CSharp
 
 			public bool ProbingMode { get; set; }
 
-			protected override void Error_TypeDoesNotContainDefinition (ResolveContext rc, TypeSpec type, string name)
+			public override void Error_TypeDoesNotContainDefinition (ResolveContext rc, TypeSpec type, string name)
 			{
 				Error_OperatorCannotBeApplied (rc, type);
 			}
@@ -159,7 +159,7 @@ namespace Mono.CSharp
 				if (invocation != null && invocation.MethodGroup != null && (invocation.MethodGroup.BestCandidate.Modifiers & Modifiers.ASYNC) != 0) {
 					rc.Report.Error (4008, loc, "Cannot await void method `{0}'. Consider changing method return type to `Task'",
 						invocation.GetSignatureForError ());
-				} else {
+				} else if (type != InternalType.ErrorType) {
 					rc.Report.Error (4001, loc, "Cannot await `{0}' expression", type.GetSignatureForError ());
 				}
 			}
@@ -819,7 +819,7 @@ namespace Mono.CSharp
 			args.Add (new Argument (awaiter, Argument.AType.Ref));
 			args.Add (new Argument (new CompilerGeneratedThis (CurrentType, Location), Argument.AType.Ref));
 			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
-				mg.EmitCall (ec, args);
+				mg.EmitCall (ec, args, true);
 			}
 		}
 
@@ -897,7 +897,7 @@ namespace Mono.CSharp
 			args.Add (new Argument (exceptionVariable));
 
 			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
-				mg.EmitCall (ec, args);
+				mg.EmitCall (ec, args, true);
 			}
 		}
 
@@ -921,7 +921,7 @@ namespace Mono.CSharp
 			}
 
 			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
-				mg.EmitCall (ec, args);
+				mg.EmitCall (ec, args, true);
 			}
 		}
 

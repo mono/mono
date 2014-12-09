@@ -529,7 +529,7 @@ namespace System.IO.Ports
 				// Probe for Linux-styled devices: /dev/ttyS* or /dev/ttyUSB*
 				// 
 				foreach (string dev in ttys) {
-					if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB")){
+					if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB") || dev.StartsWith("/dev/ttyACM")) {
 						linux_style = true;
 						break;
 					}
@@ -537,7 +537,7 @@ namespace System.IO.Ports
 
 				foreach (string dev in ttys) {
 					if (linux_style){
-						if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB"))
+						if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB") || dev.StartsWith("/dev/ttyACM"))
 							serial_ports.Add (dev);
 					} else {
 						if (dev != "/dev/tty" && dev.StartsWith ("/dev/tty") && !dev.StartsWith ("/dev/ttyC"))
@@ -572,12 +572,10 @@ namespace System.IO.Ports
 			if (is_open)
 				throw new InvalidOperationException ("Port is already open");
 			
-#if !TARGET_JVM
 			if (IsWindows) // Use windows kernel32 backend
 				stream = new WinSerialStream (port_name, baud_rate, data_bits, parity, stop_bits, dtr_enable,
 					rts_enable, handshake, read_timeout, write_timeout, readBufferSize, writeBufferSize);
 			else // Use standard unix backend
-#endif
 				stream = new SerialPortStream (port_name, baud_rate, data_bits, parity, stop_bits, dtr_enable,
 					rts_enable, handshake, read_timeout, write_timeout, readBufferSize, writeBufferSize);
 			

@@ -414,9 +414,11 @@ namespace System.Runtime.InteropServices
 #endif // !FULL_AOT_RUNTIME
 
 #if !FULL_AOT_RUNTIME
-		[MonoTODO ("SetErrorInfo")]
 		public static int GetHRForException (Exception e)
 		{
+			var errorInfo = new ManagedErrorInfo(e);
+			SetErrorInfo (0, errorInfo);
+
 			return e.hresult;
 		}
 
@@ -1314,25 +1316,312 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		public static Exception GetExceptionForHR (int errorCode) {
-			return GetExceptionForHR (errorCode, IntPtr.Zero);
-		}
-
-		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo) {
-
+		private static Exception ConvertHrToException (int errorCode)
+		{
+			const int MSEE_E_APPDOMAINUNLOADED = unchecked ((int)0x80131014L);
+			const int COR_E_APPLICATION = unchecked ((int)0x80131600L);
+			const int E_INVALIDARG = unchecked ((int)0x80070057);
+			const int COR_E_ARGUMENTOUTOFRANGE = unchecked ((int)0x80131502L);
+			const int COR_E_ARITHMETIC = unchecked ((int)0x80070216);
+			const int COR_E_ARRAYTYPEMISMATCH = unchecked ((int)0x80131503L);
+			const int COR_E_BADIMAGEFORMAT = unchecked ((int)0x8007000BL);
+			const int ERROR_BAD_FORMAT = unchecked ((int)0x0B);
+			//const int COR_E_COMEMULATE_ERROR = unchecked ((int)?);
+			const int COR_E_CONTEXTMARSHAL = unchecked ((int)0x80131504L);
+			//const int COR_E_CORE = unchecked ((int)?);
+			const int NTE_FAIL = unchecked ((int)0x80090020L);
+			const int COR_E_DIRECTORYNOTFOUND = unchecked ((int)0x80070003L);
+			const int ERROR_PATH_NOT_FOUND = unchecked ((int)0x03);
+			const int COR_E_DIVIDEBYZERO = unchecked ((int)0x80020012L);
+			const int COR_E_DUPLICATEWAITOBJECT = unchecked ((int)0x80131529L);
+			const int COR_E_ENDOFSTREAM = unchecked ((int)0x80070026L);
+			const int COR_E_TYPELOAD = unchecked ((int)0x80131522L);
+			const int COR_E_EXCEPTION = unchecked ((int)0x80131500L);
+			const int COR_E_EXECUTIONENGINE = unchecked ((int)0x80131506L);
+			const int COR_E_FIELDACCESS = unchecked ((int)0x80131507L);
+			const int COR_E_FILENOTFOUND = unchecked ((int)0x80070002L);
+			const int ERROR_FILE_NOT_FOUND = unchecked ((int)0x02);
+			const int COR_E_FORMAT = unchecked ((int)0x80131537L);
+			const int COR_E_INDEXOUTOFRANGE = unchecked ((int)0x80131508L);
+			const int COR_E_INVALIDCAST = unchecked ((int)0x80004002L);
+			const int COR_E_INVALIDCOMOBJECT = unchecked ((int)0x80131527L);
+			const int COR_E_INVALIDFILTERCRITERIA = unchecked ((int)0x80131601L);
+			const int COR_E_INVALIDOLEVARIANTTYPE = unchecked ((int)0x80131531L);
+			const int COR_E_INVALIDOPERATION = unchecked ((int)0x80131509L);
+			const int COR_E_IO = unchecked ((int)0x80131620L);
+			const int COR_E_MEMBERACCESS = unchecked ((int)0x8013151AL);
+			const int COR_E_METHODACCESS = unchecked ((int)0x80131510L);
+			const int COR_E_MISSINGFIELD = unchecked ((int)0x80131511L);
+			const int COR_E_MISSINGMANIFESTRESOURCE = unchecked ((int)0x80131532L);
+			const int COR_E_MISSINGMEMBER = unchecked ((int)0x80131512L);
+			const int COR_E_MISSINGMETHOD = unchecked ((int)0x80131513L);
+			const int COR_E_MULTICASTNOTSUPPORTED = unchecked ((int)0x80131514L);
+			const int COR_E_NOTFINITENUMBER = unchecked ((int)0x80131528L);
+			const int E_NOTIMPL = unchecked ((int)0x80004001L);
+			const int COR_E_NOTSUPPORTED = unchecked ((int)0x80131515L);
+			const int COR_E_NULLREFERENCE = unchecked ((int)0x80004003L);
 			const int E_OUTOFMEMORY = unchecked ((int)0x8007000EL);
-			const int E_INVALIDARG = unchecked ((int)0X80070057);
-			
-			switch (errorCode)
-			{
-			case E_OUTOFMEMORY:
-				return new OutOfMemoryException ();
-			case E_INVALIDARG:
-				return new ArgumentException ();
+			const int COR_E_OVERFLOW = unchecked ((int)0x80131516L);
+			const int COR_E_PATHTOOLONG = unchecked ((int)0x800700CEL);
+			const int ERROR_FILENAME_EXCED_RANGE = unchecked ((int)0xCE);
+			const int COR_E_RANK = unchecked ((int)0x80131517L);
+			const int COR_E_REFLECTIONTYPELOAD = unchecked ((int)0x80131602L);
+			const int COR_E_REMOTING = unchecked ((int)0x8013150BL);
+			const int COR_E_SAFEARRAYTYPEMISMATCH = unchecked ((int)0x80131533L);
+			const int COR_E_SECURITY = unchecked ((int)0x8013150AL);
+			const int COR_E_SERIALIZATION = unchecked ((int)0x8013150CL);
+			const int COR_E_STACKOVERFLOW = unchecked ((int)0x800703E9L);
+			const int ERROR_STACK_OVERFLOW = unchecked ((int)0x03E9);
+			const int COR_E_SYNCHRONIZATIONLOCK = unchecked ((int)0x80131518L);
+			const int COR_E_SYSTEM = unchecked ((int)0x80131501L);
+			const int COR_E_TARGET = unchecked ((int)0x80131603L);
+			const int COR_E_TARGETINVOCATION = unchecked ((int)0x80131604L);
+			const int COR_E_TARGETPARAMCOUNT = unchecked ((int)0x8002000EL);
+			const int COR_E_THREADABORTED = unchecked ((int)0x80131530L);
+			const int COR_E_THREADINTERRUPTED = unchecked ((int)0x80131519L);
+			const int COR_E_THREADSTATE = unchecked ((int)0x80131520L);
+			const int COR_E_THREADSTOP = unchecked ((int)0x80131521L);
+			const int COR_E_TYPEINITIALIZATION = unchecked ((int)0x80131534L);
+			const int COR_E_VERIFICATION = unchecked ((int)0x8013150DL);
+			//const int COR_E_WEAKREFERENCE = unchecked ((int)?);
+			//const int COR_E_VTABLECALLSNOTSUPPORTED = unchecked ((int));
+
+			switch (errorCode) {
+				case MSEE_E_APPDOMAINUNLOADED:
+					return new AppDomainUnloadedException ();
+				case COR_E_APPLICATION:
+					return new ApplicationException ();
+				case E_INVALIDARG:
+					return new ArgumentException ();
+				case COR_E_ARGUMENTOUTOFRANGE:
+					return new ArgumentOutOfRangeException ();
+				case COR_E_ARITHMETIC:
+					return new ArithmeticException ();
+				case COR_E_ARRAYTYPEMISMATCH:
+					return new ArrayTypeMismatchException ();
+				case COR_E_BADIMAGEFORMAT:
+				case ERROR_BAD_FORMAT:
+					return new BadImageFormatException ();
+//				case COR_E_COMEMULATE_ERROR:
+//					return new COMEmulateException ();
+				case COR_E_CONTEXTMARSHAL:
+					return new ContextMarshalException ();
+//				case COR_E_CORE:
+//					return new CoreException ();
+				case NTE_FAIL:
+					return new System.Security.Cryptography.CryptographicException ();
+				case COR_E_DIRECTORYNOTFOUND:
+				case ERROR_PATH_NOT_FOUND:
+					return new System.IO.DirectoryNotFoundException ();
+				case COR_E_DIVIDEBYZERO:
+					return new DivideByZeroException ();
+				case COR_E_DUPLICATEWAITOBJECT:
+					return new DuplicateWaitObjectException ();
+				case COR_E_ENDOFSTREAM:
+					return new System.IO.EndOfStreamException ();
+				case COR_E_EXCEPTION:
+					return new Exception ();
+				case COR_E_EXECUTIONENGINE:
+					return new ExecutionEngineException ();
+				case COR_E_FIELDACCESS:
+					return new FieldAccessException ();
+				case COR_E_FILENOTFOUND:
+				case ERROR_FILE_NOT_FOUND:
+					return new System.IO.FileNotFoundException ();
+				case COR_E_FORMAT:
+					return new FormatException ();
+				case COR_E_INDEXOUTOFRANGE:
+					return new IndexOutOfRangeException ();
+				case COR_E_INVALIDCAST:
+				// E_NOINTERFACE has same value as COR_E_INVALIDCAST
+					return new InvalidCastException ();
+				case COR_E_INVALIDCOMOBJECT:
+					return new InvalidComObjectException ();
+				case COR_E_INVALIDFILTERCRITERIA:
+					return new InvalidFilterCriteriaException ();
+				case COR_E_INVALIDOLEVARIANTTYPE:
+					return new InvalidOleVariantTypeException ();
+				case COR_E_INVALIDOPERATION:
+					return new InvalidOperationException ();
+				case COR_E_IO:
+					return new System.IO.IOException ();
+				case COR_E_MEMBERACCESS:
+					return new MemberAccessException ();
+				case COR_E_METHODACCESS:
+					return new MethodAccessException ();
+				case COR_E_MISSINGFIELD:
+					return new MissingFieldException ();
+				case COR_E_MISSINGMANIFESTRESOURCE:
+					return new System.Resources.MissingManifestResourceException ();
+				case COR_E_MISSINGMEMBER:
+					return new MissingMemberException ();
+				case COR_E_MISSINGMETHOD:
+					return new MissingMethodException ();
+				case COR_E_MULTICASTNOTSUPPORTED:
+					return new MulticastNotSupportedException ();
+				case COR_E_NOTFINITENUMBER:
+					return new NotFiniteNumberException ();
+				case E_NOTIMPL:
+					return new NotImplementedException ();
+				case COR_E_NOTSUPPORTED:
+					return new NotSupportedException ();
+				case COR_E_NULLREFERENCE:
+				// E_POINTER has the same value as COR_E_NULLREFERENCE
+					return new NullReferenceException ();
+				case E_OUTOFMEMORY:
+				// COR_E_OUTOFMEMORY has the same value as E_OUTOFMEMORY
+					return new OutOfMemoryException ();
+				case COR_E_OVERFLOW:
+					return new OverflowException ();
+				case COR_E_PATHTOOLONG:
+				case ERROR_FILENAME_EXCED_RANGE:
+					return new System.IO.PathTooLongException ();
+				case COR_E_RANK:
+					return new RankException ();
+				case COR_E_REFLECTIONTYPELOAD:
+					return new System.Reflection.ReflectionTypeLoadException (new Type[] { }, new Exception[] { });
+				case COR_E_REMOTING:
+					return new System.Runtime.Remoting.RemotingException ();
+				case COR_E_SAFEARRAYTYPEMISMATCH:
+					return new SafeArrayTypeMismatchException ();
+				case COR_E_SECURITY:
+					return new SecurityException ();
+				case COR_E_SERIALIZATION:
+					return new System.Runtime.Serialization.SerializationException ();
+				case COR_E_STACKOVERFLOW:
+				case ERROR_STACK_OVERFLOW:
+					return new StackOverflowException ();
+				case COR_E_SYNCHRONIZATIONLOCK:
+					return new SynchronizationLockException ();
+				case COR_E_SYSTEM:
+					return new SystemException ();
+				case COR_E_TARGET:
+					return new TargetException ();
+				case COR_E_TARGETINVOCATION:
+					return new System.Reflection.TargetInvocationException (null);
+				case COR_E_TARGETPARAMCOUNT:
+					return new TargetParameterCountException ();
+//				case COR_E_THREADABORTED:
+//					ThreadAbortException c'tor is inaccessible
+//					return new System.Threading.ThreadAbortException ();
+				case COR_E_THREADINTERRUPTED:
+					return new ThreadInterruptedException ();
+				case COR_E_THREADSTATE:
+					return new ThreadStateException ();
+//				case COR_E_THREADSTOP:
+//					ThreadStopException does not exist
+//					return new System.Threading.ThreadStopException ();
+				case COR_E_TYPELOAD:
+					return new TypeLoadException ();
+				// MSDN lists COR_E_TYPELOAD twice with different exceptions.
+				// return new EntryPointNotFoundException ();
+				case COR_E_TYPEINITIALIZATION:
+					return new TypeInitializationException("", null);
+				case COR_E_VERIFICATION:
+					return new VerificationException ();
+//				case COR_E_WEAKREFERENCE:
+//					return new WeakReferenceException ();
+//				case COR_E_VTABLECALLSNOTSUPPORTED:
+//					return new VTableCallsNotSupportedException ();
 			}
 			if (errorCode < 0)
 				return new COMException ("", errorCode);
 			return null;
+		}
+
+		[DllImport ("oleaut32.dll", CharSet=CharSet.Unicode, EntryPoint = "SetErrorInfo")]
+		static extern int _SetErrorInfo (int dwReserved,
+			[MarshalAs(UnmanagedType.Interface)] IErrorInfo pIErrorInfo);
+
+		[DllImport ("oleaut32.dll", CharSet=CharSet.Unicode, EntryPoint = "GetErrorInfo")]
+		static extern int _GetErrorInfo (int dwReserved,
+			[MarshalAs(UnmanagedType.Interface)] out IErrorInfo ppIErrorInfo);
+
+		static bool SetErrorInfoNotAvailable;
+		static bool GetErrorInfoNotAvailable;
+
+		internal static int SetErrorInfo (int dwReserved, IErrorInfo errorInfo)
+		{
+			int retVal = 0;
+			errorInfo = null;
+
+			if (SetErrorInfoNotAvailable)
+				return -1;
+
+			try {
+				retVal = _SetErrorInfo (dwReserved, errorInfo);
+			}
+			catch (Exception) {
+				// ignore any exception - probably there's no suitable SetErrorInfo
+				// method available.
+				SetErrorInfoNotAvailable = true;
+			}
+			return retVal;
+		}
+
+		internal static int GetErrorInfo (int dwReserved, out IErrorInfo errorInfo)
+		{
+			int retVal = 0;
+			errorInfo = null;
+
+			if (GetErrorInfoNotAvailable)
+				return -1;
+
+			try {
+				retVal = _GetErrorInfo (dwReserved, out errorInfo);
+			}
+			catch (Exception) {
+				// ignore any exception - probably there's no suitable GetErrorInfo
+				// method available.
+				GetErrorInfoNotAvailable = true;
+			}
+			return retVal;
+		}
+
+		public static Exception GetExceptionForHR (int errorCode)
+		{
+			return GetExceptionForHR (errorCode, IntPtr.Zero);
+		}
+
+		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo)
+		{
+#if !MOBILE
+			IErrorInfo info = null;
+			if (errorInfo != (IntPtr)(-1)) {
+				if (errorInfo == IntPtr.Zero) {
+					if (GetErrorInfo (0, out info) != 0) {
+						info  = null;
+					}
+				} else {
+					info  = Marshal.GetObjectForIUnknown (errorInfo) as IErrorInfo;
+				}
+			}
+
+			if (info is ManagedErrorInfo && ((ManagedErrorInfo) info).Exception.hresult == errorCode) {
+				return ((ManagedErrorInfo) info).Exception;
+			}
+
+			Exception e = ConvertHrToException (errorCode);
+			if (info != null && e != null) {
+				uint helpContext;
+				info.GetHelpContext (out helpContext);
+				string str;
+				info.GetSource (out str);
+				e.Source = str;
+				info.GetDescription (out str);
+				e.SetMessage (str);
+				info.GetHelpFile (out str);
+
+				if (helpContext == 0) {
+					e.HelpLink = str;
+				} else {
+					e.HelpLink = string.Format ("{0}#{1}", str, helpContext);
+				}
+			}
+			return e;
+#else
+			return ConvertHrToException (errorCode);
+#endif
 		}
 
 #if !FULL_AOT_RUNTIME

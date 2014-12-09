@@ -150,6 +150,21 @@ public class ConditionalParsing
 		}
 	}
 
+	void Test_18 (bool b, Action a)
+	{
+		var e = b ? () => { } : a;
+	}
+
+	void Test_19 (int[,] table)
+	{
+		var x = 1 > 0  ? table[5, 1] : 0;
+	}
+
+	void Test_20 ()
+	{
+		var t = (Object)string.Empty;
+	}
+
 	static void Helper<T> (T arg)
 	{
 	}

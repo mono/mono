@@ -51,7 +51,7 @@ namespace MonoTests.System.Reflection.Emit
 	[TestFixture]
 	public class TypeBuilderTest
 	{
-		private interface AnInterface
+		public interface AnInterface
 		{
 		}
 
@@ -92,8 +92,8 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		public class Tuple <A,B> {
-			A a;
-			B b;
+			public A a;
+			public B b;
 		}
 
 		private AssemblyBuilder assembly;
@@ -11121,6 +11121,18 @@ namespace MonoTests.System.Reflection.Emit
 			/* This will trigger the runtime to use the cached version, which is wrong as it's an open type. */
 			var ins4 = ins3.Bar ();
 			Assert.IsNotNull (ins4);
+		}
+
+		// #22059
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void PrivateIface ()
+		{
+			TypeBuilder tb = module.DefineType ("Sample", TypeAttributes.Public, typeof (object), new[] { typeof (IFoo) });
+            tb.CreateType();
+		}
+
+		interface IFoo {
 		}
 	}
 }

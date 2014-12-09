@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Xml;
 
 namespace System.Xml.Linq
@@ -54,7 +55,9 @@ namespace System.Xml.Linq
 
 		public override void WriteTo (XmlWriter writer)
 		{
-			writer.WriteComment (value);
+			var v = value.Replace ("--", "- -");
+			v = v.LastOrDefault () == '-' ? v.Substring (0, v.Length - 1) +"&#2D;" : v;
+			writer.WriteComment (v);
 		}
 	}
 }

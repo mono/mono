@@ -73,6 +73,11 @@ namespace Microsoft.Build.BuildEngine
 			foreach (XmlAttribute attrib in XmlElement.Attributes)
 				yield return attrib.Value;
 		}
+
+		public bool ResolveOutputItems ()
+		{
+			return true;
+		}
 	}
 }
 

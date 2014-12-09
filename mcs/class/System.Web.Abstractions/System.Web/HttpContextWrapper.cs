@@ -183,10 +183,9 @@ namespace System.Web
 			return w.GetSection (sectionName);
 		}
 
-		[MonoTODO]
 		public override object GetService (Type serviceType)
 		{
-			throw new NotImplementedException ();
+			return ((IServiceProvider)w).GetService (serviceType);
 		}
 #if NET_4_0
 		public override void RemapHandler (IHttpHandler handler)

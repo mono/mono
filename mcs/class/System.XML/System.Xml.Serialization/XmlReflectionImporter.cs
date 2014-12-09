@@ -326,21 +326,21 @@ namespace System.Xml.Serialization {
 			return map;
 		}
 
-		XmlTypeMapping ImportClassMapping (Type type, XmlRootAttribute root, string defaultNamespace)
+		XmlTypeMapping ImportClassMapping (Type type, XmlRootAttribute root, string defaultNamespace, bool isBaseType = false)
 		{
 			TypeData typeData = TypeTranslator.GetTypeData (type);
-			return ImportClassMapping (typeData, root, defaultNamespace);
+			return ImportClassMapping (typeData, root, defaultNamespace, isBaseType);
 		}
 
-		XmlTypeMapping ImportClassMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
+		XmlTypeMapping ImportClassMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace, bool isBaseType = false)
 		{
 			Type type = typeData.Type;
 
+			if (!allowPrivateTypes && !isBaseType)
+				ReflectionHelper.CheckSerializableType (type, false);
+
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
-
-			if (!allowPrivateTypes)
-				ReflectionHelper.CheckSerializableType (type, false);
 			
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
@@ -372,7 +372,7 @@ namespace System.Xml.Serialization {
 				string ns = map.XmlTypeNamespace;
 				if (rmember.XmlAttributes.XmlIgnore) continue;
 				if (rmember.DeclaringType != null && rmember.DeclaringType != type) {
-					XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace);
+					XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace, true);
 					if (bmap.HasXmlTypeNamespace)
 						ns = bmap.XmlTypeNamespace;
 				}
@@ -400,7 +400,7 @@ namespace System.Xml.Serialization {
 
 			if (type.BaseType != null)
 			{
-				XmlTypeMapping bmap = ImportClassMapping (type.BaseType, root, defaultNamespace);
+				XmlTypeMapping bmap = ImportClassMapping (type.BaseType, root, defaultNamespace, true);
 				ClassMap cbmap = bmap.ObjectMap as ClassMap;
 				
 				if (type.BaseType != typeof (object)) {
@@ -516,7 +516,7 @@ namespace System.Xml.Serialization {
 				elem.Form = att.Form;
 				if (att.Form == XmlSchemaForm.Unqualified)
 					elem.Namespace = string.Empty;
-				elem.IsNullable = att.IsNullable && CanBeNull (elem.TypeData);
+				elem.IsNullable = (!att.IsNullableSpecified || att.IsNullable) && CanBeNull (elem.TypeData);
 				elem.NestingLevel = att.NestingLevel;
 
 				if (isMultiArray) {
@@ -709,16 +709,6 @@ namespace System.Xml.Serialization {
 			// Read all Fields via reflection.
 			ArrayList fieldList = new ArrayList();
 			FieldInfo[] tfields = type.GetFields (BindingFlags.Instance | BindingFlags.Public);
-#if TARGET_JVM
-			// This statement ensures fields are ordered starting from the base type.
-			for (int ti=0; ti<typeList.Count; ti++) {
-				for (int i=0; i<tfields.Length; i++) {
-					FieldInfo field = tfields[i];
-					if (field.DeclaringType == typeList[ti])
-						fieldList.Add (field);
-				}
-			}
-#else
 			currentType = null;
 			int currentIndex = 0;
 			foreach (FieldInfo field in tfields)
@@ -731,22 +721,9 @@ namespace System.Xml.Serialization {
 				}
 				fieldList.Insert(currentIndex++, field);
 			}
-#endif
 			// Read all Properties via reflection.
 			ArrayList propList = new ArrayList();
 			PropertyInfo[] tprops = type.GetProperties (BindingFlags.Instance | BindingFlags.Public);
-#if TARGET_JVM
-			// This statement ensures properties are ordered starting from the base type.
-			for (int ti=0; ti<typeList.Count; ti++) {
-				for (int i=0; i<tprops.Length; i++) {
-					PropertyInfo prop = tprops[i];
-					if (!prop.CanRead) continue;
-					if (prop.GetIndexParameters().Length > 0) continue;
-					if (prop.DeclaringType == typeList[ti])
-						propList.Add (prop);
-				}
-			}
-#else
 			currentType = null;
 			currentIndex = 0;
 			foreach (PropertyInfo prop in tprops)
@@ -761,7 +738,6 @@ namespace System.Xml.Serialization {
 				if (prop.GetIndexParameters().Length > 0) continue;
 				propList.Insert(currentIndex++, prop);
 			}
-#endif
 			var members = new List<XmlReflectionMember>();
 			int fieldIndex=0;
 			int propIndex=0;
@@ -1041,6 +1017,9 @@ namespace System.Xml.Serialization {
 
 				if (choiceEnumMap != null) {
 					string cname = choiceEnumMap.GetEnumName (choiceEnumType.FullName, elem.ElementName);
+					if (cname == null && elem.Namespace != null)
+						cname = choiceEnumMap.GetEnumName (choiceEnumType.FullName,
+							elem.Namespace.ToString () + ":" + elem.ElementName);
 					if (cname == null)
 						throw new InvalidOperationException (string.Format (
 							CultureInfo.InvariantCulture, "Type {0} is missing"

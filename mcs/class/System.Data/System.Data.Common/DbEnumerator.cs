@@ -43,7 +43,6 @@ namespace System.Data.Common {
 		readonly IDataReader reader;
 		readonly bool closeReader;
 		readonly SchemaInfo [] schema;
-		readonly object [] values;
 	
 		#endregion // Fields
 
@@ -58,7 +57,6 @@ namespace System.Data.Common {
 		{
 			this.reader = reader;
 			this.closeReader = closeReader;
-			this.values = new object [reader.FieldCount];
 			this.schema = LoadSchema (reader);
 		}
 
@@ -67,8 +65,13 @@ namespace System.Data.Common {
 		#region Properties
 
 		public object Current {
-			get { 
+			get {
+				// DbDataRecordImpl does not do copy of the array
+				// and MoveNext would overwrite any previously filled data
+				var values = new object [reader.FieldCount];
 				reader.GetValues (values);
+
+				// TODO: Should not allocate on every property call
 				return new DbDataRecordImpl (schema, values); 
 			}
 		}

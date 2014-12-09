@@ -15,5 +15,6 @@ Mono.Documentation/normalize.cs
 Mono.Documentation/validate.cs
 Mono.Documentation/webdoc.cs
 Mono.Documentation/XhtmlWriter.cs
+Mono.Documentation/preserver.cs
 Mono.Rocks/ObjectRocks.cs
 Mono.Rocks/StreamRocks.cs

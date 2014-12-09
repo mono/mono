@@ -686,9 +686,10 @@ namespace Mono.CSharp {
 			throw new NotImplementedException (member.GetType ().ToString ());
 		}
 
-		public static List<FieldSpec> GetAllFieldsForDefiniteAssignment (TypeSpec container)
+		public static List<FieldSpec> GetAllFieldsForDefiniteAssignment (TypeSpec container, IMemberContext context)
 		{
 			List<FieldSpec> fields = null;
+			bool imported = container.MemberDefinition.IsImported;
 			foreach (var entry in container.MemberCache.member_hash) {
 				foreach (var name_entry in entry.Value) {
 					if (name_entry.Kind != MemberKind.Field)
@@ -698,27 +699,13 @@ namespace Mono.CSharp {
 						continue;
 
 					//
-					// Ignore user private fields for definite assignment. This is sort of unexpected but
-					// rationale is to have consistent results when using reference assemblies which don't
-					// include any private fields and full assemblies
-					//
-					if ((name_entry.Modifiers & (Modifiers.PRIVATE | Modifiers.BACKING_FIELD)) == Modifiers.PRIVATE)
-						continue;
-
-					//
 					// Fixed size buffers are not subject to definite assignment checking
 					//
 					if (name_entry is FixedFieldSpec || name_entry is ConstSpec)
 						continue;
 
 					var fs = (FieldSpec) name_entry;
-
-					//
-					// LAMESPEC: Very bizzare hack, definitive assignment is not done
-					// for imported non-public reference fields except array. No idea what the
-					// actual csc rule is
-					//
-					if (!fs.IsPublic && container.MemberDefinition.IsImported && (!fs.MemberType.IsArray && TypeSpec.IsReferenceType (fs.MemberType)))
+					if (imported && ShouldIgnoreFieldForDefiniteAssignment (fs, context))
 						continue;
 
 					//if ((fs.Modifiers & (Modifiers.BACKING_FIELD) != 0)
@@ -733,6 +720,29 @@ namespace Mono.CSharp {
 			}
 
 			return fields ?? new List<FieldSpec> (0);
+		}
+
+		static bool ShouldIgnoreFieldForDefiniteAssignment (FieldSpec fs, IMemberContext context)
+		{
+			//
+			// LAMESPEC: This mimics csc quirk where definitive assignment is not done
+			// for all kinds of imported non-public struct fields
+			//
+			var mod = fs.Modifiers;
+			if ((mod & Modifiers.PRIVATE) == 0 && ((mod & Modifiers.INTERNAL) != 0 && fs.DeclaringType.MemberDefinition.IsInternalAsPublic (context.Module.DeclaringAssembly)))
+				return false;
+
+			//
+			// Ignore reference type fields except when type is an array or type parameter
+			//
+			var type = fs.MemberType;
+			switch (type.Kind) {
+			case MemberKind.ArrayType:
+			case MemberKind.TypeParameter:
+				return false;
+			default:
+				return TypeSpec.IsReferenceType (type);
+			}
 		}
 
 		public static IList<MemberSpec> GetCompletitionMembers (IMemberContext ctx, TypeSpec container, string name)

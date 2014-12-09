@@ -208,16 +208,16 @@ namespace System.Xml.Linq
 		{
 			if (Changing != null)
 				Changing (sender, args);
-			if (Parent != null)
-				Parent.OnChanging (sender, args);
+			if (Owner != null)
+				Owner.OnChanging (sender, args);
 		}
 
 		void OnChanged (object sender, XObjectChangeEventArgs args)
 		{
 			if (Changed != null)
 				Changed (sender, args);
-			if (Parent != null)
-				Parent.OnChanged (sender, args);
+			if (Owner != null)
+				Owner.OnChanged (sender, args);
 		}
 	}
 }

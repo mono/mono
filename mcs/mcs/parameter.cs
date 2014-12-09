@@ -1418,7 +1418,7 @@ namespace Mono.CSharp {
 
 			expr = Child;
 
-			if (!(expr is Constant || expr is DefaultValueExpression || (expr is New && ((New) expr).IsDefaultStruct))) {
+			if (!(expr is Constant || expr is DefaultValueExpression || (expr is New && ((New) expr).IsGeneratedStructConstructor))) {
 				if (!(expr is ErrorExpression)) {
 					rc.Report.Error (1736, Location,
 						"The expression being assigned to optional parameter `{0}' must be a constant or default value",

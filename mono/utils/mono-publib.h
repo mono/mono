@@ -49,9 +49,9 @@ typedef unsigned __int64	uint64_t;
 
 #endif /* end of compiler-specific stuff */
 
-#if !defined(MONO_STATIC_BUILD) && defined(MONO_DLL_EXPORT)
+#if defined(MONO_DLL_EXPORT)
 	#define MONO_API MONO_API_EXPORT
-#elif !defined(MONO_STATIC_BUILD)
+#elif defined(MONO_DLL_IMPORT)
 	#define MONO_API MONO_API_IMPORT
 #else
 	#define MONO_API
@@ -60,6 +60,7 @@ typedef unsigned __int64	uint64_t;
 typedef int32_t		mono_bool;
 typedef uint8_t		mono_byte;
 typedef uint16_t	mono_unichar2;
+typedef uint32_t	mono_unichar4;
 
 typedef void	(*MonoFunc)	(void* data, void* user_data);
 typedef void	(*MonoHFunc)	(void* key, void* value, void* user_data);

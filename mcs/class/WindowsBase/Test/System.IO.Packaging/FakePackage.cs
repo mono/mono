@@ -25,9 +25,11 @@
 
 
 using System;
+using System.IO;
+using System.IO.Packaging;
 using System.Collections.Generic;
 
-namespace System.IO.Packaging.Tests {
+namespace MonoTests.System.IO.Packaging {
 	
     public class FakePackage : Package {
         Dictionary<Uri, PackagePart> Parts { get; set; }

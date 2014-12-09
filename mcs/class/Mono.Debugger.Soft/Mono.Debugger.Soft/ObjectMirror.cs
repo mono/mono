@@ -307,6 +307,8 @@ namespace Mono.Debugger.Soft
 				f |= InvokeFlags.OUT_THIS;
 			if ((options & InvokeOptions.ReturnOutArgs) != 0)
 				f |= InvokeFlags.OUT_ARGS;
+			if ((options & InvokeOptions.Virtual) != 0)
+				f |= InvokeFlags.VIRTUAL;
 
 			InvokeAsyncResult r = new InvokeAsyncResult { AsyncState = state, AsyncWaitHandle = new ManualResetEvent (false), VM = vm, Thread = thread, Callback = callback };
 			thread.InvalidateFrames ();

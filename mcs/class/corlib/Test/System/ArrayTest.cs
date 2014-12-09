@@ -543,11 +543,6 @@ public class ArrayTest
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-#if TARGET_JVM // This is really implementation dependent behaviour.
-			catch (RankException) {
-				errorThrown = true;
-			}
-#endif // TARGET_JVM
 			Assert.IsTrue (errorThrown, "#E62");
 		}
 		{
@@ -707,7 +702,6 @@ public class ArrayTest
 			}
 			Assert.IsTrue (errorThrown, "#F03b");
 		}
-#if !TARGET_JVM // Arrays lower bounds are not supported for TARGET_JVM
 		{
 			bool errorThrown = false;
 			try {
@@ -717,7 +711,6 @@ public class ArrayTest
 			}
 			Assert.IsTrue (errorThrown, "#F04");
 		}
-#endif // TARGET_JVM
 		{
 			bool errorThrown = false;
 			try {
@@ -728,7 +721,6 @@ public class ArrayTest
 			}
 			Assert.IsTrue (errorThrown, "#F05");
 		}
-#if !TARGET_JVM // CreateInstance with lower bounds not supported for TARGET_JVM
 		{
 			bool errorThrown = false;
 			try {
@@ -771,7 +763,6 @@ public class ArrayTest
 		Type szarrayType = new int [10].GetType ();
 		Assert.IsTrue (szarrayType == (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0})).GetType ());
 		Assert.IsTrue (szarrayType != (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {1})).GetType ());
-#endif // TARGET_JVM
 	}
 	
 	[Test]
@@ -842,7 +833,6 @@ public class ArrayTest
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestGetEnumeratorNonZeroLowerBounds() {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -871,7 +861,6 @@ public class ArrayTest
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_Add () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -892,7 +881,6 @@ public class ArrayTest
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_Insert () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -913,7 +901,6 @@ public class ArrayTest
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_Remove () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -934,7 +921,6 @@ public class ArrayTest
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_RemoveAt () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -955,7 +941,6 @@ public class ArrayTest
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_Contains () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -981,7 +966,6 @@ public class ArrayTest
 	}
 
 	[Test]
-	[Category ("TargetJvmNotSupported")] // Arrays lower bounds are not supported for TARGET_JVM
 	public void TestIList_IndexOf () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -3178,7 +3162,6 @@ public class ArrayTest
 		public int i, j;
 	}
 
-#if !TARGET_JVM // BugBUG: T[] is not yet ICollection<T> under TARGET_JVM
 	[Test]
 	// From bug #80563
 	public void ICollectionNull ()
@@ -3234,7 +3217,6 @@ public class ArrayTest
 		Assert.AreEqual (-1, test.IndexOf (null), "array with test");
 	}
 	
-#endif // TARGET_JVM
 
 	#region Bug 80299
 
@@ -3636,5 +3618,22 @@ public class ArrayTest
 
 #endif
 
+	[Test]
+	public void JaggedArrayCtor ()
+	{
+        var type = Type.GetType ("System.Object[][]");
+
+		ConstructorInfo ctor = null;
+        foreach (var c in type.GetConstructors ()) {
+			if (c.GetParameters ().Length == 2)
+				ctor = c;
+		}
+		Assert.IsNotNull (ctor);
+		var arr = (object[])ctor.Invoke (new object [] { 4, 10 });
+		for (int i = 0; i < 4; ++i) {
+			Assert.IsNotNull (arr [i]);
+			Assert.AreEqual (10, ((object[])arr [i]).Length);
+		}
+	}
 }
 }

@@ -56,7 +56,6 @@ using System.Security;
 #endif
 [assembly: AllowPartiallyTrustedCallers]
 
-#if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
 #if WINDOWS_STORE_APP
 	[assembly: AssemblyDelaySign (false)]
@@ -65,7 +64,6 @@ using System.Security;
 	[assembly: AssemblyDelaySign (true)]
 	[assembly: AssemblyKeyFile("../ecma.pub")]
 #endif // WINDOWS_STORE_APP
-#endif // !TARGET_JVM
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 #if !WINDOWS_STORE_APP

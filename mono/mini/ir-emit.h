@@ -302,8 +302,6 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 #define NEW_JIT_ICALL_ADDRCONST(cfg,dest,name) NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_JIT_ICALL_ADDR, (name))
 
-#define GET_VARINFO_INST(cfg,num) ((cfg)->varinfo [(num)]->inst)
-
 #define NEW_VARLOAD(cfg,dest,var,vartype) do { \
         MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
 		(dest)->opcode = mono_type_to_regmove ((cfg), (vartype));  \
@@ -407,7 +405,7 @@ handle_gsharedvt_ldaddr (MonoCompile *cfg)
 	} while (0)
 
 #define NEW_SEQ_POINT(cfg,dest,il_offset,intr_loc) do {	 \
-	MONO_INST_NEW ((cfg), (dest), OP_SEQ_POINT); \
+	MONO_INST_NEW ((cfg), (dest), cfg->gen_seq_points_debug_data ? OP_SEQ_POINT : OP_IL_SEQ_POINT); \
 	(dest)->inst_imm = (il_offset); \
 	(dest)->flags = intr_loc ? MONO_INST_SINGLE_STEP_LOC : 0; \
 	} while (0)

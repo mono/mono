@@ -98,12 +98,10 @@ namespace System.Net.Mail {
 			base.GetObjectData (serializationInfo, streamingContext);
 			serializationInfo.AddValue ("failedRecipient", failedRecipient);
 		}
-#if !TARGET_JVM //remove private implementation
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			GetObjectData (serializationInfo, streamingContext);
 		}
-#endif
 
 		#endregion // Methods
 	}

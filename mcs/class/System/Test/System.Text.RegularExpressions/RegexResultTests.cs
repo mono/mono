@@ -24,7 +24,7 @@ namespace MonoTests.System.Text.RegularExpressions
 					Match match = Regex.Match (original, pattern);
 					result = match.Result (replacement);
 				}
-				catch (Exception e) {
+				catch (Exception) {
 					result = "Error.";
 				}
 				Assert.AreEqual (expected, result, "rr#: {0} ~ s,{1},{2},",

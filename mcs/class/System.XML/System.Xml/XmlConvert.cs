@@ -839,7 +839,6 @@ namespace System.Xml {
 		}
 
 #if NET_2_0 // actually NET_3_5
-#if !TARGET_JVM
 
 		public static DateTimeOffset ToDateTimeOffset (string s)
 		{
@@ -868,7 +867,6 @@ namespace System.Xml {
 		{
 			return value.ToString (format, CultureInfo.InvariantCulture);
 		}
-#endif
 
 		// it is used only from 2.1 System.Xml.Serialization.dll from
 		// MS Silverlight SDK. We don't use it so far.

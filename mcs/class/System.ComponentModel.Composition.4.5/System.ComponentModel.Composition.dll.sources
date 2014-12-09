@@ -22,10 +22,8 @@ src/ComponentModel/Microsoft/Internal/GenerationServices.cs
 src/ComponentModel/Microsoft/Internal/Runtime/Serialization/SerializationServices.cs
 src/ComponentModel/Microsoft/Internal/Collections/CollectionServices.cs
 src/ComponentModel/Microsoft/Internal/Collections/WeakReferenceCollection.cs
-src/ComponentModel/Microsoft/Internal/Collections/ReadOnlyDictionaryDebuggerProxy.cs
 src/ComponentModel/Microsoft/Internal/Collections/CollectionServices.CollectionOfObject.cs
 src/ComponentModel/Microsoft/Internal/Collections/EnumerableCardinality.cs
-src/ComponentModel/Microsoft/Internal/Collections/ReadOnlyDictionary.cs
 src/ComponentModel/System/LazyOfTTMetadata.cs
 src/ComponentModel/System/ComponentModel/Composition/PartMetadataAttribute.cs
 src/ComponentModel/System/ComponentModel/Composition/ExceptionBuilder.cs

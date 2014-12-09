@@ -21,9 +21,10 @@
 
 #define collector_pin_object(obj, queue) sgen_pin_object (obj, queue);
 #define COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION alloc_for_promotion
-#define COLLECTOR_PARALLEL_ALLOC_FOR_PROMOTION par_alloc_for_promotion
 
-extern long long stat_nursery_copy_object_failed_to_space; /* from sgen-gc.c */
+extern guint64 stat_nursery_copy_object_failed_to_space; /* from sgen-gc.c */
+
+#include "mono/utils/mono-compiler.h"
 
 #include "sgen-copy-object.h"
 
@@ -47,14 +48,11 @@ extern long long stat_nursery_copy_object_failed_to_space; /* from sgen-gc.c */
  * copy_object could be made into a macro once debugged (use inline for now).
  */
 
-#ifdef _MSC_VER
-static __forceinline void
-#else
-static inline void __attribute__((always_inline))
-#endif
+static MONO_ALWAYS_INLINE void
 SERIAL_COPY_OBJECT (void **obj_slot, SgenGrayQueue *queue) 
 {
 	char *forwarded;
+	char *copy;
 	char *obj = *obj_slot;
 
 	SGEN_ASSERT (9, current_collection_generation == GENERATION_NURSERY, "calling minor-serial-copy from a %d generation collection", current_collection_generation);
@@ -78,7 +76,7 @@ SERIAL_COPY_OBJECT (void **obj_slot, SgenGrayQueue *queue)
 		SGEN_ASSERT (9, (*(MonoVTable**)SGEN_LOAD_VTABLE (obj))->gc_descr,  "forwarded object %p has no gc descriptor", forwarded);
 		SGEN_LOG (9, " (already forwarded to %p)", forwarded);
 		HEAVY_STAT (++stat_nursery_copy_object_failed_forwarded);
-		*obj_slot = forwarded;
+		SGEN_UPDATE_REFERENCE (obj_slot, forwarded);
 		return;
 	}
 	if (G_UNLIKELY (SGEN_OBJECT_IS_PINNED (obj))) {
@@ -99,7 +97,8 @@ SERIAL_COPY_OBJECT (void **obj_slot, SgenGrayQueue *queue)
 
 	HEAVY_STAT (++stat_objects_copied_nursery);
 
-	*obj_slot = copy_object_no_checks (obj, queue);
+	copy = copy_object_no_checks (obj, queue);
+	SGEN_UPDATE_REFERENCE (obj_slot, copy);
 }
 
 /*
@@ -107,11 +106,7 @@ SERIAL_COPY_OBJECT (void **obj_slot, SgenGrayQueue *queue)
  *
  *   Similar to SERIAL_COPY_OBJECT, but assumes that OBJ_SLOT is part of an object, so it handles global remsets as well.
  */
-#ifdef _MSC_VER
-static __forceinline void
-#else
-static inline void __attribute__((always_inline))
-#endif
+static MONO_ALWAYS_INLINE void
 SERIAL_COPY_OBJECT_FROM_OBJ (void **obj_slot, SgenGrayQueue *queue) 
 {
 	char *forwarded;
@@ -139,9 +134,9 @@ SERIAL_COPY_OBJECT_FROM_OBJ (void **obj_slot, SgenGrayQueue *queue)
 		SGEN_ASSERT (9, (*(MonoVTable**)SGEN_LOAD_VTABLE (obj))->gc_descr,  "forwarded object %p has no gc descriptor", forwarded);
 		SGEN_LOG (9, " (already forwarded to %p)", forwarded);
 		HEAVY_STAT (++stat_nursery_copy_object_failed_forwarded);
-		*obj_slot = forwarded;
+		SGEN_UPDATE_REFERENCE (obj_slot, forwarded);
 #ifndef SGEN_SIMPLE_NURSERY
-		if (G_UNLIKELY (sgen_ptr_in_nursery (forwarded) && !sgen_ptr_in_nursery (obj_slot)))
+		if (G_UNLIKELY (sgen_ptr_in_nursery (forwarded) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (forwarded)))
 			sgen_add_to_global_remset (obj_slot, forwarded);
 #endif
 		return;
@@ -150,7 +145,7 @@ SERIAL_COPY_OBJECT_FROM_OBJ (void **obj_slot, SgenGrayQueue *queue)
 		SGEN_ASSERT (9, ((MonoVTable*)SGEN_LOAD_VTABLE(obj))->gc_descr, "pinned object %p has no gc descriptor", obj);
 		SGEN_LOG (9, " (pinned, no change)");
 		HEAVY_STAT (++stat_nursery_copy_object_failed_pinned);
-		if (!sgen_ptr_in_nursery (obj_slot))
+		if (!sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (obj))
 			sgen_add_to_global_remset (obj_slot, obj);
 		return;
 	}
@@ -194,7 +189,7 @@ SERIAL_COPY_OBJECT_FROM_OBJ (void **obj_slot, SgenGrayQueue *queue)
 		 * remsets will be overwritten.  Scanning objects at
 		 * most once would be the icing on the cake.
 		 */
-		if (!sgen_ptr_in_nursery (obj_slot))
+		if (!sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (obj))
 			sgen_add_to_global_remset (obj_slot, obj);
 
 		return;
@@ -204,101 +199,19 @@ SERIAL_COPY_OBJECT_FROM_OBJ (void **obj_slot, SgenGrayQueue *queue)
 	HEAVY_STAT (++stat_objects_copied_nursery);
 
 	copy = copy_object_no_checks (obj, queue);
-	*obj_slot = copy;
+	SGEN_UPDATE_REFERENCE (obj_slot, copy);
 #ifndef SGEN_SIMPLE_NURSERY
-	if (G_UNLIKELY (sgen_ptr_in_nursery (copy) && !sgen_ptr_in_nursery (obj_slot)))
+	if (G_UNLIKELY (sgen_ptr_in_nursery (copy) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (copy)))
 		sgen_add_to_global_remset (obj_slot, copy);
 #else
 	/* copy_object_no_checks () can return obj on OOM */
 	if (G_UNLIKELY (obj == copy)) {
-		if (G_UNLIKELY (sgen_ptr_in_nursery (copy) && !sgen_ptr_in_nursery (obj_slot)))
+		if (G_UNLIKELY (sgen_ptr_in_nursery (copy) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (copy)))
 			sgen_add_to_global_remset (obj_slot, copy);
 	}
 #endif
 }
 
-static void
-PARALLEL_COPY_OBJECT (void **obj_slot, SgenGrayQueue *queue)
-{
-	char *obj = *obj_slot;
-	mword vtable_word, objsize;
-	MonoVTable *vt;
-	void *destination;
-	gboolean has_references;
-
-	SGEN_ASSERT (9, current_collection_generation == GENERATION_NURSERY, "calling minor-par-copy from a %d generation collection", current_collection_generation);
-
-	HEAVY_STAT (++stat_copy_object_called_nursery);
-
-	if (!sgen_ptr_in_nursery (obj)) {
-		HEAVY_STAT (++stat_nursery_copy_object_failed_from_space);
-		return;
-	}
-
-	vtable_word = *(mword*)obj;
-	vt = (MonoVTable*)(vtable_word & ~SGEN_VTABLE_BITS_MASK);
-
-	/*
-	 * Before we can copy the object we must make sure that we are
-	 * allowed to, i.e. that the object not pinned, not already
-	 * forwarded and not in the nursery To Space.
-	 */
-
-	if (vtable_word & SGEN_FORWARDED_BIT) {
-		HEAVY_STAT (++stat_nursery_copy_object_failed_forwarded);
-		*obj_slot = vt;
-		return;
-	}
-	if (vtable_word & SGEN_PINNED_BIT) {
-		HEAVY_STAT (++stat_nursery_copy_object_failed_pinned);
-		return;
-	}
-
-	if (sgen_nursery_is_to_space (obj)) {
-		HEAVY_STAT (++stat_nursery_copy_object_failed_to_space);		
-		return;
-	}
-
-	HEAVY_STAT (++stat_objects_copied_nursery);
-
-	objsize = SGEN_ALIGN_UP (sgen_par_object_get_size (vt, (MonoObject*)obj));
-	has_references = SGEN_VTABLE_HAS_REFERENCES (vt);
-
-	destination = COLLECTOR_PARALLEL_ALLOC_FOR_PROMOTION (vt, obj, objsize, has_references);
-
-	if (G_UNLIKELY (!destination)) {
-		sgen_parallel_pin_or_update (obj_slot, obj, vt, queue);
-		return;
-	}
-
-	*(MonoVTable**)destination = vt;
-
-	if (SGEN_CAS_PTR ((void*)obj, (void*)((mword)destination | SGEN_FORWARDED_BIT), vt) == vt) {
-		par_copy_object_no_checks (destination, vt, obj, objsize, has_references ? queue : NULL);
-		obj = destination;
-		*obj_slot = obj;
-	} else {
-		/* FIXME: unify with code in major_copy_or_mark_object() */
-
-		/* FIXME: Give destination back to the allocator. */
-		/*The major collector only needs the first word zeroed and nursery requires all bits to be. */
-		if (!sgen_ptr_in_nursery (destination))
-			*(void**)destination = NULL;
-		else
-			memset (destination, 0, objsize);
-
-		vtable_word = *(mword*)obj;
-		g_assert (vtable_word & SGEN_FORWARDED_BIT);
-
-		obj = (void*)(vtable_word & ~SGEN_VTABLE_BITS_MASK);
-
-		*obj_slot = obj;
-
-		HEAVY_STAT (++stat_slots_allocated_in_vain);
-	}
-}
-
 #define FILL_MINOR_COLLECTOR_COPY_OBJECT(collector)	do {			\
 		(collector)->serial_ops.copy_or_mark_object = SERIAL_COPY_OBJECT;			\
-		(collector)->parallel_ops.copy_or_mark_object = PARALLEL_COPY_OBJECT;	\
 	} while (0)

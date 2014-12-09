@@ -34,6 +34,7 @@ using System.Xml;
 using System.Data;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.Reflection;
 #if NET_2_0
 using System.Collections.Generic;
 #endif
@@ -861,9 +862,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("JVM returns fields in different order")]
-#endif
 		public void TestSerializeGroup ()
 		{
 			Group myGroup = new Group ();
@@ -2196,7 +2194,7 @@ namespace MonoTests.System.XmlSerialization
 			ser.Deserialize (new XmlTextReader (xml, XmlNodeType.Document, null));
 		}
 
-#if !TARGET_JVM && !MOBILE
+#if !MOBILE
 		[Test]
 		public void GenerateSerializerGenerics ()
 		{
@@ -3222,6 +3220,355 @@ namespace MonoTests.System.XmlSerialization
 		{
 			SoapReflectionImporter importer = new SoapReflectionImporter (ao, defaultNamespace);
 			return importer.ImportTypeMapping (type);
+		}
+
+		[XmlSchemaProvider (null, IsAny = true)]
+		public class AnySchemaProviderClass : IXmlSerializable {
+
+			public string Text;
+
+			void IXmlSerializable.WriteXml (XmlWriter writer)
+			{
+				writer.WriteElementString ("text", Text);
+			}
+
+			void IXmlSerializable.ReadXml (XmlReader reader)
+			{
+				Text = reader.ReadElementString ("text");
+			}
+
+			XmlSchema IXmlSerializable.GetSchema ()
+			{
+				return null;
+			}
+		}
+
+		[Test]
+		public void SerializeAnySchemaProvider ()
+		{
+			string expected = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				Environment.NewLine + "<text>test</text>";
+
+			var ser = new XmlSerializer (typeof (AnySchemaProviderClass));
+
+			var obj = new AnySchemaProviderClass {
+				Text = "test",
+			};
+
+			using (var t = new StringWriter ()) {
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expected, t.ToString ());
+			}
+		}
+
+		[Test]
+		public void DeserializeAnySchemaProvider ()
+		{
+			string expected = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+				Environment.NewLine + "<text>test</text>";
+
+			var ser = new XmlSerializer (typeof (AnySchemaProviderClass));
+
+			using (var t = new StringReader (expected)) {
+				var obj = (AnySchemaProviderClass) ser.Deserialize (t);
+				Assert.AreEqual ("test", obj.Text);
+			}
+		}
+
+		public class SubNoParameterlessConstructor : NoParameterlessConstructor
+		{
+			public SubNoParameterlessConstructor ()
+				: base ("")
+			{
+			}
+		}
+
+		public class NoParameterlessConstructor
+		{
+			[XmlElement ("Text")]
+			public string Text;
+
+			public NoParameterlessConstructor (string parameter)
+			{
+			}
+		}
+
+		[Test]
+		public void BaseClassWithoutParameterlessConstructor ()
+		{
+			var ser = new XmlSerializer (typeof (SubNoParameterlessConstructor));
+
+			var obj = new SubNoParameterlessConstructor {
+				Text = "test",
+			};
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (SubNoParameterlessConstructor) ser.Deserialize (r);
+					Assert.AreEqual (obj.Text, desObj.Text);
+				}
+			}
+		}
+
+		public class ClassWithXmlAnyElement
+		{
+			[XmlAnyElement ("Contents")]
+			public XmlNode Contents;
+		}
+
+		[Test] // bug #3211
+		public void TestClassWithXmlAnyElement ()
+		{
+			var d = new XmlDocument ();
+			var e = d.CreateElement ("Contents");
+			e.AppendChild (d.CreateElement ("SomeElement"));
+
+			var c = new ClassWithXmlAnyElement {
+				Contents = e,
+			};
+
+			var ser = new XmlSerializer (typeof (ClassWithXmlAnyElement));
+			using (var sw = new StringWriter ())
+				ser.Serialize (sw, c);
+		}
+
+		[Test]
+		public void ClassWithImplicitlyConvertibleElement ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithElementRequiringImplicitCast));
+
+			var obj = new ObjectWithElementRequiringImplicitCast ("test");
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithElementRequiringImplicitCast) ser.Deserialize (r);
+					Assert.AreEqual (obj.Object.Text, desObj.Object.Text);
+				}
+			}
+		}
+
+		public class ClassWithOptionalMethods
+		{
+			private readonly bool shouldSerializeX;
+			private readonly bool xSpecified;
+
+			[XmlAttribute]
+			public int X { get; set; }
+
+			public bool ShouldSerializeX () { return shouldSerializeX; }
+
+			public bool XSpecified
+			{
+				get { return xSpecified; }
+			}
+
+			public ClassWithOptionalMethods ()
+			{
+			}
+
+			public ClassWithOptionalMethods (int x, bool shouldSerializeX, bool xSpecified)
+			{
+				this.X = x;
+				this.shouldSerializeX = shouldSerializeX;
+				this.xSpecified = xSpecified;
+			}
+		}
+
+		[Test]
+		public void OptionalMethods ()
+		{
+			var ser = new XmlSerializer (typeof (ClassWithOptionalMethods));
+
+			var expectedValueWithoutX = Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+				"<ClassWithOptionalMethods xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" />");
+
+			var expectedValueWithX = Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+				"<ClassWithOptionalMethods xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" X=\"11\" />");
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, false, false);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithoutX, Infoset (t.ToString ()));
+			}
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, true, false);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithoutX, Infoset (t.ToString ()));
+			}
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, false, true);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithoutX, Infoset (t.ToString ()));
+			}
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithOptionalMethods (11, true, true);
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithX, Infoset (t.ToString ()));
+			}
+		}
+
+		public class ClassWithShouldSerializeGeneric
+		{
+			[XmlAttribute]
+			public int X { get; set; }
+
+			public bool ShouldSerializeX<T> () { return false; }
+		}
+
+		[Test]
+		[Category("NotDotNet")]
+		public void ShouldSerializeGeneric ()
+		{
+			var ser = new XmlSerializer (typeof (ClassWithShouldSerializeGeneric));
+
+			var expectedValueWithX = Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+				"<ClassWithShouldSerializeGeneric xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" X=\"11\" />");
+
+			using (var t = new StringWriter ()) {
+				var obj = new ClassWithShouldSerializeGeneric { X = 11 };
+				ser.Serialize (t, obj);
+				Assert.AreEqual (expectedValueWithX, Infoset (t.ToString ()));
+			}
+		}
+
+		[Test]
+		public void NullableArrayItems ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithNullableArrayItems));
+
+			var obj = new ObjectWithNullableArrayItems ();
+			obj.Elements = new List <SimpleClass> ();
+			obj.Elements.Add (new SimpleClass { something = "Hello" });
+			obj.Elements.Add (null);
+			obj.Elements.Add (new SimpleClass { something = "World" });
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithNullableArrayItems) ser.Deserialize (r);
+					Assert.IsNull (desObj.Elements [1]);
+				}
+			}
+		}
+
+		[Test]
+		public void NonNullableArrayItems ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithNonNullableArrayItems));
+
+			var obj = new ObjectWithNonNullableArrayItems ();
+			obj.Elements = new List <SimpleClass> ();
+			obj.Elements.Add (new SimpleClass { something = "Hello" });
+			obj.Elements.Add (null);
+			obj.Elements.Add (new SimpleClass { something = "World" });
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithNonNullableArrayItems) ser.Deserialize (r);
+					Assert.IsNotNull (desObj.Elements [1]);
+				}
+			}
+		}
+
+		[Test]
+		public void NotSpecifiedNullableArrayItems ()
+		{
+			var ser = new XmlSerializer (typeof (ObjectWithNotSpecifiedNullableArrayItems));
+
+			var obj = new ObjectWithNotSpecifiedNullableArrayItems ();
+			obj.Elements = new List <SimpleClass> ();
+			obj.Elements.Add (new SimpleClass { something = "Hello" });
+			obj.Elements.Add (null);
+			obj.Elements.Add (new SimpleClass { something = "World" });
+
+			using (var w = new StringWriter ()) {
+				ser.Serialize (w, obj);
+				using (var r = new StringReader ( w.ToString ())) {
+					var desObj = (ObjectWithNotSpecifiedNullableArrayItems) ser.Deserialize (r);
+					Assert.IsNull (desObj.Elements [1]);
+				}
+			}
+		}
+
+		private static void TestClassWithDefaultTextNotNullAux (string value, string expected)
+		{
+			var obj = new ClassWithDefaultTextNotNull (value);
+			var ser = new XmlSerializer (typeof (ClassWithDefaultTextNotNull));
+
+			using (var mstream = new MemoryStream ())
+			using (var writer = new XmlTextWriter (mstream, Encoding.ASCII)) {
+				ser.Serialize (writer, obj);
+
+				mstream.Seek (0, SeekOrigin.Begin);
+				using (var reader = new XmlTextReader (mstream)) {
+					var result = (ClassWithDefaultTextNotNull) ser.Deserialize (reader);
+					Assert.AreEqual (expected, result.Value);
+				}
+			}
+		}
+
+		[Test]
+		public void TestClassWithDefaultTextNotNull ()
+		{
+			TestClassWithDefaultTextNotNullAux ("my_text", "my_text");
+			TestClassWithDefaultTextNotNullAux ("", ClassWithDefaultTextNotNull.DefaultValue);
+			TestClassWithDefaultTextNotNullAux (null, ClassWithDefaultTextNotNull.DefaultValue);
+		}
+	}
+
+	// Test generated serialization code.
+	public class XmlSerializerGeneratorTests : XmlSerializerTests {
+
+		private FieldInfo backgroundGeneration;
+		private FieldInfo generationThreshold;
+		private FieldInfo generatorFallback;
+
+		private bool backgroundGenerationOld;
+		private int generationThresholdOld;
+		private bool generatorFallbackOld;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			// Make sure XmlSerializer static constructor is called
+			XmlSerializer.FromTypes (new Type [] {});
+
+			const BindingFlags binding = BindingFlags.Static | BindingFlags.NonPublic;
+			backgroundGeneration = typeof (XmlSerializer).GetField ("backgroundGeneration", binding);
+			generationThreshold = typeof (XmlSerializer).GetField ("generationThreshold", binding);
+			generatorFallback = typeof (XmlSerializer).GetField ("generatorFallback", binding);
+
+			if (backgroundGeneration == null)
+				Assert.Ignore ("Unable to access field backgroundGeneration");
+			if (generationThreshold == null)
+				Assert.Ignore ("Unable to access field generationThreshold");
+			if (generatorFallback == null)
+				Assert.Ignore ("Unable to access field generatorFallback");
+
+			backgroundGenerationOld = (bool) backgroundGeneration.GetValue (null);
+			generationThresholdOld = (int) generationThreshold.GetValue (null);
+			generatorFallbackOld = (bool) generatorFallback.GetValue (null);
+
+			backgroundGeneration.SetValue (null, false);
+			generationThreshold.SetValue (null, 0);
+			generatorFallback.SetValue (null, false);
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (backgroundGeneration == null || generationThreshold == null || generatorFallback == null)
+				return;
+
+			backgroundGeneration.SetValue (null, backgroundGenerationOld);
+			generationThreshold.SetValue (null, generationThresholdOld);
+			generatorFallback.SetValue (null, generatorFallbackOld);
 		}
 	}
 }

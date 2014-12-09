@@ -50,7 +50,22 @@ namespace System {
 			if ((format < UriFormat.UriEscaped) || (format > UriFormat.SafeUnescaped))
 				throw new ArgumentOutOfRangeException ("format");
 
-			UriElements elements = UriParseComponents.ParseComponents (uri.OriginalString.Trim ());
+			if ((components & UriComponents.SerializationInfoString) != 0) {
+				if (components != UriComponents.SerializationInfoString)
+					throw new ArgumentOutOfRangeException ("components", "UriComponents.SerializationInfoString must not be combined with other UriComponents.");
+
+				if (!uri.IsAbsoluteUri)
+					return UriHelper.FormatRelative (uri.OriginalString, "", format);
+
+				components |= UriComponents.AbsoluteUri;
+			}
+
+			return GetComponentsHelper (uri, components, format);
+		}
+
+		internal string GetComponentsHelper (Uri uri, UriComponents components, UriFormat format)
+		{
+			UriElements elements = UriParseComponents.ParseComponents (uri.OriginalString.Trim (), UriKind.Absolute);
 
 			string scheme = scheme_name;
 			int dp = default_port;
@@ -62,29 +77,44 @@ namespace System {
 				throw new SystemException ("URI Parser: scheme mismatch: " + scheme + " vs. " + elements.scheme);
 			}
 
+			var formatFlags = UriHelper.FormatFlags.None;
+			if (UriHelper.HasCharactersToNormalize (uri.OriginalString))
+				formatFlags |= UriHelper.FormatFlags.HasUriCharactersToNormalize;
+
+			if (uri.UserEscaped)
+				formatFlags |= UriHelper.FormatFlags.UserEscaped;
+
+			if (!string.IsNullOrEmpty (elements.host))
+				formatFlags |= UriHelper.FormatFlags.HasHost;
+
 			// it's easier to answer some case directly (as the output isn't identical 
 			// when mixed with others components, e.g. leading slash, # ...)
 			switch (components) {
 			case UriComponents.Scheme:
 				return scheme;
 			case UriComponents.UserInfo:
-				return elements.user;
+				return elements.user ?? "";
 			case UriComponents.Host:
 				return elements.host;
 			case UriComponents.Port: {
-				string p = elements.port;
-				if (p != null && p.Length != 0 && p != dp.ToString ())
-					return p;
+				int p = elements.port;
+				if (p >= 0 && p != dp)
+					return p.ToString (CultureInfo.InvariantCulture);
 				return String.Empty;
 			}
 			case UriComponents.Path:
-				return Format (IgnoreFirstCharIf (elements.path, '/'), format);
+				var path = elements.path;
+				if (scheme != Uri.UriSchemeMailto && scheme != Uri.UriSchemeNews)
+					path = IgnoreFirstCharIf (elements.path, '/');
+				return UriHelper.FormatAbsolute (path, scheme, UriComponents.Path, format, formatFlags);
 			case UriComponents.Query:
-				return Format (elements.query, format);
+				return UriHelper.FormatAbsolute (elements.query, scheme, UriComponents.Query, format, formatFlags);
 			case UriComponents.Fragment:
-				return Format (elements.fragment, format);
+				return UriHelper.FormatAbsolute (elements.fragment, scheme, UriComponents.Fragment, format, formatFlags);
 			case UriComponents.StrongPort: {
-				return elements.port.Length != 0 ? elements.port : dp.ToString ();
+				return elements.port >= 0
+				? elements.port.ToString (CultureInfo.InvariantCulture)
+				: dp.ToString (CultureInfo.InvariantCulture);
 			}
 			case UriComponents.SerializationInfoString:
 				components = UriComponents.AbsoluteUri;
@@ -97,12 +127,12 @@ namespace System {
 
 			if ((components & UriComponents.Scheme) != 0) {
 				sb.Append (scheme);
-				sb.Append (Uri.GetSchemeDelimiter (scheme));
+				sb.Append (elements.delimiter);
 			}
 
 			if ((components & UriComponents.UserInfo) != 0) {
 				string userinfo = elements.user;
-				if (!String.IsNullOrEmpty (userinfo)) {
+				if (userinfo != null) {
 					sb.Append (elements.user);
 					sb.Append ('@');
 				}
@@ -115,7 +145,7 @@ namespace System {
 			// otherwise only display if ut's not the default port
 			if ((components & UriComponents.StrongPort) != 0) {
 				sb.Append (":");
-				if (elements.port.Length != 0) {
+				if (elements.port >= 0) {
 					sb.Append (elements.port);
 				} else {
 					sb.Append (dp);
@@ -123,36 +153,38 @@ namespace System {
 			}
 
 			if ((components & UriComponents.Port) != 0) {
-				string p = elements.port;
-				if (p != null && p.Length != 0 && p != dp.ToString ()) {
+				int p = elements.port;
+				if (p >= 0 && p != dp) {
 					sb.Append (":");
 					sb.Append (elements.port);
 				}
 			}
 
 			if ((components & UriComponents.Path) != 0) {
+				string path = elements.path;
 				if ((components & UriComponents.PathAndQuery) != 0 &&
-					(elements.path.Length == 0 || !elements.path.StartsWith ("/")))
+					(path.Length == 0 || !path.StartsWith ("/", StringComparison.Ordinal)) &&
+					elements.delimiter == Uri.SchemeDelimiter)
 					sb.Append ("/");
-				sb.Append (elements.path);
+				sb.Append (UriHelper.FormatAbsolute (path, scheme, UriComponents.Path, format, formatFlags));
 			}
 
 			if ((components & UriComponents.Query) != 0) {
 				string query = elements.query;
-				if (!String.IsNullOrEmpty (query)) {
+				if (query != null) {
 					sb.Append ("?");
-					sb.Append (elements.query);
+					sb.Append (UriHelper.FormatAbsolute (query, scheme, UriComponents.Query, format, formatFlags));
 				}
 			}
 
-			string result = Format (sb.ToString (), format);
 			if ((components & UriComponents.Fragment) != 0) {
 				string f = elements.fragment;
-				if (!String.IsNullOrEmpty (f)) {
-					result += "#" + Format (f, format);
+				if (f != null) {
+					sb.Append ("#");
+					sb.Append (UriHelper.FormatAbsolute (f, scheme, UriComponents.Fragment, format, formatFlags));
 				}
 			}
-			return result;
+			return sb.ToString ();
 		}
 
 		protected internal virtual void InitializeAndValidate (Uri uri, out UriFormatException parsingError)
@@ -167,6 +199,11 @@ namespace System {
 
 		protected internal virtual bool IsBaseOf (Uri baseUri, Uri relativeUri)
 		{
+			if (baseUri == null)
+				throw new ArgumentNullException ("baseUri");
+			if (relativeUri == null)
+				throw new ArgumentNullException ("relativeUri");
+
 			// compare, not case sensitive, the scheme, host and port (+ user informations)
 			if (Uri.Compare (baseUri, relativeUri, UriComponents.SchemeAndServer | UriComponents.UserInfo, UriFormat.Unescaped, StringComparison.InvariantCultureIgnoreCase) != 0)
 				return false;
@@ -224,23 +261,6 @@ namespace System {
 			if (s[0] == c)
 				return s.Substring (1);
 			return s;
-		}
-
-		private string Format (string s, UriFormat format)
-		{
-			if (s.Length == 0)
-				return String.Empty;
-
-			switch (format) {
-			case UriFormat.UriEscaped:
-				return Uri.EscapeString (s, Uri.EscapeCommonHexBrackets);
-			case UriFormat.SafeUnescaped:
-				return Uri.UnescapeDataString (s, true);
-			case UriFormat.Unescaped:
-				return Uri.Unescape (s, false);
-			default:
-				throw new ArgumentOutOfRangeException ("format");
-			}
 		}
 
 		// static methods

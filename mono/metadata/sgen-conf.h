@@ -28,10 +28,8 @@
 
 #if SIZEOF_VOID_P == 4
 typedef guint32 mword;
-#define MWORD_MAX_VALUE ((uint32_t) 0xffffffff)
 #else
 typedef guint64 mword;
-#define MWORD_MAX_VALUE (G_MAXUINT64)
 #endif
 
 
@@ -40,6 +38,12 @@ typedef guint64 mword;
  * the managed write barrier.
  */
 // #define HEAVY_STATISTICS
+
+#ifdef HEAVY_STATISTICS
+#define HEAVY_STAT(x)	x
+#else
+#define HEAVY_STAT(x)
+#endif
 
 /*
  * Define this to allow the user to change the nursery size by
@@ -77,6 +81,15 @@ typedef guint64 mword;
  * whether it is where it should be.
  */
 //#define SGEN_CHECK_GRAY_OBJECT_SECTIONS
+
+/*
+ * Enable this to check every reference update for null references and whether the update is
+ * made in a worker thread.  In only a few cases do we potentially update references by
+ * writing nulls, so we assert in all the cases where it's not allowed.  The concurrent
+ * collector's worker thread is not allowed to update references at all, so we also assert
+ * that we're not in the worker thread.
+ */
+//#define SGEN_CHECK_UPDATE_REFERENCE
 
 /*
  * Define this and use the "xdomain-checks" MONO_GC_DEBUG option to
@@ -138,12 +151,9 @@ typedef guint64 mword;
 #define SGEN_SCAN_START_SIZE (4096*2)
 
 /*
- * Objects bigger then this go into the large object space.  This size
- * has a few constraints.  It must fit into the major heap, which in
- * the case of the copying collector means that it must fit into a
- * pinned chunk.  It must also play well with the GC descriptors, some
- * of which (DESC_TYPE_RUN_LENGTH, DESC_TYPE_SMALL_BITMAP) encode the
- * object size.
+ * Objects bigger then this go into the large object space.  This size has a few
+ * constraints.  At least two of them must fit into a major heap block.  It must also play
+ * well with the run length GC descriptor, which encodes the object size.
  */
 #define SGEN_MAX_SMALL_OBJ_SIZE 8000
 
@@ -194,16 +204,17 @@ typedef guint64 mword;
 /*
  * Configurable cementing parameters.
  *
- * The hash table size should be a prime.  If there are too many
- * pinned nursery objects with many references from the major heap,
- * this number must be increased.
+ * If there are too many pinned nursery objects with many references
+ * from the major heap, the hash table size must be increased.
  *
  * The threshold is the number of references from the major heap to a
  * pinned nursery object which triggers cementing: if there are more
  * than that number of references, the pinned object is cemented until
  * the next major collection.
  */
-#define SGEN_CEMENT_HASH_SIZE	61
+#define SGEN_CEMENT_HASH_SHIFT	6
+#define SGEN_CEMENT_HASH_SIZE	(1 << SGEN_CEMENT_HASH_SHIFT)
+#define SGEN_CEMENT_HASH(hv)	(((hv) ^ ((hv) >> SGEN_CEMENT_HASH_SHIFT)) & (SGEN_CEMENT_HASH_SIZE - 1))
 #define SGEN_CEMENT_THRESHOLD	1000
 
 #endif

@@ -11,17 +11,15 @@
 
 #if defined(__MACH__)
 
+/* For pthread_main_np, pthread_get_stackaddr_np and pthread_get_stacksize_np */
+#define _DARWIN_C_SOURCE 1
+
 #include <mono/utils/mach-support.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-semaphore.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/hazard-pointer.h>
-#include <mono/metadata/gc-internal.h>
-#include <mono/metadata/appdomain.h>
-#include <mono/metadata/threads-types.h>
-
-#include <pthread.h>
-#include <errno.h>
+#include <mono/utils/mono-mmap.h>
 
 void
 mono_threads_init_platform (void)
@@ -47,7 +45,7 @@ mono_threads_core_needs_abort_syscall (void)
 }
 
 gboolean
-mono_threads_core_suspend (MonoThreadInfo *info)
+mono_threads_core_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
 {
 	kern_return_t ret;
 	gboolean res;
@@ -146,6 +144,26 @@ void
 mono_threads_core_set_name (MonoNativeThreadId tid, const char *name)
 {
 	/* pthread_setnmae_np() on Mac is not documented and doesn't receive thread id. */
+}
+
+void
+mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
+{
+	*staddr = (guint8*)pthread_get_stackaddr_np (pthread_self());
+	*stsize = pthread_get_stacksize_np (pthread_self());
+
+#ifdef TARGET_OSX
+	/*
+	 * Mavericks reports stack sizes as 512kb:
+	 * http://permalink.gmane.org/gmane.comp.java.openjdk.hotspot.devel/11590
+	 * https://bugs.openjdk.java.net/browse/JDK-8020753
+	 */
+	if (pthread_main_np () && *stsize == 512 * 1024)
+		*stsize = 2048 * mono_pagesize ();
+#endif
+
+	/* staddr points to the start of the stack, not the end */
+	*staddr -= *stsize;
 }
 
 #endif

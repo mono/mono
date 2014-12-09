@@ -371,12 +371,18 @@ namespace System.Collections.Generic {
 			return Array.GetLastIndex (_items, startIndex - count + 1, count, match);
 		}
 
-		public void ForEach (Action <T> action)
+		public void ForEach (Action<T> action)
 		{
 			if (action == null)
 				throw new ArgumentNullException ("action");
-			for(int i=0; i < _size; i++)
-				action(_items[i]);
+
+			var version =_version;
+			for (int i = 0; i < _size; i++) {
+				if (_version != version)
+					throw Enumerator.GetModifiedCollectionException ();
+
+				action (_items [i]);
+			}
 		}
 		
 		public Enumerator GetEnumerator ()
@@ -812,7 +818,7 @@ namespace System.Collections.Generic {
 				}
 
 				if (ver != l._version)
-					throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
+					throw GetModifiedCollectionException ();
 
 				next = -1;
 				return false;
@@ -825,7 +831,7 @@ namespace System.Collections.Generic {
 			void IEnumerator.Reset ()
 			{
 				if (ver != l._version)
-					throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
+					throw GetModifiedCollectionException ();
 
 				next = 0;
 				current = default (T);
@@ -834,12 +840,17 @@ namespace System.Collections.Generic {
 			object IEnumerator.Current {
 				get {
 					if (ver != l._version)
-						throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
+						throw GetModifiedCollectionException ();
 
 					if (next <= 0)
 						throw new InvalidOperationException ();
 					return current;
 				}
+			}
+
+			internal static InvalidOperationException GetModifiedCollectionException ()
+			{
+				return new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
 			}
 		}
 	}

@@ -56,7 +56,7 @@ namespace MonoTests.System.Net.Http.Headers
 
 		[Test]
 		/*
-		 * This fails on Windows with the .NET runtime:
+		 * .NET BUG
 		 * 
 		 * Test Case Failures:
 		 * 1) MonoTests.System.Net.Http.Headers.ContentDispositionHeaderValueTest.Equals : System.NullReferenceException : Der Objektverweis wurde nicht auf eine Objektinstanz festgelegt.
@@ -64,7 +64,7 @@ namespace MonoTests.System.Net.Http.Headers
 		 * bei MonoTests.System.Net.Http.Headers.ContentDispositionHeaderValueTest.Equals()
 		 * 
 		 */
-		[Category ("NotWorking")]
+		[Category ("NotDotNet")]
 		public void Equals ()
 		{
 			var value = new ContentDispositionHeaderValue ("x");
@@ -215,6 +215,22 @@ namespace MonoTests.System.Net.Http.Headers
 			value.FileName = "(@)";
 			Assert.AreEqual ("\"(@)\"", value.FileName, "#21");
 			Assert.AreEqual (new NameValueHeaderValue ("filename", "\"(@)\""), value.Parameters.First (), "#22");
+
+			value.FileName = "\"č\"";
+			Assert.AreEqual ("č", value.FileName, "#31");
+			Assert.AreEqual (new NameValueHeaderValue ("filename", "\"=?utf-8?B?xI0=?=\""), value.Parameters.First (), "#32");
+
+			value.FileName = "\"quoted\"";
+			Assert.AreEqual ("\"quoted\"", value.FileName, "#41");
+			Assert.AreEqual (new NameValueHeaderValue ("filename", "\"quoted\""), value.Parameters.First (), "#42");
+
+			value.FileName = "~";
+			Assert.AreEqual ("~", value.FileName, "#51");
+			Assert.AreEqual (new NameValueHeaderValue ("filename", "~"), value.Parameters.First (), "#52");
+
+			value.FileName = "\x7f";
+			Assert.AreEqual ("\"\x7f\"", value.FileName, "#61");
+			Assert.AreEqual (new NameValueHeaderValue ("filename", "\"\x7f\""), value.Parameters.First (), "#62");
 		}
 
 		[Test]
@@ -229,6 +245,36 @@ namespace MonoTests.System.Net.Http.Headers
 			value.FileNameStar = "č";
 			Assert.AreEqual ("č", value.FileNameStar, "#11");
 			Assert.AreEqual (new NameValueHeaderValue ("filename*", "utf-8''%C4%8D"), value.Parameters.First (), "#12");
+
+			value.FileNameStar = "@x*\\%?.txt";
+			Assert.AreEqual ("@x*\\%?.txt", value.FileNameStar, "#21");
+			Assert.AreEqual (new NameValueHeaderValue ("filename*", "utf-8''%40x%2A%5C%25%3F.txt"), value.Parameters.First (), "#22");
+		}
+
+		[Test]
+		public void Properties_Name ()
+		{
+			var value = new ContentDispositionHeaderValue ("a");
+
+			value.Name = "aa";
+			Assert.AreEqual ("aa", value.Name, "#1");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "aa"), value.Parameters.First (), "#2");
+
+			value.Name = "č";
+			Assert.AreEqual ("č", value.Name, "#11");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "\"=?utf-8?B?xI0=?=\""), value.Parameters.First (), "#12");
+
+			value.Name = "(@)";
+			Assert.AreEqual ("\"(@)\"", value.Name, "#21");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "\"(@)\""), value.Parameters.First (), "#22");
+
+			value.Name = "\"č\"";
+			Assert.AreEqual ("č", value.Name, "#31");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "\"=?utf-8?B?xI0=?=\""), value.Parameters.First (), "#32");
+
+			value.Name = "\"quoted\"";
+			Assert.AreEqual ("\"quoted\"", value.Name, "#41");
+			Assert.AreEqual (new NameValueHeaderValue ("name", "\"quoted\""), value.Parameters.First (), "#42");
 		}
 
 		[Test]

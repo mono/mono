@@ -34,18 +34,7 @@ using Novell.Directory.Ldap;
 using Novell.Directory.Ldap.Asn1;
 using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Utilclass;
-#if !TARGET_JVM
 using Mono.Security.Protocol.Tls;
-#else
-using org.ietf.jgss;
-using javax.security.auth;
-using javax.security.auth.login;
-using java.security;
-
-using Novell.Directory.Ldap.Security;
-using System.Collections.Specialized;
-using System.Configuration;
-#endif
 using System.Security.Cryptography.X509Certificates;
 
 namespace Novell.Directory.Ldap
@@ -1199,13 +1188,6 @@ namespace Novell.Directory.Ldap
 		
 		public virtual void  Bind(System.String dn, System.String passwd, AuthenticationTypes authenticationTypes)
 		{
-#if TARGET_JVM
-			if (authenticationTypes != AuthenticationTypes.None &&
-				authenticationTypes != AuthenticationTypes.ServerBind &&
-				authenticationTypes != AuthenticationTypes.Anonymous)
-				BindSecure(dn, passwd, authenticationTypes);
-			else
-#endif
 				Bind(Ldap_V3, dn, passwd, defSearchCons);		
 
 			return ;
@@ -1542,11 +1524,6 @@ namespace Novell.Directory.Ldap
 			}
 
 			LdapMessage msg;
-#if TARGET_JVM
-			if (mech != null)
-				msg = new LdapBindRequest(version, "", mech, passwd, cons.getControls());
-			else
-#endif
 				msg = new LdapBindRequest(version, dn, passwd, cons.getControls());
 			
 			msgId = msg.MessageID;
@@ -1565,127 +1542,12 @@ namespace Novell.Directory.Ldap
 				}
 			}
 			
-#if TARGET_JVM
-			// stopping reader to enable stream replace after secure binding is complete, see Connection.ReplaceStreams()
-			if (mech != null)
-			{
-				if (conn.BindSemIdClear) {
-					// need to acquire a semaphore only if bindSemId is clear
-					// because if we receive SASL_BIND_IN_PROGRESS the semaphore is not
-					// released when the response is queued
-					conn.acquireWriteSemaphore(msgId);
-					conn.BindSemId = msgId;
-				}
-				conn.stopReaderOnReply(msgId);
-			}
-			else
-#endif
 			// The semaphore is released when the bind response is queued.
 			conn.acquireWriteSemaphore(msgId);
 			
 			return SendRequestToServer(msg, cons.TimeLimit, queue, bindProps);
 		}
 
-#if TARGET_JVM
-		private void BindSecure(System.String username, System.String password, AuthenticationTypes authenticationTypes)
-		{
-			if ((authenticationTypes & AuthenticationTypes.Secure) != 0) {			
-				LoginContext loginContext = null;
-				try {					
-					if (username != null && password != null) {
-						AuthenticationCallbackHandler callbackHandler = new AuthenticationCallbackHandler (username,password);
-						loginContext = new LoginContext (SecurityAppName, callbackHandler);
-					}
-					else
-						loginContext = new LoginContext (SecurityAppName);
-
-					loginContext.login ();
-				}
-				catch (Exception e) {
-					throw new LdapException ("Failed to create login security context", 80, "", e);
-				}
-
-				Krb5Helper krb5Helper = null;
-				try {
-					krb5Helper = new Krb5Helper ("ldap@" + conn.Host, username, loginContext.getSubject (), authenticationTypes, SecurityMech);
-				}
-				finally {
-					loginContext.logout();
-				}
-				sbyte [] token = krb5Helper.ExchangeTokens (Krb5Helper.EmptyToken);
-
-				for (;;) {
-					LdapResponseQueue queue = Bind(LdapConnection.Ldap_V3, username, token, null, null, AuthenticationMech);
-					LdapResponse res = (LdapResponse) queue.getResponse ();
-					if (res.ResultCode != LdapException.SASL_BIND_IN_PROGRESS &&
-						res.ResultCode != LdapException.SUCCESS) {
-						krb5Helper.Dispose();
-						throw new LdapException(ExceptionMessages.CONNECTION_ERROR, res.ResultCode, res.ErrorMessage);
-					}
-					Asn1OctetString serverSaslCreds = ((RfcBindResponse)res.Asn1Object.Response).ServerSaslCreds;
-					token = serverSaslCreds != null ? serverSaslCreds.byteValue () : null;
-
-					token = krb5Helper.ExchangeTokens(token == null ? Krb5Helper.EmptyToken : token);
-
-					if (res.ResultCode != LdapException.SASL_BIND_IN_PROGRESS)
-						break;
-
-					conn.ReplaceStreams (conn.InputStream,conn.OutputStream);
-				}
-
-				System.IO.Stream inStream = conn.InputStream;
-				System.IO.Stream newIn = new SecureStream (inStream, krb5Helper);
-				System.IO.Stream outStream = conn.OutputStream;
-				System.IO.Stream newOut = new SecureStream (outStream, krb5Helper);
-				conn.ReplaceStreams (newIn,newOut);
-			}		
-		}
-
-		static string SecurityMech
-		{
-			get {
-				string securityMech = null;
-					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("mainsoft.directoryservices/settings");
-					if (config != null) 
-						securityMech = config ["securitymech"];
-
-					if (securityMech == null) 
-						throw new ArgumentException("Security mechanism id not found in application settings");
-
-				return securityMech;
-			}
-		}
-
-		static string SecurityAppName
-		{
-			get {
-				string securityAppName = null; 
-					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("mainsoft.directoryservices/settings");
-					if (config != null) 
-						securityAppName = config ["securityappname"];
-
-					if (securityAppName == null) 
-						throw new ArgumentException("Application section name not found in application settings");
-
-				return securityAppName;
-			}
-		}
-
-		static string AuthenticationMech
-		{
-			get {
-				string authenticationMech = null;
-				NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("mainsoft.directoryservices/settings");
-				if (config != null) 
-					authenticationMech = config ["authenticationmech"];
-
-				if (authenticationMech == null) 
-					throw new ArgumentException("Authentication mechanism not found in application settings");
-
-				return authenticationMech;
-			}
-		}
-#endif
 		
 		//*************************************************************************
 		// compare methods

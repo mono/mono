@@ -23,7 +23,12 @@
  * object must be given in the variable "char* start".  Afterwards,
  * "start" will point to the start of the next object, if the scanned
  * object contained references.  If not, the value of "start" should
- * be considered undefined after executing this code.
+ * be considered undefined after executing this code.  The object's
+ * GC descriptor must be in the variable "mword desc".
+ *
+ * The macro `HANDLE_PTR` will be invoked for every reference encountered while scanning the
+ * object.  It is called with two parameters: The pointer to the reference (not the
+ * reference itself!) as well as the pointer to the scanned object.
  *
  * Modifiers (automatically undefined):
  *
@@ -40,33 +45,17 @@
 
 {
 #ifndef SCAN_OBJECT_NOVTABLE
-	GCVTable *vt;
-	mword desc;
-
-	vt = (GCVTable*)SGEN_LOAD_VTABLE (start);
-	//type = vt->desc & 0x7;
-
-	/* gcc should be smart enough to remove the bounds check, but it isn't:( */
-	desc = vt->desc;
-
 #if defined(SGEN_HEAVY_BINARY_PROTOCOL) && defined(SCAN_OBJECT_PROTOCOL)
-	binary_protocol_scan_begin (start, vt, sgen_safe_object_get_size ((MonoObject*)start));
+	binary_protocol_scan_begin (start, SGEN_LOAD_VTABLE (start), sgen_safe_object_get_size ((MonoObject*)start));
 #endif
 #else
 #if defined(SGEN_HEAVY_BINARY_PROTOCOL) && defined(SCAN_OBJECT_PROTOCOL)
 	binary_protocol_scan_vtype_begin (start + sizeof (MonoObject), size);
 #endif
 #endif
-	switch (desc & 0x7) {
+	switch (desc & DESC_TYPE_MASK) {
 	case DESC_TYPE_RUN_LENGTH:
 #define SCAN OBJ_RUN_LEN_FOREACH_PTR (desc, start)
-#ifndef SCAN_OBJECT_NOSCAN
-		SCAN;
-#endif
-#undef SCAN
-		break;
-	case DESC_TYPE_SMALL_BITMAP:
-#define SCAN OBJ_BITMAP_FOREACH_PTR (desc, start)
 #ifndef SCAN_OBJECT_NOSCAN
 		SCAN;
 #endif
@@ -79,8 +68,8 @@
 #endif
 #undef SCAN
 		break;
-	case DESC_TYPE_LARGE_BITMAP:
-#define SCAN OBJ_LARGE_BITMAP_FOREACH_PTR (desc, start)
+	case DESC_TYPE_BITMAP:
+#define SCAN OBJ_BITMAP_FOREACH_PTR (desc, start)
 #ifndef SCAN_OBJECT_NOSCAN
 		SCAN;
 #endif
@@ -97,13 +86,14 @@
 #ifndef SCAN_OBJECT_NOVTABLE
 	case DESC_TYPE_COMPLEX_ARR:
 		/* this is an array of complex structs */
-#define SCAN OBJ_COMPLEX_ARR_FOREACH_PTR (vt, start)
+#define SCAN OBJ_COMPLEX_ARR_FOREACH_PTR (desc, start)
 #ifndef SCAN_OBJECT_NOSCAN
 		SCAN;
 #endif
 #undef SCAN
 		break;
 #endif
+	case DESC_TYPE_SMALL_PTRFREE:
 	case DESC_TYPE_COMPLEX_PTRFREE:
 		/*Nothing to do*/
 		break;

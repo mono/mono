@@ -3,14 +3,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{817CE046-07E8-409D-84BF-A6EA4F2879DE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mono.CSharp</RootNamespace>
     <AssemblyName>Mono.CSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -54,24 +54,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.XML" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs">
-      <Link>MonoSymbolFile.cs</Link>
-    </Compile>
-    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs">
-      <Link>MonoSymbolTable.cs</Link>
-    </Compile>
-    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs">
-      <Link>MonoSymbolWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs">
-      <Link>SourceMethodBuilder.cs</Link>
-    </Compile>
     <Compile Include="..\..\mcs\anonymous.cs">
       <Link>anonymous.cs</Link>
     </Compile>
@@ -232,6 +218,18 @@
       <Link>CryptoConvert.cs</Link>
     </Compile>
     <Compile Include="cs-parser.cs" />
+    <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs">
+      <Link>MonoSymbolFile.cs</Link>
+    </Compile>
+    <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs">
+      <Link>MonoSymbolTable.cs</Link>
+    </Compile>
+    <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs">
+      <Link>MonoSymbolWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs">
+      <Link>SourceMethodBuilder.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

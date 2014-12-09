@@ -8,7 +8,7 @@ using System;
 using System.IO.Packaging;
 using NUnit.Framework;
 
-namespace System.IO.Packaging.Tests {
+namespace MonoTests.System.IO.Packaging {
     
     [TestFixture]
     public class PackUriHelperTests {
@@ -25,7 +25,6 @@ namespace System.IO.Packaging.Tests {
         Uri main = new Uri ("/main.html", UriKind.Relative);
 
         [Test]
-        [Category("NotWorking")]
         public void ComparePackUriTest ()
         {
             Assert.AreEqual (0, PackUriHelper.ComparePackUri (null, null), "#1");
@@ -44,7 +43,6 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [Category("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
         public void NonPackUriCompareTest ()
         {
@@ -52,7 +50,6 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [Category("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
         public void NonPackUriCompareRelativeTest ()
         {
@@ -60,7 +57,6 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [Category("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
         public void InvalidPartUriCompareTest ()
         {
@@ -76,7 +72,6 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [Category("NotWorking")]
         public void CreateTest ()
         {
             Assert.AreEqual ("pack://http:,,www.test.com,pack.pkg/",
@@ -92,7 +87,6 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [Category("NotWorking")]
         public void CreateTest2()
         {
                 Uri uri = PackUriHelper.Create(new Uri("http://www.test.com/pack1.pkg"));
@@ -121,7 +115,6 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [Category("NotWorking")]
         public void CreateInvalidTest4 ()
         {
             PackUriHelper.Create (new Uri ("http://www.test.com/pack.pkg"), new Uri ("/main.html", UriKind.Relative));
@@ -168,7 +161,6 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [Category("NotWorking")]
         public void GetPackageUriTest ()
         {
             Assert.AreEqual (a, PackUriHelper.GetPackageUri (PackUriHelper.Create (a, new Uri ("/test.html", UriKind.Relative))));
@@ -189,7 +181,6 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [Category("NotWorking")]
         public void GetPartUriTest ()
         {
                 var pack = PackUriHelper.Create(new Uri("http://www.test.com/pack1.pkg"));

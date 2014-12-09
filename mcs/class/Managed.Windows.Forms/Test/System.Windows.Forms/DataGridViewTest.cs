@@ -2569,6 +2569,42 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (30, dgv.Rows [0].MinimumHeight);
 			}
 		}
+
+		[Test] // Xamarin bug #24372
+		public void Bug24372_first_row_index ()
+		{
+			Form form = new Form ();
+			DataGridView24372 dgv = new DataGridView24372 ();
+			dgv.Parent = form;
+			dgv.ColumnCount = 1;
+			dgv.RowCount = 100;
+			dgv.CurrentCell = dgv[0,50];
+			dgv.Focus ();
+			form.Show ();
+
+			dgv.Rows.Clear ();
+			form.Refresh ();
+			Application.DoEvents ();
+
+			if (dgv.HasException)
+				Assert.Fail("#A1");
+
+			form.Dispose ();
+		}
+
+		class DataGridView24372 : DataGridView
+		{
+			public bool HasException { get; private set; }
+			protected override void OnPaint (PaintEventArgs e)
+			{
+				HasException = false;
+				try {
+					base.OnPaint(e);
+				} catch (ArgumentOutOfRangeException ex) {
+					HasException = true;
+				}
+			}
+		}
 	}
 	
 	[TestFixture]

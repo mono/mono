@@ -177,7 +177,6 @@ public class TimeZoneTest {
         }
 
 	[Test]
-	[Category ("TargetJvmNotWorking")]
 	public void CurrentTimeZone_SerializationRoundtrip ()
 	{
 		TimeZone tz = TimeZone.CurrentTimeZone;
@@ -304,11 +303,12 @@ public class TimeZoneTest {
 
 
 			TimeZone tz = TimeZone.CurrentTimeZone;
-			DaylightTime daylightChanges = tz.GetDaylightChanges(2007);
+			int year = DateTime.Now.Year;
+			DaylightTime daylightChanges = tz.GetDaylightChanges(year);
 			DateTime dst_end = daylightChanges.End;
 
 			if (dst_end == DateTime.MinValue)
-				Assert.Ignore (tz.StandardName + " did not observe daylight saving time during 2007.");
+				Assert.Ignore (tz.StandardName + " did not observe daylight saving time during " + year + ".");
 
 			var standardOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(-1));
 

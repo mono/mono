@@ -1249,6 +1249,7 @@
     <Compile Include="System.Web\DefaultExceptionPageTemplate.cs" />
     <Compile Include="System.Web\DefaultHttpHandler.cs" />
     <Compile Include="System.Web\EndEventHandler.cs" />
+    <Compile Include="System.Web\EventHandlerTaskAsyncHelper.cs" />
     <Compile Include="System.Web\ExceptionPageTemplate.cs" />
     <Compile Include="System.Web\ExceptionPageTemplateFragment.cs" />
     <Compile Include="System.Web\ExceptionPageTemplateFragmentValue.cs" />
@@ -1294,6 +1295,7 @@
     <Compile Include="System.Web\HttpRuntime.cs" />
     <Compile Include="System.Web\HttpServerUtility.cs" />
     <Compile Include="System.Web\HttpStaticObjectsCollection.cs" />
+    <Compile Include="System.Web\HttpTaskAsyncHandler.cs" />
     <Compile Include="System.Web\HttpUnhandledException.cs" />
     <Compile Include="System.Web\HttpUtility.cs" />
     <Compile Include="System.Web\HttpValidationStatus.cs" />
@@ -1321,6 +1323,7 @@
     <Compile Include="System.Web\ProcessShutdownReason.cs" />
     <Compile Include="System.Web\ProcessStatus.cs" />
     <Compile Include="System.Web\QueueManager.cs" />
+    <Compile Include="System.Web\ReadEntityBodyMode.cs" />
     <Compile Include="System.Web\RequestNotification.cs" />
     <Compile Include="System.Web\RequestNotificationStatus.cs" />
     <Compile Include="System.Web\ServerVariablesCollection.cs" />
@@ -1332,6 +1335,8 @@
     <Compile Include="System.Web\SiteMapResolveEventArgs.cs" />
     <Compile Include="System.Web\StaticFileHandler.cs" />
     <Compile Include="System.Web\StaticSiteMapProvider.cs" />
+    <Compile Include="System.Web\TaskAsyncResult.cs" />
+    <Compile Include="System.Web\TaskEventHandler.cs" />
     <Compile Include="System.Web\TempFileStream.cs" />
     <Compile Include="System.Web\TraceContext.cs" />
     <Compile Include="System.Web\TraceContextEventArgs.cs" />

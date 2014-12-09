@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using Microsoft.Build.Framework;
@@ -102,12 +100,12 @@ namespace Microsoft.Build.Tasks {
 			//
 			if (References != null)
 				foreach (ITaskItem item in References) {
-					string aliases = item.GetMetadata ("Aliases") ?? String.Empty;
-					aliases = aliases.Trim ();
-					if (aliases.Length > 0)
-						commandLine.AppendSwitchIfNotNull ("/reference:" + aliases + "=", item.ItemSpec);
-					else
+					string aliases = item.GetMetadata ("Aliases");
+					if (!string.IsNullOrEmpty (aliases)) {
+						AddAliasesReference (commandLine, aliases, item.ItemSpec);
+					} else {
 						commandLine.AppendSwitchIfNotNull ("/reference:", item.ItemSpec);
+					}
 				}
 
 			if (ResponseFiles != null)
@@ -123,6 +121,21 @@ namespace Microsoft.Build.Tasks {
 
 			if (Win32Resource != null)
 				commandLine.AppendSwitchIfNotNull ("/win32res:", Win32Resource);
+		}
+
+		static void AddAliasesReference (CommandLineBuilderExtension commandLine, string aliases, string reference)
+		{
+			foreach (var alias in aliases.Split (',')) {
+				var a = alias.Trim ();
+				if (a.Length == null)
+					continue;
+
+				var r = "/reference:";
+				if (!string.Equals (a, "global", StringComparison.OrdinalIgnoreCase))
+					r += a + "=";
+
+				commandLine.AppendSwitchIfNotNull (r, reference);
+			}
 		}
 
 		[MonoTODO]
@@ -232,4 +245,3 @@ namespace Microsoft.Build.Tasks {
 	}
 }
 
-#endif

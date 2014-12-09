@@ -104,7 +104,17 @@ namespace System.Runtime.CompilerServices
 			if (stateMachine == null)
 				throw new ArgumentNullException ("stateMachine");
 			
-			stateMachine.MoveNext ();
+			var thread = Thread.CurrentThread;
+			var prev = default (ExecutionContext.Switcher);
+			try {
+				thread.BranchExecutionContext (out prev);
+				stateMachine.MoveNext ();
+			} finally {
+				//
+				// Any changes to ExecutionContext within MoveNext scope cannot leak out
+				//
+				thread.RestoreExecutionContext (ref prev);
+			}
 		}
 	}
 }

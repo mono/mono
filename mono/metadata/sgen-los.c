@@ -38,6 +38,7 @@
 #include "metadata/sgen-cardtable.h"
 #include "metadata/sgen-memory-governor.h"
 #include "utils/mono-mmap.h"
+#include "utils/mono-compiler.h"
 
 #define LOS_SECTION_SIZE	(1024 * 1024)
 
@@ -336,13 +337,13 @@ sgen_los_alloc_large_inner (MonoVTable *vtable, size_t size)
 	g_assert ((size & 1) == 0);
 
 	/*
-	 * size + sizeof (LOSObject) <= SIZE_MAX - (mono_pagesize () - 1)
+	 * size + sizeof (LOSObject) <= SSIZE_MAX - (mono_pagesize () - 1)
 	 *
 	 * therefore:
 	 *
-	 * size <= SIZE_MAX - (mono_pagesize () - 1) - sizeof (LOSObject)
+	 * size <= SSIZE_MAX - (mono_pagesize () - 1) - sizeof (LOSObject)
 	 */
-	if (size > SIZE_MAX - (mono_pagesize () - 1) - sizeof (LOSObject))
+	if (size > SSIZE_MAX - (mono_pagesize () - 1) - sizeof (LOSObject))
 		return NULL;
 
 #ifdef LOS_DUMMY

@@ -381,18 +381,18 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 
 		if (aot) {
 			code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_IMAGE, mono_defaults.corlib);
-			ppc_mr (code, ppc_r3, ppc_r11);
+			ppc_mr (code, ppc_r3, ppc_r12);
 			code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_exception_from_token");
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
-			ppc_ldptr (code, ppc_r2, sizeof (gpointer), ppc_r11);
-			ppc_ldptr (code, ppc_r11, 0, ppc_r11);
+			ppc_ldptr (code, ppc_r2, sizeof (gpointer), ppc_r12);
+			ppc_ldptr (code, ppc_r12, 0, ppc_r12);
 #endif
-			ppc_mtctr (code, ppc_r11);
+			ppc_mtctr (code, ppc_r12);
 			ppc_bcctrl (code, PPC_BR_ALWAYS, 0);
 		} else {
 			ppc_load (code, ppc_r3, (gulong)mono_defaults.corlib);
-			ppc_load_func (code, ppc_r0, mono_exception_from_token);
-			ppc_mtctr (code, ppc_r0);
+			ppc_load_func (code, PPC_CALL_REG, mono_exception_from_token);
+			ppc_mtctr (code, PPC_CALL_REG);
 			ppc_bcctrl (code, PPC_BR_ALWAYS, 0);
 		}
 	}
@@ -420,14 +420,14 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 		code = mono_arch_emit_load_got_addr (start, code, NULL, &ji);
 		code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_ppc_throw_exception");
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
-		ppc_ldptr (code, ppc_r2, sizeof (gpointer), ppc_r11);
-		ppc_ldptr (code, ppc_r11, 0, ppc_r11);
+		ppc_ldptr (code, ppc_r2, sizeof (gpointer), ppc_r12);
+		ppc_ldptr (code, ppc_r12, 0, ppc_r12);
 #endif
-		ppc_mtctr (code, ppc_r11);
+		ppc_mtctr (code, ppc_r12);
 		ppc_bcctrl (code, PPC_BR_ALWAYS, 0);
 	} else {
-		ppc_load_func (code, ppc_r0, mono_ppc_throw_exception);
-		ppc_mtctr (code, ppc_r0);
+		ppc_load_func (code, PPC_CALL_REG, mono_ppc_throw_exception);
+		ppc_mtctr (code, PPC_CALL_REG);
 		ppc_bcctrl (code, PPC_BR_ALWAYS, 0);
 	}
 	/* we should never reach this breakpoint */
@@ -594,39 +594,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	return FALSE;
 }
 
-/*
- * This is the function called from the signal handler
- */
-void
-mono_arch_sigctx_to_monoctx (void *ctx, MonoContext *mctx)
-{
-#ifdef MONO_CROSS_COMPILE
-	g_assert_not_reached ();
-#else
-	os_ucontext *uc = ctx;
-
-	mctx->sc_ir = UCONTEXT_REG_NIP(uc);
-	mctx->sc_sp = UCONTEXT_REG_Rn(uc, 1);
-	memcpy (&mctx->regs, &UCONTEXT_REG_Rn(uc, 13), sizeof (mgreg_t) * MONO_SAVED_GREGS);
-	memcpy (&mctx->fregs, &UCONTEXT_REG_FPRn(uc, 14), sizeof (double) * MONO_SAVED_FREGS);
-#endif
-}
-
-void
-mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
-{
-#ifdef MONO_CROSS_COMPILE
-	g_assert_not_reached ();
-#else
-	os_ucontext *uc = ctx;
-
-	UCONTEXT_REG_NIP(uc) = mctx->sc_ir;
-	UCONTEXT_REG_Rn(uc, 1) = mctx->sc_sp;
-	memcpy (&UCONTEXT_REG_Rn(uc, 13), &mctx->regs, sizeof (mgreg_t) * MONO_SAVED_GREGS);
-	memcpy (&UCONTEXT_REG_FPRn(uc, 14), &mctx->fregs, sizeof (double) * MONO_SAVED_FREGS);
-#endif
-}
-
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
@@ -659,7 +626,7 @@ altstack_handle_and_restore (void *sigctx, gpointer obj)
 {
 	MonoContext mctx;
 
-	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
+	mono_sigctx_to_monoctx (sigctx, &mctx);
 	mono_handle_exception (&mctx, obj);
 	mono_restore_context (&mctx);
 }
@@ -782,7 +749,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	void *uc = sigctx;
 
 	/* Pass the ctx parameter in TLS */
-	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
+	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 	/* The others in registers */
 	UCONTEXT_REG_Rn (sigctx, PPC_FIRST_ARG_REG) = (gsize)obj;
 
@@ -801,13 +768,13 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	MonoContext mctx;
 	gboolean result;
 
-	mono_arch_sigctx_to_monoctx (ctx, &mctx);
+	mono_sigctx_to_monoctx (ctx, &mctx);
 
 	result = mono_handle_exception (&mctx, obj);
 	/* restore the context so that returning from the signal handler will invoke
 	 * the catch clause 
 	 */
-	mono_arch_monoctx_to_sigctx (&mctx, ctx);
+	mono_monoctx_to_sigctx (&mctx, ctx);
 	return result;
 #endif
 }

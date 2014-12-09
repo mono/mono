@@ -178,7 +178,7 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				if (Reader.LocalName != rootMap.ElementName || Reader.NamespaceURI != rootMap.Namespace)
+				if (!rootMap.IsAny && (Reader.LocalName != rootMap.ElementName || Reader.NamespaceURI != rootMap.Namespace))
 					throw CreateUnknownNodeException();
 				
 				return ReadObject (rootMap, rootMap.IsNullable, true);
@@ -505,7 +505,7 @@ namespace System.Xml.Serialization
 						XmlTypeMapMemberElement mem = (XmlTypeMapMemberElement) map.XmlTextCollector;
 						XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) mem.ElementInfo [0];
 						if (info.TypeData.Type == typeof (string))
-							SetMemberValue (mem, ob, ReadString ((string) GetMemberValue (mem, ob, isValueList)), isValueList);
+							SetMemberValue (mem, ob, Reader.ReadString (), isValueList);
 						else
 							SetMemberValue (mem, ob, GetValueFromXmlString (Reader.ReadString(), info.TypeData, info.MappedType), isValueList);
 					}
@@ -585,6 +585,10 @@ namespace System.Xml.Serialization
 
 		void SetMemberValue (XmlTypeMapMember member, object ob, object value, bool isValueList)
 		{
+			var memberType = member.TypeData.Type;
+			if (value != null && !value.GetType().IsAssignableFrom (memberType))
+				value = XmlSerializationWriterInterpreter.ImplicitConvert (value, memberType);
+
 			if (isValueList)
 				((object[])ob)[member.GlobalIndex] = value;
 			else
@@ -835,7 +839,7 @@ namespace System.Xml.Serialization
 			Reader.MoveToContent ();
 			if (Reader.NodeType == XmlNodeType.Element)
 			{
-				if (Reader.LocalName == typeMap.ElementName && Reader.NamespaceURI == typeMap.Namespace)
+				if (typeMap.IsAny || (Reader.LocalName == typeMap.ElementName && Reader.NamespaceURI == typeMap.Namespace))
 				{
 					object ob = CreateInstance (typeMap.TypeData.Type, true);
 					return ReadSerializable ((IXmlSerializable)ob);

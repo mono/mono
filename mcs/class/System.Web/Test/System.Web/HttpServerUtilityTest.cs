@@ -65,9 +65,6 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category ("NotDotNet")]
-#if TARGET_JVM
-		[Ignore ("TD #6954")]
-#endif
 		public void HtmlEncode_XSS ()
 		{
 			string problem = "\xff1cscript\xff1e";  // unicode looks alike <script>

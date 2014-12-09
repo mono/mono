@@ -198,9 +198,7 @@ namespace MonoTests.System
 				new ToStringTest ("E", Decimal.MinValue, "-7.922816E+028"),
 				new ToStringTest ("E3", Decimal.MinValue, "-7.923E+028"),
 				new ToStringTest ("E28", Decimal.MinValue, "-7.9228162514264337593543950335E+028"),
-#if !TARGET_JVM // TargetJvmNotWorking
 				new ToStringTest ("E30", Decimal.MinValue, "-7.922816251426433759354395033500E+028"),
-#endif
 				new ToStringTest ("E0", Decimal.MinValue, "-8E+028"),
 				new ToStringTest ("N3", Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.000"),
 				new ToStringTest ("N0", Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335"),
@@ -288,7 +286,6 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		[Category ("TargetJvmNotWorking")]
 		public void TestPercentPattern ()
 		{
 			NumberFormatInfo nfi2 = (NumberFormatInfo) NfiUser.Clone ();
@@ -342,7 +339,6 @@ namespace MonoTests.System
 		};
 
 		[Test]
-		[Category ("TargetJvmNotWorking")]
 		public void TestParse ()
 		{
 
@@ -1140,7 +1136,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("TargetJvmNotWorking")]
 		public void TryParse ()
 		{
 			Decimal r;
@@ -1560,6 +1555,14 @@ namespace MonoTests.System
 
 			d = Decimal.Parse ("0.");
 			Assert.AreEqual ("0", d.ToString (), "#11");
+		}
+
+		[Test] // bug #21764
+		public void RoundToString ()
+		{
+			Assert.AreEqual ("3", Math.Round (3M, 5).ToString (CultureInfo.InvariantCulture), "#1");
+			Assert.AreEqual ("3.01", Math.Round (3.01M, 5).ToString (CultureInfo.InvariantCulture), "#2");
+			Assert.AreEqual ("-3.01", Math.Round (-3.01M, 5).ToString (CultureInfo.InvariantCulture), "#3");
 		}
 	}
 }

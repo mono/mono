@@ -164,34 +164,18 @@ namespace MonoTests.System.Text
                 }
                 
                 [Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
                 public void TestMaxCharCount()
                 {
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding ();
-#if NET_2_0
-                        // where is this extra 1 coming from?
                         Assert.AreEqual (26, UnicodeEnc.GetMaxCharCount(50), "UTF #1");
                         Assert.AreEqual (27, UnicodeEnc.GetMaxCharCount(51), "UTF #2");
-#else
-                        Assert.AreEqual (25, UnicodeEnc.GetMaxCharCount(50), "UTF #1");
-#endif
                 }
         
                 [Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
                 public void TestMaxByteCount()
                 {
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding ();
-#if NET_2_0
-                        // is this extra 2 BOM?
                         Assert.AreEqual (102, UnicodeEnc.GetMaxByteCount(50), "UTF #1");
-#else
-                        Assert.AreEqual (100, UnicodeEnc.GetMaxByteCount(50), "UTF #1");
-#endif
                 }
 
 		[Test]
@@ -256,6 +240,28 @@ namespace MonoTests.System.Text
 
 			Assert.AreEqual (2, s.Length, "Length");
 			Assert.AreEqual (65533, (int) s [1], "1");
+		}
+
+		[Test]
+		public void GetMaxByteCountIncludesBOM ()
+		{
+			Assert.AreEqual (2, Encoding.Unicode.GetMaxByteCount (0), "#1");
+			Assert.AreEqual (4, Encoding.Unicode.GetMaxByteCount (1), "#2");
+			Assert.AreEqual (6, Encoding.Unicode.GetMaxByteCount (2), "#3");
+			Assert.AreEqual (10, Encoding.Unicode.GetMaxByteCount (4), "#4");
+			Assert.AreEqual (20, Encoding.Unicode.GetMaxByteCount (9), "#5");
+			Assert.AreEqual (22, Encoding.Unicode.GetMaxByteCount (10), "#6");
+		}
+
+		[Test]
+		public void GetMaxCharCountRoundsCorrectly ()
+		{
+			Assert.AreEqual (1, Encoding.Unicode.GetMaxCharCount (0), "#1");
+			Assert.AreEqual (2, Encoding.Unicode.GetMaxCharCount (1), "#2");
+			Assert.AreEqual (2, Encoding.Unicode.GetMaxCharCount (2), "#3");
+			Assert.AreEqual (3, Encoding.Unicode.GetMaxCharCount (4), "#4");
+			Assert.AreEqual (6, Encoding.Unicode.GetMaxCharCount (9), "#5");
+			Assert.AreEqual (6, Encoding.Unicode.GetMaxCharCount (10), "#6");
 		}
 	}
 }

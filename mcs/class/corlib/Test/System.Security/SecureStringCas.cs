@@ -58,9 +58,7 @@ namespace MonoCasTests.System.Security {
 			try {
 				SecureStringTest unit = new SecureStringTest ();
 				unit.DefaultConstructor ();
-#if !TARGET_JVM
 				unit.UnsafeConstructor ();
-#endif
 				unit.ReadOnly ();
 				unit.Disposed ();
 			}

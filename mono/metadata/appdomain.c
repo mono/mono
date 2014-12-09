@@ -78,7 +78,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 111
+#define MONO_CORLIB_VERSION 113
 
 typedef struct
 {
@@ -88,9 +88,9 @@ typedef struct
 	gchar *filename;
 } RuntimeConfig;
 
-CRITICAL_SECTION mono_delegate_section;
+mono_mutex_t mono_delegate_section;
 
-CRITICAL_SECTION mono_strtod_mutex;
+mono_mutex_t mono_strtod_mutex;
 
 static gunichar2 process_guid [36];
 static gboolean process_guid_set = FALSE;
@@ -242,17 +242,17 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb,
 	mono_thread_init (start_cb, attach_cb);
 
 	class = mono_class_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
-	setup = (MonoAppDomainSetup *) mono_object_new (domain, class);
+	setup = (MonoAppDomainSetup *) mono_object_new_pinned (domain, class);
 
 	class = mono_class_from_name (mono_defaults.corlib, "System", "AppDomain");
-	ad = (MonoAppDomain *) mono_object_new (domain, class);
+	ad = (MonoAppDomain *) mono_object_new_pinned (domain, class);
 	ad->data = domain;
 	domain->domain = ad;
 	domain->setup = setup;
 
-	InitializeCriticalSection (&mono_delegate_section);
+	mono_mutex_init_recursive (&mono_delegate_section);
 
-	InitializeCriticalSection (&mono_strtod_mutex);
+	mono_mutex_init_recursive (&mono_strtod_mutex);
 	
 	mono_thread_attach (domain);
 	mono_context_init (domain);
@@ -330,7 +330,7 @@ mono_context_init (MonoDomain *domain)
 	MonoAppContext *context;
 
 	class = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
-	context = (MonoAppContext *) mono_object_new (domain, class);
+	context = (MonoAppContext *) mono_object_new_pinned (domain, class);
 	context->domain_id = domain->domain_id;
 	context->context_id = 0;
 	domain->default_context = context;
@@ -1880,7 +1880,7 @@ mono_domain_assembly_search (MonoAssemblyName *aname,
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = tmp->data;
 		/* Dynamic assemblies can't match here in MS.NET */
-		if (ass->dynamic || refonly != ass->ref_only || !mono_assembly_names_equal (aname, &ass->aname))
+		if (assembly_is_dynamic (ass) || refonly != ass->ref_only || !mono_assembly_names_equal (aname, &ass->aname))
 			continue;
 
 		mono_domain_assemblies_unlock (domain);
@@ -2272,12 +2272,12 @@ deregister_reflection_info_roots (MonoDomain *domain)
 		 * promoting it from a simple lock to a complex lock, which we better avoid if
 		 * possible.
 		 */
-		if (image->dynamic)
+		if (image_is_dynamic (image))
 			deregister_reflection_info_roots_from_list (image);
 
 		for (i = 0; i < image->module_count; ++i) {
 			MonoImage *module = image->modules [i];
-			if (module && module->dynamic)
+			if (module && image_is_dynamic (module))
 				deregister_reflection_info_roots_from_list (module);
 		}
 	}
@@ -2321,7 +2321,7 @@ unload_thread_main (void *arg)
 	 * class->runtime_info.
 	 */
 
-	mono_loader_lock ();
+	mono_loader_lock (); //FIXME why do we need the loader lock here?
 	mono_domain_lock (domain);
 #ifdef HAVE_SGEN_GC
 	/*
@@ -2415,6 +2415,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	unload_data *thread_data;
 	MonoNativeThreadId tid;
 	MonoDomain *caller_domain = mono_domain_get ();
+	char *name;
 
 	/* printf ("UNLOAD STARTING FOR %s (%p) IN THREAD 0x%x.\n", domain->friendly_name, domain, GetCurrentThreadId ()); */
 
@@ -2466,7 +2467,10 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	thread_handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)unload_thread_main, thread_data, 0, CREATE_SUSPENDED, &tid);
 	if (thread_handle == NULL)
 		return;
+	name = g_strdup_printf ("Unload thread for domain %x", domain);
+	mono_thread_info_set_name (tid, name);
 	mono_thread_info_resume (tid);
+	g_free (name);
 
 	/* Wait for the thread */	
 	while (!thread_data->done && WaitForSingleObjectEx (thread_handle, INFINITE, TRUE) == WAIT_IO_COMPLETION) {

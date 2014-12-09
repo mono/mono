@@ -83,6 +83,11 @@ namespace Microsoft.Build.Framework
 			get {
 				return message;
 			}
+#if NET_4_0			
+			protected set {
+				message = value;
+			}
+#endif
 		}
 
 		public string SenderName {

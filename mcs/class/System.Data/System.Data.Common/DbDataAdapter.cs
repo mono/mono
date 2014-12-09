@@ -667,7 +667,7 @@ namespace System.Data.Common
 				}
 
 				RowUpdatingEventArgs argsUpdating = CreateRowUpdatingEvent (row, command, statementType, tableMapping);
-				row.RowError = null;
+				row.RowError = String.Empty;
 				OnRowUpdating (argsUpdating);
 				switch (argsUpdating.Status) {
 				case UpdateStatus.Continue :

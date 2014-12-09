@@ -25,6 +25,7 @@ enum {
 	MONO_COUNTER_SECURITY = 1 << 12,
 	MONO_COUNTER_RUNTIME  = 1 << 13,
 	MONO_COUNTER_SYSTEM   = 1 << 14,
+	MONO_COUNTER_PERFCOUNTERS = 1 << 15,
 	MONO_COUNTER_LAST_SECTION,
 
 	/* Unit, bits 24-27 (4 bits) */
@@ -46,8 +47,8 @@ enum {
 
 typedef struct _MonoCounter MonoCounter;
 
-
 MONO_API void mono_counters_enable (int section_mask);
+MONO_API void mono_counters_init (void);
 
 /* 
  * register addr as the address of a counter of type type.
@@ -56,6 +57,9 @@ MONO_API void mono_counters_enable (int section_mask);
  */
 MONO_API void mono_counters_register (const char* descr, int type, void *addr);
 MONO_API void mono_counters_register_with_size (const char *name, int type, void *addr, int size);
+
+typedef void (*MonoCounterRegisterCallback) (MonoCounter*);
+MONO_API void mono_counters_on_register (MonoCounterRegisterCallback callback);
 
 /* 
  * Create a readable dump of the counters for section_mask sections (ORed section values)

@@ -545,6 +545,9 @@ namespace CorCompare
 			if (TypeHelper.IsDelegate(t))
 				return "delegate";
 
+			if (t.IsPointer)
+				return "pointer";
+
 			return "class";
 		}
 
@@ -907,6 +910,8 @@ namespace CorCompare
 				AddAttribute (p, "abstract", "true");
 			if (mbase.IsVirtual)
 				AddAttribute (p, "virtual", "true");
+			if (mbase.IsFinal && mbase.IsVirtual && mbase.IsReuseSlot)
+				AddAttribute (p, "sealed", "true");
 			if (mbase.IsStatic)
 				AddAttribute (p, "static", "true");
 

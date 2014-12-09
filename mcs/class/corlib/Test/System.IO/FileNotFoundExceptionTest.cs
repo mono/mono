@@ -63,12 +63,8 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#4");
 			Assert.AreEqual ("message", fnf.Message, "#5");
 			Assert.IsNull (fnf.FusionLog, "#6");
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ": message"),"#7");
-#else
 			Assert.AreEqual (fnf.GetType ().FullName + ": message",
 				fnf.ToString (), "#7");
-#endif
 		}
 
 		[Test]
@@ -84,12 +80,8 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#4");
 			Assert.AreEqual (string.Empty, fnf.Message, "#5");
 			Assert.IsNull (fnf.FusionLog, "#6");
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ": "), "#7");
-#else
 			Assert.AreEqual (fnf.GetType ().FullName + ": ",
 				fnf.ToString (), "#7");
-#endif
 		}
 
 		[Test]
@@ -108,7 +100,7 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#4"); // File or assembly name (null), or ...
 #endif
 			Assert.IsNull (fnf.FusionLog, "#5");
-#if NET_2_0 && !TARGET_JVM
+#if NET_2_0
 			Assert.AreEqual (fnf.GetType ().FullName + ": ",
 				fnf.ToString (), "#6");
 #else
@@ -132,13 +124,8 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#5");
 			Assert.AreEqual ("message", fnf.Message, "#6");
 			Assert.IsNull (fnf.FusionLog, "#7");
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ": message ---> "
-                + ame.GetType().FullName + ": something"), "#8");
-#else
 			Assert.AreEqual (fnf.GetType ().FullName + ": message ---> "
 				+ ame.GetType ().FullName + ": something", fnf.ToString (), "#8");
-#endif
 		}
 
 		[Test]
@@ -156,13 +143,8 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#5");
 			Assert.AreEqual (string.Empty, fnf.Message, "#6");
 			Assert.IsNull (fnf.FusionLog, "#7");
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ":  ---> "
-                + ame.GetType().FullName + ": something"), "#8");
-#else
 			Assert.AreEqual (fnf.GetType ().FullName + ":  ---> "
 				+ ame.GetType ().FullName + ": something", fnf.ToString (), "#8");
-#endif
 		}
 
 		[Test]
@@ -184,13 +166,8 @@ namespace MonoTests.System.IO {
 #endif
 			Assert.IsNull (fnf.FusionLog, "#6");
 #if NET_2_0
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ":  ---> "
-                + ame.GetType().FullName + ": something"), "#7");
-#else
 			Assert.AreEqual (fnf.GetType ().FullName + ":  ---> "
 				+ ame.GetType ().FullName + ": something", fnf.ToString (), "#7");
-#endif
 #else
 			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName), "#7");
 			Assert.IsFalse (fnf.ToString ().IndexOf (Environment.NewLine) != -1, "#9");
@@ -211,12 +188,8 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#4");
 			Assert.AreEqual ("message", fnf.Message, "#5");
 			Assert.IsNull (fnf.FusionLog, "#6");
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ": message"), "#7");
-#else
 			Assert.AreEqual (fnf.GetType ().FullName + ": message",
 				fnf.ToString (), "#7");
-#endif
 		}
 
 		[Test]
@@ -260,12 +233,8 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#5");
 			Assert.AreEqual ("message", fnf.Message, "#6");
 			Assert.IsNull (fnf.FusionLog, "#7");
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ": message"), "#8");
-#else
 			Assert.AreEqual (fnf.GetType ().FullName + ": message",
 				fnf.ToString (), "#8");
-#endif
 		}
 
 		[Test]
@@ -282,13 +251,9 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#A4");
 			Assert.AreEqual ("message", fnf.Message, "#A5");
 			Assert.IsNull (fnf.FusionLog, "#A6");
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ": message"), "#A7");
-#else
 		
 			Assert.AreEqual (fnf.GetType ().FullName + ": message",
 				fnf.ToString (), "#A7");
-#endif
 
 			fnf = new FileNotFoundException (string.Empty, (string) null);
 
@@ -300,12 +265,8 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#B4");
 			Assert.AreEqual (string.Empty, fnf.Message, "#B5");
 			Assert.IsNull (fnf.FusionLog, "#B6");
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ": "), "#B7");
-#else
 			Assert.AreEqual (fnf.GetType ().FullName + ": ",
 				fnf.ToString (), "#B7");
-#endif
 		}
 
 		[Test]
@@ -323,11 +284,7 @@ namespace MonoTests.System.IO {
 			Assert.IsNotNull (fnf.Message, "#5");
 			Assert.AreEqual (string.Empty, fnf.Message, "#6");
 			Assert.IsNull (fnf.FusionLog, "#7");
-#if TARGET_JVM
-            Assert.IsTrue(fnf.ToString().StartsWith(fnf.GetType().FullName + ": "), "#8");
-#else
 			Assert.AreEqual (fnf.GetType ().FullName + ": ", fnf.ToString (), "#8");
-#endif
 		}
 
 		[Test]
@@ -349,9 +306,7 @@ namespace MonoTests.System.IO {
 			Assert.IsNull (fnf.FusionLog, "#5");
 			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName
 				+ ": "), "#6");
-#if !TARGET_JVM
 			Assert.IsFalse (fnf.ToString ().IndexOf (Environment.NewLine) != -1, "#7");
-#endif
 			Assert.IsFalse (fnf.ToString ().IndexOf ("''") != -1, "#8");
 		}
 
@@ -422,9 +377,7 @@ namespace MonoTests.System.IO {
 			Assert.IsNull (fnf.FusionLog, "#B6");
 			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName
 				+ ": "), "#B7");
-#if !TARGET_JVM
 			Assert.IsFalse (fnf.ToString ().IndexOf (Environment.NewLine) != -1, "#B8");
-#endif
 #if NET_2_0
 			Assert.IsTrue (fnf.ToString ().IndexOf ("''") != -1, "#B9");
 #else

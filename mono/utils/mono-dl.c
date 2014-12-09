@@ -64,12 +64,7 @@ static const char suffixes [][4] = {
 #endif  /* RTLD_LAZY */
 
 #define SO_HANDLE_TYPE void*
-#ifdef PLATFORM_ANDROID
-/* Bionic doesn't support NULL filenames */
-#  define LL_SO_OPEN(file,flags) ((file) ? dlopen ((file), (flags)) : NULL)
-#else
-#  define LL_SO_OPEN(file,flags) dlopen ((file), (flags))
-#endif
+#define LL_SO_OPEN(file,flags) dlopen ((file), (flags))
 #define LL_SO_CLOSE(module) dlclose ((module)->handle)
 #define LL_SO_SYMBOL(module, name) dlsym ((module)->handle, (name))
 #define LL_SO_TRFLAGS(flags) convert_flags ((flags))
@@ -124,7 +119,7 @@ w32_dlerror (void)
 	wchar_t* buf = NULL;
 	DWORD code = GetLastError ();
 
-	if (FormatMessage (FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL,
+	if (FormatMessage (FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
 		code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&buf, 0, NULL))
 	{
 		ret = g_utf16_to_utf8 (buf, wcslen(buf), NULL, NULL, NULL);
@@ -337,7 +332,16 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 		return NULL;
 	}
 	module->main_module = name == NULL? TRUE: FALSE;
+
+#ifdef PLATFORM_ANDROID
+	/* Bionic doesn't support NULL filenames */
+	if (!name)
+		lib = NULL;
+	else
+		lib = LL_SO_OPEN (name, lflags);
+#else
 	lib = LL_SO_OPEN (name, lflags);
+#endif
 	if (!lib) {
 		GSList *node;
 		for (node = fallback_handlers; node != NULL; node = node->next){

@@ -651,6 +651,7 @@ namespace Mono.CSharp
 			case MemberKind.Struct:
 			case MemberKind.Enum:
 			case MemberKind.Void:
+			case MemberKind.PointerType:
 				return false;
 			case MemberKind.InternalCompilerType:
 				//
@@ -1445,6 +1446,7 @@ namespace Mono.CSharp
 		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
 		public static readonly InternalType Namespace = new InternalType ("<namespace>");
 		public static readonly InternalType ErrorType = new InternalType ("<error>");
+		public static readonly InternalType VarOutType = new InternalType ("var out");
 
 		readonly string name;
 

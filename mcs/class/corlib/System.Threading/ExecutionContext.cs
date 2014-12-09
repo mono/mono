@@ -38,11 +38,46 @@ using System.Collections.Generic;
 
 namespace System.Threading {
 	[Serializable]
-	public sealed class ExecutionContext : ISerializable
+	public sealed partial class ExecutionContext : ISerializable
 #if NET_4_0
-		, IDisposable
+           , IDisposable
 #endif
 	{
+		internal struct Switcher
+		{
+			readonly ExecutionContext ec;
+			readonly LogicalCallContext _lcc;
+			readonly bool _suppressFlow;
+			readonly bool _capture;
+			readonly Dictionary<string, object> local_data;
+			readonly bool copy_on_write;
+
+			public Switcher (ExecutionContext ec)
+			{
+				this.ec = ec;
+				this._lcc = ec._lcc;
+				this._suppressFlow = ec._suppressFlow;
+				this._capture = ec._capture;
+				this.local_data = ec.local_data;
+				this.copy_on_write = ec.CopyOnWrite;
+			}
+
+			public bool IsEmpty {
+				get {
+					return ec == null;
+				}
+			}
+
+			public void Restore (ExecutionContext ec)
+			{
+				ec._lcc = this._lcc;
+				ec._suppressFlow = this._suppressFlow;
+				ec._capture = this._capture;
+				ec.local_data = this.local_data;
+				ec.CopyOnWrite = this.copy_on_write;
+			}
+		}
+
 #if !MOBILE
 		private SecurityContext _sc;
 #endif
@@ -57,15 +92,20 @@ namespace System.Threading {
 
 		private ExecutionContext (ExecutionContext ec)
 		{
+			CloneData (ec);
+
+			_suppressFlow = ec._suppressFlow;
+			_capture = true;
+		}
+
+		void CloneData (ExecutionContext ec)
+		{
 #if !MOBILE
 			if (ec._sc != null)
 				_sc = new SecurityContext (ec._sc);
 #endif
 			if (ec._lcc != null)
 				_lcc = (LogicalCallContext) ec._lcc.Clone ();
-
-			_suppressFlow = ec._suppressFlow;
-			_capture = true;
 		}
 		
 		[MonoTODO]
@@ -81,7 +121,11 @@ namespace System.Threading {
 		
 		internal static ExecutionContext Capture (bool captureSyncContext, bool nullOnEmpty)
 		{
-			ExecutionContext ec = Current;
+			var thread = Thread.CurrentThread;
+			if (nullOnEmpty && !thread.HasExecutionContext)
+				return null;
+
+			var ec = thread.ExecutionContext;
 			if (ec.FlowSuppressed)
 				return null;
 
@@ -167,6 +211,8 @@ namespace System.Threading {
 			set { _suppressFlow = value; }
 		}
 
+		internal bool CopyOnWrite { get; set; }
+
 		public static bool IsFlowSuppressed ()
 		{
 			return Current.FlowSuppressed;
@@ -231,6 +277,17 @@ namespace System.Threading {
 			get {
 				return Thread.CurrentThread.ExecutionContext;
 			}
+		}
+
+		internal static ExecutionContext GetCurrentWritable ()
+		{
+			var current = Thread.CurrentThread.ExecutionContext;
+			if (current.CopyOnWrite) {
+				current.CopyOnWrite = false;
+				current.CloneData (current);
+			}
+
+			return current;
 		}
 	}
 }

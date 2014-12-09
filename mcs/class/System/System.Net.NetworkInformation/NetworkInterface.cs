@@ -58,7 +58,7 @@ namespace System.Net.NetworkInformation {
 #else
 			if (runningOnUnix) {
 				try {
-					if (Platform.IsMacOS)
+					if (Platform.IsMacOS || Platform.IsFreeBSD)
 						return MacOsNetworkInterface.ImplGetAllNetworkInterfaces ();
 					else
 						return LinuxNetworkInterface.ImplGetAllNetworkInterfaces ();
@@ -238,11 +238,29 @@ namespace System.Net.NetworkInformation {
 			get { return iface_path; }
 		}
 		
+		static int GetInterfaceAddresses (out IntPtr ifap)
+		{
+#if MONODROID
+			return AndroidPlatform.GetInterfaceAddresses (out ifap);
+#else
+			return getifaddrs (out ifap);
+#endif
+		}
+
+		static void FreeInterfaceAddresses (IntPtr ifap)
+		{
+#if MONODROID
+			AndroidPlatform.FreeInterfaceAddresses (ifap);
+#else
+			freeifaddrs (ifap);
+#endif
+		}
+		
 		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
 		{
 			var interfaces = new Dictionary <string, LinuxNetworkInterface> ();
 			IntPtr ifap;
-			if (getifaddrs (out ifap) != 0)
+			if (GetInterfaceAddresses (out ifap) != 0)
 				throw new SystemException ("getifaddrs() failed");
 
 			try {
@@ -254,6 +272,7 @@ namespace System.Net.NetworkInformation {
 					int       index = -1;
 					byte[]    macAddress = null;
 					NetworkInterfaceType type = NetworkInterfaceType.Unknown;
+					int       nullNameCount = 0;
 
 					if (addr.ifa_addr != IntPtr.Zero) {
 						sockaddr_in sockaddr = (sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_in));
@@ -295,6 +314,9 @@ namespace System.Net.NetworkInformation {
 										break;
 									
 									case LinuxArpHardware.SLIP:
+									case LinuxArpHardware.CSLIP:
+									case LinuxArpHardware.SLIP6:
+									case LinuxArpHardware.CSLIP6:
 										type = NetworkInterfaceType.Slip;
 										break;
 									
@@ -311,9 +333,11 @@ namespace System.Net.NetworkInformation {
 										type = NetworkInterfaceType.Fddi;
 										break;
 
+									case LinuxArpHardware.SIT:
+									case LinuxArpHardware.IPDDP:
+									case LinuxArpHardware.IPGRE:
+									case LinuxArpHardware.IP6GRE:
 									case LinuxArpHardware.TUNNEL6:
-										goto case LinuxArpHardware.TUNNEL;
-										
 									case LinuxArpHardware.TUNNEL:
 										type = NetworkInterfaceType.Tunnel;
 										break;
@@ -324,6 +348,9 @@ namespace System.Net.NetworkInformation {
 
 					LinuxNetworkInterface iface = null;
 
+					if (String.IsNullOrEmpty (name))
+						name = "\0" + (++nullNameCount).ToString ();
+					
 					if (!interfaces.TryGetValue (name, out iface)) {
 						iface = new LinuxNetworkInterface (name);
 						interfaces.Add (name, iface);
@@ -344,7 +371,7 @@ namespace System.Net.NetworkInformation {
 					next = addr.ifa_next;
 				}
 			} finally {
-				freeifaddrs (ifap);
+				FreeInterfaceAddresses (ifap);
 			}
 
 			NetworkInterface [] result = new NetworkInterface [interfaces.Count];

@@ -170,6 +170,35 @@ namespace MonoTests.System.Net.Http
 			client.SendAsync (request).Wait (WaitTimeout);
 		}
 
+
+		[Test]
+		public void CancelRequestViaProxy ()
+		{
+			var handler = new HttpClientHandler {
+				Proxy = new WebProxy ("192.168.10.25:8888/"), // proxy that doesn't exist
+				UseProxy = true,
+				AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+			};
+
+			var httpClient = new HttpClient (handler) {
+				BaseAddress = new Uri ("https://google.com"),
+				Timeout = TimeSpan.FromSeconds (1)
+			};
+
+			try {
+				var restRequest = new HttpRequestMessage {
+					Method = HttpMethod.Post,
+					RequestUri = new Uri("foo", UriKind.Relative),
+					Content = new StringContent("", null, "application/json")
+				};
+
+				httpClient.PostAsync (restRequest.RequestUri, restRequest.Content).Wait (WaitTimeout);
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				Assert.IsTrue (e.InnerException is TaskCanceledException, "#2");
+			}
+		}
+
 		[Test]
 		public void Properties ()
 		{
@@ -794,6 +823,30 @@ namespace MonoTests.System.Net.Http
 				} catch (AggregateException e) {
 					Assert.IsTrue (e.InnerException is HttpRequestException, "#2");
 				}
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void RequestUriAfterRedirect ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				var response = l.Response;
+
+				response.StatusCode = (int)HttpStatusCode.Moved;
+				response.RedirectLocation = "http://xamarin.com/";
+			});
+
+			try {
+				var chandler = new HttpClientHandler ();
+				chandler.AllowAutoRedirect = true;
+				var client = new HttpClient (chandler);
+
+				var resp = client.GetAsync (LocalServer).Result;
+				Assert.AreEqual ("http://xamarin.com/", resp.RequestMessage.RequestUri.AbsoluteUri, "#1");
 			} finally {
 				listener.Abort ();
 				listener.Close ();

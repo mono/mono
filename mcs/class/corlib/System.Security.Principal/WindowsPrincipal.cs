@@ -30,13 +30,21 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Security.Claims;
+#endif
 
 namespace System.Security.Principal {
 
 	[Serializable]
 	[ComVisible (true)]
-	public class WindowsPrincipal : IPrincipal {
-
+	public class WindowsPrincipal :
+#if NET_4_5
+		ClaimsPrincipal
+#else
+		IPrincipal
+#endif
+	{
 		private WindowsIdentity _identity;
 		// http://groups.google.ca/groups?q=WindowsPrincipal+m_roles&hl=en&lr=&ie=UTF-8&oe=UTF-8&selm=OghXf4OgCHA.4228%40tkmsftngp08&rnum=4
 		private string [] m_roles;
@@ -53,8 +61,12 @@ namespace System.Security.Principal {
 		}
 
 		// properties
-
-		public virtual IIdentity Identity {
+#if NET_4_5
+		override
+#else
+		virtual
+#endif
+		public IIdentity Identity {
 			get { return _identity; }
 		}
 
@@ -102,7 +114,12 @@ namespace System.Security.Principal {
 			}
 		}
 
-		public virtual bool IsInRole (string role)
+#if NET_4_5
+		override
+#else
+		virtual
+#endif
+		public bool IsInRole (string role)
 		{
 			if (role == null)
 				return false;	// ArgumentNullException

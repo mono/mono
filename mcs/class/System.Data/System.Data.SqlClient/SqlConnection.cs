@@ -57,6 +57,7 @@ using System.Xml;
 #if NET_2_0
 using System.Collections.Generic;
 #endif
+using System.Security;
 
 namespace System.Data.SqlClient
 {
@@ -93,6 +94,9 @@ namespace System.Data.SqlClient
 
 		// The connection string that identifies this connection
 		string connectionString;
+
+		// The connection credentials
+		SqlCredential credentials;
 
 		// The transaction object for the current transaction
 		SqlTransaction transaction;
@@ -134,6 +138,12 @@ namespace System.Data.SqlClient
 			ConnectionString = connectionString;
 		}
 
+		public SqlConnection (string connectionString, SqlCredential cred)
+		{
+			ConnectionString = connectionString;
+			Credentials = cred;
+		}
+
 		#endregion // Constructors
 
 		#region Properties
@@ -153,6 +163,15 @@ namespace System.Data.SqlClient
 				if (state == ConnectionState.Open)
 					throw new InvalidOperationException ("Not Allowed to change ConnectionString property while Connection state is OPEN");
 				SetConnectionString (value);
+			}
+		}
+	
+		public SqlCredential Credentials {
+			get {
+				return credentials;
+			}
+			set {
+				credentials = value;
 			}
 		}
 	
@@ -564,6 +583,16 @@ namespace System.Data.SqlClient
 
 			if (!tds.IsConnected) {
 				try {
+					if (Credentials != null) {
+						if (parms.User != String.Empty)
+							throw new ArgumentException("UserID already specified");
+						if (parms.PasswordSet)
+							throw new ArgumentException("Password already specified");
+						if (parms.DomainLogin != false)
+							throw new ArgumentException("Cannot use credentials with DomainLogin");
+						parms.User = Credentials.UserId;
+						parms.Password = Credentials.Password;
+					}
 					tds.Connect (parms);
 				} catch {
 					if (pooling)
@@ -880,7 +909,10 @@ namespace System.Data.SqlClient
 				break;
 			case "password" :
 			case "pwd" :
-				parms.Password = value;
+				parms.Password = new SecureString();
+				foreach (char c in value)
+					parms.Password.AppendChar(c);
+				parms.PasswordSet = true;
 				break;
 			case "persistsecurityinfo" :
 			case "persist security info" :

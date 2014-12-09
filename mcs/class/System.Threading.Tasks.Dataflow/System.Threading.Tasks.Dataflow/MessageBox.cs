@@ -80,7 +80,7 @@ namespace System.Threading.Tasks.Dataflow {
 				return DataflowMessageStatus.DecliningPermanently;
 
 			var full = options.BoundedCapacity != -1
-			           && Thread.VolatileRead (ref itemCount) >= options.BoundedCapacity;
+			           && Volatile.Read (ref itemCount) >= options.BoundedCapacity;
 			if (!greedy || full) {
 				if (source == null)
 					return DataflowMessageStatus.Declined;
@@ -252,7 +252,7 @@ namespace System.Threading.Tasks.Dataflow {
 		void RetrievePostponed ()
 		{
 			// BoundedCapacity can't be -1 here, because in that case there would be no postponing
-			while (Thread.VolatileRead (ref itemCount) < options.BoundedCapacity
+			while (Volatile.Read (ref itemCount) < options.BoundedCapacity
 			       && !postponedMessages.IsEmpty && !MessageQueue.IsAddingCompleted) {
 				var block = postponedMessages.First ().Key;
 				DataflowMessageHeader header;
@@ -286,7 +286,7 @@ namespace System.Threading.Tasks.Dataflow {
 			postponedProcessing.Value = false;
 
 			// because of race
-			if ((Thread.VolatileRead (ref itemCount) < options.BoundedCapacity
+			if ((Volatile.Read (ref itemCount) < options.BoundedCapacity
 			     || MessageQueue.IsAddingCompleted)
 			    && !postponedMessages.IsEmpty)
 				EnsurePostponedProcessing ();

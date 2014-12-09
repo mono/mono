@@ -107,7 +107,7 @@ namespace System
 			"H:mzzz",
 			"H:m",
 			"H tt", // Specifies AM to disallow '8'.
-			"H'\u6642'm'\u5206's'\u79D2'",
+			"H'\u6642'm'\u5206's'\u79D2'"
 		};
 
 		// DateTime.Parse date patterns extend ParseExact patterns as follows:
@@ -885,6 +885,9 @@ namespace System
 					if (_DoParse (s, firstPart, ParseTimeFormats [j], false, out result, out dto, dfi, styles, true, ref incompleteFormat, ref longYear))
 						return true;
 				}
+
+				if (_DoParse (s, firstPart, "zzz", false, out result, out dto, dfi, styles, true, ref incompleteFormat, ref longYear))
+					return true;
 			}
 
 			//
@@ -928,10 +931,10 @@ namespace System
 			}
 
 			// Try as a last resort all the patterns
-			if (ParseExact (s, dfi.GetAllDateTimePatternsInternal (), dfi, styles, out result, false, ref longYear, setExceptionOnError, ref exception))
+			if (CoreParseExact (s, dfi.GetAllDateTimePatternsInternal (), dfi, styles, out result, out dto, false, ref longYear, setExceptionOnError, ref exception))
 				return true;
 
-			if (ParseExact (s, ExoticAndNonStandardFormats, dfi, styles, out result, false, ref longYear, setExceptionOnError, ref exception))
+			if (CoreParseExact (s, ExoticAndNonStandardFormats, dfi, styles, out result, out dto, false, ref longYear, setExceptionOnError, ref exception))
 				return true;
 
 			if (!setExceptionOnError)
@@ -1142,7 +1145,8 @@ namespace System
 					      DateTimeStyles style,
 					      bool firstPartIsDate,
 					      ref bool incompleteFormat,
-					      ref bool longYear)
+					      ref bool longYear,
+					      bool dateTimeOffset = false)
 		{
 			bool useutc = false;
 			bool use_invariant = false;
@@ -1155,7 +1159,7 @@ namespace System
 			bool afterTFormat = false;
 			DateTimeFormatInfo invInfo = DateTimeFormatInfo.InvariantInfo;
 			if (format.Length == 1)
-				format = DateTimeUtils.GetStandardPattern (format [0], dfi, out useutc, out use_invariant);
+				format = DateTimeUtils.GetStandardPattern (format [0], dfi, out useutc, out use_invariant, dateTimeOffset);
 
 			result = new DateTime (0);
 			if (format == null)
@@ -1396,13 +1400,8 @@ namespace System
 					} else if (num < 3) {
 						year = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
 					} else {
-						year = _ParseNumber (s, valuePos, exact ? 4 : 3, 4, false, sloppy_parsing, out num_parsed);
-						if ((year >= 1000) && (num_parsed == 4) && (!longYear) && (s.Length > 4 + valuePos)) {
-							int np = 0;
-							int ly = _ParseNumber (s, valuePos, 5, 5, false, sloppy_parsing, out np);
-							longYear = (ly > 9999);
-						}
-						num = 3;
+						year = _ParseNumber (s, valuePos, exact ? num + 1 : 3, num + 1, false, sloppy_parsing, out num_parsed);
+						longYear = (year > 9999);
 					}
 
 					//FIXME: We should do use dfi.Calendat.TwoDigitYearMax
@@ -1470,6 +1469,25 @@ namespace System
 					if (num_parsed == -1)
 						return false;
 					fractionalSeconds = decimalNumber / Math.Pow(10.0, num_parsed);
+
+					//Parse ISO8601 with an unlimited number of fractional digits.
+					if (!exact && num == 6 && hour != -1 && minute != -1 && second != -1) {
+						var total_num_parsed = num_parsed;
+						while (true) {
+							valuePos += num_parsed;
+							decimalNumber = (double) _ParseNumber (s, valuePos, 0, 1, leading_zeros, sloppy_parsing, out num_parsed);
+							if (num_parsed < 1) {
+								num_parsed = 0;
+								break;
+							}
+
+							total_num_parsed += num_parsed;
+							if (total_num_parsed > 15)
+								continue; //not enough precision, ignore additional digits.
+
+							fractionalSeconds += decimalNumber / Math.Pow (10.0, total_num_parsed);
+						}
+					}
 					break;
 				case 't':
 					if (!_ParseAmPm (s, valuePos, num > 0 ? 0 : 1, dfi, exact, out num_parsed, ref ampm))
@@ -1538,7 +1556,6 @@ namespace System
 						valuePos += num_parsed;
 
 						tzoffmin = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
-						num = 2;
 						if (num_parsed < 0)
 							return false;
 					}
@@ -1727,7 +1744,16 @@ namespace System
 			if (tzsign == -1) {
 				if (result != DateTime.MinValue) {
 					try {
-						dto = new DateTimeOffset (result);
+						if (((style & DateTimeStyles.AssumeUniversal) != 0) || useutc) {
+							dto = new DateTimeOffset (result, TimeSpan.Zero);
+						} else if ((style & DateTimeStyles.AssumeLocal) != 0) {
+							var offset = use_invariant ?
+								TimeSpan.Zero :
+								TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now);
+							dto = new DateTimeOffset (result, offset);
+						} else {
+							dto = new DateTimeOffset (result);
+						}
 					} catch { } // We handle this error in DateTimeOffset.Parse
 				}
 			} else {
@@ -1794,9 +1820,10 @@ namespace System
 				throw new FormatException ("Format specifier was invalid.");
 
 			DateTime result;
+			DateTimeOffset dto;
 			bool longYear = false;
 			Exception e = null;
-			if (!ParseExact (s, formats, dfi, style, out result, true, ref longYear, true, ref e))
+			if (!CoreParseExact (s, formats, dfi, style, out result, out dto, true, ref longYear, true, ref e))
 				throw e;
 			return result;
 		}		
@@ -1860,21 +1887,25 @@ namespace System
 		{
 			try {
 				DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
+				DateTimeOffset dto;
 
 				bool longYear = false;
 				Exception e = null;
-				return ParseExact (s, formats, dfi, style, out result, true, ref longYear, false, ref e);
+				return CoreParseExact (s, formats, dfi, style, out result, out dto, true, ref longYear, false, ref e);
 			} catch {
 				result = MinValue;
 				return false;
 			}
 		}
 
-		private static bool ParseExact (string s, string [] formats,
-						DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret,
+		internal static bool CoreParseExact (string s, string [] formats,
+						DateTimeFormatInfo dfi, DateTimeStyles style,
+						out DateTime ret, out DateTimeOffset dto,
 						bool exact, ref bool longYear,
-						bool setExceptionOnError, ref Exception exception)
+						bool setExceptionOnError, ref Exception exception,
+						bool dateTimeOffset = false)
 		{
+			dto = new DateTimeOffset (0, TimeSpan.Zero);
 			int i;
 			bool incompleteFormat = false;
 			for (i = 0; i < formats.Length; i++)
@@ -1884,8 +1915,7 @@ namespace System
 				if (format == null || format == String.Empty)
 					break;
 
-				DateTimeOffset dto;
-				if (_DoParse (s, formats[i], null, exact, out result, out dto, dfi, style, false, ref incompleteFormat, ref longYear)) {
+				if (_DoParse (s, formats[i], null, exact, out result, out dto, dfi, style, false, ref incompleteFormat, ref longYear, dateTimeOffset)) {
 					ret = result;
 					return true;
 				}

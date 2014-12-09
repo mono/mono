@@ -79,12 +79,10 @@ namespace System.ComponentModel
 			// Set fields to null
 		}
 
-#if !TARGET_JVM
 		~MarshalByValueComponent ()
 		{
 			Dispose (false);
 		}
-#endif	
 
 #if !WINDOWS_STORE_APP
 		public virtual object GetService (Type service) 

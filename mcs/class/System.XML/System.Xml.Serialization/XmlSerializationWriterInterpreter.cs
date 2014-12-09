@@ -109,16 +109,20 @@ namespace System.Xml.Serialization
 
 			if (ob is XmlNode)
 			{
-				if (_format == SerializationFormat.Literal) WriteElementLiteral((XmlNode)ob, "", "", true, false);
-				else WriteElementEncoded((XmlNode)ob, "", "", true, false);
+				if (_format == SerializationFormat.Literal) WriteElementLiteral((XmlNode)ob, "", "", true, typeMap.IsAny);
+				else WriteElementEncoded((XmlNode)ob, "", "", true, typeMap.IsAny);
 				return;
 			}
 
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
-				WriteSerializable ((IXmlSerializable)ob, element, namesp, isNullable);
+				WriteSerializable ((IXmlSerializable)ob, element, namesp, isNullable, !typeMap.IsAny);
 				return;
 			}
+
+			var obExpectedType = typeMap.TypeData.Type;
+			if (!ob.GetType().IsAssignableFrom (obExpectedType))
+				ob = ImplicitConvert (ob, obExpectedType);
 
 			XmlTypeMapping map = typeMap.GetRealTypeMap (ob.GetType());
 
@@ -355,18 +359,17 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		object ImplicitConvert (object obj, Type type)
+		internal static object ImplicitConvert (object obj, Type type)
 		{
 			if (obj == null)
 				return null;
-			for (Type t = type; t != typeof (object); t = t.BaseType) {
-				MethodInfo mi = t.GetMethod ("op_Implicit", new Type [] {t});
-				if (mi != null && mi.ReturnType.IsAssignableFrom (obj.GetType ()))
-					return mi.Invoke (null, new object [] {obj});
-			}
 
 			for (Type t = obj.GetType (); t != typeof (object); t = t.BaseType) {
 				MethodInfo mi = t.GetMethod ("op_Implicit", new Type [] {t});
+				if (mi != null && mi.ReturnType == type)
+					return mi.Invoke (null, new object [] {obj});
+
+				mi = type.GetMethod ("op_Implicit", new Type [] {t});
 				if (mi != null && mi.ReturnType == type)
 					return mi.Invoke (null, new object [] {obj});
 			}

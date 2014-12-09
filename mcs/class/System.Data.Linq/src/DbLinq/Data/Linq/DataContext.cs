@@ -830,9 +830,12 @@ namespace DbLinq.Data.Linq
             }
         }
 
-		private static MethodInfo _WhereMethod = typeof(Queryable).GetMethods().First(m => m.Name == "Where");
+		private static MethodInfo _WhereMethod;
         internal object GetOtherTableQuery(Expression predicate, ParameterExpression parameter, Type otherTableType, IQueryable otherTable)
         {
+            if (_WhereMethod == null)
+                System.Threading.Interlocked.CompareExchange (ref _WhereMethod, typeof(Queryable).GetMethods().First(m => m.Name == "Where"), null);
+
             //predicate: other.EmployeeID== "WARTH"
             Expression lambdaPredicate = Expression.Lambda(predicate, parameter);
             //lambdaPredicate: other=>other.EmployeeID== "WARTH"

@@ -1040,17 +1040,12 @@ public abstract class Encoding : ICloneable
 	}
 
 	// Forwarding decoder implementation.
-	private sealed class ForwardingDecoder : Decoder
+	private sealed class ForwardingDecoder : EncodingDecoder
 	{
-		private Encoding encoding;
-
 		// Constructor.
 		public ForwardingDecoder (Encoding enc)
+			: base (enc)
 		{
-			encoding = enc;
-			DecoderFallback fallback = encoding.DecoderFallback;
-			if (fallback != null)
-				Fallback = fallback;
 		}
 
 		// Override inherited methods.
@@ -1068,17 +1063,12 @@ public abstract class Encoding : ICloneable
 	} // class ForwardingDecoder
 
 	// Forwarding encoder implementation.
-	private sealed class ForwardingEncoder : Encoder
+	private sealed class ForwardingEncoder : EncodingEncoder
 	{
-		private Encoding encoding;
-
 		// Constructor.
 		public ForwardingEncoder (Encoding enc)
+			: base (enc)
 		{
-			encoding = enc;
-			EncoderFallback fallback = encoding.EncoderFallback;
-			if (fallback != null)
-				Fallback = fallback;
 		}
 
 		// Override inherited methods.

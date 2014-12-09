@@ -3,6 +3,12 @@
 
 using System;
 
+public enum FooEnum
+{
+	One,
+	Two
+};
+
 class Foo
 {
 	public static int y = 1;
@@ -40,5 +46,23 @@ class Foo
 		}
 
 		return s;
+	}
+
+	const FooEnum foo = FooEnum.Two;
+
+	static void Test_3 ()
+	{
+		object obj;
+
+		switch (foo) {
+		case FooEnum.One:
+			obj = new object ();
+			break;
+		case FooEnum.Two:
+			obj = new object ();
+			break;
+		}
+
+		Console.WriteLine (obj);
 	}
 }

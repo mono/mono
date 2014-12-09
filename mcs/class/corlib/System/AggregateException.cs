@@ -126,16 +126,6 @@ namespace System
 			}
 		}
 
-		internal void AddChildException (AggregateException childEx)
-		{
-			if (innerExceptions == null)
-				innerExceptions = new List<Exception> ();
-			if (childEx == null)
-				return;
-
-			innerExceptions.Add (childEx);
-		}
-		
 		public override string ToString ()
 		{
 			System.Text.StringBuilder finalMessage = new System.Text.StringBuilder (base.ToString ());

@@ -47,13 +47,6 @@ namespace System.Drawing
 		
 		public static readonly RectangleF Empty;
 
-#if TARGET_JVM
-		internal java.awt.geom.Rectangle2D NativeObject {
-			get {
-				return new java.awt.geom.Rectangle2D.Float(X,Y,Width,Height);
-			}
-		}
-#endif
 
 		/// <summary>
 		///	FromLTRB Shared Method
@@ -255,14 +248,6 @@ namespace System.Drawing
 		}
 
 
-#if TARGET_JVM
-		internal RectangleF (java.awt.geom.RectangularShape r2d) {
-			this.x = (float) r2d.getX ();
-			this.y = (float) r2d.getY ();
-			this.width = (float) r2d.getWidth ();
-			this.height = (float) r2d.getHeight ();
-		}
-#endif
 
 		/// <summary>
 		///	Bottom Property

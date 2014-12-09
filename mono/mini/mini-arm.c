@@ -88,9 +88,9 @@ void sys_icache_invalidate (void *start, size_t len);
 #endif
 
 /* This mutex protects architecture specific caches */
-#define mono_mini_arch_lock() EnterCriticalSection (&mini_arch_mutex)
-#define mono_mini_arch_unlock() LeaveCriticalSection (&mini_arch_mutex)
-static CRITICAL_SECTION mini_arch_mutex;
+#define mono_mini_arch_lock() mono_mutex_lock (&mini_arch_mutex)
+#define mono_mini_arch_unlock() mono_mutex_unlock (&mini_arch_mutex)
+static mono_mutex_t mini_arch_mutex;
 
 static gboolean v5_supported = FALSE;
 static gboolean v6_supported = FALSE;
@@ -177,32 +177,11 @@ int mono_exc_esp_offset = 0;
 #define LDR_PC_VAL ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 26) | (0 << 22) | (1 << 20) | (15 << 12))
 #define IS_LDR_PC(val) (((val) & LDR_MASK) == LDR_PC_VAL)
 
-#define ADD_LR_PC_4 ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 25) | (1 << 23) | (ARMREG_PC << 16) | (ARMREG_LR << 12) | 4)
-#define MOV_LR_PC ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 24) | (0xa << 20) |  (ARMREG_LR << 12) | ARMREG_PC)
 //#define DEBUG_IMT 0
- 
-/* A variant of ARM_LDR_IMM which can handle large offsets */
-#define ARM_LDR_IMM_GENERAL(code, dreg, basereg, offset, scratch_reg) do { \
-	if (arm_is_imm12 ((offset))) { \
-		ARM_LDR_IMM (code, (dreg), (basereg), (offset));	\
-	} else {												\
-		g_assert ((scratch_reg) != (basereg));					   \
-		code = mono_arm_emit_load_imm (code, (scratch_reg), (offset));	\
-		ARM_LDR_REG_REG (code, (dreg), (basereg), (scratch_reg));		\
-	}																	\
-	} while (0)
 
-#define ARM_STR_IMM_GENERAL(code, dreg, basereg, offset, scratch_reg) do {	\
-	if (arm_is_imm12 ((offset))) { \
-		ARM_STR_IMM (code, (dreg), (basereg), (offset));	\
-	} else {												\
-		g_assert ((scratch_reg) != (basereg));					   \
-		code = mono_arm_emit_load_imm (code, (scratch_reg), (offset));	\
-		ARM_STR_REG_REG (code, (dreg), (basereg), (scratch_reg));		\
-	}																	\
-	} while (0)
-
+#ifndef DISABLE_JIT
 static void mono_arch_compute_omit_fp (MonoCompile *cfg);
+#endif
 
 const char*
 mono_arch_regname (int reg)
@@ -245,9 +224,32 @@ emit_big_add (guint8 *code, int dreg, int sreg, int imm)
 		ARM_ADD_REG_IMM (code, dreg, sreg, imm8, rot_amount);
 		return code;
 	}
-	g_assert (dreg != sreg);
-	code = mono_arm_emit_load_imm (code, dreg, imm);
-	ARM_ADD_REG_REG (code, dreg, dreg, sreg);
+	if (dreg == sreg) {
+		code = mono_arm_emit_load_imm (code, ARMREG_IP, imm);
+		ARM_ADD_REG_REG (code, dreg, sreg, ARMREG_IP);
+	} else {
+		code = mono_arm_emit_load_imm (code, dreg, imm);
+		ARM_ADD_REG_REG (code, dreg, dreg, sreg);
+	}
+	return code;
+}
+
+/* If dreg == sreg, this clobbers IP */
+static guint8*
+emit_sub_imm (guint8 *code, int dreg, int sreg, int imm)
+{
+	int imm8, rot_amount;
+	if ((imm8 = mono_arm_is_rotated_imm8 (imm, &rot_amount)) >= 0) {
+		ARM_SUB_REG_IMM (code, dreg, sreg, imm8, rot_amount);
+		return code;
+	}
+	if (dreg == sreg) {
+		code = mono_arm_emit_load_imm (code, ARMREG_IP, imm);
+		ARM_SUB_REG_REG (code, dreg, sreg, ARMREG_IP);
+	} else {
+		code = mono_arm_emit_load_imm (code, dreg, imm);
+		ARM_SUB_REG_REG (code, dreg, dreg, sreg);
+	}
 	return code;
 }
 
@@ -387,7 +389,8 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	case OP_FCALL_REG:
 	case OP_FCALL_MEMBASE:
 		if (IS_VFP) {
-			if (((MonoCallInst*)ins)->signature->ret->type == MONO_TYPE_R4) {
+			MonoType *sig_ret = mini_type_get_underlying_type (NULL, ((MonoCallInst*)ins)->signature->ret);
+			if (sig_ret->type == MONO_TYPE_R4) {
 				if (IS_HARD_FLOAT) {
 					ARM_CVTS (code, ins->dreg, ARM_VFP_F0);
 				} else {
@@ -794,6 +797,12 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 }
 
 gpointer
+mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method, int offset, gboolean load_imt_reg)
+{
+	return NULL;
+}
+
+gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
 {
 	return (gpointer)regs [ARMREG_R0];
@@ -889,7 +898,7 @@ mono_arch_init (void)
 {
 	const char *cpu_arch;
 
-	InitializeCriticalSection (&mini_arch_mutex);
+	mono_mutex_init_recursive (&mini_arch_mutex);
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	if (mini_get_debug_options ()->soft_breakpoints) {
 		single_step_func_wrapper = create_function_wrapper (debugger_agent_single_step_from_context);
@@ -1084,8 +1093,6 @@ mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 	return vars;
 }
 
-#define USE_EXTRA_TEMPS 0
-
 GList *
 mono_arch_get_global_int_regs (MonoCompile *cfg)
 {
@@ -1151,6 +1158,8 @@ mono_arch_flush_icache (guint8 *code, gint size)
 #ifdef MONO_CROSS_COMPILE
 #elif __APPLE__
 	sys_icache_invalidate (code, size);
+#elif __GNUC_PREREQ(4, 3)
+    __builtin___clear_cache (code, code + size);
 #elif __GNUC_PREREQ(4, 1)
 	__clear_cache (code, code + size);
 #elif defined(PLATFORM_ANDROID)
@@ -2427,7 +2436,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 				 */
 				float_arg->flags |= MONO_INST_VOLATILE;
 
-				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, float_arg->dreg, in->dreg);
+				MONO_EMIT_NEW_UNALU (cfg, OP_FMOVE, float_arg->dreg, in->dreg);
 
 				/* We use the dreg to look up the instruction later. The hreg is used to
 				 * emit the instruction that loads the value into the FP reg.
@@ -2591,6 +2600,8 @@ mono_arch_is_inst_imm (gint64 imm)
 typedef struct {
 	MonoMethodSignature *sig;
 	CallInfo *cinfo;
+	MonoType *rtype;
+	MonoType **param_types;
 } ArchDynCallInfo;
 
 static gboolean
@@ -2649,6 +2660,8 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 		if (t->byref)
 			continue;
 
+		t = mini_replace_type (t);
+
 		switch (t->type) {
 		case MONO_TYPE_R4:
 		case MONO_TYPE_R8:
@@ -2674,6 +2687,7 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 {
 	ArchDynCallInfo *info;
 	CallInfo *cinfo;
+	int i;
 
 	cinfo = get_call_info (NULL, NULL, sig);
 
@@ -2686,6 +2700,10 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 	// FIXME: Preprocess the info to speed up start_dyn_call ()
 	info->sig = sig;
 	info->cinfo = cinfo;
+	info->rtype = mini_replace_type (sig->ret);
+	info->param_types = g_new0 (MonoType*, sig->param_count);
+	for (i = 0; i < sig->param_count; ++i)
+		info->param_types [i] = mini_replace_type (sig->params [i]);
 	
 	return (MonoDynCallInfo*)info;
 }
@@ -2726,7 +2744,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		p->regs [greg ++] = (mgreg_t)ret;
 
 	for (i = pindex; i < sig->param_count; i++) {
-		MonoType *t = mono_type_get_underlying_type (sig->params [i]);
+		MonoType *t = dinfo->param_types [i];
 		gpointer *arg = args [arg_index ++];
 		ArgInfo *ainfo = &dinfo->cinfo->args [i + sig->hasthis];
 		int slot = -1;
@@ -2814,13 +2832,11 @@ void
 mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 {
 	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
-	MonoMethodSignature *sig = ((ArchDynCallInfo*)info)->sig;
-	MonoType *ptype;
+	MonoType *ptype = ainfo->rtype;
 	guint8 *ret = ((DynCallArgs*)buf)->ret;
 	mgreg_t res = ((DynCallArgs*)buf)->res;
 	mgreg_t res2 = ((DynCallArgs*)buf)->res2;
 
-	ptype = mini_type_get_underlying_type (NULL, sig->ret);
 	switch (ptype->type) {
 	case MONO_TYPE_VOID:
 		*(gpointer*)ret = NULL;
@@ -4361,6 +4377,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL:
 			break;
+		case OP_IL_SEQ_POINT:
+			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
+			break;
 		case OP_SEQ_POINT: {
 			int i;
 			MonoInst *info_var = cfg->arch.seq_point_info_var;
@@ -4929,15 +4948,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_LOCALLOC: {
-			/* keep alignment */
-			int alloca_waste = cfg->param_area;
-			alloca_waste += 7;
-			alloca_waste &= ~7;
 			/* round the size to 8 bytes */
 			ARM_ADD_REG_IMM8 (code, ins->dreg, ins->sreg1, 7);
 			ARM_BIC_REG_IMM8 (code, ins->dreg, ins->dreg, 7);
-			if (alloca_waste)
-				ARM_ADD_REG_IMM8 (code, ins->dreg, ins->dreg, alloca_waste);
 			ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ins->dreg);
 			/* memzero the area: dreg holds the size, sp is the pointer */
 			if (ins->flags & MONO_INST_INIT) {
@@ -4953,7 +4966,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ARM_B_COND (code, ARMCOND_GE, 0);
 				arm_patch (code - 4, start_loop);
 			}
-			ARM_ADD_REG_IMM8 (code, ins->dreg, ARMREG_SP, alloca_waste);
+			ARM_MOV_REG_REG (code, ins->dreg, ARMREG_SP);
+			if (cfg->param_area)
+				code = emit_sub_imm (code, ARMREG_SP, ARMREG_SP, ALIGN_TO (cfg->param_area, MONO_ARCH_FRAME_ALIGNMENT));
 			break;
 		}
 		case OP_DYN_CALL: {
@@ -5309,8 +5324,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = mono_arm_emit_vfp_scratch_restore (cfg, code, vfp_scratch1);
 			break;
 
-		case OP_SETFRET:
-			if (mono_method_signature (cfg->method)->ret->type == MONO_TYPE_R4) {
+		case OP_SETFRET: {
+			MonoType *sig_ret = mini_type_get_underlying_type (NULL, mono_method_signature (cfg->method)->ret);
+			if (sig_ret->type == MONO_TYPE_R4) {
 				ARM_CVTD (code, ARM_VFP_F0, ins->sreg1);
 
 				if (!IS_HARD_FLOAT) {
@@ -5324,6 +5340,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 			break;
+		}
 		case OP_FCONV_TO_I1:
 			code = emit_float_to_int (cfg, code, ins->dreg, ins->sreg1, 1, TRUE);
 			break;
@@ -6909,6 +6926,26 @@ GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
 	return mono_arm_get_exception_trampolines (aot);
+}
+
+gpointer
+mono_arch_install_handler_block_guard (MonoJitInfo *ji, MonoJitExceptionInfo *clause, MonoContext *ctx, gpointer new_value)
+{
+	gpointer *lr_loc;
+	char *old_value;
+	char *bp;
+
+	/*Load the spvar*/
+	bp = MONO_CONTEXT_GET_BP (ctx);
+	lr_loc = (gpointer*)(bp + clause->exvar_offset);
+
+	old_value = *lr_loc;
+	if ((char*)old_value < (char*)ji->code_start || (char*)old_value > ((char*)ji->code_start + ji->code_size))
+		return old_value;
+
+	*lr_loc = new_value;
+
+	return old_value;
 }
 
 #if defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED)

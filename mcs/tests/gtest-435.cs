@@ -6,6 +6,11 @@ namespace testcase
 	{
 		public static int Main ()
 		{
+			DateTime? dt = null;
+			var res1 = default (DateTime?) == dt;
+			if (!res1)
+				return 5;
+
 			DateTime? a = default (DateTime?);
 			DateTime? b = default (DateTime?);
 			bool res = a == b;

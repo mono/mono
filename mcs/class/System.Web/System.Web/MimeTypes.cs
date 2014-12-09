@@ -195,6 +195,7 @@ namespace System.Web
 			mimeTypes.Add ("htx", "text/html");
 			mimeTypes.Add ("ice", "x-conference/x-cooltalk");
 			mimeTypes.Add ("ico", "image/x-icon");
+			mimeTypes.Add ("ics", "text/calendar");
 			mimeTypes.Add ("idc", "text/plain");
 			mimeTypes.Add ("ief", "image/ief");
 			mimeTypes.Add ("iefs", "image/ief");
@@ -232,6 +233,7 @@ namespace System.Web
 			mimeTypes.Add ("la", "audio/nspaudio");
 			mimeTypes.Add ("lam", "audio/x-liveaudio");
 			mimeTypes.Add ("latex", "application/x-latex");
+			mimeTypes.Add ("less", "text/css");
 			mimeTypes.Add ("list", "text/plain");
 			mimeTypes.Add ("lma", "audio/nspaudio");
 			mimeTypes.Add ("log", "text/plain");
@@ -271,11 +273,11 @@ namespace System.Web
 			mimeTypes.Add ("mme", "application/base64");
 			mimeTypes.Add ("mny", "application/x-msmoney");
 			mimeTypes.Add ("mod", "audio/mod");
-			mimeTypes.Add ("moov", "video/quicktime");
-			mimeTypes.Add ("movie", "video/x-sgi-movie");
 			mimeTypes.Add ("mov", "video/quicktime");
+			mimeTypes.Add ("movie", "video/x-sgi-movie");
+			mimeTypes.Add ("moov", "video/quicktime");
 			mimeTypes.Add ("mp2", "video/mpeg");
-			mimeTypes.Add ("mp3", "audio/mpeg3");
+			mimeTypes.Add ("mp3", "audio/mpeg");
 			mimeTypes.Add ("mp4", "video/mp4");
 			//mimeTypes.Add ("mp4a", "audio/mp4");  // A common but unofficial alternative to m4a
 			mimeTypes.Add ("mpa", "audio/mpeg");
@@ -528,7 +530,7 @@ namespace System.Web
 			mimeTypes.Add ("wmls", "text/vnd.wap.wmlscript");
 			mimeTypes.Add ("wml", "text/vnd.wap.wml");
 			mimeTypes.Add ("wmp", "video/x-ms-wmp");
-			mimeTypes.Add ("woff", "application/x-woff");
+			mimeTypes.Add ("woff", "application/font-woff");
 			mimeTypes.Add ("word", "application/msword");
 			mimeTypes.Add ("wp5", "application/wordperfect");
 			mimeTypes.Add ("wp6", "application/wordperfect");

@@ -255,7 +255,7 @@ namespace System.Xml.Serialization
 				sb.Append (type.Name);
 			}
 			else {
-				if (full && type.Namespace.Length > 0)
+				if (full && !string.IsNullOrEmpty(type.Namespace))
 					sb.Append (type.Namespace).Append ('.');
 				sb.Append (type.Name);
 			}

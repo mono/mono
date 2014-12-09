@@ -79,7 +79,7 @@ namespace System.Collections.Generic {
 		//             to be ORed with HASH_FLAG before comparing it with the save hashcode.
 		// "touchedSlots" and "emptySlot" manage the free space in the heap 
 
-		const int INITIAL_SIZE = 10;
+		const int INITIAL_SIZE = 4;
 		const float DEFAULT_LOAD_FACTOR = (90f / 100);
 		const int NO_SLOT = -1;
 		const int HASH_FLAG = -2147483648;
@@ -233,22 +233,25 @@ namespace System.Collections.Generic {
 		}
 
 		public Dictionary (int capacity)
+			: this (capacity, null)
 		{
-			Init (capacity, null);
 		}
 
 		public Dictionary (IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer)
 		{
 			if (dictionary == null)
 				throw new ArgumentNullException ("dictionary");
-			int capacity = dictionary.Count;
-			Init (capacity, comparer);
+
+			Init (dictionary.Count, comparer);
 			foreach (KeyValuePair<TKey, TValue> entry in dictionary)
 				this.Add (entry.Key, entry.Value);
 		}
 
 		public Dictionary (int capacity, IEqualityComparer<TKey> comparer)
 		{
+			if (capacity < 0)
+				throw new ArgumentOutOfRangeException ("capacity");
+
 			Init (capacity, comparer);
 		}
 
@@ -257,22 +260,16 @@ namespace System.Collections.Generic {
 			serialization_info = info;
 		}
 
-		private void Init (int capacity, IEqualityComparer<TKey> hcp)
+		void Init (int capacity, IEqualityComparer<TKey> hcp)
 		{
-			if (capacity < 0)
-				throw new ArgumentOutOfRangeException ("capacity");
-			this.hcp = (hcp != null) ? hcp : EqualityComparer<TKey>.Default;
-			if (capacity == 0)
-				capacity = INITIAL_SIZE;
+			this.hcp = hcp ?? EqualityComparer<TKey>.Default;
 
-			/* Modify capacity so 'capacity' elements can be added without resizing */
-			capacity = (int)(capacity / DEFAULT_LOAD_FACTOR) + 1;
-			
+			capacity = Math.Max (1, (int)(capacity / DEFAULT_LOAD_FACTOR));
 			InitArrays (capacity);
-			generation = 0;
 		}
 		
-		private void InitArrays (int size) {
+		void InitArrays (int size)
+		{
 			table = new int [size];
 
 			linkSlots = new Link [size];
@@ -456,6 +453,9 @@ namespace System.Collections.Generic {
 
 		public void Clear ()
 		{
+			if (count == 0)
+				return;
+
 			count = 0;
 			// clear the hash table
 			Array.Clear (table, 0, table.Length);

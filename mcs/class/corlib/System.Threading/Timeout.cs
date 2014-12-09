@@ -38,8 +38,6 @@ namespace System.Threading {
 	{
 		public const int Infinite = -1;
 
-#if NET_4_5
 		public static readonly TimeSpan InfiniteTimeSpan = new TimeSpan (0, 0, 0, 0, -1);
-#endif
 	}
 }

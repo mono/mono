@@ -167,7 +167,7 @@ namespace System.Threading.Tasks.Dataflow {
 		{
 			firstOffering = true;
 			currentItem = item;
-			Thread.VolatileWrite (ref currentMessageHeaderId, ++lastMessageHeaderId);
+			Volatile.Write (ref currentMessageHeaderId, ++lastMessageHeaderId);
 
 			ClearUnpostponed ();
 		}
@@ -184,14 +184,14 @@ namespace System.Threading.Tasks.Dataflow {
 		public void ResetCurrentItem ()
 		{
 			currentItem = default(T);
-			Thread.VolatileWrite (ref currentMessageHeaderId, 0);
+			Volatile.Write (ref currentMessageHeaderId, 0);
 		}
 
 		/// <summary>
 		/// Is there an item to send right now?
 		/// </summary>
 		public bool HasCurrentItem {
-			get { return Thread.VolatileRead (ref currentMessageHeaderId) != 0; }
+			get { return Volatile.Read (ref currentMessageHeaderId) != 0; }
 		}
 
 		/// <summary>
@@ -352,7 +352,7 @@ namespace System.Threading.Tasks.Dataflow {
 		/// </summary>
 		public bool VerifyHeader (DataflowMessageHeader header)
 		{
-			return header.Id == Thread.VolatileRead (ref currentMessageHeaderId);
+			return header.Id == Volatile.Read (ref currentMessageHeaderId);
 		}
 	}
 

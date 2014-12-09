@@ -120,9 +120,17 @@ namespace System.Net.Http.Headers
 
 		public string Name {
 			get {
-				return FindParameter ("name");
+				var value = FindParameter ("name");
+
+				if (value == null)
+					return null;
+
+				return DecodeValue (value, false);
 			}
 			set {
+				if (value != null)
+					value = EncodeBase64Value (value);
+
 				SetValue ("name", value);
 			}
 		}
@@ -211,6 +219,10 @@ namespace System.Net.Http.Headers
 
 		static string EncodeBase64Value (string value)
 		{
+			bool quoted = value.Length > 1 && value [0] == '"' && value [value.Length - 1] == '"';
+			if (quoted)
+				value = value.Substring (1, value.Length - 2);
+
 			for (int i = 0; i < value.Length; ++i) {
 				var ch = value[i];
 				if (ch > 127) {
@@ -220,7 +232,7 @@ namespace System.Net.Http.Headers
 				}
 			}
 
-			if (!Lexer.IsValidToken (value))
+			if (quoted || !Lexer.IsValidToken (value))
 				return "\"" + value + "\"";
 
 			return value;
@@ -242,6 +254,11 @@ namespace System.Net.Http.Headers
 						sb.Append (b.ToString ("X2"));
 					}
 
+					continue;
+				}
+
+				if (!Lexer.IsValidCharacter (ch) || ch == '*' || ch == '?' || ch == '%') {
+					sb.Append (Uri.HexEscape (ch));
 					continue;
 				}
 

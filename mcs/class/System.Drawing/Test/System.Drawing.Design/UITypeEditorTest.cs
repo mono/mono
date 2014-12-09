@@ -65,7 +65,6 @@ namespace MonoTests.System.Drawing.Design {
 #endif
 		}
 
-#if !TARGET_JVM
 		[Test]
 		public void PaintValue_PaintValueEventArgs_Null ()
 		{
@@ -83,6 +82,5 @@ namespace MonoTests.System.Drawing.Design {
 		{
 			editor.PaintValue (null, graphics, Rectangle.Empty);
 		}
-#endif
 	}
 }

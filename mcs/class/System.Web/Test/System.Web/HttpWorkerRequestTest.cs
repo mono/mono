@@ -268,9 +268,6 @@ namespace MonoTests.System.Web {
 
 		}
 
-#if TARGET_JVM //BUG #6499
-		[Category ("NotWorking")]
-#endif
 		[Test] public void TestDefaults ()
 		{
 			FakeHttpWorkerRequest f = new FakeHttpWorkerRequest ();

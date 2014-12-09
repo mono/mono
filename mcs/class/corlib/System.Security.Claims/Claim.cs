@@ -58,6 +58,9 @@ namespace System.Security.Claims {
 				throw new ArgumentNullException ("type");
 			if (value == null)
 				throw new ArgumentNullException ("value");
+
+			Properties = new Dictionary <string, string> ();
+
 			Type = type;
 			Value = value;
 			ValueType = valueType == null ? ClaimValueTypes.String : valueType;

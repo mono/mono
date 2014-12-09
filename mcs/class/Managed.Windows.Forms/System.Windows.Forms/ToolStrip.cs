@@ -1145,13 +1145,7 @@ namespace System.Windows.Forms
 				if (tsi.Enabled && tsi.Visible && !string.IsNullOrEmpty (tsi.Text) && Control.IsMnemonic (charCode, tsi.Text))
 					return tsi.ProcessMnemonic (charCode);
 
-			string code = Char.ToUpper (charCode).ToString ();
-			
-			// If any item's text starts with our letter, it gets the message
-			if ((Control.ModifierKeys & Keys.Alt) != 0 || this is ToolStripDropDownMenu)
-				foreach (ToolStripItem tsi in this.Items)
-					if (tsi.Enabled && tsi.Visible && !string.IsNullOrEmpty (tsi.Text) && tsi.Text.ToUpper ().StartsWith (code) && !(tsi is ToolStripControlHost))
-						return tsi.ProcessMnemonic (charCode);
+			// Do not try to match any further here.  See Xamarin bug 23532.
 
 			return base.ProcessMnemonic (charCode);
 		}

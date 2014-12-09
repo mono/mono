@@ -317,7 +317,7 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[ExpectedException (typeof (SecurityException))]
 		public void LinkDemand_IsDefinedExtension_Deny_Anything ()
 		{
-			MethodInfo mi = mi = typeof (CodeDomProvider).GetMethod ("IsDefinedExtension");
+			MethodInfo mi = typeof (CodeDomProvider).GetMethod ("IsDefinedExtension");
 			Assert.IsNotNull (mi, "IsDefinedExtension");
 			Assert.IsFalse ((bool) mi.Invoke (null, new object[1] { String.Empty }), "IsDefinedExtension('')");
 			// requires full trust (i.e. unrestricted permission set)
@@ -328,7 +328,7 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[ExpectedException (typeof (SecurityException))]
 		public void LinkDemand_IsDefinedLanguage_Deny_Anything ()
 		{
-			MethodInfo mi = mi = typeof (CodeDomProvider).GetMethod ("IsDefinedLanguage");
+			MethodInfo mi = typeof (CodeDomProvider).GetMethod ("IsDefinedLanguage");
 			Assert.IsNotNull (mi, "IsDefinedLanguage");
 			Assert.IsFalse ((bool) mi.Invoke (null, new object[1] { String.Empty }), "IsDefinedLanguage('')");
 			// requires full trust (i.e. unrestricted permission set)

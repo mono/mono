@@ -345,7 +345,6 @@ namespace MonoTests.System.Collections.Generic {
 #if !NET_4_0 // FIXME: the blob contains the 2.0 mscorlib version
 
 		[Test]
-		[Category ("TargetJvmNotWorking")]
 		public void SerializeTest ()
 		{
 			List <int> list = new List <int> ();
@@ -353,11 +352,7 @@ namespace MonoTests.System.Collections.Generic {
 			list.Add (0);
 			list.Add (7);
 
-#if TARGET_JVM
-			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
-#else
 			BinaryFormatter bf = new BinaryFormatter ();
-#endif // TARGET_JVM
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, list);
 
@@ -371,18 +366,13 @@ namespace MonoTests.System.Collections.Generic {
 #endif
 
 		[Test]
-		[Category ("TargetJvmNotWorking")]
 		public void DeserializeTest ()
 		{
 			MemoryStream ms = new MemoryStream ();
 			ms.Write (_serializedList, 0, _serializedList.Length);
 			ms.Position = 0;
 
-#if TARGET_JVM
-			BinaryFormatter bf = (BinaryFormatter)vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (false);
-#else
 			BinaryFormatter bf = new BinaryFormatter ();
-#endif // TARGET_JVM
 			List<int> list = (List<int>) bf.Deserialize (ms);
 			Assert.AreEqual (3, list.Count, "#1");
 			Assert.AreEqual (5, list [0], "#2");
@@ -631,6 +621,16 @@ namespace MonoTests.System.Collections.Generic {
 			_list1.ForEach (delegate (int j) { i += j; });
 
 			Assert.AreEqual (418, i);
+		}
+
+		[Test]
+		public void ForEach_Modified ()
+		{
+			try {
+				_list1.ForEach (l => _list1.Add (0));
+				Assert.Fail ();
+			} catch (InvalidOperationException) {
+			}
 		}
 
 		[Test]

@@ -545,6 +545,16 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (Environment.CurrentDirectory, Path.GetFullPath ("."), "#03");
 			Assert.AreEqual (Path.Combine (Environment.CurrentDirectory, "hey"),
 					     Path.GetFullPath ("hey"), "#04");
+			Assert.AreEqual ("/", Path.GetFullPath ("/"), "#01");
+
+			string curdir = Directory.GetCurrentDirectory ();
+			try {
+				Directory.SetCurrentDirectory ("/");
+				Assert.AreEqual ("/test.txt", Path.GetFullPath ("test.txt"), "xambug #833");
+			}
+			finally {
+				Directory.SetCurrentDirectory (curdir);
+			}
 		}
 
 		[Test]
@@ -765,9 +775,7 @@ namespace MonoTests.System.IO
 		{
 			if (Windows) {
 				Assert.AreEqual (@"Z:\", Path.GetFullPath ("Z:"), "GetFullPath w#01");
-#if !TARGET_JVM // Java full (canonical) path always starts with caps drive letter
 				Assert.AreEqual (@"c:\abc\def", Path.GetFullPath (@"c:\abc\def"), "GetFullPath w#02");
-#endif
 				Assert.IsTrue (Path.GetFullPath (@"\").EndsWith (@"\"), "GetFullPath w#03");
 				// "\\\\" is not allowed
 				Assert.IsTrue (Path.GetFullPath ("/").EndsWith (@"\"), "GetFullPath w#05");
@@ -1037,11 +1045,7 @@ namespace MonoTests.System.IO
 
 			string curdir = Directory.GetCurrentDirectory ();
 			try {
-#if TARGET_JVM
-				string system = "C:\\WINDOWS\\system32\\";
-#else
 				string system = Environment.SystemDirectory;
-#endif
 				Directory.SetCurrentDirectory (system);
 				string drive = system.Substring (0, 2);
 				Assert.AreEqual (system, Path.GetFullPath (drive), "current dir");
@@ -1062,11 +1066,7 @@ namespace MonoTests.System.IO
 
 			string curdir = Directory.GetCurrentDirectory ();
 			try {
-#if TARGET_JVM
-				string system = "C:\\WINDOWS\\system32\\";
-#else
 				string system = Environment.SystemDirectory;
-#endif
 				Directory.SetCurrentDirectory (system);
 				// e.g. C:dir (no backslash) will return CurrentDirectory + dir
 				string dir = system.Substring (0, 2) + "dir";
@@ -1078,9 +1078,6 @@ namespace MonoTests.System.IO
 		}
 #endif
 		[Test]
-#if TARGET_JVM
-		[Ignore("Java full (canonical) path always returns windows dir in caps")]
-#endif
 		public void WindowsDriveC14N_77058 ()
 		{
 			// check for Unix platforms - see FAQ for more details

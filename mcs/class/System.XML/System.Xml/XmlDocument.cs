@@ -858,20 +858,7 @@ namespace System.Xml
 		[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 		public virtual XmlNode ReadNode (XmlReader reader)
 		{
-			if (PreserveWhitespace)
-				return ReadNodeCore (reader);
-			XmlTextReader xtr = reader as XmlTextReader;
-			if (xtr != null && xtr.WhitespaceHandling ==
-			    WhitespaceHandling.All) {
-				try {
-					xtr.WhitespaceHandling = WhitespaceHandling.Significant;
-					return ReadNodeCore (reader);
-				} finally {
-					xtr.WhitespaceHandling = WhitespaceHandling.All;
-				}
-			}
-			else
-				return ReadNodeCore (reader);
+			return ReadNodeCore (reader);
 		}
 
 		XmlNode ReadNodeCore (XmlReader reader)

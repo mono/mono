@@ -53,8 +53,13 @@ namespace Microsoft.Build.Utilities
 #if XBUILD_12
 		Version451,
 #endif
+#if XBUILD_14
+		Version453,
+#endif
 
-#if XBUILD_12
+#if XBUILD_14
+		VersionLatest = Version453
+#elif XBUILD_12
 		VersionLatest = Version451
 #elif NET_4_5
 		VersionLatest = Version45

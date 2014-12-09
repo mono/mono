@@ -728,13 +728,13 @@ namespace Mono.CSharp
 			
 	public class Property : PropertyBase
 	{
-		public sealed class BackingField : Field
+		public sealed class BackingFieldDeclaration : Field
 		{
 			readonly Property property;
+			const Modifiers DefaultModifiers = Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | Modifiers.DEBUGGER_HIDDEN;
 
-			public BackingField (Property p, bool readOnly)
-				: base (p.Parent, p.type_expr,
-				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
+			public BackingFieldDeclaration (Property p, bool readOnly)
+				: base (p.Parent, p.type_expr, DefaultModifiers | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				new MemberName ("<" + p.GetFullName (p.MemberName) + ">k__BackingField", p.Location), null)
 			{
 				this.property = p;
@@ -756,8 +756,6 @@ namespace Mono.CSharp
 
 		static readonly string[] attribute_target_auto = new string[] { "property", "field" };
 
-		Field backing_field;
-
 		public Property (TypeDefinition parent, FullNamedExpression type, Modifiers mod,
 				 MemberName name, Attributes attrs)
 			: base (parent, type, mod,
@@ -767,6 +765,8 @@ namespace Mono.CSharp
 				name, attrs)
 		{
 		}
+
+		public BackingFieldDeclaration BackingField { get; private set; }
 
 		public Expression Initializer { get; set; }
 
@@ -778,7 +778,7 @@ namespace Mono.CSharp
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.Field) {
-				backing_field.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				BackingField.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
 
@@ -788,20 +788,20 @@ namespace Mono.CSharp
 		void CreateAutomaticProperty ()
 		{
 			// Create backing field
-			backing_field = new BackingField (this, Initializer != null && Set == null);
-			if (!backing_field.Define ())
+			BackingField = new BackingFieldDeclaration (this, Initializer == null && Set == null);
+			if (!BackingField.Define ())
 				return;
 
 			if (Initializer != null) {
-				backing_field.Initializer = Initializer;
-				Parent.RegisterFieldForInitialization (backing_field, new FieldInitializer (backing_field, Initializer, Location));
-				backing_field.ModFlags |= Modifiers.READONLY;
+				BackingField.Initializer = Initializer;
+				Parent.RegisterFieldForInitialization (BackingField, new FieldInitializer (BackingField, Initializer, Location));
+				BackingField.ModFlags |= Modifiers.READONLY;
 			}
 
-			Parent.PartialContainer.Members.Add (backing_field);
+			Parent.PartialContainer.Members.Add (BackingField);
 
-			FieldExpr fe = new FieldExpr (backing_field, Location);
-			if ((backing_field.ModFlags & Modifiers.STATIC) == 0)
+			FieldExpr fe = new FieldExpr (BackingField, Location);
+			if ((BackingField.ModFlags & Modifiers.STATIC) == 0)
 				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
 
 			//
@@ -839,7 +839,7 @@ namespace Mono.CSharp
 						GetSignatureForError ());
 
 				if (IsInterface)
-					Report.Error (8053, Location, "`{0}': Properties inside interfaces cannot have initializers",
+					Report.Error (8052, Location, "`{0}': Properties inside interfaces cannot have initializers",
 						GetSignatureForError ());
 
 				if (Compiler.Settings.Version < LanguageVersion.V_6)
@@ -848,14 +848,9 @@ namespace Mono.CSharp
 
 			if (auto) {
 				if (Get == null) {
-					Report.Error (8052, Location, "Auto-implemented property `{0}' must have get accessor",
+					Report.Error (8051, Location, "Auto-implemented property `{0}' must have get accessor",
 						GetSignatureForError ());
 					return false;
-				}
-
-				if (Initializer == null && AccessorSecond == null) {
-					Report.Error (8051, Location, "Auto-implemented property `{0}' must have set accessor or initializer",
-						GetSignatureForError ());
 				}
 
 				if (Compiler.Settings.Version < LanguageVersion.V_3 && Initializer == null)
@@ -1040,13 +1035,22 @@ namespace Mono.CSharp
 					Location)));
 				args.Add (new Argument (new LocalVariableReference (obj1, Location)));
 
-				var cas = Module.PredefinedMembers.InterlockedCompareExchange_T.Resolve (Location);
-				if (cas == null)
-					return;
-
-				body.AddStatement (new StatementExpression (new SimpleAssign (
-					new LocalVariableReference (obj1, Location),
-					new Invocation (MethodGroupExpr.CreatePredefined (cas, cas.DeclaringType, Location), args))));
+				var cas = Module.PredefinedMembers.InterlockedCompareExchange_T.Get ();
+				if (cas == null) {
+					if (Module.PredefinedMembers.MonitorEnter_v4.Get () != null || Module.PredefinedMembers.MonitorEnter.Get () != null) {
+						// Workaround for cripled (e.g. microframework) mscorlib without CompareExchange
+						body.AddStatement (new Lock (
+							block.GetParameterReference (0, Location),
+							new StatementExpression (new SimpleAssign (
+								f_expr, args [1].Expr, Location), Location), Location));
+					} else {
+						Module.PredefinedMembers.InterlockedCompareExchange_T.Resolve (Location);
+					}
+				} else {
+					body.AddStatement (new StatementExpression (new SimpleAssign (
+						new LocalVariableReference (obj1, Location),
+						new Invocation (MethodGroupExpr.CreatePredefined (cas, cas.DeclaringType, Location), args))));
+				}
 			}
 		}
 

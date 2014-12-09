@@ -436,7 +436,7 @@ fail_no_space:
 	private unsafe static int InternalGetCharCount (
 		byte[] bytes, int index, int count, uint leftOverBits,
 		uint leftOverCount, object provider,
-		ref DecoderFallbackBuffer fallbackBuffer, ref byte [] bufferArg, bool flush)
+		ref DecoderFallbackBuffer fallbackBuffer, bool flush)
 	{
 		// Validate the parameters.
 		if (bytes == null) {
@@ -453,22 +453,22 @@ fail_no_space:
 			return 0;
 		fixed (byte *bptr = bytes)
 			return InternalGetCharCount (bptr + index, count,
-				leftOverBits, leftOverCount, provider, ref fallbackBuffer, ref bufferArg, flush);
+				leftOverBits, leftOverCount, provider, ref fallbackBuffer, flush);
 	}
 
 	private unsafe static int InternalGetCharCount (
-		byte* bytes, int count, uint leftOverBits,
+		byte* bytes, int byteCount, uint leftOverBits,
 		uint leftOverCount, object provider,
-		ref DecoderFallbackBuffer fallbackBuffer, ref byte [] bufferArg, bool flush)
+		ref DecoderFallbackBuffer fallbackBuffer, bool flush)
 	{
-		int index = 0;
+		int byteIndex = 0;
 
 		int length = 0;
 
 		if (leftOverCount == 0) {
-			int end = index + count;
-			for (; index < end; index++, count--) {
-				if (bytes [index] < 0x80)
+			int end = byteIndex + byteCount;
+			for (; byteIndex < end; byteIndex++, byteCount--) {
+				if (bytes [byteIndex] < 0x80)
 					length++;
 				else
 					break;
@@ -480,9 +480,11 @@ fail_no_space:
 		uint leftBits = leftOverBits;
 		uint leftSoFar = (leftOverCount & (uint)0x0F);
 		uint leftSize = ((leftOverCount >> 4) & (uint)0x0F);
-		while (count > 0) {
-			ch = (uint)(bytes[index++]);
-			--count;
+
+		int byteEnd = byteIndex + byteCount;
+		for(; byteIndex < byteEnd; byteIndex++) {
+			// Fetch the next character from the byte buffer.
+			ch = (uint)(bytes[byteIndex]);
 			if (leftSize == 0) {
 				// Process a UTF-8 start character.
 				if (ch < (uint)0x0080) {
@@ -515,7 +517,7 @@ fail_no_space:
 					leftSize = 6;
 				} else {
 					// Invalid UTF-8 start character.
-					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1, 1);
+					length += Fallback (provider, ref fallbackBuffer, bytes, byteIndex, 1);
 				}
 			} else {
 				// Process an extra byte in a multi-byte sequence.
@@ -544,34 +546,34 @@ fail_no_space:
 								break;
 							}
 							if (overlong) {
-								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+								length += Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar);
+								--byteIndex; //process byte again
 							}
 							else if ((leftBits & 0xF800) == 0xD800) {
 								// UTF-8 doesn't use surrogate characters
-								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+								length += Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar);
 							}
 							else
 								++length;
 						} else if (leftBits < (uint)0x110000) {
 							length += 2;
 						} else {
-							length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+							length += Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar);
 						}
 						leftSize = 0;
 					}
 				} else {
 					// Invalid UTF-8 sequence: clear and restart.
-					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+					length += Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar);
 					leftSize = 0;
-					--index;
-					++count;
+					--byteIndex;
 				}
 			}
 		}
 		if (flush && leftSize != 0) {
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
-			length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+			length += Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar);
 		}
 
 		// Return the final length to the caller.
@@ -579,7 +581,7 @@ fail_no_space:
 	}
 
 	// for GetCharCount()
-	static unsafe int Fallback (object provider, ref DecoderFallbackBuffer buffer, ref byte [] bufferArg, byte* bytes, long index, uint size)
+	static unsafe int Fallback (object provider, ref DecoderFallbackBuffer buffer, byte* bytes, long index, uint size)
 	{
 		if (buffer == null) {
 			DecoderFallback fb = provider as DecoderFallback;
@@ -588,20 +590,21 @@ fail_no_space:
 			else
 				buffer = ((Decoder) provider).FallbackBuffer;
 		}
-		if (bufferArg == null)
-			bufferArg = new byte [1];
-		int ret = 0;
-		for (int i = 0; i < size; i++) {
-			bufferArg [0] = bytes [(int) index + i];
-			buffer.Fallback (bufferArg, 0);
-			ret += buffer.Remaining;
-			buffer.Reset ();
-		}
+
+		var bufferArg = new byte [size];
+
+		for (int i = 0; i < size; i++)
+			bufferArg [i] = bytes [(int) index + i];
+
+		buffer.Fallback (bufferArg, 0);
+		int ret = buffer.Remaining;
+		buffer.Reset ();
+
 		return ret;
 	}
 
 	// for GetChars()
-	static unsafe void Fallback (object provider, ref DecoderFallbackBuffer buffer, ref byte [] bufferArg, byte* bytes, long byteIndex, uint size,
+	static unsafe void Fallback (object provider, ref DecoderFallbackBuffer buffer, byte* bytes, long byteIndex, uint size,
 		char* chars, ref int charIndex)
 	{
 		if (buffer == null) {
@@ -611,23 +614,23 @@ fail_no_space:
 			else
 				buffer = ((Decoder) provider).FallbackBuffer;
 		}
-		if (bufferArg == null)
-			bufferArg = new byte [1];
-		for (int i = 0; i < size; i++) {
-			bufferArg [0] = bytes [byteIndex + i];
-			buffer.Fallback (bufferArg, 0);
-			while (buffer.Remaining > 0)
-				chars [charIndex++] = buffer.GetNextChar ();
-			buffer.Reset ();
-		}
+
+		var bufferArg = new byte [size];
+
+		for (int i = 0; i < size; i++)
+			bufferArg [i] = bytes [byteIndex + i];
+
+		buffer.Fallback (bufferArg, 0);
+		while (buffer.Remaining > 0)
+			chars [charIndex++] = buffer.GetNextChar ();
+		buffer.Reset ();
 	}
 
 	// Get the number of characters needed to decode a byte buffer.
 	public override int GetCharCount (byte[] bytes, int index, int count)
 	{
 		DecoderFallbackBuffer buf = null;
-		byte [] bufferArg = null;
-		return InternalGetCharCount (bytes, index, count, 0, 0, DecoderFallback, ref buf, ref bufferArg, true);
+		return InternalGetCharCount (bytes, index, count, 0, 0, DecoderFallback, ref buf, true);
 	}
 
 	[CLSCompliant (false)]
@@ -635,8 +638,7 @@ fail_no_space:
 	public unsafe override int GetCharCount (byte* bytes, int count)
 	{
 		DecoderFallbackBuffer buf = null;
-		byte [] bufferArg = null;
-		return InternalGetCharCount (bytes, count, 0, 0, DecoderFallback, ref buf, ref bufferArg, true);
+		return InternalGetCharCount (bytes, count, 0, 0, DecoderFallback, ref buf, true);
 	}
 
 	// Get the characters that result from decoding a byte buffer.
@@ -644,7 +646,7 @@ fail_no_space:
 		byte[] bytes, int byteIndex, int byteCount, char[] chars,
 		int charIndex, ref uint leftOverBits, ref uint leftOverCount,
 		object provider,
-		ref DecoderFallbackBuffer fallbackBuffer, ref byte [] bufferArg, bool flush)
+		ref DecoderFallbackBuffer fallbackBuffer, bool flush)
 	{
 		// Validate the parameters.
 		if (bytes == null) {
@@ -668,10 +670,10 @@ fail_no_space:
 
 		fixed (char* cptr = chars) {
 			if (byteCount == 0 || byteIndex == bytes.Length)
-				return InternalGetChars (null, 0, cptr + charIndex, chars.Length - charIndex, ref leftOverBits, ref leftOverCount, provider, ref fallbackBuffer, ref bufferArg, flush);
+				return InternalGetChars (null, 0, cptr + charIndex, chars.Length - charIndex, ref leftOverBits, ref leftOverCount, provider, ref fallbackBuffer, flush);
 			// otherwise...
 			fixed (byte* bptr = bytes)
-				return InternalGetChars (bptr + byteIndex, byteCount, cptr + charIndex, chars.Length - charIndex, ref leftOverBits, ref leftOverCount, provider, ref fallbackBuffer, ref bufferArg, flush);
+				return InternalGetChars (bptr + byteIndex, byteCount, cptr + charIndex, chars.Length - charIndex, ref leftOverBits, ref leftOverCount, provider, ref fallbackBuffer, flush);
 		}
 	}
 
@@ -679,7 +681,7 @@ fail_no_space:
 		byte* bytes, int byteCount, char* chars, int charCount,
 		ref uint leftOverBits, ref uint leftOverCount,
 		object provider,
-		ref DecoderFallbackBuffer fallbackBuffer, ref byte [] bufferArg, bool flush)
+		ref DecoderFallbackBuffer fallbackBuffer, bool flush)
 	{
 		int charIndex = 0, byteIndex = 0;
 		int length = charCount;
@@ -744,7 +746,7 @@ fail_no_space:
 					leftSize = 6;
 				} else {
 					// Invalid UTF-8 start character.
-					Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, 1, chars, ref posn);
+					Fallback (provider, ref fallbackBuffer, bytes, byteIndex, 1, chars, ref posn);
 				}
 			} else {
 				// Process an extra byte in a multi-byte sequence.
@@ -773,11 +775,12 @@ fail_no_space:
 								break;
 							}
 							if (overlong) {
-								Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
+								Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
+								--byteIndex; //process byte again
 							}
 							else if ((leftBits & 0xF800) == 0xD800) {
 								// UTF-8 doesn't use surrogate characters
-								Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
+								Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
 							}
 							else {
 								if (posn >= length) {
@@ -797,13 +800,13 @@ fail_no_space:
 							chars[posn++] =
 								(char)((leftBits & (uint)0x3FF) + (uint)0xDC00);
 						} else {
-							Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
+							Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
 						}
 						leftSize = 0;
 					}
 				} else {
 					// Invalid UTF-8 sequence: clear and restart.
-					Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
+					Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
 					leftSize = 0;
 					--byteIndex;
 				}
@@ -812,7 +815,7 @@ fail_no_space:
 		if (flush && leftSize != 0) {
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
-			Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
+			Fallback (provider, ref fallbackBuffer, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
 		}
 		leftOverBits = leftBits;
 		leftOverCount = (leftSoFar | (leftSize << 4));
@@ -828,9 +831,8 @@ fail_no_space:
 		uint leftOverBits = 0;
 		uint leftOverCount = 0;
 		DecoderFallbackBuffer buf = null;
-		byte [] bufferArg = null;
 		return InternalGetChars (bytes, byteIndex, byteCount, chars, 
-				charIndex, ref leftOverBits, ref leftOverCount, DecoderFallback, ref buf, ref bufferArg, true);
+				charIndex, ref leftOverBits, ref leftOverCount, DecoderFallback, ref buf, true);
 	}
 
 	[CLSCompliant (false)]
@@ -838,11 +840,10 @@ fail_no_space:
 	public unsafe override int GetChars (byte* bytes, int byteCount, char* chars, int charCount)
 	{
 		DecoderFallbackBuffer buf = null;
-		byte [] bufferArg = null;
 		uint leftOverBits = 0;
 		uint leftOverCount = 0;
 		return InternalGetChars (bytes, byteCount, chars, 
-				charCount, ref leftOverBits, ref leftOverCount, DecoderFallback, ref buf, ref bufferArg, true);
+				charCount, ref leftOverBits, ref leftOverCount, DecoderFallback, ref buf, true);
 	}
 
 	// Get the maximum number of bytes needed to encode a
@@ -882,13 +883,13 @@ fail_no_space:
 	// Get a UTF8-specific decoder that is attached to this instance.
 	public override Decoder GetDecoder ()
 	{
-		return new UTF8Decoder (DecoderFallback);
+		return new UTF8Decoder (this);
 	}
 
 	// Get a UTF8-specific encoder that is attached to this instance.
 	public override Encoder GetEncoder ()
 	{
-		return new UTF8Encoder (EncoderFallback, emitIdentifier);
+		return new UTF8Encoder (this);
 	}
 
 	// Get the UTF8 preamble.
@@ -935,15 +936,15 @@ fail_no_space:
 
 	// UTF-8 decoder implementation.
 	[Serializable]
-	private class UTF8Decoder : Decoder
+	private class UTF8Decoder : EncodingDecoder
 	{
 		private uint leftOverBits;
 		private uint leftOverCount;
 
 		// Constructor.
-		public UTF8Decoder (DecoderFallback fallback)
+		public UTF8Decoder (Encoding encoding)
+			: base (encoding)
 		{
-			Fallback = fallback;
 			leftOverBits = 0;
 			leftOverCount = 0;
 		}
@@ -952,34 +953,31 @@ fail_no_space:
 		public override int GetCharCount (byte[] bytes, int index, int count)
 		{
 			DecoderFallbackBuffer buf = null;
-			byte [] bufferArg = null;
 			return InternalGetCharCount (bytes, index, count,
-				leftOverBits, leftOverCount, this, ref buf, ref bufferArg, false);
+				leftOverBits, leftOverCount, this, ref buf, false);
 		}
 		public override int GetChars (byte[] bytes, int byteIndex,
 						 int byteCount, char[] chars, int charIndex)
 		{
 			DecoderFallbackBuffer buf = null;
-			byte [] bufferArg = null;
 			return InternalGetChars (bytes, byteIndex, byteCount,
-				chars, charIndex, ref leftOverBits, ref leftOverCount, this, ref buf, ref bufferArg, false);
+				chars, charIndex, ref leftOverBits, ref leftOverCount, this, ref buf, false);
 		}
 
 	} // class UTF8Decoder
 
 	// UTF-8 encoder implementation.
 	[Serializable]
-	private class UTF8Encoder : Encoder
+	private class UTF8Encoder : EncodingEncoder
 	{
 //		private bool emitIdentifier;
 		private char leftOverForCount;
 		private char leftOverForConv;
 
 		// Constructor.
-		public UTF8Encoder (EncoderFallback fallback, bool emitIdentifier)
+		public UTF8Encoder (UTF8Encoding encoding)
+			: base (encoding)
 		{
-			Fallback = fallback;
-//			this.emitIdentifier = emitIdentifier;
 			leftOverForCount = '\0';
 			leftOverForConv = '\0';
 		}

@@ -206,9 +206,6 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category("NotWorking")]
-#endif
 		public void ConvertFrom_String_Flags ()
 		{
 			EnumConverter converter = new EnumConverter (typeof (E2));

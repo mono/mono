@@ -156,9 +156,9 @@ namespace Mono.Security.Cryptography {
 		// clear keys
 		protected override void Dispose(bool disposing) {
 			if (!m_Disposed) {
-				m_P.Clear();
-				m_G.Clear();
-				m_X.Clear();
+				if (m_P != null) m_P.Clear();
+				if (m_G != null) m_G.Clear();
+				if (m_X != null) m_X.Clear();
 			}
 			m_Disposed = true;
 		}

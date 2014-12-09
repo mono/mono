@@ -64,8 +64,8 @@ namespace System.Diagnostics
 
 		protected Switch(string displayName, string description)
 		{
-			this.name = displayName;
-			this.description = description;
+			this.name = displayName ?? string.Empty;
+			this.description = description ?? string.Empty;
 		}
 
 		protected Switch(string displayName, string description, string defaultSwitchValue)

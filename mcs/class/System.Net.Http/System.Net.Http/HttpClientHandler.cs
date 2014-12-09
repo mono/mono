@@ -50,7 +50,6 @@ namespace System.Net.Http
 		bool useProxy;
 		ClientCertificateOption certificate;
 		bool sentRequest;
-		HttpWebRequest wrequest;
 		string connectionGroupName;
 		bool disposed;
 
@@ -221,12 +220,9 @@ namespace System.Net.Http
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing) {
-				if (wrequest != null) {
-					wrequest.ServicePoint.CloseConnectionGroup (wrequest.ConnectionGroupName);
-					Volatile.Write (ref wrequest, null);
-				}
+			if (disposing && !disposed) {
 				Volatile.Write (ref disposed, true);
+				ServicePointManager.CloseConnectionGroup (connectionGroupName);
 			}
 
 			base.Dispose (disposing);
@@ -306,6 +302,8 @@ namespace System.Net.Http
 				item_headers.TryAddWithoutValidation (key, value);
 			}
 
+			requestMessage.RequestUri = wr.ResponseUri;
+
 			return response;
 		}
 
@@ -315,39 +313,39 @@ namespace System.Net.Http
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			Volatile.Write (ref sentRequest, true);
-			wrequest = CreateWebRequest (request);
+			var wrequest = CreateWebRequest (request);
+			HttpWebResponse wresponse = null;
 
-			if (request.Content != null) {
-				var headers = wrequest.Headers;
-				foreach (var header in request.Content.Headers) {
-					foreach (var value in header.Value) {
-						headers.AddValue (header.Key, value);
+			try {
+				using (cancellationToken.Register (l => ((HttpWebRequest)l).Abort (), wrequest)) {
+					if (request.Content != null) {
+						var headers = wrequest.Headers;
+						foreach (var header in request.Content.Headers) {
+							foreach (var value in header.Value) {
+								headers.AddValue (header.Key, value);
+							}
+						}
+
+						var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
+						await request.Content.CopyToAsync (stream).ConfigureAwait (false);
+					} else if (HttpMethod.Post.Equals (request.Method) || HttpMethod.Put.Equals (request.Method) || HttpMethod.Delete.Equals (request.Method)) {
+						// Explicitly set this to make sure we're sending a "Content-Length: 0" header.
+						// This fixes the issue that's been reported on the forums:
+						// http://forums.xamarin.com/discussion/17770/length-required-error-in-http-post-since-latest-release
+						wrequest.ContentLength = 0;
 					}
-				}
 
-				var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
-				await request.Content.CopyToAsync (stream).ConfigureAwait (false);
-			} else if (HttpMethod.Post.Equals (request.Method) || HttpMethod.Put.Equals (request.Method) || HttpMethod.Delete.Equals (request.Method)) {
-				// Explicitly set this to make sure we're sending a "Content-Length: 0" header.
-				// This fixes the issue that's been reported on the forums:
-				// http://forums.xamarin.com/discussion/17770/length-required-error-in-http-post-since-latest-release
-				wrequest.ContentLength = 0;
+					wresponse = (HttpWebResponse)await wrequest.GetResponseAsync ().ConfigureAwait (false);
+				}
+			} catch (WebException we) {
+				if (we.Status != WebExceptionStatus.RequestCanceled)
+					throw;
 			}
 
-			HttpWebResponse wresponse = null;
-			using (cancellationToken.Register (l => ((HttpWebRequest) l).Abort (), wrequest)) {
-				try {
-					wresponse = (HttpWebResponse) await wrequest.GetResponseAsync ().ConfigureAwait (false);
-				} catch (WebException we) {
-					if (we.Status != WebExceptionStatus.RequestCanceled)
-						throw;
-				}
-
-				if (cancellationToken.IsCancellationRequested) {
-					var cancelled = new TaskCompletionSource<HttpResponseMessage> ();
-					cancelled.SetCanceled ();
-					return await cancelled.Task;
-				}
+			if (cancellationToken.IsCancellationRequested) {
+				var cancelled = new TaskCompletionSource<HttpResponseMessage> ();
+				cancelled.SetCanceled ();
+				return await cancelled.Task;
 			}
 			
 			return CreateResponseMessage (wresponse, request, cancellationToken);

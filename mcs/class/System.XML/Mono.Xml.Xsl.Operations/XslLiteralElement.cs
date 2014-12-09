@@ -140,7 +140,8 @@ namespace Mono.Xml.Xsl.Operations {
 
 			if (children != null) children.Evaluate (p);
 
-			if (isEmptyElement)
+			var templateContent = children as XslTemplateContent;
+			if (isEmptyElement || (templateContent != null && templateContent.IsEmptyElement))
 				p.Out.WriteEndElement ();
 			else
 				p.Out.WriteFullEndElement ();

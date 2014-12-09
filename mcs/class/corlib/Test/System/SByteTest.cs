@@ -24,12 +24,15 @@ public class SByteTest
 	private const string MyString3 = "127";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
+#if false
+	// These are not currently being tested against, due to the locale-specific nature of the test, we need a different way of doing this
 	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"128.00)",
 					"-128", "-1.280000e+002", "-128.00",
 					"-128", "-128.00", "-12,800.00 %", "80"};
 	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"127.00000",
 					"00127", "1.27000e+002", "127.00000",
 					"127", "127.00000", "12,700.00000 %", "0007f"};
+#endif
 	private string[] ResultsNfi1 = {"("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"128.00)", 
 					"-128", "-1.280000e+002", "-128.00",
 					"-128", "-128.00", "-12,800.00 %", "80"};
@@ -161,14 +164,17 @@ public class SByteTest
 		Assert.IsTrue(String.Compare(MyString2, MySByte2.ToString()) == 0, "MyString2, MySByte2.ToString()");
 		Assert.IsTrue(String.Compare(MyString3, MySByte3.ToString()) == 0, "MyString3, MySByte3.ToString()");
 		//test ToString(string format)
+
+#if false
 		/*
-		TODO: These tests depend on the culture of the system running the test.
-			So, this needs to be tested in a different way.
+		 * TODO: These tests depend on the culture of the system running the test.
+		 * So, this needs to be tested in a different way.
+		 /
 		for (int i=0; i < Formats1.Length; i++) {
 			Assert.IsTrue("i="+i+", Results1[i]="+Results1[i]+", MySByte2.ToString(Formats1[i])="+MySByte2.ToString(Formats1[i]), String.Compare(Results1[i], MySByte2.ToString(Formats1[i])) == 0);
 			Assert.IsTrue(String.Compare(Results2[i], MySByte3.ToString(Formats2[i])) == 0, "Results2[i], MySByte3.ToString(Formats2[i])");
 		}
-		*/
+#endif
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
 			Assert.IsTrue(String.Compare(ResultsNfi1[i], MySByte2.ToString(Formats1[i], Nfi)) == 0, "i="+i+", ResultsNfi1[i]="+ResultsNfi1[i]+", MySByte2.ToString(Formats1[i]="+Formats1[i]+"): Expected "+ResultsNfi1[i]+" but got "+MySByte2.ToString(Formats1[i], Nfi));

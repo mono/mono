@@ -2927,9 +2927,6 @@ namespace MonoTests.System.Data
 		#region Read/Write XML Tests
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void ReadXmlSchema ()
 		{
 			DataTable Table = new DataTable ();
@@ -3822,9 +3819,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void WriteXmlSchema_Hierarchy ()
 		{
 			DataSet ds = new DataSet ();
@@ -3858,9 +3852,6 @@ namespace MonoTests.System.Data
 		[Test]
 		[Ignore ()]
 		// See the same-named tests in DataSetTest.cs
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		// WriteXmlSchema doesn't have overload wityh 2 parameters in System.Data
 		// and is commented-out TWICE below
 		public void ReadWriteXmlSchema()
@@ -3975,9 +3966,6 @@ namespace MonoTests.System.Data
 		[Test]
 		[Ignore ()]
 		// See the same-named tests in DataSetTest.cs
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void ReadWriteXmlSchema_IgnoreSchema ()
 		{
 			DataSet ds = new DataSet ();
@@ -4175,7 +4163,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (5, n, "n");
 		}
 
-#if !TARGET_JVM && !MONOTOUCH && !WINDOWS_STORE_APP
+#if !MONOTOUCH && !WINDOWS_STORE_APP
 		[Test]
 		public void NFIFromBug55978 ()
 		{
