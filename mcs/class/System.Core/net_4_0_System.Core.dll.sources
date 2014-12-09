@@ -61,8 +61,6 @@ System.Security.Cryptography/SHA384CryptoServiceProvider.cs
 System.Security.Cryptography/SHA512Cng.cs
 System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 System.Threading/LockRecursionException.cs
-System.Threading/LockRecursionPolicy.cs
-System.Threading/ReaderWriterLockSlim.cs
 System.Threading/ThreadLockState.cs
 System.Threading/ReaderWriterLockSlimExtensions.cs
 System.Threading.Tasks/TaskExtensions.cs
@@ -227,6 +225,7 @@ System.IO/HandleInheritability.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/Util.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/Wrapper.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/WrapperEqualityComparer.cs
+../../../external/referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 
 ReferenceSources/Set.cs
 ReferenceSources/SR.cs

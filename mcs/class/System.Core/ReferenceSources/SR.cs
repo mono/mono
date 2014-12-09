@@ -52,4 +52,15 @@ partial class SR
 	public const string PartitionerQueryOperator_NullPartition = "PartitionerQueryOperator_NullPartition";
 	public const string PartitionerQueryOperator_NullPartitionList = "PartitionerQueryOperator_NullPartitionList";
 	public const string PartitionerQueryOperator_WrongNumberOfPartitions = "PartitionerQueryOperator_WrongNumberOfPartitions";
+	public const string LockRecursionException_ReadAfterWriteNotAllowed = "LockRecursionException_ReadAfterWriteNotAllowed";
+	public const string LockRecursionException_RecursiveReadNotAllowed = "LockRecursionException_RecursiveReadNotAllowed";
+	public const string LockRecursionException_RecursiveUpgradeNotAllowed = "LockRecursionException_RecursiveUpgradeNotAllowed";
+	public const string LockRecursionException_RecursiveWriteNotAllowed = "LockRecursionException_RecursiveWriteNotAllowed";
+	public const string LockRecursionException_UpgradeAfterReadNotAllowed = "LockRecursionException_UpgradeAfterReadNotAllowed";
+	public const string LockRecursionException_UpgradeAfterWriteNotAllowed = "LockRecursionException_UpgradeAfterWriteNotAllowed";
+	public const string LockRecursionException_WriteAfterReadNotAllowed = "LockRecursionException_WriteAfterReadNotAllowed";
+	public const string SynchronizationLockException_IncorrectDispose = "SynchronizationLockException_IncorrectDispose";
+	public const string SynchronizationLockException_MisMatchedRead = "SynchronizationLockException_MisMatchedRead";
+	public const string SynchronizationLockException_MisMatchedUpgrade = "SynchronizationLockException_MisMatchedUpgrade";
+	public const string SynchronizationLockException_MisMatchedWrite = "SynchronizationLockException_MisMatchedWrite";
 }
