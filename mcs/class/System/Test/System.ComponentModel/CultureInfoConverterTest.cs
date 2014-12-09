@@ -60,46 +60,37 @@ namespace MonoTests.System.ComponentModel
 				"nl-BE");
 			Assert.AreEqual (new CultureInfo ("nl-BE"), c, "#2");
 
-			c = (CultureInfo) converter.ConvertFrom (null, CultureInfo.InvariantCulture,
-				"Dut");
-			Assert.AreEqual (new CultureInfo ("nl"), c, "#3");
+			try {
+				c = (CultureInfo) converter.ConvertFrom (null, CultureInfo.InvariantCulture,
+					"Dut");
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
 
-			c = (CultureInfo) converter.ConvertFrom (null, CultureInfo.InvariantCulture,
-				"Dutch (Bel");
-			Assert.AreEqual (new CultureInfo ("nl-BE"), c, "#4");
+			try {
+				c = (CultureInfo) converter.ConvertFrom (null, CultureInfo.InvariantCulture,
+					"Dutch (Bel");
+				Assert.Fail ("#4");
+			} catch (ArgumentException) {
+			}
 
-			c = (CultureInfo) converter.ConvertFrom (null, CultureInfo.InvariantCulture,
-				"duTcH (Bel");
-			Assert.AreEqual (new CultureInfo ("nl-BE"), c, "#5");
+			try {
+				c = (CultureInfo) converter.ConvertFrom (null, CultureInfo.InvariantCulture,
+					"duTcH (Bel");
+				Assert.Fail ("#5");
+			} catch (ArgumentException) {
+			}
 
 			c = (CultureInfo) converter.ConvertFrom (null, CultureInfo.InvariantCulture,
 				"(Default)");
 			Assert.AreEqual (CultureInfo.InvariantCulture, c, "#6");
-
-#if ONLY_1_1
-			c = (CultureInfo) converter.ConvertFrom (null, CultureInfo.InvariantCulture,
-				"(defAuLt)");
-			Assert.AreEqual (CultureInfo.InvariantCulture, c, "#6");
-#endif
 		}
 
 		[Test]
 		public void ConvertFrom_String_IncompleteName ()
 		{
-			try {
-				converter.ConvertFrom (null, CultureInfo.InvariantCulture,
-					"nl-B");
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// The nl-B culture cannot be converted to a
-				// CultureInfo object on this computer
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (CultureInfo).Name) != -1, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("nl-B") != -1, "#6");
-				Assert.IsNull (ex.ParamName, "#7");
-			}
+			converter.ConvertFrom (null, CultureInfo.InvariantCulture,
+				"nl-B");
 		}
 
 		[Test]
@@ -177,7 +168,7 @@ namespace MonoTests.System.ComponentModel
 
 			result = converter.ConvertToString (null, CultureInfo.InvariantCulture,
 				new MyCultureInfo ());
-			Assert.AreEqual ("display", result, "#1");
+			Assert.AreEqual ("nl-BE", result, "#1");
 
 			result = converter.ConvertToString (null, CultureInfo.InvariantCulture,
 				null);
@@ -189,7 +180,7 @@ namespace MonoTests.System.ComponentModel
 
 			result = converter.ConvertToString (null, CultureInfo.InvariantCulture,
 				new CultureInfo ("nl-BE"));
-			Assert.AreEqual ("Dutch (Belgium)", result, "#4");
+			Assert.AreEqual ("nl-BE", result, "#4");
 		}
 
 		[Serializable]

@@ -1078,11 +1078,11 @@ namespace MonoTests.System.ComponentModel
 
 			test.ResetMethodsCalled ();
 			prop = TypeDescriptor.GetDefaultProperty (test);
-			Assert.AreEqual ("6", test.methods_called, "#5");
+			Assert.AreEqual ("63", test.methods_called, "#5");
 
 			test.ResetMethodsCalled ();
 			events = TypeDescriptor.GetEvents (test);
-			Assert.AreEqual ("2", test.methods_called, "#6");
+			Assert.AreEqual ("1", test.methods_called, "#6");
 
 			test.ResetMethodsCalled ();
 			events = TypeDescriptor.GetEvents (test, new Attribute[0]);
@@ -1090,7 +1090,7 @@ namespace MonoTests.System.ComponentModel
 
 			test.ResetMethodsCalled ();
 			events = TypeDescriptor.GetEvents (test, false);
-			Assert.AreEqual ("2", test.methods_called, "#8");
+			Assert.AreEqual ("1", test.methods_called, "#8");
 		}
 
 		[Test]
