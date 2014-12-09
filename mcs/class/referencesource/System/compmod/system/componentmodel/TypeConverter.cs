@@ -33,6 +33,7 @@ namespace System.ComponentModel {
 
         private static bool UseCompatibleTypeConversion {
             get {
+#if !MONO
                 if (firstLoadAppSetting) {
                     lock (loadAppSettingLock) {
                         if (firstLoadAppSetting) {
@@ -52,6 +53,7 @@ namespace System.ComponentModel {
                         }
                     }
                 }
+#endif
                 return useCompatibleTypeConversion;
             }
         }
