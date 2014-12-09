@@ -72,6 +72,8 @@ namespace System.Drawing
 			if (s == null)
 				return base.ConvertFrom (context, culture, value);
 
+			if (culture == null)
+				culture = CultureInfo.InvariantCulture;
 			string[] subs = s.Split (culture.TextInfo.ListSeparator.ToCharArray ());
 
 			SingleConverter converter = new SingleConverter ();
