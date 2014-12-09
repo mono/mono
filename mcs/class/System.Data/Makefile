@@ -7,10 +7,8 @@ LIBRARY = System.Data.dll
 LIB_MCS_FLAGS = \
 	-nowarn:649 \
 	-unsafe \
-	-r:$(corlib)				\
-	-r:$(system)			 	\
-	-r:System.Xml.dll 			\
-	-r:System.Core.dll 			\
+	-r:System			 	\
+	-r:System.Xml.dll 			
 
 
 MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
