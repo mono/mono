@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Data.Common;
@@ -1081,14 +1082,14 @@ namespace System.Data
 
 		ListSortDescriptionCollection IBindingListView.SortDescriptions {
 			get {
-				ListSortDescriptionCollection col = new ListSortDescriptionCollection ();
+				var l = new List<ListSortDescription> ();
 				for (int i = 0; i < sortColumns.Length; ++i) {
 					ListSortDescription ldesc = new ListSortDescription (
 										new DataColumnPropertyDescriptor (sortColumns [i]),
 										sortOrder [i]);
-					((IList) col).Add (ldesc);
+					l.Add (ldesc);
 				}
-				return col;
+				return new ListSortDescriptionCollection (l.ToArray ());
 			}
 		}
 
