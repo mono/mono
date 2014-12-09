@@ -1632,14 +1632,14 @@ namespace System.Windows.Forms
 								image_rect = AlignInRectangle (contentRectangle, GetImageSize (), this.image_align);
 								break;
 							case TextImageRelation.ImageAboveText:
-								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Bottom - (text_size.Height - 4), contentRectangle.Width, text_size.Height - 4);
+								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Bottom - text_size.Height, contentRectangle.Width, text_size.Height);
 								image_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, contentRectangle.Width, contentRectangle.Height - text_area.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
 								image_rect = AlignInRectangle (image_area, GetImageSize (), this.image_align);
 								break;
 							case TextImageRelation.TextAboveImage:
-								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, contentRectangle.Width, text_size.Height - 4);
+								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, contentRectangle.Width, text_size.Height);
 								image_area = new Rectangle (contentRectangle.Left, text_area.Bottom, contentRectangle.Width, contentRectangle.Height - text_area.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
