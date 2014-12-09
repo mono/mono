@@ -409,6 +409,7 @@ public sealed class TypeDescriptor
 				defaultConverters.Add (new DictionaryEntry (typeof (Array), typeof (ArrayConverter)));
 				defaultConverters.Add (new DictionaryEntry (typeof (CultureInfo), typeof (CultureInfoConverter)));
 				defaultConverters.Add (new DictionaryEntry (typeof (DateTime), typeof (DateTimeConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (DateTimeOffset), typeof (DateTimeOffsetConverter)));
 				defaultConverters.Add (new DictionaryEntry (typeof (Guid), typeof (GuidConverter)));
 				defaultConverters.Add (new DictionaryEntry (typeof (TimeSpan), typeof (TimeSpanConverter)));
 				defaultConverters.Add (new DictionaryEntry (typeof (ICollection), typeof (CollectionConverter)));
