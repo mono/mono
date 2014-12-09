@@ -26,7 +26,7 @@ namespace System.ComponentModel {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
     [Serializable]
     [SuppressUnmanagedCodeSecurity]
-    public class Win32Exception : ExternalException, ISerializable {
+    public partial class Win32Exception : ExternalException, ISerializable {
         /// <devdoc>
         ///    <para>Represents the Win32 error code associated with this exception. This 
         ///       field is read-only.</para>
@@ -88,7 +88,7 @@ namespace System.ComponentModel {
                 return nativeErrorCode;
             }
         }
-
+#if !MONO
         private static string GetErrorMessage(int error) {
             //get the system error message...
             string errorMsg = "";
@@ -115,7 +115,7 @@ namespace System.ComponentModel {
 
             return errorMsg;
         }
-
+#endif
         // Even though all we're exposing is the nativeErrorCode (which is also available via public property)
         // it's not a bad idea to have this in place.  Later, if more fields are added to this exception, 
         // we won't need to worry about accidentaly exposing them through this interface.

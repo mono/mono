@@ -92,7 +92,7 @@ namespace System {
         internal const int Win32InvalidHandle   = unchecked((int)0x80070006);
 
 
-#if !FEATURE_PAL
+#if !FEATURE_PAL || MONO
         internal const int License = unchecked((int)0x80131901);
         internal const int InternalBufferOverflow = unchecked((int)0x80131905);
         internal const int ServiceControllerTimeout = unchecked((int)0x80131906);
