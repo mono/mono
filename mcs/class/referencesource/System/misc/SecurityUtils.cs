@@ -70,9 +70,11 @@ namespace System.Windows.Forms
 
         [SecuritySafeCritical]
         private static void DemandGrantSet(Assembly assembly) {
+#if !MOBILE
             PermissionSet targetGrantSet = assembly.PermissionSet;
             targetGrantSet.AddPermission(RestrictedMemberAccessPermission);
             targetGrantSet.Demand();
+#endif
         }
 
         private static bool HasReflectionPermission(Type type) {

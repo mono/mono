@@ -365,7 +365,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("type");
             }
-
+#if !MOBILE
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
             typeDescriptorPermission.AddPermission(new TypeDescriptorPermission(TypeDescriptorPermissionFlags.RestrictedRegistrationAccess));
 
@@ -373,7 +373,7 @@ namespace System.ComponentModel
             targetPermissions = targetPermissions.Union(typeDescriptorPermission);
 
             targetPermissions.Demand();
-
+#endif
             AddProvider(provider, type);
         }
 
@@ -401,7 +401,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("instance");
             }
-
+#if !MOBILE
             Type type = instance.GetType();
 
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
@@ -411,7 +411,7 @@ namespace System.ComponentModel
             targetPermissions = targetPermissions.Union(typeDescriptorPermission);
 
             targetPermissions.Demand();
-
+#endif
             AddProvider(provider, instance);
         }
 
@@ -3240,7 +3240,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("type");
             }
-
+#if !MOBILE
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
             typeDescriptorPermission.AddPermission(new TypeDescriptorPermission(TypeDescriptorPermissionFlags.RestrictedRegistrationAccess));
 
@@ -3248,7 +3248,7 @@ namespace System.ComponentModel
             targetPermissions = targetPermissions.Union(typeDescriptorPermission);
 
             targetPermissions.Demand();
-
+#endif
             RemoveProvider(provider, type);
         }
 
@@ -3275,7 +3275,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("instance");
             }
-
+#if !MOBILE
             Type type = instance.GetType();
 
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
@@ -3285,7 +3285,7 @@ namespace System.ComponentModel
             targetPermissions = targetPermissions.Union(typeDescriptorPermission);
 
             targetPermissions.Demand();
-
+#endif
             RemoveProvider(provider, instance);
         }
 
