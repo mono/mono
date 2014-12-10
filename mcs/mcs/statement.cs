@@ -1135,7 +1135,7 @@ namespace Mono.CSharp {
 			var block_return_type = ec.ReturnType;
 
 			if (expr == null) {
-				if (block_return_type.Kind == MemberKind.Void)
+				if (block_return_type.Kind == MemberKind.Void || block_return_type == InternalType.ErrorType)
 					return true;
 
 				//
