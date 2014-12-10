@@ -460,31 +460,49 @@ using_directive
 	;
 
 using_namespace
-	: USING namespace_or_type_expr SEMICOLON 
+	: USING opt_static namespace_or_type_expr SEMICOLON
 	  {
-		var un = new UsingNamespace ((ATypeNameExpression) $2, GetLocation ($1));
-		current_namespace.AddUsing (un);
-		
-		lbag.AddLocation (un, GetLocation ($3));
+		UsingClause uc;
+		if ($2 != null) {
+			if (lang_version <= LanguageVersion.V_5)
+				FeatureIsNotAvailable (GetLocation ($2), "using static");
+
+			uc = new UsingType ((ATypeNameExpression) $3, GetLocation ($1));
+			lbag.AddLocation (uc, GetLocation ($2), GetLocation ($4));
+		} else {
+			uc = new UsingNamespace ((ATypeNameExpression) $3, GetLocation ($1));
+			lbag.AddLocation (uc, GetLocation ($4));
+		}
+
+		current_namespace.AddUsing (uc);
 	  }
-	| USING IDENTIFIER ASSIGN namespace_or_type_expr SEMICOLON
+	| USING opt_static IDENTIFIER ASSIGN namespace_or_type_expr SEMICOLON
 	  {
-		var lt = (LocatedToken) $2;
+		var lt = (LocatedToken) $3;
 		if (lang_version != LanguageVersion.ISO_1 && lt.Value == "global") {
 			report.Warning (440, 2, lt.Location,
 			 "An alias named `global' will not be used when resolving `global::'. The global namespace will be used instead");
 		}
 
-		var un = new UsingAliasNamespace (new SimpleMemberName (lt.Value, lt.Location), (ATypeNameExpression) $4, GetLocation ($1));
+		if ($2 != null) {
+			report.Error (8085, GetLocation ($2), "A `using static' directive cannot be used to declare an alias");
+		}
+
+		var un = new UsingAliasNamespace (new SimpleMemberName (lt.Value, lt.Location), (ATypeNameExpression) $5, GetLocation ($1));
 		current_namespace.AddUsing (un);
 		
-		lbag.AddLocation (un, GetLocation ($3), GetLocation ($5));
+		lbag.AddLocation (un, GetLocation ($4), GetLocation ($6));
 	  }
 	| USING error
 	 {
 		Error_SyntaxError (yyToken);
 		$$ = null;
 	 }
+	;
+
+opt_static
+	:
+	| STATIC
 	;
 
 //

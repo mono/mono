@@ -1,8 +1,8 @@
 // Compiler options: -langversion:6
 
 using System;
-using A.B.X;
-using A.C.X;
+using static A.B.X;
+using static A.C.X;
 
 namespace A.B
 {

@@ -69515,6 +69515,21 @@
       </method>
     </type>
   </test>
+  <test name="test-static-using-07.cs">
+    <type name="S">
+      <method name="Int32 Foo()" attrs="147">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>72</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-var-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

@@ -1,6 +1,6 @@
 // Compiler options: -langversion:experimental
 
-using System.Console;
+using static System.Console;
 
 public class DeclarationExpressions
 {

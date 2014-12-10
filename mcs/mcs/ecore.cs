@@ -833,107 +833,117 @@ namespace Mono.CSharp {
 			if (members == null)
 				return null;
 
-			MemberSpec non_method = null;
-			MemberSpec ambig_non_method = null;
+			Expression expr;
 			do {
-				for (int i = 0; i < members.Count; ++i) {
-					var member = members[i];
+				expr = MemberLookupToExpression (rc, members, errorMode, queried_type, name, arity, restrictions, loc);
+				if (expr != null)
+					return expr;
 
-					// HACK: for events because +=/-= can appear at same class only, should use OverrideToBase there
-					if ((member.Modifiers & Modifiers.OVERRIDE) != 0 && member.Kind != MemberKind.Event)
-						continue;
-
-					if ((member.Modifiers & Modifiers.BACKING_FIELD) != 0 || member.Kind == MemberKind.Operator)
-						continue;
-
-					if ((arity > 0 || (restrictions & MemberLookupRestrictions.ExactArity) != 0) && member.Arity != arity)
-						continue;
-
-					if (!errorMode) {
-						if (!member.IsAccessible (rc))
-							continue;
-
-						//
-						// With runtime binder we can have a situation where queried type is inaccessible
-						// because it came via dynamic object, the check about inconsisted accessibility
-						// had no effect as the type was unknown during compilation
-						//
-						// class A {
-						//		private class N { }
-						//
-						//		public dynamic Foo ()
-						//		{
-						//			return new N ();
-						//		}
-						//	}
-						//
-						if (rc.Module.Compiler.IsRuntimeBinder && !member.DeclaringType.IsAccessible (rc))
-							continue;
-					}
-
-					if ((restrictions & MemberLookupRestrictions.InvocableOnly) != 0) {
-						if (member is MethodSpec) {
-							//
-							// Interface members that are hidden by class members are removed from the set. This
-							// step only has an effect if T is a type parameter and T has both an effective base 
-							// class other than object and a non-empty effective interface set
-							//
-							var tps = queried_type as TypeParameterSpec;
-							if (tps != null && tps.HasTypeConstraint)
-								members = RemoveHiddenTypeParameterMethods (members);
-
-							return new MethodGroupExpr (members, queried_type, loc);
-						}
-
-						if (!Invocation.IsMemberInvocable (member))
-							continue;
-					}
-
-					if (non_method == null || member is MethodSpec || non_method.IsNotCSharpCompatible) {
-						non_method = member;
-					} else if (!errorMode && !member.IsNotCSharpCompatible) {
-						//
-						// Interface members that are hidden by class members are removed from the set when T is a type parameter and
-						// T has both an effective base class other than object and a non-empty effective interface set.
-						//
-						// The spec has more complex rules but we simply remove all members declared in an interface declaration.
-						//
-						var tps = queried_type as TypeParameterSpec;
-						if (tps != null && tps.HasTypeConstraint) {
-							if (non_method.DeclaringType.IsClass && member.DeclaringType.IsInterface)
-								continue;
-
-							if (non_method.DeclaringType.IsInterface && member.DeclaringType.IsInterface) {
-								non_method = member;
-								continue;
-							}
-						}
-
-						ambig_non_method = member;
-					}
-				}
-
-				if (non_method != null) {
-					if (ambig_non_method != null && rc != null && (restrictions & MemberLookupRestrictions.IgnoreAmbiguity) == 0) {
-						var report = rc.Module.Compiler.Report;
-						report.SymbolRelatedToPreviousError (non_method);
-						report.SymbolRelatedToPreviousError (ambig_non_method);
-						report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
-							non_method.GetSignatureForError (), ambig_non_method.GetSignatureForError ());
-					}
-
-					if (non_method is MethodSpec)
-						return new MethodGroupExpr (members, queried_type, loc);
-
-					return ExprClassFromMemberInfo (non_method, loc);
-				}
-
-				if (members[0].DeclaringType.BaseType == null)
+				if (members [0].DeclaringType.BaseType == null)
 					members = null;
 				else
-					members = MemberCache.FindMembers (members[0].DeclaringType.BaseType, name, false);
-
+					members = MemberCache.FindMembers (members [0].DeclaringType.BaseType, name, false);
 			} while (members != null);
+
+			return expr;
+		}
+
+		public static Expression MemberLookupToExpression (IMemberContext rc, IList<MemberSpec> members, bool errorMode, TypeSpec queried_type, string name, int arity, MemberLookupRestrictions restrictions, Location loc)
+		{
+			MemberSpec non_method = null;
+			MemberSpec ambig_non_method = null;
+
+			for (int i = 0; i < members.Count; ++i) {
+				var member = members [i];
+
+				// HACK: for events because +=/-= can appear at same class only, should use OverrideToBase there
+				if ((member.Modifiers & Modifiers.OVERRIDE) != 0 && member.Kind != MemberKind.Event)
+					continue;
+
+				if ((member.Modifiers & Modifiers.BACKING_FIELD) != 0 || member.Kind == MemberKind.Operator)
+					continue;
+
+				if ((arity > 0 || (restrictions & MemberLookupRestrictions.ExactArity) != 0) && member.Arity != arity)
+					continue;
+
+				if (!errorMode) {
+					if (!member.IsAccessible (rc))
+						continue;
+
+					//
+					// With runtime binder we can have a situation where queried type is inaccessible
+					// because it came via dynamic object, the check about inconsisted accessibility
+					// had no effect as the type was unknown during compilation
+					//
+					// class A {
+					//		private class N { }
+					//
+					//		public dynamic Foo ()
+					//		{
+					//			return new N ();
+					//		}
+					//	}
+					//
+					if (rc.Module.Compiler.IsRuntimeBinder && !member.DeclaringType.IsAccessible (rc))
+						continue;
+				}
+
+				if ((restrictions & MemberLookupRestrictions.InvocableOnly) != 0) {
+					if (member is MethodSpec) {
+						//
+						// Interface members that are hidden by class members are removed from the set. This
+						// step only has an effect if T is a type parameter and T has both an effective base 
+						// class other than object and a non-empty effective interface set
+						//
+						var tps = queried_type as TypeParameterSpec;
+						if (tps != null && tps.HasTypeConstraint)
+							members = RemoveHiddenTypeParameterMethods (members);
+
+						return new MethodGroupExpr (members, queried_type, loc);
+					}
+
+					if (!Invocation.IsMemberInvocable (member))
+						continue;
+				}
+
+				if (non_method == null || member is MethodSpec || non_method.IsNotCSharpCompatible) {
+					non_method = member;
+				} else if (!errorMode && !member.IsNotCSharpCompatible) {
+					//
+					// Interface members that are hidden by class members are removed from the set when T is a type parameter and
+					// T has both an effective base class other than object and a non-empty effective interface set.
+					//
+					// The spec has more complex rules but we simply remove all members declared in an interface declaration.
+					//
+					var tps = queried_type as TypeParameterSpec;
+					if (tps != null && tps.HasTypeConstraint) {
+						if (non_method.DeclaringType.IsClass && member.DeclaringType.IsInterface)
+							continue;
+
+						if (non_method.DeclaringType.IsInterface && member.DeclaringType.IsInterface) {
+							non_method = member;
+							continue;
+						}
+					}
+
+					ambig_non_method = member;
+				}
+			}
+
+			if (non_method != null) {
+				if (ambig_non_method != null && rc != null && (restrictions & MemberLookupRestrictions.IgnoreAmbiguity) == 0) {
+					var report = rc.Module.Compiler.Report;
+					report.SymbolRelatedToPreviousError (non_method);
+					report.SymbolRelatedToPreviousError (ambig_non_method);
+					report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
+						non_method.GetSignatureForError (), ambig_non_method.GetSignatureForError ());
+				}
+
+				if (non_method is MethodSpec)
+					return new MethodGroupExpr (members, queried_type, loc);
+
+				return ExprClassFromMemberInfo (non_method, loc);
+			}
 
 			return null;
 		}
@@ -2711,7 +2721,7 @@ namespace Mono.CSharp {
 					return fne;
 			}
 
-			if (Arity == 0 && Name == "dynamic" && mc.Module.Compiler.Settings.Version > LanguageVersion.V_3) {
+			if (Arity == 0 && Name == "dynamic" && !(mc is NamespaceContainer) && mc.Module.Compiler.Settings.Version > LanguageVersion.V_3) {
 				if (!mc.Module.PredefinedAttributes.Dynamic.IsDefined) {
 					mc.Module.Compiler.Report.Error (1980, Location,
 						"Dynamic keyword requires `{0}' to be defined. Are you missing System.Core.dll assembly reference?",
@@ -2855,13 +2865,16 @@ namespace Mono.CSharp {
 					}
 				}
 
-				var mg = NamespaceContainer.LookupStaticUsings (rc, Name, Arity, loc);
-				if (mg != null) {
+				var expr = NamespaceContainer.LookupStaticUsings (rc, Name, Arity, loc);
+				if (expr != null) {
 					if (Arity > 0) {
 						targs.Resolve (rc, false);
-						mg.SetTypeArguments (rc, targs);
+
+						var me = expr as MemberExpr;
+						if (me != null)
+							me.SetTypeArguments (rc, targs);
 					}
-					return mg;
+					return expr;
 				}
 
 				if ((restrictions & MemberLookupRestrictions.NameOfExcluded) == 0 && Name == "nameof")
