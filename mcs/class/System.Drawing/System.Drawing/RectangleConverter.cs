@@ -74,7 +74,7 @@ namespace System.Drawing {
 				return base.ConvertFrom (context, culture, value);
 
 			if (culture == null)
-				culture = CultureInfo.InvariantCulture;
+				culture = CultureInfo.CurrentCulture;
 			string [] subs = s.Split (culture.TextInfo.ListSeparator.ToCharArray ());
 
 			Int32Converter converter = new Int32Converter ();
