@@ -307,6 +307,20 @@ namespace System.Runtime.Caching {
 
         private void Init(NameValueCollection config) {
             _storeCount = Environment.ProcessorCount;
+#if MONO
+            if (config != null) {
+                if (config ["__MonoEmulateOneCPU"] == "true")
+                    _storeCount = 1;
+                if (config ["__MonoTimerPeriod"] != null) {
+                    try {
+                        int parsed = (int)UInt32.Parse (config ["__MonoTimerPeriod"]);
+                        CacheExpires.EXPIRATIONS_INTERVAL = new TimeSpan (0, 0, parsed);
+                    } catch {
+                        //
+                    }
+                }
+            }
+#endif
             _storeMask = _storeCount - 1;
             _stores = new MemoryCacheStore[_storeCount];
             InitDisposableMembers(config);
