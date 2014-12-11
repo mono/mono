@@ -254,11 +254,12 @@ namespace System.IO {
 			if (exc != null) {
 				fsw.OnError (new ErrorEventArgs (exc));
 				return;
+			}
 
 			try {
 				Monitor ();
 			} catch (Exception e) {
-				monitorExc = e;
+				exc = e;
 			} finally {
 				CleanUp ();
 				if (!requestStop) { // failure
