@@ -196,13 +196,13 @@ namespace System.IO {
 
 				startedEvent.WaitOne ();
 
-				if (monitorExc != null) {
+				if (exc != null) {
 					thread.Join ();
 					CleanUp ();
-					throw monitorExc;
+					throw exc;
 				}
-				else 
-					started = true;
+ 
+				started = true;
 			}
 		}
 
@@ -213,14 +213,17 @@ namespace System.IO {
 					return;
 					
 				requestStop = true;
-				thread.Join ();
-				requestStop = false;
 
-				CleanUp ();
+				if (inDispatch)
+					return;
+				if (!thread.Join (2000))
+					thread.Abort ();
+
+				requestStop = false;
 				started = false;
 
-				if (monitorExc != null)
-					throw monitorExc;
+				if (exc != null)
+					throw exc;
 			}
 		}
 
@@ -239,18 +242,17 @@ namespace System.IO {
 		}
 
 		void DoMonitor ()
-		{
-			monitorExc = null;
-
+		{			
 			try {
 				Setup ();
 			} catch (Exception e) {
-				monitorExc = e;
+				exc = e;
 			} finally {
 				startedEvent.Set ();
 			}
 
-			if (monitorExc != null) 
+			if (exc != null) {
+				fsw.OnError (new ErrorEventArgs (exc));
 				return;
 
 			try {
@@ -258,13 +260,16 @@ namespace System.IO {
 			} catch (Exception e) {
 				monitorExc = e;
 			} finally {
+				CleanUp ();
 				if (!requestStop) { // failure
-					CleanUp ();
 					started = false;
-					if (monitorExc != null)
-						throw monitorExc;
+					inDispatch = false;
+					fsw.EnableRaisingEvents = false;
+					throw exc;
 				}
-
+				if (exc != null)
+					fsw.OnError (new ErrorEventArgs (exc));
+				requestStop = false;
 			}
 		}
 
@@ -556,7 +561,7 @@ namespace System.IO {
 		{
 			RenamedEventArgs renamed = null;
 
-			if (action == 0)
+			if (requestStop || action == 0)
 				return;
 
 			// e.Name
@@ -571,10 +576,12 @@ namespace System.IO {
 				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, fsw.Path, newName, name);
 			}
 
-			lock (fsw) {
-				fsw.DispatchEvents (action, name, ref renamed);
+			inDispatch = true;
+			fsw.DispatchEvents (action, path, ref renamed);
+			inDispatch = false;
 
-				if (fsw.Waiting) {
+			if (fsw.Waiting) {
+				lock (fsw) {
 					fsw.Waiting = false;
 					System.Threading.Monitor.PulseAll (fsw);
 				}
@@ -609,7 +616,8 @@ namespace System.IO {
 		volatile bool requestStop = false;
 		AutoResetEvent startedEvent = new AutoResetEvent (false);
 		bool started = false;
-		Exception monitorExc;
+		bool inDispatch = false;
+		Exception exc = null;
 		object stateLock = new object ();
 
 		readonly Dictionary<string, PathData> pathsDict = new Dictionary<string, PathData> ();
