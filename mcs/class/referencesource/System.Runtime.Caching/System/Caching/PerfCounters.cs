@@ -41,12 +41,14 @@ namespace System.Runtime.Caching {
                 // if the host has an identifier, use it
                 string appId = (ai != null) ? ai.GetApplicationId() : null;
                 // otherwise, use the process name wihtout file extension
+#if !MONO
                 if (String.IsNullOrEmpty(appId)) {
                     StringBuilder sb = new StringBuilder(512);
                     if (UnsafeNativeMethods.GetModuleFileName(IntPtr.Zero, sb, 512) != 0) {
                         appId = Path.GetFileNameWithoutExtension(sb.ToString());
                     }
                 }
+#endif
                 // if all else fails, use AppDomain.FriendlyName
                 if (String.IsNullOrEmpty(appId)) {  
                     appId = AppDomain.CurrentDomain.FriendlyName;

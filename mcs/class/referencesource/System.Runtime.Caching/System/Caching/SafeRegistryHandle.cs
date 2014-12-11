@@ -21,8 +21,12 @@ namespace System.Runtime.Caching {
         [SecurityCritical]
         protected override bool ReleaseHandle() {
             // Returns a Win32 error code, 0 for success
+#if MONO
+            throw new NotImplementedException ();
+#else
             int r = UnsafeNativeMethods.RegCloseKey(handle);
             return r == 0;
+#endif
         }
     }
 }

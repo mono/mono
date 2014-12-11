@@ -40,12 +40,22 @@ namespace System.Runtime.Caching {
 
         [SecuritySafeCritical]
         static MemoryMonitor() {
+#if MONO
+            var pc = new System.Diagnostics.PerformanceCounter ("Mono Memory", "Total Physical Memory");
+            s_totalPhysical = pc.RawValue;
+
+            // We should set the the total virtual memory with a system value.
+            // But Mono has no such PerformanceCounter and the total virtual memory has little relevance
+            // for the rest of the System.Runtime.Caching code.
+            s_totalVirtual = 0;
+#else
             MEMORYSTATUSEX memoryStatusEx = new MEMORYSTATUSEX();
             memoryStatusEx.Init();
             if (UnsafeNativeMethods.GlobalMemoryStatusEx(ref memoryStatusEx) != 0) {
                 s_totalPhysical = memoryStatusEx.ullTotalPhys;
                 s_totalVirtual = memoryStatusEx.ullTotalVirtual;
             }
+#endif
         }
 
         internal static long TotalPhysical { get { return s_totalPhysical; } }

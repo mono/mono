@@ -107,12 +107,19 @@ namespace System.Runtime.Caching {
 
         [SecuritySafeCritical]
         protected override int GetCurrentPressure() {
+#if MONO
+            var pc = new System.Diagnostics.PerformanceCounter ("Mono Memory", "Available Physical Memory");
+            long availableMemory = pc.RawValue;
+
+            int memoryLoad = (int) ((100 * availableMemory) / TotalPhysical);
+#else
             MEMORYSTATUSEX memoryStatusEx = new MEMORYSTATUSEX();
             memoryStatusEx.Init();
             if (UnsafeNativeMethods.GlobalMemoryStatusEx(ref memoryStatusEx) == 0)
                 return 0;
 
             int memoryLoad = memoryStatusEx.dwMemoryLoad;
+#endif
             //if (_pressureHigh != 0) {
                 // PerfCounter: Cache Percentage Machine Memory Limit Used
                 //    = total physical memory used / total physical memory used limit
