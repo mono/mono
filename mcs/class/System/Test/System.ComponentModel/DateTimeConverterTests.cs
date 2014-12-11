@@ -146,6 +146,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+		[SetCulture("en-GB")]
 		public void ConvertToString ()
 		{
 			CultureInfo culture = new MyCultureInfo ();
