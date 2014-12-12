@@ -534,7 +534,7 @@ namespace System.Net.NetworkInformation {
 			CultureInfo culture = CultureInfo.InvariantCulture;
 			StringBuilder args = new StringBuilder ();
 			uint t = Convert.ToUInt32 (Math.Floor ((timeout + 1000) / 1000.0));
-			bool is_mac = ((int) Environment.OSVersion.Platform == 6);
+			bool is_mac = Platform.IsMacOS;
 			if (!is_mac)
 				args.AppendFormat (culture, "-q -n -c {0} -w {1} -t {2} -M ", DefaultCount, t, options.Ttl);
 			else

@@ -269,6 +269,7 @@ System.Net.Mail/SmtpServer.cs
 System.Net.Mime/ContentDispositionTest.cs
 System.Net.Mime/ContentTypeTest.cs
 System.Net.NetworkInformation/PhysicalAddressTest.cs
+System.Net.NetworkInformation/PingTest.cs
 System.Net.Security/SslStreamTest.cs
 System.Runtime.Versioning/FrameworkNameTest.cs
 System.Security.AccessControl/SemaphoreSecurityTest.cs
