@@ -460,6 +460,11 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern long GetNow ();
 
+		internal static void ClearCachedData ()
+		{
+			to_local_time_span_object = null;
+		}
+
 		//
 		// To reduce the time consumed by DateTime.Now, we keep
 		// the difference to map the system time into a local
@@ -474,7 +479,7 @@ namespace System
 				long now = GetNow ();
 				DateTime dt = new DateTime (now);
 
-				if (Math.Abs (now - last_now) > TimeSpan.TicksPerMinute){
+				if (to_local_time_span_object == null || Math.Abs (now - last_now) > TimeSpan.TicksPerMinute){
 					to_local_time_span_object = TimeZone.CurrentTimeZone.GetLocalTimeDiff (dt);
 					last_now = now;
 

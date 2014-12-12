@@ -531,17 +531,11 @@ namespace System {
 					return sign * (hour * 60) * 60;
 			}
 
-			static readonly object _lock = new object ();
-
 			static TimeZoneInfo defaultZone;
 			internal static TimeZoneInfo Local {
 				get {
-					lock (_lock) {
-						if (defaultZone != null)
-							return defaultZone;
-						var id  = GetDefaultTimeZoneName ();
-						return defaultZone = GetTimeZone (id, id);
-					}
+					var id  = GetDefaultTimeZoneName ();
+					return defaultZone = GetTimeZone (id, id);
 				}
 			}
 			
