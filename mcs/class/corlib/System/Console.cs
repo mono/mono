@@ -79,7 +79,7 @@ namespace System
 
 		static Console ()
 		{
-#if !NET2_API || NET_2_1
+#if !NET2_API || NET_2_1 && !UNITY
 			Encoding inputEncoding;
 			Encoding outputEncoding;
 #endif
