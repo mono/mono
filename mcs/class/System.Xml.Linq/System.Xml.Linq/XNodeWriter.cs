@@ -139,10 +139,11 @@ namespace System.Xml.Linq
 			if (prefix == null)
 				return;
 
-			if (xns == XNamespace.None)
-				if (el.GetPrefixOfNamespace (xns) != prefix)
+			if (xns == XNamespace.None) {
+				var xnsPrefix = el.GetPrefixOfNamespace (xns);
+				if (xnsPrefix != null && xnsPrefix != prefix)
 					el.SetAttributeValue (prefix == String.Empty ? XNamespace.None.GetName ("xmlns") : XNamespace.Xmlns.GetName (prefix), xns.NamespaceName);
-			else if (el.GetDefaultNamespace () != XNamespace.None)
+			} else if (el.GetDefaultNamespace () != XNamespace.None)
 				el.SetAttributeValue (XNamespace.None.GetName ("xmlns"), xns.NamespaceName);
 		}
 
@@ -164,6 +165,10 @@ namespace System.Xml.Linq
 			if (current == null)
 				throw new InvalidOperationException ();
 			XElement el = (current as XElement) ?? current.Parent;
+
+			if (ns == el.Name.Namespace.NamespaceName)
+				return "";
+
 			return el != null ? el.GetPrefixOfNamespace (XNamespace.Get (ns)) : null;
 		}
 
