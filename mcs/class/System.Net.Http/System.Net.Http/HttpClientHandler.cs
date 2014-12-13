@@ -232,6 +232,8 @@ namespace System.Net.Http
 		{
 			var wr = new HttpWebRequest (request.RequestUri);
 			wr.ThrowOnError = false;
+			wr.AllowReadStreamBuffering = false;
+			wr.AllowWriteStreamBuffering = false;
 
 			wr.ConnectionGroupName = connectionGroupName;
 			wr.Method = request.Method.Method;
