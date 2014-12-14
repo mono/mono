@@ -101,25 +101,37 @@ namespace System {
 		StreamWriter logger;
 #endif
 
+		static string TryTermInfoDir (string dir, string term )
+		{
+			string path = String.Format ("{0}/{1:x}/{2}", dir, (int)(term [0]), term);
+			if (File.Exists (path))
+				return path;
+				
+			path = Path.Combine (dir, term.Substring (0, 1), term);
+			if (File.Exists (path))
+				return path;
+			return null;
+		}
+
 		static string SearchTerminfo (string term)
 		{
 			if (term == null || term == String.Empty)
 				return null;
 
-			// Ignore TERMINFO and TERMINFO_DIRS by now
-			//string terminfo = Environment.GetEnvironmentVariable ("TERMINFO");
-			//string terminfoDirs = Environment.GetEnvironmentVariable ("TERMINFO_DIRS");
-
+			string path;
+			string terminfo = Environment.GetEnvironmentVariable ("TERMINFO");
+			if (terminfo != null && Directory.Exists (terminfo)){
+				path = TryTermInfoDir (terminfo, term);
+				if (path != null)
+					return path;
+			}
+				    
 			foreach (string dir in locations) {
 				if (!Directory.Exists (dir))
 					continue;
 
-				string path = String.Format ("{0}/{1:x}/{2}", dir, (int)(term [0]), term);
-				if (File.Exists (path))
-					return path;
-				
-				path = Path.Combine (dir, term.Substring (0, 1), term);
-				if (File.Exists (path))
+				path = TryTermInfoDir (dir, term);
+				if (path != null)
 					return path;
 			}
 
