@@ -3,6 +3,11 @@
 //
 // Copyright 2014 Xamarin Inc
 //
+// Use the following script to extract strings from .NET strings.resx:
+//
+// var d = XDocument.Load ("Strings.resx");
+// foreach (var j in d.XPathSelectElements ("/root/data")){ var v = j.XPathSelectElement ("value"); Console.WriteLine ("\tpublic const string {0}=\"{1}\";", j.Attribute ("name").Value, v.Value); }
+//
 partial class SR
 {
 	public static object GetObject (string name)
@@ -16,57 +21,53 @@ partial class SR
 		return name;
 	}
 
-	public const string UnexpectedOpcode = "UnexpectedOpcode";
-	public const string BeginIndexNotNegative = "BeginIndexNotNegative";
-	public const string CountTooSmall = "CountTooSmall";
-	public const string ReplacementError = "ReplacementError";
-	public const string BadClassInCharRange = "BadClassInCharRange";
-	public const string TooManyAlternates = "TooManyAlternates";
-	public const string MakeException = "MakeException";
-	public const string IncompleteSlashP = "IncompleteSlashP";
-	public const string MalformedSlashP = "MalformedSlashP";
-	public const string CaptureGroupOutOfRange = "CaptureGroupOutOfRange";
-	public const string InvalidGroupName = "InvalidGroupName";
-	public const string UndefinedBackref = "UndefinedBackref";
-	public const string UndefinedNameref = "UndefinedNameref";
-	public const string UnrecognizedControl = "UnrecognizedControl";
+	public const string AlternationCantCapture="Alternation conditions do not capture and cannot be named.";
+	public const string AlternationCantHaveComment="Alternation conditions cannot be comments.";
+	public const string Arg_InvalidArrayType="Target array type is not compatible with the type of items in the collection.";
+	public const string Arg_RankMultiDimNotSupported="Only single dimensional arrays are supported for the requested action.";
+	public const string BadClassInCharRange="Cannot include class {0} in character range.";
+	public const string BeginIndexNotNegative="Start index cannot be less than 0 or greater than input length.";
+	public const string CapnumNotZero="Capture number cannot be zero.";
+	public const string CaptureGroupOutOfRange="Capture group numbers must be less than or equal to Int32.MaxValue.";
+	public const string CountTooSmall="Count cannot be less than -1.";
+	public const string EnumNotStarted="Enumeration has either not started or has already finished.";
+	public const string IllegalCondition="Illegal conditional (?(...)) expression.";
+	public const string IllegalEndEscape="Illegal \\ at end of pattern.";
+	public const string IllegalRange="Illegal {x,y} with x > y.";
+	public const string IncompleteSlashP="Incomplete \\{X} character escape.";
+	public const string InternalError="Internal error in ScanRegex.";
+	public const string InvalidGroupName="Invalid group name: Group names must begin with a word character.";
+	public const string LengthNotNegative="Length cannot be less than 0 or exceed input length.";
+	public const string MakeException="parsing '{0}' - {1}";
+	public const string MalformedNameRef="Malformed \\k<...> named back reference.";
+	public const string MalformedReference="(?({0}) ) malformed.";
+	public const string MalformedSlashP="Malformed \\p{X} character escape.";
+	public const string MissingControl="Missing control character.";
+	public const string NestedQuantify="Nested quantifier {0}.";
+	public const string NoResultOnFailed="Result cannot be called on a failed Match.";
+	public const string NotEnoughParens="Not enough )'s.";
+	public const string OnlyAllowedOnce="This operation is only allowed once per object.";
+	public const string QuantifyAfterNothing="Quantifier {x,y} following nothing.";
+	public const string RegexMatchTimeoutException_Occurred="The RegEx engine has timed out while trying to match a pattern to an input string. This can occur for many reasons, including very large inputs or excessive backtracking caused by nested quantifiers, back-references and other factors.";
+	public const string ReplacementError="Replacement pattern error.";
+	public const string ReversedCharRange="[x-y] range in reverse order.";
+	public const string SubtractionMustBeLast="A subtraction must be the last element in a character class.";
+	public const string TooFewHex="Insufficient hexadecimal digits.";
+	public const string TooManyAlternates="Too many | in (?()|).";
+	public const string TooManyParens="Too many )'s.";
+	public const string UndefinedBackref="Reference to undefined group number {0}.";
+	public const string UndefinedNameRef="Reference to undefined group name {0}.";
+	public const string UndefinedReference="(?({0}) ) reference to undefined group.";
+	public const string UnexpectedOpcode="Unexpected opcode in regular expression generation: {0}.";
+	public const string UnimplementedState="Unimplemented state.";
+	public const string UnknownProperty="Unknown property '{0}'.";
+	public const string UnrecognizedControl="Unrecognized control character.";
+	public const string UnrecognizedEscape="Unrecognized escape sequence {0}.";
+	public const string UnrecognizedGrouping="Unrecognized grouping construct.";
+	public const string UnterminatedBracket="Unterminated [] set.";
+	public const string UnterminatedComment="Unterminated (?#...) comment.";
 	
-	public const string AlternationCantCapture = "AlternationCantCapture";
-	public const string AlternationCantHaveComment = "AlternationCantHaveComment";
-	public const string Arg_InvalidArrayType = "Arg_InvalidArrayType";
-	public const string Arg_RankMultiDimNotSupported = "Arg_RankMultiDimNotSupported";
 	public const string ArgumentNull_ArrayWithNullElements = "ArgumentNull_ArrayWithNullElements";
-	public const string CapnumNotZero = "CapnumNotZero";
-	public const string EnumNotStarted = "EnumNotStarted";
-	public const string IllegalCondition = "IllegalCondition";
-	public const string IllegalDefaultRegexMatchTimeoutInAppDomain = "IllegalDefaultRegexMatchTimeoutInAppDomain";
-	public const string IllegalEndEscape = "IllegalEndEscape";
-	public const string IllegalRange = "IllegalRange";
-	public const string InvalidNullEmptyArgument = "Invalid empty argument {0}";
-	public const string InternalError = "InternalError";
-	public const string LengthNotNegative = "LengthNotNegative";
-	public const string MalformedNameRef = "MalformedNameRef";
-	public const string MalformedReference = "MalformedReference";
-	public const string MissingControl = "MissingControl";
-	public const string NestedQuantify = "NestedQuantify";
-	public const string NoResultOnFailed = "NoResultOnFailed";
-	public const string NotEnoughParens = "NotEnoughParens";
-	public const string OnlyAllowedOnce = "OnlyAllowedOnce";
-	public const string QuantifyAfterNothing = "QuantifyAfterNothing";
-	public const string RegexMatchTimeoutException_Occurred = "RegexMatchTimeoutException_Occurred";
-	public const string ReversedCharRange = "ReversedCharRange";
-	public const string SubtractionMustBeLast = "SubtractionMustBeLast";
-	public const string TooFewHex = "TooFewHex";
-	public const string TooManyParens = "TooManyParens";
-	public const string UndefinedNameRef = "UndefinedNameRef";
-	public const string UndefinedReference = "UndefinedReference";
-	public const string UnimplementedState = "UnimplementedState";
-	public const string UnknownProperty = "UnknownProperty";
-	public const string UnrecognizedEscape = "UnrecognizedEscape";
-	public const string UnrecognizedGrouping = "UnrecognizedGrouping";
-	public const string UnterminatedBracket = "UnterminatedBracket";
-	public const string UnterminatedComment = "UnterminatedComment";
-
 	public const string Arg_ArrayPlusOffTooSmall = "Arg_ArrayPlusOffTooSmall";
 	public const string Arg_InsufficientSpace = "Arg_InsufficientSpace";
 	public const string Arg_MultiRank = "Arg_MultiRank";
@@ -98,6 +99,8 @@ partial class SR
 	public const string Serialization_InvalidOnDeser = "Serialization_InvalidOnDeser";
 	public const string Serialization_MismatchedCount = "Serialization_MismatchedCount";
 	public const string Serialization_MissingValues = "Serialization_MissingValues";
+	public const string IllegalDefaultRegexMatchTimeoutInAppDomain = "IllegalDefaultRegexMatchTimeoutInAppDomain";
+	public const string InvalidNullEmptyArgument = "InvalidNullEmptyArgument";
 
 	public const string BlockingCollection_Add_ConcurrentCompleteAdd = "BlockingCollection_Add_ConcurrentCompleteAdd";
 	public const string BlockingCollection_Add_Failed = "BlockingCollection_Add_Failed";
