@@ -8,17 +8,17 @@ namespace MonoTests.System.Net.NetworkInformation
 	public class PingTest
 	{
 		[Test] 
-		public void PingTimeOut()
+		public void PingFail()
 		{
 			var p = new Ping ().Send ("192.0.2.0");
-			Assert.AreEqual(p.Status, IPStatus.TimedOut);
+			Assert.AreNotEqual(IPStatus.Success, p.Status);
 		}
 
 		[Test] 
 		public void PingSuccess()
 		{
 			var p = new Ping ().Send ("127.0.0.1");
-			Assert.AreEqual(p.Status, IPStatus.Success);
+			Assert.AreEqual(IPStatus.Success, p.Status);
 		}		
 	}
 }
