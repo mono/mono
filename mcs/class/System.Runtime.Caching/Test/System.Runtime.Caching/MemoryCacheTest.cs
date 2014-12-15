@@ -1225,12 +1225,8 @@ namespace MonoTests.System.Runtime.Caching
 			Assert.AreEqual (25, trimmed, "#A4-2");
 			Assert.AreEqual (25, removed.Count, "#A4-3");
 
-			// OK, this is odd... The list is correct in terms of entries removed but the entries
-			// are removed in the _MOST_ frequently used order, within the group selected for removal.
-			for (int i = 24; i >= 0; i--) {
-				int idx = 24 - i;
-				Assert.AreEqual ("key" + i.ToString (), removed [idx], "#A5-" + idx.ToString ());
-			}
+			for (int i = 0; i < 25; i++)
+				Assert.AreEqual ("key" + i.ToString (), removed [i], "#A5-" + i.ToString ());
 		}
 		
 		[Test]
