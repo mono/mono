@@ -1377,7 +1377,10 @@ namespace MonoTests.System.Runtime.Caching
 				Assert.AreEqual (0, mc.GetCount (), "#CSL1");
 
 				var cip = new CacheItemPolicy();
-				cip.SlidingExpiration = new TimeSpan (0, 0, 1);
+				// The sliding expiration timeout has to be greater than 1 second because
+				// .NET implementation ignores timeouts updates smaller than
+				// CacheExpires.MIN_UPDATE_DELTA which is equal to 1.
+				cip.SlidingExpiration = new TimeSpan (0, 0, 2);
 				mc.Add("slidingtest", "42", cip);
 
 				mc.Add("expire1", "1", cip);
