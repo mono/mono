@@ -133,7 +133,7 @@ namespace MonoTests.System.Runtime.Caching
 		{
 			var mc = new MemoryCache ("MyCache");
 			Assert.AreEqual ("MyCache", mc.Name, "#A1");
-			Assert.AreEqual (98, mc.PhysicalMemoryLimit, "#A2");
+			Assert.AreEqual (99, mc.PhysicalMemoryLimit, "#A2");
 			// Value of this property is different from system to system
 			//Assert.AreEqual (0, mc.CacheMemoryLimit, "#A3");
 			Assert.AreEqual (TimeSpan.FromMinutes (2), mc.PollingInterval, "#A4");
@@ -152,7 +152,7 @@ namespace MonoTests.System.Runtime.Caching
 		{
 			var mc = MemoryCache.Default;
 			Assert.AreEqual ("Default", mc.Name, "#A1");
-			Assert.AreEqual (98, mc.PhysicalMemoryLimit, "#A2");
+			Assert.AreEqual (99, mc.PhysicalMemoryLimit, "#A2");
 			// Value of this property is different from system to system
 			//Assert.AreEqual (0, mc.CacheMemoryLimit, "#A3");
 			Assert.AreEqual (TimeSpan.FromMinutes (2), mc.PollingInterval, "#A4");
@@ -175,7 +175,7 @@ namespace MonoTests.System.Runtime.Caching
 			config.Add ("pollingInterval", "00:10:00");
 
 			var mc = new MemoryCache ("MyCache", config);
-			Assert.AreEqual (98, mc.PhysicalMemoryLimit, "#A1");
+			Assert.AreEqual (99, mc.PhysicalMemoryLimit, "#A1");
 			Assert.AreEqual (1048576, mc.CacheMemoryLimit, "#A2");
 			Assert.AreEqual (TimeSpan.FromMinutes (10), mc.PollingInterval, "#A3");
 
