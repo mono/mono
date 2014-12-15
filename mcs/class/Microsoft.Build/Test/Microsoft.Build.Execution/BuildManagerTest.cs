@@ -183,7 +183,7 @@ namespace MonoTests.Microsoft.Build.Execution
 			var request = new BuildRequestData (proj, new string [] {"ResolveAssemblyReferences"});
 			Assert.AreEqual (string.Empty, proj.GetPropertyValue ("TargetFrameworkDirectory"), "#1-1");
 			var result = manager.Build (parameters, request);
-			Assert.AreNotEqual (";", proj.GetPropertyValue ("TargetFrameworkDirectory"), "#1-2"); // filled during build.
+			Assert.AreNotEqual (string.Empty, proj.GetPropertyValue ("TargetFrameworkDirectory"), "#1-2"); // filled during build.
 			Assert.IsTrue (result.ResultsByTarget.ContainsKey ("GetFrameworkPaths"), "#2-1");
 			Assert.IsTrue (result.ResultsByTarget.ContainsKey ("PrepareForBuild"), "#2-2");
 			Assert.IsTrue (result.ResultsByTarget.ContainsKey ("ResolveAssemblyReferences"), "#2-3");
