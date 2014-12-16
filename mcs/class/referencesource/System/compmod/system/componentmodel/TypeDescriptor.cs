@@ -365,7 +365,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("type");
             }
-#if !MOBILE
+#if !DISABLE_CAS_USE
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
             typeDescriptorPermission.AddPermission(new TypeDescriptorPermission(TypeDescriptorPermissionFlags.RestrictedRegistrationAccess));
 
@@ -401,7 +401,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("instance");
             }
-#if !MOBILE
+#if !DISABLE_CAS_USE
             Type type = instance.GetType();
 
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
@@ -3240,7 +3240,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("type");
             }
-#if !MOBILE
+#if !DISABLE_CAS_USE
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
             typeDescriptorPermission.AddPermission(new TypeDescriptorPermission(TypeDescriptorPermissionFlags.RestrictedRegistrationAccess));
 
@@ -3275,7 +3275,7 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException("instance");
             }
-#if !MOBILE
+#if !DISABLE_CAS_USE
             Type type = instance.GetType();
 
             PermissionSet typeDescriptorPermission = new PermissionSet(PermissionState.None);
