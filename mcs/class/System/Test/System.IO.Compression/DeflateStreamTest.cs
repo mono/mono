@@ -91,6 +91,17 @@ namespace MonoTests.System.IO.Compression
 			decompressing.Close();
 		}
 
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=22346
+		[Test]
+		public void CheckEmptyRead ()
+		{
+			byte [] dummy = new byte[1];
+			byte [] data = new byte[0];
+			MemoryStream backing = new MemoryStream (data);
+			DeflateStream compressing = new DeflateStream (backing, CompressionMode.Decompress);
+			compressing.Read (dummy, 0, 1);
+		}		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void CheckNullRead ()
