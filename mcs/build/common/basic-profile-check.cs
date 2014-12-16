@@ -23,8 +23,14 @@ class X {
 			return 1;
 
 		var consts = o.GetType ().Assembly.GetType ("Consts");
-		if (consts == null)
+		if (consts == null) {
+			// We could be bootraping on cygwin using .net runtime
+			var assembly = o.GetType ().Assembly;
+			if (assembly.GetName ().Version >= new Version (4, 0) && assembly.Location.Contains ("Microsoft.NET"))
+				return 0;
+
 			return 2;
+		}
 
 		var field = consts.GetField ("MonoVersion");
 		if (field == null)
