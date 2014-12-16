@@ -4636,11 +4636,18 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 		}
 	}
 
+	method = jinfo_get_method(ji);
+	if (req->depth == STEP_DEPTH_INTO && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && ss_req->last_method == method) {
+		ss_req->last_method = method;
+		DEBUG(1, fprintf(log_file, "[%p] Seq point at nonempty stack %x while stepping in, continuing single stepping.\n", (gpointer)GetCurrentThreadId(), sp->il_offset));
+		return FALSE;
+	}
+	ss_req->last_method = method;
+
 	if (req->size != STEP_SIZE_LINE)
 		return TRUE;
 
 	/* Have to check whenever a different source line was reached */
-	method = jinfo_get_method (ji);
 	minfo = mono_debug_lookup_method (method);
 
 	if (minfo)
@@ -5355,7 +5362,7 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 		ss_req->last_sp = NULL;
 	}
 
-	if (!step_to_catch && ss_req->size == STEP_SIZE_LINE) {
+	if (!step_to_catch) {
 		StackFrame *frame;
 
 		/* Compute the initial line info */
