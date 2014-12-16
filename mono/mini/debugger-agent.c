@@ -4614,7 +4614,6 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 {
 	MonoDebugMethodInfo *minfo;
 	MonoDebugSourceLocation *loc = NULL;
-	gboolean hit = TRUE;
 	MonoMethod *method;
 
 	if (req->depth == STEP_DEPTH_OVER && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK)) {
@@ -4625,7 +4624,7 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 		return FALSE;
 	}
 
-	if (req->depth == STEP_DEPTH_OVER && hit) {
+	if (req->depth == STEP_DEPTH_OVER) {
 		if (!tls->context.valid)
 			mono_thread_state_init_from_monoctx (&tls->context, ctx);
 		compute_frame_info (tls->thread, tls);
@@ -4636,39 +4635,23 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 		}
 	}
 
+	/* Have to check whenever a different source line was reached */
 	method = jinfo_get_method(ji);
-	if (req->depth == STEP_DEPTH_INTO && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && ss_req->last_method == method) {
+	minfo = mono_debug_lookup_method (method);
+
+	if (minfo){
+		loc = mono_debug_symfile_lookup_location(minfo, sp->il_offset);
 		ss_req->last_method = method;
+		ss_req->last_line = loc->row;
+		mono_debug_free_source_location(loc);
+	}
+
+	if (req->depth == STEP_DEPTH_INTO && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && ss_req->last_method == method) {
 		DEBUG(1, fprintf(log_file, "[%p] Seq point at nonempty stack %x while stepping in, continuing single stepping.\n", (gpointer)GetCurrentThreadId(), sp->il_offset));
 		return FALSE;
 	}
-	ss_req->last_method = method;
 
-	if (req->size != STEP_SIZE_LINE)
-		return TRUE;
-
-	/* Have to check whenever a different source line was reached */
-	minfo = mono_debug_lookup_method (method);
-
-	if (minfo)
-		loc = mono_debug_symfile_lookup_location (minfo, sp->il_offset);
-
-	if (!loc || (loc && method == ss_req->last_method && loc->row == ss_req->last_line)) {
-		/* Have to continue single stepping */
-		if (!loc)
-			DEBUG(1, fprintf (log_file, "[%p] No line number info for il offset %x, continuing single stepping.\n", (gpointer)GetCurrentThreadId (), sp->il_offset));
-		else
-			DEBUG(1, fprintf (log_file, "[%p] Same source line (%d), continuing single stepping.\n", (gpointer)GetCurrentThreadId (), loc->row));
-		hit = FALSE;
-	}
-				
-	if (loc) {
-		ss_req->last_method = method;
-		ss_req->last_line = loc->row;
-		mono_debug_free_source_location (loc);
-	}
-
-	return hit;
+	return TRUE;
 }
 
 static gboolean
