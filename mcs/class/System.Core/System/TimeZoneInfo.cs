@@ -1028,15 +1028,17 @@ namespace System
 
 			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Local)
 				date = date.ToUniversalTime () + BaseUtcOffset;
-
-			if (dateTime.Kind == DateTimeKind.Utc && this != TimeZoneInfo.Utc)
+			else if (dateTime.Kind == DateTimeKind.Utc && this != TimeZoneInfo.Utc)
 				date = date + BaseUtcOffset;
+
+			// get the date component of the datetime
+			date = date.Date;
 
 			if (adjustmentRules != null) {
 				foreach (AdjustmentRule rule in adjustmentRules) {
-					if (rule.DateStart > date.Date)
+					if (rule.DateStart > date)
 						return null;
-					if (rule.DateEnd < date.Date)
+					if (rule.DateEnd < date)
 						continue;
 					return rule;
 				}
