@@ -64,6 +64,24 @@ namespace System.Web.Configuration
 			}
 		}
 
+		internal ModuleManager LoadModules ()
+		{
+			ModuleManager manager = new ModuleManager ();
+			foreach (HttpModuleAction item in Modules) {
+				Type type = HttpApplication.LoadType (item.Type); 
+				if (type == null) {
+					Console.Error.Write ("Type for Static HttpModule could not be loaded: {0}", item.Type);
+					continue;
+				}
+				manager.Add (new ModuleLoader (item.Name, type));
+			}
+			{
+				manager.Add (new ModuleLoader ("DefaultAuthentication", typeof (DefaultAuthenticationModule)));
+			}
+			return manager;
+		}
+
+		// Remove me: use LoadModules
 		/* stolen from the 1.0 S.W.Config ModulesConfiguration.cs */
 		internal HttpModuleCollection LoadModules (HttpApplication app)
 		{

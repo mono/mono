@@ -535,29 +535,34 @@ namespace System.Web
 				//
 				// Ask application to service the request
 				//
-				
-#if TARGET_J2EE
-				IHttpAsyncHandler ihah = app;
-				if (context.Handler == null)
-					ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
-				else
-					app.Tick ();
-				//ihh.ProcessRequest (context);
-				IHttpExtendedHandler extHandler = context.Handler as IHttpExtendedHandler;
-				if (extHandler != null && !extHandler.IsCompleted)
-					return;
-				if (context.Error is UnifyRequestException)
-					return;
-
-				ihah.EndProcessRequest (null);
-#else
+				bool recycleApp = true;
 				IHttpHandler ihh = app;
-//				IAsyncResult appiar = ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
-//				ihah.EndProcessRequest (appiar);
-				ihh.ProcessRequest (context);
-#endif
+				try {
+#if TARGET_J2EE
+					IHttpAsyncHandler ihah = app;
+					if (context.Handler == null)
+						ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
+					else
+						app.Tick ();
+					//ihh.ProcessRequest (context);
+					IHttpExtendedHandler extHandler = context.Handler as IHttpExtendedHandler;
+					if (extHandler != null && !extHandler.IsCompleted)
+						return;
+					if (context.Error is UnifyRequestException)
+						return;
 
-				HttpApplicationFactory.Recycle (app);
+					ihah.EndProcessRequest (null);
+#else
+					//IAsyncResult appiar = ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
+					//ihah.EndProcessRequest (appiar);
+					ihh.ProcessRequest (context);
+#endif
+				} catch (ModuleFailedException) {
+					recycleApp = false;
+				}
+
+				if (recycleApp/* && ihh.IsReusable*/)
+					HttpApplicationFactory.Recycle (app);
 			}
 		}
 

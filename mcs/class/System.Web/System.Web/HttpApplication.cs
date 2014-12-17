@@ -64,6 +64,7 @@
 
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
@@ -113,6 +114,7 @@ namespace System.Web
 
 		string assemblyLocation;
 
+		Exception module_error = null;
 		//
 		// The factory for the handler currently running.
 		//
@@ -180,6 +182,11 @@ namespace System.Web
 		//
 		bool must_yield;
 		bool in_begin;
+		// While in_begin is true whenever we are executing an async event handler, 
+		// this flag is true when we are within an event handler of a module.
+		// This is important, because when modules throw unhandled exceptions we should 
+		// probably not recycle the current instance.
+		bool in_module_code;
 
 		public virtual event EventHandler Disposed {
 			add { nonApplicationEvents.AddHandler (disposedEvent, value); }
@@ -213,13 +220,20 @@ namespace System.Web
 
 				bool mustNullContext = context == null;
 				try {
-					HttpModulesSection modules;
-					modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
 					HttpContext saved = HttpContext.Current;
 					HttpContext.Current = new HttpContext (new System.Web.Hosting.SimpleWorkerRequest (String.Empty, String.Empty, new StringWriter()));
 					if (context == null)
 						context = HttpContext.Current;
-					HttpModuleCollection coll = modules.LoadModules (this);
+#if NET_4_5
+					// Note that calling Init() first in dynamic modules is important! (For example the Owin platform will not work because of the FormsAuthenticationModule)
+					HttpModuleCollection dynamicModules = dynamicModuleManager.CreateAndInitModules (this);
+#endif
+					HttpModuleCollection coll = StaticModuleManager.CreateAndInitModules (this);
+#if NET_4_5
+					for (int i = 0; i < dynamicModules.Count; i++) {
+						coll.AddModule (dynamicModules.GetKey (i), dynamicModules.Get (i));
+					}
+#endif
 					Interlocked.CompareExchange (ref modcoll, coll, null);
 					HttpContext.Current = saved;
 
@@ -880,12 +894,31 @@ namespace System.Web
 
 			return true;
 		}
-		
+
+		bool IsCriticalModuleException (Exception e)
+		{
+			if (e is System.Web.HttpException)
+				return false;
+
+			return true;
+		}
+
 		//
 		// If we catch an error, queue this error
 		//
 		void ProcessError (Exception e)
 		{
+			// TODO: add logging here (this would be incredible usefull here)
+			if (in_module_code) {
+				if (IsCriticalModuleException (e)) {
+					if (module_error == null) // only remeber the first one for now
+					{
+						module_error = e;
+					}
+				}
+				in_module_code = false;
+			}
+
 			bool first = context.Error == null;
 			context.AddError (e);
 			if (first && ShouldHandleException (e)) {
@@ -980,9 +1013,10 @@ namespace System.Web
 
 		void Resume ()
 		{
-			if (in_begin)
+			if (in_begin) {
 				must_yield = false;
-			else
+				in_module_code = false;
+			} else
 				Tick ();
 		}
 		
@@ -1034,6 +1068,7 @@ namespace System.Web
 						must_yield = true;
 						in_begin = true;
 						context.BeginTimeoutPossible ();
+						in_module_code = true;
 						current_ai.begin (this, EventArgs.Empty, async_callback_completed_cb, current_ai.data);
 					} finally {
 						in_begin = false;
@@ -1045,18 +1080,56 @@ namespace System.Web
 					// thread now
 					//
 					if (must_yield)
-						yield return stop_processing;
-					else if (stop_processing)
-						yield return true;
+						yield return false; // let the handler finish it's work
 				} else {
 					try {
 						context.BeginTimeoutPossible ();
+						in_module_code = true;
 						d (this, EventArgs.Empty);
+						in_module_code = false;
 					} finally {
 						context.EndTimeoutPossible ();
 					}
-					if (stop_processing)
-						yield return true;
+				}
+
+				if (stop_processing)
+					yield return true; // finish the pipeline
+			}
+		}
+
+		void RunAllHooksSync (Delegate list)
+		{
+			Delegate [] delegates = list.GetInvocationList ();
+
+			foreach (EventHandler d in delegates) {
+				if (d.Target != null && (d.Target is AsyncInvoker)) {
+					current_ai = (AsyncInvoker) d.Target;
+					IAsyncResult r = null;
+					try {
+						in_begin = true;
+						in_module_code = true;
+						context.BeginTimeoutPossible ();
+						r = current_ai.begin (this, EventArgs.Empty, null, current_ai.data);
+					} finally {
+						try {
+							if (r != null) {
+								current_ai.end (r);
+							}
+						} finally {
+							context.EndTimeoutPossible ();
+							in_begin = false;
+						}
+					}
+					in_module_code = false;
+				} else {
+					try {
+						context.BeginTimeoutPossible ();
+						in_module_code = true;
+						d (this, EventArgs.Empty);
+						in_module_code = false;
+					} finally {
+						context.EndTimeoutPossible ();
+					}
 				}
 			}
 		}
@@ -1066,7 +1139,8 @@ namespace System.Web
 			try {
 				response.Write (error);
 				response.Flush (true);
-			} catch {
+			} catch (Exception e) {
+				Console.Error.WriteLine ("Error while responding with HttpException: %s", e.ToString());
 				response.Close ();
 			}
 		}
@@ -1115,9 +1189,7 @@ namespace System.Web
 		void PipelineDone ()
 		{
 			try {
-				EventHandler handler = Events [EndRequestEvent] as EventHandler;
-				if (handler != null)
-					handler (this, EventArgs.Empty);
+				RunAllHooksSync (Events [EndRequestEvent]);
 			} catch (Exception e){
 				ProcessError (e);
 			}
@@ -1128,7 +1200,7 @@ namespace System.Web
 				ProcessError (taex);
 				Thread.ResetAbort ();
 			} catch (Exception e) {
-				Console.WriteLine ("Internal error: OutputPage threw an exception " + e);
+				Console.Error.WriteLine ("Internal error: OutputPage threw an exception " + e);
 			} finally {
 				context.WorkerRequest.EndOfRequest();
 				if (factory != null && context.Handler != null){
@@ -1192,6 +1264,9 @@ namespace System.Web
 		{
 			tim.Stop ();
 		}
+
+		// NOTE: Do only edit this code when you know what you are doing!
+		// The Pipeline Code is very very sensitive.
 
 		//
 		// Events fired as described in `Http Runtime Support, HttpModules,
@@ -1332,13 +1407,19 @@ namespace System.Web
 			// ReleaseRequestState, so the code below jumps to
 			// `release:' to guarantee it rather than yielding.
 			//
+			// Addition to the above: we have to yield in order for the async handlers to finish!
+			// when RunHooks returns true, we jump to release, if it returns false we wait for the handler to finish
 			StartTimer ("PreRequestHandlerExecute");
 			eventHandler = Events [PreRequestHandlerExecuteEvent];
 			if (eventHandler != null)
-				foreach (bool stop in RunHooks (eventHandler))
-					if (stop)
+				foreach (bool stop in RunHooks (eventHandler)) {
+					// We still have to wait for the async events to be processed
+					if (stop) {
+						StopTimer ();
 						goto release;
-			StopTimer ();
+					} else yield return false;
+				}
+			StopTimer();
 			
 				
 #if TARGET_J2EE
@@ -1346,6 +1427,10 @@ namespace System.Web
 			bool doProcessHandler = false;
 #endif
 			
+			// In case async handler stopped after yielding
+			if (stop_processing)
+				goto release;
+
 			IHttpHandler ctxHandler = context.Handler;
 			if (ctxHandler != null && handler != ctxHandler) {
 				context.PopHandler ();
@@ -1387,8 +1472,9 @@ namespace System.Web
 			}
 #endif
 			if (must_yield)
-				yield return stop_processing;
-			else if (stop_processing)
+				yield return false; // let the handler finish
+
+			if (stop_processing)
 				goto release;
 			
 			// These are executed after the application has returned
@@ -1397,8 +1483,11 @@ namespace System.Web
 			eventHandler = Events [PostRequestHandlerExecuteEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
-					if (stop)
+					if (stop) {
+						StopTimer();
 						goto release;
+					}
+					else yield return false;
 			StopTimer ();
 			
 		release:
@@ -1410,7 +1499,7 @@ namespace System.Web
 					//
 					// Ignore the stop signal while release the state
 					//
-					
+					if (!stop) yield return false; // Wait for async handlers to finish
 				}
 #pragma warning restore 219
 			}
@@ -1635,12 +1724,24 @@ namespace System.Web
 		
 		void IHttpHandler.ProcessRequest (HttpContext context)
 		{
+			if (this.context != null)
+				throw new InvalidOperationException ("HttpApplication is not ready!");
+
 			begin_iar = null;
 			this.context = context;
 			done.Reset ();
 
 			Start (null);
 			done.WaitOne ();
+
+			// Throw when a module has thrown an exception?
+			ThrowOnModuleError ();
+		}
+
+		void ThrowOnModuleError ()
+		{
+			if (module_error != null) // only remeber the first one for now
+				throw new ModuleFailedException ("an inner module failed", module_error);
 		}
 
 		//
@@ -1660,6 +1761,9 @@ namespace System.Web
 
 		IAsyncResult IHttpAsyncHandler.BeginProcessRequest (HttpContext context, AsyncCallback cb, object extraData)
 		{
+			if (this.context != null)
+				throw new InvalidOperationException ("HttpApplication is not ready!");
+			
 			this.context = context;
 			done.Reset ();
 			
@@ -1676,6 +1780,7 @@ namespace System.Web
 					try {
 						Start (x);
 					} catch (Exception e) {
+						// TODO: Add Logging instead of Console.Error.WriteLine
 						Console.Error.WriteLine (e);
 					}
 				});
@@ -1692,6 +1797,8 @@ namespace System.Web
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne ();
 			begin_iar = null;
+			// Throw when module has thrown an error?
+			ThrowOnModuleError ();
 		}
 
 		public virtual void Init ()
@@ -1882,6 +1989,29 @@ namespace System.Web
 
 			return null;
 		}
+
+
+		private static ModuleManager staticModuleManager = null;
+		internal static ModuleManager StaticModuleManager
+		{
+			get
+			{
+				if (staticModuleManager == null)
+				{
+					HttpModulesSection modules = (HttpModulesSection)WebConfigurationManager.GetWebApplicationSection("system.web/httpModules");
+					staticModuleManager = modules.LoadModules();
+				}
+				return staticModuleManager;
+			}
+		}
+
+#if NET_4_5
+		private static readonly ModuleManager dynamicModuleManager = new ModuleManager ();
+		public static void RegisterModule (Type moduleType)
+		{
+			HttpApplication.dynamicModuleManager.Add (moduleType);
+		}
+#endif
 	}
 
 	//
@@ -1943,7 +2073,100 @@ namespace System.Web
 	}
 
 #region Helper classes
-	
+
+	internal struct ModuleLoader {
+		public readonly string Name;
+		public readonly Type Type;
+
+		public ModuleLoader (string name, string type)
+		{
+			this.Name = name;
+			this.Type = Type.GetType (type, true);
+		}
+
+		public ModuleLoader (string name, Type type)
+		{
+			this.Name = name;
+			this.Type = type;
+		}
+
+		public IHttpModule CreateInstance ()
+		{
+			return (IHttpModule) System.Activator.CreateInstance (this.Type, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance, null, null, null, null);
+		}
+	}
+
+	internal sealed class ModuleManager {
+		private const string moduleKeyNameFormat = "Module-{0}";
+		private readonly Dictionary<string, ModuleLoader> moduleList = new Dictionary<string, ModuleLoader> ();
+		private readonly object lockObj = new object ();
+		private bool listLocked;
+		private uint c = 0;
+
+		internal ModuleLoader GetLoader (string name)
+		{
+			return moduleList [name];
+		}
+		internal bool Contains (string name)
+		{
+			return moduleList.ContainsKey (name);
+		}
+		public void Add (Type moduleType)
+		{
+			if (moduleType == null)
+				throw new ArgumentNullException ("moduleType");
+			if (!typeof (IHttpModule).IsAssignableFrom (moduleType)) {
+				throw new ArgumentException (
+					string.Format (
+						CultureInfo.CurrentCulture, ("The given Type doesn't implement the IHttpModule interface: {0}"),
+						moduleType),
+					"moduleType");
+			}
+			string name =
+				string.Format (
+					CultureInfo.InvariantCulture,
+					moduleKeyNameFormat,
+					c++);
+			Add (new ModuleLoader (name, moduleType));
+		}
+
+		internal void Add (ModuleLoader loader)
+		{
+			lock (this.lockObj) {
+				if (this.listLocked)
+					throw new InvalidOperationException ("Can't add modules when the module list has already been locked.");
+				this.moduleList.Add (loader.Name, loader);
+			}
+		}
+
+		public IEnumerable<ModuleLoader> GetModules ()
+		{
+			lock (this.lockObj) {
+				this.listLocked = true;
+				return this.moduleList.Values;
+			}
+		}
+
+		public HttpModuleCollection CreateAndInitModules (HttpApplication app)
+		{
+			HttpModuleCollection moduleCollection = new HttpModuleCollection ();
+			foreach (ModuleLoader module in GetModules ()) {
+				IHttpModule m = module.CreateInstance ();
+				m.Init (app);
+				moduleCollection.AddModule (module.Name, m);
+			}
+			return moduleCollection;
+		}
+	}
+
+	public class ModuleFailedException : Exception {
+		public ModuleFailedException (string message, Exception inner)
+			: base (message, inner)
+		{
+
+		}
+	}
+
 	//
 	// A wrapper to keep track of begin/end pairs
 	//
