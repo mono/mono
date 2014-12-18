@@ -577,6 +577,7 @@ typedef struct {
 	gpointer start_sp;
 	MonoMethod *last_method;
 	int last_line;
+	MonoMethod *start_method;
 	/* Whenever single stepping is performed using start/stop_single_stepping () */
 	gboolean global;
 	/* The list of breakpoints used to implement step-over */
@@ -800,7 +801,7 @@ static void ids_cleanup (void);
 static void suspend_init (void);
 
 static void ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, MonoSeqPointInfo *info, MonoContext *ctx, DebuggerTlsData *tls, gboolean step_to_catch);
-static ErrorCode ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequest *req);
+static ErrorCode ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req);
 static void ss_destroy (SingleStepReq *req);
 
 static void start_debugger_thread (void);
@@ -4636,6 +4637,17 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 		}
 	}
 
+	if (req->depth == STEP_DEPTH_INTO && req->size == STEP_SIZE_MIN && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && ss_req->start_method){
+		method = jinfo_get_method (ji);
+		if (!tls->context.valid)
+			mono_thread_state_init_from_monoctx (&tls->context, ctx);
+		compute_frame_info (tls->thread, tls);
+		if (ss_req->start_method == method && req->nframes && tls->frame_count == req->nframes) {//Check also frame count(could be recursion)
+			DEBUG (1, fprintf (log_file, "[%p] Seq point at nonempty stack %x while stepping in, continuing single stepping.\n", (gpointer)GetCurrentThreadId (), sp->il_offset));
+			return FALSE;
+		}
+	}
+
 	if (req->size != STEP_SIZE_LINE)
 		return TRUE;
 
@@ -5259,9 +5271,9 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 			g_free (next);
 		}
 
+		if (ss_req->nframes == 0)
+			ss_req->nframes = tls->frame_count;
 		if (ss_req->depth == STEP_DEPTH_OVER) {
-			if (ss_req->nframes == 0)
-				ss_req->nframes = tls->frame_count;
 			/* Need to stop in catch clauses as well */
 			for (i = 0; i < tls->frame_count; ++i) {
 				StackFrame *frame = tls->frames [i];
@@ -5312,7 +5324,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
  * Start single stepping of thread THREAD
  */
 static ErrorCode
-ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequest *req)
+ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req)
 {
 	DebuggerTlsData *tls;
 	MonoSeqPointInfo *info = NULL;
@@ -5341,6 +5353,7 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 	ss_req->thread = thread;
 	ss_req->size = size;
 	ss_req->depth = depth;
+	ss_req->filter = filter;
 	req->info = ss_req;
 
 	mono_loader_lock ();
@@ -5423,6 +5436,7 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 				g_assert (sp);
 				method = frame->method;
 			}
+			ss_req->start_method = method;
 		}
 	}
 
@@ -7398,7 +7412,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				return err;
 			}
 
-			err = ss_create (THREAD_TO_INTERNAL (step_thread), size, depth, req);
+			err = ss_create (THREAD_TO_INTERNAL (step_thread), size, depth, filter, req);
 			if (err) {
 				g_free (req);
 				return err;
