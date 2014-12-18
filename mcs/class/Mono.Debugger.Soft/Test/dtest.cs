@@ -420,6 +420,10 @@ public class DebuggerTests
 		e = step_out ();
 		assert_location (e, "single_stepping");
 
+		// Step into next line
+		e = step_into ();
+		assert_location (e, "single_stepping");
+
 		// Step into ss3_2 ()
 		e = step_into ();
 		assert_location (e, "ss3_2");
