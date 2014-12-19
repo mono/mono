@@ -533,6 +533,7 @@ namespace Microsoft.Build.Utilities
 		}
 
 		public bool LogStandardErrorAsError { get; set; }
+		public string StandardOutputImportance { get; set; }
 #endif
 	}
 }
