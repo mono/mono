@@ -125,15 +125,17 @@ namespace Microsoft.Build.BuildEngine
 			string filePath;
 			path = Path.GetFullPath (path);
 
-			do {
+			while (true) {
+				filePath = Path.Combine (path, file);
+
+				if (File.Exists (filePath))
+					return Path.GetDirectoryName (filePath);
+
+				path = Path.GetDirectoryName (path);
+
 				if (path == null)  // we traversed up until root without a match, return empty string
 					return "";
-
-				filePath = Path.Combine (path, file);
-				path = Path.GetDirectoryName (path);
-			} while (!File.Exists (filePath));
-
-			return Path.GetDirectoryName (filePath);
+			}
 		}
 
 		public static object GetRegistryValue (string key, string value)
