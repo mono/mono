@@ -532,6 +532,34 @@ namespace MonoTests.System
 				Assert.AreEqual (0, ddt.Minute, "#3.5");
 				Assert.AreEqual (0, ddt.Second, "#3.6");
 			}
+
+			[Test (Description="Fix the bug https://bugzilla.xamarin.com/show_bug.cgi?id=1849")]
+			public void ConvertTime_AjustmentConvertTimeWithSourceTimeZone () {
+				
+				TimeZoneInfo easternTimeZone;
+				TimeZoneInfo pacificTimeZone;
+
+				if (Environment.OSVersion.Platform == PlatformID.Unix) {
+					// *nix
+					easternTimeZone = TimeZoneInfo.FindSystemTimeZoneById ("US/Eastern");
+					pacificTimeZone = TimeZoneInfo.FindSystemTimeZoneById ("US/Pacific");	
+				}
+				else {
+					// Windows
+					easternTimeZone = TimeZoneInfo.FindSystemTimeZoneById ("Eastern Standard Time");
+					pacificTimeZone = TimeZoneInfo.FindSystemTimeZoneById ("Pacific Standard Time");
+				}
+
+				DateTime lastMidnight = new DateTime (new DateTime (2012, 06, 13).Ticks, DateTimeKind.Unspecified);
+				DateTime lastMidnightAsEST = TimeZoneInfo.ConvertTime (lastMidnight, pacificTimeZone, easternTimeZone);
+				DateTime lastMidnightAsPST = TimeZoneInfo.ConvertTime (lastMidnightAsEST, easternTimeZone, pacificTimeZone);
+			
+				// Last midnight in PST as EST should be 3AM
+				DateTime expectedDate = new DateTime (2012, 06, 13, 3, 0, 0);
+
+				Assert.AreEqual (expectedDate, lastMidnightAsEST);
+				Assert.AreEqual (lastMidnight, lastMidnightAsPST);
+			}
 		}
 		
 		[TestFixture]
