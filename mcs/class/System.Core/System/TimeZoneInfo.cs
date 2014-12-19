@@ -267,7 +267,7 @@ namespace System
 			if (dateTime.Kind == DateTimeKind.Local && sourceTimeZone == TimeZoneInfo.Local && destinationTimeZone == TimeZoneInfo.Local)
 				return dateTime;
 
-			DateTime utc = ConvertTimeToUtc (dateTime);
+			DateTime utc = ConvertTimeToUtc (dateTime, sourceTimeZone);
 
 			if (destinationTimeZone != TimeZoneInfo.Utc) {
 				utc = ConvertTimeFromUtc (utc, destinationTimeZone);
