@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.IO;
 using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine
@@ -121,7 +122,20 @@ namespace Microsoft.Build.BuildEngine
 
 		public static string GetDirectoryNameOfFileAbove (string path, string file)
 		{
-			throw new NotImplementedException ("GetDirectoryNameOfFileAbove");
+			string filePath;
+			path = Path.GetFullPath (path);
+
+			while (true) {
+				filePath = Path.Combine (path, file);
+
+				if (File.Exists (filePath))
+					return path;
+
+				path = Path.GetDirectoryName (path);
+
+				if (path == null)  // we traversed up until root without a match, return empty string
+					return "";
+			}
 		}
 
 		public static object GetRegistryValue (string key, string value)
