@@ -129,7 +129,7 @@ namespace Microsoft.Build.BuildEngine
 				filePath = Path.Combine (path, file);
 
 				if (File.Exists (filePath))
-					return Path.GetDirectoryName (filePath);
+					return path;
 
 				path = Path.GetDirectoryName (path);
 
