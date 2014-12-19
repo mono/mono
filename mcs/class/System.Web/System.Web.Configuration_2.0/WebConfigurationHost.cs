@@ -139,23 +139,7 @@ namespace System.Web.Configuration
 				string mdir;
 
 				if (map == null)
-#if TARGET_J2EE
-				{
-					// check META-INF/web.config exists
-					java.lang.ClassLoader cl = (java.lang.ClassLoader) AppDomain.CurrentDomain.GetData ("GH_ContextClassLoader");
-					if (cl == null)
-						return null;
-					java.io.InputStream wcs = cl.getResourceAsStream ("META-INF/web.config");
-					if (wcs == null)
-						return null;
-
-					wcs.close ();
-
-					return "/META-INF/web.config";
-				}
-#else
 					mdir = Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
-#endif
 				else
 					mdir = Path.GetDirectoryName (map.MachineConfigFilename);
 
@@ -302,18 +286,6 @@ namespace System.Web.Configuration
 
 		internal static string GetWebConfigFileName (string dir)
 		{
-#if TARGET_J2EE
-			DirectoryInfo d = GetCaseSensitiveExistingDirectory (new DirectoryInfo (dir));
-			if (d == null)
-				return null;
-
-			FileInfo file = (FileInfo) FindByName ("web.config", d.GetFiles ("W*"));
-			if (file == null)
-				file = (FileInfo) FindByName ("web.config", d.GetFiles ("w*"));
-
-			if (file != null)
-				return file.FullName;
-#else
 			AppDomain domain = AppDomain.CurrentDomain;
 			bool hosted = (domain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
 
@@ -332,32 +304,8 @@ namespace System.Web.Configuration
 						return file;
 				}
 			}
-#endif			
 			return null;
 		}
-#if TARGET_J2EE
-		static DirectoryInfo GetCaseSensitiveExistingDirectory (DirectoryInfo dir) {
-			if (dir == null)
-				return null;
-			if (dir.Exists)
-				return dir;
-
-			DirectoryInfo parent = GetCaseSensitiveExistingDirectory (dir.Parent);
-			if (parent == null)
-				return null;
-
-			return (DirectoryInfo) FindByName (dir.Name, parent.GetDirectories ());
-		}
-		
-		static FileSystemInfo FindByName (string name, FileSystemInfo [] infos)
-		{
-			for (int i = 0; i < infos.Length; i++) {
-				if (String.Compare (name, infos [i].Name, StringComparison.OrdinalIgnoreCase) == 0)
-					return infos [i];
-			}
-			return null;
-		}
-#endif
 		public virtual bool IsAboveApplication (string configPath)
 		{
 			return !configPath.Contains (HttpRuntime.AppDomainAppPath);
@@ -417,18 +365,6 @@ namespace System.Web.Configuration
 		public virtual Stream OpenStreamForRead (string streamName)
 		{
 			if (!File.Exists (streamName)) {
-#if TARGET_J2EE
-				if (streamName != null && (streamName.EndsWith ("machine.config") ||
-							   streamName.EndsWith ("web.config"))) {
-					if (streamName.StartsWith ("/"))
-						streamName = streamName.Substring (1);
-					java.lang.ClassLoader cl = (java.lang.ClassLoader) AppDomain.CurrentDomain.GetData ("GH_ContextClassLoader");
-					if (cl != null) {
-						java.io.InputStream inputStream = cl.getResourceAsStream (streamName);
-						return new System.Web.J2EE.J2EEUtils.InputStreamWrapper (inputStream);
-					}
-				}
-#endif
 				return null;
 			}
 				

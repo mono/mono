@@ -79,10 +79,6 @@ using System.Security.Permissions;
 [assembly: WebResource ("MicrosoftAjaxWebForms.debug.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjaxTimer.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjaxTimer.debug.js", "application/x-javascript")]
-#if TARGET_J2EE
-	[assembly: WebResource ("MicrosoftAjaxExtension.js", "application/x-javascript")]
-	[assembly: WebResource ("MicrosoftAjaxWebFormsExtension.js", "application/x-javascript")]
-#endif
 
 // Those entries must not be enabled until the appropriate .resx files with translations for the client scripts are
 // created.

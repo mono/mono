@@ -287,9 +287,6 @@ namespace System.Web.Configuration {
 		byte[] AutoGenerate (MachineKeyRegistryStorage.KeyType type)
 		{
 			byte[] key = null;
-#if TARGET_J2EE
-			{
-#else
 			try {
 				key = MachineKeyRegistryStorage.Retrieve (type);
 
@@ -301,7 +298,6 @@ namespace System.Web.Configuration {
 			} catch (Exception) {
 				key = null;
 			}
-#endif
 			// some algorithms have special needs for key (e.g. length, parity, weak keys...) 
 			// so we better ask them to provide a default key (than to generate/use bad ones)
 			if (key == null) {
@@ -309,9 +305,7 @@ namespace System.Web.Configuration {
 					key = DecryptionTemplate.Key;
 				else if (type == MachineKeyRegistryStorage.KeyType.Validation)
 					key = ValidationTemplate.Key;
-#if !TARGET_J2EE
 				MachineKeyRegistryStorage.Store (key, type);
-#endif
 			}
 			return key;
 		}

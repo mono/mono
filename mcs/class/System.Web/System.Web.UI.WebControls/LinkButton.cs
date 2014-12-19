@@ -120,11 +120,7 @@ namespace System.Web.UI.WebControls
 			Page page = Page;
 			
 			options.ActionUrl = (PostBackUrl.Length > 0 ?
-#if TARGET_J2EE
-					     CreateActionUrl (PostBackUrl)
-#else
 					     page != null ? page.ResolveClientUrl (PostBackUrl) : PostBackUrl
-#endif
 					     : null);
 			options.ValidationGroup = null;
 			options.Argument = String.Empty;

@@ -332,9 +332,6 @@ namespace System.Web
 			lock (lockobj) {
 				if (loaded)
 					return;
-#if TARGET_J2EE
-				string filepath = "browscap.ini";
-#else
 				string dir = HttpRuntime.MachineConfigurationDirectory;
 				string filepath = Path.Combine (dir, "browscap.ini");
 				if (!File.Exists (filepath)) {
@@ -342,7 +339,6 @@ namespace System.Web
 					dir = Path.GetDirectoryName (dir);
 					filepath = Path.Combine (dir, "browscap.ini");
 				}
-#endif
 				try {
 					LoadFile (filepath);
 				} catch (Exception) {}
@@ -351,46 +347,13 @@ namespace System.Web
 			}
 		}
 
-#if TARGET_J2EE
-		static TextReader GetJavaTextReader(string filename)
-		{
-			try
-			{
-				java.lang.ClassLoader cl = (java.lang.ClassLoader)
-					AppDomain.CurrentDomain.GetData("GH_ContextClassLoader");
-				if (cl == null)
-					return null;
-
-				string custom = String.Concat("browscap/", filename);
-				
-				java.io.InputStream inputStream = cl.getResourceAsStream(custom);
-				if (inputStream == null)
-					inputStream = cl.getResourceAsStream(filename);
-
-				if (inputStream == null)
-					return null;
-
-				return new StreamReader (new System.Web.J2EE.J2EEUtils.InputStreamWrapper (inputStream));
-			}
-			catch (Exception e)
-			{
-				return null;
-			}
-		}
-#endif
 
 		static void LoadFile (string filename)
 		{
-#if TARGET_J2EE
-			TextReader input = GetJavaTextReader(filename);
-			if(input == null)
-				return;
-#else
 			if (!File.Exists (filename))
 				return;
 
 			TextReader input = new StreamReader (File.OpenRead (filename));
-#endif
 			using (input) {
 			string str;
 			Hashtable allhash = new Hashtable (StringComparer.OrdinalIgnoreCase);

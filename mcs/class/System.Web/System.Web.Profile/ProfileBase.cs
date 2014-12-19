@@ -47,22 +47,7 @@ namespace System.Web.Profile
 		SettingsPropertyValueCollection _propertiyValues = null;
 		const string Profiles_SettingsPropertyCollection = "Profiles.SettingsPropertyCollection";
 
-#if TARGET_J2EE
-		static SettingsPropertyCollection _properties
-		{
-			get
-			{
-				object o = AppDomain.CurrentDomain.GetData (Profiles_SettingsPropertyCollection);
-				return (SettingsPropertyCollection) o;
-			}
-			set
-			{
-				AppDomain.CurrentDomain.SetData (Profiles_SettingsPropertyCollection, value);
-			}
-		}
-#else
 		static SettingsPropertyCollection _properties = null;
-#endif
 
 		static void InitProperties ()
 		{

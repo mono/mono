@@ -253,12 +253,8 @@ namespace System.Web.UI
 
 		internal bool IsDeploymentRetail {
 			get {
-#if TARGET_J2EE
-				return false;
-#else
 				DeploymentSection deployment = (DeploymentSection) WebConfigurationManager.GetSection ("system.web/deployment");
 				return deployment.Retail;
-#endif
 			}
 		}
 
@@ -303,9 +299,6 @@ namespace System.Web.UI
 		}
 
 		[Category ("Behavior")]
-#if TARGET_J2EE
-		[MonoLimitation ("The 'Auto' value is the same as 'Debug'.")]
-#endif
 		public ScriptMode ScriptMode {
 			get {
 				return _scriptMode;
@@ -706,26 +699,9 @@ namespace System.Web.UI
 			return new ReadOnlyCollection<RegisteredScript> (_startupScriptBlocks);
 		}
 
-#if TARGET_J2EE
-		bool _isMultiForm = false;
-		bool _isMultiFormInited = false;
-
-		bool IsMultiForm {
-			get {
-				if (!_isMultiFormInited) {
-					string isMultiForm = WebConfigurationManager.AppSettings ["mainsoft.use.portlet.namespace"];
-					_isMultiForm = isMultiForm != null ? Boolean.Parse (isMultiForm) : false;
-
-					_isMultiFormInited = true;
-				}
-				return _isMultiForm;
-			}
-		}
-#else
 		bool IsMultiForm {
 			get { return false; }
 		}
-#endif
 
 		bool PanelRequiresUpdate (UpdatePanel panel)
 		{
@@ -904,13 +880,9 @@ namespace System.Web.UI
 				RegisterClientScriptBlock (control, typeof (ScriptManager), url, logicalTypeInfo.Proxy, true);
 			}
 			else {
-#if TARGET_J2EE
-				string pathInfo = "/js.invoke";
-#else
 				string pathInfo = "/js";
 				if (IsDebuggingEnabled)
 					pathInfo += "debug";
-#endif
 				string url = String.Concat (control.ResolveClientUrl (serviceReference.Path), pathInfo);
 				RegisterClientScriptInclude (control, typeof (ScriptManager), url, url);
 			}

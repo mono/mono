@@ -465,10 +465,6 @@ namespace System.Web
 					cookies = CookiesNoValidation;
 				}
 
-#if TARGET_J2EE
-				// For J2EE portal support we emulate cookies using the session.
-				GetSessionCookiesForPortal (cookies);
-#endif
 				bool needValidation = validate_cookies;
 #if NET_4_0
 				needValidation |= validateRequestNewMode;
@@ -663,11 +659,7 @@ namespace System.Web
 		//
 		// Loads the form data from on a application/x-www-form-urlencoded post
 		// 
-#if TARGET_J2EE
-		void RawLoadWwwForm ()
-#else
 		void LoadWwwForm ()
-#endif
 		{
 			using (Stream input = GetSubStream (InputStream)) {
 				using (StreamReader s = new StreamReader (input, ContentEncoding)) {

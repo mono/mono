@@ -1850,11 +1850,7 @@ namespace System.Web.UI.WebControls
 			string navigateUrl = node.NavigateUrl;
 			if (!String.IsNullOrEmpty (navigateUrl)) {
 				string target = node.Target.Length > 0 ? node.Target : Target;
-#if TARGET_J2EE
-				string navUrl = ResolveClientUrl (navigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
-#else
 				string navUrl = ResolveClientUrl (navigateUrl);
-#endif
 				writer.AddAttribute (HtmlTextWriterAttribute.Href, navUrl);
 				if (target.Length > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Target, target);
