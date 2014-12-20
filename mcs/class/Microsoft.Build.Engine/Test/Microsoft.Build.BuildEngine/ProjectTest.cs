@@ -2231,6 +2231,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			}
 		}
 
+#if net_4_0
 		[Test]
 		public void FileNameNotResetOnLoad ()
 		{
@@ -2241,6 +2242,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("foo", p.FullFileName);
 			Assert.AreEqual ("foo", p.EvaluatedProperties ["MSBuildThisFile"].Value);
 		}
+#endif
 
 		void DeleteAllInDir (string path)
 		{

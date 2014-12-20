@@ -75,7 +75,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Import[] t = new Import [2];
 			Assert.AreEqual (2, project.Imports.Count, "Number of imports");
 			project.Imports.CopyTo (t, 0);
-
+			if (t[0].ProjectPath.Contains("second")) {
+				Import swap = t[0];
+				t[0] = t[1];
+				t[1] = swap;
+			}
 			string base_dir = Path.Combine (Environment.CurrentDirectory, Path.Combine ("Test", "resources"));
 
 			Assert.IsNull (t [0].Condition, "A1");

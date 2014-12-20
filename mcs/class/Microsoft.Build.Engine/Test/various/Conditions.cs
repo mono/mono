@@ -357,6 +357,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.IsNull (proj.EvaluatedProperties ["A"], "A1");
 		}
 
+#if NET_4_0
 		[Test]
 		public void TestCondition_References ()
 		{
@@ -375,6 +376,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			Assert.AreEqual ("valid", proj.GetEvaluatedProperty ("A"), "#1");
 		}
+#endif
 
 		[Test]
 		public void TestHasTrailingSlash1 ()

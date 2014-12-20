@@ -44,6 +44,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj = engine.CreateNewProject ();
 		}
 
+#if NET_4_0
 		[Test]
 		public void PropertyReference ()
 		{
@@ -224,5 +225,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 			Assert.AreEqual ("True", proj.GetEvaluatedProperty ("Prop1"), "#1");
 		}
+#endif
 	}
 }
