@@ -567,5 +567,162 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").LCID);
 			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").Parent.LCID);
 		}
+
+		[Test]
+		public void ZhHans ()
+		{
+			Assert.AreEqual (4, new CultureInfo ("zh-Hans").LCID);
+			Assert.AreEqual (4, CultureInfo.GetCultureInfo ("zh-Hans").LCID);
+			Assert.AreEqual (4, new CultureInfo ("zh-CHS").LCID);
+			Assert.AreEqual (4, new CultureInfo ("zh-CHS").Parent.LCID);
+		}
+
+		[Test]
+		[SetCulture ("zh-TW")]
+		public void ParentOfZh ()
+		{
+			Assert.AreEqual (31748, CultureInfo.CurrentCulture.Parent.LCID);
+			Assert.AreEqual (31748, CultureInfo.CurrentCulture.Parent.Parent.LCID);
+		}
+		
+		[Test]
+		public void CurrentCulture ()
+		{
+			Assert.IsNotNull (CultureInfo.CurrentCulture, "CurrentCulture");
+		}
+		
+		[Test]
+#if NET_4_0
+		[ExpectedException (typeof (CultureNotFoundException))]
+#else
+		[ExpectedException (typeof (ArgumentException))]
+#endif
+		public void CultureNotFound ()
+		{
+			// that's how the 'locale' gets defined for a device with an English UI
+			// and it's international settings set for Hong Kong
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=3471
+			new CultureInfo ("en-HK");
+		}
+
+#if NET_4_5
+		CountdownEvent barrier = new CountdownEvent (3);
+		AutoResetEvent[] evt = new AutoResetEvent [] { new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false)};
+
+		CultureInfo[] initial_culture = new CultureInfo[4];
+		CultureInfo[] changed_culture = new CultureInfo[4];
+		CultureInfo[] changed_culture2 = new CultureInfo[4];
+		CultureInfo alternative_culture = new CultureInfo("pt-BR");
+
+		void StepAllPhases (int index)
+		{
+			initial_culture [index] = CultureInfo.CurrentCulture;
+			/*Phase 1 - we witness the original value */
+			barrier.Signal ();
+
+			/*Phase 2 - main thread changes culture */
+			evt [index].WaitOne ();
+
+			/*Phase 3 - we witness the new value */
+			changed_culture [index] = CultureInfo.CurrentCulture;
+			barrier.Signal ();
+
+			/* Phase 4 - main thread changes culture back */
+			evt [index].WaitOne ();
+
+			/*Phase 5 - we witness the new value */
+			changed_culture2 [index] = CultureInfo.CurrentCulture;
+			barrier.Signal ();
+		}
+
+		void ThreadWithoutChange () {
+			StepAllPhases (1);
+		}
+
+		void ThreadWithChange () {
+			Thread.CurrentThread.CurrentCulture = alternative_culture;
+			StepAllPhases (2);
+		}
+
+		void ThreadPoolWithoutChange () {
+			StepAllPhases (3);
+		}
+
+		[Test]
+		public void DefaultThreadCurrentCulture () {
+			var orig_culture = CultureInfo.CurrentCulture;
+			var new_culture = new CultureInfo("fr-FR");
+
+			// The test doesn't work if the current culture is already set
+			if (orig_culture != CultureInfo.InvariantCulture)
+				Assert.Ignore ("The test doesn't work if the current culture is already set.");
+
+			/* Phase 0 - warm up */
+			new Thread (ThreadWithoutChange).Start ();
+			new Thread (ThreadWithChange).Start ();
+			Action x = ThreadPoolWithoutChange;
+			x.BeginInvoke (null, null);
+
+			/* Phase 1 - let everyone witness initial values */
+			initial_culture [0] = CultureInfo.CurrentCulture;
+			barrier.Wait ();
+			barrier.Reset ();
+
+			/* Phase 2 - change the default culture*/
+			CultureInfo.DefaultThreadCurrentCulture = new_culture;
+			evt [0].Set ();
+			evt [1].Set ();
+			evt [2].Set ();
+			/* Phase 3 - let everyone witness the new value */
+			changed_culture [0] = CultureInfo.CurrentCulture;
+			barrier.Wait ();
+			barrier.Reset ();
+
+			/* Phase 4 - revert the default culture back to null */
+			CultureInfo.DefaultThreadCurrentCulture = null;
+			evt [0].Set ();
+			evt [1].Set ();
+			evt [2].Set ();
+
+			/* Phase 5 - let everyone witness the new value */
+			changed_culture2 [0] = CultureInfo.CurrentCulture;
+			barrier.Wait ();
+			barrier.Reset ();
+
+			CultureInfo.DefaultThreadCurrentCulture = null;
+
+			Assert.AreEqual (orig_culture, initial_culture [0], "#1");
+			Assert.AreEqual (orig_culture, initial_culture [1], "#2");
+			Assert.AreEqual (alternative_culture, initial_culture [2], "#3");
+			Assert.AreEqual (orig_culture, initial_culture [3], "#4");
+
+			Assert.AreEqual (new_culture, changed_culture [0], "#5");
+			Assert.AreEqual (new_culture, changed_culture [1], "#6");
+			Assert.AreEqual (alternative_culture, changed_culture [2], "#7");
+			Assert.AreEqual (new_culture, changed_culture [3], "#8");
+
+			Assert.AreEqual (orig_culture, changed_culture [0], "#9");
+			Assert.AreEqual (orig_culture, changed_culture2 [1], "#10");
+			Assert.AreEqual (alternative_culture, changed_culture2 [2], "#11");
+			Assert.AreEqual (orig_culture, changed_culture2 [3], "#12");
+		}
+
+		[Test]
+		public void DefaultThreadCurrentCultureAndNumberFormaters () {
+			string us_str = null;
+			string br_str = null;
+			var thread = new Thread (() => {
+				CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+				us_str = 100000.ToString ("C");
+				CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
+				br_str = 100000.ToString ("C");
+			});
+			thread.Start ();
+			thread.Join ();
+			CultureInfo.DefaultThreadCurrentCulture = null;
+			Assert.AreEqual ("$100,000.00", us_str, "#1");
+			Assert.AreEqual ("R$ 100.000,00", br_str, "#2");
+		}
+#endif
 	}
 }
