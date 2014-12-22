@@ -541,7 +541,10 @@ namespace Mono.CSharp
 					if (i > 0)
 						sb.Append (",");
 
-					sb.Append (TypeArguments[i].GetExplicitNameSignatureForDocumentation ());
+					if (TypeArguments[i].IsArray)
+						sb.Append (TypeArguments[i].ToString ());
+					else
+						sb.Append (TypeArguments[i].GetExplicitNameSignatureForDocumentation ());
 				}
 				sb.Append ("}");
 			}
