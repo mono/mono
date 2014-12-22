@@ -2,31 +2,6 @@
 
 Assembly/AssemblyInfo.cs
 System/Util.cs
-System.Linq/Check.cs
-System.Linq/Enumerable.cs
-System.Linq/QueryableEnumerable.cs
-System.Linq/QueryableTransformer.cs
-System.Linq/Grouping.cs
-System.Linq/IGrouping.cs
-System.Linq/IOrderedQueryable.cs
-System.Linq/IOrderedQueryable_T.cs
-System.Linq/IOrderedEnumerable_T.cs
-System.Linq/IQueryable.cs
-System.Linq/IQueryable_T.cs
-System.Linq/Lookup.cs
-System.Linq/ILookup_T.cs
-System.Linq/OrderedEnumerable.cs
-System.Linq/OrderedSequence.cs
-System.Linq/Queryable.cs
-System.Linq/QuickSort.cs
-System.Linq/SortContext.cs
-System.Linq/SortDirection.cs
-System.Linq/SortSequenceContext.cs
-System.Linq/IQueryProvider.cs
-System.Linq/EnumerableExecutor.cs
-System.Linq/EnumerableExecutor_T.cs
-System.Linq/EnumerableQuery.cs
-System.Linq/EnumerableQuery_T.cs
 System.IO.MemoryMappedFiles/MemoryMappedFile.cs
 System.IO.MemoryMappedFiles/MemoryMappedViewStream.cs
 System.IO.MemoryMappedFiles/MemoryMappedViewAccessor.cs
@@ -36,8 +11,9 @@ System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/ExpressionTransformer.cs
 System.Linq.Expressions/DynamicExpressionVisitor.cs
 
-ReferenceSources/Set.cs
 ReferenceSources/SR.cs
+ReferenceSources/Error.cs
+ReferenceSources/Strings.cs
 
 ../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/Action.cs
 ../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/Extension.cs
@@ -58,6 +34,12 @@ ReferenceSources/SR.cs
 
 ../../../external/referencesource/System.Core/System/IO/MemoryMappedFiles/Enums.cs
 ../../../external/referencesource/System.Core/System/IO/MemoryMappedFiles/MemoryMappedFileSecurity.cs
+
+../../../external/referencesource/System.Core/System/Linq/Enumerable.cs
+../../../external/referencesource/System.Core/System/Linq/IQueryable.cs
+../../../external/referencesource/System.Core/System/Linq/SequenceQuery.cs
+../../../external/referencesource/System.Core/System/Linq/TypeHelper.cs
+../../../external/referencesource/System.Core/System/Linq/Expressions/ExpressionVisitor.cs
 
 ../../../external/referencesource/System.Core/System/Linq/ParallelEnumerable.cs
 ../../../external/referencesource/System.Core/System/Linq/ParallelMergeOptions.cs
