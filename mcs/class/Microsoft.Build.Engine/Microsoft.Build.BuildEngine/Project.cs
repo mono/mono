@@ -53,6 +53,7 @@ namespace Microsoft.Build.BuildEngine {
 		BuildItemGroup			evaluatedItemsIgnoringCondition;
 		Dictionary <string, BuildItemGroup>	evaluatedItemsByName;
 		Dictionary <string, BuildItemGroup>	evaluatedItemsByNameIgnoringCondition;
+		Dictionary <string, BuildItemDefinition>	evaluatedItemDefinitions;
 		BuildPropertyGroup		evaluatedProperties;
 		string				firstTargetName;
 		string				fullFileName;
@@ -84,6 +85,7 @@ namespace Microsoft.Build.BuildEngine {
 		// $(MSBuildThisFile*)
 		Stack<string> this_file_property_stack;
 		ProjectLoadSettings		project_load_settings;
+		BuildItemDefinition		curItemDefBeingEvaluated;
 
 
 		static string extensions_path;
@@ -963,6 +965,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		void PrepareForEvaluate (string effective_tools_version)
 		{
+			evaluatedItemDefinitions = new Dictionary <string, BuildItemDefinition> (StringComparer.OrdinalIgnoreCase);
 			evaluatedItems = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.OrdinalIgnoreCase);
@@ -1164,13 +1167,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		void AddItemDefinitionGroup (XmlElement xmlElement)
 		{
-			string condition_attribute = xmlElement.GetAttribute ("Condition");
-			if (!ConditionParser.ParseAndEvaluate (condition_attribute, this))
-				return;
-
-			foreach (XmlNode xn in xmlElement.ChildNodes) {
-				// TODO: Add all nodes to some internal dictionary?
-			}
+			BuildItemDefinitionGroup bidg = new BuildItemDefinitionGroup (xmlElement, this);
+			groupingCollection.Add (bidg);
 		}
 
 		bool AddSingleImport (XmlElement xmlElement, string projectPath, ImportedProject importingProject, string from_source_msg)
@@ -1382,6 +1380,13 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal string GetMetadataBatched (string itemName, string metadataName)
 		{
+			if (batches.Count == 0 && curItemDefBeingEvaluated != null) {
+				if (itemName != null && String.Compare (itemName, curItemDefBeingEvaluated.Name, StringComparison.InvariantCultureIgnoreCase) != 0)
+					throw new Exception (String.Format ("Invalid Metadata reference {0}.{1} found in an ItemDefinition", itemName, metadataName));
+
+				return GetEvaluatedItemDefinitionMetadata (curItemDefBeingEvaluated.Name, metadataName);
+			}
+
 			BuildItemGroup group = null;
 			if (itemName == null) {
 				//unqualified, all items in a batch(bucket) have the
@@ -1400,6 +1405,32 @@ namespace Microsoft.Build.BuildEngine {
 						return item.GetEvaluatedMetadata (metadataName);
 				}
 			}
+			return GetEvaluatedItemDefinitionMetadata (itemName, metadataName);
+		}
+		
+		internal Dictionary <string, BuildItemDefinition> EvaluatedItemDefinitions
+		{
+			get { return evaluatedItemDefinitions; }
+		}
+
+		internal BuildItemDefinition CurrentItemDefinitionBeingEvaluated
+		{
+			get { return curItemDefBeingEvaluated; }
+			set { curItemDefBeingEvaluated = value; }
+		}
+
+		internal string GetEvaluatedItemDefinitionMetadata (string itemName, string metadataName)
+		{
+			if (itemName == null)
+				throw new ArgumentNullException ("itemName");
+			if (metadataName == null)
+				throw new ArgumentNullException ("metadataName");
+
+			BuildItemDefinition definition = null;
+			if (evaluatedItemDefinitions.TryGetValue (itemName, out definition) &&
+			    definition != null && definition.HasMetadata (metadataName))
+				return definition.GetEvaluatedMetadata (metadataName);
+
 			return String.Empty;
 		}
 
