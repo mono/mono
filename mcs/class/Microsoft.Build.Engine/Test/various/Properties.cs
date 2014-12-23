@@ -138,7 +138,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			proj.LoadXml (documentString);
 			Assert.AreEqual ("255", proj.GetEvaluatedProperty ("Prop1"), "#1");
-			Assert.AreEqual ("4.2", proj.GetEvaluatedProperty ("Prop2"), "#2");
+			Assert.AreEqual ((4.2).ToString(), proj.GetEvaluatedProperty ("Prop2"), "#2");
 			Assert.AreEqual (DateTime.Today.ToString (), proj.GetEvaluatedProperty ("Prop3"), "#3");
 			Assert.AreEqual ("3", proj.GetEvaluatedProperty ("Prop4"), "#4");
 			Assert.AreEqual ("0", proj.GetEvaluatedProperty ("Prop5"), "#5");
@@ -206,7 +206,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 				";
 
 			proj.LoadXml (documentString);
-			Assert.AreEqual ("6.6", proj.GetEvaluatedProperty ("Prop1"), "#1");
+			Assert.AreEqual ((6.6).ToString(), proj.GetEvaluatedProperty ("Prop1"), "#1");
 		}
 
 		[Test]
