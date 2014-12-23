@@ -12,6 +12,8 @@ Microsoft.Build.BuildEngine/TaskBatchingImpl.cs
 Microsoft.Build.BuildEngine/BuildChoose.cs
 Microsoft.Build.BuildEngine/BuildEngine.cs
 Microsoft.Build.BuildEngine/BuildItem.cs
+Microsoft.Build.BuildEngine/BuildItemDefinition.cs
+Microsoft.Build.BuildEngine/BuildItemDefinitionGroup.cs
 Microsoft.Build.BuildEngine/BuildItemGroupCollection.cs
 Microsoft.Build.BuildEngine/BuildItemGroup.cs
 Microsoft.Build.BuildEngine/BuildProperty.cs
