@@ -135,7 +135,7 @@ namespace System.IO.Compression
 		public static ZipArchive Open (
 			string archiveFileName, ZipArchiveMode mode)
 		{
-			return Open (archiveFileName, mode);
+			return Open (archiveFileName, mode, entryNameEncoding: null);
 		}
 
 		public static ZipArchive Open (
