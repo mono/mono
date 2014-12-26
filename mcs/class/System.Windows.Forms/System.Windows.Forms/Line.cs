@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
+//	Karl Scowen		<contact@scowencomputers.co.nz>
 //
 //
 
@@ -49,11 +50,12 @@ namespace System.Windows.Forms
 		internal HorizontalAlignment	alignment;		// Alignment of the line
 		internal int			align_shift;		// Pixel shift caused by the alignment
 		internal int			indent;			// Left indent for the first line
-		internal int			hanging_indent;		// Hanging indent (left indent for all but the first line)
+		internal int			hanging_indent;		// Hanging indent (difference between first line indent and other lines, cannot be less than -indent)
 		internal int			right_indent;		// Right indent for all lines
 		internal LineEnding		ending;
 		internal int			spacing_before;
 		internal int			spacing_after;
+		internal int[]			tab_stops;		// Custom tabstops for this paragraph.
 
 		// Stuff that's important for the tree
 		internal Line			parent;			// Our parent line
@@ -88,7 +90,8 @@ namespace System.Windows.Forms
 			text = new StringBuilder (Text, space);
 			line_no = LineNo;
 			this.ending = ending;
-
+			tab_stops = new int[0];
+			
 			widths = new float[space + 1];
 
 			
@@ -105,6 +108,7 @@ namespace System.Windows.Forms
 			line_no = LineNo;
 			this.ending = ending;
 			alignment = align;
+			tab_stops = new int[0];
 
 			widths = new float[space + 1];
 
@@ -112,6 +116,36 @@ namespace System.Windows.Forms
 			tags = new LineTag(this, 1);
 			tags.Font = font;
 			tags.Color = color;
+		}
+
+		internal Line (Document document, int LineNo, string Text, HorizontalAlignment align, Font font, Color color,
+		               Color back_color, TextPositioning text_position, int char_offset, int left_indent, int hanging_indent,
+		               int right_indent, int spacing_before, int spacing_after, int[] tab_stops, bool visible, LineEnding ending)
+					   : this(document, ending)
+		{
+			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
+			
+			text = new StringBuilder (Text, space);
+			line_no = LineNo;
+			this.ending = ending;
+			alignment = align;
+			indent = left_indent;
+			HangingIndent = hanging_indent;
+			this.right_indent = right_indent;
+			this.spacing_before = spacing_before;
+			this.spacing_after = spacing_after;
+			this.tab_stops = tab_stops;
+			
+			widths = new float[space + 1];
+			
+			
+			tags = new LineTag(this, 1);
+			tags.Font = font;
+			tags.Color = color;
+			tags.BackColor = back_color;
+			tags.TextPosition = text_position;
+			tags.CharOffset = char_offset;
+			tags.Visible = visible;
 		}
 
 		internal Line (Document document, int LineNo, string Text, LineTag tag, LineEnding ending) : this(document, ending)
@@ -142,7 +176,10 @@ namespace System.Windows.Forms
 		internal int HangingIndent {
 			get { return hanging_indent; }
 			set {
-				hanging_indent = value;
+				if (hanging_indent >= -indent)
+					this.hanging_indent = value;
+				else
+					this.hanging_indent = -indent;
 				recalc = true;
 			}
 		}
@@ -151,6 +188,11 @@ namespace System.Windows.Forms
 		internal int Height {
 			get { return height; }
 			set { height = value; }
+		}
+
+		internal int[] TabStops {
+			get { return tab_stops; }
+			set { tab_stops = value; }
 		}
 
 		internal int TotalSpacing {
@@ -303,10 +345,11 @@ namespace System.Windows.Forms
 				left = count;
 
 				left -= tag.Start + tag.Length - pos - 1;
-				tag = tag.Next;
+				//tag = tag.Next;
 				
 				// Update the start of each tag
-				while ((tag != null) && (left > 0)) {
+				while ((tag.Next != null) && (left > 0)) {
+					tag = tag.Next;
 					// Cache tag.Length as is will be indireclty modified
 					// by changes to tag.Start
 					int tag_length = tag.Length;
@@ -316,7 +359,6 @@ namespace System.Windows.Forms
 						left = 0;
 					} else {
 						left -= tag_length;
-						tag = tag.Next;
 					}
 
 				}
@@ -501,6 +543,7 @@ namespace System.Windows.Forms
 			int prev_offset;
 			bool retval;
 			bool wrapped;
+			bool first_in_para;
 			Line line;
 			int wrap_pos;
 			int prev_height;
@@ -525,10 +568,17 @@ namespace System.Windows.Forms
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.Shift = 0;			// Reset shift (which should be stored as pixels, not as points)
 
-			if (ending == LineEnding.Wrap)
-				widths[0] = document.left_margin + hanging_indent;
-			else
+			if (line_no > 0) {
+				line = doc.GetLine (LineNo - 1);
+				first_in_para = line != null && line.ending != LineEnding.Wrap;
+			} else {
+				first_in_para = true;
+			}
+
+			if (first_in_para)
 				widths[0] = document.left_margin + indent;
+			else
+				widths[0] = document.left_margin + indent + hanging_indent;
 
 			this.recalc = false;
 			retval = false;

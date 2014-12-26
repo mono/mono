@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	<pbartok@novell.com>
+//	Karl Scowen		<contact@scowencomputers.co.nz>
 //
 //
 
@@ -67,7 +68,7 @@ namespace System.Windows.Forms {
 		private bool		enable_auto_drag_drop;
 		private RichTextBoxLanguageOptions language_option;
 		private bool		rich_text_shortcuts_enabled;
-		private Color		selection_back_color;
+		//private Color		selection_back_color; // We don't actually need this now.
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -100,7 +101,7 @@ namespace System.Windows.Forms {
 			backcolor_set = false;
 			language_option = RichTextBoxLanguageOptions.AutoFontSizeAdjust;
 			rich_text_shortcuts_enabled = true;
-			selection_back_color = DefaultBackColor;
+			//selection_back_color = DefaultBackColor;
 			ForeColor = ThemeEngine.Current.ColorWindowText;
 
 			base.HScrolled += new EventHandler(RichTextBox_HScrolled);
@@ -525,12 +526,57 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color SelectionBackColor {
-			get { return selection_back_color; }
-			set { selection_back_color = value; }
+			get {
+				Color		back_colour;
+				LineTag	start;
+				LineTag	end;
+				LineTag	tag;
+
+				start = document.selection_start.line.FindTag (document.selection_start.pos);
+
+				if (SelectionLength > 0) {
+					end = document.selection_start.line.FindTag (document.selection_end.pos - 1);
+				} else {
+					end = start;
+				}
+				
+				back_colour = start.BackColor;
+				
+				tag = start;
+				while (tag != null) {
+					
+					if (back_colour != tag.BackColor)
+						return Color.Empty;
+					
+					if (tag == end)
+						break;
+					
+					tag = document.NextTag (tag);
+				}
+				
+				return back_colour;
+			}
+			set {
+				int		sel_start;
+				int		sel_end;
+				
+				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
+				sel_end = document.LineTagToCharIndex(document.selection_end.line, document.selection_end.pos);
+				
+				document.FormatText (document.selection_start.line, document.selection_start.pos + 1,
+				                     document.selection_end.line, document.selection_end.pos + 1, null,
+				                     Color.Empty, value, FormatSpecified.BackColor);
+				
+				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
+				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
+				
+				document.UpdateView(document.selection_start.line, 0);
+				//Re-Align the caret in case its changed size or position
+				Document.AlignCaret (false);
+			}
 		}
 
 		[Browsable(false)]
@@ -555,12 +601,12 @@ namespace System.Windows.Forms {
 				LineTag	start;
 				LineTag	end;
 				LineTag	tag;
-				
-				if (selection_length > 0) {
-					start = document.selection_start.line.FindTag (document.selection_start.pos + 1);
-					end = document.selection_start.line.FindTag (document.selection_end.pos);
+
+				start = document.selection_start.line.FindTag (document.selection_start.pos);
+
+				if (SelectionLength > 0) {
+					end = document.selection_start.line.FindTag (document.selection_end.pos - 1);
 				} else {
-					start = document.selection_start.line.FindTag (document.selection_start.pos);
 					end = start;
 				}
 				
@@ -590,13 +636,13 @@ namespace System.Windows.Forms {
 				
 				document.FormatText (document.selection_start.line, document.selection_start.pos + 1,
 				                     document.selection_end.line, document.selection_end.pos + 1, null,
-				                     Color.Empty, Color.Empty, TextPositioning.Normal, value, FormatSpecified.CharOffset);
+				                     Color.Empty, Color.Empty, TextPositioning.Normal, value, true, FormatSpecified.CharOffset);
 				
 				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
 				
 				document.UpdateView(document.selection_start.line, 0);
-				//Re-Align the caret in case its changed size or position
+				//Re-Align the caret in case its changed size or position -- probably not necessary
 				Document.AlignCaret (false);
 			}
 		}
@@ -610,11 +656,11 @@ namespace System.Windows.Forms {
 				LineTag	end;
 				LineTag	tag;
 
-				if (selection_length > 0) {
-					start = document.selection_start.line.FindTag (document.selection_start.pos + 1);
-					end = document.selection_start.line.FindTag (document.selection_end.pos);
+				start = document.selection_start.line.FindTag (document.selection_start.pos);
+
+				if (SelectionLength > 0) {
+					end = document.selection_start.line.FindTag (document.selection_end.pos - 1);
 				} else {
-					start = document.selection_start.line.FindTag (document.selection_start.pos);
 					end = start;
 				}
 
@@ -669,17 +715,16 @@ namespace System.Windows.Forms {
 				LineTag	end;
 				LineTag	tag;
 
-				if (selection_length > 0) {
-					start = document.selection_start.line.FindTag (document.selection_start.pos + 1);
-					end = document.selection_start.line.FindTag (document.selection_end.pos);
+				start = document.selection_start.line.FindTag (document.selection_start.pos);
+				if (SelectionLength > 0) {
+					end = document.selection_start.line.FindTag (document.selection_end.pos - 1);
 				} else {
-					start = document.selection_start.line.FindTag (document.selection_start.pos);
 					end = start;
 				}
 
 				font = start.Font;
 
-				if (selection_length > 1) {
+				if (SelectionLength > 1) {
 					tag = start;
 					while (tag != null) {
 
@@ -720,26 +765,108 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO ("Stub, does nothing")]
 		public int SelectionHangingIndent {
 			get {
-				return 0;
+				int				indent;
+				Line			start;
+				Line			end;
+				Line			line;
+				
+				start = document.ParagraphStart(document.selection_start.line);
+				indent = start.hanging_indent;
+				
+				end = document.ParagraphEnd(document.selection_end.line);
+				
+				line = start;
+				
+				while (true) {
+					if (line.hanging_indent != indent) {
+						return 0;
+					}
+					
+					if (line == end) {
+						break;
+					}
+					line = document.GetLine(line.line_no + 1);
+				}
+				
+				return indent;
 			}
-
+			
 			set {
+				Line			start;
+				Line			end;
+				Line			line;
+				
+				start = document.ParagraphStart(document.selection_start.line);
+				
+				end = document.ParagraphEnd(document.selection_end.line);
+				
+				line = start;
+				
+				while (true) {
+					line.HangingIndent = value;
+					
+					if (line == end) {
+						break;
+					}
+					line = document.GetLine(line.line_no + 1);
+				}
+				this.CalculateDocument();
 			}
 		}
 
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO ("Stub, does nothing")]
 		public int SelectionIndent {
 			get {
-				return 0;
+				int				indent;
+				Line			start;
+				Line			end;
+				Line			line;
+				
+				start = document.ParagraphStart(document.selection_start.line);
+				indent = start.indent;
+				
+				end = document.ParagraphEnd(document.selection_end.line);
+				
+				line = start;
+				
+				while (true) {
+					if (line.indent != indent) {
+						return 0;
+					}
+					
+					if (line == end) {
+						break;
+					}
+					line = document.GetLine(line.line_no + 1);
+				}
+				
+				return indent;
 			}
-
+			
 			set {
+				Line			start;
+				Line			end;
+				Line			line;
+				
+				start = document.ParagraphStart(document.selection_start.line);
+				
+				end = document.ParagraphEnd(document.selection_end.line);
+				
+				line = start;
+				
+				while (true) {
+					line.Indent = value;
+					
+					if (line == end) {
+						break;
+					}
+					line = document.GetLine(line.line_no + 1);
+				}
+				this.CalculateDocument();
 			}
 		}
 
@@ -771,25 +898,110 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO ("Stub, does nothing")]
 		public int SelectionRightIndent {
 			get {
-				return 0;
+				int				indent;
+				Line			start;
+				Line			end;
+				Line			line;
+				
+				start = document.ParagraphStart(document.selection_start.line);
+				indent = start.right_indent;
+				
+				end = document.ParagraphEnd(document.selection_end.line);
+				
+				line = start;
+				
+				while (true) {
+					if (line.right_indent != indent) {
+						return 0;
+					}
+					
+					if (line == end) {
+						break;
+					}
+					line = document.GetLine(line.line_no + 1);
+				}
+				
+				return indent;
 			}
-
+			
 			set {
+				Line			start;
+				Line			end;
+				Line			line;
+				
+				start = document.ParagraphStart(document.selection_start.line);
+				
+				end = document.ParagraphEnd(document.selection_end.line);
+				
+				line = start;
+				
+				while (true) {
+					line.RightIndent = value;
+					
+					if (line == end) {
+						break;
+					}
+					line = document.GetLine(line.line_no + 1);
+				}
+				this.CalculateDocument();
 			}
 		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO ("Stub, does nothing")]
 		public int[] SelectionTabs {
 			get {
-				return new int[0];
+				int[]			tabs;
+				Line			start;
+				Line			end;
+				Line			line;
+				
+				start = document.ParagraphStart(document.selection_start.line);
+				tabs = start.TabStops;
+				
+				end = document.ParagraphEnd(document.selection_end.line);
+				
+				line = start;
+				
+				while (true) {
+					if (line.TabStops.Length != tabs.Length)
+						return new int[0];
+					
+					for (int i = 0; i < tabs.Length; i++)
+						if (line.TabStops[i] != tabs[i])
+							return new int[0];
+					
+					if (line == end)
+						break;
+					line = document.GetLine(line.line_no + 1);
+				}
+				
+				return tabs;
 			}
-
+			
 			set {
+				Line			start;
+				Line			end;
+				Line			line;
+				
+				start = document.ParagraphStart(document.selection_start.line);
+				
+				end = document.ParagraphEnd(document.selection_end.line);
+				
+				line = start;
+				
+				while (true) {
+					line.TabStops = new int[value.Length];
+					value.CopyTo(line.TabStops, 0);
+					
+					if (line == end) {
+						break;
+					}
+					line = document.GetLine(line.line_no + 1);
+				}
+				this.CalculateDocument();
 			}
 		}
 
@@ -1402,24 +1614,31 @@ namespace System.Windows.Forms {
 
 		private class RtfSectionStyle : ICloneable {
 			internal Color rtf_color;
+			internal Color rtf_back_color;
 			internal RTF.Font rtf_rtffont;
 			internal int rtf_rtffont_size;
 			internal FontStyle rtf_rtfstyle;
 			internal HorizontalAlignment rtf_rtfalign;
 			internal int rtf_par_line_left_indent;
+			internal int rtf_par_first_line_indent;
+			internal int rtf_par_line_right_indent;
 			internal bool rtf_visible;
 			internal int rtf_skip_width;
 			internal int rtf_par_spacing_after;
 			internal int rtf_par_spacing_before;
 			internal TextPositioning rtf_text_position;
 			internal int rtf_char_offset;
+			internal ArrayList rtf_par_tab_stops = new ArrayList();
 
 			public object Clone ()
 			{
 				RtfSectionStyle new_style = new RtfSectionStyle ();
 
 				new_style.rtf_color = rtf_color;
+				new_style.rtf_back_color = rtf_back_color;
 				new_style.rtf_par_line_left_indent = rtf_par_line_left_indent;
+				new_style.rtf_par_first_line_indent = rtf_par_first_line_indent;
+				new_style.rtf_par_line_right_indent = rtf_par_line_right_indent;
 				new_style.rtf_rtfalign = rtf_rtfalign;
 				new_style.rtf_rtffont = rtf_rtffont;
 				new_style.rtf_rtffont_size = rtf_rtffont_size;
@@ -1430,6 +1649,7 @@ namespace System.Windows.Forms {
 				new_style.rtf_par_spacing_before = rtf_par_spacing_before;
 				new_style.rtf_text_position = rtf_text_position;
 				new_style.rtf_char_offset = rtf_char_offset;
+				new_style.rtf_par_tab_stops.AddRange (rtf_par_tab_stops);
 
 				return new_style;
 			}
@@ -1487,7 +1707,7 @@ namespace System.Windows.Forms {
 
 				case RTF.Major.PictAttr:
 					if (rtf.Picture != null && rtf.Picture.IsValid ()) {
-						FlushText (rtf, false);
+						FlushText (rtf, false, true);
 						Line line = document.GetLine (rtf_cursor_y);
 						document.InsertPicture (line, rtf_cursor_x++, rtf.Picture);
 						rtf.Picture = null;
@@ -1507,6 +1727,23 @@ namespace System.Windows.Forms {
 									this.rtf_style.rtf_color = ForeColor;
 								} else {
 									this.rtf_style.rtf_color = Color.FromArgb(color.Red, color.Green, color.Blue);
+								}
+								FlushText (rtf, false);
+							}
+							break;
+						}
+
+						case RTF.Minor.BackColor: {
+							System.Windows.Forms.RTF.Color	color;
+							
+							color = System.Windows.Forms.RTF.Color.GetColor(rtf, rtf.Param);
+							
+							if (color != null) {
+								FlushText(rtf, false);
+								if (color.Red == -1 && color.Green == -1 && color.Blue == -1) {
+									this.rtf_style.rtf_back_color = BackColor;
+								} else {
+									this.rtf_style.rtf_back_color = Color.FromArgb(color.Red, color.Green, color.Blue);
 								}
 								FlushText (rtf, false);
 							}
@@ -1578,7 +1815,7 @@ namespace System.Windows.Forms {
 
 						case RTF.Minor.Invisible: {
 							FlushText (rtf, false);
-							rtf_style.rtf_visible = false;
+							rtf_style.rtf_visible = (rtf.Param != RTF.RTF.NoParam);
 							break;
 						}
 
@@ -1629,14 +1866,32 @@ namespace System.Windows.Forms {
 				case RTF.Minor.ParDef:
 					FlushText (rtf, false);
 					rtf_style.rtf_par_line_left_indent = 0;
+					rtf_style.rtf_par_first_line_indent = 0;
+					rtf_style.rtf_par_line_right_indent = 0;
 					rtf_style.rtf_par_spacing_after = 0;
 					rtf_style.rtf_par_spacing_before = 0;
 					rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
+					rtf_style.rtf_par_tab_stops.Clear ();
+					break;
+
+				case RTF.Minor.TabPos:
+					using (Graphics g = CreateGraphics ())
+						rtf_style.rtf_par_tab_stops.Add((int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F));
 					break;
 
 				case RTF.Minor.LeftIndent:
 					using (Graphics g = CreateGraphics ())
 						rtf_style.rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
+					break;
+
+				case RTF.Minor.FirstIndent:
+					using (Graphics g = CreateGraphics ())
+						rtf_style.rtf_par_first_line_indent = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
+					break;
+
+				case RTF.Minor.RightIndent:
+					using (Graphics g = CreateGraphics ())
+						rtf_style.rtf_par_line_right_indent = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
 					break;
 
 				case RTF.Minor.QuadCenter:
@@ -1672,7 +1927,8 @@ namespace System.Windows.Forms {
 				}
 				break;
 			}
-case RTF.Major.SpecialChar: {
+
+			case RTF.Major.SpecialChar: {
 					//Console.Write("[Got SpecialChar control {0}]", rtf.Minor);
 					SpecialChar (rtf);
 					break;
@@ -1719,8 +1975,8 @@ case RTF.Major.SpecialChar: {
 					break;
 				}
 
-			case RTF.Minor.WidowCtrl:
-				break;
+				case RTF.Minor.WidowCtrl:
+					break;
 
 				case RTF.Minor.EmDash: {
 				rtf_line.Append ("\u2014");
@@ -1731,7 +1987,7 @@ case RTF.Major.SpecialChar: {
 					rtf_line.Append ("\u2013");
 					break;
 				}
-/*
+
 				case RTF.Minor.LQuote: {
 					Console.Write("\u2018");
 					break;
@@ -1751,7 +2007,7 @@ case RTF.Major.SpecialChar: {
 					Console.Write("\u201D");
 					break;
 				}
-*/
+
 				default: {
 //					Console.WriteLine ("skipped special char:   {0}", rtf.Minor);
 //					rtf.SkipGroup();
@@ -1784,16 +2040,21 @@ case RTF.Major.SpecialChar: {
 			}
 			*/
 
-			if  (rtf_style.rtf_visible)
-				rtf_line.Append (str);
+			rtf_line.Append (str);
 		}
 
 		private void FlushText(RTF.RTF rtf, bool newline) {
+			FlushText (rtf, newline, false);
+		}
+
+		private void FlushText(RTF.RTF rtf, bool newline, bool force) {
 			int		length;
+			int hanging_indent;
+			int left_indent;
 			Font		font;
 
 			length = rtf_line.Length;
-			if (!newline && (length == 0)) {
+			if (!newline && (length == 0) && !force) {
 				return;
 			}
 
@@ -1804,6 +2065,9 @@ case RTF.Major.SpecialChar: {
 
 			font = new Font (rtf_style.rtf_rtffont.Name, rtf_style.rtf_rtffont_size, rtf_style.rtf_rtfstyle);
 
+			hanging_indent = -rtf_style.rtf_par_first_line_indent;
+			left_indent = rtf_style.rtf_par_line_left_indent - hanging_indent;
+			
 			if (rtf_style.rtf_color == Color.Empty) {
 				System.Windows.Forms.RTF.Color color;
 
@@ -1827,24 +2091,10 @@ case RTF.Major.SpecialChar: {
 					rtf_line.Append (Environment.NewLine);
 
 				document.Add (rtf_cursor_y, rtf_line.ToString (), rtf_style.rtf_rtfalign, font, rtf_style.rtf_color,
-								newline ? LineEnding.Rich : LineEnding.None);
-				Line line = null;
-				if (rtf_style.rtf_par_line_left_indent != 0) {
-					line = document.GetLine (rtf_cursor_y);
-					line.indent = rtf_style.rtf_par_line_left_indent;
-				}
-
-				if (rtf_style.rtf_par_spacing_after != 0) {
-					if (line == null)
-						line = document.GetLine (rtf_cursor_y);
-					line.spacing_after = rtf_style.rtf_par_spacing_after;
-				}
-
-				if (rtf_style.rtf_par_spacing_before != 0) {
-					if (line == null)
-						line = document.GetLine (rtf_cursor_y);
-					line.spacing_before = rtf_style.rtf_par_spacing_before;
-				}
+					rtf_style.rtf_back_color, rtf_style.rtf_text_position, rtf_style.rtf_char_offset, left_indent, hanging_indent,
+				    rtf_style.rtf_par_line_right_indent, rtf_style.rtf_par_spacing_before, rtf_style.rtf_par_spacing_after,
+				    (int[]) rtf_style.rtf_par_tab_stops.ToArray(typeof (int)) , rtf_style.rtf_visible,
+				    newline ? LineEnding.Rich : LineEnding.None);
 			} else {
 				Line line = document.GetLine (rtf_cursor_y);
 
@@ -1854,7 +2104,9 @@ case RTF.Major.SpecialChar: {
 					line.ending = LineEnding.Rich;
 				}
 
-				line.indent = Math.Max (rtf_style.rtf_par_line_left_indent, line.indent);
+				line.indent = Math.Max (left_indent, line.indent);
+				line.HangingIndent = Math.Max (hanging_indent, line.hanging_indent);
+				line.right_indent = Math.Max (rtf_style.rtf_par_line_right_indent, line.right_indent);
 				line.spacing_after = Math.Max (rtf_style.rtf_par_spacing_after, line.spacing_after);
 				line.spacing_before = Math.Max (rtf_style.rtf_par_spacing_before, line.spacing_before);
 				line.alignment = rtf_style.rtf_rtfalign;
@@ -1862,8 +2114,9 @@ case RTF.Major.SpecialChar: {
 				if (rtf_line.Length > 0) {
 					document.InsertString (line, rtf_cursor_x, rtf_line.ToString ());
 					document.FormatText (line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length,
-					    font, rtf_style.rtf_color, Color.Empty, rtf_style.rtf_text_position, rtf_style.rtf_char_offset,
-						FormatSpecified.Font | FormatSpecified.Color | FormatSpecified.TextPosition | FormatSpecified.CharOffset);
+					    font, rtf_style.rtf_color, rtf_style.rtf_back_color, rtf_style.rtf_text_position, rtf_style.rtf_char_offset,
+					    rtf_style.rtf_visible, FormatSpecified.Font | FormatSpecified.Color | FormatSpecified.BackColor |
+					    FormatSpecified.TextPosition | FormatSpecified.CharOffset | FormatSpecified.Visibility);
 				}
 
 				if (newline && line.Text.EndsWith (Environment.NewLine) == false)
@@ -1902,6 +2155,7 @@ case RTF.Major.SpecialChar: {
 			rtf_skip_count = 0;
 			rtf_line = new StringBuilder();
 			rtf_style.rtf_color = Color.Empty;
+			rtf_style.rtf_back_color = Color.Empty;
 			rtf_style.rtf_rtffont_size = (int)this.Font.Size;
 			rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
 			rtf_style.rtf_rtfstyle = FontStyle.Regular;
@@ -1909,6 +2163,9 @@ case RTF.Major.SpecialChar: {
 			rtf_style.rtf_par_spacing_after = 0;
 			rtf_style.rtf_par_spacing_before = 0;
 			rtf_style.rtf_par_line_left_indent = 0;
+			rtf_style.rtf_par_first_line_indent = 0;
+			rtf_style.rtf_par_line_right_indent = 0;
+			rtf_style.rtf_par_tab_stops.Clear ();
 			rtf_style.rtf_char_offset = 0;
 			rtf_style.rtf_rtffont = null;
 			rtf_style.rtf_visible = true;
@@ -2100,6 +2357,7 @@ case RTF.Major.SpecialChar: {
 			ArrayList	fonts;
 			ArrayList	colors;
 			Color		color;
+			Color		back_color;
 			Font		font;
 			Line		line;
 			LineTag		tag;
@@ -2107,7 +2365,13 @@ case RTF.Major.SpecialChar: {
 			HorizontalAlignment line_alignment;
 			int		spacing_after;
 			int		spacing_before;
+			int		left_indent;
+			int		prev_left_indent;
+			int		first_line_indent;
+			int		prev_first_line_indent;
+			int		right_indent;
 			int		char_offset;
+			bool	visible;
 			int		pos;
 			int		line_no;
 			int		line_len;
@@ -2130,6 +2394,7 @@ case RTF.Major.SpecialChar: {
 			tag = LineTag.FindTag(start_line, pos);
 			font = tag.Font;
 			color = tag.Color;
+			back_color = Color.Empty;
 			fonts.Add(font.Name);
 			colors.Add(color);
 
@@ -2153,8 +2418,15 @@ case RTF.Major.SpecialChar: {
 
 					if (tag.Color != color) {
 						color = tag.Color;
-						if (!colors.Contains(color)) {
+						if (color != Color.Empty && !colors.Contains(color)) {
 							colors.Add(color);
+						}
+					}
+
+					if (tag.BackColor != back_color) {
+						back_color = tag.BackColor;
+						if (back_color != Color.Empty && !colors.Contains(back_color)) {
+							colors.Add(back_color);
 						}
 					}
 
@@ -2189,7 +2461,7 @@ case RTF.Major.SpecialChar: {
 
 			// Emit the color table (if needed)
 			if ((colors.Count > 1) || ((((Color)colors[0]).R != this.ForeColor.R) || (((Color)colors[0]).G != this.ForeColor.G) || (((Color)colors[0]).B != this.ForeColor.B))) {
-				sb.Append("{\\colortbl ");			// Header and NO! default color
+				sb.Append("{\\colortbl;");			// Header and -N-O-!- default color -- nope we actually need the default colour
 				for (i = 0; i < colors.Count; i++) {
 					sb.Append(String.Format("\\red{0}", ((Color)colors[i]).R));
 					sb.Append(String.Format("\\green{0}", ((Color)colors[i]).G));
@@ -2204,15 +2476,22 @@ case RTF.Major.SpecialChar: {
 
 			tag = LineTag.FindTag(start_line, start_pos);
 			font = tag.Font;
-			color = (Color)colors[0];
+			color = Color.Empty;
+			back_color = Color.Empty;
 			text_position = TextPositioning.Normal;
 			char_offset = 0;
+			visible = true;
 			line = start_line;
 			line_no = start_line.line_no;
 			pos = start_pos;
 			spacing_after = line.spacing_after;
 			spacing_before = line.spacing_before;
 			line_alignment = line.alignment;
+			first_line_indent = -line.HangingIndent;
+			left_indent = line.Indent - first_line_indent;
+			prev_first_line_indent = first_line_indent;
+			prev_left_indent = left_indent;
+			right_indent = line.RightIndent;
 
 			using (Graphics g = CreateGraphics ()) {
 				// Emit initial paragraph settings
@@ -2235,6 +2514,18 @@ case RTF.Major.SpecialChar: {
 				if (line.spacing_before != 0) {
 					sb.Append("\\sb");
 					sb.Append((line.spacing_before / g.DpiX) * 1440);
+				}
+				if (left_indent != 0) {
+					sb.Append("\\li");
+					sb.Append(((left_indent) / g.DpiX) * 1440);
+				}
+				if (first_line_indent != 0) {
+					sb.Append("\\fi");
+					sb.Append((first_line_indent / g.DpiX) * 1440);
+				}
+				if (line.right_indent != 0) {
+					sb.Append("\\ri");
+					sb.Append((line.right_indent / g.DpiX) * 1440);
 				}
 				EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.Font.Name), null, tag.Font);	// Font properties
 				sb.Append(" ");		// Space separator
@@ -2278,6 +2569,27 @@ case RTF.Major.SpecialChar: {
 						sb.Append((int) ((spacing_before / g.DpiX) * 1440));
 					}
 
+					first_line_indent = -line.HangingIndent;
+					left_indent = line.Indent - first_line_indent;
+
+					if (prev_left_indent != left_indent) {
+						prev_left_indent = left_indent;
+						sb.Append("\\li");
+						sb.Append((left_indent / g.DpiX) * 1440);
+					}
+
+					if (prev_first_line_indent != first_line_indent) {
+						prev_first_line_indent = first_line_indent;
+						sb.Append("\\fi");
+						sb.Append((first_line_indent / g.DpiX) * 1440);
+					}
+
+					if (line.right_indent != right_indent) {
+						right_indent = line.right_indent;
+						sb.Append("\\ri");
+						sb.Append((right_indent / g.DpiX) * 1440);
+					}
+
 					if (length != sb.Length) {
 						sb.Append(" ");
 					}
@@ -2292,7 +2604,18 @@ case RTF.Major.SpecialChar: {
 
 						if (tag.Color != color) {
 							color = tag.Color;
-							sb.Append(String.Format("\\cf{0}", colors.IndexOf(color)));
+							if (color != Color.Empty)
+								sb.Append(String.Format("\\cf{0}", colors.IndexOf(color) + 1));
+							else
+								sb.Append("\\cf0");
+						}
+
+						if (tag.BackColor != back_color) {
+							back_color = tag.BackColor;
+							if (back_color != Color.Empty)
+								sb.Append(String.Format("\\cb{0}", colors.IndexOf(back_color) + 1));
+							else
+								sb.Append("\\cb0");
 						}
 
 						if (tag.TextPosition != text_position) {
@@ -2319,6 +2642,14 @@ case RTF.Major.SpecialChar: {
 								sb.Append("\\dn");
 								sb.Append(-(int) ((char_offset / g.DpiX) * 144));
 							}
+						}
+
+						if (tag.Visible != visible) {
+							visible = tag.Visible;
+							if (visible)
+								sb.Append("\\v0");
+							else
+								sb.Append("\\v");
 						}
 
 						if (length != sb.Length) {

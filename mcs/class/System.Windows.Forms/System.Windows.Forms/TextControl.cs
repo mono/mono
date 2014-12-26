@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
+//	Karl Scowen		<contact@scowencomputers.co.nz>
 //
 //
 
@@ -72,7 +73,8 @@ namespace System.Windows.Forms {
 		Font = 4,
 		Color = 8,
 		TextPosition = 16,
-		CharOffset = 32
+		CharOffset = 32,
+		Visibility = 64
 	}
 
 	internal enum TextPositioning {
@@ -1727,7 +1729,9 @@ namespace System.Windows.Forms {
 			StringBuilder text;	// String representing the current line
 			int line_no;
 			Color tag_color;
+			Color tag_backcolor;
 			Color current_color;
+			Color current_backcolor;
 
 			// First, figure out from what line to what line we need to draw
 			GetVisibleLineIndexes (clip, out start, out end);
@@ -1762,10 +1766,10 @@ namespace System.Windows.Forms {
 				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
 						offset_x + selection_start.line.widths [selection_start.pos] +
 						selection_start.line.X - viewport_x, 
-				                offset_y + selection_start.line.Y + selection_start.line.SpacingBefore,
+				        offset_y + selection_start.line.Y + selection_start.line.SpacingBefore,
 						(selection_end.line.X + selection_end.line.widths [selection_end.pos]) -
 						(selection_start.line.X + selection_start.line.widths [selection_start.pos]), 
-				                selection_start.line.height - selection_start.line.TotalSpacing);
+				        selection_start.line.height - selection_start.line.TotalSpacing);
 			}
 
 			while (line_no <= end) {
@@ -1806,9 +1810,8 @@ namespace System.Windows.Forms {
 					} else if (multiline) {
 						// lets draw some selection baby!!  (non multiline selection is drawn outside the loop)
 						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
-								offset_x + line.widths [line_selection_start - 1] + line.X - viewport_x, 
-						                line_y - line.SpacingBefore, line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], 
-								line.height);
+								offset_x + line.widths [line_selection_start - 1] + line.X - viewport_x, line_y - line.SpacingBefore,
+						        line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], line.height);
 					}
 				}
 
@@ -1816,7 +1819,7 @@ namespace System.Windows.Forms {
 				while (tag != null) {
 
 					// Skip empty tags
-					if (tag.Length == 0) {
+					if (tag.Length == 0 || !tag.Visible) {
 						tag = tag.Next;
 						continue;
 					}
@@ -1827,13 +1830,8 @@ namespace System.Windows.Forms {
 						continue;
 					}
 
-					if (tag.BackColor != Color.Empty) {
-						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (tag.BackColor), 
-								offset_x + tag.X + line.X - viewport_x,
-								line_y + tag.Shift - tag.CharOffset - line.SpacingBefore, tag.Width, line.height);
-					}
-
 					tag_color = tag.ColorToDisplay;
+					tag_backcolor = tag.BackColor;
 					current_color = tag_color;
 
 					if (!owner.Enabled) {
@@ -1853,12 +1851,23 @@ namespace System.Windows.Forms {
 						if (tag_pos >= line_selection_start && tag_pos < line_selection_end) {
 							current_color = ThemeEngine.Current.ColorHighlightText;
 							tag_pos = Math.Min (tag.End, line_selection_end);
+							current_backcolor = Color.Empty;
 						} else if (tag_pos < line_selection_start) {
 							current_color = tag_color;
 							tag_pos = Math.Min (tag.End, line_selection_start);
+							current_backcolor = tag_backcolor;
 						} else {
 							current_color = tag_color;
 							tag_pos = tag.End;
+							current_backcolor = tag_backcolor;
+						}
+
+						if (current_backcolor != Color.Empty && current_backcolor != owner.BackColor) {
+							g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (current_backcolor), 
+							    offset_x + line.widths [old_tag_pos - 1] + line.X - viewport_x,
+							    line_y + tag.Shift - tag.CharOffset - line.SpacingBefore,
+							    line.widths [Math.Min (tag.Start + tag.Length, tag_pos) - 1] - line.widths [old_tag_pos - 1],
+							    line.height);
 						}
 
 						Rectangle text_size;
@@ -2364,7 +2373,8 @@ namespace System.Windows.Forms {
 			// cover the easy case first
 			if (pos == line.text.Length) {
 				Add (line.line_no + 1, String.Empty, line.alignment, tag.Font, tag.Color, tag.BackColor, tag.TextPosition,
-				    tag.CharOffset, line.Indent, line.spacing_before, line.spacing_after, line.ending);
+				     tag.CharOffset, line.Indent, line.HangingIndent, line.RightIndent, line.spacing_before, line.spacing_after,
+				     line.tab_stops, tag.Visible, line.ending);
 
 				new_line = GetLine (line.line_no + 1);
 				
@@ -2398,7 +2408,8 @@ namespace System.Windows.Forms {
 
 			// We need to move the rest of the text into the new line
 			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.Font, tag.Color,
-			     tag.BackColor, tag.TextPosition, tag.CharOffset, line.Indent, line.spacing_before, line.spacing_after, line.ending);
+			     tag.BackColor, tag.TextPosition, tag.CharOffset, line.Indent, line.HangingIndent, line.RightIndent,
+			     line.spacing_before, line.spacing_after, line.tab_stops, tag.Visible, line.ending);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
@@ -2531,12 +2542,12 @@ namespace System.Windows.Forms {
 
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending)
 		{
-			Add (LineNo, Text, align, font, color, Color.Empty, TextPositioning.Normal, 0, 0, 0, 0, ending);
+			Add (LineNo, Text, align, font, color, Color.Empty, TextPositioning.Normal, 0, 0, 0, 0, 0, 0, new int[0], true, ending);
 		}
 
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, Color back_color,
-		                   TextPositioning text_position, int char_offset, int left_indent, int spacing_before, int spacing_after,
-		                   LineEnding ending)
+		                   TextPositioning text_position, int char_offset, int left_indent, int hanging_indent, int right_indent,
+		                   int spacing_before, int spacing_after, int[] tab_stops, bool visible, LineEnding ending)
 		{
 			Line	add;
 			Line	line;
@@ -2552,8 +2563,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			add = new Line (this, LineNo, Text, align, font, color, back_color, text_position,
-				char_offset, left_indent, spacing_before, spacing_after, ending);
+			add = new Line (this, LineNo, Text, align, font, color, back_color, text_position, char_offset, left_indent,
+				hanging_indent, right_indent, spacing_before, spacing_after, tab_stops, visible, ending);
 
 			line = document;
 			while (line != sentinel) {
@@ -3567,13 +3578,15 @@ namespace System.Windows.Forms {
 		                          Color color, Color back_color, FormatSpecified specified)
 		{
 			FormatText (start_line, start_pos, end_line, end_pos, font, color, back_color,
-				TextPositioning.Normal, 0, specified);
+				TextPositioning.Normal, 0, true, specified);
 		}
+
 		/// <summary>Format area of document in specified font and color</summary>
 		/// <param name="start_pos">1-based start position on start_line</param>
 		/// <param name="end_pos">1-based end position on end_line </param>
 		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
-				Color color, Color back_color, TextPositioning text_position, int char_offset, FormatSpecified specified)
+		                          Color color, Color back_color, TextPositioning text_position, int char_offset,
+		                          bool visible, FormatSpecified specified)
 		{
 			Line    l;
 
@@ -3581,20 +3594,20 @@ namespace System.Windows.Forms {
 			if (start_line != end_line) {
 				// First line
 				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, font, color,
-				                   back_color, text_position, char_offset, specified);
+					back_color, text_position, char_offset, visible, specified);
 
 				// Format last line
-				LineTag.FormatText(end_line, 1, end_pos, font, color, back_color, text_position, char_offset, specified);
+				LineTag.FormatText(end_line, 1, end_pos - 1, font, color, back_color, text_position, char_offset, visible, specified);
 
 				// Now all the lines inbetween
 				for (int i = start_line.line_no + 1; i < end_line.line_no; i++) {
 					l = GetLine(i);
-					LineTag.FormatText(l, 1, l.text.Length, font, color, back_color, text_position, char_offset, specified);
+					LineTag.FormatText(l, 1, l.text.Length, font, color, back_color, text_position, char_offset, visible, specified);
 				}
 			} else {
 				// Special case, single line
 				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color, back_color,
-					text_position, char_offset, specified);
+					text_position, char_offset, visible, specified);
 				
 				if ((end_pos - start_pos) == 0 && CaretTag.Length != 0)
 					CaretTag = CaretTag.Next;
@@ -4129,7 +4142,10 @@ namespace System.Windows.Forms {
 
 		public override SizeF SizeOfPosition (Graphics dc, int pos)
 		{
-			return picture.Size;
+			if (Visible)
+				return picture.Size;
+			else
+				return SizeF.Empty;
 		}
 
 		internal override int MaxHeight ()
@@ -4139,7 +4155,8 @@ namespace System.Windows.Forms {
 
 		public override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end)
 		{
-			picture.DrawImage (dc, xoff + Line.widths [start], y, false);
+			if (Visible)
+				picture.DrawImage (dc, (xoff + Line.widths [start]), y, false);
 		}
 
 		public override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
@@ -4151,7 +4168,7 @@ namespace System.Windows.Forms {
 		                           string text, out Rectangle measuredText, bool measureText)
 		{
 			Draw (dc, color, xoff, y, start, end);
-			if (measureText) {
+			if (measureText && Visible) {
 				measuredText = new Rectangle(Point.Round (new PointF (xoff + Line.widths [start], y)), Size.Round (picture.Size));
 			} else {
 				measuredText = new Rectangle();
