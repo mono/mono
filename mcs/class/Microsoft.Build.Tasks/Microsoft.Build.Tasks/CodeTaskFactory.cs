@@ -114,9 +114,16 @@ namespace Microsoft.Build.Tasks
 				throw new NotImplementedException (string.Format ("{0} is not supported language for inline task", language));
 			if (language != "cs")
 				throw new InvalidProjectFileException (null, string.Format ("{0} is not supported language for inline task", language), "MSB", "4175", null);
+
+			string parameters = null;
+			string parameterTemplate = "public @@TYPE@@ @@NAME@@ { get; set; }\n";
+			foreach (var param in parameter_group) {
+				parameters += parameterTemplate.Replace ("@@TYPE@@", param.Value.PropertyType.FullName).Replace ("@@NAME@@", param.Value.Name);
+			}
+
 			string gen = null;
 			// The documentation says "ITask", but the very first example shows "Log" which is not in ITask! It is likely that the generated code uses Task or TaskExtension.
-			string classTemplate = @"public class " + taskName + " : Microsoft.Build.Utilities.Task { @@EXECUTE@@ }";
+			string classTemplate = @"public class " + taskName + " : Microsoft.Build.Utilities.Task { @@PARAMETERS@@ @@EXECUTE@@ }";
 			foreach (var ns in namespace_uses)
 				gen += "using " + ns + ";\n";
 			switch (type) {
@@ -124,10 +131,10 @@ namespace Microsoft.Build.Tasks
 				gen += code;
 				break;
 			case "Method":
-				gen += classTemplate.Replace ("@@EXECUTE@@", code);
+				gen += classTemplate.Replace ("@@PARAMETERS@@", parameters).Replace ("@@EXECUTE@@", code);
 				break;
 			case "Fragment":
-				gen += classTemplate.Replace ("@@EXECUTE@@", "public override bool Execute () { " + code + " return true; }");
+				gen += classTemplate.Replace ("@@PARAMETERS@@", parameters).Replace ("@@EXECUTE@@", "public override bool Execute () { " + code + " return true; }");
 				break;
 			}
 
