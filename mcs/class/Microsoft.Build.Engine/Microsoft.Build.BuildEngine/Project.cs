@@ -1405,7 +1405,7 @@ namespace Microsoft.Build.BuildEngine {
 						return item.GetEvaluatedMetadata (metadataName);
 				}
 			}
-			return GetEvaluatedItemDefinitionMetadata (itemName, metadataName);
+			return String.Empty;
 		}
 		
 		internal Dictionary <string, BuildItemDefinition> EvaluatedItemDefinitions
