@@ -200,14 +200,20 @@ namespace System
 			get_enum_info (enumType, out info);
 
 			IComparer ic = null;
-			if (info.values is int [])
-				ic = int_comparer;
-			else if (info.values is short [])
-				ic = short_comparer;
-			else if (info.values is sbyte [])
-				ic = sbyte_comparer;
-			else if (info.values is long [])
-				ic = long_comparer;
+			if (!(info.values is byte[]) &&
+				!(info.values is ushort[]) &&
+				!(info.values is uint[]) &&
+				!(info.values is ulong[]))
+			{
+				if (info.values is int [])
+					ic = int_comparer;
+				else if (info.values is short [])
+					ic = short_comparer;
+				else if (info.values is sbyte [])
+					ic = sbyte_comparer;
+				else if (info.values is long [])
+					ic = long_comparer;
+			}
 			
 			Array.Sort (info.values, info.names, ic);
 			if (info.names.Length > 50) {
