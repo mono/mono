@@ -259,14 +259,11 @@
 		</Copy>
 	</Target>
 
-<!--
-	Not needed at the moment
-	<Target Name="_ComputeNonExistentFileProperty" Condition='false'>
+	<Target Name="_ComputeNonExistentFileProperty">
 		<CreateProperty Value="__NonExistentSubDir__\__NonExistentFile__">
 			<Output TaskParameter="Value" PropertyName="NonExistentFile"/>
 		</CreateProperty>
 	</Target>
--->
 
 	<PropertyGroup>
 		<BuildDependsOn>

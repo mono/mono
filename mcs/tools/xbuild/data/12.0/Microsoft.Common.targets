@@ -378,7 +378,7 @@
 		</Copy>
 	</Target>
 
-	<Target Name="_ComputeNonExistentFileProperty" Condition='false'>
+	<Target Name="_ComputeNonExistentFileProperty">
 		<CreateProperty Value="__NonExistentSubDir__\__NonExistentFile__">
 			<Output TaskParameter="Value" PropertyName="NonExistentFile"/>
 		</CreateProperty>
