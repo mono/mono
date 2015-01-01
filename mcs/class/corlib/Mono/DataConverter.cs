@@ -484,7 +484,7 @@ namespace Mono {
 					break;
 				case '4':
 #if PCL
-					e = Encoding.GetEncoding ("utf-32BE);
+					e = Encoding.GetEncoding ("utf-32BE");
 #else
 					e = Encoding.GetEncoding (12001);
 #endif
