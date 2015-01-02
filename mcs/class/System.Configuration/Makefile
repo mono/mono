@@ -7,8 +7,8 @@ LIBRARY = System.Configuration.dll
 
 LOCAL_MCS_FLAGS = -lib:$(secxml_libdir) -lib:$(bare_libdir)
 test_remove = $(LOCAL_MCS_FLAGS)
-LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Security.dll -nowarn:618 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) 
+LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Security.dll -r:Mono.Posix.dll -nowarn:618
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 include ../../build/library.make
 
