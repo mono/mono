@@ -519,6 +519,10 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public unsafe void GetSetValuePointers ()
 		{
+			Pointer p0 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
+			int *p0i = (int*)Pointer.Unbox (p0);
+			Assert.AreEqual (IntPtr.Zero, new IntPtr (p0i));
+
 			int i = 5;
 			void *p = &i;
 			typeof (FieldInfoTest).GetField ("ip").SetValue (null, (IntPtr)p);
