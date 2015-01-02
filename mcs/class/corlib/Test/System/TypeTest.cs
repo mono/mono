@@ -3670,10 +3670,7 @@ PublicKeyToken=b77a5c561934e089"));
 
 			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((short)0), "#14");
 			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((ushort)0), "#15");
-			try {
-				typeof (MyRealEnum).GetEnumName ('c');
-				Assert.Fail ("#16");
-			} catch (ArgumentException) { }
+			Assert.IsNull (typeof (MyRealEnum).GetEnumName ('c'), "#16");
 
 			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((int)0), "#17");
 			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((uint)0), "#18");
@@ -3701,10 +3698,7 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((short)0), "#26");
 			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((ushort)0), "#27");
 
-			try {
-				typeof (MyRealEnum2).GetEnumName ('c');
-				Assert.Fail ("#28");
-			} catch (ArgumentException) { }
+			Assert.IsNull (typeof (MyRealEnum2).GetEnumName ('c'), "#28");
 
 			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((int)0), "#29");
 			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((uint)0), "#30");

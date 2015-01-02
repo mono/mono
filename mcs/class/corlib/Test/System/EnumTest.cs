@@ -781,6 +781,20 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void ToObject_EnumType_Bool ()
+		{
+			object value = Enum.ToObject (typeof (TestingEnum5), true);
+			Assert.AreEqual (TestingEnum5.Is, value, "#1");
+		}
+
+		[Test]
+		public void ToObject_EnumType_Char ()
+		{
+			object value = Enum.ToObject (typeof (TestingEnum3), (object) '\0');
+			Assert.AreEqual (TestingEnum3.This, value, "#1");
+		}
+
+		[Test]
 		public void ToObject_EnumType_Invalid ()
 		{
 			try {
