@@ -295,6 +295,13 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void GetNameIdenticalToGetEnumName ()
+		{
+			Assert.AreEqual (typeof (EnumOverlap).GetEnumName (0), Enum.GetName (typeof(EnumOverlap), 0), "#1");
+			Assert.AreEqual ("First", Enum.GetName (typeof(EnumOverlap), 0), "#2");
+		}
+
+		[Test]
 		public void TestGetNames ()
 		{
 			try {
@@ -1408,6 +1415,12 @@ namespace MonoTests.System
 		  ulong_Ee = 0x7FFFFFFFffffffff,
 		  ulong_Ff = 100
 		}
-		
+
+		enum EnumOverlap
+		{
+			Unknown = 0,
+			First = 0,
+			System_Math = First,
+		}	
 	}
 }
