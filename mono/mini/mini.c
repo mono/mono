@@ -4534,10 +4534,10 @@ get_gsharedvt_type (MonoType *t)
 		mono_image_unlock (image);
 		if (res)
 			return res;
-		copy = mono_image_alloc0 (image, sizeof (MonoGenericParamFull));
-		memcpy (copy, par, sizeof (MonoGenericParamFull));
+		copy = mono_image_alloc0 (image, sizeof (MonoGenericParam));
+		memcpy (copy, par, sizeof (MonoGenericParam));
 	} else {
-		copy = g_memdup (par, sizeof (MonoGenericParamFull));
+		copy = g_memdup (par, sizeof (MonoGenericParam));
 	}
 	copy->owner = NULL;
 	// FIXME:
