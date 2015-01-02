@@ -3714,7 +3714,7 @@ namespace Mono.CSharp
 		public override string GetSignatureForDocumentation ()
 		{
 			if (IsExplicitImpl)
-				return Parent.GetSignatureForDocumentation () + "." + InterfaceType.GetExplicitNameSignatureForDocumentation () + "#" + ShortName;
+				return Parent.GetSignatureForDocumentation () + "." + InterfaceType.GetSignatureForDocumentation (true) + "#" + ShortName;
 
 			return Parent.GetSignatureForDocumentation () + "." + ShortName;
 		}

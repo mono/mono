@@ -1062,8 +1062,11 @@ namespace Mono.CSharp {
 			return effective_base = Convert.FindMostEncompassedType (types);
 		}
 
-		public override string GetSignatureForDocumentation ()
+		public override string GetSignatureForDocumentation (bool explicitName)
 		{
+			if (explicitName)
+				return Name;
+
 			var prefix = IsMethodOwned ? "``" : "`";
 			return prefix + DeclaredPosition;
 		}
