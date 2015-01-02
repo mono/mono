@@ -1529,7 +1529,7 @@ namespace MonoTests.System.Net {
 			Cookie cookie = new Cookie ("name", "value")
 			{
 				Domain = ".example.com",
-				Expires = new DateTime (2015, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+				Expires = new DateTime (2100, 1, 1, 0, 0, 0, DateTimeKind.Utc),
 				HttpOnly = true,
 				Secure = true,
 			};
@@ -1562,14 +1562,14 @@ namespace MonoTests.System.Net {
 			Cookie cookie = new Cookie ("name", "value")
 			{
 				Domain = ".example.com",
-				Expires = new DateTime (2015, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+				Expires = new DateTime (2100, 1, 1, 0, 0, 0, DateTimeKind.Utc),
 				HttpOnly = true,
 				Secure = true,
 			};
 
 			Uri uri = new Uri ("https://www.example.com/path/file");
 			CookieContainer container = new CookieContainer ();
-			container.SetCookies (uri, "name=value; domain=.example.com; expires=Thu, 01-Jan-2015 00:00:00 GMT; HttpOnly; secure");
+			container.SetCookies (uri, "name=value; domain=.example.com; expires=Fri, 01-Jan-2100 00:00:00 GMT; HttpOnly; secure");
 			CookieCollection collection = container.GetCookies (uri);
 			Assert.AreEqual (collection.Count, 1, "#A1");
 			Cookie cloned = collection [0];
