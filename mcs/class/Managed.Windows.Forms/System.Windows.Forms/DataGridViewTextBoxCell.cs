@@ -33,13 +33,16 @@ namespace System.Windows.Forms {
 	public class DataGridViewTextBoxCell : DataGridViewCell {
 
 		private int maxInputLength = 32767;
-		private static DataGridViewTextBoxEditingControl editingControl;
+		private DataGridViewTextBoxEditingControl editingControl;
 
-		static DataGridViewTextBoxCell ()
+		void CreateEditingControl ()
 		{
-			editingControl = new DataGridViewTextBoxEditingControl();
-			editingControl.Multiline = false;
-			editingControl.BorderStyle = BorderStyle.None;
+			editingControl = new DataGridViewTextBoxEditingControl() {
+				EditingControlDataGridView = DataGridView,
+				Multiline = false,
+				BorderStyle = BorderStyle.None,
+				MaxLength = maxInputLength
+			};
 		}
 
 		public DataGridViewTextBoxCell ()
@@ -88,11 +91,9 @@ namespace System.Windows.Forms {
 			if (DataGridView == null) {
 				throw new InvalidOperationException("There is no associated DataGridView.");
 			}
-			
+
+			CreateEditingControl ();
 			DataGridView.EditingControlInternal = editingControl;
-			
-			editingControl.EditingControlDataGridView = DataGridView;
-			editingControl.MaxLength = maxInputLength;
 			
 			if (initialFormattedValue == null || initialFormattedValue.ToString () == string.Empty)
 				editingControl.Text = string.Empty;
