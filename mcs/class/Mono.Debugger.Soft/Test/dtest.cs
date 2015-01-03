@@ -3561,6 +3561,28 @@ public class DebuggerTests
 		Assert.IsTrue (obj is ObjectMirror);
 		Assert.AreEqual ("AStruct", (obj as ObjectMirror).Type.Name);
 	}
+
+	[Test]
+	public void StaticCtorFilterInCctor () {
+		// Check that single stepping when in a cctor only ignores
+		// other cctors, not the current one
+		var bevent = run_until ("step_filters");
+
+		var assembly = entry_point.DeclaringType.Assembly;
+		var type = assembly.GetType ("Tests/ClassWithCctor");
+		var cctor = type.GetMethod (".cctor");
+		vm.SetBreakpoint (cctor, 0);
+
+		vm.Resume ();
+		var e = vm.GetNextEvent ();
+		Assert.IsTrue (e is BreakpointEvent);
+
+		var req = create_step (e);
+		req.Filter = StepFilter.StaticCtor;
+		e = step_into ();
+		// Make sure we are still in the cctor
+		Assert.AreEqual (".cctor", e.Thread.GetFrames ()[0].Location.Method.Name);
+	}
 }
 
 }
