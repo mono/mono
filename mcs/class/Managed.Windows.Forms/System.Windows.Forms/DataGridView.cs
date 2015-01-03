@@ -1368,7 +1368,6 @@ namespace System.Windows.Forms {
 					} else {
 						Controls.Remove (editingControl);
 					}
-					editingControl.Dispose();
 				}
 				
 				
