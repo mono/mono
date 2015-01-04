@@ -75,3 +75,16 @@ using System.Runtime.InteropServices;
 #endif
 
 [assembly: ComVisible (false)]
+
+namespace System.ServiceModel.Diagnostics {
+	class FencePost_To_Build_With_MS_Sources {}
+}
+
+namespace System.Runtime.Diagnostics {
+	class FencePost_To_Build_With_MS_Sources {}
+}
+
+namespace System.Runtime.Serialization.Diagnostics.Application {
+	class FencePost_To_Build_With_MS_Sources {}
+
+}

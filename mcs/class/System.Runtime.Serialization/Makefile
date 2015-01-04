@@ -12,6 +12,7 @@ LIB_MCS_FLAGS = \
 		/r:System.dll \
 		/r:System.Xml.dll \
 		/r:System.Core.dll \
+		/r:System.ServiceModel.Internals\
 		$(RESOURCE_FILES:%=/resource:%)
 
 ifneq (2.1, $(FRAMEWORK_VERSION))

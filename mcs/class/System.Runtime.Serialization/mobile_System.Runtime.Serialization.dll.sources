@@ -13,6 +13,7 @@ Assembly/AssemblyInfo.cs
 ../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/CollectionDataContractAttribute.cs
 ../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ContractNamespaceAttribute.cs
 ../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/DataContractAttribute.cs
+../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XmlObjectSerializer.cs
 System.Runtime.Serialization/DataContractResolver.cs
 System.Runtime.Serialization/DataContractSerializer.cs
 System.Runtime.Serialization/DataContractSerializerSettings.cs
