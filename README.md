@@ -10,9 +10,20 @@ It is an open source implementation of Microsoft's .NET Framework based on the E
 
 **Build Status**
 
-| debian-amd64 | debian-i386 | centos-s390x | windows-amd64 |
-|:------------:|:-----------:|:------------:|:-------------:|
-| [![debian-amd64](http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/badge/icon)](http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/) | [![debian-i386](http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/badge/icon)](http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/) | [![centos-s390x](http://jenkins.mono-project.com/job/test-mono-mainline/label=centos-s390x/badge/icon)](http://jenkins.mono-project.com/job/test-mono-mainline/label=centos-s390x/) | [![windows-amd64](https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true)](https://ci.appveyor.com/project/ajlennon/mono-817/branch/master) |
+|      debian-amd64       |      debian-i386       |      debian-ppc64el       |      centos-s390x       |       windows-amd64       |
+|:-----------------------:|:----------------------:|:-------------------------:|:-----------------------:|:-------------------------:|
+| [![debian-amd64][1]][2] | [![debian-i386][3]][4] | [![debian-ppc64el][5]][6] | [![centos-s390x][7]][8] | [![windows-amd64][9]][10] |
+
+[1]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/badge/icon
+[2]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/
+[3]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/badge/icon
+[4]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/
+[5]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=debian-ppc64el/badge/icon
+[6]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=debian-ppc64el/
+[7]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=centos-s390x/badge/icon
+[8]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=centos-s390x/
+[9]: https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true
+[10]: https://ci.appveyor.com/project/ajlennon/mono-817/branch/master
 
 Compilation and Installation
 ============================
