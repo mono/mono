@@ -232,6 +232,7 @@ namespace System.Net.Http
 		{
 			var wr = new HttpWebRequest (request.RequestUri);
 			wr.ThrowOnError = false;
+			wr.AllowWriteStreamBuffering = false;
 
 			wr.ConnectionGroupName = connectionGroupName;
 			wr.Method = request.Method.Method;
@@ -318,12 +319,25 @@ namespace System.Net.Http
 
 			try {
 				using (cancellationToken.Register (l => ((HttpWebRequest)l).Abort (), wrequest)) {
-					if (request.Content != null) {
+					var content = request.Content;
+					if (content != null) {
 						var headers = wrequest.Headers;
-						foreach (var header in request.Content.Headers) {
+
+						foreach (var header in content.Headers) {
 							foreach (var value in header.Value) {
 								headers.AddValue (header.Key, value);
 							}
+						}
+
+						//
+						// Content length has to be set because HttpWebRequest is running without buffering
+						//
+						var contentLength = content.Headers.ContentLength;
+						if (contentLength != null) {
+							wrequest.ContentLength = contentLength.Value;
+						} else {
+							await content.LoadIntoBufferAsync (MaxRequestContentBufferSize).ConfigureAwait (false);
+							wrequest.ContentLength = content.Headers.ContentLength.Value;
 						}
 
 						var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
