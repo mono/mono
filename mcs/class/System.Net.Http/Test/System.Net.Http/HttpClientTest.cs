@@ -748,7 +748,7 @@ namespace MonoTests.System.Net.Http
 				listener.Close ();
 			}
 		}
-*/
+
 		[Test]
 		public void Send_Content_Put_CustomStream ()
 		{
