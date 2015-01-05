@@ -202,8 +202,11 @@ namespace System.Net
 		
 #if NET_4_5
 		public virtual bool AllowReadStreamBuffering {
-			get { return allowBuffering; }
-			set { allowBuffering = value; }
+			get { return false; }
+			set {
+				if (value)
+					throw new InvalidOperationException ();
+			}
 		}
 #endif
 
