@@ -3,6 +3,8 @@
 using System;
 using System.Threading.Tasks;
 using Mono.Cecil;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace N
 {
@@ -22,12 +24,19 @@ namespace N
 			await Task.Delay (1);
 		}
 
-		public static void Main ()
+		public static int Main ()
 		{
+			var m = typeof (X).GetMethod ("N.I<N.C>.Foo", BindingFlags.NonPublic | BindingFlags.Instance);
+			var attr = m.GetCustomAttribute<AsyncStateMachineAttribute> ();
+			if (attr == null)
+				return 1;
+
 			var assembly = AssemblyDefinition.ReadAssembly (typeof (X).Assembly.Location);
 			foreach (var t in assembly.MainModule.Types) {
 				PrintType (t, 0);
 			}
+
+			return 0;
 		}
  
 		static void PrintType (TypeDefinition td, int indent)

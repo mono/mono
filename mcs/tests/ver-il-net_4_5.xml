@@ -64394,9 +64394,6 @@
       <method name="Void N.I&lt;N.C&gt;.Foo(N.C)" attrs="481">
         <size>27</size>
       </method>
-      <method name="Void Main()" attrs="150">
-        <size>99</size>
-      </method>
       <method name="Void PrintType(Mono.Cecil.TypeDefinition, Int32)" attrs="145">
         <size>138</size>
       </method>
@@ -64410,6 +64407,11 @@
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+    <type name="N.X">
+      <method name="Int32 Main()" attrs="150">
+        <size>153</size>
       </method>
     </type>
   </test>
