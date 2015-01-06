@@ -322,15 +322,10 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test] // bug #79650
-#if NET_2_0
-		// annoyance
-		[ExpectedException (typeof (XmlSchemaValidationException))]
-#else
 		[ExpectedException (typeof (XmlSchemaException))]
-#endif
 		public void EnumerationFacetOnAttribute ()
 		{
-			string xml = "<test mode='NOT A ENUMERATION VALUE' />";
+			string xml = "<test mode='NOT AN ENUMERATION VALUE' />";
 			XmlSchema schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/79650.xsd"), null);
 			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			xvr.ValidationType = ValidationType.Schema;

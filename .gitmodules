@@ -28,7 +28,7 @@
 	url = git://github.com/mono/ikdasm.git
 [submodule "external/referencesource"]
 	path = external/referencesource
-	url = git://github.com/mono/referencesource
+	url = https://github.com/mono/referencesource
 	branch = mono
 [submodule "external/reference-assemblies"]
 	path = external/reference-assemblies

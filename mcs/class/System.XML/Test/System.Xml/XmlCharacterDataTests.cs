@@ -88,6 +88,7 @@ namespace MonoTests.System.Xml
 		[Test]
 #if NET_2_0
 		[Category ("NotDotNet")] // enbug in 2.0
+		[Ignore ("bug in Microsoft sources")]
 #endif
 		public void InsertData ()
 		{
@@ -131,6 +132,7 @@ namespace MonoTests.System.Xml
 		[Test]
 #if NET_2_0
 		[Category ("NotDotNet")] // enbug in 2.0
+		[Ignore ("bug in Microsoft sources")]
 #endif
 		public void ReplaceData ()
 		{

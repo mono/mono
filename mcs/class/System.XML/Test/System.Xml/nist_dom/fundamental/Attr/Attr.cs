@@ -325,7 +325,7 @@ namespace nist_dom.fundamental
 
         [Test]
 #if NET_2_0
-	[Category ("NotDotNet")]
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")]
 #endif
         public void core0006A()
         {
@@ -762,7 +762,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
         public void core0014A()
         {
             string computedValue = "";

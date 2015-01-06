@@ -195,6 +195,7 @@ namespace MonoTests.System.Xml
 		[Test]
 #if NET_2_0
 		[Category ("NotDotNet")] // enbug
+		[Ignore ("bug in Microsoft sources")]
 #endif
 		public void RemoveDefaultAttribute ()
 		{

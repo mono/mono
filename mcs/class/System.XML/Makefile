@@ -15,7 +15,8 @@ endif
 
 PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
 
-LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0618,0612,0642
+LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0618,0612,0642 -unsafe -d:ASYNC -d:DISABLE_CAS_USE -d:MONO_HYBRID_SYSTEM_XML
+
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK
 endif
@@ -65,6 +66,8 @@ EXTRA_DISTFILES = \
 	$(xmlfiles_files:%=Test/XmlFiles/%) \
 	$(nist_dom_files:%=Test/System.Xml/nist_dom/%)
 
+ifneq (net_4_5, $(PROFILE))
+
 System.Xml.XPath/$(PROFILE)_Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	(cd System.Xml.XPath; $(topdir)/../jay/jay -ct < $(topdir)/../jay/skeleton.cs Parser.jay >> $(PROFILE)_Parser.cs)
 
@@ -88,6 +91,8 @@ CLEAN_FILES = Test/XmlFiles/xsl/result.xml \
 	System.Xml.XPath/$(PROFILE)_Parser.cs \
 	Mono.Xml.Xsl/$(PROFILE)_PatternParser.cs \
 	Mono.Xml.Xsl/$(PROFILE)_PatternTokenizer.cs
+endif
+
 endif
 
 include ../../build/library.make

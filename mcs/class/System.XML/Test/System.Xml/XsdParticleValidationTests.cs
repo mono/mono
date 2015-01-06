@@ -48,11 +48,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotDotNet")]
-		// MS.NET throws XmlSchemaException, not -ValidationException.
-#endif
-		[ExpectedException (typeof (ValidationException))]
+		[ExpectedException (typeof (XmlSchemaException))]
 		public void ValidateRootElementOnlyInvalid ()
 		{
 			PrepareReader1 ("1.xsd", "<invalid xmlns='urn:foo' />");
