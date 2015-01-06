@@ -915,6 +915,8 @@ namespace System.Xml.Xsl {
                 Uses big integer arithmetic to get the sequence of digits.
             */
             public static void DblToRgbPrecise(double dbl, byte[] mantissa, out int exponent, out int mantissaSize) {
+                exponent = 0;
+                mantissaSize = 0;
                 BigInteger biNum = new BigInteger();
                 BigInteger biDen = new BigInteger();
                 BigInteger biHi  = new BigInteger();

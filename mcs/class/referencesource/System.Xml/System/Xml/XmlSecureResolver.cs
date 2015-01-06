@@ -19,7 +19,11 @@ namespace System.Xml {
 
         public XmlSecureResolver(XmlResolver resolver, string securityUrl) : this(resolver, CreateEvidenceForUrl(securityUrl)) {}
 
+#if DISABLE_CAS_USE
+        public XmlSecureResolver(XmlResolver resolver, Evidence evidence) : this(resolver, new PermissionSet (PermissionState.None)) {}
+#else
         public XmlSecureResolver(XmlResolver resolver, Evidence evidence) : this(resolver, SecurityManager.GetStandardSandbox(evidence)) {}
+#endif
 
         public XmlSecureResolver(XmlResolver resolver, PermissionSet permissionSet) {
             this.resolver = resolver;
@@ -43,6 +47,7 @@ namespace System.Xml {
 
         public static Evidence CreateEvidenceForUrl(string securityUrl) {
             Evidence evidence = new Evidence();
+#if !DISABLE_CAS_USE
             if (securityUrl != null && securityUrl.Length > 0) {
                 evidence.AddHostEvidence(new Url(securityUrl));
                 evidence.AddHostEvidence(Zone.CreateFromUrl(securityUrl));
@@ -59,6 +64,7 @@ namespace System.Xml {
                     }
                 }
             }
+#endif
             return evidence;
         }
 

@@ -164,6 +164,9 @@ namespace System.Xml.Xsl.XsltOld {
         // The World of Compile
         //
         internal void Compile(NavigatorInput input, XmlResolver xmlResolver, Evidence evidence) {
+#if DISABLE_CAS_USE
+            evidence = null;
+#endif
             Debug.Assert(input != null);
             Debug.Assert(xmlResolver != null);
 //            Debug.Assert(evidence    != null); -- default evidence is null now

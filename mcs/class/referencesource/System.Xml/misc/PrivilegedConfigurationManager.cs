@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-
+#if CONFIGURATION_DEP
 namespace System.Configuration {
 
     using System.Collections.Specialized;
@@ -25,3 +25,4 @@ namespace System.Configuration {
         }
     }
 }
+#endif

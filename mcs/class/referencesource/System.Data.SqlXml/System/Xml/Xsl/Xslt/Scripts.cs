@@ -111,6 +111,7 @@ namespace System.Xml.Xsl.Xslt {
         }
 
         public ScriptClass GetScriptClass(string ns, string language, IErrorHelper errorHelper) {
+#if CONFIGURATION_DEP
             CompilerInfo compilerInfo;
             try {
                 compilerInfo = CodeDomProvider.GetCompilerInfo(language);
@@ -137,6 +138,9 @@ namespace System.Xml.Xsl.Xslt {
             newScriptClass.typeDecl.TypeAttributes = TypeAttributes.Public;
             scriptClasses.Add(newScriptClass);
             return newScriptClass;
+#else
+	    return null;
+#endif
         }
 
         //------------------------------------------------

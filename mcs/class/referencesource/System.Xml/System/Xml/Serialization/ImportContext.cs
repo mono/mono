@@ -14,6 +14,7 @@ namespace System.Xml.Serialization {
     using System.Collections;
     using System.Collections.Specialized;
 
+#if !MONO_HYBRID_SYSTEM_XML
     public class ImportContext {
         bool shareTypes;
         SchemaObjectCache cache; // cached schema top-level items
@@ -83,6 +84,7 @@ namespace System.Xml.Serialization {
             get { return Cache.Warnings; }
         }
     }
+#endif
 
     internal class SchemaObjectCache {
         Hashtable graph;

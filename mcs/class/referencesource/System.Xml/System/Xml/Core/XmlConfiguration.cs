@@ -1,8 +1,9 @@
-
 using System;
-using System.Configuration;
 using System.Globalization;
 using System.Xml;
+
+#if CONFIGURATION_DEP
+using System.Configuration;
 
 namespace System.Xml.XmlConfiguration {
     internal static class XmlConfigurationString {
@@ -139,3 +140,20 @@ namespace System.Xml.XmlConfiguration {
         }
     }
 }
+#else
+namespace System.Xml.XmlConfiguration {
+    public sealed class XsltConfigSection {
+        internal static XmlResolver CreateDefaultResolver() {
+		return XmlNullResolver.Singleton;
+        }
+        internal static bool EnableMemberAccessForXslCompiledTransform = false;
+	internal static bool LimitXPathComplexity = true;
+    }
+    public sealed class XmlReaderSection {
+        internal static XmlResolver CreateDefaultResolver() {
+		return null;
+        }
+	internal static bool ProhibitDefaultUrlResolver = false;
+    }
+}
+#endif
