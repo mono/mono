@@ -115,7 +115,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0002E()
         {
             string computedValue = "";
@@ -458,7 +458,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")]
+        [Ignore(".NET DOM implementation does not match W3C DOM specification.")]
 	public void core0008E()
         {
             string computedValue = "";
@@ -831,7 +831,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0014E()
         {
             object computedValue = null;
@@ -958,7 +958,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")]
+        [Ignore(".NET DOM implementation does not match W3C DOM specification.")]
 	public void core0016E()
         {
             string computedValue = "";
@@ -1355,7 +1355,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0023E()
         {
             string computedValue = "";
@@ -1415,7 +1415,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0024E()
         {
             string computedValue = "";
@@ -1476,7 +1476,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0025E()
         {
             string computedValue = "";
@@ -1537,7 +1537,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0026E()
         {
             string computedValue = "";
@@ -1599,7 +1599,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0027E()
         {
             string computedValue = "";
@@ -1666,7 +1666,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0028E()
         {
             System.Xml.XmlElement addressElement = null;
@@ -1800,7 +1800,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0030E()
         {
             string computedValue = "";

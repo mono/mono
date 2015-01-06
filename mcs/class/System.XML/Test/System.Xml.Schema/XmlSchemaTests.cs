@@ -20,7 +20,8 @@ namespace MonoTests.System.Xml
 	[TestFixture]
 	public class XmlSchemaTests : XmlSchemaAssertion
 	{
-		static readonly bool StrictMsCompliant = Environment.GetEnvironmentVariable ("MONO_STRICT_MS_COMPLIANT") == "yes";
+		// Whatever this flag is used is buggy tests. Now mono implementation is MS reference source based, so enabled.
+		static readonly bool StrictMsCompliant = true;// Environment.GetEnvironmentVariable ("MONO_STRICT_MS_COMPLIANT") == "yes";
 
 		[Test]
 		public void TestRead ()
@@ -537,6 +538,7 @@ namespace MonoTests.System.Xml
 		}	
 		
 		[Test]
+		[Ignore (".NET fails as well as referencesource")]
 		public void TestResolveUri ()
 		{
 			XmlSchemaSet schemaSet = new XmlSchemaSet ();
@@ -583,6 +585,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Ignore (".NET fails as well as referencesource")]
 		public void TestImportSchemaThatIncludesAnother ()
 		{
 			XmlSchema xs = GetSchema ("Test/XmlFiles/xsd/importNamespaceTest2.xsd");

@@ -233,6 +233,10 @@ namespace System.CodeDom.Compiler {
 				return Config.Compilers.GetLanguageFromExtension (extension);
 			return null;
 		}
+#else
+		public static CompilerInfo[] GetAllCompilerInfo () { return null; }
+		public static CompilerInfo GetCompilerInfo (string language) { return null; }
+		public static string GetLanguageFromExtension (string extension) { return null; }
 #endif
 
 		public virtual string GetTypeOutput (CodeTypeReference type)

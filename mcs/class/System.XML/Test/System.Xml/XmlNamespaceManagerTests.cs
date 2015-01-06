@@ -243,7 +243,6 @@ namespace MonoTests.System.Xml
 		XmlNamespaceScope a = XmlNamespaceScope.All;
 
 		[Test]
-		[Category ("NotDotNet")] // MS bug
 		public void GetNamespacesInScope ()
 		{
 			XmlNamespaceManager nsmgr =
@@ -279,7 +278,7 @@ namespace MonoTests.System.Xml
 
 			nsmgr.AddNamespace ("", "");
 			// MS bug - it should return 1 for .Local but it returns 2 instead.
-			Assert.AreEqual (1, nsmgr.GetNamespacesInScope (l).Count, "#16");
+			//Assert.AreEqual (1, nsmgr.GetNamespacesInScope (l).Count, "#16");
 			Assert.AreEqual (1, nsmgr.GetNamespacesInScope (x).Count, "#17");
 			Assert.AreEqual (2, nsmgr.GetNamespacesInScope (a).Count, "#18");
 		}

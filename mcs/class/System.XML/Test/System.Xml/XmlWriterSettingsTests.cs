@@ -36,7 +36,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (Encoding.UTF8, s.Encoding);
 			Assert.AreEqual (false, s.Indent);
 			Assert.AreEqual ("  ", s.IndentChars);
-			Assert.AreEqual ("\r\n", s.NewLineChars);
+			Assert.AreEqual (Environment.NewLine, s.NewLineChars);
 			Assert.AreEqual (false, s.NewLineOnAttributes);
 			Assert.AreEqual (false, s.OmitXmlDeclaration);
 			Assert.AreEqual (NewLineHandling.Replace, s.NewLineHandling);
@@ -383,7 +383,7 @@ namespace MonoTests.System.Xml
 
 #if NET_4_5
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
+		[ExpectedException (typeof (XmlException))]
 		public void ReadonlyAsync ()
 		{
 			var sw = new StringWriter ();

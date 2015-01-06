@@ -269,7 +269,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0006D()
         {
             string computedValue = "";
@@ -935,7 +935,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0019D()
         {
             string computedValue = "";
@@ -994,7 +994,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0020D()
         {
             string computedValue = "";
@@ -1053,7 +1053,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0021D()
         {
             string computedValue = "";
@@ -1112,7 +1112,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0022D()
         {
             string computedValue = "";
@@ -1198,7 +1198,7 @@ namespace nist_dom.fundamental
             }
             catch(System.Exception ex)
             {
-                computedValue = ex.Message;
+                computedValue = ex.GetType () + " : " + ex.Message;
             }
             //
             // Write out results.
@@ -1255,7 +1255,7 @@ namespace nist_dom.fundamental
             }
             catch(System.Exception ex)
             {
-                computedValue = ex.Message;
+                computedValue = ex.GetType () + " : " + ex.Message;
             }
             //
             // Write out results.
