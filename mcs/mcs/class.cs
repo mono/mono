@@ -359,12 +359,8 @@ namespace Mono.CSharp
 			return MemberName.GetSignatureForError ();
 		}
 
-		public string GetSignatureForMetadata ()
+		public virtual string GetSignatureForMetadata ()
 		{
-			if (Parent is TypeDefinition) {
-				return Parent.GetSignatureForMetadata () + "+" + TypeNameParser.Escape (MemberName.Basename);
-			}
-
 			var sb = new StringBuilder ();
 			CreateMetadataName (sb);
 			return sb.ToString ();
@@ -1124,6 +1120,15 @@ namespace Mono.CSharp
 
 				ns = ns.Parent;
 			}
+		}
+
+		public override string GetSignatureForMetadata ()
+		{
+			if (Parent is TypeDefinition) {
+				return Parent.GetSignatureForMetadata () + "+" + TypeNameParser.Escape (FilterNestedName (MemberName.Basename));
+			}
+
+			return base.GetSignatureForMetadata ();
 		}
 
 		public virtual void SetBaseTypes (List<FullNamedExpression> baseTypes)
