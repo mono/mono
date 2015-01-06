@@ -333,6 +333,11 @@ char *GC_parse_map_entry(char *buf_ptr, word *start, word *end,
     extern int __data_start[];
 #   pragma weak data_start
     extern int data_start[];
+#   ifdef PLATFORM_ANDROID
+#     pragma weak _etext
+#     pragma weak __dso_handle
+      extern int _etext[], __dso_handle[];
+#   endif /* PLATFORM_ANDROID */
 # endif /* LINUX */
   extern int _end[];
 
@@ -351,6 +356,17 @@ char *GC_parse_map_entry(char *buf_ptr, word *start, word *end,
 
 #   ifdef LINUX
       /* Try the easy approaches first:	*/
+
+#     ifdef PLATFORM_ANDROID
+        /* Workaround for "gold" (default) linker (as of Android NDK r9).      */
+        if ((word)__data_start < (word)_etext
+            && (word)_etext < (word)__dso_handle) {
+          GC_data_start = (ptr_t)(__dso_handle);
+          GC_ASSERT((word)GC_data_start <= (word)_end);
+          return;
+        }
+#     endif /* PLATFORM_ANDROID */
+
       if ((ptr_t)__data_start != 0) {
 	  GC_data_start = (ptr_t)(__data_start);
 	  return;
