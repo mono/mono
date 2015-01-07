@@ -1837,7 +1837,7 @@ namespace System.Data {
 
 		public XmlReadMode ReadXml (Stream stream)
 		{
-			return ReadXml (new XmlTextReader(stream, null));
+			return ReadXml (new XmlTextReader(stream, new NameTable ()));
 		}
 
 		public XmlReadMode ReadXml (string fileName)
