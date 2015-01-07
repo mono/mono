@@ -63933,7 +63933,7 @@
     </type>
     <type name="X+&lt;Foo&gt;c__async6">
       <method name="Void MoveNext()" attrs="486">
-        <size>130</size>
+        <size>142</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -64412,6 +64412,68 @@
     <type name="N.X">
       <method name="Int32 Main()" attrs="150">
         <size>153</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-77.cs">
+    <type name="Class1">
+      <method name="Void InvokeAction(System.Action)" attrs="132">
+        <size>8</size>
+      </method>
+      <method name="Void Bar()" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Test()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>17</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;Test&gt;m__0()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Class1+CIInterface1">
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] Foo(System.Action`1[System.String])" attrs="486">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Class1+ServiceLocator">
+      <method name="TService GetImplementor[TService]()" attrs="150">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Class1+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>88</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Class1+&lt;Test&gt;c__async6">
+      <method name="Void MoveNext()" attrs="486">
+        <size>264</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Class1+&lt;Test&gt;c__async6+&lt;Test&gt;c__AnonStorey7">
+      <method name="Void &lt;&gt;m__0(System.String)" attrs="131">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
