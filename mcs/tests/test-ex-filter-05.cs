@@ -13,11 +13,11 @@ class Test
 		try {
 			if (e != null)
 				throw e;
-		} catch (Exception ex) if (Verify (() => ex.Message == "foo")) {
+		} catch (Exception ex) when (Verify (() => ex.Message == "foo")) {
 			await Task.Yield ();
 			Console.WriteLine (ex);
 			return 1;
-		} catch (Exception ex) if (Verify (() => ex.Message != null)) {
+		} catch (Exception ex) when (Verify (() => ex.Message != null)) {
 			await Task.Yield ();
 			Console.WriteLine (ex);
 			return 2;

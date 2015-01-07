@@ -237,6 +237,8 @@ namespace Mono.CSharp
 
 		public bool parsing_modifiers;
 
+		public bool parsing_catch_when;
+
 		//
 		// The special characters to inject on streams to run the unit parser
 		// in the special expression mode. Using private characters from
@@ -624,6 +626,9 @@ namespace Mono.CSharp
 			AddKeyword ("async", Token.ASYNC);
 			AddKeyword ("await", Token.AWAIT);
 
+			// Contextual filter catch keyword
+			AddKeyword ("when", Token.WHEN);
+
 			keywords_preprocessor = new KeywordEntry<PreprocessorDirective>[10][];
 
 			AddPreprocessorKeyword ("region", PreprocessorDirective.Region);
@@ -696,6 +701,10 @@ namespace Mono.CSharp
 					token ();
 					res = Token.DEFAULT_COLON;
 				}
+				break;
+			case Token.WHEN:
+				if (current_token != Token.CATCH && !parsing_catch_when)
+					res = -1;
 				break;
 			case Token.WHERE:
 				if (!(handle_where && current_token != Token.COLON) && !query_parsing)

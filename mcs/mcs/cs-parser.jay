@@ -258,6 +258,7 @@ namespace Mono.CSharp
 %token ASYNC
 %token AWAIT
 %token INTERR_OPERATOR
+%token WHEN
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -6415,8 +6416,9 @@ catch_clause
 		
 		lbag.AddLocation (c, GetLocation ($2), GetLocation ($5));
 		$$ = c;
+		lexer.parsing_catch_when = true;
 	  }
-	  opt_catch_filter block_prepared
+	  opt_catch_filter_or_error
 	  {
 	  	((Catch) $6).Filter = (CatchFilterExpression) $7;
 		$$ = $6;
@@ -6432,35 +6434,36 @@ catch_clause
 		
 		$$ = new Catch (null, GetLocation ($1));
 	  }
-	| CATCH open_parens_any type opt_identifier CLOSE_PARENS error
+	;
+
+opt_catch_filter_or_error
+	: opt_catch_filter block_prepared
 	  {
+		$$ = $1;
+	  }
+	| error
+	  {
+		end_block (Location.Null);
 		Error_SyntaxError (yyToken);
-
-		// Required otherwise missing block could not be detected because
-		// start_block is run early
-		var c = new Catch (null, GetLocation ($1));
-		c.TypeExpression = (FullNamedExpression) $3;
-
-		if ($4 != null) {
-			var lt = (LocatedToken) $4;
-			c.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
-		}
-
-		lbag.AddLocation (c, GetLocation ($2), GetLocation ($5));
-
-		$$ = c;
+		$$ = null;
 	  }
 	;
 
 opt_catch_filter
-	: /* empty */
-	| IF open_parens_any expression CLOSE_PARENS
+	: {
+		lexer.parsing_catch_when = false;
+	  }
+	| WHEN
+	  {
+		lexer.parsing_catch_when = false;
+	  }
+	  open_parens_any expression CLOSE_PARENS
 	  {
 		if (lang_version <= LanguageVersion.V_5)
 			FeatureIsNotAvailable (GetLocation ($1), "exception filter");
 
-	  	$$ = new CatchFilterExpression ((Expression) $3, GetLocation ($1));
-	  	lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+		$$ = new CatchFilterExpression ((Expression) $4, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
 	  }
 	;
 
@@ -8073,7 +8076,9 @@ static string GetTokenName (int token)
 		return ";";
 	case Token.TILDE:
 		return "~";
-		
+	case Token.WHEN:
+		return "when";
+
 	case Token.PLUS:
 	case Token.UMINUS:
 	case Token.MINUS:

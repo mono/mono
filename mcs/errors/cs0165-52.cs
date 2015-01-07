@@ -16,9 +16,9 @@ class X
 		int x;
 		try {
 			throw new ApplicationException ();
-		} catch if (Foo (out x)) {
+		} catch when (Foo (out x)) {
 			return 1;
-		} catch if (x > 0) {
+		} catch when (x > 0) {
 			return 0;
 		}
 	}
