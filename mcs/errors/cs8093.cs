@@ -1,3 +1,6 @@
+// CS8093: An argument to nameof operator cannot be extension method group
+// Line: 35
+
 using System;
 
 public class A

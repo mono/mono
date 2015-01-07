@@ -1,4 +1,4 @@
-// CS1061: Type `A' does not contain a definition for `Extension' and no extension method `Extension' of type `A' could be found. Are you missing an assembly reference?
+// CS8093: An argument to nameof operator cannot be extension method group
 // Line: 21
 
 public class A
