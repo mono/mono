@@ -1163,6 +1163,12 @@ public class Tests : TestsBase, ITest2
 		AppDomain.Unload (domain);
 
 		domains_3 ();
+
+		typeof (Tests).GetMethod ("called_from_invoke").Invoke (null, null);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void called_from_invoke () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

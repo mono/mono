@@ -2916,6 +2916,13 @@ public class DebuggerTests
 		AssertThrows<Exception> (delegate {
 				d_method.DeclaringType.GetValue (d_method.DeclaringType.GetField ("static_i"));
 			});
+
+		// Check that .Domain is accessible for stack frames with native transitions
+		e = run_until ("called_from_invoke");
+		ThreadMirror.NativeTransitions = true;
+		foreach (var f in e.Thread.GetFrames ()) {
+			var dom = f.Domain;
+		}
 	}
 
 	[Test]
