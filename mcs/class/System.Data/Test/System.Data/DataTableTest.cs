@@ -54,7 +54,7 @@ namespace MonoTests.System.Data
 	[TestFixture]
 	public class DataTableTest :  DataSetAssertion
 	{
-		string EOL = "\r\n";
+		string EOL = Environment.NewLine;
 
 		[Test]
 		public void Ctor()
