@@ -1178,7 +1178,7 @@ namespace System.Net
 					if (contentLength > 0)
 						continue100 = true;
 
-					if (haveContentLength || gotRequestStream || contentLength > 0)
+					if (haveContentLength || gotRequestStream || contentLength >= 0)
 						webHeaders.SetInternal ("Content-Length", contentLength.ToString ());
 				}
 				webHeaders.RemoveInternal ("Transfer-Encoding");
