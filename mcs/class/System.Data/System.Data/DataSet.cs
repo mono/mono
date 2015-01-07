@@ -781,7 +781,7 @@ namespace System.Data
 
 		public void ReadXmlSchema (Stream stream)
 		{
-			XmlReader reader = new XmlTextReader (stream, null);
+			XmlReader reader = new XmlTextReader (stream, new NameTable ());
 			ReadXmlSchema (reader);
 		}
 
