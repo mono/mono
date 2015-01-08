@@ -85,6 +85,13 @@ namespace System.Runtime.Serialization
 
 		// Constructor
 		[CLSCompliant (false)]
+		public SerializationInfo (Type type, IFormatterConverter converter, bool requireSameTokenInPartialTrust) : this (type, converter)
+		{
+		}
+		
+		
+		// Constructor
+		[CLSCompliant (false)]
 		public SerializationInfo (Type type, IFormatterConverter converter)
 		{
 			if (type == null)
