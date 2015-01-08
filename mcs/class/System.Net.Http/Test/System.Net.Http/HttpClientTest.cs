@@ -249,7 +249,7 @@ namespace MonoTests.System.Net.Http
 
 			var httpClient = new HttpClient (handler) {
 				BaseAddress = new Uri ("https://google.com"),
-				Timeout = TimeSpan.FromSeconds (1)
+				Timeout = TimeSpan.FromMilliseconds (1)
 			};
 
 			try {
