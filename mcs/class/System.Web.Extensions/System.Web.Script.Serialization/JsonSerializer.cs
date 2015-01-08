@@ -431,12 +431,12 @@ namespace System.Web.Script.Serialization
 
 		void WriteValue (StringBuilder output, float value)
 		{
-			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r"));
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r", CultureInfo.InvariantCulture));
 		}
 
 		void WriteValue (StringBuilder output, double value)
 		{
-			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r"));
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r", CultureInfo.InvariantCulture));
 		}
 		
 		void WriteValue (StringBuilder output, Guid value)
@@ -457,7 +457,7 @@ namespace System.Web.Script.Serialization
 				value = MinimumJavaScriptDate;
 
 			long ticks = (value.Ticks - InitialJavaScriptDateTicks) / (long)10000;
-			StringBuilderExtensions.AppendCount (output, maxJsonLength, "\"\\/Date(" + ticks + ")\\/\"");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "\"\\/Date(" + ticks.ToString (CultureInfo.InvariantCulture) + ")\\/\"");
 		}
 		
 		void WriteValue (StringBuilder output, IConvertible value)
