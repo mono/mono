@@ -769,6 +769,8 @@ namespace System.Xml.Serialization
 				cp.ReferencedAssemblies.Add ("System.Xml");
 			if (!cp.ReferencedAssemblies.Contains ("System.Data"))
 				cp.ReferencedAssemblies.Add ("System.Data");
+			if (!cp.ReferencedAssemblies.Contains ("System.Web.Services"))
+				cp.ReferencedAssemblies.Add ("System.Web.Services");
 			
 			CompilerResults res = comp.CompileAssemblyFromFile (cp, file);
 			if (res.Errors.HasErrors || res.CompiledAssembly == null) {
