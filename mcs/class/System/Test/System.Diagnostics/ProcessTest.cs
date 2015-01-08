@@ -839,5 +839,10 @@ namespace MonoTests.System.Diagnostics
 			} catch (InvalidOperationException) {
 			}
 		}
+
+		[Test]
+		public void HasExitedCurrent () {
+			Assert.IsFalse (Process.GetCurrentProcess ().HasExited);
+		}
 	}
 }
