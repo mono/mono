@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SLE = System.Linq.Expressions;
+using System.Text;
 
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
@@ -12372,5 +12373,93 @@ namespace Mono.CSharp
 		{
 			this.loc = loc;
 		}
+	}
+
+	public class InterpolatedString : Expression
+	{
+		readonly StringLiteral start, end;
+		readonly List<Expression> interpolations;
+
+		public InterpolatedString (StringLiteral start, List<Expression> interpolations, StringLiteral end)
+		{
+			this.start = start;
+			this.end = end;
+			this.interpolations = interpolations;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			if (interpolations != null) {
+				for (int i = 0; i < interpolations.Count; i += 2) {
+					var ipi = (InterpolatedStringInsert)interpolations [i];
+					ipi.Resolve (rc);
+				}
+			}
+	
+			string str;
+			Arguments arguments;
+			if (interpolations != null) {
+				arguments = new Arguments (interpolations.Count);
+
+				var sb = new StringBuilder (start.Value);
+				for (int i = 0; i < interpolations.Count; ++i) {
+					if (i % 2 == 0) {
+						sb.Append ('{').Append (i / 2);
+						var isi = (InterpolatedStringInsert)interpolations [i];
+						if (isi.Alignment != null) {
+							sb.Append (',');
+							sb.Append (isi.Alignment.GetValueAsLong ());
+						}
+
+						if (isi.Format != null) {
+							sb.Append (':');
+							sb.Append (isi.Format);
+						}
+
+						sb.Append ('}');
+						arguments.Add (new Argument (interpolations [i]));
+					} else {
+						sb.Append (((StringLiteral)interpolations [i]).Value);
+					}
+				}
+
+				sb.Append (end.Value);
+				str = sb.ToString ();
+			} else {
+				arguments = new Arguments (1);
+				str = start.Value;
+			}
+
+			arguments.Insert (0, new Argument (new StringLiteral (rc.BuiltinTypes, str, start.Location)));
+
+			var members = MemberCache.FindMembers (rc.BuiltinTypes.String, "Format", true);
+			var res = new OverloadResolver (members, OverloadResolver.Restrictions.NoBaseMembers, loc);
+			var best = res.ResolveMember<MethodSpec> (rc, ref arguments);
+			if (best == null)
+				return null;
+
+			return new Invocation (MethodGroupExpr.CreatePredefined (best, best.DeclaringType, Location.Null), arguments).Resolve (rc);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+	}
+
+	public class InterpolatedStringInsert : CompositeExpression
+	{
+		public InterpolatedStringInsert (Expression expr)
+			: base (expr)
+		{
+		}
+
+		public Constant Alignment { get; set; }
+		public string Format { get; set; }
 	}
 }

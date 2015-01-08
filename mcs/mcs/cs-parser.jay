@@ -259,6 +259,8 @@ namespace Mono.CSharp
 %token AWAIT
 %token INTERR_OPERATOR
 %token WHEN
+%token INTERPOLATED_STRING
+%token INTERPOLATED_STRING_END
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -3311,6 +3313,7 @@ primary_expression
 	| pointer_member_access
 	| anonymous_method_expression
 	| undocumented_expressions
+	| interpolated_string
 	;
 
 type_name_expression
@@ -3331,6 +3334,71 @@ literal
 boolean_literal
 	: TRUE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, true, GetLocation ($1)); }
 	| FALSE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, false, GetLocation ($1)); }
+	;
+
+interpolated_string
+	: INTERPOLATED_STRING interpolations INTERPOLATED_STRING_END
+	  {
+		$$ = new InterpolatedString ((StringLiteral) $1, (List<Expression>) $2, (StringLiteral) $3);
+	  }
+	| INTERPOLATED_STRING_END
+	  {
+		$$ = new InterpolatedString ((StringLiteral) $1, null, null);
+	  }
+	;
+
+interpolations
+	: interpolation
+	  {
+		var list = new List<Expression> ();
+		list.Add ((InterpolatedStringInsert) $1);
+		$$ = list;
+	  }
+	| interpolations INTERPOLATED_STRING interpolation
+	  {
+		var list = (List<Expression>) $1;
+		list.Add ((StringLiteral) $2);
+		list.Add ((InterpolatedStringInsert) $3);
+		$$ = list;
+	  }
+	;
+
+interpolation
+	: expression
+	  {
+		$$ = new InterpolatedStringInsert ((Expression) $1);
+	  }
+	| expression COMMA LITERAL
+	  {
+		$$ = new InterpolatedStringInsert ((Expression) $1) {
+			Alignment = (Constant)$3
+		};
+	  }
+	| expression COLON
+	  {
+		lexer.parsing_interpolation_format = true;
+	  }
+	  LITERAL
+	  {
+		lexer.parsing_interpolation_format = false;
+
+		$$ = new InterpolatedStringInsert ((Expression) $1) {
+			Format = (string)$4
+		};
+	  }
+	| expression COMMA LITERAL COLON
+	  {
+		lexer.parsing_interpolation_format = true;
+	  }
+	  LITERAL
+	  {
+		lexer.parsing_interpolation_format = false;
+
+		$$ = new InterpolatedStringInsert ((Expression) $1) {
+			Alignment = (Constant)$3,
+			Format = (string) $6
+		};
+	  }
 	;
 
 
@@ -8078,6 +8146,10 @@ static string GetTokenName (int token)
 		return "~";
 	case Token.WHEN:
 		return "when";
+	case Token.INTERPOLATED_STRING_END:
+		return "}";
+	case Token.INTERPOLATED_STRING:
+		return "${";
 
 	case Token.PLUS:
 	case Token.UMINUS:
