@@ -61,7 +61,10 @@ namespace System.Runtime.Diagnostics
         [PermissionSet(SecurityAction.Demand, Unrestricted = true)]
         protected DiagnosticsEventProvider(Guid providerGuid)
         {
-            this.providerId = providerGuid;            
+            this.providerId = providerGuid;
+	    var p = (int) Environment.OSVersion.Platform;
+	    if (p == 4 || p == 128)
+		    return;
             EtwRegister();
         }
 
