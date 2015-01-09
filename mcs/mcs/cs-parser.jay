@@ -3368,10 +3368,10 @@ interpolation
 	  {
 		$$ = new InterpolatedStringInsert ((Expression) $1);
 	  }
-	| expression COMMA LITERAL
+	| expression COMMA expression
 	  {
 		$$ = new InterpolatedStringInsert ((Expression) $1) {
-			Alignment = (Constant)$3
+			Alignment = (Expression)$3
 		};
 	  }
 	| expression COLON
@@ -3386,7 +3386,7 @@ interpolation
 			Format = (string)$4
 		};
 	  }
-	| expression COMMA LITERAL COLON
+	| expression COMMA expression COLON
 	  {
 		lexer.parsing_interpolation_format = true;
 	  }
@@ -3395,7 +3395,7 @@ interpolation
 		lexer.parsing_interpolation_format = false;
 
 		$$ = new InterpolatedStringInsert ((Expression) $1) {
-			Alignment = (Constant)$3,
+			Alignment = (Expression)$3,
 			Format = (string) $6
 		};
 	  }
