@@ -1698,6 +1698,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if ((ModFlags & Modifiers.EXTERN) != 0 && Initializer != null) {
+				Report.Error (8091, Location, "`{0}': Contructors cannot be extern and have a constructor initializer",
+					GetSignatureForError ());
+			}
+
 			var ca = ModifiersExtensions.MethodAttr (ModFlags) | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName;
 
 			ConstructorBuilder = Parent.TypeBuilder.DefineConstructor (
