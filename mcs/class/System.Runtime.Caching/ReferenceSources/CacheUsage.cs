@@ -7,13 +7,22 @@ namespace System.Runtime.Caching {
 		public bool IsInvalid {
 			get { return this == INVALID; }
 		}
+
+		// This is used to compare MemoryCacheEntry that have the same UtcLastUpdateUsage.
+		public int DateTimeIndex {
+			get; set;
+		}
 	}
 
 	class CacheUsageHelper : ICacheEntryHelper
 	{
 		public int Compare(MemoryCacheEntry entry1, MemoryCacheEntry entry2)
 		{
-			return DateTime.Compare (entry1.UtcLastUpdateUsage , entry2.UtcLastUpdateUsage);
+			var ret = DateTime.Compare (entry1.UtcLastUpdateUsage , entry2.UtcLastUpdateUsage);
+			if (ret == 0)
+				return entry1.UsageEntryRef.DateTimeIndex - entry2.UsageEntryRef.DateTimeIndex;
+
+			return ret;
 		}
 
 		public DateTime GetDateTime (MemoryCacheEntry entry)
@@ -28,6 +37,9 @@ namespace System.Runtime.Caching {
 		public static TimeSpan MIN_LIFETIME_FOR_USAGE = new TimeSpan (0, 0, 10);
 		public static CacheUsageHelper helper = new CacheUsageHelper ();
 
+		public DateTime prevDateTime;
+		public int dateTimeIndex;
+
 		public CacheUsage (MemoryCacheStore store)
 			: base (store, helper)
 		{
@@ -35,8 +47,17 @@ namespace System.Runtime.Caching {
 
 		public void Add (MemoryCacheEntry entry)
 		{
-			entry.UtcLastUpdateUsage = DateTime.UtcNow;
+			var now = DateTime.UtcNow;
+			if (now == prevDateTime)
+				dateTimeIndex++;
+			else
+				dateTimeIndex = 0;
+
+			prevDateTime = now;
+
+			entry.UtcLastUpdateUsage = now;
 			entry.UsageEntryRef = new UsageEntryRef ();
+			entry.UsageEntryRef.DateTimeIndex = dateTimeIndex;
 			base.Add (entry);
 		}
 
