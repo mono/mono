@@ -34,6 +34,11 @@ namespace MonoTests.System.Runtime.InteropServices
 			{
 			}
 
+			public void ChangeHandle (IntPtr hnd)
+			{
+				this.handle = hnd;
+			}
+
 			protected override bool ReleaseHandle ()
 			{
 				released = true;
@@ -43,7 +48,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Dispose1 ()
+		public void BadDispose1 ()
 		{
 			FakeSafeHandle sf = new FakeSafeHandle ();
 
@@ -53,21 +58,135 @@ namespace MonoTests.System.Runtime.InteropServices
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Dispose2 ()
+		public void BadDispose2 ()
 		{
 			FakeSafeHandle sf = new FakeSafeHandle ();
 
-			sf.DangerousRelease ();
 			sf.Close ();
+			sf.DangerousRelease ();
 		}
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Dispose3 ()
+		public void BadDispose3 ()
 		{
 			FakeSafeHandle sf = new FakeSafeHandle ();
 
+			sf.Dispose ();
+			sf.DangerousRelease ();
+		}
+
+		[Test]
+		public void GoodDispose ()
+		{
+			int dummyHandle = 0xDEAD;
+			FakeSafeHandle sf = new FakeSafeHandle ();
+			sf.ChangeHandle (new IntPtr (dummyHandle));
+			Assert.AreEqual ((int)sf.DangerousGetHandle(), dummyHandle, "handle");
+
+			sf.DangerousRelease ();
+
 			sf.Close ();
+			sf.Dispose ();
+
+			sf.Close ();
+			sf.Dispose ();
+
+			//In Ms.Net SafeHandle does not change the value of the handle after being SetInvalid or Disposed.
+			Assert.AreEqual ((int)sf.DangerousGetHandle(), dummyHandle, "handle");
+			//Handle was closed properly.
+			Assert.IsTrue (sf.released, "released");
+			Assert.IsTrue (sf.IsClosed, "closed");
+			//Handle value is not changed, so the value itself is still valid (not 0 or -1)
+			Assert.IsFalse (sf.IsInvalid, "invalid");
+		}
+
+		[Test]
+		public void SetHandleAsInvalid ()
+		{
+			int dummyHandle = 0xDEAD;
+			FakeSafeHandle sf = new FakeSafeHandle ();
+
+			sf.ChangeHandle (new IntPtr (dummyHandle));
+			Assert.AreEqual ((int)sf.DangerousGetHandle(), dummyHandle, "handle");
+
+			sf.SetHandleAsInvalid();
+
+			//In Ms.Net SafeHandle does not change the value of the handle after being SetInvalid or Disposed.
+			Assert.AreEqual ((int)sf.DangerousGetHandle(), dummyHandle, "handle");
+			//Released == false since handle was not released, Set Invalid was called before it could be released.
+			Assert.IsFalse (sf.released, "released");
+			//IsClosed == true since handle is pointing to a disposed or invalid object.
+			Assert.IsTrue (sf.IsClosed, "closed");
+			//Handle value is not changed, so the value itself is still valid (not 0 or -1)
+			Assert.IsFalse (sf.IsInvalid, "invalid");
+		}
+
+		[Test]
+		public void SetInvalidDispose ()
+		{
+			int dummyHandle = 0xDEAD;
+			FakeSafeHandle sf = new FakeSafeHandle (true);
+
+			sf.ChangeHandle (new IntPtr (dummyHandle));
+			Assert.AreEqual ((int)sf.DangerousGetHandle(), dummyHandle, "handle");
+
+			sf.SetHandleAsInvalid();
+			sf.Dispose ();
+
+			//In Ms.Net SafeHandle does not change the value of the handle after being SetInvalid or Disposed.
+			Assert.AreEqual ((int)sf.DangerousGetHandle(), dummyHandle, "handle");
+			//Released == false since handle was not released, Set Invalid was called before it could be released.
+			Assert.IsFalse (sf.released, "released");
+			//IsClosed == true since handle is pointing to a disposed or invalid object.
+			Assert.IsTrue (sf.IsClosed, "closed");
+			//Handle value is not changed, so the value itself is still valid (not 0 or -1)
+			Assert.IsFalse (sf.IsInvalid, "invalid");
+		}
+
+		[Test]
+		public void ReleaseAfterDispose1 ()
+		{
+			int dummyHandle = 0xDEAD;
+			FakeSafeHandle sf = new FakeSafeHandle (true);
+			sf.ChangeHandle (new IntPtr (dummyHandle));
+			Assert.AreEqual ((int)sf.DangerousGetHandle(), dummyHandle, "handle");
+
+			bool success = false;
+			sf.DangerousAddRef(ref success);
+			Assert.IsTrue (success, "dar");
+
+			sf.Dispose ();
+			//Still one ref left.
+			Assert.IsFalse (sf.released, "released");
+			Assert.IsFalse (sf.IsClosed, "closed");
+
+			sf.DangerousRelease ();
+			//In Ms.Net SafeHandle does not change the value of the handle after being SetInvalid or Disposed.
+			Assert.AreEqual ((int)sf.DangerousGetHandle(), dummyHandle, "handle");
+			//Handle was closed properly.
+			Assert.IsTrue (sf.released, "released");
+			Assert.IsTrue (sf.IsClosed, "closed");
+			//Handle value is not changed, so the value itself is still valid (not 0 or -1)
+			Assert.IsFalse (sf.IsInvalid, "invalid");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void ReleaseAfterDispose2 ()
+		{
+			FakeSafeHandle sf = new FakeSafeHandle (true);
+
+			bool success = false;
+			sf.DangerousAddRef(ref success);
+			Assert.IsTrue (success, "dar");
+
+			sf.Dispose ();
+
+			sf.DangerousRelease ();
+
+			//Second release need to throw ObjectDisposedException.
+			//No more ref to release.
 			sf.DangerousRelease ();
 		}
 
@@ -77,15 +196,18 @@ namespace MonoTests.System.Runtime.InteropServices
 			FakeSafeHandle sf = new FakeSafeHandle (false);
 
 			sf.Close ();
-			Assert.AreEqual (sf.released, false, "r1");
+			Assert.IsFalse (sf.released, "r1");
+			Assert.IsTrue (sf.IsClosed, "c1");
 
 			sf = new FakeSafeHandle (false);
 			sf.DangerousRelease ();
-			Assert.AreEqual (sf.released, false, "r2");
+			Assert.IsFalse (sf.released, "r2");
+			Assert.IsTrue (sf.IsClosed, "c2");
 
 			sf = new FakeSafeHandle (false);
 			((IDisposable) sf).Dispose ();
-			Assert.AreEqual (sf.released, false, "r3");
+			Assert.IsFalse (sf.released, "r3");
+			Assert.IsTrue (sf.IsClosed, "c3");
 		}
 
 		//
@@ -100,28 +222,13 @@ namespace MonoTests.System.Runtime.InteropServices
 		[Test]
 		public void DangerousAddRefOnNewInstance ()
 		{
-			var h = new IntPtrSafe ();
-			var success = false;
-			h.DangerousAddRef (ref success);
-			Assert.AreEqual (success, true, "daroni");
-		}
-		
-		public class IntPtrSafe : SafeHandle {
-			public IntPtrSafe() : base(IntPtr.Zero, true)
-			{
-			}
+			FakeSafeHandle sf = new FakeSafeHandle ();
+			sf.ChangeHandle (IntPtr.Zero);
+			Assert.IsTrue (sf.IsInvalid, "invalid");
 
-			protected override bool ReleaseHandle()
-			{
-				return true;
-			}
-
-			public IntPtr Handle { get; set; }
-
-			public override bool IsInvalid
-			{
-				get { return Handle == IntPtr.Zero; }
-			}
+			bool success = false;
+			sf.DangerousAddRef (ref success);
+			Assert.IsTrue (success, "daroni");
 		}
 	}
 }
