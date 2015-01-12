@@ -61,7 +61,6 @@ namespace System.Runtime.InteropServices
 		// MonoSafeHandle
 		//
 		protected IntPtr handle;
-		IntPtr invalid_handle_value;
 		int refcount;
 		bool owns_handle;
 		
@@ -74,7 +73,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle)
 		{
-			invalid_handle_value = invalidHandleValue;
+			handle = invalidHandleValue;
 
 			if (!ownsHandle) {
 				GC.SuppressFinalize (this);
@@ -109,7 +108,6 @@ namespace System.Runtime.InteropServices
 			} finally {
 				if (registered && newcount == 0 && owns_handle && !IsInvalid){
 					ReleaseHandle ();
-					handle = invalid_handle_value;
 					refcount = -1;
 				}
 			}
@@ -159,10 +157,6 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public IntPtr DangerousGetHandle ()
 		{
-			if (refcount <= 0){
-				throw new ObjectDisposedException (GetType ().FullName);
-			}
-
 			return handle;
 		}
 
@@ -180,7 +174,6 @@ namespace System.Runtime.InteropServices
 
 			if (newcount == 0 && owns_handle && !IsInvalid){
 				ReleaseHandle ();
-				handle = invalid_handle_value;
 			}
 		}
 
@@ -198,7 +191,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void SetHandleAsInvalid ()
 		{
-			handle = invalid_handle_value;
+			refcount = -1;
 		}
 		
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
@@ -209,7 +202,6 @@ namespace System.Runtime.InteropServices
 			} else {
 				if (owns_handle && !IsInvalid){
 					ReleaseHandle ();
-					handle = invalid_handle_value;
 				}
 			}
 		}
