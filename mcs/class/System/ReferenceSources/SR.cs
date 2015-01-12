@@ -210,5 +210,22 @@ partial class SR
 	public const string Arg_EnumIllegalVal = "Arg_EnumIllegalVal";
 	public const string Argument_InvalidClassAttribute = "Argument_InvalidClassAttribute";
 	public const string Argument_InvalidPermissionState = "Argument_InvalidPermissionState";
-	public const string Argument_WrongType = "Argument_WrongType";		
+	public const string Argument_WrongType = "Argument_WrongType";
+
+	public const string ArgumentOutOfRange_NeedPosNum = "ArgumentOutOfRange_NeedPosNum";
+	public const string Argument_SemaphoreInitialMaximum = "Argument_SemaphoreInitialMaximum";
+	public const string Argument_WaitHandleNameTooLong = "Argument_WaitHandleNameTooLong";
+	public const string BarrierPostPhaseException = "BarrierPostPhaseException";
+	public const string Barrier_AddParticipants_NonPositive_ArgumentOutOfRange = "Barrier_AddParticipants_NonPositive_ArgumentOutOfRange";
+	public const string Barrier_AddParticipants_Overflow_ArgumentOutOfRange = "Barrier_AddParticipants_Overflow_ArgumentOutOfRange";
+	public const string Barrier_Dispose = "Barrier_Dispose";
+	public const string Barrier_InvalidOperation_CalledFromPHA = "Barrier_InvalidOperation_CalledFromPHA";
+	public const string Barrier_RemoveParticipants_ArgumentOutOfRange = "Barrier_RemoveParticipants_ArgumentOutOfRange";
+	public const string Barrier_RemoveParticipants_InvalidOperation = "Barrier_RemoveParticipants_InvalidOperation";
+	public const string Barrier_RemoveParticipants_NonPositive_ArgumentOutOfRange = "Barrier_RemoveParticipants_NonPositive_ArgumentOutOfRange";
+	public const string Barrier_SignalAndWait_ArgumentOutOfRange = "Barrier_SignalAndWait_ArgumentOutOfRange";
+	public const string Barrier_SignalAndWait_InvalidOperation_ThreadsExceeded = "Barrier_SignalAndWait_InvalidOperation_ThreadsExceeded";
+	public const string Barrier_SignalAndWait_InvalidOperation_ZeroTotal = "Barrier_SignalAndWait_InvalidOperation_ZeroTotal";
+	public const string Barrier_ctor_ArgumentOutOfRange = "Barrier_ctor_ArgumentOutOfRange";
+	public const string WaitHandleCannotBeOpenedException_InvalidHandle = "WaitHandleCannotBeOpenedException_InvalidHandle";	
 }

@@ -701,8 +701,6 @@ System.Threading/Semaphore.cs
 System.Threading/SemaphoreFullException.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
-System.Threading/Barrier.cs
-System.Threading/BarrierPostPhaseException.cs
 System.Timers/ElapsedEventArgs.cs
 System.Timers/ElapsedEventHandler.cs
 System.Timers/Timer.cs
@@ -1098,6 +1096,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/UInt64Converter.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/WarningException.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/Win32Exception.cs
+
+../../../external/referencesource/System/sys/system/threading/barrier.cs
 
 ../../../external/referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
 

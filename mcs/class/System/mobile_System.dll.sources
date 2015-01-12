@@ -371,8 +371,6 @@ System.Security.Cryptography/AsnEncodedDataEnumerator.cs
 System.Security.Cryptography/Oid.cs
 System.Security.Cryptography/OidCollection.cs
 System.Security.Cryptography/OidEnumerator.cs
-System.Threading/Barrier.cs
-System.Threading/BarrierPostPhaseException.cs
 System.Threading/Semaphore.cs
 System.Threading/SemaphoreFullException.cs
 System.Threading/ThreadExceptionEventArgs.cs
@@ -722,6 +720,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/UInt64Converter.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/WarningException.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/Win32Exception.cs
+
+../../../external/referencesource/System/sys/system/threading/barrier.cs
 
 ../../../external/referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
 
