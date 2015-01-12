@@ -61,9 +61,10 @@ namespace System.Runtime.InteropServices
 		// MonoSafeHandle
 		//
 		protected IntPtr handle;
-		IntPtr invalid_handle_value;
 		int refcount;
 		bool owns_handle;
+		bool set_as_closed;
+		int is_disposed;
 		
 #if NET_2_1
 		protected SafeHandle ()
@@ -71,48 +72,32 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 #endif
+
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle)
 		{
-			invalid_handle_value = invalidHandleValue;
+			handle = invalidHandleValue;
+			owns_handle = ownsHandle;
+			refcount = 1;
 
+			// Finalizer is not called if we are not the owner of the handle.
 			if (!ownsHandle) {
 				GC.SuppressFinalize (this);
-			} else {
-				owns_handle = true;
 			}
+		}
 
-			refcount = 1;
+		~SafeHandle ()
+		{
+			Dispose (false);
 		}
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Close ()
 		{
-			if (refcount == 0)
-				throw new ObjectDisposedException (GetType ().FullName);
-
-			int newcount = 0, current = 0;
-			bool registered = false;
-			RuntimeHelpers.PrepareConstrainedRegions ();
-			try {
-				do {
-					current = refcount;
-					newcount = current-1;
-
-					// perform changes in finally to avoid async interruptions
-					try {}
-					finally {
-						if (Interlocked.CompareExchange (ref refcount, newcount, current) == current)
-							registered = true;
-					}
-				} while (!registered);
-			} finally {
-				if (registered && newcount == 0 && owns_handle && !IsInvalid){
-					ReleaseHandle ();
-					handle = invalid_handle_value;
-					refcount = -1;
-				}
-			}
+			// Closing here instead of calling dispose can cause
+			// SafeHandle to Dispose while the overriding class has
+			// no way to dispose of ressources.
+			Dispose ();
 		}
 
 		//
@@ -127,7 +112,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public void DangerousAddRef (ref bool success)
 		{
-			if (refcount <= 0)
+			if (IsClosed)
 				throw new ObjectDisposedException (GetType ().FullName);
 
 			bool registered = false;
@@ -159,16 +144,14 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public IntPtr DangerousGetHandle ()
 		{
-			if (refcount <= 0){
-				throw new ObjectDisposedException (GetType ().FullName);
-			}
-
 			return handle;
 		}
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void DangerousRelease ()
 		{
+			// Allow to release remaining references,
+			// even after the handle is closed.
 			if (refcount <= 0)
 				throw new ObjectDisposedException (GetType ().FullName);
 
@@ -180,7 +163,6 @@ namespace System.Runtime.InteropServices
 
 			if (newcount == 0 && owns_handle && !IsInvalid){
 				ReleaseHandle ();
-				handle = invalid_handle_value;
 			}
 		}
 
@@ -191,25 +173,49 @@ namespace System.Runtime.InteropServices
 			GC.SuppressFinalize (this);
 		}
 
-		//
-		// See documentation, this invalidates the handle without
-		// closing it.
-		//
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		public void SetHandleAsInvalid ()
-		{
-			handle = invalid_handle_value;
-		}
-		
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		protected virtual void Dispose (bool disposing)
 		{
+			//Ensure that dispose is only called once.
+			if (Interlocked.Exchange(ref is_disposed, 1) != 0)
+				return;
+
+			if (IsClosed)
+				return;
+
 			if (disposing) {
-				Close ();
+				InternalClose ();
 			} else {
-				if (owns_handle && !IsInvalid){
+				refcount = -1;
+				if (owns_handle && !IsInvalid)
 					ReleaseHandle ();
-					handle = invalid_handle_value;
+			}
+		}
+
+		private void InternalClose ()
+		{
+			if (IsClosed)
+				return;
+
+			int newcount = 0, current = 0;
+			bool registered = false;
+			RuntimeHelpers.PrepareConstrainedRegions ();
+			try {
+				do {
+					current = refcount;
+					newcount = current-1;
+
+					// perform changes in finally to avoid async interruptions
+					try {}
+					finally {
+						if (Interlocked.CompareExchange (ref refcount, newcount, current) == current)
+							registered = true;
+					}
+				} while (!registered);
+			} finally {
+				if (registered && newcount == 0 && owns_handle && !IsInvalid){
+					ReleaseHandle ();
+					refcount = -1;
 				}
 			}
 		}
@@ -223,10 +229,28 @@ namespace System.Runtime.InteropServices
 			this.handle = handle;
 		}
 
+		//
+		// See documentation, this closes the handle without calling ReleaseHandle
+		//
+		// Called by an overriding class when the handle is no logner valid
+		// due to an external change. (IsClosed == true)
+		//
+		// In MS after this call, the handle value remains unchanged.
+		//
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+		public void SetHandleAsInvalid ()
+		{
+			owns_handle = false;
+			set_as_closed = true;
+
+			//Disable finalizer as we don't own the handle.
+			GC.SuppressFinalize (this);
+		}
+
 		public bool IsClosed {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			get {
-				return refcount <= 0;
+				return refcount <= 0 || set_as_closed;
 			}
 		}
 
@@ -235,9 +259,5 @@ namespace System.Runtime.InteropServices
 			get;
 		}
 
-		~SafeHandle ()
-		{
-			Dispose (false);
-		}
 	}
 }
