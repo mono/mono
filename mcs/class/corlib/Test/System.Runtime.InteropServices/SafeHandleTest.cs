@@ -77,6 +77,16 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		public void MultipleDisposes ()
+		{
+			FakeSafeHandle sf = new FakeSafeHandle ();
+
+			sf.Dispose ();
+			sf.Dispose ();
+			sf.Dispose ();
+		}
+
+		[Test]
 		public void GoodDispose ()
 		{
 			int dummyHandle = 0xDEAD;

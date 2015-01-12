@@ -87,8 +87,12 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Close ()
 		{
-			if (refcount == 0)
-				throw new ObjectDisposedException (GetType ().FullName);
+			if (refcount <= 0) {
+				if (refcount == 0)
+					throw new ObjectDisposedException (GetType ().FullName);
+
+				return;
+			}
 
 			int newcount = 0, current = 0;
 			bool registered = false;
@@ -106,8 +110,9 @@ namespace System.Runtime.InteropServices
 					}
 				} while (!registered);
 			} finally {
-				if (registered && newcount == 0 && owns_handle && !IsInvalid){
-					ReleaseHandle ();
+				if (registered && newcount == 0) {
+					if (owns_handle && !IsInvalid)
+						ReleaseHandle ();
 					refcount = -1;
 				}
 			}
