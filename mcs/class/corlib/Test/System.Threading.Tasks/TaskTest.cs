@@ -1850,7 +1850,7 @@ namespace MonoTests.System.Threading.Tasks
 			bool? is_bg = null;
 			var t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; });
 			t.Start ();
-			Assert.IsTrue (t.Wait (100));
+			t.Wait ();
 			Assert.IsTrue ((bool)is_tp, "#1");
 			Assert.IsTrue ((bool)is_bg, "#2");
 
@@ -1858,8 +1858,7 @@ namespace MonoTests.System.Threading.Tasks
 			is_bg = null;
 			t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; }, TaskCreationOptions.LongRunning);
 			t.Start ();
-
-			Assert.IsTrue (t.Wait (100));
+			t.Wait ();
 			Assert.IsFalse ((bool) is_tp, "#11");
 			Assert.IsTrue ((bool) is_bg, "#12");
 		}
