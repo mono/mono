@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs.in
 ../../build/common/Locale.cs
+../../build/common/SR.cs
 System.Data/AcceptRejectRule.cs
 System.Data/ColumnTypeConverter.cs
 System.Data/CommandBehavior.cs
@@ -146,9 +147,7 @@ System.Data.Common/DbDataAdapter.cs
 System.Data.Common/DbDataPermissionAttribute.cs
 System.Data.Common/DbDataPermission.cs
 System.Data.Common/DbDataReader.cs
-System.Data.Common/DbDataRecord.cs
 System.Data.Common/DbDataSourceEnumerator.cs
-System.Data.Common/DbEnumerator.cs
 System.Data.Common/DbException.cs
 System.Data.Common/DbMetaDataCollectionNames.cs
 System.Data.Common/DbMetaDataColumnNames.cs
@@ -163,7 +162,6 @@ System.Data.Common/DbTable.cs
 System.Data.Common/DbTransaction.cs
 System.Data.Common/DbTypes.cs
 System.Data.Common/ExceptionHelper.cs
-System.Data.Common/FieldNameLookup.cs
 System.Data.Common/GroupByBehavior.cs
 System.Data.Common/IdentifierCase.cs
 System.Data.Common/Index.cs
@@ -172,7 +170,6 @@ System.Data.Common/PermissionHelper.cs
 System.Data.Common/RecordCache.cs
 System.Data.Common/RowUpdatedEventArgs.cs
 System.Data.Common/RowUpdatingEventArgs.cs
-System.Data.Common/SchemaInfo.cs
 System.Data.Common/SchemaTableColumn.cs
 System.Data.Common/SchemaTableOptionalColumn.cs
 System.Data.Common/SupportedJoinOperators.cs
@@ -338,3 +335,22 @@ Mono.Data.SqlExpressions/Functions.cs
 Mono.Data.SqlExpressions/Like.cs
 Mono.Data.SqlExpressions/In.cs
 Mono.Data.SqlExpressions/Aggregation.cs
+
+ReferenceSources/Bid.cs
+ReferenceSources/BidArgumentTypeAttribute.cs
+ReferenceSources/BidMethodAttribute.cs
+ReferenceSources/DataStorage.cs
+ReferenceSources/DbConnectionStringDefaults.cs
+ReferenceSources/InOutOfProcHelper.cs
+ReferenceSources/ODB.cs
+ReferenceSources/Res.cs
+ReferenceSources/SafeNativeMethods.cs
+ReferenceSources/ThisAssembly.cs
+
+../../../external/referencesource/System.Data/System/Data/Common/AdapterUtil.cs
+../../../external/referencesource/System.Data/System/Data/Common/DataRecordInternal.cs
+../../../external/referencesource/System.Data/System/Data/Common/dbdatarecord.cs
+../../../external/referencesource/System.Data/System/Data/Common/dbenumerator.cs
+../../../external/referencesource/System.Data/System/Data/Common/FieldNameLookup.cs
+../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolProviderInfo.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/ApplicationIntent.cs
