@@ -1332,7 +1332,7 @@ namespace System.Data.SqlClient
 				if (value == DBNull.Value)
 					return SqlDecimal.Null;
 				if (value is TdsBigDecimal)
-					return SqlDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+					return SqlDecimalExtensions.FromTdsBigDecimal ((TdsBigDecimal) value);
 				if (value is Int64)
 					return (SqlDecimal)((long) value);
 				return (SqlDecimal) ((decimal) value);

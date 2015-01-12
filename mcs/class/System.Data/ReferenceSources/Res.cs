@@ -1028,8 +1028,8 @@ static class Res
 	public const string SqlMisc_MessageString = "SqlMisc_MessageString";
 	public const string SqlMisc_NoBufferMessage = "SqlMisc_NoBufferMessage";
 	public const string SqlMisc_NotFilledMessage = "SqlMisc_NotFilledMessage";
-	public const string SqlMisc_NullString = "SqlMisc_NullString";
-	public const string SqlMisc_NullValueMessage = "SqlMisc_NullValueMessage";
+	public const string SqlMisc_NullString = "Null";
+	public const string SqlMisc_NullValueMessage = "Data is Null. This method or property cannot be called on Null values.";
 	public const string SqlMisc_NumeToDecOverflowMessage = "SqlMisc_NumeToDecOverflowMessage";
 	public const string SqlMisc_SqlTypeMessage = "SqlMisc_SqlTypeMessage";
 	public const string SqlMisc_StreamErrorMessage = "SqlMisc_StreamErrorMessage";
