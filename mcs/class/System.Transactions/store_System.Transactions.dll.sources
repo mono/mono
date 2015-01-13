@@ -1,0 +1,3 @@
+#include System.Transactions.dll.sources
+
+..\corlib\System\SystemException.cs

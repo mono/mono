@@ -721,6 +721,7 @@ namespace System.Data
 			WriteXml (writer);
 		}
 
+#if !WINDOWS_STORE_APP
 		///<summary>
 		/// Writes the current data for the DataSet to the specified file.
 		/// </summary>
@@ -734,6 +735,7 @@ namespace System.Data
 				writer.WriteEndDocument ();
 			}
 		}
+#endif
 
 		public void WriteXml (TextWriter writer)
 		{
@@ -746,6 +748,7 @@ namespace System.Data
 			WriteXml (writer, XmlWriteMode.IgnoreSchema);
 		}
 
+#if !WINDOWS_STORE_APP
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
 			using (Stream file = File.Create (fileName))
@@ -755,6 +758,7 @@ namespace System.Data
 				writer.WriteEndDocument ();
 			}
 		}
+#endif
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
@@ -811,6 +815,7 @@ namespace System.Data
 			WriteXmlSchema (writer);
 		}
 
+#if !WINDOWS_STORE_APP
 		public void WriteXmlSchema (string fileName)
 		{
 			using (Stream file = File.Create (fileName))
@@ -820,6 +825,7 @@ namespace System.Data
 				writer.WriteEndDocument ();
 			}
 		}
+#endif
 
 		public void WriteXmlSchema (TextWriter writer)
 		{

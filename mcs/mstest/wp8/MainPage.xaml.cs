@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using WP8UnitTestApp.Resources;
 using System.Threading;
 using Microsoft.VisualStudio.TestPlatform.Core;
 using vstest_executionengine_platformbridge;

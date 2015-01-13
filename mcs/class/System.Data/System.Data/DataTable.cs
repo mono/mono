@@ -2112,10 +2112,12 @@ namespace System.Data {
 			WriteXml (writer, XmlWriteMode.IgnoreSchema, false);
 		}
 
+#if !WINDOWS_STORE_APP
 		public void WriteXml (string fileName)
 		{
 			WriteXml (fileName, XmlWriteMode.IgnoreSchema, false);
 		}
+#endif
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
@@ -2132,20 +2134,24 @@ namespace System.Data {
 			WriteXml (writer, mode, false);
 		}
 
+#if !WINDOWS_STORE_APP
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
 			WriteXml (fileName, mode, false);
 		}
+#endif
 
 		public void WriteXml (Stream stream, bool writeHierarchy)
 		{
 			WriteXml (stream, XmlWriteMode.IgnoreSchema, writeHierarchy);
 		}
 
+#if !WINDOWS_STORE_APP
 		public void WriteXml (string fileName, bool writeHierarchy)
 		{
 			WriteXml (fileName, XmlWriteMode.IgnoreSchema, writeHierarchy);
 		}
+#endif
 
 		public void WriteXml (TextWriter writer, bool writeHierarchy)
 		{
@@ -2162,6 +2168,7 @@ namespace System.Data {
 			WriteXml (XmlWriter.Create (stream, GetWriterSettings ()), mode, writeHierarchy);
 		}
 
+#if !WINDOWS_STORE_APP
 		public void WriteXml (string fileName, XmlWriteMode mode, bool writeHierarchy)
 		{
 			using (Stream file = File.Create (fileName))
@@ -2169,6 +2176,7 @@ namespace System.Data {
 				WriteXml (xw, mode, writeHierarchy);
 			}
 		}
+#endif
 
 		public void WriteXml (TextWriter writer, XmlWriteMode mode, bool writeHierarchy)
 		{
@@ -2291,6 +2299,7 @@ namespace System.Data {
 */
 		}
 
+#if !WINDOWS_STORE_APP
 		public void WriteXmlSchema (string fileName)
 		{
 			if (fileName == "") {
@@ -2306,6 +2315,7 @@ namespace System.Data {
 				WriteXmlSchema (writer);
 			}
 		}
+#endif
 
 		public void WriteXmlSchema (Stream stream, bool writeHierarchy)
 		{
@@ -2377,6 +2387,7 @@ namespace System.Data {
 //			}
 		}
 
+#if !WINDOWS_STORE_APP
 		public void WriteXmlSchema (string fileName, bool writeHierarchy)
 		{
 			if (fileName == "") {
@@ -2392,6 +2403,7 @@ namespace System.Data {
 				WriteXmlSchema (writer, writeHierarchy);
 			}
 		}
+#endif
 	}
 
 	partial class DataTable

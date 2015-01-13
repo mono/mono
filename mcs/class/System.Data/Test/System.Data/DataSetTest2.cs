@@ -3714,4 +3714,14 @@ namespace MonoTests.System.Data
 		}
 #endif
 	}
+#if WINDOWS_STORE_APP
+	static class DataSetFileExtensions
+	{
+		public static void WriteXmlSchema (this DataSet ds, string fileName)
+		{
+			using (var file = File.Create (fileName))
+				ds.WriteXmlSchema (file);
+		}
+	}
+#endif
 }

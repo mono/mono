@@ -16,6 +16,10 @@ namespace Mono.Data.Sqlite
   using System.Text;
   using System.Runtime.InteropServices;
   using System.IO;
+#if NETFX_CORE
+  using Windows.Storage;
+  using System.Threading.Tasks;
+#endif
 
   /// <summary>
   /// SQLite implentation of DbConnection.
@@ -318,8 +322,44 @@ namespace Mono.Data.Sqlite
     /// <param name="databaseFileName">The file to create</param>
     public static void CreateFile (string databaseFileName)
     {
+#if !NETFX_CORE
       File.Create (GetAbsoluteFilePath (databaseFileName)).Dispose ();
+#else
+      try {
+        CreateFileAsync (GetAbsoluteFilePath (databaseFileName)).Wait ();
+      } catch (AggregateException ex) {
+        throw ex.InnerException;
+      }
+#endif
     }
+
+#if NETFX_CORE
+    static async Task<StorageFile> CreateFileAsync (string fileName)
+    {
+      StorageFolder folder = await CreateFolderAsync (Path.GetDirectoryName (fileName));
+      if (folder != null)
+        return await folder.CreateFileAsync (Path.GetFileName (fileName), CreationCollisionOption.ReplaceExisting);
+      else
+        throw new UnauthorizedAccessException ();
+    }
+
+    static async Task<StorageFolder> CreateFolderAsync (string folderPath)
+    {
+      try {
+        return await StorageFolder.GetFolderFromPathAsync(folderPath);
+      } catch (FileNotFoundException) {
+      }
+
+      StorageFolder folder = null;
+      string parent = Path.GetDirectoryName (folderPath);
+      if (parent != folderPath)
+        folder = await CreateFolderAsync (parent);
+      if (folder != null)
+        return await folder.CreateFolderAsync (Path.GetFileName (folderPath));
+
+      throw new UnauthorizedAccessException ();
+    }
+#endif
 
     /// <summary>
     /// Determines if a database file exists.
@@ -327,7 +367,20 @@ namespace Mono.Data.Sqlite
     /// <param name="databaseFileName">The file to check</param>
     public static bool FileExists (string databaseFileName)
     {
+#if !NETFX_CORE
       return File.Exists (GetAbsoluteFilePath (databaseFileName));
+#else
+      try {
+        StorageFile.GetFileFromPathAsync (GetAbsoluteFilePath (databaseFileName)).AsTask ().Wait ();
+        return true;
+      } catch (AggregateException ex) {
+        // don't throw if the file does not exist
+        if (ex.InnerException is FileNotFoundException)
+          return false;
+        else
+          throw ex.InnerException;
+      }
+#endif
     }
 
     /// <summary>
@@ -336,7 +389,18 @@ namespace Mono.Data.Sqlite
     /// <param name="databaseFileName">The file to delete</param>
     public static void DeleteFile (string databaseFileName)
     {
+#if !NETFX_CORE
       File.Delete (GetAbsoluteFilePath (databaseFileName));
+#else
+      try {
+        StorageFile file = StorageFile.GetFileFromPathAsync (GetAbsoluteFilePath (databaseFileName)).AsTask ().Result;
+        file.DeleteAsync ().AsTask ().Wait ();
+      } catch (AggregateException ex) {
+        // don't throw if the file does not exist
+      if (!(ex.InnerException is FileNotFoundException))
+          throw ex.InnerException;
+      }
+#endif
     }
 
     /// <summary>

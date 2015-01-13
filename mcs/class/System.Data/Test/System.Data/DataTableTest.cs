@@ -4229,4 +4229,15 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, rows.Length, "Incorrect number of rows found");
 		}
 	}
+
+#if WINDOWS_STORE_APP
+	static class DataTableFileExtensions
+	{
+		public static void WriteXmlSchema (this DataTable dt, string fileName)
+		{
+			using (var file = File.Create (fileName))
+				dt.WriteXmlSchema (file);
+		}
+	}
+#endif
 }

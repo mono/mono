@@ -25,7 +25,7 @@
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
     <WinMDAssembly>true</WinMDAssembly>
     <ProjectName>Mono.Data.Sqlite.DllImport</ProjectName>
-    <SqliteVersion>3.8.4.3</SqliteVersion>
+    <SqliteVersion>3.8.7.3</SqliteVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

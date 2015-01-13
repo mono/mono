@@ -36,12 +36,12 @@ Function Build()
     
     Write-Host "Building projects for Windows Store (WinRT for Windows Phone)..." -ForegroundColor Green
     Write-Host "Building System.Transactions..." -ForegroundColor Cyan
-    Run-Build -project System.Transactions/System.Transactions-wpa81.csproj -target build -parameters $RELEASE_ANY
+    Run-Build -project System.Transactions/System.Transactions-store.csproj -target build -parameters $RELEASE_ANY
     Write-Host "Building System.Data..." -ForegroundColor Cyan
-    Run-Build -project System.Data/System.Data-wpa81.csproj -target build -parameters $RELEASE_ANY
+    Run-Build -project System.Data/System.Data-store.csproj -target build -parameters $RELEASE_ANY
     Write-Host "Building Mono.Data.Sqlite..." -ForegroundColor Cyan
-    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-wpa81.csproj -target build -parameters $RELEASE_ARM
-    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-wpa81.csproj -target build -parameters $RELEASE_X86
+    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-store.csproj -target build -parameters $RELEASE_ARM
+    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-store.csproj -target build -parameters $RELEASE_X86
     
     Write-Host "Build completed." -ForegroundColor Green
 }
@@ -62,16 +62,47 @@ Function Clean()
     Run-Build -project Mono.Data.Sqlite/MonoDataSqliteDllImport.vcxproj -target clean -parameters $RELEASE_X86
     Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-wp8.csproj -target clean -parameters $RELEASE_X86
     
-    Run-Build -project System.Transactions/System.Transactions-wpa81.csproj -target clean -parameters $RELEASE_ANY
-    Run-Build -project System.Data/System.Data-wpa81.csproj -target clean -parameters $RELEASE_ANY
-    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-wpa81.csproj -target clean -parameters $RELEASE_ARM
-    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-wpa81.csproj -target clean -parameters $RELEASE_X86
+    Run-Build -project System.Transactions/System.Transactions-store.csproj -target clean -parameters $RELEASE_ANY
+    Run-Build -project System.Data/System.Data-store.csproj -target clean -parameters $RELEASE_ANY
+    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-store.csproj -target clean -parameters $RELEASE_ARM
+    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-store.csproj -target clean -parameters $RELEASE_X86
 
     Write-Host "Clean completed." -ForegroundColor Green
 }
 
 Function Test()
-{    
+{
+    Write-Host "Building tests for Mono.Data.Sqlite for Windows Store Apps..." -ForegroundColor Green
+    
+    Write-Host "Building tests for projects for Windows Store (Windows 8)..." -ForegroundColor Green
+    Write-Host "Building tests for System.Transactions..." -ForegroundColor Cyan
+    Run-Build -project System.Transactions/System.Transactions-tests-netcore.csproj -target build -parameters $RELEASE_ANY
+    Write-Host "Building tests for System.Data..." -ForegroundColor Cyan
+    Run-Build -project System.Data/System.Data-tests-netcore.csproj -target build -parameters $RELEASE_ANY
+    Write-Host "Building tests for Mono.Data.Sqlite..." -ForegroundColor Cyan
+    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-tests-netcore.csproj -target build -parameters $RELEASE_ARM
+    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-tests-netcore.csproj -target build -parameters $RELEASE_X86
+ 
+    Write-Host "Building tests for projects for Windows Store (Silverlight for Windows Phone)..." -ForegroundColor Green
+    Write-Host "Building tests for System.Transactions..." -ForegroundColor Cyan
+    Run-Build -project System.Transactions/System.Transactions-tests-wp8.csproj -target build -parameters $RELEASE_ANY
+    Write-Host "Building tests for System.Data..." -ForegroundColor Cyan
+    Run-Build -project System.Data/System.Data-tests-wp8.csproj -target build -parameters $RELEASE_ANY
+    Write-Host "Building tests for Mono.Data.Sqlite..." -ForegroundColor Cyan
+    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-tests-wp8.csproj -target build -parameters $RELEASE_ARM
+    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-tests-wp8.csproj -target build -parameters $RELEASE_X86
+    
+#    Write-Host "Building tests for projects for Windows Store (WinRT for Windows Phone)..." -ForegroundColor Green
+#    Write-Host "Building tests for System.Transactions..." -ForegroundColor Cyan
+#    Run-Build -project System.Transactions/System.Transactions-tests-store.csproj -target build -parameters $RELEASE_ANY
+#    Write-Host "Building tests for System.Data..." -ForegroundColor Cyan
+#    Run-Build -project System.Data/System.Data-tests-store.csproj -target build -parameters $RELEASE_ANY
+#    Write-Host "Building tests for Mono.Data.Sqlite..." -ForegroundColor Cyan
+#    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-tests-store.csproj -target build -parameters $RELEASE_ARM
+#    Run-Build -project Mono.Data.Sqlite/Mono.Data.Sqlite-tests-store.csproj -target build -parameters $RELEASE_X86
+    
+    Write-Host "Building tests completed." -ForegroundColor Green
+
     Write-Host "Runing unit tests for Mono.Data.Sqlite for Windows Store Apps..." -ForegroundColor Green
 
     Write-Host "Tests to be implemented." -ForegroundColor Yellow
@@ -92,7 +123,6 @@ Function Run-Build($project, $target, $parameters)
         Write-Error "Build failed, aborting." -Category OperationStopped        
     }
 }
-
 
 # Script
 If ($args.Count -eq 0)

@@ -1,41 +1,120 @@
 ﻿$ErrorActionPreference = "Stop"
 
+Import-Module .\Invoke-MsBuild.psm1
+$MSBUILD="C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe"
+
 # powershell references
 [Reflection.Assembly]::LoadWithPartialName("System.Linq") | Out-Null
 [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq") | Out-Null
 
 # constants and helpers
 $MSBUILDNS="http://schemas.microsoft.com/developer/msbuild/2003"
+$MONO_VERSION="3.99.0.0" # this is obtained from somewhere
 
 # directories
 $TESTTEMPLATE_DIR=".\..\mstest"
 $OUTPUT_DIR='.\..\lib'
 $INTERMEDIATE_DIR='.\..\obj'
+$COMMON_DIR='.\..\build\common'
+$JAY_DIR=".\..\jay"
 
 # generation set up
 $TEST_PREFIX="tests-";
 $PROJECTS=("System.Transactions", "System.Data", "Mono.Data.Sqlite")
 $FRAMEWORKS=("wp8", "netcore", "store", "$($TEST_PREFIX)wp8", "$($TEST_PREFIX)netcore") # TODO: add "tests-store"
 
-# any references to add:
-# specific project: @{ platform=@{ task=@( @{ project=path } ) } }
-# all projects:     @{ platform=@{ task=@( path ) } }
+$CURRENT_DIR=(Get-Item -Path ".\" -Verbose).FullName
+
 $REFS=@{
     "wp8"=@{
-        "Reference"=@(
-            @{"Mono.Data.Sqlite"="$OUTPUT_DIR\wp8\$('$(Platform)')\Mono.Data.Sqlite.DllImport.winmd"}
-        );
+        "Reference"=@{
+            "Mono.Data.Sqlite"=@(
+                "$OUTPUT_DIR\wp8\$('$(Platform)')\Mono.Data.Sqlite.DllImport.winmd",
+                "$OUTPUT_DIR\wp8\AnyCPU\System.Data.dll",
+                "$OUTPUT_DIR\wp8\AnyCPU\System.Transactions.dll"
+            );
+            "System.Data"=@(
+                "$OUTPUT_DIR\wp8\AnyCPU\System.Transactions.dll"
+            );
+        };
+        "Constants"=@{
+            "Mono.Data.Sqlite"="SQLITE_STANDARD";
+            "System.Data"="INCLUDE_MONO_XML_SCHEMA"
+        };
     };
     "netcore"=@{
+        "Reference"=@{
+            "Mono.Data.Sqlite"=@(
+                "$OUTPUT_DIR\netcore\AnyCPU\System.Data.dll",
+                "$OUTPUT_DIR\netcore\AnyCPU\System.Transactions.dll"
+            );
+            "System.Data"=@(
+                "$OUTPUT_DIR\netcore\AnyCPU\System.Transactions.dll"
+            );
+        };
+        "Constants"=@{
+            "Mono.Data.Sqlite"="SQLITE_STANDARD";
+            "System.Data"="INCLUDE_MONO_XML_SCHEMA"
+        };
     };
     "store"=@{
+        "Reference"=@{
+            "Mono.Data.Sqlite"=@(
+                "$OUTPUT_DIR\store\AnyCPU\System.Data.dll",
+                "$OUTPUT_DIR\store\AnyCPU\System.Transactions.dll"
+            );
+            "System.Data"=@(
+                "$OUTPUT_DIR\store\AnyCPU\System.Transactions.dll"
+            );
+        };
+        "Constants"=@{
+            "Mono.Data.Sqlite"="SQLITE_STANDARD";
+            "System.Data"="INCLUDE_MONO_XML_SCHEMA"
+        };
     };
     "$($TEST_PREFIX)wp8"=@{
-        "Reference"=@(
-            @{"Mono.Data.Sqlite"="$OUTPUT_DIR\wp8\$('$(Platform)')\Mono.Data.Sqlite.DllImport.winmd"}
-        );
+        "Reference"=@{
+            "Mono.Data.Sqlite"=@(
+                "$OUTPUT_DIR\wp8\$('$(Platform)')\Mono.Data.Sqlite.DllImport.winmd",
+                "$OUTPUT_DIR\wp8\$('$(Platform)')\Mono.Data.Sqlite.dll",
+                "$OUTPUT_DIR\wp8\AnyCPU\System.Data.dll",
+                "$OUTPUT_DIR\wp8\AnyCPU\System.Transactions.dll"
+            );
+            "System.Data"=@(
+                "$OUTPUT_DIR\wp8\AnyCPU\System.Data.dll",
+                "$OUTPUT_DIR\wp8\AnyCPU\System.Transactions.dll"
+            );
+            "System.Transactions"=@(
+                "$OUTPUT_DIR\wp8\AnyCPU\System.Transactions.dll"
+            );
+        };
+        "SDKReference"=@{
+            "Mono.Data.Sqlite"=@(
+                "SQLite.WP80, Version=3.8.7.3"
+            );
+        };
     };
     "$($TEST_PREFIX)netcore"=@{
+        "Reference"=@{
+            "Mono.Data.Sqlite"=@(
+                "$OUTPUT_DIR\netcore\$('$(Platform)')\Mono.Data.Sqlite.dll",
+                "$OUTPUT_DIR\netcore\AnyCPU\System.Data.dll",
+                "$OUTPUT_DIR\netcore\AnyCPU\System.Transactions.dll"
+            );
+            "System.Data"=@(
+                "$OUTPUT_DIR\netcore\AnyCPU\System.Data.dll",
+                "$OUTPUT_DIR\netcore\AnyCPU\System.Transactions.dll"
+            );
+            "System.Transactions"=@(
+                "$OUTPUT_DIR\netcore\AnyCPU\System.Transactions.dll"
+            );
+        };
+        "SDKReference"=@{
+            "Mono.Data.Sqlite"=@(
+                "SQLite.WinRT, Version=3.8.4.3",
+                "Microsoft.VCLibs, version=11.0"
+            );
+        };
     };
 }
 
@@ -53,7 +132,7 @@ Function GetSourceFilesRecursive($path)
     }
 
     $include = "#include "
-    $content | Where {$_} | foreach {
+    $content | Where { $_ -and ($_.StartsWith($include) -or -not $_.StartsWith("#")) } | foreach {
         If ($_.StartsWith($include)) {
             $next = $_.SubString($include.Length)
             $specific = [System.IO.Path]::Combine([System.IO.Path]::GetDirectoryName($path), $next)
@@ -71,16 +150,17 @@ Function GetSourceFiles($path, $project, $framework)
     If ($framework.StartsWith($TEST_PREFIX)) {
         $suffix = "_test" + $suffix
     }
-    $specific = [System.IO.Path]::Combine($path, ("$framework"+"_"+"$project$suffix"))
+    $specific = [System.IO.Path]::Combine($path, ("$framework".Replace($TEST_PREFIX,"")+"_"+"$project$suffix"))
     If (Test-Path($specific)) {
         return GetSourceFilesRecursive -path $specific -framework $framework
     }
-    return GetSourceFilesRecursive -path ([System.IO.Path]::Combine($path, "$project$suffix")) -framework $framework
+    $general = [System.IO.Path]::Combine($path, "$project$suffix");
+    return GetSourceFilesRecursive -path $general -framework $framework
 }
 
 Function GetContentFiles($path, $subfolder)
 {
-    return Get-ChildItem ([System.IO.Path]::Combine($path, $subfolder)) -Include *.xsd,*.xsc,*.xss,*.xml -Recurse | foreach {
+    return Get-ChildItem ([System.IO.Path]::Combine($path, $subfolder)) -Include *.xsd,*.xsc,*.xss,*.xml -Recurse -File | foreach {
         $tmp = Get-Location
         Set-Location $path
         $rel = Resolve-Path -relative $_
@@ -93,6 +173,7 @@ Function GetContentFiles($path, $subfolder)
 Function GenerateProjectFile($project, $framework, $references)
 {
     $isTest = $framework.StartsWith($TEST_PREFIX);
+    $destination = ".\$project"
 
     If ($isTest) {
         $realFramework = $framework.Substring($TEST_PREFIX.Length)
@@ -103,11 +184,11 @@ Function GenerateProjectFile($project, $framework, $references)
         $realFramework = $framework
         $templatePath = "project_template_$framework.txt"
     }
-    $destination = ".\$project"
 
-    $xDoc = [System.Xml.Linq.XDocument]::Load("$templatePath")
+    $xDoc = [System.Xml.Linq.XDocument]::Load("$CURRENT_DIR\$templatePath")
     $xRoot = $xDoc.Element("{$MSBUILDNS}Project")
     $xInsertPoint=$xRoot.Element("{$MSBUILDNS}InsertReferencesHere")
+    $xDefineConstants=$xRoot.Elements("{$MSBUILDNS}PropertyGroup").Elements("{$MSBUILDNS}DefineConstants")
     
 
     # Global Properties
@@ -127,38 +208,34 @@ Function GenerateProjectFile($project, $framework, $references)
     # References
     $references.Keys | foreach {
         $refType = $_;
-        $xInsertPoint.AddBeforeSelf((New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}ItemGroup", [System.Xml.Linq.XObject[]]($references.Item($refType) | foreach {
-            If ($_.GetType() -eq "".GetType()) {
-                # plain string references
-                New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}$refType", 
-                    (New-Object System.Xml.Linq.XAttribute ("Include", $_)))
-            } Else {
-                If ($_.Keys[0] -eq $project) {
-                    # project-specific references
-                    $fname = $_.Values[0]
-                    New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}$refType", [System.Xml.Linq.XObject[]](
-                        (New-Object System.Xml.Linq.XAttribute ("Include", ([system.io.path]::GetFileNameWithoutExtension($fname)))),
-                        (New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}HintPath", $fname))
+        $refs = $references.Item("$refType").Item("$project")
+
+        If ($refs) {
+            # add assembly references
+            If ($refType -eq "Reference") {
+                $xInsertPoint.AddBeforeSelf((New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}ItemGroup", [System.Xml.Linq.XObject[]](
+                    $refs | foreach {
+                    New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}Reference", [System.Xml.Linq.XObject[]](
+                        (New-Object System.Xml.Linq.XAttribute ("Include", ([system.io.path]::GetFileNameWithoutExtension($_)))),
+                        (New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}HintPath", $_))
                     ))
+                }))))
+            } 
+            # add extensions references
+            If ($refType -eq "SDKReference") {
+                $xInsertPoint.AddBeforeSelf((New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}ItemGroup", [System.Xml.Linq.XObject[]](
+                    $refs | foreach {
+                    New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}SDKReference", [System.Xml.Linq.XObject[]](
+                        (New-Object System.Xml.Linq.XAttribute ("Include", $_))
+                    ))
+                }))))
+            } 
+            # add the values to <DefineConstants> for each <PropertyGroup>
+            If ($refType -eq "Constants") {
+                $xDefineConstants | foreach {
+                    $_.Value = "$($_.Value);$refs"
                 }
             }
-        }))))
-    }
-    
-    
-    # Dependencies
-    $refRoot = New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}ItemGroup", $null)
-    $xInsertPoint.AddBeforeSelf($refRoot)
-    foreach ($proj in $PROJECTS | Where { -not $_.StartsWith($TEST_PREFIX) }) {
-        If (($proj -eq $project) -and (-not $isTest)) {
-            Break
-        }
-        $refRoot.Add((New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}Reference", [System.Xml.Linq.XObject[]](
-            (New-Object System.Xml.Linq.XAttribute ("Include", $proj)),
-            (New-Object System.Xml.Linq.XElement ("{$MSBUILDNS}HintPath", "$OUTPUT_DIR\$realFramework\$('$(Platform)')\$proj.dll"))
-        ))))
-        If ($proj -eq $project) {
-            Break
         }
     }
     
@@ -182,9 +259,32 @@ Function GenerateProjectFile($project, $framework, $references)
     
 
     $xInsertPoint.Remove();
-    $xDoc.Save("$destination\$project-$framework.csproj")
+    $xDoc.Save("$CURRENT_DIR\$destination\$project-$framework.csproj");
+
+    Write-Host "Created $destination\$project-$framework.csproj"
 }
 
+# make sure that jay exists
+If (-Not (Test-Path "$JAY_DIR\jay.exe")) 
+{
+    Write-Host "Building JAY..."
+    Run-Build -project ".$JAY_DIR\jay.vcxproj" -target build -parameters ""
+    Write-Host "Building JAY complete."
+}
+
+# build the Parser.cs file from the .jay
+Get-Content "$JAY_DIR\skeleton.cs" | 
+    & "$JAY_DIR\jay.exe" -vct .\System.Data\Mono.Data.SqlExpressions\Parser.jay | 
+    Set-Content ".\System.Data\Mono.Data.SqlExpressions\Parser.cs"
+
+Write-Host "Created .\System.Data\Mono.Data.SqlExpressions\Parser.cs"
+
+# copy the consts.cs file, replacing @MONO_VERSION@
+(Get-Content "$COMMON_DIR\Consts.cs.in") | 
+    foreach {$_ -replace "@MONO_VERSION@", "$MONO_VERSION"} | 
+    Set-Content "$COMMON_DIR\Consts.cs" -Force
+
+# start the main build
 $PROJECTS | foreach { $p = $_
     $FRAMEWORKS | foreach { $f = $_
         GenerateProjectFile -project $p -framework $f -references $REFS.Item($f)
