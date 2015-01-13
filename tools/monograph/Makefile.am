@@ -4,7 +4,7 @@ export HOST_CC
 endif
 
 if DISABLE_EXECUTABLES
-runtime_lib=../mini/$(LIBMONO_LA) $(static_libs)
+runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
 else
 if !SHARED_MONO
 static_libs=	\
@@ -14,9 +14,9 @@ static_libs=	\
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(LIBGC_STATIC_LIBS)
 
-runtime_lib=../mini/$(LIBMONO_LA) $(static_libs)
+runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
 else
-runtime_lib=../mini/$(LIBMONO_LA)
+runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA)
 endif
 endif
 
