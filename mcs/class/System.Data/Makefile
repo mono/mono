@@ -8,7 +8,8 @@ LIB_MCS_FLAGS = \
 	-nowarn:649 \
 	-unsafe \
 	-r:System			 	\
-	-r:System.Xml.dll
+	-r:System.Xml.dll \
+	-r:System.Core.dll
 
 MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE

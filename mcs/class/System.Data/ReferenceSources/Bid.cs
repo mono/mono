@@ -12,6 +12,10 @@ static class Bid
 	{
 	}
 
+	internal static void TraceSqlReturn(string fmtPrintfW, System.Data.Odbc.ODBC32.RetCode a1, string a2)
+	{
+	}
+
 	internal static void ScopeEnter(out IntPtr hScp, string fmt, params object[] args) {
 		hScp = NoData;
 	}
