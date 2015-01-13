@@ -290,6 +290,8 @@ namespace System.Globalization
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
+			if (((uint)index)>=((uint)s.Length))
+				throw new ArgumentOutOfRangeException("index");
 			return GetNumericValue (s [index]);
 		}
 
@@ -302,6 +304,8 @@ namespace System.Globalization
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
+			if (((uint)index)>=((uint)s.Length))
+				throw new ArgumentOutOfRangeException("index");
 			return Char.GetUnicodeCategory (s, index);
 		}
 	}
