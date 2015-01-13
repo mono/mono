@@ -16,7 +16,9 @@ namespace System.Data.Common {
     using System.Configuration;
     using System.Data;
     using System.Data.ProviderBase;
+#if !MOBILE
     using System.Data.Odbc;
+#endif
     using System.Data.OleDb;
     using System.Data.Sql;
     using System.Data.SqlTypes;
@@ -35,7 +37,9 @@ namespace System.Data.Common {
     using System.Threading.Tasks;
     using System.Xml;
     using SysTx = System.Transactions;
+#if !MOBILE
     using SysES = System.EnterpriseServices;
+#endif
     using System.Runtime.Versioning;
 
     using Microsoft.SqlServer.Server;
@@ -165,6 +169,7 @@ namespace System.Data.Common {
             TraceExceptionAsReturnValue(e);
             return e;
         }
+#if !MOBILE
         static internal ConfigurationException Configuration(string message) {
             ConfigurationException e = new ConfigurationErrorsException(message);
             TraceExceptionAsReturnValue(e);
@@ -175,6 +180,7 @@ namespace System.Data.Common {
             TraceExceptionAsReturnValue(e);
             return e;
         }
+#endif
         static internal DataException Data(string message) {
             DataException e = new DataException(message);
             TraceExceptionAsReturnValue(e);
@@ -724,6 +730,7 @@ namespace System.Data.Common {
         static internal InvalidOperationException ConfigProviderInvalid() {
             return InvalidOperation(Res.GetString(Res.ConfigProviderInvalid));
         }
+#if !MOBILE
         static internal ConfigurationException ConfigProviderNotInstalled() {
             return Configuration(Res.GetString(Res.ConfigProviderNotInstalled));
         }
@@ -755,7 +762,7 @@ namespace System.Data.Common {
         static internal ConfigurationException ConfigRequiredAttributeEmpty(string name, XmlNode node) { // Res.Config_base_required_attribute_empty
             return Configuration(Res.GetString(Res.ConfigRequiredAttributeEmpty, name), node);
         }
-
+#endif
         //
         // DbConnectionOptions, DataAccess
         //
@@ -847,7 +854,7 @@ namespace System.Data.Common {
                 return Res.GetString(Res.ADP_ConnectionStateMsg, state.ToString());
             }
         }
-
+#if !MOBILE
         static internal ConfigurationException ConfigUnableToLoadXmlMetaDataFile(string settingName){
             return Configuration(Res.GetString(Res.OleDb_ConfigUnableToLoadXmlMetaDataFile, settingName));
         }
@@ -855,7 +862,7 @@ namespace System.Data.Common {
         static internal ConfigurationException ConfigWrongNumberOfValues(string settingName){
             return Configuration(Res.GetString(Res.OleDb_ConfigWrongNumberOfValues, settingName));
         }
-
+#endif
         //
         // : DbConnectionOptions, DataAccess, SqlClient
         //
@@ -1869,14 +1876,19 @@ namespace System.Data.Common {
 
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         static internal bool IsSysTxEqualSysEsTransaction() {
+#if MOBILE
+            return false;
+#else
             // This Method won't JIT inproc (ES isn't available), so we code it
             // separately and call it behind an if statement.
             bool result = (!SysES.ContextUtil.IsInTransaction && null == SysTx.Transaction.Current)
                        || (SysES.ContextUtil.IsInTransaction  && SysTx.Transaction.Current == (SysTx.Transaction)SysES.ContextUtil.SystemTransaction);
             return result;
+#endif
         }
 
         static internal bool NeedManualEnlistment() {
+#if !MOBILE
             // We need to force a manual enlistment of transactions for ODBC and
             // OLEDB whenever the current SysTx transaction != the SysTx transaction
             // on the EnterpriseServices ContextUtil, or when ES.ContextUtil is
@@ -1888,6 +1900,7 @@ namespace System.Data.Common {
                     return true;
                 }
             }
+#endif
             return false;
         }
 
@@ -2098,7 +2111,7 @@ namespace System.Data.Common {
                 FileIOPermission.RevertAssert();
             }
         }
-
+#if !MOBILE
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         static internal Stream GetXmlStreamFromValues(String[] values, String errorString) {
@@ -2233,7 +2246,7 @@ namespace System.Data.Common {
                 }
             }
         }
-
+#endif
         // the return value is true if the string was quoted and false if it was not
         // this allows the caller to determine if it is an error or not for the quotedString to not be quoted
         static internal Boolean RemoveStringQuotes(string quotePrefix, string quoteSuffix, string quotedString, out string unquotedString) {
