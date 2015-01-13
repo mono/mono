@@ -19,9 +19,7 @@ using System.Text;
 using IKVM.Reflection;
 
 
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 class MakeBundle {
 	static string output = "a.out";
