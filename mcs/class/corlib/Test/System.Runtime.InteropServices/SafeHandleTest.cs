@@ -25,6 +25,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		public class FakeSafeHandle : SafeHandleZeroOrMinusOneIsInvalid
 		{
 			public bool released = false;
+			public bool disposed = false;
 			
 			public FakeSafeHandle (): base (true)
 			{
@@ -43,6 +44,12 @@ namespace MonoTests.System.Runtime.InteropServices
 			{
 				released = true;
 				return true;
+			}
+
+			protected override void Dispose (bool manual)
+			{
+				disposed = true;
+				base.Dispose (manual);
 			}
 		}
 		
@@ -84,6 +91,15 @@ namespace MonoTests.System.Runtime.InteropServices
 			sf.Dispose ();
 			sf.Dispose ();
 			sf.Dispose ();
+		}
+
+		[Test]
+		public void CloseWillDispose ()
+		{
+			FakeSafeHandle sf = new FakeSafeHandle ();
+
+			sf.Close ();
+			Assert.IsTrue (sf.disposed, "disposed");
 		}
 
 		[Test]
