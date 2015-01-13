@@ -35,11 +35,7 @@ using System.ComponentModel;
 namespace System.ComponentModel.Design
 {
 
-#if NET_2_0
 	public class ComponentDesigner : ITreeDesigner, IDesigner, IDisposable, IDesignerFilter, IComponentInitializer
-#else
-	public class ComponentDesigner : IDesigner, IDisposable, IDesignerFilter
-#endif
 	{
 
 #region ShadowPropertyCollection
@@ -98,9 +94,7 @@ namespace System.ComponentModel.Design
 		private IComponent _component;
 		private DesignerVerbCollection _verbs;
 		private ShadowPropertyCollection _shadowPropertyCollection;
-#if NET_2_0
 		private DesignerActionListCollection _designerActionList;
-#endif
 
 		// This property indicates any components to copy or move along with the component managed
 		// by the designer during a copy, drag, or move operation.
@@ -153,7 +147,6 @@ namespace System.ComponentModel.Design
 			}
 		}
 
-#if NET_2_0
 		public virtual DesignerActionListCollection ActionLists {
 			get {
 				if (_designerActionList == null)
@@ -188,7 +181,6 @@ namespace System.ComponentModel.Design
 		{
 			InitializeNonDefault ();
 		}
-#endif
 
 
 		public virtual void Initialize (IComponent component)
@@ -199,9 +191,7 @@ namespace System.ComponentModel.Design
 			_component = component;
 		}
 
-#if NET_2_0
 		[Obsolete ("This method has been deprecated. Use InitializeExistingComponent instead.")]
-#endif
 		public virtual void InitializeNonDefault ()
 		{
 		}
@@ -276,9 +266,7 @@ namespace System.ComponentModel.Design
 
 
 
-#if NET_2_0
 		[Obsolete ("This method has been deprecated. Use InitializeNewComponent instead.")]
-#endif
 		// The default implementation of this method sets the default property of the component to
 		// the name of the component if the default property is a string and the property is not already set.
 		// This method can be implemented in a derived class to customize the initialization of the component
@@ -383,7 +371,6 @@ namespace System.ComponentModel.Design
 
 #endregion
 
-#if NET_2_0
 
 #region ITreeDesigner
 		// Returns a collection of the designers of the associated components
@@ -419,7 +406,6 @@ namespace System.ComponentModel.Design
 		}
 #endregion
 
-#endif
 		// Helper method - not an ISerivceProvider
 		//
 		protected virtual object GetService (Type service)

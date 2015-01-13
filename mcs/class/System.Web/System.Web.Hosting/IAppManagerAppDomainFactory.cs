@@ -26,7 +26,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 
 using System.Runtime.InteropServices;
 
@@ -43,4 +42,3 @@ namespace System.Web.Hosting
                 void Stop ();
         }
 }
-#endif

@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Web.Security;
@@ -287,4 +286,3 @@ namespace Mainsoft.Web.Profile
 	}
 }
 
-#endif

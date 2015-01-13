@@ -47,12 +47,10 @@ namespace System.Data
 		{
 		}
 
-#if NET_2_0
 		public MissingPrimaryKeyException (string message, Exception innerException)
 			: base (message, innerException)
 		{
 		}
-#endif
 
 		protected MissingPrimaryKeyException (SerializationInfo info, StreamingContext context)
 			: base (info, context)

@@ -32,7 +32,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Data.Common;
 
@@ -43,11 +42,9 @@ namespace System.Data.ProviderBase {
 		string _parameterName;
                 ParameterDirection _direction = ParameterDirection.Input;
 		int _size;
-#if NET_2_0
 		byte _precision;
 		byte _scale;
 		DataRowVersion _sourceVersion;
-#endif
 		object _value;
 		bool _isNullable;
 		int _offset;
@@ -155,12 +152,10 @@ namespace System.Data.ProviderBase {
 			set	{ _sourceColumn = value; }
 		}
 
-#if NET_2_0		
 		public override DataRowVersion SourceVersion {
 			get { return _sourceVersion; }
 			set { _sourceVersion = value; }
 		}
-#endif		
 
 		
 		public override object Value {
@@ -202,7 +197,6 @@ namespace System.Data.ProviderBase {
 		{
 		}
 
-#if NET_2_0
 
 		[MonoTODO]
 		protected void ResetCoercedValue ()
@@ -233,14 +227,12 @@ namespace System.Data.ProviderBase {
 		{
 			throw new NotImplementedException ();
 		}
-#endif	
 	
 		protected bool ShouldSerializeSize ()
 		{
 			return (_size != 0);
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override string ToString ()
 		{
@@ -264,10 +256,8 @@ namespace System.Data.ProviderBase {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		#endregion // Methods
 	}
 }
 
-#endif

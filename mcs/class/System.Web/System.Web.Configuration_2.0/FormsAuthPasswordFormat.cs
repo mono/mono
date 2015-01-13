@@ -29,9 +29,6 @@ using System;
 
 namespace System.Web.Configuration {
 
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum FormsAuthPasswordFormat
 	{
 		Clear,

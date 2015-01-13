@@ -91,11 +91,7 @@ namespace System.Data
 			AddInternal (row);
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		int IndexOf (DataRow row)
 		{
 			if (row == null || row.Table != table)

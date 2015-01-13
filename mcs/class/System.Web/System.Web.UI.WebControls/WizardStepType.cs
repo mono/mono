@@ -25,7 +25,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.UI.WebControls {
         public enum WizardStepType {
                 Auto = 0,
@@ -35,4 +34,3 @@ namespace System.Web.UI.WebControls {
 		Step = 4			
         }
 }
-#endif

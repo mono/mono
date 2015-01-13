@@ -40,11 +40,7 @@ namespace System.Web.Security {
 #if NET_4_0
 	[Obsolete ("This type is obsolete. The Passport authentication product is no longer supported and has been superseded by Live ID.")]
 #endif
-#if NET_2_0
 	public sealed class PassportIdentity : IIdentity, IDisposable {
-#else
-	public sealed class PassportIdentity : IIdentity {
-#endif
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public PassportIdentity ()
 		{
@@ -481,11 +477,9 @@ namespace System.Web.Security {
 			}
 		}
 
-#if NET_2_0
 		void IDisposable.Dispose ()
 		{
 		}
-#endif
 	}
 }
 

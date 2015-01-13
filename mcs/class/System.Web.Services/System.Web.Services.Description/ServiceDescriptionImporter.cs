@@ -158,9 +158,7 @@ namespace System.Web.Services.Description {
 		{
 			ArrayList list = new ArrayList ();
 			list.Add (new SoapProtocolImporter ());
-#if NET_2_0 
 			list.Add (new Soap12ProtocolImporter ());
-#endif
 			list.Add (new HttpGetProtocolImporter ());
 			list.Add (new HttpPostProtocolImporter ());
 			return list;

@@ -40,14 +40,10 @@ using System.Reflection;
 
 namespace System.Xml.Serialization 
 {
-#if NET_2_0
 	[MonoTODO]
 	// FIXME: provide expected elements/attributes on unknown elements/attributs
-#endif
 	public abstract class XmlSerializationReader 
-#if NET_2_0
 		: XmlSerializationGeneratedCode
-#endif
 	{
 
 		#region Fields
@@ -141,11 +137,9 @@ namespace System.Xml.Serialization
 
 		}
 
-#if NET_2_0
 		protected int ReaderCount {
 			get { return readCount; }
 		}
-#endif
 
 		#region Methods
 
@@ -275,13 +269,11 @@ namespace System.Xml.Serialization
 			return new InvalidOperationException (message);
 		}
 
-#if NET_2_0
 		protected void CheckReaderCount (ref int whileIterations, ref int readerCount)
 		{
 			whileIterations = whileIterationCount;
 			readerCount = readCount;
 		}
-#endif
 
 		protected Array EnsureArrayIndex (Array a, int index, Type elementType)
 		{
@@ -937,9 +929,7 @@ namespace System.Xml.Serialization
 			UnknownAttribute (o, attr, null);
 		}
 
-#if NET_2_0
 		protected
-#endif
 		void UnknownAttribute (object o, XmlAttribute attr, string qnames)
 		{
 			int line_number, line_position;
@@ -953,9 +943,7 @@ namespace System.Xml.Serialization
 			}
 
 			XmlAttributeEventArgs args = new XmlAttributeEventArgs (attr, line_number, line_position, o);
-#if NET_2_0
 			args.ExpectedAttributes = qnames;
-#endif
 
 			if (eventSource != null)
 				eventSource.OnUnknownAttribute (args);
@@ -966,9 +954,7 @@ namespace System.Xml.Serialization
 			UnknownElement (o, elem, null);
 		}
 
-#if NET_2_0
 		protected
-#endif
 		void UnknownElement (object o, XmlElement elem, string qnames)
 		{
 			int line_number, line_position;
@@ -982,9 +968,7 @@ namespace System.Xml.Serialization
 			}
 
 			XmlElementEventArgs args = new XmlElementEventArgs (elem, line_number, line_position, o);
-#if NET_2_0
 			args.ExpectedElements = qnames;
-#endif
 
 			if (eventSource != null)
 				eventSource.OnUnknownElement (args);
@@ -995,9 +979,7 @@ namespace System.Xml.Serialization
 			UnknownNode (o, null);
 		}
 
-#if NET_2_0
 		protected
-#endif
 		void UnknownNode (object o, string qnames)
 		{
 			OnUnknownNode (ReadXmlNode (false), o, qnames);
@@ -1147,7 +1129,6 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-#if NET_2_0
 		[MonoTODO]
 		protected bool DecodeName
 		{
@@ -1202,7 +1183,6 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-#endif
 
 	}
 }

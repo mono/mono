@@ -32,7 +32,6 @@ using System;
 using System.Configuration;
 using System.Collections;
 
-#if NET_2_0
 
 namespace System.Web.Configuration {
 
@@ -137,4 +136,3 @@ namespace System.Web.Configuration {
 	}
 }
 
-#endif

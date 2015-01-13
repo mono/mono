@@ -28,26 +28,7 @@ namespace System.Data.OracleClient {
 			 AttributeTargets.Struct | AttributeTargets.Constructor | 
 			 AttributeTargets.Method, AllowMultiple=true,
 			 Inherited=false)]
-#if NET_2_0
 	public sealed class OraclePermissionAttribute : DBDataPermissionAttribute {
-#else
-	public sealed class OraclePermissionAttribute : CodeAccessSecurityAttribute {
-
-		#region Fields
-
-		bool allowBlankPassword;
-
-		#endregion // Fields
-
-		#region Properties
-
-		public bool AllowBlankPassword {
-			get { return allowBlankPassword; }
-			set { allowBlankPassword = value; }
-		}
-
-		#endregion // Properties
-#endif
 
 		#region Constructors
 

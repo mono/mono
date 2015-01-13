@@ -26,21 +26,15 @@ namespace System.Xml
 	/// <summary>
 	/// Passed to delegates on document tree changes
 	/// </summary>
-#if NET_2_0
 	public class XmlNodeChangedEventArgs : EventArgs
-#else
-	public class XmlNodeChangedEventArgs
-#endif
 	{
 		// Private data members
 		XmlNode _oldParent;
 		XmlNode _newParent;
 		XmlNodeChangedAction _action;
 		XmlNode _node;
-#if NET_2_0		
 		string _oldValue;
 		string _newValue;
-#endif		
 
 		// public properties
 		public XmlNodeChangedAction Action 
@@ -78,7 +72,6 @@ namespace System.Xml
 		} 
 
 
-#if NET_2_0
 		public string OldValue
 		{
 			get
@@ -95,13 +88,8 @@ namespace System.Xml
 				return _newValue != null ? _newValue : _node.Value;
 			}
 		}
-#endif
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		XmlNodeChangedEventArgs (
 			XmlNode node, 
 			XmlNode oldParent,
@@ -113,10 +101,8 @@ namespace System.Xml
 			_node = node;
 			_oldParent = oldParent;
 			_newParent = newParent;
-#if NET_2_0			
 			_oldValue = oldValue;
 			_newValue = newValue;
-#endif			
 			_action = action;
 		}
 	}

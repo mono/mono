@@ -89,9 +89,6 @@ namespace System.Data
 		#region Methods
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		DataTable Add ()
 		{
 			DataTable Table = new DataTable ();
@@ -100,9 +97,6 @@ namespace System.Data
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		void Add (DataTable table)
 		{
 			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
@@ -124,11 +118,7 @@ namespace System.Data
 				NameTable (table);
 
 			// check if the collection has a table with the same name.
-#if !NET_2_0
-			int tmp = IndexOf (table.TableName);
-#else
 			int tmp = IndexOf (table.TableName, table.Namespace);
-#endif
 			// if we found a table with same name we have to check
 			// that it is the same case.
 			// indexof can return a table with different case letters.
@@ -142,9 +132,6 @@ namespace System.Data
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		DataTable Add (string name)
 		{
 			DataTable table = new DataTable (name);
@@ -198,18 +185,12 @@ namespace System.Data
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		int IndexOf (DataTable table)
 		{
 			return List.IndexOf (table);
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		int IndexOf (string tableName)
 		{
 			return IndexOf (tableName, false);
@@ -243,22 +224,14 @@ namespace System.Data
 
 		#region Protected methods
 
-#if !NET_2_0
-		protected internal virtual
-#else
 		internal
-#endif
 		void OnCollectionChanging (CollectionChangeEventArgs ccevent)
 		{
 			if (CollectionChanging != null)
 				CollectionChanging (this, ccevent);
 		}
 
-#if !NET_2_0
-		protected virtual
-#else
 		internal
-#endif
 		void OnCollectionChanged (CollectionChangeEventArgs ccevent)
 		{
 			if (CollectionChanged != null)
@@ -370,7 +343,6 @@ namespace System.Data
 		#endregion
 	}
 
-#if NET_2_0
 	sealed partial class DataTableCollection {
 		public DataTable this [string name, string tableNamespace] {
 			get {
@@ -477,13 +449,4 @@ namespace System.Data
 			}
 		}
 	}
-#else
-	[Serializable]
-	partial class DataTableCollection {
-		private int IndexOf (string name, bool error)
-		{
-			return IndexOf (name, error, 0);
-		}
-	}
-#endif
 }

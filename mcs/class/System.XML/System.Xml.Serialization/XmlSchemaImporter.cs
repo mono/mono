@@ -346,7 +346,6 @@ namespace System.Xml.Serialization
 			return new XmlMembersMapping (mapping);
 		}
 		
-#if NET_2_0
 		[MonoTODO]
 		public XmlMembersMapping ImportMembersMapping (string name, string ns, SoapSchemaMember[] members)
 		{
@@ -371,7 +370,6 @@ namespace System.Xml.Serialization
 				(XmlSchemaType) schemas.Find (typeName, typeof (XmlSchemaSimpleType));
 			return ImportTypeCommon (typeName, typeName, stype, true);
 		}
-#endif
 		
 		internal XmlMembersMapping ImportEncodedMembersMapping (string name, string ns, SoapSchemaMember[] members, bool hasWrapperElement)
 		{
@@ -961,12 +959,8 @@ namespace System.Xml.Serialization
 							// It is a simple list (space separated list).
 							// Since this is not supported, map as a single item value
 							member = new XmlTypeMapMemberElement ();
-#if NET_2_0
 							// In MS.NET those types are mapped to a string
 							typeData = TypeTranslator.GetTypeData(typeof(string));
-#else
-							typeData = typeData.ListItemTypeData;
-#endif
 						}
 						else
 							member = new XmlTypeMapMemberList ();

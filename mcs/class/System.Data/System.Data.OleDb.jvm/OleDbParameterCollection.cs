@@ -102,7 +102,6 @@ namespace System.Data.OleDb
             return Add(param);
 		}
 
-#if NET_2_0
 		public void AddRange (OleDbParameter [] values)
 		{
 			base.AddRange (values);
@@ -138,7 +137,6 @@ namespace System.Data.OleDb
 			return base.IndexOf (value);
 		}
 
-#endif
 		#endregion // Methods        
         
     }

@@ -68,12 +68,10 @@ namespace System.Drawing
 		{
 			return new PointF (pt.X + sz.Width, pt.Y + sz.Height);
 		}
-#if NET_2_0
 		public static PointF operator + (PointF pt, SizeF sz)
 		{
 			return new PointF (pt.X + sz.Width, pt.Y + sz.Height);
 		}
-#endif
 		
 		/// <summary>
 		///	Equality Operator
@@ -118,12 +116,10 @@ namespace System.Drawing
 		{
 			return new PointF (pt.X - sz.Width, pt.Y - sz.Height);
 		}
-#if NET_2_0
 		public static PointF operator - (PointF pt, SizeF sz)
 		{
 			return new PointF (pt.X - sz.Width, pt.Y - sz.Height);
 		}
-#endif
 		
 		// -----------------------
 		// Public Constructor
@@ -239,7 +235,6 @@ namespace System.Drawing
 				y.ToString (CultureInfo.CurrentCulture));
 		}
 
-#if NET_2_0
 		public static PointF Add (PointF pt, Size sz)
 		{
 			return new PointF (pt.X + sz.Width, pt.Y + sz.Height);
@@ -259,7 +254,6 @@ namespace System.Drawing
 		{
 			return new PointF (pt.X - sz.Width, pt.Y - sz.Height);
 		}
-#endif
 
 	}
 }

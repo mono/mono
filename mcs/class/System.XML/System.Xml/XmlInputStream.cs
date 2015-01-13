@@ -158,11 +158,7 @@ namespace System.Xml
 		{
 			pos = decoded_count = 0;
 			mayBlock = false;
-#if NET_2_0
 			decoder.Reset ();
-#else
-			decoder = encoding.GetDecoder ();
-#endif
 		}
 		
 		// the buffer is empty, fill it again

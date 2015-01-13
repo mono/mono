@@ -89,10 +89,8 @@ namespace System.Security.Cryptography.Xml {
 
 		public TransformChain TransformChain {
 			get { return chain; }
-#if NET_2_0
 			[ComVisible (false)]
 			set { chain = value; }
-#endif
 		}
 
 		public string Type {

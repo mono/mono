@@ -66,9 +66,7 @@ namespace System.Data.Odbc
 		AutoCommit = 102,
 		TransactionIsolation = 108,
 		CurrentCatalog = 109,
-#if NET_2_0
 		CoptTransactionIsolation = 1227		/* SQL_COPT_SS_TXN_ISOLATION */
-#endif
 	}
 
 	internal enum OdbcInfo : ushort

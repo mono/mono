@@ -30,12 +30,7 @@
 
 namespace System.Security.Cryptography.Xml {
 
-#if NET_2_0
 	public
-#else
-	// structure was undocumented (but present) before Fx 2.0
-	internal
-#endif
 	struct X509IssuerSerial {
 
 		private string _issuerName;

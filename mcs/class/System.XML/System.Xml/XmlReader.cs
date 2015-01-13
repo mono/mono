@@ -46,17 +46,11 @@ using System.Threading.Tasks;
 
 namespace System.Xml
 {
-#if NET_2_0
 	public abstract class XmlReader : IDisposable
-#else
-	public abstract class XmlReader
-#endif
 	{
 		private StringBuilder readStringBuffer;
 		private XmlReaderBinarySupport binary;
-#if NET_2_0
 		private XmlReaderSettings settings;
-#endif
 
 		#region Constructor
 
@@ -85,7 +79,6 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		// To enable it internally in sys.xml, just insert these
 		// two lines into Read():
 		//
@@ -101,15 +94,6 @@ namespace System.Xml
 		public virtual bool CanReadValueChunk {
 			get { return false; }
 		}
-#else
-		internal virtual bool CanReadBinaryContent {
-			get { return false; }
-		}
-
-		internal virtual bool CanReadValueChunk {
-			get { return false; }
-		}
-#endif
 
 		public virtual bool CanResolveEntity
 		{
@@ -148,7 +132,6 @@ namespace System.Xml
 
 		public abstract bool IsEmptyElement { get; }
 
-#if NET_2_0
 		public virtual bool IsDefault {
 			get { return false; }
 		}
@@ -164,19 +147,9 @@ namespace System.Xml
 		public virtual string this [string name, string namespaceURI] {
 			get { return GetAttribute (name, namespaceURI); }
 		}
-#else
-		public abstract bool IsDefault { get; }
-
-		public abstract string this [int i] { get; }
-
-		public abstract string this [string name] { get; }
-
-		public abstract string this [string localName, string namespaceName] { get; }
-#endif
 
 		public abstract string LocalName { get; }
 
-#if NET_2_0
 		public virtual string Name {
 			get {
 				return Prefix.Length > 0 ?
@@ -184,9 +157,6 @@ namespace System.Xml
 					LocalName;
 			}
 		}
-#else
-		public abstract string Name { get; }
-#endif
 
 		public abstract string NamespaceURI { get; }
 
@@ -196,17 +166,12 @@ namespace System.Xml
 
 		public abstract string Prefix { get; }
 
-#if NET_2_0
 		public virtual char QuoteChar {
 			get { return '\"'; }
 		}
-#else
-		public abstract char QuoteChar { get; }
-#endif
 
 		public abstract ReadState ReadState { get; }
 
-#if NET_2_0
 		public virtual IXmlSchemaInfo SchemaInfo {
 			get { return null; }
 		}
@@ -214,11 +179,9 @@ namespace System.Xml
 		public virtual XmlReaderSettings Settings {
 			get { return settings; }
 		}
-#endif
 
 		public abstract string Value { get; }
 
-#if NET_2_0
 		public virtual string XmlLang {
 			get { return String.Empty; }
 		}
@@ -226,11 +189,6 @@ namespace System.Xml
 		public virtual XmlSpace XmlSpace {
 			get { return XmlSpace.None; }
 		}
-#else
-		public abstract string XmlLang { get; }
-
-		public abstract XmlSpace XmlSpace { get; }
-#endif
 
 		#endregion
 
@@ -246,7 +204,6 @@ namespace System.Xml
 		public abstract void Close ();
 #endif
 
-#if NET_2_0
 		private static XmlNameTable PopulateNameTable (
 			XmlReaderSettings settings)
 		{
@@ -502,7 +459,6 @@ namespace System.Xml
 			if (disposing && ReadState != ReadState.Closed)
 				Close ();
 		}
-#endif
 
 		public abstract string GetAttribute (int i);
 
@@ -543,7 +499,6 @@ namespace System.Xml
 
 		public abstract string LookupNamespace (string prefix);
 
-#if NET_2_0
 		public virtual void MoveToAttribute (int i)
 		{
 			if (i >= AttributeCount)
@@ -552,9 +507,6 @@ namespace System.Xml
 			for (int a = 0; a < i; a++)
 				MoveToNextAttribute ();
 		}
-#else
-		public abstract void MoveToAttribute (int i);
-#endif
 
 		public abstract bool MoveToAttribute (string name);
 
@@ -848,7 +800,6 @@ namespace System.Xml
 			return ret;
 		}
 
-#if NET_2_0
 		public virtual Type ValueType {
 			get { return typeof (string); }
 		}
@@ -1371,7 +1322,6 @@ namespace System.Xml
 				binary = new XmlReaderBinarySupport (this);
 		}
 		
-#endif
 
 		public virtual int ReadValueChunk (char [] buffer, int index, int count)
 		{
@@ -1406,12 +1356,10 @@ namespace System.Xml
 		{
 			return new XmlException (this as IXmlLineInfo, BaseURI, message);
 		}
-#if NET_2_0
 		private XmlException XmlError (string message, Exception innerException)
 		{
 			return new XmlException (this as IXmlLineInfo, BaseURI, message);
 		}
-#endif
 		#endregion
 
 #if NET_4_5

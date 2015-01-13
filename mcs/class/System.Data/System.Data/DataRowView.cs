@@ -300,7 +300,6 @@ namespace System.Data
 		}
 	}
 
-#if NET_2_0
 	partial class DataRowView : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -312,5 +311,4 @@ namespace System.Data
 			}
 		}
 	}
-#endif
 }

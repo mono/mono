@@ -42,9 +42,6 @@ using System.Security.Permissions;
 
 namespace System.Drawing
 {
-#if !NET_2_0
-	[ComVisible (false)] 
-#endif 
 	[Serializable]	
 #if !MONOTOUCH
 	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
@@ -283,7 +280,6 @@ namespace System.Drawing
 			si.AddValue ("IconData", ms.ToArray ());
 		}
 
-#if NET_2_0
 		public Icon (Stream stream, Size size) : 
 			this (stream, size.Width, size.Height)
 		{
@@ -313,7 +309,6 @@ namespace System.Drawing
 
 			return SystemIcons.WinLogo;
 		}	
-#endif
 
 		public void Dispose ()
 		{

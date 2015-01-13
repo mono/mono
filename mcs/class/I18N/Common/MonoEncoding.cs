@@ -32,7 +32,6 @@ namespace I18N.Common
 			get { return win_code_page != 0 ? win_code_page : base.WindowsCodePage; }
 		}
 
-#if NET_2_0
 		/// <summary>
 		/// GetBytes method used internally by state-full encoders/encodings.
 		/// </summary>
@@ -90,7 +89,6 @@ namespace I18N.Common
 			HandleFallback(ref buffer, chars, ref charIndex, ref charCount,
 				bytes, ref byteIndex, ref byteCount, null);
 		}
-#endif
 
 		// Get the bytes that result from encoding a character buffer.
 		public override int GetByteCount (
@@ -193,7 +191,6 @@ namespace I18N.Common
 			}
 		}
 
-#if NET_2_0
 		public unsafe override int GetByteCount (char* chars, int count)
 
 		{
@@ -206,7 +203,6 @@ namespace I18N.Common
 		{
 			return GetBytesImpl (chars, charCount, bytes, byteCount);
 		}
-#endif
 
 		//[CLSCompliant (false)]
 		public unsafe abstract int GetByteCountImpl (char* chars, int charCount);
@@ -218,15 +214,11 @@ namespace I18N.Common
 
 		public abstract class MonoEncoder : Encoder
 		{
-#if NET_2_0
 			MonoEncoding encoding;
-#endif
 
 			public MonoEncoder (MonoEncoding encoding)
 			{
-#if NET_2_0
 				this.encoding = encoding;
-#endif
 			}
 
 			public override int GetByteCount (
@@ -289,7 +281,6 @@ namespace I18N.Common
 
 			public unsafe abstract int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount, bool refresh);
 
-		#if NET_2_0
 			public unsafe override int GetBytes (char* chars, int charCount, byte* bytes, int byteCount, bool flush)
 			{
 				return GetBytesImpl (chars, charCount, bytes, byteCount, flush);
@@ -312,6 +303,5 @@ namespace I18N.Common
 				HandleFallback(chars, ref charIndex, ref charCount,
 					bytes, ref byteIndex, ref byteCount, null);
 			}*/
-		#endif
 		}
 }

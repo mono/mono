@@ -46,9 +46,6 @@ namespace System.Data
 	/// </summary>
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataViewSettingsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#if !NET_2_0
-	[Serializable]
-#endif
 	public class DataViewSettingCollection : ICollection, IEnumerable 
 	{
 		#region Fields
@@ -131,12 +128,10 @@ namespace System.Data
 			settingList.CopyTo (ar, index);
 		}
 
-#if NET_2_0
 		public void CopyTo (DataViewSetting [] ar, int index)
 		{
 			settingList.CopyTo (ar, index);
 		}
-#endif
 
 		public IEnumerator GetEnumerator ()
 		{

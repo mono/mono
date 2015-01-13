@@ -31,9 +31,7 @@ using System.Threading;
 namespace Mono.Unix.Native {
 
 	public struct RealTimeSignum
-#if NET_2_0
 		: IEquatable <RealTimeSignum>
-#endif
 	{
 		private int rt_offset;
 		private static readonly int MaxOffset = UnixSignal.GetSIGRTMAX () - UnixSignal.GetSIGRTMIN () - 1;

@@ -39,7 +39,6 @@ namespace System.Data.OracleClient
 
 		#region Properties
 
-#if NET_2_0
 		protected override IDbCommand BaseCommand {
 			get {
 				return base.BaseCommand;
@@ -48,7 +47,6 @@ namespace System.Data.OracleClient
 				base.BaseCommand = value;
 			}
 		}
-#endif
 
 		public new OracleCommand Command {
 			get { return (OracleCommand) base.Command; }

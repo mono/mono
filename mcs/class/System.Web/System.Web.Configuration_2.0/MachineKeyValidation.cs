@@ -28,11 +28,7 @@
 
 namespace System.Web.Configuration
 {
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	enum MachineKeyValidation
 	{
 		MD5 = 0,

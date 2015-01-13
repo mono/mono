@@ -58,13 +58,11 @@ namespace System.Security.Cryptography.Xml {
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		[MonoTODO]
 		public Transform CanonicalizationMethodObject {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		// documented as not supported (and throwing exception)
 		public int Count {

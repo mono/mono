@@ -36,9 +36,6 @@ namespace System.Data
 	/// Gets the state of a DataRow object.
 	/// </summary>
 	[Flags]
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum DataRowState
 	{
 		Detached = 1,

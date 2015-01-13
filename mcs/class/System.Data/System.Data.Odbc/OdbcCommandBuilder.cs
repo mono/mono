@@ -42,11 +42,7 @@ namespace System.Data.Odbc
 	/// Provides a means of automatically generating single-table commands used to reconcile changes made to a DataSet with the associated database. This class cannot be inherited.
 	/// </summary>
 
-#if NET_2_0
 	public sealed class OdbcCommandBuilder : DbCommandBuilder
-#else // 1_1
-	public sealed class OdbcCommandBuilder : Component
-#endif // NET_2_0
 	{
 		#region Fields
 
@@ -87,9 +83,7 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("The DataAdapter for which to automatically generate OdbcCommands")]
 		[DefaultValue (null)]
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcDataAdapter DataAdapter {
 			get {
 				return _adapter;
@@ -285,11 +279,7 @@ namespace System.Data.Odbc
 						GetParameterName (++paramCount),
 						OdbcType.Int,
 						length,
-#if NET_2_0
 						columnName,
-#else
-						string.Empty,
-#endif
 						DataRowVersion.Original);
 					nullParam.Value = 1;
 					AddParameter (command, GetParameterName (++paramCount),
@@ -353,27 +343,16 @@ namespace System.Data.Odbc
 			}
 
 			query = String.Format (
-#if NET_2_0
 				"{0} ({1}) VALUES ({2})", 
-#else
-				"{0}( {1} ) VALUES ( {2} )", 
-#endif
 				query, 
-#if NET_2_0
 				String.Join (", ", columns, 0, count),
 				String.Join (", ", values, 0, count));
-#else
-				String.Join (" , ", columns, 0, count),
-				String.Join (" , ", values, 0, count));
-#endif
 			_insertCommand.CommandText = query;
 			return _insertCommand;
 		}
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcCommand GetInsertCommand ()
 		{
 			// FIXME: check validity of adapter
@@ -386,7 +365,6 @@ namespace System.Data.Odbc
 			return CreateInsertCommand (false);
 		}
 
-#if NET_2_0
 		public new OdbcCommand GetInsertCommand (bool useColumnsForParameterNames)
 		{
 			// FIXME: check validity of adapter
@@ -398,7 +376,6 @@ namespace System.Data.Odbc
 
 			return CreateInsertCommand (useColumnsForParameterNames);
 		}
-#endif // NET_2_0
 
 		private OdbcCommand CreateUpdateCommand (bool option)
 		{
@@ -432,26 +409,16 @@ namespace System.Data.Odbc
 			string whereClause = CreateOptWhereClause (_updateCommand, count);
 			
 			query = String.Format (
-#if NET_2_0
 				"{0} {1} WHERE ({2})",
-#else
-				"{0} {1} WHERE ( {2} )",
-#endif
 				query,
-#if NET_2_0
 				String.Join (", ", setClause, 0, count),
-#else
-				String.Join (" , ", setClause, 0, count),
-#endif
 				whereClause);
 			_updateCommand.CommandText = query;
 			return _updateCommand;
 		}
 		
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcCommand GetUpdateCommand ()
 		{
 			// FIXME: check validity of adapter
@@ -464,7 +431,6 @@ namespace System.Data.Odbc
 			return CreateUpdateCommand (false);
 		}
 
-#if NET_2_0
 		public new OdbcCommand GetUpdateCommand (bool useColumnsForParameterNames)
 		{
 			// FIXME: check validity of adapter
@@ -476,27 +442,18 @@ namespace System.Data.Odbc
 
 			return CreateUpdateCommand (useColumnsForParameterNames);
 		}
-#endif // NET_2_0
 
 		private OdbcCommand CreateDeleteCommand (bool option)
 		{
 			CreateNewCommand (ref _deleteCommand);
 
 			string query = String.Format (
-#if NET_2_0
 				"DELETE FROM {0}",
-#else
-				"DELETE FROM  {0}",
-#endif
 				GetQuotedString (TableName));
 			string whereClause = CreateOptWhereClause (_deleteCommand, 0);
 			
 			query = String.Format (
-#if NET_2_0
 				"{0} WHERE ({1})",
-#else
-				"{0} WHERE ( {1} )",
-#endif
 				query,
 				whereClause);
 			_deleteCommand.CommandText = query;
@@ -504,9 +461,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcCommand GetDeleteCommand ()
 		{
 			// FIXME: check validity of adapter
@@ -519,7 +474,6 @@ namespace System.Data.Odbc
 			return CreateDeleteCommand (false);
 		}
 
-#if NET_2_0
 		public new OdbcCommand GetDeleteCommand (bool useColumnsForParameterNames)
 		{
 			// FIXME: check validity of adapter
@@ -531,7 +485,6 @@ namespace System.Data.Odbc
 
 			return CreateDeleteCommand (useColumnsForParameterNames);
 		}
-#endif // NET_2_0
 
 #if ONLY_1_1
 		public
@@ -563,20 +516,13 @@ namespace System.Data.Odbc
 			_tableName	= String.Empty;
 		}
 
-#if NET_2_0
 		protected override
-#endif
 		string GetParameterName (int parameterOrdinal)
 		{
-#if NET_2_0
 			return String.Format ("p{0}", parameterOrdinal);
-#else
-			return String.Format ("@p{0}", parameterOrdinal);
-#endif
 		}
 
 
-#if NET_2_0
 		protected override void ApplyParameterInfo (DbParameter parameter,
 		                                            DataRow datarow,
 		                                            StatementType statementType,
@@ -666,7 +612,6 @@ namespace System.Data.Odbc
 				sb.Remove (sb.Length - QuoteSuffix.Length, QuoteSuffix.Length );
 			return sb.ToString ();
 		}
-#endif
 
 		private void OnRowUpdating (object sender, OdbcRowUpdatingEventArgs args)
 		{
@@ -708,12 +653,10 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if NET_2_0
 		string GetQuoteCharacter (OdbcConnection conn)
 		{
 			return conn.GetInfo (OdbcInfo.IdentifierQuoteChar);
 		}
-#endif
 
 		#endregion // Methods
 	}

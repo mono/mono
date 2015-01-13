@@ -58,12 +58,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 
-#if NET_2_0
 		[NotifyParentProperty (true)]
 		[UrlProperty]
-#else
-		[Bindable (true)]
-#endif
 		[DefaultValue ("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -81,11 +77,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[NotifyParentProperty (true)]
-#else
-		[Bindable (true)]
-#endif
 		[DefaultValue (-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -103,11 +95,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[NotifyParentProperty (true)]
-#else
-		[Bindable (true)]
-#endif
 		[DefaultValue (-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -126,11 +114,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAMESPEC: default is documented to be Both
-#if NET_2_0
 		[NotifyParentProperty (true)]
-#else
-		[Bindable (true)]
-#endif
 		[DefaultValue (GridLines.None)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -151,11 +135,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[NotifyParentProperty (true)]
-#else
-		[Bindable (true)]
-#endif
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -238,15 +218,6 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute (HtmlTextWriterAttribute.Border, BorderWidth.Value.ToString (Helpers.InvariantCulture));
 			}
 #endif
-#if !NET_2_0
-			string s = BackImageUrl;
-			if (s.Length > 0) {
-				if (owner != null)
-					s = owner.ResolveClientUrl (s);
-				s = String.Concat ("url(", s, ")");
-				writer.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, s);
-			}
-#endif
 		}
 
 		void Copy (string name, TableStyles s, Style source)
@@ -316,7 +287,6 @@ namespace System.Web.UI.WebControls {
 			// call base at the end because "styles" will reset there
 			base.Reset ();
 		}
-#if NET_2_0
 		protected override void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver)
 		{
 			if (attributes != null) {
@@ -329,7 +299,6 @@ namespace System.Web.UI.WebControls {
 			}
 			base.FillStyleAttributes (attributes, urlResolver);
 		}
-#endif
 
 	}
 }

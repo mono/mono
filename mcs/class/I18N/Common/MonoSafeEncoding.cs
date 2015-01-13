@@ -87,15 +87,11 @@ namespace I18N.Common
 
 		public abstract class MonoSafeEncoder : Encoder
 		{
-#if NET_2_0
 			MonoSafeEncoding encoding;
-#endif
 
 			public MonoSafeEncoder (MonoSafeEncoding encoding)
 			{
-#if NET_2_0
 				this.encoding = encoding;
-#endif
 			}
 
 			public void HandleFallback(

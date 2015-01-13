@@ -32,9 +32,7 @@
 
 using System.ComponentModel;
 using System.Data;
-#if NET_2_0
 using System.Transactions;
-#endif
 
 #if NET_4_5
 using System.Threading;
@@ -97,14 +95,11 @@ namespace System.Data.Common {
 
 		protected abstract DbCommand CreateDbCommand ();
 
-#if NET_2_0
 		public virtual void EnlistTransaction (Transaction transaction)
 		{
 			throw new NotSupportedException ();                        
 		}
-#endif
 
-#if NET_2_0
 		static class DataTypes
 		{
 			static readonly ColumnInfo [] columns = {
@@ -723,7 +718,6 @@ namespace System.Data.Common {
 				return null;
 			}
 		}
-#endif
 
 		IDbTransaction IDbConnection.BeginTransaction ()
 		{

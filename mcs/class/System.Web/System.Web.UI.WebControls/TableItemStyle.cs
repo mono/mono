@@ -158,11 +158,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (!Wrap) {
-#if NET_2_0
 				writer.AddStyleAttribute (HtmlTextWriterStyle.WhiteSpace, "nowrap");
-#else
-				writer.AddAttribute (HtmlTextWriterAttribute.Nowrap, "nowrap");
-#endif
 			}
 		}
 

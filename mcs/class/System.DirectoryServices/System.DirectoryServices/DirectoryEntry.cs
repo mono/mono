@@ -946,7 +946,6 @@ namespace System.DirectoryServices
 			throw new NotImplementedException();
 		}
 
-#if NET_2_0
 		/// <summary>
 		/// Gets a property value from the native Active Directory Entry.
 		/// </summary>
@@ -979,7 +978,6 @@ namespace System.DirectoryServices
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		/// <summary>
 		/// Creates a copy of this entry, as a child of the specified parent, with 

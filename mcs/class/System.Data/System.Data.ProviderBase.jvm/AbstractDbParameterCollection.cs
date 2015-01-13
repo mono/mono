@@ -89,14 +89,12 @@ namespace System.Data.ProviderBase
 			return _list.Add (value);
 		}
 
-#if NET_2_0
 		public override void AddRange (Array values)
 		{
 			foreach (object value in values)
 				Add (value);
 		}
 
-#endif
 
 		public override void Clear () {
 			OnSchemaChanging();
@@ -134,7 +132,6 @@ namespace System.Data.ProviderBase
 			return (DbParameter) _list [index];
 		}
 
-#if NET_2_0
 		protected override DbParameter GetParameter (string parameterName) {
 			return GetParameter (IndexOf (parameterName));
 		}
@@ -142,7 +139,6 @@ namespace System.Data.ProviderBase
 		protected override void SetParameter (string parameterName, DbParameter value) {
 			SetParameter (IndexOf (parameterName), value);
 		}
-#endif
 
 		public override int IndexOf (object value) {
 			ValidateType (value);

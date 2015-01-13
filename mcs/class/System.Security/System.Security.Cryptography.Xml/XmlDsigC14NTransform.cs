@@ -88,14 +88,12 @@ namespace System.Security.Cryptography.Xml {
 			return null; // THIS IS DOCUMENTED AS SUCH
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public override byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
 			// no null check, MS throws a NullReferenceException here
 			return hash.ComputeHash ((Stream) GetOutput ());
 		}
-#endif
 
 		public override object GetOutput () 
 		{
@@ -138,12 +136,8 @@ namespace System.Security.Cryptography.Xml {
 			if (nl != null) {
 				s = canonicalizer.Canonicalize (nl);
 			}
-#if NET_2_0
 			else
 				throw new ArgumentException ("obj");
-#else
-			// note: there is no default are other types won't throw an exception
-#endif
 		}
 	}
 }

@@ -33,17 +33,9 @@ using System.Security.Permissions;
 
 namespace System.Web.Hosting {
 
-#if NET_2_0
         public sealed class ISAPIRuntime : MarshalByRefObject, IISAPIRuntime, IRegisteredObject {
-#else
-	// CAS - no InheritanceDemand here as the class is sealed
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-        public sealed class ISAPIRuntime : IISAPIRuntime {
-#endif
 
-#if NET_2_0
 		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
                 public ISAPIRuntime ()
 		{
@@ -67,15 +59,12 @@ namespace System.Web.Hosting {
 		}
 		
 		[MonoTODO ("Not implemented")]
-#if NET_2_0
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-#endif
                 public void StopProcessing ()
 		{
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO ("Not implemented")]
 		public override object InitializeLifetimeService ()
 		{
@@ -87,6 +76,5 @@ namespace System.Web.Hosting {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
         }
 }

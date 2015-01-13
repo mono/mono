@@ -140,7 +140,6 @@ namespace System.Drawing {
 		static public Color WindowText {
 			get { return KnownColors.FromKnownColor (KnownColor.WindowText); }
 		}
-#if NET_2_0
 		static public Color ButtonFace {
 			get { return KnownColors.FromKnownColor (KnownColor.ButtonFace); }
 		}
@@ -168,6 +167,5 @@ namespace System.Drawing {
 		static public Color MenuHighlight {
 			get { return KnownColors.FromKnownColor (KnownColor.MenuHighlight); }
 		}
-#endif
 	}
 }

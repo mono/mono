@@ -32,9 +32,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.ServiceProcess
 {
@@ -49,9 +47,7 @@ namespace System.ServiceProcess
 		private string service_name;
 		private string[] services_depended_on;
 		private ServiceStartMode start_type;
-#if NET_2_0
 		private string description;
-#endif
 #if NET_4_0
 		private bool delayedAutoStart;
 #endif
@@ -69,7 +65,6 @@ namespace System.ServiceProcess
 		}
 #endif
 
-#if NET_2_0
 		[ComVisible (false)]
 		[DefaultValue ("")]
 		[ServiceProcessDescription ("Indicates the service's description (a brief comment that explains the purpose of the service). ")]
@@ -81,12 +76,9 @@ namespace System.ServiceProcess
 				description = value;
 			}
 		}
-#endif
 
 		[DefaultValue("")]
-#if NET_2_0
 		[ServiceProcessDescription ("Indicates the friendly name that identifies the service to the user.")]
-#endif
 		public string DisplayName {
 			get {
 				return display_name;
@@ -97,9 +89,7 @@ namespace System.ServiceProcess
 		}
 
 		[DefaultValue("")]
-#if NET_2_0
 		[ServiceProcessDescription ("Indicates the name used by the system to identify this service.")]
-#endif
 		[TypeConverter("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string ServiceName {
 			get {
@@ -112,9 +102,7 @@ namespace System.ServiceProcess
 			}
 		}
 
-#if NET_2_0
 		[ServiceProcessDescription ("Indicates the services that must be running in order for this service to run.")]
-#endif
 		public string[] ServicesDependedOn {
 			get {
 				return services_depended_on;
@@ -125,9 +113,7 @@ namespace System.ServiceProcess
 		}
 
 		[DefaultValue (ServiceStartMode.Manual)]
-#if NET_2_0
 		[ServiceProcessDescription ("Indicates how and when this service is started.")]
-#endif
 		public ServiceStartMode StartType {
 			get {
 				return start_type;

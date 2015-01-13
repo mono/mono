@@ -67,11 +67,7 @@ namespace System.Xml.Schema
 		}
 
 		[XmlIgnore]
-#if NET_2_0
 		public XmlQualifiedName QualifiedName 
-#else
-		internal XmlQualifiedName QualifiedName 
-#endif
 		{
 			get{ return qualifiedName;}
 		}

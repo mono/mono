@@ -26,7 +26,6 @@
 //
 //
 
-#if NET_2_0
 
 namespace System.Drawing
 {
@@ -49,4 +48,3 @@ namespace System.Drawing
 	}
 }
 
-#endif

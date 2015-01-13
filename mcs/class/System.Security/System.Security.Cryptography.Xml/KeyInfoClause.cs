@@ -33,11 +33,7 @@ namespace System.Security.Cryptography.Xml {
 
 	public abstract class KeyInfoClause {
 
-#if NET_2_0
 		protected KeyInfoClause ()
-#else
-		public KeyInfoClause ()
-#endif
 		{
 		}
 

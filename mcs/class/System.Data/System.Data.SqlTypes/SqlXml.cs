@@ -36,7 +36,6 @@ using System.Threading;
 using System.Xml.Serialization;
 using System.Text;
 
-#if NET_2_0
 
 namespace System.Data.SqlTypes
 {
@@ -160,4 +159,3 @@ namespace System.Data.SqlTypes
 	}
 }
 
-#endif

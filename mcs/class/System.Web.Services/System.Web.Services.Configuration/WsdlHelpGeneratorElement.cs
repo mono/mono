@@ -32,7 +32,6 @@ using System;
 using System.Configuration;
 using System.Xml;
 
-#if NET_2_0
 
 namespace System.Web.Services.Configuration {
 
@@ -80,5 +79,4 @@ namespace System.Web.Services.Configuration {
 
 }
 
-#endif
 

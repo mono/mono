@@ -50,23 +50,14 @@ namespace System.Xml.Serialization {
 		{
 		}
 
-#if NET_2_0
 		public
-#else
-		private
-#endif
 		CodeIdentifiers (bool caseSensitive)
 		{
-#if NET_2_0
 			StringComparer c = caseSensitive ?
 				StringComparer.Ordinal :
 				StringComparer.OrdinalIgnoreCase;
 			table = new Hashtable (c);
 			reserved = new Hashtable (c);
-#else
-			table = new Hashtable ();
-			reserved = new Hashtable ();
-#endif
 		}
 
 		#endregion // Constructors

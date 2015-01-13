@@ -50,10 +50,8 @@ using System.Runtime.CompilerServices;
 
 #if NET_4_0
 [assembly: AssemblyVersion("4.84.0.0")]
-#elif NET_2_0
-[assembly: AssemblyVersion("2.84.0.0")]
 #else
-	#error "No profile"
+[assembly: AssemblyVersion("2.84.0.0")]
 #endif
 
 [assembly: AssemblyDelaySign(true)]

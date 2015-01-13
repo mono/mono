@@ -76,10 +76,8 @@ namespace System.Xml
 			if (ofObjectToReturn != typeof (Stream))
 				throw new XmlException ("This object type is not supported.");
 
-#if NET_2_0
 			if (!absoluteUri.IsAbsoluteUri)
 				throw new ArgumentException ("uri must be absolute.", "absoluteUri");
-#endif
 
 			if (absoluteUri.Scheme == "file") {
 				if (absoluteUri.AbsolutePath == String.Empty)
@@ -103,12 +101,10 @@ namespace System.Xml
 			return req.GetResponse().GetResponseStream();
 		}
 
-#if NET_2_0
 		public override Uri ResolveUri (Uri baseUri, string relativeUri)
 		{
 			return base.ResolveUri (baseUri, relativeUri);
 		}
-#endif
 
 		// see also XmlResolver.EscapeRelativeUriBody().
 		private string UnescapeRelativeUriBody (string src)

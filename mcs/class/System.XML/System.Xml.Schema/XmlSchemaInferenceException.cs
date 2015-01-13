@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Runtime.Serialization;
@@ -68,10 +67,8 @@ namespace System.Xml.Schema
 		{
 		}
 
-#if NET_2_0
 		[SecurityPermission (SecurityAction.LinkDemand,
 			Flags=SecurityPermissionFlag.SerializationFormatter)]
-#endif
 		public override void GetObjectData (
 			SerializationInfo info, StreamingContext context)
 		{
@@ -80,4 +77,3 @@ namespace System.Xml.Schema
 	}
 }
 
-#endif

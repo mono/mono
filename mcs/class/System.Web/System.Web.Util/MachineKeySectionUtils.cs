@@ -36,7 +36,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web.Configuration;
 
-#if NET_2_0
 
 namespace System.Web.Util {
 
@@ -312,4 +311,3 @@ namespace System.Web.Util {
 	}
 }
 
-#endif

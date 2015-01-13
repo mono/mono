@@ -204,9 +204,7 @@ namespace Mono.Unix.Native {
 	#region Classes
 
 	public sealed class FilePosition : MarshalByRefObject, IDisposable 
-#if NET_2_0
 		, IEquatable <FilePosition>
-#endif
 	{
 
 		private static readonly int FilePositionDumpSize = 
@@ -310,21 +308,6 @@ namespace Mono.Unix.Native {
 #endif
 	public delegate void SignalHandler (int signal);
 
-#if !NET_2_0
-	internal sealed class SignalWrapper {
-		private IntPtr handler;
-
-		internal SignalWrapper (IntPtr handler)
-		{
-			this.handler = handler;
-		}
-
-		public void InvokeSignalHandler (int signum)
-		{
-			Stdlib.InvokeSignalHandler (signum, handler);
-		}
-	}
-#endif
 
 	internal class XPrintfFunctions
 	{
@@ -511,11 +494,7 @@ namespace Mono.Unix.Native {
 				return SIG_ERR;
 			if (handler == _SIG_IGN)
 				return SIG_IGN;
-#if NET_2_0
 			return (SignalHandler) Marshal.GetDelegateForFunctionPointer (handler, typeof(SignalHandler));
-#else
-			return new SignalHandler (new SignalWrapper (handler).InvokeSignalHandler);
-#endif
 		}
 
 		public static int SetSignalAction (Signum signal, SignalAction action)

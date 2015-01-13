@@ -109,7 +109,6 @@ namespace System.Data.Odbc
 			return _items.GetEnumerator ();
 		}
 
-#if NET_2_0
 		public void CopyTo (OdbcError [] array, int i)
 		{
 			if (array == null)
@@ -119,7 +118,6 @@ namespace System.Data.Odbc
 				throw new ArgumentOutOfRangeException ("index");
 			((OdbcError[]) (_items.ToArray ())).CopyTo (array, i);
 		}
-#endif
 
 		#endregion // Methods
 	}

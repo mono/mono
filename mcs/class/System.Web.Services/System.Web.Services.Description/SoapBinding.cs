@@ -47,9 +47,7 @@ namespace System.Web.Services.Description {
 		SoapBindingStyle style;
 		string transport;
 
-#if NET_2_0
 		static XmlSchema schema;
-#endif
 
 		#endregion // Fields
 
@@ -65,7 +63,6 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
-#if NET_2_0
 		public static XmlSchema Schema {
 			get {
 				if (schema == null) {
@@ -74,7 +71,6 @@ namespace System.Web.Services.Description {
 				return schema;
 			}
 		}
-#endif
 
 		// LAMESPEC: .NET says that the default value is SoapBindingStyle.Document but
 		// reflection shows this attribute is SoapBindingStyle.Default

@@ -58,9 +58,7 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
-#if NET_2_0
 		[DefaultValue ("")]
-#endif
 		[XmlAttribute ("encodingStyle")]
 		public string Encoding {
 			get { return encoding; }
@@ -80,13 +78,11 @@ namespace System.Web.Services.Description {
 			set { use = value; }
 		}
 
-#if NET_2_0
 		[XmlAttribute ("name")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
-#endif
 		#endregion // Properties
 	}
 }

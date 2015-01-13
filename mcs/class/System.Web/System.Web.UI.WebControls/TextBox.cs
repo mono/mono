@@ -42,20 +42,13 @@ namespace System.Web.UI.WebControls {
 	[DefaultProperty ("Text")]
 	[ValidationProperty ("Text")]
 	[ControlBuilder (typeof (TextBoxControlBuilder))]
-#if NET_2_0
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildren (true, "Text")]
 	[ControlValueProperty ("Text", null)]
 	[SupportsEventValidation]
-#else
-	[ParseChildren (false)]
-#endif		
 	public class TextBox : WebControl, IPostBackDataHandler
-#if NET_2_0
 	, IEditableTextControl, ITextControl
-#endif		  
 	{
-#if NET_2_0
 		readonly static string [] VCardValues = new string [] {
 			null,
 			null,
@@ -90,7 +83,6 @@ namespace System.Web.UI.WebControls {
 			"vCard.Business.ZipCode",
 			"search"
 		};
-#endif
 
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
@@ -102,17 +94,13 @@ namespace System.Web.UI.WebControls {
 			case TextBoxMode.MultiLine:
 				if (Columns != 0)
 					w.AddAttribute (HtmlTextWriterAttribute.Cols, Columns.ToString (), false);
-#if NET_2_0
 				else
 					w.AddAttribute (HtmlTextWriterAttribute.Cols, "20", false);
-#endif
 				
 				if (Rows != 0)
 					w.AddAttribute (HtmlTextWriterAttribute.Rows, Rows.ToString (), false);
-#if NET_2_0
 				else
 					w.AddAttribute (HtmlTextWriterAttribute.Rows, "2", false);
-#endif
 
 				if (!Wrap)
 					w.AddAttribute (HtmlTextWriterAttribute.Wrap, "off", false);
@@ -136,17 +124,14 @@ namespace System.Web.UI.WebControls {
 				if (MaxLength != 0)
 					w.AddAttribute (HtmlTextWriterAttribute.Maxlength, MaxLength.ToString (), false);
 
-#if NET_2_0
 				if (AutoCompleteType != AutoCompleteType.None && TextMode == TextBoxMode.SingleLine)
 					if (AutoCompleteType != AutoCompleteType.Disabled)
 						w.AddAttribute (HtmlTextWriterAttribute.VCardName, VCardValues [(int) AutoCompleteType]);
 					else
 						w.AddAttribute (HtmlTextWriterAttribute.AutoComplete, "off", false);
-#endif
 				break;	
 			}
 
-#if NET_2_0
 			if (AutoPostBack) {
 				w.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;", false);
 
@@ -158,12 +143,6 @@ namespace System.Web.UI.WebControls {
 			} else if (page != null)
 				page.ClientScript.RegisterForEventValidation (UniqueID, String.Empty);
 				
-#else		
-			if (page != null && AutoPostBack)
-				w.AddAttribute (HtmlTextWriterAttribute.Onchange,
-						BuildScriptAttribute ("onchange",
-							page.ClientScript.GetPostBackClientHyperlink (this, "")));
-#endif
 
 			if (ReadOnly)
 				w.AddAttribute (HtmlTextWriterAttribute.ReadOnly, "ReadOnly", false);
@@ -180,16 +159,11 @@ namespace System.Web.UI.WebControls {
 				Text = l.Text;
 		}
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void OnPreRender (EventArgs e)
 		{
 			// What do i do here?
 			base.OnPreRender (e);
-#if NET_2_0
 			if (AutoPostBack) {
 				RegisterKeyHandlerClientScript ();
 			}
@@ -197,14 +171,9 @@ namespace System.Web.UI.WebControls {
 			Page page = Page;
 			if (page != null && IsEnabled)
 				page.RegisterEnabledControl (this);
-#endif
 		}
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void Render (HtmlTextWriter w)
 		{
 			// Why didn't msft just override RenderContents!?
@@ -219,14 +188,10 @@ namespace System.Web.UI.WebControls {
 			RenderEndTag (w);
 		}
 		
-#if NET_2_0
 		protected virtual
-#endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-#if NET_2_0
 			ValidateEvent (postDataKey, String.Empty);
-#endif
 			if (Text != postCollection [postDataKey]) {
 				Text = postCollection [postDataKey];
 				return true;
@@ -235,15 +200,11 @@ namespace System.Web.UI.WebControls {
 			return false;
 		}
 
-#if NET_2_0
 		protected virtual
-#endif
 		void RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
 			if (CausesValidation)
 				Page.Validate (ValidationGroup);
-#endif
 			OnTextChanged (EventArgs.Empty);
 		}
 
@@ -257,16 +218,13 @@ namespace System.Web.UI.WebControls {
 			RaisePostDataChangedEvent ();
 		}
 
-#if NET_2_0
 		protected override object SaveViewState ()
 		{
 			if (TextMode == TextBoxMode.Password)
 				ViewState.SetItemDirty ("Text", false);
 			return base.SaveViewState ();
 		}
-#endif		
 	
-#if NET_2_0
 		PostBackOptions GetPostBackOptions () {
 			PostBackOptions options = new PostBackOptions (this);
 			options.ActionUrl = null;
@@ -305,9 +263,7 @@ namespace System.Web.UI.WebControls {
 				Page.ClientScript.RegisterClientScriptBlock (typeof (TextBox), "KeyHandler", script.ToString(), true);
 			}
 		}
-#endif
 
-#if NET_2_0
 		[DefaultValue (AutoCompleteType.None)]
 		[Themeable (false)]
 		public virtual AutoCompleteType AutoCompleteType 
@@ -320,12 +276,9 @@ namespace System.Web.UI.WebControls {
 				ViewState ["AutoCompleteType"] = value;
 			}
 		}
-#endif		
 		
 		[DefaultValue(false)]
-#if NET_2_0
 		[Themeable (false)]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public virtual bool AutoPostBack {
@@ -337,7 +290,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		[Themeable (false)]
 		public virtual bool CausesValidation
@@ -349,7 +301,6 @@ namespace System.Web.UI.WebControls {
 				ViewState["CausesValidation"] = value;
 			}
 		}
-#endif		
 
 #if ONLY_1_1
 		[Bindable(true)]
@@ -373,9 +324,7 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(0)]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public virtual int MaxLength {
@@ -392,9 +341,7 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue(false)]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public virtual bool ReadOnly {
@@ -410,9 +357,7 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(0)]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public virtual int Rows {
@@ -438,17 +383,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[Bindable(true, BindingDirection.TwoWay)]
-#else
-		[Bindable(true)]
-#endif		
 		[DefaultValue("")]
 		[PersistenceMode(PersistenceMode.EncodedInnerDefaultProperty)]
-#if NET_2_0
 		[Localizable (true)]
 		[Editor ("System.ComponentModel.Design.MultilineStringEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public virtual string Text {
@@ -465,9 +404,7 @@ namespace System.Web.UI.WebControls {
 		}
 	
 		[DefaultValue(TextBoxMode.SingleLine)]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public virtual TextBoxMode TextMode {
@@ -479,7 +416,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[Themeable (false)]
 		[DefaultValue ("")]
 		public virtual string ValidationGroup
@@ -491,7 +427,6 @@ namespace System.Web.UI.WebControls {
 				ViewState ["ValidationGroup"] = value;
 			}
 		}
-#endif		
 	
 		[DefaultValue(true)]
 		[WebSysDescription ("")]

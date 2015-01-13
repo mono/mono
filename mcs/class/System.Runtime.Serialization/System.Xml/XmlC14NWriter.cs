@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if USE_DEPRECATED
-#if NET_2_0
 using System;
 using System.IO;
 
@@ -183,5 +182,4 @@ namespace System.Xml
 		}
 	}
 }
-#endif
 #endif

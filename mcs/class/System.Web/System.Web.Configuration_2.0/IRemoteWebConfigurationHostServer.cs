@@ -29,7 +29,6 @@
 using System.Resources;
 using System.Runtime.InteropServices;
 
-#if NET_2_0
 namespace System.Web.Configuration
 {
 	[ComVisibleAttribute (true)]
@@ -49,4 +48,3 @@ namespace System.Web.Configuration
 		void WriteData (string fileName, string templateFileName, byte [] data, ref long readTime);
 	}
 }
-#endif

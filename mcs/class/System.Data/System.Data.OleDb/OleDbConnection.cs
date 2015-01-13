@@ -36,18 +36,12 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.EnterpriseServices;
-#if NET_2_0
 using System.Transactions;
-#endif
 
 namespace System.Data.OleDb
 {
 	[DefaultEvent ("InfoMessage")]
-#if NET_2_0
 	public sealed class OleDbConnection : DbConnection, ICloneable
-#else
-	public sealed class OleDbConnection : Component, ICloneable, IDbConnection
-#endif
 	{
 		#region Fields
 
@@ -234,9 +228,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Open ()
 		{
 //			string provider = "Default";
@@ -304,7 +296,6 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override void EnlistTransaction (Transaction transaction)
 		{
@@ -339,23 +330,14 @@ namespace System.Data.OleDb
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		#endregion
 
 		#region Events and Delegates
 
-#if !NET_2_0
-		[DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
-#endif
 		[DataCategory ("DataCategory_InfoMessage")]
 		public event OleDbInfoMessageEventHandler InfoMessage;
 
-#if !NET_2_0
-		[DataSysDescription ("Event triggered when the connection changes state.")]
-		[DataCategory ("DataCategory_StateChange")]
-		public event StateChangeEventHandler StateChange;
-#endif
 
 		#endregion
 	}

@@ -77,9 +77,7 @@ namespace System.Xml
 			this.linePosition = info.GetInt32 ("linePosition");
 			this.res = info.GetString ("res");
 			this.messages = (string []) info.GetValue ("args", typeof(string []));
-#if NET_2_0
 			this.sourceUri = info.GetString ("sourceUri");
-#endif
 		}
 
 		public XmlException (string message)
@@ -154,11 +152,9 @@ namespace System.Xml
 			get { return linePosition; }
 		}
 
-#if NET_2_0
 		public string SourceUri {
 			get { return sourceUri; }
 		}
-#endif
 
 		public override string Message {
 			get {
@@ -182,9 +178,7 @@ namespace System.Xml
 			info.AddValue ("linePosition", linePosition);
 			info.AddValue ("res", res);
 			info.AddValue ("args", messages);
-#if NET_2_0
 			info.AddValue ("sourceUri", sourceUri);
-#endif
 		}
 
 		#endregion

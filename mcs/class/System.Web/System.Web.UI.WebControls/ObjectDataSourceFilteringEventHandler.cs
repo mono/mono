@@ -27,11 +27,9 @@
 //
 
 
-#if NET_2_0
 
 namespace System.Web.UI.WebControls
 {
 	public delegate void ObjectDataSourceFilteringEventHandler (object sender, ObjectDataSourceFilteringEventArgs e);
 }
 
-#endif

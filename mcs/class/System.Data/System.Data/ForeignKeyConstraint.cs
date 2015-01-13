@@ -42,9 +42,6 @@ namespace System.Data {
 	[Editor ("Microsoft.VSDesigner.Data.Design.ForeignKeyConstraintEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("ConstraintName")]
-#if !NET_2_0
-	[Serializable]
-#endif
 	public class ForeignKeyConstraint : Constraint 
 	{
 		private UniqueConstraint _parentUniqueConstraint;
@@ -56,9 +53,7 @@ namespace System.Data {
 		private Rule _updateRule = Rule.Cascade;
 		private AcceptRejectRule _acceptRejectRule = AcceptRejectRule.None;
 		private string _parentTableName;
-#if NET_2_0
 		private string _parentTableNamespace;
-#endif
 		private string _childTableName;
 
 		//FIXME: remove those; and use only DataColumns[]
@@ -166,13 +161,10 @@ namespace System.Data {
 			_validateColumns (parentColumns, childColumns);
 			_parentColumns = parentColumns;
 			_childColumns = childColumns;
-#if NET_2_0
 			parentTable.Namespace = _parentTableNamespace;
-#endif
 			InitInProgress = false;
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		public ForeignKeyConstraint (string constraintName, string parentTableName, string parentTableNamespace, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule)
 		{
@@ -197,7 +189,6 @@ namespace System.Data {
 			_deleteRule = deleteRule;
 			_updateRule = updateRule;
 		}
-#endif
 
 		private void _foreignKeyConstraint(string constraintName, DataColumn[] parentColumns,
 				DataColumn[] childColumns)
@@ -339,9 +330,6 @@ namespace System.Data {
 		#region Properties
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("For accept and reject changes, indicates what kind of cascading should take place across this relation.")]
-#endif
 		[DefaultValue (AcceptRejectRule.None)]
 		public virtual AcceptRejectRule AcceptRejectRule {
 			get { return _acceptRejectRule; }
@@ -349,18 +337,12 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the child columns of this constraint.")]
-#endif
 		[ReadOnly (true)]
 		public virtual DataColumn[] Columns {
 			get { return _childColumns; }
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("For deletions, indicates what kind of cascading should take place across this relation.")]
-#endif
 		[DefaultValue (Rule.Cascade)]
 		public virtual Rule DeleteRule {
 			get { return _deleteRule; }
@@ -368,9 +350,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("For updates, indicates what kind of cascading should take place across this relation.")]
-#endif
 		[DefaultValue (Rule.Cascade)]
 		public virtual Rule UpdateRule {
 			get { return _updateRule; }
@@ -378,18 +357,12 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]	
-#if !NET_2_0
-		[DataSysDescription ("Indicates the parent columns of this constraint.")]
-#endif
 		[ReadOnly (true)]
 		public virtual DataColumn[] RelatedColumns {
 			get { return _parentColumns; }
 		}
 
 		[DataCategory ("Data")]	
-#if !NET_2_0
-		[DataSysDescription ("Indicates the child table of this constraint.")]
-#endif
 		[ReadOnly (true)]
 		public virtual DataTable RelatedTable {
 			get {
@@ -402,9 +375,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the table of this constraint.")]
-#endif
 		[ReadOnly (true)]
 		public override DataTable Table {
 			get {

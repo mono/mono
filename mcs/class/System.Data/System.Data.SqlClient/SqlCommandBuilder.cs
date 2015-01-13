@@ -36,18 +36,12 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-#if NET_2_0
 using System.Data.SqlTypes;
-#endif
 using System.Text;
 
 namespace System.Data.SqlClient
 {
-#if NET_2_0
 	public sealed class SqlCommandBuilder : DbCommandBuilder
-#else
-	public sealed class SqlCommandBuilder : Component
-#endif // NET_2_0
 	{
 		#region Fields
 
@@ -78,10 +72,8 @@ namespace System.Data.SqlClient
 
 		public SqlCommandBuilder ()
 		{
-#if NET_2_0
 			QuoteSuffix = "]";
 			QuotePrefix = "[";
-#endif
 		}
 
 		public SqlCommandBuilder (SqlDataAdapter adapter)
@@ -94,9 +86,6 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
-#if !NET_2_0
-		[DataSysDescription ("The DataAdapter for which to automatically generate SqlCommands")]
-#endif
 		[DefaultValue (null)]
 		public new SqlDataAdapter DataAdapter {
 			get { 
@@ -121,15 +110,9 @@ namespace System.Data.SqlClient
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-		[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
-#else
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif // NET_2_0
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string QuotePrefix {
 			get {
 #if ONLY_1_1
@@ -161,15 +144,9 @@ namespace System.Data.SqlClient
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-		[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters. ")]
-#else
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif // NET_2_0
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string QuoteSuffix {
 			get {
 #if ONLY_1_1
@@ -199,13 +176,9 @@ namespace System.Data.SqlClient
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-		[DefaultValue (".")]
-#endif
 		public override string CatalogSeparator {
 			get { return _catalogSeparator; }
 			set {
@@ -220,9 +193,6 @@ namespace System.Data.SqlClient
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-		[DefaultValue (".")]
-#endif
 		public override string SchemaSeparator {
 			get { return _schemaSeparator; }
 			set {
@@ -237,9 +207,6 @@ namespace System.Data.SqlClient
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-		[DefaultValue (CatalogLocation.Start)]
-#endif
 		public override CatalogLocation CatalogLocation {
 			get { return _catalogLocation; }
 			set {
@@ -251,7 +218,6 @@ namespace System.Data.SqlClient
 			}
 		}
 
-#endif // NET_2_0
 
 #if ONLY_1_1
 		private SqlCommand SourceCommand {
@@ -593,54 +559,26 @@ namespace System.Data.SqlClient
 #endif
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		SqlCommand GetDeleteCommand ()
 		{
-#if NET_2_0 
 			return (SqlCommand) base.GetDeleteCommand (false);
-#else
-			BuildCache (true);
-			if (deleteCommand == null)
-				return CreateDeleteCommand (false);
-			return deleteCommand;
-#endif
 		}
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		SqlCommand GetInsertCommand ()
 		{
-#if NET_2_0
 			return (SqlCommand) base.GetInsertCommand (false);
-#else
-			BuildCache (true);
-			if (insertCommand == null)
-				return CreateInsertCommand (false);
-			return insertCommand;
-#endif
 		}
 
 		public 
-#if NET_2_0
 		new
-#endif // NET_2_0
 		SqlCommand GetUpdateCommand ()
 		{
-#if NET_2_0
 			return (SqlCommand) base.GetUpdateCommand (false);
-#else
-			BuildCache (true);
-			if (updateCommand == null)
-				return CreateUpdateCommand (false);
-			return updateCommand;
-#endif
 		}
 
-#if NET_2_0
 		public new SqlCommand GetUpdateCommand (bool useColumnsForParameterNames)
 		{
 			return (SqlCommand) base.GetUpdateCommand (useColumnsForParameterNames);
@@ -677,7 +615,6 @@ namespace System.Data.SqlClient
 		{
 			return base.UnquoteIdentifier (quotedIdentifier);
 		}
-#endif // NET_2_0
 
 		private bool IncludedInInsert (DataRow schemaRow)
 		{
@@ -758,20 +695,12 @@ namespace System.Data.SqlClient
 		}
 #endif
 
-#if NET_2_0
 		protected override void ApplyParameterInfo (DbParameter parameter,
 		                                            DataRow datarow,
 		                                            StatementType statementType,
 		                                            bool whereClause)
 		{
 			SqlParameter sqlParam = (SqlParameter) parameter;
-#else
-		void ApplyParameterInfo (SqlParameter sqlParam,
-		                         DataRow datarow,
-		                         StatementType statementType,
-		                         bool whereClause)
-		{
-#endif
 			sqlParam.SqlDbType = (SqlDbType) datarow ["ProviderType"];
 
 			object precision = datarow ["NumericPrecision"];
@@ -789,28 +718,22 @@ namespace System.Data.SqlClient
 			}
 		}
 
-#if NET_2_0
 		protected override
-#endif
 		string GetParameterName (int parameterOrdinal)
 		{
 			return String.Format ("@p{0}",  parameterOrdinal);
 		}
 
-#if NET_2_0
 		protected override
-#endif
 		string GetParameterName (string parameterName)
 		{
 			return String.Format ("@{0}", parameterName);
 		}
 
-#if NET_2_0
 		protected override string GetParameterPlaceholder (int parameterOrdinal)
 		{
 			return GetParameterName (parameterOrdinal);
 		}
-#endif
 
 		#endregion // Methods
 
@@ -818,31 +741,9 @@ namespace System.Data.SqlClient
 
 		void RowUpdatingHandler (object sender, SqlRowUpdatingEventArgs args)
 		{
-#if NET_2_0
 			base.RowUpdatingHandler (args);
-#else
-			if (args.Command != null)
-				return;
-			try {
-				switch (args.StatementType) {
-				case StatementType.Insert:
-					args.Command = GetInsertCommand ();
-					break;
-				case StatementType.Update:
-					args.Command = GetUpdateCommand ();
-					break;
-				case StatementType.Delete:
-					args.Command = GetDeleteCommand ();
-					break;
-				}
-			} catch (Exception e) {
-				args.Errors = e;
-				args.Status = UpdateStatus.ErrorsOccurred;
-			}
-#endif
 		}
 
-#if NET_2_0
 		protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
 		{
 				SqlDataAdapter sda = adapter as SqlDataAdapter;
@@ -874,7 +775,6 @@ namespace System.Data.SqlClient
 			}
 			return command;
 		}
-#endif // NET_2_0
 
 		#endregion // Event Handlers
 	}

@@ -43,21 +43,17 @@ namespace System.Data
 	/// DataColumn, DataSet, or DataTable class can
 	/// retrieve a PropertyCollection.
 	/// </summary>
-#if NET_2_0
 	[Serializable]
-#endif
 	public class PropertyCollection : Hashtable {
 		public PropertyCollection() 
 		{
 		}
 
-#if NET_2_0
 		protected PropertyCollection(System.Runtime.Serialization.SerializationInfo info,
 					     System.Runtime.Serialization.StreamingContext context)
 			: base (info, context)
 		{
 		}
-#endif
 
 		// the only public methods and properties 
 		// are all inherited from Hashtable

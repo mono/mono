@@ -44,9 +44,7 @@ namespace System.Xml.Serialization
 		internal string _elementName;
 		internal string _namespace;
 		
-#if NET_2_0
 		string key;
-#endif		
 
 		internal XmlMapping ()
 		{
@@ -58,7 +56,6 @@ namespace System.Xml.Serialization
 			_namespace = ns;
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public string XsdElementName
 		{
@@ -84,7 +81,6 @@ namespace System.Xml.Serialization
 		{
 			return key;
 		}
-#endif
 
 		internal ObjectMap ObjectMap
 		{

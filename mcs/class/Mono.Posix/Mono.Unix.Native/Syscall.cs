@@ -733,9 +733,7 @@ namespace Mono.Unix.Native {
 
 	[Map ("struct flock")]
 	public struct Flock
-#if NET_2_0
 		: IEquatable <Flock>
-#endif
 	{
 		[CLSCompliant (false)]
 		public LockType         l_type;    // Type of lock: F_RDLCK, F_WRLCK, F_UNLCK
@@ -782,9 +780,7 @@ namespace Mono.Unix.Native {
 
 	[Map ("struct pollfd")]
 	public struct Pollfd
-#if NET_2_0
 		: IEquatable <Pollfd>
-#endif
 	{
 		public int fd;
 		[CLSCompliant (false)]
@@ -823,9 +819,7 @@ namespace Mono.Unix.Native {
 
 	// Use manually written To/From methods to handle fields st_atime_nsec etc.
 	public struct Stat
-#if NET_2_0
 		: IEquatable <Stat>
-#endif
 	{
 		[CLSCompliant (false)]
 		[dev_t]     public ulong    st_dev;     // device
@@ -963,9 +957,7 @@ namespace Mono.Unix.Native {
 	[Map]
 	[CLSCompliant (false)]
 	public struct Statvfs
-#if NET_2_0
 		: IEquatable <Statvfs>
-#endif
 	{
 		public                  ulong f_bsize;	  // file system block size
 		public                  ulong f_frsize;   // fragment size
@@ -1040,9 +1032,7 @@ namespace Mono.Unix.Native {
 
 	[Map ("struct timeval")]
 	public struct Timeval
-#if NET_2_0
 		: IEquatable <Timeval>
-#endif
 	{
 		[time_t]      public long tv_sec;   // seconds
 		[suseconds_t] public long tv_usec;  // microseconds
@@ -1078,9 +1068,7 @@ namespace Mono.Unix.Native {
 
 	[Map ("struct timezone")]
 	public struct Timezone
-#if NET_2_0
 		: IEquatable <Timezone>
-#endif
 	{
 		public  int tz_minuteswest; // minutes W of Greenwich
 #pragma warning disable 169		
@@ -1118,9 +1106,7 @@ namespace Mono.Unix.Native {
 
 	[Map ("struct utimbuf")]
 	public struct Utimbuf
-#if NET_2_0
 		: IEquatable <Utimbuf>
-#endif
 	{
 		[time_t] public long    actime;   // access time
 		[time_t] public long    modtime;  // modification time
@@ -1156,9 +1142,7 @@ namespace Mono.Unix.Native {
 
 	[Map ("struct timespec")]
 	public struct Timespec
-#if NET_2_0
 		: IEquatable <Timespec>
-#endif
 	{
 		[time_t] public long    tv_sec;   // Seconds.
 		public          long    tv_nsec;  // Nanoseconds.
@@ -1249,9 +1233,7 @@ namespace Mono.Unix.Native {
 	#region Classes
 
 	public sealed class Dirent
-#if NET_2_0
 		: IEquatable <Dirent>
-#endif
 	{
 		[CLSCompliant (false)]
 		public /* ino_t */ ulong  d_ino;
@@ -1302,9 +1284,7 @@ namespace Mono.Unix.Native {
 	}
 
 	public sealed class Fstab
-#if NET_2_0
 		: IEquatable <Fstab>
-#endif
 	{
 		public string fs_spec;
 		public string fs_file;
@@ -1356,9 +1336,7 @@ namespace Mono.Unix.Native {
 	}
 
 	public sealed class Group
-#if NET_2_0
 		: IEquatable <Group>
-#endif
 	{
 		public string           gr_name;
 		public string           gr_passwd;
@@ -1438,9 +1416,7 @@ namespace Mono.Unix.Native {
 	}
 
 	public sealed class Passwd
-#if NET_2_0
 		: IEquatable <Passwd>
-#endif
 	{
 		public string           pw_name;
 		public string           pw_passwd;
@@ -1497,9 +1473,7 @@ namespace Mono.Unix.Native {
 	}
 
 	public sealed class Utsname
-#if NET_2_0
 		: IEquatable <Utsname>
-#endif
 	{
 		public string sysname;
 		public string nodename;

@@ -40,10 +40,8 @@ namespace System.Web.Services.Description {
 
 		XmlElement docElement;
 
-#if NET_2_0
 		XmlAttribute [] extAttributes;
 		XmlSerializerNamespaces namespaces;
-#endif
 
 		#endregion // Fields
 
@@ -82,7 +80,6 @@ namespace System.Web.Services.Description {
 			set { docElement = value; }
 		}
 
-#if NET_2_0
 		[XmlAnyAttribute]
 		public XmlAttribute [] ExtensibleAttributes {
 			get { return extAttributes; }
@@ -103,7 +100,6 @@ namespace System.Web.Services.Description {
 			}
 			set { namespaces = value; }
 		}
-#endif
 
 		#endregion // Properties
 	}

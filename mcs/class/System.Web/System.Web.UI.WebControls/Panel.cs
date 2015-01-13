@@ -60,7 +60,6 @@ namespace System.Web.UI.WebControls {
 				w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, image);
 			}
 
-#if NET_2_0
 			if (!String.IsNullOrEmpty (DefaultButton) && Page != null) {
 				Control button = FindControl (DefaultButton);
 				if (button == null || !(button is IButtonControl))
@@ -91,14 +90,9 @@ namespace System.Web.UI.WebControls {
 				break;
 			}
 
-#endif
 
 			if (!Wrap) {
-#if NET_2_0
 				w.AddStyleAttribute (HtmlTextWriterStyle.WhiteSpace, "nowrap");
-#else
-				w.AddAttribute (HtmlTextWriterAttribute.Nowrap, "nowrap");
-#endif
 			}
 
 			string align = "";
@@ -111,13 +105,8 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (align != "")
-#if NET_2_0
 				w.AddStyleAttribute (HtmlTextWriterStyle.TextAlign, align);
-#else
-				w.AddAttribute (HtmlTextWriterAttribute.Align, align);
-#endif
 		}
-#if NET_2_0
 		PanelStyle PanelStyle {
 			get { return (ControlStyle as PanelStyle); }
 		}
@@ -274,6 +263,5 @@ namespace System.Web.UI.WebControls {
 			}
 			base.RenderEndTag (writer);
 		}
-#endif
 	}
 }

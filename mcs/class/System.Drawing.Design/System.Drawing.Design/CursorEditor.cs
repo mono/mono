@@ -91,10 +91,8 @@ namespace System.Drawing.Design
 		{
 			return UITypeEditorEditStyle.DropDown;
 		}
-#if NET_2_0
 		public override bool IsDropDownResizable {
 			get { return true; }
 		}
-#endif
 	}
 }

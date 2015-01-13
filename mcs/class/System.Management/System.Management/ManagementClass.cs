@@ -73,7 +73,6 @@ namespace System.Management
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected ManagementClass (SerializationInfo info, StreamingContext context)
 		{
@@ -85,7 +84,6 @@ namespace System.Management
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public StringCollection Derivation {
 			get {

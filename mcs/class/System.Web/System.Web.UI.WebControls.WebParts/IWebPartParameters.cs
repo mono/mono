@@ -28,7 +28,6 @@
 //
 
 
-#if NET_2_0
 
 using System.ComponentModel;
 using System.Collections;
@@ -45,5 +44,4 @@ namespace System.Web.UI.WebControls.WebParts
 
 	public delegate void ParametersCallback (IDictionary parametersData);
 }
-#endif
 

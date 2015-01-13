@@ -28,7 +28,6 @@
 //
 
 
-#if NET_2_0
 
 using System.Collections.Specialized;
 
@@ -44,5 +43,4 @@ namespace System.Web.UI.WebControls.WebParts
 		bool TracksChanges { get; }
 	}
 }
-#endif
 
