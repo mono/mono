@@ -96,17 +96,8 @@ namespace MonoTests.System.Runtime.InteropServices
 
 			sf.DangerousRelease ();
 
-			try {
-				sf.Close ();
-				Assert.Fail ("#1");
-			} catch (ObjectDisposedException) {
-			}
-
-			try {
-				sf.Dispose ();
-				Assert.Fail ("#2");
-			} catch (ObjectDisposedException) {
-			}
+			sf.Close ();
+			sf.Dispose ();
 
 			//In Ms.Net SafeHandle does not change the value of the handle after being SetInvalid or Disposed.
 			Assert.AreEqual ((int)sf.DangerousGetHandle(), dummyHandle, "handle");
