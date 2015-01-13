@@ -354,5 +354,4 @@ ReferenceSources/OdbcHandle.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLResource.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLSingle.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLString.cs
-../../../external/referencesource/System.Data/System/Data/SQLTypes/SqlTypesSchemaImporter.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLUtility.cs

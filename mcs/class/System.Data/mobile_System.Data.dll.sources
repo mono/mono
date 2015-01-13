@@ -250,8 +250,6 @@ ReferenceSources/ResCategoryAttribute.cs
 ReferenceSources/SafeNativeMethods.cs
 ReferenceSources/ThisAssembly.cs
 
-ReferenceSources/OdbcHandle.cs
-
 ../../../external/referencesource/System.Data/Misc/HResults.cs
 ../../../external/referencesource/System.Data/System/Data/Common/AdapterUtil.cs
 ../../../external/referencesource/System.Data/System/Data/Common/DataColumnMapping.cs
@@ -270,11 +268,6 @@ ReferenceSources/OdbcHandle.cs
 ../../../external/referencesource/System.Data/System/Data/Common/FieldNameLookup.cs
 ../../../external/referencesource/System.Data/System/Data/Common/NameValuePair.cs
 ../../../external/referencesource/System.Data/System/Data/Common/NameValuePermission.cs
-../../../external/referencesource/System.Data/System/Data/Odbc/Odbc32.cs
-../../../external/referencesource/System.Data/System/Data/Odbc/OdbcConnectionString.cs
-../../../external/referencesource/System.Data/System/Data/Odbc/OdbcConnectionStringbuilder.cs
-../../../external/referencesource/System.Data/System/Data/Odbc/OdbcError.cs
-../../../external/referencesource/System.Data/System/Data/Odbc/OdbcPermission.cs
 ../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolProviderInfo.cs
 ../../../external/referencesource/System.Data/System/Data/SqlClient/ApplicationIntent.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/INullable.cs
@@ -295,5 +288,4 @@ ReferenceSources/OdbcHandle.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLResource.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLSingle.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLString.cs
-../../../external/referencesource/System.Data/System/Data/SQLTypes/SqlTypesSchemaImporter.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLUtility.cs
