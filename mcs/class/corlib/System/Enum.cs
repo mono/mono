@@ -403,35 +403,35 @@ namespace System
 		static int FindPosition (object value, Array values)
 		{
 			uint[] uint_array = values as uint [];
-			if (uint_array != null)
+			if (uint_array != null && value is uint)
 				return Array.BinarySearch (uint_array, (uint)value);
 
 			int[] int_array = values as int[];
-			if (int_array != null)
+			if (int_array != null && value is int)
 				return Array.BinarySearch (int_array, (int)value, MonoEnumInfo.int_comparer);
 			
 			ushort [] ushort_array = values as ushort [];
-			if (ushort_array != null)
+			if (ushort_array != null && value is ushort)
 				return Array.BinarySearch (ushort_array, (ushort)value);
 
 			short [] short_array = values as short [];
-			if (short_array != null)
+			if (short_array != null && value is short)
 				return Array.BinarySearch (short_array, (short)value, MonoEnumInfo.short_comparer);
 
 			byte [] byte_array = values as byte [];
-			if (byte_array != null)
+			if (byte_array != null && value is byte)
 				return Array.BinarySearch (byte_array, (byte) value);
 
 			sbyte [] sbyte_array = values as sbyte [];
-			if (sbyte_array != null)
+			if (sbyte_array != null && value is sbyte)
 				return Array.BinarySearch (sbyte_array, (sbyte) value,  MonoEnumInfo.sbyte_comparer);
 
 			ulong [] ulong_array = values as ulong [];
-			if (ulong_array != null)
+			if (ulong_array != null && value is ulong)
 				return Array.BinarySearch (ulong_array, (ulong) value);
 			
 			long [] long_array = values as long [];
-			if (long_array != null)
+			if (long_array != null && value is long)
 				return Array.BinarySearch (long_array, (long) value,  MonoEnumInfo.long_comparer);
 
 			// This should never happen
