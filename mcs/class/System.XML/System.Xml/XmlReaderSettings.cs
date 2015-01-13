@@ -58,10 +58,8 @@ namespace System.Xml
 		private long maxCharactersFromEntities;
 		private long maxCharactersInDocument;
 
-#if NET_4_5
 		private bool isReadOnly;
 		private bool isAsync;
-#endif
 
 		public XmlReaderSettings ()
 		{
@@ -73,9 +71,7 @@ namespace System.Xml
 		public XmlReaderSettings Clone ()
 		{
 			var clone = (XmlReaderSettings) MemberwiseClone ();
-#if NET_4_5
 			clone.isReadOnly = false;
-#endif
 			return clone;
 		}
 
@@ -97,9 +93,7 @@ namespace System.Xml
 				XsValidationFlags.AllowXmlAttributes;
 			validationType = ValidationType.None;
 			xmlResolver = new XmlUrlResolver ();
-#if NET_4_5
 			isAsync = false;
-#endif
 		}
 
 		public bool CheckCharacters {
@@ -215,7 +209,6 @@ namespace System.Xml
 			set { xmlResolver = value; }
 		}
 
-#if NET_4_5
 		internal void SetReadOnly ()
 		{
 			isReadOnly = true;
@@ -238,6 +231,5 @@ namespace System.Xml
 				isAsync = value;
 			}
 		}
-#endif
 	}
 }

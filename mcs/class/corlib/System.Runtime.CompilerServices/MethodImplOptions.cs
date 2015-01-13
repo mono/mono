@@ -70,9 +70,7 @@ namespace System.Runtime.CompilerServices {
 		
 		NoOptimization = 64,
 
-#if NET_4_5
 		AggressiveInlining  = 256,
-#endif
 	} // MethodImplOptions
 
 } // System.Runtime.CompilerServices

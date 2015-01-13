@@ -70,9 +70,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Net.Cache;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net 
 {
@@ -95,9 +93,7 @@ namespace System.Net
 		Encoding encoding = Encoding.Default;
 		IWebProxy proxy;
 //		RequestCachePolicy cache_policy;
-#if NET_4_5
 		CancellationTokenSource cts;
-#endif
 
 		// Constructors
 		static WebClient ()
@@ -215,11 +211,7 @@ namespace System.Net
 
 		public bool IsBusy {
 			get {
-#if NET_4_5
 				return is_busy || (cts != null);
-#else
-				return is_busy;
-#endif
 			}
 		}
 		// Methods
@@ -1067,12 +1059,10 @@ namespace System.Net
 		public void CancelAsync ()
 		{
 			lock (this){
-#if NET_4_5
 				if (cts != null) {
 					cts.Cancel ();
 					return;
 				}
-#endif
 
 				if (async_thread == null)
 					return;
@@ -1094,11 +1084,9 @@ namespace System.Net
 			lock (this) {
 				is_busy = false;
 				async_thread = null;
-#if NET_4_5
 				if (cts != null)
 					cts.Dispose ();
 				cts = null;
-#endif
 			}
 		}
 
@@ -1565,7 +1553,6 @@ namespace System.Net
 			return response;
 		}
 		
-#if NET_4_5
 
 		// DownloadDataTaskAsync
 		
@@ -2268,7 +2255,6 @@ namespace System.Net
 			}
 		}
 
-#endif
 
 	}
 }

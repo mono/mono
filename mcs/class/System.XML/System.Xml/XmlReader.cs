@@ -39,10 +39,8 @@ using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
 using System.Xml.Serialization; // only required for NET_2_0 (SchemaInfo)
 using Mono.Xml.Schema; // only required for NET_2_0
 using Mono.Xml; // only required for NET_2_0
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace System.Xml
 {
@@ -190,15 +188,11 @@ namespace System.Xml
 
 		#region Methods
 
-#if NET_4_5
 		public virtual void Close ()
 		{
 			if (asyncRunning)
 				throw new InvalidOperationException ("An asynchronous operation is already in progress.");
 		}
-#else
-		public abstract void Close ();
-#endif
 
 		private static XmlNameTable PopulateNameTable (
 			XmlReaderSettings settings)
@@ -272,9 +266,7 @@ namespace System.Xml
 				copy = new XmlReaderSettings ();
 			else
 				copy = src.Clone ();
-#if NET_4_5
 			copy.SetReadOnly ();
-#endif
 			return copy;
 		}
 
@@ -285,11 +277,9 @@ namespace System.Xml
 				copy = new XmlReaderSettings ();
 			else
 				copy = src.Clone ();
-#if NET_4_5
 			if (reader.Settings != null)
 				copy.Async = reader.Settings.Async;
 			copy.SetReadOnly ();
-#endif
 			return copy;
 		}
 
@@ -946,7 +936,6 @@ namespace System.Xml
 			return ReadContentAs (ValueType, null);
 		}
 
-#if NET_4_5
 		public virtual DateTimeOffset ReadContentAsDateTimeOffset ()
 		{
 			try {
@@ -955,7 +944,6 @@ namespace System.Xml
 				throw XmlError ("Typed value is invalid.", e);
 			}
 		}
-#endif
 
 		public virtual object ReadElementContentAs (Type returnType, IXmlNamespaceResolver namespaceResolver)
 		{
@@ -1354,7 +1342,6 @@ namespace System.Xml
 		}
 		#endregion
 
-#if NET_4_5
 		#region .NET 4.5 Async Methods
 
 		bool asyncRunning;
@@ -1575,6 +1562,5 @@ namespace System.Xml
 		}
 
 		#endregion
-#endif
 	}
 }

@@ -237,12 +237,10 @@ namespace System.ServiceModel.Channels
 			return base.GetProperty<T> (context);
 		}
 		
-#if NET_4_5
 		public WebSocketTransportSettings WebSocketSettings {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 
 #if !NET_2_1
 		void IPolicyExportExtension.ExportPolicy (

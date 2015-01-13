@@ -1,4 +1,3 @@
-#if NET_4_5
 //
 // WindowsRuntimeMarshal.cs
 //
@@ -68,5 +67,4 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 		}
 	}
 }
-#endif
 

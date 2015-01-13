@@ -32,9 +32,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO {
 
@@ -163,7 +161,6 @@ namespace System.IO {
 			return new SynchronizedReader (reader);
 		}
 
-#if NET_4_5
 		//
 		// Use tuple to pack the arguments because it's faster than
 		// setting up anonymous method container with an instance delegate
@@ -193,7 +190,6 @@ namespace System.IO {
 		{
 			return Task.Factory.StartNew (l => ((TextReader) l).ReadToEnd (), this);
 		}
-#endif
 	}
 
 	//
@@ -258,7 +254,6 @@ namespace System.IO {
 			}
 		}
 
-#if NET_4_5
 		public override Task<int> ReadAsync (char[] buffer, int index, int count)
 		{
 			lock (this) {
@@ -286,6 +281,5 @@ namespace System.IO {
 				return reader.ReadToEndAsync ();
 			}
 		}
-#endif
 	}
 }

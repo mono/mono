@@ -34,9 +34,7 @@
 using System.Threading;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO
 {
@@ -262,14 +260,11 @@ namespace System.IO
 				destination.Write (buffer, 0, nread);
 		}
 
-#if NET_4_5
 		[ObsoleteAttribute("Do not call or override this method")]
-#endif
 		protected virtual void ObjectInvariant ()
 		{
 		}
 		
-#if NET_4_5
 
 		public Task CopyToAsync (Stream destination)
 		{
@@ -340,7 +335,6 @@ namespace System.IO
 		{
 			return Task.Factory.FromAsync (BeginWrite, EndWrite, buffer, offset, count, null);
 		}
-#endif
 	}
 
 	class NullStream : Stream

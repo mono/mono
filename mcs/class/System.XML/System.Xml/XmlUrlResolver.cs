@@ -30,10 +30,8 @@
 using System.Net;
 using System.IO;
 using System.Text;
-#if NET_4_5
 using System.Net.Cache;
 using System.Threading.Tasks;
-#endif
 
 namespace System.Xml
 {
@@ -41,10 +39,8 @@ namespace System.Xml
 	{
 		// Field
 		ICredentials credential;
-#if NET_4_5
 		RequestCachePolicy cachePolicy;
 		IWebProxy proxy;
-#endif
 
 		// Constructor
 		public XmlUrlResolver ()
@@ -58,7 +54,6 @@ namespace System.Xml
 			set { credential = value; }
 		}
 
-#if NET_4_5
 		public RequestCachePolicy CachePolicy {
 			set { cachePolicy = value; }
 		}
@@ -66,7 +61,6 @@ namespace System.Xml
 		public IWebProxy Proxy {
 			set { proxy = value; }
 		}
-#endif
 
 		// Methods
 		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
@@ -87,7 +81,6 @@ namespace System.Xml
 
 			// (MS documentation says) parameter role isn't used yet.
 			WebRequest req = WebRequest.Create (absoluteUri);
-#if NET_4_5
 
 #if !NET_2_1
 			if (cachePolicy != null)
@@ -95,7 +88,6 @@ namespace System.Xml
 #endif
 			if (proxy != null)
 				req.Proxy = proxy;
-#endif
 			if (credential != null)
 				req.Credentials = credential;
 			return req.GetResponse().GetResponseStream();
@@ -117,7 +109,6 @@ namespace System.Xml
 				.Replace ("%25", "%");
 		}
 
-#if NET_4_5
 		public override async Task<object> GetEntityAsync (
 			Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
@@ -148,6 +139,5 @@ namespace System.Xml
 			var res = await req.GetResponseAsync ().ConfigureAwait (false);
 			return res.GetResponseStream ();
 		}
-#endif
 	}
 }

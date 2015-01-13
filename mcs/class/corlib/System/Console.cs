@@ -661,7 +661,6 @@ namespace System
 			set { ConsoleDriver.WindowWidth = value; }
 		}
 
-#if NET_4_5
 		public static bool IsErrorRedirected {
 			get {
 				return ConsoleDriver.IsErrorRedirected;
@@ -679,7 +678,6 @@ namespace System
 				return ConsoleDriver.IsInputRedirected;
 			}
 		}
-#endif
 
 		public static void Beep ()
 		{

@@ -1,4 +1,3 @@
-#if NET_4_5
 namespace Microsoft.Build.Framework
 {
 	public enum RegisteredTaskObjectLifetime
@@ -7,5 +6,4 @@ namespace Microsoft.Build.Framework
 		AppDomain
 	}
 }
-#endif
 

@@ -26,7 +26,6 @@
 //
 //
 
-#if NET_4_5
 
 namespace System.Linq.Expressions
 {
@@ -35,4 +34,3 @@ namespace System.Linq.Expressions
 	}
 }
 
-#endif

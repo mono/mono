@@ -55,9 +55,7 @@ using System.Net.Configuration;
 using System.Configuration;
 using System.Net.Security;
 using System.Security.Authentication;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net.Mail {
 	public class SmtpClient
@@ -727,7 +725,6 @@ namespace System.Net.Mail {
 			Send (new MailMessage (from, to, subject, body));
 		}
 
-#if NET_4_5
 		public Task SendMailAsync (MailMessage message)
 		{
 			var tcs = new TaskCompletionSource<object> ();
@@ -762,7 +759,6 @@ namespace System.Net.Mail {
 
 			source.SetResult (null);
 		}
-#endif
 
 		private void SendDot()
 		{

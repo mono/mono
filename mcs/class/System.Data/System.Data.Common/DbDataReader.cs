@@ -35,10 +35,8 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace System.Data.Common {
 	public abstract class DbDataReader : MarshalByRefObject, IDataReader, IDataRecord, IDisposable, IEnumerable
@@ -182,7 +180,6 @@ namespace System.Data.Common {
 			return schemaTable;
 		}
 		
-#if NET_4_5
 		public virtual T GetFieldValue<T> (int i)
 		{
 			return (T) GetValue (i);
@@ -284,7 +281,6 @@ namespace System.Data.Common {
 				return TaskHelper.CreateExceptionTask<bool> (e);
 			}
 		}
-#endif
 
 		#endregion // Methods
 	}

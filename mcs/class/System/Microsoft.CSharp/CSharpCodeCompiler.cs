@@ -358,11 +358,7 @@ namespace Mono.CSharp
 				}
 			}
 
-#if NET_4_5			
 			args.Append("/sdk:4.5");
-#else
-			args.Append("/sdk:4");
-#endif
 
 			args.Append (" -- ");
 			foreach (string source in fileNames)

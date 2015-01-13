@@ -38,9 +38,7 @@
 
 using System;
 using System.Net;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net.Sockets
 {
@@ -302,7 +300,6 @@ namespace System.Net.Sockets
 			Init (AddressFamily.InterNetwork, savedEP);
 		}
 
-#if NET_4_5
 		public Task<Socket> AcceptSocketAsync ()
 		{
 			return Task<Socket>.Factory.FromAsync (BeginAcceptSocket, EndAcceptSocket, null);
@@ -312,6 +309,5 @@ namespace System.Net.Sockets
 		{
 			return Task<TcpClient>.Factory.FromAsync (BeginAcceptTcpClient, EndAcceptTcpClient, null);
 		}
-#endif
 	}
 }

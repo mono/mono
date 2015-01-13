@@ -29,9 +29,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Threading
 {
-#if NET_4_5
 	public
-#endif
 	static class Volatile
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_5
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -119,4 +118,3 @@ namespace System.Runtime.CompilerServices
 	}
 }
 
-#endif

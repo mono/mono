@@ -44,9 +44,6 @@ using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics.SymbolStore;
 
-#if !NET_4_5
-using TypeInfo = System.Type;
-#endif
 
 namespace System.Reflection.Emit
 {
@@ -755,9 +752,7 @@ namespace System.Reflection.Emit
 			return CreateTypeInfo ();
 		}
 		
-#if NET_4_5
 		public
-#endif
 		TypeInfo CreateTypeInfo ()
 		{
 			/* handle nesting_type */
@@ -1944,7 +1939,6 @@ namespace System.Reflection.Emit
 			}
 		}
 
-#if NET_4_5
 		public override bool IsConstructedGenericType {
 			get { return false; }
 		}
@@ -1953,7 +1947,6 @@ namespace System.Reflection.Emit
 		{
 			return base.IsAssignableFrom (typeInfo);
 		}
-#endif
 	}
 }
 #endif

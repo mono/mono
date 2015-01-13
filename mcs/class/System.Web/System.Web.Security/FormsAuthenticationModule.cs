@@ -163,10 +163,8 @@ namespace System.Web.Security
 			if (context.Response.StatusCode != 401 || context.Request.QueryString ["ReturnUrl"] != null)
 				return;
 
-#if NET_4_5
 			if (context.Response.StatusCode == 401 && context.Response.SuppressFormsAuthenticationRedirect)
 				return;
-#endif
 
 			string loginPage;
 			InitConfig (context);

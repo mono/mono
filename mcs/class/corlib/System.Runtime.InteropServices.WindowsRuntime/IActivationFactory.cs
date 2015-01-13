@@ -1,4 +1,3 @@
-#if NET_4_5
 //
 // IActivationFactory.cs
 //
@@ -35,4 +34,3 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 		object ActivateInstance ();
 	}
 }
-#endif

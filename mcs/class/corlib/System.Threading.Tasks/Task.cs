@@ -80,9 +80,7 @@ namespace System.Threading.Tasks
 		internal const TaskCreationOptions WorkerTaskNotSupportedOptions = TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness;
 
 		const TaskCreationOptions MaxTaskCreationOptions =
-#if NET_4_5
 			TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler |
-#endif
 			TaskCreationOptions.PreferFairness | TaskCreationOptions.LongRunning | TaskCreationOptions.AttachedToParent;
 
 		public Task (Action action)
@@ -149,12 +147,8 @@ namespace System.Threading.Tasks
 			this.status          = cancellationToken.IsCancellationRequested && !ignoreCancellation ? TaskStatus.Canceled : TaskStatus.Created;
 
 			// Process creationOptions
-#if NET_4_5
 			if (parent != null && HasFlag (creationOptions, TaskCreationOptions.AttachedToParent)
 			    && !HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach))
-#else
-			if (parent != null && HasFlag (creationOptions, TaskCreationOptions.AttachedToParent))
-#endif
 				parent.AddChild ();
 
 			if (token.CanBeCanceled && !ignoreCancellation)
@@ -276,9 +270,7 @@ namespace System.Threading.Tasks
 		internal Task ContinueWith (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
 			var lazyCancellation = false;
-#if NET_4_5
 			lazyCancellation = (continuationOptions & TaskContinuationOptions.LazyCancellation) > 0;
-#endif
 			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), null, this, lazyCancellation);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
@@ -319,9 +311,7 @@ namespace System.Threading.Tasks
 		internal Task<TResult> ContinueWith<TResult> (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
 			var lazyCancellation = false;
-#if NET_4_5
 			lazyCancellation = (continuationOptions & TaskContinuationOptions.LazyCancellation) > 0;
-#endif
 			var continuation = new Task<TResult> (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), parent, this, lazyCancellation);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
@@ -420,11 +410,7 @@ namespace System.Threading.Tasks
 			var saveScheduler = TaskScheduler.Current;
 
 			current = this;
-#if NET_4_5
 			TaskScheduler.Current = HasFlag (creationOptions, TaskCreationOptions.HideScheduler) ? TaskScheduler.Default : scheduler;
-#else
-			TaskScheduler.Current = scheduler;
-#endif
 			
 			if (!token.IsCancellationRequested) {
 				
@@ -592,10 +578,8 @@ namespace System.Threading.Tasks
 		{
 			if (!HasFlag (creationOptions, TaskCreationOptions.AttachedToParent))
 				return true;
-#if NET_4_5
 			if (HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach))
 				return true;
-#endif
 			if (status != TaskStatus.WaitingForChildrenToComplete)
 				parent.ChildCompleted (Exception);
 
@@ -913,11 +897,7 @@ namespace System.Threading.Tasks
 		}
 		#endregion
 
-#if NET_4_5
 		public
-#else
-		internal
-#endif
 		Task ContinueWith (Action<Task, object> continuationAction, object state, CancellationToken cancellationToken,
 								  TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
@@ -936,7 +916,6 @@ namespace System.Threading.Tasks
 			return continuation;
 		}
 		
-#if NET_4_5
 
 		public ConfiguredTaskAwaitable ConfigureAwait (bool continueOnCapturedContext)
 		{
@@ -1231,7 +1210,6 @@ namespace System.Threading.Tasks
 		{
 			return new YieldAwaitable ();
 		}
-#endif
 
 		internal static Task WhenAllCore (IList<Task> tasks)
 		{

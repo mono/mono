@@ -379,9 +379,7 @@ namespace System.Globalization
 			RegionInfo.ClearCachedData ();
 			TimeZone.ClearCachedData ();
 			DateTime.ClearCachedData ();
-#if NET_4_5
 			TimeZoneInfo.ClearCachedData ();
-#endif
 		}
 
 		public virtual object Clone()
@@ -1013,7 +1011,6 @@ namespace System.Globalization
 			return new CultureNotFoundException ("name", "Culture name " + name + " is not supported.");
 		}
 		
-#if NET_4_5
 		public static CultureInfo DefaultThreadCurrentCulture {
 			get {
 				return Thread.default_culture;
@@ -1031,6 +1028,5 @@ namespace System.Globalization
 				Thread.default_ui_culture = value;
 			}
 		}
-#endif
 	}
 }

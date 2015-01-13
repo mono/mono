@@ -142,7 +142,6 @@ namespace System.Reflection {
 			return !left.Equals (right);
 		}
 
-#if NET_4_5
 		public virtual Delegate CreateDelegate (Type delegateType)
 		{
 			return Delegate.CreateDelegate (delegateType, this);
@@ -152,6 +151,5 @@ namespace System.Reflection {
 		{
 			return Delegate.CreateDelegate (delegateType, target, this);
 		}
-#endif
 	}
 }

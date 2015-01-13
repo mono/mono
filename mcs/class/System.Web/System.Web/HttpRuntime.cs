@@ -272,7 +272,6 @@ namespace System.Web
 
 		public static bool UsingIntegratedPipeline { get { return false; } }
 
-#if NET_4_5
 		public static Version IISVersion {
 			get {
 				// Null means not hosted by IIS
@@ -285,7 +284,6 @@ namespace System.Web
 				return runtime_section.TargetFramework;
 			}
 		}
-#endif
 		
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void Close ()

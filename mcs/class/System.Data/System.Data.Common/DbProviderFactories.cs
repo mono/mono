@@ -78,7 +78,6 @@ namespace System.Data.Common {
 			throw new ConfigurationErrorsException (String.Format("Failed to find or load the registered .Net Framework Data Provider '{0}'.", providerInvariantName));
 		}
 		
-#if NET_4_5
 		public static DbProviderFactory GetFactory (DbConnection connection)
 		{
 			if (connection == null)
@@ -86,7 +85,6 @@ namespace System.Data.Common {
 
 			return connection.DbProviderFactory;
 		}
-#endif
 
 		public static DataTable GetFactoryClasses ()
 		{

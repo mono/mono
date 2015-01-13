@@ -481,12 +481,7 @@ namespace System {
 					(formatFlags & FormatFlags.HasFragmentPercentage) != 0)
 					return true;
 
-#if NET_4_5
 				return false;
-#else
-				return uriFormat == UriFormat.UriEscaped ||
-					(uriFormat != UriFormat.Unescaped && (formatFlags & FormatFlags.HasComponentCharactersToNormalize) != 0);
-#endif
 			}
 
 			if (uriFormat == UriFormat.SafeUnescaped || uriFormat == ToStringUnescape) {

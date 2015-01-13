@@ -47,13 +47,8 @@ namespace System.Web.Compilation
 {
 	class AppResourcesAssemblyBuilder
 	{
-#if NET_4_5
 		static string framework_version = "4.5";
 		static string profile_path = "net_4_5";
-#else
-		static string framework_version = "4.0";
-		static string profile_path = "net_4_0";
-#endif
 		CompilationSection config;
 		CompilerInfo ci;
 		CodeDomProvider _provider;

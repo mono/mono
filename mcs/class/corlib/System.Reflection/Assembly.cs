@@ -936,7 +936,6 @@ namespace System.Reflection {
 			return !left.Equals (right);
 		}
 
-#if NET_4_5
 		public virtual IEnumerable<TypeInfo> DefinedTypes {
 			get {
 				foreach (var type in GetTypes ()) {
@@ -956,6 +955,5 @@ namespace System.Reflection {
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
-#endif
 	}
 }

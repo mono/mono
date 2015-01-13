@@ -44,9 +44,7 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Security.Authentication.ExtendedProtection;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net {
 	public sealed class HttpListenerRequest
@@ -521,7 +519,6 @@ namespace System.Net {
 			}
 		}
 		
-#if NET_4_5
 		[MonoTODO]
 		public bool IsWebSocketRequest {
 			get {
@@ -533,7 +530,6 @@ namespace System.Net {
 		{
 			return Task<X509Certificate2>.Factory.FromAsync (BeginGetClientCertificate, EndGetClientCertificate, null);
 		}
-#endif
 	}
 }
 #endif

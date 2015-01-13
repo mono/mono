@@ -154,12 +154,10 @@ namespace System.ServiceModel.Channels
 		}
 #endif
 
-#if NET_4_5
 		[MonoTODO]
 		public CompressionFormat CompressionFormat {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 	}
 }

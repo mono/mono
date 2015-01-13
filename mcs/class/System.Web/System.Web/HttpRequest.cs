@@ -1406,7 +1406,6 @@ namespace System.Web
 			}
 		}
 
-#if NET_4_5
 		public UnvalidatedRequestValues Unvalidated { 
 			get {
 				var vals = new UnvalidatedRequestValues ();
@@ -1424,7 +1423,6 @@ namespace System.Web
 				return vals;
 			}
 		}
-#endif
 
 		public Uri Url {
 			get {

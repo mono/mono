@@ -232,13 +232,11 @@ namespace System {
 			}
 		}
 		
-#if NET_4_5
 		public virtual bool IsConstructedGenericType {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 		public bool IsContextful {
 			get {
@@ -1351,13 +1349,11 @@ namespace System {
 			}
 		}
 		
-#if NET_4_5
 		public virtual Type[] GenericTypeArguments {
 			get {
 				return IsGenericType ? GetGenericArguments () : EmptyTypes;
 			}
 		}
-#endif
 
 		public virtual Type[] GetGenericArguments ()
 		{

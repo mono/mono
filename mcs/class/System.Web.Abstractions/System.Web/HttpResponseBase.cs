@@ -66,9 +66,7 @@ namespace System.Web
 
 		public virtual string Charset { get { NotImplemented (); return null; } set { NotImplemented (); } }
 
-#if NET_4_5
 		public virtual CancellationToken ClientDisconnectedToken { get { NotImplemented (); return CancellationToken.None; } }
-#endif
 
 		public virtual Encoding ContentEncoding { get { NotImplemented (); return null; } set { NotImplemented (); } }
 
@@ -106,9 +104,7 @@ namespace System.Web
 
 		public virtual bool SuppressContent { get { NotImplemented (); return false; } set { NotImplemented (); } }
 
-#if NET_4_5
 		public virtual bool SuppressFormsAuthenticationRedirect { get { NotImplemented (); return false; } set { NotImplemented (); } }
-#endif
 
 		public virtual bool TrySkipIisCustomErrors { get { NotImplemented (); return false; } set { NotImplemented (); } }
 

@@ -81,11 +81,9 @@ namespace System.Web
 			set { w.Charset = value; }
 		}
 
-#if NET_4_5
 		public override CancellationToken ClientDisconnectedToken {
 			get { return CancellationToken.None; }
 		}
-#endif
 
 		public override Encoding ContentEncoding {
 			get { return w.ContentEncoding; }
@@ -172,12 +170,10 @@ namespace System.Web
 			set { w.SuppressContent = value; }
 		}
 
-#if NET_4_5
 		public override bool SuppressFormsAuthenticationRedirect {
 			get { return w.SuppressFormsAuthenticationRedirect; }
 			set { w.SuppressFormsAuthenticationRedirect = value; }
 		}
-#endif
 
 		public override bool TrySkipIisCustomErrors {
 			get { return w.TrySkipIisCustomErrors; }

@@ -458,7 +458,6 @@ namespace System.Reflection.Emit
 		}
 */
 
-#if NET_4_5
 		public static AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
 			if (name == null)
@@ -466,7 +465,6 @@ namespace System.Reflection.Emit
 
 			return new AssemblyBuilder (name, null, access, false);
 		}
-#endif
 
 		public ModuleBuilder DefineDynamicModule (string name)
 		{

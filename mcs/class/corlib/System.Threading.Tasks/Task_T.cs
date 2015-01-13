@@ -229,11 +229,7 @@ namespace System.Threading.Tasks
 			return true;
 		}
 
-#if NET_4_5
 		public
-#else
-		internal
-#endif
 		Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state, CancellationToken cancellationToken,
 								  TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
@@ -254,7 +250,6 @@ namespace System.Threading.Tasks
 			return t;
 		}
 		
-#if NET_4_5
 
 		public Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state)
 		{
@@ -334,6 +329,5 @@ namespace System.Threading.Tasks
 			tcs.TrySetException (ex);
 			return tcs.Task;
 		}
-#endif
 	}
 }

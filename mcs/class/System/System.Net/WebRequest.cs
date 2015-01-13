@@ -39,9 +39,7 @@ using System.Net.Configuration;
 using System.Net.Security;
 using System.Net.Cache;
 using System.Security.Principal;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 #if NET_2_1
 using ConfigurationException = System.ArgumentException;
@@ -514,7 +512,6 @@ namespace System.Net
 			prefixes [prefix] = o;
 		}
 
-#if NET_4_5
 		public virtual Task<Stream> GetRequestStreamAsync ()
 		{
 			return Task<Stream>.Factory.FromAsync (BeginGetRequestStream, EndGetRequestStream, null);
@@ -524,7 +521,6 @@ namespace System.Net
 		{
 			return Task<WebResponse>.Factory.FromAsync (BeginGetResponse, EndGetResponse, null);
 		}
-#endif
 
 	}
 }

@@ -185,7 +185,6 @@ namespace System.Reflection
 			return types;
 		}
 
-#if NET_4_5
 		public override bool HasDefaultValue {
 			get { 
 				object defaultValue = DefaultValue;
@@ -198,6 +197,5 @@ namespace System.Reflection
 				return true;
 			}
 		}
-#endif
 	}
 }

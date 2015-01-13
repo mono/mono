@@ -23,7 +23,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_4_5
 namespace System.Diagnostics.Contracts {
 
 	[AttributeUsageAttribute(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
@@ -66,4 +65,3 @@ namespace System.Diagnostics.Contracts {
 	}
 
 }
-#endif

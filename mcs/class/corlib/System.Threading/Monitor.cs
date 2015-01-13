@@ -227,11 +227,7 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool Monitor_test_owner (object obj);
 
-#if NET_4_5		
 		public
-#else
-		internal
-#endif
 		static bool IsEntered (object obj)
 		{
 			return Monitor_test_owner(obj);

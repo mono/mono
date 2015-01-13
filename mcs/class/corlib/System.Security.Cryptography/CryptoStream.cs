@@ -31,10 +31,8 @@
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace System.Security.Cryptography {
 
@@ -361,7 +359,6 @@ namespace System.Security.Cryptography {
 			get { return _flushedFinalBlock; }
 		}
 		
-#if NET_4_5
 		public override Task FlushAsync (CancellationToken cancellationToken)
 		{
 			return base.FlushAsync (cancellationToken);
@@ -376,6 +373,5 @@ namespace System.Security.Cryptography {
 		{
 			return base.WriteAsync (buffer, offset, count, cancellationToken);
 		}
-#endif
 	}
 }

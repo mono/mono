@@ -33,10 +33,8 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO
 {
@@ -50,9 +48,7 @@ namespace System.IO
 		long initial_position;
 		long current_position;
 		SafeBuffer safebuffer;
-#if NET_4_5
 		Task<int> read_task;
-#endif
 		
 		internal event EventHandler Closed;
 		
@@ -206,7 +202,6 @@ namespace System.IO
 			return progress;
 		}
 
-#if NET_4_5
 		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			if (buffer == null)
@@ -234,7 +229,6 @@ namespace System.IO
 			}
 		}
 
-#endif
 
 		public override int ReadByte ()
 		{
@@ -317,7 +311,6 @@ namespace System.IO
 			//but is included as part of the Stream base class
 		}
 
-#if NET_4_5
 		public override Task FlushAsync (CancellationToken cancellationToken)
 		{
 			if (cancellationToken.IsCancellationRequested)
@@ -330,7 +323,6 @@ namespace System.IO
 				return Task<object>.FromException (ex);
 			}
 		}
-#endif	
 		 
 		protected override void Dispose (bool disposing)
 		{
@@ -386,7 +378,6 @@ namespace System.IO
 				length = current_position;
 		}
 
-#if NET_4_5
 		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			if (buffer == null)
@@ -410,7 +401,6 @@ namespace System.IO
 				return Task<object>.FromException (ex);
 			}
 		}
-#endif
 		
 		public override void WriteByte (byte value)
 		{

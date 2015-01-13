@@ -1406,7 +1406,6 @@ namespace System.Data.SqlClient
 			return (sb);
 		}
 
-#if NET_4_5
 		[MonoTODO]
 		public override T GetFieldValue<T> (int i)
 		{
@@ -1419,7 +1418,6 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();	
 		}
 
-#endif
 		#endregion // Methods
 	}
 }

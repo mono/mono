@@ -140,9 +140,7 @@ namespace System {
 
 		static Uri ()
 		{
-#if NET_4_5
 			IriParsing = true;
-#endif
 
 			var iriparsingVar = Environment.GetEnvironmentVariable ("MONO_URI_IRIPARSING");
 			if (iriparsingVar == "true")
@@ -1790,18 +1788,6 @@ namespace System {
 				return false;
 			}
 
-#if !NET_4_5
-			switch (b) {
-			case '!':
-			case '\'':
-			case '(':
-			case ')':
-			case '*':
-			case '-':
-			case '.':
-				return false;
-			}
-#endif
 
 			return true;
 		}
@@ -1855,11 +1841,9 @@ namespace System {
 			case '_':
 			case '~':
 				return false;
-#if NET_4_5
 			case '[':
 			case ']':
 				return false;
-#endif
 			}
 
 			return true;

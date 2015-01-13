@@ -28,7 +28,6 @@
 //
 //
 
-#if NET_4_5
 
 using System;
 using System.Threading;
@@ -270,4 +269,3 @@ namespace System.Threading.Tasks
 	}
 }
 
-#endif

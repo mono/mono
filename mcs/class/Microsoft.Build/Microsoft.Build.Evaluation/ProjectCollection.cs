@@ -69,11 +69,7 @@ namespace Microsoft.Build.Evaluation
 
 		static ProjectCollection ()
 		{
-			#if NET_4_5
 			global_project_collection = new ProjectCollection (new ReadOnlyDictionary<string, string> (new Dictionary<string, string> ()));
-			#else
-			global_project_collection = new ProjectCollection (new Dictionary<string, string> ());
-			#endif
 		}
 
 		public static string Escape (string unescapedString)

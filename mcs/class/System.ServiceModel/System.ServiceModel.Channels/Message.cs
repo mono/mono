@@ -94,7 +94,6 @@ namespace System.ServiceModel.Channels
 			Close ();
 		}
 
-#if NET_4_5
 		public T GetBody<T> ()
 		{
 			return OnGetBody<T> (GetReaderAtBodyContents ());
@@ -111,17 +110,6 @@ namespace System.ServiceModel.Channels
 			var xmlFormatter = new DataContractSerializer (typeof (T));
 			return (T)xmlFormatter.ReadObject (reader);
 		}
-#else
-		public T GetBody<T> ()
-		{
-			return GetBody<T> (new DataContractSerializer (typeof (T)));
-		}
-
-		public T GetBody<T> (XmlObjectSerializer xmlFormatter)
-		{
-			return (T) xmlFormatter.ReadObject (GetReaderAtBodyContents ());
-		}
-#endif
 
 		public string GetBodyAttribute (string localName, string ns)
 		{

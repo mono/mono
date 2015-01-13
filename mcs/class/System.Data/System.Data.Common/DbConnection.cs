@@ -34,10 +34,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Transactions;
 
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace System.Data.Common {
 	public abstract class DbConnection : Component, IDbConnection, IDisposable
@@ -742,7 +740,6 @@ namespace System.Data.Common {
 				StateChange (this, stateChange);
 		}
 		
-#if NET_4_5
 		public Task OpenAsync ()
 		{
 			return OpenAsync (CancellationToken.None);
@@ -761,7 +758,6 @@ namespace System.Data.Common {
 				return TaskHelper.CreateExceptionTask (e);
 			}
 		}
-#endif
 
 		#endregion // Methods
 

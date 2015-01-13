@@ -192,7 +192,6 @@ namespace System.Reflection
 			return DefaultValueImpl;
 		}
 
-#if NET_4_5
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
@@ -200,7 +199,6 @@ namespace System.Reflection
 		public virtual bool HasDefaultValue {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 #if !MOBILE
 		void _ParameterInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

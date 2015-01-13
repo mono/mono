@@ -48,9 +48,7 @@ namespace System.Collections.ObjectModel
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class ReadOnlyCollection<T> : IList<T>, IList
-#if NET_4_5
 		, IReadOnlyList<T>
-#endif
 	{
 		IList <T> list;
 		

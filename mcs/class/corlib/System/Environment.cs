@@ -162,13 +162,11 @@ namespace System {
 			}
 		}
 		
-#if NET_4_5
 		public static int CurrentManagedThreadId {
 			get {
 				return Thread.CurrentThread.ManagedThreadId;
 			}
 		}
-#endif
 
 		/// <summary>
 		/// Gets or sets the exit code of this process

@@ -59,9 +59,7 @@ namespace System.Collections.Generic {
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 	public class Dictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary, ISerializable, IDeserializationCallback
-#if NET_4_5
 		, IReadOnlyDictionary<TKey, TValue>
-#endif
 	{
 		// The implementation of this class uses a hash table and linked lists
 		// (see: http://msdn2.microsoft.com/en-us/library/ms379571(VS.80).aspx).
@@ -656,7 +654,6 @@ namespace System.Collections.Generic {
 			get { return Values; }
 		}
 		
-#if NET_4_5
 		IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys {
 			get { return Keys; }
 		}
@@ -664,7 +661,6 @@ namespace System.Collections.Generic {
 		IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values {
 			get { return Values; }
 		}
-#endif
 
 		public KeyCollection Keys {
 			get { return new KeyCollection (this); }

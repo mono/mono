@@ -24,9 +24,7 @@
 
 using System;
 using System.Diagnostics;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Threading
 {
@@ -188,7 +186,6 @@ namespace System.Threading
 			}
 		}
 
-#if NET_4_5
 		public Task WaitAsync ()
 		{
 			return Task.Factory.StartNew (() => Wait ());
@@ -218,7 +215,6 @@ namespace System.Threading
 		{
 			return Task.Factory.StartNew (() => Wait (timeout, cancellationToken), cancellationToken);
 		}
-#endif
 
 	}
 }

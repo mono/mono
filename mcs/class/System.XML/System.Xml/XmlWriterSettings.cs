@@ -50,10 +50,8 @@ namespace System.Xml
 		private bool omitXmlDeclaration;
 		private XmlOutputMethod outputMethod;
 
-#if NET_4_5
 		private bool isReadOnly;
 		private bool isAsync;
-#endif
 
 		public XmlWriterSettings ()
 		{
@@ -87,9 +85,7 @@ namespace System.Xml
 			newLineHandling = NewLineHandling.Replace;
 			omitXmlDeclaration = false;
 			outputMethod = XmlOutputMethod.AutoDetect;
-#if NET_4_5
 			isAsync = false;
-#endif
 		}
 
 		// It affects only on XmlTextWriter
@@ -164,7 +160,6 @@ namespace System.Xml
 		public
 		NamespaceHandling NamespaceHandling { get; set; }
 
-#if NET_4_5
 		internal void SetReadOnly ()
 		{
 			isReadOnly = true;
@@ -193,7 +188,6 @@ namespace System.Xml
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 
 	}
 }

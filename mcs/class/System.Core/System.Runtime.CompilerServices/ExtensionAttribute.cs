@@ -27,19 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_5
 
 using System.Runtime.CompilerServices;
 
 [assembly: TypeForwardedTo (typeof (ExtensionAttribute))]
 
-#else
-
-namespace System.Runtime.CompilerServices {
-
-	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Assembly)]
-	public sealed class ExtensionAttribute : Attribute {
-	}
-}
-
-#endif

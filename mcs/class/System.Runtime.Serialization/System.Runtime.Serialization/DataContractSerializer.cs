@@ -213,7 +213,6 @@ namespace System.Runtime.Serialization
 			DataContractResolver = dataContractResolver;
 		}
 
-#if NET_4_5
 		public DataContractSerializer (Type type, DataContractSerializerSettings settings)
 			: this (type, settings.RootName, settings.RootNamespace, settings.KnownTypes,
 			        settings.MaxItemsInObjectGraph, settings.IgnoreExtensionDataObject,
@@ -221,7 +220,6 @@ namespace System.Runtime.Serialization
 			        settings.DataContractResolver)
 		{
 		}
-#endif
 
 		void PopulateTypes (IEnumerable<Type> knownTypes)
 		{
@@ -549,12 +547,10 @@ namespace System.Runtime.Serialization
 			WriteEndObject (XmlDictionaryWriter.CreateDictionaryWriter (writer));
 		}
 
-#if NET_4_5
 		[MonoTODO]
 		public bool SerializeReadOnlyTypes {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		private bool IsAny ()
 		{

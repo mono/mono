@@ -97,7 +97,6 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 		
-#if NET_4_5
 		[Output]
 		public string FrameworkVersion45Path {
 			get {
@@ -105,6 +104,5 @@ namespace Microsoft.Build.Tasks {
 						TargetDotNetFrameworkVersion.Version45);
 			}
 		}
-#endif
 	}
 }

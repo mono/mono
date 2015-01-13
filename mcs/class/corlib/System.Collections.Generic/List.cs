@@ -42,9 +42,7 @@ namespace System.Collections.Generic {
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class List<T> : IList<T>, IList
-#if NET_4_5
 		, IReadOnlyList<T>
-#endif
 	{
 		T [] _items;
 		int _size;

@@ -36,9 +36,7 @@ namespace System
 {
 	[Serializable]
 	public struct ArraySegment<T>
-#if NET_4_5
 		: IList<T>, IReadOnlyList<T>
-#endif
 	{
 		T [] array;
 		readonly int offset, count;
@@ -119,7 +117,6 @@ namespace System
 			return !(a.Equals(b));
 		}
 
-#if NET_4_5
 		bool ICollection<T>.IsReadOnly {
 			get {
 				return true;
@@ -199,6 +196,5 @@ namespace System
 			return res < 0 ? -1 : res - offset;
 		}
 
-#endif
 	}
 }

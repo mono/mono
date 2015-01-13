@@ -31,9 +31,6 @@ using System.Collections.Concurrent;
 
 namespace System.Threading
 {
-#if !NET_4_5
-	sealed
-#endif
 	public class CancellationTokenSource : IDisposable
 	{
 		const int StateValid = 0;
@@ -50,21 +47,17 @@ namespace System.Threading
 		internal static readonly CancellationTokenSource NoneSource = new CancellationTokenSource ();
 		internal static readonly CancellationTokenSource CanceledSource = new CancellationTokenSource ();
 		
-#if NET_4_5
 		static readonly TimerCallback timer_callback;
 		Timer timer;
-#endif
 
 		static CancellationTokenSource ()
 		{
 			CanceledSource.state = StateCanceled;
 
-#if NET_4_5
 			timer_callback = token => {
 				var cts = (CancellationTokenSource) token;
 				cts.CancelSafe ();
 			};
-#endif
 		}
 
 		public CancellationTokenSource ()
@@ -73,7 +66,6 @@ namespace System.Threading
 			handle = new ManualResetEvent (false);
 		}
 
-#if NET_4_5
 		public CancellationTokenSource (int millisecondsDelay)
 			: this ()
 		{
@@ -88,7 +80,6 @@ namespace System.Threading
 			: this (CheckTimeout (delay))
 		{
 		}
-#endif
 
 		public CancellationToken Token {
 			get {
@@ -177,7 +168,6 @@ namespace System.Threading
 				throw new AggregateException (exceptions);
 		}
 
-#if NET_4_5
 		public void CancelAfter (TimeSpan delay)
 		{
 			CancelAfter (CheckTimeout (delay));
@@ -202,7 +192,6 @@ namespace System.Threading
 
 			timer.Change (millisecondsDelay, Timeout.Infinite);
 		}
-#endif
 
 		public static CancellationTokenSource CreateLinkedTokenSource (CancellationToken token1, CancellationToken token2)
 		{
@@ -250,9 +239,7 @@ namespace System.Threading
 			Dispose (true);
 		}
 
-#if NET_4_5
 		protected virtual
-#endif
 		void Dispose (bool disposing)
 		{
 			if (disposing && (state & StateDisposed) == 0) {
@@ -266,10 +253,8 @@ namespace System.Threading
 					state |= StateDisposed;
 					Thread.MemoryBarrier ();
 				}
-#if NET_4_5
 				if (timer != null)
 					timer.Dispose ();
-#endif
 
 				handle.Dispose ();
 				handle = null;

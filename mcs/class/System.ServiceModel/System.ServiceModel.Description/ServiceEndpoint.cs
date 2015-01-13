@@ -27,9 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
-#if NET_4_5
 using System.Collections.ObjectModel;
-#endif
 using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -70,12 +68,10 @@ namespace System.ServiceModel.Description
 			get { return behaviors; }
 		}
 
-#if NET_4_5
 		[MonoTODO]
 		public KeyedCollection<Type,IEndpointBehavior> EndpointBehaviors {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		public ContractDescription Contract {
 			get { return contract; }

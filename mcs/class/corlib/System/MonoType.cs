@@ -52,11 +52,7 @@ namespace System
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
 	sealed class MonoType : 
-#if NET_4_5
 		TypeInfo
-#else
-		Type
-#endif
 		, ISerializable
 	{
 		[NonSerialized]
@@ -743,12 +739,10 @@ namespace System
 			}
 		}
 
-#if NET_4_5
 		public override bool IsConstructedGenericType {
 			get {
 				return IsGenericType && !ContainsGenericParameters;
 			}
 		}
-#endif
 	}
 }

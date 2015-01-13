@@ -256,11 +256,6 @@ namespace System.Xml
 		[MonoTODO]
 		public DtdProcessing DtdProcessing { get; set; }
 
-#if !NET_4_5
-		public override XmlReaderSettings Settings {
-			get { return base.Settings; }
-		}
-#endif
 
 		public override string Value {
 			get { return Current.Value; }

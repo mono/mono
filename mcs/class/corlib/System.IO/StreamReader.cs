@@ -33,9 +33,7 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO {
 	[Serializable]
@@ -126,10 +124,8 @@ namespace System.IO {
 		
 		bool mayBlock;
 
-#if NET_4_5
 		IDecoupledTask async_task;
 		readonly bool leave_open;
-#endif
 
 		public new static readonly StreamReader Null =  new NullStreamReader ();
 		
@@ -147,22 +143,14 @@ namespace System.IO {
 		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks)
 			: this (stream, encoding, detectEncodingFromByteOrderMarks, DefaultBufferSize) { }
 
-#if NET_4_5
 		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
 			: this (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize, false)
 		{
 		}
 
 		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize, bool leaveOpen)
-#else
-		const bool leave_open = false;
-
-		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
-#endif
 		{
-#if NET_4_5
 			leave_open = leaveOpen;
-#endif
 			Initialize (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize);
 		}
 
@@ -590,13 +578,10 @@ namespace System.IO {
 			if (base_stream == null)
 				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
 
-#if NET_4_5
 			if (async_task != null && !async_task.IsCompleted)
 				throw new InvalidOperationException ();
-#endif
 		}
 
-#if NET_4_5
 		public override int ReadBlock ([In, Out] char[] buffer, int index, int count)
 		{
 			if (buffer == null)
@@ -766,6 +751,5 @@ namespace System.IO {
 
 			return decoded_count;
 		}
-#endif
 	}
 }

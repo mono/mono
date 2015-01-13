@@ -41,9 +41,7 @@ namespace System.Threading.Tasks
 		public ConcurrentQueue<AggregateException> ChildExceptions;
 
 		volatile AggregateException exception;
-#if NET_4_5
 		volatile ExceptionDispatchInfo dispatchInfo;
-#endif
 		readonly Task parent;
 
 		public TaskExceptionSlot (Task parent)
@@ -59,7 +57,6 @@ namespace System.Threading.Tasks
 
 		public void SetException (AggregateException exception)
 		{
-#if NET_4_5			
 			if (dispatchInfo == null) {
 				//
 				// Used by task awaiter to rethrow an exception with original call stack, it's
@@ -67,7 +64,6 @@ namespace System.Threading.Tasks
 				//
 				dispatchInfo = ExceptionDispatchInfo.Capture (exception.InnerException);
 			}
-#endif
 			this.exception = exception;
 		}
 
@@ -79,9 +75,6 @@ namespace System.Threading.Tasks
 				//
 				// .NET allows to configure this using config element ThrowUnobservedTaskExceptions
 				//
-#if !NET_4_5
-				throw Exception;
-#endif
 			}
 		}
 	}

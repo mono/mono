@@ -268,7 +268,6 @@ namespace System.Reflection {
 		}
 #endif
 
-#if NET_4_5
 		public virtual MethodInfo AddMethod {
 			get { return GetAddMethod (true); }
 		}
@@ -278,6 +277,5 @@ namespace System.Reflection {
 		public virtual MethodInfo RemoveMethod {
 			get { return GetRemoveMethod (true); }
 		}
-#endif
 	}
 }

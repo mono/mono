@@ -62,9 +62,7 @@ namespace System.Web.Configuration
 		static ConfigurationProperty maxUrlLengthProp;
 		static ConfigurationProperty encoderTypeProp;
 		static ConfigurationProperty relaxedUrlToFileSystemMappingProp;
-#if NET_4_5
 		static ConfigurationProperty targetFrameworkProp;
-#endif
 		static ConfigurationPropertyCollection properties;
 
 		static HttpRuntimeSection ()
@@ -139,12 +137,10 @@ namespace System.Web.Configuration
 								     PropertyHelper.NonEmptyStringValidator,
 								     ConfigurationPropertyOptions.None);
 			relaxedUrlToFileSystemMappingProp = new ConfigurationProperty ("relaxedUrlToFileSystemMapping", typeof (bool), false);
-#if NET_4_5
 			targetFrameworkProp = new ConfigurationProperty ("targetFramework", typeof (Version), new Version (4, 0),
 										PropertyHelper.VersionConverter,
 										PropertyHelper.DefaultValidator,
 										ConfigurationPropertyOptions.None);
-#endif
 			
 			properties = new ConfigurationPropertyCollection();
 			properties.Add (apartmentThreadingProp);
@@ -172,9 +168,7 @@ namespace System.Web.Configuration
 			properties.Add (maxUrlLengthProp);
 			properties.Add (encoderTypeProp);
 			properties.Add (relaxedUrlToFileSystemMappingProp);
-#if NET_4_5
 			properties.Add (targetFrameworkProp);
-#endif
 		}
 
 		public HttpRuntimeSection()
@@ -346,14 +340,12 @@ namespace System.Web.Configuration
 			get { return (bool) base [relaxedUrlToFileSystemMappingProp]; }
 			set { base [relaxedUrlToFileSystemMappingProp] = value; }
 		}
-#if NET_4_5
 		[ConfigurationProperty ("targetFramework", DefaultValue = "4.0")]
 		[TypeConverter ("System.Web.Configuration.VersionConverter")]
 		public Version TargetFramework {
 			get { return (Version) base [targetFrameworkProp]; }
 			set { base [targetFrameworkProp] = value; }
 		}
-#endif
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
