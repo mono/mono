@@ -312,7 +312,7 @@ namespace System.Data.Common
 				//FIXME : The sourcetable name shud get passed as a parameter.. 
 				int index = dtMapping.IndexOfDataSetTable (table.TableName);
 				string srcTable = (index != -1 ? dtMapping[index].SourceTable : table.TableName);
-				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, srcTable, table.TableName, missingMapAction); 
+				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, ADP.IsEmpty (srcTable) ? " " : srcTable, table.TableName, missingMapAction); 
 				if (tableMapping != null) {
 					table.TableName = tableMapping.DataSetTable;
 					// check to see if the column mapping exists

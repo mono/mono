@@ -94,7 +94,7 @@ static class Res
 	public const string ADP_InvalidSizeValue = "ADP_InvalidSizeValue";
 	public const string ADP_InvalidSourceBufferIndex = "ADP_InvalidSourceBufferIndex";
 	public const string ADP_InvalidSourceColumn = "ADP_InvalidSourceColumn";
-	public const string ADP_InvalidSourceTable = "ADP_InvalidSourceTable";
+	public const string ADP_InvalidSourceTable = "SourceTable is required to be a non-empty string";
 	public const string ADP_InvalidStartRecord = "ADP_InvalidStartRecord";
 	public const string ADP_InvalidUDL = "ADP_InvalidUDL";
 	public const string ADP_InvalidValue = "ADP_InvalidValue";
