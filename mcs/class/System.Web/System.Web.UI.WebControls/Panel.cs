@@ -235,11 +235,9 @@ namespace System.Web.UI.WebControls {
 					ViewState ["ScrollBars"] = value;
 			}
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 		protected override Style CreateControlStyle ()
 		{
 			return new PanelStyle (ViewState);

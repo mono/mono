@@ -35,7 +35,6 @@ using System.Collections.Generic;
 
 using Mono.XBuild.Utilities;
 
-#if NET_4_0
 
 namespace Microsoft.Build.Tasks
 {
@@ -273,4 +272,3 @@ namespace Microsoft.Build.Tasks
 	}
 }
 
-#endif

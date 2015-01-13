@@ -37,19 +37,13 @@ using System.Collections.Generic;
 
 namespace System.Reflection {
 
-#if NET_4_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	class MonoAssembly : Assembly {
-#else
-	public partial class Assembly {
-#endif
 		public
-#if NET_4_0
 		override
-#endif
 		Type GetType (string name, bool throwOnError, bool ignoreCase)
 		{
 			Type res;
@@ -59,20 +53,11 @@ namespace System.Reflection {
 			throw new ArgumentException ("name", "Name cannot be empty");
 
 			res = InternalGetType (null, name, throwOnError, ignoreCase);
-#if !NET_4_0 && !FULL_AOT_RUNTIME
-			if (res is TypeBuilder) {
-				if (throwOnError)
-					throw new TypeLoadException (string.Format ("Could not load type '{0}' from assembly '{1}'", name, this));
-				return null;
-			}
-#endif
 			return res;
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Module GetModule (String name)
 		{
 			if (name == null)
@@ -90,17 +75,13 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		AssemblyName[] GetReferencedAssemblies () {
 			return GetReferencedAssemblies (this);
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Module[] GetModules (bool getResourceModules) {
 			Module[] modules = GetModulesInternal ();
 
@@ -117,27 +98,21 @@ namespace System.Reflection {
 
 		[MonoTODO ("Always returns the same as GetModules")]
 		public
-#if NET_4_0
 		override
-#endif
 		Module[] GetLoadedModules (bool getResourceModules)
 		{
 			return GetModules (getResourceModules);
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
 			return GetSatelliteAssembly (culture, null, true);
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
 			return GetSatelliteAssembly (culture, version, true);
@@ -146,9 +121,7 @@ namespace System.Reflection {
 		//FIXME remove GetManifestModule under v4, it's a v2 artifact
 		[ComVisible (false)]
 		public
-#if NET_4_0
 		override
-#endif
 		Module ManifestModule {
 			get {
 				return GetManifestModule ();
@@ -156,9 +129,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		bool GlobalAssemblyCache {
 			get {
 				return get_global_assembly_cache ();

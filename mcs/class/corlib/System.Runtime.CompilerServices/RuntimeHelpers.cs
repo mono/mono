@@ -88,7 +88,6 @@ namespace System.Runtime.CompilerServices
 			RunClassConstructor (type.Value);
 		}
 
-#if NET_4_0
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool SufficientExecutionStack ();
 
@@ -99,7 +98,6 @@ namespace System.Runtime.CompilerServices
 				return;
 			throw new InsufficientExecutionStackException ();
 		}
-#endif
 
 		[MonoTODO("Currently a no-op")]
 		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData)

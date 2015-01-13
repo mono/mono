@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0
 using System;
 
 namespace System.Threading.Tasks
@@ -48,4 +47,3 @@ namespace System.Threading.Tasks
 		ExecuteSynchronously  = 0x80000,
 	}
 }
-#endif

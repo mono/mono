@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0
 using System;
 using System.Threading;
 using System.Collections;
@@ -425,4 +424,3 @@ namespace Mono.Collections.Concurrent
 		}
 	}
 }
-#endif

@@ -49,12 +49,10 @@ namespace System {
 		{
 		}
 
-#if NET_4_0
 		public UriFormatException (string textString, Exception e)
 			: base (textString, e)
 		{
 		}
-#endif
 		protected UriFormatException (SerializationInfo serializationInfo, StreamingContext streamingContext)
 			: base (serializationInfo, streamingContext)
 		{

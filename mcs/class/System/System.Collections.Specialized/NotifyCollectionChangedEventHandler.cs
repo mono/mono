@@ -22,7 +22,6 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-#if NET_4_0
 using System.Runtime.CompilerServices;
 
 namespace System.Collections.Specialized
@@ -33,4 +32,3 @@ namespace System.Collections.Specialized
 	public delegate void NotifyCollectionChangedEventHandler (object sender, NotifyCollectionChangedEventArgs e);
 }
 
-#endif

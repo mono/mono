@@ -371,10 +371,8 @@ namespace System.Web
 						if (!File.Exists (app_file))
 							app_file = null;
 					}
-#if NET_4_0
 					BuildManager.CallPreStartMethods ();
 					BuildManager.CompilingTopLevelAssemblies = true;
-#endif
 					AppResourcesCompiler ac = new AppResourcesCompiler (context);
 					ac.Compile ();
 
@@ -413,9 +411,7 @@ namespace System.Web
 					if (Directory.Exists (app_browsers_path)) {
 						app_browsers_files = Directory.GetFiles (app_browsers_path, "*.browser");
 					}
-#if NET_4_0
 					BuildManager.CompilingTopLevelAssemblies = false;
-#endif
 					app_type = BuildManager.GetPrecompiledApplicationType ();
 					if (app_type == null && app_file != null) {
 						app_type = BuildManager.GetCompiledType ("~/" + Path.GetFileName (app_file));

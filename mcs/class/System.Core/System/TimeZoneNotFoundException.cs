@@ -24,32 +24,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if NET_4_0
 
 using System;
 using System.Runtime.CompilerServices;
 
 [assembly:TypeForwardedTo (typeof(TimeZoneNotFoundException))]
 
-#else
-
-namespace System
-{
-	[Serializable]
-	public class TimeZoneNotFoundException : Exception
-	{
-		public TimeZoneNotFoundException () : base ()
-		{}
-
-		public TimeZoneNotFoundException (string message) : base (message)
-		{}
-
-		public TimeZoneNotFoundException (string message, Exception e) : base (message, e)
-		{}
-
-		protected TimeZoneNotFoundException (Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext sc) : base (info, sc)
-		{}
-	}
-}
-
-#endif

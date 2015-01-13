@@ -98,7 +98,6 @@ namespace System.Web.UI
 				return parentMasterPage;
 			}
 		}		
-#if NET_4_0
 		public void InstantiateInContentPlaceHolder (Control contentPlaceHolder, ITemplate template)
 		{
 			// .NET compatibility...
@@ -108,7 +107,6 @@ namespace System.Web.UI
 			if (contentPlaceHolder != null && template != null)
 				template.InstantiateIn (contentPlaceHolder);
 		}
-#endif
 		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context,
 							     string masterPageFile, IDictionary contentTemplateCollection)
 		{

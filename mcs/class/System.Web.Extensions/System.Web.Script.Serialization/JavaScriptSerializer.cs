@@ -133,11 +133,7 @@ namespace System.Web.Script.Serialization
 			return (T) ConvertToType (obj, typeof (T));
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		object ConvertToType (object obj, Type targetType)
 		{
 			if (obj == null)

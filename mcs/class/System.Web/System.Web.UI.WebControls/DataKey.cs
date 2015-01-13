@@ -34,9 +34,7 @@ using System.Collections.Specialized;
 namespace System.Web.UI.WebControls
 {
 	public class DataKey : IStateManager
-#if NET_4_0
 	, IEquatable <DataKey>
-#endif
 	{
 		IOrderedDictionary keyTable;
 		string[] keyNames;
@@ -81,7 +79,6 @@ namespace System.Web.UI.WebControls
 				return readonlyKeyTable; 
 			}
 		}
-#if NET_4_0
 		public bool Equals (DataKey other)
 		{
 			if (other == null)
@@ -123,7 +120,6 @@ namespace System.Web.UI.WebControls
 			
 			return true;
 		}
-#endif
 		protected virtual void LoadViewState (object savedState)
 		{
 			if (savedState is Pair) {

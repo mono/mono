@@ -85,7 +85,6 @@ namespace System.Net
 		public virtual Uri ResponseUri {		
 			get { throw new NotSupportedException (); }
 		}		
-#if NET_4_0
 
 		public virtual bool SupportsHeaders {
 			get {
@@ -94,7 +93,6 @@ namespace System.Net
 				return true;
 			}
 		}
-#endif
 		// Methods
 		
 		public virtual void Close()
@@ -106,26 +104,16 @@ namespace System.Net
 		{
 			throw new NotSupportedException ();
 		}
-#if   NET_4_0
 		public void Dispose ()
-#else
-		void IDisposable.Dispose()
-#endif
 		{
-#if NET_4_0
 			Dispose (true);
-#else
-			Close ();
-#endif
 		}
 		
-#if NET_4_0
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing)
 				Close ();
 		}
-#endif
 
 		void ISerializable.GetObjectData
 			(SerializationInfo serializationInfo,

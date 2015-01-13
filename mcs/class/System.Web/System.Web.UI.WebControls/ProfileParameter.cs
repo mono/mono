@@ -69,11 +69,7 @@ namespace System.Web.UI.WebControls
 		{
 			return new ProfileParameter (this);
 		}
-#if NET_4_0
 		protected internal
-#else
-		protected
-#endif
 		override object Evaluate (HttpContext context, Control control)
 		{
 			if (context == null || context.Profile == null)

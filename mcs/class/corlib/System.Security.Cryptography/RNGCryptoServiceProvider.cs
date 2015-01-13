@@ -146,11 +146,9 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-#if NET_4_0
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
 		}
-#endif
 	}
 }

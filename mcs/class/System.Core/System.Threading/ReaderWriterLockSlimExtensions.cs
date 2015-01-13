@@ -37,21 +37,9 @@ namespace System.Threading
 			return (state & value) > 0;
 		}
 
-#if !NET_4_0
-		internal static bool Wait (this ManualResetEvent self, int timeout)
-		{
-			return self.WaitOne (timeout);
-		}
-
-		internal static bool IsSet (this ManualResetEvent self)
-		{
-			return self.WaitOne (0);
-		}
-#else
 		internal static bool IsSet (this ManualResetEventSlim self)
 		{
 			return self.IsSet;
 		}
-#endif
 	}
 }

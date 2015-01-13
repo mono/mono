@@ -39,12 +39,10 @@ namespace System.Web.UI.HtmlControls
 	[ControlBuilder (typeof(HtmlHeadBuilder))]
 	public sealed class HtmlHead: HtmlGenericControl, IParserAccessor
 	{
-#if NET_4_0
 		string descriptionText;
 		string keywordsText;
 		HtmlMeta descriptionMeta;
 		HtmlMeta keywordsMeta;
-#endif
 		string titleText;
 		HtmlTitle title;
 		//Hashtable metadata;
@@ -79,7 +77,6 @@ namespace System.Web.UI.HtmlControls
 					writer.Write (titleText);
 				writer.RenderEndTag ();
 			}
-#if NET_4_0
 			if (descriptionMeta == null && descriptionText != null) {
 				writer.AddAttribute ("name", "description");
 				writer.AddAttribute ("content", HttpUtility.HtmlAttributeEncode (descriptionText));
@@ -93,7 +90,6 @@ namespace System.Web.UI.HtmlControls
 				writer.RenderBeginTag (HtmlTextWriterTag.Meta);
 				writer.RenderEndTag ();
 			}
-#endif
 			if (styleSheet != null)
 				styleSheet.Render (writer);
 		}
@@ -108,7 +104,6 @@ namespace System.Web.UI.HtmlControls
 				title = t;
 			}
 
-#if NET_4_0
 			HtmlMeta meta = control as HtmlMeta;
 			if (meta != null) {
 				if (String.Compare ("keywords", meta.Name, StringComparison.OrdinalIgnoreCase) == 0)
@@ -116,7 +111,6 @@ namespace System.Web.UI.HtmlControls
 				else if (String.Compare ("description", meta.Name, StringComparison.OrdinalIgnoreCase) == 0)
 					descriptionMeta = meta;
 			}
-#endif
 			base.AddedControl (control, index);
 		}
 
@@ -125,15 +119,12 @@ namespace System.Web.UI.HtmlControls
 			if (title == control)
 				title = null;
 
-#if NET_4_0
 			if (keywordsMeta == control)
 				keywordsMeta = null;
 			else if (descriptionMeta == control)
 				descriptionMeta = null;
-#endif
 			base.RemovedControl (control);
 		}
-#if NET_4_0
 		public string Description {
 			get {
 				if (descriptionMeta != null)
@@ -163,7 +154,6 @@ namespace System.Web.UI.HtmlControls
 					keywordsText = value;
 			}
 		}
-#endif
 		
 		public IStyleSheet StyleSheet {
 			get {

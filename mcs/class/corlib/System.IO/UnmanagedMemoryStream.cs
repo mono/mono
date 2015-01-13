@@ -49,9 +49,7 @@ namespace System.IO
 		IntPtr initial_pointer;
 		long initial_position;
 		long current_position;
-#if NET_4_0
 		SafeBuffer safebuffer;
-#endif
 #if NET_4_5
 		Task<int> read_task;
 #endif
@@ -77,7 +75,6 @@ namespace System.IO
 			Initialize (pointer, length, capacity, access);
 		}
 
-#if NET_4_0
 		public UnmanagedMemoryStream (SafeBuffer buffer, long offset, long length) :
 			this (buffer, offset, length, FileAccess.Read)
 		{
@@ -88,7 +85,6 @@ namespace System.IO
 			closed = true;
 			Initialize (buffer, offset, length, access);
 		}
-#endif
 #endregion
 	
 #region Properties
@@ -146,10 +142,8 @@ namespace System.IO
 		[CLSCompliantAttribute (false)]
 		public unsafe byte* PositionPointer {
 			get {
-#if NET_4_0
 				if (safebuffer != null)
 					throw new NotSupportedException ("Not supported when using SafeBuffer");
-#endif
 				if (closed)
 					throw new ObjectDisposedException("The stream is closed");
 				if (current_position >= length)
@@ -158,10 +152,8 @@ namespace System.IO
 				return (byte *) initial_pointer + current_position;
 			}
 			set {
-#if NET_4_0
 				if (safebuffer != null)
 					throw new NotSupportedException ("Not supported when using SafeBuffer");
-#endif
 				if (closed)
 					throw new ObjectDisposedException("The stream is closed");
 
@@ -195,7 +187,6 @@ namespace System.IO
 				return 0;
 
 			int progress = current_position + count < length ? count : (int) (length - current_position);
-#if NET_4_0
 			if (safebuffer != null) {
 				unsafe {
 					byte *ptr = null;
@@ -208,7 +199,6 @@ namespace System.IO
 					}
 				}
 			} else
-#endif
 			{
 				Marshal.Copy (new IntPtr (initial_pointer.ToInt64 () + current_position), buffer, offset, progress);
 			}
@@ -257,7 +247,6 @@ namespace System.IO
 			if (current_position >= length)
 				return (-1);
 
-#if NET_4_0
 			if (safebuffer != null) {
 				unsafe {
 					byte *ptr = null;
@@ -270,7 +259,6 @@ namespace System.IO
 					}
 				}
 			} else
-#endif
 			{
 				return (int) Marshal.ReadByte(initial_pointer, (int) current_position++);
 			}
@@ -306,10 +294,8 @@ namespace System.IO
 		 
 		public override void SetLength (long value)
 		{
-#if NET_4_0
 			if (safebuffer != null)
 				throw new NotSupportedException ("Not supported when using SafeBuffer");
-#endif
 			if (closed)
 				throw new ObjectDisposedException("The stream is closed");
 			if (value < 0)
@@ -372,7 +358,6 @@ namespace System.IO
 			if (fileaccess == FileAccess.Read)
 				throw new NotSupportedException ("Stream does not support writing.");
 
-#if NET_4_0
 			if (safebuffer != null) {
 				unsafe {
 					byte *dest = null;
@@ -388,7 +373,6 @@ namespace System.IO
 					}
 				}
 			} else
-#endif
 			{
 				unsafe {
 					fixed (byte *src = buffer) {
@@ -438,7 +422,6 @@ namespace System.IO
 			if (fileaccess == FileAccess.Read)
 				throw new NotSupportedException("Stream does not support writing.");
  
-#if NET_4_0
 			if (safebuffer != null) {
 				unsafe {
 					byte *dest = null;
@@ -452,7 +435,6 @@ namespace System.IO
 					}
 				}
 			} else
-#endif
 			{
 				unsafe {
 					byte *dest = (byte *) initial_pointer + (int) current_position++;
@@ -490,7 +472,6 @@ namespace System.IO
 			closed = false;
 		}
 
-#if NET_4_0
 		protected void Initialize (SafeBuffer buffer, long offset, long length, FileAccess access)
 		{
 			if (buffer == null)
@@ -520,7 +501,6 @@ namespace System.IO
 			current_position = offset;
 			closed = false;
 		}
-#endif
 #endregion
 	}
 }

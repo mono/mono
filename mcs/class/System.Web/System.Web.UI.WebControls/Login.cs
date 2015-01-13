@@ -45,29 +45,23 @@ namespace System.Web.UI.WebControls {
 	[DefaultEvent ("Authenticate")]
 	[Designer ("System.Web.UI.Design.WebControls.LoginDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class Login : CompositeControl
-#if NET_4_0
 	, IRenderOuterTable
-#endif
 	{
 		#region LoginContainer
 		// TODO: This class should probably be folded into a generic one with BaseChangePasswordContainer
 		sealed class LoginContainer : Control
 		{
 			readonly Login _owner;
-#if NET_4_0
 			bool renderOuterTable;
-#endif
 			Table _table;
 			TableCell _containerCell;
 
 			public LoginContainer (Login owner)
 			{
 				_owner = owner;
-#if NET_4_0
 				renderOuterTable = _owner.RenderOuterTable;
 
 				if (renderOuterTable)
-#endif
 					InitTable ();
 			}
 			
@@ -88,11 +82,9 @@ namespace System.Web.UI.WebControls {
 
 			public void InstantiateTemplate (ITemplate template)
 			{
-#if NET_4_0
 				if (!renderOuterTable)
 					template.InstantiateIn (this);
 				else
-#endif
 					template.InstantiateIn (_containerCell);
 			}
 
@@ -441,9 +433,7 @@ namespace System.Web.UI.WebControls {
 		LoginContainer container;
 
 		string _password;
-#if NET_4_0
 		bool renderOuterTable = true;
-#endif
 		public Login ()
 		{
 		}
@@ -886,13 +876,11 @@ namespace System.Web.UI.WebControls {
 					ViewState ["PasswordRequiredErrorMessage"] = value;
 			}
 		}
-#if NET_4_0
 		[DefaultValue (true)]
 		public virtual bool RenderOuterTable {
 			get { return renderOuterTable; }
 			set { renderOuterTable = value; }
 		}
-#endif
 		[DefaultValue (false)]
 		[Themeable (false)]
 		public virtual bool RememberMeSet {
@@ -1191,9 +1179,7 @@ namespace System.Web.UI.WebControls {
 
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-#if NET_4_0
 			VerifyInlinePropertiesNotSet ();
-#endif
 			// VisibleWhenLoggedIn isn't applicable to the default login page
 			if (!VisibleWhenLoggedIn && !IsDefaultLoginPage () && IsLoggedIn ())
 				return;

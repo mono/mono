@@ -484,14 +484,6 @@ namespace System.Globalization
 
 		internal void CheckNeutral ()
 		{
-#if !NET_4_0
-			if (IsNeutralCulture) {
-				throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
-						"a neutral culture. It can not be used in formatting " +
-						"and parsing and therefore cannot be set as the thread's " +
-						"current culture.");
-			}
-#endif
 		}
 
 		public virtual NumberFormatInfo NumberFormat {
@@ -673,11 +665,7 @@ namespace System.Globalization
 				// Be careful not to cause recursive CultureInfo initialization
 				//
 				var msg = string.Format (InvariantCulture, "Culture ID {0} (0x{1}) is not a supported culture.", culture.ToString (InvariantCulture), culture.ToString ("X4", InvariantCulture));
-#if NET_4_0
 				throw new CultureNotFoundException ("culture", msg);
-#else
-				throw new ArgumentException (msg, "culture");
-#endif
 			}
 		}
 
@@ -1022,11 +1010,7 @@ namespace System.Globalization
 
 		static Exception CreateNotFoundException (string name)
 		{
-#if NET_4_0
 			return new CultureNotFoundException ("name", "Culture name " + name + " is not supported.");
-#else
-			return new ArgumentException ("Culture name " + name + " is not supported.", "name");
-#endif
 		}
 		
 #if NET_4_5

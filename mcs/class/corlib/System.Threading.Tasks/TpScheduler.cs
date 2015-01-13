@@ -29,7 +29,6 @@
 //
 //
 
-#if NET_4_0
 
 using System.Collections.Generic;
 
@@ -79,4 +78,3 @@ namespace System.Threading.Tasks
 		}
 	}
 }
-#endif

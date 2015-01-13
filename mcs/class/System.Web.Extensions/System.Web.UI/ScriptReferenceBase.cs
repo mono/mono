@@ -76,14 +76,12 @@ namespace System.Web.UI
 			this.NotifyScriptLoaded = true;
 			this.ScriptMode = ScriptMode.Auto;
 		}
-#if NET_4_0
 		protected internal virtual bool IsAjaxFrameworkScript (ScriptManager scriptManager)
 		{
 			return false;
 		}
 		
 		[Obsolete ("Use IsAjaxFrameworkScript(ScriptManager)")]
-#endif
 		protected internal abstract bool IsFromSystemWebExtensions ();
 		protected internal abstract string GetUrl (ScriptManager scriptManager, bool zip);
 

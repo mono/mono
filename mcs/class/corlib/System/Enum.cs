@@ -681,7 +681,6 @@ namespace System
 			return true;
 		}
 
-#if NET_4_0
 		public static bool TryParse<TEnum> (string value, out TEnum result) where TEnum : struct
 		{
 			return TryParse (value, false, out result);
@@ -704,7 +703,6 @@ namespace System
 
 			return Parse (tenum_type, value, ignoreCase, out result);
 		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern int compare_value_to (object other);
@@ -1061,7 +1059,6 @@ namespace System
 					"\"x\",\"F\",\"f\",\"D\" or \"d\".");
 		}
 
-#if NET_4_0
 		public bool HasFlag (Enum flag)
 		{
 			var val = get_value ();
@@ -1070,6 +1067,5 @@ namespace System
 
 			return ((mvalue & fvalue) == fvalue);
 		}
-#endif
 	}
 }

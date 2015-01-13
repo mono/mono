@@ -151,11 +151,9 @@ namespace System.Web.UI.WebControls {
 				ViewState["ValidationGroup"] = value;
 			}
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif		
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
@@ -199,7 +197,6 @@ namespace System.Web.UI.WebControls {
 			else
 				Page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
 		}
-#if NET_4_0
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
@@ -209,7 +206,6 @@ namespace System.Web.UI.WebControls {
 			if (ForeColor == Color.Empty)
 				ForeColor = Color.Red;
 		}
-#endif
 		protected internal
 		override void OnPreRender(EventArgs e) {
 			base.OnPreRender (e);

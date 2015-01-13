@@ -44,9 +44,7 @@ namespace System.Collections.Generic {
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 	public class HashSet<T> : ICollection<T>, ISerializable, IDeserializationCallback
-#if NET_4_0
 							, ISet<T>
-#endif
 	{
 		const int INITIAL_SIZE = 10;
 		const float DEFAULT_LOAD_FACTOR = (90f / 100);

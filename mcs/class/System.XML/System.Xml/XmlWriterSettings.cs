@@ -161,11 +161,7 @@ namespace System.Xml
 			//set { outputMethod = value; }
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		NamespaceHandling NamespaceHandling { get; set; }
 
 #if NET_4_5

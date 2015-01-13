@@ -54,9 +54,7 @@ namespace Microsoft.Build.Framework
 		{
 		}
 
-#if NET_4_0
 		protected
-#endif
 		BuildEventArgs (string message, string helpKeyword,
 		                string senderName, DateTime eventTimestamp)
 		{
@@ -76,18 +74,14 @@ namespace Microsoft.Build.Framework
 			}
 		}
 
-#if NET_4_0
 		virtual
-#endif
 		public string Message {
 			get {
 				return message;
 			}
-#if NET_4_0			
 			protected set {
 				message = value;
 			}
-#endif
 		}
 
 		public string SenderName {

@@ -143,7 +143,6 @@ namespace System
 			return *((int*)&f);
 		}
 
-#if	NET_4_0
 		public static bool operator==(float left, float right)
 		{
 			return left == right;
@@ -173,7 +172,6 @@ namespace System
 		{
 			return left <= right;
 		}
-#endif
 
 		public static bool IsInfinity (float f)
 		{

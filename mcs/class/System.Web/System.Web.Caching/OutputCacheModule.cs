@@ -50,20 +50,12 @@ namespace System.Web.Caching
 		Dictionary <string, string> keysCache;
 		Dictionary <string, string> entriesToInvalidate;
 		
-#if !NET_4_0
-		OutputCacheProvider provider;
-
-		internal OutputCacheProvider InternalProvider {
-			get { return provider; }
-		}
-#endif
 		public OutputCacheModule ()
 		{
 		}
 
 		OutputCacheProvider FindCacheProvider (HttpApplication app)
 		{				
-#if NET_4_0
 			HttpContext ctx = HttpContext.Current;
 			if (app == null) {
 				app = ctx != null ? ctx.ApplicationInstance : null;
@@ -81,12 +73,6 @@ namespace System.Web.Caching
 				throw new ProviderException (String.Format ("OutputCacheProvider named '{0}' cannot be found.", providerName));
 
 			return ret;
-#else
-			if (provider == null)
-				provider = new InMemoryOutputCacheProvider ();
-			
-			return provider;
-#endif
 		}
 		
 		public void Dispose ()

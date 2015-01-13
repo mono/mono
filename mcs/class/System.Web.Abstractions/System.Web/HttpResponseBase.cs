@@ -41,15 +41,11 @@ using System.Text;
 using System.Web.Caching;
 using System.Threading;
 
-#if NET_4_0
 using System.Web.Routing;
-#endif
 
 namespace System.Web
 {
-#if NET_4_0
         [TypeForwardedFrom ("System.Web.Abstractions, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpResponseBase
@@ -254,7 +250,6 @@ namespace System.Web
 		{
 			NotImplemented ();
 		}
-#if NET_4_0
 		public virtual void RedirectPermanent (string url)
 		{
 			NotImplemented ();
@@ -319,7 +314,6 @@ namespace System.Web
 		{
 			NotImplemented ();
 		}
-#endif
 		public virtual void RemoveOutputCacheItem (string path)
 		{
 			NotImplemented ();

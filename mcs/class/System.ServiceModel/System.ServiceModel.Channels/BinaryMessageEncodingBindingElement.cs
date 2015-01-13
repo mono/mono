@@ -82,9 +82,7 @@ namespace System.ServiceModel.Channels
 
 		public XmlDictionaryReaderQuotas ReaderQuotas {
 			get { return quotas; }
-#if NET_4_0
 			set { quotas = value; }
-#endif
 		}
 
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (

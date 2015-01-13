@@ -28,7 +28,6 @@
 //
 //
 
-#if NET_4_0
 
 using System;
 using System.Threading;
@@ -1418,4 +1417,3 @@ namespace System.Threading.Tasks
 		#endregion
 	}
 }
-#endif

@@ -321,20 +321,11 @@ namespace System.Net
 			Dispose (true);
 		}
 		
-#if NET_4_0
 		protected override void Dispose (bool disposing)
 		{
 			this.disposed = true;
 			base.Dispose (true);
 		}
-#else
-		void Dispose (bool disposing) 
-		{
-			this.disposed = true;
-			if (disposing)
-				Close ();
-		}
-#endif
 		
 		private void CheckDisposed () 
 		{

@@ -85,10 +85,7 @@ namespace System {
 			ProgramFiles = 0x26,
 			MyPictures = 0x27,
 			CommonProgramFiles = 0x2b,
-#if NET_4_0
 			MyVideos = 0x0e,
-#endif
-#if NET_4_0
 			NetworkShortcuts = 0x13,
 			Fonts = 0x14,
 			CommonStartMenu = 0x16,
@@ -112,14 +109,9 @@ namespace System {
 			LocalizedResources = 0x39,
 			CommonOemLinks = 0x3a,
 			CDBurning = 0x3b,
-#endif
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		enum SpecialFolderOption {
 			None = 0,
 			DoNotVerify = 0x4000,
@@ -489,9 +481,7 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string GetWindowsFolderPath (int folder);
 
-#if NET_4_0
 		public
-#endif
 		static string GetFolderPath(SpecialFolder folder, SpecialFolderOption option)
 		{
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
@@ -608,11 +598,8 @@ namespace System {
 			
 			case SpecialFolder.Templates:
 				return ReadXdgUserDir (config, home, "XDG_TEMPLATES_DIR", "Templates");
-#if NET_4_0
 			case SpecialFolder.MyVideos:
 				return ReadXdgUserDir (config, home, "XDG_VIDEOS_DIR", "Videos");
-#endif
-#if NET_4_0
 			case SpecialFolder.CommonTemplates:
 				return "/usr/share/templates";
 			case SpecialFolder.Fonts:
@@ -620,7 +607,6 @@ namespace System {
 					return Path.Combine (home, "Library", "Fonts");
 				
 				return Path.Combine (home, ".fonts");
-#endif
 			// these simply dont exist on Linux
 			// The spec says if a folder doesnt exist, we
 			// should return ""
@@ -642,11 +628,9 @@ namespace System {
 				else
 					return String.Empty;
 
-#if NET_4_0
 				// #2873
 			case SpecialFolder.UserProfile:
 				return home;
-#endif
 
 			case SpecialFolder.Programs:
 			case SpecialFolder.SendTo:
@@ -657,7 +641,6 @@ namespace System {
 			case SpecialFolder.Recent:
 			case SpecialFolder.CommonProgramFiles:
 			case SpecialFolder.System:
-#if NET_4_0
 			case SpecialFolder.NetworkShortcuts:
 			case SpecialFolder.CommonStartMenu:
 			case SpecialFolder.CommonPrograms:
@@ -678,7 +661,6 @@ namespace System {
 			case SpecialFolder.LocalizedResources:
 			case SpecialFolder.CommonOemLinks:
 			case SpecialFolder.CDBurning:
-#endif
 				return String.Empty;
 			// This is where data common to all users goes
 			case SpecialFolder.CommonApplicationData:
@@ -831,15 +813,12 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
-#if NET_4_0
 		public static bool Is64BitOperatingSystem {
 			get { return IntPtr.Size == 8; } // FIXME: is this good enough?
 		}
@@ -847,13 +826,8 @@ namespace System {
 		public static int SystemPageSize {
 			get { return GetPageSize (); }
 		}
-#endif
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		static bool Is64BitProcess {
 			get { return IntPtr.Size == 8; }
 		}

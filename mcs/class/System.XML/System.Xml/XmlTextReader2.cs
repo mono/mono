@@ -253,10 +253,8 @@ namespace System.Xml
 			get { return entity != null ? ReadState.Interactive : source.ReadState; }
 		}
 
-#if NET_4_0
 		[MonoTODO]
 		public DtdProcessing DtdProcessing { get; set; }
-#endif
 
 #if !NET_4_5
 		public override XmlReaderSettings Settings {

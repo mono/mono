@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 
 namespace System.Threading.Tasks 
 {
@@ -94,4 +93,3 @@ namespace System.Threading.Tasks
 	}
 }
 
-#endif

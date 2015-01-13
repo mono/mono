@@ -443,19 +443,16 @@ namespace Microsoft.Win32
 		{
 			if (!IsHandleValid (rkey))
 				return;
-#if NET_4_0
 			SafeRegistryHandle safe_handle = rkey.Handle;
 			if (safe_handle != null) {
 				// closes the unmanaged pointer for us.
 				safe_handle.Close ();
 				return;
 			}
-#endif
 			IntPtr handle = GetHandle (rkey);
 			RegCloseKey (handle);
 		}
 
-#if NET_4_0
 		public RegistryKey FromHandle (SafeRegistryHandle handle)
 		{
 			// At this point we can't tell whether the key is writable
@@ -463,7 +460,6 @@ namespace Microsoft.Win32
 			// .Net seems to do.
 			return new RegistryKey (handle.DangerousGetHandle (), String.Empty, true);
 		}
-#endif
 
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyName)
 		{
@@ -485,7 +481,6 @@ namespace Microsoft.Win32
 				true);
 		}
 
-#if NET_4_0
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyName, RegistryOptions options)
 		{
 			IntPtr handle = GetHandle (rkey);
@@ -504,7 +499,6 @@ namespace Microsoft.Win32
 			return new RegistryKey (subKeyHandle, CombineName (rkey, keyName),
 				true);
 		}
-#endif
 
 		public void DeleteKey (RegistryKey rkey, string keyName, bool shouldThrowWhenKeyMissing)
 		{

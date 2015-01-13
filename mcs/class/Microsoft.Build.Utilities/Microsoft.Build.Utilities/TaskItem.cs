@@ -39,9 +39,7 @@ namespace Microsoft.Build.Utilities
 	public
 #endif
 	sealed class TaskItem : MarshalByRefObject, ITaskItem
-#if NET_4_0
 		, ITaskItem2
-#endif
 	{
 		IDictionary		escapedMetadata;
 		string			escapedItemSpec;
@@ -57,13 +55,11 @@ namespace Microsoft.Build.Utilities
 			if (sourceItem == null)
 				throw new ArgumentNullException ("sourceItem");
 
-#if NET_4_0
 			var ti2 = sourceItem as ITaskItem2;
 			if (ti2 != null) {
 				escapedItemSpec = ti2.EvaluatedIncludeEscaped;
 				escapedMetadata = ti2.CloneCustomMetadataEscaped ();
 			} else
-#endif
 			{
 				escapedItemSpec = MSBuildUtils.Escape (sourceItem.ItemSpec);
 				escapedMetadata = sourceItem.CloneCustomMetadata ();
@@ -106,12 +102,10 @@ namespace Microsoft.Build.Utilities
 			return CollectionsUtil.CreateCaseInsensitiveHashtable (escapedMetadata);
 		}
 
-#if NET_4_0
 		IDictionary ITaskItem2.CloneCustomMetadataEscaped ()
 		{
 			return CloneCustomMetadataEscaped ();
 		}
-#endif
 
 		public void CopyMetadataTo (ITaskItem destinationItem)
 		{
@@ -139,12 +133,10 @@ namespace Microsoft.Build.Utilities
 			return ((string) escapedMetadata [metadataName]) ?? String.Empty;
 		}
 
-#if NET_4_0
 		string ITaskItem2.GetMetadataValueEscaped (string metadataName)
 		{
 			return GetMetadataValue (metadataName);
 		}
-#endif
 
 		public override object InitializeLifetimeService ()
 		{
@@ -175,12 +167,10 @@ namespace Microsoft.Build.Utilities
 			escapedMetadata [metadataName] = metadataValue;
 		}
 
-#if NET_4_0
 		void ITaskItem2.SetMetadataValueLiteral (string metadataName, string metadataValue)
 		{
 			SetMetadata (metadataName, MSBuildUtils.Escape (metadataValue));
 		}
-#endif
 		public override string ToString ()
 		{
 			return escapedItemSpec;
@@ -191,12 +181,10 @@ namespace Microsoft.Build.Utilities
 			set { escapedItemSpec = value; }
 		}
 
-#if NET_4_0
 		string ITaskItem2.EvaluatedIncludeEscaped {
 			get { return escapedItemSpec; }
 			set { escapedItemSpec = value; }
 		}
-#endif
 
 		public int MetadataCount {
 			get { return escapedMetadata.Count + 11; }

@@ -33,9 +33,7 @@ namespace System.Web.UI.WebControls {
 	{
 		Table,
 		Flow,
-#if NET_4_0
 		UnorderedList,
 		OrderedList
-#endif
 	}
 }

@@ -337,12 +337,6 @@ namespace System {
 				}
 			} else {
 				path = baseEl.path;
-#if !NET_4_0
-				if (relativeEl.query != null) {
-					var pathEnd = path.LastIndexOf ('/');
-					path = (pathEnd > 0)? path.Substring (0, pathEnd+1) : "";
-				}
-#endif
 			}
 
 			if ((path.Length == 0 || path [0] != '/') && baseEl.delimiter == SchemeDelimiter)
@@ -950,10 +944,8 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
-#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-#endif
 			if (Host != uri.Host || Scheme != uri.Scheme)
 				return uri;
 
@@ -1745,10 +1737,8 @@ namespace System {
 
 		public bool IsBaseOf (Uri uri)
 		{
-#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-#endif
 			return Parser.IsBaseOf (this, uri);
 		}
 
@@ -1957,10 +1947,8 @@ namespace System {
 			result = null;
 			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-#if NET_4_0
 			if (relativeUri == null)
 				return false;
-#endif
 			try {
 				// FIXME: this should call UriParser.Resolve
 				result = new Uri (baseUri, relativeUri.OriginalString);

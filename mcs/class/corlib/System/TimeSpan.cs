@@ -41,9 +41,7 @@ namespace System
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public struct TimeSpan : IComparable, IComparable<TimeSpan>, IEquatable <TimeSpan>
-#if NET_4_0
 				 , IFormattable
-#endif
 	{
 #if MONOTOUCH
 		static TimeSpan () {
@@ -361,7 +359,6 @@ namespace System
 			return p.Execute (true, out result);
 		}
 
-#if NET_4_0
 		public static TimeSpan Parse (string input, IFormatProvider formatProvider)
 		{
 			if (input == null)
@@ -483,7 +480,6 @@ namespace System
 
 			return false;
 		}
-#endif
 
 		public TimeSpan Subtract (TimeSpan ts)
 		{
@@ -528,7 +524,6 @@ namespace System
 			return sb.ToString ();
 		}
 
-#if NET_4_0
 		public string ToString (string format)
 		{
 			return ToString (format, null);
@@ -691,7 +686,6 @@ namespace System
 
 			return sb.ToString ();
 		}
-#endif
 
 		public static TimeSpan operator + (TimeSpan t1, TimeSpan t2)
 		{
@@ -756,7 +750,6 @@ namespace System
 			private int _cur = 0;
 			private int _length;
 			ParseError parse_error;
-#if NET_4_0
 			bool parsed_ticks;
 			NumberFormatInfo number_format;
 			int parsed_numbers_count;
@@ -766,18 +759,14 @@ namespace System
 			public bool AllMembersRequired;
 			public bool CultureSensitive = true;
 			public bool UseColonAsDaySeparator = true;
-#endif
 
 			public Parser (string src)
 			{
 				_src = src;
 				_length = _src.Length;
-#if NET_4_0
 				number_format = GetNumberFormatInfo (null);
-#endif
 			}
 
-#if NET_4_0
 			// Reset state data, so we can execute another parse over the input.
 			void Reset ()
 			{
@@ -803,7 +792,6 @@ namespace System
 
 				return format;
 			}
-#endif
 	
 			public bool AtEnd {
 				get {
@@ -843,7 +831,6 @@ namespace System
 				return res;
 			}
 
-#if NET_4_0
 			// Used for custom formats parsing, where we may need to declare how
 			// many digits we expect, as well as the maximum allowed.
 			private int ParseIntExact (int digit_count, int max_digit_count)
@@ -869,7 +856,6 @@ namespace System
 
 				return (int)res;
 			}
-#endif
 
 			// Parse simple int value
 			private int ParseInt (bool optional)
@@ -892,15 +878,12 @@ namespace System
 
 				if (!optional && (count == 0))
 					SetParseError (ParseError.Format);
-#if NET_4_0
 				if (count > 0)
 					parsed_numbers_count++;
-#endif
 
 				return (int)res;
 			}
 
-#if NET_4_0
 			// This behaves pretty much like ParseOptDot, but we need to have it
 			// as a separated routine for both days and decimal separators.
 			private bool ParseOptDaysSeparator ()
@@ -958,7 +941,6 @@ namespace System
 
 				return false;
 			}
-#endif
 			// Parse optional dot
 			private bool ParseOptDot ()
 			{
@@ -999,17 +981,14 @@ namespace System
 
 				if (!digitseen)
 					SetParseError (ParseError.Format);
-#if NET_4_0
 				else if (!AtEnd && Char.IsDigit (_src, _cur))
 					SetParseError (ParseError.Overflow);
 
 				parsed_ticks = true;
-#endif
 
 				return res;
 			}
 
-#if NET_4_0
 			// Used by custom formats parsing
 			// digits_count = 0 for digits up to max_digits_count (optional), and other value to
 			// force a precise number of digits.
@@ -1032,7 +1011,6 @@ namespace System
 
 				return res;
 			}
-#endif
 
 			void SetParseError (ParseError error)
 			{
@@ -1043,19 +1021,11 @@ namespace System
 				parse_error = error;
 			}
 
-#if NET_4_0
 			bool CheckParseSuccess (bool tryParse)
-#else
-			bool CheckParseSuccess (int hours, int minutes, int seconds, bool tryParse)
-#endif
 			{
 				// We always report the first error, but for 2.0 we need to give a higher
 				// precence to per-element overflow (as opposed to int32 overflow).
-#if NET_4_0
 				if (parse_error == ParseError.Overflow) {
-#else
-				if (parse_error == ParseError.Overflow || hours > 23 || minutes > 59 || seconds > 59) {
-#endif
 					if (tryParse)
 						return false;
 					throw new OverflowException (
@@ -1072,7 +1042,6 @@ namespace System
 				return true;
 			}
 
-#if NET_4_0
 			// We are using a different parse approach in 4.0, due to some changes in the behaviour
 			// of the parse routines.
 			// The input string is documented as:
@@ -1190,73 +1159,7 @@ namespace System
 				result = new TimeSpan (t);
 				return true;
 			}
-#else
-			public bool Execute (bool tryParse, out TimeSpan result)
-			{
-				bool sign;
-				int days;
-				int hours = 0;
-				int minutes;
-				int seconds;
-				long ticks;
 
-				result = TimeSpan.Zero;
-
-				// documented as...
-				// Parse [ws][-][dd.]hh:mm:ss[.ff][ws]
-				// ... but not entirely true as an lonely 
-				// integer will be parsed as a number of days
-				ParseWhiteSpace ();
-				sign = ParseSign ();
-				days = ParseInt (false);
-				if (ParseOptDot ()) {
-					hours = ParseInt (true);
-				}
-				else if (!AtEnd) {
-					hours = days;
-					days = 0;
-				}
-				ParseColon(false);
-				int p = _cur;
-				minutes = ParseInt (true);
-				seconds = 0;
-				if (p < _cur) {
-					ParseColon (true);
-					seconds = ParseInt (true);
-				}
-
-				if ( ParseOptDot () ) {
-					ticks = ParseTicks ();
-				}
-				else {
-					ticks = 0;
-				}
-				ParseWhiteSpace ();
-	
-				if (!AtEnd)
-					SetParseError (ParseError.Format);
-
-				if (!CheckParseSuccess (hours, minutes, seconds, tryParse))
-					return false;
-
-				long t;
-				if (!TimeSpan.CalculateTicks (days, hours, minutes, seconds, 0, false, out t))
-					return false;
-
-				try {
-					t = checked ((sign) ? (-t - ticks) : (t + ticks));
-				} catch (OverflowException) {
-					if (tryParse)
-						return false;
-					throw;
-				}
-
-				result = new TimeSpan (t);
-				return true;
-			}
-#endif
-
-#if NET_4_0
 			public bool ExecuteWithFormat (string format, TimeSpanStyles style, bool tryParse, out TimeSpan result)
 			{
 				int days, hours, minutes, seconds;
@@ -1361,9 +1264,7 @@ namespace System
 				result = new TimeSpan (t);
 				return true;
 			}
-#endif
 		}
-#if NET_4_0
 		enum FormatElementType 
 		{
 			Days,
@@ -1546,7 +1447,6 @@ namespace System
 				return null;
 			}
 		}
-#endif
 
 	}
 }

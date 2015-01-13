@@ -176,21 +176,12 @@ namespace System.Web.UI.WebControls {
 		private TableStyle TableStyle {
 			get { return (ControlStyle as TableStyle); }
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);
-#if !NET_4_0
-			if (!ControlStyleCreated || TableStyle.IsEmpty) {
-				// for some reason border=X seems to be always present
-				// and isn't rendered as a style attribute
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0", false);
-			}
-#endif
 		}
 
 		protected override ControlCollection CreateControlCollection ()

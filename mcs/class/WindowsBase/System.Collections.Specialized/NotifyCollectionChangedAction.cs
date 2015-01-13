@@ -23,25 +23,8 @@
 //	Chris Toshok (toshok@ximian.com)
 //
 
-#if NET_4_0
 
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 [assembly:TypeForwardedTo (typeof (NotifyCollectionChangedAction))]
 
-#else
-
-using System;
-
-namespace System.Collections.Specialized {
-
-	public enum NotifyCollectionChangedAction {
-		Add,
-		Remove,
-		Replace,
-		Move,
-		Reset
-	}
-
-}
-#endif

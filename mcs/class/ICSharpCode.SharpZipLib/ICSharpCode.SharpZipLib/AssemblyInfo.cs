@@ -48,11 +48,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-#if NET_4_0
 [assembly: AssemblyVersion("4.84.0.0")]
-#else
-[assembly: AssemblyVersion("2.84.0.0")]
-#endif
 
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("SharpZipLib.pub")]

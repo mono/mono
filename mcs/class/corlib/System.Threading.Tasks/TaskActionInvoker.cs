@@ -26,7 +26,6 @@
 //
 //
 
-#if NET_4_0
 
 using System.Threading;
 
@@ -502,4 +501,3 @@ namespace System.Threading.Tasks
 		public abstract void Invoke (Task owner, object state, Task context);
 	}
 }
-#endif

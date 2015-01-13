@@ -826,7 +826,6 @@ namespace System.IO
 			FlushBuffer ();
 		}
 
-#if NET_4_0
 		public virtual void Flush (bool flushToDisk)
 		{
 			FlushBuffer ();
@@ -837,7 +836,6 @@ namespace System.IO
 				MonoIO.Flush (handle, out error);
 			}
 		}
-#endif
 
 		public virtual void Lock (long position, long length)
 		{

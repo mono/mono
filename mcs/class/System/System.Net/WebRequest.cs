@@ -286,7 +286,6 @@ namespace System.Net
 				throw new ArgumentNullException ("requestUri");
 			return GetCreator (requestUri.Scheme).Create (requestUri);
 		}
-#if NET_4_0
 		static HttpWebRequest SharedCreateHttp (Uri uri)
 		{
 			if (uri.Scheme != "http" && uri.Scheme != "https")
@@ -308,7 +307,6 @@ namespace System.Net
 				throw new ArgumentNullException ("requestUri");
 			return SharedCreateHttp (requestUri);
 		}
-#endif
 		public virtual Stream EndGetRequestStream (IAsyncResult asyncResult)
 		{
 			throw GetMustImplement ();

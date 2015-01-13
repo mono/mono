@@ -723,7 +723,6 @@ namespace System.Web.UI.WebControls {
 			newClass += cssClass;
 			CssClass = newClass;
 		}
-#if NET_4_0
 		internal void PrependCssClass (string cssClass)
 		{
 			if (String.IsNullOrEmpty (cssClass))
@@ -734,7 +733,6 @@ namespace System.Web.UI.WebControls {
 				cssClass += " ";
 			CssClass = cssClass + oldClass;
 		}
-#endif
 		public void SetDirty ()
 		{
 			if (viewstate != null)

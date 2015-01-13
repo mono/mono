@@ -109,7 +109,6 @@ namespace System.Xml
 			get { return AttributeCount > 0; }
 		}
 
-#if NET_4_0
 		public virtual bool HasValue {
 			get {
 				switch (NodeType) {
@@ -126,9 +125,6 @@ namespace System.Xml
 				return false;
 			}
 		}
-#else
-		public abstract bool HasValue { get; }
-#endif
 
 		public abstract bool IsEmptyElement { get; }
 
@@ -445,11 +441,7 @@ namespace System.Xml
 			return xvr != null ? xvr : reader;
 		}
 
-#if NET_4_0
 		public void Dispose ()
-#else
-		void IDisposable.Dispose() 
-#endif
 		{
 			Dispose (true);
 		}

@@ -53,9 +53,7 @@ namespace System
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public struct Decimal: IFormattable, IConvertible, IComparable, IComparable<Decimal>, IEquatable <Decimal>
-#if NET_4_0
 		, IDeserializationCallback
-#endif
 	{
 		public const decimal MinValue = -79228162514264337593543950335m;
 		public const decimal MaxValue =  79228162514264337593543950335m;
@@ -1355,11 +1353,9 @@ namespace System
 			return ToString ("G", provider);
 		}
 		
-#if NET_4_0
 		void IDeserializationCallback.OnDeserialization(object sender)
 		{
 		}
-#endif
 
 #if !MSTEST
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

@@ -54,9 +54,7 @@ namespace System.Xml
 		private XsValidationFlags validationFlags;
 		private ValidationType validationType;
 		private XmlResolver xmlResolver;
-#if NET_4_0
 		private DtdProcessing dtdProcessing;
-#endif
 		private long maxCharactersFromEntities;
 		private long maxCharactersInDocument;
 
@@ -118,7 +116,6 @@ namespace System.Xml
 			get { return conformance; }
 			set { conformance = value; }
 		}
-#if NET_4_0
 		public DtdProcessing DtdProcessing {
 			get { return dtdProcessing; }
 			set {
@@ -126,7 +123,6 @@ namespace System.Xml
 				prohibitDtd = (value == DtdProcessing.Prohibit);
 			}
 		}
-#endif
 		public long MaxCharactersFromEntities {
 			get { return maxCharactersFromEntities; }
 			set { maxCharactersFromEntities = value; }
@@ -163,9 +159,7 @@ namespace System.Xml
 			set { linePositionOffset = value; }
 		}
 
-#if NET_4_0
 		[ObsoleteAttribute("Use DtdProcessing property instead")]
-#endif
 		public bool ProhibitDtd {
 			get { return prohibitDtd; }
 			set { prohibitDtd = value; }

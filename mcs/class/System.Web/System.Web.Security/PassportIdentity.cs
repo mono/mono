@@ -37,9 +37,7 @@ namespace System.Web.Security {
 	[MonoTODO("Not implemented")]
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_4_0
 	[Obsolete ("This type is obsolete. The Passport authentication product is no longer supported and has been superseded by Live ID.")]
-#endif
 	public sealed class PassportIdentity : IIdentity, IDisposable {
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public PassportIdentity ()

@@ -4927,11 +4927,7 @@ namespace PEAPI {
 		private static readonly uint max3BitSmlIx = 0x1FFF;
 		private static readonly uint max5BitSmlIx = 0x7FF;
 		// NOTE: version and stream name strings MUST always be quad padded
-#if NET_4_0
 		private static readonly string version = "v4.0.30319\0\0";
-#else
-		private static readonly string version = "v2.0.50727\0\0";
-#endif
 		private static readonly char[] tildeName = {'#','~','\0','\0'};
 		private static readonly char[] stringsName = {'#','S','t','r','i','n','g','s','\0','\0','\0','\0'};
 		private static readonly char[] usName = {'#','U','S','\0'};

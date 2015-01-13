@@ -30,11 +30,7 @@ using System;
 
 namespace System.Diagnostics.Contracts {
 
-#if NET_4_0
 	public
-#else
-	internal
-#endif
 
 	enum ContractFailureKind {
 		Precondition,

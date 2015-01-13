@@ -149,13 +149,11 @@ namespace System.Web.UI.WebControls {
 
 		string GetDataKey ()
 		{
-#if NET_4_0
 			if (String.IsNullOrEmpty (DataFile) && !String.IsNullOrEmpty (Data)) {
 				string key = CacheKeyContext;
 				if (!String.IsNullOrEmpty (key))
 					return key;
 			}
-#endif
 			Page page = Page;
 			string p = page != null ? page.ToString () : "NullPage";
 			
@@ -387,13 +385,11 @@ namespace System.Web.UI.WebControls {
 				}
 			}
 		}
-#if NET_4_0
 		[DefaultValue ("")]
 		public virtual string CacheKeyContext {
 			get { return ViewState.GetString ("CacheKeyContext", String.Empty); }
 			set { ViewState ["CacheKeyContext"] = value; }
 		}
-#endif
 	}
 }
 

@@ -106,11 +106,7 @@ namespace System.Reflection.Emit
 
 		protected override TypeAttributes GetAttributeFlagsImpl ()
 		{
-#if NET_4_0
 			return TypeAttributes.Public;
-#else
-			throw not_supported ();
-#endif
 		}
 
 		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,

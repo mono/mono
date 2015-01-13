@@ -27,7 +27,6 @@
 //
 //
 
-#if NET_4_0
 
 namespace System.Threading.Tasks
 {
@@ -44,4 +43,3 @@ namespace System.Threading.Tasks
 #endif
 	}
 }
-#endif

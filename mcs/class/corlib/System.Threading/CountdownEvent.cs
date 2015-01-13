@@ -26,7 +26,6 @@
 //
 //
 
-#if NET_4_0
 
 namespace System.Threading
 {
@@ -208,4 +207,3 @@ namespace System.Threading
 		}
 	}
 }
-#endif

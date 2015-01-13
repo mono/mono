@@ -129,7 +129,6 @@ namespace System.ServiceModel
 			Initialize (instance, binding, remoteAddress);
 		}
 
-#if NET_4_0
 		protected ClientBase (ServiceEndpoint endpoint)
 			: this (null, endpoint)
 		{
@@ -139,7 +138,6 @@ namespace System.ServiceModel
 			: this (instance, new ChannelFactory<TChannel> (endpoint))
 		{
 		}
-#endif
 
 		internal ClientBase (ChannelFactory<TChannel> factory)
 			: this (null, factory)
@@ -353,11 +351,7 @@ namespace System.ServiceModel
 			public object [] Results { get; private set; }
 		}
 
-#if NET_4_0
 		protected internal
-#else
-		internal
-#endif
 		class ChannelBase<T> : IClientChannel, IOutputChannel, IRequestChannel where T : class
 		{
 			ServiceEndpoint endpoint;

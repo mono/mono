@@ -139,7 +139,6 @@ namespace System {
 			return (*((long*)&d)).GetHashCode ();
 		}
 
-#if	NET_4_0
 		public static bool operator==(double left, double right)
 		{
 			return left == right;
@@ -169,7 +168,6 @@ namespace System {
 		{
 			return left <= right;
 		}
-#endif
 
 		public static bool IsInfinity (double d)
 		{

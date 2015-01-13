@@ -36,11 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-#if NET_4_0
 	public interface IEqualityComparer<in T>
-#else	
-	public interface IEqualityComparer<T>
-#endif	
 	{
 		bool Equals (T x, T y);
 		int GetHashCode (T obj);

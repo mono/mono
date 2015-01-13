@@ -61,11 +61,9 @@ namespace Microsoft.Win32 {
 
 		void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind);
 
-#if NET_4_0
 		RegistryKey CreateSubKey (RegistryKey rkey, string keyname, RegistryOptions options);
 		RegistryKey FromHandle (SafeRegistryHandle handle);
 		IntPtr GetHandle (RegistryKey key);
-#endif
 	}
 }
 

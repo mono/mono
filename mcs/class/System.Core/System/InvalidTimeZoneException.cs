@@ -24,32 +24,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if NET_4_0
 
 using System;
 using System.Runtime.CompilerServices;
 
 [assembly:TypeForwardedTo (typeof(InvalidTimeZoneException))]
 
-#else
-
-namespace System
-{
-	[Serializable]
-	public class InvalidTimeZoneException : Exception
-	{
-		public InvalidTimeZoneException () : base ()
-		{}
-
-		public InvalidTimeZoneException (string message) : base (message)
-		{}
-
-		public InvalidTimeZoneException (string message, Exception e) : base (message, e)
-		{}
-
-		protected InvalidTimeZoneException (Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext sc) : base (info, sc)
-		{}
-	}
-}
-
-#endif

@@ -682,7 +682,6 @@ namespace System
 			return res;
 		}
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
@@ -694,7 +693,6 @@ namespace System
 
 			return Enum.GetValues (this);
 		}
-#endif
 
 		static MethodBase CheckMethodSecurity (MethodBase mb)
 		{
@@ -714,7 +712,6 @@ namespace System
 #endif
 		}
 
-#if NET_4_0
 		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int get_core_clr_security_level ();
@@ -739,7 +736,6 @@ namespace System
 				return GetStructLayoutAttribute ();
 			}
 		}
-#endif
 
 		internal override bool IsUserType {
 			get {

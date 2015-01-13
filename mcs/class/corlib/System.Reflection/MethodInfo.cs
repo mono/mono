@@ -107,25 +107,6 @@ namespace System.Reflection {
 			return Type.EmptyTypes;
 		}
 
-#if !NET_4_0
-		public override bool IsGenericMethod {
-			get {
-				return false;
-			}
-		}
-
-		public override bool IsGenericMethodDefinition {
-			get {
-				return false;
-			}
-		}
-
-		public override bool ContainsGenericParameters {
-			get {
-				return false;
-			}
-		}
-#endif
 
 		public virtual ParameterInfo ReturnParameter {
 			get {
@@ -133,7 +114,6 @@ namespace System.Reflection {
 			}
 		}
 
-#if NET_4_0
 		public override bool Equals (object obj)
 		{
 			return obj == (object) this;
@@ -161,7 +141,6 @@ namespace System.Reflection {
 				return true;
 			return !left.Equals (right);
 		}
-#endif
 
 #if NET_4_5
 		public virtual Delegate CreateDelegate (Type delegateType)

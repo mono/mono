@@ -30,9 +30,7 @@
 
 namespace System.ServiceModel {
 
-#if NET_4_0
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblySystemServiceModel_3_0)]
-#endif
 	public static class ServiceHostingEnvironment
 	{
 		internal static bool InAspNet { get; set; }

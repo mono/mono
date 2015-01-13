@@ -36,16 +36,12 @@ using System.Globalization;
 
 namespace System.Web.Routing
 {
-#if NET_4_0
 	[TypeForwardedFrom ("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class Route : RouteBase
 	{
-#if NET_4_0
 		static readonly Type httpRequestBaseType = typeof (HttpRequestBase);
-#endif
 		PatternParser url;
 
 		public RouteValueDictionary Constraints { get; set; }
@@ -176,7 +172,6 @@ namespace System.Web.Routing
 
 				if (!String.IsNullOrEmpty (v))
 					return MatchConstraintRegex (v, s);
-#if NET_4_0
 				else if (reqContext != null) {
 					RouteData rd = reqContext != null ? reqContext.RouteData : null;
 					RouteValueDictionary rdValues = rd != null ? rd.Values : null;
@@ -193,7 +188,6 @@ namespace System.Web.Routing
 
 					return MatchConstraintRegex (v, s);
 				}
-#endif
 				return false;
 			}
 
@@ -229,11 +223,7 @@ namespace System.Web.Routing
 				throw new NullReferenceException ();
 
 			RequestContext reqContext;
-#if NET_4_0
 			reqContext = SafeGetContext (httpContext != null ? httpContext.Request : null);
-#else
-			reqContext = null;
-#endif
 			bool invalidConstraint;
 			bool ret = ProcessConstraintInternal (httpContext, this, constraint, parameterName, values, routeDirection, reqContext, out invalidConstraint);
 			
@@ -261,7 +251,6 @@ namespace System.Web.Routing
 			return true;
 		}
 
-#if NET_4_0
 		RequestContext SafeGetContext (HttpRequestBase req)
 		{
 			if (req == null || req.GetType () != httpRequestBaseType)
@@ -269,6 +258,5 @@ namespace System.Web.Routing
 				
 			return req.RequestContext;
 		}
-#endif
 	}
 }

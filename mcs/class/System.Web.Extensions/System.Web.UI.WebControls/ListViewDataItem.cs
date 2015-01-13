@@ -52,22 +52,6 @@ namespace System.Web.UI.WebControls
 			return base.OnBubbleEvent (source, e);
 		}
 		
-#if !NET_4_0
-		public virtual object DataItem {
-			get;
-			set;
-		}
-		
-		public virtual int DataItemIndex {
-			get;
-			private set;
-		}
-		
-		public virtual int DisplayIndex {
-			get;
-			private set;
-		}
-#endif
 	}
 }
 #endif

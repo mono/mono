@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0
 using System;
 using System.Threading;
 using System.Collections.Generic;
@@ -37,4 +36,3 @@ namespace System.Threading.Tasks
 		void PulseAll ();
 	}
 }
-#endif

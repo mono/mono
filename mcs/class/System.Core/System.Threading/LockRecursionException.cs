@@ -24,43 +24,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if NET_4_0
 
 using System;
 using System.Runtime.CompilerServices;
 
 [assembly:TypeForwardedTo (typeof(System.Threading.LockRecursionException))]
 
-#else
-
-using System;
-using System.Runtime.Serialization;
-
-namespace System.Threading
-{
-	[Serializable]
-	public class LockRecursionException : Exception
-	{
-		public LockRecursionException () 
-			: base ()
-		{
-		}
-
-		public LockRecursionException (string message) 
-			: base (message)
-		{
-		}
-
-		public LockRecursionException (string message, Exception e) 
-			: base (message, e)
-		{
-		}
-
-		protected LockRecursionException (SerializationInfo info, StreamingContext sc)
-			 : base (info, sc)
-		{
-		}
-	}
-}
-
-#endif

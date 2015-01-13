@@ -135,14 +135,12 @@ namespace System.CodeDom.Compiler {
 			CompilerInfo ci = GetCompilerInfo (language);
 			return (ci == null) ? null : ci.CreateProvider ();
 		}
-#if NET_4_0
 		[ComVisible (false)]
 		public static CodeDomProvider CreateProvider (string language, IDictionary<string, string> providerOptions)
 		{
 			CompilerInfo ci = GetCompilerInfo (language);
 			return ci == null ? null : ci.CreateProvider (providerOptions);
 		}
-#endif
 
 #endif
 		public virtual string CreateValidIdentifier (string value)

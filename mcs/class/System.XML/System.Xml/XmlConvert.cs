@@ -812,7 +812,6 @@ namespace System.Xml {
 
 #endif
 
-#if NET_4_0
 		public static bool IsNCNameChar (char ch)
 		{
 			return XmlChar.IsNCNameChar (ch);
@@ -870,6 +869,5 @@ namespace System.Xml {
 				return content;
 			throw new XmlException (string.Format ("Invalid XML character was found in the content, at index {0}.", idx));
 		}
-#endif
 	}
 }

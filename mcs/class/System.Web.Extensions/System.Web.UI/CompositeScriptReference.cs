@@ -148,14 +148,12 @@ namespace System.Web.UI
 			entriesCache.InsertOrUpdate ((uint)ret.GetHashCode (), ret, entries, entries);
 			return ret;
 		}
-#if NET_4_0
 		protected internal override bool IsAjaxFrameworkScript (ScriptManager scriptManager)
 		{
 			return false;
 		}
 		
 		[Obsolete ("Use IsAjaxFrameworkScript(ScriptManager)")]
-#endif
 		protected internal override bool IsFromSystemWebExtensions ()
 		{
 			if (scripts == null || scripts.Count == 0)

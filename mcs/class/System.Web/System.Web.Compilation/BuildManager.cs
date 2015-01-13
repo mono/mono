@@ -47,9 +47,7 @@ using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Util;
-#if NET_4_0
 using System.Runtime.Versioning;
-#endif
 
 namespace System.Web.Compilation
 {
@@ -81,13 +79,11 @@ namespace System.Web.Compilation
 		static int buildCount;
 		static bool is_precompiled;
 		static bool allowReferencedAssembliesCaching;
-#if NET_4_0
 		static List <Assembly> dynamicallyRegisteredAssemblies;
 		static bool? batchCompilationEnabled;
 		static FrameworkName targetFramework;
 		static bool preStartMethodsDone;
 		static bool preStartMethodsRunning;
-#endif
 		//static bool updatable; unused
 		static Dictionary<string, PreCompilationData> precompiled;
 		
@@ -112,7 +108,6 @@ namespace System.Web.Compilation
 			remove { events.RemoveHandler (buildManagerRemoveEntryEvent, value); }
 		}
 
-#if NET_4_0
 		internal static bool CompilingTopLevelAssemblies {
 			get; set;
 		}
@@ -149,13 +144,10 @@ namespace System.Web.Compilation
 				return targetFramework;
 			}
 		}
-#endif
 		internal static bool BatchMode {
 			get {
-#if NET_4_0
 				if (batchCompilationEnabled != null)
 					return (bool)batchCompilationEnabled;
-#endif
 				if (!hosted)
 					return false; // Fix for bug #380985
 
@@ -198,13 +190,11 @@ namespace System.Web.Compilation
 			if (is_precompiled)
 				is_precompiled = LoadPrecompilationInfo (precomp_name);
 		}
-#if NET_4_0
 		internal static void AssertPreStartMethodsRunning ()
 		{
 			if (!BuildManager.PreStartMethodsRunning)
 				throw new InvalidOperationException ("This method must be called during the application's pre-start initialization stage.");
 		}
-#endif
 		// Deal with precompiled sites deployed in a different virtual path
 		static void FixVirtualPaths ()
 		{
@@ -535,7 +525,6 @@ namespace System.Web.Compilation
 			codeDomProviders.Add (type, ret);
 			return ret;
 		}		
-#if NET_4_0
 		internal static void CallPreStartMethods ()
 		{
 			if (preStartMethodsDone)
@@ -698,7 +687,6 @@ namespace System.Web.Compilation
 			
 			return new SimpleWebObjectFactory (type);
 		}
-#endif
 		public static object CreateInstanceFromVirtualPath (string virtualPath, Type requiredBaseType)
 		{
 			return CreateInstanceFromVirtualPath (GetAbsoluteVirtualPath (virtualPath), requiredBaseType);
@@ -887,13 +875,11 @@ namespace System.Web.Compilation
 		{
 			return null; // null is ok here until we store the dependency set in the Cache.
 		}
-#if NET_4_0
 		[MonoTODO ("Not implemented, always returns null")]
 		public static BuildDependencySet GetCachedBuildDependencySet (HttpContext context, string virtualPath, bool ensureIsUpToDate)
 		{
 			return null; // null is ok here until we store the dependency set in the Cache.
 		}
-#endif
 		static BuildManagerCacheItem GetCachedItem (string vp)
 		{
 			try {
@@ -1104,11 +1090,9 @@ namespace System.Web.Compilation
 
 			foreach (string assLocation in WebConfigurationManager.ExtraAssemblies)
 				LoadAssembly (assLocation, configReferencedAssemblies);
-#if NET_4_0
 			if (dynamicallyRegisteredAssemblies != null)
 				foreach (Assembly registeredAssembly in dynamicallyRegisteredAssemblies)
 					configReferencedAssemblies.Add (registeredAssembly);
-#endif
 			// Precompiled sites unconditionally load all assemblies from bin/ (fix for
 			// bug #502016)
 			if (is_precompiled || addAssembliesInBin) {

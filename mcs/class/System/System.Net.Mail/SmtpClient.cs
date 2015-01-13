@@ -61,9 +61,7 @@ using System.Threading.Tasks;
 
 namespace System.Net.Mail {
 	public class SmtpClient
-#if NET_4_0
 	: IDisposable
-#endif
 	{
 		#region Fields
 
@@ -125,9 +123,7 @@ namespace System.Net.Mail {
 			if (cfg != null) {
 				this.host = cfg.Network.Host;
 				this.port = cfg.Network.Port;
-#if NET_4_0
 				this.enableSsl = cfg.Network.EnableSsl;
-#endif
 				TargetName = cfg.Network.TargetName;
 				if (this.TargetName == null)
 					TargetName = "SMTPSVC/" + (host != null ? host : "");
@@ -174,9 +170,7 @@ namespace System.Net.Mail {
 		}
 #endif
 
-#if NET_4_0
 		public
-#endif
 		string TargetName { get; set; }
 
 		public ICredentialsByHost Credentials {
@@ -264,7 +258,6 @@ namespace System.Net.Mail {
 		#endregion // Events 
 
 		#region Methods
-#if NET_4_0
 		public void Dispose ()
 		{
 			Dispose (true);
@@ -275,7 +268,6 @@ namespace System.Net.Mail {
 		{
 			// TODO: We should close all the connections and abort any async operations here
 		}
-#endif
 		private void CheckState ()
 		{
 			if (messageInProcess != null)
@@ -706,13 +698,8 @@ namespace System.Net.Mail {
 			if (message.ReplyToList.Count > 0)
 				SendHeader ("Reply-To", EncodeAddresses (message.ReplyToList));
 
-#if NET_4_0
 			foreach (string s in message.Headers.AllKeys)
 				SendHeader (s, ContentType.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
-#else
-			foreach (string s in message.Headers.AllKeys)
-				SendHeader (s, message.Headers [s]);
-#endif
 	
 			AddPriorityHeader (message);
 

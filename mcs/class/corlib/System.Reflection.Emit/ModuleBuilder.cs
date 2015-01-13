@@ -821,7 +821,6 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}
@@ -961,7 +960,6 @@ namespace System.Reflection.Emit {
 				return base.MetadataToken;
 			}
 		}
-#endif
 	}
 
 	internal class ModuleBuilderTokenGenerator : TokenGenerator {

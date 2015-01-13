@@ -242,7 +242,6 @@ namespace System.Reflection {
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		public override bool Equals (object obj)
 		{
 			return obj == (object) this;
@@ -288,7 +287,6 @@ namespace System.Reflection {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 #if NET_4_5
 		public virtual MethodImplAttributes MethodImplementationFlags {

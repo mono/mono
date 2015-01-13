@@ -104,13 +104,7 @@ namespace System.Web.UI.WebControls
 
 				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (image_url));
 				str = Text;
-#if !NET_4_0
-				if (!String.IsNullOrEmpty (str))
-#endif
 					w.AddAttribute (HtmlTextWriterAttribute.Alt, str);
-#if !NET_4_0
-				w.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-#endif
 				w.RenderBeginTag (HtmlTextWriterTag.Img);
 				w.RenderEndTag ();
 			} else
@@ -162,10 +156,8 @@ namespace System.Web.UI.WebControls
 					Controls.Clear ();
 			}
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 	}
 }

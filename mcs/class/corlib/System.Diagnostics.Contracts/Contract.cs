@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 
 using System;
 using System.Collections.Generic;
@@ -39,11 +38,7 @@ namespace System.Diagnostics.Contracts
 {
 	public static class Contract
 	{
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		static event EventHandler<ContractFailedEventArgs> ContractFailed;
 
 		// Used in test
@@ -279,4 +274,3 @@ namespace System.Diagnostics.Contracts
 	}
 }
 
-#endif

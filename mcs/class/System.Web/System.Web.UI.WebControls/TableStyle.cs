@@ -155,9 +155,7 @@ namespace System.Web.UI.WebControls {
 				SetBit ((int) TableStyles.HorizontalAlign);
 			}
 		}
-#if NET_4_0
 		[MonoTODO ("collapse style should be rendered only for browsers which support that.")]
-#endif
 		public override void AddAttributesToRender (HtmlTextWriter writer, WebControl owner)
 		{
 			base.AddAttributesToRender (writer, owner);
@@ -204,20 +202,8 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute (HtmlTextWriterAttribute.Align, "justify", false);
 				break;
 			}
-#if NET_4_0
 			if (g != GridLines.None && BorderWidth.IsEmpty)
 				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1", false);
-#else
-			// border (=0) is always present (and base class doesn't seems to add it)
-			// but border is "promoted" to 1 if gridlines are present (with BorderWidth == 0)
-			if (g == GridLines.None) {
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0", false);
-			} else if (BorderWidth.IsEmpty) {
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1", false);
-			} else {
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, BorderWidth.Value.ToString (Helpers.InvariantCulture));
-			}
-#endif
 		}
 
 		void Copy (string name, TableStyles s, Style source)

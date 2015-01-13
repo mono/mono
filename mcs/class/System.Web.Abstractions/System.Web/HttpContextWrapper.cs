@@ -40,9 +40,7 @@ using System.Web.SessionState;
 
 namespace System.Web
 {
-#if NET_4_0
         [TypeForwardedFrom ("System.Web.Abstractions, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HttpContextWrapper : HttpContextBase
@@ -187,12 +185,10 @@ namespace System.Web
 		{
 			return ((IServiceProvider)w).GetService (serviceType);
 		}
-#if NET_4_0
 		public override void RemapHandler (IHttpHandler handler)
 		{
 			w.RemapHandler (handler);
 		}
-#endif
 		public override void RewritePath (string path)
 		{
 			w.RewritePath (path);
@@ -212,11 +208,9 @@ namespace System.Web
 		{
 			w.RewritePath (filePath, pathInfo, queryString, setClientFilePath);
 		}
-#if NET_4_0
 		public override void SetSessionStateBehavior (SessionStateBehavior sessionStateBehavior)
 		{
 			w.SetSessionStateBehavior (sessionStateBehavior);
 		}
-#endif
 	}
 }

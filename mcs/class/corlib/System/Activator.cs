@@ -100,9 +100,7 @@ namespace System
 				activationAttributes, null);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
 		                                               BindingFlags bindingAttr, Binder binder, object [] args,
 		                                               CultureInfo culture, object [] activationAttributes,
@@ -137,9 +135,7 @@ namespace System
 				activationAttributes, null);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
 		                                           BindingFlags bindingAttr, Binder binder, object [] args,
 							   CultureInfo culture, object [] activationAttributes, Evidence securityInfo)
@@ -176,9 +172,7 @@ namespace System
 		}
 
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static ObjectHandle CreateInstanceFrom (AppDomain domain, string assemblyFile, string typeName,
 							       bool ignoreCase, BindingFlags bindingAttr, Binder binder,
 							       object [] args, CultureInfo culture,
@@ -198,9 +192,7 @@ namespace System
 			return domain.CreateInstance (assemblyName, typeName);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static ObjectHandle CreateInstance (AppDomain domain, string assemblyName, string typeName,
 							   bool ignoreCase, BindingFlags bindingAttr, Binder binder,
 							   object [] args, CultureInfo culture,
@@ -391,7 +383,6 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		public static ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
 		                                           BindingFlags bindingAttr, Binder binder, object [] args,
 							   CultureInfo culture, object [] activationAttributes)
@@ -442,6 +433,5 @@ namespace System
 
 			return domain.CreateInstanceFrom (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes);
 		}
-#endif
 	}
 }

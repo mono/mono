@@ -147,7 +147,6 @@ namespace System.Reflection {
 			throw CreateNIE ();
 		}
 
-#if NET_4_0
 		public override bool Equals (object obj)
 		{
 			return obj == (object) this;
@@ -175,7 +174,6 @@ namespace System.Reflection {
 				return true;
 			return !left.Equals (right);
 		}
-#endif
 
 #if !MOBILE
 		void _PropertyInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

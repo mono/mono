@@ -306,7 +306,6 @@ namespace System {
 			return v1.CompareTo (v2) <= 0;
 		}
 
-#if BOOSTRAP_NET_4_0 || NET_4_0
 		public static Version Parse (string input)
 		{
 			// Exactly the same as calling Version(string) .ctor
@@ -354,7 +353,6 @@ namespace System {
 
 			return true;
 		}
-#endif
 
 		// a very gentle way to construct a Version object which takes 
 		// the first four numbers in a string as the version

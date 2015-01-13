@@ -135,9 +135,7 @@ namespace System.Web.Configuration
 		}
 
 		[ConfigurationProperty ("mobileControls")]
-#if NET_4_0
 		[Obsolete ("System.Web.Mobile.dll is obsolete.")]
-#endif
 		public ConfigurationSection MobileControls {
 			get { return Sections ["MobileControls"]; }
 		}

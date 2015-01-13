@@ -328,11 +328,7 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-#if NET_4_0
 		public
-#else
-		protected
-#endif
 		void AppendTextUnquoted (string textToAppend)
 		{
 			commandLine.Append (textToAppend);

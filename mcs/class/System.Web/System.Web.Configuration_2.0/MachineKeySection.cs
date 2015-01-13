@@ -46,9 +46,7 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty validationKeyProp;
 		static ConfigurationPropertyCollection properties;
 		static MachineKeyValidationConverter converter = new MachineKeyValidationConverter ();
-#if NET_4_0
 		MachineKeyValidation validation;
-#endif
 
 		static MachineKeySection ()
 		{
@@ -60,17 +58,10 @@ namespace System.Web.Configuration {
 								       PropertyHelper.WhiteSpaceTrimStringConverter,
 								       PropertyHelper.NonEmptyStringValidator,
 								       ConfigurationPropertyOptions.None);
-#if NET_4_0
 			validationProp = new ConfigurationProperty ("validation", typeof (string), "HMACSHA256",
 								    PropertyHelper.WhiteSpaceTrimStringConverter,
 								    PropertyHelper.NonEmptyStringValidator,
 								    ConfigurationPropertyOptions.None);
-#else
-			validationProp = new ConfigurationProperty ("validation", typeof (MachineKeyValidation), 
-								    MachineKeyValidation.SHA1, converter,
-								    PropertyHelper.DefaultValidator,
-								    ConfigurationPropertyOptions.None);
-#endif
 			validationKeyProp = new ConfigurationProperty ("validationKey", typeof (string), "AutoGenerate,IsolateApps",
 								       PropertyHelper.WhiteSpaceTrimStringConverter,
 								       PropertyHelper.NonEmptyStringValidator,
@@ -87,7 +78,6 @@ namespace System.Web.Configuration {
 			Config.AutoGenerate (MachineKeyRegistryStorage.KeyType.Validation);
 		}
 
-#if NET_4_0
 		public MachineKeySection ()
 		{
 			// get DefaultValue from ValidationAlgorithm
@@ -98,7 +88,6 @@ namespace System.Web.Configuration {
 		public MachineKeyCompatibilityMode CompatibilityMode {
 			get; set;
 		}
-#endif
 
 		protected internal override void Reset (ConfigurationElement parentElement)
 		{
@@ -131,7 +120,6 @@ namespace System.Web.Configuration {
 			}
 		}
 
-#if NET_4_0
 		// property exists for backward compatibility
 		public MachineKeyValidation Validation {
 			get { return validation; }
@@ -162,14 +150,6 @@ namespace System.Web.Configuration {
 				base[validationProp] = value;
 			}
 		}
-#else
-		[TypeConverter (typeof (MachineKeyValidationConverter))]
-		[ConfigurationProperty ("validation", DefaultValue = "SHA1")]
-		public MachineKeyValidation Validation {
-			get { return (MachineKeyValidation) base [validationProp];}
-			set { base[validationProp] = value; }
-		}
-#endif
 
 		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
 		[StringValidator (MinLength = 1)]

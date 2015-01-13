@@ -50,9 +50,7 @@ namespace System.Reflection
 	, _ParameterInfo
 #endif
 
-#if NET_4_0
 	, IObjectReference
-#endif
  	{
 		protected Type ClassImpl;
 		protected object DefaultValueImpl;
@@ -227,7 +225,6 @@ namespace System.Reflection
 		}
 #endif
 
-#if NET_4_0
 		public virtual object DefaultValue {
 			get { throw new NotImplementedException (); }
 		}
@@ -270,44 +267,27 @@ namespace System.Reflection
 		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
 			throw new NotImplementedException ();
 		}
-#endif
 
 #if !FULL_AOT_RUNTIME
 		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
 		{
-#if NET_4_0
 			return new MonoParameterInfo (pb, type, member, position);
-#else
-			return new ParameterInfo (pb, type, member, position);
-#endif
 		}
 #endif
 
 		internal static ParameterInfo New (ParameterInfo pinfo, Type type, MemberInfo member, int position)
 		{
-#if NET_4_0
 			return new MonoParameterInfo (pinfo, type, member, position);
-#else
-			return new ParameterInfo (pinfo, type, member, position);
-#endif
 		}
 
 		internal static ParameterInfo New (ParameterInfo pinfo, MemberInfo member)
 		{
-#if NET_4_0
 			return new MonoParameterInfo (pinfo, member);
-#else
-			return new ParameterInfo (pinfo, member);
-#endif
 		}
 
 		internal static ParameterInfo New (Type type, MemberInfo member, MarshalAsAttribute marshalAs)
 		{
-#if NET_4_0
 			return new MonoParameterInfo (type, member, marshalAs);
-#else
-			return new ParameterInfo (type, member, marshalAs);
-#endif	
 		}
 	}
 }

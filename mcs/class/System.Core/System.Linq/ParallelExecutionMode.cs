@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
 using System;
 
 namespace System.Linq
@@ -35,4 +34,3 @@ namespace System.Linq
 		ForceParallelism = 1
 	}
 }
-#endif

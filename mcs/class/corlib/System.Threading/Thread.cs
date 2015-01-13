@@ -406,12 +406,10 @@ namespace System.Threading {
 			ResetAbort_internal ();
 		}
 
-#if NET_4_0
 		[HostProtectionAttribute (SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public extern static bool Yield ();
-#endif
 
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

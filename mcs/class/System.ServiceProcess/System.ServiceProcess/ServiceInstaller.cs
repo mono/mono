@@ -48,11 +48,8 @@ namespace System.ServiceProcess
 		private string[] services_depended_on;
 		private ServiceStartMode start_type;
 		private string description;
-#if NET_4_0
 		private bool delayedAutoStart;
-#endif
 
-#if NET_4_0
 		[DefaultValue(false)]
 		[ServiceProcessDescription("Indicates that the service's start should be delayed after other automatically started services have started.")]
 		public bool DelayedAutoStart {
@@ -63,7 +60,6 @@ namespace System.ServiceProcess
 				delayedAutoStart = value;
 			}
 		}
-#endif
 
 		[ComVisible (false)]
 		[DefaultValue ("")]

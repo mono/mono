@@ -36,11 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-#if NET_4_0
 	public interface IComparer<in T>
-#else
-	public interface IComparer<T>
-#endif
 	{
 		int Compare (T x, T y);
 	}

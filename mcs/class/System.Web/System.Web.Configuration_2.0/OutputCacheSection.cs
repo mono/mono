@@ -41,10 +41,8 @@ namespace System.Web.Configuration
 		static ConfigurationProperty omitVaryStarProp;
 		static ConfigurationProperty sendCacheControlHeaderProp;
 		static ConfigurationProperty enableKernelCacheForVaryByStarProp;
-#if NET_4_0
 		static ConfigurationProperty providersProp;
 		static ConfigurationProperty defaultProviderNameProp;
-#endif
 		
 		static ConfigurationPropertyCollection properties;
 
@@ -55,10 +53,8 @@ namespace System.Web.Configuration
 			omitVaryStarProp = new ConfigurationProperty ("omitVaryStar", typeof (bool), false);
 			sendCacheControlHeaderProp = new ConfigurationProperty ("sendCacheControlHeader", typeof (bool), true);
 			enableKernelCacheForVaryByStarProp = new ConfigurationProperty ("enableKernelCacheForVaryByStar", typeof (bool), false);
-#if NET_4_0
 			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection));
 			defaultProviderNameProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetInternalProvider");
-#endif
 			
 			properties = new ConfigurationPropertyCollection ();
 
@@ -67,10 +63,8 @@ namespace System.Web.Configuration
 			properties.Add (omitVaryStarProp);
 			properties.Add (sendCacheControlHeaderProp);
 			properties.Add (enableKernelCacheForVaryByStarProp);
-#if NET_4_0
 			properties.Add (providersProp);
 			properties.Add (defaultProviderNameProp);
-#endif
 		}
 
 		[ConfigurationProperty ("enableFragmentCache", DefaultValue = "True")]
@@ -103,7 +97,6 @@ namespace System.Web.Configuration
 			set { base[sendCacheControlHeaderProp] = value; }
 		}
 
-#if NET_4_0
 		[StringValidatorAttribute(MinLength = 1)]
 		[ConfigurationPropertyAttribute("defaultProvider", DefaultValue = "AspNetInternalProvider")]
 		public string DefaultProviderName {
@@ -115,7 +108,6 @@ namespace System.Web.Configuration
 		public ProviderSettingsCollection Providers {
 			get { return base [providersProp] as ProviderSettingsCollection; }
 		}
-#endif
 		
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }

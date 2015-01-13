@@ -247,9 +247,6 @@ namespace System {
 
 
 					if (invalidUnescape
-#if !NET_4_0
-						&& uriFormat == UriFormat.SafeUnescaped && char.IsControl (x)
-#endif
 					) {
 						s.Append (c);
 						i = iStart;
@@ -277,9 +274,7 @@ namespace System {
 				return HexEscapeMultiByte (c);
 
 			if (isEscaped && (
-#if NET_4_0
 				(userEscaped && c < 0xFF) ||
-#endif
 				!NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags))) {
 				if (IriParsing &&
 					(c == '<' || c == '>' || c == '^' || c == '{' || c == '|' || c ==  '}' || c > 0x7F) &&

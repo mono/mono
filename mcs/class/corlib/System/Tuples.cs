@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 
 using System;
 using System.Collections;
@@ -873,7 +872,6 @@ namespace System
 
 }
 	
-#endif
 
 #if FALSE
 

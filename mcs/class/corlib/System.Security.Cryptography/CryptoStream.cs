@@ -357,11 +357,9 @@ namespace System.Security.Cryptography {
 			}
 		}
 		
-#if NET_4_0
 		public bool HasFlushedFinalBlock {
 			get { return _flushedFinalBlock; }
 		}
-#endif
 		
 #if NET_4_5
 		public override Task FlushAsync (CancellationToken cancellationToken)

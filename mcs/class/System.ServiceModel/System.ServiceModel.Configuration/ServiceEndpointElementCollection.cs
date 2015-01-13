@@ -76,10 +76,8 @@ namespace System.ServiceModel.Configuration
 				GetHashCode (el.BindingConfiguration) +
 				GetHashCode (el.BindingName) +
 				GetHashCode (el.BindingNamespace) +
-#if NET_4_0
 				GetHashCode (el.EndpointConfiguration) +
 				GetHashCode (el.Kind) +
-#endif
 				GetHashCode (el.Contract);
 		}
 

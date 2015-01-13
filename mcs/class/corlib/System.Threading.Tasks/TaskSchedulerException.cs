@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0
 using System;
 using System.Runtime.Serialization;
 
@@ -61,4 +60,3 @@ namespace System.Threading.Tasks
 		}
 	}
 }
-#endif

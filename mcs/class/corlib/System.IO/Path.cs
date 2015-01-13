@@ -776,11 +776,7 @@ namespace System.IO {
 			return String.Compare (subset, slast, path, slast, subset.Length - slast) == 0;
 		}
 
-#if NET_4_0
 		public
-#else
-                internal
-#endif
 		static string Combine (params string [] paths)
 		{
 			if (paths == null)
@@ -821,11 +817,7 @@ namespace System.IO {
 			return ret.ToString ();
 		}
 
-#if NET_4_0
 		public
-#else
-                internal
-#endif
 		static string Combine (string path1, string path2, string path3)
 		{
 			if (path1 == null)
@@ -840,11 +832,7 @@ namespace System.IO {
 			return Combine (new string [] { path1, path2, path3 });
 		}
 
-#if NET_4_0
 		public
-#else
-                internal
-#endif
 		static string Combine (string path1, string path2, string path3, string path4)
 		{
 			if (path1 == null)

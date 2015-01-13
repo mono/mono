@@ -319,7 +319,6 @@ namespace System.Net
 			get { return credentials; }
 			set { credentials = value; }
 		}
-#if NET_4_0
 		public DateTime Date {
 			get {
 				string date = webHeaders ["Date"];
@@ -334,7 +333,6 @@ namespace System.Net
 					webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
 			}
 		}
-#endif
 
 #if !NET_2_1
 		[MonoTODO]
@@ -400,11 +398,7 @@ namespace System.Net
 			}
 		}
 		
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		string Host {
 			get {
 				if (host == null)
@@ -597,7 +591,6 @@ namespace System.Net
 		internal ServicePoint ServicePointNoLock {
 			get { return servicePoint; }
 		}
-#if NET_4_0
 		public virtual bool SupportsCookieContainer { 
 			get {
 				// The managed implementation supports the cookie container
@@ -605,7 +598,6 @@ namespace System.Net
 				return true;
 			}
 		}
-#endif
 		public override int Timeout { 
 			get { return timeout; }
 			set {
@@ -707,31 +699,19 @@ namespace System.Net
 		{
 			AddRange (rangeSpecifier, (long) from, (long) to);
 		}
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		void AddRange (long range)
 		{
 			AddRange ("bytes", (long) range);
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		void AddRange (long from, long to)
 		{
 			AddRange ("bytes", from, to);
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		void AddRange (string rangeSpecifier, long range)
 		{
 			if (rangeSpecifier == null)
@@ -757,11 +737,7 @@ namespace System.Net
 			webHeaders.RemoveAndAdd ("Range", r);
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		void AddRange (string rangeSpecifier, long from, long to)
 		{
 			if (rangeSpecifier == null)
@@ -872,16 +848,11 @@ namespace System.Net
 		{
 			if (writeStream == null || writeStream.RequestWritten || !InternalAllowBuffering)
 				return false;
-			#if NET_4_0
 			if (contentLength < 0 && writeStream.CanWrite == true && writeStream.WriteBufferLength < 0)
 				return false;
 
 			if (contentLength < 0 && writeStream.WriteBufferLength >= 0)
 				InternalContentLength = writeStream.WriteBufferLength;
-			#else
-			if (contentLength < 0 && writeStream.CanWrite == true)
-				return false;
-			#endif
 
 			// This will write the POST/PUT if the write stream already has the expected
 			// amount of bytes in it (ContentLength) (bug #77753) or if the write stream

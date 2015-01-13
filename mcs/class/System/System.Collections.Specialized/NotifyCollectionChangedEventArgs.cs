@@ -23,7 +23,6 @@
 //	Chris Toshok (toshok@ximian.com)
 //	Brian O'Keefe (zer0keefie@gmail.com)
 //
-#if NET_4_0
 using System.Runtime.CompilerServices;
 
 namespace System.Collections.Specialized
@@ -216,4 +215,3 @@ namespace System.Collections.Specialized
 		#endregion
 	}
 }
-#endif

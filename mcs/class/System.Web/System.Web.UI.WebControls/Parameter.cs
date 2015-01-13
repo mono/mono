@@ -406,11 +406,7 @@ namespace System.Web.UI.WebControls {
 		// returns the value of the control that it is bound to, while 
 		// the QueryStringParameter object retrieves the current name/value pair from 
 		// the HttpRequest object.
-#if NET_4_0
 		protected internal
-#else
-		protected
-#endif
 		virtual	object Evaluate (HttpContext context, Control control)
 		{
 			return null;

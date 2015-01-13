@@ -30,9 +30,7 @@ using System.Configuration.Provider;
 
 namespace System.Web.Caching
 {
-#if NET_4_0
 	public 
-#endif
 	abstract class OutputCacheProvider : ProviderBase
 	{
 		protected OutputCacheProvider ()

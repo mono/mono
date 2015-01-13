@@ -30,9 +30,7 @@
 
 namespace System.ServiceModel.Activation
 {
-#if NET_4_0
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblySystemServiceModel_3_0)]
-#endif
 	public class ServiceHostFactory : ServiceHostFactoryBase
 	{
 		[MonoTODO]

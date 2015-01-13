@@ -77,11 +77,7 @@ namespace System
 		// categories are available, 0xff otherwise.
 		private readonly static byte category_check_pair;
 
-#if NET_4_0
 		private const int CategoryDataVersion = 4;
-#else
-		private const int CategoryDataVersion = 2;
-#endif
 
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		private unsafe static extern void GetDataTablePointers (int category_data_version,

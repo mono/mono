@@ -39,9 +39,7 @@ namespace System.Web.UI.WebControls {
 	[Themeable (true)]
 	public class WebControl : Control, IAttributeAccessor
 	{
-#if NET_4_0
 		const string DEFAULT_DISABLED_CSS_CLASS = "aspNetDisabled";
-#endif
 		Style style;
 		HtmlTextWriterTag tag;
 		string tag_name;
@@ -49,12 +47,10 @@ namespace System.Web.UI.WebControls {
 		StateBag attribute_state;
 		bool enabled;
 		bool track_enabled_state;
-#if NET_4_0
 		static WebControl ()
 		{
 			DisabledCssClass = DEFAULT_DISABLED_CSS_CLASS;
 		}
-#endif
 		public WebControl (HtmlTextWriterTag tag) 
 		{
 			this.tag = tag;
@@ -407,7 +403,6 @@ namespace System.Web.UI.WebControls {
 				return true;
 			}
 		}
-#if NET_4_0
 		public static string DisabledCssClass {
 			get;
 			set;
@@ -417,7 +412,6 @@ namespace System.Web.UI.WebControls {
 		public virtual bool SupportsDisabledAttribute {
 			get { return true; }
 		}
-#endif
 		public void ApplyStyle (Style s) 
 		{
 			if (s != null && !s.IsEmpty)
@@ -506,11 +500,9 @@ namespace System.Web.UI.WebControls {
 		void RenderDisabled (HtmlTextWriter writer)
 		{
 			if (!IsEnabled) {
-#if NET_4_0
 				if (!SupportsDisabledAttribute)
 					ControlStyle.PrependCssClass (DisabledCssClass);
 				else
-#endif
 					writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 			}
 
@@ -518,14 +510,9 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual void AddAttributesToRender (HtmlTextWriter writer) 
 		{
-#if NET_4_0
 			RenderDisabled (writer);
-#endif
 			if (ID != null)
 				writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
-#if !NET_4_0
-			RenderDisabled (writer);
-#endif
 			if (AccessKey != string.Empty)
 				writer.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
 			
@@ -578,7 +565,6 @@ namespace System.Web.UI.WebControls {
 
 			enabled = ViewState.GetBool ("Enabled", enabled);
 		}
-#if NET_4_0
 		internal virtual string InlinePropertiesSet ()
 		{
 			var properties = new List <string> ();
@@ -631,7 +617,6 @@ namespace System.Web.UI.WebControls {
 				);
 			}
 		}
-#endif
 		protected internal
 		override void Render (HtmlTextWriter writer)
 		{

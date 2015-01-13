@@ -34,11 +34,7 @@ namespace System.ServiceModel
 	[MonoTODO]
 	public sealed class TcpTransportSecurity
 	{
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		TcpTransportSecurity ()
 		{
 			ClientCredentialType = TcpClientCredentialType.Windows; // huh

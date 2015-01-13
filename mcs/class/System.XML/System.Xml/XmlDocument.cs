@@ -175,11 +175,9 @@ namespace System.Xml
 			get { return implementation; }
 		}
 
-#if NET_4_0
 		public override string InnerText {
 			set { throw new InvalidOperationException (); }
 		}
-#endif
 
 		public override string InnerXml {
 			get {

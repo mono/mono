@@ -28,7 +28,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 #endif
 
-#if NET_4_0
 namespace System.Threading
 {
 	[System.Diagnostics.DebuggerDisplayAttribute ("Current Count = {currCount}")]
@@ -223,4 +222,3 @@ namespace System.Threading
 
 	}
 }
-#endif

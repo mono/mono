@@ -247,9 +247,7 @@ namespace System {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		bool IsEnum {
 			get {
 				return IsSubclassOf (typeof (Enum));
@@ -353,9 +351,7 @@ namespace System {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		bool IsSerializable {
 			get {
 				if ((Attributes & TypeAttributes.Serializable) != 0)
@@ -443,20 +439,9 @@ namespace System {
 
 		public override bool Equals (object o)
 		{
-#if NET_4_0
 			return Equals (o as Type);
-#else
-			if (o == this)
-				return true;
-
-			Type me = UnderlyingSystemType;
-			if (me == null)
-				return false;
-			return me.EqualsInternal (o as Type);
-#endif
 		}
 
-#if NET_4_0
 		public virtual bool Equals (Type o)
 		{
 			if ((object)o == (object)this)
@@ -474,21 +459,6 @@ namespace System {
 				return true;
 			return me.EqualsInternal (o);
 		}		
-#else
-		public bool Equals (Type o)
-		{
-
-			if (o == this)
-				return true;
-			if (o == null)
-				return false;
-			Type me = UnderlyingSystemType;
-			if (me == null)
-				return false;
-			return me.EqualsInternal (o.UnderlyingSystemType);
-		}
-#endif
-#if NET_4_0
 		[MonoTODO ("Implement it properly once 4.0 impl details are known.")]
 		public static bool operator == (Type left, Type right)
 		{
@@ -587,7 +557,6 @@ namespace System {
 		{
 			get { throw CreateNIE (); }
 		}
-#endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern bool EqualsInternal (Type type);
@@ -644,9 +613,7 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static TypeCode GetTypeCodeInternal (Type type);
 
-#if NET_4_0
 		protected virtual
-#endif
 		TypeCode GetTypeCodeImpl () {
 			Type type = this;
 			if (type is MonoType)
@@ -1595,11 +1562,7 @@ namespace System {
 
 		public virtual StructLayoutAttribute StructLayoutAttribute {
 			get {
-#if NET_4_0
 				throw new NotSupportedException ();
-#else
-				return GetStructLayoutAttribute ();
-#endif
 			}
 		}
 		
@@ -1658,12 +1621,10 @@ namespace System {
 		}			
 
 
-#if NET_4_0
 		public virtual bool IsEquivalentTo (Type other)
 		{
 			return this == other;
 		}
-#endif
 
 		/* 
 		 * Return whenever this object is an instance of a user defined subclass

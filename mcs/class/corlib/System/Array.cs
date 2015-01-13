@@ -50,9 +50,7 @@ namespace System
 	[ComVisible (true)]
 	// FIXME: We are doing way to many double/triple exception checks for the overloaded functions"
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
-#if NET_4_0
 		, IStructuralComparable, IStructuralEquatable
-#endif
 	{
 		// Constructor
 		private Array ()
@@ -455,7 +453,6 @@ namespace System
 			return new SimpleEnumerator (this);
 		}
 
-#if NET_4_0
 		int IStructuralComparable.CompareTo (object other, IComparer comparer)
 		{
 			if (other == null)
@@ -514,7 +511,6 @@ namespace System
 				hash = ((hash << 7) + hash) ^ comparer.GetHashCode (GetValueImpl (i));
 			return hash;
 		}
-#endif
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public int GetUpperBound (int dimension)

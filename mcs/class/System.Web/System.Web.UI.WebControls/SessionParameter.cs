@@ -67,11 +67,7 @@ namespace System.Web.UI.WebControls {
 		{
 			return new SessionParameter (this);
 		}
-#if NET_4_0
 		protected internal
-#else
-		protected
-#endif
 		override object Evaluate (HttpContext ctx, Control control)
 		{
 			if (ctx == null || ctx.Session == null)

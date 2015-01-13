@@ -43,9 +43,7 @@ using System.Threading;
 
 namespace System.Web
 {
-#if NET_4_0
         [TypeForwardedFrom ("System.Web.Abstractions, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HttpResponseWrapper : HttpResponseBase
@@ -137,9 +135,7 @@ namespace System.Web
 
 		public override TextWriter Output {
 			get { return w.Output; }
-#if NET_4_0
 			set { w.Output = value; }
-#endif
 		}
 
 		public override Stream OutputStream {
@@ -302,7 +298,6 @@ namespace System.Web
 		{
 			w.Redirect (url, endResponse);
 		}
-#if NET_4_0
 		public override void RedirectPermanent (string url)
 		{
 			w.RedirectPermanent (url);
@@ -317,7 +312,6 @@ namespace System.Web
 		{
 			HttpResponse.RemoveOutputCacheItem (path, providerName);
 		}
-#endif
 		public override void RemoveOutputCacheItem (string path)
 		{
 			 HttpResponse.RemoveOutputCacheItem (path);

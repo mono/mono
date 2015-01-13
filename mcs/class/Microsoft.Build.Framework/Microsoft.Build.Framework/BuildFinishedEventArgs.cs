@@ -46,7 +46,6 @@ namespace Microsoft.Build.Framework {
 			this.succeeded = succeeded;
 		}
 
-#if NET_4_0
 		public BuildFinishedEventArgs (string message,
 						  string helpKeyword,
 						  bool succeeded,
@@ -65,7 +64,6 @@ namespace Microsoft.Build.Framework {
 		{
 			this.succeeded = succeeded;
 		}
-#endif
 
 		public bool Succeeded {
 			get {

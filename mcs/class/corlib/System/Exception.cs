@@ -159,7 +159,6 @@ namespace System
 			}
 		}
 		
-#if NET_4_0
 		[MonoTODO]
 		protected event EventHandler<SafeSerializationEventArgs> SerializeObjectState {
 			add {
@@ -167,7 +166,6 @@ namespace System
 			remove {
 			}
 		}
-#endif
 
 		public virtual string Source {
 			get {

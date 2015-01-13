@@ -112,7 +112,6 @@ namespace System
 			RecordPressure (-bytesAllocated);
 		}
 
-#if NET_4_0
 		[PermissionSetAttribute (SecurityAction.LinkDemand, Name = "FullTrust")]
 		[MonoTODO]
 		public static GCNotificationStatus WaitForFullGCApproach () {
@@ -150,9 +149,7 @@ namespace System
 		public static void CancelFullGCNotification () {
 			throw new NotImplementedException ();
 		}
-#endif
 
-#if NET_4_0
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void register_ephemeron_array (Ephemeron[] array);
 
@@ -160,6 +157,5 @@ namespace System
 		extern static object get_ephemeron_tombstone ();
 
 		internal static readonly object EPHEMERON_TOMBSTONE = get_ephemeron_tombstone ();
-#endif
 	}
 }

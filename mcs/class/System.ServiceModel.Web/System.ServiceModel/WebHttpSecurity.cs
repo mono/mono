@@ -31,11 +31,7 @@ namespace System.ServiceModel
 {
 	public sealed class WebHttpSecurity
 	{
-#if NET_4_0
 		public WebHttpSecurity ()
-#else
-		internal WebHttpSecurity ()
-#endif
 		{
 			// there is no public constructor for transport ...
 #if !NET_2_1
@@ -50,14 +46,9 @@ namespace System.ServiceModel
 			set { mode = value; }
 		}
 
-#if NET_4_0
 		public HttpTransportSecurity Transport { get; set; }
-#elif !NET_2_1
-		public HttpTransportSecurity Transport { get; private set; }
-#endif
 
 
-#if NET_4_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool ShouldSerializeMode ()
 		{
@@ -69,6 +60,5 @@ namespace System.ServiceModel
 		{
 			return false;
 		}
-#endif
 	}
 }

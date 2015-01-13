@@ -35,12 +35,10 @@ namespace System.Web.Configuration
 		SHA1 = 1,
 		TripleDES = 2,
 		AES = 3,
-#if NET_4_0
 		HMACSHA256 = 4,
 		HMACSHA384 = 5,
 		HMACSHA512 = 6,
 		Custom = 7
-#endif
 	}
 }
 

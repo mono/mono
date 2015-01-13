@@ -46,9 +46,7 @@ using SCS = System.Collections.Specialized;
 namespace Microsoft.Build.Utilities
 {
 	public abstract class ToolTask : Task
-#if NET_4_0
 		, ICancelableTask
-#endif	
 	{
 		int			exitCode;
 		int			timeout;
@@ -58,9 +56,7 @@ namespace Microsoft.Build.Utilities
 		MessageImportance	standardOutputLoggingImportance;
 		StringBuilder toolOutput;
 		bool typeLoadException;
-#if NET_4_0
 		ManualResetEvent canceled;
-#endif
 
 		protected ToolTask ()
 			: this (null, null)
@@ -81,9 +77,7 @@ namespace Microsoft.Build.Utilities
 			this.HelpKeywordPrefix = helpKeywordPrefix;
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
-#if NET_4_0
 			canceled = new ManualResetEvent (false);
-#endif
 		}
 
 		[MonoTODO]
@@ -506,7 +500,6 @@ namespace Microsoft.Build.Utilities
 			set { toolPath  = value; }
 		}
 
-#if NET_4_0
 		protected ManualResetEvent ToolCanceled {
 			get {
 				return canceled;
@@ -517,7 +510,6 @@ namespace Microsoft.Build.Utilities
 		{
 			canceled.Set ();
 		}
-#endif
 
 #if XBUILD_12
 		protected MessageImportance StandardErrorImportanceToUse {
