@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>612,618,1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;INSIDE_CORLIB;LIBC;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;INSIDE_CORLIB;LIBC;FEATURE_PAL;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>612,618,1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>INSIDE_CORLIB;LIBC;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;LIBC;FEATURE_PAL;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -45,6 +45,22 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\collections\Concurrent\ConcurrentDictionary.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\collections\Concurrent\ConcurrentQueue.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\collections\Concurrent\ConcurrentStack.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\collections\Concurrent\IProducerConsumerCollection.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\collections\Concurrent\OrderablePartitioner.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\collections\Concurrent\Partitioner.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\collections\Concurrent\PartitionerStatic.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\collections\generic\debugview.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\runtime\compilerservices\internalsvisibletoattribute.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\CancellationToken.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\CancellationTokenRegistration.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\CancellationTokenSource.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\CountdownEvent.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\ManualResetEventSlim.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\SpinWait.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\throwhelper.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -95,6 +111,7 @@
     <Compile Include="..\System.Core\System\TimeZoneInfo.Android.cs" />
     <Compile Include="..\System.Core\System\TimeZoneInfo.cs" />
     <Compile Include="..\System.Core\System\TimeZoneInfo.MonoTouch.cs" />
+    <Compile Include="..\System.Core\System\TimeZoneInfo.Serialization.cs" />
     <Compile Include="..\System.Core\System\TimeZoneInfo.TransitionTime.cs" />
     <Compile Include="..\System\System.Threading\SemaphoreFullException.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -137,18 +154,11 @@
     <Compile Include="Mono.Xml\SmallXmlParser.cs" />
     <Compile Include="Mono\DataConverter.cs" />
     <Compile Include="Mono\Runtime.cs" />
-    <Compile Include="System.Collections.Concurrent.Partitioners\EnumerablePartitioner.cs" />
-    <Compile Include="System.Collections.Concurrent.Partitioners\ListPartitioner.cs" />
-    <Compile Include="System.Collections.Concurrent.Partitioners\UserRangePartitioner.cs" />
-    <Compile Include="System.Collections.Concurrent\ConcurrentDictionary.cs" />
+    <Compile Include="ReferenceSources\Array.cs" />
+    <Compile Include="ReferenceSources\Environment.cs" />
+    <Compile Include="ReferenceSources\ExecutionContext.cs" />
+    <Compile Include="ReferenceSources\Helpers.cs" />
     <Compile Include="System.Collections.Concurrent\ConcurrentOrderedList.cs" />
-    <Compile Include="System.Collections.Concurrent\ConcurrentQueue.cs" />
-    <Compile Include="System.Collections.Concurrent\ConcurrentStack.cs" />
-    <Compile Include="System.Collections.Concurrent\EnumerablePartitionerOptions.cs" />
-    <Compile Include="System.Collections.Concurrent\IProducerConsumerCollection.cs" />
-    <Compile Include="System.Collections.Concurrent\OrderablePartitioner.cs" />
-    <Compile Include="System.Collections.Concurrent\Partitioner.cs" />
-    <Compile Include="System.Collections.Concurrent\SplitOrderedList.cs" />
     <Compile Include="System.Collections.Generic\CollectionDebuggerView.cs" />
     <Compile Include="System.Collections.Generic\Comparer.cs" />
     <Compile Include="System.Collections.Generic\Dictionary.cs" />
@@ -543,7 +553,6 @@
     <Compile Include="System.Runtime.CompilerServices\IDispatchConstantAttribute.cs" />
     <Compile Include="System.Runtime.CompilerServices\IndexerNameAttribute.cs" />
     <Compile Include="System.Runtime.CompilerServices\INotifyCompletion.cs" />
-    <Compile Include="System.Runtime.CompilerServices\InternalsVisibleToAttribute.cs" />
     <Compile Include="System.Runtime.CompilerServices\IsBoxed.cs" />
     <Compile Include="System.Runtime.CompilerServices\IsByValue.cs" />
     <Compile Include="System.Runtime.CompilerServices\IsConst.cs" />
@@ -754,7 +763,7 @@
     <Compile Include="System.Runtime.InteropServices\LayoutKind.cs" />
     <Compile Include="System.Runtime.InteropServices\LCIDConversionAttribute.cs" />
     <Compile Include="System.Runtime.InteropServices\LIBFLAGS.cs" />
-    <Compile Include="System.Runtime.InteropServices\ManagedErrorInfo.cs " />
+    <Compile Include="System.Runtime.InteropServices\ManagedErrorInfo.cs" />
     <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
     <Compile Include="System.Runtime.InteropServices\MarshalAsAttribute.cs" />
     <Compile Include="System.Runtime.InteropServices\MarshalDirectiveException.cs" />
@@ -1053,6 +1062,7 @@
     <Compile Include="System.Runtime.Serialization\StreamingContext.cs" />
     <Compile Include="System.Runtime.Serialization\StreamingContextStates.cs" />
     <Compile Include="System.Runtime.Serialization\SurrogateSelector.cs" />
+    <Compile Include="System.Runtime.Versioning\CompatibilitySwitch.cs" />
     <Compile Include="System.Runtime.Versioning\ComponentGuaranteesAttribute.cs" />
     <Compile Include="System.Runtime.Versioning\ComponentGuaranteesOptions.cs" />
     <Compile Include="System.Runtime.Versioning\ResourceConsumptionAttribute.cs" />
@@ -1450,12 +1460,8 @@
     <Compile Include="System.Threading\AsyncFlowControl.cs" />
     <Compile Include="System.Threading\AtomicBoolean.cs" />
     <Compile Include="System.Threading\AutoResetEvent.cs" />
-    <Compile Include="System.Threading\CancellationToken.cs" />
-    <Compile Include="System.Threading\CancellationTokenRegistration.cs" />
-    <Compile Include="System.Threading\CancellationTokenSource.cs" />
     <Compile Include="System.Threading\CompressedStack.cs" />
     <Compile Include="System.Threading\ContextCallback.cs" />
-    <Compile Include="System.Threading\CountdownEvent.cs" />
     <Compile Include="System.Threading\EventResetMode.cs" />
     <Compile Include="System.Threading\EventWaitHandle.cs" />
     <Compile Include="System.Threading\ExecutionContext.cs" />
@@ -1469,7 +1475,6 @@
     <Compile Include="System.Threading\LockQueue.cs" />
     <Compile Include="System.Threading\LockRecursionException.cs" />
     <Compile Include="System.Threading\ManualResetEvent.cs" />
-    <Compile Include="System.Threading\ManualResetEventSlim.cs" />
     <Compile Include="System.Threading\Monitor.cs" />
     <Compile Include="System.Threading\Mutex.cs" />
     <Compile Include="System.Threading\NamedDataSlot.cs" />
@@ -1482,7 +1487,6 @@
     <Compile Include="System.Threading\SemaphoreSlim.cs" />
     <Compile Include="System.Threading\SendOrPostCallback.cs" />
     <Compile Include="System.Threading\SpinLock.cs" />
-    <Compile Include="System.Threading\SpinWait.cs" />
     <Compile Include="System.Threading\SynchronizationContext.cs" />
     <Compile Include="System.Threading\SynchronizationLockException.cs" />
     <Compile Include="System.Threading\Thread.cs" />
@@ -1589,7 +1593,6 @@
     <Compile Include="System\Exception.cs" />
     <Compile Include="System\ExecutionEngineException.cs" />
     <Compile Include="System\FieldAccessException.cs" />
-    <Compile Include="System\FirstChanceExceptionEventArgs.cs" />
     <Compile Include="System\FlagsAttribute.cs" />
     <Compile Include="System\FormatException.cs" />
     <Compile Include="System\Funcs.cs" />

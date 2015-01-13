@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;NET_3_0</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;NET_3_0</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -48,18 +48,15 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-	<Compile Include="System.IdentityModel\CookieTransform.cs" />
-    <Compile Include="System.IdentityModel\OpenObject.cs" />
-    <Compile Include="System.IdentityModel\SignatureVerificationFailedException.cs" />
     <Compile Include="System.IdentityModel.Claims\Claim.cs" />
     <Compile Include="System.IdentityModel.Claims\ClaimSet.cs" />
     <Compile Include="System.IdentityModel.Claims\ClaimTypes.cs" />
     <Compile Include="System.IdentityModel.Claims\DefaultClaimSet.cs" />
     <Compile Include="System.IdentityModel.Claims\Rights.cs" />
     <Compile Include="System.IdentityModel.Claims\WindowsClaimSet.cs" />
+    <Compile Include="System.IdentityModel.Claims\X509CertificateClaimSet.cs" />
     <Compile Include="System.IdentityModel.Configuration\ICustomIdentityConfiguration.cs" />
     <Compile Include="System.IdentityModel.Configuration\IdentityModelCaches.cs" />
-    <Compile Include="System.IdentityModel.Claims\X509CertificateClaimSet.cs" />
     <Compile Include="System.IdentityModel.Policy\AuthorizationContext.cs" />
     <Compile Include="System.IdentityModel.Policy\EvaluationContext.cs" />
     <Compile Include="System.IdentityModel.Policy\IAuthorizationComponent.cs" />
@@ -69,9 +66,9 @@
     <Compile Include="System.IdentityModel.Protocols\WSTrust\Entropy.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\Lifetime.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\ProtectedKey.cs" />
-    <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestSecurityTokenResponse.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestedProofToken.cs" />
-    <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestedSecurityTOken.cs" />
+    <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestedSecurityToken.cs" />
+    <Compile Include="System.IdentityModel.Protocols\WSTrust\RequestSecurityTokenResponse.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\Status.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\UseKey.cs" />
     <Compile Include="System.IdentityModel.Protocols\WSTrust\WSTrustMessage.cs" />
@@ -101,8 +98,8 @@
     <Compile Include="System.IdentityModel.Tokens\AudienceRestriction.cs" />
     <Compile Include="System.IdentityModel.Tokens\AuthenticationContext.cs" />
     <Compile Include="System.IdentityModel.Tokens\AuthenticationInformation.cs" />
-    <Compile Include="System.IdentityModel.Tokens\AuthenticationContext.cs" />
     <Compile Include="System.IdentityModel.Tokens\BinaryKeyIdentifierClause.cs" />
+    <Compile Include="System.IdentityModel.Tokens\BootstrapContext.cs" />
     <Compile Include="System.IdentityModel.Tokens\EncryptedKeyIdentifierClause.cs" />
     <Compile Include="System.IdentityModel.Tokens\EncryptingCredentials.cs" />
     <Compile Include="System.IdentityModel.Tokens\GenericXmlSecurityToken.cs" />
@@ -174,9 +171,11 @@
     <Compile Include="System.IdentityModel.Tokens\X509SubjectKeyIdentifierClause.cs" />
     <Compile Include="System.IdentityModel.Tokens\X509ThumbprintKeyIdentifierClause.cs" />
     <Compile Include="System.IdentityModel.Tokens\X509WindowsSecurityToken.cs" />
+    <Compile Include="System.IdentityModel\CookieTransform.cs" />
+    <Compile Include="System.IdentityModel\OpenObject.cs" />
+    <Compile Include="System.IdentityModel\SignatureVerificationFailedException.cs" />
     <Compile Include="System.Security.Claims\AuthenticationTypes.cs" />
-    <Compile Include="System.ServiceModel.Security\X509CertificateValidationMode.cs" />
-  </ItemGroup>
+    <Compile Include="System.ServiceModel.Security\X509CertificateValidationMode.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

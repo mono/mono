@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F2156C09-C377-4945-A690-39CFBF3319B3}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,414,169,67,3005,436,219,618,1699,414,169,67,3005,436,219,618</NoWarn>
+    <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
@@ -23,17 +23,17 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,414,169,67,3005,436,219,618,1699,414,169,67,3005,436,219,618</NoWarn>
+    <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;TRACE;NET_3_0;HAS_ACTIVATION;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,414,169,67,3005,436,219,618,1699,414,169,67,3005,436,219,618</NoWarn>
+    <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;TRACE;NET_3_0;HAS_ACTIVATION;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
