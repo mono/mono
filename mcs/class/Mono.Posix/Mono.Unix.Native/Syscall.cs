@@ -223,6 +223,7 @@ namespace Mono.Unix.Native {
 		F_GETOWN   =    9, // Get owner of socket (receiver of SIGIO).
 		F_SETSIG   =   10, // Set number of signal to be sent.
 		F_GETSIG   =   11, // Get number of signal to be sent.
+		F_NOCACHE  =   48, // OSX: turn data caching off/on for this fd.
 		F_SETLEASE = 1024, // Set a lease.
 		F_GETLEASE = 1025, // Enquire what lease is active.
 		F_NOTIFY   = 1026, // Required notifications on a directory
