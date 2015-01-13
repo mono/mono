@@ -19,9 +19,6 @@ using System.Security.Policy;
 using System.Text;
 
 using Mono.Security.Cryptography;
-#if !NET_2_0
-using Mono.Xml;
-#endif
 
 [assembly: AssemblyTitle ("Mono CasPol")]
 [assembly: AssemblyDescription ("Command line tool to modify Code Access Security policies.")]
@@ -141,16 +138,10 @@ namespace Mono.Tools {
 				xml = sr.ReadToEnd ();
 				sr.Close ();
 			}
-#if NET_2_0
 			// actually this use the SecurityParser (on the Mono 
 			// runtime) in corlib do to the job - but it remove 
 			// the dependency on Mono.Security.dll
 			SecurityElement se = SecurityElement.FromString (xml);
-#else
-			SecurityParser sp = new SecurityParser ();
-			sp.LoadXml (xml);
-			SecurityElement se = sp.ToXml ();
-#endif
 			return se;
 		}
 
