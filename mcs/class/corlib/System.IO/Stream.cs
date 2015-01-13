@@ -470,6 +470,12 @@ namespace System.IO
 			}
 		}
 
+		public override void Close ()
+		{
+			lock (slock)
+				source.Close ();
+		}
+
 		public override void Flush ()
 		{
 			lock (slock)

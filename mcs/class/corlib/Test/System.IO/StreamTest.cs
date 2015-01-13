@@ -112,6 +112,14 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		[Test]
+		public void SynchronizedTest ()
+		{
+			var s = Stream.Synchronized (new MemoryStream ());
+			s.Close ();
+			Assert.IsFalse (s.CanRead, "#1");
+		}
+
 #if NET_4_5
 		[Test]
 		public void CopyAsync ()
