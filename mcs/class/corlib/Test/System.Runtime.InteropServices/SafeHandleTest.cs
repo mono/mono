@@ -161,6 +161,47 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		public void SetInvalidRelease1 ()
+		{
+			FakeSafeHandle sf = new FakeSafeHandle (true);
+
+			bool success = false;
+			sf.DangerousAddRef(ref success);
+			Assert.IsTrue (success, "dar");
+
+			sf.SetHandleAsInvalid();
+
+			Assert.IsFalse (sf.released, "released");
+			Assert.IsTrue (sf.IsClosed, "closed");
+
+			//Allow remaining refs to be released after SetHandleAsInvalid
+			sf.DangerousRelease ();
+			sf.DangerousRelease ();
+
+			Assert.IsFalse (sf.released, "released");
+			Assert.IsTrue (sf.IsClosed, "closed");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void SetInvalidRelease2 ()
+		{
+			FakeSafeHandle sf = new FakeSafeHandle (true);
+
+			bool success = false;
+			sf.DangerousAddRef(ref success);
+			Assert.IsTrue (success, "dar");
+
+			sf.SetHandleAsInvalid();
+			sf.DangerousRelease ();
+			sf.DangerousRelease ();
+
+			//This release need to throw ObjectDisposedException.
+			//No more ref to release.
+			sf.DangerousRelease ();
+		}
+
+		[Test]
 		public void ReleaseAfterDispose1 ()
 		{
 			int dummyHandle = 0xDEAD;
