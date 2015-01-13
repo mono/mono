@@ -300,7 +300,7 @@ namespace System.Data.SqlClient
 		}
 #endif
 
-		protected internal override DbProviderFactory DbProviderFactory {
+		protected override DbProviderFactory DbProviderFactory {
 			get {
 				return SqlClientFactory.Instance;
 			}

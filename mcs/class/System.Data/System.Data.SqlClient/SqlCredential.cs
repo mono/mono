@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_STORE_APP
 using System;
 using System.Data;
 using System.Runtime.InteropServices;
@@ -74,3 +75,4 @@ namespace System.Data.SqlClient {
 		#endregion
 	}
 }
+#endif

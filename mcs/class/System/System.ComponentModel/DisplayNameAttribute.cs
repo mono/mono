@@ -45,12 +45,14 @@ namespace System.ComponentModel
 			this.attributeDisplayName = displayName;
 		}
 
+#if !WINDOWS_STORE_APP
 		public override bool IsDefaultAttribute ()
 		{
 			if (attributeDisplayName != null)
 				return attributeDisplayName.Length == 0;
 			return false;
 		}
+#endif
 
 		public override int GetHashCode ()
 		{

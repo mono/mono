@@ -724,9 +724,15 @@ namespace System.Data.Common {
 			return dataTable;
 		}
 
-		protected internal virtual DbProviderFactory DbProviderFactory {
+		protected virtual DbProviderFactory DbProviderFactory {
 			get {
 				return null;
+			}
+		}
+
+		internal DbProviderFactory ProviderFactory {
+			get {
+				return DbProviderFactory;
 			}
 		}
 #endif

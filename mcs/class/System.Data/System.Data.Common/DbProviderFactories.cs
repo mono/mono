@@ -84,7 +84,7 @@ namespace System.Data.Common {
 			if (connection == null)
 				throw new ArgumentNullException ("connection");
 
-			return connection.DbProviderFactory;
+			return connection.ProviderFactory;
 		}
 #endif
 

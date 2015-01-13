@@ -15,9 +15,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Transactions
 {
+#if !WINDOWS_STORE_APP
 	//[ComImport]
 	// [Guid (whatever)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+#endif
 	public interface IDtcTransaction
 	{
 		void Abort (IntPtr manager, int whatever, int whatever2);
