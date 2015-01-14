@@ -217,9 +217,12 @@ namespace System.IO {
 				if (inDispatch)
 					return;
 				// This will break the wait in Monitor ()
-				if (conn != -1)
-					close (conn);
-				conn = -1;
+				lock (connLock) {
+					if (conn != -1)
+						close (conn);
+					conn = -1;
+				}
+
 				if (!thread.Join (2000))
 					thread.Abort ();
 
@@ -233,7 +236,7 @@ namespace System.IO {
 
 		void CleanUp ()
 		{
-			lock (stateLock) {
+			lock (connLock) {
 				if (conn != -1)
 					close (conn);
 				conn = -1;
@@ -625,6 +628,7 @@ namespace System.IO {
 		bool inDispatch = false;
 		Exception exc = null;
 		object stateLock = new object ();
+		object connLock = new object ();
 
 		readonly Dictionary<string, PathData> pathsDict = new Dictionary<string, PathData> ();
 		readonly Dictionary<int, PathData> fdsDict = new Dictionary<int, PathData> ();
