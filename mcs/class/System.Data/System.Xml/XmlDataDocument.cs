@@ -423,6 +423,9 @@ namespace System.Xml
 				}
 
 				DataRow row = GetRowFromElement (args.NewParent as XmlElement);
+				if (row == null && args.Node is XmlCharacterData)
+					// check if grandparent is a new row and this node is one of its column values.
+					row = GetRowFromElement (args.NewParent.ParentNode as XmlElement);
 				if (row == null) {
 					// That happens only when adding table to existing DocumentElement (aka DataSet element)
 					if (args.NewParent == DocumentElement)
@@ -453,7 +456,7 @@ namespace System.Xml
 						if (args.Node.NodeType != XmlNodeType.Comment) {
 							for (int i = 0; i < row.Table.Columns.Count; i++) {
 								DataColumn col = row.Table.Columns [i];
-								if (col.ColumnMapping == MappingType.SimpleContent)
+								if (col.ColumnMapping == MappingType.SimpleContent || col.ColumnName == XmlHelper.Decode (args.NewParent.LocalName))
 									row [col] = StringToObject (col.DataType, args.Node.Value);
 							}
 						}
