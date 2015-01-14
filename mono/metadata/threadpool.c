@@ -1046,7 +1046,10 @@ mono_async_invoke (MonoAsyncResult *ares)
 		SetEvent ((gpointer)(gsize)ac->wait_event);
 	}
 	mono_monitor_exit ((MonoObject *) ares);
-	mono_gchandle_free (ares->gchandle);
+	if (ares->gchandle) {
+		mono_gchandle_free (ares->gchandle);
+		ares->gchandle = 0;
+	}
 }
 
 static void
