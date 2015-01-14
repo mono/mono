@@ -52,7 +52,7 @@ namespace System.Diagnostics
 		private string filename;
 		private string verb;
 		private string working_directory;
-		private ProcessStringDictionary envVars;
+		private StringDictionary envVars;
 		private bool create_no_window = false;
 		private bool error_dialog = false;
 		private bool redirect_standard_error = false;
@@ -113,7 +113,15 @@ namespace System.Diagnostics
 		public StringDictionary EnvironmentVariables {
 			get {
 				if (envVars == null) {
-					envVars = new ProcessStringDictionary ();
+					// check for non-Unix platforms - see FAQ for more details
+					// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+					int platform = (int) Environment.OSVersion.Platform;
+					if ((platform != 4) && (platform != 128)) {
+						envVars = new StringDictionary ();
+					} else {
+						envVars = new CaseSensitiveStringDictionary ();						
+					}
+
 					foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables ())
 						envVars.Add ((string) entry.Key, (string) entry.Value);
 				}

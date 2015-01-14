@@ -81,7 +81,6 @@ partial class SR
 	public const string Argument_ImplementIComparable = "Argument_ImplementIComparable";
 	public const string Argument_InvalidOffLen = "Argument_InvalidOffLen";
 	public const string ExternalLinkedListNode = "ExternalLinkedListNode";
-	public const string IndexOutOfRange = "IndexOutOfRange";
 	public const string InvalidOperation_CannotRemoveFromStackOrQueue = "InvalidOperation_CannotRemoveFromStackOrQueue";
 	public const string InvalidOperation_EmptyCollection = "InvalidOperation_EmptyCollection";
 	public const string InvalidOperation_EmptyQueue = "InvalidOperation_EmptyQueue";
@@ -126,6 +125,19 @@ partial class SR
 	public const string ConcurrentBag_CopyTo_ArgumentOutOfRangeException = "ConcurrentBag_CopyTo_ArgumentOutOfRangeException";
 	public const string ConcurrentBag_Ctor_ArgumentNullException = "ConcurrentBag_Ctor_ArgumentNullException";
 	public const string ConcurrentCollection_SyncRoot_NotSupported = "ConcurrentCollection_SyncRoot_NotSupported";
+
+	public const string ArgumentNull_Key = "ArgumentNull_Key";
+	public const string Argument_InvalidValue = "Argument_InvalidValue";
+	public const string BitVectorFull = "BitVectorFull";
+	public const string CollectionReadOnly = "CollectionReadOnly";
+	public const string IndexCannotBeNegative = "IndexCannotBeNegative";
+	public const string IndexOutOfRange = "IndexOutOfRange";
+	public const string MustBeResetAddOrRemoveActionForCtor = "MustBeResetAddOrRemoveActionForCtor";
+	public const string OrderedDictionary_ReadOnly = "OrderedDictionary_ReadOnly";
+	public const string OrderedDictionary_SerializationMismatch = "OrderedDictionary_SerializationMismatch";
+	public const string ResetActionRequiresIndexMinus1 = "ResetActionRequiresIndexMinus1";
+	public const string ResetActionRequiresNullItem = "ResetActionRequiresNullItem";
+	public const string WrongActionForCtor = "WrongActionForCtor";	
 
 	public const string ArrayConverterText = "{0} Array";
 	public const string Async_AsyncEventArgs_Cancelled = "Async_AsyncEventArgs_Cancelled";

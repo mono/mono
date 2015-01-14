@@ -189,10 +189,8 @@ namespace MonoTests.System.Collections.Specialized
 		{
 			BitVector32.Section s1 = BitVector32.CreateSection (32767);
 			BitVector32.Section s2 = BitVector32.CreateSection (32767, s1);
-			try {
-				BitVector32.Section s3 = BitVector32.CreateSection (4, s2);
-				Assert.Fail("Illegal section created");
-			} catch (ArgumentException) {}
+
+			BitVector32.Section s3 = BitVector32.CreateSection (4, s2);
 		}
 
                 [Test]

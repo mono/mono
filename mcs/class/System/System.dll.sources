@@ -140,22 +140,6 @@ System.CodeDom/FieldDirection.cs
 System.CodeDom/MemberAttributes.cs
 System.Collections.ObjectModel/ObservableCollection.cs
 System.Collections.ObjectModel/ReadOnlyObservableCollection.cs
-System.Collections.Specialized/BitVector32.cs
-System.Collections.Specialized/CollectionsUtil.cs
-System.Collections.Specialized/HybridDictionary.cs
-System.Collections.Specialized/IOrderedDictionary.cs
-System.Collections.Specialized/INotifyCollectionChanged.cs
-System.Collections.Specialized/ListDictionary.cs
-System.Collections.Specialized/NameObjectCollectionBase.cs
-System.Collections.Specialized/NameValueCollection.cs
-System.Collections.Specialized/NotifyCollectionChangedEventArgs.cs
-System.Collections.Specialized/NotifyCollectionChangedAction.cs
-System.Collections.Specialized/NotifyCollectionChangedEventHandler.cs
-System.Collections.Specialized/OrderedDictionary.cs
-System.Collections.Specialized/ProcessStringDictionary.cs
-System.Collections.Specialized/StringCollection.cs
-System.Collections.Specialized/StringDictionary.cs
-System.Collections.Specialized/StringEnumerator.cs
 System.Configuration/ApplicationScopedSettingAttribute.cs
 System.Configuration/ApplicationSettingsBase.cs
 System.Configuration/ApplicationSettingsGroup.cs
@@ -811,6 +795,21 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/compmod/system/collections/generic/stack.cs
 ../../../external/referencesource/System/compmod/system/collections/generic/throwhelper.cs
 
+../../../external/referencesource/System/compmod/system/collections/specialized/bitvector32.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/casesensitivestringdictionary.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/collectionsutil.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/fixedstringlookup.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/hybriddictionary.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/inotifycollectionchanged.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/iordereddictionary.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/listdictionary.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/nameobjectcollectionbase.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/namevaluecollection.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/notifycollectionchangedeventargs.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/ordereddictionary.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/stringcollection.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/stringdictionary.cs
+../../../external/referencesource/System/compmod/system/collections/specialized/stringdictionarywithcomparer.cs
 
 ../../../external/referencesource/System/compmod/system/componentmodel/AddingNewEventArgs.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/AddingNewEventHandler.cs
