@@ -138,6 +138,7 @@ partial class SR
 	public const string ResetActionRequiresIndexMinus1 = "ResetActionRequiresIndexMinus1";
 	public const string ResetActionRequiresNullItem = "ResetActionRequiresNullItem";
 	public const string WrongActionForCtor = "WrongActionForCtor";	
+	public const string ObservableCollectionReentrancyNotAllowed = "ObservableCollectionReentrancyNotAllowed";
 
 	public const string ArrayConverterText = "{0} Array";
 	public const string Async_AsyncEventArgs_Cancelled = "Async_AsyncEventArgs_Cancelled";

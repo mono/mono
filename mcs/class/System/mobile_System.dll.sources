@@ -4,8 +4,7 @@ ReferenceSources/SR.cs
 Mono.Http/NtlmClient.cs
 System.CodeDom.Compiler/GeneratedCodeAttribute.cs
 System.CodeDom.Compiler/IndentedTextWriter.cs
-System.Collections.ObjectModel/ObservableCollection.cs
-System.Collections.ObjectModel/ReadOnlyObservableCollection.cs
+ableCollection.cs
 System.Diagnostics/BooleanSwitch.cs
 System.Diagnostics/CorrelationManager.cs
 System.Diagnostics/DataReceivedEventArgs.cs
@@ -416,6 +415,9 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/compmod/system/collections/generic/sortedsetdebugview.cs
 ../../../external/referencesource/System/compmod/system/collections/generic/stack.cs
 ../../../external/referencesource/System/compmod/system/collections/generic/throwhelper.cs
+
+../../../external/referencesource/System/compmod/system/collections/objectmodel/observablecollection.cs
+../../../external/referencesource/System/compmod/system/collections/objectmodel/readonlyobservablecollection.cs
 
 ../../../external/referencesource/System/compmod/system/collections/specialized/bitvector32.cs
 ../../../external/referencesource/System/compmod/system/collections/specialized/casesensitivestringdictionary.cs
