@@ -756,11 +756,13 @@ Mono.Net.Dns/SimpleResolverEventArgs.cs
 System.Net/DnsAsyncResult.cs
 System.Windows.Input/ICommand.cs
 
+ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/ExceptionHelper.cs
 ReferenceSources/GlobalLog.cs
 ReferenceSources/HttpKnownHeaderNames.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
+ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SR.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/SystemNetworkCredential.cs
@@ -1084,8 +1086,11 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/net/System/Net/cookiecollection.cs
 ../../../external/referencesource/System/net/System/Net/cookiecontainer.cs
 ../../../external/referencesource/System/net/System/Net/cookieexception.cs
+../../../external/referencesource/System/net/System/Net/UnicodeDecodingConformance.cs
+../../../external/referencesource/System/net/System/Net/UnicodeEncodingConformance.cs
 ../../../external/referencesource/System/net/System/Net/webclient.cs
 ../../../external/referencesource/System/net/System/Net/WebPermission.cs
+
 ../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
 ../../../external/referencesource/System/sys/system/threading/Barrier.cs
