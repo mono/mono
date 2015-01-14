@@ -1086,7 +1086,7 @@ namespace System
 				return new DateTime (year, transition.Month, transition.Day) + transition.TimeOfDay.TimeOfDay;
 
 			DayOfWeek first = (new DateTime (year, transition.Month, 1)).DayOfWeek;
-			int day = 1 + (transition.Week - 1) * 7 + (transition.DayOfWeek - first) % 7;
+			int day = 1 + (transition.Week - 1) * 7 + (transition.DayOfWeek - first + 7) % 7;
 			if (day >  DateTime.DaysInMonth (year, transition.Month))
 				day -= 7;
 			if (day < 1)
