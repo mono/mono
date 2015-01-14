@@ -1,7 +1,6 @@
 ﻿$ErrorActionPreference = "Stop"
 
 Import-Module .\Invoke-MsBuild.psm1
-$MSBUILD="C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe"
 
 # powershell references
 [Reflection.Assembly]::LoadWithPartialName("System.Linq") | Out-Null
@@ -17,13 +16,12 @@ $OUTPUT_DIR='.\..\lib'
 $INTERMEDIATE_DIR='.\..\obj'
 $COMMON_DIR='.\..\build\common'
 $JAY_DIR=".\..\jay"
+$CURRENT_DIR=(Get-Item -Path ".\" -Verbose).FullName
 
 # generation set up
 $TEST_PREFIX="tests-";
 $PROJECTS=("System.Transactions", "System.Data", "Mono.Data.Sqlite")
 $FRAMEWORKS=("wp8", "netcore", "store", "$($TEST_PREFIX)wp8", "$($TEST_PREFIX)netcore") # TODO: add "tests-store"
-
-$CURRENT_DIR=(Get-Item -Path ".\" -Verbose).FullName
 
 $REFS=@{
     "wp8"=@{
@@ -268,7 +266,7 @@ Function GenerateProjectFile($project, $framework, $references)
 If (-Not (Test-Path "$JAY_DIR\jay.exe")) 
 {
     Write-Host "Building JAY..."
-    Run-Build -project ".$JAY_DIR\jay.vcxproj" -target build -parameters ""
+    Invoke-MsBuild -Path "$JAY_DIR\jay.vcxproj" -MsBuildParameters "/target:build"
     Write-Host "Building JAY complete."
 }
 
