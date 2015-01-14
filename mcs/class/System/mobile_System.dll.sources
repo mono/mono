@@ -4,7 +4,6 @@ ReferenceSources/SR.cs
 Mono.Http/NtlmClient.cs
 System.CodeDom.Compiler/GeneratedCodeAttribute.cs
 System.CodeDom.Compiler/IndentedTextWriter.cs
-ableCollection.cs
 System.Diagnostics/BooleanSwitch.cs
 System.Diagnostics/CorrelationManager.cs
 System.Diagnostics/DataReceivedEventArgs.cs
