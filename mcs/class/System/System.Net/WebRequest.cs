@@ -209,6 +209,13 @@ namespace System.Net
 				isDefaultWebProxySet = true;
 			}
 		}
+
+		internal static IWebProxy InternalDefaultWebProxy {
+			get {
+				return DefaultWebProxy;
+			}
+		}
+
 		
 		[MonoTODO("Needs to respect Module, Proxy.AutoDetect, and Proxy.ScriptLocation config settings")]
 		static IWebProxy GetDefaultWebProxy ()

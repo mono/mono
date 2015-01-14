@@ -191,12 +191,6 @@ System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
 System.Net/DnsEndPoint.cs
-System.Net/DownloadDataCompletedEventArgs.cs
-System.Net/DownloadDataCompletedEventHandler.cs
-System.Net/DownloadProgressChangedEventArgs.cs
-System.Net/DownloadProgressChangedEventHandler.cs
-System.Net/DownloadStringCompletedEventArgs.cs
-System.Net/DownloadStringCompletedEventHandler.cs
 System.Net/EndPoint.cs
 System.Net/EndPointListener.cs
 System.Net/EndPointManager.cs
@@ -252,10 +246,6 @@ System.Net/NetConfig.cs
 System.Net/NetworkAccess.cs
 System.Net/NetworkCredential.cs
 System.Net/NtlmClient.cs
-System.Net/OpenReadCompletedEventArgs.cs
-System.Net/OpenReadCompletedEventHandler.cs
-System.Net/OpenWriteCompletedEventArgs.cs
-System.Net/OpenWriteCompletedEventHandler.cs
 System.Net/ProtocolViolationException.cs
 System.Net/RequestStream.cs
 System.Net/ResponseStream.cs
@@ -267,18 +257,7 @@ System.Net/SimpleAsyncResult.cs
 System.Net/SocketAddress.cs
 System.Net/TransportContext.cs
 System.Net/TransportType.cs
-System.Net/UploadDataCompletedEventArgs.cs
-System.Net/UploadDataCompletedEventHandler.cs
-System.Net/UploadFileCompletedEventArgs.cs
-System.Net/UploadFileCompletedEventHandler.cs
-System.Net/UploadProgressChangedEventArgs.cs
-System.Net/UploadProgressChangedEventHandler.cs
-System.Net/UploadStringCompletedEventArgs.cs
-System.Net/UploadStringCompletedEventHandler.cs
-System.Net/UploadValuesCompletedEventArgs.cs
-System.Net/UploadValuesCompletedEventHandler.cs
 System.Net/WebAsyncResult.cs
-System.Net/WebClient.cs
 System.Net/WebConnection.cs
 System.Net/WebConnectionData.cs
 System.Net/WebConnectionGroup.cs
@@ -286,8 +265,6 @@ System.Net/WebConnectionStream.cs
 System.Net/WebException.cs
 System.Net/WebExceptionStatus.cs
 System.Net/WebHeaderCollection.cs
-System.Net/WebPermission.cs
-System.Net/WebPermissionAttribute.cs
 System.Net/WebProxy.cs
 System.Net/WebRequest.cs
 System.Net/WebRequestMethods.cs
@@ -403,12 +380,16 @@ System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
 System.Runtime.InteropServices/HandleCollector.cs
 System.Windows.Input/ICommand.cs
 
+ReferenceSources/ExceptionHelper.cs
 ReferenceSources/GlobalLog.cs
 ReferenceSources/HttpKnownHeaderNames.cs
+ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/SR.cs
 ReferenceSources/SRCategoryAttribute.cs
+ReferenceSources/SystemNetworkCredential.cs
 ReferenceSources/ValidationHelper.cs
+ReferenceSources/WebHeaderCollectionType.cs
 ReferenceSources/Win32Exception.cs
 
 ../../../external/referencesource/System/regex/system/text/regularexpressions/Regex.cs
@@ -719,10 +700,16 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/WarningException.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/Win32Exception.cs
 
+../../../external/referencesource/System/net/System/Net/_BufferOffsetSize.cs
+../../../external/referencesource/System/net/System/Net/_LazyAsyncResult.cs
+../../../external/referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../../../external/referencesource/System/net/System/Net/cookie.cs
 ../../../external/referencesource/System/net/System/Net/cookiecollection.cs
 ../../../external/referencesource/System/net/System/Net/cookiecontainer.cs
 ../../../external/referencesource/System/net/System/Net/cookieexception.cs
+../../../external/referencesource/System/net/System/Net/webclient.cs
+../../../external/referencesource/System/net/System/Net/WebPermission.cs
+../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
 ../../../external/referencesource/System/sys/system/threading/Barrier.cs
 

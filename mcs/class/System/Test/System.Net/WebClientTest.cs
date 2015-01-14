@@ -2237,7 +2237,7 @@ namespace MonoTests.System.Net
 				client.UploadFileTaskAsync (new Uri (serverUri), filename);
 				var request = listener.GetContext ().Request;
 
-				var expected = "multipart/form-data; boundary=------------";
+				var expected = "multipart/form-data; boundary=---------------------";
 				Assert.AreEqual (expected.Length + 15, request.ContentType.Length);
 				Assert.AreEqual (expected, request.ContentType.Substring (0, expected.Length));
 			}
