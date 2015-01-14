@@ -1139,8 +1139,7 @@ mono_thread_pool_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *
 	ares = mono_async_result_new (domain, NULL, ac->state, NULL, (MonoObject*)ac);
 	MONO_OBJECT_SETREF (ares, async_delegate, target);
 	// It seems like garbage collect likes to nuke ares inappropriately. The handle prevents this.
-	guint32 handle = mono_gchandle_new (ares, FALSE);
-	ares->gchandle = handle;
+	ares->gchandle = mono_gchandle_new (ares, FALSE);
 
 	EnterCriticalSection (&ares_lock);
 	if (domain->state == MONO_APPDOMAIN_UNLOADED || domain->state == MONO_APPDOMAIN_UNLOADING) {
