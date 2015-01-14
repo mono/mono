@@ -2,20 +2,18 @@
 using System;
 using System.IO;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Diagnostics;
-
-using SCS = System.Collections.Specialized;
 
 namespace Microsoft.Build.Utilities
 {
 	internal static class ProcessService {
-		static SCS.ProcessStringDictionary globalEnvironmentVariablesOverride;
+		static Dictionary<string, string> globalEnvironmentVariablesOverride;
 
-		public static StringDictionary GlobalEnvironmentVariblesOverride {
+		public static Dictionary<string, string> GlobalEnvironmentVariblesOverride {
 			get {
 				if (globalEnvironmentVariablesOverride == null)
-					globalEnvironmentVariablesOverride = new SCS.ProcessStringDictionary ();
+					globalEnvironmentVariablesOverride = new Dictionary<string, string> (StringComparer.InvariantCultureIgnoreCase);
 				return globalEnvironmentVariablesOverride;
 			}
 		}
@@ -58,7 +56,7 @@ namespace Microsoft.Build.Utilities
 			return StartProcess (startInfo, outWriter, errorWriter, exited, null);
 		}
 
-		public static ProcessWrapper StartProcess (ProcessStartInfo startInfo, TextWriter outWriter, TextWriter errorWriter, EventHandler exited, StringDictionary environmentOverride)
+		public static ProcessWrapper StartProcess (ProcessStartInfo startInfo, TextWriter outWriter, TextWriter errorWriter, EventHandler exited, Dictionary<string, string> environmentOverride)
 		{
 			ProcessEventHandler wout = OutWriter.GetWriteHandler (outWriter);
 			ProcessEventHandler werr = OutWriter.GetWriteHandler (errorWriter);
@@ -66,7 +64,7 @@ namespace Microsoft.Build.Utilities
 		}
 
 		// @environmentOverride overrides even the global override values
-		public static ProcessWrapper StartProcess (ProcessStartInfo startInfo, ProcessEventHandler outputStreamChanged, ProcessEventHandler errorStreamChanged, EventHandler exited, StringDictionary environmentOverride)
+		public static ProcessWrapper StartProcess (ProcessStartInfo startInfo, ProcessEventHandler outputStreamChanged, ProcessEventHandler errorStreamChanged, EventHandler exited, Dictionary<string, string> environmentOverride)
 		{
 			if (startInfo == null)
 				throw new ArgumentException ("startInfo");
@@ -121,14 +119,14 @@ namespace Microsoft.Build.Utilities
 			return startInfo;
 		}
 
-		public static void ProcessEnvironmentVariableOverrides (ProcessStartInfo info, StringDictionary environmentOverride)
+		public static void ProcessEnvironmentVariableOverrides (ProcessStartInfo info, Dictionary<string, string> environmentOverride)
 		{
 			if (globalEnvironmentVariablesOverride != null)
-				foreach (DictionaryEntry entry in globalEnvironmentVariablesOverride)
+				foreach (var entry in globalEnvironmentVariablesOverride)
 					ProcessEnvironmentVariable (info, (string)entry.Key, (string)entry.Value);
 
 			if (environmentOverride != null)
-				foreach (DictionaryEntry entry in environmentOverride)
+				foreach (var entry in environmentOverride)
 					ProcessEnvironmentVariable (info, (string)entry.Key, (string)entry.Value);
                 }
 
