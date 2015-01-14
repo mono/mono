@@ -1046,9 +1046,7 @@ mono_async_invoke (MonoAsyncResult *ares)
 		SetEvent ((gpointer)(gsize)ac->wait_event);
 	}
 	mono_monitor_exit ((MonoObject *) ares);
-	#ifdef PLATFORM_STV
-	mono_gchandle_free(ares);
-	#endif
+	mono_gchandle_free (ares->gchandle);
 }
 
 static void
@@ -1137,10 +1135,9 @@ mono_thread_pool_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *
 
 	ares = mono_async_result_new (domain, NULL, ac->state, NULL, (MonoObject*)ac);
 	MONO_OBJECT_SETREF (ares, async_delegate, target);
-	#ifdef PLATFORM_STV
-	// On only STV it seems like garbage collect likes to nuke ares inappropriately. The handle prevents this.
-	mono_gchandle_new(ares, FALSE);
-	#endif
+	// It seems like garbage collect likes to nuke ares inappropriately. The handle prevents this.
+	guint32 handle = mono_gchandle_new (ares, FALSE);
+	ares->gchandle = handle;
 
 	EnterCriticalSection (&ares_lock);
 	if (domain->state == MONO_APPDOMAIN_UNLOADED || domain->state == MONO_APPDOMAIN_UNLOADING) {
