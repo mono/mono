@@ -228,6 +228,7 @@ typedef struct {
 	MonoObject  *async_callback;
 	MonoObject  *execution_context;
 	MonoObject  *original_context;
+	guint32      gchandle;
 } MonoAsyncResult;
 
 typedef struct {
