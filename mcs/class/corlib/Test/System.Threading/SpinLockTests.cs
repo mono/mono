@@ -85,6 +85,9 @@ namespace MonoTests.System.Threading
 
 			sl.TryEnter (ref taken2);
 			Assert.IsTrue (taken2, "#3");
+
+			sl.Exit ();
+			Assert.IsFalse (sl.IsHeld);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentException))]

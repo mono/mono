@@ -154,7 +154,7 @@ namespace System.Threading
 				long u = ticket.Users;
 				long totalValue = (u << 32) | u;
 				long newTotalValue
-					= BitConverter.IsLittleEndian ? (u << 32) | (u + 1) : ((u + 1) << 32) | u;
+					= BitConverter.IsLittleEndian ? ((u + 1) << 32) | u : (u << 32) | (u + 1);
 				
 				RuntimeHelpers.PrepareConstrainedRegions ();
 				try {}
