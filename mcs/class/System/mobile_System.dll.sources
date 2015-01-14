@@ -185,11 +185,6 @@ System.Net/BindIPEndPoint.cs
 System.Net/ChunkStream.cs
 System.Net/ChunkedInputStream.cs
 System.Net/ConnectionModes.cs
-System.Net/Cookie.cs
-System.Net/CookieCollection.cs
-System.Net/CookieContainer.cs
-System.Net/CookieException.cs
-System.Net/CookieParser.cs
 System.Net/CredentialCache.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
@@ -408,9 +403,12 @@ System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
 System.Runtime.InteropServices/HandleCollector.cs
 System.Windows.Input/ICommand.cs
 
+ReferenceSources/GlobalLog.cs
+ReferenceSources/HttpKnownHeaderNames.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/SR.cs
 ReferenceSources/SRCategoryAttribute.cs
+ReferenceSources/ValidationHelper.cs
 ReferenceSources/Win32Exception.cs
 
 ../../../external/referencesource/System/regex/system/text/regularexpressions/Regex.cs
@@ -720,6 +718,11 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/UInt64Converter.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/WarningException.cs
 ../../../external/referencesource/System/compmod/system/componentmodel/Win32Exception.cs
+
+../../../external/referencesource/System/net/System/Net/cookie.cs
+../../../external/referencesource/System/net/System/Net/cookiecollection.cs
+../../../external/referencesource/System/net/System/Net/cookiecontainer.cs
+../../../external/referencesource/System/net/System/Net/cookieexception.cs
 
 ../../../external/referencesource/System/sys/system/threading/Barrier.cs
 
