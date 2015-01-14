@@ -207,9 +207,15 @@ namespace System.Collections {
 		{
 		}
 
-		public Hashtable (IDictionary d, float loadFactor, IEqualityComparer equalityComparer) : this (d, loadFactor)
+		public Hashtable (IDictionary d, float loadFactor, IEqualityComparer equalityComparer) : this (d == null ? 0 : d.Count, loadFactor, equalityComparer)
 		{
-			this.equalityComparer = equalityComparer;
+			if (d  ==  null)
+				throw new ArgumentNullException ("d");
+
+			IDictionaryEnumerator it = d.GetEnumerator ();
+			while (it.MoveNext ()) {
+				Add (it.Key, it.Value);
+			}
 		}
 
 		public Hashtable (IEqualityComparer equalityComparer) : this (1, 1.0f, equalityComparer)

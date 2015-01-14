@@ -812,6 +812,19 @@ public class HashtableTest {
 			dd.Remove (v);
 		}
 	}
+
+	[Test]
+	public void HashtableCopyWithCustomComparer ()
+	{
+		var ht = new Hashtable ();
+		ht.Add ("a", "b");
+		try {
+			new Hashtable (ht, new IEqualityComparer_ApplicationException ());
+			Assert.Fail ("custom comparer not used");
+		} catch (ApplicationException) {
+
+		}
+	}
 }
 
 class IDHashtable : Hashtable {
@@ -857,5 +870,17 @@ public class Bug :ISerializable {
 	}
 };
 
+	class IEqualityComparer_ApplicationException : IEqualityComparer
+	{
+		public new bool Equals (object x, object y)
+		{
+			return false;
+		}
+
+		public int GetHashCode (object obj)
+		{
+			throw new ApplicationException ();
+		}
+	}
 
 }
