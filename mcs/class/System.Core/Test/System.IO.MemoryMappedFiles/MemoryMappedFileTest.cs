@@ -341,6 +341,22 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 
 			MemoryMappedViewStream stream = mappedFile.CreateViewStream (8191, 8191, MemoryMappedFileAccess.ReadWrite);
 		}
+
+		[Test]
+		public void CreateViewStreamAlignToPageSize ()
+		{
+			int pageSize = Environment.SystemPageSize;
+			string f = Path.Combine (tempDir, "p-file");
+			File.WriteAllBytes (f, new byte [pageSize * 2 + 1]);
+
+			MemoryMappedFile mappedFile = MemoryMappedFile.CreateFromFile (f, FileMode.Open);
+
+			MemoryMappedViewStream stream = mappedFile.CreateViewStream (pageSize * 2, 0, MemoryMappedFileAccess.ReadWrite);
+
+			Assert.AreEqual (stream.Capacity, Environment.SystemPageSize);
+
+			stream.Write (new byte [pageSize], 0, pageSize);
+		}
 	}
 }
 
