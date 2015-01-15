@@ -101,6 +101,7 @@ System.IO/DirectoryTest.cs
 System.IO/FileInfoTest.cs
 System.IO/FileNotFoundExceptionTest.cs
 System.IO/FileStreamTest.cs
+System.IO/FileStreamSafeHandleTest.cs
 System.IO/FileSystemInfoTest.cs
 System.IO/FileTest.cs
 System.IO/MemoryStreamTest.cs
