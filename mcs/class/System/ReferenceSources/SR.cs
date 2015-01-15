@@ -242,6 +242,14 @@ partial class SR
 	public const string Barrier_ctor_ArgumentOutOfRange = "Barrier_ctor_ArgumentOutOfRange";
 	public const string WaitHandleCannotBeOpenedException_InvalidHandle = "WaitHandleCannotBeOpenedException_InvalidHandle";
 
+	public const string InvalidParameter = "InvalidParameter";
+	public const string TimerAutoReset = "TimerAutoReset";
+	public const string TimerEnabled = "TimerEnabled";
+	public const string TimerInterval = "TimerInterval";
+	public const string TimerIntervalElapsed = "TimerIntervalElapsed";
+	public const string TimerInvalidInterval = "TimerInvalidInterval";
+	public const string TimerSynchronizingObject = "TimerSynchronizingObject";
+
 	public const string ArgumentOutOfRange_Bounds_Lower_Upper = "ArgumentOutOfRange_Bounds_Lower_Upper";
 	public const string ContentDispositionInvalid = "ContentDispositionInvalid";
 	public const string ContentTypeInvalid = "ContentTypeInvalid";

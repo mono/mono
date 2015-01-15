@@ -676,9 +676,6 @@ System.Threading/SemaphoreFullException.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
 System.Timers/ElapsedEventArgs.cs
-System.Timers/ElapsedEventHandler.cs
-System.Timers/Timer.cs
-System.Timers/TimersDescriptionAttribute.cs
 System/UriBuilder.cs
 System/UriComponents.cs
 System/Uri.cs
@@ -1096,6 +1093,10 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/sys/system/threading/Barrier.cs
 
 ../../../external/referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
+
+../../../external/referencesource/System/services/timers/system/timers/ElapsedEventHandler.cs
+../../../external/referencesource/System/services/timers/system/timers/Timer.cs
+../../../external/referencesource/System/services/timers/system/timers/TimersDescriptionAttribute.cs
 
 ../../../external/referencesource/System/misc/hresults.cs
 ../../../external/referencesource/System/misc/invariantcomparer.cs

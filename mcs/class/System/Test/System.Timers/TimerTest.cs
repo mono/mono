@@ -168,13 +168,13 @@ namespace MonoTests.System.Timers
 				timer.Enabled = true;
 				Assert.Fail ("#2");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#3");
-				Assert.IsFalse (timer.Enabled);
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#3");
+				Assert.IsTrue (timer.Enabled);
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Interval_TooHigh_Enabled_Throw ()
 		{
 			timer.Interval = 100;
@@ -201,7 +201,6 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void Disposed_ThrowOnEnabled ()
 		{
 			timer.Interval = 100;
