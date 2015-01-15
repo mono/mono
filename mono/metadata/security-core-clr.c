@@ -577,7 +577,7 @@ mono_security_core_clr_method_level (MonoMethod *method, gboolean with_class_lev
 gboolean
 mono_security_core_clr_is_platform_image (MonoImage *image)
 {
-	return image->core_clr_platform_code;
+	return image && image->core_clr_platform_code;
 }
 
 /*
