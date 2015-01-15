@@ -302,10 +302,13 @@ namespace System.Timers {
             if (!this.autoReset) {
                 enabled = false;
             }
-
+#if MONO
+            ElapsedEventArgs elapsedEventArgs = new ElapsedEventArgs(DateTime.Now);
+#else
             FILE_TIME filetime = new FILE_TIME();
             GetSystemTimeAsFileTime(ref filetime);
             ElapsedEventArgs elapsedEventArgs = new ElapsedEventArgs(filetime.ftTimeLow, filetime.ftTimeHigh); 
+#endif
             try {                                            
                 // To avoid ---- between remove handler and raising the event
                 ElapsedEventHandler intervalElapsed = this.onIntervalElapsed;
@@ -319,7 +322,7 @@ namespace System.Timers {
             catch {             
             }            
         }                        
-
+#if !MONO
         [StructLayout(LayoutKind.Sequential)]
         internal struct FILE_TIME {
             internal int ftTimeLow;
@@ -329,6 +332,7 @@ namespace System.Timers {
         [ResourceExposure(ResourceScope.None)]
         [DllImport(ExternDll.Kernel32), SuppressUnmanagedCodeSecurityAttribute()]
         internal static extern void GetSystemTimeAsFileTime(ref FILE_TIME lpSystemTimeAsFileTime);		
+#endif
     }
 }
 
