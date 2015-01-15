@@ -124,8 +124,8 @@ namespace Mono.Security.Protocol.Tls
 
 		public Alert(AlertDescription description)
 		{
-			this.inferAlertLevel();
 			this.description = description;
+			this.level = inferAlertLevel(description);
 		}
 
 		public Alert(
@@ -140,15 +140,14 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Private Methods
 
-		private void inferAlertLevel()
+		private static AlertLevel inferAlertLevel(AlertDescription description)
 		{
 			switch (description)
 			{
 				case AlertDescription.CloseNotify:
 				case AlertDescription.NoRenegotiation:
 				case AlertDescription.UserCancelled:
-					this.level = AlertLevel.Warning;
-					break;
+					return AlertLevel.Warning;
 
 				case AlertDescription.AccessDenied:
 				case AlertDescription.BadCertificate:
@@ -171,8 +170,7 @@ namespace Mono.Security.Protocol.Tls
 				case AlertDescription.UnknownCA:
 				case AlertDescription.UnsupportedCertificate:
 				default:
-					this.level = AlertLevel.Fatal;
-					break;
+					return AlertLevel.Fatal;
 			}
 		}
 		
