@@ -54,17 +54,6 @@ namespace MonoTests.System.Collections
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		public void Default_Mono ()
-		{
-			// we return same instance if current culture did not change
-			CaseInsensitiveHashCodeProvider cih1 = CaseInsensitiveHashCodeProvider.Default;
-			CaseInsensitiveHashCodeProvider cih2 = CaseInsensitiveHashCodeProvider.Default;
-			Assert.IsTrue (object.ReferenceEquals (cih1, cih2));
-		}
-
-		[Test]
-		[Category ("NotWorking")]
 		public void Default_MS ()
 		{
 			// MS always returns new instance

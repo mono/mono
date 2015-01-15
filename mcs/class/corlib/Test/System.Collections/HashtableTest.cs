@@ -283,7 +283,7 @@ public class HashtableTest {
 
 	static IEqualityComparer GetEqualityComparer (Hashtable h)
 	{
-		return (IEqualityComparer) typeof (Hashtable).GetField ("equalityComparer",
+		return (IEqualityComparer) typeof (Hashtable).GetField ("_keycomparer",
 			BindingFlags.NonPublic | BindingFlags.Instance).GetValue (h);
 	}
 #endif

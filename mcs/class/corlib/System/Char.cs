@@ -178,7 +178,7 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return m_value;
+			return (int)m_value | ((int)m_value << 16);
 		}
 
 		public static double GetNumericValue (char c)

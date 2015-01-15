@@ -502,5 +502,10 @@ namespace System.Globalization {
 		{
 			return new TextInfo (this);
 		}
+
+		internal int GetCaseInsensitiveHashCode (string str)
+		{
+			return StringComparer.CurrentCultureIgnoreCase.GetHashCode (str);
+		}
 	}
 }

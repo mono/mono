@@ -648,6 +648,11 @@ namespace System
 			SetValue (value, ind);
 		}
 
+		internal static Array UnsafeCreateInstance (Type elementType, int length)
+		{
+			return CreateInstance (elementType, length);
+		}
+
 		public static Array CreateInstance (Type elementType, int length)
 		{
 			int[] lengths = {length};

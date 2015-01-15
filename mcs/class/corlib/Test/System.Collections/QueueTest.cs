@@ -147,7 +147,7 @@ namespace MonoTests.System.Collections {
 #endif
 
 			Queue q1sync = Queue.Synchronized(q1);
-			Assert.AreEqual (q1, q1sync.SyncRoot, "SyncRoot value of a synchronized queue");
+			Assert.AreNotSame (q1, q1sync.SyncRoot, "SyncRoot value of a synchronized queue");
 		}
 
 		[Test]
