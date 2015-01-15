@@ -699,13 +699,8 @@ namespace Mono.Security.Protocol.Tls
 				close = alert.IsCloseNotify;
 			}
 
-			try {
 			// Write record
-				this.SendRecord (ContentType.Alert, new byte[2] { (byte) level, (byte) description });
-			} catch (Exception ex) {
-				throw new IOException (string.Format (
-					"Exception while sending TLS Alert ({0}:{1})", level, description), ex);
-			}
+			this.SendRecord (ContentType.Alert, new byte[2] { (byte) level, (byte) description });
 
 			if (close) {
 				this.context.SentConnectionEnd = true;

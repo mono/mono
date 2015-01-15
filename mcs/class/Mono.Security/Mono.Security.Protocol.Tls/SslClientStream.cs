@@ -588,26 +588,14 @@ namespace Mono.Security.Protocol.Tls
 			}
 			catch (TlsException ex)
 			{
-				AggregateException aggregate;
-				try {
-					// FIXME: should the send alert also be done asynchronously here and below?
-					this.protocol.SendAlert(ex.Alert);
-					aggregate = new AggregateException ("The authentication or decryption has failed.", ex);
-				} catch (Exception alertEx) {
-					aggregate = new AggregateException ("The authentication or decryption has failed (error while sending Alert).", ex, alertEx);
-				}
-				negotiate.SetComplete (aggregate);
+				// FIXME: should the send alert also be done asynchronously here and below?
+				this.protocol.SendAlert(ex.Alert);
+				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
 			}
 			catch (Exception ex)
 			{
-				AggregateException aggregate;
-				try {
-					this.protocol.SendAlert(AlertDescription.InternalError);
-					aggregate = new AggregateException ("The authentication or decryption has failed.", ex);
-				} catch (Exception alertEx) {
-					aggregate = new AggregateException ("The authentication or decryption has failed (error while sending Alert).", ex, alertEx);
-				}
-				negotiate.SetComplete (aggregate);
+				this.protocol.SendAlert(AlertDescription.InternalError);
+				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
 			}
 		}
 
