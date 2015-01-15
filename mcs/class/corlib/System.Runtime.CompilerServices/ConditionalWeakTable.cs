@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Runtime.CompilerServices
 {
@@ -217,6 +218,24 @@ namespace System.Runtime.CompilerServices
 			}
 
 			return res;
+		}
+		
+		// extracted from ../../../../external/referencesource/mscorlib/system/runtime/compilerservices/
+		internal ICollection<TKey> Keys
+		{
+			[System.Security.SecuritySafeCritical]
+			get
+			{
+				List<TKey> list = new List<TKey>(data.Length);
+				lock (_lock)
+				{
+					for (int i = 0; i < data.Length; ++i)
+					{
+						list.Add ((TKey) data [i].key);
+					}
+				}
+				return list;
+			}
 		}
 	}
 }

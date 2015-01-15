@@ -2,3 +2,4 @@
 
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/DynamicExpression.cs
 System.Linq.Expressions/DynamicExpressionVisitor.cs
+../corlib/System.Threading.Tasks/TaskExtensionsImpl.cs

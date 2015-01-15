@@ -169,6 +169,11 @@ namespace System.Threading
 			return true;
 		}
 
+		// extracted from ../../../../external/referencesource/mscorlib/system/threading/timer.cs
+		internal void KeepRootedWhileScheduled()
+		{
+		}
+
 		sealed class TimerComparer : IComparer {
 			public int Compare (object x, object y)
 			{

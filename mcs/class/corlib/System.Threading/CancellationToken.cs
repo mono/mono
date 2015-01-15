@@ -81,11 +81,29 @@ namespace System.Threading
 
 			return Register (() => callback (state), useSynchronizationContext);
 		}
+		
+		// helper for internal registration needs that don't require an EC capture (e.g. creating linked token sources, or registering unstarted TPL tasks)
+		// has a handy signature, and skips capturing execution context.
+		internal CancellationTokenRegistration InternalRegisterWithoutEC(Action<object> callback, Object state)
+		{
+			return Register(
+				callback,
+				state,
+				false // useSyncContext=false
+			);
+		}
 
 		public void ThrowIfCancellationRequested ()
 		{
 			if (source != null && source.IsCancellationRequested)
 				throw new OperationCanceledException (this);
+		}
+
+		// Throw an ODE if this CancellationToken's source is disposed.
+		internal void ThrowIfSourceDisposed()
+		{
+			if ((source != null) && source.IsDisposed)
+				throw new ObjectDisposedException(null, "The CancellationTokenSource associated with this CancellationToken has been disposed.");
 		}
 
 		public bool Equals (CancellationToken other)

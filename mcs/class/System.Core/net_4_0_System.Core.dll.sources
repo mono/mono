@@ -64,6 +64,7 @@ System.Threading/LockRecursionException.cs
 System.Threading/ThreadLockState.cs
 System.Threading/ReaderWriterLockSlimExtensions.cs
 System.Threading.Tasks/TaskExtensions.cs
+../corlib/System.Threading.Tasks/TaskExtensionsImpl.cs
 
 System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/ExpressionTransformer.cs
