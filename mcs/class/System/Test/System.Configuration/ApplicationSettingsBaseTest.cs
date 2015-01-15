@@ -171,10 +171,10 @@ namespace MonoTests.System.Configuration {
 			Assert.IsNotNull (props, "A1");
 			
 			Assert.IsTrue (props.MoveNext(), "A2");
-			Assert.AreEqual ("Address", ((SettingsProperty)props.Current).Name, "A3");
+			Assert.AreEqual ("Username", ((SettingsProperty)props.Current).Name, "A3");
 
 			Assert.IsTrue (props.MoveNext(), "A4");
-			Assert.AreEqual ("Username", ((SettingsProperty)props.Current).Name, "A5");
+			Assert.AreEqual ("Address", ((SettingsProperty)props.Current).Name, "A5");
 
 			Assert.AreEqual ("root", settings.Username, "A6");
 			Assert.AreEqual ("8 Cambridge Center", settings.Address, "A7");
