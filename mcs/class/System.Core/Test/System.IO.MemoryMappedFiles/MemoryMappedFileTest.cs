@@ -331,7 +331,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotSupportedException))]
+		[ExpectedException(typeof(IOException))]
 		public void CreateViewStreamWithOffsetPastFileEnd2 ()
 		{
 			string f = Path.Combine (tempDir, "8192-file");
@@ -340,9 +340,6 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			MemoryMappedFile mappedFile = MemoryMappedFile.CreateFromFile (f, FileMode.Open);
 
 			MemoryMappedViewStream stream = mappedFile.CreateViewStream (8191, 8191, MemoryMappedFileAccess.ReadWrite);
-
-			/* Should throw exception due to trying to overflow capacity */
-			stream.Write (new byte [8191], 0, 8191);
 		}
 	}
 }
