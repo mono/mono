@@ -33,6 +33,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 
 namespace MonoTests.System.Runtime.CompilerServices
 {
@@ -60,7 +61,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 			public override void Post (SendOrPostCallback d, object state)
 			{
-				if (state is Exception) {
+				if (state is ExceptionDispatchInfo) {
 					++PostCounter;
 				}
 			}

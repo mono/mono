@@ -66,9 +66,9 @@ namespace System {
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
-	public sealed class AppDomain : MarshalByRefObject {
+	public sealed partial class AppDomain : MarshalByRefObject {
 #else
-	public sealed class AppDomain : MarshalByRefObject, _AppDomain, IEvidenceFactory {
+	public sealed partial class AppDomain : MarshalByRefObject, _AppDomain, IEvidenceFactory {
 #endif
         #pragma warning disable 169
         #region Sync with object-internals.h

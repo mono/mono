@@ -260,6 +260,15 @@ namespace System.Threading
 				handle = null;
 			}
 		}
+		
+		// extracted from ../../../../external/referencesource/mscorlib/system/threading/CancellationTokenSource.cs
+		/// <summary>
+		/// A simple helper to determine whether disposal has occured.
+		/// </summary>
+		internal bool IsDisposed
+		{
+			get { return (state & StateDisposed) != 0; }
+		}
 
 		void UnregisterLinkedTokens ()
 		{

@@ -223,19 +223,20 @@ namespace MonoTests.System.Threading.Tasks
 			try {
 				factory.ContinueWhenAll (tasks, null);
 				Assert.Fail ("#4");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
 			}
 
 			try {
 				factory.ContinueWhenAll (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.None, null);
 				Assert.Fail ("#5");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
 			}
 
 			try {
 				factory.ContinueWhenAll (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, null);
 				Assert.Fail ("#6");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 
@@ -319,19 +320,20 @@ namespace MonoTests.System.Threading.Tasks
 			try {
 				factory.ContinueWhenAny (tasks, null);
 				Assert.Fail ("#4");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
 			}
 
 			try {
 				factory.ContinueWhenAny (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.None, null);
 				Assert.Fail ("#5");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
 			}
 
 			try {
 				factory.ContinueWhenAny (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, null);
 				Assert.Fail ("#6");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 
@@ -613,15 +615,14 @@ namespace MonoTests.System.Threading.Tasks
 			} catch (InvalidOperationException) {
 			}
 
-			Assert.IsTrue (task.IsCanceled, "#2");
-
-			task = factory.StartNew (() => { }, ct);
 			try {
 				task.Wait ();
+				Assert.Fail ("#2");
 			} catch (AggregateException e) {
-				Assert.IsTrue (task.IsCanceled, "#3");
-				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#4");
+				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#3");
 			}
+
+			Assert.IsTrue (task.IsCanceled, "#4");
 		}
 	}
 }

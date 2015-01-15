@@ -492,13 +492,26 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (true, previouslyQueued);
 		}
 
-		[Test, ExpectedException (typeof (InvalidOperationException))]
+		[Test]
 		public void CreationWhileInitiallyCanceled ()
 		{
 			var token = new CancellationToken (true);
 			var task = new Task (() => { }, token);
-			Assert.AreEqual (TaskStatus.Canceled, task.Status);
-			task.Start ();
+
+			try {
+				task.Start ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				task.Wait ();
+				Assert.Fail ("#2");
+			} catch (AggregateException e) {
+				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#3");
+			}
+
+			Assert.IsTrue (task.IsCanceled, "#4");
 		}
 
 		[Test]
@@ -508,25 +521,25 @@ namespace MonoTests.System.Threading.Tasks
 			try {
 				task.ContinueWith (null);
 				Assert.Fail ("#1");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException e) {
 			}
 
 			try {
 				task.ContinueWith (delegate { }, null);
 				Assert.Fail ("#2");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException e) {
 			}
 
 			try {
 				task.ContinueWith (delegate { }, TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.NotOnCanceled);
 				Assert.Fail ("#3");
-			} catch (ArgumentException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 
 			try {
 				task.ContinueWith (delegate { }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.NotOnRanToCompletion);
 				Assert.Fail ("#4");
-			} catch (ArgumentException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 
@@ -985,7 +998,7 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void Start_NullArgument ()
 		{
-			var t = Task.Factory.StartNew (delegate () { });
+			var t = new Task (() => { });
 			try {
 				t.Start (null);
 				Assert.Fail ();

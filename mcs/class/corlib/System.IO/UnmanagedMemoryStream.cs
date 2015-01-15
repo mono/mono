@@ -225,7 +225,7 @@ namespace System.IO
 
 				return read_task;
 			} catch (Exception ex) {
-				return Task<int>.FromException (ex);
+				return Task.FromException<int> (ex);
 			}
 		}
 
@@ -320,7 +320,7 @@ namespace System.IO
 				Flush ();
 				return TaskConstants.Finished;
 			} catch (Exception ex) {
-				return Task<object>.FromException (ex);
+				return Task.FromException<object> (ex);
 			}
 		}
 		 
@@ -398,7 +398,7 @@ namespace System.IO
 				Write (buffer, offset, count);
 				return TaskConstants.Finished;
 			} catch (Exception ex) {
-				return Task<object>.FromException (ex);
+				return Task.FromException<object> (ex);
 			}
 		}
 		

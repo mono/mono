@@ -33,6 +33,15 @@ namespace System.Threading
 		const           int  maxTime = 200;
 		static readonly bool isSingleCpu = (Environment.ProcessorCount == 1);
 
+		// extracted from ../../../../external/referencesource/mscorlib/system/threading/SpinWait.cs
+		// These constants determine the frequency of yields versus spinning. The
+		// numbers may seem fairly arbitrary, but were derived with at least some
+		// thought in the design document.  I fully expect they will need to change
+		// over time as we gain more experience with performance.
+		internal const int YIELD_THRESHOLD = step; // When to switch over to a true yield.
+		internal const int SLEEP_0_EVERY_HOW_MANY_TIMES = maxTime / step; // After how many yields should we Sleep(0)?
+		internal const int SLEEP_1_EVERY_HOW_MANY_TIMES = 4 * maxTime / step; // After how many yields should we Sleep(1)?
+
 		int ntime;
 
 		public void SpinOnce ()

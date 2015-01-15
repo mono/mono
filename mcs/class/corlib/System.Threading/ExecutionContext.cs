@@ -222,6 +222,11 @@ namespace System.Threading {
 
 			ec.FlowSuppressed = false;
 		}
+		
+		internal static void Run(ExecutionContext executionContext, ContextCallback callback, Object state, bool preserveSyncCtx)
+		{
+			Run (executionContext, callback, state);
+		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public static void Run (ExecutionContext executionContext, ContextCallback callback, object state)
