@@ -1429,6 +1429,10 @@ namespace Microsoft.Build.BuildEngine {
 			return default (T);
 		}
 
+		internal string ThisFileFullPath {
+			get { return this_file_property_stack.Peek (); }
+		}
+
 		// Used for MSBuild*This* set of properties
 		internal void PushThisFileProperty (string full_filename)
 		{
