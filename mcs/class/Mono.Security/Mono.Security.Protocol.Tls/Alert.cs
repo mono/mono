@@ -124,8 +124,8 @@ namespace Mono.Security.Protocol.Tls
 
 		public Alert(AlertDescription description)
 		{
-			this.inferAlertLevel();
 			this.description = description;
+			this.inferAlertLevel();
 		}
 
 		public Alert(
