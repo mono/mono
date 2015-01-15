@@ -2060,6 +2060,14 @@ namespace Mono.Unix.Native {
 				EntryPoint="Mono_Posix_Syscall_fcntl_arg")]
 		public static extern int fcntl (int fd, FcntlCommand cmd, long arg);
 
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_fcntl_arg_int")]
+		public static extern int fcntl (int fd, FcntlCommand cmd, int arg);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_fcntl_arg_ptr")]
+		public static extern int fcntl (int fd, FcntlCommand cmd, IntPtr ptr);
+
 		public static int fcntl (int fd, FcntlCommand cmd, DirectoryNotifyFlags arg)
 		{
 			if (cmd != FcntlCommand.F_NOTIFY) {
