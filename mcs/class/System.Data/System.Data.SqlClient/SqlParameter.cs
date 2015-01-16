@@ -221,8 +221,7 @@ namespace System.Data.SqlClient {
 							      scale,
 							      GetFrameworkValue);
 			metaParameter.RawValue =  value;
-			if (dbType != SqlDbType.Variant) 
-				SqlDbType = dbType;
+			SqlDbType = dbType;
 			Direction = direction;
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
