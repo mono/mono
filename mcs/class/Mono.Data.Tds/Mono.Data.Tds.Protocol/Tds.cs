@@ -1291,7 +1291,7 @@ namespace Mono.Data.Tds.Protocol
 		
 		internal bool IsBlobType (TdsColumnType columnType)
 		{
-			return (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image || columnType == TdsColumnType.NText);
+			return (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image || columnType == TdsColumnType.NText || columnType == TdsColumnType.Variant);
 		}
 
 		internal bool IsLargeType (TdsColumnType columnType)
