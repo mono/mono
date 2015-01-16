@@ -112,6 +112,8 @@ namespace System.Data.SqlClient {
 			DbTypeMapping.Add (SqlDbType.NVarChar, typeof (string));
 			DbTypeMapping.Add (SqlDbType.SmallDateTime, typeof (DateTime));
 			DbTypeMapping.Add (SqlDbType.DateTime, typeof (DateTime));
+			DbTypeMapping.Add (SqlDbType.DateTime2, typeof (DateTime));
+			DbTypeMapping.Add (SqlDbType.DateTimeOffset, typeof (DateTimeOffset));
 			DbTypeMapping.Add (SqlDbType.Decimal, typeof (decimal));
 			DbTypeMapping.Add (SqlDbType.Float, typeof (double));
 			DbTypeMapping.Add (SqlDbType.Binary, typeof (byte []));
@@ -773,6 +775,14 @@ namespace System.Data.SqlClient {
 			case SqlDbType.SmallDateTime:
 				MetaParameter.TypeName = "smalldatetime";
 				dbType = DbType.DateTime;
+				break;
+			case SqlDbType.DateTime2:
+				MetaParameter.TypeName = "datetime2";
+				dbType = DbType.DateTime2;
+				break;
+			case SqlDbType.DateTimeOffset:
+				MetaParameter.TypeName = "datetimeoffset";
+				dbType = DbType.DateTimeOffset;
 				break;
 			case SqlDbType.Decimal:
 				MetaParameter.TypeName = "decimal";
