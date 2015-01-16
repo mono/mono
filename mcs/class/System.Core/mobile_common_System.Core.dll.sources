@@ -51,7 +51,6 @@ System.IO.MemoryMappedFiles/MemoryMappedViewAccessor.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
 System.IO/HandleInheritability.cs
-System.Threading.Tasks/TaskExtensions.cs
 System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/ExpressionTransformer.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/DynamicExpression.cs
@@ -202,4 +201,7 @@ ReferenceSources/SR.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/Util.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/Wrapper.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/WrapperEqualityComparer.cs
+
 ../../../external/referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
+
+../../../external/referencesource/System.Core/System/threading/Tasks/TaskExtensions.cs

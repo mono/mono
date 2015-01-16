@@ -62,8 +62,6 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 System.Threading/LockRecursionException.cs
 System.Threading/ThreadLockState.cs
 System.Threading/ReaderWriterLockSlimExtensions.cs
-System.Threading.Tasks/TaskExtensions.cs
-../corlib/System.Threading.Tasks/TaskExtensionsImpl.cs
 
 System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/ExpressionTransformer.cs
@@ -232,5 +230,7 @@ ReferenceSources/SR.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/Util.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/Wrapper.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/WrapperEqualityComparer.cs
+
 ../../../external/referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 
+../../../external/referencesource/System.Core/System/threading/Tasks/TaskExtensions.cs
