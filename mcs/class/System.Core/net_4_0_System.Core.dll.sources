@@ -46,7 +46,6 @@ System.Linq/SortContext.cs
 System.Linq/SortDirection.cs
 System.Linq/SortSequenceContext.cs
 System.Linq/IQueryProvider.cs
-System.Collections.Generic/HashSet.cs
 System.Security.Cryptography/AesManaged.cs
 System.Security.Cryptography/AesCryptoServiceProvider.cs
 System.Security.Cryptography/AesTransform.cs
@@ -90,7 +89,14 @@ System.IO.Pipes/PipeUnix.cs
 System.IO.Pipes/PipeWin32.cs
 System.IO/HandleInheritability.cs
 
-#PLINQ
+ReferenceSources/Set.cs
+ReferenceSources/SR.cs
+
+../../../external/referencesource/System.Core/System/Collections/Generic/BitHelper.cs
+../../../external/referencesource/System.Core/System/Collections/Generic/HashSet.cs
+../../../external/referencesource/System.Core/System/Collections/Generic/HashSetDebugView.cs
+../../../external/referencesource/System.Core/System/Collections/Generic/HashSetEqualityComparer.cs
+
 ../../../external/referencesource/System.Core/System/Linq/ParallelEnumerable.cs
 ../../../external/referencesource/System.Core/System/Linq/ParallelMergeOptions.cs
 ../../../external/referencesource/System.Core/System/Linq/ParallelExecutionMode.cs
@@ -228,5 +234,3 @@ System.IO/HandleInheritability.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/WrapperEqualityComparer.cs
 ../../../external/referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 
-ReferenceSources/Set.cs
-ReferenceSources/SR.cs

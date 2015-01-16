@@ -65,7 +65,6 @@ System.Linq.Expressions/NewExpression.cs
 System.Linq.Expressions/ParameterExpression.cs
 System.Linq.Expressions/TypeBinaryExpression.cs
 System.Linq.Expressions/UnaryExpression.cs
-System.Collections.Generic/HashSet.cs
 System.Security.Cryptography/Aes.cs
 System.Security.Cryptography/AesManaged.cs
 System.Security.Cryptography/AesCryptoServiceProvider.cs
@@ -101,4 +100,5 @@ System.IO.Pipes/PipeTransmissionMode.cs
 System.IO.Pipes/PipeUnix.cs
 System.IO.Pipes/PipeWin32.cs
 System.IO/HandleInheritability.cs
+
 ../../../external/referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
