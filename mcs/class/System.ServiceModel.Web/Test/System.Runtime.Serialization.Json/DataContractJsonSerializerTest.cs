@@ -1550,7 +1550,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		public void TestHashtableSerialization ()
 		{
 			var collection = new HashtableContainer ();
-			var expectedOutput = "{\"Items\":[{\"Key\":\"key1\",\"Value\":\"banana\"},{\"Key\":\"key2\",\"Value\":\"apple\"}]}";
+			var expectedOutput = "{\"Items\":[{\"Key\":\"key2\",\"Value\":\"apple\"},{\"Key\":\"key1\",\"Value\":\"banana\"}]}";
 			
 			var serializer = new DataContractJsonSerializer (collection.GetType ());
 			var stream = new MemoryStream ();
