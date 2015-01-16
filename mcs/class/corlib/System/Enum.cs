@@ -392,7 +392,7 @@ namespace System
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return (string []) info.names.Clone ();
 		}
-
+/*
 #if NET_2_0
 		//
 		// The faster, non-boxing version.   It must use the special MonoEnumInfo.xxx_comparers
@@ -438,23 +438,36 @@ namespace System
 			return Array.BinarySearch (values, value);
 		}
 #else
+		*/
+
+		// After a number of attempts to workaround a bug in the implementation of isinst
+		// (see the commit at acca62e1c3b5f1bff27f637e693f57a5417bf57d for details) and subsequent
+		// problems with the FindPosition implementation above, I've decided to try this
+		// implementation, which is liekly slower, but hopefully will behave correctly both with
+		// the broken isinst behavior and with the correct isinst behavior (in il2cpp).
 		static int FindPosition (object value, Array values)
 		{
 			IComparer ic = null;
 
-			if (values is int[])
-				return Array.BinarySearch (values, value, MonoEnumInfo.int_comparer);
-			if (values is short[])
-				return Array.BinarySearch (values, value, MonoEnumInfo.short_comparer);
-			if (values is sbyte [])
-				return Array.BinarySearch (values, value,  MonoEnumInfo.sbyte_comparer);
-			if (values is long [])
-				return Array.BinarySearch (values, value,  MonoEnumInfo.long_comparer);
+			if (!(values is byte[]) &&
+				!(values is ushort[]) &&
+				!(values is uint[]) &&
+				!(values is ulong[]))
+			{
+				if (values is int[])
+					return Array.BinarySearch (values, value, MonoEnumInfo.int_comparer);
+				if (values is short[])
+					return Array.BinarySearch (values, value, MonoEnumInfo.short_comparer);
+				if (values is sbyte [])
+					return Array.BinarySearch (values, value,  MonoEnumInfo.sbyte_comparer);
+				if (values is long [])
+					return Array.BinarySearch (values, value,  MonoEnumInfo.long_comparer);
+			}
 
 			return Array.BinarySearch (values, value);
 
 		}
-#endif
+//#endif
 	
 #if NET_2_0
 		[ComVisible (true)]
