@@ -586,6 +586,13 @@ namespace Mono.Data.Tds.Protocol
 			} else if (colType == TdsColumnType.BigVarBinary) {
 				if (size > 8000)
 					colType = TdsColumnType.Image;
+			} else if (colType == TdsColumnType.DateTime2 ||
+				   colType == TdsColumnType.DateTimeOffset) {
+				// HACK: Wire-level DateTime{2,Offset}
+				// require TDS 7.3, which this driver
+				// does not implement correctly--so we
+				// serialize to ASCII instead.
+				colType = TdsColumnType.Char;
 			}
 			// Calculation of TypeInfo field
 			/* 
@@ -715,6 +722,8 @@ namespace Mono.Data.Tds.Protocol
 				case "nchar" :
 				case "text" :
 				case "ntext" :
+				case "datetime2":
+				case "datetimeoffset":
 					byte [] tmp = param.GetBytes ();
 					Comm.Append (tmp);
 					break;
