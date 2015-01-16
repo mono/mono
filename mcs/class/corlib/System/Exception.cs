@@ -124,6 +124,12 @@ namespace System
 			get { return hresult; }
 			protected set { hresult = value; }
 		}
+        
+		internal void SetErrorCode(int hr)
+		{
+			HResult = hr;
+		}
+
 		internal void SetMessage (string s)
 		{
 			message = s;
