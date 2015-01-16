@@ -391,13 +391,22 @@ namespace System.Xml.Serialization
 
 		public XmlTypeMapElementInfo GetElement(string name, string ns, int minimalOrder)
 		{
-			if (_elements == null) return null;
+			if (_elements == null)
+				return null;
 
-			foreach (XmlTypeMapElementInfo info in _elements.Values)
-				if (info.ElementName == name && info.Namespace == ns && info.ExplicitOrder >= minimalOrder)
-					return info;
+			XmlTypeMapElementInfo selected = null;
+			foreach (XmlTypeMapElementInfo info in _elements.Values) {
+				if (info.ElementName == name && info.Namespace == ns) {
+					if (info.ExplicitOrder < minimalOrder)
+						continue;
 
-			return null;
+					if (selected == null || selected.ExplicitOrder > info.ExplicitOrder) {
+						selected = info;
+					}
+				}
+			}
+
+			return selected;
 		}
 
 		public XmlTypeMapElementInfo GetElement(string name, string ns)
