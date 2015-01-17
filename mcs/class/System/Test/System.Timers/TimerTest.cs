@@ -179,7 +179,7 @@ namespace MonoTests.System.Timers
 		{
 			timer.Interval = 100;
 			timer.Enabled = true;
-			timer.Interval = double.MaxValue;
+			timer.Interval = (double)int.MaxValue + 1;
 		}
 
 		[Test]
