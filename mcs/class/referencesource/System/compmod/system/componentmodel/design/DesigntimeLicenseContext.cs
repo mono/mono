@@ -12,7 +12,6 @@ namespace System.ComponentModel.Design {
     using System.Net;
     using System.IO;
     using System.Reflection;
-    using System.Reflection.Emit;
     using System.Collections;
     using System.ComponentModel;
     using System.Globalization;

@@ -109,7 +109,7 @@ namespace System.ComponentModel {
                             }
                         }
                     }
-                    
+#if !MOBILE                  
                     // Now see if this is an IComponent.
                     //
                     if (!Marshal.IsComObject(value) && value is IComponent) {
@@ -125,6 +125,7 @@ namespace System.ComponentModel {
 
                     // Couldn't find it.
                     return String.Empty;
+#endif
                 }
                 return none;
             }
