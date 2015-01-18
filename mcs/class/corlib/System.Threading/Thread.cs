@@ -234,13 +234,8 @@ namespace System.Threading {
 
 		public static void FreeNamedDataSlot (string name) {
 			lock (datastore_lock) {
-				if (datastorehash == null)
-					InitDataStoreHash ();
-				LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash [name];
-
-				if (slot != null) {
-					datastorehash.Remove (slot);
-				}
+				if (datastorehash != null)
+					datastorehash.Remove (name);
 			}
 		}
 

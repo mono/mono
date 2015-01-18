@@ -392,7 +392,7 @@ namespace System
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return (string []) info.names.Clone ();
 		}
-
+/*
 #if NET_2_0
 		//
 		// The faster, non-boxing version.   It must use the special MonoEnumInfo.xxx_comparers
@@ -402,59 +402,72 @@ namespace System
 		//
 		static int FindPosition (object value, Array values)
 		{
-			uint[] uint_array = values as uint [];
-			if (uint_array != null)
-				return Array.BinarySearch (uint_array, (uint)value);
-
 			int[] int_array = values as int[];
-			if (int_array != null)
+			if (int_array != null && value is int)
 				return Array.BinarySearch (int_array, (int)value, MonoEnumInfo.int_comparer);
-			
-			ushort [] ushort_array = values as ushort [];
-			if (ushort_array != null)
-				return Array.BinarySearch (ushort_array, (ushort)value);
 
+			uint[] uint_array = values as uint [];
+			if (uint_array != null && value is uint)
+				return Array.BinarySearch (uint_array, (uint)value);
+			
 			short [] short_array = values as short [];
-			if (short_array != null)
+			if (short_array != null && value is short)
 				return Array.BinarySearch (short_array, (short)value, MonoEnumInfo.short_comparer);
 
-			byte [] byte_array = values as byte [];
-			if (byte_array != null)
-				return Array.BinarySearch (byte_array, (byte) value);
+			ushort [] ushort_array = values as ushort [];
+			if (ushort_array != null && value is ushort)
+				return Array.BinarySearch (ushort_array, (ushort)value);
 
 			sbyte [] sbyte_array = values as sbyte [];
-			if (sbyte_array != null)
+			if (sbyte_array != null && value is sbyte)
 				return Array.BinarySearch (sbyte_array, (sbyte) value,  MonoEnumInfo.sbyte_comparer);
 
-			ulong [] ulong_array = values as ulong [];
-			if (ulong_array != null)
-				return Array.BinarySearch (ulong_array, (ulong) value);
-			
+			byte [] byte_array = values as byte [];
+			if (byte_array != null && value is byte)
+				return Array.BinarySearch (byte_array, (byte) value);
+
 			long [] long_array = values as long [];
-			if (long_array != null)
+			if (long_array != null && value is long)
 				return Array.BinarySearch (long_array, (long) value,  MonoEnumInfo.long_comparer);
+
+			ulong [] ulong_array = values as ulong [];
+			if (ulong_array != null && value is ulong)
+				return Array.BinarySearch (ulong_array, (ulong) value);
 
 			// This should never happen
 			return Array.BinarySearch (values, value);
 		}
 #else
+		*/
+
+		// After a number of attempts to workaround a bug in the implementation of isinst
+		// (see the commit at acca62e1c3b5f1bff27f637e693f57a5417bf57d for details) and subsequent
+		// problems with the FindPosition implementation above, I've decided to try this
+		// implementation, which is liekly slower, but hopefully will behave correctly both with
+		// the broken isinst behavior and with the correct isinst behavior (in il2cpp).
 		static int FindPosition (object value, Array values)
 		{
 			IComparer ic = null;
 
-			if (values is int[])
-				return Array.BinarySearch (values, value, MonoEnumInfo.int_comparer);
-			if (values is short[])
-				return Array.BinarySearch (values, value, MonoEnumInfo.short_comparer);
-			if (values is sbyte [])
-				return Array.BinarySearch (values, value,  MonoEnumInfo.sbyte_comparer);
-			if (values is long [])
-				return Array.BinarySearch (values, value,  MonoEnumInfo.long_comparer);
+			if (!(values is byte[]) &&
+				!(values is ushort[]) &&
+				!(values is uint[]) &&
+				!(values is ulong[]))
+			{
+				if (values is int[])
+					return Array.BinarySearch (values, value, MonoEnumInfo.int_comparer);
+				if (values is short[])
+					return Array.BinarySearch (values, value, MonoEnumInfo.short_comparer);
+				if (values is sbyte [])
+					return Array.BinarySearch (values, value,  MonoEnumInfo.sbyte_comparer);
+				if (values is long [])
+					return Array.BinarySearch (values, value,  MonoEnumInfo.long_comparer);
+			}
 
 			return Array.BinarySearch (values, value);
 
 		}
-#endif
+//#endif
 	
 #if NET_2_0
 		[ComVisible (true)]
