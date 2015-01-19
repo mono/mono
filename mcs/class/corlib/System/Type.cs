@@ -809,25 +809,9 @@ namespace System {
 		internal static extern void GetInterfaceMapData (Type t, Type iface, out MethodInfo[] targets, out MethodInfo[] methods);
 
 		[ComVisible (true)]
-		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType) {
-			if (!IsSystemType)
-				throw new NotSupportedException ("Derived classes must provide an implementation.");
-			if (interfaceType == null)
-				throw new ArgumentNullException ("interfaceType");
-			if (!interfaceType.IsSystemType)
-				throw new ArgumentException ("interfaceType", "Type is an user type");
-			InterfaceMapping res;
-			if (!interfaceType.IsInterface)
-				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "interfaceType");
-			if (IsInterface)
-				throw new ArgumentException ("'this' type cannot be an interface itself");
-			res.TargetType = this;
-			res.InterfaceType = interfaceType;
-			GetInterfaceMapData (this, interfaceType, out res.TargetMethods, out res.InterfaceMethods);
-			if (res.TargetMethods == null)
-				throw new ArgumentException (Locale.GetText ("Interface not found"), "interfaceType");
-
-			return res;
+		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType)
+		{
+			throw new NotSupportedException ();
 		}
 
 		public abstract Type[] GetInterfaces ();
