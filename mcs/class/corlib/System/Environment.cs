@@ -232,7 +232,7 @@ namespace System {
 		public static OperatingSystem OSVersion {
 			get {
 				if (os == null) {
-					Version v = Version.CreateFromString (GetOSVersionString ());
+					Version v = CreateVersionFromString (GetOSVersionString ());
 					PlatformID p = Platform;
 					if (p == PlatformID.MacOSX)
 						p = PlatformID.Unix;
@@ -240,6 +240,75 @@ namespace System {
 				}
 				return os;
 			}
+		}
+
+
+		// a very gentle way to construct a Version object which takes 
+		// the first four numbers in a string as the version
+		internal static Version CreateVersionFromString (string info)
+		{
+			int major = 0;
+			int minor = 0;
+			int build = 0;
+			int revision = 0;
+			int state = 1;
+			int number = -1; // string may not begin with a digit
+
+			if (info == null)
+				return new Version (0, 0, 0, 0);
+
+			for (int i=0; i < info.Length; i++) {
+				char c = info [i];
+				if (Char.IsDigit (c)) {
+					if (number < 0) {
+						number = (c - '0');
+					}
+					else {
+						number = (number * 10) + (c - '0');
+					}
+				}
+				else if (number >= 0) {
+					// assign
+					switch (state) {
+					case 1:
+						major = number;
+						break;
+					case 2:
+						minor = number;
+						break;
+					case 3:
+						build = number;
+						break;
+					case 4:
+						revision = number;
+						break;
+					}
+					number = -1;
+					state ++;
+				}
+				// ignore end of string
+				if (state == 5)
+					break;
+			}
+
+			// Last number
+			if (number >= 0) {
+				switch (state) {
+				case 1:
+					major = number;
+					break;
+				case 2:
+					minor = number;
+					break;
+				case 3:
+					build = number;
+					break;
+				case 4:
+					revision = number;
+					break;
+				}
+			}
+			return new Version (major, minor, build, revision);
 		}
 
 		/// <summary>

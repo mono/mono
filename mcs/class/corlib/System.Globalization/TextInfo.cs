@@ -507,5 +507,10 @@ namespace System.Globalization {
 		{
 			return StringComparer.CurrentCultureIgnoreCase.GetHashCode (str);
 		}
+
+		internal static int GetHashCodeOrdinalIgnoreCase (string s)
+		{
+			return s.GetCaseInsensitiveHashCode ();
+		}
 	}
 }

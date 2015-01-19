@@ -192,7 +192,6 @@ System/InvalidTimeZoneException.cs
 System/IProgress.cs
 System/IServiceProvider.cs
 System/KnownTerminals.cs
-System/Lazy.cs
 System/LoaderOptimization.cs
 System/LoaderOptimizationAttribute.cs
 System/LocalDataStoreSlot.cs
@@ -247,7 +246,6 @@ System/StackOverflowException.cs
 System/STAThreadAttribute.cs
 System/String.cs
 System/StringSplitOptions.cs
-System/StringComparer.cs
 System/StringComparison.cs
 System/SystemException.cs
 System/TermInfoBooleans.cs
@@ -275,8 +273,6 @@ System/TypedReference.cs
 System/TypeInitializationException.cs
 System/TypeLoadException.cs
 System/TypeUnloadedException.cs
-System/Tuple.cs
-System/Tuples.cs
 System/UInt16.cs
 System/UInt32.cs
 System/UInt64.cs
@@ -287,7 +283,6 @@ System/UnhandledExceptionEventHandler.cs
 System/UnitySerializationHolder.cs
 System/ValueType.cs
 System/Variant.cs
-System/Version.cs
 System/Void.cs
 System/WeakReference.cs
 System/WeakReference_T.cs
@@ -1554,11 +1549,9 @@ System.Collections.Generic/EqualityComparer.cs
 System.Collections.Generic/KeyNotFoundException.cs
 System.Collections.Generic/List.cs
 System/Action.cs
-System/ArraySegment.cs
 System/Comparison.cs
 System/Converter.cs
 System/Predicate.cs
-System/Progress.cs
 System.Collections.Generic/Comparer.cs
 
 System.Threading.Tasks/DecoupledTask.cs
@@ -1583,9 +1576,14 @@ ReferenceSources/JitHelpers.cs
 
 ../../../external/referencesource/mscorlib/system/__hresults.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
+../../../external/referencesource/mscorlib/system/arraysegment.cs
 ../../../external/referencesource/mscorlib/system/convert.cs
+../../../external/referencesource/mscorlib/system/progress.cs
+../../../external/referencesource/mscorlib/system/Lazy.cs
 ../../../external/referencesource/mscorlib/system/resid.cs
+../../../external/referencesource/mscorlib/system/stringcomparer.cs
 ../../../external/referencesource/mscorlib/system/throwhelper.cs
+../../../external/referencesource/mscorlib/system/tuple.cs
 
 ../../../external/referencesource/mscorlib/system/collections/arraylist.cs
 ../../../external/referencesource/mscorlib/system/collections/bitarray.cs
@@ -1620,6 +1618,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/collections/sortedlist.cs
 ../../../external/referencesource/mscorlib/system/collections/stack.cs
 ../../../external/referencesource/mscorlib/system/collections/structuralcomparisons.cs
+../../../external/referencesource/mscorlib/system/version.cs
 
 ../../../external/referencesource/mscorlib/system/collections/generic/debugview.cs
 ../../../external/referencesource/mscorlib/system/collections/Concurrent/ConcurrentDictionary.cs
