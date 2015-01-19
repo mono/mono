@@ -37,6 +37,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Drawing;
 using System.Collections;
+using System.Text.RegularExpressions;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Collections.Specialized;
@@ -135,6 +136,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			WebTest.CopyResource (t, "CheckBoxList_Bug377703_2.aspx", "CheckBoxList_Bug377703_2.aspx");
 			WebTest.CopyResource (t, "CheckBoxList_Bug578770.aspx", "CheckBoxList_Bug578770.aspx");
 			WebTest.CopyResource (t, "CheckBoxList_Bug600415.aspx", "CheckBoxList_Bug600415.aspx");
+			WebTest.CopyResource (t, "CheckBoxList_CustomValues.aspx", "CheckBoxList_CustomValues.aspx");
 		}
 		
 		[Test]
@@ -159,6 +161,24 @@ namespace MonoTests.System.Web.UI.WebControls {
 #endif
 		}
 
+		[Test]
+		[Category("NunitWeb")]
+		public void CheckBoxList_CustomValues(){
+			WebTest t = new WebTest("CheckBoxList_CustomValues.aspx");
+			string html = t.Run();
+			FormRequest f = new FormRequest(t.Response, "form1");
+			f.Controls.Add ("checkBoxList$1");
+#if NET_4_0
+			f.Controls ["checkBoxList$1"].Value = "val2";
+#else
+			f.Controls ["checkBoxList$1"].Value = "on";
+#endif
+			t.Request = f;
+			html = t.Run();
+			Regex countchecked = new Regex("<input[^>]*checked=\"checked\"[^>]*>");
+			Assert.AreEqual(1, countchecked.Matches(html).Count);
+		}
+
 #if NET_2_0
 		[Test]
 		public void CheckBoxList_Bug377703_1 ()
@@ -179,8 +199,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("cbxl1$0");
+#if NET_4_0
+			fr.Controls ["cbxl1$0"].Value = "x";
+#else
 			fr.Controls ["cbxl1$0"].Value = "on";
-
+#endif
 			fr.Controls.Add ("ctl01");
 			fr.Controls ["ctl01"].Value = "Click me twice to have the first Item become empty";
 
@@ -189,8 +212,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("cbxl1$0");
+#if NET_4_0
+			fr.Controls ["cbxl1$0"].Value = "x";
+#else
 			fr.Controls ["cbxl1$0"].Value = "on";
-
+#endif
 			fr.Controls.Add ("ctl01");
 			fr.Controls ["ctl01"].Value = "Click me twice to have the first Item become empty";
 
@@ -236,11 +262,17 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("cbxl2$0");
+#if NET_4_0
+			fr.Controls ["cbxl2$0"].Value = "x";
+#else
 			fr.Controls ["cbxl2$0"].Value = "on";
-
+#endif
 			fr.Controls.Add ("cbxl2$2");
+#if NET_4_0
+			fr.Controls ["cbxl2$2"].Value = "z";
+#else
 			fr.Controls ["cbxl2$2"].Value = "on";
-			
+#endif			
 			fr.Controls.Add ("ctl01");
 			fr.Controls ["ctl01"].Value = "Click to toggle enable status above";
 
@@ -331,14 +363,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("checkBoxList$0");
+#if NET_4_0
+			fr.Controls ["checkBoxList$0"].Value = "Item 1";
+#else
 			fr.Controls ["checkBoxList$0"].Value = "on";
+#endif
 			fr.Controls.Add ("checkBoxList$1");
+#if NET_4_0
+			fr.Controls ["checkBoxList$1"].Value = "Item 2";
+#else
 			fr.Controls ["checkBoxList$1"].Value = "on";
+#endif
 			fr.Controls.Add ("checkBoxList$2");
+#if NET_4_0
+			fr.Controls ["checkBoxList$2"].Value = "Item 3";
+#else
 			fr.Controls ["checkBoxList$2"].Value = "on";
+#endif
 			fr.Controls.Add ("checkBoxList$3");
+#if NET_4_0
+			fr.Controls ["checkBoxList$3"].Value = "Item 4";
+#else
 			fr.Controls ["checkBoxList$3"].Value = "on";
-
+#endif
 			t.Request = fr;
 			html = t.Run ();
 			listHtml = HtmlDiff.GetControlFromPageHtml (html);
