@@ -208,12 +208,6 @@ SCAN_OBJECT_FUNCTION_NAME (char *obj, mword desc, SgenGrayQueue *queue)
 	add_scanned_object (start);
 #endif
 
-	char *block_begin = NULL, *block_end = NULL;
-	if (!sgen_ptr_in_nursery (obj) && sgen_safe_object_get_size ((MonoObject *)obj) <= SGEN_MAX_SMALL_OBJ_SIZE) {
-		block_begin = (char *)MS_BLOCK_FOR_OBJ (obj);
-		block_end = (char *)block_begin + MS_BLOCK_SIZE;
-	}
-
 	/* Now scan the object. */
 
 #undef HANDLE_PTR
@@ -221,8 +215,9 @@ SCAN_OBJECT_FUNCTION_NAME (char *obj, mword desc, SgenGrayQueue *queue)
 		void *__old = *(ptr); \
 		binary_protocol_scan_process_reference ((obj), (ptr), __old); \
 		if (__old) { \
-			gboolean __still_in_nursery = COPY_OR_MARK_FUNCTION_NAME ((ptr), __old, queue, (char *)__old >= block_begin && (char *)__old < block_end); \
-			HEAVY_STAT ((char *)__old >= block_begin && (char *)__old < block_end ? ++stat_optimized_major_scan_local : ++stat_optimized_major_scan_nonlocal); \
+			gboolean __local = ((size_t)(__old) ^ (size_t)obj) > (MS_BLOCK_SIZE * CHAR_BIT); \
+			gboolean __still_in_nursery = COPY_OR_MARK_FUNCTION_NAME ((ptr), __old, queue, __local); \
+			HEAVY_STAT (__local ? ++stat_optimized_major_scan_local : ++stat_optimized_major_scan_nonlocal); \
 			if (G_UNLIKELY (__still_in_nursery && !sgen_ptr_in_nursery ((ptr)) && !SGEN_OBJECT_IS_CEMENTED (*(ptr)))) { \
 				void *__copy = *(ptr); \
 				sgen_add_to_global_remset ((ptr), __copy); \
