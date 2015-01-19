@@ -66,6 +66,12 @@ namespace System
 
 		internal static readonly int LOS_limit = GetLOSLimit ();
 
+		internal static bool LegacyMode {
+			get {
+				return false;
+			}
+		}
+
 		public static unsafe bool Equals (string a, string b)
 		{
 			if ((a as object) == (b as object))

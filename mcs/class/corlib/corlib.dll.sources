@@ -113,7 +113,6 @@ System/Boolean.cs
 System/Buffer.cs
 System/Byte.cs
 System/CannotUnloadAppDomainException.cs
-System/Char.cs
 System/CharEnumerator.cs
 System/CLSCompliantAttribute.cs
 System/CStreamReader.cs
@@ -1577,6 +1576,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
 ../../../external/referencesource/mscorlib/system/arraysegment.cs
+../../../external/referencesource/mscorlib/system/char.cs
 ../../../external/referencesource/mscorlib/system/convert.cs
 ../../../external/referencesource/mscorlib/system/progress.cs
 ../../../external/referencesource/mscorlib/system/Lazy.cs

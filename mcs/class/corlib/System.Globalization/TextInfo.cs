@@ -311,7 +311,7 @@ namespace System.Globalization {
 				return (char) (c + 0x20);
 
 			if (ci == null || ci.LCID == 0x7F)
-				return Char.ToLowerInvariant (c);
+				return CharUnicodeInfo.ToLowerInvariant (c);
 
 			switch (c) {
 			case '\u0049': // Latin uppercase I
@@ -341,7 +341,7 @@ namespace System.Globalization {
 			case '\u03d4':  // ? it is not in ICU
 				return '\u03cb';
 			}
-			return Char.ToLowerInvariant (c);
+			return CharUnicodeInfo.ToLowerInvariant (c);
 		}
 
 		public virtual char ToUpper (char c)
@@ -353,7 +353,7 @@ namespace System.Globalization {
 				return (char) (c - 0x20);
 
 			if (ci == null || ci.LCID == 0x7F)
-				return Char.ToUpperInvariant (c);
+				return CharUnicodeInfo.ToUpperInvariant (c);
 
 			switch (c) {
 			case '\u0069': // Latin lowercase i
@@ -391,7 +391,7 @@ namespace System.Globalization {
 			// not handled here.
 			}
 
-			return Char.ToUpperInvariant (c);
+			return CharUnicodeInfo.ToUpperInvariant (c);
 		}
 
 		private char ToTitleCase (char c)
