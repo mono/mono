@@ -539,7 +539,7 @@ namespace System {
 
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			return System.Convert.ToDateTime (m_value);
+            throw new InvalidCastException(Environment.GetResourceString("InvalidCast_FromTo", "Int64", "DateTime"));
 		}
 
 		decimal IConvertible.ToDecimal (IFormatProvider provider)

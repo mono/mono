@@ -291,12 +291,12 @@ namespace System
 
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			return System.Convert.ToChar (m_value);
+			throw new InvalidCastException(Environment.GetResourceString("InvalidCast_FromTo", "Single", "Char"));
 		}
 
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			return System.Convert.ToDateTime (m_value);
+            throw new InvalidCastException(Environment.GetResourceString("InvalidCast_FromTo", "Single", "DateTime"));
 		}
 
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
