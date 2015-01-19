@@ -112,18 +112,11 @@ namespace System {
 					throw new FormatException ("Could not find any parsable digits.");
 				}
 
-				if ((flags & TreatAsUnsigned) != 0) {
-					result = (uint) fromBase * result + (uint) digitValue;
-					if (result > max_value)
-						throw new OverflowException ();
-				} else {
-					var res = (uint) fromBase * result + (uint) digitValue;
-					if (res < result || res > max_value)
-						throw new OverflowException ();
+				var res = (uint) fromBase * result + (uint) digitValue;
+				if (res < result || res > max_value)
+					throw new OverflowException ();
 					
-					result = res;
-				}
-
+				result = res;
 				chars++;
 			}
 
