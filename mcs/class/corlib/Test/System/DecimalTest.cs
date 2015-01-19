@@ -1563,6 +1563,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("3", Math.Round (3M, 5).ToString (CultureInfo.InvariantCulture), "#1");
 			Assert.AreEqual ("3.01", Math.Round (3.01M, 5).ToString (CultureInfo.InvariantCulture), "#2");
 			Assert.AreEqual ("-3.01", Math.Round (-3.01M, 5).ToString (CultureInfo.InvariantCulture), "#3");
+			Assert.AreEqual ("128", Math.Round (127.5M, 0).ToString (CultureInfo.InvariantCulture), "#4");
 		}
 	}
 }

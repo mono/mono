@@ -559,6 +559,9 @@ namespace System
 				throw new ArgumentOutOfRangeException ("decimals", "[0,28]");
 			}
 
+			if (mode == MidpointRounding.ToEven && decimals == 0)
+				return Round (d);
+
 			bool negative = d.IsNegative ();
 			if (negative)
 				d.flags ^= SIGN_FLAG;

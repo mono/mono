@@ -51,7 +51,7 @@ namespace System {
 				return 0;
 
 			int chars = 0;
-			int result = 0;
+			uint result = 0;
 			int digitValue;
 
 			int i = 0; 
@@ -81,6 +81,15 @@ namespace System {
 				i += 2;
 			}
 
+			uint max_value;
+			if ((flags & TreatAsI1) != 0) {
+				max_value = Byte.MaxValue;
+			} else if ((flags & TreatAsI2) != 0) {
+				max_value = UInt16.MaxValue;
+			} else {
+				max_value = UInt32.MaxValue;
+			}
+
 			while (i < len) {
 				char c = value [i++];
 				if (Char.IsNumber (c)) {
@@ -103,14 +112,25 @@ namespace System {
 					throw new FormatException ("Could not find any parsable digits.");
 				}
 
-				result = fromBase * result + digitValue;
+				if ((flags & TreatAsUnsigned) != 0) {
+					result = (uint) fromBase * result + (uint) digitValue;
+					if (result > max_value)
+						throw new OverflowException ();
+				} else {
+					var res = (uint) fromBase * result + (uint) digitValue;
+					if (res < result || res > max_value)
+						throw new OverflowException ();
+					
+					result = res;
+				}
+
 				chars++;
 			}
 
 			if (chars == 0)
 				throw new FormatException ("Could not find any parsable digits.");
 
-			return negative ? -result : result;
+			return negative ? -(int)result : (int)result;
 		}        
 
 		public static string LongToString (long value, int toBase, int width, char paddingChar, int flags)
