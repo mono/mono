@@ -49,11 +49,14 @@ namespace System
 		public MonoCMethod default_ctor;
 	}
 		
+	abstract class RuntimeType : TypeInfo
+	{
+
+	}
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	sealed class MonoType : 
-		TypeInfo
-		, ISerializable
+	sealed class MonoType : RuntimeType, ISerializable
 	{
 		[NonSerialized]
 		MonoTypeInfo type_info;

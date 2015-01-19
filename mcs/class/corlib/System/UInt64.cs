@@ -567,11 +567,9 @@ namespace System
 			return System.Convert.ToSingle (m_value);
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("targetType");
-			return System.Convert.ToType (m_value, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)

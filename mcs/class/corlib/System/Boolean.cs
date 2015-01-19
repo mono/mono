@@ -64,6 +64,9 @@ namespace System
 
 		internal bool m_value;
 
+		internal const int True = 1;
+		internal const int False = 0;
+
 		/// <summary>
 		/// Compares the current Boolean instance against another object.
 		/// </summary>
@@ -219,11 +222,9 @@ namespace System
 			return TypeCode.Boolean;
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("targetType");
-			return System.Convert.ToType (m_value, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)

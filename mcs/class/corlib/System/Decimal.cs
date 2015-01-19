@@ -1256,11 +1256,9 @@ namespace System
 			return (UInt64)(Decimal.Truncate (d));
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("targetType");
-			return Convert.ToType (this, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)
@@ -1356,6 +1354,14 @@ namespace System
 		void IDeserializationCallback.OnDeserialization(object sender)
 		{
 		}
+
+		// TODO: .net icall
+		internal static int FCallToInt32 (Decimal d)
+		{
+			// Returned Even-Rounded
+			return checked ((int) Math.Round (d));
+		}
+
 
 #if !MSTEST
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

@@ -108,7 +108,6 @@ System/Attribute.cs
 System/AttributeTargets.cs
 System/AttributeUsageAttribute.cs
 System/BadImageFormatException.cs
-System/Base64FormattingOptions.cs
 System/BitConverter.cs
 System/Boolean.cs
 System/Buffer.cs
@@ -133,7 +132,6 @@ System/ContextBoundObject.cs
 System/ContextMarshalException.cs
 System/ContextStaticAttribute.cs
 System/ControlCharacters.cs
-System/Convert.cs
 System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
 System/DateTime.cs
@@ -1574,15 +1572,18 @@ System.Threading/Watch.cs
 
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
+ReferenceSources/Empty.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
+ReferenceSources/ParseNumbers.cs
 ReferenceSources/AppDomain.cs
 ReferenceSources/CLRConfig.cs
 ReferenceSources/JitHelpers.cs
 
 ../../../external/referencesource/mscorlib/system/__hresults.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
+../../../external/referencesource/mscorlib/system/convert.cs
 ../../../external/referencesource/mscorlib/system/resid.cs
 ../../../external/referencesource/mscorlib/system/throwhelper.cs
 

@@ -2922,18 +2922,16 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[ExpectedException (typeof (FormatException))]
 		public void FromBase64CharArray_Empty ()
 		{
-			Convert.FromBase64CharArray (new char[0], 0, 0);
+			Assert.AreEqual (new byte [0], Convert.FromBase64CharArray (new char[0], 0, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (FormatException))]
 		public void FormatBase64CharArray_OnlyWhitespace ()
 		{
-			Convert.FromBase64CharArray (new char[3] {' ', 
-				'\r', '\t'}, 0, 3);
+			Assert.AreEqual (new byte [0], Convert.FromBase64CharArray (new char[3] {' ', 
+				'\r', '\t'}, 0, 3));
 		}
 
 		[Test]

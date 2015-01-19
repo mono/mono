@@ -2506,11 +2506,9 @@ namespace System
 			return Convert.ToSingle (this, provider);
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("type");
-			return Convert.ToType (this, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
@@ -3176,6 +3174,11 @@ namespace System
 		{
 			fixed (char* dest = target, src = source)
 				CharCopyReverse (dest + targetIndex, src + sourceIndex, count);
+		}
+
+		internal static String FastAllocateString (int length)
+		{
+        		return InternalAllocateStr (length);
 		}
 
 		[CLSCompliant (false), MethodImplAttribute (MethodImplOptions.InternalCall)]
