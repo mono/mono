@@ -147,15 +147,23 @@ build_iphone_crosscompiler ()
 	echo "iPhone cross compiler build done"
 }
 
+get_xcode_version()
+{
+	echo $(cat /Applications/Xcode.app/Contents/version.plist | grep -A 1 CFBundleShortVersionString | tail -n 1 | sed 's/.*>\([0-9][0-9]*\).*/\1/g')
+}
+
 build_iphone_simulator ()
 {
 	echo "Building iPhone simulator static lib";
 	export CFLAGS="-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0";
 	export CPPFLAGS="$CFLAGS"
 	export MACSYSROOT="-isysroot $SIMULATOR_ASPEN_SDK"
-	# we should add something like -mios-simulator-version-min=4.3 to MACSDKOPTIONS
-	# however Xcode 4.x does not support that.
+
+	# Xcode 4.x does not support -mios-simulator-version-min=4.3 in MACSDKOPTIONS
 	export MACSDKOPTIONS="$MACSYSROOT $CFLAGS"
+	if [ "4" != "$(get_xcode_version)" ]; then
+		export MACSDKOPTIONS="$MACSDKOPTIONS -mios-simulator-version-min=4.3"
+	fi
 	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc -arch i386"
 	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
 	export LIBTOOLIZE=`which glibtoolize`
