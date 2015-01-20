@@ -275,7 +275,7 @@ namespace System {
 
 				if (sidx == len) {
 					if (!tryParse)
-						exc = Int32.GetFormatException ();
+						exc = GetFormatException ();
 					return false;
 				}
 			}
@@ -530,7 +530,7 @@ namespace System {
 					double retVal;
 					if (!ParseImpl (p, out retVal)) {
 						if (!tryParse)
-							exc = Int32.GetFormatException ();
+							exc = GetFormatException ();
 						return false;
 					}
 					if (IsPositiveInfinity(retVal) || IsNegativeInfinity(retVal)) {
@@ -590,6 +590,11 @@ namespace System {
 		public string ToString (string format, IFormatProvider provider)
 		{
 			return NumberFormatter.NumberToString (format, m_value, provider);
+		}
+
+		static Exception GetFormatException ()
+		{
+			return new FormatException ("Input string was not in the correct format");
 		}
 
 		// =========== IConvertible Methods =========== //
