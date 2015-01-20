@@ -5293,6 +5293,7 @@ mono_async_result_new (MonoDomain *domain, HANDLE handle, MonoObject *state, gpo
 
 	res->sync_completed = FALSE;
 	res->completed = FALSE;
+	res->gchandle = 0;
 
 	return res;
 }
