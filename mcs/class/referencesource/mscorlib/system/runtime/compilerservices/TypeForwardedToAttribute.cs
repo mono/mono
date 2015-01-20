@@ -26,7 +26,7 @@ namespace System.Runtime.CompilerServices
                 return _destination;
             }
         }
-
+#if false
         [System.Security.SecurityCritical]
         internal static TypeForwardedToAttribute[] GetCustomAttribute(RuntimeAssembly assembly)
         {
@@ -39,7 +39,7 @@ namespace System.Runtime.CompilerServices
 
             return attributes;
         }
-
+#endif
     }
 }
 
