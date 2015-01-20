@@ -240,7 +240,8 @@ if [ $# -gt 0 ]; then
 
 fi
 if [ $# -eq 0 ]; then
-	build_iphone_runtime || exit 1
-	build_iphone_crosscompiler || exit 1
-	build_iphone_simulator || exit 1
+	INCREMENTAL=0
+	build_iphone_runtime $INCREMENTAL || exit 1
+	build_iphone_crosscompiler $INCREMENTAL || exit 1
+	build_iphone_simulator $INCREMENTAL || exit 1
 fi
