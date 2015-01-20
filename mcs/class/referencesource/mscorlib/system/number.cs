@@ -289,7 +289,7 @@ namespace System {
     {
         private Number() {
         }
-    
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -333,7 +333,47 @@ namespace System {
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         internal static extern unsafe string FormatNumberBuffer(byte* number, string format, NumberFormatInfo info, char* allDigits);
+#else
+        public static String FormatDouble(double value, String format, NumberFormatInfo info)
+        {
+            return NumberFormatter.NumberToString (format, value, info);
+        }
 
+        public static String FormatInt32(int value, String format, NumberFormatInfo info)
+        {
+            return NumberFormatter.NumberToString (format, value, info);
+        }
+
+        public static String FormatUInt32(uint value, String format, NumberFormatInfo info)
+        {
+            return NumberFormatter.NumberToString (format, value, info);
+        }
+
+        public static String FormatInt64(long value, String format, NumberFormatInfo info)
+        {
+            return NumberFormatter.NumberToString (format, value, info);
+        }
+
+        public static String FormatUInt64(ulong value, String format, NumberFormatInfo info)
+        {
+            return NumberFormatter.NumberToString (format, value, info);
+        }
+
+        public static String FormatSingle(float value, String format, NumberFormatInfo info)
+        {
+            return NumberFormatter.NumberToString (format, value, info);
+        }
+
+        public unsafe static Boolean NumberBufferToDecimal(byte* number, ref Decimal value)
+        {
+            throw new NotImplementedException ();
+        }
+
+        internal unsafe static Boolean NumberBufferToDouble(byte* number, ref Double value)
+        {
+            throw new NotImplementedException ();
+        }
+#endif
         // Constants used by number parsing
         private const Int32 NumberMaxDigits = 50;
 
@@ -768,11 +808,10 @@ namespace System {
             Boolean parsingCurrency = false; 
             if ((options & NumberStyles.AllowCurrencySymbol) != 0) {
                 currSymbol = numfmt.CurrencySymbol;
-#if !MONO
                 if (numfmt.ansiCurrencySymbol != null) {
                     ansicurrSymbol = numfmt.ansiCurrencySymbol;
                 }
-#endif
+
                 // The idea here is to match the currency separators and on failure match the number separators to keep the perf of VB's IsNumeric fast.
                 // The values of decSep are setup to use the correct relevant separator (currency in the if part and decimal in the else part).
                 altdecSep = numfmt.NumberDecimalSeparator;
