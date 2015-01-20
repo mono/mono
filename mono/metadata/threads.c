@@ -184,6 +184,10 @@ static MonoException* mono_thread_execute_interruption (MonoThread *thread);
 #define mono_interlocked_unlock() LeaveCriticalSection (&interlocked_mutex)
 static CRITICAL_SECTION interlocked_mutex;
 
+/* next managed thread ID available to allocate. This is done native-side rather than
+ managed-side so that it's not reset by a domain reload. */
+static gint32 next_managed_thread_id = 0;
+
 /* global count of thread interruptions requested */
 static gint32 thread_interruption_requested = 0;
 
@@ -1254,7 +1258,12 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoThread *this_obj)
 	return str;
 }
 
-void 
+gint32 ves_icall_System_Threading_Thread_GetNewManagedId_internal()
+{
+    return InterlockedIncrement(&next_managed_thread_id);
+}
+
+void
 ves_icall_System_Threading_Thread_SetName_internal (MonoThread *this_obj, MonoString *name)
 {
 	ensure_synch_cs_set (this_obj);
