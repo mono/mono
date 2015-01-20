@@ -179,6 +179,10 @@ namespace System.Data.SqlClient {
 							 "exec sp_tablecollations_90 '" +
 							 DestinationTableName + "'",
 							 connection);
+
+			if (externalTransaction != null)
+				cmd.Transaction = externalTransaction;
+
 			SqlDataReader reader = cmd.ExecuteReader ();
 			int i = 0; // Skipping 1st result
 			do {
