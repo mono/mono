@@ -1638,13 +1638,14 @@ namespace Mono.Debugger.Soft
 			SendReceive (CommandSet.VM, (int)CmdVM.SET_PROTOCOL_VERSION, new PacketWriter ().WriteInt (major).WriteInt (minor));
 		}
 
-		internal long[] VM_GetThreads () {
-			var res = SendReceive (CommandSet.VM, (int)CmdVM.ALL_THREADS, null);
-			int len = res.ReadInt ();
-			long[] arr = new long [len];
-			for (int i = 0; i < len; ++i)
-				arr [i] = res.ReadId ();
-			return arr;
+		internal void VM_GetThreads (Action<long[]> resultCallaback) {
+			Send (CommandSet.VM, (int)CmdVM.ALL_THREADS, null, (res) => {
+				int len = res.ReadInt ();
+				long[] arr = new long [len];
+				for (int i = 0; i < len; ++i)
+					arr [i] = res.ReadId ();
+				resultCallaback(arr);
+			}, 1);
 		}
 
 		internal void VM_Suspend () {

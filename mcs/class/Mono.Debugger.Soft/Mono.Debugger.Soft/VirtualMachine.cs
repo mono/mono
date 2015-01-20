@@ -162,15 +162,11 @@ namespace Mono.Debugger.Soft
 					thread.InvalidateFrames ();
 				threadsToInvalidate.Clear ();
 			}
-			lock (threadCacheLocker) {
-				threadCache = null;
-			}
+			threadCache = null;
 		}
 
 		internal void InvalidateThreadCache () {
-			lock (threadCacheLocker) {
-				threadCache = null;
-			}
+			threadCache = null;
 		}
 
 		internal void AddThreadToInvalidateList (ThreadMirror threadMirror)
@@ -181,14 +177,30 @@ namespace Mono.Debugger.Soft
 		}
 
 		public IList<ThreadMirror> GetThreads () {
-			lock (threadCacheLocker) {
-				if (threadCache == null) {
-					long[] ids = vm.conn.VM_GetThreads ();
-					threadCache = new ThreadMirror [ids.Length];
-					for (int i = 0; i < ids.Length; ++i)
-						threadCache [i] = GetThread (ids [i]);
+			var threads = threadCache;
+			if (threads == null) {
+				long[] ids = null;
+				var fetchingEvent = new ManualResetEvent (false);
+				vm.conn.VM_GetThreads ((threadsIds) => {
+					ids = threadsIds;
+					threadCache = threads = new ThreadMirror [threadsIds.Length];
+					fetchingEvent.Set ();
+				});
+				if (WaitHandle.WaitAny (new []{ vm.conn.DisconnectedEvent, fetchingEvent }) == 0) {
+					throw new VMDisconnectedException ();
 				}
-				return threadCache;
+				for (int i = 0; i < ids.Length; ++i)
+					threads [i] = GetThread (ids [i]);
+				//Uncomment lines below if you want to re-fetch threads if new threads were started/stopped while
+				//featching threads... This is probably more correct but might cause deadlock of this method if runtime
+				//is starting/stopping threads nonstop, need way to prevent this(counting number of recursions?)
+				//possiblity before uncommenting
+				//if (threadCache != threads) {//While fetching threads threadCache was invalidated(thread was created/destoyed)
+				//	return GetThreads ();
+				//}
+				return threads;
+			} else {
+				return threads;
 			}
 		}
 
