@@ -373,6 +373,11 @@ namespace System {
         {
             throw new NotImplementedException ();
         }
+
+        internal static unsafe string FormatNumberBuffer(byte* number, string format, NumberFormatInfo info, char* allDigits)
+        {
+            throw new NotImplementedException ();
+        }
 #endif
         // Constants used by number parsing
         private const Int32 NumberMaxDigits = 50;
