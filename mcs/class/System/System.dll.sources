@@ -1087,7 +1087,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/net/System/Net/UnicodeEncodingConformance.cs
 ../../../external/referencesource/System/net/System/Net/webclient.cs
 ../../../external/referencesource/System/net/System/Net/WebPermission.cs
-
 ../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
 ../../../external/referencesource/System/sys/system/threading/Barrier.cs
