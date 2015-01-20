@@ -116,9 +116,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
 			
 			Assert.AreEqual (ValidationDataType.String, p.Type, "CultureInvariantValues");
-#if NET_2_0
 			Assert.AreEqual (false, p.CultureInvariantValues, "CultureInvariantValues");
-#endif 
 		}
 
 		[Test]
@@ -128,10 +126,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			
 			p.Type = ValidationDataType.Double;
 			Assert.AreEqual (ValidationDataType.Double, p.Type, "CultureInvariantValues");
-#if NET_2_0
 			p.CultureInvariantValues = true;
 			Assert.AreEqual (true, p.CultureInvariantValues, "CultureInvariantValues");
-#endif
 		}
 
 		[Test]
@@ -140,17 +136,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
 
 			p.Type = ValidationDataType.Double;
-#if NET_2_0
 			p.CultureInvariantValues = true;
-#endif
 
 			BaseCompareValidatorPoker copy = new BaseCompareValidatorPoker ();
 			copy.LoadState (p.SaveState ());
 
 			Assert.AreEqual (ValidationDataType.Double, copy.Type, "A1");
-#if NET_2_0
 			Assert.AreEqual (true, copy.CultureInvariantValues, "A1");
-#endif
 		}
 
 		[Test]
@@ -522,11 +514,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual (p.GetCutoffYear(), 2029, "E1");
 			Assert.AreEqual (p.GetFullYear (29), 2029, "E2");
-#if NET_2_0
 			Assert.AreEqual (p.GetFullYear (30), 1930, "E3");
-#else
-			Assert.AreEqual (p.GetFullYear (30), 2030, "E3"); // XXX this is broken
-#endif
 
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-GB", false);
 			Assert.AreEqual (p.GetDateElementOrder (), "dmy", "E4");
@@ -538,7 +526,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (p.GetDateElementOrder (), "ymd", "E6");
 		}
 
-#if NET_2_0
 		[Test]
 		public void CultureInvariantValues_1 ()
 		{
@@ -640,6 +627,5 @@ namespace MonoTests.System.Web.UI.WebControls
 			tb1.Text = "24-12-2005";
 			v.Validate ();
 		}
-#endif
 	}
 }

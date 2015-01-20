@@ -46,10 +46,8 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual (string.Empty, cmre.MethodName, "#2");
 			Assert.IsNull (cmre.TargetObject, "#3");
 
-#if NET_2_0
 			Assert.IsNotNull (cmre.TypeArguments, "#4");
 			Assert.AreEqual (0, cmre.TypeArguments.Count, "#5");
-#endif
 
 			string methodName = "mono";
 			cmre.MethodName = methodName;
@@ -82,10 +80,8 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cmre.TargetObject, "#3");
 			Assert.AreSame (expression, cmre.TargetObject, "#4");
 
-#if NET_2_0
 			Assert.IsNotNull (cmre.TypeArguments, "#5");
 			Assert.AreEqual (0, cmre.TypeArguments.Count, "#6");
-#endif
 
 			cmre = new CodeMethodReferenceExpression ((CodeExpression) null,
 				(string) null);
@@ -94,7 +90,6 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNull (cmre.TargetObject, "#9");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Constructor2 ()
 		{
@@ -135,6 +130,5 @@ namespace MonoTests.System.CodeDom
 			CodeMethodReferenceExpression cmre = new CodeMethodReferenceExpression (
 				expression, methodName, (CodeTypeReference) null);
 		}
-#endif
 	}
 }

@@ -222,7 +222,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (sc.AutoScroll, "#J2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void MethodScrollToControl ()
 		{
@@ -343,7 +342,6 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (true, scrollable.VerticalScroll.Visible, "#C0");
 		}
-#endif
 
 		// Tests Xamarin-2562
 		[Test]

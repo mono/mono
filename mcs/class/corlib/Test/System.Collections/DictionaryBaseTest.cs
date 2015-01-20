@@ -469,14 +469,9 @@ namespace MonoTests.System.Collections
 			Assert.IsFalse (myDictionary.onSetFired, "#B8");
 			Assert.IsFalse (myDictionary.onSetCompleteFired, "#B9");
 			Assert.IsFalse (myDictionary.onGetFired, "#B10");
-#if NET_2_0
 			myDictionary.onGetExist = true;
 			Assert.AreEqual (28, myDictionary.Count, "#B11");
 			Assert.AreEqual (22, myDictionary.BaseDictionary [11], "#B12");
-#else
-			Assert.AreEqual (27, myDictionary.Count, "#B11");
-			Assert.IsNull (myDictionary.BaseDictionary [11], "#B12");
-#endif
 		}
 
 		[Test]
@@ -487,15 +482,9 @@ namespace MonoTests.System.Collections
 
 			Assert.IsFalse (myDictionary.onInsertFired, "#B1");
 			Assert.IsFalse (myDictionary.onInsertCompleteFired, "#B2");
-#if NET_2_0
 			Assert.IsFalse (myDictionary.onValidateFired, "#1");
 			Assert.IsFalse (myDictionary.onRemoveFired, "#2");
 			Assert.IsFalse (myDictionary.onRemoveCompleteFired, "#3");
-#else
-			Assert.IsTrue (myDictionary.onValidateFired, "#1");
-			Assert.IsTrue (myDictionary.onRemoveFired, "#2");
-			Assert.IsTrue (myDictionary.onRemoveCompleteFired, "#3");
-#endif
 			Assert.IsFalse (myDictionary.onClearFired, "#B6");
 			Assert.IsFalse (myDictionary.onClearCompleteFired, "#B7");
 			Assert.IsFalse (myDictionary.onSetFired, "#B8");
@@ -805,12 +794,8 @@ namespace MonoTests.System.Collections
 		{
 			IDictionary dictionary = new ModifyDictionary ();
 			dictionary ["a"] = "b";
-#if NET_2_0
 			// first time we return "b" - because the value was cached
 			Assert.AreEqual ("b", dictionary ["a"], "#1");
-#else
-			Assert.AreEqual ("a", dictionary ["a"], "#1");
-#endif
 			// second time we return "a" - because it's the value in the dictionary
 			Assert.AreEqual ("a", dictionary ["a"], "#2");
 		}

@@ -28,9 +28,7 @@
 
 using System;
 using System.Collections;
-#if NET_2_0
 using System.ComponentModel;
-#endif
 using System.IO;
 using System.Data;
 using System.Globalization;
@@ -324,7 +322,6 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
-#if NET_2_0
 		[Test] // bug #81771
 		public void DataSource_BindingList1 ()
 		{
@@ -441,7 +438,6 @@ namespace MonoTests.System.Windows.Forms
 			lc.FormatString = CultureInfo.CurrentCulture.NumberFormat.ToString ();
 			Assert.AreEqual (true, refresh_items_called, "C1");
 		}
-#endif
 
 		void ListControl_DataSourceChanged (object sender, EventArgs e)
 		{
@@ -479,11 +475,9 @@ namespace MonoTests.System.Windows.Forms
 				}
 			}
 
-#if NET_2_0
 			public bool allow_selection {
 				get { return base.AllowSelection; }
 			}
-#endif
 
 			public object FilterItem (object obj, string field)
 			{
@@ -494,7 +488,6 @@ namespace MonoTests.System.Windows.Forms
 			{
 			}
 
-#if NET_2_0
 			protected override void RefreshItems ()
 			{
 				base.RefreshItems ();
@@ -504,7 +497,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 
 			public event EventHandler RefreshingItems;
-#endif
 
 			protected override void SetItemsCore (IList items)
 			{

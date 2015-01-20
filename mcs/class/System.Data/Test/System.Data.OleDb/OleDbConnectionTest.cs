@@ -128,7 +128,6 @@ namespace MonoTests.System.Data.OleDb
 			Assert.AreEqual (string.Empty, cn.ConnectionString, "#4");
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetSchema_Connection_Closed ()
 		{
@@ -204,7 +203,6 @@ namespace MonoTests.System.Data.OleDb
 				Assert.IsNotNull (ex.Message, "#G4");
 			}
 		}
-#endif
 
 		[Test]
 		public void ServerVersion_Connection_Closed ()

@@ -97,11 +97,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert.AreEqual (null, xnl, "Default InnerXml");
 		}
 
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#else
-		// LAMESPEC: input MUST be one of InputType - but no exception is thrown (not documented)
-#endif
 		public void LoadInputWithUnsupportedType () 
 		{
 			byte[] bad = { 0xBA, 0xD };
@@ -129,19 +125,15 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        }
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void C14NSpecExample1_WithoutResolver ()
 		{
 			using (StreamWriter sw = new StreamWriter ("doc.dtd", false, Encoding.ASCII)) {
 				sw.Write ("<!-- presence, not content, required -->");
 				sw.Close ();
 			}
-#if NET_2_0
 			if (!SecurityManager.SecurityEnabled)
 				NUnit.Framework.Assert.Ignore ("SecurityManager isn't enabled.");
-#endif
 			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample1Input, false);
 			Assert.AreEqual (C14NSpecExample1Output, res, "Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (with comments)");
 		}
@@ -203,10 +195,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			vreader.ValidationType = ValidationType.None;
 			vreader.EntityHandling = EntityHandling.ExpandCharEntities;
 			doc.Load (vreader);
-#if NET_2_0
 			if (resolver)
 				transform.Resolver = new XmlUrlResolver ();
-#endif
 			transform.LoadInput (doc);
 			return Stream2String ((Stream)transform.GetOutput ());
 		}

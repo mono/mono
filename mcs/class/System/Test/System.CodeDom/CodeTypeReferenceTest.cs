@@ -9,9 +9,7 @@
 
 using System;
 using System.CodeDom;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 using NUnit.Framework;
 
@@ -27,11 +25,9 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual (typeof (void).FullName, reference.BaseType);
 			Assert.AreEqual (0, reference.ArrayRank);
 			Assert.IsNull (reference.ArrayElementType);
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
-#endif
 		}
 
 		[Test]
@@ -41,19 +37,13 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual (typeof (void).FullName, reference.BaseType, "#1");
 			Assert.AreEqual (0, reference.ArrayRank, "#2");
 			Assert.IsNull (reference.ArrayElementType, "#3");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof(ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void NullType ()
 		{
 			new CodeTypeReference ((Type) null);
@@ -77,7 +67,6 @@ namespace MonoTests.System.CodeDom
 		public void BaseTypeTest1 ()
 		{
 			CodeTypeReference reference = new CodeTypeReference ("A[B]");
-#if NET_2_0
 			Assert.AreEqual ("A", reference.BaseType, "#1");
 			Assert.AreEqual (0, reference.ArrayRank, "#2");
 			Assert.IsNull (reference.ArrayElementType, "#3");
@@ -92,11 +81,6 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, typeArgument.Options, "#10");
 			Assert.IsNotNull (typeArgument.TypeArguments, "#11");
 			Assert.AreEqual (0, typeArgument.TypeArguments.Count, "#12");
-#else
-			Assert.AreEqual ("A[B]", reference.BaseType, "#1");
-			Assert.AreEqual (0, reference.ArrayRank, "#2");
-			Assert.IsNull (reference.ArrayElementType, "#3");
-#endif
 		}
 
 		[Test]
@@ -106,21 +90,17 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ("A", reference.BaseType, "#1");
 			Assert.AreEqual (1, reference.ArrayRank, "#2");
 			Assert.IsNotNull (reference.ArrayElementType, "#3");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
-#endif
 
 			CodeTypeReference arrayElementType = reference.ArrayElementType;
 			Assert.AreEqual ("A", arrayElementType.BaseType, "#7");
 			Assert.AreEqual (0, arrayElementType.ArrayRank, "#8");
 			Assert.IsNull (arrayElementType.ArrayElementType, "#9");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, arrayElementType.Options, "#10");
 			Assert.IsNotNull (arrayElementType.TypeArguments, "#11");
 			Assert.AreEqual (0, arrayElementType.TypeArguments.Count, "#12");
-#endif
 		}
 
 		[Test]
@@ -130,21 +110,17 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ("A", reference.BaseType, "#1");
 			Assert.AreEqual (2, reference.ArrayRank, "#2");
 			Assert.IsNotNull (reference.ArrayElementType, "#3");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
-#endif
 
 			CodeTypeReference arrayElementType = reference.ArrayElementType;
 			Assert.AreEqual ("A", arrayElementType.BaseType, "#7");
 			Assert.AreEqual (0, arrayElementType.ArrayRank, "#8");
 			Assert.IsNull (arrayElementType.ArrayElementType, "#9");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, arrayElementType.Options, "#10");
 			Assert.IsNotNull (arrayElementType.TypeArguments, "#11");
 			Assert.AreEqual (0, arrayElementType.TypeArguments.Count, "#12");
-#endif
 		}
 
 		[Test]
@@ -154,28 +130,23 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ("A", reference.BaseType, "#1");
 			Assert.AreEqual (3, reference.ArrayRank, "#2");
 			Assert.IsNotNull (reference.ArrayElementType, "#3");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
-#endif
 
 			CodeTypeReference arrayElementType = reference.ArrayElementType;
 			Assert.AreEqual ("A", arrayElementType.BaseType, "#7");
 			Assert.AreEqual (0, arrayElementType.ArrayRank, "#8");
 			Assert.IsNull (arrayElementType.ArrayElementType, "#9");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, arrayElementType.Options, "#10");
 			Assert.IsNotNull (arrayElementType.TypeArguments, "#11");
 			Assert.AreEqual (0, arrayElementType.TypeArguments.Count, "#12");
-#endif
 		}
 
 		[Test]
 		public void BaseTypeTest5 ()
 		{
 			CodeTypeReference reference = new CodeTypeReference ("A[B,C]");
-#if NET_2_0
 			Assert.AreEqual ("A", reference.BaseType, "#1");
 			Assert.AreEqual (0, reference.ArrayRank, "#2");
 			Assert.IsNull (reference.ArrayElementType, "#3");
@@ -198,11 +169,6 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, typeArgument.Options, "#16");
 			Assert.IsNotNull (typeArgument.TypeArguments, "#17");
 			Assert.AreEqual (0, typeArgument.TypeArguments.Count, "#18");
-#else
-			Assert.AreEqual ("A[B,C]", reference.BaseType, "#1");
-			Assert.AreEqual (0, reference.ArrayRank, "#2");
-			Assert.IsNull (reference.ArrayElementType, "#3");
-#endif
 		}
 
 		[Test]
@@ -212,18 +178,15 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ("A[", reference.BaseType, "#1");
 			Assert.AreEqual (0, reference.ArrayRank, "#2");
 			Assert.IsNull (reference.ArrayElementType, "#3");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
-#endif
 		}
 
 		[Test]
 		public void BaseTypeTest7 ()
 		{
 			CodeTypeReference reference = new CodeTypeReference ("A[,B,,C]");
-#if NET_2_0
 			Assert.AreEqual ("A", reference.BaseType, "#1");
 			Assert.AreEqual (0, reference.ArrayRank, "#2");
 			Assert.IsNull (reference.ArrayElementType, "#3");
@@ -246,95 +209,59 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, typeArgument.Options, "#16");
 			Assert.IsNotNull (typeArgument.TypeArguments, "#17");
 			Assert.AreEqual (0, typeArgument.TypeArguments.Count, "#18");
-#else
-			Assert.AreEqual ("A[,B,,C]", reference.BaseType, "#1");
-			Assert.AreEqual (0, reference.ArrayRank, "#2");
-			Assert.IsNull (reference.ArrayElementType, "#3");
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		// CodeTypeReference should parse basetype from right to left in 2.0 
 		// profile
 		[Category ("NotWorking")]
-#endif
 		public void BaseTypeTest8 ()
 		{
 			CodeTypeReference reference = new CodeTypeReference ("A[,,][,]");
 			Assert.AreEqual ("A", reference.BaseType, "#1");
-#if NET_2_0
 			Assert.AreEqual (3, reference.ArrayRank, "#2");
-#else
-			Assert.AreEqual (2, reference.ArrayRank, "#2");
-#endif
 			Assert.IsNotNull (reference.ArrayElementType, "#3");
 
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
-#endif
 
 			CodeTypeReference arrayElementType = reference.ArrayElementType;
 			Assert.AreEqual ("A", arrayElementType.BaseType, "#7");
-#if NET_2_0
 			Assert.AreEqual (2, arrayElementType.ArrayRank, "#8");
-#else
-			Assert.AreEqual (3, arrayElementType.ArrayRank, "#8");
-#endif
 			Assert.IsNotNull (arrayElementType.ArrayElementType, "#9");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, arrayElementType.Options, "#10");
 			Assert.IsNotNull (arrayElementType.TypeArguments, "#11");
 			Assert.AreEqual (0, arrayElementType.TypeArguments.Count, "#12");
-#endif
 
 			arrayElementType = arrayElementType.ArrayElementType;
 			Assert.AreEqual ("A", arrayElementType.BaseType, "#13");
 			Assert.AreEqual (0, arrayElementType.ArrayRank, "#14");
 			Assert.IsNull (arrayElementType.ArrayElementType, "#15");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, arrayElementType.Options, "#16");
 			Assert.IsNotNull (arrayElementType.TypeArguments, "#17");
 			Assert.AreEqual (0, arrayElementType.TypeArguments.Count, "#18");
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		// CodeTypeReference should parse basetype from right to left in 2.0 
 		// profile
 		[Category ("NotWorking")]
-#endif
 		public void BaseTypeTest9 ()
 		{
 			CodeTypeReference reference = new CodeTypeReference ("A[B,,D][,]");
-#if NET_2_0
 			Assert.AreEqual ("A`2", reference.BaseType, "#1");
 			Assert.AreEqual (2, reference.ArrayRank, "#2");
-#else
-			Assert.AreEqual ("A[B,,D]", reference.BaseType, "#1");
-			Assert.AreEqual (2, reference.ArrayRank, "#2");
-#endif
 			Assert.IsNotNull (reference.ArrayElementType, "#3");
 
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, reference.Options, "#4");
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (2, reference.TypeArguments.Count, "#6");
-#endif
 
 			CodeTypeReference arrayElementType = reference.ArrayElementType;
-#if NET_2_0
 			Assert.AreEqual ("A`2", arrayElementType.BaseType, "#7");
 			Assert.AreEqual (0, arrayElementType.ArrayRank, "#8");
-#else
-			Assert.AreEqual ("A[B,,D]", arrayElementType.BaseType, "#7");
-			Assert.AreEqual (0, arrayElementType.ArrayRank, "#8");
-#endif
 			Assert.IsNull (arrayElementType.ArrayElementType, "#9");
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, arrayElementType.Options, "#10");
 			Assert.IsNotNull (arrayElementType.TypeArguments, "#11");
 			Assert.AreEqual (2, arrayElementType.TypeArguments.Count, "#12");
@@ -354,10 +281,8 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, typeArgument.Options, "#22");
 			Assert.IsNotNull (typeArgument.TypeArguments, "#23");
 			Assert.AreEqual (0, typeArgument.TypeArguments.Count, "#24");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void Defaults ()
 		{
@@ -598,7 +523,6 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
 		}
-#endif
 
 		// bug #76535
 		[Test]

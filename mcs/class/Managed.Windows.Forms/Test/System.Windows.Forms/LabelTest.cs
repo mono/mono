@@ -66,7 +66,6 @@ namespace MonoTests.System.Windows.Forms
 			l.BorderStyle = BorderStyle.Fixed3D;
 			Assert.AreEqual (l.PreferredHeight, (l.Font.Height + 6), "#4");
 
-#if NET_2_0			
 			l.UseCompatibleTextRendering = false;
 			
 			l.BorderStyle = BorderStyle.None;
@@ -77,7 +76,6 @@ namespace MonoTests.System.Windows.Forms
 			
 			l.BorderStyle = BorderStyle.Fixed3D;
 			Assert.AreEqual (l.PreferredHeight, (l.Font.Height), "#7");
-#endif
 		}
 		
 		[Test]
@@ -114,11 +112,7 @@ namespace MonoTests.System.Windows.Forms
 			// Height: autosize = false
 			Assert.IsFalse (l1.Height.Equals (l2.Height), "#7");
 			Assert.IsTrue (l1.Height.Equals (l3.Height), "#8");
-#if NET_2_0
 			Assert.IsTrue ((l4.Height > l1.Height), "#9");
-#else
-			Assert.IsTrue (l1.Height.Equals (l4.Height), "#9");
-#endif
 			
 			// Width: autosize = false
 			Assert.IsFalse (l1.Width.Equals (l2.Width), "#10");
@@ -252,7 +246,6 @@ namespace MonoTests.System.Windows.Forms
 		   Assert.AreEqual ("System.Windows.Forms.Label, Text: My Label", l.ToString (), "T1");
 	   }
 	   
-#if NET_2_0
 	[Test]
 	public void AutoSizeExplicitSize ()
 	{
@@ -331,7 +324,6 @@ namespace MonoTests.System.Windows.Forms
 		   Assert.AreEqual (-1, b.ImageIndex, "D14");
 		   Assert.AreEqual (string.Empty, b.ImageKey, "D15");
 	   }
-#endif
    }
 
    [TestFixture]
@@ -348,9 +340,7 @@ namespace MonoTests.System.Windows.Forms
 		   eventhandled = true;
 	   }
 
-#if NET_2_0
 	   [Ignore ("AutoSize moved to Control in 2.0, Label.AutoSize needs to be reworked a bit.")]
-#endif
 	   [Test]
 	   public void AutoSizeChangedChangedTest ()
 	     {

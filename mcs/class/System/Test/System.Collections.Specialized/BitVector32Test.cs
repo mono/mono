@@ -197,11 +197,7 @@ namespace MonoTests.System.Collections.Specialized
                 public void NegativeIndexer ()
                 {
                         BitVector32 bv = new BitVector32 (-1);
-#if NET_2_0
 			Assert.IsTrue (bv [Int32.MinValue], "Int32.MinValue");
-#else
-			Assert.IsFalse (bv [Int32.MinValue], "Int32.MinValue");
-#endif
                 }
 
                 [Test]

@@ -65,7 +65,6 @@ namespace MonoTests.System.Data.Odbc
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void InsertTest ()
 		{
@@ -1242,6 +1241,5 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-#endif
 	}
 }

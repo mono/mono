@@ -149,11 +149,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("", xml.TransformSource, "V8");
 
 			Assert.AreEqual (null, xml.Transform, "V9");
-#if NET_2_0
 			Assert.AreEqual (false, xml.EnableTheming, "EnableTheming");
 			Assert.AreEqual (String.Empty, xml.SkinID, "SkinID");
 			Assert.AreEqual (null, xml.XPathNavigator, "XPathNavigator");
-#endif
 		}
 
 		// Tests that invalid documents can be set before rendering.
@@ -162,17 +160,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			Xml xml = new Xml ();
 			xml.DocumentContent = "Hey";
-#if NET_2_0
 			Assert.AreEqual ("Hey", xml.DocumentContent);
-#else
-			Assert.AreEqual ("", xml.DocumentContent);
-#endif
 			xml.DocumentContent = "<hey></hey>";
-#if NET_2_0
 			Assert.AreEqual ("<hey></hey>", xml.DocumentContent);
-#else
-			Assert.AreEqual ("", xml.DocumentContent);
-#endif
 
 			xml.TransformSource = "test.xsl";
 			Assert.AreEqual (null, xml.Transform, "ID");
@@ -222,7 +212,6 @@ namespace MonoTests.System.Web.UI.WebControls
 					 sw.ToString (), "SP1");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Xml_SourcePrecedence_2 () 
 		{
@@ -246,7 +235,6 @@ namespace MonoTests.System.Web.UI.WebControls
 					 sw.ToString (), "Xml_SourcePrecedence_2");
 
 		}
-#endif
 
 		[Test] public void Xml_DefaultTrasnform ()
 		{
@@ -279,7 +267,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			xml.DoAdd (new LiteralControl ("<test></test>"));
 		}
 
-#if NET_2_0
 		class CustomXPathNavigator : XPathNavigator
 		{
 			public override string BaseURI
@@ -438,7 +425,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Xml xml = new Xml ();
 			xml.SkinID = "Fake";
 		}
-#endif
 	}
 }
 

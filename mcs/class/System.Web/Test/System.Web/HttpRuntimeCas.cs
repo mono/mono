@@ -48,29 +48,12 @@ namespace MonoCasTests.System.Web {
 			new HttpRuntime ();
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Constructor_Deny_Unrestricted ()
 		{
 			new HttpRuntime ();
 		}
-#else
-		[Test]
-		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-		[ExpectedException (typeof (SecurityException))]
-		public void Constructor_Deny_UnmanagedCode ()
-		{
-			new HttpRuntime ();
-		}
-
-		[Test]
-		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
-		public void Constructor_PermitOnly_UnmanagedCode ()
-		{
-			new HttpRuntime ();
-		}
-#endif
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]

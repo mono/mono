@@ -35,7 +35,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 	[TestFixture]
 	public class BindingsCollectionTest : TestHelper 
 	{
-#if NET_2_0
 		// 
 		// CollectionChanging event test section
 		//
@@ -93,7 +92,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			binding_coll.Clear ();
 			Assert.IsTrue (collection_changing_called, "#C1");
 		}
-#endif
 	}
 }
 

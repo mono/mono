@@ -99,7 +99,6 @@ public class CredentialCacheTest
 			Console.WriteLine (e.Current.GetType () + " : " + e.Current.ToString ());
 		}
 		*/
-#if NET_2_0
 		result = c.GetCredential ("www.ximian.com", 80, "Basic");
 		Assert.IsTrue (result == null, "#18");		
 
@@ -117,7 +116,6 @@ public class CredentialCacheTest
 		c.Add ("www.contoso.com", 80, "Basic", cred5);
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "Basic");
 		Assert.IsTrue (result == null, "#21");		
-#endif
 	}
 }
 

@@ -303,7 +303,7 @@ namespace Mono.Unix.Native {
 	// Right now using this attribute gives an assert because it
 	// isn't implemented.
 	//
-#if NET_2_0 && UNMANAGED_FN_PTR_SUPPORT_FIXED
+#if UNMANAGED_FN_PTR_SUPPORT_FIXED
 	[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 #endif
 	public delegate void SignalHandler (int signal);

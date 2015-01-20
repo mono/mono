@@ -507,7 +507,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert.AreEqual (xml, output);
 		}
 
-#if NET_2_0
 		[Test]
 		public void PrefixlessNamespaceOutput ()
 		{
@@ -545,6 +544,5 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			new XmlDsigExcC14NTransform ().GetDigestedOutput (null);
 		}
-#endif
 	}    
 }

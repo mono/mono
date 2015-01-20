@@ -8,7 +8,6 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class LinkAreaTest : TestHelper
 	{	
-#if NET_2_0
 		[Test]
 		public void LinkAreaToString ()
 		{
@@ -45,6 +44,5 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (l1 != l2, "A2");
 			Assert.IsTrue (l2 != l3, "A3");
 		}
-#endif
 	}
 }

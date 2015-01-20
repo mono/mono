@@ -92,22 +92,6 @@ namespace MonoTests.System.Diagnostics
 				"<add />",
 				"<add name=\"a\"/>",
 				"<add value=\"b\"/>",
-#if !NET_2_0
-				// in the 2.0 profile, we currently allow non-integral
-				// values
-				//
-				// MS actually introduced new configuration classes
-				// for the 2.0 profile and did not modify the original
-				// classes
-				//
-				// Once we add 2.0 configuration classes for 
-				// system.diagnostics, the origina behavior should
-				// be restored and this test should be enabled again
-				// for the 2.0 profile
-
-				// non-integral value
-				"<add name=\"string-value\" value=\"string-value\"/>",
-#endif
 				// too many arguments
 				"<add name=\"a\" value=\"b\" extra=\"c\"/>",
 				// wrong casing
@@ -247,10 +231,6 @@ namespace MonoTests.System.Diagnostics
 				"<remove/>",
 				"<add/>",
 				"<remove name=\"foo\" extra=\"arg\"/>",
-#if NET_2_0 // type is optional (it could indicate a named listener)
-#else
-				"<add name=\"foo\"/>",
-#endif
 				"<add type=\"foo\"/>",
 				"<add name=\"foo\" type=\"invalid-type\"/>",
 			};

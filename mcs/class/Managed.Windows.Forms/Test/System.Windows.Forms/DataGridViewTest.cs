@@ -23,7 +23,6 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //	Daniel Nauck    (dna(at)mono-project(dot)de)
 //	Ivan N. Zlatev  <contact@i-nz.net>
-#if NET_2_0
 
 using System;
 using System.Data;
@@ -2714,4 +2713,3 @@ namespace MonoTests.System.Windows.Forms
 		
 }
 
-#endif

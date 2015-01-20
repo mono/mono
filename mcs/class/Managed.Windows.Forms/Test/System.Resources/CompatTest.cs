@@ -38,13 +38,7 @@ namespace MonoTests.System.Resources
 				Assert.AreEqual (16, ((byte []) h ["ByteArray2"]) [1], fileName + "#8");
 				Assert.AreEqual (1013, ((int []) h ["IntArray"]) [1], fileName + "#9");
 				Assert.AreEqual ("world", ((string []) h ["StringArray"]) [1], fileName + "#10");
-#if NET_2_0
 				Assert.IsNull (h ["InvalidMimeType"], "#11");
-#else
-				Assert.IsNotNull (h ["InvalidMimeType"], "#11a");
-				Assert.AreEqual ("AAEAAAD/////AQAAAAAAAAARAQAAAAIAAAAGAgAAAAVoZWxsbwYDAAAABXdvcmxkCw==",
-					h ["InvalidMimeType"], "#11b");
-#endif
 				Assert.IsNotNull (h ["Image"], fileName + "#12");
 				Assert.AreEqual (typeof (Bitmap), h ["Image"].GetType (), fileName + "#13");
 			}
@@ -60,7 +54,6 @@ namespace MonoTests.System.Resources
 			Helper.TestReader (fileName);
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestReader_2_0 ()
 		{
@@ -70,6 +63,5 @@ namespace MonoTests.System.Resources
 		
 			Helper.TestReader (fileName);
 		}
-#endif
 	}
 }

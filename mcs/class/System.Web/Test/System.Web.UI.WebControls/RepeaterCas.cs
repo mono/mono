@@ -43,7 +43,6 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 	[Category ("CAS")]
 	public class RepeaterCas : AspNetHostingMinimal {
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
@@ -51,7 +50,6 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			RepeaterTest unit = new RepeaterTest ();
 			unit.Repeater_DefaultsSelectArguments ();
 		}
-#endif
 		// LinkDemand
 
 		public override Type Type {

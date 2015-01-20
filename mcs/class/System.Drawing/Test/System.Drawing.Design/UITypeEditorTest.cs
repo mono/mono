@@ -60,9 +60,7 @@ namespace MonoTests.System.Drawing.Design {
 
 			Assert.IsFalse (editor.GetPaintValueSupported (), "GetPaintValueSupported()");
 			Assert.IsFalse (editor.GetPaintValueSupported (null), "GetPaintValueSupported(null)");
-#if NET_2_0
 			Assert.IsFalse (editor.IsDropDownResizable, "IsDropDownResizable");
-#endif
 		}
 
 		[Test]

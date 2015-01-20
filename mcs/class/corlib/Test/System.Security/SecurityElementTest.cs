@@ -601,15 +601,11 @@ namespace MonoTests.System.Security {
 			SecurityElement se = new SecurityElement ("Multiple");
 			se.AddAttribute ("Attribute1", "One");
 			se.AddAttribute ("Attribute2", "Two");
-#if NET_2_0
+
 			string expected = String.Format ("<Multiple Attribute1=\"One\"{0}Attribute2=\"Two\"/>{0}", Environment.NewLine);
-#else
-			string expected = String.Format ("<Multiple Attribute1=\"One\"{0}          Attribute2=\"Two\"/>{0}", Environment.NewLine);
-#endif
 			Assert.AreEqual (expected, se.ToString (), "ToString()");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Copy ()
 		{
@@ -735,7 +731,6 @@ namespace MonoTests.System.Security {
 			Assert.AreEqual ("Suds&#x26;Soda&#38;", se.Text, "#5");
 			Assert.IsNull (se.Children, "#6");
 		}
-#endif
 
 		[Test] // bug #333699 (ugh, mostly a dup)
 		public void TestToString ()
@@ -749,17 +744,11 @@ namespace MonoTests.System.Security {
 			Assert.AreEqual ("<'Suds' & \"Soda\">!", infoValue.Text, "#2");
 			Assert.IsNull (values.Text, "#3");
 
-#if NET_2_0
 			Assert.AreEqual (String.Format ("<values>{0}<value name=\"string\">&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>{0}</values>{0}", Environment.NewLine), values.ToString (), "#4");
-#else
-			Assert.AreEqual (String.Format ("<values>{0}   <value name=\"string\">&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>{0}</values>{0}", Environment.NewLine), values.ToString (), "#4");
-#endif
 
-#if NET_2_0
 			SecurityElement sec = SecurityElement.FromString (values.ToString ());
 			Assert.AreEqual (1, sec.Children.Count, "#5");
 			Assert.AreEqual ("<'Suds' & \"Soda\">!", ((SecurityElement) sec.Children [0]).Text, "#6");
-#endif
 		}
 	}
 }

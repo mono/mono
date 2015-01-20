@@ -8,7 +8,6 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class HelpProviderTest : TestHelper
 	{	
-#if NET_2_0
 		[Test]
 		public void HelpProviderPropertyTag ()
 		{
@@ -20,6 +19,5 @@ namespace MonoTests.System.Windows.Forms
 			md.Tag = s;
 			Assert.AreSame (s, md.Tag, "A2");
 		}
-#endif
 	}
 }

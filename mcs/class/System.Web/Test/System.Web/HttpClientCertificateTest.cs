@@ -241,11 +241,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (NullReferenceException))]
-#else
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void HttpRequestPublicCtor ()
 		{
 			HttpRequest hr = new HttpRequest ("file", "http://www.mono-project.com/", "");

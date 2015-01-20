@@ -16,9 +16,7 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Globalization;
 using System.IO;
-#if NET_2_0
 using System.Reflection;
-#endif
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -48,7 +46,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
@@ -68,14 +65,6 @@ namespace MonoTests.System.XmlSerialization
 				"        }}{0}" +
 				"    }}{0}" +
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
-				"public class ArrayClass {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    public object names;{0}" +
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 
 
 			codeNamespace = ExportCode (typeof (ArrayClass[]));
@@ -87,7 +76,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
@@ -106,13 +94,6 @@ namespace MonoTests.System.XmlSerialization
 				"        }}{0}" +
 				"    }}{0}" +
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#4");
-#else
-				"public class ArrayClass {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    public object names;{0}" +
-				"}}{0}", Environment.NewLine), sw.ToString (), "#4");
-#endif
 		}
 
 		[Test]
@@ -129,7 +110,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
@@ -149,14 +129,6 @@ namespace MonoTests.System.XmlSerialization
 				"        }}{0}" +
 				"    }}{0}" +
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
-				"public class ArrayContainer {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    public object[] items;{0}" +
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 		}
 
 		[Test]
@@ -173,7 +145,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
@@ -193,14 +164,6 @@ namespace MonoTests.System.XmlSerialization
 				"        }}{0}" +
 				"    }}{0}" +
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
-				"public class CDataContainer {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    public System.Xml.XmlCDataSection cdata;{0}" +
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 		}
 
 		[Test]
@@ -219,7 +182,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
@@ -243,18 +205,6 @@ namespace MonoTests.System.XmlSerialization
 				"        }}{0}" +
 				"    }}{0}" +
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
-				"public class Choices {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlElementAttribute(\"ChoiceZero\", typeof(string))]{0}" +
-				"    [System.Xml.Serialization.XmlElementAttribute(\"ChoiceTwo\", typeof(string))]{0}" +
-				"    [System.Xml.Serialization.XmlElementAttribute(\"ChoiceOne\", typeof(string))]{0}" +
-				"    [System.Xml.Serialization.XmlChoiceIdentifierAttribute(\"ItemType\")]{0}" +
-				"    public string MyChoice;{0}" +
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 		}
 
 		[Test]
@@ -272,7 +222,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
@@ -431,68 +380,12 @@ namespace MonoTests.System.XmlSerialization
 				"            this.streetField = value;{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-#else
-				"[System.Xml.Serialization.XmlRootAttribute(\"field\", Namespace=\"\", IsNullable=true)]{0}" +
-				"public class Field {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"flag1\")]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.FlagEnum.e1)]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.FlagEnum Flags1 = MonoTests.System.Xml.TestClasses.FlagEnum.e1;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"flag2\")]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.FlagEnum.e1)]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.FlagEnum Flags2 = MonoTests.System.Xml.TestClasses.FlagEnum.e1;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"flag3\", Form=System.Xml.Schema.XmlSchemaForm.Qualified)]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute((MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e2))]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.FlagEnum Flags3 = (MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e2);{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"flag4\")]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.FlagEnum Flags4;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"modifiers\")]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.MapModifiers Modifiers;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"modifiers2\")]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.MapModifiers Modifiers2;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"modifiers3\")]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.MapModifiers.Public)]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.MapModifiers Modifiers3 = MonoTests.System.Xml.TestClasses.MapModifiers.Public;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"modifiers4\")]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.MapModifiers.Protected)]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.MapModifiers Modifiers4 = MonoTests.System.Xml.TestClasses.MapModifiers.Protected;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"modifiers5\", Form=System.Xml.Schema.XmlSchemaForm.Qualified)]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.MapModifiers.Public)]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.MapModifiers Modifiers5 = MonoTests.System.Xml.TestClasses.MapModifiers.Public;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"names\")]{0}" +
-				"    public string[] Names;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"street\")]{0}" +
-				"    public string Street;{0}" +
-#endif
 				"}}{0}" +
 				"{0}" +
 				"/// <remarks/>{0}" +
 				"[System.FlagsAttribute()]{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
-#endif
 				"public enum FlagEnum {{{0}" +
 				"    {0}" +
 				"    /// <remarks/>{0}" +
@@ -510,10 +403,8 @@ namespace MonoTests.System.XmlSerialization
 				"{0}" +
 				"/// <remarks/>{0}" +
 				"[System.FlagsAttribute()]{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
-#endif
 				"public enum MapModifiers {{{0}" +
 				"    {0}" +
 				"    /// <remarks/>{0}" +
@@ -523,11 +414,7 @@ namespace MonoTests.System.XmlSerialization
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlEnumAttribute(\"protected\")]{0}" +
 				"    Protected = 2,{0}" +
-#if NET_2_0
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 		}
 
 		[Test]
@@ -544,10 +431,8 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
-#endif
 				"[System.Xml.Serialization.XmlTypeAttribute(IncludeInSchema=false)]{0}" +
 				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=false)]{0}" +
 				"public enum ItemChoiceType {{{0}" +
@@ -561,11 +446,7 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    ChoiceTwo,{0}" +
-#if NET_2_0
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 
 			codeNamespace = ExportCode (typeof (ItemChoiceType[]));
 			Assert.IsNotNull (codeNamespace, "#3");
@@ -576,10 +457,8 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
-#endif
 				"[System.Xml.Serialization.XmlTypeAttribute(IncludeInSchema=false)]{0}" +
 				"public enum ItemChoiceType {{{0}" +
 				"    {0}" +
@@ -592,11 +471,7 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    ChoiceTwo,{0}" +
-#if NET_2_0
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#4");
-#else
-				"}}{0}", Environment.NewLine), sw.ToString (), "#4");
-#endif
 		}
 
 		[Test]
@@ -613,7 +488,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
@@ -653,21 +527,6 @@ namespace MonoTests.System.XmlSerialization
 				"        }}{0}" +
 				"    }}{0}" +
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=true)]{0}" +
-				"public class ClassArrayContainer {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    public MonoTests.System.Xml.TestClasses.SimpleClass[] items;{0}" +
-				"}}{0}" +
-				"{0}" +
-				"/// <remarks/>{0}" +
-				"public class SimpleClass {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    public string something;{0}" +
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 		}
 
 		[Test]
@@ -685,7 +544,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
@@ -962,130 +820,6 @@ namespace MonoTests.System.XmlSerialization
 				"    /// <remarks/>{0}" +
 				"    e4 = 4,{0}" +
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"urn:aNS\")]{0}" +
-				"[System.Xml.Serialization.XmlRootAttribute(\"root\", Namespace=\"urn:aNS\", IsNullable=false)]{0}" +
-				"public class Root {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    public MonoTests.System.Xml.TestClasses.OptionalValueTypeContainer OptionalValue;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    public MonoTests.System.Xml.TestClasses.TestDefault Default;{0}" +
-				"}}{0}" +
-				"{0}" +
-				"/// <remarks/>{0}" +
-				"[System.Xml.Serialization.XmlTypeAttribute(TypeName=\"optionalValueType\", Namespace=\"some:urn\")]{0}" +
-				"public class OptionalValueTypeContainer {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute((MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e4))]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.FlagEnum Attributes = (MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e4);{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.FlagEnum.e1)]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.FlagEnum Flags = MonoTests.System.Xml.TestClasses.FlagEnum.e1;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlIgnoreAttribute()]{0}" +
-				"    public bool FlagsSpecified;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(false)]{0}" +
-				"    public bool IsEmpty = false;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlIgnoreAttribute()]{0}" +
-				"    public bool IsEmptySpecified;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(false)]{0}" +
-				"    public bool IsNull = false;{0}" +
-				"}}{0}" +
-				"{0}" +
-				"/// <remarks/>{0}" +
-				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"some:urn\")]{0}" +
-				"[System.FlagsAttribute()]{0}" +
-				"public enum FlagEnum {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlEnumAttribute(\"one\")]{0}" +
-				"    e1 = 1,{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlEnumAttribute(\"two\")]{0}" +
-				"    e2 = 2,{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlEnumAttribute(\"four\")]{0}" +
-				"    e4 = 4,{0}" +
-				"}}{0}" +
-				"{0}" +
-				"/// <remarks/>{0}" +
-				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"urn:myNS\")]{0}" +
-				"public class TestDefault {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    public string str;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(\"Default Value\")]{0}" +
-				"    public string strDefault = \"Default Value\";{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(true)]{0}" +
-				"    public bool boolT = true;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(false)]{0}" +
-				"    public bool boolF = false;{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(typeof(System.Decimal), \"10\")]{0}" +
-				"    public System.Decimal decimalval = ((System.Decimal)(10m));{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute((MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e4))]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.FlagEnum flag = (MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e4);{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute((MonoTests.System.Xml.TestClasses.FlagEnum_Encoded.e1 | MonoTests.System.Xml.TestClasses.FlagEnum_Encoded.e4))]{0}" +
-				"    public MonoTests.System.Xml.TestClasses.FlagEnum_Encoded flagencoded = (MonoTests.System.Xml.TestClasses.FlagEnum_Encoded.e1 | MonoTests.System.Xml.TestClasses.FlagEnum_Encoded.e4);{0}" +
-				"}}{0}" +
-				"{0}" +
-				"/// <remarks/>{0}" +
-				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"urn:myNS\")]{0}" +
-				"[System.FlagsAttribute()]{0}" +
-				"public enum FlagEnum {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlEnumAttribute(\"one\")]{0}" +
-				"    e1 = 1,{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlEnumAttribute(\"two\")]{0}" +
-				"    e2 = 2,{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlEnumAttribute(\"four\")]{0}" +
-				"    e4 = 4,{0}" +
-				"}}{0}" +
-				"{0}" +
-				"/// <remarks/>{0}" +
-				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"urn:myNS\")]{0}" +
-				"[System.FlagsAttribute()]{0}" +
-				"public enum FlagEnum_Encoded {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    e1 = 1,{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    e2 = 2,{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    e4 = 4,{0}" +
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 		}
 
 		[Test]
@@ -1102,7 +836,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
 				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
@@ -1123,15 +856,6 @@ namespace MonoTests.System.XmlSerialization
 				"        }}{0}" +
 				"    }}{0}" +
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"[System.Xml.Serialization.XmlRootAttribute(\"simple\", Namespace=\"\", IsNullable=true)]{0}" +
-				"public class SimpleClassWithXmlAttributes {{{0}" +
-				"    {0}" +
-				"    /// <remarks/>{0}" +
-				"    [System.Xml.Serialization.XmlAttributeAttribute(\"member\")]{0}" +
-				"    public string something;{0}" +
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 		}
 
 		[Test]
@@ -1185,10 +909,8 @@ namespace MonoTests.System.XmlSerialization
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
 				"[System.FlagsAttribute()]{0}" +
-#if NET_2_0
 				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
 				"[System.SerializableAttribute()]{0}" +
-#endif
 				"[System.Xml.Serialization.XmlRootAttribute(Namespace=\"\", IsNullable=false)]{0}" +
 				"public enum ZeroFlagEnum {{{0}" +
 				"    {0}" +
@@ -1203,11 +925,7 @@ namespace MonoTests.System.XmlSerialization
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlEnumAttribute(\"tns:t<w>o\")]{0}" +
 				"    e2 = 4,{0}" +
-#if NET_2_0
 				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
-#else
-				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
-#endif
 		}
 
 		[Test]
@@ -1287,7 +1005,6 @@ namespace MonoTests.System.XmlSerialization
 			return codeNamespace;
 		}
 
-#if NET_2_0
 		string XmlFileVersion {
 			get {
 				Assembly xmlAsm = typeof (XmlDocument).Assembly;
@@ -1296,7 +1013,6 @@ namespace MonoTests.System.XmlSerialization
 				return afv.Version;
 			}
 		}
-#endif
 
 		[XmlRootAttribute ("root", Namespace="urn:aNS", IsNullable=false)]
 		public class Root

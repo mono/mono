@@ -66,7 +66,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		public bool IsTracking {
 			get { return base.IsTrackingViewState; }
 		}
-#if NET_2_0
 		public void SetCssClass(string name) {
 			Type style = typeof (Style);
 			if (style != null) {	
@@ -86,7 +85,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.FillStyleAttributes (attributes, urlResolver);
 			attributes.Add ("FillStyleAttributes", "FillStyleAttributes");
 		}
-#endif
 
 		public string[] KeyValuePairs() {
 			IEnumerator	e;
@@ -399,7 +397,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			s.BorderStyle = (BorderStyle)(BorderStyle.Outset + 1);
 		}
 		
-#if NET_2_0
 		[Test]
 		public void Style_RegisteredCssClass ()
 		{
@@ -550,7 +547,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (null, css ["border-style"], "GetStyleAttributes#22");
 			Assert.AreEqual ("0px", css ["border-width"], "GetStyleAttributes#23");
 		}
-#endif
 
 		[Test]
 		public void StyleFonts () {
@@ -766,7 +762,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			s.AddAttributesToRender(writer);
 			// Figure out an order-independent way to verify rendered results
 		}
-#if NET_2_0
 		class PokerStyle : Style
 		{
 			public IUrlResolutionService UrlResolver;
@@ -796,6 +791,5 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (c, ((PokerStyle) c.ControlStyle).UrlResolver);
 		}
 
-#endif
 	}
 }

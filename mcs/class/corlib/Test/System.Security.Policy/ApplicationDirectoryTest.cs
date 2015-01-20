@@ -62,9 +62,6 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void ApplicationDirectory_Invalid ()
 		{
 			new ApplicationDirectory (Invalid (false));
@@ -74,11 +71,7 @@ namespace MonoTests.System.Security.Policy {
 		public void ApplicationDirectory_String ()
 		{
 			ApplicationDirectory ad = new ApplicationDirectory ("mono");
-#if NET_2_0
 			Assert.AreEqual ("mono", ad.Directory, "Directory");
-#else
-			Assert.AreEqual ("file://MONO", ad.Directory, "Directory");
-#endif
 		}
 
 		[Test]
@@ -99,11 +92,7 @@ namespace MonoTests.System.Security.Policy {
 		public void Copy ()
 		{
 			ApplicationDirectory ad = new ApplicationDirectory ("novell");
-#if NET_2_0
 			Assert.AreEqual ("novell", ad.Directory, "Directory");
-#else
-			Assert.AreEqual ("file://NOVELL", ad.Directory, "Directory");
-#endif
 			ApplicationDirectory copy = (ApplicationDirectory)ad.Copy ();
 			Assert.IsTrue (ad.Equals (copy), "ad.Equals(copy)");
 			Assert.IsTrue (copy.Equals (ad), "copy.Equals(ad)");
@@ -132,23 +121,13 @@ namespace MonoTests.System.Security.Policy {
 		{
 			string linux = "/unix/path/mono";
 			ApplicationDirectory ad1 = new ApplicationDirectory (linux);
-#if NET_2_0
 			Assert.AreEqual (linux, ad1.Directory);
 			Assert.AreEqual (linux.GetHashCode (), ad1.GetHashCode (), "GetHashCode-Linux");
-#else
-			Assert.AreEqual ("file://UNIX/PATH/mono", ad1.Directory);
-			Assert.AreEqual ("file://UNIX/PATH/mono".GetHashCode (), ad1.GetHashCode (), "GetHashCode-Linux");
-#endif
 
 			string windows = "\\windows\\path\\mono";
 			ApplicationDirectory ad2 = new ApplicationDirectory (windows);
-#if NET_2_0
 			Assert.AreEqual (windows, ad2.Directory);
 			Assert.AreEqual (windows.GetHashCode (), ad2.GetHashCode (), "GetHashCode-Windows");
-#else
-			Assert.AreEqual ("file://WINDOWS/PATH/mono", ad2.Directory);
-			Assert.AreEqual ("file://WINDOWS/PATH/mono".GetHashCode (), ad2.GetHashCode (), "GetHashCode-Windows");
-#endif
 		}
 
 		[Test]
@@ -161,7 +140,6 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsTrue (ts.IndexOf ("<Directory>file://MONO</Directory>") > 0, "Directory");
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Equals_Invalid ()
@@ -186,6 +164,5 @@ namespace MonoTests.System.Security.Policy {
 		{
 			new ApplicationDirectory (Invalid (true)).ToString ();
 		}
-#endif
 	}
 }

@@ -123,19 +123,11 @@ namespace MonoTests.System.Windows.Forms {
 				// due to previous statement throwing an
 				// exception
 				Console.WriteLine (s);
-#if NET_2_0
 			} catch (InvalidOperationException ex) {
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.Message, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 			}
-#else
-			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-			}
-#endif
 		}
 
 		[Test]
@@ -285,7 +277,6 @@ namespace MonoTests.System.Windows.Forms {
 			f.Dispose ();
 		}
 		
-#if NET_2_0
 		[Test]
 		public void PropertyName ()
 		{
@@ -335,7 +326,6 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual ("Woo", tn.ToolTipText, "A2");
 		}
 		
-#if NET_2_0
 		[Test]
 		public void ImageKeyIndex ()
 		{
@@ -359,7 +349,6 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (2, tn.ImageIndex, "A7");
 			Assert.AreEqual (string.Empty, tn.ImageKey, "A8");
 		}
-#endif
 
 		//[Test]
 		//public void MethodSerialize ()
@@ -381,6 +370,5 @@ namespace MonoTests.System.Windows.Forms {
 				base.Serialize (si, context);
 			}
 		}
-#endif
 	}
 }

@@ -117,11 +117,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void EmptyXslt () 
 		{
 			string test = "<Test>XmlDsigXsltTransform</Test>";
@@ -158,15 +154,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				transform.LoadInnerXml (doc.ChildNodes);
 				Stream s = (Stream) transform.GetOutput ();
 			}
-#if NET_2_0
 			catch (Exception e) {
 				// we must deal with an internal exception
 				result = (e.GetType ().ToString ().EndsWith ("XsltLoadException"));
 				result = true;
-#else
-			catch (XsltCompileException) {
-				result = true;
-#endif
 			}
 			finally {
 				Assert.IsTrue (result, "Exception not thrown");
@@ -174,11 +165,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void OnlyInner () 
 		{
 			string test = "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns=\"http://www.w3.org/TR/xhtml1/strict\" version=\"1.0\">";

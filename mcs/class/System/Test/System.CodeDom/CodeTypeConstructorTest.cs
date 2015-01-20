@@ -52,7 +52,6 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (ctc.CustomAttributes, "#4");
 			Assert.AreEqual (0, ctc.CustomAttributes.Count, "#5");
 
-#if NET_2_0
 			Assert.IsNotNull (ctc.StartDirectives, "#6");
 			Assert.AreEqual (0, ctc.StartDirectives.Count, "#7");
 
@@ -61,7 +60,6 @@ namespace MonoTests.System.CodeDom
 
 			Assert.IsNotNull (ctc.TypeParameters, "#10");
 			Assert.AreEqual (0, ctc.TypeParameters.Count, "#11");
-#endif
 
 			Assert.IsNull (ctc.LinePragma, "#12");
 

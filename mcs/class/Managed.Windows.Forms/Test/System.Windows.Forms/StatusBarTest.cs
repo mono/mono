@@ -142,7 +142,6 @@ namespace MonoTests.System.Windows.Forms
 			
 		}
 
-#if NET_2_0
 		[Test]
 		public void ItemByKeyTest ()
 		{
@@ -382,7 +381,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, c.IndexOfKey ("p3"), "#7");
 			Assert.AreEqual (-1, c.IndexOfKey ("p"), "#8");			
 		}
-#endif
 
 		[Test]
 		public void PanelParentAlwaysSet()

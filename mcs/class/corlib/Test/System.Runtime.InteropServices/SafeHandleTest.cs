@@ -6,7 +6,6 @@
 //
 // Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
-#if NET_2_0
 using NUnit.Framework;
 using System;
 using System.Runtime.InteropServices;
@@ -249,4 +248,3 @@ namespace MonoTests.System.Runtime.InteropServices
 	}
 }
 
-#endif

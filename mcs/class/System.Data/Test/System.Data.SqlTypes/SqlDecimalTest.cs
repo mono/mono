@@ -38,10 +38,8 @@ using System.Xml;
 using System.Data.SqlTypes;
 using System.Threading;
 using System.Globalization;
-#if NET_2_0
 using System.Xml.Serialization;
 using System.IO;
-#endif
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -719,7 +717,6 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (9999999999999999999999999999m, d);
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
 		{
@@ -777,6 +774,5 @@ namespace MonoTests.System.Data.SqlTypes
 				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
 			}
 		}
-#endif
 	}
 }

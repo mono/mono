@@ -181,11 +181,7 @@ namespace MonoTests.System.Text
 			Encoding encoding = Encoding.ASCII;
 			byte [] bytes = new byte [] {0x61, 0xE1, 0xE2};
 			string s = encoding.GetString (bytes, 0, 3);
-#if NET_2_0
 			Assert.AreEqual ("a??", s);
-#else
-			Assert.AreEqual ("aab", s);
-#endif
 		}
 
 		[Test] // Test Decoder

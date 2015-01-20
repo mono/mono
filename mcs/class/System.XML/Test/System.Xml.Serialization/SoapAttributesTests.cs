@@ -20,11 +20,9 @@ namespace MonoTests.System.XmlSerialization
 	public class SoapAttributesTests
 	{
 		[Test]
-#if NET_2_0
 		// in .NET 2.0, SoapDefaultValue should be null by default, but we need
 		// more tests before making this change
 		[Category ("NotDotNet")]
-#endif
 		public void Defaults ()
 		{
 			SoapAttributes atts = new SoapAttributes ();

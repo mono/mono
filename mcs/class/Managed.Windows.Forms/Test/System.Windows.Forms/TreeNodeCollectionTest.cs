@@ -22,26 +22,19 @@ namespace MonoTests.System.Windows.Forms
             tv.Nodes.Add("text");
             Assert.AreEqual(1, tv.Nodes.Count, "#A1");
             Assert.AreEqual("text", tv.Nodes[0].Text, "#A2");
-#if NET_2_0
             Assert.AreEqual("", tv.Nodes[0].Name, "#A3");
-#endif
             tv.Nodes.Clear();
 
             tv.Nodes.Add(new TreeNode());
             Assert.AreEqual("", tv.Nodes[0].Text, "#B1");
-#if NET_2_0
             Assert.AreEqual("", tv.Nodes[0].Name, "#B2");
-#endif
 
-#if NET_2_0
             tv.Nodes.Clear();
 
             tv.Nodes.Add("key", "text");
             Assert.AreEqual("text", tv.Nodes[0].Text, "#C1");
             Assert.AreEqual("key", tv.Nodes[0].Name, "#C2");
-#endif
 
-#if NET_2_0
             tv.Nodes.Clear();
             imglist = new ImageList();
             imglist.Images.Add("image key", new Bitmap(16, 16));
@@ -51,9 +44,7 @@ namespace MonoTests.System.Windows.Forms
             Assert.AreEqual("key", tv.Nodes[0].Name, "#D2");
             Assert.AreEqual(0, tv.Nodes[0].ImageIndex, "#D3");
             Assert.AreEqual("", tv.Nodes[0].ImageKey, "#D4");
-#endif
 
-#if NET_2_0
             tv.Nodes.Clear();
             imglist = new ImageList();
             imglist.Images.Add("image key", new Bitmap(16, 16));
@@ -63,9 +54,7 @@ namespace MonoTests.System.Windows.Forms
             Assert.AreEqual("key", tv.Nodes[0].Name, "#E2");
             Assert.AreEqual(-1, tv.Nodes[0].ImageIndex, "#E3");
             Assert.AreEqual("image key", tv.Nodes[0].ImageKey, "#E4");
-#endif
 
-#if NET_2_0
             tv.Nodes.Clear();
             imglist = new ImageList();
             imglist.Images.Add("image key", new Bitmap(16, 16));
@@ -78,9 +67,7 @@ namespace MonoTests.System.Windows.Forms
             Assert.AreEqual("", tv.Nodes[0].ImageKey, "#F4");
             Assert.AreEqual(1, tv.Nodes[0].SelectedImageIndex, "#F5");
             Assert.AreEqual("", tv.Nodes[0].SelectedImageKey, "#F6");
-#endif
 
-#if NET_2_0
             tv.Nodes.Clear();
             imglist = new ImageList();
             imglist.Images.Add("image key", new Bitmap(16, 16));
@@ -93,9 +80,7 @@ namespace MonoTests.System.Windows.Forms
             Assert.AreEqual("image key", tv.Nodes[0].ImageKey, "#G4");
             Assert.AreEqual(-1, tv.Nodes[0].SelectedImageIndex, "#G5");
             Assert.AreEqual("selected image key", tv.Nodes[0].SelectedImageKey, "#G6");
-#endif
 
-#if NET_2_0
             tv.Nodes.Clear();
             tv.Nodes.Add("key", "text");
             tv.Nodes.Add("key", "text 2");
@@ -107,7 +92,6 @@ namespace MonoTests.System.Windows.Forms
 
             Assert.IsTrue(tv.Nodes.ContainsKey("key"), "#I1");
             Assert.AreEqual(0, tv.Nodes.IndexOfKey("key"), "#I2");
-#endif
         }
 
 		[Test]
@@ -415,9 +399,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.ActualValue, "#B3");
 				Assert.IsNull (ex.InnerException, "#B4");
-#if NET_2_0
 				Assert.AreEqual ("index", ex.ParamName, "#B5");
-#endif
 			}
 
 			try {
@@ -427,9 +409,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
 				Assert.IsNull (ex.ActualValue, "#C3");
 				Assert.IsNull (ex.InnerException, "#C4");
-#if NET_2_0
 				Assert.AreEqual ("index", ex.ParamName, "#C5");
-#endif
 			}
 
 			try {
@@ -439,9 +419,7 @@ namespace MonoTests.System.Windows.Forms
 				// Parameter must be of type TreeNode
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
 				Assert.IsNull (ex.InnerException, "#D3");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#D4");
-#endif
 			}
 
 			try {
@@ -451,13 +429,10 @@ namespace MonoTests.System.Windows.Forms
 				// Parameter must be of type TreeNode
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
 				Assert.IsNull (ex.InnerException, "#E3");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#E4");
-#endif
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void ContainsKey ()
 		{
@@ -491,7 +466,6 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (-1, tv.Nodes.IndexOfKey ("42"), "#KI2");
 		}
-#endif
 
 		[Test]
 		public void Bug408999 ()

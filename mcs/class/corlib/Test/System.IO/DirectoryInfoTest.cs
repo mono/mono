@@ -516,9 +516,7 @@ namespace MonoTests.System.IO
 				Assert.AreEqual (0, info.GetDirectories ("test[12]*").Length, "#6");
 				Assert.AreEqual (2, info.GetDirectories ("test2*0").Length, "#7");
 				Assert.AreEqual (4, info.GetDirectories ("*test*").Length, "#8");
-#if NET_2_0
 				Assert.AreEqual (6, info.GetDirectories ("*", SearchOption.AllDirectories).Length, "#9");
-#endif
 			} finally {
 				DeleteDir (path);
 			}
@@ -572,7 +570,6 @@ namespace MonoTests.System.IO
 			Assert.AreEqual(directoryToBeLookedFor, directoriesFound[0].Name, "The name of the directory found should match the expected one.");
 		}
 
-#if NET_2_0
 		[Test] // GetDirectories (String, SearchOption)
 		public void GetDirectories3_SearchPattern_Null ()
 		{
@@ -587,7 +584,6 @@ namespace MonoTests.System.IO
 				Assert.AreEqual ("searchPattern", ex.ParamName, "#5");
 			}
 		}
-#endif
 
 		[Test] // GetFiles ()
 		public void GetFiles1 ()
@@ -692,7 +688,6 @@ namespace MonoTests.System.IO
 			}
 		}
 
-#if NET_2_0
 		[Test] // GetFiles (String, SearchOption)
 		public void GetFiles3_SearchPattern_Null ()
 		{
@@ -707,7 +702,6 @@ namespace MonoTests.System.IO
 				Assert.AreEqual ("searchPattern", ex.ParamName, "#5");
 			}
 		}
-#endif
 
 		[Test]
 		public void GetFileSystemInfos2_SearchPattern_Null ()

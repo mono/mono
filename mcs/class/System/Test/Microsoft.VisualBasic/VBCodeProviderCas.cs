@@ -66,7 +66,6 @@ namespace MonoCasTests.Microsoft.VisualBasic {
 			catch (NotImplementedException) {
 				// mono
 			}
-#if NET_2_0
 			CodeTypeMember ctm = new CodeTypeMember ();
 			StringWriter sw = new StringWriter ();
 			CodeGeneratorOptions cgo = new CodeGeneratorOptions ();
@@ -76,7 +75,6 @@ namespace MonoCasTests.Microsoft.VisualBasic {
 			catch (NotImplementedException) {
 				// mono
 			}
-#endif
 		}
 
 		// LinkDemand

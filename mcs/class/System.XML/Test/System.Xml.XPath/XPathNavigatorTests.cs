@@ -258,14 +258,6 @@ namespace MonoTests.System.Xml
 			Assert.IsTrue (nav.MoveToId ("aaa"), "ctor() from XmlValidatingReader");
 
 			// FIXME: it seems to result in different in .NET 2.0.
-#if NET_2_0
-#else
-			// When it is XmlTextReader, XPathDocument fails.
-			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			nav = new XPathDocument (xtr).CreateNavigator ();
-			Assert.IsTrue (!nav.MoveToId ("aaa"), "ctor() from XmlTextReader");
-			xtr.Close ();
-#endif
 		}
 
 		[Test]
@@ -443,7 +435,6 @@ namespace MonoTests.System.Xml
 			Assert.IsTrue (i.MoveNext (), "#2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ValueAsBoolean ()
 		{
@@ -716,6 +707,5 @@ namespace MonoTests.System.Xml
 				return;
 			Assert.Fail ("no selection");
 		}
-#endif
 	}
 }

@@ -79,12 +79,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.Render (writer);
 			return writer.InnerWriter.ToString ();
 		}
-#if NET_2_0
+
 	public new virtual void VerifyMultiSelect()
 	{
 	    base.VerifyMultiSelect();
 	}
-#endif
+
 	}
 
 	[TestFixture]	
@@ -127,18 +127,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (lb.SelectionMode, ListSelectionMode.Multiple, "A6");
 
 			lb.ToolTip = "foo";
-#if NET_2_0
 			Assert.AreEqual (lb.ToolTip, "foo", "A7");
-#else
-			Assert.AreEqual (lb.ToolTip, String.Empty, "A7"); // Always empty in 1.x
-#endif
 		}
 
 		[Test]
 	[Category ("NotWorking")]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#endif
 		public void RowsTooHigh ()
 		{
 			ListBox lb = new ListBox ();
@@ -199,21 +192,14 @@ namespace MonoTests.System.Web.UI.WebControls
 				l.Items.Add (i.ToString ());
 
 			l.SelectedIndex = l.Items.Count - 1;
-#if NET_2_0
+
 			string exp = @"<select size=""4"">
 	<option value=""0"">0</option>
 	<option value=""1"">1</option>
 	<option selected=""selected"" value=""2"">2</option>
 
 </select>";
-#else
-			string exp = @"<select name size=""4"">
-	<option value=""0"">0</option>
-	<option value=""1"">1</option>
-	<option selected=""selected"" value=""2"">2</option>
 
-</select>";
-#endif
 			HtmlDiff.AssertAreEqual (exp, l.Render (), "Render1");
 		}
 
@@ -238,21 +224,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			l.DataTextField = "Company";
 			l.DataBind ();
 			l.DataBind ();
-#if NET_2_0
+
 			string exp = @"<select size=""4"">
 	<option value=""Novell Inc."">Novell Inc.</option>
 	<option value=""Microsoft Corp."">Microsoft Corp.</option>
 	<option value=""Google"">Google</option>
 
 </select>";
-#else
-			string exp = @"<select name size=""4"">
-	<option value=""Novell Inc."">Novell Inc.</option>
-	<option value=""Microsoft Corp."">Microsoft Corp.</option>
-	<option value=""Google"">Google</option>
 
-</select>";
-#endif
 			HtmlDiff.AssertAreEqual (exp, l.Render (), "DoubleDataBind");
 		}
 
@@ -366,7 +345,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsFalse (list.Items [3].Selected, "#14");
 
 		}
-#if NET_2_0
+
 	[Test]
 	public void VerifyMultiSelectPositive()
 	{
@@ -696,7 +675,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest.CurrentTest.UserData = "SelectedIndexChanged";
 		}
-#endif
 	}
 }
 

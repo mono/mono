@@ -943,7 +943,6 @@ namespace MonoTests.System.Xml.Serialization
 			CodeTypeDeclaration type = FindType (codeNamespace, "TranslationStatus");
 			Assert.IsNotNull (type, "#10");
 
-#if NET_2_0
 			CodeMemberProperty property = FindMember (type, "Value") as CodeMemberProperty;
 			Assert.IsNotNull (property, "#A1");
 			Assert.IsTrue (property.HasGet, "#A2");
@@ -963,15 +962,6 @@ namespace MonoTests.System.Xml.Serialization
 			field = FindMember (type, "languageField") as CodeMemberField;
 			Assert.IsNotNull (field, "#B5");
 			Assert.AreEqual ("System.Int32", field.Type.BaseType, "#B6");
-#else
-			CodeMemberField field = FindMember (type, "Value") as CodeMemberField;
-			Assert.IsNotNull (field, "#A1");
-			Assert.AreEqual ("StatusType", field.Type.BaseType, "#A2");
-
-			field = FindMember (type, "Language") as CodeMemberField;
-			Assert.IsNotNull (field, "#B1");
-			Assert.AreEqual ("System.Int32", field.Type.BaseType, "#B2");
-#endif
 		}
 
 		XmlSchemaImporter CreateSchemaImporter (string xsd)
@@ -999,14 +989,9 @@ namespace MonoTests.System.Xml.Serialization
 			XmlSchemaImporter imp = CreateSchemaImporter (xsd);
 			XmlTypeMapping map = imp.ImportTypeMapping (new XmlQualifiedName ("Root"));
 			CodeNamespace cns = ExportCode (map);
-#if NET_2_0
 			CodeMemberProperty p = (CodeMemberProperty) FindMember (FindType (cns, "Root"), "Bar");
 			Assert.AreEqual (1, p.Type.TypeArguments.Count, "2.0 #1");
 			Assert.AreEqual ("System.Int32", p.Type.TypeArguments [0].BaseType, "2.0 #2");
-#else
-			CodeMemberField f = (CodeMemberField) FindMember (FindType (cns, "Root"), "Bar");
-			Assert.AreEqual ("System.Int32", f.Type.BaseType, "1.x #1");
-#endif
 		}
 
 		[Test]
@@ -1037,7 +1022,6 @@ namespace MonoTests.System.Xml.Serialization
 			Assert.AreEqual ("A", a.ElementName, "#4-1"); // ... element name?
 			Assert.IsTrue (a.CheckSpecified, "#4-2");
 
-#if NET_2_0
 			Assert.IsNull (map.TypeName, "#4-3"); // null at this state
 			Assert.IsNull (map.TypeNamespace, "#4-4"); // null at this state
 
@@ -1051,7 +1035,6 @@ namespace MonoTests.System.Xml.Serialization
 			Assert.AreEqual (null, map.TypeName, "#5-3"); // filled after ExportExportMembersMapping().
 			Assert.AreEqual (null, map.TypeNamespace, "#5-4"); // filled after ExportMembersMapping().
 			// table contains some internal stuff that does not make sense in any public API.
-#endif
 		}
 		
 		CodeNamespace ExportCode (XmlTypeMapping map)

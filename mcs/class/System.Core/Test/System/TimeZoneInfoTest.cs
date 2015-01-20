@@ -32,7 +32,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 
 using NUnit.Framework;
-#if NET_2_0
 namespace MonoTests.System
 {
 	public class TimeZoneInfoTest
@@ -957,4 +956,3 @@ namespace MonoTests.System
 		}
 	}
 }
-#endif

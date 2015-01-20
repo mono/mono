@@ -260,38 +260,29 @@ namespace MonoTests.System.Threading
 			C1Test test1 = new C1Test ();
 			Thread tA = new Thread (new ThreadStart (test1.TestMethod));
 			int hA1 = tA.GetHashCode ();
-#if NET_2_0
 			Assert.IsTrue (hA1 > 0, "#A1");
-#endif
 			tA.Start ();
 			int hA2 = tA.GetHashCode ();
 			Assert.AreEqual (hA1, hA2, "#A2");
 			tA.Join ();
 			int hA3 = tA.GetHashCode ();
 			Assert.AreEqual (hA1, hA3, "#A3");
-#if NET_2_0
 			Assert.AreEqual (hA1, tA.ManagedThreadId, "#A4");
-#endif
 
 			test1 = new C1Test ();
 			Thread tB = new Thread (new ThreadStart (test1.TestMethod));
 			int hB1 = tB.GetHashCode ();
-#if NET_2_0
 			Assert.IsTrue (hB1 > 0, "#B1");
-#endif
 			tB.Start ();
 			int hB2 = tB.GetHashCode ();
 			Assert.AreEqual (hB1, hB2, "#B2");
 			tB.Join ();
 			int hB3 = tB.GetHashCode ();
 			Assert.AreEqual (hB1, hB3, "#B3");
-#if NET_2_0
 			Assert.AreEqual (hB1, tB.ManagedThreadId, "#B4");
-#endif
 			Assert.IsFalse (hA2 == hB2, "#B5");
 		}
 
-#if NET_2_0
 		[Test] // bug #82700
 		public void ManagedThreadId ()
 		{
@@ -316,7 +307,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (mtB2, mtB3, "#B2");
 			Assert.IsFalse (mtB1 == mtA1, "#B3");
 		}
-#endif
 
 		[Test]
 		[Category ("NotDotNet")] // it hangs.
@@ -365,11 +355,7 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (ApartmentState.Unknown, TestThread.ApartmentState, "#1");
 			TestThread.Start();
 			TestUtil.WaitForAlive (TestThread, "wait5");
-#if NET_2_0
 			Assert.AreEqual (ApartmentState.MTA, TestThread.ApartmentState, "#2");
-#else
-			Assert.AreEqual (ApartmentState.Unknown, TestThread.ApartmentState, "#3");
-#endif
 			TestThread.Abort();
 		}
 
@@ -1137,11 +1123,7 @@ namespace MonoTests.System.Threading
 				exception_occured = true;
 			}
 			Assert.AreEqual (ApartmentState.Unknown, t3.ApartmentState, "Thread3 Set Invalid");
-#if NET_2_0
 			Assert.IsFalse (exception_occured, "Thread3 Set Invalid Exception Occured");
-#else
-			Assert.IsTrue (exception_occured, "Thread3 Set Invalid Exception Occured");
-#endif
 
 			t1.Start ();
 			exception_occured = false;

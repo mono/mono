@@ -65,9 +65,7 @@ public class DSASignatureDeformatterTest {
 	}
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
-#endif
 	public void Constructor_Null ()
 	{
 		DSASignatureDeformatter def = new DSASignatureDeformatter (null);
@@ -109,9 +107,7 @@ public class DSASignatureDeformatterTest {
 	}
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
-#endif
 	public void SetKey_Null () 
 	{
 		def.SetKey (null);

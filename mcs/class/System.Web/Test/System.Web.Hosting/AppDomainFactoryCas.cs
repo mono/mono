@@ -62,9 +62,7 @@ namespace MonoCasTests.System.Web.Hosting {
 
 		[Test]
 		[AspNetHostingPermission (SecurityAction.Deny, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void Constructor_Deny_AspNetHostingPermission ()
 		{
 			new AppDomainFactory ();

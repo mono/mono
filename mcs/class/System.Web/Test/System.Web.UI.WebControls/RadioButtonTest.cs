@@ -51,12 +51,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			base.Render (writer);
 			return writer.InnerWriter.ToString ();
 		}
-#if NET_2_0
 		public new void RaisePostDataChangedEvent ()
 		{
 			base.RaisePostDataChangedEvent ();
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -175,9 +173,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TestRadioButton b2 = new TestRadioButton ();
 			b2.GroupName = "mono";
 			Page p = new Page ();
-#if NET_2_0
 			p.EnableEventValidation = false;
-#endif
 			p.ID = "MyPage";
 			p.Controls.Add (b1);
 			p.Controls.Add (b2);
@@ -192,16 +188,13 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TestRadioButton b1 = new TestRadioButton ();
 			b1.ID = "monoId";
 			Page p = new Page ();
-#if NET_2_0
 			p.EnableEventValidation = false;
-#endif
 			p.ID = "MyPage";
 			p.Controls.Add (b1);
 			string t1 = b1.Render ();
 			Assert.IsTrue (t1.IndexOf ("name=\"monoId\"") != -1, "#01");
 		}
 
-#if NET_2_0
 		[Test]
 		public void RaisePostDataChangedEvent ()
 		{
@@ -359,6 +352,5 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest.Unload ();
 		}
-#endif
 	}
 }

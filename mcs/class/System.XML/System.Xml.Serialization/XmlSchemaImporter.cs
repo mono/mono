@@ -36,7 +36,7 @@ using System.CodeDom.Compiler;
 using System.Xml.Schema;
 using System.Collections;
 using System.Collections.Generic;
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 using System.Configuration;
 using System.Xml.Serialization.Configuration;
 #endif
@@ -44,7 +44,7 @@ using System.Xml.Serialization.Configuration;
 namespace System.Xml.Serialization 
 {
 	public class XmlSchemaImporter
-#if NET_2_0 && !MOBILE
+#if !MOBILE
 		: SchemaImporter
 #endif
 	{
@@ -161,7 +161,7 @@ namespace System.Xml.Serialization
 
 		void InitializeExtensions ()
 		{
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 			SerializationSectionGroup root = ConfigurationManager.GetSection ("system.xml.serialization") as SerializationSectionGroup;
 			if (root == null)
 				return;

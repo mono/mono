@@ -510,9 +510,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-#if NET_2_0
 	[Category ("NotDotNet")]
-#endif
 	public void core0009M()
         {
             string computedValue = "";

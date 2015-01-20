@@ -91,23 +91,16 @@ namespace MonoTests.System.Windows.Forms
 			textBox.PasswordChar = '*';
 			Assert.AreEqual ('*', textBox.PasswordChar, "#23b");
 			Assert.AreEqual (ScrollBars.None, textBox.ScrollBars, "#24");
-#if NET_2_0
 			Assert.AreEqual (0, textBox.SelectionLength, "#25-NET20");
-#else
-			Assert.AreEqual (-1, textBox.SelectionLength, "#25-NET11");
-#endif
 			Assert.AreEqual (HorizontalAlignment.Left , textBox.TextAlign, "#26");
-#if NET_2_0
 			Assert.AreEqual (true, textBox.AutoCompleteCustomSource != null, "#27");
 			Assert.AreEqual (AutoCompleteMode.None, textBox.AutoCompleteMode, "#28");
 			Assert.AreEqual (AutoCompleteSource.None, textBox.AutoCompleteSource, "#29");
 
 			textBox.AutoCompleteCustomSource = null;
 			Assert.AreEqual (true, textBox.AutoCompleteCustomSource != null, "#30");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void UseSystemPasswordCharDefault()
 		{
@@ -121,7 +114,6 @@ namespace MonoTests.System.Windows.Forms
 			textBox.UseSystemPasswordChar = true;
 			Assert.AreEqual('*', textBox.PasswordChar);
 		}
-#endif
 
 		[Test]
 		public void AppendTextTest ()
@@ -388,13 +380,8 @@ namespace MonoTests.System.Windows.Forms
 			textBoxB.TabIndex = 1;
 			form.Controls.Add (textBoxB);
 
-#if NET_2_0
 			Assert.AreEqual (String.Empty, textBoxA.SelectedText, "#A1 (2.0)");
 			Assert.AreEqual (String.Empty, textBoxB.SelectedText, "#A2 (2.0)");
-#else
-			Assert.IsNull (textBoxA.SelectedText, "#A1");
-			Assert.IsNull (textBoxB.SelectedText, "#A2");
-#endif
 
 			form.Show ();
 
@@ -466,11 +453,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			textBox.ReadOnly = true;
 			Assert.IsTrue (textBox.ReadOnly, "#A1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#A2");
-#else
-			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#A2");
-#endif
 
 			Form form = new Form ();
 			form.ShowInTaskbar = false;
@@ -478,19 +461,11 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 
 			Assert.IsTrue (textBox.ReadOnly, "#B1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#B2");
-#else
-			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#B2");
-#endif
 
 			textBox.ResetBackColor ();
 			Assert.IsTrue (textBox.ReadOnly, "#C1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#C2");
-#else
-			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#C2");
-#endif
 
 			textBox.ReadOnly = false;
 			Assert.IsFalse (textBox.ReadOnly, "#D1");
@@ -498,11 +473,7 @@ namespace MonoTests.System.Windows.Forms
 
 			textBox.ReadOnly = true;
 			Assert.IsTrue (textBox.ReadOnly, "#E1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#E2");
-#else
-			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#E2");
-#endif
 
 			textBox.BackColor = Color.Red;
 			Assert.IsTrue (textBox.ReadOnly, "#F1");
@@ -518,11 +489,7 @@ namespace MonoTests.System.Windows.Forms
 
 			textBox.ResetBackColor ();
 			Assert.IsTrue (textBox.ReadOnly, "#I1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#I2");
-#else
-			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#I2");
-#endif
 
 			form.Close ();
 		}
@@ -562,11 +529,7 @@ namespace MonoTests.System.Windows.Forms
 			textBox.ReadOnly = true;
 			textBox.ResetBackColor ();
 			Assert.IsTrue (textBox.ReadOnly, "#G1");
-#if NET_2_0
 			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#G2");
-#else
-			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#G2");
-#endif
 
 			form.Dispose ();
 
@@ -681,13 +644,8 @@ namespace MonoTests.System.Windows.Forms
 			TextBox tb = new TextBox ();
 			RichTextBox rtb = new RichTextBox ();
 			
-#if NET_2_0
 			Assert.AreEqual (0, tb.SelectionLength, "#1");
 			Assert.AreEqual (0, rtb.SelectionLength, "#2");
-#else
-			Assert.AreEqual (-1, tb.SelectionLength, "#1");
-			Assert.AreEqual (-1, rtb.SelectionLength, "#2");
-#endif
 
 			IntPtr i = tb.Handle;
 			i = rtb.Handle;
@@ -703,7 +661,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				tb.SelectionLength = -1;
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -711,14 +668,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("SelectionLength", ex.ParamName, "#6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -728,7 +677,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				tb.SelectionStart = -1;
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -736,14 +684,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("SelectionStart", ex.ParamName, "#6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -923,7 +863,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 
-#if NET_2_0
 	[TestFixture]
 	public class TextBoxAutoCompleteSourceConverterTest : TestHelper
 	{
@@ -953,5 +892,4 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 	}
-#endif
 }

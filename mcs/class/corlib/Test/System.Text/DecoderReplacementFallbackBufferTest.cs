@@ -7,7 +7,6 @@
 // Copyright (C) 2005 Novell, Inc.  http://www.novell.com
 //
 
-#if NET_2_0
 
 using System;
 using System.IO;
@@ -112,5 +111,4 @@ namespace MonoTests.System.Text
 	}
 }
 
-#endif
 

@@ -46,7 +46,6 @@ namespace MonoTests.System.Web.UI
 	public class CssStyleCollectionTest
 	{
 
-#if NET_2_0
 		[Test]
 		public void CssStyleCollection_BackgroundImage () {
 			WebControl c = new WebControl (HtmlTextWriterTag.A);
@@ -60,7 +59,6 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual ("background-image:url(" + url_encoded + ");", css.Value, "CssStyleCollection_BackgroundImage#3");
 			Assert.AreEqual ("background-image:url(" + url_encoded + ");", c.Attributes["style"], "CssStyleCollection_BackgroundImage#4");
 		}
-#endif
 
 		[Test]
 		public void CssStyleCollection_BackgroundImage2 () {
@@ -72,9 +70,7 @@ namespace MonoTests.System.Web.UI
 			css.Add ("background-image", url);
 
 			Assert.AreEqual (url, css ["background-image"], "CssStyleCollection_BackgroundImage#1");
-#if NET_2_0
 			Assert.AreEqual ("background-image:url(" + url_encoded + ");", css.Value, "CssStyleCollection_BackgroundImage#3");
-#endif
 			Assert.AreEqual ("background-image:url(" + url_encoded + ");", c.Attributes ["style"], "CssStyleCollection_BackgroundImage#4");
 		}
 
@@ -88,9 +84,7 @@ namespace MonoTests.System.Web.UI
 			css.Add ("background-image", "url(" + url_encoded + ")");
 
 			Assert.AreEqual ("url(" + url_encoded + ")", css ["background-image"], "CssStyleCollection_BackgroundImage#1");
-#if NET_2_0
 			Assert.AreEqual ("background-image:url(" + url_encoded + ");", css.Value, "CssStyleCollection_BackgroundImage#3");
-#endif
 			Assert.AreEqual ("background-image:url(" + url_encoded + ");", c.Attributes ["style"], "CssStyleCollection_BackgroundImage#4");
 		}
 
@@ -104,9 +98,7 @@ namespace MonoTests.System.Web.UI
 			c.Attributes ["style"] = "background-image:url(" + url_encoded + ");";
 
 			Assert.AreEqual ("url(" + url_encoded + ")", css ["background-image"], "CssStyleCollection_BackgroundImage#1");
-#if NET_2_0
 			Assert.AreEqual ("background-image:url(" + url_encoded + ");", css.Value, "CssStyleCollection_BackgroundImage#3");
-#endif
 			Assert.AreEqual ("background-image:url(" + url_encoded + ");", c.Attributes ["style"], "CssStyleCollection_BackgroundImage#4");
 		}
 
@@ -119,9 +111,7 @@ namespace MonoTests.System.Web.UI
 			c.Attributes ["style"] = "padding: 0px; margin: 0px";
 
 			Assert.AreEqual (2, c.Style.Count, "Style Count");
-#if NET_2_0
 			Assert.AreEqual (3, c.ControlStyle.GetStyleAttributes (c).Count, "ControlStyle Count");
-#endif
 
 			CssStyleCollection col = c.Style;
 			NameValueCollection styles = new NameValueCollection ();
@@ -176,21 +166,10 @@ namespace MonoTests.System.Web.UI
 		public void CssStyleCollection_case_sensitive  () {
 			WebControl c = new WebControl (HtmlTextWriterTag.A);
 			c.Style.Add ("color", "red");
-#if NET_2_0
 			Assert.AreEqual ("red", c.Style ["Color"], "");
-#else
-			Assert.AreEqual (null, c.Style ["Color"], "");
-			Assert.AreEqual ("red", c.Style ["color"], "");
-#endif
 			c.Style.Add ("Color", "Blue");
-#if NET_2_0
 			Assert.AreEqual ("Blue", c.Style ["color"], "");
 			Assert.AreEqual (1, c.Style.Count, "Style Count");
-#else
-			Assert.AreEqual ("red", c.Style ["color"], "");
-			Assert.AreEqual ("Blue", c.Style ["Color"], "");
-			Assert.AreEqual (2, c.Style.Count, "Style Count");
-#endif
 		}
 	}
 }

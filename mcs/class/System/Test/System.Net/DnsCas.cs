@@ -112,13 +112,9 @@ namespace MonoCasTests.System.Net {
 
 		[Test]
 		[DnsPermission (SecurityAction.Deny, Unrestricted = true)]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
 		// so it's not a declarative attribute on the method as the
 		// null check is done before throwing the SecurityException
-#else
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void Deny_GetHostByName_Null ()
 		{
 			Dns.GetHostByName (null);
@@ -151,7 +147,6 @@ namespace MonoCasTests.System.Net {
 			Dns.Resolve (null);
 		}
 
-#if NET_2_0
 		// TODO: New 2.0 methods aren't yet implemented in Mono
 /*
 		[Test]
@@ -218,7 +213,6 @@ namespace MonoCasTests.System.Net {
 			Dns.GetHostAddresses (null);
 		}
 */
-#endif
 
 		// ensure that only DnsPermission is required to call the methods
 
@@ -277,7 +271,6 @@ namespace MonoCasTests.System.Net {
 			Dns.Resolve (null);
 		}
 
-#if NET_2_0
 		// TODO: New 2.0 methods aren't yet implemented in Mono
 /*
 		[Test]
@@ -344,7 +337,6 @@ namespace MonoCasTests.System.Net {
 			Dns.GetHostAddresses (null);
 		}
 */
-#endif
 
 		// async tests (for stack propagation)
 
@@ -415,7 +407,6 @@ namespace MonoCasTests.System.Net {
 			Assert.IsNull (message, message);
 		}
 
-#if NET_2_0
 		// TODO: New 2.0 methods aren't yet implemented in Mono
 /*
 		[DnsPermission (SecurityAction.Deny, Unrestricted = true)]
@@ -500,7 +491,6 @@ namespace MonoCasTests.System.Net {
 			Assert.IsNull (message, message);
 		}
 */
-#endif
 	}
 }
 

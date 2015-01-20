@@ -37,9 +37,7 @@ using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace A.B.C {
 	// Disable expected warning
@@ -97,7 +95,6 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void PseudoCustomAttributes ()
 		{
@@ -135,7 +132,6 @@ namespace MonoTests.System.Reflection
 
 			Assert.IsTrue (mi.ReturnTypeCustomAttributes.GetCustomAttributes (typeof (MarshalAsAttribute), true).Length == 1);
 		}
-#endif
 
 		public static int foo (int i, int j)
 		{
@@ -215,18 +211,10 @@ namespace MonoTests.System.Reflection
 				method.Invoke (null, new object [0]);
 				Assert.Fail ("#1");
 			}
-#if NET_2_0
 			catch (ThreadAbortException ex) {
 				Thread.ResetAbort ();
 				Assert.IsNull (ex.InnerException, "#2");
 			}
-#else
-			catch (TargetInvocationException ex) {
-				Thread.ResetAbort ();
-				Assert.IsNotNull (ex.InnerException, "#2");
-				Assert.AreEqual (typeof (ThreadAbortException), ex.InnerException.GetType (), "#3");
-			}
-#endif
 		}
 
 		public static void AbortIt ()
@@ -316,7 +304,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreSame (inheritedMethod, baseMethod);
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetMethodBody_Abstract ()
 		{
@@ -740,7 +727,6 @@ namespace MonoTests.System.Reflection
 			{
 			}
 		}
-#endif
 #if NET_4_0
 		interface IMethodInvoke<out T>
 		{
@@ -826,7 +812,6 @@ namespace MonoTests.System.Reflection
 #endif
 	}
 	
-#if NET_2_0
 	// Helper class
 	class RefOnlyMethodClass 
 	{
@@ -850,5 +835,4 @@ namespace MonoTests.System.Reflection
 			set { _myList = value; }
 		}
 	}
-#endif
 }

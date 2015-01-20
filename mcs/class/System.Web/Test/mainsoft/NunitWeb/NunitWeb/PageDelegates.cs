@@ -21,7 +21,6 @@ namespace MonoTests.SystemWeb.Framework
 	[Serializable]
 	public struct PageDelegates
 	{
-#if NET_2_0
 		/// <summary>
 		/// <see cref="Page.LoadComplete"/> event callback.
 		/// </summary>
@@ -46,7 +45,6 @@ namespace MonoTests.SystemWeb.Framework
 		/// <see cref="Page.SaveStateComplete"/> event callback.
 		/// </summary>
 		public PageDelegate SaveStateComplete;
-#endif
 		/// <summary>
 		/// <see cref="TemplateControl.CommitTransaction"/> event callback.
 		/// </summary>

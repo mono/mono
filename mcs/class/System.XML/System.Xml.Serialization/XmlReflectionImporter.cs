@@ -1086,10 +1086,6 @@ namespace System.Xml.Serialization {
 		
 		bool CanBeNull (TypeData type)
 		{
-#if !NET_2_0	// idiotic compatibility
-			if (type.Type == typeof (XmlQualifiedName))
-				return false;
-#endif
 			return !type.Type.IsValueType || type.IsNullable;
 		}
 		

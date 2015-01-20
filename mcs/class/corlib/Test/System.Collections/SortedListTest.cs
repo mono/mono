@@ -44,9 +44,6 @@ namespace MonoTests.System.Collections
 		{
 			SortedList temp1 = new SortedList ();
 			Assert.IsNotNull (temp1, "#1");
-#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
-			Assert.AreEqual (icap, temp1.Capacity, "#2");
-#endif
 		}
 
 		[Test]
@@ -55,9 +52,6 @@ namespace MonoTests.System.Collections
 			Comparer c = Comparer.Default;
 			SortedList temp1 = new SortedList (c);
 			Assert.IsNotNull (temp1, "#1");
-#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
-			Assert.AreEqual (icap, temp1.Capacity, "#2");
-#endif
 		}
 
 		[Test]
@@ -125,25 +119,6 @@ namespace MonoTests.System.Collections
 			}
 		}
 
-#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
-		[Test]
-		public void Constructor_Capacity ()
-		{
-			SortedList sl = new SortedList (0);
-			Assert.AreEqual (0, sl.Capacity, "#A1");
-			sl.Capacity = 0;
-			// doesn't reset to class default (16)
-			Assert.AreEqual (0, sl.Capacity, "#A2");
-
-			for (int i = 1; i <= 16; i++) {
-				sl = new SortedList (i);
-				Assert.AreEqual (i, sl.Capacity, "#B1:" + i);
-				sl.Capacity = 0;
-				// reset to class default (16)
-				Assert.AreEqual (16, sl.Capacity, "#B2:" + i);
-			}
-		}
-#endif
 
 		[Test]
 		public void TestIsSynchronized ()
@@ -317,38 +292,8 @@ namespace MonoTests.System.Collections
 			Assert.AreEqual (2, sl1.Count, "#A2");
 			sl1.Clear ();
 			Assert.AreEqual (0, sl1.Count, "#B1");
-#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
-			Assert.AreEqual (16, sl1.Capacity, "#B2");
-#endif
 		}
 
-#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
-		[Test]
-		public void Clear_Capacity ()
-		{
-			// strangely Clear change the default capacity (while Capacity doesn't)
-			for (int i = 0; i <= 16; i++) {
-				SortedList sl = new SortedList (i);
-				Assert.AreEqual (i, sl.Capacity, "#1:"+ i);
-				sl.Clear ();
-				// reset to class default (16)
-				Assert.AreEqual (16, sl.Capacity, "#2:" + i);
-			}
-		}
-
-		[Test]
-		public void Clear_Capacity_Reset ()
-		{
-			SortedList sl = new SortedList (0);
-			Assert.AreEqual (0, sl.Capacity, "#1");
-			sl.Clear ();
-			// reset to class default (16)
-			Assert.AreEqual (16, sl.Capacity, "#2");
-			sl.Capacity = 0;
-			Assert.AreEqual (16, sl.Capacity, "#3");
-			// note: we didn't return to 0 - so Clear cahnge the default capacity
-		}
-#endif
 
 		[Test]
 		public void ClearDoesNotTouchCapacity ()
@@ -868,16 +813,10 @@ namespace MonoTests.System.Collections
 			SortedList sl1 = new SortedList (24);
 
 			sl1.TrimToSize ();
-#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
-			Assert.AreEqual (icap, sl1.Capacity, "#1");
-#endif
 
 			for (int i = 72; i >= 0; i--)
 				sl1.Add (100 + i, i);
 			sl1.TrimToSize ();
-#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
-			Assert.AreEqual (73, sl1.Capacity, "#2");
-#endif
 		}
 
 		[Test]

@@ -907,7 +907,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("PT0S", XmlConvert.ToString (TimeSpan.FromSeconds (0)));
 		}
 
-#if NET_2_0
 		[Test]
 		public void VerifyTOKEN ()
 		{
@@ -1080,7 +1079,6 @@ namespace MonoTests.System.Xml
 				XmlConvert.ToDateTime ("2009-12-15T08:44:05.2700544Z", mode);
 			}
 		}
-#endif
 	}
 }
 

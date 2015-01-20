@@ -131,11 +131,7 @@ namespace MonoTests.System.ComponentModel
 			IList list = ((IList) new PropertyDescriptorCollection (null));
 
 			Assert.AreEqual (0, list.Count, "#1");
-#if NET_2_0
 			Assert.IsFalse (list.IsFixedSize, "#2");
-#else
-			Assert.IsTrue (list.IsFixedSize, "#2");
-#endif
 			Assert.IsFalse (list.IsReadOnly, "#3");
 			Assert.IsFalse (list.IsSynchronized, "#4");
 			Assert.IsNull (list.SyncRoot, "#5");
@@ -164,11 +160,7 @@ namespace MonoTests.System.ComponentModel
 			IDictionary dictionary = ((IDictionary) new PropertyDescriptorCollection (null));
 
 			Assert.AreEqual (0, dictionary.Count, "#1");
-#if NET_2_0
 			Assert.IsFalse (dictionary.IsFixedSize, "#2");
-#else
-			Assert.IsTrue (dictionary.IsFixedSize, "#2");
-#endif
 			Assert.IsFalse (dictionary.IsReadOnly, "#3");
 			Assert.IsFalse (dictionary.IsSynchronized, "#4");
 			Assert.IsNull (dictionary.SyncRoot, "#5");
@@ -248,13 +240,11 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
-#if NET_2_0
 		public void ReadOnly ()
 		{
 			PropertyDescriptorCollection descriptors = new PropertyDescriptorCollection(null, true);
 			AssertReadOnly (descriptors, "ReadOnly");
 		}
-#endif
 
 		[Test] // Sort ()
 		public void Sort1 ()
@@ -568,11 +558,7 @@ namespace MonoTests.System.ComponentModel
 
 			IList list = (IList) descriptors;
 			Assert.IsTrue (((IList) descriptors).IsReadOnly, testCase + "#9");
-#if NET_2_0
 			Assert.IsTrue (((IList) descriptors).IsFixedSize, testCase + "#10");
-#else
-			Assert.IsFalse (((IList) descriptors).IsFixedSize, testCase + "#10");
-#endif
 
 			try {
 				list.Add (mockPropertyDescr);
@@ -650,11 +636,7 @@ namespace MonoTests.System.ComponentModel
 
 			IDictionary dictionary = (IDictionary) descriptors;
 			Assert.IsTrue (dictionary.IsReadOnly, testCase + "#21");
-#if NET_2_0
 			Assert.IsTrue (dictionary.IsFixedSize, testCase + "#22");
-#else
-			Assert.IsFalse (dictionary.IsFixedSize, testCase + "#22");
-#endif
 
 			try {
 				dictionary.Add ("test", mockPropertyDescr);

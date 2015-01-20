@@ -26,7 +26,6 @@ namespace MonoTests.System.Windows.Forms
 			new Cursor (typeof (CursorTest).Assembly.GetManifestResourceStream ("a.cur"));
 		}
 
-#if NET_2_0
 		[Test]
 		public void CursorPropertyTag ()
 		{
@@ -38,6 +37,5 @@ namespace MonoTests.System.Windows.Forms
 			md.Tag = s;
 			Assert.AreSame (s, md.Tag, "A2");
 		}
-#endif
 	}
 }

@@ -38,7 +38,6 @@ namespace MonoTests.System.CodeDom
 	[TestFixture]
 	public class CodeGotoStatementTest
 	{
-#if NET_2_0
 		[Test]
 		public void Constructor0 ()
 		{
@@ -69,7 +68,6 @@ namespace MonoTests.System.CodeDom
 			cgs.Label = label;
 			Assert.AreSame (label, cgs.Label, "#13");
 		}
-#endif
 
 		[Test]
 		public void Constructor1 ()
@@ -80,13 +78,11 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cgs.Label, "#1");
 			Assert.AreSame (label1, cgs.Label, "#2");
 
-#if NET_2_0
 			Assert.IsNotNull (cgs.StartDirectives, "#3");
 			Assert.AreEqual (0, cgs.StartDirectives.Count, "#4");
 
 			Assert.IsNotNull (cgs.EndDirectives, "#5");
 			Assert.AreEqual (0, cgs.EndDirectives.Count, "#6");
-#endif
 
 			Assert.IsNotNull (cgs.UserData, "#7");
 			Assert.AreEqual (typeof(ListDictionary), cgs.UserData.GetType (), "#8");
@@ -100,9 +96,7 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Constructor1_NullLabel ()
 		{
 			CodeGotoStatement cgs = new CodeGotoStatement ((string) null);
@@ -112,9 +106,7 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Constructor1_EmptyLabel () {
 			CodeGotoStatement cgs = new CodeGotoStatement (string.Empty);
 #if ONLY_1_1
@@ -124,9 +116,7 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Label_Null ()
 		{
 			CodeGotoStatement cgs = new CodeGotoStatement ("mono");
@@ -137,9 +127,7 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Label_Empty () {
 			CodeGotoStatement cgs = new CodeGotoStatement ("mono");
 			cgs.Label = string.Empty;

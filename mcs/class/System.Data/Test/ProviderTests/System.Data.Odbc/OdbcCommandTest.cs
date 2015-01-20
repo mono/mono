@@ -94,7 +94,6 @@ namespace MonoTests.System.Data
 					cmd.CommandText = "select id, small_id from " + tableName + " order by id asc";
 					reader = cmd.ExecuteReader ();
 
-#if NET_2_0
 					Assert.IsTrue (reader.Read (), "#A1");
 					Assert.AreEqual (1, reader.GetValue (0), "#A2");
 					Assert.AreEqual (5, reader.GetValue (1), "#A3");
@@ -102,11 +101,6 @@ namespace MonoTests.System.Data
 					Assert.AreEqual (2, reader.GetValue (0), "#A5");
 					Assert.AreEqual (6, reader.GetValue (1), "#A6");
 					Assert.IsFalse (reader.Read (), "#A7");
-#else
-					// in .NET 1.x, changing the CommandText
-					// does not reset prepared state
-					Assert.IsFalse (reader.Read (), "#A1");
-#endif
 					reader.Close ();
 					cmd.Dispose ();
 
@@ -120,13 +114,7 @@ namespace MonoTests.System.Data
 					Assert.IsTrue (reader.Read (), "#B4");
 					Assert.AreEqual (2, reader.GetValue (0), "#B5");
 					Assert.AreEqual (6, reader.GetValue (1), "#B6");
-#if NET_2_0
 					Assert.IsFalse (reader.Read (), "#B7");
-#else
-					Assert.IsTrue (reader.Read (), "#B7");
-					Assert.AreEqual (2, reader.GetValue (0), "#B8");
-					Assert.AreEqual (6, reader.GetValue (1), "#B9");
-#endif
 				} finally {
 					DBHelper.ExecuteNonQuery (conn, "DROP TABLE " + tableName);
 				}
@@ -162,7 +150,6 @@ namespace MonoTests.System.Data
 			cmd.CommandText = "select count(*) from employee where id <= ?;";
 			cmd.Parameters.Add ("@un", OdbcType.Int).Value = 3;
 			ret = cmd.ExecuteNonQuery ();
-#if NET_2_0
 			switch (ConnectionManager.Singleton.Engine.Type) {
 			case EngineType.SQLServer:
 				Assert.AreEqual (-1, ret, "#1");
@@ -174,16 +161,12 @@ namespace MonoTests.System.Data
 				Assert.Fail ("Engine type not supported.");
 				break;
 			}
-#else
-			Assert.AreEqual (-1, ret,  "#1");
-#endif
 
 			cmd = conn.CreateCommand ();
 			cmd.CommandType = CommandType.Text;
 			cmd.CommandText = "select * from employee where id <= ?;";
 			cmd.Parameters.Add ("@un", OdbcType.Int).Value = 3;
 			ret = cmd.ExecuteNonQuery ();
-#if NET_2_0
 			switch (ConnectionManager.Singleton.Engine.Type) {
 			case EngineType.SQLServer:
 				Assert.AreEqual (-1, ret, "#2");
@@ -195,15 +178,11 @@ namespace MonoTests.System.Data
 				Assert.Fail ("Engine type not supported.");
 				break;
 			}
-#else
-			Assert.AreEqual (-1, ret, "#2");
-#endif
 
 			cmd = conn.CreateCommand ();
 			cmd.CommandType = CommandType.Text;
 			cmd.CommandText = "select * from employee where id <= 3;";
 			ret = cmd.ExecuteNonQuery ();
-#if NET_2_0
 			switch (ConnectionManager.Singleton.Engine.Type) {
 			case EngineType.SQLServer:
 				Assert.AreEqual (-1, ret, "#3");
@@ -215,9 +194,6 @@ namespace MonoTests.System.Data
 				Assert.Fail ("Engine type not supported.");
 				break;
 			}
-#else
-			Assert.AreEqual (-1, ret, "#3");
-#endif
 
 			try {
 				// insert
@@ -292,11 +268,7 @@ namespace MonoTests.System.Data
 
 				cmd.Dispose ();
 
-#if NET_2_0
 				Assert.AreEqual (string.Empty, cmd.CommandText, "#1");
-#else
-				Assert.AreEqual ("SELECT 'a'", cmd.CommandText, "#1");
-#endif
 				Assert.AreEqual (67, cmd.CommandTimeout, "#2");
 				Assert.AreEqual (CommandType.StoredProcedure, cmd.CommandType, "#3");
 				Assert.IsNull (cmd.Connection, "#4");

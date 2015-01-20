@@ -42,7 +42,6 @@ namespace MonoTests.System.Security.Permissions {
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.None);
 			Assert.AreEqual (SecurityZone.NoZone, zip.SecurityZone);
 		}
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
 		public void PermissionStateUnrestricted ()
@@ -55,14 +54,6 @@ namespace MonoTests.System.Security.Permissions {
 			// and they aren't equals to None
 			Assert.IsFalse (zip.Equals (new ZoneIdentityPermission (PermissionState.None)));
 		}
-#else
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void PermissionStateUnrestricted ()
-		{
-			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.Unrestricted);
-		}
-#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void PermissionStateInvalid ()
@@ -72,11 +63,7 @@ namespace MonoTests.System.Security.Permissions {
 
 		private bool Same (ZoneIdentityPermission zip1, ZoneIdentityPermission zip2)
 		{
-#if NET_2_0
 			return zip1.Equals (zip2);
-#else
-			return (zip1.SecurityZone == zip2.SecurityZone);
-#endif
 		}
 
 		private ZoneIdentityPermission BasicTestZone (SecurityZone zone, bool special)
@@ -217,16 +204,13 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsTrue (Same (a, z), "NoZone+Trusted");
 			Assert.IsFalse (Object.ReferenceEquals (a, z), "!ReferenceEquals4");
 		}
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void Union_DifferentIdentities ()
 		{
 			ZoneIdentityPermission a = new ZoneIdentityPermission (SecurityZone.Trusted);
 			ZoneIdentityPermission b = new ZoneIdentityPermission (SecurityZone.Untrusted);
 			IPermission result = a.Union (b);
-#if NET_2_0
 			Assert.IsNotNull (result, "Union");
 			// new XML format is used to contain more than one site
 			SecurityElement se = result.ToXml ();
@@ -235,9 +219,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (b.SecurityZone.ToString (), (se.Children [1] as SecurityElement).Attribute ("Zone"), "Zone#2");
 			// strangely it is still versioned as 'version="1"'.
 			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
-#else
-			Assert.IsNull (result);
-#endif
 		}
 
 		[Test]

@@ -241,12 +241,9 @@ namespace MonoTests.System.Windows.Forms
 				{
 					Closed += new EventHandler (ChildForm_Closed);
 					Closing += new CancelEventHandler (ChildForm_Closing);
-#if NET_2_0					
 					FormClosed += new FormClosedEventHandler (ChildForm_FormClosed);
 					FormClosing += new FormClosingEventHandler (ChildForm_FormClosing);
-#endif
 				}
-#if NET_2_0
 				void ChildForm_FormClosing (object sender, FormClosingEventArgs e)
 				{
 					Assert.IsNotNull (MdiParent, "ChildForm_FormClosing");
@@ -256,7 +253,6 @@ namespace MonoTests.System.Windows.Forms
 				{
 					Assert.IsNotNull (MdiParent, "ChildForm_FormClosed");
 				}
-#endif
 				void ChildForm_Closing (object sender, CancelEventArgs e)
 				{
 					Assert.IsNotNull (MdiParent, "ChildForm_Closing");
@@ -373,7 +369,6 @@ namespace MonoTests.System.Windows.Forms
 			parent.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void RestoreWithMainMenuStrip ()
 		{
@@ -404,7 +399,6 @@ namespace MonoTests.System.Windows.Forms
 
 			parent.Dispose ();
 		}
-#endif
 
 		/* These tests are all failing on WinXP with XP Theme. 
 		 * offset seems to be 22,22 normally, and 22,29 with XP theme.
@@ -1216,11 +1210,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (child2, main.ActiveMdiChild, "#4");
 
 			main.Visible = false;
-#if NET_2_0
 			Assert.IsNull (main.ActiveMdiChild, "#5");
-#else
-			Assert.AreSame (child2, main.ActiveMdiChild, "#5");
-#endif
 
 			child2.Dispose ();
 			child1.Dispose ();
@@ -1521,12 +1511,10 @@ namespace MonoTests.System.Windows.Forms
 			mdi.Closing += new CancelEventHandler (mdi_Closing);
 			mdi.Closed += new EventHandler (mdi_Closed);
 
-#if NET_2_0
 			f.FormClosing += new FormClosingEventHandler (f_FormClosing);
 			f.FormClosed += new FormClosedEventHandler (f_FormClosed);
 			mdi.FormClosing += new FormClosingEventHandler (mdi_FormClosing);
 			mdi.FormClosed += new FormClosedEventHandler (mdi_FormClosed);
-#endif
 
 			f.Show ();
 			mdi.Show ();
@@ -1535,26 +1523,17 @@ namespace MonoTests.System.Windows.Forms
 			
 			f.Close ();
 			
-#if NET_2_0
 			Assert.AreEqual ("Child.Closing: True, Child.FormClosing: True, Parent.Closing: True, Parent.FormClosing: True, ", events_fired, "A1-2.0");
-#else
-			Assert.AreEqual ("Child.Closing: True, Parent.Closing: True, ", events_fired, "A1-1.1");
-#endif
 
 			events_fired = string.Empty;
 			mdi.can_close = true;
 			f.Close ();
 			
-#if NET_2_0
 			Assert.AreEqual ("Child.Closing: False, Child.FormClosing: False, Parent.Closing: False, Parent.FormClosing: False, Child.Closed, Child.FormClosed, Parent.Closed, Parent.FormClosed, ", events_fired, "A2-2.0");
-#else
-			Assert.AreEqual ("Child.Closing: False, Parent.Closing: False, Child.Closed, Parent.Closed, ", events_fired, "A2-1.1");
-#endif
 
 			f.Dispose ();
 		}
 
-#if NET_2_0
 		void mdi_FormClosed (object sender, FormClosedEventArgs e)
 		{
 			events_fired += "Child.FormClosed, ";
@@ -1574,7 +1553,6 @@ namespace MonoTests.System.Windows.Forms
 		{
 			events_fired += string.Format ("Parent.FormClosing: {0}, ", e.Cancel);
 		}
-#endif
 
 		void mdi_Closed (object sender, EventArgs e)
 		{

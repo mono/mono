@@ -74,7 +74,6 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.AreEqual (string.Empty, ex.Message, "#C4");
 		}
 
-#if NET_2_0
 		[Test] // ctor (string, Exception)
 		public void Constructor3 ()
 		{
@@ -104,7 +103,6 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.IsNotNull (ex.Message, "#D3");
 			Assert.AreEqual (string.Empty, ex.Message, "#D4");
 		}
-#endif
 
 		[Test] // ctor (string, int)
 		public void Constructor4 ()
@@ -139,11 +137,7 @@ namespace MonoTests.System.ComponentModel.Design
 		public void Canceled ()
 		{
 			CheckoutException ex = CheckoutException.Canceled;
-#if NET_2_0
 			Assert.AreEqual (-2147467260, ex.ErrorCode, "#1");
-#else
-			Assert.AreEqual (-2147467259, ex.ErrorCode, "#1");
-#endif
 			Assert.IsNull (ex.InnerException, "#2");
 			Assert.IsNotNull (ex.Message, "#3");
 			Assert.IsTrue (ex.Message.IndexOf (ex.GetType ().FullName) == -1, "#4");

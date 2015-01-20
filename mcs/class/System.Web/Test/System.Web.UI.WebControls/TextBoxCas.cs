@@ -47,11 +47,9 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 		{
 			TextBoxTest unit = new TextBoxTest ();
 			unit.MultilineRenderEscape ();
-#if NET_2_0
 			unit.ValidationProperties ();
 			unit.ViewState ();
 			unit.ValidationRender ();
-#endif
 		}
 
 		// LinkDemand

@@ -2345,7 +2345,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("<root xmlns:abc=\"uri:abcnamespace\"><abc:def /></root>", sw.ToString ());
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void RejectWritingAtErrorState ()
@@ -2357,6 +2356,5 @@ namespace MonoTests.System.Xml
 
 			xtw.WriteStartElement ("foo");
 		}
-#endif
 	}
 }

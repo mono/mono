@@ -56,10 +56,8 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				Assert.IsNotNull (isf.AssemblyIdentity, prefix + "AssemblyIdentity");
 			if ((isf.Scope & IsolatedStorageScope.Domain) != 0)
 				Assert.IsNotNull (isf.DomainIdentity, prefix + "DomainIdentity");
-#if NET_2_0
 			if ((isf.Scope & IsolatedStorageScope.Application) != 0)
 				Assert.IsNotNull (isf.ApplicationIdentity, prefix + "ApplicationIdentity");
-#endif
 		}
 
 		private void GetEnumerator (IsolatedStorageScope scope)
@@ -100,7 +98,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			// giving more details is bad
 			GetEnumerator (IsolatedStorageScope.User | IsolatedStorageScope.Assembly | IsolatedStorageScope.Domain | IsolatedStorageScope.Roaming);
 		}
-#if NET_2_0
 		[Test]
 		public void GetEnumerator_Machine ()
 		{
@@ -121,7 +118,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			// we can't enum application
 			GetEnumerator (IsolatedStorageScope.Application);
 		}
-#endif
 		[Test]
 		public void GetUserStoreForAssembly ()
 		{
@@ -147,7 +143,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			object o = isf.DomainIdentity;
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetUserStoreForAssembly_ApplicationIdentity ()
@@ -155,7 +150,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
 			object o = isf.ApplicationIdentity;
 		}
-#endif
 
 		[Test]
 		public void GetUserStoreForDomain ()
@@ -178,7 +172,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetUserStoreForDomain_ApplicationIdentity ()
@@ -229,7 +222,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForApplication ();
 			object o = isf.DomainIdentity;
 		}
-#endif
 #endif
 
 #if NET_4_0

@@ -46,13 +46,11 @@ namespace MonoTests.System.Data.OracleClient {
 			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
 			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 			Assert.IsFalse (a.AllowBlankPassword, "AllowBlankPassword");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, a.ConnectionString, "ConnectionString");
 			Assert.AreEqual (KeyRestrictionBehavior.AllowOnly, a.KeyRestrictionBehavior, "KeyRestrictionBehavior");
 			Assert.AreEqual (String.Empty, a.KeyRestrictions, "KeyRestrictions");
 			Assert.IsFalse (a.ShouldSerializeConnectionString (), "ShouldSerializeConnectionString");
 			Assert.IsFalse (a.ShouldSerializeKeyRestrictions (), "ShouldSerializeConnectionString");
-#endif
 			OraclePermission ocp = (OraclePermission)a.CreatePermission ();
 			Assert.IsFalse (ocp.IsUnrestricted (), "IsUnrestricted");
 		}
@@ -95,11 +93,9 @@ namespace MonoTests.System.Data.OracleClient {
 			OraclePermission ocp = (OraclePermission)a.CreatePermission ();
 			Assert.IsTrue (ocp.IsUnrestricted (), "IsUnrestricted");
 			Assert.IsFalse (a.AllowBlankPassword, "AllowBlankPassword");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, a.ConnectionString, "ConnectionString");
 			Assert.AreEqual (KeyRestrictionBehavior.AllowOnly, a.KeyRestrictionBehavior, "KeyRestrictionBehavior");
 			Assert.AreEqual (String.Empty, a.KeyRestrictions, "KeyRestrictions");
-#endif
 			a.Unrestricted = false;
 			ocp = (OraclePermission)a.CreatePermission ();
 			Assert.IsFalse (ocp.IsUnrestricted (), "!IsUnrestricted");
@@ -116,7 +112,6 @@ namespace MonoTests.System.Data.OracleClient {
 			Assert.IsFalse (a.AllowBlankPassword, "False");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ConnectionString ()
 		{
@@ -158,7 +153,6 @@ namespace MonoTests.System.Data.OracleClient {
 			a.KeyRestrictions = null;
 			Assert.AreEqual (String.Empty, a.KeyRestrictions, "Empty(null)");
 		}
-#endif
 		[Test]
 		public void Attributes ()
 		{

@@ -30,9 +30,7 @@
 using System;
 using System.IO;
 using System.IO.IsolatedStorage;
-#if NET_2_0
 using Microsoft.Win32.SafeHandles;
-#endif
 
 using NUnit.Framework;
 

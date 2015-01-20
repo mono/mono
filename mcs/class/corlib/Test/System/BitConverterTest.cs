@@ -82,11 +82,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("byteArray", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -154,11 +150,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("byteArray", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -188,9 +180,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.IsNotNull (ex.ParamName, "#B5");
-#if NET_2_0
 				Assert.AreEqual ("startIndex", ex.ParamName, "#B6");
-#endif
 			}
 		}
 
@@ -276,11 +266,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("byteArray", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -346,11 +332,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("byteArray", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -415,11 +397,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("byteArray", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -485,11 +463,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("byteArray", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -554,11 +528,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("byteArray", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -624,11 +594,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("byteArray", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -693,11 +659,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("byteArray", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -752,21 +714,7 @@ namespace MonoTests.System
 		public void ToString_Value_Empty ()
 		{
 			byte [] empty = new byte [0];
-#if NET_2_0
 			Assert.AreEqual (String.Empty, BitConverter.ToString (empty), "#A1");
-#else
-			try {
-				BitConverter.ToString (empty);
-				Assert.Fail ("#A1");
-			} catch (ArgumentOutOfRangeException ex) {
-				// StartIndex cannot be less than zero
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
-				Assert.IsNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsNotNull (ex.ParamName, "#A5");
-				Assert.AreEqual ("startIndex", ex.ParamName, "#A6");
-			}
-#endif
 
 			try {
 				BitConverter.ToString (empty, 3);
@@ -780,21 +728,7 @@ namespace MonoTests.System
 				Assert.AreEqual ("startIndex", ex.ParamName, "#B6");
 			}
 
-#if NET_2_0
 			Assert.AreEqual (String.Empty, BitConverter.ToString (empty, 0), "#C1");
-#else
-			try {
-				BitConverter.ToString (empty, 0);
-				Assert.Fail ("#C1");
-			} catch (ArgumentOutOfRangeException ex) {
-				// StartIndex cannot be less than zero
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
-				Assert.IsNull (ex.InnerException, "#C3");
-				Assert.IsNotNull (ex.Message, "#C4");
-				Assert.IsNotNull (ex.ParamName, "#C5");
-				Assert.AreEqual ("startIndex", ex.ParamName, "#C6");
-			}
-#endif
 
 			try {
 				BitConverter.ToString (empty, 3, 0);
@@ -808,21 +742,7 @@ namespace MonoTests.System
 				Assert.AreEqual ("startIndex", ex.ParamName, "#D6");
 			}
 
-#if NET_2_0
 			Assert.AreEqual (string.Empty, BitConverter.ToString (empty, 0, 0), "#E1");
-#else
-			try {
-				BitConverter.ToString (empty, 0, 0);
-				Assert.Fail ("#E1");
-			} catch (ArgumentOutOfRangeException ex) {
-				// StartIndex cannot be less than zero
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#E2");
-				Assert.IsNull (ex.InnerException, "#E3");
-				Assert.IsNotNull (ex.Message, "#E4");
-				Assert.IsNotNull (ex.ParamName, "#E5");
-				Assert.AreEqual ("startIndex", ex.ParamName, "#E6");
-			}
-#endif
 
 			try {
 				BitConverter.ToString (empty, 3, -1);

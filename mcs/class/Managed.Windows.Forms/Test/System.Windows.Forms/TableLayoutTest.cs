@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System;
 using System.Drawing;
 using System.IO;
@@ -1723,4 +1722,3 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 }
-#endif

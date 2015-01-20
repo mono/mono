@@ -556,10 +556,8 @@ namespace System.Xml
 
 		private XmlNodeType GetNodeTypeFromString (string nodeTypeString)
 		{
-#if NET_2_0 // actually should be done in any version
 			if (nodeTypeString == null)
 				throw new ArgumentNullException ("nodeTypeString");
-#endif
 			switch (nodeTypeString) {
 				case "attribute": return XmlNodeType.Attribute;
 				case "cdatasection": return XmlNodeType.CDATA;

@@ -89,9 +89,7 @@ namespace MonoTests.System.Windows.Forms
 
 			// Font
 			Assert.IsFalse (dg.Font.Bold, "Font Bold");
-#if NET_2_0
 			Assert.IsTrue (dg.Font.IsSystemFont, "Font IsSystemFont");
-#endif
 			Assert.IsFalse (dg.Font.Italic, "Font Italic");
 			Assert.IsFalse (dg.Font.Strikeout, "Font Strikeout");
 			Assert.IsFalse (dg.Font.Underline, "Font Underline");
@@ -156,9 +154,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (dg.CaptionFont.Bold, "#A1");
 			Assert.AreEqual (dg.CaptionFont.FontFamily, dg.Font.FontFamily, "#A2");
 			Assert.AreEqual (dg.CaptionFont.Height, dg.Font.Height, "#A3");
-#if NET_2_0
 			Assert.IsFalse(dg.CaptionFont.IsSystemFont, "#A4");
-#endif
 			Assert.AreEqual (dg.CaptionFont.Italic, dg.Font.Italic, "#A5");
 			Assert.AreEqual (dg.CaptionFont.Name, dg.Font.Name, "#A6");
 			Assert.AreEqual (dg.CaptionFont.Size, dg.Font.Size, "#A7");

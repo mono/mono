@@ -77,7 +77,6 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.AreEqual ("mono", p.ViewStateUserKey, "ViewStateUserKey");
 			p.Visible = true;
 			Assert.IsTrue (p.Visible, "Visible");
-#if NET_2_0
 			Assert.IsNotNull (p.ClientScript, "ClientScript");
 //			p.CodePage = 0;
 //			Assert.AreEqual (0, p.CodePage, "CodePage");
@@ -98,7 +97,6 @@ namespace MonoCasTests.System.Web.UI {
 //			Assert.AreEqual (Encoding.UTF8.WebName, p.ResponseEncoding, "ResponseEncoding");
 			p.UICulture = "en-us";
 			Assert.IsNotNull (p.UICulture, "UICulture");
-#endif
 		}
 
 		[Test]
@@ -164,7 +162,6 @@ namespace MonoCasTests.System.Web.UI {
 		{
 			Assert.IsNotNull (new Page ().User, "User");
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (HttpException))]
@@ -242,7 +239,6 @@ namespace MonoCasTests.System.Web.UI {
 		{
 			Assert.AreEqual (TraceMode.Default, page.TraceModeValue, "TraceModeValue");
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Methods_Deny_Unrestricted ()
@@ -265,7 +261,6 @@ namespace MonoCasTests.System.Web.UI {
 			p.RegisterStartupScript ("key", "script");
 			p.Validate ();
 			p.VerifyRenderingInServerForm (control);
-#if NET_2_0
 			p.Controls.Add (control);
 			Assert.IsNotNull (p.FindControl ("mono"), "FindControl");
 			p.RegisterRequiresControlState (control);
@@ -273,7 +268,6 @@ namespace MonoCasTests.System.Web.UI {
 			p.UnregisterRequiresControlState (control);
 			Assert.IsNotNull (p.GetValidators (String.Empty), "GetValidators");
 			p.Validate (String.Empty);
-#endif
 		}
 
 		[Test]
@@ -293,11 +287,7 @@ namespace MonoCasTests.System.Web.UI {
 
 		[Test]
 		[FileIOPermission (SecurityAction.Deny, Unrestricted = true)]
-#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void ProcessRequest_Deny_Unrestricted ()
 		{
 			new Page ().ProcessRequest (new HttpContext (null));
@@ -305,19 +295,12 @@ namespace MonoCasTests.System.Web.UI {
 
 		[Test]
 		[FileIOPermission (SecurityAction.PermitOnly, Unrestricted = true)]
-#if NET_2_0
 		[ExpectedException (typeof (HttpException))]
-#else
-		// indirect for HttpApplicationState | HttpStaticObjectsCollection
-		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void ProcessRequest_PermitOnly_FileIOPermission ()
 		{
 			new Page ().ProcessRequest (new HttpContext (null));
 		}
 
-#if NET_2_0
 		private void Handler (object sender, EventArgs e)
 		{
 		}
@@ -341,7 +324,6 @@ namespace MonoCasTests.System.Web.UI {
 			p.PreRenderComplete -= new EventHandler (Handler);
 			p.SaveStateComplete -= new EventHandler (Handler);
 		}
-#endif
 
 		// LinkDemand
 

@@ -58,7 +58,6 @@ namespace MonoTests.System.Collections.Specialized {
 		{
 		}
 
-#if NET_2_0
 		public UnitTestNameObjectCollectionBase (IEqualityComparer comparer)
 			: base (comparer)
 		{
@@ -68,7 +67,6 @@ namespace MonoTests.System.Collections.Specialized {
 			: base (capacity, comparer)
 		{
 		}
-#endif
 		public bool _IsReadOnly {
 			get { return base.IsReadOnly; }
 			set { base.IsReadOnly = value; }
@@ -218,7 +216,6 @@ namespace MonoTests.System.Collections.Specialized {
 		{
 			new UnitTestNameObjectCollectionBase (Int32.MinValue);
 		}
-#if NET_2_0
 		[Test]
 		public void Constructor_IEqualityComparer ()
 		{
@@ -281,7 +278,6 @@ namespace MonoTests.System.Collections.Specialized {
 				}
 			}
 		}
-#endif
 		[Test]
 		public void Constructor_Provider_Comparer ()
 		{
@@ -443,7 +439,6 @@ namespace MonoTests.System.Collections.Specialized {
 			UnitTestNameObjectCollectionBase coll = new UnitTestNameObjectCollectionBase ();
 			coll.Add ("a", "!");
 			coll._IsReadOnly = true;
-#if NET_2_0
 			try {
 				coll.Set (0, "1");
 				Assert.Fail ("#1");
@@ -453,10 +448,6 @@ namespace MonoTests.System.Collections.Specialized {
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
-#else
-			coll.Set (0, "1");
-			Assert.AreEqual ("1", coll.Get (0), "Get(0)");
-#endif
 		}
 
 		[Test]
@@ -499,7 +490,6 @@ namespace MonoTests.System.Collections.Specialized {
 		public void CopyTo_Array_Null () 
 		{
 			UnitTestNameObjectCollectionBase c = new UnitTestNameObjectCollectionBase ();
-#if NET_2_0
 			try {
 				((ICollection)c).CopyTo (null, 0);
 				Assert.Fail ("#A1");
@@ -510,16 +500,12 @@ namespace MonoTests.System.Collections.Specialized {
 				Assert.IsNotNull (ex.ParamName, "#A5");
 				Assert.AreEqual ("array", ex.ParamName, "#A6");
 			}
-#else
-			((ICollection) c).CopyTo (null, 0);
-#endif
 
 			c.Add ("1", "mono");
 
 			try {
 				((ICollection) c).CopyTo (null, 0);
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
@@ -527,10 +513,6 @@ namespace MonoTests.System.Collections.Specialized {
 				Assert.IsNotNull (ex.ParamName, "#B5");
 				Assert.AreEqual ("array", ex.ParamName, "#B6");
 			}
-#else
-			} catch (NullReferenceException) {
-			}
-#endif
 		}
 
 		[Test]
@@ -542,21 +524,12 @@ namespace MonoTests.System.Collections.Specialized {
 			try {
 				((ICollection) c).CopyTo (array, -1);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
 			}
-#else
-			} catch (IndexOutOfRangeException ex) {
-				// Index was outside the bounds of the array
-				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-			}
-#endif
 		}
 
 		[Test]
@@ -571,7 +544,6 @@ namespace MonoTests.System.Collections.Specialized {
 			try {
 				((ICollection) c).CopyTo (array, 2);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Insufficient space in the target location to
 				// copy the information
@@ -580,14 +552,6 @@ namespace MonoTests.System.Collections.Specialized {
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNull (ex.ParamName, "#5");
 			}
-#else
-			} catch (IndexOutOfRangeException ex) {
-				// Index was outside the bounds of the array
-				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-			}
-#endif
 		}
 
 		[Test]

@@ -214,7 +214,6 @@ namespace MonoTests.System.Reflection.Emit
 			}
 
 			// fail on MS .NET 1.1
-#if NET_2_0
 			TypeBuilder tb = mb.DefineType ("ITest2", TypeAttributes.Interface,
 				typeof (object));
 			Assert.AreEqual (typeof (object), tb.BaseType, "#C1");
@@ -222,7 +221,6 @@ namespace MonoTests.System.Reflection.Emit
 			tb = mb.DefineType ("ITest3", TypeAttributes.Interface,
 				typeof (IDisposable));
 			Assert.AreEqual (typeof (IDisposable), tb.BaseType, "#D1");
-#endif
 		}
 
 		[Test]
@@ -304,7 +302,6 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual (s1.GetValue (i), s2.GetValue (i), "#2: " + i);
 		}
 
-#if NET_2_0
 		[Test]
 		public void ResolveFieldTokenFieldBuilder ()
 		{
@@ -564,7 +561,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (typeof (string), resolved_method.GetParameters () [0].ParameterType);
 			Assert.AreEqual (typeof (int), resolved_method.GetParameters () [1].ParameterType);
 		}
-#endif
 
 		[Test]
 		public void GetTypes ()
@@ -586,9 +582,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test] // GetTypeToken (Type)
-#if NET_2_0
 		[Category ("NotDotNet")] // http://support.microsoft.com/kb/950986
-#endif
 		public void GetTypeToken2_Type_Array ()
 		{
 			Type type;
@@ -602,21 +596,15 @@ namespace MonoTests.System.Reflection.Emit
 
 			type = typeof (object []);
 			typeToken = mb.GetTypeToken (type);
-#if NET_2_0
 			Assert.IsFalse (typeToken == TypeToken.Empty, "#A1");
 			resolved_type = mb.ResolveType (typeToken.Token);
 			Assert.AreEqual (type, resolved_type, "#A2");
-#else
-			Assert.IsFalse (typeToken.Token == TypeToken.Empty.Token, "#A1");
-#endif
 
-#if NET_2_0
 			type = typeof (object).MakeArrayType ();
 			typeToken = mb.GetTypeToken (type);
 			Assert.IsFalse (typeToken == TypeToken.Empty, "#B1");
 			resolved_type = mb.ResolveType (typeToken.Token);
 			Assert.AreEqual (type, resolved_type, "#B2");
-#endif
 		}
 
 		[Test] // GetTypeToken (Type)
@@ -628,16 +616,11 @@ namespace MonoTests.System.Reflection.Emit
 			ModuleBuilder mb = ab.DefineDynamicModule ("MyModule");
 			Type type = typeof (string);
 			TypeToken typeToken = mb.GetTypeToken (type);
-#if NET_2_0
 			Assert.IsFalse (typeToken == TypeToken.Empty, "#1");
 			Type resolved_type = mb.ResolveType (typeToken.Token);
 			Assert.AreEqual (type, resolved_type, "#2");
-#else
-			Assert.IsFalse (typeToken.Token == TypeToken.Empty.Token, "#1");
-#endif
 		}
 
-#if NET_2_0
 		[Test] // bug #471302
 		public void ModuleBuilder_ModuleVersionId ()
 		{
@@ -649,7 +632,6 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreNotEqual (new Guid (), module.ModuleVersionId);
 		}
-#endif
 
 		[Test]
 		public void GetType_String_Null ()

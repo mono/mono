@@ -100,11 +100,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			c.Checked = true;
 			s = c.Render ();
 
-#if NET_2_0
 			HtmlDiff.AssertAreEqual ("<input name=\"*1*\" id=\"*1*\" type=\"checkbox\" checked=\"checked\" />", s, "Render fail");
-#else
-			HtmlDiff.AssertAreEqual ("<input name=\"*1*\" type=\"checkbox\" id=\"*1*\" checked=\"checked\" />", s, "Render fail");
-#endif
 		}
 	}
 }

@@ -26,7 +26,6 @@
 //  		Gary Barnett	(gary.barnett.mono@gmail.com)
 
 
-#if NET_2_0
 using System;
 using System.IO;
 using System.Reflection;
@@ -412,5 +411,4 @@ namespace MonoTests.System.Resources {
 	}
 	
 }
-#endif
 

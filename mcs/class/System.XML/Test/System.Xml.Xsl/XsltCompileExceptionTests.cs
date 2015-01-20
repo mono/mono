@@ -40,7 +40,6 @@ namespace MonoCasTests.System.Xml.Xsl
 {
 	[TestFixture]
 	public class XsltCompileExceptionTests {
-#if NET_2_0
 		[Test]
 		public void Constructor0 ()
 		{
@@ -90,7 +89,6 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.IsNull (xe.StackTrace, "#A8");
 			Assert.IsNull (xe.TargetSite, "#A9");
 		}
-#endif
 
 		[Test]
 		public void Constructor3 ()
@@ -104,13 +102,9 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.AreEqual (0, xe.LinePosition, "#A2");
 			Assert.IsNotNull (xe.Message, "#A3");
 			Assert.IsTrue (xe.Message.Length > 0, "#A4");
-#if NET_2_0
 			// exact us-english error message
 			// Assert.AreEqual ("XSLT compile error.", xe.Message, "#A5-US-ENGLISH");
 			Assert.AreEqual (-1, xe.Message.IndexOf("(0,0) :\n"), "#A5");
-#else
-			Assert.AreEqual ("(0,0) :\n", xe.Message, "#A5");
-#endif
 			Assert.IsNull (xe.SourceUri, "#A6");
 			Assert.AreSame (cause, xe.InnerException, "#A7");
 			Assert.IsNull (xe.Source, "#A8");
@@ -123,13 +117,9 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.AreEqual (0, xe.LinePosition, "#B2");
 			Assert.IsNotNull (xe.Message, "#B3");
 			Assert.IsTrue (xe.Message.Length > 0, "#B4");
-#if NET_2_0
 			// exact us-english error message
 			// Assert.AreEqual ("XSLT compile error at (1,0). See InnerException for details.", xe.Message, "#B5-US-ENGLISH");
 			Assert.IsTrue (xe.Message.IndexOf("(1,0).") != -1, "#B5");
-#else
-			Assert.AreEqual ("(1,0) :\n", xe.Message, "#B5");
-#endif
 			Assert.IsNull (xe.SourceUri, "#B6");
 			Assert.AreSame (cause, xe.InnerException, "#B7");
 			Assert.IsNull (xe.Source, "#B8");
@@ -142,13 +132,9 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.AreEqual (1, xe.LinePosition, "#C2");
 			Assert.IsNotNull (xe.Message, "#C3");
 			Assert.IsTrue (xe.Message.Length > 0, "#C4");
-#if NET_2_0
 			// exact us-english error message
 			// Assert.AreEqual ("XSLT compile error.", xe.Message, "#AC-US-ENGLISH");
 			Assert.AreEqual (-1, xe.Message.IndexOf("(0,1)"), "#C5");
-#else
-			Assert.AreEqual ("(0,1) :\n", xe.Message, "#C5");
-#endif
 			Assert.IsNull (xe.SourceUri, "#C6");
 			Assert.AreSame (cause, xe.InnerException, "#C7");
 			Assert.IsNull (xe.Source, "#C8");
@@ -161,13 +147,9 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.AreEqual (0, xe.LinePosition, "#D2");
 			Assert.IsNotNull (xe.Message, "#D3");
 			Assert.IsTrue (xe.Message.Length > 0, "#D4");
-#if NET_2_0
 			// exact us-english error message
 			// Assert.AreEqual ("XSLT compile error.", xe.Message, "#D5-US-ENGLISH");
 			Assert.AreEqual (-1, xe.Message.IndexOf("(0,0)"), "#D5");
-#else
-			Assert.AreEqual ("http://local/test.xsl(0,0) :\n", xe.Message, "#D5");
-#endif
 			Assert.AreSame (sourceUri, xe.SourceUri, "#D6");
 			Assert.AreSame (cause, xe.InnerException, "#D7");
 			Assert.IsNull (xe.Source, "#D8");
@@ -180,13 +162,9 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.AreEqual (0, xe.LinePosition, "#E2");
 			Assert.IsNotNull (xe.Message, "#E3");
 			Assert.IsTrue (xe.Message.Length > 0, "#E4");
-#if NET_2_0
 			// exact us-english error message
 			// Assert.AreEqual ("XSLT compile error at http://local/test.xsl(1,0). See InnerException for details.", xe.Message, "#E5-US-ENGLISH");
 			Assert.IsTrue (xe.Message.IndexOf("http://local/test.xsl(1,0)") != -1, "#E5");
-#else
-			Assert.AreEqual ("http://local/test.xsl(1,0) :\n", xe.Message, "#E5");
-#endif
 			Assert.AreSame (sourceUri, xe.SourceUri, "#E6");
 			Assert.AreSame (cause, xe.InnerException, "#E7");
 			Assert.IsNull (xe.Source, "#E8");
@@ -199,13 +177,9 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.AreEqual (1, xe.LinePosition, "#F2");
 			Assert.IsNotNull (xe.Message, "#F3");
 			Assert.IsTrue (xe.Message.Length > 0, "#F4");
-#if NET_2_0
 			// exact us-english error message
 			// Assert.AreEqual ("XSLT compile error.", xe.Message, "#F5-US-ENGLISH");
 			Assert.AreEqual (-1, xe.Message.IndexOf("(0,1)"), "#F5");
-#else
-			Assert.AreEqual ("http://local/test.xsl(0,1) :\n", xe.Message, "#F5");
-#endif
 			Assert.AreSame (sourceUri, xe.SourceUri, "#F6");
 			Assert.AreSame (cause, xe.InnerException, "#F7");
 			Assert.IsNull (xe.Source, "#F8");
@@ -218,13 +192,9 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.AreEqual (2, xe.LinePosition, "#G2");
 			Assert.IsNotNull (xe.Message, "#G3");
 			Assert.IsTrue (xe.Message.Length > 0, "#G4");
-#if NET_2_0
 			// exact us-english error message
 			// Assert.AreEqual ("XSLT compile error at http://local/test.xsl(1,2). See InnerException for details.", xe.Message, "#G5-US-ENGLISH");
 			Assert.IsTrue (xe.Message.IndexOf("http://local/test.xsl(1,2)") != -1, "#G5");
-#else
-			Assert.AreEqual ("http://local/test.xsl(1,2) :\n", xe.Message, "#G5");
-#endif
 			Assert.AreSame (sourceUri, xe.SourceUri, "#G5");
 			Assert.AreSame (cause, xe.InnerException, "#G6");
 			Assert.IsNull (xe.Source, "#G7");
@@ -237,13 +207,9 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.AreEqual (4, xe.LinePosition, "#H2");
 			Assert.IsNotNull (xe.Message, "#H3");
 			Assert.IsTrue (xe.Message.Length > 0, "#H4");
-#if NET_2_0
 			// exact us-english error message
 			// Assert.AreEqual ("XSLT compile error at http://local/test.xsl(3,4). See InnerException for details.", xe.Message, "#H5-US-ENGLISH");
 			Assert.IsTrue (xe.Message.IndexOf("http://local/test.xsl(3,4)") != -1, "#H5");
-#else
-			Assert.AreEqual ("http://local/test.xsl(3,4) :\n", xe.Message, "#H5");
-#endif
 			Assert.AreSame (sourceUri, xe.SourceUri, "#H6");
 			Assert.IsNull (xe.InnerException, "#H7");
 			Assert.IsNull (xe.Source, "#H8");
@@ -256,13 +222,9 @@ namespace MonoCasTests.System.Xml.Xsl
 			Assert.AreEqual (0, xe.LinePosition, "#I2");
 			Assert.IsNotNull (xe.Message, "#I3");
 			Assert.IsTrue (xe.Message.Length > 0, "#I4");
-#if NET_2_0
 			// exact us-english error message
 			// Assert.AreEqual ("XSLT compile error.", xe.Message, "#I5-US-ENGLISH");
 			Assert.AreEqual (-1, xe.Message.IndexOf("http://local/test.xsl(0,0) :\n"), "#I5");
-#else
-			Assert.AreEqual ("http://local/test.xsl(0,0) :\n", xe.Message, "#I5");
-#endif
 			Assert.AreSame (sourceUri, xe.SourceUri, "#I6");
 			Assert.IsNull (xe.InnerException, "#I7");
 			Assert.IsNull (xe.Source, "#I8");
