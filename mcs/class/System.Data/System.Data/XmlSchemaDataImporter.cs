@@ -507,9 +507,9 @@ namespace System.Data
 						useCurrent = true;
 
 					if (attr.NamespaceURI == XmlConstants.MspropNamespace && 
-					    !dataset.ExtendedProperties.ContainsKey(attr.Name))
+					    !dataset.ExtendedProperties.ContainsKey(attr.LocalName))
 					{
-						dataset.ExtendedProperties.Add (attr.Name, attr.Value);
+						dataset.ExtendedProperties.Add (attr.LocalName, attr.Value);
 						continue;
 					}
 					
@@ -564,7 +564,7 @@ namespace System.Data
 
 					if (attr.NamespaceURI == XmlConstants.MspropNamespace)
 					{
-						table.ExtendedProperties.Add (attr.Name, attr.Value);
+						table.ExtendedProperties.Add (attr.LocalName, attr.Value);
 						continue;
 					}
 
@@ -744,7 +744,7 @@ namespace System.Data
 				foreach (XmlAttribute attr in obj.UnhandledAttributes) {
 					if (attr.NamespaceURI == XmlConstants.MspropNamespace)
 					{
-						col.ExtendedProperties.Add (attr.Name, attr.Value);
+						col.ExtendedProperties.Add (attr.LocalName, attr.Value);
 						continue;
 					}
 
