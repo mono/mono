@@ -1,13 +1,17 @@
 #!/bin/sh
-SDK_VERSION=5.0
+SDK_VERSION=7.1
 MAC_SDK_VERSION=10.6
 ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
 SIMULATOR_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer
 XCOMP_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${MAC_SDK_VERSION}.sdk
 BUILDSCRIPTSDIR=external/buildscripts
 
+# allow to build with older SDKs temporarily
 if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
 	SDK_VERSION=5.1
+fi
+if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
+	SDK_VERSION=5.0
 fi
 
 echo "Using SDK $SDK_VERSION"
