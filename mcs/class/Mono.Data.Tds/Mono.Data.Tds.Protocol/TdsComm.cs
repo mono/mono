@@ -219,6 +219,9 @@ namespace Mono.Data.Tds.Protocol {
 			case TypeCode.Object :
 				if (o is byte[])
 					Append ((byte[]) o);
+				else if (o is Guid)
+					Append (((Guid) o).ToByteArray ());
+				else break;
 				return;
 			case TypeCode.Int16 :
 				Append ((short) o);
