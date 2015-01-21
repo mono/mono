@@ -102,9 +102,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -117,9 +114,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.CellPadding = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -132,9 +126,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.CellSpacing = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (GridLines.None)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -147,9 +138,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.GridLines = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]

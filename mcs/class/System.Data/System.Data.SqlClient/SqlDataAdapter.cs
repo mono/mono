@@ -229,14 +229,8 @@ namespace System.Data.SqlClient {
 
 		#region Events and Delegates
 
-#if ONLY_1_1
-		[DataSysDescription ("Event triggered before every DataRow during Update.")]
-#endif
 		public event SqlRowUpdatedEventHandler RowUpdated;
 
-#if ONLY_1_1
-		[DataSysDescription ("Event triggered after every DataRow during Update.")]
-#endif
 		public event SqlRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates

@@ -47,10 +47,6 @@ namespace System.Data.Odbc
 		#region Fields
 
 		private OdbcDataAdapter _adapter;
-#if ONLY_1_1
-		private string 			_quotePrefix;
-		private string 			_quoteSuffix;
-#endif
 
 		private DataTable		_schema;
 		private string			_tableName;
@@ -139,45 +135,6 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if ONLY_1_1
-		[BrowsableAttribute (false)]
-		[OdbcDescriptionAttribute ("The prefix string wrapped around sql objects")]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public string QuotePrefix {
-			get {
-				if (_quotePrefix == null)
-					return string.Empty;
-				return _quotePrefix;
-			}
-			set {
-				if (IsCommandGenerated)
-					throw new InvalidOperationException (
-						"QuotePrefix cannot be set after " +
-						"an Insert, Update or Delete command " +
-						"has been generated.");
-				_quotePrefix = value;
-			}
-		}
-
-		[BrowsableAttribute (false)]
-		[OdbcDescriptionAttribute ("The suffix string wrapped around sql objects")]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public string QuoteSuffix {
-			get {
-				if (_quoteSuffix == null)
-					return string.Empty;
-				return _quoteSuffix;
-			}
-			set {
-				if (IsCommandGenerated)
-					throw new InvalidOperationException (
-						"QuoteSuffix cannot be set after " +
-						"an Insert, Update or Delete command " +
-						"has been generated.");
-				_quoteSuffix = value;
-			}
-		}
-#endif
 
 		#endregion // Properties
 
@@ -189,11 +146,7 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-#if ONLY_1_1
-		protected override
-#else
 		new
-#endif
 		void Dispose (bool disposing)
 		{
 			if (_disposed)
@@ -486,11 +439,7 @@ namespace System.Data.Odbc
 			return CreateDeleteCommand (useColumnsForParameterNames);
 		}
 
-#if ONLY_1_1
-		public
-#else
 		new
-#endif // NET_2_0
 		void RefreshSchema ()
 		{
 			// creates metadata

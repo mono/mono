@@ -68,9 +68,6 @@ namespace System.Web.UI.WebControls {
 			this.enabled = true;
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -103,9 +100,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(typeof (Color), "")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
 		[WebSysDescription ("")]
@@ -122,9 +116,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(typeof (Color), "")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
 		[WebSysDescription ("")]
@@ -142,9 +133,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(BorderStyle.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -163,9 +151,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(typeof (Unit), "")]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -245,9 +230,6 @@ namespace System.Web.UI.WebControls {
 			set { base.EnableTheming = value; }
 		}
 
-#if ONLY_1_1
-		[DefaultValue(null)]
-#endif		
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -260,9 +242,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(typeof (Color), "")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
 		[WebSysDescription ("")]
@@ -289,9 +268,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(typeof (Unit), "")]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -336,9 +312,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue("")]
 		[Localizable (true)]
 		[WebSysDescription ("")]
@@ -352,9 +325,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(typeof (Unit), "")]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]

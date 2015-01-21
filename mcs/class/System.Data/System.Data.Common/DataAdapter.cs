@@ -43,9 +43,6 @@ namespace System.Data.Common
 	/// Represents a set of data commands and a database connection that are used to fill the DataSet and update the data source.
 	/// </summary>
 	public
-#if ONLY_1_1
-	abstract
-#endif
 	class DataAdapter : Component, IDataAdapter
 	{
 		#region Fields

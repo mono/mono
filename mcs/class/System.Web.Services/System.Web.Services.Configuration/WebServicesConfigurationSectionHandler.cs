@@ -78,16 +78,6 @@ namespace System.Web.Services.Configuration
 			WSProtocol proto;
 			error = null;
 
-#if ONLY_1_1
-			switch (protoName) {
-				case "HttpSoap1.2":
-					protoName = "HttpSoap12";
-					break;
-				case "HttpSoap12":
-					protoName = null;
-					break;
-			}
-#endif
 			try {
 				proto = (WSProtocol) Enum.Parse (typeof (WSProtocol), protoName);
 			} catch {

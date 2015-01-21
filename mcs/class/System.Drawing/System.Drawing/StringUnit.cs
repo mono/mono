@@ -28,9 +28,6 @@
 
 namespace System.Drawing {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum  StringUnit{
 		World      = 0x00,
 		Display    = 0x01,

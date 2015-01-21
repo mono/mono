@@ -950,9 +950,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // wrong error message is reported in .NET 1.1
-#endif
 		public void TypeMapping_Attribute_ComplexType ()
 		{
 			SoapAttributes attrs = new SoapAttributes (typeof (Field_Encoded).GetMember ("Names")[0]);
@@ -1127,9 +1124,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#if ONLY_1_1
-		[Category ("NotDotNet")] // results in NullReferenceException in .NET 1.1 (SP1)
-#endif
 		public void TypeMapping_IEnumerable_SimpleClass_PrivateGetEnumerator ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassEnumerablePrivateGetEnumerator));

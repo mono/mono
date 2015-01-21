@@ -119,14 +119,6 @@ namespace MonoCasTests.System.Web.Hosting {
 			try {
 				isapi.StopProcessing ();
 			}
-#if ONLY_1_1
-			catch (TypeInitializationException) {
-				// fx 1.x
-			}
-			catch (NotImplementedException) {
-				// mono
-			}
-#endif
 			finally {
 			}
 		}
@@ -138,11 +130,6 @@ namespace MonoCasTests.System.Web.Hosting {
 			try {
 				isapi.StopProcessing ();
 			}
-#if ONLY_1_1
-			catch (TypeInitializationException) {
-				// fx 1.x
-			}
-#endif
 			catch (NotImplementedException) {
 				// mono
 			}

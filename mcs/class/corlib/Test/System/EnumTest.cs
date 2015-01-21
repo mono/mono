@@ -748,9 +748,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")]
-#endif
 		public void ToObject_EnumType_UInt64 ()
 		{
 			object value = Enum.ToObject (typeof (TestingEnum3), 0);

@@ -769,11 +769,6 @@ namespace System.Data.OleDb
 			Dispose (true);
 		}
 
-#if ONLY_1_1
-		~OleDbDataReader () {
-			Dispose (false);
-		}
-#endif
 		#endregion // Destructors
 	}
 }

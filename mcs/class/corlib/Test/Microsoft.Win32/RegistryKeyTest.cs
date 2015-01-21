@@ -1251,11 +1251,7 @@ namespace MonoTests.Microsoft.Win32
 					Assert.IsNull (createdKey, "#A2");
 				}
 
-#if ONLY_1_1
-				subKeyName = new string ('a', 255);
-#else
 				subKeyName = new string ('a', 256);
-#endif
 
 				try {
 					softwareKey.DeleteSubKeyTree (subKeyName);

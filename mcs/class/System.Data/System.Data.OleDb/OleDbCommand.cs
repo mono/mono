@@ -174,9 +174,6 @@ namespace System.Data.OleDb
 		}
 
 		[DataCategory ("Data")]
-#if ONLY_1_1
-		[DataSysDescriptionAttribute ("The parameters collection.")]
-#endif
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public new OleDbParameterCollection Parameters {
 			get { return parameters; }
@@ -184,9 +181,6 @@ namespace System.Data.OleDb
 		}
 
 		[BrowsableAttribute (false)]
-#if ONLY_1_1
-		[DataSysDescriptionAttribute ("The transaction used by the command.")]
-#endif
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public new OleDbTransaction Transaction {
 			get {

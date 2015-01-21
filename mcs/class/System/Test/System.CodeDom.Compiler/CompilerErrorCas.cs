@@ -100,9 +100,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if ONLY_1_1
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void LinkDemand_Deny_Unrestricted ()
 		{
 			ConstructorInfo ci = typeof (CompilerError).GetConstructor (new Type [0]);

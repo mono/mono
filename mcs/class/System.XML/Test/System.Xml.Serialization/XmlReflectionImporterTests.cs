@@ -862,9 +862,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#if ONLY_1_1
-		[Category ("NotDotNet")] // results in NullReferenceException in .NET 1.1 (SP1)
-#endif
 		public void TypeMapping_IEnumerable_SimpleClass_PrivateGetEnumerator ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassEnumerablePrivateGetEnumerator));

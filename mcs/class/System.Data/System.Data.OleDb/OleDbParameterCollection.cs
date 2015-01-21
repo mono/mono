@@ -62,10 +62,6 @@ namespace System.Data.OleDb
 	
 		#region Properties
 
-#if ONLY_1_1
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public
 		override
 		int Count {

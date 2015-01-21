@@ -633,9 +633,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadData (string, byte [])
-#if ONLY_1_1
-		[Category ("NotDotNet")] // On MS, there's a nested NotImplementedException
-#endif
 		public void UploadData1_Data_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -751,9 +748,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadData (string, string, byte [])
-#if ONLY_1_1
-		[Category ("NotDotNet")] // On MS, there's a nested NotImplementedException
-#endif
 		public void UploadData3_Data_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -1483,9 +1477,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (string, NameValueCollection)
-#if ONLY_1_1
-		[Category ("NotDotNet")] // On MS, there's a nested NotImplementedException
-#endif
 		public void UploadValues1_Data_Null ()
 		{
 			WebClient wc = new WebClient ();
@@ -1601,9 +1592,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // UploadValues (string, string, NameValueCollection)
-#if ONLY_1_1
-		[Category ("NotDotNet")] // On MS, there's a nested NotImplementedException
-#endif
 		public void UploadValues3_Data_Null ()
 		{
 			WebClient wc = new WebClient ();

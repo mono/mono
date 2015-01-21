@@ -648,9 +648,6 @@ namespace System.Data.Common
 				try {
 					if (command != null) {
 						DataColumnMappingCollection columnMappings = tableMapping.ColumnMappings;
-#if ONLY_1_1
-						IDataParameter nullCheckParam = null;
-#endif
 						foreach (IDataParameter parameter in command.Parameters) {
 							if ((parameter.Direction & ParameterDirection.Input) == 0)
 								continue;

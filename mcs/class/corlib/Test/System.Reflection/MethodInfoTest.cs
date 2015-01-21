@@ -169,9 +169,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // #A2 fails on MS.NET 1.x
-#endif
 		public void ByrefVtypeInvoke ()
 		{
 			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("ByrefVtype");

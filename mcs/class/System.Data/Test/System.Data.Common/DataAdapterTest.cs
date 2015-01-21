@@ -199,26 +199,5 @@ namespace MonoTests.System.Data.Common
 
 	class MyAdapter : DataAdapter
 	{
-#if ONLY_1_1
-		public override int Fill (DataSet dataSet)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override IDataParameter[] GetFillParameters ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override int Update (DataSet dataSet)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 	}
 }

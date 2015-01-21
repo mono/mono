@@ -44,9 +44,6 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(ValidationSummaryDisplayMode.BulletList)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -91,9 +88,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue("")]
 		[Localizable (true)]
 		[WebSysDescription ("")]
@@ -108,9 +102,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(false)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -124,9 +115,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]

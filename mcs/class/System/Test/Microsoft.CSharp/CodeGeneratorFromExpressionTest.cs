@@ -244,9 +244,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_SByte ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -258,9 +255,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_UInt16 ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -272,9 +266,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_UInt32 ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -286,9 +277,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_UInt64 ()
 		{
 			StringBuilder sb = new StringBuilder ();

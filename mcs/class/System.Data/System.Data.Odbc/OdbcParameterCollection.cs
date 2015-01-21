@@ -61,10 +61,6 @@ namespace System.Data.Odbc
 	
 		#region Properties
 
-#if ONLY_1_1
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public
 		override
 		int Count {
@@ -94,54 +90,22 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if ONLY_1_1
-		bool IList.IsFixedSize {
-#else
 		public override bool IsFixedSize {
-#endif
 			get { return false; }
 		}
 
-#if ONLY_1_1
-		bool IList.IsReadOnly {
-#else
 		public override bool IsReadOnly {
-#endif
 			get { return false; }
 		}
 
-#if ONLY_1_1
-		bool ICollection.IsSynchronized {
-#else
 		public override bool IsSynchronized {
-#endif
 			get { return list.IsSynchronized; }
 		}
 
-#if ONLY_1_1
-		object ICollection.SyncRoot {
-#else
 		public override object SyncRoot {
-#endif
 			get { return list.SyncRoot; }
 		}
 		
-#if ONLY_1_1
-		object IList.this [int index] {
-			get { return list [index]; }
-			set { list [index] = value; }
-		}
-
-		object IDataParameterCollection.this [string index]
-		{
-			get { return this [index]; }
-			set {
-				if (!(value is OdbcParameter))
-					throw new InvalidCastException ("Only OdbcParameter objects can be used.");
-				this [index] = (OdbcParameter) value;
-			}
-		}
-#endif // ONLY_1_1
 
 		#endregion // Properties
 

@@ -87,11 +87,7 @@ namespace System.Web.Services.Description {
 			if (WSConfig.IsSupported (WSProtocol.HttpGet))
 				new HttpGetProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
 			
-#if ONLY_1_1
-			if (WSConfig.IsSupported (WSProtocol.HttpPost) || WSConfig.IsSupported (WSProtocol.HttpPostLocalhost))
-#else
 			if (WSConfig.IsSupported (WSProtocol.HttpPost))
-#endif
 				new HttpPostProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
 				
 			int i=0;

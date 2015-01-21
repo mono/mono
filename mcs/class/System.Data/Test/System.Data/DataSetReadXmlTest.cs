@@ -702,9 +702,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // bug #80048
-#if ONLY_1_1
-		[Category ("NotWorking")]
-#endif
 		public void XmlSpace ()
 		{
 			string xml = "<?xml version=\"1.0\" standalone=\"yes\"?>" +

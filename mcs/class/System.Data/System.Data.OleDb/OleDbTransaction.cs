@@ -159,13 +159,6 @@ namespace System.Data.OleDb
 			isOpen = false;
 		}
 
-#if ONLY_1_1
-		~OleDbTransaction ()
-		{
-			libgda.FreeObject (gdaTransaction);
-			gdaTransaction = IntPtr.Zero;
-		}
-#endif
 
 		protected override
 		void Dispose (bool disposing)

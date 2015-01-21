@@ -150,16 +150,6 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if ONLY_1_1
-		[OdbcCategory ("Behavior")]
-		[OdbcDescriptionAttribute ("Connection used by the command")]
-		[DefaultValue (null)]
-		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OdbcConnection Connection {
-			get { return connection; }
-			set { connection = value; }
-		}
-#endif // ONLY_1_1
 
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
@@ -186,11 +176,7 @@ namespace System.Data.Odbc
 		new
 		OdbcParameterCollection Parameters {
 			get {
-#if ONLY_1_1
-				return _parameters;
-#else
 				return base.Parameters as OdbcParameterCollection;
-#endif // ONLY_1_1
 			}
 		}
 		
@@ -223,38 +209,14 @@ namespace System.Data.Odbc
 		}
 
 
-#if ONLY_1_1
-		IDbConnection IDbCommand.Connection {
-			get { return Connection; }
-			set { Connection = (OdbcConnection) value; }
-		}
-
-		IDataParameterCollection IDbCommand.Parameters {
-			get { return Parameters; }
-		}
-#else
 		protected override DbParameterCollection DbParameterCollection {
 			get { return _parameters as DbParameterCollection;}
 		}
-#endif // NET_2_0
 
-#if ONLY_1_1
-		IDbTransaction IDbCommand.Transaction {
-			get { return (IDbTransaction) Transaction; }
-			set {
-				if (value is OdbcTransaction) {
-					Transaction = (OdbcTransaction) value;
-				} else {
-					throw new ArgumentException ();
-				}
-			}
-		}
-#else
 		protected override DbTransaction DbTransaction {
 			get { return transaction; }
 			set { transaction = (OdbcTransaction) value; }
 		}
-#endif // ONLY_1_1
 
 		#endregion // Properties
 
@@ -272,18 +234,10 @@ namespace System.Data.Odbc
 				throw new InvalidOperationException ();
 		}
 
-#if ONLY_1_1
-		IDbDataParameter IDbCommand.CreateParameter ()
-		{
-			return CreateParameter ();
-		}
-
-#else
 		protected override DbParameter CreateDbParameter ()
 		{
 			return CreateParameter ();
 		}
-#endif // ONLY_1_1
 
 		public new OdbcParameter CreateParameter ()
 		{
@@ -463,17 +417,10 @@ namespace System.Data.Odbc
 			return ExecuteReader (CommandBehavior.Default);
 		}
 
-#if ONLY_1_1
-		IDataReader IDbCommand.ExecuteReader ()
-		{
-			return ExecuteReader ();
-		}
-#else
 		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
 		{
 			return ExecuteReader (behavior);
 		}
-#endif // ONLY_1_1
 
 		public
 		new
@@ -489,12 +436,6 @@ namespace System.Data.Odbc
 			return dataReader;
 		}
 
-#if ONLY_1_1
-		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
-		{
-			return ExecuteReader (behavior);
-		}
-#endif // ONLY_1_1
 
 		public
 		override

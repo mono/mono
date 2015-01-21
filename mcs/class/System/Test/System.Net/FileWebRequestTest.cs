@@ -562,16 +562,6 @@ namespace MonoTests.System.Net
 				Assert.IsNull (ex.Response, "#4");
 				Assert.IsNotNull (ex.InnerException, "#5");
 
-#if ONLY_1_1
-				FileNotFoundException fnf = ex.InnerException as FileNotFoundException;
-				Assert.IsNotNull (fnf, "#6");
-				Assert.AreEqual (typeof (FileNotFoundException), fnf.GetType (), "#7");
-				Assert.IsNotNull (fnf.FileName, "#8");
-				Assert.IsTrue (fnf.FileName.IndexOf ("FileWebRequestTest.tmp") != -1, "#9");
-				Assert.IsNotNull (fnf.Message, "#10");
-				Assert.IsTrue (fnf.Message.IndexOf ("FileWebRequestTest.tmp") != -1, "#11");
-				Assert.IsNull (fnf.InnerException, "#12");
-#endif
 			}
 		}
 
