@@ -177,6 +177,7 @@ namespace System.Data.SqlClient {
 			type_mapping.Add (typeof (SqlTypes.SqlXml), SqlDbType.Xml);
 
 			type_mapping.Add (typeof (object), SqlDbType.Variant);
+			type_mapping.Add (typeof (DateTimeOffset), SqlDbType.DateTimeOffset);
 		}
 		
 		public SqlParameter () 
@@ -1067,6 +1068,13 @@ namespace System.Data.SqlClient {
 
 		object ConvertToFrameworkType (object value, Type frameworkType)
 		{
+			if (frameworkType == typeof (string)) {
+				if (value is DateTime)
+					return ((DateTime) value).ToString ("yyyy-MM-dd'T'HH':'mm':'ss.fffffff");
+				if (value is DateTimeOffset)
+					return ((DateTimeOffset) value).ToString ("yyyy-MM-dd'T'HH':'mm':'ss.fffffffzzz");
+			}
+
 			object sqlvalue = Convert.ChangeType (value, frameworkType);
 			switch (sqlDbType) {
 			case SqlDbType.Money:
