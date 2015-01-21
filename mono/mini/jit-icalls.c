@@ -33,6 +33,7 @@ mono_ldftn (MonoMethod *method)
 static void*
 ldvirtfn_internal (MonoObject *obj, MonoMethod *method, gboolean gshared)
 {
+	MonoError error;
 	MonoMethod *res;
 
 	MONO_ARCH_SAVE_REGS;
@@ -51,7 +52,8 @@ ldvirtfn_internal (MonoObject *obj, MonoMethod *method, gboolean gshared)
 			context.class_inst = res->klass->generic_container->context.class_inst;
 		context.method_inst = mono_method_get_context (method)->method_inst;
 
-		res = mono_class_inflate_generic_method (res, &context);
+		res = mono_class_inflate_generic_method_checked (res, &context, &error);
+		mono_error_raise_exception (&error);
 	}
 
 	/* An rgctx wrapper is added by the trampolines no need to do it here */
@@ -825,11 +827,13 @@ mono_class_static_field_address (MonoDomain *domain, MonoClassField *field)
 gpointer
 mono_ldtoken_wrapper (MonoImage *image, int token, MonoGenericContext *context)
 {
+	MonoError error;
 	MonoClass *handle_class;
 	gpointer res;
 
 	MONO_ARCH_SAVE_REGS;
-	res = mono_ldtoken (image, token, &handle_class, context);	
+	res = mono_ldtoken_checked (image, token, &handle_class, context, &error);
+	mono_error_raise_exception (&error);
 	mono_class_init (handle_class);
 
 	return res;

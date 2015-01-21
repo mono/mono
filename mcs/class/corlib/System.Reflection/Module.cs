@@ -50,10 +50,8 @@ namespace System.Reflection {
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
 	public abstract class Module : ISerializable, ICustomAttributeProvider {
-#elif NET_4_0
-	public abstract class Module : ISerializable, ICustomAttributeProvider, _Module {
 #else
-	public partial class Module : ISerializable, ICustomAttributeProvider, _Module {
+	public abstract class Module : ISerializable, ICustomAttributeProvider, _Module {
 #endif
 		public static readonly TypeFilter FilterTypeName = new TypeFilter (filter_by_type_name);
 		public static readonly TypeFilter FilterTypeNameIgnoreCase = new TypeFilter (filter_by_type_name_ignore_case);
@@ -71,11 +69,7 @@ namespace System.Reflection {
 		const BindingFlags defaultBindingFlags = 
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 
-#if NET_4_0
 		protected
-#else
-		internal
-#endif
 		Module () {
 		}
 
@@ -288,7 +282,6 @@ namespace System.Reflection {
 		}
 #endif
 
-#if NET_4_0
 		public override bool Equals (object o)
 		{
 			return o == (object) this;
@@ -317,9 +310,7 @@ namespace System.Reflection {
 			return !left.Equals (right);
 		}
 
-#endif
 
-#if NET_4_0
 
 		public virtual Assembly Assembly {
 			get { throw CreateNIE (); }
@@ -454,12 +445,9 @@ namespace System.Reflection {
 		{
 			throw CreateNIE ();
 		}
-#endif
 
-#if NET_4_5
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
-#endif
 	}
 }

@@ -79,7 +79,6 @@ namespace System.ServiceModel.Configuration
 			get { return (ServicesSection) Sections ["services"]; }
 		}
 
-#if NET_4_0
 		public ProtocolMappingSection ProtocolMapping {
 			get { return (ProtocolMappingSection) Sections ["protocolMapping"]; }
 		}
@@ -87,6 +86,5 @@ namespace System.ServiceModel.Configuration
 		public StandardEndpointsSection StandardEndpoints {
 			get { return (StandardEndpointsSection) Sections ["standardEndpoints"]; }
 		}
-#endif
 	}
 }

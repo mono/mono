@@ -240,15 +240,14 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Contract.TriggerFailure() triggers the assert. Check that the assert is triggered, with the correct text.
 		/// </summary>
 		[Test]
-		[Ignore ("This causes NUnit crash on .NET 4.0")]
+//		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestTriggerFailure ()
 		{
 			try {
 				ContractHelper.TriggerFailure (ContractFailureKind.Assert, "Display", null, "Condition", null);
 				Assert.Fail ("TestTriggerFailure() failed to throw exception");
 			} catch (Exception ex) {
-				Assert.IsInstanceOfType(typeof(NotImplementedException), ex, "TestTriggerFailure() wrong exception type");
-				//Assert.AreEqual ("Expression: Condition" + Environment.NewLine + "Description: Display", ex.Message, "TestTriggerFailure() wrong message");
+				Assert.AreEqual ("Display", ex.Message, "TestTriggerFailure() wrong message");
 			}
 		}
 

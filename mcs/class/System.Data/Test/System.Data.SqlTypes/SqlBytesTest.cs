@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -311,14 +310,13 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (SqlNullValueException))]
 		public void Read_NullBufferAndInstanceValueTest ()
 		{			
 			byte [] b2 = null;
 			SqlBytes bytes = new SqlBytes ();
 			
 			bytes.Read (0, b2, 8, 4);
-			Assert.Fail ("#10 Should throw ArgumentNullException");
 		}
 		
 		[Test]
@@ -488,4 +486,3 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 	}
 }
-#endif

@@ -14,9 +14,7 @@ using System.Reflection;
 using System.Runtime.Remoting;
 using System.Threading;
 using System.Windows.Forms;
-#if NET_2_0
 using System.Windows.Forms.Layout;
-#endif
 
 using NUnit.Framework;
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
@@ -355,7 +353,6 @@ namespace MonoTests.System.Windows.Forms
 				CreateHandle ();
 			}
 		}
-#if NET_2_0
 		[Test]
 		public void AutoSizeTest ()
 		{
@@ -483,7 +480,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 			
 		}
-#endif
 		
 		[Test]
 		public void Bug82748 ()
@@ -562,7 +558,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("{Width=0, Height=0}", c.Size.ToString (), "#S1");
 		}
 
-#if NET_2_0
 		[Test]
 		public void CaptureTest ()
 		{
@@ -596,7 +591,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (log.IsHandleCreated, "#05");
 			Assert.IsTrue (log.Log.ToString ().IndexOf ("OnMouseCaptureChanged") == -1, "#06");
 		}
-#endif
 	
 		public class OnPaintTester : Form
 		{
@@ -607,7 +601,6 @@ namespace MonoTests.System.Windows.Forms
 			public bool TestRefresh;
 			public bool TestInvalidate;
 			public bool TestUpdate;
-#if NET_2_0
 			public new bool DoubleBuffered {
 				get {
 					return base.DoubleBuffered;
@@ -616,7 +609,6 @@ namespace MonoTests.System.Windows.Forms
 					base.DoubleBuffered = value;
 				}
 			}
-#endif
 			protected override void OnPaint (PaintEventArgs pevent)
 			{
 				Assert.IsFalse (list.Contains (pevent.Graphics), "OnPaintTester.OnPaint: Got the same Graphics twice");
@@ -697,7 +689,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsFalse (t.Recursive, "#3");
 			}
 		}
-#if NET_2_0
 		[Test]
 		[Category ("Interactive")]
 		public void OnPaintDoubleBufferedTest ()
@@ -723,7 +714,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsFalse (t.Recursive, "#3");
 			}
 		}
-#endif
 		public class PaintEventForm : Form
 		{
 			public ArrayList overrides = new ArrayList ();
@@ -765,7 +755,6 @@ namespace MonoTests.System.Windows.Forms
 		[Ignore ("Can't find a reliable way to generate a paint message on Windows.")]
 		public void EventStyleTest ()
 		{
-#if NET_2_0
 			using (PaintEventForm f = new PaintEventForm ()) {
 				f.Show ();
 				f.SetControlStyle (ControlStyles.OptimizedDoubleBuffer, true);
@@ -774,7 +763,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsTrue (f.overrides.Contains ("OnPaint"), "#A2");
 				Assert.IsTrue (f.events.Contains ("Paint"), "#A3");
 			}
-#endif
 			using (PaintEventForm f = new PaintEventForm ()) {
 				f.Show ();
 				f.SetControlStyle (ControlStyles.DoubleBuffer, true);
@@ -838,7 +826,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsTrue (f.events.Contains ("Paint"), "#H3");
 			}
 		}
-#if NET_2_0
 		public class DoubleBufferedForm : Form
 		{
 			public bool painted;
@@ -987,7 +974,6 @@ namespace MonoTests.System.Windows.Forms
 			TestControlStyle.CheckStyles (c, "#B3", ControlStyles.AllPaintingInWmPaint);
 
 		}
-#endif
 
 		class Helper {
 			public static void TestAccessibility(Control c, string Default, string Description, string Name, AccessibleRole Role)
@@ -1126,9 +1112,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.Font.Strikeout, "#A7");
 			Assert.IsFalse (c.Font.Underline, "#A8");
 			Assert.AreEqual (GraphicsUnit.Point, c.Font.Unit, "#A9");
-#if NET_2_0
 			Assert.IsTrue (c.Font.IsSystemFont, "#A10");
-#endif
 
 			c.Font = new Font (c.Font.FontFamily, 3, FontStyle.Italic);
 			Assert.IsFalse (c.Font.Bold, "#B1");
@@ -1140,9 +1124,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.Font.Strikeout, "#B7");
 			Assert.IsFalse (c.Font.Underline, "#B8");
 			Assert.AreEqual (GraphicsUnit.Point, c.Font.Unit, "#B9");
-#if NET_2_0
 			Assert.AreEqual (false, c.Font.IsSystemFont, "#B10");
-#endif
 		}
 
 		[Test]
@@ -1165,9 +1147,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("Control", c.BackColor.Name , "B1");
 			Assert.IsNull (c.BackgroundImage, "B2");
 			Assert.IsNull (c.BindingContext, "B3");
-#if NET_2_0
 			Assert.AreEqual (ImageLayout.Tile, c.BackgroundImageLayout, "B4");
-#endif
 
 			Assert.IsFalse (c.CanFocus, "C1");
 			Assert.IsTrue (c.CanSelect, "C2");
@@ -1206,10 +1186,8 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual(Point.Empty, c.Location, "L2");
 
-#if NET_2_0
 			Assert.IsTrue(c.MaximumSize.IsEmpty);
 			Assert.IsTrue(c.MinimumSize.IsEmpty);
-#endif
 			Assert.AreEqual (Keys.None, Control.ModifierKeys, "M1");
 			Assert.IsTrue (Control.MousePosition.X >= 0 && Control.MousePosition.Y >= 0, "M2");
 			Assert.AreEqual (MouseButtons.None, Control.MouseButtons, "M3");
@@ -1564,7 +1542,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(40, r1.Height, "Scale2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ScaleChildrenTest ()
 		{
@@ -1700,7 +1677,6 @@ namespace MonoTests.System.Windows.Forms
 				get { return scale_children; }
 			}
 		}
-#endif
 
 		[Test]	// Bug #347282
 		public void ScaleHierarchy ()
@@ -2041,7 +2017,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (d.Name, l.Name, "Child4");
 
 				// GetChildAtPointSkip is not implemented and the following test is breaking for Net_2_0 profile
-#if NET_2_0
 				c.Controls.Add (e);
 				e.Visible = false;
 				l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Invisible);
@@ -2068,7 +2043,6 @@ namespace MonoTests.System.Windows.Forms
 				l = c.GetChildAtPoint (new Point (57, 57), GetChildAtPointSkip.Transparent);
 				Assert.AreSame (e.Name, l.Name, "Child10");
 
-#endif // NET_2_0
 			} finally {
 				if (c != null)
 					c.Dispose ();
@@ -2111,9 +2085,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.Font.Strikeout, "#7");
 			Assert.IsFalse (c.Font.Underline, "#8");
 			Assert.AreEqual (GraphicsUnit.Point, c.Font.Unit, "#9");
-#if NET_2_0
 			Assert.AreEqual (true, c.Font.IsSystemFont, "#10");
-#endif
 		}
 
 		public class LayoutTestControl : Control {
@@ -2388,7 +2360,6 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void UseWaitCursorTest ()
 		{
@@ -2452,7 +2423,6 @@ namespace MonoTests.System.Windows.Forms
 				return base.SizeFromClientSize (clientSize);
 			}
 		}
-#endif
 
 		public class MockControl : Control
 		{
@@ -2520,7 +2490,6 @@ namespace MonoTests.System.Windows.Forms
 		const int WM_SYSCHAR = 0x0106;
 		const int WM_KEYUP = 0x0101;
 
-#if NET_2_0
 		[Test]
 		public void MethodPreProcessControlMessage ()
 		{
@@ -2617,7 +2586,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (PreProcessControlState.MessageNotNeeded, c.PreProcessControlMessage (ref m), "A16");
 			if (testing_callstack) Console.WriteLine ("End {0}\n", m.WParam.ToString ());
 		}
-#endif
 
 		[Test]
 		public void MethodPreProcessMessage ()
@@ -2751,7 +2719,6 @@ namespace MonoTests.System.Windows.Forms
 				return retval;
 			}
 
-#if NET_2_0
 			protected override void OnPreviewKeyDown (PreviewKeyDownEventArgs e)
 			{
 				if (testing_callstack) Console.Write ("OnPreviewKeyDown[");
@@ -2764,7 +2731,6 @@ namespace MonoTests.System.Windows.Forms
 				base.OnPreviewKeyDown (e);
 				if (testing_callstack) Console.WriteLine ("]");
 			}
-#endif
 
 			protected override bool IsInputChar (char charCode)
 			{
@@ -3280,7 +3246,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 
-#if NET_2_0
 	[TestFixture]
 	public class ControlLayoutTest : TestHelper
 	{
@@ -3369,5 +3334,4 @@ namespace MonoTests.System.Windows.Forms
 			private bool _layoutInvoked;
 		}
 	}
-#endif
 }

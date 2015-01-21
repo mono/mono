@@ -110,9 +110,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotDotNet")] // enbugged in 2.0
-#endif
 		[Ignore ("Bug in Microsoft referencesource")]
 		[ExpectedException (typeof (XmlException))]
 		public void WriteNodeError ()
@@ -207,7 +205,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (xml, writer.ToString ());
 		}
 
-#if NET_2_0
 		[Test]
 		public void Create_File ()
 		{
@@ -779,7 +776,6 @@ namespace MonoTests.System.Xml
 			WriteState state = xw.WriteState;
 		}
 
-#endif
 
 	}
 

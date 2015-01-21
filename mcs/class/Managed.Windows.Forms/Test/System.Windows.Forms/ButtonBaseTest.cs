@@ -30,7 +30,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, b.Text, "A13");
 			Assert.AreEqual (ContentAlignment.MiddleCenter, b.TextAlign, "A14");
 
-#if NET_2_0
 			Assert.IsFalse (b.AutoEllipsis, "A1");
 			Assert.IsFalse (b.AutoSize, "A2");
 			Assert.AreEqual (string.Empty, b.ImageKey, "A10");
@@ -39,7 +38,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (b.UseMnemonic, "A17");
 			Assert.IsTrue (b.UseVisualStyleBackColor, "A18");
 			Assert.AreEqual (AccessibleStates.None, b.AccessibilityObject.State, "A19");
-#endif
 		}
 
 		[Test]

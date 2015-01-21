@@ -38,11 +38,9 @@ namespace System.Web.UI.WebControls
 	[Designer ("System.Web.UI.Design.WebControls.CompositeControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class CompositeControl : WebControl, INamingContainer, ICompositeControlDesignerAccessor
 	{
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 		protected CompositeControl ()
 		{
 		}

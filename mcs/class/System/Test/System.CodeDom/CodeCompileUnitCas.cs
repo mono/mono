@@ -56,10 +56,8 @@ namespace MonoCasTests.System.CodeDom {
 			Assert.AreEqual (0, ccu.AssemblyCustomAttributes.Count, "AssemblyCustomAttributes");
 			Assert.AreEqual (0, ccu.Namespaces.Count, "Namespaces");
 			Assert.AreEqual (0, ccu.ReferencedAssemblies.Count, "ReferencedAssemblies");
-#if NET_2_0
 			Assert.AreEqual (0, ccu.StartDirectives.Count, "StartDirectives");
 			Assert.AreEqual (0, ccu.EndDirectives.Count, "EndDirectives");
-#endif
 		}
 
 		[Test]

@@ -438,7 +438,6 @@ namespace MonoTests.System.Data
 			AssertEquals ("#4", 2, table.Columns.Count);
 		}
 
-#if NET_2_0
 		private bool dvInitialized;
                 private void OnDataViewInitialized (object src, EventArgs args)
                 {
@@ -473,7 +472,6 @@ namespace MonoTests.System.Data
 			AssertEquals ("#4", 2, table.Columns.Count);
 			AssertEquals("DataViewInitialized #5", dvInitialized, true);
 		}
-#endif
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
@@ -937,7 +935,6 @@ table changed.
 		[Test]
 		public void DefaultColumnNameAddListChangedTest ()
 		{
-#if NET_2_0
 			string result = @"setting table...
 ---- OnListChanged PropertyDescriptorChanged,0,0
 ----- UpdateIndex : True
@@ -956,30 +953,6 @@ table was set.
 ---- OnListChanged PropertyDescriptorAdded,0,0
  add a column with an empty name.
 ";
-#else
-			string result = @"setting table...
----- OnListChanged PropertyDescriptorChanged,0,0
------ UpdateIndex : True
----- OnListChanged Reset,-1,-1
-table was set.
----- OnListChanged PropertyDescriptorChanged,0,0
----- OnListChanged PropertyDescriptorAdded,0,0
- default named column added.
----- OnListChanged PropertyDescriptorAdded,0,0
- non-default named column added.
----- OnListChanged PropertyDescriptorChanged,0,0
----- OnListChanged PropertyDescriptorAdded,0,0
- another default named column added (Column2).
----- OnListChanged PropertyDescriptorAdded,0,0
- add a column with the same name as the default columnnames.
----- OnListChanged PropertyDescriptorChanged,0,0
----- OnListChanged PropertyDescriptorAdded,0,0
- add a column with a null name.
----- OnListChanged PropertyDescriptorChanged,0,0
----- OnListChanged PropertyDescriptorAdded,0,0
- add a column with an empty name.
-";
-#endif
 			eventWriter = new StringWriter ();
 			DataTable dt = new DataTable ("table");
 			ComplexEventSequence1View dv =

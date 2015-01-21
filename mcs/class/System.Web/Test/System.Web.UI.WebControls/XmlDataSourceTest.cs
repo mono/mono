@@ -30,7 +30,6 @@
 // NOTE: INCLUDE 2 CATEGORIES [Category ("NunitWeb")];[Category ("NotWorking")]
 		
 
-#if NET_2_0
 
 
 using System;
@@ -484,4 +483,3 @@ namespace MonoTests.System.Web.UI.WebControls
 	}	
 }
 
-#endif

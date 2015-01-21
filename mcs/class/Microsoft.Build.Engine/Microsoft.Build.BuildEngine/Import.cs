@@ -231,7 +231,6 @@ namespace Microsoft.Build.BuildEngine {
 			if (String.IsNullOrEmpty (parsed_import))
 				throw new InvalidProjectFileException ("The required attribute \"Project\" in Import is empty");
 
-#if NET_4_0
 			if (DirectoryScanner.HasWildcard (parsed_import)) {
 				var directoryScanner = new DirectoryScanner () {
 					Includes = new ITaskItem [] { new TaskItem (parsed_import) },
@@ -242,7 +241,6 @@ namespace Microsoft.Build.BuildEngine {
 				foreach (ITaskItem matchedItem in directoryScanner.MatchedItems)
 					yield return matchedItem.ItemSpec;
 			} else
-#endif
 				yield return parsed_import;
 		}
 

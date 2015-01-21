@@ -23,11 +23,7 @@ namespace MonoTests.System.Windows.Forms
 		bool Ticked;
 		
 		[Test ()]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void IntervalException1 ()
 		{
 			Timer timer = new Timer ();
@@ -35,11 +31,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test ()]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException), "'-1' is not a valid value for Interval. Interval must be greater than 0.")]
-#endif
 		public void IntervalException2 ()
 		{
 			Timer timer = new Timer ();
@@ -54,11 +46,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test ()]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException), "'-2147483648' is not a valid value for Interval. Interval must be greater than 0.")]
-#endif
 		public void IntervalException4 ()
 		{
 			Timer timer = new Timer ();
@@ -99,7 +87,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 		
-#if NET_2_0
 		[Test]
 		public void TagTest ()
 		{
@@ -107,7 +94,6 @@ namespace MonoTests.System.Windows.Forms
 			timer.Tag = "a";
 			Assert.AreEqual ("a", timer.Tag, "1");
 		}
-#endif
 
 		/* Application.DoEvents and Sleep are not guarenteed on Linux
 		[Test]
@@ -150,9 +136,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, timer.Enabled, "E1");
 			Assert.AreEqual (100, timer.Interval, "I1");
 			Assert.AreEqual (null, timer.Site, "S1");
-#if NET_2_0
 			Assert.AreEqual (null, timer.Tag, "T1");
-#endif
 		}
 
 		[Test] // bug #325033

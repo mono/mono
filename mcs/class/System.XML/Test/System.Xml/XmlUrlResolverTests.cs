@@ -58,10 +58,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category ("NotDotNet")] // It should throw ArgumentNullException.
-		[Ignore(".NET implementation does not throw ArgumentNullException.")]
-#endif
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ResolveUriWithNullArgs ()
 		{
@@ -76,14 +72,12 @@ namespace MonoTests.System.Xml
 			resolver.GetEntity (uri, null, null);
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetEntityWithRelativeFileUri ()
 		{
 			resolver.GetEntity (new Uri ("file.txt", UriKind.Relative), null, typeof (Stream));
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]

@@ -333,7 +333,6 @@ namespace System.Net {
 			}
 		}
 
-#if NET_4_0
 		public bool IsIPv6Teredo {
 			get {
 				return m_Family != AddressFamily.InterNetwork &&
@@ -341,7 +340,6 @@ namespace System.Net {
 					m_Numbers[1] == 0;
 			}
 		}
-#endif
 
 		public long ScopeId {
 			get {

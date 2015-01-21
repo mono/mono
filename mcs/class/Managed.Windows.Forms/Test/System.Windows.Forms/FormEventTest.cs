@@ -209,13 +209,9 @@ namespace MonoTests.System.Windows.Forms
 
 			string [] expectedEvents_Close = {
 				"Closing",
-#if NET_2_0
 				"FormClosing",
-#endif
 				"Closed",
-#if NET_2_0
 				"FormClosed",
-#endif
 				"Deactivate",
 				"LostFocus",
 				"HandleDestroyed",
@@ -233,13 +229,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, logger.CountEvents ("GotFocus"), "#A4");
 			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#A5");
 			Assert.AreEqual (0, logger.CountEvents ("Closing"), "#A6");
-#if NET_2_0
 			Assert.AreEqual (0, logger.CountEvents ("FormClosing"), "#A7");
-#endif
 			Assert.AreEqual (0, logger.CountEvents ("Closed"), "#A8");
-#if NET_2_0
 			Assert.AreEqual (0, logger.CountEvents ("FormClosed"), "#A9");
-#endif
 			Assert.AreEqual (0, logger.CountEvents ("Deactivate"), "#A10");
 			Assert.AreEqual (0, logger.CountEvents ("LostFocus"), "#A11");
 			Assert.AreEqual (0, logger.CountEvents ("HandleDestroyed"), "#A12");
@@ -255,13 +247,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, logger.CountEvents ("GotFocus"), "#B4");
 			Assert.AreEqual (0, logger.CountEvents ("Activated"), "#B5");
 			Assert.AreEqual (1, logger.CountEvents ("Closing"), "#B6");
-#if NET_2_0
 			Assert.AreEqual (1, logger.CountEvents ("FormClosing"), "#B7");
-#endif
 			Assert.AreEqual (1, logger.CountEvents ("Closed"), "#B8");
-#if NET_2_0
 			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#B9");
-#endif
 			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#B10");
 			Assert.AreEqual (1, logger.CountEvents ("LostFocus"), "#B11");
 			Assert.AreEqual (1, logger.CountEvents ("HandleDestroyed"), "#B12");
@@ -280,13 +268,9 @@ namespace MonoTests.System.Windows.Forms
 				"GotFocus",
 				"Activated",
 				"Closing",
-#if NET_2_0
 				"FormClosing",
-#endif
 				"Closed",
-#if NET_2_0
 				"FormClosed",
-#endif
 				"VisibleChanged",
 				"Deactivate",
 				"LostFocus",
@@ -302,13 +286,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, logger.CountEvents ("GotFocus"), "#A4");
 			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#A5");
 			Assert.AreEqual (1, logger.CountEvents ("Closing"), "#A6");
-#if NET_2_0
 			Assert.AreEqual (1, logger.CountEvents ("FormClosing"), "#A7");
-#endif
 			Assert.AreEqual (1, logger.CountEvents ("Closed"), "#A8");
-#if NET_2_0
 			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#A9");
-#endif
 			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#A10");
 			Assert.AreEqual (1, logger.CountEvents ("LostFocus"), "#A11");
 			Assert.AreEqual (1, logger.CountEvents ("HandleDestroyed"), "#A12");
@@ -323,20 +303,15 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, logger.CountEvents ("GotFocus"), "#B4");
 			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#B5");
 			Assert.AreEqual (1, logger.CountEvents ("Closing"), "#B6");
-#if NET_2_0
 			Assert.AreEqual (1, logger.CountEvents ("FormClosing"), "#B7");
-#endif
 			Assert.AreEqual (1, logger.CountEvents ("Closed"), "#B8");
-#if NET_2_0
 			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#B9");
-#endif
 			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#B10");
 			Assert.AreEqual (1, logger.CountEvents ("LostFocus"), "#B11");
 			Assert.AreEqual (1, logger.CountEvents ("HandleDestroyed"), "#B12");
 			Assert.AreEqual (0, logger.CountEvents ("Disposed"), "#B13");
 		}
 
-#if NET_2_0
 		[Test]
 		public void FormClosed ()
 		{
@@ -408,7 +383,6 @@ namespace MonoTests.System.Windows.Forms
 			_form.ShowDialog ();
 			Assert.AreEqual (2, logger.CountEvents ("FormClosing"));
 		}
-#endif
 
 		[Test]
 		public void Load ()
@@ -440,7 +414,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, logger.CountEvents ("Load"), "#3");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Shown ()
 		{
@@ -477,7 +450,6 @@ namespace MonoTests.System.Windows.Forms
 			_form.ShowDialog ();
 			Assert.AreEqual (2, logger.CountEvents ("Shown"), "#3");
 		}
-#endif
 
 		[Test]
 		public void VisibleChangedEvent ()

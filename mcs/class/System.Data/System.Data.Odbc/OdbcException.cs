@@ -42,11 +42,7 @@ using System.Text;
 namespace System.Data.Odbc
 {
 	[Serializable]
-#if NET_2_0
 	public sealed class OdbcException : DbException
-#else
-	public sealed class OdbcException : SystemException
-#endif
 	{
 		OdbcErrorCollection odbcErrors;
 
@@ -68,13 +64,6 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if !NET_2_0
-		public override string Message {
-			get {
-				return base.Message;
-			}
-		}
-#endif
 
 		private OdbcException (SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{

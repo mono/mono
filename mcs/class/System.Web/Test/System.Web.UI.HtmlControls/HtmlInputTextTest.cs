@@ -87,7 +87,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public string AttributeNewValue {
 			get { return attr_new_value; }
 		}
-#if NET_2_0
 		public bool LoadPost (string key, NameValueCollection nvc)
 		{
 			return base.LoadPostData(key, nvc);
@@ -97,7 +96,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		{
 			base.RaisePostDataChangedEvent ();
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -198,16 +196,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			it.Size = 4;
 			it.ID = "mono";
 			it.Value = "s3kr3t";
-#if NET_2_0
 			// value is there, maybe because a new HtmlInputPassword class exists ?
 			HtmlDiff.AssertAreEqual (" name=\"mono\" id=\"mono\" type=\"password\" maxlength=\"2\" size=\"4\" value=\"s3kr3t\" /", it.RenderAttributes (),"Render failed");
 			Assert.IsFalse (it.ViewStateValueChanged, "ViewStateValueChanged");
 			Assert.IsFalse (it.AttributeValueChanged, "AttributeValueChanged");
-#else
-			HtmlDiff.AssertAreEqual(" name=\"mono\" id=\"mono\" type=\"password\" maxlength=\"2\" size=\"4\" /", it.RenderAttributes(),"Render failed");
-			Assert.IsTrue (it.ViewStateValueChanged, "ViewStateValueChanged");
-			Assert.IsTrue (it.AttributeValueChanged, "AttributeValueChanged");
-#endif
 			Assert.IsNull (it.ViewStateNewValue, "ViewStateNewValue");
 			Assert.IsNull (it.AttributeNewValue, "AttributeNewValue");
 		}
@@ -275,7 +267,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsTrue (pbdh.LoadPostData ("id1", nvc), "LoadPostData");
 			Assert.AreEqual ("mono", it.Value, "Value");
 		}
-#if NET_2_0
 		[Test]
 		public void RaisePostBackEvent ()
 		{
@@ -328,6 +319,5 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsTrue (it.LoadPost ("id1", nvc), "LoadPostData");
 			Assert.AreEqual ("mono", it.Value, "Value");
 		}
-#endif
 	}
 }

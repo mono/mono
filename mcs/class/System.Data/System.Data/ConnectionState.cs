@@ -40,9 +40,6 @@ namespace System.Data
 	/// This enumeration has a FlagsAttribute that allows a bitwise combination of its member values.
 	/// </summary>
 	[Flags]
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum ConnectionState
 	{
 		Closed = 0,

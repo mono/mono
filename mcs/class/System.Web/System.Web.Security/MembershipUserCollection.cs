@@ -33,9 +33,7 @@ using System.Web.UI;
 
 namespace System.Web.Security
 {
-#if NET_4_0
 	[TypeForwardedFrom ("System.Web, Version=2.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-#endif
 	[Serializable]
 	public sealed class MembershipUserCollection : ICollection
 	{

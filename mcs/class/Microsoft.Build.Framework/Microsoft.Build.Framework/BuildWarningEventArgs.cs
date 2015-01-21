@@ -31,11 +31,7 @@ using System;
 namespace Microsoft.Build.Framework {
 	[Serializable]
 	public class BuildWarningEventArgs
-#if NET_4_0
 			: LazyFormattedBuildEventArgs {
-#else
-			: BuildEventArgs {
-#endif
 	
 		string	subcategory;
 		string	code;
@@ -44,9 +40,7 @@ namespace Microsoft.Build.Framework {
 		int	columnNumber;
 		int	endLineNumber;
 		int	endColumnNumber;
-#if NET_4_0
 		string projectFile;
-#endif
 
 		protected BuildWarningEventArgs ()
 		{
@@ -71,7 +65,6 @@ namespace Microsoft.Build.Framework {
 			this.endColumnNumber = endColumnNumber;
 		}
 
-#if NET_4_0
 		public BuildWarningEventArgs (string subcategory, string code,
 				string file, int lineNumber, int columnNumber,
 				int endLineNumber, int endColumnNumber, string message,
@@ -98,7 +91,6 @@ namespace Microsoft.Build.Framework {
 			this.endColumnNumber = endColumnNumber;
 
 		}
-#endif
 
 		public string Code {
 			get {
@@ -142,11 +134,9 @@ namespace Microsoft.Build.Framework {
 			}
 		}
 
-#if NET_4_0
 		public string ProjectFile {
 			get { return projectFile; }
 			set {  projectFile = value; }
 		}
-#endif
 	}
 }

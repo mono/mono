@@ -7,9 +7,9 @@ class X
 		int x = -1;
 		try {
 			throw new ApplicationException ();
-		} catch if (x > 0) {
+		} catch when (x > 0) {
 			return 1;
-		} catch if (x < 0) {
+		} catch when (x < 0) {
 			return 0;
 		} catch {
 			return 2;
@@ -20,12 +20,12 @@ class X
 	{
 		try {
 			throw new ApplicationException ();
-		} catch (Exception e) if (Foo (delegate { Console.WriteLine (e); })) {
+		} catch (Exception e) when (Foo (delegate { Console.WriteLine (e); })) {
 			Action a = delegate {
 				Console.WriteLine (e);
 			};
 			return 1;
-		} catch (Exception e) if (e is InvalidOperationException) {
+		} catch (Exception e) when (e is InvalidOperationException) {
 			Console.WriteLine (e);
 
 			int paramIndex = 0;

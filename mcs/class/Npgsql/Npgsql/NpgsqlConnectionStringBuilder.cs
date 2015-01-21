@@ -59,7 +59,6 @@
 
 // TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-#if NET_2_0
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -1058,5 +1057,4 @@ namespace Npgsql
 		Require = 1 << 3
 	}
 	
-#endif
 }

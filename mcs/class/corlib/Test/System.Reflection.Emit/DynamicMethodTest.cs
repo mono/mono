@@ -6,7 +6,6 @@
 //
 // (C) 2006 Novell
 
-#if NET_2_0
 
 using System;
 using System.Reflection;
@@ -512,4 +511,3 @@ namespace MonoTests.System.Reflection.Emit
 	}
 }
 
-#endif

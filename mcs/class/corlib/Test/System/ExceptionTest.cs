@@ -50,11 +50,9 @@ namespace MonoTests.System
 			Assert.AreEqual ("URL", ex.HelpLink, "#A3");
 			Assert.AreEqual (10, ex.HResult, "#A4");
 			Assert.AreEqual ("SRC", ex.Source, "#A5");
-#if NET_2_0
 			Assert.IsNotNull (ex.Data, "#A6");
 			Assert.AreEqual (1, ex.Data.Keys.Count, "#A7");
 			Assert.AreEqual ("ZZ", ex.Data ["XX"], "#A8");
-#endif
 
 			inner = null;
 			si = new SerializationInfo (typeof (Exception),
@@ -77,10 +75,8 @@ namespace MonoTests.System
 			Assert.AreEqual ("URL", ex.HelpLink, "#B4");
 			Assert.AreEqual (10, ex.HResult, "#B5");
 			Assert.AreEqual ("SRC", ex.Source, "#B6");
-#if NET_2_0
 			Assert.IsNotNull (ex.Data, "#B7");
 			Assert.AreEqual (0, ex.Data.Keys.Count, "#B8");
-#endif
 		}
 
 
@@ -277,15 +273,9 @@ namespace MonoTests.System
 			si = new SerializationInfo (typeof (Exception),
 				new FormatterConverter ());
 			se.GetObjectData (si, new StreamingContext ());
-#if NET_2_0
 			Assert.AreEqual (11, si.MemberCount, "#A1");
-#else
-			Assert.AreEqual (10, si.MemberCount, "#A1");
-#endif
 			Assert.AreEqual (typeof (Exception).FullName, si.GetString ("ClassName"), "#A2");
-#if NET_2_0
 			Assert.IsNull (si.GetValue ("Data", typeof (IDictionary)), "#A3");
-#endif
 			Assert.AreSame (msg, si.GetString ("Message"), "#A4");
 			Assert.AreSame (inner, si.GetValue ("InnerException", typeof (Exception)), "#A5");
 			Assert.AreSame (se.HelpLink, si.GetString ("HelpURL"), "#A6");
@@ -297,24 +287,16 @@ namespace MonoTests.System
 			Assert.IsNull (si.GetString ("ExceptionMethod"), "#A12");
 
 			// attempt initialization of lazy init members
-#if NET_2_0
 			Assert.IsNotNull (se.Data);
-#endif
 			Assert.IsNull (se.Source);
 			Assert.IsNull (se.StackTrace);
 
 			si = new SerializationInfo (typeof (Exception),
 				new FormatterConverter ());
 			se.GetObjectData (si, new StreamingContext ());
-#if NET_2_0
 			Assert.AreEqual (11, si.MemberCount, "#B1");
-#else
-			Assert.AreEqual (10, si.MemberCount, "#B1");
-#endif
 			Assert.AreEqual (typeof (Exception).FullName, si.GetString ("ClassName"), "#B2");
-#if NET_2_0
 			Assert.AreSame (se.Data, si.GetValue ("Data", typeof (IDictionary)), "#B3");
-#endif
 			Assert.AreSame (msg, si.GetString ("Message"), "#B4");
 			Assert.AreSame (inner, si.GetValue ("InnerException", typeof (Exception)), "#B5");
 			Assert.AreSame (se.HelpLink, si.GetString ("HelpURL"), "#B6");
@@ -331,15 +313,9 @@ namespace MonoTests.System
 				si = new SerializationInfo (typeof (Exception),
 					new FormatterConverter ());
 				ex.GetObjectData (si, new StreamingContext ());
-#if NET_2_0
 				Assert.AreEqual (11, si.MemberCount, "#C1");
-#else
-				Assert.AreEqual (10, si.MemberCount, "#C1");
-#endif
 				Assert.AreEqual (typeof (Exception).FullName, si.GetString ("ClassName"), "#C2");
-#if NET_2_0
 				Assert.IsNull (si.GetValue ("Data", typeof (IDictionary)), "#C3");
-#endif
 				Assert.AreSame (msg, si.GetString ("Message"), "#C4");
 				Assert.AreSame (inner, si.GetValue ("InnerException", typeof (Exception)), "#C5");
 				Assert.AreSame (se.HelpLink, si.GetString ("HelpURL"), "#C6");
@@ -355,23 +331,15 @@ namespace MonoTests.System
 				throw new Exception (msg, inner);
 			} catch (Exception ex) {
 				// force initialization of lazy init members
-#if NET_2_0
 				Assert.IsNotNull (ex.Data);
-#endif
 				Assert.IsNotNull (ex.StackTrace);
 
 				si = new SerializationInfo (typeof (Exception),
 					new FormatterConverter ());
 				ex.GetObjectData (si, new StreamingContext ());
-#if NET_2_0
 				Assert.AreEqual (11, si.MemberCount, "#D1");
-#else
-				Assert.AreEqual (10, si.MemberCount, "#D1");
-#endif
 				Assert.AreEqual (typeof (Exception).FullName, si.GetString ("ClassName"), "#D2");
-#if NET_2_0
 				Assert.AreSame (ex.Data, si.GetValue ("Data", typeof (IDictionary)), "#D3");
-#endif
 				Assert.AreSame (msg, si.GetString ("Message"), "#D4");
 				Assert.AreSame (inner, si.GetValue ("InnerException", typeof (Exception)), "#D5");
 				Assert.AreSame (ex.HelpLink, si.GetString ("HelpURL"), "#D6");

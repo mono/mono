@@ -403,11 +403,7 @@ namespace System {
 			if (possibleIpv6) {
 				IPv6Address ipv6addr;
 				if (IPv6Address.TryParse (sb.ToString (), out ipv6addr)) {
-#if NET_4_5
 					var ipStr = ipv6addr.ToString (false);
-#else
-					var ipStr = ipv6addr.ToString (true);
-#endif
 					//remove scope
 					ipStr = ipStr.Split ('%') [0];
 

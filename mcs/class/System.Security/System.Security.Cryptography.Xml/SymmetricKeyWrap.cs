@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.IO;
 using System.Security.Cryptography;
@@ -365,4 +364,3 @@ namespace System.Security.Cryptography.Xml {
 	}
 }
 
-#endif

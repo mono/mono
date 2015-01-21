@@ -33,9 +33,7 @@ using System.Text;
 
 namespace System
 {
-#if NET_4_0 || !INSIDE_CORLIB
 	public
-#endif
 	partial class TimeZoneInfo
 	{
 		public static TimeZoneInfo FromSerializedString (string source)

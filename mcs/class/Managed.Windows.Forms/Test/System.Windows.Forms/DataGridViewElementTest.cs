@@ -24,7 +24,6 @@
 //
 
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -46,4 +45,3 @@ namespace MonoTests.System.Windows.Forms {
 	}
 }
 
-#endif

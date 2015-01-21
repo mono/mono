@@ -1,4 +1,4 @@
-thisdir = class/System.ComponentModel.Composition
+thisdir = class/System.ComponentModel.Composition.4.5
 SUBDIRS = 
 include ../../build/rules.make
 

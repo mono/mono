@@ -36,10 +36,8 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml.XPath;
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace System.Xml
 {
@@ -73,15 +71,11 @@ namespace System.Xml
 
 		#region Methods
 
-#if NET_4_5
 		public virtual void Close ()
 		{
 			if (asyncRunning)
 				throw new InvalidOperationException ("An asynchronous operation is already in progress.");
 		}
-#else
-		public abstract void Close ();
-#endif
 
 		public static XmlWriter Create (Stream output)
 		{
@@ -143,9 +137,7 @@ namespace System.Xml
 			if (src == null) {
 				settings.ConformanceLevel = ConformanceLevel.Document; // Huh? Why??
 				output = new DefaultXmlWriter (output);
-#if NET_4_5
 				settings.SetReadOnly ();
-#endif
 				output.settings = settings;
 			} else {
 				ConformanceLevel dst = src.ConformanceLevel;
@@ -162,9 +154,7 @@ namespace System.Xml
 
 				settings.MergeFrom (src);
 
-#if NET_4_5
 				settings.SetReadOnly ();
-#endif
 
 				// It returns a new XmlWriter instance if 1) Settings is null, or 2) Settings ConformanceLevel (or might be other members as well) give significant difference.
 				if (src.ConformanceLevel != dst) {
@@ -189,11 +179,7 @@ namespace System.Xml
 			Close ();
 		}
 
-#if NET_4_0
 		public void Dispose ()
-#else
-		void IDisposable.Dispose() 
-#endif
 		{
 			Dispose (false);
 		}
@@ -688,16 +674,13 @@ namespace System.Xml
 			WriteString (value);
 		}
 
-#if NET_4_5
 		public virtual void WriteValue (DateTimeOffset value)
 		{
 			WriteString (XmlConvert.ToString (value));
 		}
-#endif
 
 		#endregion
 
-#if NET_4_5
 		#region .NET 4.5 Async Methods
 
 		bool asyncRunning;
@@ -1089,6 +1072,5 @@ namespace System.Xml
 		}
 
 		#endregion
-#endif
 	}
 }

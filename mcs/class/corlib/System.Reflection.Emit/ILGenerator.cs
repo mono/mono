@@ -1038,11 +1038,7 @@ namespace System.Reflection.Emit {
 			return ig.code_len;
 		}	
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		virtual int ILOffset {
 			get { return code_len; }
 		}

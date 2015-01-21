@@ -45,12 +45,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			base.RenderAttributes (writer);
 			return writer;
 		}
-#if NET_2_0
 		public void Raise ()
 		{
 			base.RaisePostBackEvent ("2.0");
 		}
-#endif
 
 		public void TrakState () {
 			TrackViewState();
@@ -292,9 +290,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (NullReferenceException))] // since 2.0 RC :-(
-#endif
 		public void IPostBackEventHandler_RaisePostBackEvent ()
 		{
 			TestHtmlAnchor a = new TestHtmlAnchor ();
@@ -313,7 +309,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			HtmlTextWriter writer = a.GetWriter ();
 			Assert.AreEqual (" href=\"http://127.0.0.1/\"", writer.InnerWriter.ToString (), "#01");
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))] // since 2.0 RC :-(
 		public void RaisePostBackEvent ()
@@ -341,6 +336,5 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual (false, copy.CausesValidation, "A1");
 			Assert.AreEqual ("VG", copy.ValidationGroup, "A2");
 		}
-#endif
 	}
 }

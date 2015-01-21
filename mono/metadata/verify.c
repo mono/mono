@@ -26,10 +26,10 @@
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/mono-basic-block.h>
 #include <mono/metadata/attrdefs.h>
+#include <mono/metadata/class-internals.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/monobitset.h>
 #include <string.h>
-#include <signal.h>
 #include <ctype.h>
 
 static MiniVerifierMode verifier_mode = MONO_VERIFIER_MODE_OFF;
@@ -974,20 +974,22 @@ static MonoMethod*
 verifier_load_method (VerifyContext *ctx, int token, const char *opcode) {
 	MonoMethod* method;
 
+
 	if (ctx->method->wrapper_type != MONO_WRAPPER_NONE) {
 		method = mono_method_get_wrapper_data (ctx->method, (guint32)token);
 	} else {
+		MonoError error;
 		if (!IS_METHOD_DEF_OR_REF_OR_SPEC (token) || !token_bounds_check (ctx->image, token)) {
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid method token 0x%08x for %s at 0x%04x", token, opcode, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 			return NULL;
 		}
 
-		method = mono_get_method_full (ctx->image, token, NULL, ctx->generic_context);
+		method = mono_get_method_checked (ctx->image, token, NULL, ctx->generic_context, &error);
+		mono_error_cleanup (&error); /* FIXME don't swallow this error */
 	}
 
-	if (!method || mono_loader_get_last_error ()) {
+	if (!method) {
 		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Cannot load method from token 0x%08x for %s at 0x%04x", token, opcode, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
-		mono_loader_clear_error ();
 		return NULL;
 	}
 	
@@ -3596,6 +3598,7 @@ do_conversion (VerifyContext *ctx, int kind)
 static void
 do_load_token (VerifyContext *ctx, int token) 
 {
+	MonoError error;
 	gpointer handle;
 	MonoClass *handle_class;
 	if (!check_overflow (ctx))
@@ -3625,11 +3628,12 @@ do_load_token (VerifyContext *ctx, int token)
 			return;
 		}
 
-		handle = mono_ldtoken (ctx->image, token, &handle_class, ctx->generic_context);
+		handle = mono_ldtoken_checked (ctx->image, token, &handle_class, ctx->generic_context, &error);
 	}
 
 	if (!handle) {
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid token 0x%x for ldtoken at 0x%04x", token, ctx->ip_offset));
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid token 0x%x for ldtoken at 0x%04x due to %s", token, ctx->ip_offset, mono_error_get_message (&error)));
+		mono_error_cleanup (&error);
 		return;
 	}
 	if (handle_class == mono_defaults.typehandle_class) {

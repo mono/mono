@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using System;
-#if NET_2_0
 using System.Net.NetworkInformation;
 
 namespace MonoTests.System.Net.NetworkInformation
@@ -133,4 +132,3 @@ namespace MonoTests.System.Net.NetworkInformation
 	}
 }
 
-#endif

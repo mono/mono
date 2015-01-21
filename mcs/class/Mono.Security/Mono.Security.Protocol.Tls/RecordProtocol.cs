@@ -669,14 +669,24 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Send Alert Methods
 
+		internal void SendAlert(ref Exception ex)
+		{
+			var tlsEx = ex as TlsException;
+			var alert = tlsEx != null ? tlsEx.Alert : new Alert(AlertDescription.InternalError);
+
+			try {
+				SendAlert(alert);
+			} catch (Exception alertEx) {
+				ex = new IOException (string.Format ("Error while sending TLS Alert ({0}:{1}): {2}", alert.Level, alert.Description, ex), ex);
+			}
+		}
+
 		public void SendAlert(AlertDescription description)
 		{
 			this.SendAlert(new Alert(description));
 		}
 
-		public void SendAlert(
-			AlertLevel			level, 
-			AlertDescription	description)
+		public void SendAlert(AlertLevel level, AlertDescription description)
 		{
 			this.SendAlert(new Alert(level, description));
 		}

@@ -137,12 +137,10 @@ namespace MonoCasTests.System.Web {
 
 			response.SuppressContent = false;
 			Assert.IsFalse (response.SuppressContent, "SuppressContent");
-#if NET_2_0
 			response.HeaderEncoding = Encoding.UTF8;
 			Assert.AreEqual (Encoding.UTF8, response.HeaderEncoding, "HeaderEncoding");
 
 			Assert.IsFalse (response.IsRequestBeingRedirected, "IsRequestBeingRedirected");
-#endif
 		}
 
 		[Test]
@@ -193,11 +191,9 @@ namespace MonoCasTests.System.Web {
 			response.AddCacheItemDependency (String.Empty);
 			response.AddFileDependencies (new ArrayList ());
 			response.AddFileDependency (fname);
-#if NET_2_0
 			response.AddCacheDependency (new CacheDependency[0]);
 			response.AddCacheItemDependencies (new string [0]);
 			response.AddFileDependencies (new string [0]);
-#endif
 
 			try {
 				response.AppendCookie (new HttpCookie ("mono"));
@@ -258,9 +254,7 @@ namespace MonoCasTests.System.Web {
 			response.Write (Char.MinValue);
 			response.Write (new char[0], 0, 0);
 			response.Write (this);
-#if NET_2_0
 			response.WriteSubstitution (new HttpResponseSubstitutionCallback (Callback));
-#endif
 
 			response.Flush ();
 

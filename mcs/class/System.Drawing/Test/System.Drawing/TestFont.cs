@@ -188,11 +188,7 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
-	#if NET_2_0
 		[ExpectedException (typeof (AccessViolationException))]
-	#else
-		[ExpectedException (typeof (NullReferenceException))]
-	#endif
 		public void ToLogFont_Null ()
 		{
 			Font f = new Font ("Arial", 10);

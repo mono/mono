@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if USE_DEPRECATED
-#if NET_2_0
 using System;
 using System.IO;
 
@@ -88,5 +87,4 @@ namespace System.Xml
 		public abstract void WriteXmlnsAttribute (byte [] prefix, int offset1, int count1, byte [] namespaceUri, int offset2, int count2);
 	}
 }
-#endif
 #endif

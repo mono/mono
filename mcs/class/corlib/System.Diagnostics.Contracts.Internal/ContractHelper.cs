@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 
 using System;
 using System.Text;
@@ -35,9 +34,7 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Diagnostics.Contracts.Internal
 {
-#if NET_4_5
 	[Obsolete ("Type has been moved to System.Runtime.CompilerServices")]
-#endif
 	public static class ContractHelper
 	{
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -139,4 +136,3 @@ namespace System.Diagnostics.Contracts.Internal
 
 }
 
-#endif

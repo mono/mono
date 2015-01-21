@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Windows.Forms;
 using System.CodeDom;
@@ -58,4 +57,3 @@ namespace System.ComponentModel.Design.Data
 	}
 }
 
-#endif

@@ -4004,7 +4004,7 @@ mono_metadata_typedef_from_method (MonoImage *meta, guint32 index)
  * Returns: TRUE on success, FALSE on failure.
  */
 gboolean
-mono_metadata_interfaces_from_typedef_full (MonoImage *meta, guint32 index, MonoClass ***interfaces, guint *count, gboolean heap_alloc_result, MonoGenericContext *context)
+mono_metadata_interfaces_from_typedef_full (MonoImage *meta, guint32 index, MonoClass ***interfaces, guint *count, gboolean heap_alloc_result, MonoGenericContext *context, MonoError *error)
 {
 	MonoTableInfo *tdef = &meta->tables [MONO_TABLE_INTERFACEIMPL];
 	locator_t loc;
@@ -4014,6 +4014,8 @@ mono_metadata_interfaces_from_typedef_full (MonoImage *meta, guint32 index, Mono
 
 	*interfaces = NULL;
 	*count = 0;
+
+	mono_error_init (error);
 
 	if (!tdef->base)
 		return TRUE;
@@ -4050,19 +4052,15 @@ mono_metadata_interfaces_from_typedef_full (MonoImage *meta, guint32 index, Mono
 
 	pos = start;
 	while (pos < tdef->rows) {
-		MonoError error;
 		MonoClass *iface;
 		
 		mono_metadata_decode_row (tdef, pos, cols, MONO_INTERFACEIMPL_SIZE);
 		if (cols [MONO_INTERFACEIMPL_CLASS] != loc.idx)
 			break;
 		iface = mono_class_get_and_inflate_typespec_checked (
-			meta, mono_metadata_token_from_dor (cols [MONO_INTERFACEIMPL_INTERFACE]), context, &error);
-		if (iface == NULL) {
-			mono_loader_set_error_from_mono_error (&error);
-			mono_error_cleanup (&error); /* FIXME Don't swallow the error */
+			meta, mono_metadata_token_from_dor (cols [MONO_INTERFACEIMPL_INTERFACE]), context, error);
+		if (iface == NULL)
 			return FALSE;
-		}
 		result [pos - start] = iface;
 		++pos;
 	}
@@ -4088,10 +4086,12 @@ mono_metadata_interfaces_from_typedef_full (MonoImage *meta, guint32 index, Mono
 MonoClass**
 mono_metadata_interfaces_from_typedef (MonoImage *meta, guint32 index, guint *count)
 {
-	MonoClass **interfaces;
+	MonoError error;
+	MonoClass **interfaces = NULL;
 	gboolean rv;
 
-	rv = mono_metadata_interfaces_from_typedef_full (meta, index, &interfaces, count, TRUE, NULL);
+	rv = mono_metadata_interfaces_from_typedef_full (meta, index, &interfaces, count, TRUE, NULL, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME dont swallow the error */
 	if (rv)
 		return interfaces;
 	else
@@ -5301,10 +5301,8 @@ mono_type_create_from_typespec (MonoImage *image, guint32 type_spec)
 {
 	MonoError error;
 	MonoType *type = mono_type_create_from_typespec_checked (image, type_spec, &error);
-	if (!type) {
-		mono_loader_set_error_from_mono_error (&error);
-		mono_error_cleanup (&error); /* FIXME don't swallow error*/
-	}
+	if (!type)
+		 g_error ("Could not create typespec %x due to %s", type_spec, mono_error_get_message (&error));
 	return type;
 }
 
@@ -5694,18 +5692,25 @@ mono_metadata_get_marshal_info (MonoImage *meta, guint32 idx, gboolean is_field)
 }
 
 MonoMethod*
-method_from_method_def_or_ref (MonoImage *m, guint32 tok, MonoGenericContext *context)
+method_from_method_def_or_ref (MonoImage *m, guint32 tok, MonoGenericContext *context, MonoError *error)
 {
+	MonoMethod *result = NULL;
 	guint32 idx = tok >> MONO_METHODDEFORREF_BITS;
+
+	mono_error_init (error);
 
 	switch (tok & MONO_METHODDEFORREF_MASK) {
 	case MONO_METHODDEFORREF_METHODDEF:
-		return mono_get_method_full (m, MONO_TOKEN_METHOD_DEF | idx, NULL, context);
+		result = mono_get_method_checked (m, MONO_TOKEN_METHOD_DEF | idx, NULL, context, error);
+		break;
 	case MONO_METHODDEFORREF_METHODREF:
-		return mono_get_method_full (m, MONO_TOKEN_MEMBER_REF | idx, NULL, context);
+		result = mono_get_method_checked (m, MONO_TOKEN_MEMBER_REF | idx, NULL, context, error);
+		break;
+	default:
+		mono_error_set_bad_image (error, m, "Invalid MethodDefOfRef token %x", tok);
 	}
-	g_assert_not_reached ();
-	return NULL;
+
+	return result;
 }
 
 /*
@@ -5766,21 +5771,25 @@ mono_class_get_overrides_full (MonoImage *image, guint32 type_token, MonoMethod 
 		MonoMethod *method;
 
 		if (!mono_verifier_verify_methodimpl_row (image, start + i, &error)) {
-			mono_error_cleanup (&error);
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 			ok = FALSE;
 			break;
 		}
 
 		mono_metadata_decode_row (tdef, start + i, cols, MONO_METHODIMPL_SIZE);
 		method = method_from_method_def_or_ref (
-			image, cols [MONO_METHODIMPL_DECLARATION], generic_context);
-		if (method == NULL)
+			image, cols [MONO_METHODIMPL_DECLARATION], generic_context, &error);
+		if (method == NULL) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 			ok = FALSE;
+		}
 		result [i * 2] = method;
 		method = method_from_method_def_or_ref (
-			image, cols [MONO_METHODIMPL_BODY], generic_context);
-		if (method == NULL)
+			image, cols [MONO_METHODIMPL_BODY], generic_context, &error);
+		if (method == NULL) {
+			mono_error_cleanup (&error); /* FIXME don't swallow the error */
 			ok = FALSE;
+		}
 		result [i * 2 + 1] = method;
 	}
 

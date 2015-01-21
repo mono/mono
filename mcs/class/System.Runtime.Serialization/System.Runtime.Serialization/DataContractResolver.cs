@@ -32,11 +32,7 @@ using System.Xml;
 namespace System.Runtime.Serialization
 {
 	// See http://msdn.microsoft.com/en-us/library/ee358759.aspx
-#if NET_4_0
 	public
-#else
-	internal
-#endif
 	abstract class DataContractResolver
 	{
 		public abstract Type ResolveName (string typeName, string typeNamespace, Type declaredType, DataContractResolver knownTypeResolver);

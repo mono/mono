@@ -324,12 +324,9 @@ namespace System
 			return Convert.ToSingle (Value, provider);
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("targetType");
-
-			return Convert.ToType (this, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
@@ -681,7 +678,6 @@ namespace System
 			return true;
 		}
 
-#if NET_4_0
 		public static bool TryParse<TEnum> (string value, out TEnum result) where TEnum : struct
 		{
 			return TryParse (value, false, out result);
@@ -704,7 +700,6 @@ namespace System
 
 			return Parse (tenum_type, value, ignoreCase, out result);
 		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern int compare_value_to (object other);
@@ -1061,7 +1056,6 @@ namespace System
 					"\"x\",\"F\",\"f\",\"D\" or \"d\".");
 		}
 
-#if NET_4_0
 		public bool HasFlag (Enum flag)
 		{
 			var val = get_value ();
@@ -1070,6 +1064,5 @@ namespace System
 
 			return ((mvalue & fvalue) == fvalue);
 		}
-#endif
 	}
 }

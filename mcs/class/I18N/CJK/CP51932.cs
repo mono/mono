@@ -98,26 +98,16 @@ public class CP51932 : MonoEncoding
 
 	public override int GetCharCount (byte [] bytes, int index, int count)
 	{
-#if NET_2_0
 		return new CP51932Decoder ().GetCharCount (
 			bytes, index, count, true);
-#else
-		return new CP51932Decoder ().GetCharCount (
-			bytes, index, count);
-#endif
 	}
 
 	public override int GetChars (
 		byte [] bytes, int byteIndex, int byteCount,
 		char [] chars, int charIndex)
 	{
-#if NET_2_0
 		return new CP51932Decoder ().GetChars (bytes,
 			byteIndex, byteCount, chars, charIndex, true);
-#else
-		return new CP51932Decoder ().GetChars (bytes,
-			byteIndex, byteCount, chars, charIndex);
-#endif
 	}
 
 	// Get the maximum number of bytes needed to encode a
@@ -312,13 +302,9 @@ public class CP51932Encoder : MonoEncoder
 			}
 
 			if (value == 0) {
-#if NET_2_0
 				HandleFallback (
 					chars, ref i, ref charCount,
 					bytes, ref posn, ref byteCount, null);
-#else
-				bytes [posn++] = (byte) '?';
-#endif
 			} else if (value < 0x0100) {
 				bytes [posn++] = (byte) value;
 			} else if ((posn + 1) >= byteLength) {
@@ -468,12 +454,8 @@ public class CP51932Encoder : MonoEncoder
 
 			if (value == 0)
 			{
-#if NET_2_0
 				HandleFallback (chars, ref i, ref charCount,
 					bytes, ref posn, ref byteCount, null);
-#else
-				bytes [posn++] = (byte) '?';
-#endif
 			}
 			else if (value < 0x0100)
 			{
@@ -521,11 +503,7 @@ internal class CP51932Decoder : DbcsEncoding.DbcsDecoder
 		return GetCharCount (bytes, index, count, false);
 	}
 
-#if NET_2_0
 	public override
-#else
-	internal
-#endif
 	int GetCharCount (byte [] bytes, int index, int count, bool refresh)
 	{
 		CheckRange (bytes, index, count);
@@ -629,11 +607,7 @@ internal class CP51932Decoder : DbcsEncoding.DbcsDecoder
 		return GetChars (bytes, byteIndex, byteCount, chars, charIndex, false);
 	}
 
-#if NET_2_0
 	public override
-#else
-	internal
-#endif
 	int GetChars (byte[] bytes, int byteIndex,
 						 int byteCount, char[] chars,
 						 int charIndex, bool refresh)

@@ -55,6 +55,9 @@ typedef struct {
 	GPtrArray *subprogram_mds;
 	MonoEERef *mono_ee;
 	LLVMExecutionEngineRef ee;
+	gboolean external_symbols;
+	gboolean emit_dwarf;
+	int max_got_offset;
 } MonoLLVMModule;
 
 /*
@@ -2032,7 +2035,8 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 						 * their own calling convention on some platforms.
 						 */
 #ifndef TARGET_AMD64
-						if (abs_ji->type == MONO_PATCH_INFO_MONITOR_ENTER || abs_ji->type == MONO_PATCH_INFO_MONITOR_EXIT || abs_ji->type == MONO_PATCH_INFO_GENERIC_CLASS_INIT)
+						if (abs_ji->type == MONO_PATCH_INFO_MONITOR_ENTER || abs_ji->type == MONO_PATCH_INFO_MONITOR_ENTER_V4 ||
+								abs_ji->type == MONO_PATCH_INFO_MONITOR_EXIT || abs_ji->type == MONO_PATCH_INFO_GENERIC_CLASS_INIT)
 							LLVM_FAILURE (ctx, "trampoline with own cconv");
 #endif
 						target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, abs_ji, FALSE);
@@ -3242,6 +3246,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				   
 			//mono_add_patch_info (cfg, 0, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
 			got_offset = mono_aot_get_got_offset (cfg->patch_info);
+			ctx->lmodule->max_got_offset = MAX (ctx->lmodule->max_got_offset, got_offset);
  
 			indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
 			indexes [1] = LLVMConstInt (LLVMInt32Type (), (gssize)got_offset, FALSE);
@@ -4450,6 +4455,10 @@ mono_llvm_emit_method (MonoCompile *cfg)
 		/* This causes an assertion in later LLVM versions */
 		LLVMSetVisibility (method, LLVMHiddenVisibility);
 #endif
+		if (ctx->lmodule->external_symbols) {
+			LLVMSetLinkage (method, LLVMExternalLinkage);
+			LLVMSetVisibility (method, LLVMHiddenVisibility);
+		}
 	} else {
 		LLVMSetLinkage (method, LLVMPrivateLinkage);
 	}
@@ -4504,8 +4513,7 @@ mono_llvm_emit_method (MonoCompile *cfg)
 	}
 	g_free (names);
 
-	// See emit_dbg_info ()
-	if (FALSE && cfg->compile_aot && mono_debug_enabled ()) {
+	if (ctx->lmodule->emit_dwarf && cfg->compile_aot && mono_debug_enabled ()) {
 		ctx->minfo = mono_debug_lookup_method (cfg->method);
 		ctx->dbg_md = emit_dbg_subprogram (ctx, cfg, method, method_name);
 	}
@@ -5333,7 +5341,7 @@ mono_llvm_free_domain_info (MonoDomain *domain)
 }
 
 void
-mono_llvm_create_aot_module (const char *got_symbol)
+mono_llvm_create_aot_module (const char *got_symbol, gboolean external_symbols, gboolean emit_dwarf)
 {
 	/* Delete previous module */
 	if (aot_module.plt_entries)
@@ -5345,6 +5353,10 @@ mono_llvm_create_aot_module (const char *got_symbol)
 
 	aot_module.module = LLVMModuleCreateWithName ("aot");
 	aot_module.got_symbol = got_symbol;
+	aot_module.external_symbols = external_symbols;
+	aot_module.emit_dwarf = emit_dwarf;
+	/* The first few entries are reserved */
+	aot_module.max_got_offset = 16;
 
 	add_intrinsics (aot_module.module);
 	add_types (&aot_module);
@@ -5387,7 +5399,7 @@ mono_llvm_create_aot_module (const char *got_symbol)
  * Emit the aot module into the LLVM bitcode file FILENAME.
  */
 void
-mono_llvm_emit_aot_module (const char *filename, const char *cu_name, int got_size)
+mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 {
 	LLVMTypeRef got_type;
 	LLVMValueRef real_got;
@@ -5397,11 +5409,15 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name, int got_si
 	 * Create the real got variable and replace all uses of the dummy variable with
 	 * the real one.
 	 */
-	got_type = LLVMArrayType (aot_module.ptr_type, got_size);
+	got_type = LLVMArrayType (aot_module.ptr_type, module->max_got_offset + 1);
 	real_got = LLVMAddGlobal (aot_module.module, got_type, aot_module.got_symbol);
 	LLVMSetInitializer (real_got, LLVMConstNull (got_type));
-	LLVMSetLinkage (real_got, LLVMInternalLinkage);
-
+	if (module->external_symbols) {
+		LLVMSetLinkage (real_got, LLVMExternalLinkage);
+		LLVMSetVisibility (real_got, LLVMHiddenVisibility);
+	} else {
+		LLVMSetLinkage (real_got, LLVMInternalLinkage);
+	}
 	mono_llvm_replace_uses_of (aot_module.got_var, real_got);
 
 	mark_as_used (&aot_module, real_got);
@@ -5463,12 +5479,14 @@ emit_dbg_info (MonoLLVMModule *lmodule, const char *filename, const char *cu_nam
 	int n_cuargs;
 	char *build_info, *s, *dir;
 
-	//
-	// FIXME: This cannot be enabled, since the AOT compiler also emits dwarf info,
-	// and the abbrev indexes will not be correct since llvm has added its own
-	// abbrevs.
-	//
-	return;
+	/*
+	 * This can only be enabled when LLVM code is emitted into a separate object
+	 * file, since the AOT compiler also emits dwarf info,
+	 * and the abbrev indexes will not be correct since llvm has added its own
+	 * abbrevs.
+	 */
+	if (!lmodule->emit_dwarf)
+		return;
 
 	/*
 	 * Emit dwarf info in the form of LLVM metadata. There is some

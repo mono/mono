@@ -905,7 +905,7 @@ namespace System.Data.SqlClient {
 				if (value == DBNull.Value)
 					return SqlDecimal.Null;
 				if (value is TdsBigDecimal)
-					return SqlDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+					return SqlDecimalExtensions.FromTdsBigDecimal ((TdsBigDecimal) value);
 				return (SqlDecimal) ((decimal) value);
 			case SqlDbType.Float:
 				if (value == DBNull.Value)

@@ -47,9 +47,7 @@ namespace System.Web.UI
 		bool autoEventWireup = true;
 		bool enableViewState = true;
 		CompilationMode compilationMode = CompilationMode.Always;
-#if NET_4_0
 		ClientIDMode? clientIDMode;
-#endif
 		TextReader reader;
 
 		protected TemplateControlParser ()
@@ -81,7 +79,6 @@ namespace System.Web.UI
 			}
 			
 			atts.Remove ("TargetSchema"); // Ignored
-#if NET_4_0
 			value = GetString (atts, "ClientIDMode", null);
 			if (!String.IsNullOrEmpty (value)) {
 				try {
@@ -90,7 +87,6 @@ namespace System.Web.UI
 					ThrowParseException ("Invalid value of the ClientIDMode attribute.", ex);
 				}
 			}
-#endif
 			base.ProcessMainAttributes (atts);
 		}
 
@@ -209,11 +205,9 @@ namespace System.Web.UI
 		internal CompilationMode CompilationMode {
 			get { return compilationMode; }
 		}		
-#if NET_4_0
 		internal ClientIDMode? ClientIDMode {
 			get { return clientIDMode; }
 		}
-#endif
 		internal override TextReader Reader {
 			get { return reader; }
 			set { reader = value; }

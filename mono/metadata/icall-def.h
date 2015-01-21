@@ -115,9 +115,6 @@ ICALL(BUFFER_2, "ByteLengthInternal", ves_icall_System_Buffer_ByteLengthInternal
 ICALL(BUFFER_3, "GetByteInternal", ves_icall_System_Buffer_GetByteInternal)
 ICALL(BUFFER_4, "SetByteInternal", ves_icall_System_Buffer_SetByteInternal)
 
-ICALL_TYPE(CHAR, "System.Char", CHAR_1)
-ICALL(CHAR_1, "GetDataTablePointers", ves_icall_System_Char_GetDataTablePointers)
-
 ICALL_TYPE (COMPO_W, "System.ComponentModel.Win32Exception", COMPO_W_1)
 ICALL (COMPO_W_1, "W32ErrorMessage", ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage)
 
@@ -136,10 +133,6 @@ ICALL(CONSOLE_2, "Isatty", ves_icall_System_ConsoleDriver_Isatty )
 ICALL(CONSOLE_3, "SetBreak", ves_icall_System_ConsoleDriver_SetBreak )
 ICALL(CONSOLE_4, "SetEcho", ves_icall_System_ConsoleDriver_SetEcho )
 ICALL(CONSOLE_5, "TtySetup", ves_icall_System_ConsoleDriver_TtySetup )
-
-ICALL_TYPE(CONVERT, "System.Convert", CONVERT_1)
-ICALL(CONVERT_1, "InternalFromBase64CharArray", InternalFromBase64CharArray )
-ICALL(CONVERT_2, "InternalFromBase64String", InternalFromBase64String )
 
 ICALL_TYPE(TZONE, "System.CurrentSystemTimeZone", TZONE_1)
 ICALL(TZONE_1, "GetTimeZoneData", ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData)
@@ -275,6 +268,9 @@ ICALL(GC_6, "WaitForPendingFinalizers", ves_icall_System_GC_WaitForPendingFinali
 ICALL(GC_7, "get_MaxGeneration", mono_gc_max_generation)
 ICALL(GC_9, "get_ephemeron_tombstone", ves_icall_System_GC_get_ephemeron_tombstone)
 ICALL(GC_8, "register_ephemeron_array", ves_icall_System_GC_register_ephemeron_array)
+
+ICALL_TYPE(CHARINFO, "System.Globalization.CharUnicodeInfo", CHARINFO_1)
+ICALL(CHARINFO_1, "GetDataTablePointers", ves_icall_System_Globalization_CharUnicodeInfo_GetDataTablePointers)
 
 ICALL_TYPE(COMPINF, "System.Globalization.CompareInfo", COMPINF_1)
 ICALL(COMPINF_1, "assign_sortkey(object,string,System.Globalization.CompareOptions)", ves_icall_System_Globalization_CompareInfo_assign_sortkey)
@@ -442,6 +438,11 @@ ICALL_TYPE(NDNS, "System.Net.Dns", NDNS_1)
 ICALL(NDNS_1, "GetHostByAddr_internal(string,string&,string[]&,string[]&)", ves_icall_System_Net_Dns_GetHostByAddr_internal)
 ICALL(NDNS_2, "GetHostByName_internal(string,string&,string[]&,string[]&)", ves_icall_System_Net_Dns_GetHostByName_internal)
 ICALL(NDNS_3, "GetHostName_internal(string&)", ves_icall_System_Net_Dns_GetHostName_internal)
+
+#if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD)
+ICALL_TYPE(MAC_IFACE_PROPS, "System.Net.NetworkInformation.MacOsIPInterfaceProperties", MAC_IFACE_PROPS_1)
+ICALL(MAC_IFACE_PROPS_1, "ParseRouteInfo_internal", ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal)
+#endif
 
 ICALL_TYPE(SOCK, "System.Net.Sockets.Socket", SOCK_1)
 ICALL(SOCK_1, "Accept_internal(intptr,int&,bool)", ves_icall_System_Net_Sockets_Socket_Accept_internal)

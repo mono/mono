@@ -52,7 +52,6 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Assert.AreEqual(string.Empty, uc.Text, "#A1");
 
-#if NET_2_0
 			Assert.AreEqual(BorderStyle.None, uc.BorderStyle, "#A2");
 			uc.BorderStyle = BorderStyle.Fixed3D;
 			Assert.AreEqual(BorderStyle.Fixed3D, uc.BorderStyle, "#A3");
@@ -60,10 +59,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(BorderStyle.FixedSingle, uc.BorderStyle, "#A4");
 			uc.BorderStyle = BorderStyle.None;
 			Assert.AreEqual(BorderStyle.None, uc.BorderStyle, "#A5");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException(typeof(InvalidEnumArgumentException))]
 		public void BorderStyleInvalidEnumArgumentException()
@@ -172,6 +169,5 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 	
-#endif	
 	}
 }

@@ -35,9 +35,7 @@ namespace System.Web.Hosting {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class AppDomainFactory : IAppDomainFactory {
 
-#if NET_2_0
 		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public AppDomainFactory ()
 		{

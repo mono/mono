@@ -36,7 +36,6 @@ namespace MonoCasTests.System.Xml.Xsl {
 	[TestFixture]
 	public class XsltExceptionTests
 	{
-#if NET_2_0
 		[Test]
 		public void Constructor0 ()
 		{
@@ -66,7 +65,6 @@ namespace MonoCasTests.System.Xml.Xsl {
 			Assert.IsNull (xsltException.StackTrace, "#7");
 			Assert.IsNull (xsltException.TargetSite, "#8");
 		}
-#endif
 
 		[Test]
 		public void Constructor2 ()

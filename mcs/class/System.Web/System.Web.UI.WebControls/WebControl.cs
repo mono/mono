@@ -35,17 +35,11 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ParseChildren (true)]
-#if NET_2_0
 	[PersistChildrenAttribute (false, false)]
 	[Themeable (true)]
-#else	
-	[PersistChildrenAttribute (false)]
-#endif		
 	public class WebControl : Control, IAttributeAccessor
 	{
-#if NET_4_0
 		const string DEFAULT_DISABLED_CSS_CLASS = "aspNetDisabled";
-#endif
 		Style style;
 		HtmlTextWriterTag tag;
 		string tag_name;
@@ -53,12 +47,10 @@ namespace System.Web.UI.WebControls {
 		StateBag attribute_state;
 		bool enabled;
 		bool track_enabled_state;
-#if NET_4_0
 		static WebControl ()
 		{
 			DisabledCssClass = DEFAULT_DISABLED_CSS_CLASS;
 		}
-#endif
 		public WebControl (HtmlTextWriterTag tag) 
 		{
 			this.tag = tag;
@@ -206,9 +198,7 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		public bool ControlStyleCreated {
 			get {
 				return style != null;
@@ -233,9 +223,7 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue(true)]
-#if NET_2_0
 		[Themeable (false)]
-#endif		
 		public virtual bool Enabled {
 			get {
 				return enabled;
@@ -250,14 +238,12 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		public virtual new bool EnableTheming
 		{
 			get { return base.EnableTheming; }
 			set { base.EnableTheming = value; }
 		}
-#endif		
 
 #if ONLY_1_1
 		[DefaultValue(null)]
@@ -295,11 +281,7 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		bool HasAttributes 
 		{
 			get {
@@ -325,14 +307,12 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		public virtual new string SkinID
 		{
 			get { return base.SkinID; }
 			set { base.SkinID = value; }
 		}
-#endif		
 		
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -360,9 +340,7 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue("")]
-#if NET_2_0
 		[Localizable (true)]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public virtual string ToolTip {
@@ -412,13 +390,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		protected
-#endif
 		internal bool IsEnabled	
 		{
 			get {
-#if NET_2_0
 				WebControl wc = this;
 				while (wc != null) {
 					if (!wc.Enabled)
@@ -426,12 +401,8 @@ namespace System.Web.UI.WebControls {
 					wc = wc.Parent as WebControl;
 				}
 				return true;
-#else
-				return Enabled;
-#endif
 			}
 		}
-#if NET_4_0
 		public static string DisabledCssClass {
 			get;
 			set;
@@ -441,7 +412,6 @@ namespace System.Web.UI.WebControls {
 		public virtual bool SupportsDisabledAttribute {
 			get { return true; }
 		}
-#endif
 		public void ApplyStyle (Style s) 
 		{
 			if (s != null && !s.IsEmpty)
@@ -516,7 +486,6 @@ namespace System.Web.UI.WebControls {
 			return attr;
 		}
 		
-#if NET_2_0
 		internal void AddDisplayStyleAttribute (HtmlTextWriter writer)
 		{
 			if (!ControlStyleCreated)
@@ -528,15 +497,12 @@ namespace System.Web.UI.WebControls {
 			    !ControlStyle.Width.IsEmpty)
 				writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "inline-block");
 		}
-#endif
 		void RenderDisabled (HtmlTextWriter writer)
 		{
 			if (!IsEnabled) {
-#if NET_4_0
 				if (!SupportsDisabledAttribute)
 					ControlStyle.PrependCssClass (DisabledCssClass);
 				else
-#endif
 					writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 			}
 
@@ -544,14 +510,9 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual void AddAttributesToRender (HtmlTextWriter writer) 
 		{
-#if NET_4_0
 			RenderDisabled (writer);
-#endif
 			if (ID != null)
 				writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
-#if !NET_4_0
-			RenderDisabled (writer);
-#endif
 			if (AccessKey != string.Empty)
 				writer.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
 			
@@ -562,11 +523,9 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute (HtmlTextWriterAttribute.Tabindex, TabIndex.ToString ());
 
 			if (style != null && !style.IsEmpty) {
-#if NET_2_0
 				//unbelievable, but see WebControlTest.RenderBeginTag_BorderWidth_xxx
 				if (TagKey == HtmlTextWriterTag.Span)
 					AddDisplayStyleAttribute (writer);
-#endif
 				style.AddAttributesToRender(writer, this);
 			}
 
@@ -606,7 +565,6 @@ namespace System.Web.UI.WebControls {
 
 			enabled = ViewState.GetBool ("Enabled", enabled);
 		}
-#if NET_4_0
 		internal virtual string InlinePropertiesSet ()
 		{
 			var properties = new List <string> ();
@@ -659,30 +617,19 @@ namespace System.Web.UI.WebControls {
 				);
 			}
 		}
-#endif
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void Render (HtmlTextWriter writer)
 		{
-#if NET_2_0
 			if (Adapter != null) {
 				Adapter.Render(writer);
 				return;
 			}
-#endif
 			RenderBeginTag (writer);
 			RenderContents (writer);
 			RenderEndTag (writer);
 		}
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		virtual void RenderContents (HtmlTextWriter writer)
 		{
 			base.Render (writer);

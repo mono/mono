@@ -15,8 +15,8 @@ int mono_llvm_load (const char* bpath) MONO_INTERNAL;
 typedef void (*MonoLLVMVoidFunc)(void);
 typedef void (*MonoLLVMCFGFunc)(MonoCompile *cfg);
 typedef void (*MonoLLVMEmitCallFunc)(MonoCompile *cfg, MonoCallInst *call);
-typedef void (*MonoLLVMCreateAotFunc)(const char *got_symbol);
-typedef void (*MonoLLVMEmitAotFunc)(const char *filename, const char *cu_name, int got_size);
+typedef void (*MonoLLVMCreateAotFunc)(const char *got_symbol, gboolean external_symbols, gboolean emit_dwarf);
+typedef void (*MonoLLVMEmitAotFunc)(const char *filename, const char *cu_name);
 typedef void (*MonoLLVMFreeDomainFunc)(MonoDomain *domain);
 
 static MonoLLVMVoidFunc mono_llvm_init_fptr;
@@ -53,17 +53,17 @@ mono_llvm_emit_call (MonoCompile *cfg, MonoCallInst *call)
 }
 
 void
-mono_llvm_create_aot_module (const char *got_symbol)
+mono_llvm_create_aot_module (const char *got_symbol, gboolean external_symbols, gboolean emit_dwarf)
 {
 	g_assert (mono_llvm_create_aot_module_fptr);
-	mono_llvm_create_aot_module_fptr (got_symbol);
+	mono_llvm_create_aot_module_fptr (got_symbol, external_symbols, emit_dwarf);
 }
 
 void
-mono_llvm_emit_aot_module (const char *filename, const char *cu_name, int got_size)
+mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 {
 	g_assert (mono_llvm_emit_aot_module_fptr);
-	mono_llvm_emit_aot_module_fptr (filename, cu_name, got_size);
+	mono_llvm_emit_aot_module_fptr (filename, cu_name);
 }
 
 void

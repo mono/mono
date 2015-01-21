@@ -124,9 +124,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				Assert.AreEqual (1, bmp.FrameDimensionsList.Length, "FrameDimensionsList");
 				Assert.AreEqual (0, bmp.PropertyIdList.Length, "PropertyIdList");
 				Assert.AreEqual (0, bmp.PropertyItems.Length, "PropertyItems");
-#if NET_2_0
 				Assert.IsNull (bmp.Tag, "Tag");
-#endif
 				Assert.AreEqual (96.0f, bmp.HorizontalResolution, "HorizontalResolution");
 				Assert.AreEqual (96.0f, bmp.VerticalResolution, "VerticalResolution");
 				Assert.AreEqual (16, bmp.Width, "bmp.Width");
@@ -295,9 +293,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				Assert.AreEqual (1, bmp.FrameDimensionsList.Length, "FrameDimensionsList");
 				Assert.AreEqual (0, bmp.PropertyIdList.Length, "PropertyIdList");
 				Assert.AreEqual (0, bmp.PropertyItems.Length, "PropertyItems");
-#if NET_2_0
 				Assert.IsNull (bmp.Tag, "Tag");
-#endif
 				Assert.AreEqual (96.0f, bmp.HorizontalResolution, "HorizontalResolution");
 				Assert.AreEqual (96.0f, bmp.VerticalResolution, "VerticalResolution");
 				Assert.AreEqual (32, bmp.Width, "bmp.Width");
@@ -509,9 +505,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				Assert.AreEqual (1, bmp.FrameDimensionsList.Length, "FrameDimensionsList");
 				Assert.AreEqual (0, bmp.PropertyIdList.Length, "PropertyIdList");
 				Assert.AreEqual (0, bmp.PropertyItems.Length, "PropertyItems");
-#if NET_2_0
 				Assert.IsNull (bmp.Tag, "Tag");
-#endif
 				Assert.AreEqual (96.0f, bmp.HorizontalResolution, "HorizontalResolution");
 				Assert.AreEqual (96.0f, bmp.VerticalResolution, "VerticalResolution");
 				Assert.AreEqual (48, bmp.Width, "bmp.Width");
@@ -738,9 +732,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				Assert.AreEqual (1, bmp.FrameDimensionsList.Length, "FrameDimensionsList");
 				Assert.AreEqual (0, bmp.PropertyIdList.Length, "PropertyIdList");
 				Assert.AreEqual (0, bmp.PropertyItems.Length, "PropertyItems");
-#if NET_2_0
 				Assert.IsNull (bmp.Tag, "Tag");
-#endif
 				Assert.AreEqual (96.0f, bmp.HorizontalResolution, "HorizontalResolution");
 				Assert.AreEqual (96.0f, bmp.VerticalResolution, "VerticalResolution");
 				Assert.AreEqual (64, bmp.Width, "bmp.Width");
@@ -1003,9 +995,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				Assert.AreEqual (1, bmp.FrameDimensionsList.Length, "FrameDimensionsList");
 				Assert.AreEqual (0, bmp.PropertyIdList.Length, "PropertyIdList");
 				Assert.AreEqual (0, bmp.PropertyItems.Length, "PropertyItems");
-#if NET_2_0
 				Assert.IsNull (bmp.Tag, "Tag");
-#endif
 				Assert.AreEqual (96.0f, bmp.HorizontalResolution, "HorizontalResolution");
 				Assert.AreEqual (96.0f, bmp.VerticalResolution, "VerticalResolution");
 				Assert.AreEqual (96, bmp.Width, "bmp.Width");
@@ -1944,9 +1934,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				Assert.AreEqual (1, bmp.FrameDimensionsList.Length, "FrameDimensionsList");
 				Assert.AreEqual (0, bmp.PropertyIdList.Length, "PropertyIdList");
 				Assert.AreEqual (0, bmp.PropertyItems.Length, "PropertyItems");
-#if NET_2_0
 				Assert.IsNull (bmp.Tag, "Tag");
-#endif
 				Assert.AreEqual (96.0f, bmp.HorizontalResolution, "HorizontalResolution");
 				Assert.AreEqual (96.0f, bmp.VerticalResolution, "VerticalResolution");
 				Assert.AreEqual (16, bmp.Width, "bmp.Width");

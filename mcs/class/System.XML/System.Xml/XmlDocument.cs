@@ -42,10 +42,8 @@ using System.Xml.XPath;
 using System.Diagnostics;
 using System.Collections;
 using Mono.Xml;
-#if NET_2_0
 using System.Xml.Schema;
 using Mono.Xml.XPath;
-#endif
 
 namespace System.Xml
 {
@@ -64,10 +62,8 @@ namespace System.Xml
 		XmlNameEntryCache nameCache;
 		XmlLinkedNode lastLinkedChild;
 		XmlAttribute nsNodeXml;
-#if NET_2_0
 		XmlSchemaSet schemas;
 		IXmlSchemaInfo schemaInfo;
-#endif
 
 		// MS.NET rejects undeclared entities _only_ during Load(),
 		// while ReadNode() never rejects such node. So it signs
@@ -179,11 +175,9 @@ namespace System.Xml
 			get { return implementation; }
 		}
 
-#if NET_4_0
 		public override string InnerText {
 			set { throw new InvalidOperationException (); }
 		}
-#endif
 
 		public override string InnerXml {
 			get {
@@ -270,7 +264,6 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public override XmlNode ParentNode {
 			get { return null; }
 		}
@@ -288,7 +281,6 @@ namespace System.Xml
 			get { return schemaInfo; }
 			internal set { schemaInfo = value; }
 		}
-#endif
 
 		#endregion
 
@@ -437,20 +429,14 @@ namespace System.Xml
 			return new XmlEntityReference (name, this);
 		}
 
-#if NET_2_0
 		public override XPathNavigator CreateNavigator ()
 		{
 			return CreateNavigator (this);
 		}
-#endif
 
 		protected internal virtual XPathNavigator CreateNavigator (XmlNode node)
 		{
-#if NET_2_0
 			return new XPathEditableDocument (node).CreateNavigator ();
-#else
-			return new XmlDocumentNavigator (node);
-#endif
 		}
 
 		public virtual XmlNode CreateNode (
@@ -496,11 +482,7 @@ namespace System.Xml
 				case XmlNodeType.Whitespace: return CreateWhitespace (String.Empty);
 				case XmlNodeType.XmlDeclaration: return CreateXmlDeclaration ("1.0", null, null);
 				default:
-#if NET_2_0
 					throw new ArgumentException (
-#else // makes less sense
-					throw new ArgumentOutOfRangeException (
-#endif
 						String.Format("{0}\nParameter name: {1}",
 							 "Specified argument was out of the range of valid values", type.ToString ()));
 			}
@@ -574,10 +556,8 @@ namespace System.Xml
 
 		private XmlNodeType GetNodeTypeFromString (string nodeTypeString)
 		{
-#if NET_2_0 // actually should be done in any version
 			if (nodeTypeString == null)
 				throw new ArgumentNullException ("nodeTypeString");
-#endif
 			switch (nodeTypeString) {
 				case "attribute": return XmlNodeType.Attribute;
 				case "cdatasection": return XmlNodeType.CDATA;
@@ -741,10 +721,8 @@ namespace System.Xml
 					if (preserveWhitespace || n.NodeType != XmlNodeType.Whitespace)
 						AppendChild (n, false);
 				} while (reader.NodeType != XmlNodeType.EndElement);
-#if NET_2_0
 				if (reader.Settings != null)
 					schemas = reader.Settings.Schemas;
-#endif
 			} finally {
 				loadMode = false;
 			}
@@ -829,10 +807,8 @@ namespace System.Xml
 			else if (reader.NodeType != XmlNodeType.Attribute)
 				throw new InvalidOperationException (MakeReaderErrorMessage ("bad position to read attribute.", reader));
 			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
-#if NET_2_0
 			if (reader.SchemaInfo != null)
 				SchemaInfo = reader.SchemaInfo;
-#endif
 			bool isDefault = reader.IsDefault;
 
 			ReadAttributeNodeValue (reader, attribute);
@@ -867,10 +843,8 @@ namespace System.Xml
 			case ReadState.Interactive:
 				break;
 			case ReadState.Initial:
-#if NET_2_0
 				if (reader.SchemaInfo != null)
 					SchemaInfo = reader.SchemaInfo;
-#endif
 				reader.Read ();
 				break;
 			default:
@@ -898,10 +872,8 @@ namespace System.Xml
 
 			case XmlNodeType.Element:
 				XmlElement element = CreateElement (reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.NameTable == this.NameTable);
-#if NET_2_0
 				if (reader.SchemaInfo != null)
 					element.SchemaInfo = reader.SchemaInfo;
-#endif
 				element.IsEmpty = reader.IsEmptyElement;
 
 				// set the element's attributes.
@@ -1108,7 +1080,6 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public void Validate (ValidationEventHandler validationEventHandler)
 		{
 			Validate (validationEventHandler, this,
@@ -1136,7 +1107,6 @@ namespace System.Xml
 			while (!r.EOF)
 				r.Read ();
 		}
-#endif
 
 		#endregion
 	}

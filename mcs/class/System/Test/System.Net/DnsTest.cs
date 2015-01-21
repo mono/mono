@@ -72,7 +72,6 @@ namespace MonoTests.System.Net
 			SubTestValidIPHostEntry (h);
 		}
 
-#if NET_2_0
 		[Test]
 		public void BeginGetHostAddresses_HostNameOrAddress_Null ()
 		{
@@ -179,7 +178,6 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("hostNameOrAddress", ex.ParamName, "#B5");
 			}
 		}
-#endif
 
 		[Test]
 		public void GetHostName ()

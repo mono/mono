@@ -87,13 +87,11 @@ public class ChineseLunisolarCalendar : EastAsianLunisolarCalendar {
 		}
 	}
 
-#if NET_4_5
 	protected override int DaysInYearBeforeMinSupportedYear {
 		get{
 			return 384;
 		}
 	}
-#endif
 }
 
 }

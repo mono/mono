@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -85,11 +84,9 @@ namespace System.Web.UI.WebControls
 		Style staticSelectedLinkStyle;
 		Style dynamicHoverLinkStyle;
 		Style staticHoverLinkStyle;
-#if NET_4_0
 		bool? renderList;
 		bool includeStyleBlock = true;
 		MenuRenderingMode renderingMode = MenuRenderingMode.Default;
-#endif
 		static readonly object MenuItemClickEvent = new object();
 		static readonly object MenuItemDataBoundEvent = new object();
 		
@@ -129,7 +126,6 @@ namespace System.Web.UI.WebControls
 				return renderer;
 			}
 		}
-#if NET_4_0
 		bool RenderList {
 			get {
 				if (renderList == null) {
@@ -173,7 +169,6 @@ namespace System.Web.UI.WebControls
 				renderer = CreateRenderer (renderer);
 			}
 		}
-#endif
 		[DefaultValueAttribute (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[EditorAttribute ("System.Web.UI.Design.WebControls.MenuBindingsEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
@@ -321,11 +316,7 @@ namespace System.Web.UI.WebControls
 				if (o != null)
 					return (Unit)o;
 				// LAMESPEC: on 4.0 it returns Unit.Empty and on 3.5 16px
-#if NET_4_0
 				return Unit.Empty;
-#else
-				return new Unit (16);
-#endif
 			}
 			set {
 				ViewState["StaticSubMenuIndent"] = value;
@@ -896,7 +887,6 @@ namespace System.Web.UI.WebControls
 		
 		IMenuRenderer CreateRenderer (IMenuRenderer current)
 		{
-#if NET_4_0
 			Type newType = null;
 			
 			switch (RenderingMode) {
@@ -921,10 +911,6 @@ namespace System.Web.UI.WebControls
 
 			if (current == null || current.GetType () != newType)
 				return Activator.CreateInstance (newType, this) as IMenuRenderer;
-#else
-			if (current == null)
-				return new MenuTableRenderer (this);
-#endif
 			return current;
 		}
 		
@@ -1732,4 +1718,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

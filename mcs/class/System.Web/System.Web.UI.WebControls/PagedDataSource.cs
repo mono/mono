@@ -39,9 +39,7 @@ namespace System.Web.UI.WebControls {
 		bool allow_paging, allow_custom_paging;
 		IEnumerable source;
 		
-#if NET_2_0
 		bool allow_server_paging;
-#endif
 		
 		public PagedDataSource ()
 		{
@@ -52,11 +50,9 @@ namespace System.Web.UI.WebControls {
 			get { return allow_custom_paging; }
 			set { 
 				allow_custom_paging = value; 
-#if NET_2_0
 				// AllowCustomPaging and AllowServerPaging are mutually exclusive
 				if (allow_custom_paging)
 					allow_server_paging = false;
-#endif
 			}
 		}
 
@@ -96,9 +92,7 @@ namespace System.Web.UI.WebControls {
 					return 0;
 				
 				if (IsCustomPagingEnabled 
-#if NET_2_0
 				    || IsServerPagingEnabled
-#endif
 				)
 					return virtual_count;
 
@@ -112,9 +106,7 @@ namespace System.Web.UI.WebControls {
 		public int FirstIndexInPage {
 			get {
 				if (!IsPagingEnabled || IsCustomPagingEnabled || 
-#if NET_2_0
 				    IsServerPagingEnabled || 
-#endif
 				    source == null)
 					return 0;
 				
@@ -126,11 +118,9 @@ namespace System.Web.UI.WebControls {
 			get { return IsPagingEnabled && allow_custom_paging; }
 		}
 
-#if NET_2_0
 		public bool IsServerPagingEnabled {
 			get { return IsPagingEnabled && allow_server_paging; }
 		}
-#endif
 
 		public bool IsFirstPage {
 			get { 
@@ -187,7 +177,6 @@ namespace System.Web.UI.WebControls {
 			get { return virtual_count; }
 			set { virtual_count = value; }
 		}
-#if NET_2_0
 		public bool AllowServerPaging {
 			get {
 				return allow_server_paging;
@@ -199,7 +188,6 @@ namespace System.Web.UI.WebControls {
 					allow_custom_paging = false;
 			}
 		}
-#endif
 
 		public void CopyTo (Array array, int index)
 		{

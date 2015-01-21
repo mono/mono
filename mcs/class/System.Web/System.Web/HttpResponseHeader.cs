@@ -43,11 +43,7 @@ namespace System.Web
 			get { return headerValue; }
 			set {
 				string hname, hvalue;
-#if NET_4_0
 				HttpEncoder.Current.HeaderNameValueEncode (null, value, out hname, out hvalue);
-#else
-				HttpEncoder.HeaderNameValueEncode (null, value, out hname, out hvalue);
-#endif
 				headerValue = hvalue;
 			}
 		}
@@ -92,11 +88,7 @@ namespace System.Web
 			get { return headerName; }
 			set {
 				string hname, hvalue;
-#if NET_4_0
 				HttpEncoder.Current.HeaderNameValueEncode (value, null, out hname, out hvalue);
-#else
-				HttpEncoder.HeaderNameValueEncode (value, null, out hname, out hvalue);
-#endif
 				headerName = hname;
 			}
 		}

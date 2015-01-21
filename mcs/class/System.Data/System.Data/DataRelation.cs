@@ -47,9 +47,6 @@ namespace System.Data
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataRelationEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("RelationName")]
-#if !NET_2_0
-	[Serializable]
-#endif
 	[TypeConverterAttribute (typeof (RelationshipConverter))]
 	public class DataRelation {
 		private DataSet dataSet;
@@ -71,10 +68,8 @@ namespace System.Data
 		string [] _childColumnNames;
 		bool _nested;
 		bool initInProgress = false;
-#if NET_2_0
 		string _parentTableNameSpace = String.Empty;
 		string _childTableNameSpace = String.Empty;
-#endif
 
 		#region Constructors
 
@@ -135,7 +130,6 @@ namespace System.Data
 			InitInProgress = true;
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		public DataRelation (string relationName, string parentTableName,
 				     string parentTableNamespace, string childTableName,
@@ -152,7 +146,6 @@ namespace System.Data
 			_nested = nested;
 			InitInProgress = true;
 		}
-#endif
 
 		internal bool InitInProgress {
 			get { return initInProgress; }
@@ -187,12 +180,10 @@ namespace System.Data
 			this.initFinished = true;
 			this.extendedProperties = new PropertyCollection ();
 			InitInProgress = false;
-#if NET_2_0
 			if (_parentTableNameSpace != String.Empty)
 				parent.Namespace = _parentTableNameSpace;
 			if (_childTableNameSpace != String.Empty)
 				child.Namespace = _childTableNameSpace;
-#endif
 		}
 
 		#endregion // Constructors
@@ -200,9 +191,6 @@ namespace System.Data
 		#region Properties
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the child columns of this relation.")]
-#endif
 		public virtual DataColumn [] ChildColumns {
 			get { return childColumns; }
 		}
@@ -228,9 +216,6 @@ namespace System.Data
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The collection that holds custom user information.")]
-#endif
 		public PropertyCollection ExtendedProperties {
 			get {
 				if (extendedProperties == null)
@@ -240,9 +225,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether relations are nested.")]
-#endif
 		[DefaultValue (false)]
 		public virtual bool Nested {
 			get { return nested; }
@@ -250,9 +232,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the parent columns of this relation.")]
-#endif
 		public virtual DataColumn[] ParentColumns {
 			get { return parentColumns; }
 		}
@@ -276,9 +255,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The name used to look up this relation in the Relations collection of a DataSet.")]
-#endif
 		[DefaultValue ("")]
 		public virtual string RelationName {
 			get { return relationName; }

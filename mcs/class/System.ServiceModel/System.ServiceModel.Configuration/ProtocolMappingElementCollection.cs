@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -69,4 +68,3 @@ namespace System.ServiceModel.Configuration
 		}
 	}
 }
-#endif

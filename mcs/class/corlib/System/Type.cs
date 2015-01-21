@@ -232,13 +232,11 @@ namespace System {
 			}
 		}
 		
-#if NET_4_5
 		public virtual bool IsConstructedGenericType {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 		public bool IsContextful {
 			get {
@@ -247,9 +245,7 @@ namespace System {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		bool IsEnum {
 			get {
 				return IsSubclassOf (typeof (Enum));
@@ -353,9 +349,7 @@ namespace System {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		bool IsSerializable {
 			get {
 				if ((Attributes & TypeAttributes.Serializable) != 0)
@@ -443,20 +437,9 @@ namespace System {
 
 		public override bool Equals (object o)
 		{
-#if NET_4_0
 			return Equals (o as Type);
-#else
-			if (o == this)
-				return true;
-
-			Type me = UnderlyingSystemType;
-			if (me == null)
-				return false;
-			return me.EqualsInternal (o as Type);
-#endif
 		}
 
-#if NET_4_0
 		public virtual bool Equals (Type o)
 		{
 			if ((object)o == (object)this)
@@ -474,21 +457,6 @@ namespace System {
 				return true;
 			return me.EqualsInternal (o);
 		}		
-#else
-		public bool Equals (Type o)
-		{
-
-			if (o == this)
-				return true;
-			if (o == null)
-				return false;
-			Type me = UnderlyingSystemType;
-			if (me == null)
-				return false;
-			return me.EqualsInternal (o.UnderlyingSystemType);
-		}
-#endif
-#if NET_4_0
 		[MonoTODO ("Implement it properly once 4.0 impl details are known.")]
 		public static bool operator == (Type left, Type right)
 		{
@@ -587,7 +555,6 @@ namespace System {
 		{
 			get { throw CreateNIE (); }
 		}
-#endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern bool EqualsInternal (Type type);
@@ -644,9 +611,7 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static TypeCode GetTypeCodeInternal (Type type);
 
-#if NET_4_0
 		protected virtual
-#endif
 		TypeCode GetTypeCodeImpl () {
 			Type type = this;
 			if (type is MonoType)
@@ -844,25 +809,9 @@ namespace System {
 		internal static extern void GetInterfaceMapData (Type t, Type iface, out MethodInfo[] targets, out MethodInfo[] methods);
 
 		[ComVisible (true)]
-		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType) {
-			if (!IsSystemType)
-				throw new NotSupportedException ("Derived classes must provide an implementation.");
-			if (interfaceType == null)
-				throw new ArgumentNullException ("interfaceType");
-			if (!interfaceType.IsSystemType)
-				throw new ArgumentException ("interfaceType", "Type is an user type");
-			InterfaceMapping res;
-			if (!interfaceType.IsInterface)
-				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "interfaceType");
-			if (IsInterface)
-				throw new ArgumentException ("'this' type cannot be an interface itself");
-			res.TargetType = this;
-			res.InterfaceType = interfaceType;
-			GetInterfaceMapData (this, interfaceType, out res.TargetMethods, out res.InterfaceMethods);
-			if (res.TargetMethods == null)
-				throw new ArgumentException (Locale.GetText ("Interface not found"), "interfaceType");
-
-			return res;
+		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType)
+		{
+			throw new NotSupportedException ();
 		}
 
 		public abstract Type[] GetInterfaces ();
@@ -1384,13 +1333,11 @@ namespace System {
 			}
 		}
 		
-#if NET_4_5
 		public virtual Type[] GenericTypeArguments {
 			get {
 				return IsGenericType ? GetGenericArguments () : EmptyTypes;
 			}
 		}
-#endif
 
 		public virtual Type[] GetGenericArguments ()
 		{
@@ -1595,11 +1542,7 @@ namespace System {
 
 		public virtual StructLayoutAttribute StructLayoutAttribute {
 			get {
-#if NET_4_0
 				throw new NotSupportedException ();
-#else
-				return GetStructLayoutAttribute ();
-#endif
 			}
 		}
 		
@@ -1658,12 +1601,10 @@ namespace System {
 		}			
 
 
-#if NET_4_0
 		public virtual bool IsEquivalentTo (Type other)
 		{
 			return this == other;
 		}
-#endif
 
 		/* 
 		 * Return whenever this object is an instance of a user defined subclass

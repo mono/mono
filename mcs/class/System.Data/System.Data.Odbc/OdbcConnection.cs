@@ -37,18 +37,12 @@ using System.Data.Common;
 using System.EnterpriseServices;
 using System.Runtime.InteropServices;
 using System.Text;
-#if NET_2_0
 using System.Transactions;
-#endif
 
 namespace System.Data.Odbc
 {
 	[DefaultEvent ("InfoMessage")]
-#if NET_2_0
 	public sealed class OdbcConnection : DbConnection, ICloneable
-#else
-	public sealed class OdbcConnection : Component, ICloneable, IDbConnection
-#endif //NET_2_0
 	{
 		#region Fields
 
@@ -97,9 +91,7 @@ namespace System.Data.Odbc
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurableAttribute (true)]
 		public
-#if NET_2_0
 		override
-#endif
 		string ConnectionString {
 			get {
 				if (connectionString == null)
@@ -111,13 +103,9 @@ namespace System.Data.Odbc
 		
 		[OdbcDescriptionAttribute ("Current connection timeout value, not settable  in the ConnectionString")]
 		[DefaultValue (15)]
-#if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		int ConnectionTimeout {
 			get {
 				return connectionTimeout;
@@ -132,9 +120,7 @@ namespace System.Data.Odbc
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[OdbcDescriptionAttribute ("Current data source Catlog value, 'Database=X' in the ConnectionString")]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string Database {
 			get {
 				if (State == ConnectionState.Closed)
@@ -147,9 +133,7 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("The ConnectionState indicating whether the connection is open or closed")]
 		[BrowsableAttribute (false)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		ConnectionState State {
 			get {
 				if (hdbc != IntPtr.Zero)
@@ -160,13 +144,9 @@ namespace System.Data.Odbc
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[OdbcDescriptionAttribute ("Current data source, 'Server=X' in the ConnectionString")]
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string DataSource {
 			get {
 				if (State == ConnectionState.Closed)
@@ -175,9 +155,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[OdbcDescriptionAttribute ("Current ODBC Driver")]
 		public string Driver {
@@ -193,9 +171,7 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("Version of the product accessed by the ODBC Driver")]
 		[BrowsableAttribute (false)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string ServerVersion {
 			get {
 				return GetInfo (OdbcInfo.DbmsVersion);
@@ -216,9 +192,7 @@ namespace System.Data.Odbc
 		#region Methods
 	
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcTransaction BeginTransaction ()
 		{
 			return BeginTransaction (IsolationLevel.Unspecified);
@@ -231,17 +205,13 @@ namespace System.Data.Odbc
 		}
 #endif // ONLY_1_1
 
-#if NET_2_0
 		protected override DbTransaction BeginDbTransaction (IsolationLevel isolationLevel)
 		{
 			return BeginTransaction (isolationLevel);
 		}
-#endif
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcTransaction BeginTransaction (IsolationLevel isolevel)
 		{
 			if (State == ConnectionState.Closed)
@@ -262,9 +232,7 @@ namespace System.Data.Odbc
 #endif // ONLY_1_1
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Close ()
 		{
 			OdbcReturn ret = OdbcReturn.Error;
@@ -304,18 +272,14 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcCommand CreateCommand ()
 		{
 			return new OdbcCommand (string.Empty, this, transaction);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void ChangeDatabase (string value)
 		{
 			IntPtr ptr = IntPtr.Zero;
@@ -360,17 +324,13 @@ namespace System.Data.Odbc
 		}
 #endif //ONLY_1_1
 
-#if NET_2_0
 		protected override DbCommand CreateDbCommand ()
 		{
 			return CreateCommand ();
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Open ()
 		{
 			if (State == ConnectionState.Open)
@@ -384,7 +344,7 @@ namespace System.Data.Odbc
 				ret = libodbc.SQLAllocHandle (OdbcHandleType.Env, IntPtr.Zero, ref henv);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) {
 					OdbcErrorCollection errors = new OdbcErrorCollection ();
-					errors.Add (new OdbcError (this));
+					errors.Add (new OdbcError (SafeDriver, "Error in " + SafeDriver, "", 1));
 					e = new OdbcException (errors);
 					MessageHandler (e);
 					throw e;
@@ -464,7 +424,6 @@ namespace System.Data.Odbc
 			henv = IntPtr.Zero;
 		}
 
-#if NET_2_0
 		public override DataTable GetSchema ()
 		{
 			if (State == ConnectionState.Closed)
@@ -489,7 +448,6 @@ namespace System.Data.Odbc
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public void EnlistDistributedTransaction (ITransaction transaction)
@@ -584,7 +542,7 @@ namespace System.Data.Odbc
 				string state = RemoveTrailingNullChar (Encoding.Unicode.GetString (buf_SqlState));
 				string message = Encoding.Unicode.GetString (buf_MsgText, 0, txtlen * 2);
 
-				errors.Add (new OdbcError (message, state, nativeerror));
+				errors.Add (new OdbcError (SafeDriver, message, state, nativeerror));
 			}
 
 			string source = SafeDriver;

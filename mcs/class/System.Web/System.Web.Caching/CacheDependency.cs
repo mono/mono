@@ -56,11 +56,7 @@ namespace System.Web.Caching
 			remove { events.RemoveHandler (dependencyChangedEvent, value); }
 		}
 
-#if NET_4_0
 		protected
-#else
-		public
-#endif
 		CacheDependency (): this (null, null, null, DateTime.Now)
 		{
 		}

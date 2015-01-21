@@ -30,9 +30,7 @@
 
 namespace System.Web.Services.Description 
 {
-#if NET_2_0
 	[Flags]
-#endif
 	public enum ServiceDescriptionImportWarnings {
 		NoCodeGenerated = 0x1,
 		NoMethodsGenerated = 0x20,
@@ -40,9 +38,7 @@ namespace System.Web.Services.Description
 		RequiredExtensionsIgnored = 0x4,
 		UnsupportedBindingsIgnored = 0x10,
 		UnsupportedOperationsIgnored = 0x8,
-#if NET_2_0
 		SchemaValidation = 0x40,
 		WsiConformance = 0x80
-#endif
 	}
 }

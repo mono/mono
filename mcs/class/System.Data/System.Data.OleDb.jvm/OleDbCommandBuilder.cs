@@ -135,7 +135,6 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 
 		[MonoNotSupported("")]
 		public string QuoteIdentifier (string unquotedIdentifier, OleDbConnection connection) 
@@ -149,7 +148,6 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-#endif
 		#endregion // Methods
 	}
 }

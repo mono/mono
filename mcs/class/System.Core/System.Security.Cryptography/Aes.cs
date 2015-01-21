@@ -47,7 +47,7 @@ namespace System.Security.Cryptography {
 	#if MOBILE
 	// version has not changed between SL3 (System.Core) and SL4
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
-	#elif NET_4_0
+	#else
 	// use 3.5 version
 	[TypeForwardedFrom ("System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	#endif

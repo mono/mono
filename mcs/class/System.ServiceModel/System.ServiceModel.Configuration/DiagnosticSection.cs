@@ -59,10 +59,8 @@ namespace System.ServiceModel.Configuration
 	{
 		// Static Fields
 		static ConfigurationPropertyCollection properties;
-#if NET_4_0
 		static ConfigurationProperty end_to_end_tracing;
 		static ConfigurationProperty etw_provider_id;
-#endif
 		static ConfigurationProperty message_logging;
 		static ConfigurationProperty performance_counters;
 		static ConfigurationProperty performance_counter_enabled;
@@ -71,11 +69,9 @@ namespace System.ServiceModel.Configuration
 		static DiagnosticSection ()
 		{
 			properties = new ConfigurationPropertyCollection ();
-#if NET_4_0
 			end_to_end_tracing = new ConfigurationProperty ("endToEndTracing", typeof (EndToEndTracingElement), null, null, null, ConfigurationPropertyOptions.None);
 
 			etw_provider_id = new ConfigurationProperty ("etwProviderId", typeof (string), null, null, null, ConfigurationPropertyOptions.None);
-#endif
 			message_logging = new ConfigurationProperty ("messageLogging", typeof (MessageLoggingElement), null, null, null, ConfigurationPropertyOptions.None);
 
 			performance_counters = new ConfigurationProperty ("performanceCounters", typeof (PerformanceCounterScope), "Off", null, null, ConfigurationPropertyOptions.None);
@@ -85,10 +81,8 @@ namespace System.ServiceModel.Configuration
 			wmi_provider_enabled = new ConfigurationProperty ("wmiProviderEnabled",
 				typeof (bool), "false", new BooleanConverter (), null, ConfigurationPropertyOptions.None);
 
-#if NET_4_0
 			properties.Add (end_to_end_tracing);
 			properties.Add (etw_provider_id);
-#endif
 			properties.Add (message_logging);
 			properties.Add (performance_counters);
 			properties.Add (performance_counter_enabled);
@@ -102,7 +96,6 @@ namespace System.ServiceModel.Configuration
 
 		// Properties
 
-#if NET_4_0
 		[ConfigurationProperty ("endToEndTracing", Options = ConfigurationPropertyOptions.None)]
 		public EndToEndTracingElement EndToEndTracing {
 			get { return (EndToEndTracingElement) base [end_to_end_tracing]; }
@@ -114,7 +107,6 @@ namespace System.ServiceModel.Configuration
 			get { return (string) base [etw_provider_id]; }
 			set { base [etw_provider_id] = value; }
 		}
-#endif
 
 		[ConfigurationProperty ("messageLogging",
 			 Options = ConfigurationPropertyOptions.None)]

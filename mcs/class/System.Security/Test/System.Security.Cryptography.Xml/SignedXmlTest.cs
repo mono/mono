@@ -75,10 +75,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("2.0 throws a NullReferenceException - reported as FDBK25892")]
 		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=02dd9730-d1ad-4170-8c82-36858c55fbe2
-#endif
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_XmlDocument_Null () 
 		{
@@ -100,9 +98,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void Constructor_XmlElement_WithoutLoadXml () 
 		{
 			XmlDocument doc = new XmlDocument ();
@@ -341,11 +336,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			// Compute the signature.
 			byte[] secretkey = Encoding.Default.GetBytes ("password");
 			HMACSHA1 hmac = new HMACSHA1 (secretkey);
-#if NET_2_0
 			Assert.AreEqual (0, signedXml.KeyInfo.Count, "KeyInfo");
-#else
-			Assert.IsNull (signedXml.KeyInfo, "KeyInfo");
-#endif
 			Assert.IsNull (signedXml.SignatureLength, "SignatureLength");
 			Assert.IsNull (signedXml.SignatureMethod, "SignatureMethod");
 			Assert.IsNull (signedXml.SignatureValue, "SignatureValue");
@@ -353,11 +344,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			signedXml.ComputeSignature (hmac);
 
-#if NET_2_0
 			Assert.AreEqual (0, signedXml.KeyInfo.Count, "KeyInfo");
-#else
-			Assert.IsNull (signedXml.KeyInfo, "KeyInfo");
-#endif
 			Assert.IsNull (signedXml.SignatureLength, "SignatureLength");
 			Assert.AreEqual (SignedXml.XmlDsigHMACSHA1Url, signedXml.SignatureMethod, "SignatureMethod");
 			Assert.AreEqual (20, signedXml.SignatureValue.Length, "SignatureValue");
@@ -480,7 +467,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			AsymmetricAlgorithm aa2 = sxe.PublicGetPublicKey ();
 			Assert.IsNull (aa2, "Second Public Key is null");
 		}
-#if NET_2_0
 		[Test]
 		// [ExpectedException (typeof (ArgumentNullException))]
 		public void AddObject_Null () 
@@ -497,16 +483,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			SignedXml sx = new SignedXml ();
 			sx.AddReference (null);
 		}
-#else
-		[Test]
-		public void Add_Null () 
-		{
-			SignedXml sx = new SignedXml ();
-			// no ArgumentNull exceptions for those
-			sx.AddObject (null);
-			sx.AddReference (null);
-		}
-#endif
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		public void GetXml_WithoutInfo () 
@@ -553,9 +529,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void CheckSignatureEmpty ()
 		{
 			SignedXml sx = new SignedXml ();
@@ -681,7 +654,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert.IsNull (sign.GetIdElement (new XmlDocument (), null));
 		}
 
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")] // bug #79483
 		public void DigestValue_CRLF ()
@@ -1374,7 +1346,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			// verify MS-generated signature
 			Assert.IsTrue (sign.CheckSignature (new HMACRIPEMD160 (hmackey)));
 		}
-#endif
 		// CVE-2009-0217
 		// * a 0-length signature is the worse case - it accepts anything
 		// * between 1-7 bits length are considered invalid (not a multiple of 8)
@@ -1502,7 +1473,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			SignedXml sign = GetSignedXml (xml);
 			Assert.IsTrue (sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("secret"))));
 		}
-#if NET_2_0
 		[Test]
 		[Category ("NotDotNet")] // will fail until a fix is available
 		public void VerifyHMAC_SmallerHalfLength ()
@@ -1521,7 +1491,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			SignedXml sign = GetSignedXml (xml);
 			Assert.IsTrue (sign.CheckSignature (new HMACSHA256 (Encoding.ASCII.GetBytes ("secret"))));
 		}
-#endif
 		[Test]
 		public void VerifyHMAC_FullLength ()
 		{

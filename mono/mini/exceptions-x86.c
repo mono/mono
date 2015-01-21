@@ -59,7 +59,7 @@ LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	}
 #endif
 
-	mono_handle_native_sigsegv (SIGSEGV, NULL);
+	mono_handle_native_sigsegv (SIGSEGV, NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -96,7 +96,7 @@ mono_win32_get_handle_stackoverflow (void)
 	x86_call_code (code, mono_domain_get);
 
 	/* get stack overflow exception from domain object */
-	x86_mov_reg_membase (code, X86_EAX, X86_EAX, MONO_STRUCT_OFFSET (MonoDomain, stack_overflow_ex), 4);
+	x86_mov_reg_membase (code, X86_EAX, X86_EAX, G_STRUCT_OFFSET (MonoDomain, stack_overflow_ex), 4);
 
 	/* call mono_arch_handle_exception (sctx, stack_overflow_exception_obj) */
 	x86_push_reg (code, X86_EAX);
@@ -1052,7 +1052,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 }
 
 void
-mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean stack_ovf)
+mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
 {
 #ifdef MONO_ARCH_USE_SIGACTION
 	MonoException *exc = NULL;
@@ -1074,7 +1074,7 @@ mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean
 	if (stack_ovf)
 		exc = mono_domain_get ()->stack_overflow_ex;
 	if (!ji)
-		mono_handle_native_sigsegv (SIGSEGV, sigctx);
+		mono_handle_native_sigsegv (SIGSEGV, sigctx, siginfo);
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.
 	 * If this was a stack overflow the caller already ensured the stack pages

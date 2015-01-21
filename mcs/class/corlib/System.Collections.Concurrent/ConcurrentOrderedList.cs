@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0
 
 using System;
 using System.Threading;
@@ -337,4 +336,3 @@ namespace System.Collections.Concurrent
 	}
 }
 
-#endif

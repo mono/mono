@@ -43,9 +43,7 @@
 using System;
 using System.Data.Common;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -153,7 +151,6 @@ namespace System.Data {
 		protected DataTable (SerializationInfo info, StreamingContext context)
 			: this ()
 		{
-#if NET_2_0
 			SerializationInfoEnumerator e = info.GetEnumerator ();
 			SerializationFormat serializationFormat = SerializationFormat.Xml;
 
@@ -164,7 +161,6 @@ namespace System.Data {
 				}
 			}
 			if (serializationFormat == SerializationFormat.Xml) {
-#endif
 				string schema = info.GetString ("XmlSchema");
 				string data = info.GetString ("XmlDiffGram");
 
@@ -185,19 +181,14 @@ namespace System.Data {
 				 xtr = new XmlTextReader(new StringReader (data));
 				 loader.Load (xtr);
 				*/
-#if NET_2_0
 			} else /*if (Tables.RemotingFormat == SerializationFormat.Binary)*/ {
 				BinaryDeserializeTable (info);
 			}
-#endif
 		}
 
 		/// <summary>
 		/// Indicates whether string comparisons within the table are case-sensitive.
 		/// </summary>
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether comparing strings within the table is case sensitive.")]
-#endif
 		public bool CaseSensitive {
 			get {
 				if (_virginCaseSensitive && dataSet != null)
@@ -259,9 +250,6 @@ namespace System.Data {
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("Returns the child relations for this table.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataRelationCollection ChildRelations {
 			get { return _childRelations; }
@@ -271,9 +259,6 @@ namespace System.Data {
 		/// Gets the collection of columns that belong to this table.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The collection that holds the columns for this table.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataColumnCollection Columns {
 			get { return _columnCollection; }
@@ -283,24 +268,16 @@ namespace System.Data {
 		/// Gets the collection of constraints maintained by this table.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The collection that holds the constraints for this table.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ConstraintCollection Constraints {
 			get { return _constraintCollection; }
-#if NET_2_0
 			internal set { _constraintCollection = value; }
-#endif
 		}
 
 		/// <summary>
 		/// Gets the DataSet that this table belongs to.
 		/// </summary>
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the DataSet to which this table belongs.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataSet DataSet {
 			get { return dataSet; }
@@ -311,9 +288,6 @@ namespace System.Data {
 		/// include a filtered view, or a cursor position.
 		/// </summary>
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("This is the default DataView for the table.")]
-#endif
 		public DataView DefaultView {
 			get {
 				if (_defaultView == null) {
@@ -336,9 +310,6 @@ namespace System.Data {
 		/// a value used to represent this table in the user interface.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The expression used to compute the data-bound value of this row.")]
-#endif
 		[DefaultValue ("")]
 		public string DisplayExpression {
 			get { return _displayExpression == null ? "" : _displayExpression; }
@@ -350,9 +321,6 @@ namespace System.Data {
 		/// </summary>
 		[Browsable (false)]
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The collection that holds custom user information.")]
-#endif
 		public PropertyCollection ExtendedProperties {
 			get { return _extendedProperties; }
 		}
@@ -363,9 +331,6 @@ namespace System.Data {
 		/// which the table belongs.
 		/// </summary>
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("Returns whether the table has errors.")]
-#endif
 		public bool HasErrors {
 			get {
 				// we can not use the _hasError flag because we do not know when to turn it off!
@@ -381,9 +346,6 @@ namespace System.Data {
 		/// Gets or sets the locale information used to
 		/// compare strings within the table.
 		/// </summary>
-#if !NET_2_0
-		[DataSysDescription ("Indicates a locale under which to compare strings within the table.")]
-#endif
 		public CultureInfo Locale {
 			get {
 				// if the locale is null, we check for the DataSet locale
@@ -413,9 +375,6 @@ namespace System.Data {
 		/// Gets or sets the initial starting size for this table.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates an initial starting size for this table.")]
-#endif
 		[DefaultValue (50)]
 		public int MinimumCapacity {
 			get { return _minimumCapacity; }
@@ -427,9 +386,6 @@ namespace System.Data {
 		/// of the data stored in the DataTable.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the XML uri namespace for the elements contained in this table.")]
-#endif
 		public string Namespace {
 			get {
 				if (_nameSpace != null)
@@ -446,9 +402,6 @@ namespace System.Data {
 		/// this DataTable.
 		/// </summary>
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("Returns the parent relations for this table.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataRelationCollection ParentRelations {
 			get { return _parentRelations; }
@@ -459,9 +412,6 @@ namespace System.Data {
 		///  of the data stored in the DataTable.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the Prefix of the namespace used for this table in XML representation.")]
-#endif
 		[DefaultValue ("")]
 		public string Prefix {
 			get { return _prefix == null ? "" : _prefix; }
@@ -480,9 +430,6 @@ namespace System.Data {
 		/// primary keys for the data table.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the column(s) that represent the primary key for this table.")]
-#endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.PrimaryKeyEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[TypeConverterAttribute ("System.Data.PrimaryKeyTypeConverter, " + Consts.AssemblySystem_Data)]
 		public DataColumn[] PrimaryKey {
@@ -554,9 +501,6 @@ namespace System.Data {
 		/// Gets the collection of_rows that belong to this table.
 		/// </summary>
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the collection that holds the rows of data for this table.")]
-#endif
 		public DataRowCollection Rows {
 			get { return _rows; }
 		}
@@ -576,9 +520,6 @@ namespace System.Data {
 		/// Gets or sets the name of the the DataTable.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the name used to look up this table in the Tables collection of a DataSet.")]
-#endif
 		[DefaultValue ("")]
 		[RefreshProperties (RefreshProperties.All)]
 		public string TableName {
@@ -727,15 +668,11 @@ namespace System.Data {
 		/// occurs at runtime.
 		/// </summary>
 		public
-#if NET_2_0
 		virtual
-#endif
 		void BeginInit ()
 		{
 			InitInProgress = true;
-#if NET_2_0
 			tableInitialized = false;
-#endif
 		}
 
 		/// <summary>
@@ -916,9 +853,7 @@ namespace System.Data {
 		/// initialization occurs at runtime.
 		/// </summary>
 		public
-#if NET_2_0
 		virtual
-#endif
 		void EndInit ()
 		{
 			InitInProgress = false;
@@ -996,9 +931,7 @@ namespace System.Data {
 				DataRow newRow = copyTable.NewNotInitializedRow ();
 				// Don't check for ReadOnly, when cloning data to new uninitialized row.
 				row.CopyValuesToRow (newRow, false);
-#if NET_2_0
 				newRow.XmlRowID = row.XmlRowID;
-#endif
 				copyTable.Rows.AddInternal (newRow);
 			}
 
@@ -1098,18 +1031,11 @@ namespace System.Data {
 		/// <summary>
 		/// This member is only meant to support Mono's infrastructure
 		/// </summary>
-#if NET_2_0
 		public virtual
-#endif
 		void
-#if !NET_2_0
-		ISerializable.
-#endif
 		GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-#if NET_2_0
 			if (RemotingFormat == SerializationFormat.Xml) {
-#endif
 				DataSet dset;
 				if (dataSet != null)
 					dset = dataSet;
@@ -1132,7 +1058,6 @@ namespace System.Data {
 
 				info.AddValue ("XmlSchema", sw2.ToString(), typeof(string));
 				info.AddValue ("XmlDiffGram", sw.ToString(), typeof(string));
-#if NET_2_0
 			} else /*if (RemotingFormat == SerializationFormat.Binary)*/ {
 				BinarySerializeProperty (info);
 				if (dataSet == null) {
@@ -1143,7 +1068,6 @@ namespace System.Data {
 					BinarySerialize (info, "DataTable_0.");
 				}
 			}
-#endif
 		}
 
 		/// <summary>
@@ -1647,9 +1571,6 @@ namespace System.Data {
 		/// the specified DataColumn in a DataRow.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Occurs when a value has been changed for this column.")]
-#endif
 		public event DataColumnChangeEventHandler ColumnChanged;
 
 		/// <summary>
@@ -1657,45 +1578,30 @@ namespace System.Data {
 		/// DataColumn in a DataRow.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Occurs when a value has been submitted for this column.  The user can modify the proposed value and should throw an exception to cancel the edit.")]
-#endif
 		public event DataColumnChangeEventHandler ColumnChanging;
 
 		/// <summary>
 		/// Occurs after a DataRow has been changed successfully.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Occurs after a row in the table has been successfully edited.")]
-#endif
 		public event DataRowChangeEventHandler RowChanged;
 
 		/// <summary>
 		/// Occurs when a DataRow is changing.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Occurs when the row is being changed so that the event handler can modify or cancel the change. The user can modify values in the row and should throw an  exception to cancel the edit.")]
-#endif
 		public event DataRowChangeEventHandler RowChanging;
 
 		/// <summary>
 		/// Occurs after a row in the table has been deleted.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Occurs after a row in the table has been successfully deleted.")]
-#endif
 		public event DataRowChangeEventHandler RowDeleted;
 
 		/// <summary>
 		/// Occurs before a row in the table is about to be deleted.
 		/// </summary>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Occurs when a row in the table marked for deletion.  Throw an exception to cancel the deletion.")]
-#endif
 		public event DataRowChangeEventHandler RowDeleting;
 
 		#endregion // Events
@@ -1790,7 +1696,6 @@ namespace System.Data {
 		}
 	}
 
-#if NET_2_0
 	[XmlSchemaProvider ("GetDataTableSchema")]
 	partial class DataTable : IXmlSerializable {
 		[MonoNotSupported ("")]
@@ -3034,5 +2939,4 @@ namespace System.Data {
 			OnTableNewRow (new DataTableNewRowEventArgs (dr));
 		}
 	}
-#endif
 }

@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -77,13 +76,6 @@ namespace System.Runtime.Serialization
 
 	internal static class TypeExtensions
 	{
-#if !NET_4_5
-		public static T GetCustomAttribute<T> (this MemberInfo type, bool inherit)
-		{
-			var arr = type.GetCustomAttributes (typeof (T), inherit);
-			return arr != null && arr.Length == 1 ? (T) arr [0] : default (T);
-		}
-#endif
 		public static IEnumerable<Type> GetInterfacesOrSelfInterface (this Type type)
 		{
 			if (type.IsInterface)
@@ -1073,4 +1065,3 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
-#endif

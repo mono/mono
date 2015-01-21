@@ -169,7 +169,6 @@ namespace MonoTests.Microsoft.CSharp
 				"}}{0}", NewLine), Generate (options), "#B2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Type_TypeParameters ()
 		{
@@ -531,6 +530,5 @@ namespace MonoTests.Microsoft.CSharp
 				"    }}{0}" +
 				"}}{0}", NewLine), Generate ());
 		}
-#endif
 	}
 }

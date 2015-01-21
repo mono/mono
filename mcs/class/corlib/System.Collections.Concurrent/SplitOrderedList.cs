@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0 || INSIDE_SYSTEM_WEB
 
 using System;
 using System.Threading;
@@ -476,33 +475,5 @@ namespace System.Collections.Concurrent
 		}
 	}
 
-#if INSIDE_SYSTEM_WEB && !NET_4_0
-	internal struct SpinWait
-	{
-		// The number of step until SpinOnce yield on multicore machine
-		const           int  step = 10;
-		const           int  maxTime = 200;
-		static readonly bool isSingleCpu = (Environment.ProcessorCount == 1);
-
-		int ntime;
-
-		public void SpinOnce ()
-		{
-			ntime += 1;
-
-			if (isSingleCpu) {
-				// On a single-CPU system, spinning does no good
-				Thread.Sleep (0);
-			} else {
-				if (ntime % step == 0)
-					Thread.Sleep (0);
-				else
-					// Multi-CPU system might be hyper-threaded, let other thread run
-					Thread.SpinWait (Math.Min (ntime, maxTime) << 1);
-			}
-		}
-	}
-#endif
 }
 
-#endif

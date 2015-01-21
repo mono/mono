@@ -18,11 +18,7 @@ using System.Text;
 
 using NUnit.Framework;
 
-#if NET_2_0
 using InvalidNodeTypeArgException = System.ArgumentException;
-#else // it makes less sense
-using InvalidNodeTypeArgException = System.ArgumentOutOfRangeException;
-#endif
 
 namespace MonoTests.System.Xml
 {
@@ -201,9 +197,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotDotNet")] // enbug in 2.0
-#endif
 		public void CreateNodeNodeTypeName ()
 		{
 			XmlNode node;

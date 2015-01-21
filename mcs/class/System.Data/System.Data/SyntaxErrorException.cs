@@ -52,11 +52,9 @@ namespace System.Data
 		{
 		}
 
-#if NET_2_0
 		public SyntaxErrorException (String message, Exception innerException)
 			: base (message, innerException)
 		{
 		}
-#endif
 	}
 }

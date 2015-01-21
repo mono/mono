@@ -57,6 +57,17 @@ namespace System.Threading
 			}
 		}
 
+		// extracted from ../../../../external/referencesource/mscorlib/system/threading/synchronizationcontext.cs
+		// Get the last SynchronizationContext that was set explicitly (not flowed via ExecutionContext.Capture/Run)		
+		internal static SynchronizationContext CurrentNoFlow
+		{
+			get
+			{
+				// FIXME get context not flowed
+				return Current;
+			}
+		}
+
 		public virtual SynchronizationContext CreateCopy ()
 		{
 			return new SynchronizationContext (this);

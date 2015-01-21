@@ -42,12 +42,10 @@ namespace System.Web.UI.WebControls
 		int rowIndex;
 		DataControlRowState rowState;
 		DataControlRowType rowType;
-#if NET_4_0
 		internal bool RenderJustCellContents {
 			get;
 			set;
 		}
-#endif
 		public FormViewRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
 		{
 			this.rowIndex = rowIndex;
@@ -78,7 +76,6 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
-#if NET_4_0
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			if (!RenderJustCellContents) {
@@ -89,7 +86,6 @@ namespace System.Web.UI.WebControls
 			foreach (TableCell cell in Cells)
 				cell.RenderContents (writer);
 		}
-#endif
 	}
 }
 

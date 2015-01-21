@@ -216,6 +216,13 @@ namespace System.IO {
 
 				if (inDispatch)
 					return;
+				// This will break the wait in Monitor ()
+				lock (connLock) {
+					if (conn != -1)
+						close (conn);
+					conn = -1;
+				}
+
 				if (!thread.Join (2000))
 					thread.Abort ();
 
@@ -229,10 +236,11 @@ namespace System.IO {
 
 		void CleanUp ()
 		{
-			if (conn != -1)
-				close (conn);
-
-			conn = -1;
+			lock (connLock) {
+				if (conn != -1)
+					close (conn);
+				conn = -1;
+			}
 
 			foreach (int fd in fdsDict.Keys)
 				close (fd); 
@@ -279,7 +287,7 @@ namespace System.IO {
 			var initialFds = new List<int> ();
 
 			// fsw.FullPath may end in '/', see https://bugzilla.xamarin.com/show_bug.cgi?id=5747
-			if (fsw.FullPath.EndsWith ("/", StringComparison.Ordinal))
+			if (fsw.FullPath != "/" && fsw.FullPath.EndsWith ("/", StringComparison.Ordinal))
 				fullPathNoLastSlash = fsw.FullPath.Substring (0, fsw.FullPath.Length - 1);
 			else
 				fullPathNoLastSlash = fsw.FullPath;
@@ -338,7 +346,6 @@ namespace System.IO {
 
 		void Monitor ()
 		{
-			var timeout = new timespec { tv_sec = (IntPtr)0, tv_usec = (IntPtr)500000000 };
 			var eventBuffer = new kevent[32];
 			var newFds = new List<int> ();
 			List<PathData> removeQueue = new List<PathData> ();
@@ -349,9 +356,12 @@ namespace System.IO {
 			while (!requestStop) {
 				var changes = CreateChangeList (ref newFds);
 
-				int numEvents = kevent (conn, changes, changes.Length, eventBuffer, eventBuffer.Length, ref timeout);
+				int numEvents = kevent_notimeout (conn, changes, changes.Length, eventBuffer, eventBuffer.Length, IntPtr.Zero);
 
 				if (numEvents == -1) {
+					// Stop () signals us to stop by closing the connection
+					if (requestStop)
+						break;
 					if (++retries == 3)
 						throw new IOException (String.Format (
 							"persistent kevent() error, error code = '{0}'", Marshal.GetLastWin32Error ()));
@@ -618,6 +628,7 @@ namespace System.IO {
 		bool inDispatch = false;
 		Exception exc = null;
 		object stateLock = new object ();
+		object connLock = new object ();
 
 		readonly Dictionary<string, PathData> pathsDict = new Dictionary<string, PathData> ();
 		readonly Dictionary<int, PathData> fdsDict = new Dictionary<int, PathData> ();
@@ -638,6 +649,9 @@ namespace System.IO {
 
 		[DllImport ("libc")]
 		extern static int kevent (int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents, [In] ref timespec time);
+
+		[DllImport ("libc", EntryPoint="kevent")]
+		extern static int kevent_notimeout (int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents, IntPtr ptr);
 	}
 
 	class KeventWatcher : IFileWatcher

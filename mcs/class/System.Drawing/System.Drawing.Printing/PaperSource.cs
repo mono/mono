@@ -37,21 +37,17 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for PaperSource.
 	/// </summary>
-#if NET_2_0
 	[Serializable]
-#endif	
 	public class PaperSource
 	{
 		private PaperSourceKind kind;
 		private string source_name;
 		internal bool is_default;
 		
-#if NET_2_0
 		public PaperSource ()
 		{
 			
 		}
-#endif
 
 		internal PaperSource(string sourceName, PaperSourceKind kind)
 		{
@@ -80,14 +76,11 @@ namespace System.Drawing.Printing
 			get {
 				return this.source_name;
 			}
-#if NET_2_0
 		set {
 				this.source_name = value;
 			}
-#endif
 		}
 		
-#if NET_2_0
 		public int RawKind {
 			get {
 				return (int)kind;
@@ -96,7 +89,6 @@ namespace System.Drawing.Printing
 				kind = (PaperSourceKind)value;
 			}
 		}		  
-#endif
 
 		internal bool IsDefault {
 			get { return is_default;}

@@ -353,11 +353,9 @@ namespace Mono.XBuild.CommandLine {
 
 		void EmitBeforeImports (ProjectRootElement p, string file)
 		{
-#if NET_4_0
 			p.AddImportGroup ().AddImport ("$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\SolutionFile\\ImportBefore\\*").Condition =
 					"'$(ImportByWildcardBeforeSolution)' != 'false' and " +
 					"Exists('$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\SolutionFile\\ImportBefore')";
-#endif
 
 			string before_filename = Path.Combine (Path.GetDirectoryName (file), "before." + Path.GetFileName (file) + ".targets");
 			p.AddImportGroup ().AddImport (before_filename).Condition = String.Format ("Exists ('{0}')", before_filename);
@@ -365,11 +363,9 @@ namespace Mono.XBuild.CommandLine {
 
 		void EmitAfterImports (ProjectRootElement p, string file)
 		{
-#if NET_4_0
 			p.AddImportGroup ().AddImport ("$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\SolutionFile\\ImportAfter\\*").Condition =
 					"'$(ImportByWildcardAfterSolution)' != 'false' and " +
 					"Exists('$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\SolutionFile\\ImportAfter')";
-#endif
 
 			string after_filename = Path.Combine (Path.GetDirectoryName (file), "after." + Path.GetFileName (file) + ".targets");
 			p.AddImportGroup ().AddImport (after_filename).Condition = String.Format ("Exists ('{0}')", after_filename);

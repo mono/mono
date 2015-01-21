@@ -96,14 +96,12 @@ namespace MonoCasTests.System.Web.UI {
 			catch (NullReferenceException) {
 				// ms 2.0 rc
 			}
-#if NET_2_0
 			try {
 				Assert.IsNotNull (uc.CachePolicy, "CachePolicy");
 			}
 			catch (NotImplementedException) {
 				// mono
 			}
-#endif
 		}
 
 		[Test]

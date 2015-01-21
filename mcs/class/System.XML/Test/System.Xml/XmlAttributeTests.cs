@@ -177,9 +177,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=336180
-#endif
 		public void SetInnerTextAndXml ()
 		{
 			string original = doc.OuterXml;

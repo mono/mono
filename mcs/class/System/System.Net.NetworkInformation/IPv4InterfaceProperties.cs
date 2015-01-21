@@ -55,7 +55,7 @@ namespace System.Net.NetworkInformation {
 		}
 		
 		public override int Index {
-			get { return UnixNetworkInterface.IfNameToIndex (iface.Name); }
+			get { return iface.NameIndex; }
 		}
 
 		// TODO: how to discover that?
@@ -90,7 +90,7 @@ namespace System.Net.NetworkInformation {
 				string iface_path = "/proc/sys/net/ipv4/conf/" + iface.Name + "/forwarding";
 
 				if (File.Exists (iface_path)) {
-					string val = NetworkInterface.ReadLine (iface_path);
+					string val = LinuxNetworkInterface.ReadLine (iface_path);
 
 					return val != "0";
 				}
@@ -105,7 +105,7 @@ namespace System.Net.NetworkInformation {
 				int ret = 0;
 
 				if (File.Exists (iface_path)) {
-					string val = NetworkInterface.ReadLine (iface_path);
+					string val = LinuxNetworkInterface.ReadLine (iface_path);
 					
 					try {
 						ret = Int32.Parse (val);

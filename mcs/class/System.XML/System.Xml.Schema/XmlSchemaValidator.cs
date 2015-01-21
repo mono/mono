@@ -36,7 +36,6 @@
 //	- There is no SourceUri provision.
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -1682,4 +1681,3 @@ namespace System.Xml.Schema
 	}
 }
 
-#endif

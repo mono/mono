@@ -43,9 +43,7 @@ namespace System.Data
 	/// </summary>
 
 	public
-#if NET_2_0
 	sealed
-#endif
 	class DataRowBuilder 
 	{
 		#region Fields

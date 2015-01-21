@@ -144,21 +144,8 @@ namespace MonoTests.System.Windows.Forms
 		{
 			SaveFileDialog sfd = new SaveFileDialog ();
 			sfd.FileName = Path.InvalidPathChars [0] + "file";
-#if NET_2_0
 			Assert.IsNotNull (sfd.FileName, "#1");
 			Assert.AreEqual (Path.InvalidPathChars [0] + "file", sfd.FileName, "#2");
-#else
-			try {
-				string fileName = sfd.FileName;
-				Assert.Fail ("#1: " + fileName);
-			} catch (ArgumentException ex) {
-				// The path contains illegal characters
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				//Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -183,22 +170,9 @@ namespace MonoTests.System.Windows.Forms
 		{
 			SaveFileDialog sfd = new SaveFileDialog ();
 			sfd.FileName = Path.InvalidPathChars [0] + "file";
-#if NET_2_0
 			Assert.IsNotNull (sfd.FileNames, "#1");
 			Assert.AreEqual (1, sfd.FileNames.Length, "#2");
 			Assert.AreEqual (Path.InvalidPathChars [0] + "file", sfd.FileNames [0], "#3");
-#else
-			try {
-				string [] fileNames = sfd.FileNames;
-				Assert.Fail ("#1: " + fileNames.Length);
-			} catch (ArgumentException ex) {
-				// The path contains illegal characters
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				//Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 
 		[Test]

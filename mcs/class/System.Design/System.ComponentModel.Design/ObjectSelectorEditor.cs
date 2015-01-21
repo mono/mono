@@ -114,13 +114,11 @@ namespace System.ComponentModel.Design
 				throw new NotImplementedException ();
 			}
 
-#if NET_2_0
 			[MonoTODO]
 			protected override void OnNodeMouseClick (TreeNodeMouseClickEventArgs e)
 			{
 				throw new NotImplementedException ();
 			}
-#endif
 
 			[MonoTODO]
 			public bool SetSelection (object value, TreeNodeCollection nodes)

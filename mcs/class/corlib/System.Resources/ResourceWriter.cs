@@ -55,7 +55,6 @@ namespace System.Resources
 			}
 		}
 
-#if NET_4_0
 		class StreamWrapper
 		{
 			public readonly bool CloseAfterWrite;
@@ -67,7 +66,6 @@ namespace System.Resources
 				CloseAfterWrite = closeAfterWrite;
 			}
 		}
-#endif
 
 		SortedList resources = new SortedList (StringComparer.OrdinalIgnoreCase);
 		Stream stream;
@@ -91,7 +89,6 @@ namespace System.Resources
 				FileAccess.Write);
 		}
 
-#if NET_4_0
 		Func <Type, string> type_name_converter;
 
 		public Func<Type, string> TypeNameConverter {
@@ -102,7 +99,6 @@ namespace System.Resources
 				type_name_converter = value;
 			}
 		}
-#endif
 		
 		public void AddResource (string name, byte[] value)
 		{
@@ -124,7 +120,6 @@ namespace System.Resources
 				throw new InvalidOperationException ("The resource writer has already been closed and cannot be edited");
 			if (resources[name] != null)
 				throw new ArgumentException ("Resource already present: " + name);
-#if NET_4_0
 			if (value is Stream) {
 				Stream stream = value as Stream;
 				if (!stream.CanSeek)
@@ -133,7 +128,6 @@ namespace System.Resources
 				if (!(value is MemoryStream)) // We already support MemoryStream
 					value = new StreamWrapper (stream, false);
 			}
-#endif
 
 			resources.Add(name, value);
 		}
@@ -150,7 +144,6 @@ namespace System.Resources
 			resources.Add(name, value);
 		}
 
-#if NET_4_0
 		public void AddResource (string name, Stream value)
 		{
 			// It seems .Net adds this overload just to make the api complete,
@@ -177,7 +170,6 @@ namespace System.Resources
 
 			resources.Add (name, new StreamWrapper (value, true));
 		}
-#endif
 
 		public void Close ()
 		{
@@ -239,7 +231,6 @@ namespace System.Resources
 			BinaryWriter resman = new BinaryWriter (resman_stream,
 							     Encoding.UTF8);
 
-#if NET_4_0
 			string type_name = null;
 			if (type_name_converter != null)
 				type_name = type_name_converter (typeof (ResourceReader));
@@ -247,9 +238,6 @@ namespace System.Resources
 				type_name = typeof (ResourceReader).AssemblyQualifiedName;
 
 			resman.Write (type_name);
-#else
-			resman.Write (typeof (ResourceReader).AssemblyQualifiedName);
-#endif
 			resman.Write (typeof (RuntimeResourceSet).FullName);
 
 			/* Only space for 32 bits of header len in the
@@ -326,10 +314,8 @@ namespace System.Resources
 						break;
 					if (type == typeof (MemoryStream))
 						break;
-#if NET_4_0
 					if (type == typeof (StreamWrapper))
 						break;
-#endif
 					if (type==typeof(byte[]))
 						break;
 
@@ -397,7 +383,6 @@ namespace System.Resources
 					byte [] data = ((MemoryStream) res_enum.Value).ToArray ();
 					res_data.Write ((uint) data.Length);
 					res_data.Write (data, 0, data.Length);
-#if NET_4_0
 				} else if (type == typeof (StreamWrapper)) {
 					StreamWrapper sw = (StreamWrapper) res_enum.Value;
 					sw.Stream.Position = 0;
@@ -409,7 +394,6 @@ namespace System.Resources
 
 					if (sw.CloseAfterWrite)
 						sw.Stream.Close ();
-#endif
 				} else {
 					/* non-intrinsic types are
 					 * serialized
@@ -480,7 +464,6 @@ namespace System.Resources
 			resources = null;
 		}
 
-#if NET_4_0
 		byte [] ReadStream (Stream stream)
 		{
 			byte [] buff = new byte [stream.Length];
@@ -499,7 +482,6 @@ namespace System.Resources
 
 			return buff;
 		}
-#endif
 
 		// looks like it is (similar to) DJB hash
 		int GetHash (string name)

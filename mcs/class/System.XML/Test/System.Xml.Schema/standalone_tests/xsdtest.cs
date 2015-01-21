@@ -173,7 +173,6 @@ USAGE: mono xsdtest.exe options target-pattern
 				XmlTextReader ixtr = new XmlTextReader (
 					Path.Combine (basePath, instanceFile));
 				xvr = ixtr;
-#if NET_2_0
 				if (version2) {
 					XmlReaderSettings settings =
 						new XmlReaderSettings ();
@@ -188,7 +187,6 @@ USAGE: mono xsdtest.exe options target-pattern
 						settings.XmlResolver = null;
 					xvr = XmlReader.Create (ixtr, settings);
 				} else {
-#endif
 					XmlValidatingReader vr = new XmlValidatingReader (ixtr);
 					if (noResolver)
 						vr.XmlResolver = null;
@@ -196,9 +194,7 @@ USAGE: mono xsdtest.exe options target-pattern
 						vr.ValidationEventHandler += noValidateHandler;
 					vr.Schemas.Add (schema);
 					xvr = vr;
-#if NET_2_0
 				}
-#endif
 				while (!xvr.EOF)
 					xvr.Read ();
 				if (!isValidInstance && !noValidate)

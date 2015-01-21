@@ -730,6 +730,13 @@ class Tester
 		e9.Compile ().Invoke (1);
 	}		
 
+	void CallTest_10 ()
+	{
+		Expression<Func<string>> e = () => $"{int.MaxValue}";
+		AssertNodeType (e, ExpressionType.Call);
+		Assert (int.MaxValue.ToString (), e.Compile ().Invoke ());
+	}
+
 	void CoalesceTest ()
 	{
 		Expression<Func<uint?, uint>> e = (uint? a) => a ?? 99;

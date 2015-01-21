@@ -693,11 +693,7 @@ namespace Mono.Data.Tds.Protocol
 							CultureInfo.InvariantCulture,
 							"Value '{0}' is not valid for SmallMoney."
 							+ "  Must be between {1:N4} and {2:N4}.",
-#if NET_2_0
 							val,
-#else
-							val.ToString (CultureInfo.CurrentCulture),
-#endif
 							SMALLMONEY_MIN, SMALLMONEY_MAX));
 
 					int[] arr = Decimal.GetBits (val);
@@ -886,7 +882,6 @@ namespace Mono.Data.Tds.Protocol
 
 				TdsDataColumn col = new TdsDataColumn ();
 				Columns.Add (col);
-#if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnName = columnName;
 				col.IsAutoIncrement = autoIncrement;
@@ -898,19 +893,6 @@ namespace Mono.Data.Tds.Protocol
 				col.AllowDBNull = nullable;
 				col.BaseTableName = tableName;
 				col.DataTypeName = Enum.GetName (typeof (TdsColumnType), xColumnType);
-#else
-				col ["ColumnType"] = columnType;
-				col ["ColumnName"] = columnName;
-				col ["IsAutoIncrement"] = autoIncrement;
-				col ["IsIdentity"] = isIdentity;
-				col ["ColumnSize"] = columnSize;
-				col ["NumericPrecision"] = precision;
-				col ["NumericScale"] = scale;
-				col ["IsReadOnly"] = !writable;
-				col ["AllowDBNull"] = nullable;
-				col ["BaseTableName"] = tableName;
-				col ["DataTypeName"] = Enum.GetName (typeof (TdsColumnType), xColumnType);
-#endif
 			}
 		}
 
@@ -1073,7 +1055,6 @@ namespace Mono.Data.Tds.Protocol
 
 		#endregion // Methods
 
-#if NET_2_0
 		#region Asynchronous Methods
 
 		public override IAsyncResult BeginExecuteNonQuery (string cmdText,
@@ -1136,6 +1117,5 @@ namespace Mono.Data.Tds.Protocol
 		}
 
 		#endregion // Asynchronous Methods
-#endif // NET_2_0
 	}
 }

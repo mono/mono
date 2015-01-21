@@ -65,8 +65,10 @@ mono_100ns_datetime (void)
 #include <sys/time.h>
 #endif
 
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+#if defined (HAVE_SYS_PARAM_H)
 #include <sys/param.h>
+#endif
+#if defined(HAVE_SYS_SYSCTL_H)
 #include <sys/sysctl.h>
 #endif
 
@@ -80,7 +82,7 @@ mono_100ns_datetime (void)
 static gint64
 get_boot_time (void)
 {
-#if defined(PLATFORM_MACOSX) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+#if defined (HAVE_SYS_PARAM_H) && defined (KERN_BOOTTIME)
 	int mib [2];
 	size_t size;
 	time_t now;

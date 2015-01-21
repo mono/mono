@@ -20474,6 +20474,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-autoproperty-15.cs">
+    <type name="C">
+      <method name="Int32 get_A()" attrs="2502">
+        <size>14</size>
+      </method>
+      <method name="Void set_A(Int32)" attrs="2177">
+        <size>8</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Void TestList(System.Collections.Generic.List`1[System.Int32], Int32)" attrs="145">
@@ -21783,6 +21799,9 @@
     <type name="Tester">
       <method name="Void NewTest_8()" attrs="129">
         <size>140</size>
+      </method>
+      <method name="Void CallTest_10()" attrs="129">
+        <size>137</size>
       </method>
     </type>
   </test>
@@ -63933,7 +63952,7 @@
     </type>
     <type name="X+&lt;Foo&gt;c__async6">
       <method name="Void MoveNext()" attrs="486">
-        <size>130</size>
+        <size>142</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -64412,6 +64431,68 @@
     <type name="N.X">
       <method name="Int32 Main()" attrs="150">
         <size>153</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-77.cs">
+    <type name="Class1">
+      <method name="Void InvokeAction(System.Action)" attrs="132">
+        <size>8</size>
+      </method>
+      <method name="Void Bar()" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Test()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>17</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;Test&gt;m__0()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Class1+CIInterface1">
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] Foo(System.Action`1[System.String])" attrs="486">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Class1+ServiceLocator">
+      <method name="TService GetImplementor[TService]()" attrs="150">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Class1+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>88</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Class1+&lt;Test&gt;c__async6">
+      <method name="Void MoveNext()" attrs="486">
+        <size>264</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Class1+&lt;Test&gt;c__async6+&lt;Test&gt;c__AnonStorey7">
+      <method name="Void &lt;&gt;m__0(System.String)" attrs="131">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -66264,6 +66345,50 @@
       </method>
     </type>
   </test>
+  <test name="test-interpolation-01.cs">
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>540</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-interpolation-02.cs">
+    <type name="System.FormattableString">
+      <method name="System.String get_Value()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Value(System.String)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor(String, Object[])" attrs="6278">
+        <size>22</size>
+      </method>
+    </type>
+    <type name="System.Runtime.CompilerServices.FormattableStringFactory">
+      <method name="System.Object Create(System.String, System.Object[])" attrs="150">
+        <size>43</size>
+      </method>
+    </type>
+    <type name="MyFormattable">
+      <method name="System.String System.IFormattable.ToString(System.String, System.IFormatProvider)" attrs="481">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ConversionTest">
+      <method name="Int32 Main()" attrs="145">
+        <size>120</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-iter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
@@ -67915,29 +68040,6 @@
     <type name="Ambiguous">
       <method name="Int32 Main()" attrs="150">
         <size>68</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-nameof-05.cs">
-    <type name="A">
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="N1.X">
-      <method name="System.String Extension(A, Int64)" attrs="150">
-        <size>10</size>
-      </method>
-      <method name="System.String Extension(A, Int32)" attrs="150">
-        <size>10</size>
-      </method>
-    </type>
-    <type name="N2.Program">
-      <method name="Int32 Main()" attrs="150">
-        <size>12</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

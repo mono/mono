@@ -58,11 +58,7 @@ namespace System.ServiceModel.Configuration
 		 : ServiceModelExtensionCollectionElement<TServiceModelExtensionElement>,  ICollection<TServiceModelExtensionElement>,  IEnumerable<TServiceModelExtensionElement>,  IEnumerable
 		where TServiceModelExtensionElement : ServiceModelExtensionElement
 	{
-#if NET_4_0
 		const int minNameLength = 0;
-#else
-		const int minNameLength = 1;
-#endif
 		ConfigurationPropertyCollection _properties;
 
 		internal NamedServiceModelExtensionCollectionElement ()
@@ -71,11 +67,7 @@ namespace System.ServiceModel.Configuration
 
 
 		// Properties
-#if NET_4_0
 		[StringValidator ( MinLength = 0, MaxLength = int.MaxValue, InvalidCharacters = null)]
-#else
-		[StringValidator ( MinLength = 1, MaxLength = int.MaxValue, InvalidCharacters = null)]
-#endif
 		[ConfigurationProperty ("name",
 			 Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey,
 			IsRequired = true,

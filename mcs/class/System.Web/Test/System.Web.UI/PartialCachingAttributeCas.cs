@@ -51,9 +51,7 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsNull (pca.VaryByControls, "VaryByControls");
 			Assert.IsNull (pca.VaryByCustom, "VaryByCustom");
 			Assert.IsNull (pca.VaryByParams, "VaryByParams");
-#if NET_2_0
 			Assert.IsNull (pca.SqlDependency, "SqlDependency");
-#endif
 			Assert.IsFalse (pca.Shared, "Shared");
 		}
 
@@ -66,9 +64,7 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.AreEqual ("2", pca.VaryByControls, "VaryByControls");
 			Assert.AreEqual ("3", pca.VaryByCustom, "VaryByCustom");
 			Assert.AreEqual ("1", pca.VaryByParams, "VaryByParams");
-#if NET_2_0
 			Assert.IsNull (pca.SqlDependency, "SqlDependency");
-#endif
 			Assert.IsFalse (pca.Shared, "Shared");
 		}
 
@@ -81,13 +77,10 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.AreEqual ("b", pca.VaryByControls, "VaryByControls");
 			Assert.AreEqual ("c", pca.VaryByCustom, "VaryByCustom");
 			Assert.AreEqual ("a", pca.VaryByParams, "VaryByParams");
-#if NET_2_0
 			Assert.IsNull (pca.SqlDependency, "SqlDependency");
-#endif
 			Assert.IsTrue (pca.Shared, "Shared");
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Ctor6_Deny_Unrestricted ()
@@ -100,7 +93,6 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.AreEqual ("sql", pca.SqlDependency, "SqlDependency");
 			Assert.IsFalse (pca.Shared, "Shared");
 		}
-#endif
 
 		// LinkDemand
 

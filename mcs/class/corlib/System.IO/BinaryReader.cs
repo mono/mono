@@ -62,7 +62,6 @@ namespace System.IO {
 		{
 		}
 		
-#if NET_4_5
 		readonly bool leave_open;
 		
 		public BinaryReader(Stream input, Encoding encoding)
@@ -71,11 +70,6 @@ namespace System.IO {
 		}
 		
 		public BinaryReader(Stream input, Encoding encoding, bool leaveOpen)
-#else
-		const bool leave_open = false;
-		
-		public BinaryReader(Stream input, Encoding encoding)
-#endif
 		{
 			if (input == null || encoding == null) 
 				throw new ArgumentNullException(Locale.GetText ("Input or Encoding is a null reference."));
@@ -84,9 +78,7 @@ namespace System.IO {
 
 			m_stream = input;
 			m_encoding = encoding;
-#if NET_4_5
 			leave_open = leaveOpen;
-#endif
 			decoder = encoding.GetDecoder ();
 			
 			// internal buffer size is documented to be between 16 and the value
@@ -117,11 +109,7 @@ namespace System.IO {
 			charBuffer = null;
 		}
 
-#if NET_4_0
 		public void Dispose ()
-#else
-		void IDisposable.Dispose() 
-#endif
 		{
 			Dispose (true);
 		}

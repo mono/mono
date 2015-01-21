@@ -52,9 +52,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.ChildControl ();
 			unit.ChildControlViewstate ();
 			unit.TestEvents ();
-#if NET_2_0
 			unit.TestValidationGroup ();
-#endif
 		}
 
 		// LinkDemand

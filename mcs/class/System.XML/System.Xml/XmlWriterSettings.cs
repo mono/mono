@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.IO;
@@ -51,10 +50,8 @@ namespace System.Xml
 		private bool omitXmlDeclaration;
 		private XmlOutputMethod outputMethod;
 
-#if NET_4_5
 		private bool isReadOnly;
 		private bool isAsync;
-#endif
 
 		public XmlWriterSettings ()
 		{
@@ -88,9 +85,7 @@ namespace System.Xml
 			newLineHandling = NewLineHandling.Replace;
 			omitXmlDeclaration = false;
 			outputMethod = XmlOutputMethod.AutoDetect;
-#if NET_4_5
 			isAsync = false;
-#endif
 		}
 
 		// It affects only on XmlTextWriter
@@ -162,14 +157,9 @@ namespace System.Xml
 			//set { outputMethod = value; }
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		NamespaceHandling NamespaceHandling { get; set; }
 
-#if NET_4_5
 		internal void SetReadOnly ()
 		{
 			isReadOnly = true;
@@ -198,9 +188,7 @@ namespace System.Xml
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 
 	}
 }
 
-#endif

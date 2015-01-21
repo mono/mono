@@ -34,9 +34,6 @@ using System.Runtime.InteropServices;
 using System.Resources;
 
 [assembly: AssemblyVersion (Consts.VsVersion)]
-#if (!NET_2_0)
-[assembly: SatelliteContractVersion (Consts.VsVersion)]
-#endif
 
 /* TODO COMPLETE INFORMATION
 

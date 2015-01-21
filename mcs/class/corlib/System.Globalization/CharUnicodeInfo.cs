@@ -30,11 +30,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace System.Globalization
 {
 	public static class CharUnicodeInfo
 	{
+		static CharUnicodeInfo ()
+		{
+			unsafe {
+				GetDataTablePointers (CategoryDataVersion,
+					out category_data, out category_astral_index, out numeric_data,
+					out numeric_data_values, out to_lower_data_low, out to_lower_data_high,
+					out to_upper_data_low, out to_upper_data_high);
+				category_check_pair = category_astral_index != null
+					? (byte)UnicodeCategory.Surrogate
+					: (byte)0xff;
+			}
+		}
+
+		private readonly unsafe static byte *category_data;
+		private readonly unsafe static ushort *category_astral_index;
+		private readonly unsafe static byte *numeric_data; // unused
+		private readonly unsafe static double *numeric_data_values;	 // unused
+		private readonly unsafe static ushort *to_lower_data_low;
+		private readonly unsafe static ushort *to_lower_data_high;
+		private readonly unsafe static ushort *to_upper_data_low;
+		private readonly unsafe static ushort *to_upper_data_high;
+
+		// UnicodeCategory.Surrogate if astral plane
+		// categories are available, 0xff otherwise.
+		private readonly static byte category_check_pair;
+
+		private const int CategoryDataVersion = 4;
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		private unsafe static extern void GetDataTablePointers (int category_data_version,
+			out byte *category_data, out ushort *category_astral_index, out byte *numeric_data,
+			out double *numeric_data_values, out ushort *to_lower_data_low, out ushort *to_lower_data_high,
+			out ushort *to_upper_data_low, out ushort *to_upper_data_high);
+
 		public static int GetDecimalDigitValue (char ch)
 		{
 			int i = (int) ch;
@@ -290,19 +326,109 @@ namespace System.Globalization
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
+			if (((uint)index)>=((uint)s.Length))
+				throw new ArgumentOutOfRangeException("index");
 			return GetNumericValue (s [index]);
 		}
 
 		public static UnicodeCategory GetUnicodeCategory (char ch)
 		{
-			return Char.GetUnicodeCategory (ch);
+			return (InternalGetUnicodeCategory(ch)) ;
 		}
 
 		public static UnicodeCategory GetUnicodeCategory (string s, int index)
 		{
-			if (s == null)
-				throw new ArgumentNullException ("s");
-			return Char.GetUnicodeCategory (s, index);
+			if (s==null)
+				throw new ArgumentNullException("s");
+			if (((uint)index)>=((uint)s.Length)) {
+				throw new ArgumentOutOfRangeException("index");
+			}
+			Contract.EndContractBlock();
+			return InternalGetUnicodeCategory(s, index);
+		}
+
+		internal static char ToLowerInvariant (char c)
+		{
+			unsafe {
+				if (c <= ((char)0x24cf))
+					return (char) to_lower_data_low [c];
+				if (c >= ((char)0xff21))
+					return (char) to_lower_data_high[c - 0xff21];
+			}
+			return c;
+		}
+
+		public static char ToUpperInvariant (char c)
+		{
+			unsafe {
+				if (c <= ((char)0x24e9))
+					return (char) to_upper_data_low [c];
+				if (c >= ((char)0xff21))
+					return (char) to_upper_data_high [c - 0xff21];
+			}
+			return c;
+		}
+
+		internal unsafe static UnicodeCategory InternalGetUnicodeCategory (int ch)
+		{
+			return (UnicodeCategory)(category_data [ch]);
+		}
+
+		internal static UnicodeCategory InternalGetUnicodeCategory (string value, int index) {
+			Contract.Assert(value != null, "value can not be null");
+			Contract.Assert(index < value.Length, "index < value.Length");
+
+			UnicodeCategory c = GetUnicodeCategory (value [index]);
+			if ((byte)c == category_check_pair &&
+				Char.IsSurrogatePair (value, index)) {
+				int u = Char.ConvertToUtf32 (value [index], value [index + 1]);
+				unsafe {
+					// ConvertToUtf32 guarantees 0x10000 <= u <= 0x10ffff
+					int x = (category_astral_index [(u - 0x10000) >> 8] << 8) + (u & 0xff);
+
+					c = (UnicodeCategory)category_data [x];
+				}
+			}
+
+			return c;
+		}
+
+		internal const char  HIGH_SURROGATE_START  = '\ud800';
+		internal const char  HIGH_SURROGATE_END    = '\udbff';
+		internal const char  LOW_SURROGATE_START   = '\udc00';
+		internal const char  LOW_SURROGATE_END     = '\udfff';
+
+		internal static bool IsWhiteSpace(String s, int index)
+		{
+			Contract.Assert(s != null, "s!=null");
+			Contract.Assert(index >= 0 && index < s.Length, "index >= 0 && index < s.Length");
+
+			UnicodeCategory uc = GetUnicodeCategory(s, index);
+			// In Unicode 3.0, U+2028 is the only character which is under the category "LineSeparator".
+			// And U+2029 is th eonly character which is under the category "ParagraphSeparator".
+			switch (uc) {
+				case (UnicodeCategory.SpaceSeparator):
+				case (UnicodeCategory.LineSeparator):
+				case (UnicodeCategory.ParagraphSeparator):
+					return (true);
+			}
+			return (false);
+		}
+
+
+		internal static bool IsWhiteSpace(char c)
+		{
+			UnicodeCategory uc = GetUnicodeCategory(c);
+			// In Unicode 3.0, U+2028 is the only character which is under the category "LineSeparator".
+			// And U+2029 is th eonly character which is under the category "ParagraphSeparator".
+			switch (uc) {
+				case (UnicodeCategory.SpaceSeparator):
+				case (UnicodeCategory.LineSeparator):
+				case (UnicodeCategory.ParagraphSeparator):
+					return (true);
+			}
+
+			return (false);
 		}
 	}
 }

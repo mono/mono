@@ -925,7 +925,6 @@ namespace MonoTests.System.Xml
 				xtr.Read ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void Settings ()
 		{
@@ -1082,7 +1081,6 @@ namespace MonoTests.System.Xml
 			} catch (XmlException) {
 			}
 		}
-#endif
 
 		[Test]
 		public void SurrogatePair ()

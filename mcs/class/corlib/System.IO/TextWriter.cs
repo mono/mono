@@ -33,9 +33,7 @@
 
 using System.Text;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO
 {
@@ -361,7 +359,6 @@ namespace System.IO
 			WriteLine ();
 		}
 
-#if NET_4_5
 		public virtual Task FlushAsync ()
 		{
 			return Task.Factory.StartNew (l => ((TextWriter)l).Flush (), this);
@@ -439,7 +436,6 @@ namespace System.IO
 				t.Item1.WriteLine (t.Item2);
 			}, Tuple.Create (this, value));
 		}
-#endif
 	}
 
 	//
@@ -719,7 +715,6 @@ namespace System.IO
 		}
 		#endregion
 
-#if NET_4_5
 		public override Task FlushAsync ()
 		{
 			lock (this) {
@@ -775,7 +770,6 @@ namespace System.IO
 				return writer.WriteLineAsync (value);
 			}
 		}
-#endif
 		public override Encoding Encoding {
 			get {
 				lock (this) {

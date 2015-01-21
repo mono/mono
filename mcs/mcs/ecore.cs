@@ -3756,6 +3756,10 @@ namespace Mono.CSharp {
 
 		public bool ResolveNameOf (ResolveContext rc, MemberAccess ma)
 		{
+			rc.Report.Error (8093, ma.Location, "An argument to nameof operator cannot be extension method group");
+
+			// Not included in C#6
+			/*
 			ExtensionExpression = ExtensionExpression.Resolve (rc);
 			if (ExtensionExpression == null)
 				return false;
@@ -3769,6 +3773,7 @@ namespace Mono.CSharp {
 			// TODO: Scan full hierarchy
 
 			ma.Error_TypeDoesNotContainDefinition (rc, argType, ma.Name);
+			*/
 			return false;
 		}
 

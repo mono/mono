@@ -18,9 +18,7 @@ namespace MonoTests.System.Collections {
 		// We need a concrete class to test the abstract base class
 		public class ConcreteReadOnlyCollection : ReadOnlyCollectionBase 
 		{
-#if NET_2_0
 			public override int Count { get { return -1; }}
-#endif
 		}
 
 		// Make sure that the Count is 0 for a new object
@@ -29,11 +27,7 @@ namespace MonoTests.System.Collections {
 		{
 			ConcreteReadOnlyCollection myCollection;
 			myCollection = new ConcreteReadOnlyCollection();
-#if NET_2_0
 			Assert.IsTrue (-1 == myCollection.Count);
-#else						
-			Assert.IsTrue ( 0 == myCollection.Count);
-#endif					
 		}
 
 		// Make sure we get an object from GetEnumerator()

@@ -28,11 +28,7 @@
 
 namespace System.Drawing.Imaging {
 
-#if NET_2_0
 	[Flags]
-#else
-	[Serializable]
-#endif
 	public enum PaletteFlags {
 		GrayScale = 2,
 		Halftone = 4,

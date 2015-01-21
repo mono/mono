@@ -366,7 +366,6 @@ namespace System.Drawing
 			return string.Format ("{{X={0},Y={1}}}", x.ToString (CultureInfo.InvariantCulture), 
 				y.ToString (CultureInfo.InvariantCulture));
 		}
-#if NET_2_0
 		public static Point Add (Point pt, Size sz)
 		{
 			return new Point (pt.X + sz.Width, pt.Y + sz.Height);
@@ -381,7 +380,6 @@ namespace System.Drawing
 		{
 			return new Point (pt.X - sz.Width, pt.Y - sz.Height);
 		}
-#endif
 
 	}
 }

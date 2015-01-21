@@ -45,16 +45,12 @@ namespace MonoTests.System.CodeDom.Compiler {
 			Assert.AreEqual ("Block", cgo.BracingStyle, "BracingStyle");
 			Assert.IsFalse (cgo.ElseOnClosing, "ElseOnClosing");
 			Assert.AreEqual ("    ", cgo.IndentString, "IndentString");
-#if NET_2_0
 			Assert.IsFalse (cgo.VerbatimOrder, "VerbatimOrder");
-#endif
 			Assert.IsNull (cgo["BlankLinesBetweenMembers"], "this[BlankLinesBetweenMembers]");
 			Assert.IsNull (cgo["BracingStyle"], "this[BracingStyle]");
 			Assert.IsNull (cgo["ElseOnClosing"], "this[ElseOnClosing]");
 			Assert.IsNull (cgo["IndentString"], "this[IndentString]");
-#if NET_2_0
 			Assert.IsNull (cgo["VerbatimOrder"], "this[VerbatimOrder]");
-#endif
 		}
 
 		[Test]
@@ -70,10 +66,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 			Assert.IsNotNull (cgo["ElseOnClosing"], "this[ElseOnClosing]");
 			cgo.IndentString = cgo.IndentString;
 			Assert.IsNotNull (cgo["IndentString"], "this[IndentString]");
-#if NET_2_0
 			cgo.VerbatimOrder = cgo.VerbatimOrder;
 			Assert.IsNotNull (cgo["VerbatimOrder"], "this[VerbatimOrder]");
-#endif
 		}
 
 		[Test]
@@ -99,12 +93,10 @@ namespace MonoTests.System.CodeDom.Compiler {
 			Assert.AreEqual ("\t", cgo.IndentString, "IndentString-1");
 			cgo["IndentString"] = null;
 			Assert.AreEqual ("    ", cgo.IndentString, "IndentString-2");
-#if NET_2_0
 			cgo.VerbatimOrder = true;
 			Assert.IsTrue (cgo.VerbatimOrder, "VerbatimOrder-1");
 			cgo["VerbatimOrder"] = null;
 			Assert.IsFalse (cgo.VerbatimOrder, "VerbatimOrder-2");
-#endif
 		}
 	}
 }

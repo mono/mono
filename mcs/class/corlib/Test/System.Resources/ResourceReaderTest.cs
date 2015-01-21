@@ -186,7 +186,6 @@ namespace MonoTests.System.Resources
 			reader.Close ();
 		}
 
-#if NET_2_0
 		[Test] // bug #81757
 		public void ReadNullResource ()
 		{
@@ -208,7 +207,6 @@ namespace MonoTests.System.Resources
 				Assert.AreEqual (1, entryCount, "#4");
 			}
 		}
-#endif
 
 		[Test] // bug #79976
 		public void ByteArray ()
@@ -217,19 +215,10 @@ namespace MonoTests.System.Resources
 
 			Stream stream = null;
 
-#if NET_2_0
 			// we currently do not support writing v2 resource files
 			stream = new MemoryStream ();
 			stream.Write (byte_resource_v2, 0, byte_resource_v2.Length);
 			stream.Position = 0;
-#else
-			using (IResourceWriter rw = new ResourceWriter (_tempResourceFile)) {
-				rw.AddResource ("byteArrayTest", content);
-				rw.Generate ();
-			}
-
-			stream = File.OpenRead (_tempResourceFile);
-#endif
 
 			using (stream) {
 				int entryCount = 0;

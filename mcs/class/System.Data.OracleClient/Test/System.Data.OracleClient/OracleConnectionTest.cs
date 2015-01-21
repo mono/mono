@@ -66,7 +66,6 @@ namespace MonoTests.System.Data.OracleClient
 			Assert.AreEqual (string.Empty, connection.ConnectionString, "#3");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ConnectionTimeout ()
 		{
@@ -75,7 +74,6 @@ namespace MonoTests.System.Data.OracleClient
 			connection.ConnectionString = "Data Source=Oracle8i;Integrated Security=yes";
 			Assert.AreEqual (0, connection.ConnectionTimeout, "#2");
 		}
-#endif
 
 		[Test]
 		public void ConnectionTimeout_IDbConnection ()

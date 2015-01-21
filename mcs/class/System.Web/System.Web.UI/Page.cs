@@ -54,9 +54,7 @@ using System.Web.UI.Adapters;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Reflection;
-#if NET_4_0
 using System.Web.Routing;
-#endif
 
 namespace System.Web.UI
 {
@@ -146,13 +144,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	string _title;
 	string _theme;
 	string _styleSheetTheme;
-#if NET_4_0
 	string _metaDescription;
 	string _metaKeywords;
 	Control _autoPostBackControl;
 	
 	bool frameworkInitialized;
-#endif
 	Hashtable items;
 
 	bool _maintainScrollPositionOnPostBack;
@@ -183,9 +179,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			viewStateEncryptionMode = ViewStateEncryptionMode.Auto;
 			_viewState = true;
 		}
-#if NET_4_0
 		this.ViewStateMode = ViewStateMode.Enabled;
-#endif
 	}
 
 	#endregion		
@@ -564,7 +558,6 @@ public partial class Page : TemplateControl, IHttpHandler
 				_pageTheme.SetPage (this);
 		}
 	}
-#if NET_4_0
 	public Control AutoPostBackControl {
 		get { return _autoPostBackControl; }
 		set { _autoPostBackControl = value; }
@@ -638,7 +631,6 @@ public partial class Page : TemplateControl, IHttpHandler
 				htmlHeader.Keywords = value;
 		}
 	}
-#endif
 	[Localizable (true)] 
 	[Bindable (true)] 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -1191,9 +1183,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		_appCulture = Thread.CurrentThread.CurrentCulture;
 		_appUICulture = Thread.CurrentThread.CurrentUICulture;
 		FrameworkInitialize ();
-#if NET_4_0
 		frameworkInitialized = true;
-#endif
 		context.ErrorPage = _errorPage;
 
 		try {
@@ -1497,12 +1487,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		string eventTarget = postdata [postEventSourceID];
 		IPostBackEventHandler target;
 		if (String.IsNullOrEmpty (eventTarget)) {
-#if NET_4_0
 			target = AutoPostBackControl as IPostBackEventHandler;
 			if (target != null)
 				RaisePostBackEvent (target, null);
 			else
-#endif
 			if (formPostedRequiresRaiseEvent != null)
 				RaisePostBackEvent (formPostedRequiresRaiseEvent, null);
 			else
@@ -1511,10 +1499,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 
 		target = FindControl (eventTarget, true) as IPostBackEventHandler;
-#if NET_4_0
 		if (target == null)
 			target = AutoPostBackControl as IPostBackEventHandler;
-#endif
 		if (target == null)
 			return;
 
@@ -1690,9 +1676,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		object viewState = null;
 		
 		if (EnableViewState
-#if NET_4_0
 		    && this.ViewStateMode == ViewStateMode.Enabled
-#endif
 		)
 			viewState = SaveViewStateRecursive ();
 		
@@ -2047,7 +2031,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			htmlHeader.Title = _title;
 			_title = null;
 		}
-#if NET_4_0
 		if (_metaDescription != null) {
 			htmlHeader.Description = _metaDescription;
 			_metaDescription = null;
@@ -2057,7 +2040,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			htmlHeader.Keywords = _metaKeywords;
 			_metaKeywords = null;
 		}
-#endif
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]

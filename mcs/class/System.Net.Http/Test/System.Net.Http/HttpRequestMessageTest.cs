@@ -463,6 +463,40 @@ namespace MonoTests.System.Net.Http
 						new ProductInfoHeaderValue ("MonoDevelop", null),
 						new ProductInfoHeaderValue ("(Unix 3.13.0; amd64; en-US; Octokit 0.3.4)")
 				});
+
+			Assert.IsTrue (se, "#1");
+			Assert.AreEqual ("MonoDevelop (Unix 3.13.0; amd64; en-US; Octokit 0.3.4)", headers.UserAgent.ToString (), "#2");
+		}
+
+		[Test]
+		public void Headers_UserAgentExtraWithTabs ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			var headers = message.Headers;
+
+			headers.Add ("User-Agent", "A \t  \t B");
+
+			var se = headers.UserAgent.SequenceEqual (
+				new[] {
+						new ProductInfoHeaderValue ("A", null),
+						new ProductInfoHeaderValue ("B", null)
+				});
+
+			Assert.IsTrue (se, "#1");
+			Assert.AreEqual ("A B", headers.UserAgent.ToString (), "#2");
+		}
+
+		[Test]
+		public void Headers_UserAgentInvalid ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			var headers = message.Headers;
+
+			try {
+				headers.Add ("User-Agent", "A(B)");
+				Assert.Fail ("#1");
+			} catch (FormatException) {
+			}
 		}
 
 		[Test]

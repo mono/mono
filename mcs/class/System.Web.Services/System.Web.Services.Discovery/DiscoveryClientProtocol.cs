@@ -234,9 +234,7 @@ namespace System.Web.Services.Discovery {
 			}
 		}
 
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible (false)]
-#endif
 		[Obsolete ("This method will be removed from a future version. The method call is no longer required for resource discovery", false)]
 		public void LoadExternals ()
 		{

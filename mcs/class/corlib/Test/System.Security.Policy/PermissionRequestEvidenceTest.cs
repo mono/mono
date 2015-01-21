@@ -42,11 +42,9 @@ namespace MonoTests.System.Security.Policy {
 
 		private string AdjustNewLine (string s) 
 		{
-#if NET_2_0
 			// no spaces are used in Fx 2.0
 			while (s.IndexOf ("\r\n ") != -1)
 				s = s.Replace ("\r\n ", "\r\n");
-#endif
 			if (Environment.NewLine != "\r\n")
 				s = s.Replace ("\r\n", Environment.NewLine);
 			return s;

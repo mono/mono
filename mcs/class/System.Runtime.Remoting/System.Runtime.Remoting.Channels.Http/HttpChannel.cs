@@ -34,9 +34,7 @@ namespace System.Runtime.Remoting.Channels.Http
 
 	public class HttpChannel : BaseChannelWithProperties,
 		IChannel, IChannelReceiver, IChannelReceiverHook, IChannelSender
-#if NET_2_0
 		, ISecurableChannel
-#endif
 	{
 		HttpClientChannel client;
 		HttpServerChannel server;
@@ -223,7 +221,6 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		#endregion
 
-#if NET_2_0
 		#region ISecurableChannel
 
 		public bool IsSecured
@@ -233,6 +230,5 @@ namespace System.Runtime.Remoting.Channels.Http
 		}
 
 		#endregion
-#endif
 	}
 }

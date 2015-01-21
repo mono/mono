@@ -37,9 +37,7 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[Designer ("System.Web.UI.Design.WebControls.CheckBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
 	public class RadioButton : CheckBox , IPostBackDataHandler
 	{
 		public RadioButton () : base ("radio")
@@ -47,9 +45,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue ("")]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public virtual string GroupName
@@ -72,11 +68,7 @@ namespace System.Web.UI.WebControls {
 					return unique;
 				int colon = -1;
 				if (unique != null) {
-#if NET_2_0
 					colon = unique.LastIndexOf (IdSeparator);
-#else
-					colon = unique.IndexOf (IdSeparator);
-#endif
 				}
 				
 				if (colon == -1)
@@ -92,12 +84,10 @@ namespace System.Web.UI.WebControls {
 				if (val != null)
 					return val;
 				
-#if NET_2_0
 				string id = ID;
 				if (!String.IsNullOrEmpty (id))
 					return id;
 				else
-#endif
 					return UniqueID;
 			}
 			set {
@@ -107,35 +97,25 @@ namespace System.Web.UI.WebControls {
 
 		internal override void InternalAddAttributesToRender (HtmlTextWriter w, bool enabled)
 		{
-#if NET_2_0
 			Page page = Page;
 			if (page != null)
 				page.ClientScript.RegisterForEventValidation (NameAttribute, ValueAttribute);
-#endif
 			base.InternalAddAttributesToRender (w, enabled);
 			w.AddAttribute (HtmlTextWriterAttribute.Value, ValueAttribute);
 		}
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 		}
 
-#if NET_2_0
 		protected override
-#endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
 		{
 			string value = postCollection [NameAttribute];
 			bool checkedOnClient = value == ValueAttribute;
-#if NET_2_0
 			ValidateEvent (NameAttribute, value);
-#endif
 			if (Checked == checkedOnClient)
 				return false;
 
@@ -143,14 +123,12 @@ namespace System.Web.UI.WebControls {
 			return checkedOnClient;			
 		}
 
-#if NET_2_0
 		protected override void RaisePostDataChangedEvent ()
 		{
 			if (CausesValidation)
 				Page.Validate (ValidationGroup);
 			OnCheckedChanged (EventArgs.Empty);
 		}
-#endif
 		
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{

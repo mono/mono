@@ -73,9 +73,7 @@ namespace System.Web.Compilation
 			AddPrimitiveArgument (arguments, parser.OutputCacheVaryByCustom);
 			AddPrimitiveArgument (arguments, parser.OutputCacheSqlDependency);
 			AddPrimitiveArgument (arguments, parser.OutputCacheShared);
-#if NET_4_0
 			arguments.Add (new CodeAttributeArgument ("ProviderName", new CodePrimitiveExpression (parser.ProviderName)));
-#endif
 			mainClass.CustomAttributes.Add (cad);
 		}
 

@@ -106,7 +106,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("System.Windows.Forms.RadioButton, Checked: False" , rButton1.ToString (), "#9");
 		}
 
-#if NET_2_0
 		[Test]
 		public void AutoSizeText ()
 		{
@@ -125,7 +124,6 @@ namespace MonoTests.System.Windows.Forms
 			if (rb.Width == width)
 				Assert.Fail ("RadioButton did not autosize, actual: {0}", rb.Width);
 		}
-#endif
 	}
 	
 	[TestFixture]

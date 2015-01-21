@@ -20,7 +20,6 @@
 // Copyright (c) 2007 Novell, Inc.
 //
 
-#if NET_2_0
 
 using System;
 using System.Data;
@@ -1996,4 +1995,3 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 	}
 }
 
-#endif

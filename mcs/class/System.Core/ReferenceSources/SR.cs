@@ -63,4 +63,11 @@ partial class SR
 	public const string SynchronizationLockException_MisMatchedRead = "SynchronizationLockException_MisMatchedRead";
 	public const string SynchronizationLockException_MisMatchedUpgrade = "SynchronizationLockException_MisMatchedUpgrade";
 	public const string SynchronizationLockException_MisMatchedWrite = "SynchronizationLockException_MisMatchedWrite";
+
+	public const string Arg_ArrayPlusOffTooSmall = "Arg_ArrayPlusOffTooSmall";
+	public const string Arg_HSCapacityOverflow = "Arg_HSCapacityOverflow";
+	public const string ArgumentOutOfRange_NeedNonNegNum = "ArgumentOutOfRange_NeedNonNegNum";
+	public const string InvalidOperation_EnumFailedVersion = "InvalidOperation_EnumFailedVersion";
+	public const string InvalidOperation_EnumOpCantHappen = "InvalidOperation_EnumOpCantHappen";
+	public const string Serialization_MissingKeys = "Serialization_MissingKeys";
 }

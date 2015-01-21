@@ -44,9 +44,7 @@ namespace System.Web.Services.Protocols {
 		string responseElementName;
 		string responseNamespace;
 		
-#if NET_2_0
 		SoapBindingUse use;
-#endif
 		#endregion // Fields
 
 		#region Constructors
@@ -100,13 +98,11 @@ namespace System.Web.Services.Protocols {
 			set { responseNamespace = value; }
 		}
 		
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public SoapBindingUse Use {
 			get { return use; }
 			set { use = value; }
 		}
-#endif
 
 		#endregion // Properties
 	}

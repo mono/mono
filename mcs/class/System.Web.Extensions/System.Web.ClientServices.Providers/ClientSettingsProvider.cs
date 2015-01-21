@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_3_5
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -97,4 +96,3 @@ namespace System.Web.ClientServices.Providers
 		}
 	}
 }
-#endif

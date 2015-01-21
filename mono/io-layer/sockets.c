@@ -45,10 +45,12 @@
 
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <netdb.h>
 #include <arpa/inet.h>
 #ifdef HAVE_SYS_SENDFILE_H
 #include <sys/sendfile.h>
+#endif
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
 #endif
 
 #if 0
@@ -346,7 +348,7 @@ int _wapi_connect(guint32 fd, const struct sockaddr *serv_addr,
 		}
 
 		fds.fd = fd;
-		fds.events = POLLOUT;
+		fds.events = MONO_POLLOUT;
 		while (mono_poll (&fds, 1, -1) == -1 &&
 		       !_wapi_thread_cur_apc_pending ()) {
 			if (errno != EINTR) {

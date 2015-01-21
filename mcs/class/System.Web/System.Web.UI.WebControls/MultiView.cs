@@ -28,7 +28,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 
 using System;
 using System.Globalization;
@@ -41,11 +40,7 @@ namespace System.Web.UI.WebControls
 	[ControlBuilder (typeof(MultiViewControlBuilder))]
 	[Designer ("System.Web.UI.Design.WebControls.MultiViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxData ("<{0}:MultiView runat=\"server\"></{0}:MultiView>")]
-#if NET_2_0
 	[ParseChildren (typeof(View))]
-#else
-	[ParseChildren (false)]
-#endif
 	[DefaultEvent ("ActiveViewChanged")]
 	public class MultiView: Control
 	{
@@ -232,4 +227,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

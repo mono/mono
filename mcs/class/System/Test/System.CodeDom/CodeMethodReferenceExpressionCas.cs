@@ -57,9 +57,7 @@ namespace MonoCasTests.System.CodeDom {
 			cmre.MethodName = "mono";
 			Assert.IsNull (cmre.TargetObject, "TargetObject");
 			cmre.TargetObject = new CodeExpression ();
-#if NET_2_0
 			Assert.AreEqual (0, cmre.TypeArguments.Count, "TypeArguments");
-#endif
 		}
 
 		[Test]
@@ -72,11 +70,8 @@ namespace MonoCasTests.System.CodeDom {
 			cmre.MethodName = String.Empty;
 			Assert.AreSame (target, cmre.TargetObject, "TargetObject");
 			cmre.TargetObject = new CodeExpression ();
-#if NET_2_0
 			Assert.AreEqual (0, cmre.TypeArguments.Count, "TypeArguments");
-#endif
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Constructor2_Deny_Unrestricted ()
@@ -90,7 +85,6 @@ namespace MonoCasTests.System.CodeDom {
 			cmre.TargetObject = new CodeExpression ();
 			Assert.AreEqual (1, cmre.TypeArguments.Count, "TypeArguments");
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void LinkDemand_Deny_Unrestricted ()

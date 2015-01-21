@@ -33,9 +33,7 @@
 //
 
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.Collections.Specialized;
 
 namespace System.Xml
@@ -123,11 +121,7 @@ namespace System.Xml
 			get { return defaultNamespace == null ? string.Empty : defaultNamespace; }
 		}
 
-#if NET_2_0
 		public virtual XmlNameTable NameTable {
-#else
-		public XmlNameTable NameTable {
-#endif
 			get { return nameTable; }
 		}
 
@@ -212,7 +206,6 @@ namespace System.Xml
 			return ht.Keys.GetEnumerator ();
 		}
 
-#if NET_2_0
 		public virtual IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			IDictionary namespaceTable = GetNamespacesInScopeImpl (scope);
@@ -223,12 +216,6 @@ namespace System.Xml
 			}
 			return namespaces;
 		}
-#else
-		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
-		{
-			return GetNamespacesInScopeImpl (scope);
-		}
-#endif
 
 		internal virtual IDictionary GetNamespacesInScopeImpl (XmlNamespaceScope scope)
 		{
@@ -310,11 +297,7 @@ namespace System.Xml
 
 		public virtual string LookupPrefix (string uri)
 		{
-#if NET_2_0
 			return LookupPrefix (uri, false);
-#else
-			return LookupPrefix (uri, true);
-#endif
 		}
 
 		private bool CompareString (string s1, string s2, bool atomizedNames)

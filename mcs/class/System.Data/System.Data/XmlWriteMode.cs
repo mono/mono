@@ -37,9 +37,6 @@ namespace System.Data
 	/// <summary>
 	/// Use the members of this enumeration when setting the WriteMode parameter of the WriteXml method.
 	/// </summary>
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum XmlWriteMode
 	{
 		WriteSchema = 0,

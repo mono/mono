@@ -79,64 +79,33 @@ namespace MonoTests.System.Diagnostics
 			}
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (file);
-#if NET_2_0
 			Assert.IsNull (fvi.Comments, "#1");
 			Assert.IsNull (fvi.CompanyName, "#2");
-#else
-			Assert.AreEqual (string.Empty, fvi.Comments, "#1");
-			Assert.AreEqual (string.Empty, fvi.CompanyName, "#2");
-#endif
 			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
-#if NET_2_0
 			Assert.IsNull (fvi.FileDescription, "#4");
-#else
-			Assert.AreEqual (string.Empty, fvi.FileDescription, "#4");
-#endif
 			Assert.AreEqual (0, fvi.FileMajorPart, "#5");
 			Assert.AreEqual (0, fvi.FileMinorPart, "#6");
 			Assert.AreEqual (file, fvi.FileName, "#7");
 			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
-#if NET_2_0
 			Assert.IsNull (fvi.FileVersion, "#9");
 			Assert.IsNull (fvi.InternalName, "#10");
-#else
-			Assert.AreEqual (string.Empty, fvi.FileVersion, "#9");
-			Assert.AreEqual (string.Empty, fvi.InternalName, "#10");
-#endif
 			Assert.IsFalse (fvi.IsDebug, "#11");
 			Assert.IsFalse (fvi.IsPatched, "#12");
 			Assert.IsFalse (fvi.IsPreRelease, "#13");
 			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
 			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
-#if NET_2_0
 			Assert.IsNull (fvi.Language, "#16");
 			Assert.IsNull (fvi.LegalCopyright, "#17");
 			Assert.IsNull (fvi.LegalTrademarks, "#18");
 			Assert.IsNull (fvi.OriginalFilename, "#19");
 			Assert.IsNull (fvi.PrivateBuild, "#20");
-#else
-			Assert.AreEqual (string.Empty, fvi.Language, "#16");
-			Assert.AreEqual (string.Empty, fvi.LegalCopyright, "#17");
-			Assert.AreEqual (string.Empty, fvi.LegalTrademarks, "#18");
-			Assert.AreEqual (string.Empty, fvi.OriginalFilename, "#19");
-			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
-#endif
 			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
 			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
 			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
-#if NET_2_0
 			Assert.IsNull (fvi.ProductName, "#24");
-#else
-			Assert.AreEqual (string.Empty, fvi.ProductName, "#24");
-#endif
 			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
-#if NET_2_0
 			Assert.IsNull (fvi.ProductVersion, "#26");
 			Assert.IsNull (fvi.SpecialBuild, "#27");
-#else
-			Assert.AreEqual (string.Empty, fvi.ProductVersion, "#26");
-			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
-#endif
 		}
 
 #if !MONOTOUCH
@@ -213,64 +182,33 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-#if NET_2_0
 			Assert.IsNull (fvi.Comments, "#1");
 			Assert.IsNull (fvi.CompanyName, "#2");
-#else
-			Assert.AreEqual (string.Empty, fvi.Comments, "#1");
-			Assert.AreEqual (string.Empty, fvi.CompanyName, "#2");
-#endif
 			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
-#if NET_2_0
 			Assert.IsNull (fvi.FileDescription, "#4");
-#else
-			Assert.AreEqual (string.Empty, fvi.FileDescription, "#4");
-#endif
 			Assert.AreEqual (0, fvi.FileMajorPart, "#5");
 			Assert.AreEqual (0, fvi.FileMinorPart, "#6");
 			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
 			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
-#if NET_2_0
 			Assert.IsNull (fvi.FileVersion, "#9");
 			Assert.IsNull (fvi.InternalName, "#10");
-#else
-			Assert.AreEqual (string.Empty, fvi.FileVersion, "#9");
-			Assert.AreEqual (string.Empty, fvi.InternalName, "#10");
-#endif
 			Assert.IsFalse (fvi.IsDebug, "#11");
 			Assert.IsFalse (fvi.IsPatched, "#12");
 			Assert.IsFalse (fvi.IsPreRelease, "#13");
 			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
 			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
-#if NET_2_0
 			Assert.IsNull (fvi.Language, "#16");
 			Assert.IsNull (fvi.LegalCopyright, "#17");
 			Assert.IsNull (fvi.LegalTrademarks, "#18");
 			Assert.IsNull (fvi.OriginalFilename, "#19");
 			Assert.IsNull (fvi.PrivateBuild, "#20");
-#else
-			Assert.AreEqual (string.Empty, fvi.Language, "#16");
-			Assert.AreEqual (string.Empty, fvi.LegalCopyright, "#17");
-			Assert.AreEqual (string.Empty, fvi.LegalTrademarks, "#18");
-			Assert.AreEqual (string.Empty, fvi.OriginalFilename, "#19");
-			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
-#endif
 			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
 			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
 			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
-#if NET_2_0
 			Assert.IsNull (fvi.ProductName, "#24");
-#else
-			Assert.AreEqual (string.Empty, fvi.ProductName, "#24");
-#endif
 			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
-#if NET_2_0
 			Assert.IsNull (fvi.ProductVersion, "#26");
 			Assert.IsNull (fvi.SpecialBuild, "#27");
-#else
-			Assert.AreEqual (string.Empty, fvi.ProductVersion, "#26");
-			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
-#endif
 		}
 
 		[Test] // DefineUnmanagedResource (String)
@@ -777,64 +715,33 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib3g.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-#if NET_2_0
 			Assert.IsNull (fvi.Comments, "#1");
 			Assert.IsNull (fvi.CompanyName, "#2");
-#else
-			Assert.AreEqual (string.Empty, fvi.Comments, "#1");
-			Assert.AreEqual (string.Empty, fvi.CompanyName, "#2");
-#endif
 			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
-#if NET_2_0
 			Assert.IsNull (fvi.FileDescription, "#4");
-#else
-			Assert.AreEqual (string.Empty, fvi.FileDescription, "#4");
-#endif
 			Assert.AreEqual (0, fvi.FileMajorPart, "#5");
 			Assert.AreEqual (0, fvi.FileMinorPart, "#6");
 			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
 			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
-#if NET_2_0
 			Assert.IsNull (fvi.FileVersion, "#9");
 			Assert.IsNull (fvi.InternalName, "#10");
-#else
-			Assert.AreEqual (string.Empty, fvi.FileVersion, "#9");
-			Assert.AreEqual (string.Empty, fvi.InternalName, "#10");
-#endif
 			Assert.IsFalse (fvi.IsDebug, "#11");
 			Assert.IsFalse (fvi.IsPatched, "#12");
 			Assert.IsFalse (fvi.IsPreRelease, "#13");
 			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
 			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
-#if NET_2_0
 			Assert.IsNull (fvi.Language, "#16");
 			Assert.IsNull (fvi.LegalCopyright, "#17");
 			Assert.IsNull (fvi.LegalTrademarks, "#18");
 			Assert.IsNull (fvi.OriginalFilename, "#19");
 			Assert.IsNull (fvi.PrivateBuild, "#20");
-#else
-			Assert.AreEqual (string.Empty, fvi.Language, "#16");
-			Assert.AreEqual (string.Empty, fvi.LegalCopyright, "#17");
-			Assert.AreEqual (string.Empty, fvi.LegalTrademarks, "#18");
-			Assert.AreEqual (string.Empty, fvi.OriginalFilename, "#19");
-			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
-#endif
 			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
 			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
 			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
-#if NET_2_0
 			Assert.IsNull (fvi.ProductName, "#24");
-#else
-			Assert.AreEqual (string.Empty, fvi.ProductName, "#24");
-#endif
 			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
-#if NET_2_0
 			Assert.IsNull (fvi.ProductVersion, "#26");
 			Assert.IsNull (fvi.SpecialBuild, "#27");
-#else
-			Assert.AreEqual (string.Empty, fvi.ProductVersion, "#26");
-			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
-#endif
 		}
 
 		[Test] // DefineUnmanagedResource (String)
@@ -916,64 +823,33 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib3h.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-#if NET_2_0
 			Assert.IsNull (fvi.Comments, "#1");
 			Assert.IsNull (fvi.CompanyName, "#2");
-#else
-			Assert.AreEqual (string.Empty, fvi.Comments, "#1");
-			Assert.AreEqual (string.Empty, fvi.CompanyName, "#2");
-#endif
 			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
-#if NET_2_0
 			Assert.IsNull (fvi.FileDescription, "#4");
-#else
-			Assert.AreEqual (string.Empty, fvi.FileDescription, "#4");
-#endif
 			Assert.AreEqual (0, fvi.FileMajorPart, "#5");
 			Assert.AreEqual (0, fvi.FileMinorPart, "#6");
 			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
 			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
-#if NET_2_0
 			Assert.IsNull (fvi.FileVersion, "#9");
 			Assert.IsNull (fvi.InternalName, "#10");
-#else
-			Assert.AreEqual (string.Empty, fvi.FileVersion, "#9");
-			Assert.AreEqual (string.Empty, fvi.InternalName, "#10");
-#endif
 			Assert.IsFalse (fvi.IsDebug, "#11");
 			Assert.IsFalse (fvi.IsPatched, "#12");
 			Assert.IsFalse (fvi.IsPreRelease, "#13");
 			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
 			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
-#if NET_2_0
 			Assert.IsNull (fvi.Language, "#16");
 			Assert.IsNull (fvi.LegalCopyright, "#17");
 			Assert.IsNull (fvi.LegalTrademarks, "#18");
 			Assert.IsNull (fvi.OriginalFilename, "#19");
 			Assert.IsNull (fvi.PrivateBuild, "#20");
-#else
-			Assert.AreEqual (string.Empty, fvi.Language, "#16");
-			Assert.AreEqual (string.Empty, fvi.LegalCopyright, "#17");
-			Assert.AreEqual (string.Empty, fvi.LegalTrademarks, "#18");
-			Assert.AreEqual (string.Empty, fvi.OriginalFilename, "#19");
-			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
-#endif
 			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
 			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
 			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
-#if NET_2_0
 			Assert.IsNull (fvi.ProductName, "#24");
-#else
-			Assert.AreEqual (string.Empty, fvi.ProductName, "#24");
-#endif
 			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
-#if NET_2_0
 			Assert.IsNull (fvi.ProductVersion, "#26");
 			Assert.IsNull (fvi.SpecialBuild, "#27");
-#else
-			Assert.AreEqual (string.Empty, fvi.ProductVersion, "#26");
-			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
-#endif
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
@@ -1439,13 +1315,8 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual (5, fvi.FileMajorPart, "#5");
 			Assert.AreEqual (4, fvi.FileMinorPart, "#6");
 			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
-#if NET_2_0
 			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
 			Assert.AreEqual ("5.4.7.0", fvi.FileVersion, "#9");
-#else
-			Assert.AreEqual (65535, fvi.FilePrivatePart, "#8");
-			Assert.AreEqual ("5.4.7.65535", fvi.FileVersion, "#9");
-#endif
 			Assert.AreEqual ("lib1g", fvi.InternalName, "#10");
 			Assert.IsFalse (fvi.IsDebug, "#11");
 			Assert.IsFalse (fvi.IsPatched, "#12");
@@ -1542,22 +1413,13 @@ namespace MonoTests.System.Diagnostics
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
 			Assert.AreEqual ("System Test", fvi.Comments, "#1");
 			Assert.AreEqual (" ", fvi.CompanyName, "#2");
-#if NET_2_0
 			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
-#else
-			Assert.AreEqual (65535, fvi.FileBuildPart, "#3");
-#endif
 			Assert.AreEqual (" ", fvi.FileDescription, "#4");
 			Assert.AreEqual (5, fvi.FileMajorPart, "#5");
 			Assert.AreEqual (4, fvi.FileMinorPart, "#6");
 			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
-#if NET_2_0
 			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
 			Assert.AreEqual ("5.4.0.0", fvi.FileVersion, "#9");
-#else
-			Assert.AreEqual (65535, fvi.FilePrivatePart, "#8");
-			Assert.AreEqual ("5.4.65535.65535", fvi.FileVersion, "#9");
-#endif
 			Assert.AreEqual ("lib1h", fvi.InternalName, "#10");
 			Assert.IsFalse (fvi.IsDebug, "#11");
 			Assert.IsFalse (fvi.IsPatched, "#12");
@@ -2390,13 +2252,8 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual (3, fvi.FileMajorPart, "#5");
 			Assert.AreEqual (5, fvi.FileMinorPart, "#6");
 			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
-#if NET_2_0
 			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
 			Assert.AreEqual ("3.5.7.0", fvi.FileVersion, "#9");
-#else
-			Assert.AreEqual (65535, fvi.FilePrivatePart, "#8");
-			Assert.AreEqual ("3.5.7.65535", fvi.FileVersion, "#9");
-#endif
 			Assert.AreEqual ("lib2f", fvi.InternalName, "#10");
 			Assert.IsFalse (fvi.IsDebug, "#11");
 			Assert.IsFalse (fvi.IsPatched, "#12");

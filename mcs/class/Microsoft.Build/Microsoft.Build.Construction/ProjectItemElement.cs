@@ -65,23 +65,11 @@ namespace Microsoft.Build.Construction
                 string keepDuplicates;
 		string keepMetadata;
 		string removeMetadata;
-		#if NET_4_5
                 public
-                #else
-                internal
-                #endif
                 string KeepDuplicates { get { return keepDuplicates ?? String.Empty; } set { keepDuplicates = value; } }
-		#if NET_4_5
                 public
-                #else
-                internal
-                #endif
 		string KeepMetadata { get { return keepMetadata ?? String.Empty; } set { keepMetadata = value; } }
-		#if NET_4_5
                 public
-                #else
-                internal
-                #endif
 		string RemoveMetadata { get { return removeMetadata ?? String.Empty; } set { removeMetadata = value; } }
                 
                 public ProjectMetadataElement AddMetadata (string name, string unevaluatedValue)
@@ -142,18 +130,10 @@ namespace Microsoft.Build.Construction
                         AppendChild (metadata);
                         return metadata;
                 }
-#if NET_4_5
                  public ElementLocation ExcludeLocation { get; private set; }
                  public ElementLocation IncludeLocation { get; private set; }
                  public ElementLocation KeepDuplicatesLocation { get; private set; }
                  public ElementLocation RemoveLocation { get; private set; }
                  public ElementLocation RemoveMetadataLocation { get; private set; }
-#else
-                 ElementLocation ExcludeLocation { get; set; }
-                 ElementLocation IncludeLocation { get; set; }
-                 ElementLocation KeepDuplicatesLocation { get; set; }
-                 ElementLocation RemoveLocation { get; set; }
-                 ElementLocation RemoveMetadataLocation { get; set; }
-#endif
         }
 }

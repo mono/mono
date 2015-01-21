@@ -324,9 +324,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-#if NET_2_0
 	[Ignore(".NET DOM implementation does not match W3C DOM specification.")]
-#endif
         public void core0006A()
         {
             string computedValue = "";

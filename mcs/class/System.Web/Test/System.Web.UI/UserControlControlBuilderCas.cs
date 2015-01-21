@@ -55,7 +55,6 @@ namespace MonoCasTests.System.Web.UI {
 			uccb.SetTagInnerText ("mono");
 		}
 
-#if NET_2_0
 		[Test]
 		[AspNetHostingPermission (SecurityAction.Deny, Level = AspNetHostingPermissionLevel.Minimal)]
 		[ExpectedException (typeof (SecurityException))]
@@ -71,7 +70,6 @@ namespace MonoCasTests.System.Web.UI {
 		{
 			new UserControlControlBuilder ().BuildObject ();
 		}
-#endif
 
 		// LinkDemand
 

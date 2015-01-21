@@ -43,17 +43,12 @@ using System.Data.Common;
 using System.Collections;
 using System.Globalization;
 using System.Xml;
-#if NET_2_0
 using System.ComponentModel;
-#endif
 
 namespace System.Data {
 	/// <summary>
 	/// Represents a row of data in a DataTable.
 	/// </summary>
-#if !NET_2_0
-	[Serializable]
-#endif
 	public class DataRow {
 		#region Fields
 
@@ -171,11 +166,7 @@ namespace System.Data {
 				DataColumn column = _table.Columns [columnIndex];
 				_table.ChangingDataColumn (this, column, value);
 
-#if NET_2_0
 				if (value == null && column.DataType.IsValueType)
-#else
-				if (value == null && column.DataType != typeof (string))
-#endif
 					throw new ArgumentException ("Canot set column '"
 						+ column.ColumnName + "' to be null."
 						+ " Please use DBNull instead.");
@@ -336,7 +327,6 @@ namespace System.Data {
 					return DataRowState.Deleted;
 				return DataRowState.Modified;
 			}
-#if NET_2_0
 			internal set {
 				if (DataRowState.Detached == value) {
 					Original = -1;
@@ -349,10 +339,8 @@ namespace System.Data {
 				if (DataRowState.Deleted == value)
 					Current = -1;
 			}
-#endif
 		}
 
-#if NET_2_0
 		public void SetAdded ()
 		{
 			if (RowState != DataRowState.Unchanged)
@@ -367,16 +355,13 @@ namespace System.Data {
 			Current = _table.RecordCache.NewRecord ();
 			_table.RecordCache.CopyRecord (_table, Original, Current);
 		}
-#endif
 
 		/// <summary>
 		/// Gets the DataTable for which this row has a schema.
 		/// </summary>
 		public DataTable Table {
 			get { return _table; }
-#if NET_2_0
 			internal set { _table = value; }
-#endif
 		}
 
 		/// <summary>
@@ -442,10 +427,8 @@ namespace System.Data {
 				Current = Proposed;
 				Proposed = -1;
 			}
-#if NET_2_0
 			if ((action & (DataRowAction.ChangeCurrentAndOriginal | DataRowAction.ChangeOriginal)) != 0)
 				Original = Current;
-#endif
 		}
 
 		void Detach ()
@@ -622,9 +605,7 @@ namespace System.Data {
 		/// <summary>
 		/// Begins an edit operation on a DataRow object.
 		/// </summary>
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public void BeginEdit ()
 		{
 			if (_inChangingEvent)
@@ -645,9 +626,7 @@ namespace System.Data {
 		/// <summary>
 		/// Cancels the current edit on the row.
 		/// </summary>
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public void CancelEdit ()
 		{
 			 if (_inChangingEvent)
@@ -812,9 +791,7 @@ namespace System.Data {
 		/// <summary>
 		/// Ends the edit occurring on the row.
 		/// </summary>
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public void EndEdit ()
 		{
 			if (_inChangingEvent)
@@ -1636,7 +1613,6 @@ namespace System.Data {
 
 		#endregion // Methods
 
-#if NET_2_0
 		/// <summary>
 		///    This method loads a given value into the existing row affecting versions,
 		///    state based on the LoadOption.  The matrix of changes for this method are as
@@ -1697,7 +1673,6 @@ namespace System.Data {
 				}
 			}
 		}
-#endif // NET_2_0
 
 		DataColumn GetColumn (string columnName)
 		{

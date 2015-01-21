@@ -32,7 +32,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 
 using NUnit.Framework;
-#if NET_2_0
 namespace MonoTests.System
 {
 	public class TimeZoneInfoTest
@@ -286,6 +285,20 @@ namespace MonoTests.System
 				// DST end: 4/6/2015 3:00:00 AM
 				dt = new DateTime (2014, 10, 9, 23, 0, 0, DateTimeKind.Utc);
 				Assert.IsTrue (tz.IsDaylightSavingTime (dt), "#3.1");
+			}
+
+			[Test] //Covers #26008
+			public void DSTWithFloatingDateRule ()
+			{
+				// Construct a custom time zone where daylight saving time starts on the
+				// 2nd Sunday in March.
+				var transitionToDaylight = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 0, 0), 3, 2, DayOfWeek.Sunday);
+				var transitionToStandard = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 0, 0), 11, 1, DayOfWeek.Sunday);
+				var adjustment = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (DateTime.MinValue.Date, DateTime.MaxValue.Date, new TimeSpan (1, 0, 0), transitionToDaylight, transitionToStandard);
+				var timeZone = TimeZoneInfo.CreateCustomTimeZone ("BugCheck", new TimeSpan (-8, 0, 0), "Testing", "Testing Standard", "Testing Daylight", new TimeZoneInfo.AdjustmentRule [] { adjustment });
+				// See if March 7, 2014 is listed as being during daylight saving time.
+				// If it is DST, then the runtime has the bug that we are looking for.
+				Assert.IsFalse (timeZone.IsDaylightSavingTime (new DateTime (2014, 3, 7, 12, 0, 0, DateTimeKind.Unspecified)));
 			}
 		}
 		
@@ -943,4 +956,3 @@ namespace MonoTests.System
 		}
 	}
 }
-#endif

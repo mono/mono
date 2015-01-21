@@ -108,7 +108,6 @@ namespace System.Web.Security
 			return MachineKeySectionUtils.GetHexString (result);
 		}
 
-#if NET_4_5
 		public static byte[] Protect (byte[] userData, params string[] purposes)
 		{
 			if (userData == null)
@@ -162,6 +161,5 @@ namespace System.Web.Security
 				return hash.ComputeHash (bytes, 0, bytes.Length);
 			}
 		}
-#endif
 	}
 }

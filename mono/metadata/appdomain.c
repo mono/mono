@@ -78,7 +78,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 113
+#define MONO_CORLIB_VERSION 114
 
 typedef struct
 {
@@ -2053,6 +2053,7 @@ gint32
 ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomain *ad, 
 											MonoReflectionAssembly *refass, MonoArray *args)
 {
+	MonoError error;
 	MonoImage *image;
 	MonoMethod *method;
 
@@ -2062,10 +2063,10 @@ ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomain *ad,
 	image = refass->assembly->image;
 	g_assert (image);
 
-	method = mono_get_method (image, mono_image_get_entry_point (image), NULL);
+	method = mono_get_method_checked (image, mono_image_get_entry_point (image), NULL, NULL, &error);
 
 	if (!method)
-		g_error ("No entry point method found in %s", image->name);
+		g_error ("No entry point method found in %s due to %s", image->name, mono_error_get_message (&error));
 
 	if (!args)
 		args = (MonoArray *) mono_array_new (ad->data, mono_defaults.string_class, 0);

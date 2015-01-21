@@ -43,15 +43,11 @@ namespace System.Web.UI.WebControls
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.DetailsViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ControlValuePropertyAttribute ("SelectedValue")]
 	[DefaultEventAttribute ("PageIndexChanging")]
-#if NET_4_0
 	[DataKeyProperty ("DataKey")]
-#endif
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DetailsView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IDataItemContainer, INamingContainer, IPostBackEventHandler, IPostBackContainer
-#if NET_4_0
 		, IDataBoundItemControl, IDataBoundControl, IFieldControl
-#endif
 	{
 		object dataItem;
 		
@@ -300,7 +296,6 @@ namespace System.Web.UI.WebControls
 				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ItemUpdating"));
 		}
 		
-#if NET_4_0		
 		DataBoundControlMode IDataBoundItemControl.Mode {
 			get {
 				switch (CurrentMode) {
@@ -332,7 +327,6 @@ namespace System.Web.UI.WebControls
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 		[WebCategoryAttribute ("Paging")]
 		[DefaultValueAttribute (false)]
 		public virtual bool AllowPaging {
@@ -1600,9 +1594,7 @@ namespace System.Web.UI.WebControls
 					break;
 			}
 		}
-#if NET_4_0
 		public
-#endif
 		void SetPageIndex (int newIndex)
 		{
 			DetailsViewPageEventArgs args = new DetailsViewPageEventArgs (newIndex);

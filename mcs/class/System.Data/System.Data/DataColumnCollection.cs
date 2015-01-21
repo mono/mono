@@ -56,21 +56,12 @@ namespace System.Data {
 
 	[Editor ("Microsoft.VSDesigner.Data.Design.ColumnsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#if !NET_2_0
-	[Serializable]
-#endif
 	[DefaultEvent ("CollectionChanged")]
 	public
-#if NET_2_0
 	sealed
-#endif
 	class DataColumnCollection : InternalDataCollectionBase	{
 		//This hashtable maps between unique case insensetive column name to a doublet containing column ref and column count
-#if NET_2_0
 		private Hashtable columnNameCount = new Hashtable (StringComparer.OrdinalIgnoreCase);
-#else
-		private Hashtable columnNameCount = new Hashtable (CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
-#endif
 		//This hashtable maps between column name to DataColumn object.
 		private Hashtable columnFromName = new Hashtable ();
 		//This ArrayList contains the auto-increment columns names
@@ -95,9 +86,6 @@ namespace System.Data {
 		/// Gets the DataColumn from the collection at the specified index.
 		/// </summary>
 		public
-#if !NET_2_0
-		virtual
-#endif
 		DataColumn this [int index] {
 			get {
 				if (index < 0 || index >= base.List.Count)
@@ -110,15 +98,10 @@ namespace System.Data {
 		/// Gets the DataColumn from the collection with the specified name.
 		/// </summary>
 		public
-#if !NET_2_0
-		virtual
-#endif
 		DataColumn this [string name] {
 			get {
-#if NET_2_0
 				if (name == null)
 					throw new ArgumentNullException ("name");
-#endif
 
 				DataColumn dc = columnFromName [name] as DataColumn;
 				if (dc != null)
@@ -157,9 +140,6 @@ namespace System.Data {
 		/// </summary>
 		/// <returns></returns>
 		public
-#if !NET_2_0
-		virtual
-#endif
 		DataColumn Add ()
 		{
 			DataColumn column = new DataColumn (null);
@@ -167,12 +147,10 @@ namespace System.Data {
 			return column;
 		}
 
-#if NET_2_0
 		public void CopyTo (DataColumn [] array, int index)
 		{
 			CopyTo ((Array) array, index);
 		}
-#endif
 
 		internal void RegisterName (string name, DataColumn column)
 		{
@@ -196,13 +174,8 @@ namespace System.Data {
 				columnNameCount [name] = d;
 			}
 
-#if NET_2_0
 			if (name.Length <= ColumnPrefix.Length || !name.StartsWith (ColumnPrefix, StringComparison.Ordinal))
 				return;
-#else
-			if (name.Length <= ColumnPrefix.Length || !name.StartsWith (ColumnPrefix))
-				return;
-#endif
 
 			if (name == MakeName (defaultColumnIndex + 1)) {
 				do {
@@ -263,12 +236,6 @@ namespace System.Data {
 			if (column == null)
 				throw new ArgumentNullException ("column", "'column' argument cannot be null.");
 
-#if !NET_2_0
-			/* in 1.1, they must do this here, as the
-			 * setting of ColumnName below causes an event
-			 * to be raised */
-			column.PropertyChanged += new PropertyChangedEventHandler (ColumnPropertyChanged);
-#endif
 
 			if (column.ColumnName.Length == 0) {
 				column.ColumnName = GetNextDefaultColumnName ();
@@ -284,11 +251,7 @@ namespace System.Data {
 			RegisterName (column.ColumnName, column);
 			int ordinal = base.List.Add (column);
 
-#if NET_2_0
 			column.Ordinal = ordinal;
-#else
-			column.SetOrdinal (ordinal);
-#endif
 
 			// Check if the Column Expression is ok
 			if (column.CompiledExpression != null)
@@ -311,9 +274,7 @@ namespace System.Data {
 			if (column.AutoIncrement)
 				autoIncrement.Add (column);
 
-#if NET_2_0
 			column.PropertyChanged += new PropertyChangedEventHandler (ColumnPropertyChanged);
-#endif
 
 			OnCollectionChanged (new CollectionChangeEventArgs(CollectionChangeAction.Add, column));
 		}
@@ -324,9 +285,6 @@ namespace System.Data {
 		/// <param name="columnName">The name of the column.</param>
 		/// <returns>The newly created DataColumn.</returns>
 		public
-#if !NET_2_0
-		virtual
-#endif
 		DataColumn Add (string columnName)
 		{
 			DataColumn column = new DataColumn (columnName);
@@ -341,9 +299,6 @@ namespace System.Data {
 		/// <param name="type">The DataType of the new column.</param>
 		/// <returns>The newly created DataColumn.</returns>
 		public
-#if !NET_2_0
-		virtual
-#endif
 		DataColumn Add (string columnName, Type type)
 		{
 			if (columnName == null || columnName == "")
@@ -362,9 +317,6 @@ namespace System.Data {
 		/// <param name="expression">The expression to assign to the Expression property.</param>
 		/// <returns>The newly created DataColumn.</returns>
 		public
-#if !NET_2_0
-		virtual
-#endif
 		DataColumn Add (string columnName, Type type, string expression)
 		{
 			if (columnName == null || columnName == "")
@@ -504,9 +456,6 @@ namespace System.Data {
 		/// <param name="column">The name of the column to return.</param>
 		/// <returns>The index of the column specified by column if it is found; otherwise, -1.</returns>
 		public
-#if !NET_2_0
-		virtual
-#endif
 		int IndexOf (DataColumn column)
 		{
 			if (column == null)
@@ -535,11 +484,7 @@ namespace System.Data {
 		/// Raises the OnCollectionChanged event.
 		/// </summary>
 		/// <param name="ccevent">A CollectionChangeEventArgs that contains the event data.</param>
-#if !NET_2_0
-		protected virtual
-#else
 		internal
-#endif
 		void OnCollectionChanged (CollectionChangeEventArgs ccevent)
 		{
 			parentTable.ResetPropertyDescriptorsCache ();
@@ -551,11 +496,7 @@ namespace System.Data {
 		/// Raises the OnCollectionChanging event.
 		/// </summary>
 		/// <param name="ccevent">A CollectionChangeEventArgs that contains the event data.</param>
-#if !NET_2_0
-		protected internal virtual
-#else
 		internal
-#endif
 		void OnCollectionChanging (CollectionChangeEventArgs ccevent)
 		{
 			if (CollectionChanged != null) {
@@ -592,11 +533,7 @@ namespace System.Data {
 
 			//Update the ordinals
 			for( int i = ordinal ; i < this.Count ; i ++ )
-#if NET_2_0
 				this[i].Ordinal = i;
-#else
-				this[i].SetOrdinal(i);
-#endif
 
 			if (parentTable != null)
 				parentTable.OnRemoveColumn (column);
@@ -703,7 +640,6 @@ namespace System.Data {
 			OnCollectionMetaDataChanged (new CollectionChangeEventArgs(CollectionChangeAction.Refresh, sender));
 		}
 
-#if NET_2_0
 		internal void MoveColumn (int oldOrdinal, int newOrdinal)
 		{
 			if (newOrdinal == -1 || newOrdinal > this.Count)
@@ -730,6 +666,5 @@ namespace System.Data {
 			List [end] = currColumn;
 			currColumn.Ordinal = end;
 		}
-#endif
 	}
 }

@@ -29,9 +29,7 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual ("B", StringInfo.GetNextTextElement ("A\u0330BC", 2), "#4");
 
 			// hmm ...
-#if NET_2_0 // it causes ArgumentOutOfRangeException in 1.x, not worthy to test it anymore
 			Assert.AreEqual (String.Empty, StringInfo.GetNextTextElement ("A\u0330BC", 4), "#4");
-#endif
 		}
 
 		[Test]
@@ -41,7 +39,6 @@ namespace MonoTests.System.Globalization
 			StringInfo.GetNextTextElement ("ABC", -1);
 		}
 
-#if NET_2_0
 		[Test]
 		public void LengthInTextElements ()
 		{
@@ -87,7 +84,6 @@ namespace MonoTests.System.Globalization
 		{
 			new StringInfo (String.Empty).SubstringByTextElements (0);
 		}
-#endif
 	}
 
 }

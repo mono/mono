@@ -18,13 +18,10 @@ using System.Runtime.InteropServices;
 using NUnit.Framework;
 using System.Runtime.CompilerServices;
 
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace MonoTests.System.Reflection.Emit
 {
-#if NET_2_0
 	[TestFixture]
 	public class PointerTypeTest
 	{
@@ -1745,5 +1742,4 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 	}
-#endif
 }

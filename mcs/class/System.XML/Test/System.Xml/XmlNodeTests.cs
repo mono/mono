@@ -129,25 +129,15 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("urn:default", n.GetNamespaceOfPrefix (String.Empty), "#1");
 			Assert.AreEqual ("urn:foo", n.GetNamespaceOfPrefix ("foo"), "#2");
 			Assert.AreEqual (String.Empty, n.GetNamespaceOfPrefix ("bar"), "#3");
-#if NET_2_0
 			Assert.AreEqual ("http://www.w3.org/XML/1998/namespace", n.GetNamespaceOfPrefix ("xml"), "#4");
 			Assert.AreEqual ("http://www.w3.org/2000/xmlns/", n.GetNamespaceOfPrefix ("xmlns"), "#5");
-#else
-			Assert.AreEqual (String.Empty, n.GetNamespaceOfPrefix ("xml"), "#4");
-			Assert.AreEqual (String.Empty, n.GetNamespaceOfPrefix ("xmlns"), "#5");
-#endif
 
 			n = document.DocumentElement.FirstChild;
 			Assert.AreEqual ("urn:default", n.GetNamespaceOfPrefix (String.Empty), "#6");
 			Assert.AreEqual ("urn:foo", n.GetNamespaceOfPrefix ("foo"), "#7");
 			Assert.AreEqual (String.Empty, n.GetNamespaceOfPrefix ("bar"), "#8");
-#if NET_2_0
 			Assert.AreEqual ("http://www.w3.org/XML/1998/namespace", n.GetNamespaceOfPrefix ("xml"), "#9");
 			Assert.AreEqual ("http://www.w3.org/2000/xmlns/", n.GetNamespaceOfPrefix ("xmlns"), "#10");
-#else
-			Assert.AreEqual (String.Empty, n.GetNamespaceOfPrefix ("xml"), "#9");
-			Assert.AreEqual (String.Empty, n.GetNamespaceOfPrefix ("xmlns"), "#10");
-#endif
 		}
 
 		[Test]

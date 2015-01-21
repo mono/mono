@@ -30,12 +30,10 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, gb.TabStop, "A4");
 			Assert.AreEqual (string.Empty, gb.Text, "A5");
 			
-#if NET_2_0
 			Assert.AreEqual (false, gb.AutoSize, "A6");
 			Assert.AreEqual (AutoSizeMode.GrowOnly, gb.AutoSizeMode, "A7");
 			Assert.AreEqual (true, gb.UseCompatibleTextRendering, "A8");
 			Assert.AreEqual ("System.Windows.Forms.GroupBox+GroupBoxAccessibleObject", gb.AccessibilityObject.GetType ().ToString (), "A9");
-#endif
 		}
 		
 		[Test]
@@ -59,7 +57,6 @@ namespace MonoTests.System.Windows.Forms
 			myform.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void AutoSize ()
 		{
@@ -144,6 +141,5 @@ namespace MonoTests.System.Windows.Forms
 				base.ScaleControl (factor, specified);
 			}
 		}
-#endif
 	}
 }

@@ -60,9 +60,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.Empty ();
 			unit.FontInfo_Empty ();
 			unit.Render ();
-#if NET_2_0
 			unit.Style_CssClass ();
-#endif
 		}
 
 		// LinkDemand

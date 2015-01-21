@@ -37,21 +37,15 @@ using System.Web.Configuration;
 
 namespace System.Web.Security
 {
-#if NET_4_0
 	[TypeForwardedFrom ("System.Web, Version=2.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-#endif
 	public abstract class MembershipProvider : ProviderBase
 	{
-#if NET_4_0
 		const string HELPER_TYPE_NAME = "System.Web.Security.MembershipHelper, System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 
 		internal static IMembershipHelper Helper {
 			get { return helper; }
 		}
 		static IMembershipHelper helper;
-#else
-		static MembershipHelper helper;
-#endif
 		
 		static readonly object validatingPasswordEvent = new object ();
 		
@@ -63,7 +57,6 @@ namespace System.Web.Security
 
 		static MembershipProvider ()
 		{
-#if NET_4_0
 			Type type = Type.GetType (HELPER_TYPE_NAME, false);
 			if (type == null)
 				return;
@@ -73,9 +66,6 @@ namespace System.Web.Security
 			} catch {
 				// ignore
 			}
-#else
-			helper = new MembershipHelper ();
-#endif
 		}
 
 		protected MembershipProvider ()
@@ -120,22 +110,15 @@ namespace System.Web.Security
 
 		protected virtual byte [] DecryptPassword (byte [] encodedPassword)
 		{
-#if NET_4_0
 			if (helper == null)
 				throw new PlatformNotSupportedException ("This method is not available.");
-#endif
 			return helper.DecryptPassword (encodedPassword);
 		}
 
 		protected virtual byte[] EncryptPassword (byte[] password)
 		{
-#if NET_4_0
 			return EncryptPassword (password, MembershipPasswordCompatibilityMode.Framework20);
-#else
-			return helper.EncryptPassword (password);
-#endif
 		}
-#if NET_4_0
 		[MonoTODO ("Discover what actually is 4.0 password compatibility mode.")]
 		protected virtual byte[] EncryptPassword (byte[] password, MembershipPasswordCompatibilityMode legacyPasswordCompatibilityMode)
 		{
@@ -147,7 +130,6 @@ namespace System.Web.Security
 			
 			return helper.EncryptPassword (password);
 		}
-#endif
 	}
 }
 

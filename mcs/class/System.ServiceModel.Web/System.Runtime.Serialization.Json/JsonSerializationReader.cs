@@ -295,7 +295,9 @@ namespace System.Runtime.Serialization.Json
 		{
 			if (type.IsArray)
 				return type.GetElementType ();
-			
+
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (IEnumerable<>))
+				return type.GetGenericArguments () [0];
 			var inter = type.GetInterface ("System.Collections.Generic.IEnumerable`1", false);
 			if (inter != null)
 				return inter.GetGenericArguments () [0];

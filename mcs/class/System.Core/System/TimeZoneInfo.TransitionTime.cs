@@ -31,15 +31,13 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-#if NET_4_0 || !INSIDE_CORLIB
 	public
-#endif
 	sealed partial class TimeZoneInfo
 	{
 		[SerializableAttribute]
 #if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
-#elif NET_4_0
+#else
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 		public struct TransitionTime : IEquatable<TimeZoneInfo.TransitionTime>, ISerializable, IDeserializationCallback
@@ -207,11 +205,7 @@ namespace System
 			}
 
 
-#if NET_4_0
 			void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
-#else
-			public void GetObjectData (SerializationInfo info, StreamingContext context)
-#endif
 			{
 				if (info == null)
 					throw new ArgumentNullException ("info");
@@ -249,11 +243,7 @@ namespace System
 				return (day ^ (int)dayOfWeek ^ month ^ (int)timeOfDay.Ticks ^ week);
 			}
 
-#if NET_4_0
 			void IDeserializationCallback.OnDeserialization (object sender)
-#else
-			public void OnDeserialization (object sender)
-#endif
 			{
 				try {
 					TimeZoneInfo.TransitionTime.Validate (timeOfDay, month, week, day, dayOfWeek, isFixedDateRule);

@@ -65,11 +65,7 @@ namespace System.Threading {
 			_t = null;
 		}
 
-#if NET_4_0
 		public void Dispose ()
-#else
-		void IDisposable.Dispose ()
-#endif
 		{
 			if (_t != null) {
 				Undo ();

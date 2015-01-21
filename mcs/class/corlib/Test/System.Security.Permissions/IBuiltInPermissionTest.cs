@@ -127,58 +127,37 @@ namespace MonoTests.System.Security.Permissions {
 		public void PublisherIdentity ()
 		{
 			IPermission p = (IPermission) new PublisherIdentityPermission (PermissionState.None);
-#if NET_2_0
 			Assert.AreEqual (10, GetTokenIndex (p));
-#else
-			Assert.AreEqual (9, GetTokenIndex (p));
-#endif
 		}
 
 		[Test]
 		public void SiteIdentity ()
 		{
 			IPermission p = (IPermission) new SiteIdentityPermission (PermissionState.None);
-#if NET_2_0
 			Assert.AreEqual (11, GetTokenIndex (p));
-#else
-			Assert.AreEqual (10, GetTokenIndex (p));
-#endif
 		}
 
 		[Test]
 		public void StrongNameIdentity ()
 		{
 			IPermission p = (IPermission) new StrongNameIdentityPermission (PermissionState.None);
-#if NET_2_0
 			Assert.AreEqual (12, GetTokenIndex (p));
-#else
-			Assert.AreEqual (11, GetTokenIndex (p));
-#endif
 		}
 
 		[Test]
 		public void UrlIdentity ()
 		{
 			IPermission p = (IPermission) new UrlIdentityPermission (PermissionState.None);
-#if NET_2_0
 			Assert.AreEqual (13, GetTokenIndex (p));
-#else
-			Assert.AreEqual (12, GetTokenIndex (p));
-#endif
 		}
 
 		[Test]
 		public void ZoneIdentity ()
 		{
 			IPermission p = (IPermission) new ZoneIdentityPermission (PermissionState.None);
-#if NET_2_0
 			Assert.AreEqual (14, GetTokenIndex (p));
-#else
-			Assert.AreEqual (13, GetTokenIndex (p));
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void GacIdentity ()
 		{
@@ -192,6 +171,5 @@ namespace MonoTests.System.Security.Permissions {
 			IPermission p = (IPermission)new KeyContainerPermission (PermissionState.None);
 			Assert.AreEqual (16, GetTokenIndex (p));
 		}
-#endif
 	}
 }

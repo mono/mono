@@ -30,7 +30,6 @@
 //
 // Runtime type method wrapper for XPath2 function.
 //
-#if NET_2_0
 using System;
 using System.Collections;
 using System.Reflection;
@@ -207,4 +206,3 @@ namespace Mono.Xml.XPath2
 	}
 
 }
-#endif

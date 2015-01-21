@@ -28,7 +28,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.IO;
 using System.Collections;
@@ -458,4 +457,3 @@ namespace System.Web.SessionState
                 }
 	}
 }
-#endif

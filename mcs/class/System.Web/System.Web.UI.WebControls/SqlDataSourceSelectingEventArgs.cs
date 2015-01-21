@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Data.Common;
 
 namespace System.Web.UI.WebControls {
@@ -46,5 +45,4 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif
 

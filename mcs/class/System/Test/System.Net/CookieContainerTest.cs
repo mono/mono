@@ -626,6 +626,7 @@ namespace MonoTests.System.Net {
 			Assert.AreEqual (1, coll.Count, "#A2");
 		}
 
+		[Test]
 		public void Add6_Insecure ()
 		{
 			var cc = new CookieContainer ();
@@ -667,7 +668,6 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
-		//		[Category ("NotWorking")]
 		public void TestAddExpired_Cookie ()
 		{
 			CookieContainer cc = new CookieContainer ();
@@ -1409,55 +1409,6 @@ namespace MonoTests.System.Net {
 			Assert.IsNotNull (cookies, "#A3");
 			Assert.AreEqual (1, cookies.Count, "#A4");
 		}
-
-#if FIXME
-		[Test]
-		public void SetCookies_Domain_Local ()
-		{
-			CookieContainer cc;
-			CookieCollection cookies;
-			string hostname = Dns.GetHostName ();
-
-			cc = new CookieContainer ();
-			cc.SetCookies (new Uri ("http://localhost/Whatever/Do"),
-				"Age=26; path=/Whatever; domain=.local");
-			cookies = cc.GetCookies (new Uri ("http://localhost/Whatever/Do"));
-			Assert.IsNotNull (cookies, "#A1");
-			Assert.AreEqual (0, cookies.Count, "#A2");
-			cookies = cc.GetCookies (new Uri ("http://127.0.0.1/Whatever/Do"));
-			Assert.IsNotNull (cookies, "#A3");
-			Assert.AreEqual (0, cookies.Count, "#A4");
-			cookies = cc.GetCookies (new Uri ("http://" + hostname + "/Whatever/Do"));
-			Assert.IsNotNull (cookies, "#A5");
-			Assert.AreEqual (hostname.EndsWith (".local") ? 1 : 0, cookies.Count, "#A6");
-
-			cc = new CookieContainer ();
-			cc.SetCookies (new Uri ("http://127.0.0.1/Whatever/Do"),
-				"Age=26; path=/Whatever; domain=.local");
-			cookies = cc.GetCookies (new Uri ("http://localhost/Whatever/Do"));
-			Assert.IsNotNull (cookies, "#B1");
-			Assert.AreEqual (0, cookies.Count, "#B2");
-			cookies = cc.GetCookies (new Uri ("http://127.0.0.1/Whatever/Do"));
-			Assert.IsNotNull (cookies, "#B3");
-			Assert.AreEqual (0, cookies.Count, "#B4");
-			cookies = cc.GetCookies (new Uri ("http://" + hostname + "/Whatever/Do"));
-			Assert.IsNotNull (cookies, "#B5");
-			Assert.AreEqual (hostname.EndsWith (".local") ? 1 : 0, cookies.Count, "#B6");
-
-			cc = new CookieContainer ();
-			cc.SetCookies (new Uri ("http://" + hostname + "/Whatever/Do"),
-				"Age=26; path=/Whatever; domain=.local");
-			cookies = cc.GetCookies (new Uri ("http://localhost/Whatever/Do"));
-			Assert.IsNotNull (cookies, "#C1");
-			Assert.AreEqual (0, cookies.Count, "#C2");
-			cookies = cc.GetCookies (new Uri ("http://127.0.0.1/Whatever/Do"));
-			Assert.IsNotNull (cookies, "#C3");
-			Assert.AreEqual (0, cookies.Count, "#C4");
-			cookies = cc.GetCookies (new Uri ("http://" + hostname + "/Whatever/Do"));
-			Assert.IsNotNull (cookies, "#C5");
-			Assert.AreEqual (hostname.EndsWith (".local") ? 1 : 0, cookies.Count, "#C6");
-		}
-#endif
 
 		[Test]
 		public void bug421827 ()

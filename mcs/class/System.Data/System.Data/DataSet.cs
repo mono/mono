@@ -71,9 +71,7 @@ namespace System.Data
 		private CultureInfo locale;
 		internal XmlDataDocument _xmlDataDocument;
 
-#if NET_2_0
 		internal TableAdapterSchemaInfo tableAdapterSchemaInfo;
-#endif
 		bool initInProgress;
 
 		#region Constructors
@@ -95,12 +93,10 @@ namespace System.Data
 		protected DataSet (SerializationInfo info, StreamingContext context)
 			: this ()
 		{
-#if NET_2_0
 			if (IsBinarySerialized (info, context)) {
 				BinaryDeserialize (info);
 				return;
 			}
-#endif
 			string s = info.GetValue ("XmlSchema", typeof (String)) as String;
 			XmlTextReader reader = new XmlTextReader (new StringReader (s));
 			ReadXmlSchema (reader);
@@ -114,9 +110,6 @@ namespace System.Data
 		#region Public Properties
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether comparing strings within the DataSet is case sensitive.")]
-#endif
 		[DefaultValue (false)]
 		public bool CaseSensitive {
 			get { return caseSensitive; }
@@ -137,18 +130,12 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The name of this DataSet.")]
-#endif
 		[DefaultValue ("")]
 		public string DataSetName {
 			get { return dataSetName; }
 			set { dataSetName = value; }
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Indicates a custom \"view\" of the data contained by the DataSet. This view allows filtering, searching, and navigating through the custom data view.")]
-#endif
 		[Browsable (false)]
 		public DataViewManager DefaultViewManager {
 			get {
@@ -158,9 +145,6 @@ namespace System.Data
 			}
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether constraint rules are to be followed.")]
-#endif
 		[DefaultValue (true)]
 		public bool EnforceConstraints {
 			get { return enforceConstraints; }
@@ -169,17 +153,11 @@ namespace System.Data
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The collection that holds custom user information.")]
-#endif
 		public PropertyCollection ExtendedProperties {
 			get { return properties; }
 		}
 
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("Indicates that the DataSet has errors.")]
-#endif
 		public bool HasErrors {
 			get {
 				for (int i = 0; i < Tables.Count; i++) {
@@ -191,9 +169,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
-#endif
 		public CultureInfo Locale {
 			get { return locale != null ? locale : Thread.CurrentThread.CurrentCulture; }
 			set {
@@ -210,11 +185,9 @@ namespace System.Data
 		}
 
 		
-#if NET_2_0
 		internal TableAdapterSchemaInfo TableAdapterSchemaData {
 			get { return tableAdapterSchemaInfo; }
 		}
-#endif
 		
 		internal void InternalEnforceConstraints (bool value,bool resetIndexes)
 		{
@@ -306,9 +279,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the XML uri namespace for the root element pointed at by this DataSet.")]
-#endif
 		[DefaultValue ("")]
 		public string Namespace {
 			get { return _namespace; }
@@ -323,9 +293,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the prefix of the namespace used for this DataSet.")]
-#endif
 		[DefaultValue ("")]
 		public string Prefix {
 			get { return prefix; }
@@ -345,9 +312,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The collection that holds the relations for this DatSet.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataRelationCollection Relations {
 			get { return relationCollection; }
@@ -361,9 +325,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The collection that holds the tables for this DataSet.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataTableCollection Tables {
 			get { return tableCollection; }
@@ -845,9 +806,7 @@ namespace System.Data
 #if true
 			XmlSchemaDataImporter xsdImporter = new XmlSchemaDataImporter (this, reader, true);
 			xsdImporter.Process ();
-#if NET_2_0
 			tableAdapterSchemaInfo = xsdImporter.CurrentAdapter;
-#endif
 #else
 			XmlSchemaMapper SchemaMapper = new XmlSchemaMapper (this);
 			SchemaMapper.Read (reader);
@@ -1077,9 +1036,6 @@ namespace System.Data
 		#region Public Events
 
 		[DataCategory ("Action")]
-#if !NET_2_0
-		[DataSysDescription ("Occurs when it is not possible to merge schemas for two tables with the same name.")]
-#endif
 		public event MergeFailedEventHandler MergeFailed;
 
 		#endregion // Public Events
@@ -1107,9 +1063,7 @@ namespace System.Data
 		public void BeginInit ()
 		{
 			InitInProgress = true;
-#if NET_2_0
 			dataSetInitialized = false;
-#endif
 		}
 
 		public void EndInit ()
@@ -1125,27 +1079,18 @@ namespace System.Data
 
 			Relations.PostAddRange ();
 			InitInProgress = false;
-#if NET_2_0
 			dataSetInitialized = true;
 			DataSetInitialized ();
-#endif
 		}
 		#endregion
 
 		#region ISerializable
-#if NET_2_0
 		public virtual
-#endif
 		void
-#if !NET_2_0
-		ISerializable.
-#endif
 		GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-#if NET_2_0
 			if (RemotingFormat == SerializationFormat.Xml) {
 				info.AddValue ("SchemaSerializationMode.DataSet", this.SchemaSerializationMode);
-#endif
 				StringWriter sw = new StringWriter ();
 				XmlTextWriter writer = new XmlTextWriter (sw);
 				DoWriteXmlSchema (writer);
@@ -1157,11 +1102,9 @@ namespace System.Data
 				WriteXml (writer, XmlWriteMode.DiffGram);
 				writer.Flush ();
 				info.AddValue ("XmlDiffGram", sw.ToString ());
-#if NET_2_0
 			} else /*if (DataSet.RemotingFormat == SerializationFormat.Binary)*/ {
 				BinarySerialize (info);
 			}
-#endif
 		}
 		#endregion
 
@@ -1262,11 +1205,7 @@ namespace System.Data
 				case TypeCode.Char:
 					return XmlConvert.ToString ((Char) o);
 				case TypeCode.DateTime:
-#if NET_2_0
 					return XmlConvert.ToString ((DateTime) o, XmlDateTimeSerializationMode.Unspecified);
-#else
-					return XmlConvert.ToString ((DateTime) o);
-#endif
 				case TypeCode.Decimal:
 					return XmlConvert.ToString ((Decimal) o);
 				case TypeCode.Double:
@@ -1545,7 +1484,6 @@ namespace System.Data
 		#endregion //Private Xml Serialisation
 	}
 
-#if NET_2_0
 	[XmlSchemaProvider ("GetDataSetSchema")]
 	[XmlRoot ("DataSet")]
 	partial class DataSet : ISupportInitializeNotification {
@@ -1803,5 +1741,4 @@ namespace System.Data
 			return false;
 		}
 	}
-#endif
 }

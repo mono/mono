@@ -51,7 +51,7 @@ class X
 			Console.WriteLine (x);
 			if (e != null)
 				throw e;
-		} catch (Exception) if (x != 15) {
+		} catch (Exception) when (x != 15) {
 			await Task.FromResult (0);
 			throw;
 		}
@@ -64,7 +64,7 @@ class X
 		try {
 			Console.WriteLine (x);
 			throw ex;
-		} catch if (x != 15) {
+		} catch when (x != 15) {
 			await Task.FromResult (0);
 			throw;
 		}

@@ -54,10 +54,8 @@ namespace System.Web.Configuration
 		static ConfigurationProperty stateNetworkTimeoutProp;
 		static ConfigurationProperty timeoutProp;
 		static ConfigurationProperty useHostingIdentityProp;
-#if NET_4_0
 		static ConfigurationProperty compressionEnabledProp;
 		static ConfigurationProperty sqlConnectionRetryIntervalProp;
-#endif
 		static ConfigurationPropertyCollection properties;
 
 		static ConfigurationElementProperty elementProperty;
@@ -91,13 +89,11 @@ namespace System.Web.Configuration
 								 ConfigurationPropertyOptions.None);
 			useHostingIdentityProp = new ConfigurationProperty ("useHostingIdentity", typeof (bool), true);
 
-#if NET_4_0
 			compressionEnabledProp = new ConfigurationProperty ("compressionEnabled", typeof (bool), false);
 			sqlConnectionRetryIntervalProp = new ConfigurationProperty ("sqlConnectionRetryIntervalProp", typeof (TimeSpan), TimeSpan.FromSeconds (0),
 										    PropertyHelper.TimeSpanSecondsOrInfiniteConverter,
 										    PropertyHelper.PositiveTimeSpanValidator,
 										    ConfigurationPropertyOptions.None);
-#endif
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (allowCustomSqlDatabaseProp);
@@ -115,10 +111,8 @@ namespace System.Web.Configuration
 			properties.Add (stateNetworkTimeoutProp);
 			properties.Add (timeoutProp);
 			properties.Add (useHostingIdentityProp);
-#if NET_4_0
 			properties.Add (compressionEnabledProp);
 			properties.Add (sqlConnectionRetryIntervalProp);
-#endif
 
 			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (SessionStateSection), ValidateElement));
 		}
@@ -222,7 +216,6 @@ namespace System.Web.Configuration
 			set { base[useHostingIdentityProp] = value; }
 		}
 
-#if NET_4_0
 		[ConfigurationPropertyAttribute("compressionEnabled", DefaultValue = false)]
 		public bool CompressionEnabled {
 			get { return (bool) base [compressionEnabledProp]; }
@@ -235,7 +228,6 @@ namespace System.Web.Configuration
 			get { return (TimeSpan) base [sqlConnectionRetryIntervalProp]; }
 			set { base [sqlConnectionRetryIntervalProp] = value; }
 		}
-#endif
 		
 		static void ValidateElement (object o)
 		{

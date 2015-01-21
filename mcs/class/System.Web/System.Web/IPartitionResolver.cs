@@ -31,10 +31,6 @@ using System.Security.Permissions;
 
 namespace System.Web
 {
-#if !NET_4_0
-	[AspNetHostingPermission(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal),
-	AspNetHostingPermission(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
 	public interface IPartitionResolver
 	{
 		void Initialize ();

@@ -232,7 +232,6 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if NET_2_0
 		[Test] // GetFieldFromHandle (RuntimeFieldHandle, RuntimeTypeHandle)
 		public void GetFieldFromHandle2_DeclaringType_Zero ()
 		{
@@ -315,7 +314,6 @@ namespace MonoTests.System.Reflection
 
 			FieldInfo fi2 = FieldInfo.GetFieldFromHandle (fh, th);
 		}
-#endif
 
 		[Test]
 		public void PseudoCustomAttributes ()

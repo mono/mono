@@ -47,9 +47,7 @@ using System.IO.IsolatedStorage;
 using System.Security.AccessControl;
 #endif
 
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO
 {
@@ -826,7 +824,6 @@ namespace System.IO
 			FlushBuffer ();
 		}
 
-#if NET_4_0
 		public virtual void Flush (bool flushToDisk)
 		{
 			FlushBuffer ();
@@ -837,7 +834,6 @@ namespace System.IO
 				MonoIO.Flush (handle, out error);
 			}
 		}
-#endif
 
 		public virtual void Lock (long position, long length)
 		{
@@ -952,7 +948,6 @@ namespace System.IO
 		}
 #endif
 
-#if NET_4_5
 		public override Task FlushAsync (CancellationToken cancellationToken)
 		{
 			return base.FlushAsync (cancellationToken);
@@ -967,7 +962,6 @@ namespace System.IO
 		{
 			return base.WriteAsync (buffer, offset, count, cancellationToken);
 		}
-#endif
 
 		// private.
 

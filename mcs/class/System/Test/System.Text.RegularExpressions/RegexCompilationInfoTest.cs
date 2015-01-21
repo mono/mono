@@ -64,9 +64,7 @@ namespace MonoTests.System.Text.RegularExpressions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Constructor_EmptyName ()
 		{
 			new RegexCompilationInfo ("pattern", RegexOptions.None, String.Empty, "fullnamespace", false);
@@ -114,9 +112,7 @@ namespace MonoTests.System.Text.RegularExpressions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Name_Empty ()
 		{
 			RegexCompilationInfo info = new RegexCompilationInfo ("pattern", RegexOptions.None, "name", "fullnamespace", true);

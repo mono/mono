@@ -30,7 +30,6 @@
 
 // It is a copy from System.Data.TypedDataSetGeneratorException
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -67,7 +66,6 @@ namespace System.Data.Design {
 				errorList.Add (info.GetString("KEY_ARRAYVALUES" + i));
 		}
 
-#if NET_2_0
 		public TypedDataSetGeneratorException (String error) : base (error)
 		{
 		}
@@ -76,7 +74,6 @@ namespace System.Data.Design {
 			: base (error, inner)
 		{
 		}
-#endif
 		#endregion //Constructors	
 
 		public IList ErrorList {
@@ -100,4 +97,3 @@ namespace System.Data.Design {
 	}
 }
 
-#endif

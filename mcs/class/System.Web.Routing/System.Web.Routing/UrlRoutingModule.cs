@@ -35,18 +35,12 @@ using System.Web;
 
 namespace System.Web.Routing
 {
-#if NET_4_0
 	[TypeForwardedFrom ("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class UrlRoutingModule : IHttpModule
 	{
 		RouteCollection routes;
-#if !NET_4_0
-		object module_identity_key = new object ();
-		object original_path_key = new object ();
-#endif		
 		public RouteCollection RouteCollection {
 			get {
 				if (routes == null)
@@ -87,24 +81,9 @@ namespace System.Web.Routing
 			var app = (HttpApplication) o;
 			PostResolveRequestCache (new HttpContextWrapper (app.Context));
 		}
-#if NET_4_0
 		[Obsolete]
-#endif
 		public virtual void PostMapRequestHandler (HttpContextBase context)
 		{
-#if !NET_4_0
-			if (context == null)
-				throw new ArgumentNullException ("context");
-
-			// FIXME: find out what it actually does.
-			IHttpHandler h = (IHttpHandler) context.Items [module_identity_key];
-			if (h != null)
-				context.Handler = h;
-
-			string original_path = context.Items [original_path_key] as string;
-			if (!String.IsNullOrEmpty (original_path))
-				context.RewritePath (original_path);
-#endif
 		}
 
 		[MonoTODO]
@@ -128,21 +107,8 @@ namespace System.Web.Routing
 			IHttpHandler http = rd.RouteHandler.GetHttpHandler (rc);
 			if (http == null)
 				throw new InvalidOperationException ("The mapped IRouteHandler did not return an IHttpHandler");
-#if NET_4_0
 			context.Request.RequestContext = rc;
 			context.RemapHandler (http);
-#else
-			// note: It does not resolve paths using GetVirtualPath():
-			//var vpd = RouteCollection.GetVirtualPath (rc, rd.Values);
-			//context.RewritePath (vpd.VirtualPath);
-
-			context.Items [original_path_key] = context.Request.Path;
-
-			// default handler (forbidden in MVC/DynamicData projects)
-			context.RewritePath ("~/UrlRouting.axd");
-
-			context.Items [module_identity_key] = http;
-#endif
 		}
 	}
 }

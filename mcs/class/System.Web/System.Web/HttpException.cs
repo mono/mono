@@ -63,11 +63,7 @@ namespace System.Web
 				return pageTemplate;
 			}
 		}
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		int WebEventCode 
 		{
 			get { return webEventCode; }

@@ -153,6 +153,7 @@ static MonoMethodSignature *helper_sig_generic_class_init_trampoline_llvm;
 static MonoMethodSignature *helper_sig_rgctx_lazy_fetch_trampoline;
 static MonoMethodSignature *helper_sig_monitor_enter_exit_trampoline;
 static MonoMethodSignature *helper_sig_monitor_enter_exit_trampoline_llvm;
+static MonoMethodSignature *helper_sig_monitor_enter_v4_trampoline_llvm;
 
 /*
  * Instruction metadata
@@ -364,6 +365,7 @@ mono_create_helper_signatures (void)
 	helper_sig_rgctx_lazy_fetch_trampoline = mono_create_icall_signature ("ptr ptr");
 	helper_sig_monitor_enter_exit_trampoline = mono_create_icall_signature ("void");
 	helper_sig_monitor_enter_exit_trampoline_llvm = mono_create_icall_signature ("void object");
+	helper_sig_monitor_enter_v4_trampoline_llvm = mono_create_icall_signature ("void object ptr");
 }
 
 static MONO_NEVER_INLINE void
@@ -5567,24 +5569,6 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			return emit_memory_barrier (cfg, FullBarrier);
 		}
 	} else if (cmethod->klass == mono_defaults.monitor_class) {
-
-		/* FIXME this should be integrated to the check below once we support the trampoline version */
-#if defined(MONO_ARCH_ENABLE_MONITOR_IL_FASTPATH)
-		if (strcmp (cmethod->name, "Enter") == 0 && fsig->param_count == 2) {
-			MonoMethod *fast_method = NULL;
-
-			/* Avoid infinite recursion */
-			if (cfg->method->wrapper_type == MONO_WRAPPER_UNKNOWN && !strcmp (cfg->method->name, "FastMonitorEnterV4"))
-				return NULL;
-				
-			fast_method = mono_monitor_get_fast_path (cmethod);
-			if (!fast_method)
-				return NULL;
-
-			return (MonoInst*)mono_emit_method_call (cfg, fast_method, args, NULL);
-		}
-#endif
-
 #if defined(MONO_ARCH_MONITOR_OBJECT_REG)
 		if (strcmp (cmethod->name, "Enter") == 0 && fsig->param_count == 1) {
 			MonoCallInst *call;
@@ -5603,6 +5587,25 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			}
 
 			return (MonoInst*)call;
+#if defined(MONO_ARCH_MONITOR_LOCK_TAKEN_REG)
+		} else if (strcmp (cmethod->name, "Enter") == 0 && fsig->param_count == 2) {
+			MonoCallInst *call;
+
+			if (COMPILE_LLVM (cfg)) {
+				/*
+				 * Pass the argument normally, the LLVM backend will handle the
+				 * calling convention problems.
+				 */
+				call = (MonoCallInst*)mono_emit_abs_call (cfg, MONO_PATCH_INFO_MONITOR_ENTER_V4, NULL, helper_sig_monitor_enter_v4_trampoline_llvm, args);
+			} else {
+				call = (MonoCallInst*)mono_emit_abs_call (cfg, MONO_PATCH_INFO_MONITOR_ENTER_V4,
+					    NULL, helper_sig_monitor_enter_exit_trampoline, NULL);
+				mono_call_inst_add_outarg_reg (cfg, call, args [0]->dreg, MONO_ARCH_MONITOR_OBJECT_REG, FALSE);
+				mono_call_inst_add_outarg_reg (cfg, call, args [1]->dreg, MONO_ARCH_MONITOR_LOCK_TAKEN_REG, FALSE);
+			}
+
+			return (MonoInst*)call;
+#endif
 		} else if (strcmp (cmethod->name, "Exit") == 0) {
 			MonoCallInst *call;
 
@@ -5616,24 +5619,6 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			}
 
 			return (MonoInst*)call;
-		}
-#elif defined(MONO_ARCH_ENABLE_MONITOR_IL_FASTPATH)
-		{
-		MonoMethod *fast_method = NULL;
-
-		/* Avoid infinite recursion */
-		if (cfg->method->wrapper_type == MONO_WRAPPER_UNKNOWN &&
-				(strcmp (cfg->method->name, "FastMonitorEnter") == 0 ||
-				 strcmp (cfg->method->name, "FastMonitorExit") == 0))
-			return NULL;
-
-		if ((strcmp (cmethod->name, "Enter") == 0 && fsig->param_count == 2) ||
-				strcmp (cmethod->name, "Exit") == 0)
-			fast_method = mono_monitor_get_fast_path (cmethod);
-		if (!fast_method)
-			return NULL;
-
-		return (MonoInst*)mono_emit_method_call (cfg, fast_method, args, NULL);
 		}
 #endif
 	} else if (cmethod->klass->image == mono_defaults.corlib &&
@@ -6452,8 +6437,11 @@ mini_get_method_allow_open (MonoMethod *m, guint32 token, MonoClass *klass, Mono
 
 	if (m->wrapper_type != MONO_WRAPPER_NONE) {
 		method = mono_method_get_wrapper_data (m, token);
-		if (context)
-			method = mono_class_inflate_generic_method (method, context);
+		if (context) {
+			MonoError error;
+			method = mono_class_inflate_generic_method_checked (method, context, &error);
+			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		}
 	} else {
 		method = mono_get_method_full (m->klass->image, token, klass, context);
 	}
@@ -7153,6 +7141,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 			g_free (il_offsets);
 			g_free (line_numbers);
+		} else if (!method->wrapper_type && !method->dynamic && mono_debug_image_has_debug_info (method->klass->image)) {
+			/* Methods without line number info like auto-generated property accessors */
+			seq_point_locs = mono_bitset_mem_new (mono_mempool_alloc0 (cfg->mempool, mono_bitset_alloc_size (header->code_size, 0)), header->code_size, 0);
+			seq_point_set_locs = mono_bitset_mem_new (mono_mempool_alloc0 (cfg->mempool, mono_bitset_alloc_size (header->code_size, 0)), header->code_size, 0);
+			sym_seq_points = TRUE;
 		}
 	}
 
@@ -8111,7 +8104,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						if (!((constrained_call->byval_arg.type == MONO_TYPE_VAR ||
 							   constrained_call->byval_arg.type == MONO_TYPE_MVAR) &&
 							  cfg->generic_sharing_context)) {
-							cmethod = mono_get_method_constrained_with_method (image, cil_method, constrained_call, generic_context);
+							cmethod = mono_get_method_constrained_with_method (image, cil_method, constrained_call, generic_context, &cfg->error);
+							CHECK_CFG_ERROR;
 						}
 					} else {
 						if (cfg->verbose_level > 2)
@@ -8127,7 +8121,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							if (!mini_is_gsharedvt_klass (cfg, constrained_call))
 								g_assert (!cmethod->klass->valuetype);
 						} else {
-							cmethod = mono_get_method_constrained (image, token, constrained_call, generic_context, &cil_method);
+							cmethod = mono_get_method_constrained_checked (image, token, constrained_call, generic_context, &cil_method, &cfg->error);
+							CHECK_CFG_ERROR;
 						}
 					}
 				}
@@ -8192,20 +8187,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				mono_save_token_info (cfg, image, token, cil_method);
 
-				if (!MONO_TYPE_IS_VOID (fsig->ret)) {
-					/*
-					 * Need to emit an implicit seq point after every non-void call so single stepping through nested calls like
-					 * foo (bar (), baz ())
-					 * works correctly. MS does this also:
-					 * http://stackoverflow.com/questions/6937198/making-your-net-language-step-correctly-in-the-debugger
-					 * The problem with this approach is that the debugger will stop after all calls returning a value,
-					 * even for simple cases, like:
-					 * int i = foo ();
-					 */
-					/* Special case a few common successor opcodes */
-					if (!(ip + 5 < end && (ip [5] == CEE_POP || ip [5] == CEE_NOP)) && !(seq_point_locs && mono_bitset_test_fast (seq_point_locs, ip + 5 - header->code)))
-						need_seq_point = TRUE;
-				}
+				if (!(seq_point_locs && mono_bitset_test_fast (seq_point_locs, ip + 5 - header->code)))
+					need_seq_point = TRUE;
 
 				n = fsig->param_count + fsig->hasthis;
 
@@ -9651,8 +9634,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 			else if (method->wrapper_type != MONO_WRAPPER_NONE) {
 				MonoInst *iargs [1];
+				char *str = mono_method_get_wrapper_data (method, n);
 
-				EMIT_NEW_PCONST (cfg, iargs [0], mono_method_get_wrapper_data (method, n));				
+				if (cfg->compile_aot)
+					EMIT_NEW_LDSTRLITCONST (cfg, iargs [0], str);
+				else
+					EMIT_NEW_PCONST (cfg, iargs [0], str);
 				*sp = mono_emit_jit_icall (cfg, mono_string_new_wrapper, iargs);
 			} else {
 				if (cfg->opt & MONO_OPT_SHARED) {
@@ -9881,6 +9868,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			
 			ip += 5;
 			inline_costs += 5;
+			if (!(seq_point_locs && mono_bitset_test_fast (seq_point_locs, ip - header->code)))
+				emit_seq_point (cfg, method, ip, FALSE, TRUE);
 			break;
 		}
 		case CEE_CASTCLASS:
@@ -11080,7 +11069,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					handle = &((MonoClass*)handle)->byval_arg;
 			}
 			else {
-				handle = mono_ldtoken (image, n, &handle_class, generic_context);
+				handle = mono_ldtoken_checked (image, n, &handle_class, generic_context, &cfg->error);
+				CHECK_CFG_ERROR;
 			}
 			if (!handle)
 				LOAD_ERROR;

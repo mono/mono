@@ -97,11 +97,7 @@ namespace MonoTests.System.Data
 			if (engine == null) {
 				string msg = string.Format (CultureInfo.InvariantCulture,
 					"Engine '{0}' does not exist.", engineName);
-#if NET_2_0
 				throw new ConfigurationErrorsException (msg, engineAttr);
-#else
-				throw new ConfigurationException (msg, engineAttr);
-#endif
 			}
 			return engine;
 		}
@@ -110,11 +106,7 @@ namespace MonoTests.System.Data
 		{
 			string msg = string.Format (CultureInfo.InvariantCulture,
 				"Missing '{0}' attribute.", name);
-#if NET_2_0
 			throw new ConfigurationErrorsException (msg, node);
-#else
-			throw new ConfigurationException (msg, node);
-#endif
 		}
 	}
 }

@@ -258,6 +258,9 @@ namespace Mono.CSharp
 %token ASYNC
 %token AWAIT
 %token INTERR_OPERATOR
+%token WHEN
+%token INTERPOLATED_STRING
+%token INTERPOLATED_STRING_END
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -3310,6 +3313,7 @@ primary_expression
 	| pointer_member_access
 	| anonymous_method_expression
 	| undocumented_expressions
+	| interpolated_string
 	;
 
 type_name_expression
@@ -3330,6 +3334,71 @@ literal
 boolean_literal
 	: TRUE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, true, GetLocation ($1)); }
 	| FALSE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, false, GetLocation ($1)); }
+	;
+
+interpolated_string
+	: INTERPOLATED_STRING interpolations INTERPOLATED_STRING_END
+	  {
+		$$ = new InterpolatedString ((StringLiteral) $1, (List<Expression>) $2, (StringLiteral) $3);
+	  }
+	| INTERPOLATED_STRING_END
+	  {
+		$$ = new InterpolatedString ((StringLiteral) $1, null, null);
+	  }
+	;
+
+interpolations
+	: interpolation
+	  {
+		var list = new List<Expression> ();
+		list.Add ((InterpolatedStringInsert) $1);
+		$$ = list;
+	  }
+	| interpolations INTERPOLATED_STRING interpolation
+	  {
+		var list = (List<Expression>) $1;
+		list.Add ((StringLiteral) $2);
+		list.Add ((InterpolatedStringInsert) $3);
+		$$ = list;
+	  }
+	;
+
+interpolation
+	: expression
+	  {
+		$$ = new InterpolatedStringInsert ((Expression) $1);
+	  }
+	| expression COMMA expression
+	  {
+		$$ = new InterpolatedStringInsert ((Expression) $1) {
+			Alignment = (Expression)$3
+		};
+	  }
+	| expression COLON
+	  {
+		lexer.parsing_interpolation_format = true;
+	  }
+	  LITERAL
+	  {
+		lexer.parsing_interpolation_format = false;
+
+		$$ = new InterpolatedStringInsert ((Expression) $1) {
+			Format = (string)$4
+		};
+	  }
+	| expression COMMA expression COLON
+	  {
+		lexer.parsing_interpolation_format = true;
+	  }
+	  LITERAL
+	  {
+		lexer.parsing_interpolation_format = false;
+
+		$$ = new InterpolatedStringInsert ((Expression) $1) {
+			Alignment = (Expression)$3,
+			Format = (string) $6
+		};
+	  }
 	;
 
 
@@ -6415,8 +6484,9 @@ catch_clause
 		
 		lbag.AddLocation (c, GetLocation ($2), GetLocation ($5));
 		$$ = c;
+		lexer.parsing_catch_when = true;
 	  }
-	  opt_catch_filter block_prepared
+	  opt_catch_filter_or_error
 	  {
 	  	((Catch) $6).Filter = (CatchFilterExpression) $7;
 		$$ = $6;
@@ -6432,35 +6502,36 @@ catch_clause
 		
 		$$ = new Catch (null, GetLocation ($1));
 	  }
-	| CATCH open_parens_any type opt_identifier CLOSE_PARENS error
+	;
+
+opt_catch_filter_or_error
+	: opt_catch_filter block_prepared
 	  {
+		$$ = $1;
+	  }
+	| error
+	  {
+		end_block (Location.Null);
 		Error_SyntaxError (yyToken);
-
-		// Required otherwise missing block could not be detected because
-		// start_block is run early
-		var c = new Catch (null, GetLocation ($1));
-		c.TypeExpression = (FullNamedExpression) $3;
-
-		if ($4 != null) {
-			var lt = (LocatedToken) $4;
-			c.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
-		}
-
-		lbag.AddLocation (c, GetLocation ($2), GetLocation ($5));
-
-		$$ = c;
+		$$ = null;
 	  }
 	;
 
 opt_catch_filter
-	: /* empty */
-	| IF open_parens_any expression CLOSE_PARENS
+	: {
+		lexer.parsing_catch_when = false;
+	  }
+	| WHEN
+	  {
+		lexer.parsing_catch_when = false;
+	  }
+	  open_parens_any expression CLOSE_PARENS
 	  {
 		if (lang_version <= LanguageVersion.V_5)
 			FeatureIsNotAvailable (GetLocation ($1), "exception filter");
 
-	  	$$ = new CatchFilterExpression ((Expression) $3, GetLocation ($1));
-	  	lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+		$$ = new CatchFilterExpression ((Expression) $4, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
 	  }
 	;
 
@@ -8073,7 +8144,13 @@ static string GetTokenName (int token)
 		return ";";
 	case Token.TILDE:
 		return "~";
-		
+	case Token.WHEN:
+		return "when";
+	case Token.INTERPOLATED_STRING_END:
+		return "}";
+	case Token.INTERPOLATED_STRING:
+		return "${";
+
 	case Token.PLUS:
 	case Token.UMINUS:
 	case Token.MINUS:

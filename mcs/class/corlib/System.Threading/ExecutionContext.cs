@@ -39,9 +39,7 @@ using System.Collections.Generic;
 namespace System.Threading {
 	[Serializable]
 	public sealed partial class ExecutionContext : ISerializable
-#if NET_4_0
            , IDisposable
-#endif
 	{
 		internal struct Switcher
 		{
@@ -152,7 +150,6 @@ namespace System.Threading {
 			return new ExecutionContext (this);
 		}
 		
-#if NET_4_0
 		public void Dispose ()
 		{
 #if !MOBILE
@@ -160,7 +157,6 @@ namespace System.Threading {
 				_sc.Dispose ();
 #endif
 		}
-#endif
 
 		[MonoTODO]
 		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]
@@ -225,6 +221,11 @@ namespace System.Threading {
 				throw new InvalidOperationException ();
 
 			ec.FlowSuppressed = false;
+		}
+		
+		internal static void Run(ExecutionContext executionContext, ContextCallback callback, Object state, bool preserveSyncCtx)
+		{
+			Run (executionContext, callback, state);
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]

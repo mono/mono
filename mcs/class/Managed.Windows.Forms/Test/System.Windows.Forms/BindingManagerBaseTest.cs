@@ -56,10 +56,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			bm = c2.BindingContext[c1, "Text"];
 			bm2 = c2.BindingContext[c1];
 
-#if NET_2_0
 			bm.BindingComplete += delegate (object sender, BindingCompleteEventArgs e) { Console.WriteLine (Environment.StackTrace); };
 			bm2.BindingComplete += delegate (object sender, BindingCompleteEventArgs e) { Console.WriteLine (Environment.StackTrace); };
-#endif
 
 			binding = c2.DataBindings.Add ("Text", c1, "Text");
 
@@ -69,7 +67,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.AreEqual (bm2.Bindings[0], binding, "3");
 		}
 
-#if NET_2_0
 		[Test]
 		public void IsBindingSuspendedTest ()
 		{
@@ -94,6 +91,5 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.IsFalse (manager.IsBindingSuspended, "#C1");
 			Assert.IsFalse (manager2.IsBindingSuspended, "#C2");
 		}
-#endif
 	}
 }

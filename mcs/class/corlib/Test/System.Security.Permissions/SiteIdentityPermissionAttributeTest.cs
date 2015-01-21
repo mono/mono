@@ -48,11 +48,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (NullReferenceException))]
-#else
 		[Category ("NotWorking")]
-#endif
 		public void DefaultPermission ()
 		{
 			SiteIdentityPermissionAttribute a = new SiteIdentityPermissionAttribute (SecurityAction.Assert);
@@ -108,11 +104,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#else
 		[Category ("NotWorking")]
-#endif
 		public void Unrestricted () 
 		{
 			SiteIdentityPermissionAttribute a = new SiteIdentityPermissionAttribute (SecurityAction.Assert);

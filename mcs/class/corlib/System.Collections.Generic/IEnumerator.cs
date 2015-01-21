@@ -37,11 +37,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-#if NET_4_0
 	public interface IEnumerator<out T> : IDisposable, IEnumerator
-#else
-	public interface IEnumerator<T> : IDisposable, IEnumerator
-#endif
 	{
 		new T Current {
 			get;

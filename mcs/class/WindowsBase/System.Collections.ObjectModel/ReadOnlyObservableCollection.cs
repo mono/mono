@@ -24,67 +24,8 @@
 //	Brian O'Keefe (zer0keefie@gmail.com)
 //
 
-#if NET_4_0
 
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 [assembly:TypeForwardedTo (typeof (ReadOnlyObservableCollection<>))]
 
-#else
-
-using System.Collections.Specialized;
-using System.ComponentModel;
-
-namespace System.Collections.ObjectModel {
-	public class ReadOnlyObservableCollection<T> : ReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged {
-		
-		public ReadOnlyObservableCollection(ObservableCollection<T> list)
-			: base (list)
-		{
-			((INotifyPropertyChanged)list).PropertyChanged += SourceCollection_PropertyChanged;
-			((INotifyCollectionChanged)list).CollectionChanged += SourceCollection_CollectionChanged;
-		}
-
-		protected virtual event NotifyCollectionChangedEventHandler CollectionChanged;
-
-		protected virtual event PropertyChangedEventHandler PropertyChanged;
-
-		event NotifyCollectionChangedEventHandler INotifyCollectionChanged.CollectionChanged {
-			add { this.CollectionChanged += value; }
-			remove { this.CollectionChanged -= value; }
-		}
-
-		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged {
-			add { this.PropertyChanged += value; }
-			remove { this.PropertyChanged -= value; }
-		}
-
-		protected virtual void OnCollectionChanged (NotifyCollectionChangedEventArgs args)
-		{
-			NotifyCollectionChangedEventHandler eh = CollectionChanged;
-
-			if (eh != null)
-				eh (this, args);
-		}
-
-		protected virtual void OnPropertyChanged (PropertyChangedEventArgs args)
-		{
-			PropertyChangedEventHandler eh = PropertyChanged;
-
-			if (eh != null)
-				eh (this, args);
-		}
-
-		private void SourceCollection_CollectionChanged (object sender, NotifyCollectionChangedEventArgs e)
-		{
-			OnCollectionChanged (e);
-		}
-
-		private void SourceCollection_PropertyChanged (object sender, PropertyChangedEventArgs e)
-		{
-			OnPropertyChanged (e);
-		}
-	}
-
-}
-#endif

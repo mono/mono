@@ -119,8 +119,7 @@ namespace System.Security.Permissions {
 				}
 				a = esd.Attribute ("UserQuota");
 				if (a != null) {
-					Exception exc;
-					Int64.Parse (a, true, out m_userQuota, out exc);
+					m_userQuota = Int64.Parse (a, CultureInfo.InvariantCulture);
 				}
 			}
 		}

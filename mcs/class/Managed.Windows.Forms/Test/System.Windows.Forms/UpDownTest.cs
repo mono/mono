@@ -389,7 +389,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				nud.Value = 1000;
 				Assert.Fail ("#A1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
@@ -397,19 +396,10 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("Value", ex.ParamName, "#A5");
 				Assert.IsNull (ex.InnerException, "#A6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNotNull (ex.Message, "#A3");
-				Assert.IsNull (ex.ParamName, "#A4");
-				Assert.IsNull (ex.InnerException, "#A5");
-			}
-#endif
 
 			try {
 				nud.Value = 1000;
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
@@ -417,19 +407,10 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("Value", ex.ParamName, "#B5");
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNotNull (ex.Message, "#B3");
-				Assert.IsNull (ex.ParamName, "#B4");
-				Assert.IsNull (ex.InnerException, "#B5");
-			}
-#endif
 
 			try {
 				nud.Value = -1000;
 				Assert.Fail ("#C1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
 				Assert.IsNotNull (ex.Message, "#C3");
@@ -437,14 +418,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("Value", ex.ParamName, "#C5");
 				Assert.IsNull (ex.InnerException, "#C6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				Assert.IsNotNull (ex.Message, "#C3");
-				Assert.IsNull (ex.ParamName, "#C4");
-				Assert.IsNull (ex.InnerException, "#C5");
-			}
-#endif
 
 			nud.BeginInit ();
 
@@ -458,7 +431,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				nud.Value = -1000;
 				Assert.Fail ("#E1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#E2");
 				Assert.IsNotNull (ex.Message, "#E3");
@@ -466,14 +438,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("Value", ex.ParamName, "#E5");
 				Assert.IsNull (ex.InnerException, "#E6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
-				Assert.IsNotNull (ex.Message, "#E3");
-				Assert.IsNull (ex.ParamName, "#E4");
-				Assert.IsNull (ex.InnerException, "#E5");
-			}
-#endif
 		}
 
 		void NumericUpDown_TextChanged (object sender, EventArgs e)
@@ -900,7 +864,6 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				dud.SelectedIndex = -2;
 				Assert.Fail ("#A1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
@@ -908,19 +871,10 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("SelectedIndex", ex.ParamName, "#A5");
 				Assert.IsNull (ex.InnerException, "#A6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNotNull (ex.Message, "#A3");
-				Assert.IsNull (ex.ParamName, "#A4");
-				Assert.IsNull (ex.InnerException, "#A5");
-			}
-#endif
 
 			try {
 				dud.SelectedIndex = 1;
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
@@ -928,14 +882,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("SelectedIndex", ex.ParamName, "#A5");
 				Assert.IsNull (ex.InnerException, "#A6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNotNull (ex.Message, "#B3");
-				Assert.IsNull (ex.ParamName, "#B4");
-				Assert.IsNull (ex.InnerException, "#B5");
-			}
-#endif
 		}
 
 		[Test]
@@ -1048,7 +994,6 @@ namespace MonoTests.System.Windows.Forms
 			private readonly string _text;
 		}
 		
-#if NET_2_0
 		[Test]
 		public void Defaults ()
 		{
@@ -1085,6 +1030,5 @@ namespace MonoTests.System.Windows.Forms
 				throw new Exception ("The method or operation is not implemented.");
 			}
 		}
-#endif	
 	}
 }

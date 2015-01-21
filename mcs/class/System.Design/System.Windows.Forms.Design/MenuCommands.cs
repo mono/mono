@@ -79,7 +79,6 @@ namespace System.Windows.Forms.Design
 			MenuCommands.KeySelectNext = new CommandID (MenuCommands.guidVSStd2K, 4);
 			MenuCommands.KeySelectPrevious = new CommandID (MenuCommands.guidVSStd2K, 5);
 			MenuCommands.KeyTabOrderSelect = new CommandID (MenuCommands.wfCommandSet, 16405);
-#if NET_2_0
 			MenuCommands.KeyHome = new CommandID (MenuCommands.guidVSStd2K, 15);
 			MenuCommands.KeyShiftHome = new CommandID (MenuCommands.guidVSStd2K, 16);
 			MenuCommands.KeyEnd = new CommandID (MenuCommands.guidVSStd2K, 17);
@@ -88,7 +87,6 @@ namespace System.Windows.Forms.Design
 			MenuCommands.EditLabel = new CommandID (MenuCommands.guidVSStd97, 338);
 			MenuCommands.SetStatusText = new CommandID (MenuCommands.wfCommandSet, 16387);
 			MenuCommands.SetStatusRectangle = new CommandID (MenuCommands.wfCommandSet, 16388);
-#endif
 		}
 
 		#endregion Static Constructor
@@ -122,7 +120,6 @@ namespace System.Windows.Forms.Design
 		public static readonly CommandID KeyTabOrderSelect;
 		public static readonly CommandID SelectionMenu;
 		public static readonly CommandID TraySelectionMenu;
-#if NET_2_0
 		public static readonly CommandID EditLabel;
 		public static readonly CommandID KeyEnd;
 		public static readonly CommandID KeyHome;
@@ -131,7 +128,6 @@ namespace System.Windows.Forms.Design
 		public static readonly CommandID KeyShiftHome;
 		public static readonly CommandID SetStatusRectangle;
 		public static readonly CommandID SetStatusText;
-#endif
 
 		#endregion Public Static Fields
 

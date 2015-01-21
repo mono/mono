@@ -44,7 +44,6 @@ namespace MonoTests.System.Data.Common
 	[TestFixture]
 	public class DbDataAdapterTest
 	{
-#if NET_2_0
 		[Test]
 		public void UpdateBatchSize ()
 		{
@@ -260,7 +259,6 @@ sqliteDataAdapter.Update (dataSet, "Primus");
 		}
 #endif
 
-#endif
 
 		class MyAdapter : DbDataAdapter
 		{
@@ -290,7 +288,6 @@ sqliteDataAdapter.Update (dataSet, "Primus");
 			}
 #endif
 
-#if NET_2_0
 			public new int AddToBatch (IDbCommand command)
 			{
 				return base.AddToBatch (command);
@@ -325,7 +322,6 @@ sqliteDataAdapter.Update (dataSet, "Primus");
 			{
 				base.TerminateBatching ();
 			}
-#endif
 		}
 	}
 }

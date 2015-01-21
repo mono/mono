@@ -338,7 +338,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly2";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -354,13 +353,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				AppDomain.CurrentDomain.Evidence);
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence)
@@ -456,7 +448,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly3";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -472,13 +463,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				Path.GetTempPath ());
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String)
@@ -574,7 +558,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly4";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -591,14 +574,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				Path.GetTempPath (),
-				AppDomain.CurrentDomain.Evidence);
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence)
@@ -698,7 +673,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly5";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -716,15 +690,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				(PermissionSet) null,
-				(PermissionSet) null,
-				(PermissionSet) null);
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, PermissionSet, PermissionSet, PermissionSet)
@@ -828,7 +793,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly6";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -847,16 +811,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				AppDomain.CurrentDomain.Evidence,
-				(PermissionSet) null,
-				(PermissionSet) null,
-				(PermissionSet) null);
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence, PermissionSet, PermissionSet, PermissionSet)
@@ -964,7 +918,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly7";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -983,16 +936,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				Path.GetTempPath (),
-				(PermissionSet) null,
-				(PermissionSet) null,
-				(PermissionSet) null);
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, PermissionSet, PermissionSet, PermissionSet)
@@ -1100,7 +1043,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly8";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -1120,17 +1062,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				Path.GetTempPath (),
-				AppDomain.CurrentDomain.Evidence,
-				(PermissionSet) null,
-				(PermissionSet) null,
-				(PermissionSet) null);
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet)
@@ -1242,7 +1173,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly9";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -1263,18 +1193,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				Path.GetTempPath (),
-				AppDomain.CurrentDomain.Evidence,
-				(PermissionSet) null,
-				(PermissionSet) null,
-				(PermissionSet) null,
-				true);
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean)
@@ -1384,14 +1302,12 @@ namespace MonoTests.System
 			}
 		}
 
-#if NET_2_0
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
 		public void DefineDynamicAssembly10_Access_Invalid ()
 		{
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly10";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -1413,19 +1329,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				Path.GetTempPath (),
-				AppDomain.CurrentDomain.Evidence,
-				(PermissionSet) null,
-				(PermissionSet) null,
-				(PermissionSet) null,
-				true,
-				new List<CustomAttributeBuilder> ());
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
@@ -1711,7 +1614,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly11";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -1727,13 +1629,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666,
-				new List<CustomAttributeBuilder> ());
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess, IEnumerable<CustomAttributeBuilder>)
@@ -1888,7 +1783,6 @@ namespace MonoTests.System
 				Assert.IsTrue (ex.Message.IndexOf (typeof (object).Assembly.FullName) != -1, "#5");
 			}
 		}
-#endif
 
 		[Test]
 		public void SetThreadPrincipal ()
@@ -2624,62 +2518,30 @@ namespace MonoTests.System
 			aname = new AssemblyName ();
 			aname.Name = "bug79522A";
 			aname.CodeBase = assemblyFile;
-#if NET_2_0
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A3");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79522A";
 			aname.CodeBase = assemblyFile;
 			aname.Version = new Version (2, 5);
-#if NET_2_0
 			// the version number is not considered when comparing the manifest
 			// of the assembly found using codebase
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A4");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79522A";
 			aname.CodeBase = assemblyFile;
 			aname.Version = new Version (2, 4, 1);
-#if NET_2_0
 			// the version number is not considered when comparing the manifest
 			// of the assembly found using codebase
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A5");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			// if version is set, then culture must also be set
 			aname = new AssemblyName ();
 			aname.Name = "bug79522A";
 			aname.CodeBase = assemblyFile;
 			aname.Version = new Version (2, 4);
-#if NET_2_0
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A6");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			// version number does not need to be set
 			aname = new AssemblyName ();
@@ -2771,49 +2633,23 @@ namespace MonoTests.System
 			aname = new AssemblyName ();
 			aname.Name = "bug79522B";
 			aname.CodeBase = assemblyFile;
-#if NET_2_0
 			// the version number is not considered when comparing the manifest
 			// of the assembly found using codebase
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#B3");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79522B";
 			aname.CodeBase = assemblyFile;
 			aname.Version = new Version (5, 5);
-#if NET_2_0
 			// the version number is not considered when comparing the manifest
 			// of the assembly found using codebase
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#B3");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79522B";
 			aname.CodeBase = assemblyFile;
 			aname.Version = new Version (2, 4, 1);
-#if NET_2_0
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			// when the loaded assembly has a specific culture, then that
-			// culture must be set if you set the Version on the aname
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#B4");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			// version does not need to be set
 			aname = new AssemblyName ();
@@ -2898,15 +2734,7 @@ namespace MonoTests.System
 			aname = new AssemblyName ();
 			aname.Name = "bug79522C";
 			aname.CodeBase = assemblyFile;
-#if NET_2_0
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#C3");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79522C";
@@ -2922,64 +2750,27 @@ namespace MonoTests.System
 			aname.Name = "bug79522C";
 			aname.CodeBase = assemblyFile;
 			aname.Version = new Version (2, 4);
-#if NET_2_0
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			// when the loaded assembly has a specific culture/publickey,
-			// then that culture/publickey must be set if you set the
-			// Version on the aname
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#C4");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79522C";
 			aname.CodeBase = assemblyFile;
 			aname.CultureInfo = new CultureInfo ("nl-BE");
 			aname.Version = new Version (2, 4);
-#if NET_2_0
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			// if loaded assembly is signed, then the public key must be set
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#C5");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79522C";
 			aname.CodeBase = assemblyFile;
 			aname.CultureInfo = new CultureInfo ("nl-BE");
 			aname.SetPublicKey (publicKey);
-#if NET_2_0
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			// if public key is set, then version must be set
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#C6");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79522C";
 			aname.CodeBase = assemblyFile;
 			aname.CultureInfo = new CultureInfo ("nl-BE");
-#if NET_2_0
 			AppDomain.CurrentDomain.Load (aname);
-#else
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#C7");
-			} catch (FileLoadException) {
-			}
-#endif
 
 			// if culture and version are set, then the version must match
 			aname = new AssemblyName ();
@@ -3123,7 +2914,6 @@ namespace MonoTests.System
 			AppDomain.CurrentDomain.SetData (null, "data");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ApplyPolicy ()
 		{
@@ -3238,7 +3028,6 @@ namespace MonoTests.System
 		{
 			return Assembly.ReflectionOnlyLoad(args.Name);
 		}
-#endif
 
 
 		public class StuffToPick

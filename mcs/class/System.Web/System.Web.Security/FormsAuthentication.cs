@@ -69,7 +69,6 @@ namespace System.Web.Security
 						"default.aspx",
 						"index.html",
 						"index.htm" };
-#if NET_4_0
 		public static TimeSpan Timeout {
 			get; private set;
 		}
@@ -92,7 +91,6 @@ namespace System.Web.Security
 			if (!String.IsNullOrEmpty (value))
 				default_url = value;
 		}
-#endif
 		public FormsAuthentication ()
 		{
 		}
@@ -326,9 +324,7 @@ namespace System.Web.Security
 				FormsAuthenticationConfiguration config = section.Forms;
 
 				cookieName = config.Name;
-#if NET_4_0
 				Timeout = config.Timeout;
-#endif
 				timeout = (int)config.Timeout.TotalMinutes;
 				cookiePath = config.Path;
 				protection = config.Protection;
@@ -337,18 +333,14 @@ namespace System.Web.Security
 				cookie_domain = config.Domain;
 				cookie_mode = config.Cookieless;
 				cookies_supported = true; /* XXX ? */
-#if NET_4_0
 				if (!String.IsNullOrEmpty (default_url))
 					default_url = MapUrl (default_url);
 				else
-#endif
 					default_url = MapUrl(config.DefaultUrl);
 				enable_crossapp_redirects = config.EnableCrossAppRedirects;
-#if NET_4_0
 				if (!String.IsNullOrEmpty (login_url))
 					login_url = MapUrl (login_url);
 				else
-#endif
 					login_url = MapUrl(config.LoginUrl);
 
 				initialized = true;

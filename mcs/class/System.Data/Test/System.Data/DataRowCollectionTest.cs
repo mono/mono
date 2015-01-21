@@ -759,7 +759,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("c", Rows [0] [0], "test#19");
 		}
 
-#if NET_2_0
 		[Test]
 		public void IndexOf () {
 			DataSet ds = new DataSet ();
@@ -826,7 +825,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (-1, dt.Rows.IndexOf (dr3));
 			Assert.AreEqual (-1, dt.Rows.IndexOf (null));
 		}
-#endif
 
 		[Test]
 		public void Find_DoesntThrowWithNullObjectInArray () // Novell bug 519648

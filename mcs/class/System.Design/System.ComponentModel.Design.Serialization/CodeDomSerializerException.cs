@@ -31,9 +31,7 @@ using System.Runtime.Serialization;
 
 namespace System.ComponentModel.Design.Serialization {
 
-#if NET_2_0
 [Serializable]
-#endif
 public class CodeDomSerializerException : SystemException
 {
 	private CodeLinePragma linePragma;
@@ -55,7 +53,6 @@ public class CodeDomSerializerException : SystemException
 		throw new NotImplementedException ();
 	}
 
-#if NET_2_0
 	[MonoTODO]
 	public CodeDomSerializerException (string message, IDesignerSerializationManager manager)
 	{
@@ -67,7 +64,6 @@ public class CodeDomSerializerException : SystemException
 	{
 		throw new NotImplementedException ();
 	}
-#endif
 
 	[MonoTODO]
 	public override void GetObjectData (SerializationInfo info, StreamingContext context)

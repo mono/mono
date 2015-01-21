@@ -70,11 +70,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 		public void BindingCollections () {
 			ServiceModelSectionGroup g = GetConfig ("Test/config/test1.config");
 			List<BindingCollectionElement> coll = g.Bindings.BindingCollections;
-#if NET_3_5
 			Assert.AreEqual (20, coll.Count, "Count");
-#else
-			Assert.AreEqual (16, coll.Count, "Count");
-#endif
 		}
 
 		[Test]

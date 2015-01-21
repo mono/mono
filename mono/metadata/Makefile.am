@@ -157,6 +157,8 @@ common_sources = \
 	mono-perfcounters.h	\
 	mono-perfcounters-def.h	\
 	mono-ptr-array.h	\
+	mono-route.c		\
+	mono-route.h		\
 	mono-wsq.c		\
 	mono-wsq.h		\
 	monitor.h		\
@@ -176,7 +178,7 @@ common_sources = \
 	remoting.h		\
 	remoting.c		\
 	runtime.c		\
-	security.c		\
+	mono-security.c		\
 	security.h		\
 	security-core-clr.c	\
 	security-core-clr.h	\

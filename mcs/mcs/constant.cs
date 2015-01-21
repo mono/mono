@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
-			if (!expl && IsLiteral && 
+			if (!expl && IsLiteral && type.BuiltinType != BuiltinTypeSpec.Type.Double &&
 				BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (target) &&
 				BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (type)) {
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",

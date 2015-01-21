@@ -71,12 +71,10 @@ namespace System.Web.UI.Design
 			return (context.Instance is IComponent);
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected virtual bool IsValidDataSource (IComponent component)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

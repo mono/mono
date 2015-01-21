@@ -53,7 +53,6 @@ namespace MonoCasTests.System.Security {
 		}
 
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void GetAction ()
@@ -187,7 +186,6 @@ namespace MonoCasTests.System.Security {
 		{
 			se.FirstPermissionThatFailed = null;
 		}
-#endif
 		[Test]
 		[SecurityPermission (SecurityAction.PermitOnly, ControlEvidence = true, ControlPolicy = true)]
 		public void GetGrantedSet_Pass ()
@@ -210,7 +208,6 @@ namespace MonoCasTests.System.Security {
 		{
 			string s = se.GrantedSet;
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void SetGrantedSet ()
@@ -247,7 +244,6 @@ namespace MonoCasTests.System.Security {
 		{
 			se.Method = null;
 		}
-#endif
 		[Test]
 		[SecurityPermission (SecurityAction.PermitOnly, ControlEvidence = true, ControlPolicy = true)]
 		public void GetPermissionState_Pass ()
@@ -270,7 +266,6 @@ namespace MonoCasTests.System.Security {
 		{
 			string s = se.PermissionState;
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void SetPermissionState ()
@@ -307,7 +302,6 @@ namespace MonoCasTests.System.Security {
 		{
 			se.PermitOnlySetInstance = null;
 		}
-#endif
 		[Test]
 		[SecurityPermission (SecurityAction.PermitOnly, ControlEvidence = true, ControlPolicy = true)]
 		public void GetRefusedSet_Pass ()
@@ -330,7 +324,6 @@ namespace MonoCasTests.System.Security {
 		{
 			string s = se.RefusedSet;
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void SetRefusedSet ()
@@ -381,7 +374,6 @@ namespace MonoCasTests.System.Security {
 		{
 			se.Zone = SecurityZone.Untrusted;
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void ToString_Empty ()

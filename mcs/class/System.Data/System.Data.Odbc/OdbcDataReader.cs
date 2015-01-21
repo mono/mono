@@ -42,11 +42,7 @@ using System.Text;
 
 namespace System.Data.Odbc
 {
-#if NET_2_0
 	public sealed class OdbcDataReader : DbDataReader
-#else
-	public sealed class OdbcDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
-#endif
 	{
 		#region Fields
 		
@@ -95,9 +91,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int Depth {
 			get {
 				return 0; // no nested selects supported
@@ -105,9 +99,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int FieldCount {
 			get {
 				if (IsClosed)
@@ -117,9 +109,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool IsClosed {
 			get {
 				return !open;
@@ -127,9 +117,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		object this [string value] {
 			get {
 				int pos = GetOrdinal (value);
@@ -138,9 +126,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		object this [int i] {
 			get {
 				return GetValue (i);
@@ -148,9 +134,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int RecordsAffected {
 			get {
 				return _recordsAffected;
@@ -159,9 +143,7 @@ namespace System.Data.Odbc
 
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool HasRows {
 			get { throw new NotImplementedException(); }
 		}
@@ -227,9 +209,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Close ()
 		{
 			// FIXME : have to implement output parameter binding
@@ -250,27 +230,21 @@ namespace System.Data.Odbc
 #endif
 
 		public 
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool GetBoolean (int i)
 		{
 			return (bool) GetValue (i);
 		}
 
 		public 
-#if NET_2_0
 		override
-#endif // NET_2_0
 		byte GetByte (int i)
 		{
 			return Convert.ToByte (GetValue (i));
 		}
 
 		public 
-#if NET_2_0
 		override
-#endif // NET_2_0
 		long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			if (IsClosed)
@@ -340,9 +314,7 @@ namespace System.Data.Odbc
 		
 		[MonoTODO]
 		public 
-#if NET_2_0
 		override
-#endif // NET_2_0
 		char GetChar (int i)
 		{
 			throw new NotImplementedException ();
@@ -350,9 +322,7 @@ namespace System.Data.Odbc
 
 		[MonoTODO]
 		public 
-#if NET_2_0
 		override
-#endif // NET_2_0
 		long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			if (IsClosed)
@@ -369,18 +339,14 @@ namespace System.Data.Odbc
 #if ONLY_1_1
 		public
 #endif
-#if NET_2_0
 		new
-#endif
 		IDataReader GetData (int i)
 		{
 			throw new NotImplementedException ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string GetDataTypeName (int i)
 		{
 			if (IsClosed)
@@ -396,36 +362,28 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		DateTime GetDateTime (int i)
 		{
 			return (DateTime) GetValue (i);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		decimal GetDecimal (int i)
 		{
 			return (decimal) GetValue (i);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		double GetDouble (int i)
 		{
 			return (double) GetValue (i);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		Type GetFieldType (int i)
 		{
 			if (IsClosed)
@@ -434,9 +392,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		float GetFloat (int i)
 		{
 			return (float) GetValue (i);
@@ -444,45 +400,35 @@ namespace System.Data.Odbc
 
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		Guid GetGuid (int i)
 		{
 			throw new NotImplementedException ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		short GetInt16 (int i)
 		{
 			return (short) GetValue (i);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int GetInt32 (int i)
 		{
 			return (int) GetValue (i);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		long GetInt64 (int i)
 		{
 			return (long) GetValue (i);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string GetName (int i)
 		{
 			if (IsClosed)
@@ -491,9 +437,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int GetOrdinal (string value)
 		{
 			if (IsClosed)
@@ -509,9 +453,7 @@ namespace System.Data.Odbc
 
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		DataTable GetSchemaTable ()
 		{
 			if (IsClosed)
@@ -632,9 +574,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string GetString (int i)
 		{
 			object ret = GetValue (i);
@@ -652,9 +592,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		object GetValue (int i)
 		{
 			if (IsClosed)
@@ -861,9 +799,7 @@ namespace System.Data.Odbc
 		}
 		
 		public 
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int GetValues (object [] values)
 		{
 			int numValues = 0;
@@ -906,16 +842,12 @@ namespace System.Data.Odbc
 		}
 #endif // ONLY_1_1
 
-#if NET_2_0
 		public override IEnumerator GetEnumerator ()
 		{
 			return new DbEnumerator (this);
 		}
-#endif
 
-#if NET_2_0
 		protected override
-#endif
 		void Dispose (bool disposing)
 		{
 			if (disposed)
@@ -933,9 +865,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool IsDBNull (int i)
 		{
 			return (GetValue (i) is DBNull);
@@ -945,9 +875,7 @@ namespace System.Data.Odbc
 		/// Move to the next result set.
 		/// </remarks>
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool NextResult ()
 		{
 			OdbcReturn ret = OdbcReturn.Success;
@@ -1138,9 +1066,7 @@ namespace System.Data.Odbc
 		}
 		
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool Read ()
 		{
 			return NextRow ();

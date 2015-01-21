@@ -3,7 +3,6 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
 
-#if NET_2_0
 namespace MonoTests.System
 {
 	public class TimeZoneInfo_AdjustmentRuleTest
@@ -115,4 +114,3 @@ namespace MonoTests.System
 		}
 	}	
 }
-#endif

@@ -28,9 +28,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-#if NET_2_0
 using System.Transactions;
-#endif
 
 namespace System.EnterpriseServices {
 
@@ -60,7 +58,6 @@ namespace System.EnterpriseServices {
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public Transaction BringYourOwnSystemTransaction {
 			get {
@@ -70,7 +67,6 @@ namespace System.EnterpriseServices {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 		[MonoTODO]
 		public ITransaction BringYourOwnTransaction {

@@ -59,7 +59,6 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		// Only use on Windows!
 		public static string GenerateCustomFormatTests ()
 		{
@@ -125,7 +124,6 @@ namespace MonoTests.System.Windows.Forms {
 
 			return builder.ToString ();
 		}
-#endif
 
 		// On Windows this test must be called with en-US locale specified in the regional settings.
 		// There is no way to change this programmatically for the test to run correctly on other locales
@@ -3116,9 +3114,7 @@ namespace MonoTests.System.Windows.Forms {
 			
 			Assert.AreEqual ("Window", dt.BackColor.Name, "B1");
 			Assert.AreSame (null, dt.BackgroundImage, "B2");
-#if NET_2_0
 			Assert.AreEqual (ImageLayout.Tile, dt.BackgroundImageLayout, "B3");
-#endif
 
 			//Assert.AreSame (null, dt.CalendarFont, "C1");
 			Assert.AreEqual ("ControlText", dt.CalendarForeColor.Name, "C2");
@@ -3136,19 +3132,13 @@ namespace MonoTests.System.Windows.Forms {
 			
 			Assert.AreEqual (new DateTime (9998, 12, 31, 0, 0, 0), DateTimePicker.MaxDateTime, "M2");
 			Assert.AreEqual (new DateTime (1753, 1, 1), DateTimePicker.MinDateTime, "M4");
-#if NET_2_0
 			Assert.AreEqual (new DateTime (9998, 12, 31, 0, 0, 0), DateTimePicker.MaximumDateTime, "M5");
 			Assert.AreEqual (new DateTime (1753, 1, 1), DateTimePicker.MinimumDateTime, "M6");
-#endif
 
-#if NET_2_0
 			Assert.AreEqual (new Padding (0, 0, 0, 0), dt.Padding, "P1");
-#endif
 			// PreferredHeight is Font dependent.
 			
-#if NET_2_0
 			Assert.AreEqual (false, dt.RightToLeftLayout, "R1");
-#endif
 
 			Assert.AreEqual (false, dt.ShowCheckBox, "S1");
 			Assert.AreEqual (false, dt.ShowUpDown, "S2");
@@ -3192,7 +3182,6 @@ namespace MonoTests.System.Windows.Forms {
 			try {
 				dt.MaxDate = new DateTime (9999, 1, 1);
 				Assert.Fail ("#A1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				// DateTimePicker does not support dates after 12/31/9998 12:00:00 AM
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
@@ -3201,16 +3190,6 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.IsNotNull (ex.ParamName, "#A5");
 				Assert.AreEqual ("MaxDate", ex.ParamName, "#A6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// DateTimePicker does not support dates after 12/31/9998 12:00:00 AM
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsNotNull (ex.ParamName, "#A5");
-				Assert.AreEqual ("value", ex.ParamName, "#A6");
-			}
-#endif
 
 			dt.MinDate = new DateTime (2007, 8, 13);
 
@@ -3218,7 +3197,6 @@ namespace MonoTests.System.Windows.Forms {
 			try {
 				dt.MaxDate = new DateTime (2007, 8, 12);
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				// '8/12/2007 12:00:00 AM' is not a valid value for 'MaxDate'.
 				// 'MaxDate' must be greater than or equal to MinDate.
@@ -3228,16 +3206,6 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.IsNotNull (ex.ParamName, "#B5");
 				Assert.AreEqual ("MaxDate", ex.ParamName, "#B6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// '8/12/2007 12:00:00 AM' is not a valid value for 'MaxDate'.
-				// 'MaxDate' must be greater than or equal to MinDate.
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
-			}
-#endif
 		}
 
 		[Test]
@@ -3262,7 +3230,6 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (new DateTime (2008, 2, 5), dt.Value, "#11");
 		}
 
-#if NET_2_0
 		[Test]
 		public void DateTimeMinDate ()
 		{
@@ -3273,7 +3240,6 @@ namespace MonoTests.System.Windows.Forms {
 			dt.MinDate = DateTime.MinValue;
 			Assert.AreEqual (DateTimePicker.MinimumDateTime, dt.MinDate, "A1");
 		}
-#endif
 
 		[Test]
 		public void MinDate_Invalid ()
@@ -3284,7 +3250,6 @@ namespace MonoTests.System.Windows.Forms {
 			try {
 				dt.MinDate = new DateTime (1752, 12, 31);
 				Assert.Fail ("#A1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				// DateTimePicker does not support dates before 1/1/1753 12:00:00 AM
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
@@ -3293,42 +3258,17 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.IsNotNull (ex.ParamName, "#A5");
 				Assert.AreEqual ("MinDate", ex.ParamName, "#A6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// DateTimePicker does not support dates before 1/1/1753 12:00:00 AM
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsNotNull (ex.ParamName, "#A5");
-				Assert.AreEqual ("value", ex.ParamName, "#A6");
-			}
-#endif
 
 			dt.MaxDate = new DateTime (2007, 8, 13);
 
 			// equal to MaxDate
-#if NET_2_0
 			dt.MinDate = new DateTime (2007, 8, 13);
 			Assert.AreEqual (new DateTime (2007, 8, 13), dt.MinDate, "#B1");
-#else
-			try {
-				dt.MinDate = new DateTime (2007, 8, 13);
-				Assert.Fail ("#B1");
-			} catch (ArgumentException ex) {
-				// '8/13/2007 12:00:00 AM' is not a valid value for 'MinDate'.
-				// 'MinDate' must be less than MaxDate
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
-			}
-#endif
 
 			// not less than MaxDate
 			try {
 				dt.MinDate = new DateTime (2007, 8, 14);
 				Assert.Fail ("#C1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				// '8/14/2007 12:00:00 AM' is not a valid value for 'MinDate'.
 				// 'MinDate' must be less than MaxDate
@@ -3338,16 +3278,6 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.IsNotNull (ex.ParamName, "#C5");
 				Assert.AreEqual ("MinDate", ex.ParamName, "#C6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// '8/14/2007 12:00:00 AM' is not a valid value for 'MinDate'.
-				// 'MinDate' must be less than MaxDate
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				Assert.IsNull (ex.InnerException, "#C3");
-				Assert.IsNotNull (ex.Message, "#C4");
-				Assert.IsNull (ex.ParamName, "#C5");
-			}
-#endif
 		}
 
 		[Test]
@@ -3420,11 +3350,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif	
 		public void ValueTooBig ()
 		{
 			DateTimePicker dt = new DateTimePicker ();
@@ -3434,11 +3360,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void ValueTooSmall ()
 		{
 			DateTimePicker dt = new DateTimePicker ();

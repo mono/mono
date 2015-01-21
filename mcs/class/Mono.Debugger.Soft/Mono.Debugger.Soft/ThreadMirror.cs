@@ -22,7 +22,9 @@ namespace Mono.Debugger.Soft
 
 		public StackFrame[] GetFrames () {
 			FetchFrames (true);
-			fetchingEvent.WaitOne ();
+			if (WaitHandle.WaitAny (new []{ vm.conn.DisconnectedEvent, fetchingEvent }) == 0) {
+				throw new VMDisconnectedException ();
+			}
 			return frames;
 		}
 

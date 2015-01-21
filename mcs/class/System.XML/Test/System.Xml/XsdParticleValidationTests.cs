@@ -11,11 +11,7 @@ using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
 
-#if NET_2_0
 using ValidationException = System.Xml.Schema.XmlSchemaValidationException;
-#else
-using ValidationException = System.Xml.Schema.XmlSchemaException;
-#endif
 
 namespace MonoTests.System.Xml
 {

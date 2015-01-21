@@ -34,9 +34,7 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO
 {
@@ -55,10 +53,8 @@ namespace System.IO
 		bool streamClosed;
 		int position;
 		int dirty_bytes;
-#if NET_4_5
 		[NonSerialized]
 		Task<int> read_task;
-#endif
 
 		public MemoryStream () : this (0)
 		{
@@ -425,7 +421,6 @@ namespace System.IO
 			stream.Write (internalBuffer, initialIndex, length - initialIndex);
 		}
 
-#if NET_4_5
 
 		public override Task CopyToAsync (Stream destination, int bufferSize, CancellationToken cancellationToken)
 		{
@@ -442,7 +437,7 @@ namespace System.IO
 				Flush ();
 				return TaskConstants.Finished;
 			} catch (Exception ex) {
-				return Task<object>.FromException (ex);
+				return Task.FromException<object> (ex);
 			}
 		}
 
@@ -469,7 +464,7 @@ namespace System.IO
 
 				return read_task;
 			} catch (Exception ex) {
-				return Task<int>.FromException (ex);
+				return Task.FromException<int> (ex);
 			}
 		}
 
@@ -492,9 +487,8 @@ namespace System.IO
 				Write (buffer, offset, count);
 				return TaskConstants.Finished;
 			} catch (Exception ex) {
-				return Task<object>.FromException (ex);
+				return Task.FromException<object> (ex);
 			}
 		}
-#endif
 	}               
 }

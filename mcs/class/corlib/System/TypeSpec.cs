@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-#if NET_4_0
 namespace System {
 	internal class ArraySpec
 	{
@@ -374,5 +373,4 @@ namespace System {
 		}
 	}
 }
-#endif
 

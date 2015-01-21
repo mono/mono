@@ -3279,7 +3279,7 @@ namespace Mono.CSharp {
 				//
 				// We are the first storey on path and 'this' has to be hoisted
 				//
-				if (storey.HoistedThis == null) {
+				if (storey.HoistedThis == null || !(storey.Parent is HoistedStoreyClass)) {
 					foreach (ExplicitBlock ref_block in Original.ParametersBlock.TopBlock.ThisReferencesFromChildrenBlock) {
 						//
 						// ThisReferencesFromChildrenBlock holds all reference even if they

@@ -69,11 +69,7 @@ namespace Microsoft.Build.Evaluation
 
 		static ProjectCollection ()
 		{
-			#if NET_4_5
 			global_project_collection = new ProjectCollection (new ReadOnlyDictionary<string, string> (new Dictionary<string, string> ()));
-			#else
-			global_project_collection = new ProjectCollection (new Dictionary<string, string> ());
-			#endif
 		}
 
 		public static string Escape (string unescapedString)
@@ -251,10 +247,8 @@ namespace Microsoft.Build.Evaluation
 		//FIXME: should also support config file, depending on ToolsetLocations
 		void LoadDefaultToolsets ()
 		{
-#if NET_4_0
 			AddToolset (new Toolset ("4.0",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40), this, null));
-#endif
 #if XBUILD_12
 			AddToolset (new Toolset ("12.0", ToolLocationHelper.GetPathToBuildTools ("12.0"), this, null));
 #endif

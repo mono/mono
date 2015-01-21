@@ -457,10 +457,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.TitleFormat = TitleFormat.Month;
 			p.TodaysDate = new DateTime (1999,1,1);
 			p.VisibleDate = new DateTime (1998,1,1);
-#if NET_2_0
 			p.Caption = "This is a Caption";
 			p.CaptionAlign = TableCaptionAlign.Right;
-#endif
 
 			p.DayHeaderStyle.BackColor = Color.Blue;
 			p.DayStyle.BackColor = Color.Yellow;
@@ -494,10 +492,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (new DateTime (1999,1,1), copy.TodaysDate, "TodaysDate");
 			Assert.AreEqual (new DateTime (1998,1,1), copy.VisibleDate, "VisibleDate");
 
-#if NET_2_0
 			Assert.AreEqual ("This is a Caption", copy.Caption, "Caption");
 			Assert.AreEqual (TableCaptionAlign.Right, copy.CaptionAlign, "CaptionAlign");
-#endif
 
 			copy.ShowDayHeader = true;
 			copy.ShowNextPrevMonth = true;

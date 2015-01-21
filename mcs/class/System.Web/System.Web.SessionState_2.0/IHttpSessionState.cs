@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Collections;
 using System.Collections.Specialized;
@@ -65,5 +64,4 @@ namespace System.Web.SessionState {
 		int Timeout { get; set; }			
 	}
 }
-#endif
 

@@ -53,13 +53,11 @@ namespace System
 {
 #if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
-#elif NET_4_0
+#else
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 	[SerializableAttribute]
-#if NET_4_0 || !INSIDE_CORLIB
 	public
-#endif
 	sealed partial class TimeZoneInfo : IEquatable<TimeZoneInfo>, ISerializable, IDeserializationCallback
 	{
 		TimeSpan baseUtcOffset;
@@ -321,11 +319,7 @@ namespace System
 			//FIXME: do not rely on DateTime implementation !
 			if (this == TimeZoneInfo.Local) 
 			{
-#if NET_4_0
 				return dateTime.ToLocalTime ();
-#else
-				return DateTime.SpecifyKind (dateTime.ToLocalTime (), DateTimeKind.Unspecified);
-#endif
 			}
 
 
@@ -395,12 +389,10 @@ namespace System
 			return new TimeZoneInfo (id, baseUtcOffset, displayName, standardDisplayName, daylightDisplayName, adjustmentRules, disableDaylightSavingTime);
 		}
 
-#if NET_4_5
 		public override bool Equals (object obj)
 		{
 			return Equals (obj as TimeZoneInfo);
 		}
-#endif
 
 		public bool Equals (TimeZoneInfo other)
 		{
@@ -616,11 +608,7 @@ namespace System
 			return hash_code;
 		}
 
-#if NET_4_0
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
-#else
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
-#endif
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
@@ -892,11 +880,7 @@ namespace System
 			return false;
 		}
 
-#if NET_4_0
 		void IDeserializationCallback.OnDeserialization (object sender)
-#else
-		public void OnDeserialization (object sender)
-#endif
 		{
 			try {
 					TimeZoneInfo.Validate (id, baseUtcOffset, adjustmentRules);
@@ -1086,7 +1070,7 @@ namespace System
 				return new DateTime (year, transition.Month, transition.Day) + transition.TimeOfDay.TimeOfDay;
 
 			DayOfWeek first = (new DateTime (year, transition.Month, 1)).DayOfWeek;
-			int day = 1 + (transition.Week - 1) * 7 + (transition.DayOfWeek - first) % 7;
+			int day = 1 + (transition.Week - 1) * 7 + (transition.DayOfWeek - first + 7) % 7;
 			if (day >  DateTime.DaysInMonth (year, transition.Month))
 				day -= 7;
 			if (day < 1)

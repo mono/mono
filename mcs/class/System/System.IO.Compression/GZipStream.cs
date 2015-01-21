@@ -49,7 +49,6 @@ namespace System.IO.Compression {
 		}
 		
 		
-#if NET_4_5
 		public GZipStream (Stream stream, CompressionLevel compressionLevel)
 			: this (stream, compressionLevel, false)
 		{
@@ -59,7 +58,6 @@ namespace System.IO.Compression {
 		{
 			this.deflateStream = new DeflateStream (stream, compressionLevel, leaveOpen, true);
 		}
-#endif
 
 		protected override void Dispose (bool disposing)
 		{

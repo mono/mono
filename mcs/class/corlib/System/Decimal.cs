@@ -53,9 +53,7 @@ namespace System
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public struct Decimal: IFormattable, IConvertible, IComparable, IComparable<Decimal>, IEquatable <Decimal>
-#if NET_4_0
 		, IDeserializationCallback
-#endif
 	{
 		public const decimal MinValue = -79228162514264337593543950335m;
 		public const decimal MaxValue =  79228162514264337593543950335m;
@@ -560,6 +558,9 @@ namespace System
 			if (decimals < 0 || decimals > 28) {
 				throw new ArgumentOutOfRangeException ("decimals", "[0,28]");
 			}
+
+			if (mode == MidpointRounding.ToEven && decimals == 0)
+				return Round (d);
 
 			bool negative = d.IsNegative ();
 			if (negative)
@@ -1258,11 +1259,9 @@ namespace System
 			return (UInt64)(Decimal.Truncate (d));
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("targetType");
-			return Convert.ToType (this, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)
@@ -1355,11 +1354,17 @@ namespace System
 			return ToString ("G", provider);
 		}
 		
-#if NET_4_0
 		void IDeserializationCallback.OnDeserialization(object sender)
 		{
 		}
-#endif
+
+		// TODO: .net icall
+		internal static int FCallToInt32 (Decimal d)
+		{
+			// Returned Even-Rounded
+			return checked ((int) Math.Round (d));
+		}
+
 
 #if !MSTEST
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

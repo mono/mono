@@ -420,6 +420,10 @@ public class DebuggerTests
 		e = step_out ();
 		assert_location (e, "single_stepping");
 
+		// Step into next line
+		e = step_into ();
+		assert_location (e, "single_stepping");
+
 		// Step into ss3_2 ()
 		e = step_into ();
 		assert_location (e, "ss3_2");
@@ -2912,6 +2916,13 @@ public class DebuggerTests
 		AssertThrows<Exception> (delegate {
 				d_method.DeclaringType.GetValue (d_method.DeclaringType.GetField ("static_i"));
 			});
+
+		// Check that .Domain is accessible for stack frames with native transitions
+		e = run_until ("called_from_invoke");
+		ThreadMirror.NativeTransitions = true;
+		foreach (var f in e.Thread.GetFrames ()) {
+			var dom = f.Domain;
+		}
 	}
 
 	[Test]
@@ -3536,10 +3547,10 @@ public class DebuggerTests
 
 		e.Thread.SetIP (next_loc);
 
-		/* Check that i = 5; j = 5; was skipped */
+		/* Check that i ++; j = 5; was skipped */
 		bevent = run_until ("set_ip_2");
 		var f = bevent.Thread.GetFrames ()[1];
-		AssertValue (1, f.GetValue (f.Method.GetLocal ("i")));
+		AssertValue (2, f.GetValue (f.Method.GetLocal ("i")));
 		AssertValue (0, f.GetValue (f.Method.GetLocal ("j")));
 
 		// Error handling
@@ -3550,6 +3561,32 @@ public class DebuggerTests
 		AssertThrows<ArgumentException> (delegate {
 				e.Thread.SetIP (invalid_loc);
 			});
+	}
+
+	[Test]
+	public void SetIPSingleStep () {
+		// Check that single stepping after set-ip steps from the new ip
+		var bevent = run_until ("set_ip_1");
+
+		var invalid_loc = bevent.Thread.GetFrames ()[0].Location;
+
+		var req = create_step (bevent);
+		req.Size = StepSize.Line;
+		var e = step_out ();
+		req.Disable ();
+		var frames = e.Thread.GetFrames ();
+		var locs = frames [0].Method.Locations;
+		var prev_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber - 3));
+		AssertValue (2, frames [0].GetValue (frames [0].Method.GetLocal ("i")));
+
+		Console.WriteLine ("X: " + frames [0].Location.LineNumber);
+		// Set back the ip to the first i ++; line
+		e.Thread.SetIP (prev_loc);
+
+		e = step_over ();
+		var f = e.Thread.GetFrames ()[0];
+		Console.WriteLine (f.GetValue (f.Method.GetLocal ("i")));
+		AssertValue (3, f.GetValue (f.Method.GetLocal ("i")));
 	}
 
 	[Test]

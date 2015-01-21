@@ -23,7 +23,7 @@ System.Threading.Tasks.Dataflow/PassingMessageBox.cs
 System.Threading.Tasks.Dataflow/NameHelper.cs
 System.Threading.Tasks.Dataflow/TargetCollection.cs
 System.Threading.Tasks.Dataflow/JoinTarget.cs
-../corlib/System.Threading/AtomicBoolean.cs
+../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 System.Threading.Tasks.Dataflow/ActionBlock.cs
 System.Threading.Tasks.Dataflow/BatchBlock.cs
 System.Threading.Tasks.Dataflow/BatchedJoinBlock.cs

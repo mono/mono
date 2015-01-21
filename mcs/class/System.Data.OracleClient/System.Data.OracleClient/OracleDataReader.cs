@@ -30,19 +30,12 @@ using System.Text;
 namespace System.Data.OracleClient
 {
 	public sealed class OracleDataReader :
-#if NET_2_0
 		DbDataReader
-#else
-		MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
-#endif
 	{
 		#region Fields
 
 		OracleCommand command;
 		ArrayList dataTypeNames;
-#if !NET_2_0
-		bool disposed;
-#endif
 		bool isClosed;
 		bool hasRows;
 		DataTable schemaTable;
@@ -76,57 +69,43 @@ namespace System.Data.OracleClient
 		#region Properties
 
 		public
-#if NET_2_0
 		override
-#endif
 		int Depth {
 			get { return 0; }
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int FieldCount {
 			get { return statement.ColumnCount; }
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool HasRows {
 			get { return hasRows; }
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool IsClosed {
 			get { return isClosed; }
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		object this [string name] {
 			get { return GetValue (GetOrdinal (name)); }
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		object this [int i] {
 			get { return GetValue (i); }
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int RecordsAffected {
 			get {
 				return GetRecordsAffected ();
@@ -138,9 +117,7 @@ namespace System.Data.OracleClient
 		#region Methods
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Close ()
 		{
 			if (!isClosed) {
@@ -152,12 +129,10 @@ namespace System.Data.OracleClient
 				statement.Dispose();
 				statement = null;
 			}
-#if NET_2_0
 			if (schemaTable != null) {
 				schemaTable.Dispose ();
 				schemaTable = null;
 			}
-#endif
 			isClosed = true;
 		}
 
@@ -190,45 +165,23 @@ namespace System.Data.OracleClient
 			return schemaTable;
 		}
 
-#if !NET_2_0
-		private void Dispose (bool disposing)
-		{
-			if (!disposed) {
-				if (disposing)
-					Close ();
-				disposed = true;
-			}
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool GetBoolean (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		byte GetByte (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		long GetBytes (int i, long fieldOffset, byte[] buffer2, int bufferoffset, int length)
 		{
 			byte[] value = (byte[]) GetValue (i);
@@ -246,18 +199,14 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		char GetChar (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		long GetChars (int i, long fieldOffset, char[] buffer2, int bufferoffset, int length)
 		{
 			char [] value = (char[]) GetValue (i);
@@ -266,27 +215,16 @@ namespace System.Data.OracleClient
 			return (value.Length - fieldOffset);
 		}
 
-#if !NET_2_0
-		[MonoTODO]
-		public IDataReader GetData (int i)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		string GetDataTypeName (int i)
 		{
 			return dataTypeNames [i].ToString ().ToUpper ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		DateTime GetDateTime (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
@@ -294,9 +232,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		decimal GetDecimal (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
@@ -304,9 +240,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		double GetDouble (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
@@ -314,9 +248,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		Type GetFieldType (int i)
 		{
 			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
@@ -324,9 +256,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		float GetFloat (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
@@ -334,27 +264,21 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		Guid GetGuid (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		short GetInt16 (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int GetInt32 (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
@@ -362,9 +286,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		long GetInt64 (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
@@ -372,9 +294,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		string GetName (int i)
 		{
 			return statement.GetParameter (i).GetName ();
@@ -498,9 +418,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int GetOrdinal (string name)
 		{
 			int i = GetOrdinalInternal (name);
@@ -697,9 +615,7 @@ namespace System.Data.OracleClient
 
 		[MonoTODO("Implement this properly, with all needed information.")]
 		public
-#if NET_2_0
 		override
-#endif
 		DataTable GetSchemaTable ()
 		{
 			StringCollection keyinfo = null;
@@ -769,9 +685,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		string GetString (int i)
 		{
 			return (string) GetValue (i);
@@ -783,9 +697,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		object GetValue (int i)
 		{
 			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
@@ -806,9 +718,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int GetValues (object [] values)
 		{
 			int len = values.Length;
@@ -826,19 +736,13 @@ namespace System.Data.OracleClient
 			return retval;
 		}
 
-#if NET_2_0
 		public override IEnumerator GetEnumerator ()
-#else
-		IEnumerator IEnumerable.GetEnumerator ()
-#endif
 		{
 			return new DbEnumerator (this);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool IsDBNull (int i)
 		{
 			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
@@ -852,9 +756,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool NextResult ()
 		{
 			ValidateState ();
@@ -874,9 +776,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool Read ()
 		{
 			ValidateState ();
@@ -889,7 +789,6 @@ namespace System.Data.OracleClient
 			return false;
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override Type GetProviderSpecificFieldType (int i)
 		{
@@ -907,7 +806,6 @@ namespace System.Data.OracleClient
 		{
 			return GetOracleValues (values);
 		}
-#endif
 
 		#endregion // Methods
 	}

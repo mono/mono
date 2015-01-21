@@ -8,7 +8,9 @@
 
 #include "config.h"
 #include <glib.h>
+#ifdef HAVE_SIGNAL_H
 #include <signal.h>
+#endif
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -103,7 +105,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 106
+#define MONO_AOT_FILE_VERSION 107
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -178,8 +180,12 @@ typedef struct MonoAotFileInfo
 
 	/* Mono's Global Offset Table */
 	gpointer got;
+	/* Global Offset Table for LLVM code */
+	gpointer llvm_got;
 	/* Compiled code for methods */
 	gpointer methods;
+	gpointer jit_code_start;
+	gpointer jit_code_end;
 	/* Mono EH Frame created by llc when using LLVM */
 	gpointer mono_eh_frame;
 	/* Data blob */
@@ -192,6 +198,7 @@ typedef struct MonoAotFileInfo
 	gpointer extra_method_info_offsets;
 	gpointer extra_method_table;
 	gpointer got_info_offsets;
+	gpointer llvm_got_info_offsets;
 	gpointer methods_end;
 	gpointer unwind_info;
 	gpointer mem_end;
@@ -1245,6 +1252,7 @@ typedef enum {
 	MONO_TRAMPOLINE_RESTORE_STACK_PROT,
 	MONO_TRAMPOLINE_GENERIC_VIRTUAL_REMOTING,
 	MONO_TRAMPOLINE_MONITOR_ENTER,
+	MONO_TRAMPOLINE_MONITOR_ENTER_V4,
 	MONO_TRAMPOLINE_MONITOR_EXIT,
 	MONO_TRAMPOLINE_VCALL,
 	MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD,
@@ -1258,12 +1266,14 @@ typedef enum {
 	 (t) == MONO_TRAMPOLINE_RESTORE_STACK_PROT ||	\
 	 (t) == MONO_TRAMPOLINE_RGCTX_LAZY_FETCH ||	\
 	 (t) == MONO_TRAMPOLINE_MONITOR_ENTER ||	\
+	 (t) == MONO_TRAMPOLINE_MONITOR_ENTER_V4 ||	\
 	 (t) == MONO_TRAMPOLINE_MONITOR_EXIT)
 
 /* These trampolines receive an argument directly in a register */
 #define MONO_TRAMPOLINE_TYPE_HAS_ARG(t)		\
 	((t) == MONO_TRAMPOLINE_GENERIC_CLASS_INIT ||	\
 	 (t) == MONO_TRAMPOLINE_MONITOR_ENTER ||		\
+	 (t) == MONO_TRAMPOLINE_MONITOR_ENTER_V4 ||		\
 	 (t) == MONO_TRAMPOLINE_MONITOR_EXIT ||			\
 	 (t) == MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD)
 
@@ -2237,8 +2247,8 @@ void     mono_llvm_init                     (void) MONO_LLVM_INTERNAL;
 void     mono_llvm_cleanup                  (void) MONO_LLVM_INTERNAL;
 void     mono_llvm_emit_method              (MonoCompile *cfg) MONO_LLVM_INTERNAL;
 void     mono_llvm_emit_call                (MonoCompile *cfg, MonoCallInst *call) MONO_LLVM_INTERNAL;
-void     mono_llvm_create_aot_module        (const char *got_symbol) MONO_LLVM_INTERNAL;
-void     mono_llvm_emit_aot_module          (const char *filename, const char *cu_name, int got_size) MONO_LLVM_INTERNAL;
+void     mono_llvm_create_aot_module        (const char *got_symbol, gboolean external_symbols, gboolean emit_dwarf) MONO_LLVM_INTERNAL;
+void     mono_llvm_emit_aot_module          (const char *filename, const char *cu_name) MONO_LLVM_INTERNAL;
 void     mono_llvm_check_method_supported   (MonoCompile *cfg) MONO_LLVM_INTERNAL;
 void     mono_llvm_free_domain_info         (MonoDomain *domain) MONO_LLVM_INTERNAL;
 
@@ -2275,6 +2285,7 @@ MonoDelegateTrampInfo* mono_create_delegate_trampoline_info (MonoDomain *domain,
 gpointer          mono_create_delegate_virtual_trampoline (MonoDomain *domain, MonoClass *klass, MonoMethod *method) MONO_INTERNAL;
 gpointer          mono_create_rgctx_lazy_fetch_trampoline (guint32 offset) MONO_INTERNAL;
 gpointer          mono_create_monitor_enter_trampoline (void) MONO_INTERNAL;
+gpointer          mono_create_monitor_enter_v4_trampoline (void) MONO_INTERNAL;
 gpointer          mono_create_monitor_exit_trampoline (void) MONO_INTERNAL;
 gpointer          mono_create_static_rgctx_trampoline (MonoMethod *m, gpointer addr) MONO_INTERNAL;
 gpointer          mono_create_llvm_imt_trampoline (MonoDomain *domain, MonoMethod *m, int vt_offset) MONO_LLVM_INTERNAL;
@@ -2292,6 +2303,7 @@ gpointer          mono_aot_plt_trampoline (mgreg_t *regs, guint8 *code, guint8 *
 void              mono_class_init_trampoline (mgreg_t *regs, guint8 *code, MonoVTable *vtable, guint8 *tramp) MONO_INTERNAL;
 void              mono_generic_class_init_trampoline (mgreg_t *regs, guint8 *code, MonoVTable *vtable, guint8 *tramp) MONO_INTERNAL;
 void              mono_monitor_enter_trampoline (mgreg_t *regs, guint8 *code, MonoObject *obj, guint8 *tramp) MONO_INTERNAL;
+void              mono_monitor_enter_v4_trampoline (mgreg_t *regs, guint8 *code, MonoObject *obj, guint8 *tramp) MONO_INTERNAL;
 void              mono_monitor_exit_trampoline (mgreg_t *regs, guint8 *code, MonoObject *obj, guint8 *tramp) MONO_INTERNAL;
 gconstpointer     mono_get_trampoline_func (MonoTrampolineType tramp_type);
 gpointer          mini_get_vtable_trampoline (int slot_index) MONO_INTERNAL;
@@ -2371,7 +2383,7 @@ gpointer  mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampI
 gpointer  mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboolean aot) MONO_INTERNAL;
 gpointer  mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean aot) MONO_INTERNAL;
 gpointer  mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info) MONO_INTERNAL;
-gpointer  mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot) MONO_INTERNAL;
+gpointer  mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean is_v4, gboolean aot) MONO_INTERNAL;
 gpointer  mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot) MONO_INTERNAL;
 guint8   *mono_arch_create_llvm_native_thunk     (MonoDomain *domain, guint8* addr) MONO_LLVM_INTERNAL;
 GList    *mono_arch_get_allocatable_int_vars    (MonoCompile *cfg) MONO_INTERNAL;
@@ -2473,8 +2485,8 @@ gpointer  mono_arch_get_rethrow_exception       (MonoTrampInfo **info, gboolean 
 gpointer  mono_arch_get_throw_corlib_exception  (MonoTrampInfo **info, gboolean aot) MONO_INTERNAL;
 gpointer  mono_arch_get_throw_pending_exception (MonoTrampInfo **info, gboolean aot) MONO_INTERNAL;
 gboolean mono_arch_handle_exception             (void *sigctx, gpointer obj) MONO_INTERNAL;
-void     mono_arch_handle_altstack_exception    (void *sigctx, gpointer fault_addr, gboolean stack_ovf) MONO_INTERNAL;
-gboolean mono_handle_soft_stack_ovf             (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, guint8* fault_addr) MONO_INTERNAL;
+void     mono_arch_handle_altstack_exception    (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf) MONO_INTERNAL;
+gboolean mono_handle_soft_stack_ovf             (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, guint8* fault_addr) MONO_INTERNAL;
 void     mono_handle_hard_stack_ovf             (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, guint8* fault_addr) MONO_INTERNAL;
 gpointer mono_arch_ip_from_context              (void *sigctx) MONO_INTERNAL;
 mgreg_t mono_arch_context_get_int_reg		    (MonoContext *ctx, int reg) MONO_INTERNAL;
@@ -2531,7 +2543,7 @@ typedef gboolean (*MonoJitStackWalk)            (StackFrameInfo *frame, MonoCont
 
 void     mono_exceptions_init                   (void) MONO_INTERNAL;
 gboolean mono_handle_exception                  (MonoContext *ctx, gpointer obj) MONO_INTERNAL;
-void     mono_handle_native_sigsegv             (int signal, void *sigctx) MONO_INTERNAL;
+void     mono_handle_native_sigsegv             (int signal, void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo) MONO_INTERNAL;
 MONO_API void     mono_print_thread_dump                 (void *sigctx);
 MONO_API void     mono_print_thread_dump_from_ctx        (MonoContext *ctx);
 void     mono_walk_stack_with_ctx               (MonoJitStackWalk func, MonoContext *start_ctx, MonoUnwindOptions unwind_options, void *user_data) MONO_INTERNAL;

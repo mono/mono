@@ -47,13 +47,11 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (css.Value, "#2");
 			Assert.AreEqual (string.Empty, css.Value, "#3");
 
-#if NET_2_0
 			Assert.IsNotNull (css.StartDirectives, "#4");
 			Assert.AreEqual (0, css.StartDirectives.Count, "#5");
 
 			Assert.IsNotNull (css.EndDirectives, "#6");
 			Assert.AreEqual (0, css.EndDirectives.Count, "#7");
-#endif
 
 			Assert.IsNotNull (css.UserData, "#8");
 			Assert.AreEqual (typeof(ListDictionary), css.UserData.GetType (), "#9");
@@ -84,13 +82,11 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual (stmt, css.Value, "#3");
 			Assert.AreSame (stmt, css.Value, "#4");
 
-#if NET_2_0
 			Assert.IsNotNull (css.StartDirectives, "#5");
 			Assert.AreEqual (0, css.StartDirectives.Count, "#6");
 
 			Assert.IsNotNull (css.EndDirectives, "#7");
 			Assert.AreEqual (0, css.EndDirectives.Count, "#8");
-#endif
 
 			Assert.IsNotNull (css.UserData, "#9");
 			Assert.AreEqual (typeof(ListDictionary), css.UserData.GetType (), "#10");

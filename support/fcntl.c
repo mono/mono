@@ -31,6 +31,22 @@ Mono_Posix_Syscall_fcntl (gint32 fd, gint32 cmd)
 }
 
 gint32
+Mono_Posix_Syscall_fcntl_arg_int (gint32 fd, gint32 cmd, int arg)
+{
+	if (Mono_Posix_FromFcntlCommand (cmd, &cmd) == -1)
+		return -1;
+	return fcntl (fd, cmd, arg);
+}
+
+gint32
+Mono_Posix_Syscall_fcntl_arg_ptr (gint32 fd, gint32 cmd, void *arg)
+{
+	if (Mono_Posix_FromFcntlCommand (cmd, &cmd) == -1)
+		return -1;
+	return fcntl (fd, cmd, arg);
+}
+
+gint32
 Mono_Posix_Syscall_fcntl_arg (gint32 fd, gint32 cmd, gint64 arg)
 {
 	long _arg;

@@ -952,13 +952,11 @@ namespace System.Net.Sockets {
 #endif
 		}
 
-#if NET_4_5
 		[MonoTODO ("Currently hardcoded to IPv4. Ideally, support v4/v6 dual-stack.")]
 		public Socket (SocketType socketType, ProtocolType protocolType)
 			: this (AddressFamily.InterNetwork, socketType, protocolType)
 		{
 		}
-#endif
 
 		~Socket ()
 		{
@@ -1188,11 +1186,7 @@ namespace System.Net.Sockets {
 			}
 		}
 
-#if NET_4_0
 		public void Dispose ()
-#else
-		void IDisposable.Dispose ()
-#endif
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
@@ -1589,7 +1583,6 @@ namespace System.Net.Sockets {
 		bool GetCheckedIPs (SocketAsyncEventArgs e, out IPAddress [] addresses)
 		{
 			addresses = null;
-#if NET_4_0
 			// Connect to the first address that match the host name, like:
 			// http://blogs.msdn.com/ncl/archive/2009/07/20/new-ncl-features-in-net-4-0-beta-2.aspx
 			// while skipping entries that do not match the address family
@@ -1601,18 +1594,13 @@ namespace System.Net.Sockets {
 				e.ConnectByNameError = null;
 					return false;
 			}
-#else
-			return false; // < NET_4_0 -> use remote endpoint
-#endif
 		}
 
 		bool ConnectAsyncReal (SocketAsyncEventArgs e)
 		{			
 			bool use_remoteep = true;
-#if NET_4_0
 			IPAddress [] addresses = null;
 			use_remoteep = !GetCheckedIPs (e, out addresses);
-#endif
 			e.curSocket = this;
 			Worker w = e.Worker;
 			w.Init (this, e, SocketOperation.Connect);
@@ -1623,7 +1611,6 @@ namespace System.Net.Sockets {
 					result.EndPoint = e.RemoteEndPoint;
 					ares = BeginConnect (e.RemoteEndPoint, SocketAsyncEventArgs.Dispatcher, e);
 				}
-#if NET_4_0
 				else {
 
 					DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
@@ -1632,7 +1619,6 @@ namespace System.Net.Sockets {
 
 					ares = BeginConnect (addresses, dep.Port, SocketAsyncEventArgs.Dispatcher, e);
 				}
-#endif
 				if (ares.IsCompleted && ares.CompletedSynchronously) {
 					((SocketAsyncResult) ares).CheckIfThrowDelayedException ();
 					return false;

@@ -57,10 +57,8 @@ namespace Microsoft.Build.Utilities
 
 			lib_mono_dir = t2.FullName;
 
-#if NET_4_0
 			var windowsPath = Environment.GetFolderPath (Environment.SpecialFolder.Windows);
 			runningOnDotNet = !string.IsNullOrEmpty (windowsPath) && lib_mono_dir.StartsWith (windowsPath);
-#endif
 
 			if (Environment.GetEnvironmentVariable ("TESTING_MONO") != null) {
 				mono_dir = new string [] {
@@ -133,11 +131,9 @@ namespace Microsoft.Build.Utilities
 
 			//Mono doesn't ship multiple versions of tools that are backwards/forwards compatible
 			if (!runningOnDotNet) {
-#if NET_3_5
 				//most of the 3.5 tools are in the 2.0 directory
 				if (version == TargetDotNetFrameworkVersion.Version35)
 					return GetPathToDotNetFrameworkFile (fileName, TargetDotNetFrameworkVersion.Version20);
-#endif
 				//unversioned tools are in the 4.5 directory
 				if (version == TargetDotNetFrameworkVersion.Version20)
 					return GetPathToDotNetFrameworkFile (fileName, (TargetDotNetFrameworkVersion)5);
@@ -158,7 +154,6 @@ namespace Microsoft.Build.Utilities
 			throw new NotImplementedException ();
 		}
 
-		#if NET_4_0
 		public static string GetPathToStandardLibraries (string targetFrameworkIdentifier,
 								 string targetFrameworkVersion,
 								 string targetFrameworkProfile)
@@ -209,7 +204,6 @@ namespace Microsoft.Build.Utilities
 			// I'm not sure if this is completely valid assumption...
 			return path;
 		}
-		#endif
 
 		[MonoTODO]
 		public static string GetPathToSystemFile (string fileName)

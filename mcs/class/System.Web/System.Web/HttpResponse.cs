@@ -43,9 +43,7 @@ using System.Security.Permissions;
 using System.Web.Hosting;
 using System.Web.SessionState;
 
-#if NET_4_0
 using System.Web.Routing;
-#endif
 
 namespace System.Web
 {	
@@ -352,9 +350,7 @@ namespace System.Web
 			get {
 				return writer;
 			}
-#if NET_4_0
 			set { writer = value; }
-#endif
 		}
 
 		public Stream OutputStream {
@@ -398,12 +394,10 @@ namespace System.Web
 			set;
 		}
 
-#if NET_4_5
 		public bool SuppressFormsAuthenticationRedirect {
 			get;
 			set;
 		}
-#endif
 
 		public bool TrySkipIisCustomErrors {
 			get;
@@ -912,7 +906,6 @@ namespace System.Web
 		{
 			Redirect (url, endResponse, 302);
 		}
-#if NET_4_0
 		public void RedirectPermanent (string url)
 		{
 			RedirectPermanent (url, true);
@@ -1000,7 +993,6 @@ namespace System.Web
 
 			OutputCache.RemoveFromProvider (path, providerName);
 		}
-#endif
 		public static void RemoveOutputCacheItem (string path)
 		{
 			if (path == null)
@@ -1012,19 +1004,7 @@ namespace System.Web
 			if (path [0] != '/')
 				throw new ArgumentException ("'" + path + "' is not an absolute virtual path.");
 
-#if NET_4_0
 			RemoveOutputCacheItem (path, OutputCache.DefaultProviderName);
-#else
-			HttpContext context = HttpContext.Current;
-			HttpApplication app_instance = context != null ? context.ApplicationInstance : null;
-			HttpModuleCollection modules = app_instance != null ? app_instance.Modules : null;
-			OutputCacheModule ocm = modules != null ? modules.Get ("OutputCache") as OutputCacheModule : null;
-			OutputCacheProvider internalProvider = ocm != null ? ocm.InternalProvider : null;
-			if (internalProvider == null)
-				return;
-
-			internalProvider.Remove (path);
-#endif
 		}
 
 		public void SetCookie (HttpCookie cookie)
@@ -1035,22 +1015,18 @@ namespace System.Web
 		public void Write (char ch)
 		{
 			TextWriter writer = Output;
-#if NET_4_0
 			// Emulating .NET
 			if (writer == null)
 				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
-#endif
 			writer.Write (ch);
 		}
 
 		public void Write (object obj)
 		{
 			TextWriter writer = Output;
-#if NET_4_0
 			// Emulating .NET
 			if (writer == null)
 				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
-#endif
 			if (obj == null)
 				return;
 			
@@ -1060,22 +1036,18 @@ namespace System.Web
 		public void Write (string s)
 		{
 			TextWriter writer = Output;
-#if NET_4_0
 			// Emulating .NET
 			if (writer == null)
 				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
-#endif
 			writer.Write (s);
 		}
 		
 		public void Write (char [] buffer, int index, int count)
 		{
 			TextWriter writer = Output;
-#if NET_4_0
 			// Emulating .NET
 			if (writer == null)
 				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
-#endif
 			writer.Write (buffer, index, count);
 		}
 

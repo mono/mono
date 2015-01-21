@@ -35,10 +35,8 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace System.Data.Common {
 	public abstract class DbDataReader : MarshalByRefObject, IDataReader, IDataRecord, IDisposable, IEnumerable
@@ -61,11 +59,9 @@ namespace System.Data.Common {
 		public abstract object this [string name] { get; }
 		public abstract int RecordsAffected { get; }
 
-#if NET_2_0
 		public virtual int VisibleFieldCount {
 			get { return FieldCount; }
 		}
-#endif
 		#endregion // Properties
 
 		#region Methods
@@ -88,13 +84,11 @@ namespace System.Data.Common {
 			if (disposing)
 				Close ();
 		}
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public DbDataReader GetData (int ordinal)
 		{
 			return ((DbDataReader) this [ordinal]);
 		}
-#endif
 
 		public abstract string GetDataTypeName (int ordinal);
 		public abstract DateTime GetDateTime (int ordinal);
@@ -113,7 +107,6 @@ namespace System.Data.Common {
 		public abstract string GetName (int ordinal);
 		public abstract int GetOrdinal (string name);
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual Type GetProviderSpecificFieldType (int ordinal)
 		{
@@ -136,7 +129,6 @@ namespace System.Data.Common {
 		{
 			return ((DbDataReader) this [ordinal]);
 		}
-#endif 
 
 		public abstract DataTable GetSchemaTable ();
 		public abstract string GetString (int ordinal);
@@ -188,7 +180,6 @@ namespace System.Data.Common {
 			return schemaTable;
 		}
 		
-#if NET_4_5
 		public virtual T GetFieldValue<T> (int i)
 		{
 			return (T) GetValue (i);
@@ -290,7 +281,6 @@ namespace System.Data.Common {
 				return TaskHelper.CreateExceptionTask<bool> (e);
 			}
 		}
-#endif
 
 		#endregion // Methods
 	}

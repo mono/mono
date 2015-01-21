@@ -717,11 +717,7 @@ namespace Microsoft.Build.Evaluation
 
 		public bool SkipEvaluation { get; set; }
 
-		#if NET_4_5
 		public
-		#else
-		internal
-		#endif
 		IDictionary<string, ProjectTargetInstance> Targets {
 			get { return targets; }
 		}

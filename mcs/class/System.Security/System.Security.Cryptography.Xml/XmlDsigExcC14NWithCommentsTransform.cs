@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 namespace System.Security.Cryptography.Xml {
 	public class XmlDsigExcC14NWithCommentsTransform : XmlDsigExcC14NTransform {
@@ -48,4 +47,3 @@ namespace System.Security.Cryptography.Xml {
 	}
 }
 
-#endif

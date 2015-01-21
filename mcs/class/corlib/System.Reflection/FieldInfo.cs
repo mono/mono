@@ -247,7 +247,6 @@ namespace System.Reflection {
 		}
 
 
-#if NET_4_0
 		public override bool Equals (object obj)
 		{
 			return obj == (object) this;
@@ -293,7 +292,6 @@ namespace System.Reflection {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 #if !MOBILE
 		void _FieldInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

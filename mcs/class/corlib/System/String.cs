@@ -66,6 +66,12 @@ namespace System
 
 		internal static readonly int LOS_limit = GetLOSLimit ();
 
+		internal static bool LegacyMode {
+			get {
+				return false;
+			}
+		}
+
 		public static unsafe bool Equals (string a, string b)
 		{
 			if ((a as object) == (b as object))
@@ -312,22 +318,9 @@ namespace System
 		}
 
 		// .NET 2.0 compatibility only
-#if !NET_4_0 && !MOBILE
-		static readonly char[] WhiteChars = {
-			(char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
-			(char) 0x85, (char) 0x1680, (char) 0x2028, (char) 0x2029,
-			(char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004,
-			(char) 0x2005, (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B,
-			(char) 0x3000, (char) 0xFEFF
-		};
-#endif
 
 		unsafe string[] SplitByCharacters (char[] sep, int count, bool removeEmpty)
 		{
-#if !NET_4_0 && !MOBILE
-			if (sep == null || sep.Length == 0)
-				sep = WhiteChars;
-#endif
 
 			int[] split_points = null;
 			int total_points = 0;
@@ -539,7 +532,6 @@ namespace System
 
 		unsafe int FindNotWhiteSpace (int pos, int target, int change)
 		{
-#if NET_4_0
 			fixed (char* src = this) {
 				while (pos != target) {
 					if (!char.IsWhiteSpace (src[pos]))
@@ -548,25 +540,6 @@ namespace System
 					pos += change;
 				}
 			}
-#else
-			while (pos != target) {
-				char c = this[pos];
-				if (c < 0x85) {
-					if (c != 0x20) {
-						if (c < 0x9 || c > 0xD)
-							return pos;
-					}
-				}
-				else {
-					if (c != 0xA0 && c != 0xFEFF && c != 0x3000) {
-						if (c != 0x85 && c != 0x1680 && c != 0x2028 && c != 0x2029)
-							if (c < 0x2000 || c > 0x200B)
-								return pos;
-					}
-				}
-				pos += change;
-			}
-#endif
 			return pos;
 		}
 
@@ -2405,11 +2378,7 @@ namespace System
 			return InternalIsInterned (str);
 		}
 	
-#if NET_4_0
 		public static string Join (string separator, params string [] value)
-#else
-		public static string Join (string separator, string [] value)
-#endif
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
@@ -2543,11 +2512,9 @@ namespace System
 			return Convert.ToSingle (this, provider);
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("type");
-			return Convert.ToType (this, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
@@ -2710,7 +2677,6 @@ namespace System
 			}
 		}
 
-#if NET_4_0
 		[ComVisible(false)]
 		public static string Concat (IEnumerable<string> values)
 		{
@@ -2798,9 +2764,6 @@ namespace System
 		}
 
 		public static bool IsNullOrWhiteSpace (string value)
-#else
-		internal static bool IsNullOrWhiteSpace (string value)
-#endif
 		{
 			if ((value == null) || (value.Length == 0))
 				return true;
@@ -3217,6 +3180,11 @@ namespace System
 		{
 			fixed (char* dest = target, src = source)
 				CharCopyReverse (dest + targetIndex, src + sourceIndex, count);
+		}
+
+		internal static String FastAllocateString (int length)
+		{
+        		return InternalAllocateStr (length);
 		}
 
 		[CLSCompliant (false), MethodImplAttribute (MethodImplOptions.InternalCall)]

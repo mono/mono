@@ -22,11 +22,7 @@ using System.Data.OracleClient.Oci;
 namespace System.Data.OracleClient
 {
 	public sealed class OracleTransaction :
-#if NET_2_0
 	Common.DbTransaction
-#else
-	MarshalByRefObject, IDbTransaction, IDisposable
-#endif
 	{
 		#region Fields
 
@@ -57,33 +53,22 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		new
-#endif
 		OracleConnection Connection {
 			get { return connection; }
 		}
 		
-#if NET_2_0
 		[MonoTODO]
 		protected override Common.DbConnection DbConnection {
 			get { return Connection; }
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		IsolationLevel IsolationLevel {
 			get { return isolationLevel; }
 		}
 
-#if !NET_2_0
-		IDbConnection IDbTransaction.Connection {
-			get { return Connection; }
-		}
-#endif
 
 		#endregion // Properties
 
@@ -95,9 +80,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Commit ()
 		{
 			transaction.Commit ();
@@ -105,9 +88,7 @@ namespace System.Data.OracleClient
 			isOpen = false;
 		}
 
-#if NET_2_0
 		protected override
-#endif
 		void Dispose (bool disposing)
 		{
 			if (!disposed) {
@@ -121,18 +102,9 @@ namespace System.Data.OracleClient
 			}
 		}
 
-#if !NET_2_0
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Rollback ()
 		{
 			transaction.Rollback ();

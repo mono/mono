@@ -44,12 +44,8 @@ namespace System.Data.Odbc
 	/// </summary>
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
-#if NET_2_0
 	[DefaultEvent ("RecordsAffected")]
 	public sealed class OdbcCommand : DbCommand, ICloneable
-#else
-	public sealed class OdbcCommand : Component, ICloneable, IDbCommand
-#endif //NET_2_0
 	{
 		#region Fields
 
@@ -115,9 +111,7 @@ namespace System.Data.Odbc
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public
-#if NET_2_0
 		override
-#endif
 		string CommandText {
 			get {
 				if (commandText == null)
@@ -125,9 +119,7 @@ namespace System.Data.Odbc
 				return commandText;
 			}
 			set {
-#if NET_2_0
 				prepared = false;
-#endif
 				commandText = value;
 			}
 		}
@@ -149,9 +141,7 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("How to interpret the CommandText")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public
-#if NET_2_0
 		override
-#endif
 		CommandType CommandType {
 			get { return commandType; }
 			set {
@@ -171,25 +161,19 @@ namespace System.Data.Odbc
 		}
 #endif // ONLY_1_1
 
-#if NET_2_0
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new OdbcConnection Connection {
 			get { return DbConnection as OdbcConnection; }
 			set { DbConnection = value; }
 		}
-#endif // NET_2_0
 
 		[BrowsableAttribute (false)]
 		[DesignOnlyAttribute (true)]
 		[DefaultValue (true)]
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		bool DesignTimeVisible {
 			get { return designTimeVisible; }
 			set { designTimeVisible = value; }
@@ -199,9 +183,7 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("The parameters collection")]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcParameterCollection Parameters {
 			get {
 #if ONLY_1_1
@@ -216,9 +198,7 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("The transaction used by the command")]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcTransaction Transaction {
 			get { return transaction; }
 			set { transaction = value; }
@@ -228,9 +208,7 @@ namespace System.Data.Odbc
 		[DefaultValue (UpdateRowSource.Both)]
 		[OdbcDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow")]
 		public
-#if NET_2_0
 		override
-#endif
 		UpdateRowSource UpdatedRowSource {
 			get { return updateRowSource; }
 			set {
@@ -239,13 +217,11 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if NET_2_0
 		protected override DbConnection DbConnection {
 			get { return connection; }
 			set { connection = (OdbcConnection) value;}
 		}
 
-#endif // NET_2_0
 
 #if ONLY_1_1
 		IDbConnection IDbCommand.Connection {
@@ -285,9 +261,7 @@ namespace System.Data.Odbc
 		#region Methods
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Cancel ()
 		{
 			if (hstmt != IntPtr.Zero) {
@@ -330,9 +304,7 @@ namespace System.Data.Odbc
 				return;
 
 			FreeStatement (); // free handles
-#if NET_2_0
 			CommandText = null;
-#endif
 			Connection = null;
 			Transaction = null;
 			Parameters.Clear ();
@@ -422,9 +394,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int ExecuteNonQuery ()
 		{
 			return ExecuteNonQuery ("ExecuteNonQuery", CommandBehavior.Default, false);
@@ -464,9 +434,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Prepare()
 		{
 			ReAllocStatment ();
@@ -489,9 +457,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
@@ -510,9 +476,7 @@ namespace System.Data.Odbc
 #endif // ONLY_1_1
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			return ExecuteReader ("ExecuteReader", behavior);
@@ -533,9 +497,7 @@ namespace System.Data.Odbc
 #endif // ONLY_1_1
 
 		public
-#if NET_2_0
 		override
-#endif
 		object ExecuteScalar ()
 		{
 			object val = null;

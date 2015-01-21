@@ -82,10 +82,8 @@ namespace System.Xml.Serialization
 			get { return isNamespaceSpecified; }
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		internal bool IsNullableSpecified { get; set; }
-#endif
 
 		public int Order {
 			get { return order; }

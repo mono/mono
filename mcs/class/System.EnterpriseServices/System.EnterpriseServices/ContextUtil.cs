@@ -29,9 +29,7 @@
 //
 
 using System;
-#if NET_2_0
 using System.Transactions;
-#endif
 
 namespace System.EnterpriseServices {
 	public sealed class ContextUtil {
@@ -104,12 +102,10 @@ namespace System.EnterpriseServices {
 			get { throw new NotImplementedException (); }
 		}
 
-#if NET_2_0
 		public static Transaction SystemTransaction {
 			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		public static Guid TransactionId {
 			[MonoTODO]
@@ -144,13 +140,11 @@ namespace System.EnterpriseServices {
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public static bool IsDefaultContext ()
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public static void SetAbort ()
@@ -164,13 +158,11 @@ namespace System.EnterpriseServices {
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public static void SetNamedProperty (string name, object property)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		#endregion // Methods
 	}
 }

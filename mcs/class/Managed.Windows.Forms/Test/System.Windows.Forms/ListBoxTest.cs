@@ -270,7 +270,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, x, "#207");
 		}
 
-#if NET_2_0
 		[Test]
 		public void AllowSelection ()
 		{
@@ -280,7 +279,6 @@ namespace MonoTests.System.Windows.Forms
 			lb.SelectionMode = SelectionMode.One;
 			Assert.IsTrue (lb.allow_selection, "#2");
 		}
-#endif
 
 		//
 		// Exceptions
@@ -358,7 +356,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, listBox.SelectedIndex, "#4");
 		}
 
-#if NET_2_0
 		[Test]
 		public void SelectedIndex_Removed ()
 		{
@@ -501,7 +498,6 @@ namespace MonoTests.System.Windows.Forms
 			} catch (ArgumentException) {
 			}
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
@@ -587,12 +583,8 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("item", ex.ParamName, "#5");
 			}
 
-#if NET_2_0
 			Assert.AreEqual (1, l.Items.Count, "#6");
 			Assert.AreEqual ("A", l.Items [0], "#7");
-#else
-			Assert.AreEqual (0, l.Items.Count, "#6");
-#endif
 		}
 
 		[Test]
@@ -623,7 +615,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetScaledBoundsTest ()
 		{
@@ -693,7 +684,6 @@ namespace MonoTests.System.Windows.Forms
 				base.ScaleControl (factor, specified);
 			}
 		}
-#endif
 
 		[Test]
 		public void MethodIsInputChar ()
@@ -818,11 +808,9 @@ namespace MonoTests.System.Windows.Forms
 
 		public class MockListBox : ListBox
 		{
-#if NET_2_0
 			public bool allow_selection {
 				get { return base.AllowSelection; }
 			}
-#endif
 
 			public void InvokeSetItemsCore (IList value)
 			{
@@ -1010,11 +998,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#5");
-#else
-				Assert.IsNotNull (ex.ParamName, "#5");
-#endif
 			}
 		}
 
@@ -1053,18 +1037,12 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#5");
-#else
-				Assert.IsNotNull (ex.ParamName, "#5");
-#endif
 			}
 		}
 
 		[Test]
-#if NET_2_0
 		[NUnit.Framework.Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=363285
-#endif
 		public void Insert_Item_Null ()
 		{
 			col.Add ("Item1");
@@ -1114,7 +1092,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 
-#if NET_2_0
 	[TestFixture]
 	public class ListBoxIntegerCollectionTest : TestHelper
 	{
@@ -1657,5 +1634,4 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, list.Count, "#6");
 		}
 	}
-#endif
 }

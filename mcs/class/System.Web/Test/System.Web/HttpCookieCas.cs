@@ -62,10 +62,8 @@ namespace MonoCasTests.System.Web {
 
 			Assert.IsTrue (biscuit.Value.IndexOf ("mono=monkey") >= 0, "Value");
 			biscuit.Value = "monkey=mono&singe=monkey";
-#if NET_2_0
 			Assert.IsFalse (biscuit.HttpOnly, "HttpOnly");
 			biscuit.HttpOnly = true;
-#endif
 		}
 
 		[Test]

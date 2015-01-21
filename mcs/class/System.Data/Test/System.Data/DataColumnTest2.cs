@@ -835,7 +835,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (-1, ptable.Rows [1][1], "#2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void DateTimeMode_DataType ()
 		{
@@ -926,7 +925,6 @@ namespace MonoTests.System.Data
 				Assert.Fail ("#10");
 			} catch (ArgumentOutOfRangeException e) { }
 		}
-#endif
 		[Test]
 		public void bug672113_MulpleColConstraint ()
 		{

@@ -635,11 +635,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#G2");
 				Assert.IsNull (ex.InnerException, "#G3");
 				Assert.IsNotNull (ex.Message, "#G4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'huh?'") != -1, "#G5");
-#else
-				Assert.IsTrue (ex.Message.IndexOf ("huh?") != -1, "#G5");
-#endif
 				Assert.IsNull (ex.ParamName, "#G6");
 			}
 
@@ -653,11 +649,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#H2");
 				Assert.IsNull (ex.InnerException, "#H3");
 				Assert.IsNotNull (ex.Message, "#H4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'test'") != -1, "#H5");
-#else
-				Assert.IsTrue (ex.Message.IndexOf ("test") != -1, "#H5");
-#endif
 				Assert.IsNull (ex.ParamName, "#H6");
 			}
 

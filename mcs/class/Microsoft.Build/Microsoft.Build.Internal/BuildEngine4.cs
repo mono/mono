@@ -42,11 +42,7 @@ using System.Xml;
 namespace Microsoft.Build.Internal
 {
 	class BuildEngine4
-#if NET_4_5
 		: IBuildEngine4
-#else
-		: IBuildEngine3
-#endif
 	{
 		public BuildEngine4 (BuildSubmission submission)
 		{
@@ -318,10 +314,8 @@ namespace Microsoft.Build.Internal
 			
 			// Create Task instance.
 			var factoryIdentityParameters = new Dictionary<string,string> ();
-			#if NET_4_5
 			factoryIdentityParameters ["MSBuildRuntime"] = taskInstance.MSBuildRuntime;
 			factoryIdentityParameters ["MSBuildArchitecture"] = taskInstance.MSBuildArchitecture;
-			#endif
 			var task = args.BuildTaskFactory.CreateTask (taskInstance.Name, factoryIdentityParameters, this);
 			if (task == null)
 				throw new InvalidOperationException (string.Format ("TaskFactory {0} returned null Task", args.BuildTaskFactory));
@@ -523,7 +517,6 @@ namespace Microsoft.Build.Internal
 			}
 		}
 		
-#if NET_4_5
 		#region IBuildEngine4 implementation
 		
 		// task objects are not in use anyways though...
@@ -564,7 +557,6 @@ namespace Microsoft.Build.Internal
 			return reg.Object;
 		}
 		#endregion
-#endif
 
 		#region IBuildEngine3 implementation
 

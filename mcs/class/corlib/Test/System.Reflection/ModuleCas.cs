@@ -72,12 +72,10 @@ namespace MonoCasTests.System.Reflection {
 		{
 			// call "normal" unit with reduced privileges
 			mt.FindTypes ();
-#if NET_2_0
 			mt.ResolveType ();
 			mt.ResolveMethod ();
 			mt.ResolveField ();
 			mt.ResolveMember ();
-#endif
 			// properties
 			Assert.IsNotNull (main.Assembly, "Assembly");
 			Assert.IsNotNull (main.ScopeName, "ScopeName");

@@ -25,7 +25,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.Data.Common {
 	[MonoTODO]
 	public static class DbMetaDataCollectionNames {
@@ -37,4 +36,3 @@ namespace System.Data.Common {
 		public static readonly string Restrictions = "Restrictions";
 	}
 }
-#endif

@@ -4,9 +4,7 @@ using Microsoft.Build.Execution;
 
 namespace Microsoft.Build.Evaluation
 {
-	#if NET_4_5
 	public
-	#endif
 	class SubToolset
 	{
 		internal SubToolset (IDictionary<string, ProjectPropertyInstance> properties, string subToolsetVersion)

@@ -201,14 +201,12 @@ namespace MonoTests.System.Xml
 			document.LoadXml (xml);
 			xnr = new XmlNodeReader (document);
 			method (xnr);
-#if NET_2_0
 /*
 			// XPathNavigatorReader tests
 			System.Xml.XPath.XPathDocument doc = new System.Xml.XPath.XPathDocument (new StringReader (xml));
 			XmlReader xpr = doc.CreateNavigator ().ReadSubtree ();
 			method (xpr);
 */
-#endif
 		}
 
 
@@ -1514,7 +1512,6 @@ namespace MonoTests.System.Xml
 			reader.Read (); // silently returns false
 		}
 
-#if NET_2_0
 		[Test]
 		public void CreateSimple ()
 		{
@@ -2337,7 +2334,6 @@ namespace MonoTests.System.Xml
 			if (task.Result != null)
 				throw task.Result;
 		}
-#endif
 #endif
 	}
 }

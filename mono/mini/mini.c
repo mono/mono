@@ -12,7 +12,6 @@
 
 #define MONO_LLVM_IN_MINI 1
 #include <config.h>
-#include <signal.h>
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
@@ -3247,6 +3246,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
 	case MONO_PATCH_INFO_JIT_TLS_ID:
 	case MONO_PATCH_INFO_MONITOR_ENTER:
+	case MONO_PATCH_INFO_MONITOR_ENTER_V4:
 	case MONO_PATCH_INFO_MONITOR_EXIT:
 	case MONO_PATCH_INFO_GOT_OFFSET:
 		return (ji->type << 8);
@@ -3261,6 +3261,8 @@ mono_patch_info_hash (gconstpointer data)
 		return g_str_hash (ji->data.target);
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
 		return (ji->type << 8) | (gsize)ji->data.del_tramp->klass | (gsize)ji->data.del_tramp->method | (gsize)ji->data.del_tramp->virtual;
+	case MONO_PATCH_INFO_LDSTR_LIT:
+		return g_str_hash (ji->data.target);
 	default:
 		printf ("info type: %d\n", ji->type);
 		mono_print_ji (ji); printf ("\n");
@@ -3543,9 +3545,12 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_TYPE_FROM_HANDLE: {
 		gpointer handle;
 		MonoClass *handle_class;
+		MonoError error;
 
-		handle = mono_ldtoken (patch_info->data.token->image, 
-							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL);
+		handle = mono_ldtoken_checked (patch_info->data.token->image, 
+							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, &error);
+		if (!mono_error_ok (&error))
+			g_error ("Could not patch ldtoken due to %s", mono_error_get_message (&error));
 		mono_class_init (handle_class);
 		mono_class_init (mono_class_from_mono_type (handle));
 
@@ -3556,9 +3561,12 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_LDTOKEN: {
 		gpointer handle;
 		MonoClass *handle_class;
+		MonoError error;
 		
-		handle = mono_ldtoken (patch_info->data.token->image,
-							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL);
+		handle = mono_ldtoken_checked (patch_info->data.token->image,
+							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, &error);
+   		if (!mono_error_ok (&error))
+   			g_error ("Could not patch ldtoken due to %s", mono_error_get_message (&error));
 		mono_class_init (handle_class);
 		
 		target = handle;
@@ -3663,6 +3671,9 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_MONITOR_ENTER:
 		target = mono_create_monitor_enter_trampoline ();
 		break;
+	case MONO_PATCH_INFO_MONITOR_ENTER_V4:
+		target = mono_create_monitor_enter_v4_trampoline ();
+		break;
 	case MONO_PATCH_INFO_MONITOR_EXIT:
 		target = mono_create_monitor_exit_trampoline ();
 		break;
@@ -3710,6 +3721,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	}
 	case MONO_PATCH_INFO_OBJC_SELECTOR_REF: {
 		target = NULL;
+		break;
+	}
+	case MONO_PATCH_INFO_LDSTR_LIT: {
+		target = mono_string_new (domain, patch_info->data.target);
 		break;
 	}
 	default:
@@ -4639,6 +4654,7 @@ get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGeneri
 MonoMethod*
 mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gsharedvt)
 {
+	MonoError error;
 	MonoGenericContext shared_context;
 	MonoMethod *declaring_method, *res;
 	gboolean partial = FALSE;
@@ -4690,7 +4706,9 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 		partial = TRUE;
 	}
 
-    res = mono_class_inflate_generic_method (declaring_method, &shared_context);
+    res = mono_class_inflate_generic_method_checked (declaring_method, &shared_context, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+
 	if (!partial) {
 		/* The result should be an inflated method whose parent is not inflated */
 		g_assert (!res->klass->is_inflated);
@@ -6129,8 +6147,11 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 			if (method->is_inflated)
 				ctx = mono_method_get_context (method);
 			method = info->d.synchronized_inner.method;
-			if (ctx)
-				method = mono_class_inflate_generic_method (method, ctx);
+			if (ctx) {
+				MonoError error;
+				method = mono_class_inflate_generic_method_checked (method, ctx, &error);
+				g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			}
 		}
 	}
 
@@ -6552,8 +6573,8 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		gpointer *args;
 		static RuntimeInvokeDynamicFunction dyn_runtime_invoke;
 		int i, pindex;
-		guint8 buf [128];
-		guint8 retval [128];
+		guint8 buf [256];
+		guint8 retval [256];
 
 		if (!dyn_runtime_invoke) {
 			invoke = mono_marshal_get_runtime_invoke_dynamic ();
@@ -6599,7 +6620,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigfpe_signal_handler)
 {
 	MonoException *exc = NULL;
 	MonoJitInfo *ji;
-	void *info = MONO_SIG_HANDLER_GET_INFO ();
+	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
 	ji = mono_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context (ctx));
@@ -6621,7 +6642,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigfpe_signal_handler)
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_handle_native_sigsegv (SIGSEGV, ctx);
+		mono_handle_native_sigsegv (SIGSEGV, ctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			return;
@@ -6652,6 +6673,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	gpointer fault_addr = NULL;
 #ifdef HAVE_SIG_INFO
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
+#else
+	void *info = NULL;
 #endif
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
@@ -6665,7 +6688,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	}
 #endif
 
-#if !defined(HOST_WIN32) && defined(HAVE_SIG_INFO)
+#if defined(HAVE_SIG_INFO)
+#if !defined(HOST_WIN32)
 	fault_addr = info->si_addr;
 	if (mono_aot_is_pagefault (info->si_addr)) {
 		mono_aot_handle_pagefault (info->si_addr);
@@ -6677,17 +6701,18 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	if (!mono_domain_get () || !jit_tls) {
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
-		mono_handle_native_sigsegv (SIGSEGV, ctx);
+		mono_handle_native_sigsegv (SIGSEGV, ctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			return;
 		}
 	}
+#endif
 
 	ji = mono_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context (ctx));
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-	if (mono_handle_soft_stack_ovf (jit_tls, ji, ctx, (guint8*)info->si_addr))
+	if (mono_handle_soft_stack_ovf (jit_tls, ji, ctx, info, (guint8*)info->si_addr))
 		return;
 
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
@@ -6715,7 +6740,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!ji && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_arch_handle_altstack_exception (ctx, info->si_addr, FALSE);
+		mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
 	}
 #else
 
@@ -6723,7 +6748,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_handle_native_sigsegv (SIGSEGV, ctx);
+		mono_handle_native_sigsegv (SIGSEGV, ctx, info);
 
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);

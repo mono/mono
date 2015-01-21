@@ -55,7 +55,6 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-#if NET_3_5
 		[Output]
 		public string FrameworkVersion11Path {
 			get {
@@ -87,9 +86,7 @@ namespace Microsoft.Build.Tasks {
 						TargetDotNetFrameworkVersion.Version35);
 			}
 		}
-#endif
 
-#if NET_4_0
 		[Output]
 		public string FrameworkVersion40Path {
 			get {
@@ -97,9 +94,7 @@ namespace Microsoft.Build.Tasks {
 						TargetDotNetFrameworkVersion.Version40);
 			}
 		}
-#endif
 		
-#if NET_4_5
 		[Output]
 		public string FrameworkVersion45Path {
 			get {
@@ -107,6 +102,5 @@ namespace Microsoft.Build.Tasks {
 						TargetDotNetFrameworkVersion.Version45);
 			}
 		}
-#endif
 	}
 }
