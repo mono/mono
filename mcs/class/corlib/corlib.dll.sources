@@ -1444,27 +1444,12 @@ System.Threading/Volatile.cs
 System.Threading/WaitCallback.cs
 System.Threading/WaitHandle.cs
 System.Threading/WaitOrTimerCallback.cs
-System.Collections.Generic/CollectionDebuggerView.cs
-System.Collections.Generic/Dictionary.cs
-System.Collections.Generic/ICollection.cs
-System.Collections.Generic/IEnumerable.cs
-System.Collections.Generic/IEnumerator.cs
-System.Collections.Generic/IList.cs
-System.Collections.Generic/IComparer.cs
-System.Collections.Generic/IEqualityComparer.cs
-System.Collections.Generic/IDictionary.cs
-System.Collections.Generic/IReadOnlyCollection.cs
-System.Collections.Generic/IReadOnlyList.cs
-System.Collections.Generic/IReadOnlyDictionary.cs
-System.Collections.Generic/KeyValuePair.cs
-System.Collections.Generic/EqualityComparer.cs
-System.Collections.Generic/KeyNotFoundException.cs
-System.Collections.Generic/List.cs
 System/Action.cs
 System/Comparison.cs
 System/Converter.cs
 System/Predicate.cs
 System.Collections.Generic/Comparer.cs
+System.Collections.Generic/EqualityComparer.cs
 
 System.Threading.Tasks/DecoupledTask.cs
 System.Threading.Tasks/TaskConstants.cs
@@ -1544,6 +1529,21 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/collections/structuralcomparisons.cs
 
 ../../../external/referencesource/mscorlib/system/collections/generic/debugview.cs
+../../../external/referencesource/mscorlib/system/collections/generic/dictionary.cs
+../../../external/referencesource/mscorlib/system/collections/generic/icollection.cs
+../../../external/referencesource/mscorlib/system/collections/generic/icomparer.cs
+../../../external/referencesource/mscorlib/system/collections/generic/idictionary.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ienumerable.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ienumerator.cs
+../../../external/referencesource/mscorlib/system/collections/generic/iequalitycomparer.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ilist.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ireadonlycollection.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ireadonlydictionary.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ireadonlylist.cs
+../../../external/referencesource/mscorlib/system/collections/generic/keynotfoundexception.cs
+../../../external/referencesource/mscorlib/system/collections/generic/keyvaluepair.cs
+../../../external/referencesource/mscorlib/system/collections/generic/list.cs
+
 ../../../external/referencesource/mscorlib/system/collections/Concurrent/ConcurrentDictionary.cs
 ../../../external/referencesource/mscorlib/system/collections/Concurrent/ConcurrentQueue.cs
 ../../../external/referencesource/mscorlib/system/collections/Concurrent/ConcurrentStack.cs
@@ -1620,6 +1620,8 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/TypeForwardedToAttribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/unsafevaluetypeattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
+
+../../../external/referencesource/mscorlib/system/text/stringbuildercache.cs
 
 ../../../external/referencesource/mscorlib/system/threading/abandonedmutexexception.cs
 ../../../external/referencesource/mscorlib/system/threading/apartmentstate.cs
