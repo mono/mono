@@ -134,3 +134,84 @@ void
 mono_runtime_shutdown_stat_profiler (void)
 {
 }
+
+#ifndef MONO_CROSS_COMPILE
+
+typedef struct
+{
+	guint32 free_stack;
+	MonoContext initial_ctx;
+	MonoContext ctx;
+} MonoWin32StackOverflowData;
+
+gboolean win32_stack_overflow_walk (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
+{
+	MonoWin32StackOverflowData* walk_data = (MonoWin32StackOverflowData*)data;
+
+	if (!frame->ji) {
+		g_warning ("Exception inside function without unwind info");
+		g_assert_not_reached ();
+	}
+
+	if (frame->ji != (gpointer)-1) {
+		walk_data->free_stack = (guint8*)(MONO_CONTEXT_GET_BP (ctx)) - (guint8*)(MONO_CONTEXT_GET_BP (&walk_data->initial_ctx));
+	} else {
+		g_warning ("Exception inside function without unwind info");
+		g_assert_not_reached ();
+	}
+
+	walk_data->ctx = *ctx;
+
+	return !(walk_data->free_stack < 64 * 1024 && frame->ji != (gpointer) -1);
+}
+
+extern void (*restore_stack) (void *);
+
+/* Special hack to workaround the fact that the
+ * when the SEH handler is called the stack is
+ * to small to recover.
+ *
+ * Stack walking part of this method is from mono_handle_exception
+ *
+ * The idea is simple; 
+ *  - walk the stack to free some space (64k)
+ *  - set esp to new stack location
+ *  - call mono_arch_handle_exception with stack overflow exception
+ *  - set esp to SEH handlers stack
+ *  - done
+ */
+void 
+win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, MonoContext *ctx) 
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoJitInfo rji;
+	MonoJitInfo *ji;
+	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	MonoLMF *lmf = jit_tls->lmf;
+	StackFrameInfo frame;
+	MonoWin32StackOverflowData stack_overflow_data;
+
+	/* Let's walk the stack to recover
+	 * the needed stack space (if possible)
+	 */
+	memset (&rji, 0, sizeof (rji));
+	memset (&stack_overflow_data, 0, sizeof (stack_overflow_data));
+	
+	ji = mono_jit_info_table_find (domain, MONO_CONTEXT_GET_IP(ctx));
+
+	stack_overflow_data.initial_ctx = *ctx;
+
+	/* try to free 64kb from our stack */
+	mono_jit_walk_stack_from_ctx_in_thread (win32_stack_overflow_walk, domain, ctx, FALSE, mono_thread_current (), lmf, &stack_overflow_data);
+	
+	/* convert into sigcontext to be used in mono_arch_handle_exception */
+	mono_arch_monoctx_to_sigctx (&(stack_overflow_data.ctx), ctx);
+
+	/* the new stack-guard page is installed in mono_handle_exception_internal using _resetstkoflw */
+
+	/* use the new stack and call mono_arch_handle_exception () */
+	restore_stack (ctx);
+}
+
+#endif
+

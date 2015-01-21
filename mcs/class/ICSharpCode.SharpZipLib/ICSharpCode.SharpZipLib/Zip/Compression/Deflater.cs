@@ -54,112 +54,86 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// </summary>
 	public class Deflater
 	{
+		#region Deflater Documentation
+		/*
+		* The Deflater can do the following state transitions:
+		*
+		* (1) -> INIT_STATE   ----> INIT_FINISHING_STATE ---.
+		*        /  | (2)      (5)                          |
+		*       /   v          (5)                          |
+		*   (3)| SETDICT_STATE ---> SETDICT_FINISHING_STATE |(3)
+		*       \   | (3)                 |        ,--------'
+		*        |  |                     | (3)   /
+		*        v  v          (5)        v      v
+		* (1) -> BUSY_STATE   ----> FINISHING_STATE
+		*                                | (6)
+		*                                v
+		*                           FINISHED_STATE
+		*    \_____________________________________/
+		*                    | (7)
+		*                    v
+		*               CLOSED_STATE
+		*
+		* (1) If we should produce a header we start in INIT_STATE, otherwise
+		*     we start in BUSY_STATE.
+		* (2) A dictionary may be set only when we are in INIT_STATE, then
+		*     we change the state as indicated.
+		* (3) Whether a dictionary is set or not, on the first call of deflate
+		*     we change to BUSY_STATE.
+		* (4) -- intentionally left blank -- :)
+		* (5) FINISHING_STATE is entered, when flush() is called to indicate that
+		*     there is no more INPUT.  There are also states indicating, that
+		*     the header wasn't written yet.
+		* (6) FINISHED_STATE is entered, when everything has been flushed to the
+		*     internal pending output buffer.
+		* (7) At any time (7)
+		*
+		*/
+		#endregion
+		#region Public Constants
 		/// <summary>
 		/// The best and slowest compression level.  This tries to find very
 		/// long and distant string repetitions.
 		/// </summary>
-		public static  int BEST_COMPRESSION = 9;
+		public const  int BEST_COMPRESSION = 9;
 		
 		/// <summary>
 		/// The worst but fastest compression level.
 		/// </summary>
-		public static  int BEST_SPEED = 1;
+		public const  int BEST_SPEED = 1;
 		
 		/// <summary>
 		/// The default compression level.
 		/// </summary>
-		public static  int DEFAULT_COMPRESSION = -1;
+		public const  int DEFAULT_COMPRESSION = -1;
 		
 		/// <summary>
 		/// This level won't compress at all but output uncompressed blocks.
 		/// </summary>
-		public static  int NO_COMPRESSION = 0;
+		public const  int NO_COMPRESSION = 0;
 				
 		/// <summary>
 		/// The compression method.  This is the only method supported so far.
 		/// There is no need to use this constant at all.
 		/// </summary>
-		public static  int DEFLATED = 8;
-		
-		/*
-		* The Deflater can do the following state transitions:
-			*
-			* (1) -> INIT_STATE   ----> INIT_FINISHING_STATE ---.
-			*        /  | (2)      (5)                         |
-			*       /   v          (5)                         |
-			*   (3)| SETDICT_STATE ---> SETDICT_FINISHING_STATE |(3)
-			*       \   | (3)                 |        ,-------'
-			*        |  |                     | (3)   /
-			*        v  v          (5)        v      v
-			* (1) -> BUSY_STATE   ----> FINISHING_STATE
-			*                                | (6)
-			*                                v
-			*                           FINISHED_STATE
-			*    \_____________________________________/
-			*          | (7)
-			*          v
-			*        CLOSED_STATE
-			*
-			* (1) If we should produce a header we start in INIT_STATE, otherwise
-			*     we start in BUSY_STATE.
-			* (2) A dictionary may be set only when we are in INIT_STATE, then
-			*     we change the state as indicated.
-			* (3) Whether a dictionary is set or not, on the first call of deflate
-			*     we change to BUSY_STATE.
-			* (4) -- intentionally left blank -- :)
-			* (5) FINISHING_STATE is entered, when flush() is called to indicate that
-			*     there is no more INPUT.  There are also states indicating, that
-			*     the header wasn't written yet.
-			* (6) FINISHED_STATE is entered, when everything has been flushed to the
-			*     internal pending output buffer.
-			* (7) At any time (7)
-			*
-			*/
-			
-		private static  int IS_SETDICT              = 0x01;
-		private static  int IS_FLUSHING             = 0x04;
-		private static  int IS_FINISHING            = 0x08;
-		
-		private static  int INIT_STATE              = 0x00;
-		private static  int SETDICT_STATE           = 0x01;
+		public const  int DEFLATED = 8;
+		#endregion
+		#region Local Constants
+		private const  int IS_SETDICT              = 0x01;
+		private const  int IS_FLUSHING             = 0x04;
+		private const  int IS_FINISHING            = 0x08;
+
+		private const  int INIT_STATE              = 0x00;
+		private const  int SETDICT_STATE           = 0x01;
 		//		private static  int INIT_FINISHING_STATE    = 0x08;
 		//		private static  int SETDICT_FINISHING_STATE = 0x09;
-		private static  int BUSY_STATE              = 0x10;
-		private static  int FLUSHING_STATE          = 0x14;
-		private static  int FINISHING_STATE         = 0x1c;
-		private static  int FINISHED_STATE          = 0x1e;
-		private static  int CLOSED_STATE            = 0x7f;
-		
-		/// <summary>
-		/// Compression level.
-		/// </summary>
-		private int level;
-		
-		/// <summary>
-		/// If true no Zlib/RFC1950 headers or footers are generated
-		/// </summary>
-		private bool noZlibHeaderOrFooter;
-		
-		/// <summary>
-		/// The current state.
-		/// </summary>
-		private int state;
-		
-		/// <summary>
-		/// The total bytes of output written.
-		/// </summary>
-		private long totalOut;
-		
-		/// <summary>
-		/// The pending output.
-		/// </summary>
-		private DeflaterPending pending;
-		
-		/// <summary>
-		/// The deflater engine.
-		/// </summary>
-		private DeflaterEngine engine;
-		
+		private const  int BUSY_STATE              = 0x10;
+		private const  int FLUSHING_STATE          = 0x14;
+		private const  int FINISHING_STATE         = 0x1c;
+		private const  int FINISHED_STATE          = 0x1e;
+		private const  int CLOSED_STATE            = 0x7f;
+		#endregion
+		#region Constructors
 		/// <summary>
 		/// Creates a new deflater with default compression level.
 		/// </summary>
@@ -171,12 +145,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <summary>
 		/// Creates a new deflater with given compression level.
 		/// </summary>
-		/// <param name="lvl">
+		/// <param name="level">
 		/// the compression level, a value between NO_COMPRESSION
 		/// and BEST_COMPRESSION, or DEFAULT_COMPRESSION.
 		/// </param>
 		/// <exception cref="System.ArgumentOutOfRangeException">if lvl is out of range.</exception>
-		public Deflater(int lvl) : this(lvl, false)
+		public Deflater(int level) : this(level, false)
 		{
 			
 		}
@@ -209,7 +183,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			SetLevel(level);
 			Reset();
 		}
-		
+		#endregion
 		
 		/// <summary>
 		/// Resets the deflater.  The deflater acts afterwards as if it was
@@ -236,7 +210,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <summary>
 		/// Gets the number of input bytes processed so far.
 		/// </summary>
-		public int TotalIn {
+		public long TotalIn {
 			get {
 				return engine.TotalIn;
 			}
@@ -270,7 +244,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// </summary>
 		public void Finish() 
 		{
-			state |= IS_FLUSHING | IS_FINISHING;
+			state |= (IS_FLUSHING | IS_FINISHING);
 		}
 		
 		/// <summary>
@@ -279,7 +253,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// </summary>
 		public bool IsFinished {
 			get {
-				return state == FINISHED_STATE && pending.IsFlushed;
+				return (state == FINISHED_STATE) && pending.IsFlushed;
 			}
 		}
 		
@@ -324,21 +298,21 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <param name="input">
 		/// the buffer containing the input data.
 		/// </param>
-		/// <param name="off">
+		/// <param name="offset">
 		/// the start of the data.
 		/// </param>
-		/// <param name="len">
-		/// the length of the data.
+		/// <param name="count">
+		/// the number of data bytes of input.
 		/// </param>
 		/// <exception cref="System.InvalidOperationException">
-		/// if the buffer was finished() or ended() or if previous input is still pending.
+		/// if the buffer was Finish()ed or if previous input is still pending.
 		/// </exception>
-		public void SetInput(byte[] input, int off, int len)
+		public void SetInput(byte[] input, int offset, int count)
 		{
 			if ((state & IS_FINISHING) != 0) {
-				throw new InvalidOperationException("finish()/end() already called");
+				throw new InvalidOperationException("Finish() already called");
 			}
-			engine.SetInput(input, off, len);
+			engine.SetInput(input, offset, count);
 		}
 		
 		/// <summary>
@@ -347,20 +321,20 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// true the change of compression level will occur somewhere near
 		/// before the end of the so far given input.
 		/// </summary>
-		/// <param name="lvl">
+		/// <param name="level">
 		/// the new compression level.
 		/// </param>
-		public void SetLevel(int lvl)
+		public void SetLevel(int level)
 		{
-			if (lvl == DEFAULT_COMPRESSION) {
-				lvl = 6;
-			} else if (lvl < NO_COMPRESSION || lvl > BEST_COMPRESSION) {
-				throw new ArgumentOutOfRangeException("lvl");
+			if (level == DEFAULT_COMPRESSION) {
+				level = 6;
+			} else if (level < NO_COMPRESSION || level > BEST_COMPRESSION) {
+				throw new ArgumentOutOfRangeException("level");
 			}
 			
-			if (level != lvl) {
-				level = lvl;
-				engine.SetLevel(lvl);
+			if (this.level != level) {
+				this.level = level;
+				engine.SetLevel(level);
 			}
 		}
 		
@@ -376,7 +350,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// Sets the compression strategy. Strategy is one of
 		/// DEFAULT_STRATEGY, HUFFMAN_ONLY and FILTERED.  For the exact
 		/// position where the strategy is changed, the same as for
-		/// setLevel() applies.
+		/// SetLevel() applies.
 		/// </summary>
 		/// <param name="strategy">
 		/// The new compression strategy.
@@ -394,7 +368,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// </param>
 		/// <returns>
 		/// The number of compressed bytes added to the output, or 0 if either
-		/// needsInput() or finished() returns true or length is zero.
+		/// IsNeedingInput() or IsFinished returns true or length is zero.
 		/// </returns>
 		public int Deflate(byte[] output)
 		{
@@ -418,10 +392,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// needsInput() or finished() returns true or length is zero.
 		/// </returns>
 		/// <exception cref="System.InvalidOperationException">
-		/// If end() was previously called.
+		/// If Finish() was previously called.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// If offset and/or length don't match the array length.
+		/// If offset or length don't match the array length.
 		/// </exception>
 		public int Deflate(byte[] output, int offset, int length)
 		{
@@ -432,7 +406,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			}
 			
 			if (state < BUSY_STATE) {
-				/* output header */
+				// output header
 				int header = (DEFLATED +
 					((DeflaterConstants.MAX_WBITS - 8) << 4)) << 8;
 				int level_flags = (level - 1) >> 1;
@@ -441,11 +415,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				}
 				header |= level_flags << 6;
 				if ((state & IS_SETDICT) != 0) {
-					/* Dictionary was set */
+					// Dictionary was set
 					header |= DeflaterConstants.PRESET_DICT;
 				}
 				header += 31 - (header % 31);
-				
 				
 				pending.WriteShortMSB(header);
 				if ((state & IS_SETDICT) != 0) {
@@ -470,7 +443,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				
 				if (!engine.Deflate((state & IS_FLUSHING) != 0, (state & IS_FINISHING) != 0)) {
 					if (state == BUSY_STATE) {
-						/* We need more input now */
+						// We need more input now
 						return origLength - length;
 					} else if (state == FLUSHING_STATE) {
 						if (level != NO_COMPRESSION) {
@@ -508,15 +481,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// Sets the dictionary which should be used in the deflate process.
 		/// This call is equivalent to <code>setDictionary(dict, 0, dict.Length)</code>.
 		/// </summary>
-		/// <param name="dict">
+		/// <param name="dictionary">
 		/// the dictionary.
 		/// </param>
 		/// <exception cref="System.InvalidOperationException">
-		/// if setInput () or deflate () were already called or another dictionary was already set.
+		/// if SetInput () or Deflate () were already called or another dictionary was already set.
 		/// </exception>
-		public void SetDictionary(byte[] dict)
+		public void SetDictionary(byte[] dictionary)
 		{
-			SetDictionary(dict, 0, dict.Length);
+			SetDictionary(dictionary, 0, dictionary.Length);
 		}
 		
 		/// <summary>
@@ -527,26 +500,58 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// checksum.  To decompress the output you need to supply the same
 		/// dictionary again.
 		/// </summary>
-		/// <param name="dict">
+		/// <param name="dictionary">
 		/// The dictionary data
 		/// </param>
-		/// <param name="offset">
-		/// An offset into the dictionary.
+		/// <param name="index">
+		/// The index where dictionary information commences.
 		/// </param>
-		/// <param name="length">
-		/// The length of the dictionary data to use
+		/// <param name="count">
+		/// The number of bytes in the dictionary.
 		/// </param>
 		/// <exception cref="System.InvalidOperationException">
-		/// If setInput () or deflate () were already called or another dictionary was already set.
+		/// If SetInput () or Deflate() were already called or another dictionary was already set.
 		/// </exception>
-		public void SetDictionary(byte[] dict, int offset, int length)
+		public void SetDictionary(byte[] dictionary, int index, int count)
 		{
 			if (state != INIT_STATE) {
 				throw new InvalidOperationException();
 			}
 			
 			state = SETDICT_STATE;
-			engine.SetDictionary(dict, offset, length);
+			engine.SetDictionary(dictionary, index, count);
 		}
+
+		#region Instance Fields
+		/// <summary>
+		/// Compression level.
+		/// </summary>
+		int level;
+
+		/// <summary>
+		/// If true no Zlib/RFC1950 headers or footers are generated
+		/// </summary>
+		bool noZlibHeaderOrFooter;
+
+		/// <summary>
+		/// The current state.
+		/// </summary>
+		int state;
+
+		/// <summary>
+		/// The total bytes of output written.
+		/// </summary>
+		long totalOut;
+
+		/// <summary>
+		/// The pending output.
+		/// </summary>
+		DeflaterPending pending;
+
+		/// <summary>
+		/// The deflater engine.
+		/// </summary>
+		DeflaterEngine engine;
+		#endregion
 	}
 }

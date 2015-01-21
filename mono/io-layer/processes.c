@@ -1672,6 +1672,16 @@ static gboolean process_open_compare (gpointer handle, gpointer user_data)
 	}
 }
 
+gboolean CloseProcess(gpointer handle)
+{
+	if ((GPOINTER_TO_UINT (handle) & _WAPI_PROCESS_UNHANDLED) == _WAPI_PROCESS_UNHANDLED) {
+		/* This is a pseudo handle */
+		return(TRUE);
+	}
+
+	return CloseHandle (handle);
+}
+
 gpointer OpenProcess (guint32 req_access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSED, guint32 pid)
 {
 	/* Find the process handle that corresponds to pid */
@@ -1723,6 +1733,7 @@ gboolean GetExitCodeProcess (gpointer process, guint32 *code)
 	if(code==NULL) {
 		return(FALSE);
 	}
+	*code = STILL_ACTIVE;
 	
 	if ((GPOINTER_TO_UINT (process) & _WAPI_PROCESS_UNHANDLED) == _WAPI_PROCESS_UNHANDLED) {
 		/* This is a pseudo handle, so we don't know what the
@@ -1747,13 +1758,8 @@ gboolean GetExitCodeProcess (gpointer process, guint32 *code)
 	/* Make sure any process exit has been noticed, before
 	 * checking if the process is signalled.  Fixes bug 325463.
 	 */
-	process_wait (process, 0);
-	
-	if (_wapi_handle_issignalled (process) == TRUE) {
+	if (WAIT_OBJECT_0 == process_wait (process, 0) && _wapi_handle_issignalled (process) == TRUE)
 		*code = process_handle->exitstatus;
-	} else {
-		*code = STILL_ACTIVE;
-	}
 	
 	return(TRUE);
 }
@@ -1862,6 +1868,23 @@ static gint find_procmodule (gconstpointer a, gconstpointer b)
 #include <mach-o/dyld.h>
 #include <mach-o/getsect.h>
 
+#if defined(TARGET_AMD64)
+	typedef struct mach_header_64 mach_header_type;
+	typedef struct section_64 mach_section_type;
+	static const uint32_t mach_header_magic = MH_MAGIC_64;
+	#define mach_getsectbynamefromheader getsectbynamefromheader_64;
+#else
+	#if !defined(TARGET_X86)
+	#warning "Unspecified architecture"
+	#endif
+
+	typedef struct mach_header mach_header_type;
+	typedef struct section mach_section_type;
+	static const uint32_t mach_header_magic = MH_MAGIC;
+	#define mach_getsectbynamefromheader getsectbynamefromheader;
+#endif
+
+
 static GSList *load_modules (void)
 {
 	GSList *ret = NULL;
@@ -1870,20 +1893,23 @@ static GSList *load_modules (void)
 	int i = 0;
 
 	for (i = 0; i < count; i++) {
-		const struct mach_header *hdr;
-		const struct section *sec;
+		const mach_header_type *hdr;
+		const mach_section_type *sec;
 		const char *name;
 		intptr_t slide;
 
 		slide = _dyld_get_image_vmaddr_slide (i);
 		name = _dyld_get_image_name (i);
 		hdr = _dyld_get_image_header (i);
-		sec = getsectbynamefromheader (hdr, SEG_DATA, SECT_DATA);
+
+		if (!hdr || mach_header_magic != hdr->magic)
+			continue;
+
+		sec = mach_getsectbynamefromheader (hdr, SEG_DATA, SECT_DATA);
 
 		/* Some dynlibs do not have data sections on osx (#533893) */
-		if (sec == 0) {
+		if (sec == 0)
 			continue;
-		}
 			
 		mod = g_new0 (WapiProcModule, 1);
 		mod->address_start = GINT_TO_POINTER (sec->addr);

@@ -206,6 +206,15 @@ mono_class_get_interfaces    (MonoClass* klass, gpointer *iter);
 MonoClass*
 mono_class_get_nested_types  (MonoClass* klass, gpointer *iter);
 
+void*
+mono_class_get_userdata      (MonoClass* klass);
+
+void
+mono_class_set_userdata      (MonoClass* klass, void* userdata);
+
+int
+mono_class_get_userdata_offset ();
+
 /* MonoClassField accessors */
 const char*
 mono_field_get_name   (MonoClassField *field);

@@ -182,10 +182,10 @@ case "$host" in
 		use_sigposix=yes
 		with_tls=pthread
 		libgc_threads=pthreads
-        with_sigaltstack=no 
- 	    with_glib=embedded 
- 	    disable_nls=yes 
-        parallel_mark=no
+		with_sigaltstack=no
+		with_glib=embedded
+		disable_nls=yes
+		parallel_mark=no
 		mono_cv_uscore=yes
 		;;
 	*-*-linux*)
@@ -199,6 +199,7 @@ case "$host" in
 		libgc_threads=pthreads
 		AOT_SUPPORTED="yes"
 		use_sigposix=yes
+		with_sigaltstack=no
 		;;
 	*-*-hpux*)
 	        platform_win32=no
@@ -254,6 +255,7 @@ case "$host" in
 		libdl=
 		libgc_threads=pthreads
 		has_dtrace=yes
+		with_sigaltstack=no
 		if test "x$cross_compiling" = "xyes"; then
 			has_broken_apple_cpp=yes
 		fi
@@ -645,7 +647,8 @@ AC_ARG_WITH(tls, [  --with-tls=__thread,pthread    select Thread Local Storage i
 
 # Enable support for using sigaltstack for SIGSEGV and stack overflow handling
 # This does not work on some platforms (bug #55253)
-AC_ARG_WITH(sigaltstack, [  --with-sigaltstack=yes,no      enable/disable support for sigaltstack (defaults to yes)],[],[with_sigaltstack=yes])
+# Unity: disabled because it doesn't work nicely when threads have small stacks (e.g. 48k for FMOD threads)
+AC_ARG_WITH(sigaltstack, [  --with-sigaltstack=yes,no      enable/disable support for sigaltstack (defaults to no)],[],[with_sigaltstack=no])
 
 AC_ARG_WITH(static_mono, [  --with-static_mono=yes,no      link mono statically to libmono (faster) (defaults to yes)],[],[with_static_mono=yes])
 

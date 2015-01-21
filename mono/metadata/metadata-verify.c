@@ -416,6 +416,14 @@ verify_msdos_header (VerifyContext *ctx)
 static void
 verify_pe_header (VerifyContext *ctx)
 {
+	enum {
+		MACHINE_X86 = 0x14c,
+		MACHINE_X64 = 0x8664
+	};
+	
+	guint16 machine;
+	gboolean machineOk;
+
 	guint32 offset = pe_signature_offset (ctx);
 	const char *pe_header = ctx->data + offset;
 	if (pe_header [0] != 'P' || pe_header [1] != 'E' ||pe_header [2] != 0 ||pe_header [3] != 0)
@@ -425,7 +433,15 @@ verify_pe_header (VerifyContext *ctx)
 
 	if (offset > ctx->size - 20)
 		ADD_ERROR (ctx, g_strdup ("File with truncated pe header"));
-	if (read16 (pe_header) != 0x14c)
+
+	// Check machine.  x86 is used as the default and will run
+	// on x64 as well.
+	machine = read16 (pe_header);
+	machineOk = machine == MACHINE_X86;
+#ifdef _AMD64_
+	machineOk |= machine == MACHINE_X64;
+#endif
+	if (!machineOk)
 		ADD_ERROR (ctx, g_strdup ("Invalid PE header Machine value"));
 }
 
