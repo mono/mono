@@ -1258,6 +1258,42 @@ namespace MonoTests.System.IO
 		}
 
 		/// <summary>
+		/// Checks whether the <see cref="FileStream"/> writes at the correct position. 
+		/// Uses a <see cref="FileStream.Read(byte[], int, int)" /> to adjust the position before  
+		/// the <see cref="FileStream.Write(byte[], int, int)" /> is called.
+		/// 
+		/// In response to Bug #11699 
+		/// </summary>
+		[Test]
+		public void TestWriteAtCorrectPosition ()
+		{
+			const int pos = 1;
+			const int bufferSize = 128;
+
+			var filename = Path.GetTempFileName ();
+			File.WriteAllBytes (filename, new byte[pos + 1]); 
+
+			var bytes = new byte[bufferSize + 1];
+			new Random ().NextBytes (bytes);
+
+			using (var file = new FileStream (filename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, bufferSize, FileOptions.SequentialScan)) {
+				file.Read (new byte[pos], 0, pos); 
+				Assert.AreEqual (pos, file.Position); 
+
+				file.Write (bytes, 0, bytes.Length);
+
+				Assert.AreEqual (pos + bytes.Length, file.Length);
+			}
+
+			using (var filestream = File.Open (filename, FileMode.Open, FileAccess.Read)) {
+				var bb = new byte[bytes.Length];
+				filestream.Position = pos;
+				filestream.Read (bb, 0, bb.Length);
+				Assert.AreEqual (bytes, bb);
+			}
+		}
+
+		/// <summary>
 		/// Checks whether the <see cref="FileStream" /> throws a <see cref="NotSupportedException" />
 		/// when the stream is opened with access mode <see cref="FileAccess.Write" /> and the
 		/// <see cref="FileStream.Read(byte[], int, int)" /> method is called.

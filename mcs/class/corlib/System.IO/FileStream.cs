@@ -633,7 +633,13 @@ namespace System.IO
 
 				FlushBuffer ();
 				int wcount = count;
-				
+
+				if (CanSeek) {
+					MonoIO.Seek (handle, Position, SeekOrigin.Begin, out error);
+					if (error != MonoIOError.ERROR_SUCCESS)
+						throw MonoIO.GetException (GetSecureFileName (name), error);
+				}
+
 				while (wcount > 0){
 					int n = MonoIO.Write (handle, src, offset, wcount, out error);
 					if (error != MonoIOError.ERROR_SUCCESS)
