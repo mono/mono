@@ -53,6 +53,7 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 	object async_callback;
 	ExecutionContext current;
 	ExecutionContext original;
+	int gchandle;
 #pragma warning restore 169, 414, 649
 
 	// not part of MonoAsyncResult...
