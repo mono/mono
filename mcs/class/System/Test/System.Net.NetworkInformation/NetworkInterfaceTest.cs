@@ -7,6 +7,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 
@@ -59,8 +60,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		[Test]
 		public void FirstInterfaceOperationalStatus ()
 		{
-			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
-			Assert.AreNotEqual (adapters[0].OperationalStatus, OperationalStatus.Unknown);
+			// skip the loopback interface, it doesn't support OperationalStatus on Linux
+			var adapter = NetworkInterface.GetAllNetworkInterfaces ().First (x => x.NetworkInterfaceType != NetworkInterfaceType.Loopback);
+			Assert.AreNotEqual (adapter.OperationalStatus, OperationalStatus.Unknown);
 		}
 	
 		[Test]
