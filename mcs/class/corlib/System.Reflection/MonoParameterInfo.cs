@@ -108,7 +108,7 @@ namespace System.Reflection
 					/* default values for DateTime are encoded using a custom attribute */
 					DateTimeConstantAttribute[] attrs = (DateTimeConstantAttribute[])GetCustomAttributes (typeof (DateTimeConstantAttribute), false);
 					if (attrs.Length > 0)
-						return new DateTime (attrs [0].Ticks);
+						return attrs [0].Value;
 				}
 				return DefaultValueImpl;
 			}

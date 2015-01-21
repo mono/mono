@@ -30,21 +30,21 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Contract.Assert(false) will cause an assert to be triggered with the correct message.
 		/// </summary>
 		[Test]
-		[Ignore ("This causes NUnit crash on .NET 4.0")]
+//		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestAssertNoEventHandler ()
 		{
 			try {
 				Contract.Assert (false);
 				Assert.Fail ("TestAssertNoEventHandler() exception not thrown #1");
 			} catch (Exception ex) {
-				Assert.IsInstanceOfType (typeof (NotImplementedException), ex, "TestAssertNoEventHandler() wrong exception type #1");
+				Assert.AreEqual ("Assertion failed.", ex.Message);
 			}
 
 			try {
 				Contract.Assert (false, "Message");
 				Assert.Fail ("TestAssertNoEventHandler() exception not thrown #2");
 			} catch (Exception ex) {
-				Assert.IsInstanceOfType (typeof (NotImplementedException), ex, "TestAssertNoEventHandler() wrong exception type #2");
+				Assert.AreEqual ("Assertion failed.  Message", ex.Message);
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// Because nothing is done in the event handler, an assert should be triggered.
 		/// </summary>
 		[Test]
-		[Ignore ("This causes NUnit crash on .NET 4.0")]
+//		[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestAssertEventHandlerNoAction ()
 		{
 			bool visitedEventHandler = false;
@@ -70,7 +70,7 @@ namespace MonoTests.System.Diagnostics.Contracts {
 				Contract.Assert (false);
 				Assert.Fail ("TestAssertEventHandlerNoAction() exception not thrown");
 			} catch (Exception ex) {
-				Assert.IsInstanceOfType (typeof (NotImplementedException), ex, "TestAssertEventHandlerNoAction() wrong exception type");
+				Assert.AreEqual ("Assertion failed.", ex.Message);
 			}
 
 			Assert.IsTrue (visitedEventHandler, "TestAssertEventHandlerNoAction() handler not visited");

@@ -40,6 +40,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Diagnostics.Contracts;
 
 namespace System {
 
@@ -390,6 +391,11 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode=true)]
 		public extern static void Exit (int exitCode);
+
+		internal static void _Exit (int exitCode)
+		{
+			Exit (exitCode);
+		}
 
 		/// <summary>
 		/// Substitute environment variables in the argument "name"
@@ -880,6 +886,11 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
+		internal static void FailFast (String message, uint exitCode)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
@@ -960,6 +971,17 @@ namespace System {
 			get {
 				return Environment.Platform == PlatformID.MacOSX;
 			}
+		}
+
+		internal static bool IsCLRHosted {
+			get {
+				return false;
+			}
+		}
+
+		internal static void TriggerCodeContractFailure(ContractFailureKind failureKind, String message, String condition, String exceptionAsString)
+		{
+
 		}
 	}
 }
