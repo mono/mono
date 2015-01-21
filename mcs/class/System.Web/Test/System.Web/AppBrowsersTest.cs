@@ -39,9 +39,7 @@ using System.Threading;
 namespace MonoTests.System.Web
 {
 	[TestFixture]
-#if NET_3_0
 	[Ignore ("adapters.browser depends on System.Web_test_net_2_0.dll")]
-#endif
 	public class AppBrowsersTest
 	{
 		[TestFixtureSetUp]

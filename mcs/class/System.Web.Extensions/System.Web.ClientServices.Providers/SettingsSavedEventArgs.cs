@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_3_5
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -55,4 +54,3 @@ namespace System.Web.ClientServices.Providers
 		}		
 	}
 }
-#endif

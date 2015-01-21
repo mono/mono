@@ -47,13 +47,8 @@ using System.Security.Permissions;
 [assembly: AssemblyCompany (Consts.MonoCompany)]
 [assembly: AssemblyProduct (Consts.MonoProduct)]
 [assembly: AssemblyCopyright (Consts.MonoCopyright)]
-#if NET_3_5
 	[assembly: AssemblyVersion (Consts.FxVersion)]
 	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-#else
-	[assembly: AssemblyVersion ("1.0.61025.0")]
-	[assembly: AssemblyInformationalVersion ("1.0.61025.0")]
-#endif
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 

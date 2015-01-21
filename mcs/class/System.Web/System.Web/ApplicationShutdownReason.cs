@@ -46,9 +46,7 @@ namespace System.Web
                 HttpRuntimeClose = 12,
                 InitializationError = 13,
                 MaxRecompilationsReached = 14
-#if NET_3_5
 		, BuildManagerChange = 15
-#endif 		
         }
 }
 

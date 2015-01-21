@@ -95,12 +95,10 @@ namespace Microsoft.Build.Tasks {
 			set { include = value; }
 		}
 
-#if NET_3_5
 		public bool PreserveExistingMetadata {
 			get { return preserveExistingMetadata; }
 			set { preserveExistingMetadata = value; }
 		}
-#endif
 	}
 }
 

@@ -303,7 +303,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");					
 		}
 
-#if NET_3_5
 		[Test]
 		public void TestCopy_OverwriteReadOnlyTrue ()
 		{
@@ -396,7 +395,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			
 			File.SetAttributes (target_file, FileAttributes.Normal);
 		}
-#endif
 
 		void CheckCopyBuildItems (Project project, string [] source_files, string destination_folder, string prefix)
 		{

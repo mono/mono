@@ -66,11 +66,7 @@ namespace System.Web.Script.Serialization
 
 			ScriptingJsonSerializationSection section = (ScriptingJsonSerializationSection) ConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/jsonSerialization");
 			if (section == null) {
-#if NET_3_5
 				_maxJsonLength = 2097152;
-#else
-				_maxJsonLength = 102400;
-#endif
 				_recursionLimit = 100;
 			} else {
 				_maxJsonLength = section.MaxJsonLength;

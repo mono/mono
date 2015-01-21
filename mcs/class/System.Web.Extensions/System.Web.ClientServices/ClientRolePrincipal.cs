@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_3_5
 using System;
 using System.ComponentModel;
 using System.Net;
@@ -58,4 +57,3 @@ namespace System.Web.ClientServices
 		}
 	}
 }
-#endif

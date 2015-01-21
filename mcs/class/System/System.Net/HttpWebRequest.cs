@@ -937,13 +937,11 @@ namespace System.Net
 			return result.Response;
 		}
 		
-#if NET_3_5
 		public Stream EndGetRequestStream (IAsyncResult asyncResult, out TransportContext transportContext)
 		{
 			transportContext = null;
 			return EndGetRequestStream (asyncResult);
 		}
-#endif
 
 		public override WebResponse GetResponse()
 		{
