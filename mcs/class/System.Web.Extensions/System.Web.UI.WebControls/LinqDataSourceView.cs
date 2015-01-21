@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_3_5
 
 // FIXME: in general we should create something like
 // System.Web.Query,Dynamic.DynamicClass to execute DataContext operations.
@@ -564,4 +563,3 @@ namespace System.Web.UI.WebControls
 		#endregion
 	}
 }
-#endif

@@ -40,10 +40,8 @@ namespace Microsoft.Build.Utilities
 	{
 		Version11,
 		Version20,
-#if NET_3_5
 		Version30,
 		Version35,
-#endif
 		Version40,
 		Version45,
 #if XBUILD_12
