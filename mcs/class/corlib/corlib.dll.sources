@@ -1389,7 +1389,6 @@ System.Text/EncodingInfo.cs
 System.Text/Latin1Encoding.cs
 System.Text/MLangCodePageEncoding.cs
 System.Text/NormalizationForm.cs
-System.Text/StringBuilder.cs
 System.Text/SurrogateEncoder.cs
 System.Text/UnicodeEncoding.cs
 System.Text/UTF7Encoding.cs
@@ -1446,6 +1445,7 @@ System.Threading/Watch.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
+ReferenceSources/CompatibilitySwitches.cs
 ReferenceSources/Empty.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
@@ -1623,6 +1623,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/unsafevaluetypeattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
 
+../../../external/referencesource/mscorlib/system/text/stringbuilder.cs
 ../../../external/referencesource/mscorlib/system/text/stringbuildercache.cs
 
 ../../../external/referencesource/mscorlib/system/threading/abandonedmutexexception.cs
