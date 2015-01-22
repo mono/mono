@@ -737,6 +737,7 @@ System.Windows.Input/ICommand.cs
 ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/SettingsSectionInternal.cs
+ReferenceSources/Socket.cs
 ReferenceSources/SR.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/SystemNetworkCredential.cs
