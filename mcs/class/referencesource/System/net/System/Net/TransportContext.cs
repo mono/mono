@@ -32,6 +32,7 @@ namespace System.Net
     }
 #endif
 
+#if MONO_FEATURE_NEW_TLS
     internal class SslStreamContext : TransportContext
     {
         internal SslStreamContext(SslStream sslStream)
@@ -47,6 +48,7 @@ namespace System.Net
 
         private SslStream sslStream;
     }
+#endif
 
 #if MONO_FEATURE_WEB_STACK
     internal class HttpListenerRequestContext : TransportContext
