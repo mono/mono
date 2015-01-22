@@ -37,9 +37,6 @@ using System.IO;
 
 namespace System.Drawing.Imaging {
 
-#if ONLY_1_1
-	[ComVisible (false)]
-#endif
 	public sealed class ImageCodecInfo {
 		private Guid clsid;
 		private string codecName;

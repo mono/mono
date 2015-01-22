@@ -580,12 +580,6 @@ namespace System.Web.UI.WebControls {
 			viewstate.Remove (BitStateKey);
 			stylesTraked = 0;
 		}
-#if ONLY_1_1
-		public override string ToString() 
-		{
-			return string.Empty;
-		}
-#endif
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods

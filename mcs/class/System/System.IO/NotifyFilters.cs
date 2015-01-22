@@ -30,9 +30,6 @@
 namespace System.IO {
 
 	[Flags]
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum NotifyFilters {
 		Attributes = 4,
 		CreationTime = 64,

@@ -76,9 +76,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (0)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -95,9 +92,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -110,9 +104,6 @@ namespace System.Web.UI.WebControls {
 			set { TableItemStyle.HorizontalAlign = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (0)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -150,9 +141,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (VerticalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -165,9 +153,6 @@ namespace System.Web.UI.WebControls {
 			set { TableItemStyle.VerticalAlign = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]

@@ -81,9 +81,6 @@ namespace System.Web.UI.WebControls {
 			set { base.BorderWidth = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(4)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -113,16 +110,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(false)]
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override string ToolTip {
-			get { return String.Empty; }
-			set { /* Tooltip is always String.Empty */ }
-		}
-#endif		
 
 		public virtual int[] GetSelectedIndices ()
 		{
@@ -166,23 +153,6 @@ namespace System.Web.UI.WebControls {
 			return options;
 		}
 
-#if ONLY_1_1
-		protected override void RenderContents (HtmlTextWriter writer)
-		{
-			foreach (ListItem item in Items) {
-				if (item.Selected) {
-					writer.AddAttribute (HtmlTextWriterAttribute.Selected, "selected", false);
-				}
-				writer.AddAttribute (HtmlTextWriterAttribute.Value, item.Value, true);
-				writer.RenderBeginTag (HtmlTextWriterTag.Option);
-				
-				string encoded = HttpUtility.HtmlEncode (item.Text);
-				writer.Write (encoded);
-				writer.RenderEndTag ();
-				writer.WriteLine ();
-			}
-		}
-#endif
 
 		protected internal
 		override void OnPreRender (EventArgs e)

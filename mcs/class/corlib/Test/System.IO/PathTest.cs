@@ -854,9 +854,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotWorking")] // we also throw ArgumentException on 1.0 profile
-#endif
 		public void GetPathRoot_Path_InvalidPathChars ()
 		{
 			try {

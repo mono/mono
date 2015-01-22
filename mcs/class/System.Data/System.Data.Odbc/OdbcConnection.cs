@@ -198,12 +198,6 @@ namespace System.Data.Odbc
 			return BeginTransaction (IsolationLevel.Unspecified);
 		}
 
-#if ONLY_1_1
-		IDbTransaction IDbConnection.BeginTransaction ()
-		{
-			return (IDbTransaction) BeginTransaction ();
-		}
-#endif // ONLY_1_1
 
 		protected override DbTransaction BeginDbTransaction (IsolationLevel isolationLevel)
 		{
@@ -224,12 +218,6 @@ namespace System.Data.Odbc
 				throw new InvalidOperationException ();
 		}
 
-#if ONLY_1_1
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel isolevel)
-		{
-			return (IDbTransaction) BeginTransaction (isolevel);
-		}
-#endif // ONLY_1_1
 
 		public
 		override
@@ -317,12 +305,6 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-#if ONLY_1_1
-		IDbCommand IDbConnection.CreateCommand ()
-		{
-			return (IDbCommand) CreateCommand ();
-		}
-#endif //ONLY_1_1
 
 		protected override DbCommand CreateDbCommand ()
 		{
@@ -489,12 +471,7 @@ namespace System.Data.Odbc
 
 		private void RaiseStateChange (ConnectionState from, ConnectionState to)
 		{
-#if ONLY_1_1
-			if (StateChange != null)
-				StateChange (this, new StateChangeEventArgs (from, to));
-#else
 			base.OnStateChange (new StateChangeEventArgs (from, to));
-#endif
 		}
 
 		private OdbcInfoMessageEventArgs CreateOdbcInfoMessageEvent (OdbcErrorCollection errors)
@@ -590,11 +567,6 @@ namespace System.Data.Odbc
 
 		#region Events and Delegates
 
-#if ONLY_1_1
-		[OdbcDescription ("DbConnection_StateChange")]
-		[OdbcCategory ("DataCategory_StateChange")]
-		public event StateChangeEventHandler StateChange;
-#endif // ONLY_1_1
 
 		[OdbcDescription ("DbConnection_InfoMessage")]
 		[OdbcCategory ("DataCategory_InfoMessage")]

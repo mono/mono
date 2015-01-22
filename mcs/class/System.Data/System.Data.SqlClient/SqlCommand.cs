@@ -182,10 +182,6 @@ namespace System.Data.SqlClient {
 			get { return connection; }
 			set
 			{
-#if ONLY_1_1
-				if (connection != null && connection.DataReader != null)
-					throw new InvalidOperationException ("The connection is busy fetching data.");
-#endif
 				connection = value;
 			}
 		}
@@ -223,10 +219,6 @@ namespace System.Data.SqlClient {
 			}
 			set
 			{
-#if ONLY_1_1
-				if (connection != null && connection.DataReader != null)
-					throw new InvalidOperationException ("The connection is busy fetching data.");
-#endif
 				transaction = value;
 			}
 		}

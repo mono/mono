@@ -272,9 +272,6 @@ namespace System.Drawing {
 			if ((n <= 0) || (n >= ArgbValues.Length)) {
 				// This is what it returns!
 				c = Color.FromArgb (0, 0, 0, 0);
-#if ONLY_1_1
-				c.name = kc.ToString ();
-#endif
 				c.state |= (short) Color.ColorType.Named;
 			} else {
 				c = new Color ();
@@ -282,9 +279,6 @@ namespace System.Drawing {
 				if ((n < 27) || (n > 169))
 					c.state |= (short) Color.ColorType.System;
 				c.Value = ArgbValues [n];
-#if ONLY_1_1
-				c.name = GetName (n);
-#endif
 			}
 			c.knownColor = n;
 			return c;

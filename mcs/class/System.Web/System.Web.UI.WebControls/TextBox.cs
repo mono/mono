@@ -300,9 +300,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(0)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -318,9 +315,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(0)]
 		[Themeable (false)]
 		[WebSysDescription ("")]
@@ -351,9 +345,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(0)]
 		[Themeable (false)]
 		[WebSysDescription ("")]
@@ -394,10 +385,6 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				ViewState ["Text"] = value;
-#if ONLY_1_1
-				if (TextMode == TextBoxMode.Password)
-					ViewState.SetItemDirty ("Text", false);
-#endif
 			}
 		}
 	

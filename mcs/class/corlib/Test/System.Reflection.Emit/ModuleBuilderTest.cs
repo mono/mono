@@ -224,9 +224,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // Parent type was not extensible by the given type
-#endif
 		public void DefineType_Parent_Interface ()
 		{
 			TypeBuilder tb;

@@ -1240,14 +1240,6 @@ namespace MonoTests.System.Data
 			Assert.IsNull (colChangeArgs.ProposedValue, "#J3");
 			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#J4");
 
-#if ONLY_1_1
-			evt = (EventInfo) _eventsFired [index++];
-			Assert.AreEqual ("ColumnChanging", evt.Name, "#K1");
-			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc1, colChangeArgs.Column, "#K2");
-			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#K3");
-			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#K4");
-#endif
 
 			evt = (EventInfo) _eventsFired [index++];
 			Assert.AreEqual ("ColumnChanged", evt.Name, "#L1");

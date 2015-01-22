@@ -296,11 +296,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"End Class{0}", NewLine), code);
 		}
 
-#if ONLY_1_1
-		// A bug in MS.NET 1.x causes MemberAttributes.FamilyOrAssembly to be 
-		// generated as Protected
-		[Category ("NotDotNet")]
-#endif
 		[Test]
 		public override void PropertyMembersTypeFamilyOrAssembly ()
 		{
@@ -314,11 +309,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"End Class{0}", NewLine), code);
 		}
 
-#if ONLY_1_1
-		// A bug in MS.NET 1.x causes MemberAttributes.Assembly to be generated
-		// as Protected
-		[Category ("NotDotNet")]
-#endif
 		[Test]
 		public override void PropertyMembersTypeAssembly ()
 		{
@@ -2210,11 +2200,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"End Structure{0}", NewLine), code);
 		}
 
-#if ONLY_1_1
-		// A bug in MS.NET 1.x causes MemberAttributes.FamilyOrAssembly to be 
-		// generated as Protected
-		[Category ("NotDotNet")]
-#endif
 		[Test]
 		public override void PropertyMembersTypeFamilyOrAssembly ()
 		{
@@ -2570,9 +2555,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
 				"    Private Sub New(){0}" +
-#if ONLY_1_1
-				"        MyBase.New{0}" +
-#endif
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2586,9 +2568,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Structure Test1{0}" +
 				"    {0}" +
 				"    Public Sub New(ByVal value1 As Object, ByVal value2 As Object, ByRef index As Integer, ByRef count As Integer){0}" +
-#if ONLY_1_1
-				"        MyBase.New{0}" +
-#endif
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2602,9 +2581,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Structure Test1{0}" +
 				"    {0}" +
 				"    Private Sub New(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer){0}" +
-#if ONLY_1_1
-				"        MyBase.New{0}" +
-#endif
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
 		}

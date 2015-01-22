@@ -222,12 +222,6 @@ namespace System.Data.Odbc
 				this.command.Connection.Close ();
 		}
 
-#if ONLY_1_1
-		~OdbcDataReader ()
-		{
-			this.Dispose (false);
-		}
-#endif
 
 		public 
 		override
@@ -336,9 +330,6 @@ namespace System.Data.Odbc
 
 		[MonoTODO]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-#if ONLY_1_1
-		public
-#endif
 		new
 		IDataReader GetData (int i)
 		{
@@ -829,18 +820,6 @@ namespace System.Data.Odbc
 			return numValues;
 		}
 
-#if ONLY_1_1
-		void IDisposable.Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return new DbEnumerator (this);
-		}
-#endif // ONLY_1_1
 
 		public override IEnumerator GetEnumerator ()
 		{

@@ -33,9 +33,6 @@ using System.Configuration;
 using System.Data;
 using System.Data.Common;
 
-#if ONLY_1_1
-using Mono.Data;
-#endif
 
 namespace MonoTests.System.Data
 {

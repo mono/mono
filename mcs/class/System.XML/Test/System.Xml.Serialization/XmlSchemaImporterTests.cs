@@ -210,17 +210,6 @@ namespace MonoTests.System.Xml.Serialization
 			Assert.AreEqual ("System.String", map.TypeFullName, "#A4");
 			Assert.AreEqual ("String", map.TypeName, "#A5");
 
-#if ONLY_1_1
-			schemas = ExportType (typeof (char));
-			importer = new XmlSchemaImporter (schemas);
-			map = importer.ImportTypeMapping (new XmlQualifiedName ("char", "NSChar"));
-
-			Assert.IsNotNull (map, "#B1");
-			Assert.AreEqual ("char", map.ElementName, "#B2");
-			Assert.AreEqual ("NSChar", map.Namespace, "#B3");
-			Assert.AreEqual ("System.Char", map.TypeFullName, "#B4");
-			Assert.AreEqual ("Char", map.TypeName, "#B5");
-#endif
 		}
 
 		[Test]
@@ -486,17 +475,6 @@ namespace MonoTests.System.Xml.Serialization
 			Assert.AreEqual ("System.String", map.TypeFullName, "#A4");
 			Assert.AreEqual ("String", map.TypeName, "#A5");
 
-#if ONLY_1_1
-			schemas = ExportType (typeof (Guid));
-			importer = new XmlSchemaImporter (schemas);
-			map = importer.ImportTypeMapping (new XmlQualifiedName ("guid", "NSGuid"));
-
-			Assert.IsNotNull (map, "#B1");
-			Assert.AreEqual ("guid", map.ElementName, "#B2");
-			Assert.AreEqual ("NSGuid", map.Namespace, "#B3");
-			Assert.AreEqual ("System.Guid", map.TypeFullName, "#B4");
-			Assert.AreEqual ("Guid", map.TypeName, "#B5");
-#endif
 		}
 
 		[Test]

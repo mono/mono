@@ -145,9 +145,6 @@ namespace MonoCasTests.System.Web {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // triggers a TypeInitializationException in HttpRuntime
-#endif
 		public void Filter_Deny_Unrestricted ()
 		{
 			HttpResponse response = new HttpResponse (writer);
@@ -163,9 +160,6 @@ namespace MonoCasTests.System.Web {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // triggers a TypeInitializationException in HttpRuntime
-#endif
 		public void OutputStream_Deny_Unrestricted ()
 		{
 			HttpResponse response = new HttpResponse (writer);
@@ -270,9 +264,6 @@ namespace MonoCasTests.System.Web {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // triggers a TypeInitializationException in HttpRuntime
-#endif
 		public void AppendHeader_Deny_Unrestricted ()
 		{
 			HttpResponse response = new HttpResponse (writer);
@@ -281,9 +272,6 @@ namespace MonoCasTests.System.Web {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // triggers a TypeInitializationException in HttpRuntime
-#endif
 		public void AddHeader_Deny_Unrestricted ()
 		{
 			HttpResponse response = new HttpResponse (writer);
@@ -297,9 +285,6 @@ namespace MonoCasTests.System.Web {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // triggers a TypeInitializationException in HttpRuntime
-#endif
 		public void BinaryWrite_Deny_Unrestricted ()
 		{
 			HttpResponse response = new HttpResponse (writer);
@@ -313,9 +298,6 @@ namespace MonoCasTests.System.Web {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // triggers a TypeInitializationException in HttpRuntime
-#endif
 		public void Pics_Deny_Unrestricted ()
 		{
 			HttpResponse response = new HttpResponse (writer);

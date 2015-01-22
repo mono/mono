@@ -28,9 +28,6 @@
 
 namespace System.Drawing.Imaging {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum MetafileFrameUnit {
 		Document = 5,
 		GdiCompatible = 7,

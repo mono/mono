@@ -93,13 +93,6 @@ namespace MonoCasTests.System.Web {
 		}
 
 		// LinkDemand
-#if ONLY_1_1
-		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
-		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
-		{
-			return base.CreateControl (action, level);
-		}
-#endif
 		public override Type Type {
 			get { return typeof (HttpStaticObjectsCollection); }
 		}

@@ -262,31 +262,6 @@ sqliteDataAdapter.Update (dataSet, "Primus");
 
 		class MyAdapter : DbDataAdapter
 		{
-#if ONLY_1_1
-			protected override RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
-										     StatementType statementType,
-										     DataTableMapping tableMapping)
-			{
-				throw new NotImplementedException ();
-			}
-
-			protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command,
-										       StatementType statementType,
-										       DataTableMapping tableMapping)
-			{
-				throw new NotImplementedException ();
-			}
-
-			protected override void OnRowUpdated (RowUpdatedEventArgs value)
-			{
-				throw new NotImplementedException ();
-			}
-
-			protected override void OnRowUpdating (RowUpdatingEventArgs value)
-			{
-				throw new NotImplementedException ();
-			}
-#endif
 
 			public new int AddToBatch (IDbCommand command)
 			{

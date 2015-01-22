@@ -1097,12 +1097,6 @@ namespace MonoTests.System.Net.Sockets {
 				set { base.Active = value; }
 			}
 
-#if ONLY_1_1
-			public new Socket Client {
-				get { return base.Client; }
-				set { base.Client = value; }
-			}
-#endif
 		}
 	}
 }

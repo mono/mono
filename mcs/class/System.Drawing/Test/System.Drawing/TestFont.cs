@@ -195,9 +195,6 @@ namespace MonoTests.System.Drawing{
 			f.ToLogFont (null);
 		}
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Font_StringNull_Float ()
 		{
 			string family = null;

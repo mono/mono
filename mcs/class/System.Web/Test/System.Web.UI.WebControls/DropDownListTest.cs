@@ -342,9 +342,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException(typeof(NullReferenceException))]
-#endif
 		public void DropDownNullWriterTest () {
 			DropDownListTestClass	d;
 
@@ -445,9 +442,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if ONLY_1_1
-        [Category("NotWorking")]
-#endif
 		public void HtmlEncodeItem ()
 		{
 			DropDownListTestClass d = new DropDownListTestClass ();

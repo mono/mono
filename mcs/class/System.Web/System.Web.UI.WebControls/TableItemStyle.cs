@@ -54,9 +54,6 @@ namespace System.Web.UI.WebControls {
 		{
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("")]
@@ -78,9 +75,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (VerticalAlign.NotSet)]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("")]
@@ -102,9 +96,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (true)]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("")]

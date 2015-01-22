@@ -268,9 +268,6 @@ public class HashAlgorithmTest {
 	}
 
 	[Test]
-#if ONLY_1_1
-	[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
-#endif
 	public void TransformBlock_OutputBuffer_Null ()
 	{
 		byte[] input = new byte [8];
