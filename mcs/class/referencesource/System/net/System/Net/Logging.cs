@@ -598,11 +598,13 @@ namespace System.Net {
             if ((length < 0) || (length > buffer.Length - offset)) {
                 length = buffer.Length - offset;
             }
+#if MONO_FEATURE_WEB_STACK
             if (GetUseProtocolTextSetting(traceSource)) {
                 string output = "<<" + WebHeaderCollection.HeaderEncoding.GetString(buffer, offset, length) + ">>";
                 PrintLine(traceSource, TraceEventType.Verbose, 0, output);
                 return;
             }
+#endif
             do {
                 int n = Math.Min(length, 16);
                 string disp = String.Format(CultureInfo.CurrentCulture, "{0:X8} : ", offset);

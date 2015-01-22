@@ -129,6 +129,8 @@ namespace System.Net {
         UnverifiedTargetName        = 0x20000000,   // ISC_REQ_UNVERIFIED_TARGET_NAME
     }
 
+#if MONO_NOT_IMPLEMENTED
+
     internal class NTAuthentication {
 
         static private int s_UniqueGroupId = 1;
@@ -1271,5 +1273,5 @@ namespace System.Net {
             return ValidationHelper.ToString(Domain) + "\\" + ValidationHelper.ToString(UserName);
         }
     }
-
+#endif
 }

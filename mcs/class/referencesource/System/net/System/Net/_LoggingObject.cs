@@ -617,12 +617,14 @@ namespace System.Net {
         [ReliabilityContract(Consistency.MayCorruptAppDomain, Cer.None)]
         private static BaseLoggingObject LoggingInitialize() {
 
+#if MONO_FEATURE_WEB_STACK
 #if DEBUG
             if (GetSwitchValue("SystemNetLogging", "System.Net logging module", false) &&
                 GetSwitchValue("SystemNetLog_ConnectionMonitor", "System.Net connection monitor thread", false)) {
                 InitConnectionMonitor();
             }
 #endif // DEBUG
+#endif // MONO_FEATURE_WEB_STACK
 #if TRAVE
             // by default we'll log to c:\temp\ so that non interactive services (like w3wp.exe) that don't have environment
             // variables can easily be debugged, note that the ACLs of the directory might need to be adjusted
@@ -978,7 +980,9 @@ namespace System.Net {
 #if DEBUG && !STRESS
                 Debug.Assert(false, message, detailMessage);
 #else
+#if MONO_NOT_IMPLEMENTED
                 UnsafeNclNativeMethods.DebugBreak();
+#endif
                 Debugger.Break();
 #endif
             }
@@ -1054,6 +1058,8 @@ namespace System.Net {
             Logobject.Dump(buffer, offset, length);
 #endif
         }
+
+#if MONO_FEATURE_WEB_STACK
 
 #if DEBUG
         private class HttpWebRequestComparer : IComparer {
@@ -1213,5 +1219,6 @@ namespace System.Net {
             }
 #endif
         }
+#endif
     } // class GlobalLog
 } // namespace System.Net
