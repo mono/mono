@@ -288,7 +288,11 @@ namespace System.Net {
 
         internal static uint GetThreadId()
         {
+#if MONO
+            uint threadId = (uint)Thread.CurrentThread.ManagedThreadId;
+#else
             uint threadId = UnsafeNclNativeMethods.GetCurrentThreadId();
+#endif
             if (threadId == 0) {
                 threadId = (uint)Thread.CurrentThread.GetHashCode();
             }
