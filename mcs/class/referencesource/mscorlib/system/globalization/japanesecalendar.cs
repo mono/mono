@@ -1,3 +1,6 @@
+#if MONO
+#define __APPLE__
+#endif
 // ==++==
 //
 //   Copyright (c) Microsoft Corporation.  All rights reserved.

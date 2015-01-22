@@ -309,7 +309,7 @@ namespace System.Globalization {
 #else //FEATURE_WIN32_REGISTRY
             int hijriAdvance = 0;
 
-#if FEATURE_PAL && !FEATURE_CORECLR
+#if FEATURE_PAL && !(FEATURE_CORECLR || MONO)
 
             const int parameterValueLength = 255;
             StringBuilder parameterValue = new StringBuilder(parameterValueLength);
