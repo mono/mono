@@ -1,4 +1,5 @@
-// GZIPConstants.cs
+// GZipConstants.cs
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This file was translated from java, it was part of the GNU Classpath
@@ -41,12 +42,12 @@ namespace ICSharpCode.SharpZipLib.GZip
 	/// <summary>
 	/// This class contains constants used for gzip.
 	/// </summary>
-	public class GZipConstants
+	sealed public class GZipConstants
 	{
 		/// <summary>
 		/// Magic number found at start of GZIP header
 		/// </summary>
-		public static readonly int GZIP_MAGIC = 0x1F8B;
+		public const int GZIP_MAGIC = 0x1F8B;
 		
 		/*  The flag byte is divided into individual bits as follows:
 			
@@ -85,6 +86,10 @@ namespace ICSharpCode.SharpZipLib.GZip
 		/// </summary>
 		public const int FCOMMENT = 0x10;
 		
+		/// <summary>
+		/// Initialise default instance.
+		/// </summary>
+		/// <remarks>Constructor is private to prevent instances being created.</remarks>
 		GZipConstants()
 		{
 		}

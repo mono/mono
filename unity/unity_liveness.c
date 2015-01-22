@@ -78,8 +78,15 @@ struct _LivenessState
 };
 
 /* Liveness calculation */
+LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata);
+void           mono_unity_liveness_stop_gc_world ();
+void           mono_unity_liveness_finalize (LivenessState* state);
+void           mono_unity_liveness_start_gc_world ();
+void           mono_unity_liveness_free_struct (LivenessState* state);
+
 LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata);
 void           mono_unity_liveness_calculation_end (LivenessState* state);
+
 void           mono_unity_liveness_calculation_from_root (MonoObject* root, LivenessState* state);
 void           mono_unity_liveness_calculation_from_statics (LivenessState* state);
 
@@ -420,9 +427,7 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 			}
 		}
 	}
-	
 	mono_traverse_objects (liveness_state);
-
 	//Filter objects and call callback to register found objects
 	mono_filter_objects(liveness_state);
 }
@@ -518,7 +523,9 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 		filter = mono_class_from_mono_type (filter_type->type);
 
 	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000, mono_unity_liveness_add_object_callback, (void*)objects);
+
 	mono_unity_liveness_calculation_from_root (root, liveness_state);
+
 	mono_unity_liveness_calculation_end (liveness_state);
 
 	res = mono_array_new (mono_domain_get (), filter ? filter: mono_defaults.object_class, objects->len);
@@ -532,16 +539,16 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 	return (gpointer)mono_gchandle_new ((MonoObject*)res, FALSE);
 }
 
-LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata)
+LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata)
 {
 	LivenessState* state = NULL;
-	
+
 	// construct liveness_state;
 	// allocate memory for the following structs
 	// all_objects: contains a list of all referenced objects to be able to clean the vtable bits after the traversal
 	// process_array. array that contains the objcets that should be processed. this should run depth first to reduce memory usage
 	// if all_objects run out of space, run through list, add objects that match the filter, clear bit in vtable and then clear the array.
-	
+
 	state = g_new(LivenessState, 1);
 	max_count = max_count < 1000 ? 1000 : max_count;
 	state->all_objects = array_create_and_initialize(max_count*4);
@@ -553,13 +560,10 @@ LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint m
 	state->callback_userdata = callback_userdata;
 	state->filter_callback = callback;
 
-	GC_stop_world_external ();
-	// no allocations can happen beyond this point
-
 	return state;
 }
 
-void mono_unity_liveness_calculation_end (LivenessState* state)
+void mono_unity_liveness_finalize (LivenessState* state)
 {
 	int i;
 	for (i = 0; i < state->all_objects->len; i++)
@@ -567,21 +571,38 @@ void mono_unity_liveness_calculation_end (LivenessState* state)
 		MonoObject* object = g_ptr_array_index(state->all_objects,i);
 		CLEAR_OBJ(object);
 	}
-	GC_start_world_external ();
+}
 
+void mono_unity_liveness_free_struct (LivenessState* state)
+{
 	//cleanup the liveness_state
 	array_destroy(state->all_objects);
 	array_destroy(state->process_array);
 	g_free(state);
 }
 
-void mono_unity_liveness_mark_classes_for_intptr_scanning (MonoClass* filter)
+void mono_unity_liveness_stop_gc_world ()
 {
-	filter->has_unity_native_intptr = 1;
+	GC_stop_world_external ();
+	// no allocations can happen beyond this point
 }
 
-gboolean mono_unity_liveness_has_parent_class (MonoObject* object, MonoClass* base_klass)
+void mono_unity_liveness_start_gc_world ()
 {
-	MonoClass* object_klass = GET_VTABLE(object)->klass;
-	return mono_class_has_parent(object_klass, base_klass);
+	GC_start_world_external ();
+}
+
+LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata)
+{
+	LivenessState* state = mono_unity_liveness_allocate_struct (filter, max_count, callback, callback_userdata);
+	mono_unity_liveness_stop_gc_world ();
+	// no allocations can happen beyond this point
+	return state;
+}
+
+void mono_unity_liveness_calculation_end (LivenessState* state)
+{
+	mono_unity_liveness_finalize(state);
+	mono_unity_liveness_start_gc_world();
+	mono_unity_liveness_free_struct(state);
 }

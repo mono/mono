@@ -30,10 +30,16 @@
 #include "mini-amd64.h"
 #include "tasklets.h"
 #include "debug-mini.h"
+#ifdef PLATFORM_WIN32
+#include "mini-windows.h"
+#endif
 
 #define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
 
 #ifdef PLATFORM_WIN32
+void (*restore_stack) (void *);
+extern void win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, MonoContext *ctx);
+
 static MonoW32ExceptionHandler fpe_handler;
 static MonoW32ExceptionHandler ill_handler;
 static MonoW32ExceptionHandler segv_handler;
@@ -61,6 +67,71 @@ LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
+
+/*
+ * mono_win32_get_handle_stackoverflow (void):
+ *
+ * Returns a pointer to a method which restores the current context stack
+ * and calls handle_exceptions, when done restores the original stack.
+ */
+static gpointer
+mono_win32_get_handle_stackoverflow (void)
+{
+	static guint8 *start = NULL;
+	guint8 *code;
+
+	if (start)
+		return start;
+
+	/* restore_contect (void *sigctx) */
+	start = code = mono_global_codeman_reserve (128);
+
+	/* save context into r12 */
+	amd64_mov_reg_reg (code, AMD64_R12, AMD64_RCX, 8);
+
+	/* move current stack into rdi for later restore */
+	amd64_mov_reg_reg (code, AMD64_RDI, AMD64_RSP, 8);
+
+	/* use the new freed stack from sigcontext */
+	amd64_mov_reg_membase (code, AMD64_RSP, AMD64_RCX, G_STRUCT_OFFSET (MonoContext, rsp), 8);
+	
+	/* reserve 32 bytes of stack space for Win64 calling convention */
+	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 32);
+
+	/* get the current domain */
+	amd64_mov_reg_imm (code, AMD64_R11, mono_domain_get);
+	amd64_call_reg (code, AMD64_R11);
+	
+	/* pop 32 bytes of stack space for Win64 calling convention */
+	amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 32);
+
+	/* get stack overflow exception from domain object */
+	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RAX, G_STRUCT_OFFSET (MonoDomain, stack_overflow_ex), 8);
+	
+	/* reserve 32 bytes of stack space for Win64 calling convention */
+	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 32);
+
+	/* call mono_arch_handle_exception (sctx, stack_overflow_exception_obj, FALSE) */
+	amd64_mov_reg_imm (code, AMD64_R8, 0);
+	amd64_mov_reg_reg (code, AMD64_RDX, AMD64_RAX, 8);
+	amd64_mov_reg_reg (code, AMD64_RCX, AMD64_R12, 8);
+	amd64_mov_reg_imm (code, AMD64_R11, mono_arch_handle_exception);
+	amd64_call_reg (code, AMD64_R11);
+	
+	/* pop 32 bytes of stack space for Win64 calling convention */
+	amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 32);
+
+	/* restore the SEH handler stack */
+	amd64_mov_reg_reg (code, AMD64_RSP, AMD64_RDI, 8);
+
+	/* return */
+	amd64_ret (code);
+
+	g_assert ((code - start) < 128);
+
+	return start;
+}
+
 /*
  * Unhandled Exception Filter
  * Top-level per-process exception handler.
@@ -95,6 +166,9 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	sctx->r15 = ctx->R15;
 
 	switch (er->ExceptionCode) {
+	case EXCEPTION_STACK_OVERFLOW:
+		win32_handle_stack_overflow (ep, sctx);
+		break;
 	case EXCEPTION_ACCESS_VIOLATION:
 		W32_SEH_HANDLE_EX(segv);
 		break;
@@ -151,6 +225,10 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 void win32_seh_init()
 {
+	/* install restore stack helper */
+	if (!restore_stack)
+		restore_stack = mono_win32_get_handle_stackoverflow ();
+
 	old_win32_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_unhandled_exception_filter);
 	win32_vectored_exception_handle = AddVectoredExceptionHandler (1, seh_vectored_exception_handler);
 }

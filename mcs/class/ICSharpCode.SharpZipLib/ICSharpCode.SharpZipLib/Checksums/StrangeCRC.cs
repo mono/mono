@@ -1,5 +1,5 @@
-// StrangeCRC.cs - computes a crc used in the bziplib ... I don't think that
-//                 this is the 'standard' crc, please correct me, if I'm wrong
+// StrangeCRC.cs - computes a crc used in the bziplib
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This file was translated from java, it was part of the GNU Classpath
@@ -142,42 +142,66 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// <summary>
 		/// Update the Crc value.
 		/// </summary>
-		/// <param name="inCh">data update is based on</param>
-		public void Update(int inCh)
+		/// <param name="value">data update is based on</param>
+		public void Update(int value)
 		{
-			int temp = (globalCrc >> 24) ^ inCh;
+			int temp = (globalCrc >> 24) ^ value;
 			if (temp < 0) {
 				temp = 256 + temp;
 			}
-			globalCrc = (int)((globalCrc << 8) ^ crc32Table[temp]);
+			globalCrc = unchecked((int)((globalCrc << 8) ^ crc32Table[temp]));
 		}
 
 		/// <summary>
 		/// Update Crc based on a block of data
-		/// </summary>		
-		public void Update(byte[] buf)
+		/// </summary>
+		/// <param name="buffer">The buffer containing data to update the crc with.</param>
+		public void Update(byte[] buffer)
 		{
-			Update(buf, 0, buf.Length);
+			if (buffer == null) {
+				throw new ArgumentNullException("buffer");
+			}
+
+			Update(buffer, 0, buffer.Length);
 		}
 		
 		/// <summary>
 		/// Update Crc based on a portion of a block of data
 		/// </summary>
-		/// <param name="buf">block of data</param>
-		/// <param name="off">index of first byte to use</param>
-		/// <param name="len">number of bytes to use</param>
-		public void Update(byte[] buf, int off, int len)
+		/// <param name="buffer">block of data</param>
+		/// <param name="offset">index of first byte to use</param>
+		/// <param name="count">number of bytes to use</param>
+		public void Update(byte[] buffer, int offset, int count)
 		{
-			if (buf == null) {
-				throw new ArgumentNullException("buf");
+			if (buffer == null) {
+				throw new ArgumentNullException("buffer");
 			}
 			
-			if (off < 0 || len < 0 || off + len > buf.Length) {
-				throw new ArgumentOutOfRangeException();
+			if ( offset < 0 )
+			{
+#if NETCF_1_0
+				throw new ArgumentOutOfRangeException("offset");
+#else
+				throw new ArgumentOutOfRangeException("offset", "cannot be less than zero");
+#endif
+			}
+
+			if ( count < 0 )
+			{
+#if NETCF_1_0
+				throw new ArgumentOutOfRangeException("count");
+#else
+				throw new ArgumentOutOfRangeException("count", "cannot be less than zero");
+#endif
+			}
+
+			if ( offset + count > buffer.Length )
+			{
+				throw new ArgumentOutOfRangeException("count");
 			}
 			
-			for (int i = 0; i < len; ++i) {
-				Update(buf[off++]);
+			for (int i = 0; i < count; ++i) {
+				Update(buffer[offset++]);
 			}
 		}
 	}

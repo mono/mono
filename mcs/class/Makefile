@@ -66,9 +66,7 @@ common_dirs := \
 	System.Design			\
 	PEAPI				\
 	Npgsql				\
-	Compat.ICSharpCode.SharpZipLib	\
 	ICSharpCode.SharpZipLib		\
-	Compat.ICSharpCode.SharpZipLib	\
 	ByteFX.Data			\
 	Commons.Xml.Relaxng		\
 	Novell.Directory.Ldap		\
@@ -93,7 +91,14 @@ common_dirs := \
 	SystemWebTestShim
 
 net_1_1_dirs :=		\
-	FirebirdSql.Data.Firebird
+	corlib					\
+	Mono.CompilerServices.SymbolWriter	\
+	System					\
+	System.XML				\
+	Mono.Security				\
+	System.Security				\
+	System.Configuration			\
+	System
 
 net_2_0_dirs := \
 	Microsoft.Build.Framework	\
@@ -175,7 +180,7 @@ net_4_0_dirs := \
 	Microsoft.CSharp
 
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
-net_1_1_SUBDIRS := $(common_dirs) $(net_1_1_dirs)
+net_1_1_SUBDIRS := $(net_1_1_dirs)
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
 net_2_1_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter

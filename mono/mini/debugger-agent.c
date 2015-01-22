@@ -3524,10 +3524,22 @@ remove_breakpoint (BreakpointInstance *inst)
 #endif
 }	
 
+static inline MonoMethod*
+get_declaring_method(MonoMethod* method)
+{
+	if (!method || !method->is_inflated)
+		return method;
+
+	return mono_method_get_declaring_generic_method(method);
+}
+
 static inline gboolean
 bp_matches_method (MonoBreakpoint *bp, MonoMethod *method)
 {
-	return (!bp->method || method == bp->method || (method->is_inflated && ((MonoMethodInflated*)method)->declaring == bp->method));
+	MonoMethod* bp_declaring_method = get_declaring_method(bp->method);
+	MonoMethod* declaring_method = get_declaring_method(method);
+
+	return (!bp->method || bp_declaring_method == declaring_method);
 }
 
 /*
@@ -4818,15 +4830,17 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 				int objid = decode_objid (buf, &buf, limit);
 				int err;
 				MonoObject *obj;
+				MonoClass *klass;
 
 				err = get_object (objid, (MonoObject**)&obj);
 				if (err)
 					return err;
 
-				if (obj && !mono_class_is_assignable_from (mono_class_from_mono_type (t), obj->vtable->klass))
+				klass = mono_class_from_mono_type (t);
+				if (obj && !mono_class_is_assignable_from (klass, obj->vtable->klass))
 					return ERR_INVALID_ARGUMENT;
-				if (obj && obj->vtable->domain != domain)
-					return ERR_INVALID_ARGUMENT;
+				if (obj && obj->vtable->domain != domain && klass != mono_defaults.string_class)
+					return ERR_INVALID_ARGUMENT; /* Allow cross-domain for strings */
 
 				mono_gc_wbarrier_generic_store (addr, obj);
 			} else if (type == VALUE_TYPE_ID_NULL) {
@@ -5132,9 +5146,9 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 			err = decode_value (sig->params [i], domain, (guint8*)&args [i], p, &p, end);
 			if (err)
 				break;
-
-			if (args [i] && ((MonoObject*)args [i])->vtable->domain != domain)
-				NOT_IMPLEMENTED;
+			/* This is already checked in decode_value */
+			/* if (args [i] && ((MonoObject*)args [i])->vtable->domain != domain) */
+			/* 	NOT_IMPLEMENTED; */
 		} else {
 			arg_buf [i] = g_alloca (mono_class_instance_size (mono_class_from_mono_type (sig->params [i])));
 			err = decode_value (sig->params [i], domain, arg_buf [i], p, &p, end);
@@ -7367,7 +7381,15 @@ debugger_thread (void *arg)
 
 		/* This will break if the socket is closed during shutdown too */
 		if (res != HEADER_LENGTH)
+		{
+			DEBUG (1, fprintf (log_file, "[dbg] Socket closed.\n"));
+
+			command_set = CMD_SET_VM;
+			command = CMD_VM_DISPOSE;
+			vm_commands(CMD_VM_DISPOSE, 0, NULL, NULL, NULL);
+
 			break;
+		}
 
 		p = header;
 		end = header + HEADER_LENGTH;

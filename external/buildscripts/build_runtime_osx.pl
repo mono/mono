@@ -36,10 +36,33 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 		print "\n\nARE YOU SURE YOU DONT WANT TO MAKE A DEBUG BUILD?!?!?!!!!!\n\n\n";
 	}
 	$jobs = "-j$jobs";
-	$ENV{'LIBTOOLIZE'} = 'glibtoolize';
+	my $libtoolize = $ENV{'LIBTOOLIZE'};
+	my $libtool = $ENV{'LIBTOOL'};
+	if($teamcity)
+	{
+		$libtoolize = `which glibtoolize`;
+		chomp($libtoolize);
+		if(!-e $libtoolize)
+		{
+			$libtoolize = `which libtoolize`;
+			chomp($libtoolize);
+		}
+	}
+	if(!-e $libtoolize)
+	{
+		$libtoolize = 'libtoolize';
+	}
+	if(!-e $libtool)
+	{
+		$libtool = $libtoolize;
+		$libtool =~ s/ize$//;
+	}
+	print("Libtool: using $libtoolize and $libtool\n");
+	$ENV{'LIBTOOLIZE'} = $libtoolize;
+	$ENV{'LIBTOOL'} = $libtool;
 }
 
-my @arches = ('x86_64','i386');
+my @arches = ('i386','x86_64');
 if ($iphone_simulator || $minimal) {
 	@arches = ('i386');
 }
@@ -88,12 +111,7 @@ for my $arch (@arches)
 	{
 		$stackrealign = '-mstackrealign';
 
-		if ($iphone_simulator)
-		{
-			$ENV{CFLAGS} = "-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0";
-			$macversion = "10.6";
-			$sdkversion = "10.6";
-		} else {
+		if (!$iphone_simulator) {
 			if ($debug)
 			{
 				$ENV{CFLAGS} = "-arch $arch -g -O0 -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1 $stackrealign";
@@ -108,10 +126,10 @@ for my $arch (@arches)
 				$ENV{CXXFLAGS} = $ENV{CFLAGS};
 				$ENV{LDFLAGS} = "-arch $arch";
 			}
+			$sdkOptions = "-isysroot $sdkPath -mmacosx-version-min=$macversion $ENV{CFLAGS}";
+			$ENV{'MACSDKOPTIONS'} = $sdkOptions;
 		}
-		$sdkOptions = "-isysroot $sdkPath -mmacosx-version-min=$macversion $ENV{CFLAGS}";
-		$ENV{'MACSDKOPTIONS'} = $sdkOptions;
-		
+
 		#this will fail on a fresh working copy, so don't die on it.
 		system("make distclean");
 		#were going to tell autogen to use a specific cache file, that we purposely remove before starting.

@@ -9381,7 +9381,7 @@ static int elem_addr_cache_next = 0;
  * @rank: rank of the array type
  * @elem_size: size in bytes of an element of an array.
  *
- * Returns a MonoMethd that implements the code to get the address
+ * Returns a MonoMethod that implements the code to get the address
  * of an element in a multi-dimenasional array of @rank dimensions.
  * The returned method takes an array as the first argument and then
  * @rank indexes for the @rank dimensions.
@@ -9395,6 +9395,7 @@ mono_marshal_get_array_address (int rank, int elem_size)
 	int i, bounds, ind, realidx;
 	int branch_pos, *branch_positions;
 	int cached;
+	char *function_name;
 
 	ret = NULL;
 	mono_marshal_lock ();
@@ -9419,7 +9420,10 @@ mono_marshal_get_array_address (int rank, int elem_size)
 		sig->params [i + 1] = &mono_defaults.int32_class->byval_arg;
 	}
 
-	mb = mono_mb_new (mono_defaults.object_class, "ElementAddr", MONO_WRAPPER_MANAGED_TO_MANAGED);
+	function_name = g_new0 (char, 32);
+	g_snprintf (function_name, 32, "ElementAddr_%d_%d", rank, elem_size);
+	mb = mono_mb_new_no_dup_name (mono_defaults.object_class, function_name,
+								  MONO_WRAPPER_MANAGED_TO_MANAGED);
 	
 	bounds = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	ind = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);

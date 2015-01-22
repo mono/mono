@@ -9,7 +9,10 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/threads.h>
+#include <mono/metadata/tokentype.h>
+#include <mono/utils/mono-string.h>
 
 #include <glib.h>
 
@@ -154,4 +157,44 @@ void mono_unity_thread_clear_domain_fields (void)
 	 */
 	MonoThread* thread = mono_thread_current ();
 	thread->principal = NULL;
+}
+
+// classes_ref is a preallocated array of *length_ref MonoClass*
+// returned classes are stored in classes_ref, number of stored classes is stored in length_ref
+// return value is number of classes found (which may be greater than number of classes stored)
+unsigned mono_unity_get_all_classes_with_name_case (MonoImage *image, const char *name, MonoClass **classes_ref, unsigned *length_ref)
+{
+	MonoClass *klass;
+	MonoTableInfo *tdef = &image->tables [MONO_TABLE_TYPEDEF];
+	int i, count;
+	guint32 attrs, visibility;
+	unsigned length = 0;
+
+	/* (yoinked from icall.c) we start the count from 1 because we skip the special type <Module> */
+	for (i = 1; i < tdef->rows; ++i)
+	{
+		klass = mono_class_get (image, (i + 1) | MONO_TOKEN_TYPE_DEF);
+		if (klass && klass->name && 0 == mono_utf8_strcasecmp (klass->name, name))
+		{
+			if (length < *length_ref)
+				classes_ref[length] = klass;
+			++length;
+		}
+	}
+
+	if (length < *length_ref)
+		*length_ref = length;
+	return length;
+}
+
+gboolean
+unity_mono_method_is_inflated (MonoMethod* method)
+{
+	return method->is_inflated;
+}
+
+gboolean
+unity_mono_method_is_generic (MonoMethod* method)
+{
+	return method->is_generic;
 }

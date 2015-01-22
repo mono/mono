@@ -38,12 +38,12 @@ namespace ICSharpCode.SharpZipLib.BZip2
 	/// <summary>
 	/// Defines internal values for both compression and decompression
 	/// </summary>
-	public sealed class BZip2Constants
+	internal sealed class BZip2Constants
 	{
 		/// <summary>
 		/// Random numbers used to randomise repetitive blocks
 		/// </summary>
-		public readonly static int[] rNums = {
+		public readonly static int[] RandomNumbers = {
 			619, 720, 127, 481, 931, 816, 813, 233, 566, 247,
 			985, 724, 205, 454, 863, 491, 741, 242, 949, 214,
 			733, 859, 335, 708, 621, 574,  73, 654, 730, 472,
@@ -100,54 +100,54 @@ namespace ICSharpCode.SharpZipLib.BZip2
 
 		/// <summary>
 		/// When multiplied by compression parameter (1-9) gives the block size for compression
-		/// 9 gives the best compresssion but uses the most memory.
+		/// 9 gives the best compression but uses the most memory.
 		/// </summary>		
-		public readonly static int baseBlockSize = 100000;
+		public const int BaseBlockSize = 100000;
 		
 		/// <summary>
 		/// Backend constant
 		/// </summary>
-		public readonly static int MAX_ALPHA_SIZE = 258;
+		public const int MaximumAlphaSize = 258;
 		
 		/// <summary>
 		/// Backend constant
 		/// </summary>
-		public readonly static int MAX_CODE_LEN = 23;
+		public const int MaximumCodeLength = 23;
 		
 		/// <summary>
 		/// Backend constant
 		/// </summary>
-		public readonly static int RUNA = 0;
+		public const int RunA = 0;
 		
 		/// <summary>
 		/// Backend constant
 		/// </summary>
-		public readonly static int RUNB = 1;
+		public const int RunB = 1;
 		
 		/// <summary>
 		/// Backend constant
 		/// </summary>
-		public readonly static int N_GROUPS = 6;
+		public const int GroupCount = 6;
 		
 		/// <summary>
 		/// Backend constant
 		/// </summary>
-		public readonly static int G_SIZE = 50;
+		public const int GroupSize = 50;
 		
 		/// <summary>
 		/// Backend constant
 		/// </summary>
-		public readonly static int N_ITERS = 4;
+		public const int NumberOfIterations = 4;
 		
 		/// <summary>
 		/// Backend constant
 		/// </summary>
-		public readonly static int MAX_SELECTORS = (2 + (900000 / G_SIZE));
+		public const int MaximumSelectors = (2 + (900000 / GroupSize));
 		
 		/// <summary>
 		/// Backend constant
 		/// </summary>
-		public readonly static int NUM_OVERSHOOT_BYTES = 20;
+		public const int OvershootBytes = 20;
 		
 		private BZip2Constants()
 		{

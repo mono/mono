@@ -33,4 +33,10 @@ void mono_unity_set_vprintf_func(vprintf_func func);
 
 void unity_mono_install_memory_callbacks(MonoMemoryCallbacks* callbacks);
 
+gboolean
+unity_mono_method_is_inflated (MonoMethod* method);
+
+gboolean
+unity_mono_method_is_generic (MonoMethod* method);
+
 #endif
