@@ -412,7 +412,6 @@ System.Net/FtpStatus.cs
 System.Net/FtpWebResponse.cs
 System.Net/GlobalProxySelection.cs
 System.Net/HttpConnection.cs
-System.Net/HttpContinueDelegate.cs
 System.Net/HttpListenerBasicIdentity.cs
 System.Net/HttpListenerContext.cs
 System.Net/HttpListener.cs
@@ -736,16 +735,11 @@ System.Net/DnsAsyncResult.cs
 System.Windows.Input/ICommand.cs
 
 ReferenceSources/BinaryCompatibility.cs
-ReferenceSources/ExceptionHelper.cs
-ReferenceSources/GlobalLog.cs
-ReferenceSources/HttpKnownHeaderNames.cs
-ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SR.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/SystemNetworkCredential.cs
-ReferenceSources/ValidationHelper.cs
 ReferenceSources/WebHeaderCollectionType.cs
 ReferenceSources/Win32Exception.cs
 
@@ -1101,3 +1095,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/misc/invariantcomparer.cs
 ../../../external/referencesource/System/misc/SecurityUtils.cs
 ../../../external/referencesource/System/misc/WeakHashtable.cs
+
+../../../external/referencesource/System/net/System/Net/Internal.cs
+../../../external/referencesource/System/net/System/Net/Logging.cs
+../../../external/referencesource/System/net/System/Net/_LoggingObject.cs
