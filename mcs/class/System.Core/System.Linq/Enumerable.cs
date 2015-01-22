@@ -1845,8 +1845,12 @@ namespace System.Linq
 		public static int Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
 		{
 			Check.SourceAndSelector (source, selector);
-
-			return Sum<TSource, int> (source, (a, b) => checked (a + selector (b)));
+			int total = 0;
+			
+			foreach (var element in source)
+				total = checked (total + selector (element));
+			
+			return total;
 		}
 
 		public static int? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
@@ -1876,8 +1880,12 @@ namespace System.Linq
 		public static long Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
 		{
 			Check.SourceAndSelector (source, selector);
-
-			return Sum<TSource, long> (source, (a, b) => checked (a + selector (b)));
+			long total = 0;
+			
+			foreach (var element in source)
+				total = checked (total + selector (element));
+			
+			return total;
 		}
 
 		public static long? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, long?> selector)
@@ -1907,8 +1915,12 @@ namespace System.Linq
 		public static double Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
 		{
 			Check.SourceAndSelector (source, selector);
-
-			return Sum<TSource, double> (source, (a, b) => checked (a + selector (b)));
+			double total = 0;
+			
+			foreach (var element in source)
+				total = checked (total + selector (element));
+			
+			return total;
 		}
 
 		public static double? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, double?> selector)
@@ -1938,8 +1950,12 @@ namespace System.Linq
 		public static float Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
 		{
 			Check.SourceAndSelector (source, selector);
-
-			return Sum<TSource, float> (source, (a, b) => checked (a + selector (b)));
+			float total = 0;
+			
+			foreach (var element in source)
+				total = checked (total + selector (element));
+			
+			return total;
 		}
 
 		public static float? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, float?> selector)
@@ -1969,8 +1985,12 @@ namespace System.Linq
 		public static decimal Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
 		{
 			Check.SourceAndSelector (source, selector);
-
-			return Sum<TSource, decimal> (source, (a, b) => checked (a + selector (b)));
+			decimal total = 0;
+			
+			foreach (var element in source)
+				total = checked (total + selector (element));
+			
+			return total;
 		}
 
 		public static decimal? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal?> selector)
