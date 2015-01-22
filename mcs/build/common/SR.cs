@@ -42,6 +42,6 @@ static partial class SR
 
 namespace System.Runtime.CompilerServices
 {
-	class FriendAccessAllowed : Attribute
+	class FriendAccessAllowedAttribute : Attribute
 	{ }
 }
