@@ -1,8 +1,0 @@
-2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
-
-	* ListPartitioner.cs: Remove playground code
-
-2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
-
-	* ListPartitioner.cs:
-	* EnumerablePartitioner.cs: Add internal behavior specific to PLinq
