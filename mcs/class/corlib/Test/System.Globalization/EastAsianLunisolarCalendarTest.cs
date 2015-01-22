@@ -45,7 +45,6 @@ namespace MonoTests.System.Globalization
 		static KoreanLunisolarCalendar kr = new KoreanLunisolarCalendar ();
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ToDateTime ()
 		{
 			Assert.AreEqual (new DateTime (2000, 2, 5), cn.ToDateTime (2000, 1, 1, 0, 0, 0, 0), "cn1");
@@ -85,7 +84,6 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ToDateTimeOutOfRange ()
 		{
 			try {
@@ -101,7 +99,6 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetYear ()
 		{
 			Assert.AreEqual (1901, cn.GetYear (new DateTime (1901, 2, 19, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#1");
@@ -115,7 +112,6 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetYear2 ()
 		{
 			Assert.AreEqual (1999, cn.GetYear (new DateTime (2000, 2, 4, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#1");
@@ -136,7 +132,6 @@ namespace MonoTests.System.Globalization
 			};
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsLeapYear ()
 		{
 			//Assert.IsFalse (cn.IsLeapYear (1901), "#cn1901");
@@ -158,7 +153,6 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsLeapMonth ()
 		{
 			Dictionary<int,int> d = new Dictionary<int,int> ();

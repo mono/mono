@@ -325,12 +325,9 @@ System.Diagnostics.SymbolStore/SymbolToken.cs
 System.Diagnostics.SymbolStore/SymDocumentType.cs
 System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
-System.Globalization/Calendar.cs
 System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
-System.Globalization/CalendricalCalculations.cs
 System.Globalization/CharUnicodeInfo.cs
-System.Globalization/ChineseLunisolarCalendar.cs
 System.Globalization/CodePageDataItem.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
@@ -341,31 +338,17 @@ System.Globalization/DateTimeFormatInfo.cs
 System.Globalization/DateTimeStyles.cs
 System.Globalization/DaylightTime.cs
 System.Globalization/DigitShapes.cs
-System.Globalization/EastAsianLunisolarCalendar.cs
-System.Globalization/GregorianCalendar.cs
 System.Globalization/GregorianCalendarTypes.cs
-System.Globalization/HebrewCalendar.cs
-System.Globalization/HijriCalendar.cs
 System.Globalization/IdnMapping.cs
-System.Globalization/JapaneseCalendar.cs
-System.Globalization/JapaneseLunisolarCalendar.cs
-System.Globalization/JulianCalendar.cs
-System.Globalization/KoreanCalendar.cs
-System.Globalization/KoreanLunisolarCalendar.cs
 System.Globalization/NumberFormatInfo.cs
 System.Globalization/NumberStyles.cs
-System.Globalization/PersianCalendar.cs
 System.Globalization/RegionInfo.cs
 System.Globalization/RegionInfo.MonoTouch.cs
 System.Globalization/SortVersion.cs
 System.Globalization/StringInfo.cs
-System.Globalization/TaiwanCalendar.cs
-System.Globalization/TaiwanLunisolarCalendar.cs
 System.Globalization/TextElementEnumerator.cs
 System.Globalization/TextInfo.cs
-System.Globalization/ThaiBuddhistCalendar.cs
 System.Globalization/TimeSpanStyles.cs
-System.Globalization/UmAlQuraCalendar.cs
 System.Globalization/UnicodeCategory.cs
 System.IO/BinaryReader.cs
 System.IO/BinaryWriter.cs
@@ -1462,6 +1445,7 @@ System.Threading/Watch.cs
 
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
+ReferenceSources/CalendarData.cs
 ReferenceSources/Empty.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
@@ -1558,6 +1542,24 @@ ReferenceSources/JitHelpers.cs
 
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contracts.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
+
+../../../external/referencesource/mscorlib/system/globalization/calendar.cs
+../../../external/referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/eastasianlunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/gregoriancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/gregoriancalendarhelper.cs
+../../../external/referencesource/mscorlib/system/globalization/hebrewcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/hijricalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/japanesecalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/japaneselunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/juliancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/koreancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/koreanlunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/Persiancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/taiwancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/taiwanlunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/thaibuddhistcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/umalquracalendar.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
