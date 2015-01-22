@@ -1267,6 +1267,16 @@ heap corruption issues.
 .ne
 .RE
 .TP
+\fBdo-not-finalize\fR
+If enabled, finalizers will not be run.  Everything else will be
+unaffected: finalizable objects will still be put into the
+finalization queue where they survive until they're scheduled to
+finalize.  Once they're not in the queue anymore they will be
+collected regularly.
+.fi
+.ne
+.RE
+.TP
 \fBMONO_GAC_PREFIX\fR
 Provides a prefix the runtime uses to look for Global Assembly Caches.
 Directories are separated by the platform path separator (colons on
