@@ -3508,6 +3508,8 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 						!strcmp (jinfo_get_method (ji)->name, ".cctor") &&
 						(jinfo_get_method (ji) != ((SingleStepReq*)req->info)->start_method))
 						filtered = TRUE;
+
+					static MonoClass *stepperBoundaryClass;
 					if ((mod->data.filter & STEP_FILTER_DEBUGGER_HIDDEN) && ji) {
 						MonoCustomAttrInfo *ainfo;
 						static MonoClass *klass;
@@ -3519,8 +3521,14 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 						if (!ji->dbg_hidden_inited) {
 							ainfo = mono_custom_attrs_from_method (jinfo_get_method (ji));
 							if (ainfo) {
-								if (mono_custom_attrs_has_attr (ainfo, klass))
-									ji->dbg_hidden = TRUE;
+								if (mono_custom_attrs_has_attr (ainfo, klass)) {
+									if (!stepperBoundaryClass) {
+										stepperBoundaryClass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepperBoundaryAttribute");
+										g_assert (stepperBoundaryClass);
+									}
+									if (!mono_custom_attrs_has_attr (ainfo, stepperBoundaryClass))
+										ji->dbg_hidden = TRUE;
+								}
 								mono_custom_attrs_free (ainfo);
 							}
 							ji->dbg_hidden_inited = TRUE;
@@ -3537,16 +3545,26 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 							g_assert (klass);
 						}
 						if (!ji->dbg_step_through_inited) {
-							ainfo = mono_custom_attrs_from_method (jinfo_get_method (ji));
+							ainfo = mono_custom_attrs_from_class (jinfo_get_method (ji)->klass);
 							if (ainfo) {
 								if (mono_custom_attrs_has_attr (ainfo, klass))
 									ji->dbg_step_through = TRUE;
 								mono_custom_attrs_free (ainfo);
 							}
-							ainfo = mono_custom_attrs_from_class (jinfo_get_method (ji)->klass);
+							ainfo = mono_custom_attrs_from_method (jinfo_get_method (ji));
 							if (ainfo) {
 								if (mono_custom_attrs_has_attr (ainfo, klass))
 									ji->dbg_step_through = TRUE;
+								if (!ji->dbg_step_through)//Will free after DebuggerStepperBoundaryAttribute check
+									mono_custom_attrs_free (ainfo);
+							}
+							if (ainfo && ji->dbg_step_through) {
+								if (!stepperBoundaryClass) {
+									stepperBoundaryClass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepperBoundaryAttribute");
+									g_assert (stepperBoundaryClass);
+								}
+								if (mono_custom_attrs_has_attr (ainfo, stepperBoundaryClass))
+									ji->dbg_step_through = FALSE;
 								mono_custom_attrs_free (ainfo);
 							}
 							ji->dbg_step_through_inited = TRUE;
@@ -3563,16 +3581,26 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 							g_assert (klass);
 						}
 						if (!ji->dbg_non_user_code_inited) {
-							ainfo = mono_custom_attrs_from_method (jinfo_get_method (ji));
+							ainfo = mono_custom_attrs_from_class (jinfo_get_method (ji)->klass);
 							if (ainfo) {
 								if (mono_custom_attrs_has_attr (ainfo, klass))
 									ji->dbg_non_user_code = TRUE;
 								mono_custom_attrs_free (ainfo);
 							}
-							ainfo = mono_custom_attrs_from_class (jinfo_get_method (ji)->klass);
+							ainfo = mono_custom_attrs_from_method (jinfo_get_method (ji));
 							if (ainfo) {
 								if (mono_custom_attrs_has_attr (ainfo, klass))
 									ji->dbg_non_user_code = TRUE;
+								if (!ji->dbg_non_user_code)//Will free after DebuggerStepperBoundaryAttribute check
+									mono_custom_attrs_free (ainfo);
+							}
+							if (ainfo && ji->dbg_non_user_code) {
+								if (!stepperBoundaryClass) {
+									stepperBoundaryClass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggerStepperBoundaryAttribute");
+									g_assert (stepperBoundaryClass);
+								}
+								if (mono_custom_attrs_has_attr (ainfo, stepperBoundaryClass))
+									ji->dbg_non_user_code = FALSE;
 								mono_custom_attrs_free (ainfo);
 							}
 							ji->dbg_non_user_code_inited = TRUE;
