@@ -521,7 +521,7 @@ namespace MonoTests.System
 			}
 
 			[Test (Description="Fix the bug https://bugzilla.xamarin.com/show_bug.cgi?id=1849")]
-			public void ConvertTime_AjustmentConvertTimeWithSourceTiemZone() {
+			public void ConvertTime_AjustmentConvertTimeWithSourceTimeZone () {
 				
 				TimeZoneInfo easternTimeZone;
 				TimeZoneInfo pacificTimeZone;
@@ -537,15 +537,15 @@ namespace MonoTests.System
 					pacificTimeZone = TimeZoneInfo.FindSystemTimeZoneById ("Pacific Standard Time");
 				}
 
-				DateTime lastMidnight = new DateTime(new DateTime(2012, 06, 13).Ticks, DateTimeKind.Unspecified);
-				DateTime lastMidnightAsEST = TimeZoneInfo.ConvertTime(lastMidnight, pacificTimeZone, easternTimeZone);
-				DateTime lastMidnightAsPST = TimeZoneInfo.ConvertTime(lastMidnightAsEST, easternTimeZone, pacificTimeZone);
+				DateTime lastMidnight = new DateTime (new DateTime (2012, 06, 13).Ticks, DateTimeKind.Unspecified);
+				DateTime lastMidnightAsEST = TimeZoneInfo.ConvertTime (lastMidnight, pacificTimeZone, easternTimeZone);
+				DateTime lastMidnightAsPST = TimeZoneInfo.ConvertTime (lastMidnightAsEST, easternTimeZone, pacificTimeZone);
 			
 				// Last midnight in PST as EST should be 3AM
-				DateTime expectedDate = new DateTime(2012, 06, 13, 3, 0, 0);
+				DateTime expectedDate = new DateTime (2012, 06, 13, 3, 0, 0);
 
-				Assert.AreEqual(expectedDate, lastMidnightAsEST);
-				Assert.AreEqual(lastMidnight, lastMidnightAsPST);
+				Assert.AreEqual (expectedDate, lastMidnightAsEST);
+				Assert.AreEqual (lastMidnight, lastMidnightAsPST);
 			}
 		}
 		
