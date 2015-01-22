@@ -694,7 +694,7 @@ namespace System.Text {
                     Append(valueChars, value.Length);
             }
         }
-
+#if !MONO
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [SecurityCritical]
@@ -710,7 +710,7 @@ namespace System.Text {
         [System.Runtime.ForceTokenStabilization]
         #endif //!FEATURE_CORECLR
         internal unsafe extern void ReplaceBufferAnsiInternal(sbyte* newBuffer, int newLength);
-
+#endif
         // Appends a copy of the characters in value from startIndex to startIndex +
         // count at the end of this string builder.
         [System.Security.SecuritySafeCritical]  // auto-generated
@@ -1872,7 +1872,7 @@ namespace System.Text {
                 }
             }
         }
-
+#if !MONO
          // Copies the source StringBuilder to the destination IntPtr memory allocated with len bytes.
         #if !FEATURE_CORECLR
         [System.Runtime.ForceTokenStabilization]
@@ -1901,7 +1901,7 @@ namespace System.Text {
                 currentSrc = currentSrc.m_ChunkPrevious;
             } while(currentSrc != null);
         }
-
+#endif
         /// <summary>
         /// Finds the chunk for the logical index (number of characters in the whole stringbuilder) 'index'
         /// YOu can then get the offset in this chunk by subtracting the m_BlockOffset field from 'index' 
