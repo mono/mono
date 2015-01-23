@@ -58,15 +58,6 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
-		public void FirstInterfaceOperationalStatus ()
-		{
-			var adapter = NetworkInterface.GetAllNetworkInterfaces ()[0];
-			var status = adapter.OperationalStatus;
-			// lo status is Unknown on Linux
-			//Assert.AreNotEqual (adapter.OperationalStatus, OperationalStatus.Unknown);
-		}
-	
-		[Test]
 		public void FirstInterfaceSpeed ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
