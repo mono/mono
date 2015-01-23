@@ -61,7 +61,7 @@ namespace MonoTests.System.Net.NetworkInformation
 		public void FirstInterfaceOperationalStatus ()
 		{
 			var adapter = NetworkInterface.GetAllNetworkInterfaces ()[0];
-			var status = adapter [0].OperationalStatus;
+			var status = adapter.OperationalStatus;
 			// lo status is Unknown on Linux
 			//Assert.AreNotEqual (adapter.OperationalStatus, OperationalStatus.Unknown);
 		}
