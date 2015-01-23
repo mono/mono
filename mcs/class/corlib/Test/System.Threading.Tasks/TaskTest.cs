@@ -212,11 +212,11 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			var mre = new ManualResetEventSlim (false);
 			var tasks = new Task[] {
-				Task.Factory.StartNew (delegate { mre.Wait (1000); }),
+				Task.Factory.StartNew (delegate { mre.Wait (5000); }),
 				Task.Factory.StartNew (delegate { throw new ApplicationException (); })
 			};
 
-			Assert.AreEqual (1, Task.WaitAny (tasks, 1000), "#1");
+			Assert.AreEqual (1, Task.WaitAny (tasks, 3000), "#1");
 			Assert.IsFalse (tasks[0].IsCompleted, "#2");
 			Assert.IsTrue (tasks[1].IsFaulted, "#3");
 
