@@ -64,6 +64,18 @@ namespace System.Globalization {
         [OnDeserialized]
         private void OnDeserialized(StreamingContext ctx)
         {
+#if MONO_NOT_SUPPORTED
+            // FIXME: This breaks Xamarin Studio, making it completely impossible to
+            //        compile any projects with the new runtime.
+            //
+            //        To reproduce, compile and install Mono to a custom prefix, for
+            //        instance /Workspace/TEST, add it in "Preferences / .NET Runtimes",
+            //        open a random C# project, select "Project / Active Runtime" and the
+            //        build will abort with this exception.
+            //
+            //        When this happens, 'm_type' is 0.
+            //
+            //        2015-01-24  Martin Baulig
             if (m_type < GregorianCalendarTypes.Localized || 
                 m_type > GregorianCalendarTypes.TransliteratedFrench) 
             {
@@ -75,6 +87,7 @@ namespace System.Globalization {
                                                 "type", 
                                                 "GregorianCalendar"));
             }
+#endif
         }
 #endregion Serialization
 
