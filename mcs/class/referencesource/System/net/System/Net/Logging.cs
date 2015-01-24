@@ -288,11 +288,7 @@ namespace System.Net {
 
         internal static uint GetThreadId()
         {
-#if MONO
-            uint threadId = (uint)Thread.CurrentThread.ManagedThreadId;
-#else
             uint threadId = UnsafeNclNativeMethods.GetCurrentThreadId();
-#endif
             if (threadId == 0) {
                 threadId = (uint)Thread.CurrentThread.GetHashCode();
             }
@@ -602,13 +598,11 @@ namespace System.Net {
             if ((length < 0) || (length > buffer.Length - offset)) {
                 length = buffer.Length - offset;
             }
-#if MONO_FEATURE_WEB_STACK
             if (GetUseProtocolTextSetting(traceSource)) {
                 string output = "<<" + WebHeaderCollection.HeaderEncoding.GetString(buffer, offset, length) + ">>";
                 PrintLine(traceSource, TraceEventType.Verbose, 0, output);
                 return;
             }
-#endif
             do {
                 int n = Math.Min(length, 16);
                 string disp = String.Format(CultureInfo.CurrentCulture, "{0:X8} : ", offset);
