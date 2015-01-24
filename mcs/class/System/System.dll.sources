@@ -735,6 +735,7 @@ System.Net/DnsAsyncResult.cs
 System.Windows.Input/ICommand.cs
 
 ReferenceSources/BinaryCompatibility.cs
+ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/Socket.cs
@@ -1073,11 +1074,13 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/referencesource/System/net/System/Net/_BufferOffsetSize.cs
 ../../../external/referencesource/System/net/System/Net/_LazyAsyncResult.cs
+../../../external/referencesource/System/net/System/Net/_LoggingObject.cs
 ../../../external/referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../../../external/referencesource/System/net/System/Net/cookie.cs
 ../../../external/referencesource/System/net/System/Net/cookiecollection.cs
 ../../../external/referencesource/System/net/System/Net/cookiecontainer.cs
 ../../../external/referencesource/System/net/System/Net/cookieexception.cs
+../../../external/referencesource/System/net/System/Net/Internal.cs
 ../../../external/referencesource/System/net/System/Net/UnicodeDecodingConformance.cs
 ../../../external/referencesource/System/net/System/Net/UnicodeEncodingConformance.cs
 ../../../external/referencesource/System/net/System/Net/webclient.cs
@@ -1096,7 +1099,3 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/misc/invariantcomparer.cs
 ../../../external/referencesource/System/misc/SecurityUtils.cs
 ../../../external/referencesource/System/misc/WeakHashtable.cs
-
-../../../external/referencesource/System/net/System/Net/Internal.cs
-../../../external/referencesource/System/net/System/Net/Logging.cs
-../../../external/referencesource/System/net/System/Net/_LoggingObject.cs
