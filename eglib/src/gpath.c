@@ -91,17 +91,14 @@ g_build_path (const gchar *separator, const gchar *first_element, ...)
 static gchar*
 strrchr_seperator (const gchar* filename)
 {
-#ifdef G_OS_WIN32
-	char *p2;
-#endif
 	char *p;
+	char *p2;
 
-	p = strrchr (filename, G_DIR_SEPARATOR);
-#ifdef G_OS_WIN32
-	p2 = strrchr (filename, '/');
+	p = strrchr (filename, '/');
+	p2 = strrchr (filename, '\\');
+
 	if (p2 > p)
 		p = p2;
-#endif
 
 	return p;
 }

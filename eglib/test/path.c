@@ -152,7 +152,7 @@ test_dirname ()
 {
 	char *s;
 
-#ifdef G_OS_WIN32
+
 	s = g_path_get_dirname ("c:\\home\\miguel");
 	if (strcmp (s, "c:\\home") != 0)
 		return FAILED ("Expected c:\\home, got %s", s);
@@ -176,7 +176,7 @@ test_dirname ()
 	s = g_path_get_dirname ("c:\\index.html");
 	if (strcmp (s, "c:") != 0)
 		return FAILED ("Expected [c:], got [%s]", s);
-#else
+
 	s = g_path_get_dirname ("/home/miguel");
 	if (strcmp (s, "/home") != 0)
 		return FAILED ("Expected /home, got %s", s);
@@ -195,7 +195,7 @@ test_dirname ()
 	s = g_path_get_dirname ("/index.html");
 	if (strcmp (s, "/") != 0)
 		return FAILED ("Expected [/], got [%s]", s);
-#endif	
+
 	return OK;
 }
 
@@ -204,7 +204,6 @@ test_basename ()
 {
 	char *s;
 
-#ifdef G_OS_WIN32
 	s = g_path_get_basename ("");
 	if (strcmp (s, ".") != 0)
 		return FAILED ("Expected `.', got %s", s);
@@ -229,7 +228,7 @@ test_basename ()
 	if (strcmp (s, "dingus") != 0)
 		return FAILED ("2 Expected dingus, got %s", s);
 	g_free (s);
-#else
+
 	s = g_path_get_basename ("");
 	if (strcmp (s, ".") != 0)
 		return FAILED ("Expected `.', got %s", s);
@@ -244,7 +243,6 @@ test_basename ()
 	if (strcmp (s, "dingus") != 0)
 		return FAILED ("2 Expected dingus, got %s", s);
 	g_free (s);
-#endif
 	return OK;
 }
 
