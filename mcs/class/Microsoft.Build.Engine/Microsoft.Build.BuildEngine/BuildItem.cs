@@ -192,8 +192,11 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
 				return true;
-			else
-				return evaluatedMetadata.Contains (metadataName);
+			else if (evaluatedMetadata.Contains (metadataName))
+				return true;
+			else if (parent_item_group != null)
+				return parent_item_group.ParentProject.HasItemDefinitionMetadata (Name, metadataName);
+			return false;
 		}
 
 		public void RemoveMetadata (string metadataName)

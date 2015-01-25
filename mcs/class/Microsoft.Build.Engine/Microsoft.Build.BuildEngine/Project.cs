@@ -1434,6 +1434,21 @@ namespace Microsoft.Build.BuildEngine {
 			return String.Empty;
 		}
 
+		internal bool HasItemDefinitionMetadata (string itemName, string metadataName)
+		{
+			if (itemName == null)
+				throw new ArgumentNullException ("itemName");
+			if (metadataName == null)
+				throw new ArgumentNullException ("metadataName");
+
+			BuildItemDefinition definition = null;
+			if (evaluatedItemDefinitions.TryGetValue (itemName, out definition) &&
+				definition != null && definition.HasMetadata (metadataName))
+				return true;
+
+			return false;
+		}
+
 		internal IEnumerable<BuildItemGroup> GetAllItemGroups ()
 		{
 			if (perBatchItemsByName == null && commonItemsByName == null)

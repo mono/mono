@@ -61,6 +61,45 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestItemMetadataFallbackInBatch ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemDefinitionGroup>
+						<A>
+							<Meta>Data</Meta>
+						</A>
+					</ItemDefinitionGroup>
+					<ItemGroup>
+						<A Include='Source' />
+					</ItemGroup>
+					<Target Name=""Main"">
+						<Message Text = ""@(A) %(Meta)""/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			bool result = project.Build ("Main");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("Source Data", "A1");
+		}
+
+		[Test]
 		public void TestItemMetadataFallback2 ()
 		{
 			Engine engine;
