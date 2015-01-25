@@ -9676,7 +9676,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 			if (!cmethod || mono_loader_get_last_error ())
 				LOAD_ERROR;
-			fsig = mono_method_get_signature (cmethod, image, token);
+			fsig = mono_method_get_signature_full (cmethod, image, token, generic_context);
 			if (!fsig)
 				LOAD_ERROR;
 
