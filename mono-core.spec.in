@@ -173,6 +173,7 @@ rm -rf %buildroot
 %_bindir/al
 %_bindir/al2
 %_bindir/certmgr
+%_bindir/cert-sync
 %_bindir/chktrust
 %_bindir/crlupdate
 %_bindir/csharp
@@ -265,6 +266,7 @@ rm -rf %buildroot
 %_prefix/lib/mono/4.0/System.dll
 %_prefix/lib/mono/4.5/al.exe*
 %_prefix/lib/mono/4.5/certmgr.exe*
+%_prefix/lib/mono/4.5/cert-sync.exe*
 %_prefix/lib/mono/4.5/chktrust.exe*
 %_prefix/lib/mono/4.5/crlupdate.exe*
 %_prefix/lib/mono/4.0/cscompmgd.dll
