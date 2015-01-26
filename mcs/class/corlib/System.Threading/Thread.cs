@@ -585,11 +585,12 @@ namespace System.Threading {
 
 		public ThreadPriority Priority {
 			get {
-				return(ThreadPriority.Lowest);
+				return (ThreadPriority)GetPriority (Internal);
 			}
 			
 			set {
-				// FIXME: Implement setter.
+				// FIXME: This doesn't do anything yet
+				SetPriority (Internal, (int)value);
 			}
 		}
 
@@ -601,6 +602,12 @@ namespace System.Threading {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Abort_internal (InternalThread thread, object stateInfo);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static int GetPriority (InternalThread thread);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void SetPriority (InternalThread thread, int priority);
 
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Abort () 
