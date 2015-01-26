@@ -2146,6 +2146,11 @@ public class DebuggerTests
 		v = this_obj.InvokeMethod (e.Thread, m, null, InvokeOptions.Virtual);
 		AssertValue ("V2", v);
 
+		// virtual call on static method
+		m = t.GetMethod ("invoke_static_pass_ref");
+		v = t.InvokeMethod (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") }, InvokeOptions.Virtual);
+		AssertValue ("ABC", v);
+
 #if NET_4_5
 		// instance
 		m = t.GetMethod ("invoke_pass_ref");
