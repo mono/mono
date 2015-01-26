@@ -133,5 +133,12 @@ namespace MonoTests.System.Reflection
 		{
 			typeof (Foo).GetConstructors ()[0].Invoke (new object (), BindingFlags.Default, null, null, null);
 		}
+
+		[Test]
+		public void ContainsGenericParametersOnGenericType ()
+		{
+			var ctor = typeof (Gen<>).GetConstructor (Type.EmptyTypes);
+			Assert.IsTrue (ctor.ContainsGenericParameters);
+		}
 	}
 }
