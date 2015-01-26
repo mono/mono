@@ -92,6 +92,9 @@ gboolean ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (HANDLE to
 MonoArray* ves_icall_System_Threading_Thread_ByteArrayToRootDomain (MonoArray *arr) MONO_INTERNAL;
 MonoArray* ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain (MonoArray *arr) MONO_INTERNAL;
 
+void ves_icall_System_Threading_Thread_Set_Priority (MonoInternalThread*, guint32) MONO_INTERNAL;
+guint32 ves_icall_System_Threading_Thread_Get_Priority (MonoInternalThread*) MONO_INTERNAL;
+
 gint32 ves_icall_System_Threading_Interlocked_Increment_Int(gint32 *location) MONO_INTERNAL;
 gint64 ves_icall_System_Threading_Interlocked_Increment_Long(gint64 *location) MONO_INTERNAL;
 gint32 ves_icall_System_Threading_Interlocked_Decrement_Int(gint32 *location) MONO_INTERNAL;

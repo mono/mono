@@ -749,9 +749,6 @@ namespace I18N.CJK
 	}
 
 	[Serializable]
-	public class ENCiso_2022_jp : CP50220
-	{
-		public ENCiso_2022_jp () : base() {}
-
-	}; // class ENCiso_2022_jp
+	internal class ENCiso_2022_jp : CP50220 { }
 }
+

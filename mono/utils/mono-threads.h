@@ -33,6 +33,7 @@ typedef DWORD mono_native_thread_return_t;
 #else
 
 #include <pthread.h>
+#include <sched.h>
 
 #if defined(__MACH__)
 #include <mono/utils/mach-support.h>
@@ -405,4 +406,19 @@ mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 void mono_threads_init_dead_letter (void) MONO_INTERNAL;
 void mono_threads_install_dead_letter (void) MONO_INTERNAL;
 
+/* thread priority
+ * the enum needs to be consistent with System.ThreadPriority enum */
+enum thread_priority
+{
+    thread_priority_lowest = 0,
+    thread_priority_below_normal = 1,
+    thread_priority_normal = 2,
+    thread_priority_above_normal = 3,
+    thread_priority_highest = 4
+};
+
+void mono_threads_set_priority(MonoNativeThreadId, enum thread_priority priority) MONO_INTERNAL;
+enum thread_priority mono_threads_get_priority(MonoNativeThreadId) MONO_INTERNAL;
+
 #endif /* __MONO_THREADS_H__ */
+

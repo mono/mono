@@ -450,16 +450,10 @@ namespace I18N.CJK
     }
 
     [Serializable]
-    internal class ENCuhc : CP949
-    {
-        public ENCuhc() {}
-    }
+    internal class ENCuhc : CP949 { }
 
     [Serializable]
-    internal class ENCeuc_kr: CP51949
-    {
-        public ENCeuc_kr() {}
-    }
+    internal class ENCeuc_kr: CP51949 { }
 }
 
 // ex: ts=8 sts=4 et
