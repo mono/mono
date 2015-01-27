@@ -11,7 +11,7 @@ LOCAL_MCS_FLAGS = \
 
 include ../../build/executable.make
 
-LIB_PATH = $(topdir)/class/lib/net_4_5
+LIB_PATH = $(topdir)/class/lib/$(PROFILE)
 
 MONO = MONO_PATH=$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH $(RUNTIME)
 
@@ -26,7 +26,7 @@ build-test:
 	@mkdir -p $(OUT_DIR)
 	@$(MCS) -debug $(TEST_CS) -out:$(TEST_EXE)
 
-check: build-test
+check: all build-test
 	@MONO_DEBUG=gen-compact-seq-points $(MONO) $(TEST_EXE) > $(RELEASE_FILE)
 	@$(MONO) $(LIB_PATH)/symbolicate.exe $(TEST_EXE) $(RELEASE_FILE) > $(SYMBOLICATE_FILE)
 	@$(MONO) --debug $(TEST_EXE) > $(DEBUG_FILE)
