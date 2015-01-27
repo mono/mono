@@ -4,6 +4,8 @@ Known conditionals:
 
 * MONO_FEATURE_NEW_TLS: we are using the new TLS implementation.
 
+* MONO_FEATURE_LOGGING: whether we want the internal logging API.
+
 * MONO_NOT_SUPPORTED: not supported in Mono.
 
 * MONO_NOT_IMPLEMENTED: not yet implemented in Mono.

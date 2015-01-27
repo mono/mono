@@ -22,7 +22,11 @@ namespace System.Net {
     [FriendAccessAllowed]
     internal class Logging {
 
+        #if MONO_FEATURE_LOGGING
         private static volatile bool s_LoggingEnabled = true;
+        #else
+        private static volatile bool s_LoggingEnabled = true;
+        #endif
         private static volatile bool s_LoggingInitialized;
         private static volatile bool s_AppDomainShutdown;
 
@@ -159,14 +163,17 @@ namespace System.Net {
 
         private static bool GetUseProtocolTextSetting(TraceSource traceSource) {
             bool useProtocolTextOnly = DefaultUseProtocolTextOnly;
+            #if MONO_FEATURE_LOGGING
             if (traceSource.Attributes[AttributeNameTraceMode] == AttributeValueProtocolOnly) {
                 useProtocolTextOnly = true;
             }
+            #endif
             return useProtocolTextOnly;
         }
 
         private static int GetMaxDumpSizeSetting(TraceSource traceSource) {
             int maxDumpSize = DefaultMaxDumpSize;
+            #if MONO_FEATURE_LOGGING
             if (traceSource.Attributes.ContainsKey(AttributeNameMaxSize)) {
                 try {
                     maxDumpSize = Int32.Parse(traceSource.Attributes[AttributeNameMaxSize], NumberFormatInfo.InvariantInfo);
@@ -177,6 +184,7 @@ namespace System.Net {
                     traceSource.Attributes[AttributeNameMaxSize] = maxDumpSize.ToString(NumberFormatInfo.InvariantInfo);
                 }
             }
+            #endif
             return maxDumpSize;
         }
 
@@ -184,6 +192,7 @@ namespace System.Net {
         ///    <para>Sets up internal config settings for logging. (MUST be called under critsec) </para>
         /// </devdoc>
         private static void InitializeLogging() {
+            #if MONO_FEATURE_LOGGING
             lock(InternalSyncObject) {
                 if (!s_LoggingInitialized) {
                     bool loggingEnabled = false;
@@ -220,16 +229,19 @@ namespace System.Net {
                     s_LoggingInitialized = true;
                 }
             }
+            #endif
         }
 
         [SuppressMessage("Microsoft.Security","CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification="Logging functions must work in partial trust mode")]
         private static void Close() {
+            #if MONO_FEATURE_LOGGING
             if (s_WebTraceSource != null) s_WebTraceSource.Close();
             if (s_HttpListenerTraceSource != null) s_HttpListenerTraceSource.Close();
             if (s_SocketsTraceSource != null) s_SocketsTraceSource.Close();
             if (s_WebSocketsTraceSource != null) s_WebSocketsTraceSource.Close();
             if (s_CacheTraceSource != null) s_CacheTraceSource.Close();
             if (s_TraceSourceHttpName != null) s_TraceSourceHttpName.Close();
+            #endif
         }
 
         /// <devdoc>
@@ -257,6 +269,7 @@ namespace System.Net {
         ///    <para>Confirms logging is enabled, given current logging settings</para>
         /// </devdoc>
         private static bool ValidateSettings(TraceSource traceSource, TraceEventType traceLevel) {
+            #if MONO_FEATURE_LOGGING
             if (!s_LoggingEnabled) {
                 return false;
             }
@@ -270,6 +283,9 @@ namespace System.Net {
                 return false;
             }
             return true;
+            #else
+            return false;
+            #endif
         }
 
         /// <devdoc>
@@ -288,7 +304,11 @@ namespace System.Net {
 
         internal static uint GetThreadId()
         {
+#if MONO
+            uint threadId = (uint)Thread.CurrentThread.ManagedThreadId;
+#else
             uint threadId = UnsafeNclNativeMethods.GetCurrentThreadId();
+#endif
             if (threadId == 0) {
                 threadId = (uint)Thread.CurrentThread.GetHashCode();
             }
@@ -296,8 +316,10 @@ namespace System.Net {
         }
 
         internal static void PrintLine(TraceSource traceSource, TraceEventType eventType, int id, string msg) {
+            #if MONO_FEATURE_LOGGING
             string logHeader = "["+GetThreadId().ToString("d4", CultureInfo.InvariantCulture)+"] " ;
             traceSource.TraceEvent(eventType, id, logHeader + msg);
+            #endif
         }
 
         /// <devdoc>
@@ -598,11 +620,13 @@ namespace System.Net {
             if ((length < 0) || (length > buffer.Length - offset)) {
                 length = buffer.Length - offset;
             }
+#if MONO_FEATURE_WEB_STACK
             if (GetUseProtocolTextSetting(traceSource)) {
                 string output = "<<" + WebHeaderCollection.HeaderEncoding.GetString(buffer, offset, length) + ">>";
                 PrintLine(traceSource, TraceEventType.Verbose, 0, output);
                 return;
             }
+#endif
             do {
                 int n = Math.Min(length, 16);
                 string disp = String.Format(CultureInfo.CurrentCulture, "{0:X8} : ", offset);
@@ -624,6 +648,7 @@ namespace System.Net {
             } while (length > 0);
         }
 
+        #if MONO_FEATURE_LOGGING
         private class NclTraceSource : TraceSource
         {
             internal NclTraceSource(string name) : base(name) { }
@@ -633,5 +658,6 @@ namespace System.Net {
                 return Logging.SupportedAttributes;
             }
         }
+        #endif
     }
 }
