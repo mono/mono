@@ -1195,7 +1195,7 @@ namespace System {
 			AssemblyLoad (this, new AssemblyLoadEventArgs (assembly));
 		}
 
-		private Assembly DoAssemblyResolve (string name, bool refonly)
+		private Assembly DoAssemblyResolve (string name, Assembly requestingAssembly, bool refonly)
 		{
 			ResolveEventHandler del;
 #if !NET_2_1
@@ -1234,7 +1234,7 @@ namespace System {
 
 				foreach (Delegate eh in invocation_list) {
 					ResolveEventHandler handler = (ResolveEventHandler) eh;
-					Assembly assembly = handler (this, new ResolveEventArgs (name));
+					Assembly assembly = handler (this, new ResolveEventArgs (name, requestingAssembly));
 					if (assembly != null)
 						return assembly;
 				}
