@@ -1438,7 +1438,6 @@ System.Threading.Tasks/DecoupledTask.cs
 System.Threading.Tasks/TaskConstants.cs
 System.Threading.Tasks/TaskConstants_T.cs
 System.Collections.Concurrent/ConcurrentOrderedList.cs
-System.Threading/SpinLock.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 System.Threading/ThreadLocal.cs
 System.Threading/Watch.cs
@@ -1638,6 +1637,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/threading/parameterizedthreadstart.cs
 ../../../external/referencesource/mscorlib/system/threading/SemaphoreSlim.cs
 ../../../external/referencesource/mscorlib/system/threading/sendorpostcallback.cs
+../../../external/referencesource/mscorlib/system/threading/SpinLock.cs
 ../../../external/referencesource/mscorlib/system/threading/SpinWait.cs
 ../../../external/referencesource/mscorlib/system/threading/synchronizationlockexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadpriority.cs
