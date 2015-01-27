@@ -190,6 +190,9 @@ namespace System.Xml
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
 
+			if (reader.ReadState == ReadState.Initial)
+				reader.Read ();
+			
 			switch (reader.NodeType) {
 			case XmlNodeType.Element:
 				// gratuitously copied from System.XML/System.Xml/XmlWriter.cs:WriteNode(XmlReader,bool)
