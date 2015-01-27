@@ -1753,6 +1753,19 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (3, count, "#3");
 		}
 
+		[Test, Category("NotWorking")]
+		public void ReadToNextSiblingInInitialReadState ()
+		{
+			var xml = "<Text name=\"hello\"><Something></Something></Text>";
+			var ms = new MemoryStream(Encoding.Default.GetBytes(xml));
+			var xtr = XmlReader.Create(ms);
+
+			Assert.AreEqual(xtr.ReadState, ReadState.Initial);
+			xtr.ReadToNextSibling("Text");
+
+			Assert.AreEqual("hello", xtr.GetAttribute("name"));
+		}
+
 		[Test]
 		public void ReadSubtree ()
 		{
