@@ -109,6 +109,8 @@ namespace MonoTests.System.Threading.Tasks
 
 		Task[] tasks;
 		const int max = 6;
+		object cleanup_mutex = new object ();
+		List<Task> cleanup_list;
 		
 		[SetUp]
 		public void Setup()
@@ -116,13 +118,35 @@ namespace MonoTests.System.Threading.Tasks
 			ThreadPool.GetMinThreads (out workerThreads, out completionPortThreads);
 			ThreadPool.SetMinThreads (1, 1);
 
-			tasks = new Task[max];			
+			tasks = new Task[max];
+			cleanup_list = new List<Task> ();
 		}
 		
 		[TearDown]
 		public void Teardown()
 		{
 			ThreadPool.SetMinThreads (workerThreads, completionPortThreads);
+			Task[] l = null;
+			lock (cleanup_mutex) {
+				l = cleanup_list.ToArray ();
+			}
+			try {
+				Task.WaitAll (l);
+			} catch (Exception) {
+			}
+		}
+
+		void AddToCleanup (Task[] tasks) {
+			lock (cleanup_mutex) {
+				foreach (var t in tasks)
+					cleanup_list.Add (t);
+			}
+		}
+
+		void AddToCleanup (Task task) {
+			lock (cleanup_mutex) {
+				cleanup_list.Add (task);
+			}
 		}
 		
 		void InitWithDelegate(Action action)
@@ -130,6 +154,7 @@ namespace MonoTests.System.Threading.Tasks
 			for (int i = 0; i < max; i++) {
 				tasks[i] = Task.Factory.StartNew(action);
 			}
+			AddToCleanup (tasks);
 		}
 		
 		[Test]
@@ -286,6 +311,7 @@ namespace MonoTests.System.Threading.Tasks
 				for (int i = 0; i < tasks.Length; i++) {
 					tasks[i] = Task.Factory.StartNew (delegate { Thread.Sleep (0); });
 				}
+				AddToCleanup (tasks);
 
 				Assert.IsTrue (Task.WaitAll (tasks, 5000));
 			}
