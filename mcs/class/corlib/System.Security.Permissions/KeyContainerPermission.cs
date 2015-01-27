@@ -170,7 +170,7 @@ namespace System.Security.Permissions {
 
 		private void SetFlags (KeyContainerPermissionFlags flags)
 		{
-			if ((flags & KeyContainerPermissionFlags.AllFlags) != 0) {
+			if ((flags & KeyContainerPermissionFlags.AllFlags) == 0) {
 				string msg = String.Format (Locale.GetText ("Invalid enum {0}"), flags);
 				throw new ArgumentException (msg, "KeyContainerPermissionFlags");
 			}

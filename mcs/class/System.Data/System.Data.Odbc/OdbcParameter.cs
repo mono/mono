@@ -136,11 +136,6 @@ namespace System.Data.Odbc
 			set { container = value; }
 		}
 
-#if ONLY_1_1
-		[BrowsableAttribute (false)]
-		[RefreshPropertiesAttribute (RefreshProperties.All)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#endif
 		[OdbcCategory ("Data")]
 		[OdbcDescriptionAttribute ("The parameter generic type")]
 		public
@@ -165,12 +160,6 @@ namespace System.Data.Odbc
 			set { direction = value; }
 		}
 
-#if ONLY_1_1
-		[BrowsableAttribute (false)]
-		[DesignOnlyAttribute (true)]
-		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
-		[DefaultValue (false)]
-#endif
 		[OdbcDescriptionAttribute ("A design-time property used for strongly typed code generation")]
 		public
 		override
@@ -195,9 +184,6 @@ namespace System.Data.Odbc
 		}
 
 		[OdbcDescription ("DataParameter_ParameterName")]
-#if ONLY_1_1
-		[DefaultValue ("")]
-#endif
 		public 
 		override
 		string ParameterName {
@@ -223,9 +209,6 @@ namespace System.Data.Odbc
 		
 		[OdbcDescription ("DbDataParameter_Size")]
 		[OdbcCategory ("DataCategory_Data")]
-#if ONLY_1_1
-		[DefaultValue (0)]
-#endif
 		public
 		override
 		int Size {
@@ -235,9 +218,6 @@ namespace System.Data.Odbc
 
 		[OdbcDescription ("DataParameter_SourceColumn")]
 		[OdbcCategory ("DataCategory_Data")]
-#if ONLY_1_1
-		[DefaultValue ("")]
-#endif
 		public
 		override
 		string SourceColumn {
@@ -247,9 +227,6 @@ namespace System.Data.Odbc
 		
 		[OdbcDescription ("DataParameter_SourceVersion")]
 		[OdbcCategory ("DataCategory_Data")]
-#if ONLY_1_1
-		[DefaultValue ("Current")]
-#endif
 		public
 		override
 		DataRowVersion SourceVersion {
@@ -260,11 +237,7 @@ namespace System.Data.Odbc
 		[TypeConverter (typeof(StringConverter))]
 		[OdbcDescription ("DataParameter_Value")]
 		[OdbcCategory ("DataCategory_Data")]
-#if ONLY_1_1
-		[DefaultValue (null)]
-#else
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
-#endif
 		public
 		override
 		object Value {

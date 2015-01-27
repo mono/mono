@@ -28,9 +28,6 @@
 
 namespace System.Drawing {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	[Flags]
 	public enum StringFormatFlags {
 		DirectionRightToLeft  = 0x0001,

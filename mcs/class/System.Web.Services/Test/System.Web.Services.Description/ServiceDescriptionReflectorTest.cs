@@ -184,9 +184,6 @@ namespace MonoTests.System.Web.Services.Description
 				"    </wsdl:operation>{0}" +
 				"  </wsdl:binding>{0}" +
 				"  <wsdl:service name=\"IncludeTestServices\">{0}" +
-#if ONLY_1_1
-				"    <documentation xmlns=\"http://schemas.xmlsoap.org/wsdl/\" />{0}" +
-#endif
 				"    <wsdl:port name=\"IncludeTestServicesSoap\" binding=\"tns:IncludeTestServicesSoap\">{0}" +
 				"      <soap:address location=\"http://localhost/IncludeTestServices.asmx\" />{0}" +
 				"    </wsdl:port>{0}" +

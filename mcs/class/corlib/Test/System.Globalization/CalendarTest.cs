@@ -502,7 +502,6 @@ public class CalendarTest {
 		}
 	}
 
-	[Category ("NotWorking")]
 	[Test]
 	public void TestErasProperty2() {
 		Assert.AreEqual(1, clcal.Eras.Length, "cn");
@@ -540,7 +539,8 @@ public class CalendarTest {
 			catch (ArgumentOutOfRangeException) {
 				exception = true;
 			}
-			Assert.IsTrue(exception,
+
+			Assert.IsFalse(exception,
 				   String.Format("E09 {0}.TwoDigitYearMax 99 " +
 								 " out of range exception", cal));
 
@@ -599,7 +599,6 @@ public class CalendarTest {
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void GetLeapMonth ()
 	{
 		GregorianCalendar gc = new GregorianCalendar ();

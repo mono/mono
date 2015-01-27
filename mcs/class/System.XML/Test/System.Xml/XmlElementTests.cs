@@ -559,9 +559,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void SetNullPrefix ()
 		{
 			XmlDocument doc = new XmlDocument ();

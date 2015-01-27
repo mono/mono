@@ -28,9 +28,6 @@
 
 namespace System.Drawing {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum  StringTrimming {
 		None              = 0,
 		Character         = 1,

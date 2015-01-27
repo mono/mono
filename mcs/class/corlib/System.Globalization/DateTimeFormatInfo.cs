@@ -59,9 +59,11 @@ namespace System.Globalization
 			= new string[13] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "" };
 		private static readonly string[] INVARIANT_MONTH_NAMES
 			= new string[13] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "" };
-//		private static readonly string[] INVARIANT_ERA_NAMES = {"A.D."};
 		static readonly string[] INVARIANT_SHORT_DAY_NAMES =
 			new string[7] { "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" };
+		static readonly string[] INVARIANT_ERA_NAMES = { "A.D." };
+		static readonly string[] INVARIANT_ABBREVIATED_ERA_NAMES = { "AD" };
+
 		private static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
 #pragma warning disable 169
@@ -193,11 +195,11 @@ namespace System.Globalization
 
 		public string GetAbbreviatedEraName (int era)
 		{
-			if (era < 0 || era > Calendar.AbbreviatedEraNames.Length)
+			if (era < 0 || era > AbbreviatedEraNames.Length)
 				throw new ArgumentOutOfRangeException ("era", era.ToString ());
 			if (era == Calendar.CurrentEra)
-			    era = Calendar.EraNames.Length;				
-			return Calendar.AbbreviatedEraNames [era - 1];
+				era = EraNames.Length;
+			return AbbreviatedEraNames [era - 1];
 		}
 
 		public string GetAbbreviatedMonthName(int month)
@@ -210,14 +212,14 @@ namespace System.Globalization
 		{
 			if (eraName == null)
 				throw new ArgumentNullException ();
-			string [] eras = Calendar.EraNames;
+			string [] eras = EraNames;
 			for (int i = 0; i < eras.Length; i++)
 				if (CultureInfo.InvariantCulture.CompareInfo
 					.Compare (eraName, eras [i],
 					CompareOptions.IgnoreCase) == 0)
 					return Calendar.Eras [i];
 			
-			eras = Calendar.AbbreviatedEraNames;
+			eras = AbbreviatedEraNames;
 			for (int i = 0; i < eras.Length; i++)
 				if (CultureInfo.InvariantCulture.CompareInfo
 					.Compare (eraName, eras [i],
@@ -229,11 +231,35 @@ namespace System.Globalization
 
 		public string GetEraName (int era)
 		{
-			if (era < 0 || era > Calendar.EraNames.Length)
+			if (era < 0 || era > EraNames.Length)
 				throw new ArgumentOutOfRangeException ("era", era.ToString ());
 			if (era == Calendar.CurrentEra)
-			    era = Calendar.EraNames.Length;
-			return Calendar.EraNames [era - 1];
+			    era = EraNames.Length;
+			return EraNames [era - 1];
+		}
+
+		internal string[] EraNames {
+			get {
+				if (m_eraNames != null)
+					return m_eraNames;
+
+				// TODO: Should use Calendar.ID to initialize calendar specific era names
+				// from current culture. We don't have such data yet
+				m_eraNames = INVARIANT_ERA_NAMES;
+				return m_eraNames;
+			}
+		}
+
+		internal string[] AbbreviatedEraNames {
+			get {
+				if (m_abbrevEraNames != null)
+					return m_abbrevEraNames;
+
+				// TODO: Should use Calendar.ID to initialize calendar specific era names
+				// from current culture. We don't have such data yet
+				m_abbrevEraNames = INVARIANT_ABBREVIATED_ERA_NAMES;
+				return m_abbrevEraNames;
+			}
 		}
 
 		public string GetMonthName(int month)
@@ -549,9 +575,26 @@ namespace System.Globalization
 
 			[MonoLimitation ("Only default calendar specific data are available")]
 			set {
-				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				if (value == null) throw new ArgumentNullException();
-				calendar = value;
+				if (IsReadOnly)
+					throw new InvalidOperationException(MSG_READONLY);
+				if (value == null)
+					throw new ArgumentNullException();
+
+				if (calendar == value)
+					return;
+
+				// TODO: Should use only ids
+				var calendars = culture.OptionalCalendars;
+				for (int i = 0; i < calendars.Length; ++i) {
+					if (calendars [i].ID != value.ID)
+						continue;
+
+					calendar = value;
+					m_eraNames = null;
+					m_abbrevEraNames = null;
+				}
+
+				throw new ArgumentOutOfRangeException ("Invalid calendar");
 			}
 		}
 

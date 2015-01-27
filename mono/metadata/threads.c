@@ -1250,6 +1250,17 @@ ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj
 	mono_thread_set_name_internal (this_obj, name, TRUE);
 }
 
+int
+ves_icall_System_Threading_Thread_GetPriority (MonoInternalThread *thread)
+{
+	return ThreadPriority_Lowest;
+}
+
+void
+ves_icall_System_Threading_Thread_SetPriority (MonoInternalThread *thread, int priority)
+{
+}
+
 /* If the array is already in the requested domain, we just return it,
    otherwise we return a copy in that domain. */
 static MonoArray*
@@ -1760,6 +1771,13 @@ gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int(gint32 *locati
 	return InterlockedCompareExchange(location, value, comparand);
 }
 
+gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int_Success(gint32 *location, gint32 value, gint32 comparand, MonoBoolean *success)
+{
+	gint32 r = InterlockedCompareExchange(location, value, comparand);
+	*success = r == comparand;
+	return r;
+}
+
 MonoObject * ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject **location, MonoObject *value, MonoObject *comparand)
 {
 	MonoObject *res;
@@ -1969,7 +1987,7 @@ void mono_thread_current_check_pending_interrupt ()
 int  
 mono_thread_get_abort_signal (void)
 {
-#ifdef HOST_WIN32
+#if defined (HOST_WIN32) || !defined (HAVE_SIGACTION)
 	return -1;
 #elif defined(PLATFORM_ANDROID)
 	return SIGUNUSED;
@@ -4481,7 +4499,7 @@ mono_thread_kill (MonoInternalThread *thread, int signal)
 	/* Workaround pthread_kill abort() in NaCl glibc. */
 	return -1;
 #endif
-#ifdef HOST_WIN32
+#if defined (HOST_WIN32) || !defined (HAVE_SIGACTION)
 	/* Win32 uses QueueUserAPC and callers of this are guarded */
 	g_assert_not_reached ();
 #else

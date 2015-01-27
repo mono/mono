@@ -3219,14 +3219,14 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			if (Parent != null)
+				ec.BeginScope ();
+
 			EmitScopeInitialization (ec);
 
 			if (ec.EmitAccurateDebugInfo && !IsCompilerGenerated && ec.Mark (StartLocation)) {
 				ec.Emit (OpCodes.Nop);
 			}
-
-			if (Parent != null)
-				ec.BeginScope ();
 
 			DoEmit (ec);
 
@@ -6499,6 +6499,31 @@ namespace Mono.CSharp {
 
 	public class Catch : Statement
 	{
+		class CatchVariableStore : Statement
+		{
+			readonly Catch ctch;
+
+			public CatchVariableStore (Catch ctch)
+			{
+				this.ctch = ctch;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				// Emits catch variable debug information inside correct block
+				ctch.EmitCatchVariableStore (ec);
+			}
+
+			protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+			{
+				return true;
+			}
+		}
+
 		class FilterStatement : Statement
 		{
 			readonly Catch ctch;
@@ -6628,9 +6653,6 @@ namespace Mono.CSharp {
 				ec.BeginExceptionFilterBlock ();
 				ec.Emit (OpCodes.Isinst, IsGeneral ? ec.BuiltinTypes.Object : CatchType);
 
-				if (li != null)
-					EmitCatchVariableStore (ec);
-
 				if (Block.HasAwait) {
 					Block.EmitScopeInitialization (ec);
 				} else {
@@ -6645,14 +6667,15 @@ namespace Mono.CSharp {
 			else
 				ec.BeginCatchBlock (CatchType);
 
-			if (li != null) {
-				EmitCatchVariableStore (ec);
-			} else {
+			if (li == null)
 				ec.Emit (OpCodes.Pop);
-			}
 
-			if (!Block.HasAwait)
+			if (Block.HasAwait) {
+				if (li != null)
+					EmitCatchVariableStore (ec);
+			} else {
 				Block.Emit (ec);
+			}
 		}
 
 		void EmitCatchVariableStore (EmitContext ec)
@@ -6660,9 +6683,9 @@ namespace Mono.CSharp {
 			li.CreateBuilder (ec);
 
 			//
-			// Special case hoisted catch variable, we have to use a temporary variable
-			// to pass via anonymous storey initialization with the value still on top
-			// of the stack
+			// For hoisted catch variable we have to use a temporary local variable
+			// for captured variable initialization during storey setup because variable
+			// needs to be on the stack after storey instance for stfld operation
 			//
 			if (li.HoistedVariant != null) {
 				hoisted_temp = new LocalTemporary (li.Type);
@@ -6678,6 +6701,9 @@ namespace Mono.CSharp {
 			using (bc.Set (ResolveContext.Options.CatchScope)) {
 				if (type_expr == null) {
 					if (CreateExceptionVariable (bc.Module.Compiler.BuiltinTypes.Object)) {
+						if (!block.HasAwait || Filter != null)
+							block.AddScopeStatement (new CatchVariableStore (this));
+
 						Expression source = new EmptyExpression (li.Type);
 						assign = new CompilerAssign (new LocalVariableReference (li, Location.Null), source, Location.Null);
 						Block.AddScopeStatement (new StatementExpression (assign, Location.Null));
@@ -6700,6 +6726,9 @@ namespace Mono.CSharp {
 						Expression source = new EmptyExpression (li.Type);
 						if (li.Type.IsGenericParameter)
 							source = new UnboxCast (source, li.Type);
+
+						if (!block.HasAwait || Filter != null)
+							block.AddScopeStatement (new CatchVariableStore (this));
 
 						//
 						// Uses Location.Null to hide from symbol file

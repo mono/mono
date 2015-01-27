@@ -55,10 +55,6 @@ namespace System.Drawing
 
 		private void CreateFont (string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
-#if ONLY_1_1
-			if (familyName == null)
-				throw new ArgumentNullException ("familyName");
-#endif
 			originalFontName = familyName;
                         FontFamily family;
 			// NOTE: If family name is null, empty or invalid,

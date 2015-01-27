@@ -572,6 +572,12 @@ namespace System.Reflection {
 			}
 		}
 		
+		public override bool ContainsGenericParameters {
+			get {
+				return DeclaringType.ContainsGenericParameters;
+			}
+		}
+
 		public override Type ReflectedType {
 			get {
 				return reftype;

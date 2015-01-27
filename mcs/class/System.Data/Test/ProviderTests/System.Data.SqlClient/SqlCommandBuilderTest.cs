@@ -1128,21 +1128,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (0)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (0)");
 
-#if ONLY_1_1
-			param = cmd.Parameters [1];
-			Assert.AreEqual (DbType.Int32, param.DbType, prefix + "DbType (1)");
-			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (1)");
-			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (1)");
-			Assert.AreEqual (0, param.Offset, prefix + "Offset (1)");
-			Assert.AreEqual ("@p2", param.ParameterName, prefix + "ParameterName (1)");
-			Assert.AreEqual (0, param.Precision, prefix + "Precision (1)");
-			Assert.AreEqual (0, param.Scale, prefix + "Scale (1)");
-			//Assert.AreEqual (0, param.Size, prefix + "Size (1)");
-			Assert.AreEqual (string.Empty, param.SourceColumn, prefix + "SourceColumn (1)");
-			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (1)");
-			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (1)");
-			Assert.AreEqual (1, param.Value, prefix + "Value (1)");
-#endif
 
 			param = cmd.Parameters [1];
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (2)");
@@ -1403,21 +1388,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (3)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (3)");
 
-#if ONLY_1_1
-			param = cmd.Parameters [4];
-			Assert.AreEqual (DbType.Int32, param.DbType, prefix + "DbType (4)");
-			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (4)");
-			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (4)");
-			Assert.AreEqual (0, param.Offset, prefix + "Offset (4)");
-			Assert.AreEqual ("@p5", param.ParameterName, prefix + "ParameterName (4)");
-			Assert.AreEqual (0, param.Precision, prefix + "Precision (4)");
-			Assert.AreEqual (0, param.Scale, prefix + "Scale (4)");
-			//Assert.AreEqual (0, param.Size, prefix + "Size (4)");
-			Assert.AreEqual (string.Empty, param.SourceColumn, prefix + "SourceColumn (4)");
-			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (4)");
-			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (4)");
-			Assert.AreEqual (1, param.Value, prefix + "Value (4)");
-#endif
 
 			param = cmd.Parameters [4];
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (5)");

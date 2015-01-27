@@ -2611,11 +2611,9 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 
 		size = mono_metadata_decode_blob_size (sig, &sig_body);
 
-		signature = mono_metadata_parse_method_signature_full (img, container, idx, sig_body, NULL);
-		if (!signature) {
-			mono_error_set_from_loader_error (error);
+		signature = mono_metadata_parse_method_signature_full (img, container, idx, sig_body, NULL, error);
+		if (!signature)
 			return NULL;
-		}
 
 		if (can_cache_signature) {
 			mono_image_lock (img);

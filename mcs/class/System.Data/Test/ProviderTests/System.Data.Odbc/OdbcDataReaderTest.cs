@@ -222,9 +222,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Ignore ("dataIndex is ignored")]
-#endif
 		public void GetBytes_DataIndex_Negative ()
 		{
 			IDbCommand cmd = conn.CreateCommand ();

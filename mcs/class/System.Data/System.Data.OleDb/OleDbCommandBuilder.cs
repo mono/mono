@@ -47,17 +47,6 @@ namespace System.Data.OleDb
 		#region Fields
 
 		OleDbDataAdapter adapter;
-#if ONLY_1_1
-		string quotePrefix;
-		string quoteSuffix;
-		private DataTable		_schema;
-		private string			_tableName;
-		private OleDbCommand	_insertCommand;
-		private OleDbCommand	_updateCommand;
-		private OleDbCommand	_deleteCommand;
-
-		bool _disposed;
-#endif
 		#endregion // Fields
 
 		#region Constructors
@@ -119,26 +108,6 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-#if ONLY_1_1
-		protected override void Dispose (bool disposing)
-		{
-			if (_disposed)
-				return;
-			
-			if (disposing) {
-				// dispose managed resource
-				if (_insertCommand != null) _insertCommand.Dispose ();
-				if (_updateCommand != null) _updateCommand.Dispose ();
-				if (_deleteCommand != null) _deleteCommand.Dispose ();
-
-				_insertCommand = null;
-				_updateCommand = null;
-				_deleteCommand = null;
-				_schema = null;
-			}
-			_disposed = true;
-		}
-#endif
 
 		[MonoTODO]
 		public new OleDbCommand GetDeleteCommand ()

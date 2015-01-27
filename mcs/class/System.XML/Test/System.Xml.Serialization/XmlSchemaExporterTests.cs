@@ -801,9 +801,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS.NET 1.x does not escape spaces in a type name, bug is fixed in .NET 2.0
-#endif
 		public void ExportClass_TestSpace ()
 		{
 			XmlSchemas schemas = Export (typeof (TestSpace), "NSTestSpace");
@@ -1584,9 +1581,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSEmployeeSchema\" elementFormDefault=\"qualified\" targetNamespace=\"NSEmployeeSchema\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-#if ONLY_1_1
-				"  <xs:import namespace=\"urn:types-devx-com\" />{0}" +
-#endif
 				"  <xs:element name=\"EmployeeSchema\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
@@ -1619,9 +1613,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-#if ONLY_1_1
-				"  <xs:import namespace=\"urn:types-devx-com\" />{0}" +
-#endif
 				"  <xs:element name=\"EmployeeSchema\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +

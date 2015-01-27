@@ -128,7 +128,9 @@ System.Net.Security/ProtectionLevel.cs
 System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslPolicyErrors.cs
 System.Net.Security/SslStream.cs
-System.Net.Sockets/AddressFamily.cs
+System.Net/SocketAddress.cs
+System.Net/SocketPermissionAttribute.cs
+System.Net/SocketPermission.cs
 System.Net.Sockets/AddressFamily.cs
 System.Net.Sockets/IOControlCode.cs
 System.Net.Sockets/IPPacketInformation.cs
@@ -176,6 +178,7 @@ System.Net/DnsEndPoint.cs
 System.Net/EndPoint.cs
 System.Net/EndPointListener.cs
 System.Net/EndPointManager.cs
+System.Net/EndpointPermission.cs
 System.Net/FileWebRequest.cs
 System.Net/FileWebRequestCreator.cs
 System.Net/FileWebResponse.cs
@@ -188,7 +191,6 @@ System.Net/FtpWebRequest.cs
 System.Net/FtpWebResponse.cs
 System.Net/GlobalProxySelection.cs
 System.Net/HttpConnection.cs
-System.Net/HttpContinueDelegate.cs
 System.Net/HttpListener.cs
 System.Net/HttpListenerBasicIdentity.cs
 System.Net/HttpListenerContext.cs
@@ -359,15 +361,11 @@ System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
 System.Runtime.InteropServices/HandleCollector.cs
 System.Windows.Input/ICommand.cs
 
-ReferenceSources/ExceptionHelper.cs
-ReferenceSources/GlobalLog.cs
-ReferenceSources/HttpKnownHeaderNames.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/SR.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/SystemNetworkCredential.cs
-ReferenceSources/ValidationHelper.cs
 ReferenceSources/WebHeaderCollectionType.cs
 ReferenceSources/Win32Exception.cs
 
@@ -700,11 +698,13 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/referencesource/System/net/System/Net/_BufferOffsetSize.cs
 ../../../external/referencesource/System/net/System/Net/_LazyAsyncResult.cs
+../../../external/referencesource/System/net/System/Net/_LoggingObject.cs
 ../../../external/referencesource/System/net/System/Net/_ScatterGatherBuffers.cs
 ../../../external/referencesource/System/net/System/Net/cookie.cs
 ../../../external/referencesource/System/net/System/Net/cookiecollection.cs
 ../../../external/referencesource/System/net/System/Net/cookiecontainer.cs
 ../../../external/referencesource/System/net/System/Net/cookieexception.cs
+../../../external/referencesource/System/net/System/Net/Internal.cs
 ../../../external/referencesource/System/net/System/Net/webclient.cs
 ../../../external/referencesource/System/net/System/Net/WebPermission.cs
 ../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs

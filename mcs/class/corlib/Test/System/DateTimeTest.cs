@@ -1271,6 +1271,9 @@ namespace MonoTests.System
 		public void Parse_Bug53023b ()
 		{
 			foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
+				if (ci.Name == "ar-SA")
+					continue;
+
 				try {
 					DateTime.Parse ("01-Sep-05", ci);
 

@@ -3213,6 +3213,14 @@ PublicKeyToken=b77a5c561934e089"));
 
 #if !MONOTOUCH
 		[Test]
+		public void SpaceAfterComma () {
+			string strType = "System.Collections.Generic.Dictionary`2[[System.Int32,mscorlib], [System.String,mscorlib]],mscorlib";
+			Assert.IsTrue (Type.GetType (strType) != null);
+		}
+#endif
+
+#if !MONOTOUCH
+		[Test]
 		public void Bug506757 ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();

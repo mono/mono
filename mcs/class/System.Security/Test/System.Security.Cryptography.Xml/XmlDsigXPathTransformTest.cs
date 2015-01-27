@@ -95,9 +95,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void OnlyInner () 
 		{
 			XmlNodeList inner = InnerXml (""); // empty

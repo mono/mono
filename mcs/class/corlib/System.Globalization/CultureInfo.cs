@@ -629,7 +629,7 @@ namespace System.Globalization
 			iso3lang="IVL";
 			iso2lang="iv";
 			win3lang="IVL";
-			default_calendar_type = 1 << CalendarTypeBits;
+			default_calendar_type = 1 << CalendarTypeBits | (int) GregorianCalendarTypes.Localized;
 		}
 
 		private unsafe TextInfo CreateTextInfo (bool readOnly)
@@ -1002,7 +1002,7 @@ namespace System.Globalization
 
 			Type type = Type.GetType (name, false);
 			if (type == null)
-				return CreateCalendar (1 << CalendarTypeBits); // return invariant calandar if not found
+				return new GregorianCalendar (GregorianCalendarTypes.Localized); // return invariant calendar if not found
 			return (Calendar) Activator.CreateInstance (type);
 		}
 

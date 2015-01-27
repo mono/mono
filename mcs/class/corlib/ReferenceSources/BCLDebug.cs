@@ -13,5 +13,10 @@ namespace System
 		internal static void Correctness(bool expr, string msg)
 		{
 		}
+
+		[Conditional("_DEBUG")]
+		static public void Log (string message)
+		{
+		}
 	}
 }

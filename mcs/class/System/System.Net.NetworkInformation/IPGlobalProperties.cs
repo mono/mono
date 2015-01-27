@@ -4,6 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
@@ -43,6 +44,9 @@ namespace System.Net.NetworkInformation {
 
 		public static IPGlobalProperties GetIPGlobalProperties ()
 		{
+#if MONODROID
+			return new AndroidIPGlobalProperties ();
+#else
 			switch (Environment.OSVersion.Platform) {
 			case PlatformID.Unix:
 				MibIPGlobalProperties impl = null;
@@ -60,6 +64,7 @@ namespace System.Net.NetworkInformation {
 			default:
 				return new Win32IPGlobalProperties ();
 			}
+#endif
 		}
 
 		internal static IPGlobalProperties InternalGetIPGlobalProperties()
@@ -182,6 +187,15 @@ namespace System.Net.NetworkInformation {
 		public override UdpStatistics GetUdpIPv6Statistics ()
 		{
 			throw new NotImplementedException ();
+		}
+	}
+
+	sealed class AndroidIPGlobalProperties : UnixIPGlobalProperties
+	{
+		public override string DomainName {
+			get {
+				return String.Empty;
+			}
 		}
 	}
 

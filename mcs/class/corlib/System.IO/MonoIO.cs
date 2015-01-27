@@ -35,6 +35,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.Win32.SafeHandles;
 #if NET_2_1
 using System.IO.IsolatedStorage;
 #endif
@@ -203,7 +204,7 @@ namespace System.IO
 		public extern static bool SetFileAttributes (string path, FileAttributes attrs, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static MonoFileType GetFileType (IntPtr handle, out MonoIOError error);
+		public extern static MonoFileType GetFileType (SafeHandle safeHandle, out MonoIOError error);
 
 		//
 		// Find file methods
@@ -288,41 +289,41 @@ namespace System.IO
 						  FileShare share,
 						  FileOptions options,
 						  out MonoIOError error);
-		
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool Close (IntPtr handle,
 						 out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int Read (IntPtr handle, byte [] dest,
+		public extern static int Read (SafeHandle safeHandle, byte [] dest,
 					       int dest_offset, int count,
 					       out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int Write (IntPtr handle, [In] byte [] src,
+		public extern static int Write (SafeHandle safeHandle, [In] byte [] src,
 						int src_offset, int count,
 						out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static long Seek (IntPtr handle, long offset,
+		public extern static long Seek (SafeHandle safeHandle, long offset,
 						SeekOrigin origin,
 						out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool Flush (IntPtr handle,
+		public extern static bool Flush (SafeHandle safeHandle,
 						 out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static long GetLength (IntPtr handle,
+		public extern static long GetLength (SafeHandle handle,
 						     out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetLength (IntPtr handle,
+		public extern static bool SetLength (SafeHandle safeHandle,
 						     long length,
 						     out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetFileTime (IntPtr handle,
+		public extern static bool SetFileTime (SafeHandle safeHandle,
 						       long creation_time,
 						       long last_access_time,
 						       long last_write_time,
@@ -393,7 +394,7 @@ namespace System.IO
 				break;
 			}
 
-			result = SetFileTime (handle, creation_time,
+			result = SetFileTime (new SafeFileHandle(handle, false), creation_time,
 					      last_access_time,
 					      last_write_time, out error);
 
@@ -404,12 +405,12 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void Lock (IntPtr handle,
+		public extern static void Lock (SafeHandle safeHandle,
 						long position, long length,
 						out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void Unlock (IntPtr handle,
+		public extern static void Unlock (SafeHandle safeHandle,
 						  long position, long length,
 						  out MonoIOError error);
 

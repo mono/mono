@@ -64,10 +64,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (NotSupportedException))]
-		[Category ("ValueAdd")] // Is this worth fixing, or is this considered, "extra value"?
-#endif
 		public void TestHasElementTypeEnumBuilderComplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -320,10 +316,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNotNull (type.Namespace, "#V7");
 			Assert.IsNotNull (type.UnderlyingSystemType, "#V8");
 
-#if ONLY_1_1
-			// on .NET 2.0, module is name is fixed to 
-			Assert.AreEqual (_moduleName, type.Module.Name, "#V9");
-#endif
 			Assert.AreEqual (_enumNamespace, type.Namespace, "#V10");
 			Assert.AreEqual (_enumName, type.Name, "#V11");
 			Assert.AreEqual (typeof (Enum), type.BaseType, "#V12");

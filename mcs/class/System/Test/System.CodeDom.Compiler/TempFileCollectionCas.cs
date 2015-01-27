@@ -136,9 +136,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "Mono")]
 		[ExpectedException (typeof (SecurityException))]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
-#endif
 		public void BasePath_Deny_EnvironmentPermission ()
 		{
 			TempFileCollection tfc = new TempFileCollection ();
@@ -149,9 +146,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[FileIOPermission (SecurityAction.PermitOnly, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
-#endif
 		public void BasePath_PermitOnly_FileIOPermission ()
 		{
 			TempFileCollection tfc = new TempFileCollection ();
@@ -182,9 +176,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "Mono")]
 		[ExpectedException (typeof (SecurityException))]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
-#endif
 		public void AddExtension_Deny_EnvironmentPermission ()
 		{
 			TempFileCollection tfc = new TempFileCollection ();
@@ -195,9 +186,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[FileIOPermission (SecurityAction.PermitOnly, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
-#endif
 		public void AddExtension_PermitOnly_FileIOPermission ()
 		{
 			TempFileCollection tfc = new TempFileCollection ();
@@ -228,9 +216,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "Mono")]
 		[ExpectedException (typeof (SecurityException))]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
-#endif
 		public void AddExtension2_Deny_EnvironmentPermission ()
 		{
 			TempFileCollection tfc = new TempFileCollection ();
@@ -241,9 +226,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		[Test]
 		[FileIOPermission (SecurityAction.PermitOnly, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS doesn't check for Environment under 1.x
-#endif
 		public void AddExtension2_PermitOnly_FileIOPermission ()
 		{
 			TempFileCollection tfc = new TempFileCollection ();

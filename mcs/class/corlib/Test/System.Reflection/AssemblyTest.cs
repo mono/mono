@@ -338,9 +338,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #78517
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS.NET 1.x throws FileLoadException
-#endif
 		public void LoadFrom_Empty_Assembly ()
 		{
 			string tempFile = Path.GetTempFileName ();

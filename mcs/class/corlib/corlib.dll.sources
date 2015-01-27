@@ -325,12 +325,9 @@ System.Diagnostics.SymbolStore/SymbolToken.cs
 System.Diagnostics.SymbolStore/SymDocumentType.cs
 System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
-System.Globalization/Calendar.cs
 System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
-System.Globalization/CalendricalCalculations.cs
 System.Globalization/CharUnicodeInfo.cs
-System.Globalization/ChineseLunisolarCalendar.cs
 System.Globalization/CodePageDataItem.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
@@ -341,31 +338,17 @@ System.Globalization/DateTimeFormatInfo.cs
 System.Globalization/DateTimeStyles.cs
 System.Globalization/DaylightTime.cs
 System.Globalization/DigitShapes.cs
-System.Globalization/EastAsianLunisolarCalendar.cs
-System.Globalization/GregorianCalendar.cs
 System.Globalization/GregorianCalendarTypes.cs
-System.Globalization/HebrewCalendar.cs
-System.Globalization/HijriCalendar.cs
 System.Globalization/IdnMapping.cs
-System.Globalization/JapaneseCalendar.cs
-System.Globalization/JapaneseLunisolarCalendar.cs
-System.Globalization/JulianCalendar.cs
-System.Globalization/KoreanCalendar.cs
-System.Globalization/KoreanLunisolarCalendar.cs
 System.Globalization/NumberFormatInfo.cs
 System.Globalization/NumberStyles.cs
-System.Globalization/PersianCalendar.cs
 System.Globalization/RegionInfo.cs
 System.Globalization/RegionInfo.MonoTouch.cs
 System.Globalization/SortVersion.cs
 System.Globalization/StringInfo.cs
-System.Globalization/TaiwanCalendar.cs
-System.Globalization/TaiwanLunisolarCalendar.cs
 System.Globalization/TextElementEnumerator.cs
 System.Globalization/TextInfo.cs
-System.Globalization/ThaiBuddhistCalendar.cs
 System.Globalization/TimeSpanStyles.cs
-System.Globalization/UmAlQuraCalendar.cs
 System.Globalization/UnicodeCategory.cs
 System.IO/BinaryReader.cs
 System.IO/BinaryWriter.cs
@@ -1444,27 +1427,12 @@ System.Threading/Volatile.cs
 System.Threading/WaitCallback.cs
 System.Threading/WaitHandle.cs
 System.Threading/WaitOrTimerCallback.cs
-System.Collections.Generic/CollectionDebuggerView.cs
-System.Collections.Generic/Dictionary.cs
-System.Collections.Generic/ICollection.cs
-System.Collections.Generic/IEnumerable.cs
-System.Collections.Generic/IEnumerator.cs
-System.Collections.Generic/IList.cs
-System.Collections.Generic/IComparer.cs
-System.Collections.Generic/IEqualityComparer.cs
-System.Collections.Generic/IDictionary.cs
-System.Collections.Generic/IReadOnlyCollection.cs
-System.Collections.Generic/IReadOnlyList.cs
-System.Collections.Generic/IReadOnlyDictionary.cs
-System.Collections.Generic/KeyValuePair.cs
-System.Collections.Generic/EqualityComparer.cs
-System.Collections.Generic/KeyNotFoundException.cs
-System.Collections.Generic/List.cs
 System/Action.cs
 System/Comparison.cs
 System/Converter.cs
 System/Predicate.cs
 System.Collections.Generic/Comparer.cs
+System.Collections.Generic/EqualityComparer.cs
 
 System.Threading.Tasks/DecoupledTask.cs
 System.Threading.Tasks/TaskConstants.cs
@@ -1477,6 +1445,7 @@ System.Threading/Watch.cs
 
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
+ReferenceSources/CalendarData.cs
 ReferenceSources/Empty.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
@@ -1544,6 +1513,21 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/collections/structuralcomparisons.cs
 
 ../../../external/referencesource/mscorlib/system/collections/generic/debugview.cs
+../../../external/referencesource/mscorlib/system/collections/generic/dictionary.cs
+../../../external/referencesource/mscorlib/system/collections/generic/icollection.cs
+../../../external/referencesource/mscorlib/system/collections/generic/icomparer.cs
+../../../external/referencesource/mscorlib/system/collections/generic/idictionary.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ienumerable.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ienumerator.cs
+../../../external/referencesource/mscorlib/system/collections/generic/iequalitycomparer.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ilist.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ireadonlycollection.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ireadonlydictionary.cs
+../../../external/referencesource/mscorlib/system/collections/generic/ireadonlylist.cs
+../../../external/referencesource/mscorlib/system/collections/generic/keynotfoundexception.cs
+../../../external/referencesource/mscorlib/system/collections/generic/keyvaluepair.cs
+../../../external/referencesource/mscorlib/system/collections/generic/list.cs
+
 ../../../external/referencesource/mscorlib/system/collections/Concurrent/ConcurrentDictionary.cs
 ../../../external/referencesource/mscorlib/system/collections/Concurrent/ConcurrentQueue.cs
 ../../../external/referencesource/mscorlib/system/collections/Concurrent/ConcurrentStack.cs
@@ -1558,6 +1542,24 @@ ReferenceSources/JitHelpers.cs
 
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contracts.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
+
+../../../external/referencesource/mscorlib/system/globalization/calendar.cs
+../../../external/referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/eastasianlunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/gregoriancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/gregoriancalendarhelper.cs
+../../../external/referencesource/mscorlib/system/globalization/hebrewcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/hijricalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/japanesecalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/japaneselunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/juliancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/koreancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/koreanlunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/Persiancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/taiwancalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/taiwanlunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/thaibuddhistcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/umalquracalendar.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
@@ -1585,7 +1587,6 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/fixedbufferattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/hascopysemanticsattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/IAsyncStateMachine.cs
-../../../external/referencesource/mscorlib/system/runtime/compilerservices/idispatchconstantattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/indexernameattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/INotifyCompletion.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/internalsvisibletoattribute.cs
@@ -1620,6 +1621,8 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/TypeForwardedToAttribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/unsafevaluetypeattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
+
+../../../external/referencesource/mscorlib/system/text/stringbuildercache.cs
 
 ../../../external/referencesource/mscorlib/system/threading/abandonedmutexexception.cs
 ../../../external/referencesource/mscorlib/system/threading/apartmentstate.cs

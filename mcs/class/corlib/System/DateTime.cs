@@ -2227,7 +2227,118 @@ namespace System
 			// This is the new .NET format, encodes the kind on the top bits
 			info.AddValue ("dateData", (UInt64)encoded);
 		}
-		
+
+#region Extracted from Microsoft reference sources
+
+        // Number of 100ns ticks per time unit
+        private const long TicksPerMillisecond = 10000;
+        private const long TicksPerSecond = TicksPerMillisecond * 1000;
+        private const long TicksPerMinute = TicksPerSecond * 60;
+        private const long TicksPerHour = TicksPerMinute * 60;
+        private const long TicksPerDay = TicksPerHour * 24;
+    
+        // Number of milliseconds per time unit
+        private const int MillisPerSecond = 1000;
+        private const int MillisPerMinute = MillisPerSecond * 60;
+        private const int MillisPerHour = MillisPerMinute * 60;
+        private const int MillisPerDay = MillisPerHour * 24;
+    
+        // Number of days in a non-leap year
+        private const int DaysPerYear = 365;
+        // Number of days in 4 years
+        private const int DaysPer4Years = DaysPerYear * 4 + 1;       // 1461
+        // Number of days in 100 years
+        private const int DaysPer100Years = DaysPer4Years * 25 - 1;  // 36524
+        // Number of days in 400 years
+        private const int DaysPer400Years = DaysPer100Years * 4 + 1; // 146097
+    
+        // Number of days from 1/1/0001 to 12/31/1600
+        private const int DaysTo1601 = DaysPer400Years * 4;          // 584388
+        // Number of days from 1/1/0001 to 12/30/1899
+        private const int DaysTo1899 = DaysPer400Years * 4 + DaysPer100Years * 3 - 367;
+        // Number of days from 1/1/0001 to 12/31/9999
+        private const int DaysTo10000 = DaysPer400Years * 25 - 366;  // 3652059
+    
+        internal const long MinTicks = 0;
+        internal const long MaxTicks = DaysTo10000 * TicksPerDay - 1;
+        private const long MaxMillis = (long)DaysTo10000 * MillisPerDay;
+    
+        private const long FileTimeOffset = DaysTo1601 * TicksPerDay;
+        private const long DoubleDateOffset = DaysTo1899 * TicksPerDay;
+        // The minimum OA date is 0100/01/01 (Note it's year 100).
+        // The maximum OA date is 9999/12/31
+        private const long OADateMinAsTicks = (DaysPer100Years - DaysPerYear) * TicksPerDay;
+        // All OA dates must be greater than (not >=) OADateMinAsDouble
+        private const double OADateMinAsDouble = -657435.0;
+        // All OA dates must be less than (not <=) OADateMaxAsDouble
+        private const double OADateMaxAsDouble = 2958466.0;
+    
+        private const int DatePartYear = 0;
+        private const int DatePartDayOfYear = 1;
+        private const int DatePartMonth = 2;
+        private const int DatePartDay = 3;
+    
+        private static readonly int[] DaysToMonth365 = {
+            0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
+        private static readonly int[] DaysToMonth366 = {
+            0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366};
+
+        // Returns the tick count corresponding to the given year, month, and day.
+        // Will check the if the parameters are valid.
+        private static long DateToTicks(int year, int month, int day) {     
+            if (year >= 1 && year <= 9999 && month >= 1 && month <= 12) {
+                int[] days = IsLeapYear(year)? DaysToMonth366: DaysToMonth365;
+                if (day >= 1 && day <= days[month] - days[month - 1]) {
+                    int y = year - 1;
+                    int n = y * 365 + y / 4 - y / 100 + y / 400 + days[month - 1] + day - 1;
+                    return n * TicksPerDay;
+                }
+            }
+            throw new ArgumentOutOfRangeException(null, Environment.GetResourceString("ArgumentOutOfRange_BadYearMonthDay"));
+        }
+
+        // Return the tick count corresponding to the given hour, minute, second.
+        // Will check the if the parameters are valid.
+        private static long TimeToTicks(int hour, int minute, int second)
+        {
+            //TimeSpan.TimeToTicks is a family access function which does no error checking, so
+            //we need to put some error checking out here.
+            if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60 && second >=0 && second < 60)
+            {
+                return (TimeSpan.TimeToTicks(hour, minute, second));
+            }
+            throw new ArgumentOutOfRangeException(null, Environment.GetResourceString("ArgumentOutOfRange_BadHourMinuteSecond"));
+        }        
+
+        // Tries to construct a DateTime from a given year, month, day, hour,
+        // minute, second and millisecond.
+        //
+        internal static Boolean TryCreate(int year, int month, int day, int hour, int minute, int second, int millisecond, out DateTime result) {
+            result = DateTime.MinValue;
+            if (year < 1 || year > 9999 || month < 1 || month > 12) {
+                return false;
+            }
+            int[] days = IsLeapYear(year) ? DaysToMonth366 : DaysToMonth365;
+            if (day < 1 || day > days[month] - days[month - 1]) {
+                return false;
+            }                
+            if (hour < 0 || hour >= 24 || minute < 0 || minute >= 60 || second < 0 || second >= 60) {
+                return false;
+            }                
+            if (millisecond < 0 || millisecond >= MillisPerSecond) {
+                return false;
+            }
+            long ticks = DateToTicks(year, month, day) + TimeToTicks(hour, minute, second);
+            
+            ticks += millisecond * TicksPerMillisecond;
+            if (ticks < MinTicks || ticks > MaxTicks) {
+                return false;
+            }
+            result = new DateTime(ticks, DateTimeKind.Unspecified);
+            return true;
+        }    		
+#endregion
+
 #if MONOTOUCH
 		static DateTime () {
 			if (MonoTouchAOTHelper.FalseFlag) {

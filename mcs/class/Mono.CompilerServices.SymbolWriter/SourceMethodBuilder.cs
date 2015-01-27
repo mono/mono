@@ -100,7 +100,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			int parent = CurrentBlock != null ? CurrentBlock.Index : -1;
 
 			CodeBlockEntry block = new CodeBlockEntry (
-				_blocks.Count + 1, parent, type, start_offset);
+				_blocks.Count, parent, type, start_offset);
 
 			_block_stack.Push (block);
 			_blocks.Add (block);

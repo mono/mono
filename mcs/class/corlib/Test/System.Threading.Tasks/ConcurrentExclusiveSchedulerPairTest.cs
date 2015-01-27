@@ -35,7 +35,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture]
-	[Ignore ("Not implemented yet")]
 	public class ConcurrentExclusiveSchedulerPairTest
 	{
 		ConcurrentExclusiveSchedulerPair schedPair;

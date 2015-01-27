@@ -48,7 +48,6 @@
 #
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
-memory_barrier: len:8 clob:a
 nop: len:4
 relaxed_nop: len:4
 break: len:20
@@ -421,5 +420,16 @@ atomic_exchange_i4: dest:i src1:i src2:i len:32
 atomic_exchange_i8: dest:i src1:i src2:i len:32
 atomic_cas_i4: dest:i src1:i src2:i src3:i len:32
 atomic_cas_i8: dest:i src1:i src2:i src3:i len:32
-
-
+memory_barrier: len:8 clob:a
+atomic_load_i1: dest:i src1:b len:20
+atomic_load_u1: dest:i src1:b len:20
+atomic_load_i2: dest:i src1:b len:20
+atomic_load_u2: dest:i src1:b len:20
+atomic_load_i4: dest:i src1:b len:16
+atomic_load_u4: dest:i src1:b len:16
+atomic_store_i1: dest:b src1:i len:16
+atomic_store_u1: dest:b src1:i len:16
+atomic_store_i2: dest:b src1:i len:16
+atomic_store_u2: dest:b src1:i len:16
+atomic_store_i4: dest:b src1:i len:16
+atomic_store_u4: dest:b src1:i len:16

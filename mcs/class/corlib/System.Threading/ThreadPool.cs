@@ -73,10 +73,9 @@ namespace System.Threading {
 			return true;
 		}
 
-#if !NET_2_1		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void GetAvailableThreads (out int workerThreads, out int completionPortThreads);
-#endif
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void GetMaxThreads (out int workerThreads, out int completionPortThreads);
 			

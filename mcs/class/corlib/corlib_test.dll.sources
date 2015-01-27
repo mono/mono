@@ -101,6 +101,7 @@ System.IO/DirectoryTest.cs
 System.IO/FileInfoTest.cs
 System.IO/FileNotFoundExceptionTest.cs
 System.IO/FileStreamTest.cs
+System.IO/FileStreamSafeHandleTest.cs
 System.IO/FileSystemInfoTest.cs
 System.IO/FileTest.cs
 System.IO/MemoryStreamTest.cs
@@ -478,6 +479,7 @@ System.Threading/ExecutionContextCas.cs
 System.Threading/MutexCas.cs
 System.Threading/ThreadCas.cs
 System.Threading/WaitHandleCas.cs
+System.Threading.Tasks/ConcurrentExclusiveSchedulerPairTest.cs
 System.Threading.Tasks/TaskTest.cs
 System.Threading.Tasks/Task_T_Test.cs
 System.Threading.Tasks/TaskSchedulerTest.cs

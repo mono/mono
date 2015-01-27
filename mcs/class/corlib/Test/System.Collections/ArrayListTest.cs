@@ -1821,9 +1821,6 @@ namespace MonoTests.System.Collections
 		}
 
 		[Test]
-#if ONLY_1_1
-	[Category ("NotDotNet")] // MS bug
-#endif
 		public void AddRange_GetRange ()
 		{
 			ArrayList source = ArrayList.Adapter (new object [] { "1", "2" });
@@ -1840,9 +1837,6 @@ namespace MonoTests.System.Collections
 		}
 
 		[Test]
-#if ONLY_1_1
-	[Category ("NotDotNet")] // MS bug
-#endif
 		public void IterateSelf ()
 		{
 			ArrayList list = new ArrayList ();

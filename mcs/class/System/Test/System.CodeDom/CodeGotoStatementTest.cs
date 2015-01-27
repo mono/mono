@@ -100,19 +100,12 @@ namespace MonoTests.System.CodeDom
 		public void Constructor1_NullLabel ()
 		{
 			CodeGotoStatement cgs = new CodeGotoStatement ((string) null);
-#if ONLY_1_1
-			Assert.IsNull (cgs.Label, "#1");
-#endif
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor1_EmptyLabel () {
 			CodeGotoStatement cgs = new CodeGotoStatement (string.Empty);
-#if ONLY_1_1
-			Assert.IsNotNull (cgs.Label, "#1");
-			Assert.AreEqual (string.Empty, cgs.Label, "#2");
-#endif
 		}
 
 		[Test]
@@ -121,9 +114,6 @@ namespace MonoTests.System.CodeDom
 		{
 			CodeGotoStatement cgs = new CodeGotoStatement ("mono");
 			cgs.Label = null;
-#if ONLY_1_1
-			Assert.IsNull (cgs.Label, "#1");
-#endif
 		}
 
 		[Test]
@@ -131,10 +121,6 @@ namespace MonoTests.System.CodeDom
 		public void Label_Empty () {
 			CodeGotoStatement cgs = new CodeGotoStatement ("mono");
 			cgs.Label = string.Empty;
-#if ONLY_1_1
-			Assert.IsNotNull (cgs.Label, "#1");
-			Assert.AreEqual (string.Empty, cgs.Label, "#2");
-#endif
 		}
 	}
 }

@@ -171,7 +171,7 @@ namespace System.Runtime.InteropServices
 				RunRelease ();
 				disposed = true;
 			} else {
-				if (owns_handle && !IsInvalid){
+				if (owns_handle && !closed && !IsInvalid){
 					ReleaseHandle ();
 				}
 			}

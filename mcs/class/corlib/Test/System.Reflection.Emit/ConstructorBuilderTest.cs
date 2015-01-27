@@ -378,9 +378,6 @@ public class ConstructorBuilderTest
 	}
 
 	[Test]
-#if ONLY_1_1
-	[Category ("NotDotNet")] // ArgumentNullException in GetParameters
-#endif
 	public void GetParameters_Complete2 ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (

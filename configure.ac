@@ -1144,6 +1144,12 @@ AC_TRY_COMPILE([
 
 AC_CHECK_HEADERS(nacl/nacl_dyncode.h)
 
+dnl ***********************************
+dnl *** Checks for signals
+dnl ***********************************
+AC_CHECK_HEADERS(signal.h)
+AC_CHECK_FUNCS(sigaction)
+
 if test x$target_win32 = xno; then
 
 	dnl hires monotonic clock support
@@ -1704,11 +1710,23 @@ if test x$target_win32 = xno; then
 	AC_CHECK_FUNCS(pthread_attr_getstack pthread_attr_getstacksize)
 	AC_CHECK_FUNCS(pthread_get_stacksize_np pthread_get_stackaddr_np)
 
-	dnl ***********************************
-	dnl *** Checks for signals
-	dnl ***********************************
-	AC_CHECK_HEADERS(signal.h)
-	AC_CHECK_FUNCS(sigaction)
+	dnl **********************************
+	dnl *** Check for mincore ***
+	dnl **********************************
+	AC_MSG_CHECKING(for mincore)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <sys/types.h>
+		#include <sys/mman.h>
+	], [
+		mincore(NULL, 0, NULL);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_MINCORE, 1, [Have mincore])
+	], [
+		AC_MSG_RESULT(no)
+	])
 
 	dnl ***********************************
 	dnl *** Checks for working __thread ***
@@ -2688,7 +2706,9 @@ if test "x$enable_llvm" = "xyes"; then
          -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore \
          -lLLVMSupport -lstdc++"
        LLVM_LIBS="$LLVM_LIBS $LLVM_SYSTEM_LIBS"
-       llvm_api_version=1
+
+       llvm_config_path=$with_llvm/include/llvm/Config/llvm-config.h
+       llvm_api_version=`awk '/MONO_API_VERSION/ { print $3 }' $llvm_config_path`
    fi  
 
    if test "x$llvm_api_version" = "x"; then
