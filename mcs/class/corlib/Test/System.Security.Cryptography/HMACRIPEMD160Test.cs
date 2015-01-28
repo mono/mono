@@ -422,6 +422,7 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual (160, hmac.HashSize, "HMACRIPEMD160.HashSize");
 			Assert.AreEqual (1, hmac.InputBlockSize, "HMACRIPEMD160.InputBlockSize");
 			Assert.AreEqual (1, hmac.OutputBlockSize, "HMACRIPEMD160.OutputBlockSize");
+			Assert.AreEqual (64, hmac.Key.Length, "HMACRIPEMD160.Key.Length");
 			Assert.AreEqual ("System.Security.Cryptography.HMACRIPEMD160", hmac.ToString (), "HMACRIPEMD160.ToString()");
 		}
 
