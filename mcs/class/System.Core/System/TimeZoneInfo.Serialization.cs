@@ -24,8 +24,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if INSIDE_CORLIB || (NET_3_5 && !NET_4_0 && !MOBILE)
-
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -210,5 +208,3 @@ namespace System
 		}
 	}
 }
-
-#endif

@@ -2,7 +2,6 @@
 
 #include dynamic_System.Core.dll.sources
 
-System/TimeZoneInfo.Android.cs
 System.Security.Cryptography/AesCryptoServiceProvider.cs
 System.Security.Cryptography/AesManaged.cs
 System.Security.Cryptography/AesTransform.cs

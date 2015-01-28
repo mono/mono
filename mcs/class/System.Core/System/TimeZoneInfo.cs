@@ -30,13 +30,6 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
-
-#if !INSIDE_CORLIB && NET_4_0
-
-[assembly:TypeForwardedTo (typeof(TimeZoneInfo))]
-
-#elif INSIDE_CORLIB || (NET_3_5 && !NET_4_0 && !MOBILE)
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
@@ -1300,5 +1293,3 @@ namespace System
 #endif
 	}
 }
-
-#endif

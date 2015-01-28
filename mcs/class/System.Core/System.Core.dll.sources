@@ -6,10 +6,6 @@ ReferenceSources/Set.cs
 System/Actions.cs
 System/Funcs.cs
 System/InvalidTimeZoneException.cs
-System/TimeZoneInfo.AdjustmentRule.cs
-System/TimeZoneInfo.cs
-System/TimeZoneInfo.Serialization.cs
-System/TimeZoneInfo.TransitionTime.cs
 System/TimeZoneNotFoundException.cs
 System.Runtime.CompilerServices/DynamicAttribute.cs
 System.Runtime.CompilerServices/ExecutionScope.cs
