@@ -326,6 +326,8 @@ mono_networking_addr_to_str (MonoAddress *address, char *buffer, socklen_t bufle
 
 #endif
 
+#if HAVE_NET_IF_H
+
 void
 mono_networking_init (void)
 {
@@ -337,3 +339,5 @@ mono_networking_shutdown (void)
 {
 	//nothing really
 }
+
+#endif
