@@ -30,9 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// Since 4.0 (both FX and SL) this type is defined in mscorlib - before 4.0 it was in System.Core.dll
-#if (INSIDE_CORLIB && (NET_4_0)) || (!INSIDE_CORLIB && !NET_4_0 && !MOBILE)
-
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -42,7 +39,6 @@ namespace System.Security.Cryptography {
 	// a.	FIPS PUB 197: Advanced Encryption Standard
 	//	http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf
 
-#if INSIDE_CORLIB
 	// since 4.0 (both FX and SL) this type now resides inside mscorlib.dll and link back to System.Core.dll
 	#if MOBILE
 	// version has not changed between SL3 (System.Core) and SL4
@@ -51,7 +47,6 @@ namespace System.Security.Cryptography {
 	// use 3.5 version
 	[TypeForwardedFrom ("System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	#endif
-#endif
 	public abstract class Aes : SymmetricAlgorithm {
 
 		public static new Aes Create () 
@@ -84,5 +79,4 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-#endif
 

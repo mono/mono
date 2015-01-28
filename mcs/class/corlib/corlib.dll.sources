@@ -1150,7 +1150,7 @@ System.Security.AccessControl/ResourceType.cs
 System.Security.AccessControl/SddlAccessRight.cs
 System.Security.AccessControl/SecurityInfos.cs
 System.Security.AccessControl/SystemAcl.cs
-../System.Core/System.Security.Cryptography/Aes.cs
+System.Security.Cryptography/Aes.cs
 System.Security.Claims/Claim.cs
 System.Security.Claims/ClaimsIdentity.cs
 System.Security.Claims/ClaimsPrincipal.cs
