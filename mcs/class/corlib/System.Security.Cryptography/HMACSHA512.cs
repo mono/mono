@@ -49,7 +49,7 @@ namespace System.Security.Cryptography {
 #endif
 
 		public HMACSHA512 ()
-			: this (KeyBuilder.Key (8))
+			: this (KeyBuilder.Key (128))
 		{
 		}
 
