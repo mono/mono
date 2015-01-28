@@ -68,6 +68,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void Invariants () 
 		{
+			var algo = new HMACSHA256 ();
 			Assert.IsTrue (algo.CanReuseTransform, "HMACSHA256.CanReuseTransform");
 			Assert.IsTrue (algo.CanTransformMultipleBlocks, "HMACSHA256.CanTransformMultipleBlocks");
 			Assert.AreEqual ("SHA256", algo.HashName, "HMACSHA256.HashName");

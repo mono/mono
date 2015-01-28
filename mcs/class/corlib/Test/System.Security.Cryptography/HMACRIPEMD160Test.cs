@@ -416,6 +416,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void Invariants ()
 		{
+			var hmac = new HMACRIPEMD160 ();
 			Assert.IsTrue (hmac.CanReuseTransform, "HMACRIPEMD160.CanReuseTransform");
 			Assert.IsTrue (hmac.CanTransformMultipleBlocks, "HMACRIPEMD160.CanTransformMultipleBlocks");
 			Assert.AreEqual ("RIPEMD160", hmac.HashName, "HMACRIPEMD160.HashName");
