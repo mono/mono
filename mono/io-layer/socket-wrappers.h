@@ -36,6 +36,7 @@
 #define _wapi_shutdown shutdown 
 #define _wapi_socket WSASocket 
 #define _wapi_select select 
+#define _wapi_cleanup_networking WSACleanup
 
 /* No need to wrap FD_ZERO because it doesnt involve file
  * descriptors
