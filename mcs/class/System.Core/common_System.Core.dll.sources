@@ -1,15 +1,7 @@
 ../../build/common/SR.cs
 
 Assembly/AssemblyInfo.cs
-System/Actions.cs
-System/Funcs.cs
-System/InvalidTimeZoneException.cs
-System/TimeZoneNotFoundException.cs
 System/Util.cs
-System.Runtime.CompilerServices/DynamicAttribute.cs
-System.Runtime.CompilerServices/ExtensionAttribute.cs
-System.Runtime.CompilerServices/IStrongBox.cs
-System.Runtime.CompilerServices/StrongBox_T.cs
 System.Linq/Check.cs
 System.Linq/Enumerable.cs
 System.Linq/QueryableEnumerable.cs
@@ -31,23 +23,15 @@ System.Linq/SortContext.cs
 System.Linq/SortDirection.cs
 System.Linq/SortSequenceContext.cs
 System.Linq/IQueryProvider.cs
-System.Security.Cryptography/AesManaged.cs
-System.Threading/ThreadLockState.cs
-System.Threading/ReaderWriterLockSlimExtensions.cs
 System.Linq/EnumerableExecutor.cs
 System.Linq/EnumerableExecutor_T.cs
 System.Linq/EnumerableQuery.cs
 System.Linq/EnumerableQuery_T.cs
 System.IO.MemoryMappedFiles/MemoryMappedFile.cs
-System.IO.MemoryMappedFiles/MemoryMappedFileAccess.cs
-System.IO.MemoryMappedFiles/MemoryMappedFileOptions.cs
-System.IO.MemoryMappedFiles/MemoryMappedFileRights.cs
-System.IO.MemoryMappedFiles/MemoryMappedFileSecurity.cs
 System.IO.MemoryMappedFiles/MemoryMappedViewStream.cs
 System.IO.MemoryMappedFiles/MemoryMappedViewAccessor.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
-System.IO/HandleInheritability.cs
 System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/ExpressionTransformer.cs
 System.Linq.Expressions/DynamicExpressionVisitor.cs
@@ -55,12 +39,25 @@ System.Linq.Expressions/DynamicExpressionVisitor.cs
 ReferenceSources/Set.cs
 ReferenceSources/SR.cs
 
+../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/Action.cs
+../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/Extension.cs
+../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/Function.cs
+../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/StrongBox.cs
+
+../../../external/referencesource/System.Core/System/FuncAndAction.cs
+../../../external/referencesource/System.Core/System/InvalidTimeZoneException.cs
+../../../external/referencesource/System.Core/System/TimeZoneInfo.cs
+../../../external/referencesource/System.Core/System/TimeZoneNotFoundException.cs
+
 ../../../external/referencesource/System.Core/System/Collections/Generic/BitHelper.cs
 ../../../external/referencesource/System.Core/System/Collections/Generic/HashSet.cs
 ../../../external/referencesource/System.Core/System/Collections/Generic/HashSetDebugView.cs
 ../../../external/referencesource/System.Core/System/Collections/Generic/HashSetEqualityComparer.cs
 
-../../../external/referencesource/System.Core/System/Runtime/CompilerServices/ExecutionScope.cs
+../../../external/referencesource/System.Core/System/IO/Enums.cs
+
+../../../external/referencesource/System.Core/System/IO/MemoryMappedFiles/Enums.cs
+../../../external/referencesource/System.Core/System/IO/MemoryMappedFiles/MemoryMappedFileSecurity.cs
 
 ../../../external/referencesource/System.Core/System/Linq/ParallelEnumerable.cs
 ../../../external/referencesource/System.Core/System/Linq/ParallelMergeOptions.cs
@@ -197,6 +194,12 @@ ReferenceSources/SR.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/Util.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/Wrapper.cs
 ../../../external/referencesource/System.Core/System/Linq/Parallel/Utils/WrapperEqualityComparer.cs
+
+../../../external/referencesource/System.Core/System/Runtime/CompilerServices/DynamicAttribute.cs
+../../../external/referencesource/System.Core/System/Runtime/CompilerServices/ExecutionScope.cs
+
+../../../external/referencesource/System.Core/System/Security/Cryptography/Aes.cs
+../../../external/referencesource/System.Core/System/Security/Cryptography/AesManaged.cs
 
 ../../../external/referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 

@@ -175,7 +175,7 @@ namespace System.Security.Cryptography {
 		public virtual CipherMode Mode {
 			get { return this.ModeValue; }
 			set {
-				if (!Enum.IsDefined (ModeValue.GetType (), value)) {
+				if ((value < CipherMode.CBC) || (CipherMode.CFB < value)) {
 					throw new CryptographicException (
 						Locale.GetText ("Cipher mode not available"));
 				}

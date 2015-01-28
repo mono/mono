@@ -1,8 +1,6 @@
 #include common_System.Core.dll.sources
 #include dynamic_System.Core.dll.sources
 
-System.Threading/LockRecursionException.cs
-
 Microsoft.Win32.SafeHandles/SafePipeHandle.cs
 
 System.IO.Pipes/AnonymousPipeClientStream.cs
@@ -34,3 +32,5 @@ System.Security.Cryptography/SHA384Cng.cs
 System.Security.Cryptography/SHA384CryptoServiceProvider.cs
 System.Security.Cryptography/SHA512Cng.cs
 System.Security.Cryptography/SHA512CryptoServiceProvider.cs
+
+../../../external/referencesource/System.Core/System/threading/ReaderWriterLockSlim/LockRecursionException.cs
