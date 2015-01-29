@@ -867,6 +867,14 @@ command script import $PREFIX/lib/mono/lldb/mono.py
 .PP
 Where $PREFIX is the prefix value that you used when you configured
 Mono (typically /usr).
+.PP
+Once this is done, then you can inspect some Mono Runtime data structures,
+for example:
+.nf
+(lldb) p method
+
+(MonoMethod *) $0 = 0x05026ac0 [mscorlib]System.OutOfMemoryException:.ctor()
+.fi
 .SH SERIALIZATION
 Mono's XML serialization engine by default will use a reflection-based
 approach to serialize which might be slow for continuous processing
