@@ -504,7 +504,7 @@ namespace System.Xml.Serialization
 				stype = elem.SchemaType;
 				qname = elem.QualifiedName;
 			}
-			else if (elem.ElementType == XmlSchemaComplexType.AnyType)
+			else if (elem.ElementSchemaType == XmlSchemaComplexType.AnyType)
 			{
 				qname = anyType;
 				return true;
