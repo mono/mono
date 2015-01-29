@@ -5,25 +5,31 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6E1C7BDE-7B9E-47B0-A7B2-1561822FE922}</ProjectGuid>
+    <ProjectGuid>{EF11BD41-8AF8-4A15-A6B7-344BC9852EF6}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
+    <NoWarn>1699,1616,1699</NoWarn>
+    <OutputPath>./../../../class/lib/net_4_5/Facades</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
-    <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
+    <AssemblyName>System.ServiceModel.Security</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  
+    <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>../../msfinal.pub</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699</NoWarn>
+    <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -31,7 +37,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699</NoWarn>
+    <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -45,28 +51,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\..\tools\xbuild\XBuildConsts.cs" />
-    <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="Microsoft.Build.Utilities\AppDomainIsolatedTask.cs" />
-    <Compile Include="Microsoft.Build.Utilities\CommandLineBuilder.cs" />
-    <Compile Include="Microsoft.Build.Utilities\HostObjectInitializationStatus.cs" />
-    <Compile Include="Microsoft.Build.Utilities\IAsyncOperation.cs" />
-    <Compile Include="Microsoft.Build.Utilities\IProcessAsyncOperation.cs" />
-    <Compile Include="Microsoft.Build.Utilities\Logger.cs" />
-    <Compile Include="Microsoft.Build.Utilities\MSBuildErrorParser.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ProcessService.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ProcessWrapper.cs" />
-    <Compile Include="Microsoft.Build.Utilities\TargetDotNetFrameworkVersion.cs" />
-    <Compile Include="Microsoft.Build.Utilities\Task.cs" />
-    <Compile Include="Microsoft.Build.Utilities\TaskItem.cs" />
-    <Compile Include="Microsoft.Build.Utilities\TaskLoggingHelper.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ToolLocationHelper.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ToolTask.cs" />
-    <Compile Include="Mono.XBuild.Utilities\MonoLocationHelper.cs" />
-    <Compile Include="Mono.XBuild.Utilities\MSBuildUtils.cs" />
-    <Compile Include="Mono.XBuild.Utilities\ReservedNameUtils.cs" />  </ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="TypeForwarders.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -90,25 +76,17 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
+    <ProjectReference Include="../../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="../System/System-net_4_5.csproj">
-      <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
-      <Name>System-net_4_5</Name>
+    <ProjectReference Include="../../corlib/corlib-net_4_5.csproj">
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="../System.Core/System.Core-net_4_5.csproj">
-      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
-      <Name>System.Core-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
-      <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
-      <Name>System.Xml-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../Microsoft.Build.Framework/Microsoft.Build.Framework-net_4_5.csproj">
-      <Project>{DA3B9FEE-8FBD-4587-B760-65420765256A}</Project>
-      <Name>Microsoft.Build.Framework-net_4_5</Name>
+    <ProjectReference Include="../../System.ServiceModel/System.ServiceModel-net_4_5.csproj">
+      <Project>{F2156C09-C377-4945-A690-39CFBF3319B3}</Project>
+      <Name>System.ServiceModel-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
