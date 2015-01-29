@@ -218,7 +218,7 @@ print_entry (int type, void *data)
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
 		pes [2].type = t3; \
-		pes [2].name = #f2; \
+		pes [2].name = #f3; \
 		pes [2].data = &entry->f3; \
 		printf ("%s ", #method + strlen ("binary_protocol_"));
 #define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
@@ -233,7 +233,7 @@ print_entry (int type, void *data)
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
 		pes [2].type = t3; \
-		pes [2].name = #f2; \
+		pes [2].name = #f3; \
 		pes [2].data = &entry->f3; \
 		pes [3].type = t4; \
 		pes [3].name = #f4; \
@@ -251,7 +251,7 @@ print_entry (int type, void *data)
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
 		pes [2].type = t3; \
-		pes [2].name = #f2; \
+		pes [2].name = #f3; \
 		pes [2].data = &entry->f3; \
 		pes [3].type = t4; \
 		pes [3].name = #f4; \
@@ -272,7 +272,7 @@ print_entry (int type, void *data)
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
 		pes [2].type = t3; \
-		pes [2].name = #f2; \
+		pes [2].name = #f3; \
 		pes [2].data = &entry->f3; \
 		pes [3].type = t4; \
 		pes [3].name = #f4; \
