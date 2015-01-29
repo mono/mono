@@ -143,8 +143,7 @@ namespace System.Runtime.Serialization
 			if (schemas == null)
 				throw new ArgumentNullException ("schemas");
 
-			if (!schemas.IsCompiled)
-				schemas.Compile ();
+			PrepareSchemas (schemas);
 
 			foreach (XmlSchemaElement xe in schemas.GlobalElements.Values)
 				if (!CanImport (schemas, xe))
@@ -159,8 +158,7 @@ namespace System.Runtime.Serialization
 			if (typeNames == null)
 				throw new ArgumentNullException ("typeNames");
 
-			if (!schemas.IsCompiled)
-				schemas.Compile ();
+			PrepareSchemas (schemas);
 
 			foreach (var name in typeNames)
 				if (!CanImport (schemas, name))
@@ -175,8 +173,7 @@ namespace System.Runtime.Serialization
 			if (typeName == null)
 				throw new ArgumentNullException ("typeName");
 
-			if (!schemas.IsCompiled)
-				schemas.Compile ();
+			PrepareSchemas (schemas);
 
 			if (IsPredefinedType (typeName))
 				return true; // while it just ignores...
@@ -194,8 +191,7 @@ namespace System.Runtime.Serialization
 			if (element == null)
 				throw new ArgumentNullException ("element");
 
-			if (!schemas.IsCompiled)
-				schemas.Compile ();
+			PrepareSchemas (schemas);
 
 			if (element.ElementSchemaType != null)
 				return CanImport (schemas, element.ElementSchemaType as XmlSchemaType);
@@ -390,13 +386,21 @@ namespace System.Runtime.Serialization
 
 		// Import
 
+		void PrepareSchemas (XmlSchemaSet schemas)
+		{
+			if (!schemas.Contains (KnownTypeCollection.MSSimpleNamespace))
+				schemas.Add (XmlSchema.Read (GetType ().Assembly.GetManifestResourceStream ("mstypes.schema"), null));
+
+			if (!schemas.IsCompiled)
+				schemas.Compile ();
+		}
+
 		public void Import (XmlSchemaSet schemas)
 		{
 			if (schemas == null)
 				throw new ArgumentNullException ("schemas");
 
-			if (!schemas.IsCompiled)
-				schemas.Compile ();
+			PrepareSchemas (schemas);
 
 			foreach (XmlSchemaElement xe in schemas.GlobalElements.Values)
 				Import (schemas, xe);
@@ -420,8 +424,7 @@ namespace System.Runtime.Serialization
 			if (typeName == null)
 				throw new ArgumentNullException ("typeName");
 
-			if (!schemas.IsCompiled)
-				schemas.Compile ();
+			PrepareSchemas (schemas);
 
 			if (IsPredefinedType (typeName))
 				return;
