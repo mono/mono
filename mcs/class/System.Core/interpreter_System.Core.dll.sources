@@ -34,6 +34,7 @@
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/DebugInfoExpression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/DebugViewWriter.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/DefaultExpression.cs
+../dlr/Runtime/Microsoft.Scripting.Core/Ast/DynamicExpression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/ElementInit.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/Expression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/Expression.DebuggerProxy.cs
