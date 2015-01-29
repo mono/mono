@@ -59,7 +59,7 @@ read_entry (FILE *in, void **data)
 #define CUSTOM_PRINT(_)
 
 #define IS_ALWAYS_MATCH(_)
-#define IS_MATCH(_)
+#define MATCH_INDEX(_)
 #define IS_VTABLE_MATCH(_)
 
 #define END_PROTOCOL_ENTRY
@@ -122,7 +122,7 @@ is_always_match (int type)
 
 #define IS_ALWAYS_MATCH(is_always_match) \
 		return is_always_match;
-#define IS_MATCH(_)
+#define MATCH_INDEX(_)
 #define IS_VTABLE_MATCH(_)
 
 #define END_PROTOCOL_ENTRY
@@ -136,10 +136,16 @@ is_always_match (int type)
 
 #define WORKER_PREFIX(t)	(WORKER ((t)) ? "w" : " ")
 
+enum { NO_COLOR = -1 };
+
 typedef struct {
 	int type;
 	const char *name;
 	void *data;
+	/* The index of the ANSI color with which to highlight
+	 * this entry, or NO_COLOR for no highlighting.
+	 */
+	int color;
 } PrintEntry;
 
 
@@ -149,31 +155,48 @@ typedef struct {
 #define TYPE_POINTER 3
 
 static void
-print_entry_content (int entries_size, PrintEntry *entries)
+print_entry_content (int entries_size, PrintEntry *entries, gboolean color_output)
 {
 	int i;
 	for (i = 0; i < entries_size; ++i) {
+		printf ("%s%s ", i == 0 ? "" : " ", entries [i].name);
+		if (color_output && entries [i].color != NO_COLOR)
+			/* Set foreground color, excluding black & white. */
+			printf ("\x1B[%dm", 31 + (entries [i].color % 6));
 		switch (entries [i].type) {
 		case TYPE_INT:
-			printf ("%s%s %d", i == 0 ? "" : " ", entries [i].name, *(int*) entries [i].data);
+			printf ("%d", *(int*) entries [i].data);
 			break;
 		case TYPE_LONGLONG:
-			printf ("%s%s %lld", i == 0 ? "" : " ", entries [i].name, *(long long*) entries [i].data);
+			printf ("%lld", *(long long*) entries [i].data);
 			break;
 		case TYPE_SIZE:
-			printf ("%s%s %lu", i == 0 ? "" : " ", entries [i].name, *(size_t*) entries [i].data);
+			printf ("%lu", *(size_t*) entries [i].data);
 			break;
 		case TYPE_POINTER:
-			printf ("%s%s %p", i == 0 ? "" : " ", entries [i].name, *(gpointer*) entries [i].data);
+			printf ("%p", *(gpointer*) entries [i].data);
 			break;
 		default:
 			assert (0);
 		}
+		if (color_output && entries [i].color != NO_COLOR)
+			/* Reset foreground color to default. */
+			printf ("\x1B[0m");
 	}
 }
 
+static int
+index_color (int index, int num_nums, int *match_indices)
+{
+	int result;
+	for (result = 0; result < num_nums + 1; ++result)
+		if (index == match_indices [result])
+			return result;
+	return NO_COLOR;
+}
+
 static void
-print_entry (int type, void *data)
+print_entry (int type, void *data, int num_nums, int *match_indices, gboolean color_output)
 {
 	const char *always_prefix = is_always_match (type) ? "  " : "";
 	printf ("%s%s ", WORKER_PREFIX (type), always_prefix);
@@ -193,6 +216,7 @@ print_entry (int type, void *data)
 		pes [0].type = t1; \
 		pes [0].name = #f1; \
 		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
 		printf ("%s ", #method + strlen ("binary_protocol_"));
 #define BEGIN_PROTOCOL_ENTRY2(method,t1,f1,t2,f2) \
 	case PROTOCOL_ID(method): { \
@@ -202,9 +226,11 @@ print_entry (int type, void *data)
 		pes [0].type = t1; \
 		pes [0].name = #f1; \
 		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
 		pes [1].type = t2; \
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
 		printf ("%s ", #method + strlen ("binary_protocol_"));
 #define BEGIN_PROTOCOL_ENTRY3(method,t1,f1,t2,f2,t3,f3) \
 	case PROTOCOL_ID(method): { \
@@ -214,12 +240,15 @@ print_entry (int type, void *data)
 		pes [0].type = t1; \
 		pes [0].name = #f1; \
 		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
 		pes [1].type = t2; \
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
 		pes [2].type = t3; \
 		pes [2].name = #f3; \
 		pes [2].data = &entry->f3; \
+		pes [2].color = index_color(2, num_nums, match_indices); \
 		printf ("%s ", #method + strlen ("binary_protocol_"));
 #define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
 	case PROTOCOL_ID(method): { \
@@ -229,15 +258,19 @@ print_entry (int type, void *data)
 		pes [0].type = t1; \
 		pes [0].name = #f1; \
 		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
 		pes [1].type = t2; \
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
 		pes [2].type = t3; \
 		pes [2].name = #f3; \
 		pes [2].data = &entry->f3; \
+		pes [2].color = index_color(2, num_nums, match_indices); \
 		pes [3].type = t4; \
 		pes [3].name = #f4; \
 		pes [3].data = &entry->f4; \
+		pes [3].color = index_color(3, num_nums, match_indices); \
 		printf ("%s ", #method + strlen ("binary_protocol_"));
 #define BEGIN_PROTOCOL_ENTRY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
 	case PROTOCOL_ID(method): { \
@@ -247,18 +280,23 @@ print_entry (int type, void *data)
 		pes [0].type = t1; \
 		pes [0].name = #f1; \
 		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
 		pes [1].type = t2; \
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
 		pes [2].type = t3; \
 		pes [2].name = #f3; \
 		pes [2].data = &entry->f3; \
+		pes [2].color = index_color(2, num_nums, match_indices); \
 		pes [3].type = t4; \
 		pes [3].name = #f4; \
 		pes [3].data = &entry->f4; \
+		pes [3].color = index_color(3, num_nums, match_indices); \
 		pes [4].type = t5; \
 		pes [4].name = #f5; \
 		pes [4].data = &entry->f5; \
+		pes [4].color = index_color(4, num_nums, match_indices); \
 		printf ("%s ", #method + strlen ("binary_protocol_"));
 #define BEGIN_PROTOCOL_ENTRY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
 	case PROTOCOL_ID(method): { \
@@ -268,21 +306,27 @@ print_entry (int type, void *data)
 		pes [0].type = t1; \
 		pes [0].name = #f1; \
 		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
 		pes [1].type = t2; \
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
 		pes [2].type = t3; \
 		pes [2].name = #f3; \
 		pes [2].data = &entry->f3; \
+		pes [2].color = index_color(2, num_nums, match_indices); \
 		pes [3].type = t4; \
 		pes [3].name = #f4; \
 		pes [3].data = &entry->f4; \
+		pes [3].color = index_color(3, num_nums, match_indices); \
 		pes [4].type = t5; \
 		pes [4].name = #f5; \
 		pes [4].data = &entry->f5; \
+		pes [4].color = index_color(4, num_nums, match_indices); \
 		pes [5].type = t6; \
 		pes [5].name = #f6; \
 		pes [5].data = &entry->f6; \
+		pes [5].color = index_color(5, num_nums, match_indices); \
 		printf ("%s ", #method + strlen ("binary_protocol_"));
 
 #define BEGIN_PROTOCOL_ENTRY_HEAVY0(method) \
@@ -303,12 +347,12 @@ print_entry (int type, void *data)
 #define FLUSH()
 
 #define DEFAULT_PRINT() \
-	print_entry_content (pes_size, pes);
+	print_entry_content (pes_size, pes, color_output);
 #define CUSTOM_PRINT(print) \
 	print;
 
 #define IS_ALWAYS_MATCH(_)
-#define IS_MATCH(_)
+#define MATCH_INDEX(_)
 #define IS_VTABLE_MATCH(_)
 
 #define END_PROTOCOL_ENTRY \
@@ -340,8 +384,12 @@ matches_interval (gpointer ptr, gpointer start, int size)
 	return ptr >= start && (char*)ptr < (char*)start + size;
 }
 
-static gboolean
-is_match (gpointer ptr, int type, void *data)
+/* Returns the index of the field where a match was found,
+ * BINARY_PROTOCOL_NO_MATCH for no match, or
+ * BINARY_PROTOCOL_MATCH for a match with no index.
+ */
+static int
+match_index (gpointer ptr, int type, void *data)
 {
 	switch (TYPE (type)) {
 
@@ -387,7 +435,7 @@ is_match (gpointer ptr, int type, void *data)
 #define CUSTOM_PRINT(_)
 
 #define IS_ALWAYS_MATCH(_)
-#define IS_MATCH(block) \
+#define MATCH_INDEX(block) \
 		return (block);
 #define IS_VTABLE_MATCH(_)
 
@@ -450,7 +498,7 @@ is_vtable_match (gpointer ptr, int type, void *data)
 #define CUSTOM_PRINT(_)
 
 #define IS_ALWAYS_MATCH(_)
-#define IS_MATCH(block) \
+#define MATCH_INDEX(block) \
 		return (block);
 #define IS_VTABLE_MATCH(_)
 
@@ -487,6 +535,7 @@ main (int argc, char *argv[])
 	gboolean pause_times_stopped = FALSE;
 	gboolean pause_times_concurrent = FALSE;
 	gboolean pause_times_finish = FALSE;
+	gboolean color_output = FALSE;
 	long long pause_times_ts = 0;
 
 	for (i = 0; i < num_args; ++i) {
@@ -499,6 +548,8 @@ main (int argc, char *argv[])
 		} else if (!strcmp (arg, "-v") || !strcmp (arg, "--vtable")) {
 			vtables [num_vtables++] = strtoul (next_arg, NULL, 16);
 			++i;
+		} else if (!strcmp (arg, "-c") || !strcmp (arg, "--color")) {
+			color_output = TRUE;
 		} else {
 			nums [num_nums++] = strtoul (arg, NULL, 16);
 		}
@@ -541,12 +592,13 @@ main (int argc, char *argv[])
 			}
 			}
 		} else {
-			gboolean match = num_nums == 0 ? is_match (NULL, type, data) : FALSE;
+			int match_indices [num_nums + 1];
+			gboolean match = is_always_match (type);
+			match_indices [num_nums] = num_nums == 0 ? match_index (NULL, type, data) : BINARY_PROTOCOL_NO_MATCH;
+			match = match_indices [num_nums] != BINARY_PROTOCOL_NO_MATCH;
 			for (i = 0; i < num_nums; ++i) {
-				if (is_match ((gpointer) nums [i], type, data)) {
-					match = TRUE;
-					break;
-				}
+				match_indices [i] = match_index ((gpointer) nums [i], type, data);
+				match = match || match_indices [i] != BINARY_PROTOCOL_NO_MATCH;
 			}
 			if (!match) {
 				for (i = 0; i < num_vtables; ++i) {
@@ -559,7 +611,7 @@ main (int argc, char *argv[])
 			if (dump_all)
 				printf (match ? "* " : "  ");
 			if (match || dump_all)
-				print_entry (type, data);
+				print_entry (type, data, num_nums, match_indices, color_output);
 		}
 		free (data);
 	}
