@@ -1149,6 +1149,24 @@ namespace MonoTests.System
 		}
 #endif
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void HasFlagNull ()
+		{
+			SomeEnum x = SomeEnum.a;
+
+			x.HasFlag (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void HasFlagWrongType ()
+		{
+			SomeEnum x = SomeEnum.a;
+
+			x.HasFlag (SomeByteEnum.a);
+		}
+
 		[Flags]
 		enum SomeEnum
 		{
