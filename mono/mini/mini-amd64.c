@@ -6727,8 +6727,16 @@ mono_arch_is_int_overflow (void *sigctx, void *info)
 	int reg;
 	gint64 value;
 
-	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+#ifdef PLATFORM_WIN32
 
+	EXCEPTION_POINTERS* ep = (EXCEPTION_POINTERS*) info;
+	EXCEPTION_RECORD* er = ep->ExceptionRecord;
+	
+	return (er->ExceptionCode == EXCEPTION_INT_OVERFLOW) ? TRUE : FALSE;
+
+#else
+
+	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 	rip = (guint8*)ctx.rip;
 
 	if (IS_REX (rip [0])) {
@@ -6789,6 +6797,7 @@ mono_arch_is_int_overflow (void *sigctx, void *info)
 	}
 
 	return FALSE;
+#endif
 }
 
 guint32
