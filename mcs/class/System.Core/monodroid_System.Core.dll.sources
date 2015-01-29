@@ -3,3 +3,5 @@
 
 System.Security.Cryptography/AesCryptoServiceProvider.cs
 System.Security.Cryptography/AesTransform.cs
+
+../../../external/referencesource/System.Core/System/Security/Cryptography/AesManaged.cs
