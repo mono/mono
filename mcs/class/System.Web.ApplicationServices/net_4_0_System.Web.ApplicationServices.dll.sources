@@ -7,6 +7,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/SR.cs
 
 System.Web.Security/IMembershipHelper.cs
+ReferenceSources/ApplicationServicesStrings.cs
 
 ../../../external/referencesource/System.Web.ApplicationServices/Hosting/CustomLoaderAttribute.cs
 ../../../external/referencesource/System.Web.ApplicationServices/Hosting/ICustomLoaderHelperFunctions.cs
@@ -28,5 +29,4 @@ System.Web.Security/IMembershipHelper.cs
 ../../../external/referencesource/System.Web.ApplicationServices/Security/MembershipUserCollection.cs
 ../../../external/referencesource/System.Web.ApplicationServices/Security/MembershipUser.cs
 ../../../external/referencesource/System.Web.ApplicationServices/Properties/AssemblyInfo.cs
-../../../external/referencesource/System.Web.ApplicationServices/ApplicationServicesStrings.Designer.cs
 
