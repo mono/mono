@@ -1,13 +1,9 @@
-PROFILE = net_1_1
+PROFILE = net_4_5
 RUNTIME = MONO_PATH=../../../lib/$(PROFILE) mono --debug 
 #XMLDSIG_EXE_OPTIONS =
 XMLDSIG_EXE_OPTIONS = --decent-reader
 
-ifeq ($(PROFILE), net_2_0)
-CSCOMPILE = gmcs --debug -d:NET_2_0
-else
 CSCOMPILE = mcs --debug
-endif
 
 run-test: c14n.exe xmldsig.exe merlin-xmldsig-twenty-three
 	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-enveloped-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloped-dsa-c14n-1.txt

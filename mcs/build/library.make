@@ -79,14 +79,10 @@ secxml_libdir = $(the_libdir_base)secxml
 
 the_libdir = $(the_libdir_base)$(intermediate)
 
-ifdef LIBRARY_NEEDS_POSTPROCESSING
-build_libdir = fixup/$(PROFILE)/
-else
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 build_libdir = $(the_libdir)tmp/
 else
 build_libdir = $(the_libdir)
-endif
 endif
 
 the_lib   = $(the_libdir)$(LIBRARY_NAME)
@@ -243,13 +239,6 @@ dist-local: dist-default
 	for d in . $$subs ; do \
 	  case $$d in .) : ;; *) test ! -f $$d/ChangeLog || cp -p $$d/ChangeLog $(distdir)/$$d ;; esac ; done
 
-ifdef LIBRARY_NEEDS_POSTPROCESSING
-dist-local: dist-fixup
-FIXUP_PROFILES = default net_2_0
-dist-fixup:
-	$(MKINSTALLDIRS) $(distdir)/fixup $(FIXUP_PROFILES:%=$(distdir)/fixup/%)
-endif
-
 ifndef LIBRARY_COMPILE
 LIBRARY_COMPILE = $(CSCOMPILE)
 endif
@@ -340,9 +329,8 @@ $(makefrag) $(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag
 ## Documentation stuff
 
 Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE)] $(notdir $(@))";)
-# net_2_0 is needed because monodoc is only compiled in that profile
 MDOC_UP  =$(Q_MDOC_UP) \
-		MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe \
+		MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe \
 		update --delete -o Documentation/en $(the_lib)
 
 doc-update-local: $(the_libdir)/.doc-stamp

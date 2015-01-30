@@ -42,29 +42,6 @@ default_centum_tests := \
 	$(centum_tests) 	\
 	class/System.Data
 
-net_2_0_centum_tests := \
-	$(centum_tests)				\
-	class/System.Core			\
-	class/System.Configuration		\
-	class/System.Data.DataSetExtensions	\
-	class/System.Xml.Linq			\
-	class/System.Transactions		\
-	class/Microsoft.Build.Framework		\
-	class/Microsoft.Build.Utilities		\
-	class/Microsoft.Build.Engine		\
-	class/System.Runtime.Serialization	\
-	class/System.IdentityModel		\
-	class/System.ServiceModel		\
-	class/System.ServiceModel.Web		\
-	class/Mono.C5
-
-#	class/System.Web.Extensions
-#	class/Microsoft.Build.Tasks	
-
-# note that System.Xml.Linq is here to prevent this from being empty
-net_3_5_centum_tests := \
-	class/System.Xml.Linq
-
 ifdef ONLY_CENTUM_TESTS
 TEST_SUBDIRS := $($(PROFILE)_centum_tests)
 endif
