@@ -131,11 +131,11 @@ namespace MonoTests.System.Xml.Linq
 			}
 
 			var sb = new StringBuilder ();
-			sb.Append ("<MyRoot xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"urn:mynamespace\">\r\n");
+			sb.Append ("<MyRoot xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:mynamespace\">\r\n");
 			sb.Append ("  <Elements xsi:type=\"MyElement1\" V=\"2\" />\r\n");
 			sb.Append ("</MyRoot>");
 
-			Assert.AreEqual (sb.ToString (), doc.Root.ToString ());
+			Assert.AreEqual (sb.ToString ().Replace ("\r\n", Environment.NewLine), doc.Root.ToString ());
 		}
 	}
 }
