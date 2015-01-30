@@ -31,9 +31,6 @@ using System.Xml;
 using System.ComponentModel;
 using Mono.Xml.Schema;
 using System.Xml.Serialization;
-#if NET_2_0_in_the_future
-using MS.Internal.Xml;
-#endif
 
 namespace System.Xml.Schema
 {
