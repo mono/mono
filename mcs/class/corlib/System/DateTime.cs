@@ -93,6 +93,8 @@ namespace System
 		private static readonly string[] ParseTimeFormats = new string [] {
 			"H:m:s.fff zzz",
 			"H:m:s.fffffffzzz",
+			"H:m:s.fffffffff",
+			"H:m:s.ffffffff",
 			"H:m:s.fffffff",
 			"H:m:s.ffffff",
 			"H:m:s.ffffffzzz",
