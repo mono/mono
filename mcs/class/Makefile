@@ -72,6 +72,7 @@ net_2_0_dirs := \
 	Mono.Debugger.Soft		\
 	SystemWebTestShim			\
 	System.Xml.Linq			\
+	System.ServiceModel.Internals	\
 	System.Runtime.Serialization	\
 	System.Data.DataSetExtensions	\
 	System.Data.Linq		\
@@ -113,6 +114,7 @@ mobile_common_dirs := \
 	System	\
 	I18N		\
 	System.Xml.Linq	\
+	System.ServiceModel.Internals \
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
 	System.ServiceModel.Web	\
