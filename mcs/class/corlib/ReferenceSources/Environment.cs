@@ -19,6 +19,10 @@ namespace System
 				return "Postcondition failed after throwing an exception.";
 			case "PreconditionFailed":
 				return "Precondition failed.";
+			case "AggregateException_ToString":
+				return "AggregateException_ToString={0}{1}---> (Inner Exception #{2}) {3}{4}{5}";
+			case "AggregateException_ctor_DefaultMessage":
+				return "One or more errors occurred.";
 			}
 
 			return key;
