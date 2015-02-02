@@ -119,6 +119,7 @@ namespace System.Xaml
 
 			intl.CloseAll ();
 
+			w.Flush ();
 			if (settings.CloseOutput)
 				w.Close ();
 		}
