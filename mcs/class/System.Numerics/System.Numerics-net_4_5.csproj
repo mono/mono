@@ -45,7 +45,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\external\referencesource\mscorlib\system\number.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Numerics\System\Numerics\BigInteger.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Numerics\System\Numerics\BigIntegerBuilder.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Numerics\System\Numerics\BigNumber.cs" />

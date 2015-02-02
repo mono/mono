@@ -45,6 +45,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Collections\Generic\BitHelper.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Collections\Generic\HashSet.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Collections\Generic\HashSetDebugView.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Collections\Generic\HashSetEqualityComparer.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\Parallel\Channels\AsynchronousChannel.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\Parallel\Channels\SynchronousChannel.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\Parallel\Enumerables\AggregationMinMaxHelpers.cs" />
@@ -181,6 +185,7 @@
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\ParallelExecutionMode.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\ParallelMergeOptions.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\threading\ReaderWriterLockSlim\ReaderWriterLockSlim.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\threading\Tasks\TaskExtensions.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\BinaryOperationBinder.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\BindingRestrictions.cs" />
@@ -305,7 +310,6 @@
     <Compile Include="Microsoft.Win32.SafeHandles\SafePipeHandle.cs" />
     <Compile Include="ReferenceSources\Set.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
-    <Compile Include="System.Collections.Generic\HashSet.cs" />
     <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFile.cs" />
     <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileAccess.cs" />
     <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileOptions.cs" />
@@ -375,7 +379,6 @@
     <Compile Include="System.Security.Cryptography\SHA384CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
     <Compile Include="System.Security.Cryptography\SHA512CryptoServiceProvider.cs" />
-    <Compile Include="System.Threading.Tasks\TaskExtensions.cs" />
     <Compile Include="System.Threading\LockRecursionException.cs" />
     <Compile Include="System.Threading\ReaderWriterLockSlimExtensions.cs" />
     <Compile Include="System.Threading\ThreadLockState.cs" />

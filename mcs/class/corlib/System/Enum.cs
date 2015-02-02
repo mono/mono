@@ -1056,13 +1056,18 @@ namespace System
 					"\"x\",\"F\",\"f\",\"D\" or \"d\".");
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern bool InternalHasFlag (Enum a, Enum b);
+
 		public bool HasFlag (Enum flag)
 		{
-			var val = get_value ();
-			ulong mvalue = GetValue (val, Type.GetTypeCode (val.GetType ()));
-			ulong fvalue = GetValue (flag, Type.GetTypeCode (flag.GetType ()));
+			if (flag == null)
+				throw new ArgumentNullException ("flag");
 
-			return ((mvalue & fvalue) == fvalue);
+			if (!this.GetType ().IsEquivalentTo (flag.GetType ()))
+				throw new ArgumentException (Environment.GetResourceString ("Argument_EnumTypeDoesNotMatch", flag.GetType (), this.GetType ()));
+
+			return InternalHasFlag (this, flag);
 		}
 	}
 }

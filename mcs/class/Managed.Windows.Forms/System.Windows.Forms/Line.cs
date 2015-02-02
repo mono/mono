@@ -60,6 +60,8 @@ namespace System.Windows.Forms
 		internal LineColor		color;			// We're doing a black/red tree. this is the node color
 		static int			DEFAULT_TEXT_LEN = 0;	// 
 		internal bool			recalc;			// Line changed
+
+		private static Hashtable kerning_fonts = new Hashtable ();		// record which fonts use kerning
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -453,6 +455,11 @@ namespace System.Windows.Forms
 		/// </summary>
 		internal bool RecalculateLine (Graphics g, Document doc)
 		{
+			return RecalculateLine (g, doc, kerning_fonts.ContainsKey (tags.Font.GetHashCode ()));
+		}
+
+		private bool RecalculateLine (Graphics g, Document doc, bool handleKerning)
+		{
 			LineTag tag;
 			int pos;
 			int len;
@@ -495,16 +502,38 @@ namespace System.Windows.Forms
 					tag = tag.Next;
 				}
 
-				size = tag.SizeOfPosition (g, pos);
-				w = size.Width;
+				// kerning is a problem.  The original code in this method assumed that the
+				// width of a string equals the sum of the widths of its characters.  This is
+				// not true when kerning takes place during the display process.  Since it's
+				// impossible to find out easily whether a font does kerning, and with which
+				// characters, we just detect that kerning must have happened and use a slower
+				// (but accurate) measurement for those fonts henceforth.  Without handling
+				// kerning, many fonts for English become unreadable during typing for many
+				// input strings, and text in many other languages is even worse trying to
+				// type in TextBoxes.
+				// See https://bugzilla.xamarin.com/show_bug.cgi?id=26478 for details.
+				float newWidth;
+				if (handleKerning && !Char.IsWhiteSpace(text[pos]))
+				{
+					// MeasureText doesn't measure trailing spaces, so we do the best we can for those
+					// in the else branch.
+					size = TextBoxTextRenderer.MeasureText (g, text.ToString (0, pos + 1), tag.Font);
+					newWidth = widths[0] + size.Width;
+				}
+				else
+				{
+					size = tag.SizeOfPosition (g, pos);
+					w = size.Width;
+					newWidth = widths[pos] + w;
+				}
 
 				if (Char.IsWhiteSpace (text[pos]))
 					wrap_pos = pos + 1;
 
 				if (doc.wrap) {
-					if ((wrap_pos > 0) && (wrap_pos != len) && (widths[pos] + w) + 5 > (doc.viewport_width - this.right_indent)) {
+					if ((wrap_pos > 0) && (wrap_pos != len) && (newWidth + 5) > (doc.viewport_width - this.right_indent)) {
 						// Make sure to set the last width of the line before wrapping
-						widths[pos + 1] = widths[pos] + w;
+						widths[pos + 1] = newWidth;
 
 						pos = wrap_pos;
 						len = text.Length;
@@ -514,11 +543,11 @@ namespace System.Windows.Forms
 
 						retval = true;
 						wrapped = true;
-					} else if (pos > 1 && (widths[pos] + w) > (doc.viewport_width - this.right_indent)) {
+					} else if (pos > 1 && newWidth > (doc.viewport_width - this.right_indent)) {
 						// No suitable wrap position was found so break right in the middle of a word
 
 						// Make sure to set the last width of the line before wrapping
-						widths[pos + 1] = widths[pos] + w;
+						widths[pos + 1] = newWidth;
 
 						doc.Split (this, tag, pos);
 						ending = LineEnding.Wrap;
@@ -532,7 +561,7 @@ namespace System.Windows.Forms
 				if (!wrapped) {
 					pos++;
 
-					widths[pos] = widths[pos - 1] + w;
+					widths[pos] = newWidth;
 
 					if (pos == len) {
 						line = doc.GetLine (this.line_no + 1);
@@ -574,6 +603,24 @@ namespace System.Windows.Forms
 						tag.Shift = 0;
 						wrap_pos = pos;
 					}
+				}
+			}
+
+			var fullText = text.ToString();
+			if (!handleKerning && fullText.Length > 1 && !wrapped)
+			{
+				// Check whether kerning takes place for this string and font.
+				var realSize = TextBoxTextRenderer.MeasureText(g, fullText, tags.Font);
+				float realWidth = realSize.Width + widths[0];
+				// MeasureText ignores trailing whitespace, so we will too at this point.
+				int length = fullText.TrimEnd().Length;
+				float sumWidth = widths[length];
+				if (realWidth != sumWidth)
+				{
+					kerning_fonts.Add(tags.Font.GetHashCode (), true);
+					// Using a slightly incorrect width this time around isn't that bad. All that happens
+					// is that the cursor is a pixel or two off until the next character is typed.  It's
+					// the accumulation of pixel after pixel that causes display problems.
 				}
 			}
 

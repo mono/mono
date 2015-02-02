@@ -194,6 +194,7 @@ common_sources = \
 	threadpool.c		\
 	threadpool.h		\
 	threadpool-internals.h	\
+	tpool-poll.c	\
 	verify.c		\
 	verify-internals.h	\
 	wrapper-types.h	\
@@ -256,6 +257,7 @@ sgen_sources = \
 	sgen-minor-scan-object.h \
 	sgen-marksweep-drain-gray-stack.h	\
 	sgen-protocol.h		\
+	sgen-protocol-def.h		\
 	sgen-scan-object.h	\
 	sgen-nursery-allocator.c	\
 	sgen-hash-table.c	\

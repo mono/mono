@@ -21,7 +21,7 @@ clean_aot () {
 
 get_methods () {
 	if [ -z $4 ]; then
-		MONO_PATH=$1 $2 -v $3 -q | grep '^Method .*code length' | sed 's/emitted[^()]*//' | sort
+		MONO_PATH=$1 $2 -v --compile-all=1 $3 | grep '^Method .*code length' | sed 's/emitted[^()]*//' | sort
 	else
 		clean_aot
 		MONO_PATH=$1 $2 -v --aot $3 | grep '^Method .*code length' | sed 's/emitted[^()]*//' | sort
@@ -30,7 +30,7 @@ get_methods () {
 
 get_method () {
 	if [ -z $5 ]; then
-		MONO_VERBOSE_METHOD="$4" MONO_PATH=$1 $2 $3 -q | sed 's/0x[0-9a-fA-F]*/0x0/g'
+		MONO_VERBOSE_METHOD="$4" MONO_PATH=$1 $2 --compile-all=1 $3 | sed 's/0x[0-9a-fA-F]*/0x0/g'
 	else
 		clean_aot
 		MONO_VERBOSE_METHOD="$4" MONO_PATH=$1 $2 --aot $3 | sed 's/0x[0-9a-fA-F]*/0x0/g'
@@ -38,13 +38,13 @@ get_method () {
 }
 
 diff_methods () {
-	TMP_FILE=tmp_file
+	TMP_FILE=$(tmp_file)
 	echo "$(get_methods $1 $2 $3 $4)" >$TMP_FILE
 	diff <(cat $TMP_FILE) <(echo "$(MONO_DEBUG=gen-compact-seq-points get_methods $1 $2 $3 $4)")
 }
 
 diff_method () {
-	TMP_FILE=tmp_file
+	TMP_FILE=$(tmp_file)
 	echo "$(get_method $1 $2 $3 $4 $5)" >$TMP_FILE
 	sdiff -w 150 <(cat $TMP_FILE) <(echo "$(MONO_DEBUG=gen-compact-seq-points get_method $1 $2 $3 $4 $5 | grep -Ev il_seq_point)")
 }
@@ -63,7 +63,7 @@ else
 	echo "Checking unintended native code changes in $TEST_FILE with AOT"
 fi
 
-TMP_FILE=tmp_file
+TMP_FILE=$(tmp_file)
 
 echo "$(diff_methods $MONO_PATH $RUNTIME $TEST_FILE $USE_AOT)" > $TMP_FILE
 

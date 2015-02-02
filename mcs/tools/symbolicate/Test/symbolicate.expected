@@ -1,0 +1,11 @@
+System.Exception: Exception of type 'System.Exception' was thrown.
+  at StackTraceDumper.Main () in StackTraceDumper.cs:7 
+Exception is not in the first line!
+System.Exception: Exception of type 'System.Exception' was thrown.
+  at StackTraceDumper.ThrowException () in StackTraceDumper.cs:27 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:13 
+Exception is not in the first line!
+System.Exception: Exception of type 'System.Exception' was thrown.
+  at StackTraceDumper.ThrowException () in StackTraceDumper.cs:27 
+  at StackTraceDumper.ThrowException2 () in StackTraceDumper.cs:31 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:19 

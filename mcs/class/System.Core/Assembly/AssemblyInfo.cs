@@ -67,6 +67,5 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
-[assembly: TypeForwardedTo (typeof (System.Security.Cryptography.Aes))]
 [assembly: TypeForwardedTo (typeof (System.Threading.LazyThreadSafetyMode ))]
 [assembly: TypeForwardedTo (typeof (System.Lazy<>))]

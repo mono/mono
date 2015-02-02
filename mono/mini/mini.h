@@ -427,8 +427,8 @@ enum {
 #define MONO_IS_SETCC(ins) ((((ins)->opcode >= OP_CEQ) && ((ins)->opcode <= OP_CLT_UN)) || (((ins)->opcode >= OP_ICEQ) && ((ins)->opcode <= OP_ICLT_UN)) || (((ins)->opcode >= OP_LCEQ) && ((ins)->opcode <= OP_LCLT_UN)) || (((ins)->opcode >= OP_FCEQ) && ((ins)->opcode <= OP_FCLT_UN)))
 
 
-#define MONO_IS_LOAD_MEMBASE(ins) (((ins)->opcode >= OP_LOAD_MEMBASE && (ins)->opcode <= OP_LOADV_MEMBASE) || ((ins)->opcode >= OP_ATOMIC_LOAD_I1 && (ins)->opcode <= OP_ATOMIC_LOAD_U8))
-#define MONO_IS_STORE_MEMBASE(ins) (((ins)->opcode >= OP_STORE_MEMBASE_REG && (ins)->opcode <= OP_STOREV_MEMBASE) || ((ins)->opcode >= OP_ATOMIC_STORE_I1 && (ins)->opcode <= OP_ATOMIC_STORE_U8))
+#define MONO_IS_LOAD_MEMBASE(ins) (((ins)->opcode >= OP_LOAD_MEMBASE && (ins)->opcode <= OP_LOADV_MEMBASE) || ((ins)->opcode >= OP_ATOMIC_LOAD_I1 && (ins)->opcode <= OP_ATOMIC_LOAD_R8))
+#define MONO_IS_STORE_MEMBASE(ins) (((ins)->opcode >= OP_STORE_MEMBASE_REG && (ins)->opcode <= OP_STOREV_MEMBASE) || ((ins)->opcode >= OP_ATOMIC_STORE_I1 && (ins)->opcode <= OP_ATOMIC_STORE_R8))
 #define MONO_IS_STORE_MEMINDEX(ins) (((ins)->opcode >= OP_STORE_MEMINDEX) && ((ins)->opcode <= OP_STORER8_MEMINDEX))
 
 #define MONO_IS_CALL(ins) (((ins->opcode >= OP_VOIDCALL) && (ins->opcode <= OP_VOIDCALL_MEMBASE)) || ((ins->opcode >= OP_FCALL) && (ins->opcode <= OP_FCALL_MEMBASE)) || ((ins->opcode >= OP_LCALL) && (ins->opcode <= OP_LCALL_MEMBASE)) || ((ins->opcode >= OP_VCALL) && (ins->opcode <= OP_VCALL_MEMBASE)) || ((ins->opcode >= OP_CALL) && (ins->opcode <= OP_CALL_MEMBASE)) || ((ins->opcode >= OP_VCALL2) && (ins->opcode <= OP_VCALL2_MEMBASE)) || (ins->opcode == OP_TAILCALL))
@@ -704,13 +704,28 @@ typedef enum {
 	LLVMArgVtypeByVal,
 	LLVMArgVtypeRetAddr, /* On on cinfo->ret */
 	LLVMArgGSharedVt,
+	/* Vtype passed as one int array argument */
+	LLVMArgAsIArgs,
+	/* Vtype passed as a set of fp arguments */
+	LLVMArgAsFpArgs
 } LLVMArgStorage;
 
 typedef struct {
 	LLVMArgStorage storage;
 
-	/* Only if storage == ArgValuetypeInReg */
-	LLVMArgStorage pair_storage [2];
+	/*
+	 * Only if storage == ArgValuetypeInReg/LLVMArgAsFpArgs.
+	 * This contains how the parts of the vtype are passed.
+	 */
+	LLVMArgStorage pair_storage [8];
+	/*
+	 * Only if storage == LLVMArgAsIArgs/LLVMArgAsFpArgs.
+	 * If storage == LLVMArgAsFpArgs, this is the number of arguments
+	 * used to pass the value.
+	 */
+	int nslots;
+	/* Only if storage == LLVMArgAsFpArgs (4/8) */
+	int esize;
 } LLVMArgInfo;
 
 typedef struct {

@@ -88,7 +88,6 @@
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLResource.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLSingle.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLString.cs" />
-    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SqlTypesSchemaImporter.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLUtility.cs" />
     <Compile Include="..\..\build\common\Consts.cs.in" />
     <Compile Include="..\..\build\common\Locale.cs" />

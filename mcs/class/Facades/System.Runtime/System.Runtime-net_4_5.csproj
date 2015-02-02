@@ -89,7 +89,7 @@
       <Name>System-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../../System.ComponentModel.Composition.4.5/System.ComponentModel.Composition-net_4_5.csproj">
-      <Project>{473444B5-C640-4856-B886-D75735A10F1A}</Project>
+      <Project>{81352E26-6AB7-4AA3-8FB1-28A476E82748}</Project>
       <Name>System.ComponentModel.Composition-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../../System.Core/System.Core-net_4_5.csproj">

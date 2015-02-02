@@ -48,7 +48,6 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\tools\xbuild\XBuildConsts.cs" />
-    <Compile Include="..\System\System.Collections.Specialized\ProcessStringDictionary.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.Build.Utilities\AppDomainIsolatedTask.cs" />
     <Compile Include="Microsoft.Build.Utilities\CommandLineBuilder.cs" />

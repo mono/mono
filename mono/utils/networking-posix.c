@@ -325,3 +325,18 @@ mono_networking_addr_to_str (MonoAddress *address, char *buffer, socklen_t bufle
 }
 
 #endif
+
+#ifndef _WIN32
+// These are already defined in networking-windows.c for Windows
+void
+mono_networking_init (void)
+{
+	//nothing really
+}
+
+void
+mono_networking_shutdown (void)
+{
+	//nothing really
+}
+#endif

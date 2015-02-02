@@ -45,7 +45,7 @@
         <entry il="0x12" row="28" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="e" il_index="0" scope_ref="1" />
+        <entry name="e" il_index="0" scope_ref="2" />
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x2" />
@@ -67,8 +67,8 @@
         <entry il="0x19" row="43" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="e" il_index="0" scope_ref="1" />
-        <entry name="e" il_index="1" scope_ref="2" />
+        <entry name="e" il_index="0" scope_ref="2" />
+        <entry name="e" il_index="1" scope_ref="3" />
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x2" />
@@ -105,7 +105,7 @@
         <entry il="0x15" row="67" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="e" il_index="0" scope_ref="1" />
+        <entry name="e" il_index="0" scope_ref="2" />
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x2" />

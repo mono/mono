@@ -1,9 +1,7 @@
-#include mobile_common_System.Core.dll.sources
-
+#include common_System.Core.dll.sources
 #include dynamic_System.Core.dll.sources
 
-System/TimeZoneInfo.Android.cs
 System.Security.Cryptography/AesCryptoServiceProvider.cs
-System.Security.Cryptography/AesManaged.cs
 System.Security.Cryptography/AesTransform.cs
 
+../../../external/referencesource/System.Core/System/Security/Cryptography/AesManaged.cs

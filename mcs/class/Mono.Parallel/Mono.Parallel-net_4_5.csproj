@@ -48,12 +48,12 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\corlib\System.Collections.Concurrent\ConcurrentOrderedList.cs" />
-    <Compile Include="..\corlib\System.Threading.Tasks\CyclicDeque.cs" />
-    <Compile Include="..\corlib\System.Threading.Tasks\IConcurrentDeque.cs" />
-    <Compile Include="..\corlib\System.Threading.Tasks\PopResult.cs" />
-    <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.Collections.Concurrent\ConcurrentSkipList.cs" />
+    <Compile Include="Mono.Threading.Tasks\CyclicDeque.cs" />
+    <Compile Include="Mono.Threading.Tasks\IConcurrentDeque.cs" />
+    <Compile Include="Mono.Threading.Tasks\PopResult.cs" />
+    <Compile Include="Mono.Threading\AtomicBoolean.cs" />
     <Compile Include="Mono.Threading\CSnzi.cs" />
     <Compile Include="Mono.Threading\ReaderWriterLockSlimmer.cs" />
     <Compile Include="Mono.Threading\Snzi.cs" />

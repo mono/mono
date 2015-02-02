@@ -23,8 +23,8 @@
         <entry il="0x3f" row="9" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="v" il_index="0" scope_ref="0" />
-        <entry name="v" il_index="3" scope_ref="2" />
+        <entry name="v" il_index="0" scope_ref="1" />
+        <entry name="v" il_index="3" scope_ref="3" />
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x1c" />

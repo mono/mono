@@ -143,6 +143,9 @@ namespace System
 		// </summary>
 		protected sealed override Delegate CombineImpl (Delegate follow)
 		{
+			if (follow == null)
+				return this;
+
 			MulticastDelegate combined, orig, clone;
 
 			if (this.GetType() != follow.GetType ())
