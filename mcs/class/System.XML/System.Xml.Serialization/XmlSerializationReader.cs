@@ -797,7 +797,7 @@ namespace System.Xml.Serialization
 			if (wrapped)
 				reader.ReadStartElement ();
 			reader.MoveToContent ();
-			XmlDocument doc = new XmlDocument ();
+			XmlDocument doc = new XmlDocument (reader.NameTable);
 			XmlNode node = doc.ReadNode (reader);
 			doc.AppendChild (node);
 			
