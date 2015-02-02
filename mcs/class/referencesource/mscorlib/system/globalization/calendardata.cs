@@ -32,7 +32,7 @@ namespace System.Globalization
     // WARNING: The type loader will rearrange class member offsets so the mscorwks!CalendarDataBaseObject
     // WARNING: must be manually structured to match the true loaded class layout
     //
-    internal class CalendarData
+    internal partial class CalendarData
     {
         // Max calendars
         internal const int MAX_CALENDARS = 23;
@@ -392,7 +392,7 @@ namespace System.Globalization
 
             return "en-US";
         }
-
+#if !MONO_CULTURE_DATA
         internal void FixupWin7MonthDaySemicolonBug()
         {
             int unescapedCharacterIndex = FindUnescapedCharacter(sMonthDay, ';');
@@ -446,7 +446,7 @@ namespace System.Globalization
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern int nativeGetCalendars(String localeName, bool useUserOverride, [In, Out] int[] calendars);
-
+#endif
     }
  }
 

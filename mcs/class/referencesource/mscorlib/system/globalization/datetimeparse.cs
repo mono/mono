@@ -37,7 +37,7 @@ namespace System {
 
         internal static MatchNumberDelegate m_hebrewNumberParser = new MatchNumberDelegate(DateTimeParse.MatchHebrewDigits);
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
         [SecuritySafeCritical]
         internal static bool GetAmPmParseFlag()
         {
@@ -760,7 +760,7 @@ new DS[] { DS.ERROR, DS.TX_NNN,  DS.TX_NNN,  DS.TX_NNN,  DS.ERROR,   DS.ERROR,  
                             if (raw.timeMark == TM.NotSet) {
                                 raw.timeMark = (sep == TokenType.SEP_Am ? TM.AM : TM.PM);
                                 dtok.dtt = DTT.NumAmpm;
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                                 // Fix AM/PM parsing case, e.g. "1/10 5 AM"
                                 if (enableAmPmParseAdjustment && dps == DS.D_NN)
                                 {
@@ -1054,7 +1054,7 @@ new DS[] { DS.ERROR, DS.TX_NNN,  DS.TX_NNN,  DS.TX_NNN,  DS.ERROR,   DS.ERROR,  
                         return (false);
                     }
 
-#if !FEATURE_CORECLR                    
+#if !FEATURE_CORECLR  && !MONO
                     // If DateTimeParseIgnorePunctuation is defined, we want to have the V1.1 behavior of just
                     // ignoring any unrecognized punctuation and moving on to the next character
                     if (Environment.GetCompatibilityFlag(CompatibilityFlag.DateTimeParseIgnorePunctuation) && ((result.flags & ParseFlags.CaptureOffset) == 0)) {
