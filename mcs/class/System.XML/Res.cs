@@ -509,7 +509,7 @@ namespace System.Xml
 		public const string Xml_ValueOutOfRange = "Xml_ValueOutOfRange";
 		public const string Xml_WhitespaceHandling = "Xml_WhitespaceHandling";
 		public const string Xml_WriterAsyncNotSetException = "Xml_WriterAsyncNotSetException";
-		public const string Xml_WrongToken = "Xml_WrongToken";
+		public const string Xml_WrongToken = "Unexpected XML token {0} appeared at {1} state.";
 		public const string Xml_XapResolverCannotOpenUri = "Xml_XapResolverCannotOpenUri";
 		public const string Xml_XmlDeclNotFirst = "Xml_XmlDeclNotFirst";
 		public const string Xml_XmlPrefix = "Xml_XmlPrefix";
