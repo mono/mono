@@ -276,13 +276,9 @@ namespace System.Xml.Serialization {
         }
         internal object Find(XmlQualifiedName name, Type type, bool checkCache) {
             if (!IsCompiled) {
-#if MONO_HYBRID_SYSTEM_XML
-                 Compile (null, true);
-#else
                  foreach (XmlSchema schema in List) {
                     Preprocess(schema);
                 }
-#endif
             }
             IList values = (IList)SchemaSet.Schemas(name.Namespace);
             if (values == null) return null;
