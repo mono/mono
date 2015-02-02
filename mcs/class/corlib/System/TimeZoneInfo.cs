@@ -108,12 +108,14 @@ namespace System
 				return BuildFromStream ("Local", stream);
 			}
 #else
+#if !NET_2_1
 			if (IsWindows && LocalZoneKey != null) {
 				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
 				name = TrimSpecial (name);
 				if (name != null)
 					return TimeZoneInfo.FindSystemTimeZoneById (name);
 			}
+#endif
 
 			var tz = Environment.GetEnvironmentVariable ("TZ");
 			if (tz != null) {
