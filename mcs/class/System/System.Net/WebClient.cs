@@ -12,6 +12,7 @@
 // Copyright 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright 2006, 2010 Novell, Inc. (http://www.novell.com)
 // Copyright 2012 Xamarin Inc. (http://www.xamarin.com)
+// Copyright 2014 Microsoft Inc 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -553,6 +554,21 @@ namespace System.Net
 			}
 		}
 
+		// From the Microsoft reference source
+	        string MapToDefaultMethod(Uri address) {
+			Uri uri;
+			if (!address.IsAbsoluteUri && baseAddress != null) {
+				uri = new Uri(baseAddress, address);
+			} else {
+				uri = address;
+			}
+			if (uri.Scheme.ToLower(System.Globalization.CultureInfo.InvariantCulture) == "ftp") {
+				return WebRequestMethods.Ftp.UploadFile;
+			} else {
+				return "POST";
+			}
+	        }
+			
 		byte [] UploadFileCore (Uri address, string method, string fileName, object userToken)
 		{
 			string fileCType = Headers ["Content-Type"];
@@ -565,7 +581,10 @@ namespace System.Net
 				fileCType = "application/octet-stream";
 			}
 
-			bool needs_boundary = (method != "PUT"); // only verified case so far
+			if (method == null)
+				method = MapToDefaultMethod (address);
+			
+			bool needs_boundary = (method != "PUT" && method != WebRequestMethods.Ftp.UploadFile); // only verified case so far
 			string boundary = null;
 			if (needs_boundary) {
 				boundary = "------------" + DateTime.Now.Ticks.ToString ("x");
