@@ -461,11 +461,15 @@ namespace System.Xml.Schema {
         }
 
         public bool IsXSDRoot(string localName, string ns) {
-            return Ref.Equal(ns, NsXs) && Ref.Equal(localName, XsdSchema);
+            // FIXME: due to some implementation glitch, SchemaNames are not fully used in mono yet.
+            // return Ref.Equal(ns, NsXs) && Ref.Equal(localName, XsdSchema);
+            return localName == XsdSchema && ns == NsXs;
         }
 
         public bool IsXDRRoot(string localName, string ns) {
-            return Ref.Equal(ns, NsXdr) && Ref.Equal(localName, XdrSchema);
+            // FIXME: due to some implementation glitch, SchemaNames are not fully used in mono yet.
+            // return Ref.Equal(ns, NsXdr) && Ref.Equal(localName, XdrSchema);
+            return localName == XdrSchema && ns == NsXdr;
         }
 
         public XmlQualifiedName GetName(SchemaNames.Token token) {
