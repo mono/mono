@@ -138,7 +138,7 @@ namespace System.Xml {
             return xmlResolver;
         }
 
-#if !SILVERLIGHT && !MOBILE
+#if !SILVERLIGHT
         //This is used by get XmlResolver in Xsd.
         //Check if the config set to prohibit default resovler
         //notice we must keep GetXmlResolver() to avoid dead lock when init System.Config.ConfigurationManager
@@ -705,7 +705,7 @@ namespace System.Xml {
             }
         }
 
-#if !SILVERLIGHT && !MOBILE
+#if !SILVERLIGHT
         private static bool? s_enableLegacyXmlSettings = null;
 
         static internal bool EnableLegacyXmlSettings()
@@ -722,16 +722,19 @@ namespace System.Xml {
             }
 
             bool enableSettings = false; // default value
+#if !MOBILE
             if (!ReadSettingsFromRegistry(Registry.LocalMachine, ref enableSettings))
             {
                 // still ok if this call return false too as we'll use the default value which is false
                 ReadSettingsFromRegistry(Registry.CurrentUser, ref enableSettings);
             }
+#endif
 
             s_enableLegacyXmlSettings = enableSettings;
             return s_enableLegacyXmlSettings.Value;
         }
 
+#if !MOBILE
         [RegistryPermission(SecurityAction.Assert, Unrestricted = true)]
         [SecuritySafeCritical]
         private static bool ReadSettingsFromRegistry(RegistryKey hive, ref bool value)
@@ -757,6 +760,7 @@ namespace System.Xml {
 
             return false;
         }
+#endif // MOBILE
 
 #endif // SILVERLIGHT
         
