@@ -20,7 +20,7 @@ using System.Runtime.Versioning;
 namespace System.Xml {
 
     // XmlReaderSettings class specifies basic features of an XmlReader.
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !MOBILE
     [PermissionSetAttribute(SecurityAction.InheritanceDemand, Name = "FullTrust")]
 #endif
     public sealed class XmlReaderSettings {
@@ -138,7 +138,7 @@ namespace System.Xml {
             return xmlResolver;
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !MOBILE
         //This is used by get XmlResolver in Xsd.
         //Check if the config set to prohibit default resovler
         //notice we must keep GetXmlResolver() to avoid dead lock when init System.Config.ConfigurationManager
@@ -501,7 +501,7 @@ namespace System.Xml {
 
         void Initialize(XmlResolver resolver) {
             nameTable = null;
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !MOBILE
             if (!EnableLegacyXmlSettings())
             {
                 xmlResolver = resolver;
@@ -705,7 +705,7 @@ namespace System.Xml {
             }
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !MOBILE
         private static bool? s_enableLegacyXmlSettings = null;
 
         static internal bool EnableLegacyXmlSettings()
