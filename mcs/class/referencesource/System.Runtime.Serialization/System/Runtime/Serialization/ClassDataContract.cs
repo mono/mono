@@ -568,6 +568,10 @@ namespace System.Runtime.Serialization
             + " permissions to private members, any changes to the logic should be reviewed.")]
         internal bool RequiresMemberAccessForWrite(SecurityException securityException)
         {
+
+#if DISABLE_CAS_USE
+            return true;
+#else
             EnsureMethodsImported();
 
             if (!IsTypeVisible(UnderlyingType))
@@ -647,6 +651,7 @@ namespace System.Runtime.Serialization
             }
 
             return false;
+#endif
         }
 
         [Fx.Tag.SecurityNote(Critical = "Holds all state used for (de)serializing classes."
