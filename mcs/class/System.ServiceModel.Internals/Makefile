@@ -14,8 +14,6 @@ LIB_MCS_FLAGS += /d:NET_3_0 	\
 			/r:System.Configuration.dll \
 			/r:System.Data.dll	\
 			/r:System.Security.dll \
-			/r:System.IdentityModel.dll \
-			/r:System.IdentityModel.Selectors.dll \
 			/r:System.Transactions.dll \
 			/r:System.Messaging.dll \
 			/r:System.Web.dll \
