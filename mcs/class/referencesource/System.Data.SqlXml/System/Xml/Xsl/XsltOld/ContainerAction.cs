@@ -494,9 +494,11 @@ namespace System.Xml.Xsl.XsltOld {
                             compiler.PopScope();
                         }
                     }
+#if !DISABLE_XSLT_SCRIPT
                     else if (nspace == input.Atoms.UrnMsxsl && name == input.Atoms.Script) {
                         AddScript(compiler);
                     }
+#endif
                     else {
                         if (nspace.Length == 0) {
                             throw XsltException.Create(Res.Xslt_NullNsAtTopLevel, input.Name);
@@ -738,6 +740,7 @@ namespace System.Xml.Xsl.XsltOld {
             lastCopyCodeAction.AddEvents(copyEvents);
         }
 
+#if !DISABLE_XSLT_SCRIPT
         private void AddScript(Compiler compiler) {
             NavigatorInput input = compiler.Input;
 
@@ -789,6 +792,7 @@ namespace System.Xml.Xsl.XsltOld {
             compiler.AddScript(input.Value, lang, implementsNamespace, input.BaseURI, input.LineNumber);
             input.ToParent();
         }
+#endif
 
         internal override void Execute(Processor processor, ActionFrame frame) {
             Debug.Assert(processor != null && frame != null);

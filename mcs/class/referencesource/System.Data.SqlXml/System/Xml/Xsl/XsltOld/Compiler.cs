@@ -196,7 +196,9 @@ namespace System.Xml.Xsl.XsltOld {
                 this.stylesheet.ProcessTemplates();
                 this.rootAction.PorcessAttributeSets(this.rootStylesheet);
                 this.stylesheet.SortWhiteSpace();
+#if !DISABLE_XSLT_SCRIPT
                 CompileScript(evidence);
+#endif
                 if (evidence != null) {
                     this.rootAction.permissions = SecurityManager.GetStandardSandbox(evidence);
                 }
@@ -686,6 +688,7 @@ namespace System.Xml.Xsl.XsltOld {
             return "ScriptClass_" + System.Threading.Interlocked.Increment(ref scriptClassCounter);
         }
 
+#if !DISABLE_XSLT_SCRIPT
         internal void AddScript(string source, ScriptingLanguage lang, string ns, string fileName, int lineNumber) {
             ValidateExtensionNamespace(ns);
 
@@ -710,6 +713,7 @@ namespace System.Xml.Xsl.XsltOld {
                 }
             }
         }
+#endif
 
         private static void ValidateExtensionNamespace(string nsUri) {
             if (nsUri.Length == 0 || nsUri == XmlReservedNs.NsXslt) {
@@ -718,6 +722,7 @@ namespace System.Xml.Xsl.XsltOld {
             XmlConvert.ToUri(nsUri);
         }
 
+#if !DISABLE_XSLT_SCRIPT
         private void FixCompilerError(CompilerError e) {
             foreach(string scriptFile in this.scriptFiles) {
                 if (e.FileName == scriptFile) {
@@ -824,6 +829,7 @@ namespace System.Xml.Xsl.XsltOld {
                 this.stylesheet.ScriptObjectTypes.Add(ns, assembly.GetType(nsName + "." + scriptClass.Name));
             }
         }
+#endif
 
         public string GetNsAlias(ref string prefix) {
             Debug.Assert(

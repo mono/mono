@@ -766,6 +766,7 @@ namespace System.Xml {
 #if !SILVERLIGHT
 
 #if !HIDE_XSL
+#if !DISABLE_XSLT_COMPILER
         /// <summary>
         /// Serialize the object to BinaryWriter.
         /// </summary>
@@ -864,6 +865,7 @@ namespace System.Xml {
             // bool isReadOnly;
             ReadOnly = reader.ReadBoolean();
         }
+#endif
 #else
         internal void GetObjectData(object writer) { }
         internal XmlWriterSettings(object reader) { }
