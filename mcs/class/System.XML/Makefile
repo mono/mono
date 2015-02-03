@@ -19,7 +19,7 @@ LIB_REFS = System
 LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0618,0612,0642 -unsafe -d:ASYNC -d:DISABLE_CAS_USE -d:MONO_HYBRID_SYSTEM_XML
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK -d:DISABLE_XSLT_COMPILER
+LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT
 endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 -r:System.Data.dll -r:System.Core.dll
 
