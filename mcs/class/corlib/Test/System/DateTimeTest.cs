@@ -1514,7 +1514,7 @@ namespace MonoTests.System
 			d = new DateTime (599264352000000000);
 			Assert.AreEqual (0.0d, d.ToOADate (), "#2");
 			d = new DateTime (31242239136000000);
-			Assert.AreEqual (-657434.999d, d.ToOADate (), "#3");
+			Assert.AreEqual ("-657434.999", d.ToOADate ().ToString (), "#3");
 			d = new DateTime (3155378975136000000);
 			Assert.AreEqual (2958465.999d, d.ToOADate (), "#4");
 		}

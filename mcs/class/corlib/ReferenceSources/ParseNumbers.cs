@@ -137,11 +137,11 @@ namespace System {
 
 			switch (toBase) {
 			case 2:
-				return ConvertToBase2 (val);
+				return ConvertToBase2 (val).ToString ();
 			case 8:
-				return ConvertToBase8 (val);
+				return ConvertToBase8 (val).ToString ();
 			case 16:
-				return ConvertToBase16 (val);
+				return ConvertToBase16 (val).ToString ();
 			default:
 				throw new NotImplementedException ();
 			}
@@ -224,31 +224,47 @@ namespace System {
 
 		public static string IntToString (int value, int toBase, int width, char paddingChar, int flags)
  		{
-			if (value == 0)
-				return "0";
+			StringBuilder sb;
 
-			if (toBase == 10)
-				return value.ToString ();
+			if (value == 0) {
+				if (width <= 0)
+					return "0";
 
-			byte[] val;
-			if ((flags & PrintAsI1) != 0) {
-				val = BitConverter.GetBytes ((byte) value);
-			} else if ((flags & PrintAsI2) != 0) {
-				val = BitConverter.GetBytes ((short) value);
-			} else {
-				val = BitConverter.GetBytes (value);
+				sb = new StringBuilder ("0", width);
+			} else if (toBase == 10)
+				sb = new StringBuilder (value.ToString ());
+			else {
+				byte[] val;
+				if ((flags & PrintAsI1) != 0) {
+					val = BitConverter.GetBytes ((byte) value);
+				} else if ((flags & PrintAsI2) != 0) {
+					val = BitConverter.GetBytes ((short) value);
+				} else {
+					val = BitConverter.GetBytes (value);
+				}
+
+				switch (toBase) {
+				case 2:
+					sb = ConvertToBase2 (val);
+					break;
+				case 8:
+					sb = ConvertToBase8 (val);
+					break;
+				case 16:
+					sb = ConvertToBase16 (val);
+					break;
+				default:
+					throw new NotImplementedException ();
+				}
 			}
 
-			switch (toBase) {
-			case 2:
-				return ConvertToBase2 (val);
-			case 8:
-				return ConvertToBase8 (val);
-			case 16:
-				return ConvertToBase16 (val);
-			default:
-				throw new NotImplementedException ();
+			var padding = width - sb.Length;
+			while (padding > 0) {
+				sb.Insert (0, paddingChar);
+				--padding;
 			}
+
+			return sb.ToString ();
  		}
 
 		static void EndianSwap (ref byte[] value)
@@ -259,7 +275,7 @@ namespace System {
 			value = buf;
 		}
 
-		static string ConvertToBase2 (byte[] value)
+		static StringBuilder ConvertToBase2 (byte[] value)
 		{
 			if (!BitConverter.IsLittleEndian)
 				EndianSwap (ref value);
@@ -277,10 +293,10 @@ namespace System {
 					b <<= 1;
 				}
 			}
-			return sb.ToString ();
+			return sb;
 		}
 
-		static string ConvertToBase8 (byte[] value)
+		static StringBuilder ConvertToBase8 (byte[] value)
 		{
 			ulong l = 0;
 			switch (value.Length) {
@@ -309,10 +325,10 @@ namespace System {
 					sb.Append (val);
 				}
 			}
-			return sb.ToString ();
+			return sb;
 		}
 
-		static string ConvertToBase16 (byte[] value)
+		static StringBuilder ConvertToBase16 (byte[] value)
 		{
 			if (!BitConverter.IsLittleEndian)
 				EndianSwap (ref value);
@@ -340,7 +356,7 @@ namespace System {
 					sb.Append (low);
 				}
 			}
-			return sb.ToString ();
+			return sb;
 		}
 
     }

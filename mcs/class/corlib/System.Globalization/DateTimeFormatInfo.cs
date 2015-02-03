@@ -115,9 +115,17 @@ namespace System.Globalization
 			return GetAllDateTimePatterns (format);
 		}
 
+		[NonSerialized]
+		private string m_fullTimeSpanPositivePattern;
 		internal String FullTimeSpanPositivePattern {
 			get {
-				throw new NotImplementedException ("FullTimeSpanPositivePattern");
+				if (m_fullTimeSpanPositivePattern == null) {
+					String decimalSeparator = Culture.NumberFormat.NumberDecimalSeparator;
+
+					m_fullTimeSpanPositivePattern = "d':'h':'mm':'ss'" + decimalSeparator + "'FFFFFFF";
+				}
+
+				return m_fullTimeSpanPositivePattern;
 			}
 		}
 	}
