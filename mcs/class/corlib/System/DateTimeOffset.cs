@@ -53,6 +53,10 @@ namespace System
 		
 		DateTime dt;
 		TimeSpan utc_offset;
+
+        // Constants
+        internal const Int64 MaxOffset = TimeSpan.TicksPerHour * 14;
+        internal const Int64 MinOffset = -MaxOffset;
 	
 		public DateTimeOffset (DateTime dateTime)
 		{

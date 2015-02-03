@@ -124,7 +124,7 @@ namespace System {
 				break;
 			case 'o':
 			case 'O':
-				pattern = dfi.RoundtripPattern;
+				pattern = DateTimeFormat.RoundtripFormat;
 				use_invariant = true;
 				break;
 			case 'r':

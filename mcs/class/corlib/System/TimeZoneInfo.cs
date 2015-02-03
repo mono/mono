@@ -1272,6 +1272,26 @@ namespace System
 			DateTime date_time = new DateTime (1970, 1, 1);
 			return date_time.AddSeconds (unix_time);
 		}
+
+#region reference sources
+        // Shortcut for TimeZoneInfo.Local.GetUtcOffset
+        internal static TimeSpan GetLocalUtcOffset(DateTime dateTime, TimeZoneInfoOptions flags)
+        {
+            bool dst;
+            return Local.GetUtcOffset (dateTime, out dst);
+        }
+
+        internal TimeSpan GetUtcOffset(DateTime dateTime, TimeZoneInfoOptions flags)
+        {
+            bool dst;
+            return GetUtcOffset (dateTime, out dst);
+        }
+
+        static internal TimeSpan GetUtcOffsetFromUtc(DateTime time, TimeZoneInfo zone, out Boolean isDaylightSavings, out Boolean isAmbiguousLocalDst)
+        {
+        	throw new NotImplementedException ();
+        }
+#endregion
 	}
 
 	struct TimeType {

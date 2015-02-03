@@ -505,6 +505,11 @@ namespace System.Text {
 			return this;
 		}
 
+		internal unsafe StringBuilder Append(char* value, int valueCount)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public StringBuilder Clear ()
 		{
 			Length = 0;

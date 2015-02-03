@@ -26,33 +26,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+
 namespace System.Globalization
 {
-	class CalendarData
+	[StructLayout (LayoutKind.Sequential)]
+	partial class CalendarData
 	{
-		internal int iCurrentEra;
-
-		private CalendarData (int calendarId)
-		{
-			// Japanese calendar is the only calendar with > 1 era. Its current era value
-			// is total eras count in erras array
-			if (calendarId == Calendar.CAL_JAPAN) {
-				iCurrentEra = 4;
-			} else {
-				iCurrentEra = 1;
-			}
-		}
-
 		public static int nativeGetTwoDigitYearMax (int calID)
 		{
 			// -1 mean OS does not override default BCL max year
 			return -1;
 		}
 
-		internal static CalendarData GetCalendarData (int calendarId)
+		static bool nativeGetCalendarData (CalendarData data, string localeName, int calendarId)
 		{
-			// calendarID is any of CAL_ constants from calendar.cs
-			return new CalendarData (calendarId);
+			// TODO: Convert calendar-id to mono runtime calendar-id when it's used
+			return data.fill_calendar_data (localeName.ToLowerInvariant (), calendarId);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern bool fill_calendar_data (string localeName, int datetimeIndex);
 	}
 }
