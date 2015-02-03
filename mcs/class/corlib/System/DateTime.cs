@@ -2052,6 +2052,11 @@ namespace System
 			return TimeZone.CurrentTimeZone.ToLocalTime (this);
 		}
 
+		internal DateTime ToLocalTime (bool throwOnOverflow)
+		{
+			return ToLocalTime ();
+		}
+
 		public DateTime ToUniversalTime()
 		{
 			return TimeZone.CurrentTimeZone.ToUniversalTime (this);

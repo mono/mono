@@ -113,7 +113,7 @@ namespace System.Globalization
 			}
 		}
 
-		public static CultureData GetCultureData (string cultureName, bool useUserOverride, int datetimeIndex, int calendarId)
+		public static CultureData GetCultureData (string cultureName, bool useUserOverride, int datetimeIndex, int calendarId, string iso2lang)
 		{
 			if (string.IsNullOrEmpty (cultureName))
 				return Invariant;
@@ -122,6 +122,7 @@ namespace System.Globalization
 			cd.fill_culture_data (datetimeIndex);
 			cd.bUseOverrides = useUserOverride;
 			cd.calendarId = calendarId;
+			cd.sISO639Language = iso2lang;
 			return cd;
 		}
 
@@ -211,6 +212,12 @@ namespace System.Globalization
                 return sRealName;
             }
         }
+
+	 internal String SCOMPAREINFO {
+		get {
+			return "";
+		}
+	}
 
 #region from reference sources
 

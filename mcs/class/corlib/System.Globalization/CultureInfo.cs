@@ -424,7 +424,7 @@ namespace System.Globalization
 
 			for (int i = 1; i < infos.Length; ++i) {
 				var ci = infos [i];
-				infos [i].m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType);
+				infos [i].m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.iso2lang);
 			}
 
 			return infos;
@@ -666,7 +666,7 @@ namespace System.Globalization
 				throw new CultureNotFoundException ("culture", msg);
 			}
 
-			m_cultureData = CultureData.GetCultureData (m_name, m_useUserOverride, datetime_index, CalendarType);
+			m_cultureData = CultureData.GetCultureData (m_name, m_useUserOverride, datetime_index, CalendarType, iso2lang);
 		}
 
 		public CultureInfo (string name) : this (name, true) {}
@@ -695,7 +695,7 @@ namespace System.Globalization
 				throw CreateNotFoundException (name);
 			}
 
-			m_cultureData = CultureData.GetCultureData (name, useUserOverride, datetime_index, CalendarType);
+			m_cultureData = CultureData.GetCultureData (name, useUserOverride, datetime_index, CalendarType, iso2lang);
 		}
 
 		// This is used when creating by specific name and creating by
@@ -812,7 +812,7 @@ namespace System.Globalization
 			if (ci.IsNeutralCulture)
 				ci = CreateSpecificCultureFromNeutral (ci.Name);
 
-			ci.m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType);
+			ci.m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.iso2lang);
 			return ci;
 		}
 

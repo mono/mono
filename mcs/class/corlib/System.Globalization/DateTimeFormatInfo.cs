@@ -115,12 +115,6 @@ namespace System.Globalization
 			return GetAllDateTimePatterns (format);
 		}
 
-		internal CompareInfo CompareInfo {
-			get {
-				throw new NotImplementedException ("CompareInfo");
-			}
-		}
-
 		internal String FullTimeSpanPositivePattern {
 			get {
 				throw new NotImplementedException ("FullTimeSpanPositivePattern");
