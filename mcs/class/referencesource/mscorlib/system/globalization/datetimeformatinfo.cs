@@ -2203,7 +2203,7 @@ namespace System.Globalization {
                 return m_fullTimeSpanNegativePattern;
             }
         }
-#if !MONO_CULTURE_DATA
+
         //
         // Get suitable CompareInfo from current DTFI object.
         //
@@ -2221,7 +2221,6 @@ namespace System.Globalization {
                 return m_compareInfo;
             }
         }
-#endif
 
         internal const DateTimeStyles InvalidDateTimeStyles = ~(DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite
                                                                | DateTimeStyles.AllowInnerWhite | DateTimeStyles.NoCurrentDateDefault
