@@ -455,7 +455,7 @@ namespace System {
         [System.Security.SecuritySafeCritical]
 #endif
         private static bool GetLegacyFormatMode() {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (LegacyFormatMode()) // FCALL to check COMPLUS_TimeSpan_LegacyFormatMode
                 return true;
             return CompatibilitySwitches.IsNetFx40TimeSpanLegacyFormatMode;
