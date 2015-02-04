@@ -307,7 +307,7 @@ tls_get_reg: dest:i src1:i len:20
 tls_set: src1:i len:20
 tls_set_reg: src1:i src2:i len:20
 atomic_add_i4: src1:b src2:i dest:i len:16
-atomic_exchange_i4: src1:b src2:i dest:a len:24
+atomic_exchange_i4: src1:b src2:i dest:i clob:x len:8
 atomic_cas_i4: src1:b src2:i src3:a dest:a len:24
 memory_barrier: len:16
 atomic_load_i1: dest:y src1:b len:7
@@ -411,6 +411,8 @@ long_conv_to_r4_2: dest:f src1:i src2:i len:14
 long_conv_to_r_un_2: dest:f src1:i src2:i len:40
 
 fmove: dest:f src1:f
+move_f_to_i4: dest:i src1:f len:5
+move_i4_to_f: dest:f src1:i len:7
 float_conv_to_r4: dest:f src1:f  len:12
 
 load_mem: dest:i len:9

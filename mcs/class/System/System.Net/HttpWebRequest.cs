@@ -1095,13 +1095,15 @@ namespace System.Net
 				break;
 			}
 
-			if (method != "GET" && !InternalAllowBuffering)
+			if (method != "GET" && !InternalAllowBuffering && writeStream.WriteBufferLength > 0)
 				e = new WebException ("The request requires buffering data to succeed.", null, WebExceptionStatus.ProtocolError, webResponse);
 
 			if (e != null)
 				throw e;
 
-			contentLength = -1;
+			if (AllowWriteStreamBuffering)
+				contentLength = -1;
+
 			uriString = webResponse.Headers ["Location"];
 
 			if (uriString == null)

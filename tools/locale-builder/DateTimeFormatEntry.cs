@@ -63,19 +63,13 @@ namespace Mono.Tools.LocaleBuilder
 		public string[] ShortTimePatterns = new string[Constants.NUM_SHORT_TIME_PATTERNS];
 		public string[] LongTimePatterns = new string[Constants.NUM_LONG_TIME_PATTERNS];
 		public string[] ShortestDayNames = new string[Constants.NUM_DAYS];
+		public string[] YearMonthPatterns = new string[Constants.NUM_YEAR_MONTH_PATTERNS];
 
 		public int Row;
 
 		public void AppendTableRow (StringBuilder builder)
 		{
 			builder.Append ("\t{");
-			builder.Append (EncodeStringIdx (LongDatePattern) + ", ");
-			builder.Append (EncodeStringIdx (ShortDatePattern) + ", ");
-
-			builder.Append (EncodeStringIdx (LongTimePattern) + ", ");
-			builder.Append (EncodeStringIdx (ShortTimePattern) + ", ");
-
-			builder.Append (EncodeStringIdx (YearMonthPattern) + ", ");
 			builder.Append (EncodeStringIdx (MonthDayPattern) + ", ");
 
 			builder.Append (EncodeStringIdx (AMDesignator) + ", ");
@@ -104,6 +98,8 @@ namespace Mono.Tools.LocaleBuilder
 			AppendPatterns (builder, ShortTimePatterns);
 			builder.Append (',');
 			AppendPatterns (builder, LongTimePatterns);
+			builder.Append (',');
+			AppendPatterns (builder, YearMonthPatterns);
 
 			builder.Append ('}');
 		}

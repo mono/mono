@@ -505,6 +505,19 @@ namespace System.Text {
 			return this;
 		}
 
+		internal unsafe StringBuilder Append (char* value, int valueCount)
+		{
+			int needed_cap = _length + valueCount;
+			InternalEnsureCapacity (needed_cap);
+
+			fixed (char* src = _str) {
+				String.CharCopy (src + _length, value, valueCount);
+			}
+			_length = needed_cap;
+
+			return this;
+		}
+
 		public StringBuilder Clear ()
 		{
 			Length = 0;

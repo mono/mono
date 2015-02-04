@@ -1,12 +1,11 @@
 //
-// System.Globalization.TimeSpanStyles.cs
+// System.Web.Security.MembershipPasswordCompatibilityMode
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//    Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (c) 2010 Novell (http://www.novell.com)
+// Copyright (C) 2010 Novell, Inc (http://novell.com)
 //
-
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -26,14 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 
-namespace System.Globalization {
-	[Flags]
-	public enum TimeSpanStyles {
-		None,
-		AssumeNegative
+namespace System.Web.Configuration
+{
+	public enum MembershipPasswordCompatibilityMode
+	{
+		Framework20,
+		Framework40
 	}
 }
-

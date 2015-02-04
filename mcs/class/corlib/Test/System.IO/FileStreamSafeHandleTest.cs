@@ -17,6 +17,7 @@ namespace MonoTests.System.IO
 	[TestFixture]
 	public class FileStreamWithClosedSafeHandleTests
 	{
+#if !NET_2_1
 		private FileStream GetFileStreamWithClosedHandle ()
 		{
 			var fs1 = new FileStream ("test2", FileMode.OpenOrCreate);
@@ -178,5 +179,6 @@ namespace MonoTests.System.IO
 
 			fs.FlushAsync (new CancellationToken ());
 		}
+#endif
 	}
 }

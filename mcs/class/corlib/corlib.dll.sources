@@ -134,7 +134,6 @@ System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
 System/DateTime.cs
 System/DateTimeKind.cs
-System/DateTimeOffset.cs
 System/DateTimeUtils.cs
 System/DayOfWeek.cs
 System/DBNull.cs
@@ -248,7 +247,6 @@ System/TermInfoNumbers.cs
 System/TermInfoReader.cs
 System/TermInfoStrings.cs
 System/ThreadStaticAttribute.cs
-System/TimeSpan.cs
 System/TimeZone.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.AdjustmentRule.cs
@@ -348,7 +346,6 @@ System.Globalization/SortVersion.cs
 System.Globalization/StringInfo.cs
 System.Globalization/TextElementEnumerator.cs
 System.Globalization/TextInfo.cs
-System.Globalization/TimeSpanStyles.cs
 System.Globalization/UnicodeCategory.cs
 System.IO/BinaryReader.cs
 System.IO/BinaryWriter.cs
@@ -1445,11 +1442,14 @@ System.Threading/Watch.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
+ReferenceSources/CompatibilitySwitches.cs
+ReferenceSources/CultureData.cs
 ReferenceSources/Empty.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
 ReferenceSources/ParseNumbers.cs
+ReferenceSources/TimeZoneInfoOptions.cs
 ReferenceSources/AppDomain.cs
 ReferenceSources/CLRConfig.cs
 ReferenceSources/JitHelpers.cs
@@ -1460,6 +1460,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/byte.cs
 ../../../external/referencesource/mscorlib/system/char.cs
 ../../../external/referencesource/mscorlib/system/convert.cs
+../../../external/referencesource/mscorlib/system/datetimeoffset.cs
 ../../../external/referencesource/mscorlib/system/int16.cs
 ../../../external/referencesource/mscorlib/system/int32.cs
 ../../../external/referencesource/mscorlib/system/int64.cs
@@ -1470,6 +1471,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/sbyte.cs
 ../../../external/referencesource/mscorlib/system/stringcomparer.cs
 ../../../external/referencesource/mscorlib/system/stringfreezingattribute.cs
+../../../external/referencesource/mscorlib/system/timespan.cs
 ../../../external/referencesource/mscorlib/system/throwhelper.cs
 ../../../external/referencesource/mscorlib/system/tuple.cs
 ../../../external/referencesource/mscorlib/system/uint16.cs
@@ -1543,11 +1545,17 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
 
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs
+../../../external/referencesource/mscorlib/system/globalization/calendardata.cs
 ../../../external/referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/datetimeformat.cs
+../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfo.cs
+../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfoscanner.cs
+../../../external/referencesource/mscorlib/system/globalization/datetimeparse.cs
 ../../../external/referencesource/mscorlib/system/globalization/eastasianlunisolarcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/gregoriancalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/gregoriancalendarhelper.cs
 ../../../external/referencesource/mscorlib/system/globalization/hebrewcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/hebrewnumber.cs
 ../../../external/referencesource/mscorlib/system/globalization/hijricalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/japanesecalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/japaneselunisolarcalendar.cs
@@ -1557,6 +1565,8 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/globalization/Persiancalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/taiwancalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/taiwanlunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/timespanformat.cs
+../../../external/referencesource/mscorlib/system/globalization/timespanparse.cs
 ../../../external/referencesource/mscorlib/system/globalization/thaibuddhistcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/umalquracalendar.cs
 

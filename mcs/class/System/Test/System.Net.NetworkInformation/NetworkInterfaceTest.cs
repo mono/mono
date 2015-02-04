@@ -26,28 +26,28 @@ namespace MonoTests.System.Net.NetworkInformation
 		[Test]
 		public void LoopbackInterfaceIndex ()
 		{
-			Assert.Greater (NetworkInterface.LoopbackInterfaceIndex, 0);
+			Assert.IsTrue (NetworkInterface.LoopbackInterfaceIndex > 0);
 		}
 	
 		[Test]
 		public void AtLeastOneInterface ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
-			Assert.Greater (adapters.Length, 0);
+			Assert.IsTrue (adapters.Length > 0);
 		}
 	
 		[Test]
 		public void FirstInterfaceId ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
-			Assert.Greater (adapters[0].Id.Length, 0);
+			Assert.IsTrue (adapters[0].Id.Length > 0);
 		}
 	
 		[Test]
 		public void FirstInterfaceName ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
-			Assert.Greater (adapters[0].Name.Length, 0);
+			Assert.IsTrue (adapters[0].Name.Length > 0);
 		}
 	
 		[Test]
@@ -70,7 +70,7 @@ namespace MonoTests.System.Net.NetworkInformation
 		public void FirstInterfaceSpeed ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
-			Assert.Greater (adapters[0].Speed, 0);
+			Assert.IsTrue (adapters[0].Speed > 0);
 		}
 	
 	}

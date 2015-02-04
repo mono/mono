@@ -257,6 +257,10 @@ float_clt_membase: dest:i src1:f src2:b len:35
 float_clt_un_membase: dest:i src1:f src2:b len:42
 float_conv_to_u: dest:i src1:f len:46
 fmove: dest:f src1:f len:8
+move_f_to_i4: dest:i src1:f clob:1 len:9
+move_i4_to_f: dest:f src1:i len:9
+move_f_to_i8: dest:i src1:f len:5
+move_i8_to_f: dest:f src1:i len:5
 call_handler: len:14 clob:c nacl:52
 aot_const: dest:i len:10
 nacl_gc_safe_point: clob:c
@@ -300,8 +304,8 @@ tls_set: src1:i len:16
 tls_set_reg: src1:i src2:i len:32
 atomic_add_i4: src1:b src2:i dest:i len:32
 atomic_add_i8: src1:b src2:i dest:i len:32
-atomic_exchange_i4: src1:b src2:i dest:a len:32
-atomic_exchange_i8: src1:b src2:i dest:a len:32
+atomic_exchange_i4: src1:b src2:i dest:i clob:x len:8
+atomic_exchange_i8: src1:b src2:i dest:i clob:x len:8
 atomic_cas_i4: src1:b src2:i src3:a dest:a len:24
 atomic_cas_i8: src1:b src2:i src3:a dest:a len:24
 memory_barrier: len:3

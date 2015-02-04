@@ -1,10 +1,10 @@
 //
-// Constants.cs
+// CompatibilitySwitches.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
-// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2015 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,24 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
-namespace Mono.Tools.LocaleBuilder
+namespace System
 {
-	static class Constants
+	static class CompatibilitySwitches
 	{
-		//
-		// All values must match defines from culture-info.h
-		// 
-		public const int NUM_DAYS = 7;
-		public const int NUM_MONTHS = 13;
-		public const int GROUP_SIZE = 2;
-		public const int NUM_CALENDARS = 4;
-
-		public const int NUM_SHORT_DATE_PATTERNS = 14;
-		public const int NUM_LONG_DATE_PATTERNS = 10;
-		public const int NUM_SHORT_TIME_PATTERNS = 12;
-		public const int NUM_LONG_TIME_PATTERNS = 9;
-		public const int NUM_YEAR_MONTH_PATTERNS = 8;
+		public const bool IsAppEarlierThanSilverlight4 = false;
 	}
 }

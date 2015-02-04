@@ -350,6 +350,11 @@ namespace System
 			encoded = ((long)kind << KindShift) | ticks;
 		}
 
+		internal DateTime (long ticks, DateTimeKind kind, Boolean isAmbiguousDst)
+			: this (ticks, kind)
+		{
+		}
+
 		public DateTime (int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
 			: this (year, month, day, hour, minute, second)
 		{
@@ -781,25 +786,7 @@ namespace System
 
 		public string[] GetDateTimeFormats(char format,IFormatProvider provider	)
 		{
-			if ("dDgGfFmMrRstTuUyY".IndexOf (format) < 0)
-				throw new FormatException ("Invalid format character.");
-
-			// LAMESPEC: There is NO assurance that 'U' ALWAYS
-			// euqals to 'F', but since we have to iterate all
-			// the pattern strings, we cannot just use 
-			// ToString("U", provider) here. I believe that the 
-			// method's behavior cannot be formalized.
-			bool adjustutc = false;
-			switch (format) {
-			case 'U':
-//			case 'r':
-//			case 'R':
-//			case 'u':
-				adjustutc = true;
-				break;
-			}
-			DateTimeFormatInfo info = (DateTimeFormatInfo) provider.GetFormat (typeof(DateTimeFormatInfo));
-			return GetDateTimeFormats (adjustutc, info.GetAllRawDateTimePatterns (format), info);
+			return DateTimeFormat.GetAllDateTimes(this, format, DateTimeFormatInfo.GetInstance(provider));
 		}
 
 		private string [] GetDateTimeFormats (bool adjustutc, string [] patterns, DateTimeFormatInfo dfi)
@@ -2063,6 +2050,11 @@ namespace System
 		public DateTime ToLocalTime ()
 		{
 			return TimeZone.CurrentTimeZone.ToLocalTime (this);
+		}
+
+		internal DateTime ToLocalTime (bool throwOnOverflow)
+		{
+			return ToLocalTime ();
 		}
 
 		public DateTime ToUniversalTime()
