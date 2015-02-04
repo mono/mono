@@ -568,7 +568,7 @@ namespace System {
             return millis * TicksPerMillisecond;
         }
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
