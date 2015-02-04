@@ -27,7 +27,19 @@ namespace System {
     // 
     // Only statics, does not need to be marked with the serializable attribute
     public static class BitConverter {
+#if MONO
+        public static readonly bool IsLittleEndian = AmILittleEndian ();
 
+        static unsafe bool AmILittleEndian ()
+        {
+            // binary representations of 1.0:
+            // big endian:            3f f0 00 00 00 00 00 00
+            // little endian:         00 00 00 00 00 00 f0 3f
+            double d = 1.0;
+            byte *b = (byte*)&d;
+            return (b [0] == 0);
+        }
+#else
         // This field indicates the "endianess" of the architecture.
         // The value is set to true if the architecture is
         // little endian; false if it is big endian.
@@ -36,7 +48,7 @@ namespace System {
 #else
         public static readonly bool IsLittleEndian = true;
 #endif
-
+#endif
         // Converts a byte into an array of bytes with length one.
         public static byte[] GetBytes(bool value) {
             Contract.Ensures(Contract.Result<byte[]>() != null);
