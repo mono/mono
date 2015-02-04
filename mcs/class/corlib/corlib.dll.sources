@@ -109,7 +109,6 @@ System/AttributeTargets.cs
 System/AttributeUsageAttribute.cs
 System/BadImageFormatException.cs
 System/BitConverter.cs
-System/Boolean.cs
 System/Buffer.cs
 System/CannotUnloadAppDomainException.cs
 System/CharEnumerator.cs
@@ -1451,6 +1450,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
 ../../../external/referencesource/mscorlib/system/arraysegment.cs
+../../../external/referencesource/mscorlib/system/boolean.cs
 ../../../external/referencesource/mscorlib/system/byte.cs
 ../../../external/referencesource/mscorlib/system/char.cs
 ../../../external/referencesource/mscorlib/system/convert.cs
