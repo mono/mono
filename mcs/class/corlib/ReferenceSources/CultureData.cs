@@ -200,7 +200,19 @@ namespace System.Globalization
 		internal int[] CalendarIds {
 			get {
 				if (this.waCalendars == null) {
-					waCalendars = new int [] { calendarId };
+					// Need this specialization because GetJapaneseCalendarDTFI/GetTaiwanCalendarDTFI depend on
+					// optional calendars
+					switch (sISO639Language) {
+					case "ja":
+						waCalendars = new int[] { calendarId, Calendar.CAL_JAPAN };
+						break;
+					case "zh":
+						waCalendars = new int[] { calendarId, Calendar.CAL_TAIWAN };
+						break;
+					default:
+						waCalendars = new int [] { calendarId };
+						break;
+					}
 				}
 
 				return waCalendars;

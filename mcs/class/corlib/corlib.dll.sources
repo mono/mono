@@ -132,10 +132,6 @@ System/ContextStaticAttribute.cs
 System/ControlCharacters.cs
 System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
-System/DateTime.cs
-System/DateTimeKind.cs
-System/DateTimeUtils.cs
-System/DayOfWeek.cs
 System/DBNull.cs
 System/Decimal.cs
 System/Delegate.cs
@@ -334,7 +330,6 @@ System.Globalization/CultureNotFoundException.cs
 System.Globalization/CultureTypes.cs
 System.Globalization/DateTimeFormatInfo.cs
 System.Globalization/DateTimeStyles.cs
-System.Globalization/DaylightTime.cs
 System.Globalization/DigitShapes.cs
 System.Globalization/GregorianCalendarTypes.cs
 System.Globalization/IdnMapping.cs
@@ -1437,7 +1432,6 @@ System.Threading.Tasks/TaskConstants_T.cs
 System.Collections.Concurrent/ConcurrentOrderedList.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 System.Threading/ThreadLocal.cs
-System.Threading/Watch.cs
 
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
@@ -1460,7 +1454,10 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/byte.cs
 ../../../external/referencesource/mscorlib/system/char.cs
 ../../../external/referencesource/mscorlib/system/convert.cs
+../../../external/referencesource/mscorlib/system/datetime.cs
+../../../external/referencesource/mscorlib/system/datetimekind.cs
 ../../../external/referencesource/mscorlib/system/datetimeoffset.cs
+../../../external/referencesource/mscorlib/system/dayofweek.cs
 ../../../external/referencesource/mscorlib/system/int16.cs
 ../../../external/referencesource/mscorlib/system/int32.cs
 ../../../external/referencesource/mscorlib/system/int64.cs
@@ -1547,6 +1544,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendardata.cs
 ../../../external/referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/daylighttime.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformat.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfoscanner.cs

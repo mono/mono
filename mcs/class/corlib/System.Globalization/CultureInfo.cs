@@ -382,7 +382,6 @@ namespace System.Globalization
 
 			RegionInfo.ClearCachedData ();
 			TimeZone.ClearCachedData ();
-			DateTime.ClearCachedData ();
 			TimeZoneInfo.ClearCachedData ();
 		}
 
@@ -695,7 +694,7 @@ namespace System.Globalization
 				throw CreateNotFoundException (name);
 			}
 
-			m_cultureData = CultureData.GetCultureData (name, useUserOverride, datetime_index, CalendarType, iso2lang);
+			m_cultureData = CultureData.GetCultureData (m_name, useUserOverride, datetime_index, CalendarType, iso2lang);
 		}
 
 		// This is used when creating by specific name and creating by
