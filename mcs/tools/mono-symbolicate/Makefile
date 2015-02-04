@@ -1,8 +1,8 @@
-thisdir = tools/symbolicate
+thisdir = tools/mono-symbolicate
 SUBDIRS =
 include ../../build/rules.make
 
-PROGRAM = symbolicate.exe
+PROGRAM = mono-symbolicate.exe
 
 LOCAL_MCS_FLAGS = \
 	/r:Mono.Cecil.dll	\

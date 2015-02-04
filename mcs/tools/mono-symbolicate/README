@@ -1,6 +1,6 @@
 Mono Symbolicate Tool - README
 
-symbolicate is a tool that converts a stack trace with `<filename unknown>:0`
+mono-symbolicate is a tool that converts a stack trace with `<filename unknown>:0`
 into one with file names and line numbers.
 
 Usage
@@ -15,4 +15,4 @@ a file name and a line number.
 
 To use the tool, run the following command:
 
-	mono symbolicate.exe your.exe filewithstacktraces [mdbfolders]
+	mono mono-symbolicate.exe your.exe filewithstacktraces [mdbfolders]
