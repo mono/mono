@@ -371,15 +371,20 @@ namespace System
 			if (dateTime.Kind == DateTimeKind.Utc)
 				return dateTime;
 
-			if (sourceTimeZone.IsAmbiguousTime (dateTime) || !sourceTimeZone.IsDaylightSavingTime (dateTime))
-				return DateTime.SpecifyKind (dateTime - sourceTimeZone.BaseUtcOffset, DateTimeKind.Utc);
-			else {
+			if (sourceTimeZone.IsAmbiguousTime (dateTime) || !sourceTimeZone.IsDaylightSavingTime (dateTime)) {
+				var ticks = dateTime.Ticks - sourceTimeZone.BaseUtcOffset.Ticks;
+				if (ticks < DateTime.MinValue.Ticks)
+					ticks = DateTime.MinValue.Ticks;
+
+				return new DateTime (ticks, DateTimeKind.Utc);
+			}
+			
 				AdjustmentRule rule = sourceTimeZone.GetApplicableRule (dateTime);
 				if (rule != null)
 					return DateTime.SpecifyKind (dateTime - sourceTimeZone.BaseUtcOffset - rule.DaylightDelta, DateTimeKind.Utc);
 				else
 					return DateTime.SpecifyKind (dateTime - sourceTimeZone.BaseUtcOffset, DateTimeKind.Utc);
-			}
+			
 		}
 
 		static internal TimeSpan GetDateTimeNowUtcOffsetFromUtc(DateTime time, out Boolean isAmbiguousLocalDst)

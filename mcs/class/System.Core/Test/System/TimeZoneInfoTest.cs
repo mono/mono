@@ -424,6 +424,13 @@ namespace MonoTests.System
 		
 			}
 
+			[Test]
+			public void ConvertTimeToUtc_MinValue ()
+			{
+				var dt = new DateTime (0);
+				var res = TimeZoneInfo.ConvertTimeToUtc (dt);
+				Assert.AreEqual (res.Kind, DateTimeKind.Utc);
+			}
 
 			[Test]
 			public void ConvertFromToLocal ()
