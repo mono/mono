@@ -27,7 +27,7 @@ namespace MonoTests.System.Net.NetworkInformation
 				UnicastIPAddressInformationCollection unicastAddresses = adapterProperties.UnicastAddresses;
 				numUnicastAddresses += unicastAddresses.Count;
 			}
-			Assert.Greater (numUnicastAddresses, 0);
+			Assert.IsTrue (numUnicastAddresses > 0);
 		}
 	
 		[Test]
@@ -41,7 +41,7 @@ namespace MonoTests.System.Net.NetworkInformation
 				GatewayIPAddressInformationCollection gatewayAddresses = adapterProperties.GatewayAddresses;
 				numGatewayAddresses += gatewayAddresses.Count;
 			}
-			Assert.Greater (numGatewayAddresses, 0);
+			Assert.IsTrue (numGatewayAddresses > 0);
 		}
 	
 		[Test]
@@ -66,7 +66,7 @@ namespace MonoTests.System.Net.NetworkInformation
 				IPAddressCollection dnsAddresses = adapterProperties.DnsAddresses;
 				numDnsAddresses += dnsAddresses.Count;
 			}
-			Assert.Greater (numDnsAddresses, 0);
+			Assert.IsTrue (numDnsAddresses > 0);
 		}
 	
 	}
