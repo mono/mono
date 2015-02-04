@@ -564,3 +564,4 @@ System.Xml.Serialization/XmlTypeMapMember.cs
 System.Xml.Serialization/XmlTypeMapMemberElement.cs
 System.Xml.Serialization/XmlTypeMapMemberNamespaces.cs
 System.Xml.Serialization/XmlTypeMapping.cs
+System.Xml.Xsl/XslCompiledTransform_Mobile.cs
