@@ -430,7 +430,7 @@ namespace System.Xml
 		public const string Xml_IsDataSetAttributeMissingInSchema = "Xml_IsDataSetAttributeMissingInSchema";
 		public const string Xml_LimitExceeded = "Xml_LimitExceeded";
 		public const string Xml_MergeDuplicateDeclaration = "Xml_MergeDuplicateDeclaration";
-		public const string Xml_MessageWithErrorPosition = "Xml_MessageWithErrorPosition";
+		public const string Xml_MessageWithErrorPosition = "{0} Line {1}, position {2}";
 		public const string Xml_MismatchKeyLength = "Xml_MismatchKeyLength";
 		public const string Xml_MissingAttribute = "Xml_MissingAttribute";
 		public const string Xml_MissingByteOrderMark = "Xml_MissingByteOrderMark";
