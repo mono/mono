@@ -31,7 +31,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
-using Mono.Xml.XPath;
 
 namespace System.ServiceModel.Channels
 {
