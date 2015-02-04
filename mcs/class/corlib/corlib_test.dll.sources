@@ -421,6 +421,10 @@ System.Threading/VolatileTest.cs
 System.Threading/ThreadPoolTest.cs
 System/TimeSpanTest.cs
 System/TimeZoneTest.cs
+System/TimeZoneInfoTest.cs
+System/TimeZoneInfo.AdjustmentRuleTest.cs
+System/TimeZoneInfo.SerializationTest.cs
+System/TimeZoneInfo.TransitionTimeTest.cs
 System/TypeTest.cs
 System/UInt16Test.cs
 System/UInt32Test.cs
