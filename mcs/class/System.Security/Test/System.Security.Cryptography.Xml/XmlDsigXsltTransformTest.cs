@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
@@ -243,7 +244,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = GetXslDoc ();
 			transform.LoadInnerXml (doc.DocumentElement.ChildNodes);
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			Assert.AreEqual (doc.DocumentElement.ChildNodes, xnl, "LoadInnerXml");
+			AssertNodeListEqual (doc.DocumentElement.ChildNodes, xnl, "LoadInnerXml");
+		}
+		
+		void AssertNodeListEqual (XmlNodeList nl1, XmlNodeList nl2, string label)
+		{
+			Assert.AreEqual (nl1.Count, nl2.Count, label + ": node count");
+			IEnumerator e1, e2;
+			int i;
+			for (i = 0, e1 = nl1.GetEnumerator (), e2 = nl2.GetEnumerator (); e1.MoveNext (); i++) {
+				Assert.IsTrue (e2.MoveNext (), label + " : nl2.MoveNext");
+				Assert.AreEqual (e1.Current, e2.Current, label + " : node at " + i);
+			}
+			Assert.IsFalse (e2.MoveNext (), label + " : nl2 has extras");
 		}
 
 		[Test]
