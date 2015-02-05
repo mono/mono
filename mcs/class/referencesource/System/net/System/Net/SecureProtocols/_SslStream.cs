@@ -16,7 +16,7 @@ Revision History:
     22-Aug-2003 New design that has obsoleted SslClientStream and SslServerStream class
 
 --*/
-
+#if MONO_FEATURE_NEW_TLS && SECURITY_DEP
 namespace System.Net.Security {
     using System;
     using System.IO;
@@ -30,7 +30,7 @@ namespace System.Net.Security {
     //
     // This is a wrapping stream that does data encryption/decryption based on a successfully authenticated SSPI context.
     //
-    internal class _SslStream
+    internal partial class _SslStream
     {
         private static AsyncCallback _WriteCallback         = new AsyncCallback(WriteCallback);
         private static AsyncCallback _MulitpleWriteCallback = new AsyncCallback(MulitpleWriteCallback);
@@ -1058,3 +1058,4 @@ namespace System.Net.Security {
         //
     }
 }
+#endif

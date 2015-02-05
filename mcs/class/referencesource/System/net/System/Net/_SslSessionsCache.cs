@@ -17,6 +17,7 @@ Revision History:
 
 
 --*/
+#if MONO_FEATURE_NEW_TLS && SECURITY_DEP
 namespace System.Net.Security {
 
 using System.Net;
@@ -231,3 +232,4 @@ using System.Collections;
         }
     }
 }
+#endif
