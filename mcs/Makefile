@@ -17,62 +17,6 @@ net_4_5_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
 xbuild_12_SUBDIRS := build class tools/xbuild
 xbuild_14_SUBDIRS := build class tools/xbuild
 
-# List of test subdirs that should pass 100%
-centum_tests := \
-	class/corlib						\
-	class/System						\
-	class/System.XML					\
-	class/Commons.Xml.Relaxng				\
-	class/Cscompmgd						\
-	class/Mono.Posix					\
-	class/Mono.Security					\
-	class/System.Design					\
-	class/System.DirectoryServices		\
-	class/System.Drawing				\
-	class/System.Runtime.Remoting				\
-	class/System.Runtime.Serialization.Formatters.Soap	\
-	class/System.Security					\
-	class/System.ServiceProcess				\
-	class/System.Web						\
-	class/System.Web.Services				\
-	tests							\
-	errors
-
-default_centum_tests := \
-	$(centum_tests) 	\
-	class/System.Data
-
-net_2_0_centum_tests := \
-	$(centum_tests)				\
-	class/System.Core			\
-	class/System.Configuration		\
-	class/System.Data.DataSetExtensions	\
-	class/System.Xml.Linq			\
-	class/System.Transactions		\
-	class/Microsoft.Build.Framework		\
-	class/Microsoft.Build.Utilities		\
-	class/Microsoft.Build.Engine		\
-	class/System.Runtime.Serialization	\
-	class/System.IdentityModel		\
-	class/System.ServiceModel		\
-	class/System.ServiceModel.Web		\
-	class/Mono.C5
-
-#	class/System.Web.Extensions
-#	class/Microsoft.Build.Tasks	
-
-# note that System.Xml.Linq is here to prevent this from being empty
-net_3_5_centum_tests := \
-	class/System.Xml.Linq
-
-ifdef ONLY_CENTUM_TESTS
-TEST_SUBDIRS := $($(PROFILE)_centum_tests)
-endif
-
-ifdef TEST_SUBDIRS
-$(PROFILE)_SUBDIRS := $(TEST_SUBDIRS)
-endif
-
 include build/rules.make
 
 all-recursive $(STD_TARGETS:=-recursive): dir-check platform-check profile-check

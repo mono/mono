@@ -538,28 +538,10 @@ namespace Mono.AssemblyLinker
 
 		private void SetKeyPair (AssemblyName aname)
 		{
-#if ONLY_1_1
-			switch (delaysign) {
-			case DelaySign.Yes:
-				AddCattr (typeof (AssemblyDelaySignAttribute),
-					typeof (bool), true);
-				break;
-			case DelaySign.No:
-				AddCattr (typeof (AssemblyDelaySignAttribute),
-					typeof (bool), false);
-				break;
-			}
-#endif
-
 			if (keyfile != null) {
 				if (!File.Exists (keyfile)) {
 					Report (1044, String.Format ("Couldn't open '{0}' key file.", keyfile));
 				}
-
-#if ONLY_1_1
-				AddCattr (typeof (AssemblyKeyFileAttribute),
-					keyfile);
-#endif
 
 				using (FileStream fs = File.OpenRead (keyfile)) {
 					byte[] data = new byte [fs.Length];
@@ -590,10 +572,6 @@ namespace Mono.AssemblyLinker
 					fs.Close ();
 				}
 			} else if (keyname != null) {
-#if ONLY_1_1
-				AddCattr (typeof (AssemblyKeyNameAttribute),
-					keyname);
-#endif
 				// delay-sign doesn't apply to key containers
 				aname.KeyPair = new StrongNameKeyPair (keyname);
 			}

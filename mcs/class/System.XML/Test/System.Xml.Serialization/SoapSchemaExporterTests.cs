@@ -87,11 +87,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-/*
-#if NET_2_0
-		[Category ("NotWorking")] // minOccurs is 1 on Mono
-#endif
-*/
 		public void ExportClass_SimpleClass ()
 		{
 			SoapAttributeOverrides overrides = new SoapAttributeOverrides ();
@@ -658,11 +653,6 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-/*
-#if NET_2_0
-		[Category ("NotWorking")] // minOccurs is 1 on Mono
-#endif
- */
 		public void ExportClass_SimpleClass_Array ()
 		{
 			SoapAttributeOverrides overrides = new SoapAttributeOverrides ();

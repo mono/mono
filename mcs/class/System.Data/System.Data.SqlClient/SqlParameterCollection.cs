@@ -69,10 +69,6 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
-#if ONLY_1_1 || ONLY_1_0
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public
 		override
 		int Count {

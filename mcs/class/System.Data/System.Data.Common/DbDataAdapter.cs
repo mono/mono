@@ -168,16 +168,6 @@ namespace System.Data.Common
 
 		#endregion // Properties
 		
-		#region Events
-
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Fill")]
-		[DataSysDescription ("Event triggered when a recoverable error occurs during Fill.")]
-		public event FillErrorEventHandler FillError;
-
-#endif
-		#endregion // Events
-
 		#region Methods
 
 		protected virtual RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
