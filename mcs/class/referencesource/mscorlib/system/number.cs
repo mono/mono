@@ -289,6 +289,10 @@ namespace System {
     {
         private Number() {
         }
+        [System.Security.SecurityCritical]  // auto-generated
+        [ResourceExposure(ResourceScope.None)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        public unsafe static extern Boolean NumberBufferToDecimal(byte* number, ref Decimal value);
 #if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
@@ -322,10 +326,6 @@ namespace System {
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public unsafe static extern Boolean NumberBufferToDecimal(byte* number, ref Decimal value);
-        [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal unsafe static extern Boolean NumberBufferToDouble(byte* number, ref Double value);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -334,6 +334,11 @@ namespace System {
         [ResourceExposure(ResourceScope.None)]
         internal static extern unsafe string FormatNumberBuffer(byte* number, string format, NumberFormatInfo info, char* allDigits);
 #else
+        public static String FormatDecimal(Decimal value, String format, NumberFormatInfo info)
+	{
+		return NumberFormatter.NumberToString (format, value, info);
+	}
+	   
         public static String FormatDouble(double value, String format, NumberFormatInfo info)
         {
             return NumberFormatter.NumberToString (format, value, info);
@@ -362,11 +367,6 @@ namespace System {
         public static String FormatSingle(float value, String format, NumberFormatInfo info)
         {
             return NumberFormatter.NumberToString (format, value, info);
-        }
-
-        public unsafe static Boolean NumberBufferToDecimal(byte* number, ref Decimal value)
-        {
-            throw new NotImplementedException ();
         }
 
         internal unsafe static Boolean NumberBufferToDouble(byte* number, ref Double value)
