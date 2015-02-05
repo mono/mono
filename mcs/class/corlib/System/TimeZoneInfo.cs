@@ -375,6 +375,8 @@ namespace System
 				var ticks = dateTime.Ticks - sourceTimeZone.BaseUtcOffset.Ticks;
 				if (ticks < DateTime.MinValue.Ticks)
 					ticks = DateTime.MinValue.Ticks;
+				else if (ticks > DateTime.MaxValue.Ticks)
+					ticks = DateTime.MaxValue.Ticks;
 
 				return new DateTime (ticks, DateTimeKind.Utc);
 			}
