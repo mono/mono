@@ -408,6 +408,16 @@ namespace System.DirectoryServices
 			}
 		}
 
+		[DSDescription ("The provider-specific options for this entry.")]
+		[Browsable (false)]
+		[MonoTODO]
+		public DirectoryEntryConfiguration Options
+		{ 
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets the password to use when authenticating the client.
 		/// </summary>

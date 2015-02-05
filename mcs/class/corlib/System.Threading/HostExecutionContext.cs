@@ -29,7 +29,7 @@
 namespace System.Threading {
 
 	[MonoTODO ("Useless until the runtime supports it")]
-	public class HostExecutionContext {
+	public class HostExecutionContext : IDisposable {
 
 		private object _state;
 
@@ -51,6 +51,16 @@ namespace System.Threading {
 		protected internal object State {
 			get { return _state; }
 			set { _state = value; }
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		public virtual void Dispose (bool disposing)
+		{
 		}
 	}
 }
