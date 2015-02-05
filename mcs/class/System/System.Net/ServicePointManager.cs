@@ -294,6 +294,10 @@ namespace System.Net
 			set { useNagle = value; }
 		}
 
+		internal static bool DisableStrongCrypto {
+			get { return false; }
+		}
+
 		// Methods
 		public static void SetTcpKeepAlive (bool enabled, int keepAliveTime, int keepAliveInterval)
 		{
