@@ -75,7 +75,9 @@ namespace System.ComponentModel {
         }
 
         protected Win32Exception(SerializationInfo info, StreamingContext context) : base (info, context) {
+#if !DISABLE_CAS_USE
             IntSecurity.UnmanagedCode.Demand();
+#endif
             nativeErrorCode = info.GetInt32("NativeErrorCode");
         }
 

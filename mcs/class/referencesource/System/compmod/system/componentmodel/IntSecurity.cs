@@ -11,10 +11,15 @@ namespace System.ComponentModel {
 
     [HostProtection(SharedState = true)]
     internal static class IntSecurity {
+#if !DISABLE_CAS_USE
         public static readonly CodeAccessPermission UnmanagedCode = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
         public static readonly CodeAccessPermission FullReflection = new ReflectionPermission(PermissionState.Unrestricted);
+#endif
 
         public static string UnsafeGetFullPath(string fileName) {
+#if DISABLE_CAS_USE
+			return System.IO.Path.GetFullPath(fileName);
+#else
             string full = fileName;
 
             FileIOPermission fiop = new FileIOPermission(PermissionState.None);
@@ -27,6 +32,7 @@ namespace System.ComponentModel {
                 CodeAccessPermission.RevertAssert();
             }
             return full;
+#endif
         }
     }
 }

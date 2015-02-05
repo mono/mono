@@ -417,14 +417,17 @@ namespace System.ComponentModel {
                     else {
                         args = new Type[] {receiverType};
                     }
-                    
+#if !DISABLE_CAS_USE                    
                     IntSecurity.FullReflection.Assert();
                     try {
+#endif
                         resetMethod = FindMethod(componentClass, "Reset" + Name, args, typeof(void), /* publicOnly= */ false);
+#if !DISABLE_CAS_USE
                     }
                     finally {
                         CodeAccessPermission.RevertAssert();
                     }
+#endif
                 }
                 return resetMethod; 
             } 
@@ -521,14 +524,18 @@ namespace System.ComponentModel {
                         args = new Type[] {receiverType};
                     }
                     
+#if !DISABLE_CAS_USE
                     IntSecurity.FullReflection.Assert();
                     try {
+#endif
                         shouldSerializeMethod = FindMethod(componentClass, "ShouldSerialize" + Name,
                                                          args, typeof(Boolean), /* publicOnly= */ false);
+#if !DISABLE_CAS_USE
                     }
                     finally {
                         CodeAccessPermission.RevertAssert();
                     }
+#endif
                 }
                 return shouldSerializeMethod;
             }
