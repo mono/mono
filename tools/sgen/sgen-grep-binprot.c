@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <glib.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #define SGEN_BINARY_PROTOCOL
 #define MONO_INTERNAL
@@ -13,13 +15,68 @@
 #define TYPE(t)		((t) & 0x7f)
 #define WORKER(t)	((t) & 0x80)
 
+#define MAX_ENTRY_SIZE (1 << 10)
+#define BUFFER_SIZE (1 << 20)
+
+typedef struct {
+	int file;
+	char *buffer;
+	const char *end;
+	const char *pos;
+} EntryStream;
+
+static void
+init_stream (EntryStream *stream, int file)
+{
+	stream->file = file;
+	stream->buffer = g_malloc0 (BUFFER_SIZE);
+	stream->end = stream->buffer + BUFFER_SIZE;
+	stream->pos = stream->end;
+}
+
+static void
+close_stream (EntryStream *stream)
+{
+	g_free (stream->buffer);
+}
+
+static gboolean
+refill_stream (EntryStream *in, size_t size)
+{
+	size_t remainder = in->end - in->pos;
+	ssize_t refilled;
+	g_assert (size > 0);
+	g_assert (in->pos >= in->buffer);
+	if (in->pos + size <= in->end)
+		return TRUE;
+	memmove (in->buffer, in->pos, remainder);
+	in->pos = in->buffer;
+	refilled = read (in->file, in->buffer + remainder, BUFFER_SIZE - remainder);
+	if (refilled < 0)
+		return FALSE;
+	g_assert (refilled + remainder <= BUFFER_SIZE);
+	in->end = in->buffer + refilled + remainder;
+	return in->end - in->buffer >= size;
+}
+
+static ssize_t
+read_stream (EntryStream *stream, void *out, size_t size)
+{
+	if (refill_stream (stream, size)) {
+		memcpy (out, stream->pos, size);
+		stream->pos += size;
+		return size;
+	}
+	return 0;
+}
+
 static int
-read_entry (FILE *in, void **data)
+read_entry (EntryStream *stream, void *data)
 {
 	unsigned char type;
-	int size;
+	ssize_t size;
 
-	if (fread (&type, 1, 1, in) != 1)
+	if (read_stream (stream, &type, 1) <= 0)
 		return SGEN_PROTOCOL_EOF;
 	switch (TYPE (type)) {
 
@@ -71,11 +128,8 @@ read_entry (FILE *in, void **data)
 	}
 
 	if (size) {
-		*data = malloc (size);
-		if (fread (*data, size, 1, in) != 1)
-			assert (0);
-	} else {
-		*data = NULL;
+		size_t size_read = read_stream (stream, data, size);
+		g_assert (size_read == size);
 	}
 
 	return (int)type;
@@ -523,7 +577,7 @@ int
 main (int argc, char *argv[])
 {
 	int type;
-	void *data;
+	void *data = g_malloc0 (MAX_ENTRY_SIZE);
 	int num_args = argc - 1;
 	int num_nums = 0;
 	int num_vtables = 0;
@@ -537,6 +591,9 @@ main (int argc, char *argv[])
 	gboolean pause_times_finish = FALSE;
 	gboolean color_output = FALSE;
 	long long pause_times_ts = 0;
+	const char *input_path = NULL;
+	int input_file;
+	EntryStream stream;
 
 	for (i = 0; i < num_args; ++i) {
 		char *arg = argv [i + 1];
@@ -550,6 +607,9 @@ main (int argc, char *argv[])
 			++i;
 		} else if (!strcmp (arg, "-c") || !strcmp (arg, "--color")) {
 			color_output = TRUE;
+		} else if (!strcmp (arg, "-i") || !strcmp (arg, "--input")) {
+			input_path = next_arg;
+			++i;
 		} else {
 			nums [num_nums++] = strtoul (arg, NULL, 16);
 		}
@@ -560,7 +620,9 @@ main (int argc, char *argv[])
 	if (pause_times)
 		assert (!dump_all);
 
-	while ((type = read_entry (stdin, &data)) != SGEN_PROTOCOL_EOF) {
+	input_file = input_path ? open (input_path, O_RDONLY) : STDIN_FILENO;
+	init_stream (&stream, input_file);
+	while ((type = read_entry (&stream, data)) != SGEN_PROTOCOL_EOF) {
 		if (pause_times) {
 			switch (type) {
 			case PROTOCOL_ID (binary_protocol_world_stopping): {
@@ -613,8 +675,11 @@ main (int argc, char *argv[])
 			if (match || dump_all)
 				print_entry (type, data, num_nums, match_indices, color_output);
 		}
-		free (data);
 	}
+	close_stream (&stream);
+	if (input_path)
+		close (input_file);
+	g_free (data);
 
 	return 0;
 }
