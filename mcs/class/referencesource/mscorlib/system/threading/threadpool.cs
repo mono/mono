@@ -62,122 +62,6 @@ namespace System.Threading
     [CLSCompliant(false)]
     [System.Runtime.InteropServices.ComVisible(true)]
     unsafe public delegate void IOCompletionCallback(uint errorCode, uint numBytes, NativeOverlapped* pOVERLAP);
-
-
-    [System.Runtime.InteropServices.ComVisible(true)]
-#if FEATURE_REMOTING
-    public sealed class RegisteredWaitHandle : MarshalByRefObject
-#else // FEATURE_REMOTING
-    public sealed class RegisteredWaitHandle
-#endif // FEATURE_REMOTING
-    {
-        // Microsoft ThreadPool
-        private Microsoft.RegisteredWaitHandleSafe internalRegisteredWait;
-
-        // Mono ThreadPool
-        private WaitHandle _waitObject;
-        private WaitOrTimerCallback _callback;
-        private object _state;
-        private WaitHandle _finalEvent;
-        private ManualResetEvent _cancelEvent;
-        private TimeSpan _timeout;
-        private int _callsInProcess;
-        private bool _executeOnlyOnce;
-        private bool _unregistered;
-
-        internal RegisteredWaitHandle()
-        {
-            Contract.Assert (Microsoft.ThreadPool.UseMicrosoftThreadPool);
-            internalRegisteredWait = new Microsoft.RegisteredWaitHandleSafe();
-        }
-
-        internal RegisteredWaitHandle (WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce)
-        {
-            Contract.Assert (!Microsoft.ThreadPool.UseMicrosoftThreadPool);
-            _waitObject = waitObject;
-            _callback = callback;
-            _state = state;
-            _timeout = timeout;
-            _executeOnlyOnce = executeOnlyOnce;
-            _finalEvent = null;
-            _cancelEvent = new ManualResetEvent (false);
-            _callsInProcess = 0;
-            _unregistered = false;
-        }
-
-        internal void SetHandle(IntPtr handle)
-        {
-            Contract.Assert (Microsoft.ThreadPool.UseMicrosoftThreadPool);
-            internalRegisteredWait.SetHandle(handle);
-        }
-
-        [System.Security.SecurityCritical]  // auto-generated
-        internal void SetWaitObject(WaitHandle waitObject)
-        {
-            Contract.Assert (Microsoft.ThreadPool.UseMicrosoftThreadPool);
-            internalRegisteredWait.SetWaitObject(waitObject);
-        }
-
-        internal void Wait (object state)
-        {
-            Contract.Assert (!Microsoft.ThreadPool.UseMicrosoftThreadPool);
-
-            try {
-                WaitHandle[] waits = new WaitHandle[] {_waitObject, _cancelEvent};
-                do {
-                    int signal = WaitHandle.WaitAny (waits, _timeout, false);
-                    if (!_unregistered) {
-                        lock (this) { _callsInProcess++; }
-                        ThreadPool.QueueUserWorkItem (new WaitCallback (DoCallBack), (signal == WaitHandle.WaitTimeout));
-                    }
-                } while (!_unregistered && !_executeOnlyOnce);
-            } catch {
-            }
-
-            lock (this) {
-                _unregistered = true;
-                if (_callsInProcess == 0 && _finalEvent != null)
-                    NativeEventCalls.SetEvent_internal (_finalEvent.Handle);
-            }
-        }
-
-        private void DoCallBack (object timedOut)
-        {
-            Contract.Assert (!Microsoft.ThreadPool.UseMicrosoftThreadPool);
-
-            if (_callback != null) {
-                try {
-                    _callback (_state, (bool)timedOut);
-                } catch {
-                }
-            }
-
-            lock (this) {
-                _callsInProcess--;
-                if (_unregistered && _callsInProcess == 0 && _finalEvent != null)
-                    NativeEventCalls.SetEvent_internal (_finalEvent.Handle);
-            }
-        }
-
-        [System.Security.SecuritySafeCritical]  // auto-generated
-        [System.Runtime.InteropServices.ComVisible(true)]
-        // This is the only public method on this class
-        public bool Unregister(WaitHandle waitObject)
-        {
-            if (Microsoft.ThreadPool.UseMicrosoftThreadPool) {
-                return internalRegisteredWait.Unregister(waitObject);
-            } else {
-                lock (this) {
-                    if (_unregistered)
-                        return false;
-                    _finalEvent = waitObject;
-                    _unregistered = true;
-                    _cancelEvent.Set();
-                    return true;
-                }
-            }
-        }
-    }
 }
 
 namespace System.Threading.Microsoft
@@ -1089,6 +973,7 @@ namespace System.Threading.Microsoft
         }
     }
 
+#if !MONO
     internal sealed class RegisteredWaitHandleSafe : CriticalFinalizerObject
     {
         private static IntPtr InvalidHandle
@@ -1266,6 +1151,42 @@ namespace System.Threading.Microsoft
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern bool UnregisterWaitNative(IntPtr handle, SafeHandle waitObject);
     }
+
+    [System.Runtime.InteropServices.ComVisible(true)]
+#if FEATURE_REMOTING
+    public sealed class RegisteredWaitHandle : MarshalByRefObject {
+#else // FEATURE_REMOTING
+    public sealed class RegisteredWaitHandle {
+#endif // FEATURE_REMOTING
+        private RegisteredWaitHandleSafe internalRegisteredWait;
+
+        internal RegisteredWaitHandle()
+        {
+            internalRegisteredWait = new RegisteredWaitHandleSafe();
+        }
+
+        internal void SetHandle(IntPtr handle)
+        {
+           internalRegisteredWait.SetHandle(handle);
+        }
+
+        [System.Security.SecurityCritical]  // auto-generated
+        internal void SetWaitObject(WaitHandle waitObject)
+        {
+           internalRegisteredWait.SetWaitObject(waitObject);
+        }
+
+        [System.Security.SecuritySafeCritical]  // auto-generated
+        [System.Runtime.InteropServices.ComVisible(true)]
+        // This is the only public method on this class
+        public bool Unregister(
+             WaitHandle     waitObject          // object to be notified when all callbacks to delegates have completed
+        )
+        {
+            return internalRegisteredWait.Unregister(waitObject);
+        }
+    }
+#endif // !MONO
 
     //
     // This type is necessary because VS 2010's debugger looks for a method named _ThreadPoolWaitCallbacck.PerformWaitCallback
@@ -1540,6 +1461,7 @@ namespace System.Threading.Microsoft
              bool               compressStack
              )
         {
+#if !MONO
 #if FEATURE_REMOTING
             if (RemotingServices.IsTransparentProxy(waitObject))
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_WaitOnTransparentProxy"));
@@ -1569,6 +1491,19 @@ namespace System.Threading.Microsoft
                 throw new ArgumentNullException("WaitOrTimerCallback");
             }
             return registeredWaitHandle;
+#else
+            if (waitObject == null)
+                throw new ArgumentNullException ("waitObject");
+            if (callBack == null)
+                throw new ArgumentNullException ("callBack");
+            if (millisecondsTimeOutInterval != Timeout.UnsignedInfinite && millisecondsTimeOutInterval > Int32.MaxValue)
+                throw new NotSupportedException ("Timeout is too big. Maximum is Int32.MaxValue");
+
+            RegisteredWaitHandle waiter = new RegisteredWaitHandle (waitObject, callBack, state, new TimeSpan (0, 0, 0, 0, (int) millisecondsTimeOutInterval), executeOnlyOnce);
+            QueueUserWorkItem (new WaitCallback (waiter.Wait), null);
+
+            return waiter;
+#endif
         }
 
 
@@ -1586,7 +1521,7 @@ namespace System.Threading.Microsoft
                 throw new ArgumentOutOfRangeException("millisecondsTimeOutInterval", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegOrNegative1"));
             Contract.EndContractBlock();
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            return RegisterWaitForSingleObject(waitObject,callBack,state,(UInt32)millisecondsTimeOutInterval,executeOnlyOnce,ref stackMark,true);
+            return RegisterWaitForSingleObject(waitObject,callBack,state,millisecondsTimeOutInterval == Timeout.Infinite ? Timeout.UnsignedInfinite : (UInt32)millisecondsTimeOutInterval,executeOnlyOnce,ref stackMark,true);
         }
 
         [System.Security.SecurityCritical]  // auto-generated_required
@@ -1603,7 +1538,7 @@ namespace System.Threading.Microsoft
                 throw new ArgumentOutOfRangeException("millisecondsTimeOutInterval", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegOrNegative1"));
             Contract.EndContractBlock();
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            return RegisterWaitForSingleObject(waitObject,callBack,state,(UInt32)millisecondsTimeOutInterval,executeOnlyOnce,ref stackMark,false);
+            return RegisterWaitForSingleObject(waitObject,callBack,state,millisecondsTimeOutInterval == Timeout.Infinite ? Timeout.UnsignedInfinite : (UInt32)millisecondsTimeOutInterval,executeOnlyOnce,ref stackMark,false);
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
@@ -1620,7 +1555,7 @@ namespace System.Threading.Microsoft
                 throw new ArgumentOutOfRangeException("millisecondsTimeOutInterval", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegOrNegative1"));
             Contract.EndContractBlock();
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            return RegisterWaitForSingleObject(waitObject,callBack,state,(UInt32)millisecondsTimeOutInterval,executeOnlyOnce,ref stackMark,true);
+            return RegisterWaitForSingleObject(waitObject,callBack,state,millisecondsTimeOutInterval == Timeout.Infinite ? Timeout.UnsignedInfinite : (UInt32)millisecondsTimeOutInterval,executeOnlyOnce,ref stackMark,true);
         }
 
         [System.Security.SecurityCritical]  // auto-generated_required
@@ -1637,7 +1572,7 @@ namespace System.Threading.Microsoft
                 throw new ArgumentOutOfRangeException("millisecondsTimeOutInterval", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegOrNegative1"));
             Contract.EndContractBlock();
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            return RegisterWaitForSingleObject(waitObject,callBack,state,(UInt32)millisecondsTimeOutInterval,executeOnlyOnce,ref stackMark,false);
+            return RegisterWaitForSingleObject(waitObject,callBack,state,millisecondsTimeOutInterval == Timeout.Infinite ? Timeout.UnsignedInfinite : (UInt32)millisecondsTimeOutInterval,executeOnlyOnce,ref stackMark,false);
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
