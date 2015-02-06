@@ -402,7 +402,7 @@ namespace System.Xml
 		public const string Xml_InvalidIndentation = "Xml_InvalidIndentation";
 		public const string Xml_InvalidKey = "Xml_InvalidKey";
 		public const string Xml_InvalidNameChars = "Xml_InvalidNameChars";
-		public const string Xml_InvalidNameCharsDetail = "Xml_InvalidNameCharsDetail";
+		public const string Xml_InvalidNameCharsDetail = "'{0}' contains invalid name character '{1}' ({2})";
 		public const string Xml_InvalidNmToken = "Xml_InvalidNmToken";
 		public const string Xml_InvalidNodeType = "Xml_InvalidNodeType";
 		public const string Xml_InvalidOperation = "Xml_InvalidOperation";
