@@ -33,10 +33,159 @@
 namespace System.Threading
 {
     using System.Security;
+    using System.Diagnostics.Contracts;
+
+    //
+    // Interface to something that can be queued to the TP.  This is implemented by
+    // QueueUserWorkItemCallback, Task, and potentially other internal types.
+    // For example, SemaphoreSlim represents callbacks using its own type that
+    // implements IThreadPoolWorkItem.
+    //
+    // If we decide to expose some of the workstealing
+    // stuff, this is NOT the thing we want to expose to the public.
+    //
+    internal interface IThreadPoolWorkItem
+    {
+        [SecurityCritical]
+        void ExecuteWorkItem();
+        [SecurityCritical]
+        void MarkAborted(ThreadAbortException tae);
+    }
+
+    [System.Runtime.InteropServices.ComVisible(true)]
+    public delegate void WaitCallback(Object state);
+
+    [System.Runtime.InteropServices.ComVisible(true)]
+    public delegate void WaitOrTimerCallback(Object state, bool timedOut);  // signalled or timed out
+
+    [System.Security.SecurityCritical]
+    [CLSCompliant(false)]
+    [System.Runtime.InteropServices.ComVisible(true)]
+    unsafe public delegate void IOCompletionCallback(uint errorCode, uint numBytes, NativeOverlapped* pOVERLAP);
+
+
+    [System.Runtime.InteropServices.ComVisible(true)]
+#if FEATURE_REMOTING
+    public sealed class RegisteredWaitHandle : MarshalByRefObject
+#else // FEATURE_REMOTING
+    public sealed class RegisteredWaitHandle
+#endif // FEATURE_REMOTING
+    {
+        // Microsoft ThreadPool
+        private Microsoft.RegisteredWaitHandleSafe internalRegisteredWait;
+
+        // Mono ThreadPool
+        private WaitHandle _waitObject;
+        private WaitOrTimerCallback _callback;
+        private object _state;
+        private WaitHandle _finalEvent;
+        private ManualResetEvent _cancelEvent;
+        private TimeSpan _timeout;
+        private int _callsInProcess;
+        private bool _executeOnlyOnce;
+        private bool _unregistered;
+
+        internal RegisteredWaitHandle()
+        {
+            Contract.Assert (Microsoft.ThreadPool.UseMicrosoftThreadPool);
+            internalRegisteredWait = new Microsoft.RegisteredWaitHandleSafe();
+        }
+
+        internal RegisteredWaitHandle (WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce)
+        {
+            Contract.Assert (!Microsoft.ThreadPool.UseMicrosoftThreadPool);
+            _waitObject = waitObject;
+            _callback = callback;
+            _state = state;
+            _timeout = timeout;
+            _executeOnlyOnce = executeOnlyOnce;
+            _finalEvent = null;
+            _cancelEvent = new ManualResetEvent (false);
+            _callsInProcess = 0;
+            _unregistered = false;
+        }
+
+        internal void SetHandle(IntPtr handle)
+        {
+            Contract.Assert (Microsoft.ThreadPool.UseMicrosoftThreadPool);
+            internalRegisteredWait.SetHandle(handle);
+        }
+
+        [System.Security.SecurityCritical]  // auto-generated
+        internal void SetWaitObject(WaitHandle waitObject)
+        {
+            Contract.Assert (Microsoft.ThreadPool.UseMicrosoftThreadPool);
+            internalRegisteredWait.SetWaitObject(waitObject);
+        }
+
+        internal void Wait (object state)
+        {
+            Contract.Assert (!Microsoft.ThreadPool.UseMicrosoftThreadPool);
+
+            try {
+                WaitHandle[] waits = new WaitHandle[] {_waitObject, _cancelEvent};
+                do {
+                    int signal = WaitHandle.WaitAny (waits, _timeout, false);
+                    if (!_unregistered) {
+                        lock (this) { _callsInProcess++; }
+                        ThreadPool.QueueUserWorkItem (new WaitCallback (DoCallBack), (signal == WaitHandle.WaitTimeout));
+                    }
+                } while (!_unregistered && !_executeOnlyOnce);
+            } catch {
+            }
+
+            lock (this) {
+                _unregistered = true;
+                if (_callsInProcess == 0 && _finalEvent != null)
+                    NativeEventCalls.SetEvent_internal (_finalEvent.Handle);
+            }
+        }
+
+        private void DoCallBack (object timedOut)
+        {
+            Contract.Assert (!Microsoft.ThreadPool.UseMicrosoftThreadPool);
+
+            if (_callback != null) {
+                try {
+                    _callback (_state, (bool)timedOut);
+                } catch {
+                }
+            }
+
+            lock (this) {
+                _callsInProcess--;
+                if (_unregistered && _callsInProcess == 0 && _finalEvent != null)
+                    NativeEventCalls.SetEvent_internal (_finalEvent.Handle);
+            }
+        }
+
+        [System.Security.SecuritySafeCritical]  // auto-generated
+        [System.Runtime.InteropServices.ComVisible(true)]
+        // This is the only public method on this class
+        public bool Unregister(WaitHandle waitObject)
+        {
+            if (Microsoft.ThreadPool.UseMicrosoftThreadPool) {
+                return internalRegisteredWait.Unregister(waitObject);
+            } else {
+                lock (this) {
+                    if (_unregistered)
+                        return false;
+                    _finalEvent = waitObject;
+                    _unregistered = true;
+                    _cancelEvent.Set();
+                    return true;
+                }
+            }
+        }
+    }
+}
+
+namespace System.Threading.Microsoft
+{
+    using System.Security;
     using System.Runtime.Remoting;
     using System.Security.Permissions;
     using System;
-    using Microsoft.Win32;
     using System.Runtime.CompilerServices;
     using System.Runtime.ConstrainedExecution;
     using System.Runtime.InteropServices;
@@ -45,6 +194,9 @@ namespace System.Threading
     using System.Diagnostics.Contracts;
     using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Tracing;
+#if !MONO
+    using Microsoft.Win32;
+#endif
 
     internal static class ThreadPoolGlobals
     {
@@ -560,7 +712,7 @@ namespace System.Threading
         public ThreadPoolWorkQueue()
         {
             queueTail = queueHead = new QueueSegment();
-#if !FEATURE_CORECLR
+#if !MONO && !FEATURE_CORECLR
             loggingEnabled = FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.ThreadPool|FrameworkEventSource.Keywords.ThreadTransfer);
 #endif
         }
@@ -622,7 +774,7 @@ namespace System.Threading
             if (!forceGlobal)
                 tl = ThreadPoolWorkQueueThreadLocals.threadLocals;
 
-#if !FEATURE_CORECLR
+#if !MONO && !FEATURE_CORECLR
             if (loggingEnabled)
                 System.Diagnostics.Tracing.FrameworkEventSource.Log.ThreadPoolEnqueueWorkObject(callback);
 #endif
@@ -734,7 +886,7 @@ namespace System.Threading
             //
             workQueue.MarkThreadRequestSatisfied();
 
-#if !FEATURE_CORECLR
+#if !MONO && !FEATURE_CORECLR
             // Has the desire for logging changed since the last time we entered?
             workQueue.loggingEnabled = FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.ThreadPool|FrameworkEventSource.Keywords.ThreadTransfer);
 #endif
@@ -796,7 +948,7 @@ namespace System.Threading
                     }
                     else
                     {
-#if !FEATURE_CORECLR
+#if !MONO && !FEATURE_CORECLR
                         if (workQueue.loggingEnabled)
                             System.Diagnostics.Tracing.FrameworkEventSource.Log.ThreadPoolDequeueWorkObject(workItem);
 #endif
@@ -944,7 +1096,7 @@ namespace System.Threading
             [System.Security.SecuritySafeCritical]  // auto-generated
             get
             {
-                return Win32Native.INVALID_HANDLE_VALUE;
+                return new IntPtr(-1);
             }
         }
         private IntPtr registeredWaitHandle;
@@ -1115,48 +1267,6 @@ namespace System.Threading
         private static extern bool UnregisterWaitNative(IntPtr handle, SafeHandle waitObject);
     }
 
-[System.Runtime.InteropServices.ComVisible(true)]
-#if FEATURE_REMOTING    
-    public sealed class RegisteredWaitHandle : MarshalByRefObject {
-#else // FEATURE_REMOTING
-    public sealed class RegisteredWaitHandle {
-#endif // FEATURE_REMOTING
-        private RegisteredWaitHandleSafe internalRegisteredWait;
-    
-        internal RegisteredWaitHandle()
-        {
-            internalRegisteredWait = new RegisteredWaitHandleSafe();
-        }
-
-        internal void SetHandle(IntPtr handle)
-        {
-           internalRegisteredWait.SetHandle(handle);
-        }
-
-        [System.Security.SecurityCritical]  // auto-generated
-        internal void SetWaitObject(WaitHandle waitObject)
-        {
-           internalRegisteredWait.SetWaitObject(waitObject);
-        }
-
-    
-[System.Security.SecuritySafeCritical]  // auto-generated
-[System.Runtime.InteropServices.ComVisible(true)]
-        // This is the only public method on this class
-        public bool Unregister(
-             WaitHandle     waitObject          // object to be notified when all callbacks to delegates have completed
-             )
-        {
-            return internalRegisteredWait.Unregister(waitObject);
-        }
-    }
-    
-    [System.Runtime.InteropServices.ComVisible(true)]
-    public delegate void WaitCallback(Object state);
-
-    [System.Runtime.InteropServices.ComVisible(true)]
-    public delegate void WaitOrTimerCallback(Object state, bool timedOut);  // signalled or timed out
-
     //
     // This type is necessary because VS 2010's debugger looks for a method named _ThreadPoolWaitCallbacck.PerformWaitCallback
     // on the stack to determine if a thread is a ThreadPool thread or not.  We have a better way to do this for .NET 4.5, but
@@ -1170,23 +1280,6 @@ namespace System.Threading
         {
             return ThreadPoolWorkQueue.Dispatch();
         }
-    }
-
-    //
-    // Interface to something that can be queued to the TP.  This is implemented by 
-    // QueueUserWorkItemCallback, Task, and potentially other internal types.
-    // For example, SemaphoreSlim represents callbacks using its own type that
-    // implements IThreadPoolWorkItem.
-    //
-    // If we decide to expose some of the workstealing
-    // stuff, this is NOT the thing we want to expose to the public.
-    //
-    internal interface IThreadPoolWorkItem
-    {
-        [SecurityCritical]
-        void ExecuteWorkItem();
-        [SecurityCritical]
-        void MarkAborted(ThreadAbortException tae);
     }
 
     internal sealed class QueueUserWorkItemCallback : IThreadPoolWorkItem
@@ -1356,17 +1449,10 @@ namespace System.Threading
 
     }
 
-    [System.Security.SecurityCritical]
-    [CLSCompliant(false)]
-    [System.Runtime.InteropServices.ComVisible(true)]
-    unsafe public delegate void IOCompletionCallback(uint errorCode, // Error code
-                                       uint numBytes, // No. of bytes transferred 
-                                       NativeOverlapped* pOVERLAP // ptr to OVERLAP structure
-                                       );   
-
     [HostProtection(Synchronization=true, ExternalThreading=true)]
     public static class ThreadPool
     {
+        internal static readonly bool UseMicrosoftThreadPool = Environment.GetEnvironmentVariable ("MONO_THREADPOOL") == "microsoft";
 
         #if FEATURE_CORECLR
         [System.Security.SecurityCritical] // auto-generated
@@ -1785,8 +1871,7 @@ namespace System.Threading
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
-        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
-        [SuppressUnmanagedCodeSecurity]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern bool RequestWorkerThread();
 
         [System.Security.SecurityCritical]  // auto-generated
@@ -1874,8 +1959,7 @@ namespace System.Threading
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
-        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
-        [SuppressUnmanagedCodeSecurity]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void InitializeVMTp(ref bool enableWorkerTracking);
 
         [System.Security.SecurityCritical]  // auto-generated
