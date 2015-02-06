@@ -411,10 +411,10 @@ namespace System.ServiceModel.Syndication
 				writer.WriteStartElement ("feed", AtomNamespace);
 
 			if (Feed.BaseUri != null)
-				writer.WriteAttributeString ("xml:base", Feed.BaseUri.ToString ());
+				writer.WriteAttributeString ("xml", "base", null, Feed.BaseUri.ToString ());
 
 			if (Feed.Language != null)
-				writer.WriteAttributeString ("xml:lang", Feed.Language);
+				writer.WriteAttributeString ("xml", "lang", null, Feed.Language);
 
 			// atom:feed elements MUST contain exactly one atom:title element.
 			(Feed.Title ?? new TextSyndicationContent (String.Empty)).WriteTo (writer, "title", AtomNamespace);
