@@ -136,8 +136,12 @@ namespace System.Xml
 				req.Proxy = proxy;
 			if (credential != null)
 				req.Credentials = credential;
+#if BOOTSTRAP_BASIC
+			return null;
+#else
 			var res = await req.GetResponseAsync ().ConfigureAwait (false);
 			return res.GetResponseStream ();
+#endif
 		}
 	}
 }
