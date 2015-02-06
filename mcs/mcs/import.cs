@@ -1960,7 +1960,7 @@ namespace Mono.CSharp
 		{
 			// 
 			// Report details about missing type and most likely cause of the problem.
-			// csc reports 1683, 1684 as warnings but we report them only when used
+			// csc used to reports 1683, 1684 (now 7069) as warnings but we report them only when used
 			// or referenced from the user core in which case compilation error has to
 			// be reported because compiler cannot continue anyway
 			//
@@ -2001,7 +2001,7 @@ namespace Mono.CSharp
 					report.Error (731, loc, "The type forwarder for type `{0}' in assembly `{1}' has circular dependency",
 						name, definition.DeclaringAssembly.FullName);
 				} else {
-					report.Error (1684, loc,
+					report.Error (7069, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
 						name, t.MemberDefinition.DeclaringAssembly.FullName);
 				}

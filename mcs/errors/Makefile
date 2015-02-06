@@ -32,9 +32,10 @@ TEST_SUPPORT_FILES = \
 	CS0730-lib.dll CS0731-1-lib.dll CS0731-2-lib.dll \
 	CS1070-lib.dll \
 	CS1540-15-lib.dll CS1540-17-lib.dll CS1542-lib.dll CS1577-lib.dll \
-	CS1683-lib.dll CS1684-lib.dll CS1685-2-lib.dll \
+	CS1683-lib.dll CS1685-2-lib.dll \
 	dlls/first/CS1701-lib.dll dlls/second/CS1701-lib.dll CS1701-lib.dll dlls/first/CS1702-lib.dll dlls/second/CS1702-lib.dll CS1702-lib.dll dlls/first/CS1705-lib.dll dlls/second/CS1705-lib.dll CS1705-lib.dll \
 	CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll CSExternAlias-lib.dll \
+	CS7069-lib.dll \
 	CS8009-lib.dll \
 	CSFriendAssembly-lib.dll \
 	dlls/first/CS1703-lib.dll dlls/first/CS1704-lib.dll \
