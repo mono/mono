@@ -61,6 +61,24 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+		[Test]
+		public void QueueUserWorkItem ()
+		{
+			int n = 100000;
+			int total = 0, sum = 0;
+			for (int i = 0; i < n; ++i) {
+				if (i % 2 == 0)
+					ThreadPool.QueueUserWorkItem (_ => { Interlocked.Decrement (ref sum); Interlocked.Increment (ref total); });
+				else
+					ThreadPool.QueueUserWorkItem (_ => { Interlocked.Increment (ref sum); Interlocked.Increment (ref total); });
+			}
+			var start = DateTime.Now;
+			while ((total != n || sum != 0) && (DateTime.Now - start).TotalSeconds < 60)
+				Thread.Sleep (1000);
+			Assert.IsTrue (total == n, "#1");
+			Assert.IsTrue (sum   == 0, "#2");
+		}
+
 #if NET_4_0
 		event WaitCallback e;
 

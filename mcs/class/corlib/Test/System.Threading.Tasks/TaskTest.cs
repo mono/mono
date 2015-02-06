@@ -345,7 +345,7 @@ namespace MonoTests.System.Threading.Tasks
 			CountdownEvent cde = new CountdownEvent (2);
 			var mre = new ManualResetEvent (false);
 			var tasks = new[] {
-				Task.Factory.StartNew (delegate { mre.WaitOne (); }),
+				Task.Factory.StartNew (delegate { Assert.IsTrue (mre.WaitOne (1500), "#0"); }),
 				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } }),
 				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } })
 			};
@@ -356,7 +356,7 @@ namespace MonoTests.System.Threading.Tasks
 			mre.Set ();
 
 			try {
-				Assert.IsTrue (Task.WaitAll (tasks, 1000), "#3");
+				Task.WaitAll (tasks, 1000);
 				Assert.Fail ("#4");
 			} catch (AggregateException e) {
 				Assert.AreEqual (2, e.InnerExceptions.Count, "#5");

@@ -1282,7 +1282,6 @@ System.Threading/ExecutionContext.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
 System.Threading/Interlocked.cs
-System.Threading/IOCompletionCallback.cs
 System.Threading/LockCookie.cs
 System.Threading/LockQueue.cs
 System.Threading/LockRecursionException.cs
@@ -1303,9 +1302,7 @@ System.Threading/ThreadPool.cs
 System.Threading/Timer.cs
 System.Threading/TimerCallback.cs
 System.Threading/Volatile.cs
-System.Threading/WaitCallback.cs
 System.Threading/WaitHandle.cs
-System.Threading/WaitOrTimerCallback.cs
 System/Action.cs
 System/Comparison.cs
 System/Converter.cs
@@ -1340,6 +1337,7 @@ ReferenceSources/EncodingTable.cs
 ReferenceSources/TypeNameParser.cs
 ReferenceSources/RuntimeType.cs
 ReferenceSources/RemotingFieldCachedData.cs
+ReferenceSources/MonoRuntimeWorkItem.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
@@ -1658,6 +1656,7 @@ ReferenceSources/RemotingFieldCachedData.cs
 ../../../external/referencesource/mscorlib/system/threading/threadstateexception.cs
 ../../../external/referencesource/mscorlib/system/threading/timeout.cs
 ../../../external/referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
+../../../external/referencesource/mscorlib/system/threading/threadpool.cs
 
 ../../../external/referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskFactory.cs
