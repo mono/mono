@@ -34,6 +34,9 @@ namespace System.Configuration
                 None = 0,
                 IsDefaultCollection = 1,
                 IsRequired = 2,
-                IsKey = 4
+                IsKey = 4,
+                IsTypeStringTransformationRequired  = 8,
+                IsAssemblyStringTransformationRequired = 16,
+                IsVersionCheckRequired = 32
         }
 }

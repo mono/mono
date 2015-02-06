@@ -1541,8 +1541,8 @@ namespace MonoTests.System.ComponentModel
 			TypeDescriptor.AddAttributes(testType, new ProviderTestAttribute());
 			var registeredAttributeTypes = TypeDescriptor.GetAttributes(testType).Cast<Attribute>().Select(attr => attr.GetType()).ToArray();
 			Assert.AreEqual(2, registeredAttributeTypes.Length);
-			Assert.Contains(typeof(ProviderTestAttribute), registeredAttributeTypes);
-			Assert.Contains(typeof(SerializableAttribute), registeredAttributeTypes);
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(ProviderTestAttribute)), "Contains-1");
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(SerializableAttribute)), "Contains-2");
 		}
 
 		[Test]
@@ -1552,8 +1552,8 @@ namespace MonoTests.System.ComponentModel
 			TypeDescriptor.AddAttributes(testObj, new ProviderTestAttribute());
 			var registeredAttributeTypes = TypeDescriptor.GetAttributes(testObj).Cast<Attribute>().Select(attr => attr.GetType()).ToArray();
 			Assert.AreEqual(2, registeredAttributeTypes.Length);
-			Assert.Contains(typeof(ProviderTestAttribute), registeredAttributeTypes);
-			Assert.Contains(typeof(SerializableAttribute), registeredAttributeTypes);
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(ProviderTestAttribute)), "Contains-1");
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(SerializableAttribute)), "Contains-2");
 		}
 
 		[Test]
@@ -1564,11 +1564,11 @@ namespace MonoTests.System.ComponentModel
 
 			var registeredAttributeTypes = TypeDescriptor.GetAttributes(testType).Cast<Attribute>().Select(attr => attr.GetType()).ToArray();
 			Assert.AreEqual(1, registeredAttributeTypes.Length);
-			Assert.Contains(typeof(ProviderTestAttribute), registeredAttributeTypes);
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(ProviderTestAttribute)), "Contains-1");
 
 			var registeredPropertyDescriptorTypes = TypeDescriptor.GetProperties(testType).Cast<PropertyDescriptor>().Select(prop => prop.GetType()).ToArray();
 			Assert.AreEqual(1, registeredPropertyDescriptorTypes.Length);
-			Assert.Contains(typeof(ProviderTestPropertyDescriptor), registeredPropertyDescriptorTypes);
+			Assert.IsTrue (registeredPropertyDescriptorTypes.Contains (typeof(ProviderTestPropertyDescriptor)), "Contains-2");
 		}
 
 		[Test]
@@ -1579,11 +1579,11 @@ namespace MonoTests.System.ComponentModel
 
 			var registeredAttributeTypes = TypeDescriptor.GetAttributes(testObj).Cast<Attribute>().Select(attr => attr.GetType()).ToArray();
 			Assert.AreEqual(1, registeredAttributeTypes.Length);
-			Assert.Contains(typeof(ProviderTestAttribute), registeredAttributeTypes);
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(ProviderTestAttribute)), "Contains-1");
 
 			var registeredPropertyDescriptorTypes = TypeDescriptor.GetProperties(testObj).Cast<PropertyDescriptor>().Select(prop => prop.GetType()).ToArray();
 			Assert.AreEqual(1, registeredPropertyDescriptorTypes.Length);
-			Assert.Contains(typeof(ProviderTestPropertyDescriptor), registeredPropertyDescriptorTypes);
+			Assert.IsTrue (registeredPropertyDescriptorTypes.Contains (typeof(ProviderTestPropertyDescriptor)), "Contains-2");
 		}
 
 		private class CustomDescriptionTestProvider : TypeDescriptionProvider

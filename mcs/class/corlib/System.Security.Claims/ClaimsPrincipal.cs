@@ -208,6 +208,11 @@ namespace System.Security.Claims {
 				throw new ArgumentNullException ("type");
 			return FindAll(x => x.Type == type);
 		}
-		
+
+		[MonoTODO]
+		protected virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -300,6 +300,15 @@ namespace MonoTests.System
 				// If it is DST, then the runtime has the bug that we are looking for.
 				Assert.IsFalse (timeZone.IsDaylightSavingTime (new DateTime (2014, 3, 7, 12, 0, 0, DateTimeKind.Unspecified)));
 			}
+
+			[Test] //Covers #25050
+			public void TestAthensDST ()
+			{
+				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById ("Europe/Athens");
+				var date = new DateTime (2014, 3, 30 , 2, 0, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (2,0,0), tzi.GetUtcOffset (date));
+			}
 		}
 		
 		[TestFixture]
@@ -425,11 +434,13 @@ namespace MonoTests.System
 			}
 
 			[Test]
-			public void ConvertTimeToUtc_MinValue ()
+			public void ConvertTimeToUtc_Overflow ()
 			{
-				var dt = new DateTime (0);
-				var res = TimeZoneInfo.ConvertTimeToUtc (dt);
-				Assert.AreEqual (res.Kind, DateTimeKind.Utc);
+				var res = TimeZoneInfo.ConvertTimeToUtc (new DateTime (0));
+				Assert.AreEqual (res.Kind, DateTimeKind.Utc, "#1");
+
+				res = TimeZoneInfo.ConvertTimeToUtc (DateTime.MaxValue);
+				Assert.AreEqual (res.Kind, DateTimeKind.Utc, "#2");
 			}
 
 			[Test]

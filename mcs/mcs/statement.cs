@@ -3736,13 +3736,13 @@ namespace Mono.CSharp {
 						if (list != null) {
 							var list_clone = new List<LabeledStatement> ();
 							foreach (var lentry in list) {
-								list_clone.Add (RemapLabeledStatement (lentry, lentry.Block, clonectx.RemapBlockCopy (lentry.Block)));
+								list_clone.Add (RemapLabeledStatement (lentry, clonectx.RemapBlockCopy (lentry.Block)));
 							}
 
 							target.labels.Add (entry.Key, list_clone);
 						} else {
 							var labeled = (LabeledStatement) entry.Value;
-							target.labels.Add (entry.Key, RemapLabeledStatement (labeled, labeled.Block, clonectx.RemapBlockCopy (labeled.Block)));
+							target.labels.Add (entry.Key, RemapLabeledStatement (labeled, clonectx.RemapBlockCopy (labeled.Block)));
 						}
 					}
 
@@ -3884,8 +3884,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static LabeledStatement RemapLabeledStatement (LabeledStatement stmt, Block src, Block dst)
+		LabeledStatement RemapLabeledStatement (LabeledStatement stmt, Block dst)
 		{
+			var src = stmt.Block;
+
+			//
+			// Cannot remap label block if the label was not yet cloned which
+			// can happen in case of anonymous method inside anoynymous method
+			// with a label. But in this case we don't care because goto cannot
+			// jump of out anonymous method
+			//
+			if (src.ParametersBlock != this)
+				return stmt;
+
 			var src_stmts = src.Statements;
 			for (int i = 0; i < src_stmts.Count; ++i) {
 				if (src_stmts[i] == stmt)

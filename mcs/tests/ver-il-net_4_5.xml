@@ -51109,6 +51109,34 @@
       </method>
     </type>
   </test>
+  <test name="test-911.cs">
+    <type name="N">
+      <method name="Void Foo()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-912.cs">
+    <type name="Bar">
+      <method name="Int32 Main()" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-92.cs">
     <type name="Outer">
       <method name="Void .ctor()" attrs="6278">
@@ -55186,6 +55214,25 @@
       </method>
       <method name="Void &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-173.cs">
+    <type name="MainClass">
+      <method name="Void Main()" attrs="150">
+        <size>36</size>
+      </method>
+      <method name="Void SomeMethod(System.Action)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
+        <size>36</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
+        <size>9</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
