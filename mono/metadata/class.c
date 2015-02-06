@@ -4285,6 +4285,10 @@ mono_class_init (MonoClass *class)
 	
 	g_assert (class);
 
+	/* A bogus class? */
+	if (!class->name)
+		return 0;
+
 	/* Double-checking locking pattern */
 	if (class->inited)
 		return class->exception_type == MONO_EXCEPTION_NONE;
@@ -4349,7 +4353,7 @@ mono_class_init (MonoClass *class)
 		if (!gklass->exception_type)
 			mono_class_setup_methods (gklass);
 		if (gklass->exception_type) {
-			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Generic Type Defintion failed to init"));
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Generic Type Definition failed to init"));
 			goto leave;
 		}
 
@@ -4362,7 +4366,7 @@ mono_class_init (MonoClass *class)
 
 	has_cached_info = mono_class_get_cached_class_info (class, &cached_info);
 
-	if (class->generic_class || class->image->dynamic || !class->type_token || (has_cached_info && !cached_info.has_nested_classes))
+	if (class->generic_class || (class->image && class->image->dynamic) || !class->type_token || (has_cached_info && !cached_info.has_nested_classes))
 		class->nested_classes_inited = TRUE;
 
 	/*
