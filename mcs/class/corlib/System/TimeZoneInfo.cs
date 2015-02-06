@@ -1016,7 +1016,7 @@ namespace System
 
 		private AdjustmentRule GetApplicableRule (DateTime dateTime)
 		{
-			//Transitions are always in standard time
+			//Applicable rules are in standard time
 			DateTime date = dateTime;
 
 			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Local)
@@ -1047,14 +1047,17 @@ namespace System
 			if (transitions == null)
 				return false;
 
-			//Transitions are always in standard time
+			//Transitions are in UTC
 			DateTime date = dateTime;
 
 			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Local)
 				date = date.ToUniversalTime () + BaseUtcOffset;
 
-			if (dateTime.Kind == DateTimeKind.Utc && this != TimeZoneInfo.Utc)
-				date = date + BaseUtcOffset;
+			if (dateTime.Kind != DateTimeKind.Utc) {
+				if (date.Ticks < BaseUtcOffset.Ticks)
+					return false;
+				date = date - BaseUtcOffset;
+			}
 
 			for (var i =  transitions.Count - 1; i >= 0; i--) {
 				var pair = transitions [i];
