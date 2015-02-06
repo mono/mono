@@ -35,9 +35,17 @@ namespace Mono.Debugger.Soft
 
 		public AppDomainMirror Domain {
 			get {
-				vm.CheckProtocolVersion (2, 38);
-				if (domain == null)
-					domain = vm.GetDomain (vm.conn.StackFrame_GetDomain (thread.Id, Id));
+				if (domain == null) {
+					if (vm.Version.AtLeast (2, 38)) {
+						try {
+							domain = vm.GetDomain (vm.conn.StackFrame_GetDomain (thread.Id, Id));
+						} catch (AbsentInformationException) {
+							domain = Thread.Domain;
+						}
+					} else {
+						domain = Thread.Domain;
+					}
+				}
 
 				return domain;
 			}
