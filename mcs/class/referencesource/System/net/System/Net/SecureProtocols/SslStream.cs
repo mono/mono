@@ -16,6 +16,11 @@ Revision History:
 
 --*/
 #if MONO_FEATURE_NEW_TLS && SECURITY_DEP
+#if MONO_X509_ALIAS
+extern alias PrebuiltSystem;
+using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+#endif
+
 namespace System.Net.Security {
 using System;
 using System.IO;

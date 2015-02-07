@@ -16,5 +16,9 @@ Other defines which are used when building the BCL and tests:
 
 * MONO_INSIDE_MONO_SECURITY: we're building Mono.Security.dll.
 
+Extern aliases:
+
 * MONO_SECURITY_ALIAS: we're using Mono.Security from the "MonoSecurity" extern alias.
+
+* MONO_X509_ALIAS: we're using X509CertificateCollection from the "PrebuiltSystem" extern alias.
 
