@@ -131,7 +131,7 @@ System/ControlCharacters.cs
 System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
 System/DBNull.cs
-System/Decimal.cs
+../../../external/referencesource/mscorlib/system/decimal.cs
 System/Delegate.cs
 System/DelegateSerializationHolder.cs
 System/DivideByZeroException.cs
