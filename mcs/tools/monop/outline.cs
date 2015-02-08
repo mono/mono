@@ -55,6 +55,11 @@ public class Outline {
 	Universe universe;
 	Assembly mscorlib;
 
+	public Outline (System.Type t, TextWriter output, bool declared_only, bool show_private, bool filter_obsolete)
+	{
+		throw new NotImplementedException ();
+	}
+	
 	public Outline (Universe universe, Assembly mscorlib, Type t, TextWriter output, bool declared_only, bool show_private, bool filter_obsolete)
 	{
 		if (universe == null)
@@ -91,7 +96,7 @@ public class Outline {
 		type_value_type = typeof (ValueType);
 		type_int = typeof (int);
 		type_flags_attribute = typeof (FlagsAttribute);
-		type_obsolete_attribute = typeof (ObsoleteAttribuet);
+		type_obsolete_attribute = typeof (ObsoleteAttribute);
 		type_param_array_attribute = typeof (ParamArrayAttribute);
 	}
 #endif
