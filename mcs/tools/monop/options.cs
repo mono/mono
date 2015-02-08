@@ -36,6 +36,8 @@ public class Options
 	public bool ShowPrivate = false;
 	public string AssemblyReference = null;
 	public string Type = null;
+	public string PublicDir = null;
+	public string Style = null;
 
 	public Options ()
 	{
@@ -52,62 +54,70 @@ public class Options
 
 		for (int i = 0; i < args.Length; i++) {
 			switch (args[i]) {
-				case "-h":
-				case "--help":
-					PrintHelp ();
-					return false;
-				case "--runtime-version":
-					PrintRuntimeVersion ();
-					return false;
-				case "-d":
-				case "--declared-only":
-					DeclaredOnly = true;
+			case "-h":
+			case "--help":
+				PrintHelp ();
+			return false;
+			case "--runtime-version":
+				PrintRuntimeVersion ();
+				return false;
+			case "-d":
+			case "--declared-only":
+				DeclaredOnly = true;
+			break;
+			case "--filter-obsolete":
+			case "-f":
+				FilterObsolete = true;
+			break;
+			case "-p":
+			case "--private":
+				ShowPrivate = true;
+			break;
+			case "--refs":
+				PrintRefs = true;
+				break;
+			case "-xi":
+				PublicDir = "/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS";
+				Style = "xios";
+				break;
+			case "-xa":
+				PublicDir = "/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/2.1";
+				Style = "xand";
+				break;
+			case "-s":
+			case "-k":
+			case "--search":
+				Search = true;
+			break;
+			case "-c":
+				i++;
+				if (i < args.Length)
+					MonoP.Completion (args[i]);
+				return false;
+			case "-r":
+				i++;
+				if (i < args.Length)
+					AssemblyReference = args[i];
+				break;
+			case "-a":
+				ShowAll = true;
+				break;
+			default:
+				if (args[i].StartsWith ("-r:") || args[i].StartsWith ("/r:")) {
+					AssemblyReference = args [i].Substring (3);
 					break;
-				case "--filter-obsolete":
-				case "-f":
-					FilterObsolete = true;
+				}
+				
+				// The first unrecognizable option becomes
+				// the type to look up
+				if (Type == null) {
+					Type = args[i];
 					break;
-				case "-p":
-				case "--private":
-					ShowPrivate = true;
-					break;
-				case "--refs":
-					PrintRefs = true;
-					break;
-				case "-s":
-				case "-k":
-				case "--search":
-					Search = true;
-					break;
-				case "-c":
-					i++;
-					if (i < args.Length)
-						MonoP.Completion (args[i]);
-					return false;
-				case "-r":
-					i++;
-					if (i < args.Length)
-						AssemblyReference = args[i];
-					break;
-				case "-a":
-					ShowAll = true;
-					break;
-				default:
-					if (args[i].StartsWith ("-r:") || args[i].StartsWith ("/r:")) {
-						AssemblyReference = args [i].Substring (3);
-						break;
-					}
-
-					// The first unrecognizable option becomes
-					// the type to look up
-					if (Type == null) {
-						Type = args[i];
-						break;
-					}
-
-					// others are ignored
-					Console.WriteLine ("ignored: {0}", args[i]);
-					break;
+				}
+				
+				// others are ignored
+				Console.WriteLine ("ignored: {0}", args[i]);
+				break;
 			}
 		}
 
@@ -135,6 +145,8 @@ public class Options
 		Console.WriteLine ("\t--refs\t\t\tPrint a list of the referenced assemblies for an assembly");
 		Console.WriteLine ("\t--runtime-version\tPrint runtime version");
 		Console.WriteLine ("\t--search,-s,-k\t\tSearch through all known namespaces");
+		Console.WriteLine ("\t--xi\t\tSet search style to Xamarin.iOS");
+		Console.WriteLine ("\t--xa\t\tSet search style to Xamarin.Android");
 		Console.WriteLine ("\t--a\t\tShows all the types declare in the specified assembly");
 	}
 }
