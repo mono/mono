@@ -4,6 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 #if MONO_FEATURE_NEW_TLS && SECURITY_DEP
+#if MONO_X509_ALIAS
+extern alias PrebuiltSystem;
+using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+#endif
+using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net.Security {
     using System.Diagnostics;
@@ -12,7 +17,6 @@ namespace System.Net.Security {
     using System.Runtime.InteropServices;
     using System.Security.Authentication.ExtendedProtection;
     using System.Security.Cryptography;
-    using System.Security.Cryptography.X509Certificates;
     using System.Text;
     using System.Threading;
     using System.Security.Permissions;

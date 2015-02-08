@@ -20,6 +20,7 @@ Revision History:
 extern alias PrebuiltSystem;
 using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
+using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net.Security {
 using System;
@@ -30,7 +31,6 @@ using System.Security.Authentication;
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Permissions;
 using System.Security.Principal;
-using System.Security.Cryptography.X509Certificates;
 using System.Net.Configuration;
 
     [Flags]
