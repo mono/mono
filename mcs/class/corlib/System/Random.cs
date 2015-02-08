@@ -5,6 +5,7 @@
 //   Bob Smith (bob@thestuff.net)
 //   Ben Maurer (bmaurer@users.sourceforge.net)
 //   Sebastien Pouliot  <sebastien@xamarin.com>
+//   Konstantin Safonov <kasthack@epicm.org>
 //
 // (C) 2001 Bob Smith.  http://www.thestuff.net
 // (C) 2003 Ben Maurer
@@ -43,6 +44,12 @@ namespace System
 		uint z;
 		uint c;
 
+		private const double REAL_UNIT_INT = 1.0 / ( int.MaxValue + 1.0 );
+		private const double REAL_UNIT_UINT = 1.0 / ( uint.MaxValue + 1.0 );
+		private const uint Y = 842502087;
+		private const uint Z = 3579807591;
+		private const uint W = 273326509;
+
 		public Random ()
 			: this (Environment.TickCount)
 		{
@@ -50,83 +57,98 @@ namespace System
 
 		public Random (int Seed)
 		{
-			x = (uint) Seed;
-			y = (uint) 987654321;
-			z = (uint) 43219876;
-			c = (uint) 6543217;
+			Reset (Seed);
 		}
 
-		uint JKiss ()
+		private void Reset (int seed)
 		{
-			x = 314527869 * x + 1234567;
-			y ^= y << 5;
-			y ^= y >> 7;
-			y ^= y << 22;
-			ulong t = ((ulong) 4294584393 * z + c);
-			c = (uint) (t >> 32);
-			z = (uint) t;
-			return (x + y + z);
+			x = (uint)seed;
+			y = Y;
+			z = Z;
+			c = W;
 		}
 
 		public virtual int Next (int minValue, int maxValue)
 		{
 			if (minValue > maxValue)
 				throw new ArgumentOutOfRangeException ("Maximum value is less than minimal value.");
-
-			// special case: a difference of one (or less) will always return the minimum
-			// e.g. -1,-1 or -1,0 will always return -1
-			uint diff = (uint) (maxValue - minValue);
-			if (diff <= 1)
-				return minValue;
-
-			return minValue + ((int) (JKiss () % diff));
+			uint t = x ^ x << 11;
+			x = y;
+			y = z;
+			z = c;
+			int range = maxValue - minValue;
+			if (range < 0)
+			{
+				// If range is <0 then an overflow has occured and must resort to using long integer arithmetic instead (slower).
+				return minValue + (int)( REAL_UNIT_UINT * ( c = c ^ c >> 19 ^ ( t ^ t >> 8 ) ) * ( (long)maxValue - minValue ) );
+			}
+			return minValue + (int)( REAL_UNIT_INT * (int)( 0x7FFFFFFF & ( c = ( c ^ c >> 19 ) ^ ( t ^ t >> 8 ) ) ) * range );
 		}
 
 		public virtual int Next (int maxValue)
 		{
 			if (maxValue < 0)
 				throw new ArgumentOutOfRangeException ("Maximum value is less than minimal value.");
-
-			return maxValue > 0 ? (int)(JKiss () % maxValue) : 0;
+			uint t = x ^ x << 11;
+			x = y;
+			y = z;
+			z = c;
+			return (int)( REAL_UNIT_INT * (int)( 0x7FFFFFFF & ( c = c ^ c >> 19 ^ ( t ^ t >> 8 ) ) ) * maxValue );
 		}
 
 		public virtual int Next ()
 		{
-			// returns a non-negative, [0 - Int32.MacValue], random number
-			// but we want to avoid calls to Math.Abs (call cost and branching cost it requires)
-			// and the fact it would throw for Int32.MinValue (so roughly 1 time out of 2^32)
-			int random = (int) JKiss ();
-			while (random == Int32.MinValue)
-				random = (int) JKiss ();
-			int mask = random >> 31;
-			random ^= mask;
-			return random + (mask & 1);
+			uint t = x ^ x << 11;
+			x = y;
+			y = z;
+			z = c;
+			c = c ^ c >> 19 ^ ( t ^ t >> 8 );
+			uint rtn = c & 0x7FFFFFFF;
+			return (int)rtn;
 		}
 
-		public virtual void NextBytes (byte [] buffer)
+		public unsafe virtual void NextBytes (byte [] buffer)
 		{
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-
-			// each random `int` can fill 4 bytes
-			int p = 0;
-			uint random;
-			for (int i = 0; i < (buffer.Length >> 2); i++) {
-				random = JKiss ();
-				buffer [p++] = (byte) (random >> 24);
-				buffer [p++] = (byte) (random >> 16);
-				buffer [p++] = (byte) (random >> 8);
-				buffer [p++] = (byte) random;
+			uint
+				x = this.x,
+				y = this.y,
+				z = this.z,
+				c = this.c;
+			int i = 0;
+			uint t;
+			if (buffer.Length > sizeof(int) - 1)
+			{
+				fixed (byte* bptr = buffer)
+				{
+					uint* iptr = (uint*)bptr;
+					uint* endptr = iptr + buffer.Length / 4;
+					do
+					{
+						t = ( x ^ ( x << 11 ) );
+						x = y;
+						y = z;
+						z = c;
+						c = c ^ c >> 19 ^ ( t ^ t >> 8 );
+						*iptr = c;
+					}
+					while (++iptr < endptr);
+					i = buffer.Length - buffer.Length % 4;
+				}
 			}
-			if (p == buffer.Length)
-				return;
-
-			// complete the array
-			random = JKiss ();
-			while (p < buffer.Length) {
-				buffer [p++] = (byte) random;
-				random >>= 8;
+			if (i < buffer.Length)
+			{
+				t = ( x ^ ( x << 11 ) );
+				x = y; y = z; z = c;
+				c = c ^ c >> 19 ^ ( t ^ t >> 8 );
+				do
+				{
+					buffer [i] = (byte)( c >>= 8 );
+				}
+				while (++i < buffer.Length);
 			}
+			this.x = x; this.y = y; this.z = z; this.c = c;
 		}
 
 		public virtual double NextDouble ()
@@ -137,10 +159,11 @@ namespace System
 
 		protected virtual double Sample ()
 		{
-			// a single 32 bits random value is not enough to create a random double value
-			uint a = JKiss () >> 6;	// Upper 26 bits
-			uint b = JKiss () >> 5;	// Upper 27 bits
-			return (a * 134217728.0 + b) / 9007199254740992.0;
+			uint t = x ^ x << 11;
+			x = y;
+			y = z;
+			z = c;
+			return REAL_UNIT_INT * (int)( 0x7FFFFFFF & ( c = c ^ c >> 19 ^ ( t ^ t >> 8 ) ) );
 		}
 	}
 }
