@@ -131,7 +131,6 @@ System/ControlCharacters.cs
 System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
 System/DBNull.cs
-../../../external/referencesource/mscorlib/system/decimal.cs
 System/Delegate.cs
 System/DelegateSerializationHolder.cs
 System/DivideByZeroException.cs
@@ -319,9 +318,6 @@ System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
 System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
-../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
-../../../external/referencesource/mscorlib/system/globalization/charunicodeinfo.cs
-../../../external/referencesource/mscorlib/system/globalization/globalizationassembly.cs
 System.Globalization/CodePageDataItem.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
@@ -1461,6 +1457,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/datetimekind.cs
 ../../../external/referencesource/mscorlib/system/datetimeoffset.cs
 ../../../external/referencesource/mscorlib/system/dayofweek.cs
+../../../external/referencesource/mscorlib/system/decimal.cs
 ../../../external/referencesource/mscorlib/system/int16.cs
 ../../../external/referencesource/mscorlib/system/int32.cs
 ../../../external/referencesource/mscorlib/system/int64.cs
@@ -1544,8 +1541,10 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contracts.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
 
+../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendardata.cs
+../../../external/referencesource/mscorlib/system/globalization/charunicodeinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/daylighttime.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformat.cs
@@ -1553,6 +1552,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfoscanner.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeparse.cs
 ../../../external/referencesource/mscorlib/system/globalization/eastasianlunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/globalizationassembly.cs
 ../../../external/referencesource/mscorlib/system/globalization/gregoriancalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/gregoriancalendarhelper.cs
 ../../../external/referencesource/mscorlib/system/globalization/hebrewcalendar.cs
