@@ -319,7 +319,9 @@ System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
 System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
-System.Globalization/CharUnicodeInfo.cs
+../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
+../../../external/referencesource/mscorlib/system/globalization/charunicodeinfo.cs
+../../../external/referencesource/mscorlib/system/globalization/globalizationassembly.cs
 System.Globalization/CodePageDataItem.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
