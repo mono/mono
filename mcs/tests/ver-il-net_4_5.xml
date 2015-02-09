@@ -69806,4 +69806,14 @@
       </method>
     </type>
   </test>
+  <test name="test-pragma-unrecognized.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
 </tests>
