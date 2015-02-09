@@ -6723,7 +6723,7 @@ static const char *encodings [] = {
  * returns the code page as a string
  */
 ICALL_EXPORT MonoString*
-ves_icall_System_Text_Encoding_InternalCodePage (gint32 *int_code_page) 
+ves_icall_System_Text_EncodingHelper_InternalCodePage (gint32 *int_code_page) 
 {
 	const char *cset;
 	const char *p;
