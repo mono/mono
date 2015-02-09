@@ -3763,7 +3763,7 @@ public class StringTest
 		Assert.AreEqual ("original", "\u0085original\u1680".Trim (), "net_2_0 additional char#2");
 
 #if NET_4_0
-		Assert.AreEqual ("", "\x9\xa\xb\xc\xd\x20\x85\xa0\x1680\x180e\x2000\x2001\x2002\x2003\x2004\x2005\x2006\x2007\x2008\x2009\x200a\x2028\x2029\x202f\x205f\x3000".Trim (), "net_4_0 changes #1");
+		Assert.AreEqual ("", "\x9\xa\xb\xc\xd\x20\x85\xa0\x1680\x2000\x2001\x2002\x2003\x2004\x2005\x2006\x2007\x2008\x2009\x200a\x2028\x2029\x202f\x205f\x3000".Trim (), "net_4_0 changes #1");
 #endif
 	}
 
@@ -3938,7 +3938,7 @@ public class StringTest
 		Assert.AreEqual (0, chunks.Length, "Zero split");
 
 #if NET_4_0
-		Assert.AreEqual (0, "\x9\xa\xb\xc\xd\x20\x85\xa0\x1680\x180e\x2000\x2001\x2002\x2003\x2004\x2005\x2006\x2007\x2008\x2009\x200a\x2028\x2029\x202f\x205f\x3000".Split ((char[]) null, StringSplitOptions.RemoveEmptyEntries).Length, "net_4_0 changes");
+		Assert.AreEqual (0, "\x9\xa\xb\xc\xd\x20\x85\xa0\x1680\x2000\x2001\x2002\x2003\x2004\x2005\x2006\x2007\x2008\x2009\x200a\x2028\x2029\x202f\x205f\x3000".Split ((char[]) null, StringSplitOptions.RemoveEmptyEntries).Length, "net_4_0 changes");
 #endif
 	}
 
