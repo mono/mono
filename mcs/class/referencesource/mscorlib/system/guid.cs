@@ -17,7 +17,7 @@ namespace System {
     [StructLayout(LayoutKind.Sequential)]
     [Serializable]
 [System.Runtime.InteropServices.ComVisible(true)]
-    public struct Guid : IFormattable, IComparable
+    public partial struct Guid : IFormattable, IComparable
 #if GENERICS_WORK
         , IComparable<Guid>, IEquatable<Guid>
 #endif
@@ -645,7 +645,7 @@ namespace System {
             startPos += 4;
             currentPos = startPos;
 
-            if (!StringToLong(guidString, ref currentPos, startPos /*flags*/, out templ, ref result))
+            if (!StringToLong(guidString, ref currentPos, ParseNumbers.NoSpace, out templ, ref result))
                 return false;
 
             if (currentPos - startPos!=12) {
@@ -1137,7 +1137,7 @@ namespace System {
         {
             return !(a == b);
         }
-
+#if !MONO
         // This will create a new guid.  Since we've now decided that constructors should 0-init,
         // we need a method that allows users to create a guid.
         [System.Security.SecuritySafeCritical]  // auto-generated
@@ -1151,7 +1151,7 @@ namespace System {
             Marshal.ThrowExceptionForHR(Win32Native.CoCreateGuid(out guid), new IntPtr(-1));
             return guid;
         }
-
+#endif
         public String ToString(String format) {
             return ToString(format, null);
         }
