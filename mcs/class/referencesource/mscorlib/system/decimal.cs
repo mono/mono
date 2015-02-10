@@ -388,11 +388,11 @@ namespace System {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void FCallAddSub(ref Decimal d1, ref Decimal d2, byte bSign);
-        
-        [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern void FCallAddSubOverflowed(ref Decimal d1, ref Decimal d2, byte bSign, ref bool overflowed);
+
+        //[System.Security.SecurityCritical]  // auto-generated
+        //[ResourceExposure(ResourceScope.None)]
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        //private static extern void FCallAddSubOverflowed(ref Decimal d1, ref Decimal d2, byte bSign, ref bool overflowed);
         
         // Rounds a Decimal to an integer value. The Decimal argument is rounded
         // towards positive infinity.
@@ -457,11 +457,10 @@ namespace System {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void FCallDivide(ref Decimal d1, ref Decimal d2);
 
-        [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern void FCallDivideOverflowed(ref Decimal d1, ref Decimal d2, ref bool overflowed);
-
+        //[System.Security.SecurityCritical]  // auto-generated
+        //[ResourceExposure(ResourceScope.None)]
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        //private static extern void FCallDivideOverflowed(ref Decimal d1, ref Decimal d2, ref bool overflowed);
     
         // Checks if this Decimal is equal to a given object. Returns true
         // if the given object is a boxed Decimal and its value is equal to the
