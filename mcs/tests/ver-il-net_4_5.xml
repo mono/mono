@@ -30233,6 +30233,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-35.cs">
+    <type name="MainClass">
+      <method name="Void Main(System.String[])" attrs="150">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="MainClass+FooDelegate">
+      <method name="Int32 Invoke(Int32)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">
@@ -69354,6 +69375,16 @@
       </method>
     </type>
   </test>
+  <test name="test-pragma-unrecognized.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-primary-ctor-01.cs">
     <type name="Simple">
       <method name="Int32 get_Property()" attrs="2177">
@@ -69800,16 +69831,6 @@
       </method>
       <method name="Void FunctionWithParameter(Int32 ByRef, Int32 ByRef)" attrs="134">
         <size>8</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-pragma-unrecognized.cs">
-    <type name="C">
-      <method name="Void Main()" attrs="150">
-        <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

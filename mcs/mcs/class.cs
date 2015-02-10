@@ -1730,21 +1730,14 @@ namespace Mono.CSharp
 
 			foreach (var member in members) {
 				var pbm = member as PropertyBasedMember;
-				if (pbm != null)
+				if (pbm != null) {
 					pbm.PrepareEmit ();
+					continue;
+				}
 
-				var pm = member as IParametersMember;
-				if (pm != null) {
-					var mc = member as MethodOrOperator;
-					if (mc != null) {
-						mc.PrepareEmit ();
-					}
-
-					var p = pm.Parameters;
-					if (p.IsEmpty)
-						continue;
-
-					((ParametersCompiled) p).ResolveDefaultValues (member);
+				var mc = member as MethodCore;
+				if (mc != null) {
+					mc.PrepareEmit ();
 					continue;
 				}
 

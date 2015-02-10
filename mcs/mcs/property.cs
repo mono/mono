@@ -1756,6 +1756,13 @@ namespace Mono.CSharp
 			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
 		}
 
+		public override void PrepareEmit ()
+		{
+			parameters.ResolveDefaultValues (this);
+
+			base.PrepareEmit ();
+		}
+
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
