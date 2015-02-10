@@ -6320,32 +6320,15 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				//
-				// The rules for the possible declarators are pretty wise,
-				// but the production on the grammar is more concise.
-				//
-				// So we have to enforce these rules here.
-				//
-				// We do not resolve before doing the case 1 test,
-				// because the grammar is explicit in that the token &
-				// is present, so we need to test for this particular case.
-				//
-
-				if (initializer is Cast) {
-					bc.Report.Error (254, initializer.Location, "The right hand side of a fixed statement assignment may not be a cast expression");
-					return null;
-				}
-
-				initializer = initializer.Resolve (bc);
-
-				if (initializer == null)
+				var res = initializer.Resolve (bc);
+				if (res == null)
 					return null;
 
 				//
 				// Case 1: Array
 				//
-				if (initializer.Type.IsArray) {
-					TypeSpec array_type = TypeManager.GetElementType (initializer.Type);
+				if (res.Type.IsArray) {
+					TypeSpec array_type = TypeManager.GetElementType (res.Type);
 
 					//
 					// Provided that array_type is unmanaged,
@@ -6357,7 +6340,7 @@ namespace Mono.CSharp {
 					// and T* is implicitly convertible to the
 					// pointer type given in the fixed statement.
 					//
-					ArrayPtr array_ptr = new ArrayPtr (initializer, array_type, loc);
+					ArrayPtr array_ptr = new ArrayPtr (res, array_type, loc);
 
 					Expression converted = Convert.ImplicitConversionRequired (bc, array_ptr.Resolve (bc), li.Type, loc);
 					if (converted == null)
@@ -6380,33 +6363,39 @@ namespace Mono.CSharp {
 				//
 				// Case 2: string
 				//
-				if (initializer.Type.BuiltinType == BuiltinTypeSpec.Type.String) {
-					return new StringEmitter (initializer, li).Resolve (bc);
+				if (res.Type.BuiltinType == BuiltinTypeSpec.Type.String) {
+					return new StringEmitter (res, li).Resolve (bc);
 				}
 
 				// Case 3: fixed buffer
-				if (initializer is FixedBufferPtr) {
-					return new ExpressionEmitter (initializer, li);
+				if (res is FixedBufferPtr) {
+					return new ExpressionEmitter (res, li);
 				}
 
 				//
 				// Case 4: & object.
 				//
-				bool already_fixed = true;
-				Unary u = initializer as Unary;
-				if (u != null && u.Oper == Unary.Operator.AddressOf) {
-					IVariableReference vr = u.Expr as IVariableReference;
-					if (vr == null || !vr.IsFixed) {
-						already_fixed = false;
+				Unary u = res as Unary;
+				if (u != null) {
+					bool already_fixed = true;
+
+					if (u.Oper == Unary.Operator.AddressOf) {
+						IVariableReference vr = u.Expr as IVariableReference;
+						if (vr == null || !vr.IsFixed) {
+							already_fixed = false;
+						}
 					}
+
+					if (already_fixed) {
+						bc.Report.Error (213, loc, "You cannot use the fixed statement to take the address of an already fixed expression");
+					}
+				} else if (initializer is Cast) {
+					bc.Report.Error (254, initializer.Location, "The right hand side of a fixed statement assignment may not be a cast expression");
+					return null;
 				}
 
-				if (already_fixed) {
-					bc.Report.Error (213, loc, "You cannot use the fixed statement to take the address of an already fixed expression");
-				}
-
-				initializer = Convert.ImplicitConversionRequired (bc, initializer, li.Type, loc);
-				return new ExpressionEmitter (initializer, li);
+				res = Convert.ImplicitConversionRequired (bc, res, li.Type, loc);
+				return new ExpressionEmitter (res, li);
 			}
 		}
 
