@@ -5933,7 +5933,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (!TypeSpec.IsReferenceType (expr.Type)) {
+			if (!TypeSpec.IsReferenceType (expr.Type) && expr.Type != InternalType.ErrorType) {
 				ec.Report.Error (185, loc,
 					"`{0}' is not a reference type as required by the lock statement",
 					expr.Type.GetSignatureForError ());
@@ -6372,26 +6372,26 @@ namespace Mono.CSharp {
 					return new ExpressionEmitter (res, li);
 				}
 
+				bool already_fixed = true;
+
 				//
 				// Case 4: & object.
 				//
 				Unary u = res as Unary;
 				if (u != null) {
-					bool already_fixed = true;
-
 					if (u.Oper == Unary.Operator.AddressOf) {
 						IVariableReference vr = u.Expr as IVariableReference;
 						if (vr == null || !vr.IsFixed) {
 							already_fixed = false;
 						}
 					}
-
-					if (already_fixed) {
-						bc.Report.Error (213, loc, "You cannot use the fixed statement to take the address of an already fixed expression");
-					}
 				} else if (initializer is Cast) {
 					bc.Report.Error (254, initializer.Location, "The right hand side of a fixed statement assignment may not be a cast expression");
 					return null;
+				}
+
+				if (already_fixed) {
+					bc.Report.Error (213, loc, "You cannot use the fixed statement to take the address of an already fixed expression");
 				}
 
 				res = Convert.ImplicitConversionRequired (bc, res, li.Type, loc);
