@@ -680,6 +680,13 @@ namespace System {
 					var isDst  = zone.IsDaylightSavingTime (time.Value);
 					Console.WriteLine ("\tDate({0}): Offset({1}) IsDST({2})", time.Value, offset, isDst);
 				}
+
+				if (zone.transitions != null) {
+					Console.WriteLine ("Transitions for: {0}", path);
+					foreach (var transition in zone.transitions) {
+						Console.WriteLine ("\t Date({0}): {1}", transition.Key, transition.Value);
+					}
+				}
 			}
 #endif
 		}
