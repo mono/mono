@@ -164,7 +164,7 @@ EXTRA_DISTFILES += \
 # Android TimeZoneInfo testing....
 #
 
-tzi.exe: ../corlib/System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/common/Consts.cs ../Mono.Options/Mono.Options/Options.cs
+tzi.exe: System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/common/Consts.cs ../../build/common/Locale.cs ../Mono.Options/Mono.Options/Options.cs ReferenceSources/TimeZoneInfoOptions.cs
 	mcs /debug+ /out:$@ /unsafe "/d:INSIDE_CORLIB;MONODROID;MOBILE;NET_4_5;NET_4_0;LIBC;SELF_TEST" $^
 
 android-pull-tzdb:
