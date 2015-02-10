@@ -159,3 +159,21 @@ EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
 	$(vtsdir)/BinarySerializationOverVersions.cs
+
+#
+# Android TimeZoneInfo testing....
+#
+
+tzi.exe: ../corlib/System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/common/Consts.cs ../Mono.Options/Mono.Options/Options.cs
+	mcs /debug+ /out:$@ /unsafe "/d:INSIDE_CORLIB;MONODROID;MOBILE;NET_4_5;NET_4_0;LIBC;SELF_TEST" $^
+
+android-pull-tzdb:
+	mkdir -p android/tzdb/usr/share/zoneinfo
+	mkdir -p android/tzdb/misc/zoneinfo/zoneinfo
+	android_root=`adb shell echo '$$ANDROID_ROOT' | tr -d "\r"` ; \
+	android_data=`adb shell echo '$$ANDROID_DATA' | tr -d "\r"` ; \
+	adb $(ADB_TARGET) pull $$android_root/usr/share/zoneinfo    android/tzdb/usr/share/zoneinfo ; \
+	adb $(ADB_TARGET) pull $$android_data/misc/zoneinfo/tzdata  android/tzdb/misc/zoneinfo
+
+android-dump-tzdata: tzi.exe android-pull-tzdb
+	__XA_OVERRIDE_TIMEZONE_ID__=America/New_York ANDROID_ROOT="`pwd`/android/tzdb" ANDROID_DATA="`pwd`/android/tzdb" mono --debug tzi.exe -o android/tzdata
