@@ -155,6 +155,7 @@ System/GC.cs
 System/GCCollectionMode.cs
 System/GCNotificationStatus.cs
 System/Guid.cs
+System/Guid.MonoTouch.cs
 System/IAppDomainSetup.cs
 System/IAsyncResult.cs
 System/IObservable.cs
@@ -1458,6 +1459,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/datetimeoffset.cs
 ../../../external/referencesource/mscorlib/system/dayofweek.cs
 ../../../external/referencesource/mscorlib/system/decimal.cs
+../../../external/referencesource/mscorlib/system/guid.cs
 ../../../external/referencesource/mscorlib/system/int16.cs
 ../../../external/referencesource/mscorlib/system/int32.cs
 ../../../external/referencesource/mscorlib/system/int64.cs
