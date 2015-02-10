@@ -320,8 +320,6 @@ System.Diagnostics.SymbolStore/SymLanguageVendor.cs
 System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
 ../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
-../../../external/referencesource/mscorlib/system/globalization/encodingdataitem.cs
-../../../external/referencesource/mscorlib/system/globalization/encodingtable.cs
 ../../../external/referencesource/mscorlib/system/globalization/charunicodeinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/globalizationassembly.cs
 System.Globalization/CompareInfo.cs
@@ -1444,6 +1442,8 @@ ReferenceSources/TimeZoneInfoOptions.cs
 ReferenceSources/AppDomain.cs
 ReferenceSources/CLRConfig.cs
 ReferenceSources/JitHelpers.cs
+ReferenceSources/EncodingDataItem.cs
+ReferenceSources/EncodingTable.cs
 
 ../../../external/referencesource/mscorlib/system/__hresults.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
