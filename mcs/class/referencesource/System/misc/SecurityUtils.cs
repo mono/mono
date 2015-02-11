@@ -60,12 +60,14 @@ namespace System.Windows.Forms
         }
 
         private static void DemandReflectionAccess(Type type) {
+#if !DISABLE_CAS_USE
             try {
                 MemberAccessPermission.Demand();
             }
             catch (SecurityException) {
                 DemandGrantSet(type.Assembly);
             }
+#endif
         }
 
         [SecuritySafeCritical]
