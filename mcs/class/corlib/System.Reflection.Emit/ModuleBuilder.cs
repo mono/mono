@@ -574,8 +574,7 @@ namespace System.Reflection.Emit {
 		{
 			if (entryPoint == null)
 				throw new ArgumentNullException ("entryPoint");
-			if (entryPoint.DeclaringType.Module != this)
-				throw new InvalidOperationException ("entryPoint is not contained in this module");
+
 			throw new NotImplementedException ();
 		}
 
