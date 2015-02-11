@@ -1,4 +1,4 @@
-#if MONOTOUCH
+#if MONOTOUCH && FULL_AOT_RUNTIME
 
 using Crimson.CommonCrypto;
 
