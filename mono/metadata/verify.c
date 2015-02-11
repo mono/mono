@@ -6260,8 +6260,7 @@ mono_verifier_is_enabled_for_method (MonoMethod *method)
 gboolean
 mono_verifier_is_enabled_for_class (MonoClass *klass)
 {
-	/* Guard against NULL images */
-	if (!klass->image || mono_security_core_clr_is_platform_image(klass->image)) return 0;
+	if (mono_security_core_clr_is_platform_image(klass->image)) return 0;
 	return verify_all || (verifier_mode > MONO_VERIFIER_MODE_OFF && !klass->image->assembly->in_gac && klass->image != mono_defaults.corlib);
 }
 
