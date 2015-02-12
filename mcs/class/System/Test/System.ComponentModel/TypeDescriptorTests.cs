@@ -227,6 +227,8 @@ namespace MonoTests.System.ComponentModel
 		
 		public MyComponent  ()
 		{
+			// A workaround for aggressive linker
+			Disposed -= null;
 		}
 		
 		public MyComponent (ISite site)
@@ -1236,9 +1238,11 @@ namespace MonoTests.System.ComponentModel
 
 			// Test from bug #76686
 			Assert.AreEqual  (typeof (Int32Converter), TypeDescriptor.GetConverter ((int?) 1).GetType (), "#28");
+			new ComponentConverter (null); // Needed for MT linker
 			Assert.IsTrue (TypeDescriptor.GetConverter (typeof (Component)) is ComponentConverter, "#29");
 			Assert.IsTrue (TypeDescriptor.GetConverter (new Component()) is ComponentConverter, "#30");
 			Assert.AreEqual (typeof (NullableConverter), TypeDescriptor.GetConverter (typeof (int?)).GetType (), "#31");
+			new DateTimeOffsetConverter (); // Needed for MT linker
 			Assert.AreEqual (typeof (DateTimeOffsetConverter), TypeDescriptor.GetConverter (typeof (DateTimeOffset)).GetType (), "#32");
 		}
 		
