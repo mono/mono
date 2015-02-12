@@ -574,7 +574,8 @@ namespace System.Reflection.Emit {
 		{
 			if (entryPoint == null)
 				throw new ArgumentNullException ("entryPoint");
-
+			if (entryPoint.DeclaringType.Module != this)
+				throw new InvalidOperationException ("entryPoint is not contained in this module");
 			throw new NotImplementedException ();
 		}
 
@@ -582,8 +583,7 @@ namespace System.Reflection.Emit {
 		{
 			if (method == null)
 				throw new ArgumentNullException ("method");
-			if (method.DeclaringType.Module != this)
-				throw new InvalidOperationException ("The method is not in this module");
+
 			return new MethodToken (GetToken (method));
 		}
 
