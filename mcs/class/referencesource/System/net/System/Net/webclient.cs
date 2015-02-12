@@ -238,7 +238,9 @@ namespace System.Net {
         /// </devdoc>
         public IWebProxy Proxy {
             get {
+#if !DISABLE_CAS_USE
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
                 if (!m_ProxySet) {
                     return WebRequest.InternalDefaultWebProxy;
                 } else {
@@ -246,7 +248,9 @@ namespace System.Net {
                 }
             }
             set {
+#if !DISABLE_CAS_USE
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
+#endif
                 m_Proxy = value;
                 m_ProxySet = true;
             }
