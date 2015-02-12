@@ -18,7 +18,7 @@ internal static class EncodingHelper
 				lock (lockobj){
 					if (utf8EncodingWithoutMarkers == null){
 						utf8EncodingWithoutMarkers = new UTF8Encoding (false, false);
-//						utf8EncodingWithoutMarkers.is_readonly = true;
+						typeof (Encoding).GetField ("m_isReadOnly", BindingFlags.NonPublic | BindingFlags.Instance).SetValue (utf8EncodingWithoutMarkers, false);
 					}
 				}
 			}
@@ -36,9 +36,9 @@ internal static class EncodingHelper
 				lock (lockobj){
 					if (utf8EncodingUnsafe == null){
 						utf8EncodingUnsafe = new UTF8Encoding (false, false);
-						typeof (Encoding).GetField ("is_readonly", BindingFlags.NonPublic | BindingFlags.Instance).SetValue (utf8EncodingUnsafe, false);
+						typeof (Encoding).GetField ("m_isReadOnly", BindingFlags.NonPublic | BindingFlags.Instance).SetValue (utf8EncodingUnsafe, false);
 						utf8EncodingUnsafe.DecoderFallback = new DecoderReplacementFallback (String.Empty);
-						typeof (Encoding).GetField ("is_readonly", BindingFlags.NonPublic | BindingFlags.Instance).SetValue (utf8EncodingUnsafe, true);
+						typeof (Encoding).GetField ("m_isReadOnly", BindingFlags.NonPublic | BindingFlags.Instance).SetValue (utf8EncodingUnsafe, true);
 					}
 				}
 			}
@@ -55,7 +55,7 @@ internal static class EncodingHelper
 				lock (lockobj) {
 					if (bigEndianUTF32Encoding == null) {
 						bigEndianUTF32Encoding = new UTF32Encoding (true, true);
-//						bigEndianUTF32Encoding.is_readonly = true;
+						typeof (Encoding).GetField ("m_isReadOnly", BindingFlags.NonPublic | BindingFlags.Instance).SetValue (bigEndianUTF32Encoding, false);
 					}
 				}
 			}
