@@ -68,7 +68,7 @@ namespace System
 		// Properties
 		public static TimeZone CurrentTimeZone {
 			get {
-				long now = DateTime.GetNow ();
+				long now = DateTime.UtcNow.Ticks;
 				TimeZone tz = currentTimeZone;
 				
 				lock (tz_lock) {

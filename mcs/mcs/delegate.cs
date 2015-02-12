@@ -297,10 +297,6 @@ namespace Mono.CSharp {
 			if ((caching_flags & Flags.CloseTypeCreated) != 0)
 				return;
 
-			if (!Parameters.IsEmpty) {
-				parameters.ResolveDefaultValues (this);
-			}
-
 			InvokeBuilder.PrepareEmit ();
 			if (BeginInvokeBuilder != null) {
 				BeginInvokeBuilder.PrepareEmit ();

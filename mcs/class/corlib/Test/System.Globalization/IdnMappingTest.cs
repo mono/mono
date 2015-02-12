@@ -121,7 +121,7 @@ namespace MonoTests.System.Globalization
 		public void UnassignedCharacter ()
 		{
 			IdnMapping m = new IdnMapping ();
-			GetAsciiInvalid (m, "\u18b0.com", 1);
+			//GetAsciiInvalid (m, "\u18b0.com", 1);
 			m.AllowUnassigned = true;
 			GetAscii (m, "\u18b0.com", "xn--6bf.com", 2);
 		}

@@ -116,24 +116,10 @@ $(build_lib): $(CYCLIC_DEP_FILES)
 
 $(test_lib): $(test_lib).config $(TEST_RESOURCES)
 
-ifeq (net_2_0, $(PROFILE))
-$(test_lib).config: Test/test-config-file-net-2.0
-	cp $< $@
-else
 $(test_lib).config: Test/test-config-file
 	cp $< $@
-endif
 
 CLEAN_FILES = $(test_lib).config $(bare_libdir)/System.dll $(secxml_libdir)/System.dll $(bare_libdir)/System.dll.mdb $(secxml_libdir)/System.dll.mdb
-
-# run the PKITS tests only if the data was installed/activated, otherwise ignore them
-ifeq (net_2_0, $(PROFILE))
-pkits_files := $(wildcard Test/System.Security.Cryptography.X509Certificates/pkits/hint)
-ifndef pkits_files
-TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)NotWorking,ValueAdd,CAS,InetAccess,PKITS
-TEST_HARNESS_EXCLUDES_ONDOTNET = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)NotDotNet,CAS,PKITS
-endif
-endif
 
 # Helper target to run the perl regex test suite
 regex-check:

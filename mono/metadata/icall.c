@@ -95,7 +95,7 @@
 #include <windows.h>
 #include <shlobj.h>
 #endif
-#include "decimal.h"
+#include "decimal-ms.h"
 
 extern MonoString* ves_icall_System_Environment_GetOSVersionString (void) MONO_INTERNAL;
 
@@ -7421,44 +7421,14 @@ ves_icall_System_NumberFormatter_GetFormatterTables (guint64 const **mantissas,
 	*decHexDigits = Formatter_DecHexDigits;
 }
 
+/* These parameters are "readonly" in corlib/System/Globalization/TextInfo.cs */
 ICALL_EXPORT void
-get_category_data (int version,
-		   guint8 const **category_data,
-		   guint16 const **category_astral_index)
-{
-	*category_astral_index = NULL;
-
-#ifndef DISABLE_NET_4_0
-	if (version == 4) {
-		*category_data = CategoryData_v4;
-#ifndef DISABLE_ASTRAL
-		*category_astral_index = CategoryData_v4_astral_index;
-#endif
-		return;
-	}
-#endif
-
-	*category_data = CategoryData_v2;
-#ifndef DISABLE_ASTRAL
-	*category_astral_index = CategoryData_v2_astral_index;
-#endif
-}
-
-/* These parameters are "readonly" in corlib/System/Globalization/CharUnicodeInfo.cs */
-ICALL_EXPORT void
-ves_icall_System_Globalization_CharUnicodeInfo_GetDataTablePointers (int category_data_version,
-					    guint8 const **category_data,
-					    guint16 const **category_astral_index,
-					    guint8 const **numeric_data,
-					    gdouble const **numeric_data_values,
+ves_icall_System_Globalization_TextInfo_GetDataTablePointersLite (
 					    guint16 const **to_lower_data_low,
 					    guint16 const **to_lower_data_high,
 					    guint16 const **to_upper_data_low,
 					    guint16 const **to_upper_data_high)
 {
-	get_category_data (category_data_version, category_data, category_astral_index);
-	*numeric_data = NumericData;
-	*numeric_data_values = NumericDataValues;
 	*to_lower_data_low = ToLowerDataLow;
 	*to_lower_data_high = ToLowerDataHigh;
 	*to_upper_data_low = ToUpperDataLow;
@@ -8084,7 +8054,7 @@ mono_lookup_internal_call (MonoMethod *method)
 	g_warning ("cant resolve internal call to \"%s\" (tested without signature also)", mname);
 	g_print ("\nYour mono runtime and class libraries are out of sync.\n");
 	g_print ("The out of sync library is: %s\n", method->klass->image->name);
-	g_print ("\nWhen you update one from svn you need to update, compile and install\nthe other too.\n");
+	g_print ("\nWhen you update one from git you need to update, compile and install\nthe other too.\n");
 	g_print ("Do not report this as a bug unless you're sure you have updated correctly:\nyou probably have a broken mono install.\n");
 	g_print ("If you see other errors or faults after this message they are probably related\n");
 	g_print ("and you need to fix your mono install first.\n");

@@ -361,6 +361,32 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void GetMethodTokenCrossMethodBuilders ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder moduleb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			TypeBuilder tb = moduleb.DefineType ("foo");
+			MethodBuilder mb = tb.DefineMethod("Frub", MethodAttributes.Static, null, new Type[] { typeof(IntPtr) });
+			int tok = mb.GetToken().Token;
+			mb.SetImplementationFlags(MethodImplAttributes.NoInlining);
+			ILGenerator ilgen = mb.GetILGenerator();
+			ilgen.Emit(OpCodes.Ret);
+
+			tb.CreateType ();
+
+			var mi = (MethodInfo) moduleb.ResolveMember (tok);
+			Assert.IsNotNull (mi);
+
+			ModuleBuilder moduleb2 = ab.DefineDynamicModule ("foo2.dll", "foo2.dll");
+			var tok2 = moduleb2.GetMethodToken (mi).Token;
+
+			MethodBase mi2 = moduleb.ResolveMethod (tok2);
+			Assert.IsNotNull (mi2);
+			Assert.AreEqual ("Frub", mi.Name);
+		}
+
+		[Test]
 		public void ResolveMemberField ()
 		{
 			var assembly = genAssembly ();

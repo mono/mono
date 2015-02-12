@@ -80,6 +80,10 @@ namespace System.Diagnostics {
 		public static void Assert (bool condition, string message,
 			string detailMessageFormat, params object [] args)
 		{
+			if (condition)
+				// Return early to avoid the string formatting
+				return;
+
 			TraceImpl.Assert (condition,
 				message,
 				string.Format (detailMessageFormat, args));

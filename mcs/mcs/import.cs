@@ -208,7 +208,7 @@ namespace Mono.CSharp
 			if ((fa & FieldAttributes.Literal) != 0) {
 				Constant c = field_type.Kind == MemberKind.MissingType ?
 					new NullConstant (InternalType.ErrorType, Location.Null) :
-					Constant.CreateConstantFromValue (field_type, fi.GetRawConstantValue (), Location.Null);
+					CreateConstantFromValue (field_type, fi);
 				return new ConstSpec (declaringType, definition, field_type, fi, mod, c);
 			}
 
@@ -240,6 +240,25 @@ namespace Mono.CSharp
 			}
 
 			return new FieldSpec (declaringType, definition, field_type, fi, mod);
+		}
+
+		Constant CreateConstantFromValue (TypeSpec fieldType, FieldInfo fi)
+		{
+			var value = fi.GetRawConstantValue ();
+			//
+			// Metadata value can be encoded using different constant value type
+			// than is actual field type
+			//
+			// e.g. unsigned int16 CONSTANT = int16 (0x0000ffff)
+			//
+			if (value != null && !fieldType.IsEnum) {
+				var c = ImportConstant (value);
+				if (c != null) {
+					return fieldType == c.Type ? c : c.ConvertExplicitly (false, fieldType);
+				}
+			}
+
+			return Constant.CreateConstantFromValue (fieldType, value, Location.Null);
 		}
 
 		public EventSpec CreateEvent (EventInfo ei, TypeSpec declaringType, MethodSpec add, MethodSpec remove)
@@ -531,7 +550,7 @@ namespace Mono.CSharp
 							if (value == null) {
 								default_value = Constant.CreateConstantFromValue (ptype, null, Location.Null);
 							} else {
-								default_value = ImportParameterConstant (value);
+								default_value = ImportConstant (value);
 
 								if (ptype.IsEnum) {
 									default_value = new EnumConstant ((Constant) default_value, ptype);
@@ -557,7 +576,7 @@ namespace Mono.CSharp
 						} else if (value == null) {
 							default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
 						} else if (ptype.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
-							default_value = ImportParameterConstant (value);
+							default_value = ImportConstant (value);
 						}
 					}
 				}
@@ -1109,7 +1128,7 @@ namespace Mono.CSharp
 				spec.TypeArguments = tparams.ToArray ();
 		}
 
-		Constant ImportParameterConstant (object value)
+		Constant ImportConstant (object value)
 		{
 			//
 			// Get type of underlying value as int constant can be used for object
@@ -1960,7 +1979,7 @@ namespace Mono.CSharp
 		{
 			// 
 			// Report details about missing type and most likely cause of the problem.
-			// csc reports 1683, 1684 as warnings but we report them only when used
+			// csc used to reports 1683, 1684 (now 7069) as warnings but we report them only when used
 			// or referenced from the user core in which case compilation error has to
 			// be reported because compiler cannot continue anyway
 			//
@@ -2001,7 +2020,7 @@ namespace Mono.CSharp
 					report.Error (731, loc, "The type forwarder for type `{0}' in assembly `{1}' has circular dependency",
 						name, definition.DeclaringAssembly.FullName);
 				} else {
-					report.Error (1684, loc,
+					report.Error (7069, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
 						name, t.MemberDefinition.DeclaringAssembly.FullName);
 				}

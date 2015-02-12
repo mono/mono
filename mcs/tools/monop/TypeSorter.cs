@@ -26,6 +26,9 @@
 
 using System;
 using System.Collections;
+#if STATIC
+using Type=IKVM.Reflection.Type;
+#endif
 
 class TypeSorter : IComparer
 {

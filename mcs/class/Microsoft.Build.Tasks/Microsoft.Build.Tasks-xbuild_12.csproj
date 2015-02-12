@@ -104,6 +104,7 @@
     <Compile Include="Microsoft.Build.Tasks\AssignCulture.cs" />
     <Compile Include="Microsoft.Build.Tasks\AssignProjectConfiguration.cs" />
     <Compile Include="Microsoft.Build.Tasks\AssignTargetPath.cs" />
+    <Compile Include="Microsoft.Build.Tasks\AssignLinkMetadata.cs" />
     <Compile Include="Microsoft.Build.Tasks\CallTarget.cs" />
     <Compile Include="Microsoft.Build.Tasks\CombinePath.cs" />
     <Compile Include="Microsoft.Build.Tasks\CommandLineBuilderExtension.cs" />

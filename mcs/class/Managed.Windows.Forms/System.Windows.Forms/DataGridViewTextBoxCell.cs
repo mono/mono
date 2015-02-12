@@ -38,10 +38,8 @@ namespace System.Windows.Forms {
 		void CreateEditingControl ()
 		{
 			editingControl = new DataGridViewTextBoxEditingControl() {
-				EditingControlDataGridView = DataGridView,
 				Multiline = false,
-				BorderStyle = BorderStyle.None,
-				MaxLength = maxInputLength
+				BorderStyle = BorderStyle.None
 			};
 		}
 
@@ -92,8 +90,13 @@ namespace System.Windows.Forms {
 				throw new InvalidOperationException("There is no associated DataGridView.");
 			}
 
-			CreateEditingControl ();
+			if (editingControl == null)
+				CreateEditingControl ();
+
 			DataGridView.EditingControlInternal = editingControl;
+
+			editingControl.EditingControlDataGridView = DataGridView;
+			editingControl.MaxLength = maxInputLength;
 			
 			if (initialFormattedValue == null || initialFormattedValue.ToString () == string.Empty)
 				editingControl.Text = string.Empty;
@@ -126,6 +129,9 @@ namespace System.Windows.Forms {
 
 		public override void PositionEditingControl (bool setLocation, bool setSize, Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow)
 		{
+			if (editingControl == null)
+				CreateEditingControl ();
+
 			cellBounds.Size = new Size (cellBounds.Width - 5, cellBounds.Height + 2);
 			cellBounds.Location = new Point (cellBounds.X + 3, ((cellBounds.Height - editingControl.Height) / 2) + cellBounds.Y - 1);
 

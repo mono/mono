@@ -286,7 +286,7 @@ namespace System.Net.NetworkInformation {
 
 		private PingReply SendUnprivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
-			DateTime sentTime = DateTime.Now;
+			DateTime sentTime = DateTime.UtcNow;
 
 			Process ping = new Process ();
 			string args = BuildPingArgs (address, timeout, options);
@@ -301,6 +301,7 @@ namespace System.Net.NetworkInformation {
 			ping.StartInfo.RedirectStandardOutput = true;
 			ping.StartInfo.RedirectStandardError = true;
 
+			IPStatus status = IPStatus.Unknown;
 			try {
 				ping.Start ();
 
@@ -309,23 +310,21 @@ namespace System.Net.NetworkInformation {
 				string stderr = ping.StandardError.ReadToEnd ();
 #pragma warning restore 219
 				
-				trip_time = (long) (DateTime.Now - sentTime).TotalMilliseconds;
+				trip_time = (long) (DateTime.UtcNow - sentTime).TotalMilliseconds;
 				if (!ping.WaitForExit (timeout) || (ping.HasExited && ping.ExitCode == 2))
-					return new PingReply (address, buffer, options, trip_time, IPStatus.TimedOut); 
-
-				if (ping.ExitCode == 1)
-					return new PingReply (address, buffer, options, trip_time, IPStatus.TtlExpired);
-			} catch (Exception) {
-				return new PingReply (address, buffer, options, trip_time, IPStatus.Unknown);
+					status = IPStatus.TimedOut;
+				else if (ping.ExitCode == 0)
+					status = IPStatus.Success;
+				else if (ping.ExitCode == 1)
+					status = IPStatus.TtlExpired;
+			} catch {
 			} finally {
-				if (ping != null) {
-					if (!ping.HasExited)
-						ping.Kill ();
-					ping.Dispose ();
-				}
+				if (!ping.HasExited)
+					ping.Kill ();
+				ping.Dispose ();
 			}
 
-			return new PingReply (address, buffer, options, trip_time, IPStatus.Success);
+			return new PingReply (address, buffer, options, trip_time, status);
 		}
 
 		// Async

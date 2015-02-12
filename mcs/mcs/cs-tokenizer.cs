@@ -2629,6 +2629,9 @@ namespace Mono.CSharp
 			}
 
 			Report.Warning (1633, 1, Location, "Unrecognized #pragma directive");
+
+			// Eat any remaining characters on the line
+			ReadToEndOfLine ();
 		}
 
 		bool eval_val (string s)

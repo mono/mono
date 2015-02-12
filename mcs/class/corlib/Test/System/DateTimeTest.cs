@@ -1527,13 +1527,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Ignore ("This test is probably geo location dependent, at least fails on .NET 4.0 in Japan")]
-		public void ToOADate_MaxValue ()
-		{
-			Assert.AreEqual (2958465.99999999d, DateTime.MaxValue.ToOADate ());
-		}
-
-		[Test]
 		public void ToOADate_UnderMin ()
 		{
 			DateTime d = new DateTime (31242239135999999);
@@ -2621,6 +2614,14 @@ namespace MonoTests.System
 		{
 			string date = "2014-08-25T01:20:23.601911612343423423465789789365674575676746756747467%Z";
 			DateTime.Parse (date, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+		}
+
+		[Test]
+		public void Year_2 ()
+		{
+			var res = DateTime.Parse ("12-002", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.RoundtripKind);			
+			Assert.AreEqual (2, res.Year, "#1");
+			Assert.AreEqual (12, res.Month, "#2");			
 		}
 	}
 }

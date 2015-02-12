@@ -1024,6 +1024,13 @@ namespace MonoTests.System.Xml
 			XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000", m);
 			XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000Z", m);
 			XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000+09:00", m);
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public void XmlDateTimeSerializationModeBadFormats ()
+		{
+			XmlDateTimeSerializationMode m = XmlDateTimeSerializationMode.RoundtripKind;
 
 			try {
 				XmlConvert.ToDateTime ("0001-02-03T", m);

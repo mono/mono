@@ -2,13 +2,13 @@
 {
 }
 
-.assembly 'CS1684-lib'
+.assembly 'CS7069-lib'
 {
   .hash algorithm 0x00008004
   .ver 0:0:0:0
 }
 
-.module 'CS1684-lib.dll'
+.module 'CS7069-lib.dll'
 
 .class public auto ansi beforefieldinit A
        extends [mscorlib]TYWSF$

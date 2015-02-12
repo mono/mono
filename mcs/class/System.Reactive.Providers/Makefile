@@ -37,7 +37,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = more_build_args $(RESX_RESOURCES:.resources=.resx) $(PREBUILT)
 
-VALID_PROFILE := $(filter monodroid xammac net_4_0 net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter monodroid xammac net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.System.Reactive.Providers.dll
 NO_SIGN_ASSEMBLY = yes

@@ -560,7 +560,7 @@ namespace Mono.CSharp
 				if (t == Token.EOF)
 					return InputKind.EOF;
 
-				if (t == Token.IDENTIFIER)
+				if (t == Token.IDENTIFIER || t == Token.STATIC)
 					return InputKind.CompilationUnit;
 				return InputKind.StatementOrExpression;
 

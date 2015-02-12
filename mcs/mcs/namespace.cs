@@ -279,6 +279,9 @@ namespace Mono.CSharp {
 						break;
 					}
 
+					if (ts.Kind == MemberKind.MissingType)
+						continue;
+
 					if (best.MemberDefinition.IsImported)
 						best = ts;
 

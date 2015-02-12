@@ -138,25 +138,23 @@ ICALL_TYPE(TZONE, "System.CurrentSystemTimeZone", TZONE_1)
 ICALL(TZONE_1, "GetTimeZoneData", ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData)
 
 ICALL_TYPE(DTIME, "System.DateTime", DTIME_1)
-ICALL(DTIME_1, "GetNow", mono_100ns_datetime)
-ICALL(DTIME_2, "GetTimeMonotonic", mono_100ns_ticks)
+ICALL(DTIME_1, "GetSystemTimeAsFileTime", mono_100ns_datetime)
 
 #ifndef DISABLE_DECIMAL
 ICALL_TYPE(DECIMAL, "System.Decimal", DECIMAL_1)
-ICALL(DECIMAL_1, "decimal2Int64", mono_decimal2Int64)
-ICALL(DECIMAL_2, "decimal2UInt64", mono_decimal2UInt64)
-ICALL(DECIMAL_3, "decimal2double", mono_decimal2double)
-//ICALL(DECIMAL_4, "decimal2string", mono_decimal2string)
-ICALL(DECIMAL_5, "decimalCompare", mono_decimalCompare)
-ICALL(DECIMAL_6, "decimalDiv", mono_decimalDiv)
-ICALL(DECIMAL_7, "decimalFloorAndTrunc", mono_decimalFloorAndTrunc)
-ICALL(DECIMAL_8, "decimalIncr", mono_decimalIncr)
-ICALL(DECIMAL_9, "decimalIntDiv", mono_decimalIntDiv)
-ICALL(DECIMAL_10, "decimalMult", mono_decimalMult)
-ICALL(DECIMAL_11, "decimalRound", mono_decimalRound)
-ICALL(DECIMAL_12, "decimalSetExponent", mono_decimalSetExponent)
-ICALL(DECIMAL_13, "double2decimal", mono_double2decimal) /* FIXME: wrong signature. */
-ICALL(DECIMAL_14, "string2decimal", mono_string2decimal)
+ICALL(DECIMAL_1, ".ctor(double)", mono_decimal_init_double)
+ICALL(DECIMAL_2, ".ctor(single)", mono_decimal_init_single)
+ICALL(DECIMAL_3, "FCallAddSub(System.Decimal&,System.Decimal&,byte)", mono_decimal_addsub)
+ICALL(DECIMAL_4, "FCallCompare", mono_decimal_compare)
+ICALL(DECIMAL_5, "FCallDivide", mono_decimal_divide)
+ICALL(DECIMAL_6, "FCallFloor", mono_decimal_floor)
+ICALL(DECIMAL_7, "FCallMultiply", mono_decimal_multiply)
+ICALL(DECIMAL_8, "FCallRound", mono_decimal_round)
+ICALL(DECIMAL_9, "FCallToInt32", mono_decimal_to_int32)
+ICALL(DECIMAL_10, "FCallTruncate", mono_decimal_truncate)
+ICALL(DECIMAL_11, "GetHashCode", mono_decimal_get_hash_code)
+ICALL(DECIMAL_12, "ToDouble", mono_decimal_to_double)
+ICALL(DECIMAL_13, "ToSingle", mono_decimal_to_float)
 #endif
 
 ICALL_TYPE(DELEGATE, "System.Delegate", DELEGATE_1)
@@ -273,9 +271,6 @@ ICALL(GC_8, "register_ephemeron_array", ves_icall_System_GC_register_ephemeron_a
 ICALL_TYPE(CALDATA, "System.Globalization.CalendarData", CALDATA_1)
 ICALL(CALDATA_1, "fill_calendar_data", ves_icall_System_Globalization_CalendarData_fill_calendar_data)
 
-ICALL_TYPE(CHARINFO, "System.Globalization.CharUnicodeInfo", CHARINFO_1)
-ICALL(CHARINFO_1, "GetDataTablePointers", ves_icall_System_Globalization_CharUnicodeInfo_GetDataTablePointers)
-
 ICALL_TYPE(COMPINF, "System.Globalization.CompareInfo", COMPINF_1)
 ICALL(COMPINF_1, "assign_sortkey(object,string,System.Globalization.CompareOptions)", ves_icall_System_Globalization_CompareInfo_assign_sortkey)
 ICALL(COMPINF_2, "construct_compareinfo(string)", ves_icall_System_Globalization_CompareInfo_construct_compareinfo)
@@ -298,6 +293,9 @@ ICALL(CULINF_9, "internal_get_cultures", ves_icall_System_Globalization_CultureI
 ICALL_TYPE(REGINF, "System.Globalization.RegionInfo", REGINF_1)
 ICALL(REGINF_1, "construct_internal_region_from_lcid", ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid)
 ICALL(REGINF_2, "construct_internal_region_from_name", ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name)
+
+ICALL_TYPE(TXTINF, "System.Globalization.TextInfo", TXTINF_1)
+ICALL(TXTINF_1, "GetDataTablePointersLite", ves_icall_System_Globalization_TextInfo_GetDataTablePointersLite)
 
 #ifndef PLATFORM_NO_DRIVEINFO
 ICALL_TYPE(IODRIVEINFO, "System.IO.DriveInfo", IODRIVEINFO_1)
@@ -483,6 +481,8 @@ ICALL_TYPE(SOCKEX, "System.Net.Sockets.SocketException", SOCKEX_1)
 ICALL(SOCKEX_1, "WSAGetLastError_internal", ves_icall_System_Net_Sockets_SocketException_WSAGetLastError_internal)
 #endif /* !DISABLE_SOCKETS */
 
+ICALL_TYPE(NUMBER, "System.Number", NUMBER_1)
+ICALL(NUMBER_1, "NumberBufferToDecimal", mono_decimal_from_number)
 ICALL_TYPE(NUMBER_FORMATTER, "System.NumberFormatter", NUMBER_FORMATTER_1)
 ICALL(NUMBER_FORMATTER_1, "GetFormatterTables", ves_icall_System_NumberFormatter_GetFormatterTables)
 
@@ -928,6 +928,9 @@ ICALL(THREADP_3, "GetMinThreads", ves_icall_System_Threading_ThreadPool_GetMinTh
 ICALL(THREADP_35, "SetMaxThreads", ves_icall_System_Threading_ThreadPool_SetMaxThreads)
 ICALL(THREADP_4, "SetMinThreads", ves_icall_System_Threading_ThreadPool_SetMinThreads)
 ICALL(THREADP_5, "pool_queue", icall_append_job)
+
+ICALL_TYPE(TTIMER, "System.Threading.Timer", TTIMER_1)
+ICALL(TTIMER_1, "GetTimeMonotonic", mono_100ns_ticks)
 
 ICALL_TYPE(VOLATILE, "System.Threading.Volatile", VOLATILE_28)
 ICALL(VOLATILE_28, "Read(T&)", ves_icall_System_Threading_Volatile_Read_T)

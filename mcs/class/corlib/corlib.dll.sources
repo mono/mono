@@ -108,8 +108,6 @@ System/Attribute.cs
 System/AttributeTargets.cs
 System/AttributeUsageAttribute.cs
 System/BadImageFormatException.cs
-System/BitConverter.cs
-System/Boolean.cs
 System/Buffer.cs
 System/CannotUnloadAppDomainException.cs
 System/CharEnumerator.cs
@@ -132,12 +130,7 @@ System/ContextStaticAttribute.cs
 System/ControlCharacters.cs
 System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
-System/DateTime.cs
-System/DateTimeKind.cs
-System/DateTimeUtils.cs
-System/DayOfWeek.cs
 System/DBNull.cs
-System/Decimal.cs
 System/Delegate.cs
 System/DelegateSerializationHolder.cs
 System/DivideByZeroException.cs
@@ -162,6 +155,7 @@ System/GC.cs
 System/GCCollectionMode.cs
 System/GCNotificationStatus.cs
 System/Guid.cs
+System/Guid.MonoTouch.cs
 System/IAppDomainSetup.cs
 System/IAsyncResult.cs
 System/IObservable.cs
@@ -325,7 +319,6 @@ System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
 System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
-System.Globalization/CharUnicodeInfo.cs
 System.Globalization/CodePageDataItem.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
@@ -334,7 +327,6 @@ System.Globalization/CultureNotFoundException.cs
 System.Globalization/CultureTypes.cs
 System.Globalization/DateTimeFormatInfo.cs
 System.Globalization/DateTimeStyles.cs
-System.Globalization/DaylightTime.cs
 System.Globalization/DigitShapes.cs
 System.Globalization/GregorianCalendarTypes.cs
 System.Globalization/IdnMapping.cs
@@ -1437,7 +1429,6 @@ System.Threading.Tasks/TaskConstants_T.cs
 System.Collections.Concurrent/ConcurrentOrderedList.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 System.Threading/ThreadLocal.cs
-System.Threading/Watch.cs
 
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
@@ -1448,6 +1439,7 @@ ReferenceSources/Empty.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
+ReferenceSources/mscorlib.txt.cs
 ReferenceSources/ParseNumbers.cs
 ReferenceSources/TimeZoneInfoOptions.cs
 ReferenceSources/AppDomain.cs
@@ -1457,10 +1449,17 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
 ../../../external/referencesource/mscorlib/system/arraysegment.cs
+../../../external/referencesource/mscorlib/system/bitconverter.cs
+../../../external/referencesource/mscorlib/system/boolean.cs
 ../../../external/referencesource/mscorlib/system/byte.cs
 ../../../external/referencesource/mscorlib/system/char.cs
 ../../../external/referencesource/mscorlib/system/convert.cs
+../../../external/referencesource/mscorlib/system/datetime.cs
+../../../external/referencesource/mscorlib/system/datetimekind.cs
 ../../../external/referencesource/mscorlib/system/datetimeoffset.cs
+../../../external/referencesource/mscorlib/system/dayofweek.cs
+../../../external/referencesource/mscorlib/system/decimal.cs
+../../../external/referencesource/mscorlib/system/guid.cs
 ../../../external/referencesource/mscorlib/system/int16.cs
 ../../../external/referencesource/mscorlib/system/int32.cs
 ../../../external/referencesource/mscorlib/system/int64.cs
@@ -1544,14 +1543,18 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contracts.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
 
+../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendardata.cs
+../../../external/referencesource/mscorlib/system/globalization/charunicodeinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/daylighttime.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformat.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfoscanner.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeparse.cs
 ../../../external/referencesource/mscorlib/system/globalization/eastasianlunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/globalizationassembly.cs
 ../../../external/referencesource/mscorlib/system/globalization/gregoriancalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/gregoriancalendarhelper.cs
 ../../../external/referencesource/mscorlib/system/globalization/hebrewcalendar.cs

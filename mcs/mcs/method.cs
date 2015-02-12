@@ -165,6 +165,11 @@ namespace Mono.CSharp {
 			return s + parameters.GetSignatureForDocumentation ();
 		}
 
+		public virtual void PrepareEmit ()
+		{
+			parameters.ResolveDefaultValues (this);
+		}
+
 		public MethodSpec Spec {
 			get { return spec; }
 		}
@@ -816,8 +821,10 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public virtual void PrepareEmit ()
+		public override void PrepareEmit ()
 		{
+			base.PrepareEmit ();
+
 			var mb = MethodData.DefineMethodBuilder (Parent);
 
 			if (CurrentTypeParameters != null) {

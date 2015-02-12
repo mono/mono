@@ -46,12 +46,6 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
-#if ONLY_1_0 || ONLY_1_1
-		SqlCommand _selectCommand;
-		SqlCommand _insertCommand;
-		SqlCommand _updateCommand;
-		SqlCommand _deleteCommand;		
-#endif
 		int updateBatchSize;
 		#endregion
 
