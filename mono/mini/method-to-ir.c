@@ -3111,7 +3111,7 @@ emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value)
 		wbarrier->sreg1 = ptr->dreg;
 		wbarrier->sreg2 = value->dreg;
 		MONO_ADD_INS (cfg->cbb, wbarrier);
-	} else if (card_table) {
+	} else if (card_table && (!mono_gc_card_table_nursery_check () || cfg->compile_aot)) {
 		int offset_reg = alloc_preg (cfg);
 		int card_reg  = alloc_preg (cfg);
 		MonoInst *ins;
