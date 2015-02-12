@@ -18,7 +18,11 @@ namespace MonoTests.System.Net.NetworkInformation
 		public void PingSuccess()
 		{
 #if MONOTOUCH
+#if XAMCORE_2_0
 			if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
+#else
+			if (MonoTouch.ObjCRuntime.Runtime.Arch == MonoTouch.ObjCRuntime.Arch.SIMULATOR)
+#endif
 				Assert.Ignore ("dyld: program was built for Mac OS X and cannot be run in simulator");
 #endif
 			var p = new Ping ().Send ("127.0.0.1");
