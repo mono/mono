@@ -680,7 +680,7 @@ ENC ("x-x-big5", 950),
 #endif // FEATURE_CORECLR
 
     // End of data.
-//    MapCodePageDataItem( 0, 0, NULL, 0),
+    MapCodePageDataItem( 0, 0, null, 0),
 
 };
 
