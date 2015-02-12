@@ -4759,6 +4759,7 @@ emit_throw_exception (MonoCompile *cfg, MonoException *ex)
 	MonoInst *args [1];
 
 	EMIT_NEW_PCONST (cfg, args [0], ex);
+    mono_gchandle_new(ex, TRUE);
 	mono_emit_method_call (cfg, thrower, args, NULL);
 }
 
