@@ -51,11 +51,11 @@ namespace System.IO {
 		int maxCharsPerRound;
 		bool disposed;
 
-		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8UnmarkedUnsafe)
+		protected BinaryWriter() : this (Stream.Null, EncodingHelper.UTF8UnmarkedUnsafe)
 		{
 		}
 
-		public BinaryWriter(Stream output) : this(output, Encoding.UTF8UnmarkedUnsafe)
+		public BinaryWriter(Stream output) : this(output, EncodingHelper.UTF8UnmarkedUnsafe)
 		{
 		}
 		

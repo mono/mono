@@ -1375,6 +1375,7 @@ System.Text/Encoding.cs
 System.Text/EncodingEncoder.cs
 System.Text/EncodingDecoder.cs
 System.Text/EncodingInfo.cs
+System.Text/EncodingHelper.cs
 System.Text/Latin1Encoding.cs
 System.Text/MLangCodePageEncoding.cs
 System.Text/NormalizationForm.cs
