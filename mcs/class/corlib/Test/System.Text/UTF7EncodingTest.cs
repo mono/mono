@@ -269,7 +269,7 @@ namespace MonoTests.System.Text
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotDotNet")] // MS bug
+		[Ignore ("referencesource bug")]
 		public void Bug77315 ()
 		{
 			string s = new UTF7Encoding ().GetString (

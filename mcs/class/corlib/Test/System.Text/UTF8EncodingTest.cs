@@ -1156,5 +1156,46 @@ namespace MonoTests.System.Text
 			data = new byte [] { 0xF4, 0x8F, 0xB0, 0xC0 };
 			t.TestDecoderFallback (data, "??", new byte [] { 0xF4, 0x8F, 0xB0 }, new byte [] { 0xC0 });
 		}
+
+		[Test]
+		public void DecoderBug23771 ()
+		{
+			var input = "\u733F"; // 'mono' on Japanese, 3bytes in UTF-8.
+			var encoded = Encoding.UTF8.GetBytes (input);
+			var decoder = Encoding.UTF8.GetDecoder ();
+			var chars = new char [10]; // Just enough space to decode.
+			var result = new StringBuilder ();
+			var bytes = new byte [1]; // Simulates chunked input bytes.
+			// Specify encoded bytes separetely.
+			foreach (var b in encoded) {
+				bytes [0] = b;
+				int bytesUsed, charsUsed;
+				bool completed;
+				decoder.Convert (bytes, 0, bytes.Length, chars, 0, chars.Length, false, out bytesUsed, out charsUsed, out completed);
+				result.Append (chars, 0, charsUsed);
+				// Expected outputs are written in bottom.
+				//Debug.Print ("bytesUsed:{0}, charsUsed:{1}, completed:{2}, result:'{3}'", bytesUsed, charsUsed, completed, result);
+			}
+
+			// Expected: NO assertion error.
+			Assert.AreEqual (input, result.ToString (), "#1");
+
+			/*
+			 * Expected Debug outputs are:
+			 * bytesUsed:1, charsUsed:0, completed:True, result:''
+			 * bytesUsed:1, charsUsed:0, completed:True, result:''
+			 * bytesUsed:1, charsUsed:1, completed:True, result:'猿'
+			 * 
+			 * -- Note: '猿' is U+733F (1char in UTF-16)
+			 * 
+			 * Actual Debug output are:
+			 * bytesUsed:3, charsUsed:1, completed:False, result:'�'
+			 * bytesUsed:3, charsUsed:1, completed:False, result:'��'
+			 * bytesUsed:3, charsUsed:1, completed:False, result:'���'
+			 * 
+			 * All output parameters are not match.
+			 * -- Note: '�' is decoder fallback char (U+FFFD)
+			 */
+		}
 	}
 }
