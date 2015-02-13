@@ -184,12 +184,6 @@ System/LoaderOptimizationAttribute.cs
 System/LocalDataStoreSlot.cs
 System/MarshalByRefObject.cs
 System/Math.cs
-System/MemberAccessException.cs
-System/MethodAccessException.cs
-System/MidpointRounding.cs
-System/MissingFieldException.cs
-System/MissingMemberException.cs
-System/MissingMethodException.cs
 System/MonoAsyncCall.cs
 System/MonoCQItem.cs
 System/MonoCustomAttrs.cs
@@ -1463,6 +1457,12 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/int32.cs
 ../../../external/referencesource/mscorlib/system/int64.cs
 ../../../external/referencesource/mscorlib/system/Lazy.cs
+../../../external/referencesource/mscorlib/system/memberaccessexception.cs
+../../../external/referencesource/mscorlib/system/methodaccessexception.cs
+../../../external/referencesource/mscorlib/system/midpointrounding.cs
+../../../external/referencesource/mscorlib/system/missingfieldexception.cs
+../../../external/referencesource/mscorlib/system/missingmemberexception.cs
+../../../external/referencesource/mscorlib/system/missingmethodexception.cs
 ../../../external/referencesource/mscorlib/system/number.cs
 ../../../external/referencesource/mscorlib/system/progress.cs
 ../../../external/referencesource/mscorlib/system/resid.cs
