@@ -88,6 +88,7 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		Assert.AreEqual (160, algo.HashSize, "HMACSHA1.HashSize");
 		Assert.AreEqual (1, algo.InputBlockSize, "HMACSHA1.InputBlockSize");
 		Assert.AreEqual (1, algo.OutputBlockSize, "HMACSHA1.OutputBlockSize");
+		Assert.AreEqual (64, algo.Key.Length, "HMACSHA1.Key.Length");
 		Assert.AreEqual ("System.Security.Cryptography.HMACSHA1", algo.ToString (), "HMACSHA1.ToString()"); 
 	}
 

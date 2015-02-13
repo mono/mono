@@ -68,12 +68,14 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void Invariants () 
 		{
+			var algo = new HMACSHA256 ();
 			Assert.IsTrue (algo.CanReuseTransform, "HMACSHA256.CanReuseTransform");
 			Assert.IsTrue (algo.CanTransformMultipleBlocks, "HMACSHA256.CanTransformMultipleBlocks");
 			Assert.AreEqual ("SHA256", algo.HashName, "HMACSHA256.HashName");
 			Assert.AreEqual (256, algo.HashSize, "HMACSHA256.HashSize");
 			Assert.AreEqual (1, algo.InputBlockSize, "HMACSHA256.InputBlockSize");
 			Assert.AreEqual (1, algo.OutputBlockSize, "HMACSHA256.OutputBlockSize");
+			Assert.AreEqual (64, algo.Key.Length, "HMACSHA256.Key.Length");
 			Assert.AreEqual ("System.Security.Cryptography.HMACSHA256", algo.ToString (), "HMACSHA256.ToString()"); 
 		}
 

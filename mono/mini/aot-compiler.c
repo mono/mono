@@ -5035,7 +5035,10 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 	emit_line (acfg);
 
 	if (acfg->aot_opts.write_symbols) {
-		emit_symbol_size (acfg, debug_sym, ".");
+		if (debug_sym)
+			emit_symbol_size (acfg, debug_sym, ".");
+		else
+			emit_symbol_size (acfg, cfg->asm_symbol, ".");
 		g_free (debug_sym);
 	}
 
@@ -5855,7 +5858,9 @@ emit_plt (MonoAotCompile *acfg)
 			emit_label (acfg, plt_entry->llvm_symbol);
 			if (acfg->llvm_separate) {
 				emit_global (acfg, plt_entry->llvm_symbol, TRUE);
+#if defined(TARGET_MACH)
 				fprintf (acfg->fp, ".private_extern %s\n", plt_entry->llvm_symbol);
+#endif
 			}
 		}
 

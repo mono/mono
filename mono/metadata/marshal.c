@@ -4176,20 +4176,23 @@ emit_marshal_custom (EmitMarshalContext *m, int argnum, MonoType *t,
 	int pos2;
 
 	if (!ICustomMarshaler) {
-		ICustomMarshaler = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "ICustomMarshaler");
-		if (!ICustomMarshaler) {
+		MonoClass *klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "ICustomMarshaler");
+		if (!klass) {
 			exception_msg = g_strdup ("Current profile doesn't support ICustomMarshaler");
 			goto handle_exception;
 		}
 
-		cleanup_native = mono_class_get_method_from_name (ICustomMarshaler, "CleanUpNativeData", 1);
+		cleanup_native = mono_class_get_method_from_name (klass, "CleanUpNativeData", 1);
 		g_assert (cleanup_native);
-		cleanup_managed = mono_class_get_method_from_name (ICustomMarshaler, "CleanUpManagedData", 1);
+		cleanup_managed = mono_class_get_method_from_name (klass, "CleanUpManagedData", 1);
 		g_assert (cleanup_managed);
-		marshal_managed_to_native = mono_class_get_method_from_name (ICustomMarshaler, "MarshalManagedToNative", 1);
+		marshal_managed_to_native = mono_class_get_method_from_name (klass, "MarshalManagedToNative", 1);
 		g_assert (marshal_managed_to_native);
-		marshal_native_to_managed = mono_class_get_method_from_name (ICustomMarshaler, "MarshalNativeToManaged", 1);
+		marshal_native_to_managed = mono_class_get_method_from_name (klass, "MarshalNativeToManaged", 1);
 		g_assert (marshal_native_to_managed);
+
+		mono_memory_barrier ();
+		ICustomMarshaler = klass;
 	}
 
 	if (spec->data.custom_data.image)
@@ -9861,8 +9864,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArray *s
 	int element_size;
 	void *source_addr;
 
-	MONO_ARCH_SAVE_REGS;
-
 	MONO_CHECK_ARG_NULL (src);
 	MONO_CHECK_ARG_NULL (dest);
 
@@ -9890,8 +9891,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gpointer s
 	int element_size;
 	void *dest_addr;
 
-	MONO_ARCH_SAVE_REGS;
-
 	MONO_CHECK_ARG_NULL (src);
 	MONO_CHECK_ARG_NULL (dest);
 
@@ -9915,8 +9914,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gpointer s
 MonoString *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (char *ptr)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	if (ptr == NULL)
 		return NULL;
 	else
@@ -9926,8 +9923,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (char *ptr)
 MonoString *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (char *ptr, gint32 len)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	if (ptr == NULL) {
 		mono_raise_exception (mono_get_exception_argument_null ("ptr"));
 		g_assert_not_reached ();
@@ -9944,8 +9939,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (guint16 *ptr)
 	int len = 0;
 	guint16 *t = ptr;
 
-	MONO_ARCH_SAVE_REGS;
-
 	if (ptr == NULL)
 		return NULL;
 
@@ -9960,8 +9953,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (guint16 *pt
 {
 	MonoDomain *domain = mono_domain_get (); 
 
-	MONO_ARCH_SAVE_REGS;
-
 	if (ptr == NULL) {
 		mono_raise_exception (mono_get_exception_argument_null ("ptr"));
 		g_assert_not_reached ();
@@ -9974,8 +9965,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (guint16 *pt
 guint32 
 ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return (GPOINTER_TO_INT (mono_native_tls_get_value (last_error_tls_id)));
 }
 
@@ -9985,8 +9974,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionType *rty
 	MonoClass *klass;
 	MonoType *type;
 	guint32 layout;
-
-	MONO_ARCH_SAVE_REGS;
 
 	MONO_CHECK_ARG_NULL (rtype);
 
@@ -10019,8 +10006,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr (MonoObject *obj
 	MonoMethod *method;
 	gpointer pa [3];
 
-	MONO_ARCH_SAVE_REGS;
-
 	MONO_CHECK_ARG_NULL (obj);
 	MONO_CHECK_ARG_NULL (dst);
 
@@ -10052,8 +10037,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure (gpointer src, M
 {
 	MonoType *t;
 
-	MONO_ARCH_SAVE_REGS;
-
 	MONO_CHECK_ARG_NULL (src);
 	MONO_CHECK_ARG_NULL (dst);
 	
@@ -10081,8 +10064,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gpointer s
 	MonoDomain *domain = mono_domain_get (); 
 	MonoObject *res;
 
-	MONO_ARCH_SAVE_REGS;
-
 	if (src == NULL)
 		return NULL;
 	MONO_CHECK_ARG_NULL (type);
@@ -10106,8 +10087,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionType *t
 	char *fname;
 	int match_index = -1;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	MONO_CHECK_ARG_NULL (type);
 	MONO_CHECK_ARG_NULL (field_name);
 
@@ -10178,8 +10157,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoString
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (MonoString *string)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	if (string == NULL)
 		return NULL;
 	else {
@@ -10251,8 +10228,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src,
 {
 	MonoClass *klass;
 
-	MONO_ARCH_SAVE_REGS;
-
 	MONO_CHECK_ARG_NULL (src);
 	MONO_CHECK_ARG_NULL (type);
 
@@ -10267,8 +10242,6 @@ void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (int size)
 {
 	gpointer res;
-
-	MONO_ARCH_SAVE_REGS;
 
 	if ((gulong)size == 0)
 		/* This returns a valid pointer for size 0 on MS.NET */
@@ -10309,8 +10282,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, i
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr)
 {
-	MONO_ARCH_SAVE_REGS;
-
 #ifdef HOST_WIN32
 	GlobalFree (ptr);
 #else
@@ -10321,8 +10292,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr)
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size)
 {
-	MONO_ARCH_SAVE_REGS;
-
 #ifdef HOST_WIN32
 	return CoTaskMemAlloc (size);
 #else
@@ -10333,8 +10302,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size)
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr)
 {
-	MONO_ARCH_SAVE_REGS;
-
 #ifdef HOST_WIN32
 	CoTaskMemFree (ptr);
 #else
@@ -10345,8 +10312,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr)
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr, int size)
 {
-	MONO_ARCH_SAVE_REGS;
-
 #ifdef HOST_WIN32
 	return CoTaskMemRealloc (ptr, size);
 #else
