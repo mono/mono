@@ -1064,8 +1064,12 @@ namespace Mono.CSharp {
 					continue;
 
 				UsingAliasNamespace uan;
-				if (n.aliases.TryGetValue (name, out uan))
+				if (n.aliases.TryGetValue (name, out uan)) {
+					if (uan.ResolvedExpression == null)
+						uan.Define (n);
+
 					return uan.ResolvedExpression;
+				}
 			}
 
 			return null;
@@ -1092,6 +1096,9 @@ namespace Mono.CSharp {
 							"Namespace `{0}' contains a definition with same name as alias `{1}'",
 							GetSignatureForError (), name);
 					}
+
+					if (uan.ResolvedExpression == null)
+						uan.Define (this);
 
 					return uan.ResolvedExpression;
 				}
@@ -1291,13 +1298,27 @@ namespace Mono.CSharp {
 					for (int i = 0; i < clauses.Count; ++i) {
 						var entry = clauses[i];
 						if (entry.Alias != null) {
-							entry.Define (this);
-							if (entry.ResolvedExpression != null) {
-								aliases.Add (entry.Alias.Value, (UsingAliasNamespace) entry);
-							}
-
-							clauses.RemoveAt (i--);
+							aliases.Add (entry.Alias.Value, (UsingAliasNamespace) entry);
 						}
+					}
+				}
+			}
+		}
+
+		protected override void DoDefineContainer ()
+		{
+			base.DoDefineContainer ();
+
+			if (clauses != null) {
+				for (int i = 0; i < clauses.Count; ++i) {
+					var entry = clauses[i];
+
+					//
+					// Finish definition of using aliases not visited during container
+					// definition
+					//
+					if (entry.Alias != null && entry.ResolvedExpression == null) {
+						entry.Define (this);
 					}
 				}
 			}
@@ -1615,7 +1636,8 @@ namespace Mono.CSharp {
 			// We achieve that by introducing alias-context which redirect any local
 			// namespace or type resolve calls to parent namespace
 			//
-			resolved = NamespaceExpression.ResolveAsTypeOrNamespace (new AliasContext (ctx), false);
+			resolved = NamespaceExpression.ResolveAsTypeOrNamespace (new AliasContext (ctx), false) ??
+				new TypeExpression (InternalType.ErrorType, NamespaceExpression.Location);
 		}
 	}
 }

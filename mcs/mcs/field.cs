@@ -394,7 +394,7 @@ namespace Mono.CSharp
 		//
 		// Explicit struct layout set by parent
 		//
-		public CharSet? CharSet {
+		public CharSet? CharSetValue {
 			get; set;
 		}		
 
@@ -493,8 +493,32 @@ namespace Mono.CSharp
 			}
 
 			AttributeEncoder encoder;
+			MethodSpec ctor;
 
-			var ctor = Module.PredefinedMembers.StructLayoutAttributeCtor.Resolve (Location);
+			var char_set = CharSetValue ?? Module.DefaultCharSet ?? 0;
+#if STATIC
+			//
+			// Set struct layout without resolving StructLayoutAttribute which is not always available
+			//
+
+			TypeAttributes attribs = TypeAttributes.SequentialLayout;
+			switch (char_set) {
+			case CharSet.None:
+			case CharSet.Ansi:
+				attribs |= TypeAttributes.AnsiClass;
+				break;
+			case CharSet.Auto:
+				attribs |= TypeAttributes.AutoClass;
+				break;
+			case CharSet.Unicode:
+				attribs |= TypeAttributes.UnicodeClass;
+				break;
+			}
+
+			fixed_buffer_type.__SetAttributes (fixed_buffer_type.Attributes | attribs);
+			fixed_buffer_type.__SetLayout (0, buffer_size * type_size);
+#else
+			ctor = Module.PredefinedMembers.StructLayoutAttributeCtor.Resolve (Location);
 			if (ctor == null)
 				return;
 
@@ -502,8 +526,6 @@ namespace Mono.CSharp
 			var field_charset = Module.PredefinedMembers.StructLayoutCharSet.Resolve (Location);
 			if (field_size == null || field_charset == null)
 				return;
-
-			var char_set = CharSet ?? Module.DefaultCharSet ?? 0;
 
 			encoder = new AttributeEncoder ();
 			encoder.Encode ((short)LayoutKind.Sequential);
@@ -516,7 +538,7 @@ namespace Mono.CSharp
 			);
 
 			fixed_buffer_type.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
-
+#endif
 			//
 			// Don't emit FixedBufferAttribute attribute for private types
 			//

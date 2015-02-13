@@ -232,10 +232,20 @@ namespace System.Net.Http.Headers
 				return false;
 			}
 
+			int parens = 1;
 			while (pos < s.Length) {
 				var ch = s[pos];
+				if (ch == '(') {
+					++parens;
+					++pos;
+					continue;
+				}
+
 				if (ch == ')') {
 					++pos;
+					if (--parens > 0)
+						continue;
+
 					var start = readToken.StartPosition;
 					value = s.Substring (start, pos - start);
 					return true;

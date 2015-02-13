@@ -130,7 +130,6 @@ System/ContextStaticAttribute.cs
 System/ControlCharacters.cs
 System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
-System/DBNull.cs
 System/Delegate.cs
 System/DelegateSerializationHolder.cs
 System/DivideByZeroException.cs
@@ -185,12 +184,6 @@ System/LoaderOptimizationAttribute.cs
 System/LocalDataStoreSlot.cs
 System/MarshalByRefObject.cs
 System/Math.cs
-System/MemberAccessException.cs
-System/MethodAccessException.cs
-System/MidpointRounding.cs
-System/MissingFieldException.cs
-System/MissingMemberException.cs
-System/MissingMethodException.cs
 System/MonoAsyncCall.cs
 System/MonoCQItem.cs
 System/MonoCustomAttrs.cs
@@ -218,7 +211,6 @@ System/OverflowException.cs
 System/ParamArrayAttribute.cs
 System/PlatformID.cs
 System/PlatformNotSupportedException.cs
-System/Random.cs
 System/RankException.cs
 System/ResolveEventArgs.cs
 System/ResolveEventHandler.cs
@@ -263,7 +255,6 @@ System/UIntPtr.cs
 System/UnauthorizedAccessException.cs
 System/UnhandledExceptionEventArgs.cs
 System/UnhandledExceptionEventHandler.cs
-System/UnitySerializationHolder.cs
 System/ValueType.cs
 System/Variant.cs
 System/Void.cs
@@ -1435,7 +1426,6 @@ ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
 ReferenceSources/CompatibilitySwitches.cs
 ReferenceSources/CultureData.cs
-ReferenceSources/Empty.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
@@ -1459,13 +1449,22 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/datetimeoffset.cs
 ../../../external/referencesource/mscorlib/system/dayofweek.cs
 ../../../external/referencesource/mscorlib/system/decimal.cs
+../../../external/referencesource/mscorlib/system/dbnull.cs
+../../../external/referencesource/mscorlib/system/empty.cs
 ../../../external/referencesource/mscorlib/system/guid.cs
 ../../../external/referencesource/mscorlib/system/int16.cs
 ../../../external/referencesource/mscorlib/system/int32.cs
 ../../../external/referencesource/mscorlib/system/int64.cs
 ../../../external/referencesource/mscorlib/system/Lazy.cs
+../../../external/referencesource/mscorlib/system/memberaccessexception.cs
+../../../external/referencesource/mscorlib/system/methodaccessexception.cs
+../../../external/referencesource/mscorlib/system/midpointrounding.cs
+../../../external/referencesource/mscorlib/system/missingfieldexception.cs
+../../../external/referencesource/mscorlib/system/missingmemberexception.cs
+../../../external/referencesource/mscorlib/system/missingmethodexception.cs
 ../../../external/referencesource/mscorlib/system/number.cs
 ../../../external/referencesource/mscorlib/system/progress.cs
+../../../external/referencesource/mscorlib/system/random.cs
 ../../../external/referencesource/mscorlib/system/resid.cs
 ../../../external/referencesource/mscorlib/system/sbyte.cs
 ../../../external/referencesource/mscorlib/system/stringcomparer.cs
@@ -1476,6 +1475,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/uint16.cs
 ../../../external/referencesource/mscorlib/system/uint32.cs
 ../../../external/referencesource/mscorlib/system/uint64.cs
+../../../external/referencesource/mscorlib/system/unityserializationholder.cs
 ../../../external/referencesource/mscorlib/system/version.cs
 
 ../../../external/referencesource/mscorlib/system/collections/arraylist.cs

@@ -122,10 +122,7 @@ namespace System.Reflection {
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-
-			UnitySerializationHolder.GetModuleData (this, info, context);
+			throw new NotImplementedException ();
 		}
 
 		[ComVisible (true)]

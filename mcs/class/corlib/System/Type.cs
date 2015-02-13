@@ -1618,6 +1618,16 @@ namespace System {
 			}
 		}
 
+		internal Type GetRootElementType()
+		{
+			Type rootElementType = this;
+
+			while (rootElementType.HasElementType)
+				rootElementType = rootElementType.GetElementType();
+
+			return rootElementType;
+		}
+
 #if !MOBILE
 		void _Type.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
