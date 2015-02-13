@@ -1129,9 +1129,16 @@ to 100 percent.  A value of 0 turns evacuation off.
 .TP
 \fB(no-)lazy-sweep\fR
 Enables or disables lazy sweep for the Mark&Sweep collector.  If
-enabled, the sweep phase of the garbage collection is done piecemeal
-whenever the need arises, typically during nursery collections.  Lazy
-sweeping is enabled by default.
+enabled, the sweeping of individual major heap blocks is done
+piecemeal whenever the need arises, typically during nursery
+collections.  Lazy sweeping is enabled by default.
+.TP
+\fB(no-)concurrent-sweep\fR
+Enables or disables concurrent sweep for the Mark&Sweep collector.  If
+enabled, the iteration of all major blocks to determine which ones can
+be freed and which ones have to be kept and swept, is done
+concurrently with the running program.  Concurrent sweeping is enabled
+by default.
 .TP
 \fBstack-mark=\fImark-mode\fR
 Specifies how application threads should be scanned. Options are
