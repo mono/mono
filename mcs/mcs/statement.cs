@@ -2914,9 +2914,7 @@ namespace Mono.CSharp {
 
 				if (!s.Resolve (bc)) {
 					ok = false;
-					if (!bc.IsInProbingMode)
-						statements [ix] = new EmptyStatement (s.loc);
-
+					statements [ix] = new EmptyStatement (s.loc);
 					continue;
 				}
 			}
