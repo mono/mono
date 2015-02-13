@@ -588,6 +588,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 			catch (TlsException ex)
 			{
+#if NET_4_0
 				AggregateException aggregate;
 				try {
 					// FIXME: should the send alert also be done asynchronously here and below?
@@ -596,10 +597,14 @@ namespace Mono.Security.Protocol.Tls
 				} catch (Exception alertEx) {
 					aggregate = new AggregateException ("The authentication or decryption has failed (error while sending Alert).", ex, alertEx);
 				}
+#else
+				var aggregate = new Exception ();
+#endif
 				negotiate.SetComplete (aggregate);
 			}
 			catch (Exception ex)
 			{
+#if NET_4_0
 				AggregateException aggregate;
 				try {
 					this.protocol.SendAlert(AlertDescription.InternalError);
@@ -607,6 +612,9 @@ namespace Mono.Security.Protocol.Tls
 				} catch (Exception alertEx) {
 					aggregate = new AggregateException ("The authentication or decryption has failed (error while sending Alert).", ex, alertEx);
 				}
+#else
+				var aggregate = new Exception ();
+#endif
 				negotiate.SetComplete (aggregate);
 			}
 		}
