@@ -51168,6 +51168,26 @@
       </method>
     </type>
   </test>
+  <test name="test-913.cs">
+    <type name="N.A">
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.A+B">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.A+C">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-92.cs">
     <type name="Outer">
       <method name="Void .ctor()" attrs="6278">
