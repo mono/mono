@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security;
 using System.Security.Permissions;
-
+using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
@@ -267,6 +267,14 @@ namespace System.Reflection {
 				return res;
 		}
 
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			UnitySerializationHolder.GetUnitySerializationInfo (info, UnitySerializationHolder.ModuleUnity, this.ScopeName, this.GetRuntimeAssembly ());
+		}
+
 #if !NET_2_1
 
 		public
@@ -290,6 +298,11 @@ namespace System.Reflection {
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
+		}
+
+		internal RuntimeAssembly GetRuntimeAssembly ()
+		{
+			return (RuntimeAssembly)assembly;
 		}
 	}
 }

@@ -51,7 +51,16 @@ namespace System
 		
 	abstract class RuntimeType : TypeInfo
 	{
+		internal RuntimeAssembly GetRuntimeAssembly ()
+		{
+			return (RuntimeAssembly) Assembly;
+		}
 
+		internal virtual bool IsSzArray {
+			get {
+				return IsArrayImpl () && GetArrayRank () == 1;
+			}
+		}
 	}
 
 	[Serializable]
@@ -656,7 +665,7 @@ namespace System
 
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			UnitySerializationHolder.GetTypeData (this, info, context);
+			UnitySerializationHolder.GetUnitySerializationInfo(info, this);
 		}
 
 		public override string ToString()

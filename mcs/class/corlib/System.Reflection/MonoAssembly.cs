@@ -34,14 +34,30 @@ using System.Runtime.InteropServices;
 using System.Reflection.Emit;
 #endif
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace System.Reflection {
+
+	abstract class RuntimeAssembly : Assembly
+	{
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			UnitySerializationHolder.GetUnitySerializationInfo (info,
+                                                               UnitySerializationHolder.AssemblyUnity,
+                                                               this.FullName,
+                                                               this);
+		}
+	}
 
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
-	class MonoAssembly : Assembly {
+	class MonoAssembly : RuntimeAssembly
+	{
 		public
 		override
 		Type GetType (string name, bool throwOnError, bool ignoreCase)

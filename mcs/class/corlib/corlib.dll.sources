@@ -130,7 +130,6 @@ System/ContextStaticAttribute.cs
 System/ControlCharacters.cs
 System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
-System/DBNull.cs
 System/Delegate.cs
 System/DelegateSerializationHolder.cs
 System/DivideByZeroException.cs
@@ -263,7 +262,6 @@ System/UIntPtr.cs
 System/UnauthorizedAccessException.cs
 System/UnhandledExceptionEventArgs.cs
 System/UnhandledExceptionEventHandler.cs
-System/UnitySerializationHolder.cs
 System/ValueType.cs
 System/Variant.cs
 System/Void.cs
@@ -1435,7 +1433,6 @@ ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
 ReferenceSources/CompatibilitySwitches.cs
 ReferenceSources/CultureData.cs
-ReferenceSources/Empty.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
@@ -1459,6 +1456,8 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/datetimeoffset.cs
 ../../../external/referencesource/mscorlib/system/dayofweek.cs
 ../../../external/referencesource/mscorlib/system/decimal.cs
+../../../external/referencesource/mscorlib/system/dbnull.cs
+../../../external/referencesource/mscorlib/system/empty.cs
 ../../../external/referencesource/mscorlib/system/guid.cs
 ../../../external/referencesource/mscorlib/system/int16.cs
 ../../../external/referencesource/mscorlib/system/int32.cs
@@ -1476,6 +1475,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/uint16.cs
 ../../../external/referencesource/mscorlib/system/uint32.cs
 ../../../external/referencesource/mscorlib/system/uint64.cs
+../../../external/referencesource/mscorlib/system/unityserializationholder.cs
 ../../../external/referencesource/mscorlib/system/version.cs
 
 ../../../external/referencesource/mscorlib/system/collections/arraylist.cs
