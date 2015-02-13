@@ -970,6 +970,10 @@ where V is the architecture number 4, 5, 6, 7 and the options can be currently b
 
 .fi
 .TP
+\fBMONO_ARM_FORCE_SOFT_FLOAT\fR
+When Mono is built with a soft float fallback on ARM and this variable is set to
+"1", Mono will always emit soft float code, even if a VFP unit is detected.
+.TP
 \fBMONO_DISABLE_AIO\fR
 If set, tells mono NOT to attempt using native asynchronous I/O services. In
 that case, a default select/poll implementation is used. Currently only epoll()
