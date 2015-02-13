@@ -3023,7 +3023,7 @@ namespace Mono.CSharp
 					if (ff == null)
 						continue;
 
-					ff.CharSet = (CharSet) System.Enum.Parse (typeof (CharSet), value.GetValue ().ToString ());
+					ff.CharSetValue = (CharSet) System.Enum.Parse (typeof (CharSet), value.GetValue ().ToString ());
 				}
 			}
 		}
