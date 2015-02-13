@@ -211,7 +211,6 @@ System/OverflowException.cs
 System/ParamArrayAttribute.cs
 System/PlatformID.cs
 System/PlatformNotSupportedException.cs
-System/Random.cs
 System/RankException.cs
 System/ResolveEventArgs.cs
 System/ResolveEventHandler.cs
@@ -1465,6 +1464,7 @@ ReferenceSources/JitHelpers.cs
 ../../../external/referencesource/mscorlib/system/missingmethodexception.cs
 ../../../external/referencesource/mscorlib/system/number.cs
 ../../../external/referencesource/mscorlib/system/progress.cs
+../../../external/referencesource/mscorlib/system/random.cs
 ../../../external/referencesource/mscorlib/system/resid.cs
 ../../../external/referencesource/mscorlib/system/sbyte.cs
 ../../../external/referencesource/mscorlib/system/stringcomparer.cs
