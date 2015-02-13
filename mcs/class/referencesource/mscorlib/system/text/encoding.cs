@@ -1383,6 +1383,13 @@ namespace System.Text
             return (enc);
         }
 
+#if MONO_HYBRID_ENCODING_SUPPORT
+        internal void setReadOnly (bool value = true)
+        {
+                   m_isReadOnly = value;
+        }
+#endif
+
         // Returns an encoding for the system's current ANSI code page.
         //
 
