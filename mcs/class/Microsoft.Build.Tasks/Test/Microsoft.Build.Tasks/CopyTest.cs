@@ -30,6 +30,7 @@ using System.IO;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
 using System.Text;
+using System.Threading;
 using Microsoft.Build.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -394,6 +395,61 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.IsFalse (project.Build ("1"));
 			
 			File.SetAttributes (target_file, FileAttributes.Normal);
+		}
+
+		[Test]
+		public void TestCopy_Retries ()
+		{
+			Engine engine;
+			Project project;
+			string file_path = Path.Combine (source_path, "copyretries.txt");
+			string target_file = Path.Combine (target_path, "copyretries.txt");			
+
+			using (File.CreateText (file_path)) { }
+			using (File.CreateText (target_file)) { }
+
+			File.SetAttributes (target_file, FileAttributes.ReadOnly);
+			Assert.AreEqual (FileAttributes.ReadOnly, File.GetAttributes (target_file), "A1");
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup><DestFile>" + target_file + @"</DestFile></PropertyGroup>
+					<ItemGroup>
+						<SFiles Include='" + file_path + @"'><Md>1</Md></SFiles>
+						<DFiles Include='$(DestFile)'><Mde>2</Mde></DFiles>
+					</ItemGroup>
+					<Target Name='1'>
+						<Copy SourceFiles='@(SFiles)' DestinationFiles='@(DFiles)' Retries='3' RetryDelayMilliseconds='2000'>
+							<Output TaskParameter='CopiedFiles' ItemName='I0'/>
+							<Output TaskParameter='DestinationFiles' ItemName='I1'/>
+						</Copy>
+						<Message Text=""I0 : @(I0), I1: @(I1)""/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (documentString);
+
+			// remove the read-only flag from the file after a few secs,
+			// so copying works after retries
+			new Thread ( () => {
+				Thread.Sleep (3000);
+				File.SetAttributes (target_file, FileAttributes.Normal);
+			}).Start ();
+
+			if (!project.Build ("1")) {
+				var sb = new StringBuilder ();
+				testLogger.DumpMessages (sb);
+				Assert.Fail ("Build failed " + sb.ToString ());
+			}
+
+			testLogger.CheckLoggedAny ("Copying failed. Retries left: 3.", MessageImportance.Normal, "A2");
 		}
 
 		void CheckCopyBuildItems (Project project, string [] source_files, string destination_folder, string prefix)
