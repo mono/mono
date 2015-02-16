@@ -125,11 +125,11 @@ namespace System
 				// UTF-8 ZWNBSP (zero-width non-breaking space).
 				//
 				int code_page = 0;
-				Encoding.InternalCodePage (ref code_page);
+				EncodingHelper.InternalCodePage (ref code_page);
 
 				if (code_page != -1 && ((code_page & 0x0fffffff) == 3 // UTF8Encoding.UTF8_CODE_PAGE
 					|| ((code_page & 0x10000000) != 0)))
-					inputEncoding = outputEncoding = Encoding.UTF8Unmarked;
+					inputEncoding = outputEncoding = EncodingHelper.UTF8Unmarked;
 				else
 					inputEncoding = outputEncoding = Encoding.Default;
 			}

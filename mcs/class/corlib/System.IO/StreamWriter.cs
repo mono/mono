@@ -59,10 +59,10 @@ namespace System.IO {
 		readonly bool leave_open;
 		IDecoupledTask async_task;
 
-		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 1);
+		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, EncodingHelper.UTF8Unmarked, 1);
 
 		public StreamWriter (Stream stream)
-			: this (stream, Encoding.UTF8Unmarked, DefaultBufferSize) {}
+			: this (stream, EncodingHelper.UTF8Unmarked, DefaultBufferSize) {}
 
 		public StreamWriter (Stream stream, Encoding encoding)
 			: this (stream, encoding, DefaultBufferSize) {}
@@ -102,10 +102,10 @@ namespace System.IO {
 		}
 
 		public StreamWriter (string path)
-			: this (path, false, Encoding.UTF8Unmarked, DefaultFileBufferSize) {}
+			: this (path, false, EncodingHelper.UTF8Unmarked, DefaultFileBufferSize) {}
 
 		public StreamWriter (string path, bool append)
-			: this (path, append, Encoding.UTF8Unmarked, DefaultFileBufferSize) {}
+			: this (path, append, EncodingHelper.UTF8Unmarked, DefaultFileBufferSize) {}
 
 		public StreamWriter (string path, bool append, Encoding encoding)
 			: this (path, append, encoding, DefaultFileBufferSize) {}

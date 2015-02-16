@@ -253,7 +253,7 @@ namespace MonoTests.System.Text
 			var chars = new char[] { '9', '8', '7', '6', '5' };
 			var ret = enc.GetChars (bytes, 0, bytes.Length, chars, 0);
 			
-			Assert.That (ret, Is.EqualTo (4), "ret"); // FIXME: Wrong it should be 2
+			Assert.That (ret, Is.EqualTo (2), "ret");
 			Assert.That (chars [0], Is.EqualTo ('0'), "chars[0]");
 			Assert.That (chars [1], Is.EqualTo ('1'), "chars[1]");
 			Assert.That (chars [2], Is.EqualTo ('7'), "chars[2]");
