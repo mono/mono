@@ -3611,7 +3611,7 @@ member_initializer
 
 		lbag.AddLocation ($$, GetLocation ($3));
 	  }
-	| OPEN_BRACKET_EXPR argument_list CLOSE_BRACKET ASSIGN initializer_value // MSAF
+	| OPEN_BRACKET_EXPR argument_list CLOSE_BRACKET ASSIGN initializer_value
 	  {
 		if (lang_version < LanguageVersion.V_6)
 			FeatureIsNotAvailable (GetLocation ($1), "dictionary initializer");
