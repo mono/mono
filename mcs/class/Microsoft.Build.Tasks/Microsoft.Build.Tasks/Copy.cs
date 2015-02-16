@@ -44,6 +44,7 @@ namespace Microsoft.Build.Tasks {
 		bool		overwriteReadOnlyFiles;
 		int			retries;
 		int			retryDelayMilliseconds;
+		bool		useHardlinksIfPossible;
 
 		public Copy ()
 		{
@@ -190,6 +191,16 @@ namespace Microsoft.Build.Tasks {
 			}
 			set {
 				retryDelayMilliseconds = value;
+			}
+		}
+
+		[MonoTODO ("Not implemented yet.")]
+		public bool UseHardlinksIfPossible {
+			get {
+				return useHardlinksIfPossible;
+			}
+			set {
+				useHardlinksIfPossible = value;
 			}
 		}
 
