@@ -319,7 +319,7 @@ namespace System.Xml
 		public const string Xml_BadNameChar = "Xml_BadNameChar";
 		public const string Xml_BadNameCharWithPos = "Xml_BadNameCharWithPos";
 		public const string Xml_BadNamespaceDecl = "Xml_BadNamespaceDecl";
-		public const string Xml_BadStartNameChar = "Xml_BadStartNameChar";
+		public const string Xml_BadStartNameChar = "a name did not start with a legal character '{0}' ({1}).";
 		public const string Xml_CDATAEndInText = "Xml_CDATAEndInText";
 		public const string Xml_CanNotBindToReservedNamespace = "Xml_CanNotBindToReservedNamespace";
 		public const string Xml_CanNotDeserializeObjectType = "Xml_CanNotDeserializeObjectType";
@@ -430,7 +430,7 @@ namespace System.Xml
 		public const string Xml_IsDataSetAttributeMissingInSchema = "Xml_IsDataSetAttributeMissingInSchema";
 		public const string Xml_LimitExceeded = "Xml_LimitExceeded";
 		public const string Xml_MergeDuplicateDeclaration = "Xml_MergeDuplicateDeclaration";
-		public const string Xml_MessageWithErrorPosition = "{0} Line {1}, position {2}";
+		public const string Xml_MessageWithErrorPosition = "{0} Line {1}, position {2}.";
 		public const string Xml_MismatchKeyLength = "Xml_MismatchKeyLength";
 		public const string Xml_MissingAttribute = "Xml_MissingAttribute";
 		public const string Xml_MissingByteOrderMark = "Xml_MissingByteOrderMark";
@@ -481,7 +481,7 @@ namespace System.Xml
 		public const string Xml_SimpleTypeNotSupported = "Xml_SimpleTypeNotSupported";
 		public const string Xml_StackOverflow = "Xml_StackOverflow";
 		public const string Xml_SurrogatePairSplit = "Xml_SurrogatePairSplit";
-		public const string Xml_TagMismatchEx = "Xml_TagMismatchEx";
+		public const string Xml_TagMismatchEx = "'{0}' is expected.";
 		public const string Xml_TooManyIsDataSetAtributeInSchema = "Xml_TooManyIsDataSetAtributeInSchema";
 		public const string Xml_UnclosedConditionalSection = "Xml_UnclosedConditionalSection";
 		public const string Xml_UnclosedQuote = "Xml_UnclosedQuote";
@@ -511,7 +511,7 @@ namespace System.Xml
 		public const string Xml_WriterAsyncNotSetException = "Xml_WriterAsyncNotSetException";
 		public const string Xml_WrongToken = "Unexpected XML token {0} appeared at {1} state.";
 		public const string Xml_XapResolverCannotOpenUri = "Xml_XapResolverCannotOpenUri";
-		public const string Xml_XmlDeclNotFirst = "Xml_XmlDeclNotFirst";
+		public const string Xml_XmlDeclNotFirst = "Cannot insert specified type of node as a child of this node.";
 		public const string Xml_XmlPrefix = "Xml_XmlPrefix";
 		public const string Xml_XmlnsBelongsToReservedNs = "Xml_XmlnsBelongsToReservedNs";
 		public const string Xml_XmlnsPrefix = "Xml_XmlnsPrefix";
@@ -870,7 +870,7 @@ namespace System.Xml
 		public const string Xdom_Node_Insert_Context = "Xdom_Node_Insert_Context";
 		public const string Xdom_Node_Insert_Location = "Xdom_Node_Insert_Location";
 		public const string Xdom_Node_Insert_Path = "Xdom_Node_Insert_Path";
-		public const string Xdom_Node_Insert_TypeConflict = "Xdom_Node_Insert_TypeConflict";
+		public const string Xdom_Node_Insert_TypeConflict = "Cannot insert specified type of node as a child of this node";
 		public const string Xdom_Node_Modify_ReadOnly = "Xdom_Node_Modify_ReadOnly";
 		public const string Xdom_Node_Null_Doc = "Xdom_Node_Null_Doc";
 		public const string Xdom_Node_Remove_Child = "Xdom_Node_Remove_Child";
