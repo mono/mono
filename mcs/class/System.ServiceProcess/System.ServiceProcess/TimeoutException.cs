@@ -43,12 +43,10 @@ namespace System.ServiceProcess
 		{
 		}
 
-#if NET_2_0
 		public TimeoutException (string message, Exception innerException)
 			: base (message, innerException)
 		{
 		}
-#endif
 
 		protected TimeoutException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{

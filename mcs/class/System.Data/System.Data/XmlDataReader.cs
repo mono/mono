@@ -194,9 +194,7 @@ namespace System.Data
 			if (reader.MoveToFirstAttribute ()) {
 				do {
 					if (reader.NamespaceURI == XmlConstants.XmlnsNS
-#if NET_2_0
 					|| reader.NamespaceURI == XmlConstants.XmlNS
-#endif
 						)
 						continue;
 					ReadElementAttribute (row);
@@ -299,7 +297,6 @@ namespace System.Data
 				int depth = reader.Depth;
 
 				if (typeof (IXmlSerializable).IsAssignableFrom (col.DataType)) {
-#if NET_2_0
 					try {
 						// NOTE: ReadElementString works fine with proper XML with CDATA etc,
 						// however doesn't behave well with XMLs like the one in 
@@ -315,15 +312,12 @@ namespace System.Data
 						}						
 						row [col] = obj;
 					} catch (XmlException) {
-#endif
 						// XML is not in accordance to expected standards, try reading the content as an xml doc
 						row [col] = reader.ReadInnerXml ();
-#if NET_2_0
 					} catch (InvalidOperationException) {
 
 						row [col] = reader.ReadInnerXml ();
 					}
-#endif
 				} else {
 					row [col] = StringToObject (col.DataType, reader.ReadElementString ());
 				}
@@ -381,11 +375,7 @@ namespace System.Data
 				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
 				case TypeCode.Byte: return XmlConvert.ToByte (value);
 				case TypeCode.Char: return (char)XmlConvert.ToInt32 (value);
-#if NET_2_0
 				case TypeCode.DateTime: return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
-#else
-				case TypeCode.DateTime: return XmlConvert.ToDateTime (value);
-#endif
 				case TypeCode.Decimal: return XmlConvert.ToDecimal (value);
 				case TypeCode.Double: return XmlConvert.ToDouble (value);
 				case TypeCode.Int16: return XmlConvert.ToInt16 (value);

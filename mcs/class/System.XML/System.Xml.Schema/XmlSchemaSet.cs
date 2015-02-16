@@ -40,11 +40,7 @@ using System.Xml.XPath;
 
 namespace System.Xml.Schema
 {
-#if NET_2_0
 	public class XmlSchemaSet
-#else
-	internal sealed class XmlSchemaSet
-#endif
 	{
 		XmlNameTable nameTable;
 		XmlResolver xmlResolver = new XmlUrlResolver ();
@@ -121,11 +117,7 @@ namespace System.Xml.Schema
 
 		public XmlResolver XmlResolver {
 			set { xmlResolver = value; }
-#if NET_2_0
 			internal get { return xmlResolver; }
-#else
-			get { return xmlResolver; }
-#endif
 		}
 
 		public XmlSchema Add (string targetNamespace, string schemaUri)

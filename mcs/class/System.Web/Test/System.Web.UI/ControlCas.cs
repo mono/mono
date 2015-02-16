@@ -72,7 +72,6 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsNull (c.Site, "Site");
 			Assert.AreEqual ("mono", c.UniqueID, "UniqueID");
 			Assert.IsTrue (c.Visible, "Visible");
-#if NET_2_0
 			c.AppRelativeTemplateSourceDirectory = String.Empty;
 			Assert.AreEqual (String.Empty, c.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory");
 			c.EnableTheming = true;
@@ -82,7 +81,6 @@ namespace MonoCasTests.System.Web.UI {
 			c.TemplateControl = null;
 			Assert.IsNull (c.TemplateControl, "TemplateControl");
 			Assert.AreEqual (String.Empty, c.TemplateSourceDirectory, "TemplateSourceDirectory");
-#endif
 		}
 
 		private void SetRenderMethodDelegate (HtmlTextWriter writer, Control control)
@@ -102,14 +100,11 @@ namespace MonoCasTests.System.Web.UI {
 			c.RenderControl (writer);
 			Assert.IsNotNull (c.ResolveUrl (String.Empty), "ResolveUrl");
 			c.SetRenderMethodDelegate (new RenderMethod (SetRenderMethodDelegate));
-#if NET_2_0
 			c.ApplyStyleSheetSkin (page);
 			Assert.IsNotNull (c.ResolveClientUrl (String.Empty), "ResolveClientUrl");
-#endif
 			c.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (InvalidOperationException))]
@@ -120,7 +115,6 @@ namespace MonoCasTests.System.Web.UI {
 			c.Focus ();
 			// normal, no forms on page
 		}
-#endif
 
 		private void Handler (object sender, EventArgs e)
 		{

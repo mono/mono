@@ -71,7 +71,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 	public class DisplayAttributeTests
 	{
 		const string property_not_set_message = "The {0} property has not been set.  Use the Get{0} method to get the value.";
-		const string localization_failed_message = "Cannot retrieve property '{0}' because localization failed. Type '{1} is not public or does not contain a public static string property with the name '{2}'.";
+		const string localization_failed_message = "Cannot retrieve property '{0}' because localization failed. Type '{1}' is not public or does not contain a public static string property with the name '{2}'.";
 	
 		[Test]
 		public void StringProperties_ReturnLiteralValues_Success()

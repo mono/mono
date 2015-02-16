@@ -31,9 +31,6 @@ using System.Xml;
 using System.ComponentModel;
 using Mono.Xml.Schema;
 using System.Xml.Serialization;
-#if NET_2_0_in_the_future
-using MS.Internal.Xml;
-#endif
 
 namespace System.Xml.Schema
 {
@@ -87,9 +84,7 @@ namespace System.Xml.Schema
 		}
 
 		[XmlIgnore]
-#if NET_2_0
 		[Obsolete ("This property is going away. Use BaseXmlSchemaType instead")]
-#endif
 		public object BaseSchemaType {
 			get{
 				if (BaseXmlSchemaType != null)
@@ -110,11 +105,7 @@ namespace System.Xml.Schema
 		
 		// To modify this property, we have to make sure that it does
 		// not affect to any compilation/validation logic.
-#if NET_2_0
 		public XmlSchemaType BaseXmlSchemaType {
-#else
-		internal XmlSchemaType BaseXmlSchemaType {
-#endif
 			get { return  BaseXmlSchemaTypeInternal; }
 		}
 
@@ -134,7 +125,6 @@ namespace System.Xml.Schema
 			set{ isMixed = value; } 
 		}
 
-#if NET_2_0
 		// LAMESPEC: for IDREFS it returns Idref. for ENTITIES 
 		// it returns Entity. for NMTOKENS it returns NmToken.
 		[XmlIgnore]
@@ -155,10 +145,8 @@ namespace System.Xml.Schema
 				return BaseXmlSchemaType.TypeCode;
 			}
 		}
-#endif
 		#endregion
 
-#if NET_2_0
 		internal static XmlSchemaType GetBuiltInType (XmlQualifiedName qualifiedName)
 		{
 			XmlSchemaType t = GetBuiltInSimpleType (qualifiedName);
@@ -173,13 +161,8 @@ namespace System.Xml.Schema
 				return XmlSchemaComplexType.AnyType;
 			return GetBuiltInSimpleType (typecode);
 		}
-#endif
 
-#if NET_2_0
 		public static XmlSchemaComplexType GetBuiltInComplexType (XmlQualifiedName qualifiedName)
-#else
-		internal static XmlSchemaComplexType GetBuiltInComplexType (XmlQualifiedName qualifiedName)
-#endif
 		{
 			if (qualifiedName.Name == "anyType" && qualifiedName.Namespace == XmlSchema.Namespace)
 				return XmlSchemaComplexType.AnyType;
@@ -187,7 +170,6 @@ namespace System.Xml.Schema
 			return null;
 		}
 
-#if NET_2_0
 		public static XmlSchemaComplexType GetBuiltInComplexType (XmlTypeCode typeCode)
 		{
 			switch (typeCode) {
@@ -196,9 +178,7 @@ namespace System.Xml.Schema
 			}
 			return null;
 		}
-#endif
 
-#if NET_2_0
 		[MonoTODO]
 		public static XmlSchemaSimpleType GetBuiltInSimpleType (XmlQualifiedName qualifiedName)
 		{
@@ -445,7 +425,6 @@ namespace System.Xml.Schema
 			return IsDerivedFrom (derivedType.BaseXmlSchemaType,
 				baseType, except);
 		}
-#endif
 
 		internal bool ValidateRecursionCheck ()
 		{

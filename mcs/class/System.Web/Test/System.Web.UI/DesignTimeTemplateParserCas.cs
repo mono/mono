@@ -68,9 +68,6 @@ namespace MonoCasTests.System.Web.UI {
 
 		[Test]
 		[SecurityPermission (SecurityAction.PermitOnly, ControlThread = true, UnmanagedCode = true)]
-#if ONLY_1_1
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void ParseControl_PermitOnly_ControlThreadUnmanagedCode ()
 		{
 			DesignTimeTemplateParser.ParseControl (dtpd);
@@ -94,14 +91,10 @@ namespace MonoCasTests.System.Web.UI {
 
 		[Test]
 		[SecurityPermission (SecurityAction.PermitOnly, ControlThread = true, UnmanagedCode = true)]
-#if ONLY_1_1
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void ParseTemplate_PermitOnly_ControlThreadUnmanagedCode ()
 		{
 			DesignTimeTemplateParser.ParseTemplate (dtpd);
 		}
-#if NET_2_0
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlThread = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -145,7 +138,6 @@ namespace MonoCasTests.System.Web.UI {
 		{
 			DesignTimeTemplateParser.ParseTheme (null, "theme", "path");
 		}
-#endif
 
 		// LinkDemand
 
@@ -159,10 +151,6 @@ namespace MonoCasTests.System.Web.UI {
 				return mi.Invoke (null, new object[1] { dtpd });
 			}
 			catch (TargetInvocationException tie) {
-#if ONLY_1_1
-				if (tie.InnerException is NullReferenceException)
-					return String.Empty;
-#endif
 				throw tie;
 			}
 		}

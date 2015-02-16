@@ -203,31 +203,12 @@ namespace System.Web.UI.HtmlControls
 
 		internal bool DetermineRenderUplevel ()
 		{
-#if TARGET_J2EE
-			if (HttpContext.Current == null)
-				return false;
-
-			return (
-				/* From someplace on the web: "JavaScript 1.2
-				 * and later (also known as ECMAScript) has
-				 * built-in support for regular
-				 * expressions" */
-				((Page.Request.Browser.EcmaScriptVersion.Major == 1
-				  && Page.Request.Browser.EcmaScriptVersion.Minor >= 2)
-				 || (Page.Request.Browser.EcmaScriptVersion.Major > 1))
-
-				/* document.getElementById, .getAttribute,
-				 * etc, are all DOM level 1.  I don't think we
-				 * use anything in level 2.. */
-				&& Page.Request.Browser.W3CDomVersion.Major >= 1);
-#else
 			if (isUplevel != null)
 				return (bool) isUplevel;
 			
 			isUplevel = UplevelHelper.IsUplevel (
 				System.Web.Configuration.HttpCapabilitiesBase.GetUserAgentForDetection (HttpContext.Current.Request));
 			return (bool) isUplevel;
-#endif
 		}
 
 		protected internal override void OnPreRender (EventArgs e)
@@ -244,7 +225,6 @@ namespace System.Web.UI.HtmlControls
 			string customAction = Attributes ["action"];
 			Page page = Page;
 			HttpRequest req = page != null ? page.RequestInternal : null;
-#if !TARGET_J2EE
 			if (String.IsNullOrEmpty (customAction)) {
 				string file_path = req != null ? req.ClientFilePath : null;
 				string current_path = req != null ? req.CurrentExecutionFilePath : null;
@@ -282,23 +262,10 @@ namespace System.Web.UI.HtmlControls
 				action = customAction;
 			if (req != null)
 				action += req.QueryStringRaw;
-#else
-			// Allow the page to transform action to a portlet action url
-			if (String.IsNullOrEmpty (customAction)) {
-				string queryString = req.QueryStringRaw;
-				action = CreateActionUrl (VirtualPathUtility.ToAppRelative (req.CurrentExecutionFilePath) +
-					(string.IsNullOrEmpty (queryString) ? string.Empty : "?" + queryString));
-			}
-			else
-				action = customAction;
-
-#endif
 			if (req != null) {
 				XhtmlConformanceSection xhtml = WebConfigurationManager.GetSection ("system.web/xhtmlConformance") as XhtmlConformanceSection;
 				if (xhtml == null || xhtml.Mode != XhtmlConformanceMode.Strict)
-#if NET_4_0
 					if (RenderingCompatibilityLessThan40)
-#endif
 						// LAMESPEC: MSDN says the 'name' attribute is rendered only in
 						// Legacy mode, this is not true.
 						w.WriteAttribute ("name", Name);

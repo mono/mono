@@ -30,7 +30,9 @@
 /*HACK, move this to an eventual mono-signal.c*/
 #if defined( __linux__) || defined(__sun) || defined(__APPLE__) || defined(__NetBSD__) || \
        defined(__FreeBSD__) || defined(__OpenBSD__)
-#define MONO_SIGNAL_USE_SIGACTION
+#ifdef HAVE_SIGACTION
+#define MONO_SIGNAL_USE_SIGACTION 1
+#endif
 #endif
 
 #if defined(__native_client__)
@@ -148,7 +150,9 @@ typedef struct {
 
 #if !defined( HOST_WIN32 ) && !defined(__native_client__) && !defined(__native_client_codegen__)
 
+#ifdef HAVE_SIGACTION
 #define MONO_SIGNAL_USE_SIGACTION 1
+#endif
 
 #endif
 
@@ -236,11 +240,11 @@ extern void mono_context_get_current (void *);
 		: "rdx", "memory")
 #endif
 
-#if !defined(HOST_WIN32)
 #define MONO_ARCH_HAS_MONO_CONTEXT 1
-#endif
 
 #elif (defined(__arm__) && !defined(MONO_CROSS_COMPILE)) || (defined(TARGET_ARM)) /* defined(__x86_64__) */
+
+#include <mono/arch/arm/arm-codegen.h>
 
 typedef struct {
 	mgreg_t pc;
@@ -280,6 +284,8 @@ typedef struct {
 	);								\
 	ctx.pc = ctx.regs [15];			\
 } while (0)
+
+#define MONO_ARCH_HAS_MONO_CONTEXT 1
 
 #elif (defined(__aarch64__) && !defined(MONO_CROSS_COMPILE)) || (defined(TARGET_ARM64))
 
@@ -458,6 +464,8 @@ mono_ia64_context_get_fp (MonoContext *ctx)
 
 #elif ((defined(__mips__) && !defined(MONO_CROSS_COMPILE)) || (defined(TARGET_MIPS))) && SIZEOF_REGISTER == 4 /* defined(__ia64__) */
 
+#include <mono/arch/mips/mips-codegen.h>
+
 typedef struct {
 	mgreg_t	    sc_pc;
 	mgreg_t		sc_regs [32];
@@ -546,7 +554,18 @@ typedef struct ucontext MonoContext;
 
 #endif
 
+/*
+ * The naming is misleading, the SIGCTX argument should be the platform's context
+ * structure (ucontext_c on posix, CONTEXT on windows).
+ */
 void mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx) MONO_INTERNAL;
+
+/*
+ * This will not completely initialize SIGCTX since MonoContext contains less
+ * information that the system context. The caller should obtain a SIGCTX from
+ * the system, and use this function to override the parts of it which are
+ * also in MonoContext.
+ */
 void mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx) MONO_INTERNAL;
 
 #endif /* __MONO_MONO_CONTEXT_H__ */

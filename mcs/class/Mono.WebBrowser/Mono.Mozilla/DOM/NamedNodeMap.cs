@@ -25,9 +25,7 @@
 
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using Mono.WebBrowser;
 using Mono.WebBrowser.DOM;
 

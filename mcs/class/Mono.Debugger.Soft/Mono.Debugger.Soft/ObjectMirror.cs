@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -169,7 +167,6 @@ namespace Mono.Debugger.Soft
 			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
 		}
 
-#if NET_4_5
 		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
 			var tcs = new TaskCompletionSource<Value> ();
 			BeginInvokeMethod (thread, method, arguments, options, iar =>
@@ -199,7 +196,6 @@ namespace Mono.Debugger.Soft
 					}, null);
 			return tcs.Task;
 		}
-#endif
 
 		//
 		// Invoke the members of METHODS one-by-one, calling CALLBACK after each invoke was finished. The IAsyncResult will be marked as completed after all invokes have
@@ -307,6 +303,8 @@ namespace Mono.Debugger.Soft
 				f |= InvokeFlags.OUT_THIS;
 			if ((options & InvokeOptions.ReturnOutArgs) != 0)
 				f |= InvokeFlags.OUT_ARGS;
+			if ((options & InvokeOptions.Virtual) != 0)
+				f |= InvokeFlags.VIRTUAL;
 
 			InvokeAsyncResult r = new InvokeAsyncResult { AsyncState = state, AsyncWaitHandle = new ManualResetEvent (false), VM = vm, Thread = thread, Callback = callback };
 			thread.InvalidateFrames ();

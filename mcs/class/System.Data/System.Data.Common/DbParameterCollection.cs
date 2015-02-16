@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Collections;
 using System.ComponentModel;
@@ -115,12 +114,10 @@ namespace System.Data.Common {
 
 		public abstract int Add (object value);
 
-#if NET_2_0
 		public abstract void AddRange (Array values);
 		protected abstract DbParameter GetParameter (String parameterName);
 		protected abstract void SetParameter (String parameterName, 
 						      DbParameter value);
-#endif
 
 		public abstract void Clear ();
 		public abstract bool Contains (object value);
@@ -143,4 +140,3 @@ namespace System.Data.Common {
 	}
 }
 
-#endif

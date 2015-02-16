@@ -94,6 +94,7 @@ namespace System.Diagnostics
 		public DiagnosticsConfigurationHandler ()
 		{
 			elementHandlers ["assert"] = new ElementHandler (AddAssertNode);
+			elementHandlers ["performanceCounters"] = new ElementHandler (AddPerformanceCountersNode);
 			elementHandlers ["switches"] = new ElementHandler (AddSwitchesNode);
 			elementHandlers ["trace"] = new ElementHandler (AddTraceNode);
 			elementHandlers ["sources"] = new ElementHandler (AddSourcesNode);
@@ -175,6 +176,25 @@ namespace System.Diagnostics
 					dtl.AssertUiEnabled = (bool) d ["assertuienabled"];
 				if (logfilename != null)
 					dtl.LogFileName = logfilename;
+			}
+
+			if (node.ChildNodes.Count > 0)
+				ThrowUnrecognizedElement (node.ChildNodes[0]);
+		}
+
+		private void AddPerformanceCountersNode (IDictionary d, XmlNode node)
+		{
+			XmlAttributeCollection c = node.Attributes;
+			string filemappingsize = GetAttribute (c, "filemappingsize", false, node);
+			ValidateInvalidAttributes (c, node);
+			if (filemappingsize != null) {
+				try {
+					d ["filemappingsize"] = int.Parse (filemappingsize);
+				}
+				catch (Exception e) {
+					throw new ConfigurationException ("The `filemappingsize' attribute must be an integral value.",
+							e, node);
+				}
 			}
 
 			if (node.ChildNodes.Count > 0)

@@ -31,9 +31,6 @@
 
 namespace System.Drawing.Drawing2D {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum HatchStyle {
 		BackwardDiagonal = 3,
 		Cross = LargeGrid,

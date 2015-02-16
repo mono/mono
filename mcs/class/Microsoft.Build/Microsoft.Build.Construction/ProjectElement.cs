@@ -114,15 +114,9 @@ namespace Microsoft.Build.Construction
                                 writer.WriteAttributeString (attributeName, attributeValue);
                 }
                 
-#if NET_4_5
                 public ElementLocation Location { get; private set; }
                 public ElementLocation LabelLocation { get; private set; }
                 public ElementLocation ConditionLocation { get; private set; }
-#else
-                internal ElementLocation Location { get; private set; }
-                internal ElementLocation LabelLocation { get; private set; }
-                internal ElementLocation ConditionLocation { get; private set; }
-#endif
                 string GetFilePath (string baseURI)
                 {
                         return string.IsNullOrEmpty (baseURI) ? string.Empty : new Uri (baseURI).LocalPath;

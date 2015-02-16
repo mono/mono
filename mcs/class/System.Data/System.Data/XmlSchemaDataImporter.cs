@@ -291,15 +291,9 @@ namespace System.Data
 			e.Name = "bar";
 			s.Items.Add (e);
 			s.Compile (null);
-#if NET_2_0
 			schemaIntegerType = ((XmlSchemaSimpleType) a.AttributeSchemaType).Datatype;
 			schemaDecimalType = ((XmlSchemaSimpleType) b.AttributeSchemaType).Datatype;
 			schemaAnyType = e.ElementSchemaType as XmlSchemaComplexType;
-#else
-			schemaIntegerType = a.AttributeType as XmlSchemaDatatype;
-			schemaDecimalType = b.AttributeType as XmlSchemaDatatype;
-			schemaAnyType = e.ElementType as XmlSchemaComplexType;
-#endif
 		}
 
 		#region Fields
@@ -322,10 +316,8 @@ namespace System.Data
 
 		TableStructure currentTable;
 	
-#if NET_2_0
 		// TODO: Do we need a collection here?
 		TableAdapterSchemaInfo currentAdapter;
-#endif
 		#endregion
 
 		// .ctor()
@@ -341,12 +333,10 @@ namespace System.Data
 			schema.Compile (null);
 		}
 
-#if NET_2_0
 		// properties
 		internal TableAdapterSchemaInfo CurrentAdapter {
 			get { return currentAdapter; }
 		}
-#endif
 		
 		// methods
 
@@ -363,13 +353,8 @@ namespace System.Data
 					if (datasetElement == null &&
 						IsDataSetElement (el))
 						datasetElement = el;
-#if NET_2_0
 					if (el.ElementSchemaType is XmlSchemaComplexType &&
 					    el.ElementSchemaType != schemaAnyType)
-#else
-					if (el.ElementType is XmlSchemaComplexType &&
-					    el.ElementType != schemaAnyType)
-#endif
 						targetElements.Add (obj);
 				}
 			}
@@ -389,13 +374,8 @@ namespace System.Data
 			foreach (XmlSchemaObject obj in schema.Items) {
 				if (obj is XmlSchemaElement) {
 					XmlSchemaElement el = obj as XmlSchemaElement;
-#if NET_2_0
 					if (el.ElementSchemaType is XmlSchemaComplexType &&
 					    el.ElementSchemaType != schemaAnyType)
-#else
-					if (el.ElementType is XmlSchemaComplexType &&
-					    el.ElementType != schemaAnyType)
-#endif
 						targetElements.Add (obj);
 				}
 			}
@@ -471,11 +451,7 @@ namespace System.Data
 			XmlSchemaElement el = p as XmlSchemaElement;
 			if (el != null) {
 				XmlSchemaComplexType ct = null;
-#if NET_2_0
 				ct = el.ElementSchemaType as XmlSchemaComplexType;
-#else
-				ct = el.ElementType as XmlSchemaComplexType;
-#endif
 				if (ct == null || ct == schemaAnyType)
 					return true; // column element
 				if (ct.AttributeUses.Count > 0)
@@ -501,11 +477,7 @@ namespace System.Data
 				return;
 
 			// If type is not complex, just skip this element
-#if NET_2_0
 			if (! (el.ElementSchemaType is XmlSchemaComplexType && el.ElementSchemaType != schemaAnyType))
-#else
-			if (! (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType))
-#endif
 				return;
 
 			if (IsDataSetElement (el)) {
@@ -530,11 +502,9 @@ namespace System.Data
 			bool useCurrent = false;
 			if (el.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in el.UnhandledAttributes) {
-#if NET_2_0
 					if (attr.LocalName == "UseCurrentLocale" &&
 						attr.NamespaceURI == XmlConstants.MsdataNamespace)
 						useCurrent = true;
-#endif
 
 					if (attr.NamespaceURI == XmlConstants.MspropNamespace && 
 					    !dataset.ExtendedProperties.ContainsKey(attr.Name))
@@ -550,18 +520,12 @@ namespace System.Data
 					}
 				}
 			}
-#if NET_2_0
 			if (!useCurrent && !dataset.LocaleSpecified) // then set current culture instance _explicitly_
 				dataset.Locale = CultureInfo.CurrentCulture;
-#endif
 
 			// Process content type particle (and create DataTable)
 			XmlSchemaComplexType ct = null;
-#if NET_2_0
 			ct = el.ElementSchemaType as XmlSchemaComplexType;
-#else
-			ct = el.ElementType as XmlSchemaComplexType;
-#endif
 			XmlSchemaParticle p = ct != null ? ct.ContentTypeParticle : null;
 			if (p != null)
 				HandleDataSetContentTypeParticle (p);
@@ -571,11 +535,7 @@ namespace System.Data
 		{
 			XmlSchemaElement el = p as XmlSchemaElement;
 			if (el != null) {
-#if NET_2_0
 				if (el.ElementSchemaType is XmlSchemaComplexType && el.RefName != el.QualifiedName)
-#else
-				if (el.ElementType is XmlSchemaComplexType && el.RefName != el.QualifiedName)
-#endif
 					ProcessDataTableElement (el);
 			}
 			else if (p is XmlSchemaGroupBase) {
@@ -617,11 +577,7 @@ namespace System.Data
 			// Handle complex type (NOTE: It is (or should be)
 			// impossible the type is other than complex type).
 			XmlSchemaComplexType ct = null;
-#if NET_2_0
 			ct = (XmlSchemaComplexType) el.ElementSchemaType;
-#else
-			ct = (XmlSchemaComplexType) el.ElementType;
-#endif
 
 			// Handle attributes
 			foreach (DictionaryEntry de in ct.AttributeUses)
@@ -738,11 +694,7 @@ namespace System.Data
 			col.ColumnName = attr.QualifiedName.Name;
 			col.Namespace = attr.QualifiedName.Namespace;
 			XmlSchemaDatatype dt = null;
-#if NET_2_0
 			dt = GetSchemaPrimitiveType (((XmlSchemaSimpleType) attr.AttributeSchemaType).Datatype);
-#else
-			dt = GetSchemaPrimitiveType (attr.AttributeType);
-#endif
 			// This complicated check comes from the fact that
 			// MS.NET fails to map System.Object to anyType (that
 			// will cause ReadTypedObject() fail on XmlValidatingReader).
@@ -762,11 +714,7 @@ namespace System.Data
 			if (attr.Use == XmlSchemaUse.Required)
 				col.AllowDBNull = false;
 
-#if NET_2_0
 			FillFacet (col, attr.AttributeSchemaType as XmlSchemaSimpleType);
-#else
-			FillFacet (col, attr.AttributeType as XmlSchemaSimpleType);
-#endif
 
 			// Call this method after filling the name
 			ImportColumnMetaInfo (attr, attr.QualifiedName, col);
@@ -781,11 +729,7 @@ namespace System.Data
 			col.DefaultValue = GetElementDefaultValue (el);
 			col.AllowDBNull = (el.MinOccurs == 0);
 
-#if NET_2_0
 			if (el.ElementSchemaType is XmlSchemaComplexType && el.ElementSchemaType != schemaAnyType)
-#else
-			if (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType)
-#endif
 				FillDataColumnComplexElement (parent, el, col);
 			else if (el.MaxOccurs != 1)
 				FillDataColumnRepeatedSimpleElement (parent, el, col);
@@ -938,11 +882,7 @@ namespace System.Data
 			cc2.Namespace = el.QualifiedName.Namespace;
 			cc2.ColumnMapping = MappingType.SimpleContent;
 			cc2.AllowDBNull = false;
-#if NET_2_0
 			cc2.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementSchemaType));
-#else
-			cc2.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementType));
-#endif
 
 			dt.Columns.Add (cc2);
 			dt.Columns.Add (cc);
@@ -963,13 +903,8 @@ namespace System.Data
 			col.ColumnName = XmlHelper.Decode (el.QualifiedName.Name);
 			col.Namespace = el.QualifiedName.Namespace;
 			col.ColumnMapping = MappingType.Element;
-#if NET_2_0
 			col.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementSchemaType));
 			FillFacet (col, el.ElementSchemaType as XmlSchemaSimpleType);
-#else
-			col.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementType));
-			FillFacet (col, el.ElementType as XmlSchemaSimpleType);
-#endif
 
 			ImportColumnMetaInfo (el, el.QualifiedName, col);
 
@@ -1256,16 +1191,13 @@ namespace System.Data
 						//Console.WriteLine ("Name: " + el.LocalName + " NS: " + el.NamespaceURI + " Const: " + XmlConstants.MsdataNamespace);
 						if (el != null && el.LocalName == "Relationship" && el.NamespaceURI == XmlConstants.MsdataNamespace)
 							HandleRelationshipAnnotation (el, nested);
-#if NET_2_0
 						if (el != null && el.LocalName == "DataSource" && el.NamespaceURI == XmlConstants.MsdatasourceNamespace)
 							HandleDataSourceAnnotation (el, nested);
-#endif
 					}
 				}
 			}
 		}
 
-#if NET_2_0
 		private void HandleDataSourceAnnotation (XmlElement el, bool nested)
 		{
 			// Handle: Connections and Tables
@@ -1561,7 +1493,6 @@ namespace System.Data
 			                                 el.GetAttribute ("DataSetColumn"));
 		}
 		
-#endif
 		
 		private void HandleRelationshipAnnotation (XmlElement el, bool nested)
 		{

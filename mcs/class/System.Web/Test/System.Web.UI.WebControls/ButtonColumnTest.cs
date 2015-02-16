@@ -49,24 +49,20 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void Defaults ()
 		{
 			ButtonColumn bc = new ButtonColumn ();
-#if NET_2_0
 			Assert.AreEqual ("", bc.ValidationGroup, "ValidationGroup");
 			Assert.AreEqual (false, bc.CausesValidation, "CausesValidation"); 
-#endif
 		}
 
 		[Test]
 		public void AssignedProperties ()
 		{
 			ButtonColumn bc = new ButtonColumn ();
-#if NET_2_0
 			Assert.AreEqual ("", bc.ValidationGroup, "ValidationGroup#1");
 			bc.ValidationGroup = "test";
 			Assert.AreEqual ("test", bc.ValidationGroup, "ValidationGroup#2");
 			Assert.AreEqual (false, bc.CausesValidation, "CausesValidation#1");
 			bc.CausesValidation = true;
 			Assert.AreEqual (true, bc.CausesValidation, "CausesValidation#2");
-#endif
 		}
 
 		[Test]

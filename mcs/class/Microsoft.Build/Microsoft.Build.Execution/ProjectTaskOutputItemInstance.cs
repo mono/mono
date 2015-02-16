@@ -10,11 +10,9 @@ namespace Microsoft.Build.Execution
 			condition = xml.Condition;
 			ItemType = xml.ItemType;
 			TaskParameter = xml.TaskParameter;
-			#if NET_4_5
 			condition_location = xml.ConditionLocation;
 			location = xml.Location;
 			task_parameter_location = xml.TaskParameterLocation;
-			#endif
 		}
 		
 		public string ItemType { get; private set; }
@@ -24,7 +22,6 @@ namespace Microsoft.Build.Execution
 		public override string Condition {
 			get { return condition; }
 		}
-		#if NET_4_5
 		readonly ElementLocation condition_location, location, task_parameter_location;
 		public ElementLocation ItemTypeLocation { get; private set; }
 		public override ElementLocation ConditionLocation {
@@ -36,7 +33,6 @@ namespace Microsoft.Build.Execution
 		public override ElementLocation TaskParameterLocation {
 			get { return task_parameter_location; }
 		}
-		#endif
 	}
 }
 

@@ -47,7 +47,6 @@ namespace System.Reflection {
 		public abstract bool CanRead { get; }
 		public abstract bool CanWrite { get; }
 		
-#if NET_4_5
 		public virtual MethodInfo GetMethod {
 			get { return GetGetMethod(true); }
 		}
@@ -55,7 +54,6 @@ namespace System.Reflection {
 		public virtual MethodInfo SetMethod {
 			get { return GetSetMethod(true); }
 		}
-#endif
 
 		public bool IsSpecialName {
 			get {return (Attributes & PropertyAttributes.SpecialName) != 0;}
@@ -97,14 +95,12 @@ namespace System.Reflection {
 			return GetValue(obj, BindingFlags.Default, null, index, null);
 		}
 
-#if NET_4_5
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public object GetValue (object obj)
 		{
 			return GetValue(obj, BindingFlags.Default, null, null, null);
 		}
-#endif
 
 		public abstract object GetValue (object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 		
@@ -115,14 +111,12 @@ namespace System.Reflection {
 			SetValue (obj, value, BindingFlags.Default, null, index, null);
 		}
 
-#if NET_4_5
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public void SetValue (object obj, object value)
 		{
 			SetValue (obj, value, BindingFlags.Default, null, null, null);
 		}
-#endif
 
 		public abstract void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 
@@ -147,7 +141,6 @@ namespace System.Reflection {
 			throw CreateNIE ();
 		}
 
-#if NET_4_0
 		public override bool Equals (object obj)
 		{
 			return obj == (object) this;
@@ -175,7 +168,6 @@ namespace System.Reflection {
 				return true;
 			return !left.Equals (right);
 		}
-#endif
 
 #if !MOBILE
 		void _PropertyInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

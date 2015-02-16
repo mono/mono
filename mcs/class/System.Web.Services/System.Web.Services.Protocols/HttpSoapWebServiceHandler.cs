@@ -125,11 +125,7 @@ namespace System.Web.Services.Protocols
 				string soapAction = null;
 				string ctype;
 				Encoding encoding = WebServiceHelper.GetContentEncoding (request.ContentType, out ctype);
-#if NET_2_0
 				if (ctype != "text/xml" && ctype != "application/soap+xml")
-#else
-				if (ctype != "text/xml")
-#endif
 					throw new WebException ("Content is not XML: " + ctype);
 					
 				object server = CreateServerInstance ();
@@ -137,11 +133,9 @@ namespace System.Web.Services.Protocols
 				SoapServerMessage message = new SoapServerMessage (request, server, stream);
 				message.SetStage (SoapMessageStage.BeforeDeserialize);
 				message.ContentType = ctype;
-#if NET_2_0
 				object soapVer = context.Items ["WebServiceSoapVersion"];
 				if (soapVer != null)
 					message.SetSoapVersion ((SoapProtocolVersion) soapVer);
-#endif
 
 				// If the routing style is SoapAction, then we can get the method information now
 				// and set it to the SoapMessage
@@ -317,21 +311,17 @@ namespace System.Web.Services.Protocols
 				if (message.Exception == null)
 					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Out, message.OutParameters, message.Headers, message.IsSoap12);
 				else if (methodInfo != null) {
-#if NET_2_0
 					if (message.IsSoap12)
 						WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Soap12Fault (message.Exception), message.Headers, message.IsSoap12);
 					else
-#endif
 					{
 						WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Fault (message.Exception), message.Headers, message.IsSoap12);
 					}
 				}
 				else {
-#if NET_2_0
 					if (message.IsSoap12)
 						WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Soap12Fault.Serializer, null, new Soap12Fault (message.Exception), null, message.IsSoap12);
 					else
-#endif
 					{
 						WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Fault.Serializer, null, new Fault (message.Exception), null, message.IsSoap12);
 					}
@@ -370,11 +360,9 @@ namespace System.Web.Services.Protocols
 				faultMessage = new SoapServerMessage (context.Request, soex, requestMessage.MethodStubInfo, requestMessage.Server, requestMessage.Stream);
 			else
 				faultMessage = new SoapServerMessage (context.Request, soex, null, null, null);
-#if NET_2_0
 			object soapVer = context.Items ["WebServiceSoapVersion"];
 			if (soapVer != null)
 				faultMessage.SetSoapVersion ((SoapProtocolVersion) soapVer);
-#endif
 
 			SerializeResponse (context.Response, faultMessage);
 			context.Response.End ();

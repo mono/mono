@@ -51,13 +51,13 @@ void check_object (char *start);
 
 const char*descriptor_types [] = {
 	"INVALID",
-	"run_length",
-	"small_bitmap",
+	"run length",
+	"bitmap",
+	"small pointer-free",
 	"complex",
 	"vector",
-	"large_bitmap",
-	"complex_arr",
-	"complex_ptrfree"
+	"complex arrray",
+	"complex pointer-free"
 };
 
 static char* describe_nursery_ptr (char *ptr, gboolean need_setup);
@@ -131,7 +131,7 @@ describe_pointer (char *ptr, gboolean need_setup)
 	desc = ((GCVTable*)vtable)->desc;
 	printf ("Descriptor: %lx\n", (long)desc);
 
-	type = desc & 0x7;
+	type = desc & DESC_TYPE_MASK;
 	printf ("Descriptor type: %d (%s)\n", type, descriptor_types [type]);
 
 	size = sgen_safe_object_get_size ((MonoObject*)ptr);
@@ -174,7 +174,8 @@ static gboolean missing_remsets;
 static void
 check_consistency_callback (char *start, size_t size, void *dummy)
 {
-	GCVTable *vt = (GCVTable*)LOAD_VTABLE (start);
+	MonoVTable *vt = (MonoVTable*)LOAD_VTABLE (start);
+	mword desc = sgen_vtable_get_descriptor (vt);
 	SGEN_LOG (8, "Scanning object %p, vtable: %p (%s)", start, vt, vt->klass->name);
 
 #include "sgen-scan-object.h"
@@ -230,7 +231,8 @@ static void
 check_mod_union_callback (char *start, size_t size, void *dummy)
 {
 	gboolean in_los = (gboolean) (size_t) dummy;
-	GCVTable *vt = (GCVTable*)LOAD_VTABLE (start);
+	MonoVTable *vt = (MonoVTable*)LOAD_VTABLE (start);
+	mword desc = sgen_vtable_get_descriptor (vt);
 	guint8 *cards;
 	SGEN_LOG (8, "Scanning object %p, vtable: %p (%s)", start, vt, vt->klass->name);
 
@@ -269,6 +271,8 @@ sgen_check_mod_union_consistency (void)
 static void
 check_major_refs_callback (char *start, size_t size, void *dummy)
 {
+	mword desc = sgen_obj_get_descriptor (start);
+
 #include "sgen-scan-object.h"
 }
 
@@ -296,8 +300,12 @@ sgen_check_major_refs (void)
 void
 check_object (char *start)
 {
+	mword desc;
+
 	if (!start)
 		return;
+
+	desc = sgen_obj_get_descriptor (start);
 
 #include "sgen-scan-object.h"
 }
@@ -338,6 +346,16 @@ find_object_in_nursery_dump (char *object)
 	}
 	g_assert (first == last);
 	return FALSE;
+}
+
+static void
+iterate_valid_nursery_objects (IterateObjectCallbackFunc callback, void *data)
+{
+	int i;
+	for (i = 0; i < valid_nursery_object_count; ++i) {
+		char *obj = valid_nursery_objects [i];
+		callback (obj, safe_object_get_size ((MonoObject*)obj), data);
+	}
 }
 
 static char*
@@ -425,6 +443,7 @@ static void
 verify_object_pointers_callback (char *start, size_t size, void *data)
 {
 	gboolean allow_missing_pinned = (gboolean) (size_t) data;
+	mword desc = sgen_obj_get_descriptor (start);
 
 #include "sgen-scan-object.h"
 }
@@ -531,15 +550,14 @@ find_pinning_reference (char *obj, size_t size)
 #define HANDLE_PTR(ptr,obj)	do {					\
 		char* __target = *(char**)ptr;				\
 		if (__target) {						\
-			g_assert (is_valid_object_pointer (__target));	\
 			if (sgen_ptr_in_nursery (__target)) {		\
-				g_assert (SGEN_OBJECT_IS_PINNED (__target)); \
-			} else if (sgen_los_is_valid_object (__target)) { \
-				g_assert (sgen_los_object_is_pinned (__target)); \
-			} else if (major_collector.is_valid_object (__target)) { \
-				g_assert (major_collector.is_object_live (__target)); \
+				g_assert (!SGEN_OBJECT_IS_FORWARDED (__target)); \
 			} else {					\
-				g_assert_not_reached ();		\
+				mword __size = sgen_safe_object_get_size ((MonoObject*)__target); \
+				if (__size <= SGEN_MAX_SMALL_OBJ_SIZE)	\
+					g_assert (major_collector.is_object_live (__target)); \
+				else					\
+					g_assert (sgen_los_object_is_pinned (__target)); \
 			}						\
 		}							\
 	} while (0)
@@ -547,9 +565,13 @@ find_pinning_reference (char *obj, size_t size)
 static void
 check_marked_callback (char *start, size_t size, void *dummy)
 {
-	gboolean is_los = (gboolean) (size_t) dummy;
+	gboolean flag = (gboolean) (size_t) dummy;
+	mword desc;
 
-	if (is_los) {
+	if (sgen_ptr_in_nursery (start)) {
+		if (flag)
+			SGEN_ASSERT (0, SGEN_OBJECT_IS_PINNED (start), "All objects remaining in the nursery must be pinned");
+	} else if (flag) {
 		if (!sgen_los_object_is_pinned (start))
 			return;
 	} else {
@@ -557,14 +579,17 @@ check_marked_callback (char *start, size_t size, void *dummy)
 			return;
 	}
 
+	desc = sgen_obj_get_descriptor_safe (start);
+
 #include "sgen-scan-object.h"
 }
 
 void
-sgen_check_major_heap_marked (void)
+sgen_check_heap_marked (gboolean nursery_must_be_pinned)
 {
 	setup_valid_nursery_objects ();
 
+	iterate_valid_nursery_objects (check_marked_callback, (void*)(size_t)nursery_must_be_pinned);
 	major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, check_marked_callback, (void*)FALSE);
 	sgen_los_iterate_objects (check_marked_callback, (void*)TRUE);
 }
@@ -608,6 +633,7 @@ scan_object_for_specific_ref (char *start, MonoObject *key)
 		start = forwarded;
 
 	if (scan_object_for_specific_ref_precise) {
+		mword desc = sgen_obj_get_descriptor_safe (start);
 		#include "sgen-scan-object.h"
 	} else {
 		mword *words = (mword*)start;
@@ -896,7 +922,9 @@ check_reference_for_xdomain (gpointer *ptr, char *obj, MonoDomain *domain)
 static void
 scan_object_for_xdomain_refs (char *start, mword size, void *data)
 {
-	MonoDomain *domain = ((MonoObject*)start)->vtable->domain;
+	MonoVTable *vt = (MonoVTable*)SGEN_LOAD_VTABLE (start);
+	MonoDomain *domain = vt->domain;
+	mword desc = sgen_vtable_get_descriptor (vt);
 
 	#include "sgen-scan-object.h"
 }

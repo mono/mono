@@ -42,11 +42,9 @@ namespace System.Data
 		{
 		}
 
-#if NET_2_0
 		public StrongTypingException (string message) : base (message)
 		{
 		}
-#endif
 
 		public StrongTypingException (string s, Exception innerException)
 			: base (s, innerException)

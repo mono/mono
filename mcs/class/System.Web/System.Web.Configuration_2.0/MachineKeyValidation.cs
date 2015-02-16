@@ -28,23 +28,17 @@
 
 namespace System.Web.Configuration
 {
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	enum MachineKeyValidation
 	{
 		MD5 = 0,
 		SHA1 = 1,
 		TripleDES = 2,
 		AES = 3,
-#if NET_4_0
 		HMACSHA256 = 4,
 		HMACSHA384 = 5,
 		HMACSHA512 = 6,
 		Custom = 7
-#endif
 	}
 }
 

@@ -32,7 +32,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Collections;
 using System.Data.Common;
@@ -75,12 +74,10 @@ namespace System.Data.ProviderBase {
 
 		protected abstract Type ItemType { get; }
 
-#if NET_2_0
 		[MonoTODO]
 		protected virtual string ParameterNamePrefix {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		public override object SyncRoot {
 			get { return _list.SyncRoot; }
@@ -97,7 +94,6 @@ namespace System.Data.ProviderBase {
                         return _list.Add (value);
 		}
 
-#if NET_2_0
 		public override void AddRange (Array values)
 		{
 			foreach (object value in values)
@@ -109,7 +105,6 @@ namespace System.Data.ProviderBase {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public override void Clear ()
 		{
@@ -172,13 +167,11 @@ namespace System.Data.ProviderBase {
             return -1;
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected internal static int IndexOf (IEnumerable items, string parameterName)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public override void Insert (int index, object value)
 		{
@@ -187,13 +180,11 @@ namespace System.Data.ProviderBase {
 			_list.Insert (index, value);
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected virtual void OnChange ()
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public override void Remove (object value)
 		{
@@ -284,4 +275,3 @@ namespace System.Data.ProviderBase {
 	}
 }
 
-#endif

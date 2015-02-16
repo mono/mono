@@ -74,10 +74,8 @@ namespace System
 		
 		public UriBuilder (Uri uri)
 		{
-#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-#endif
 			Initialize (uri);
 		}
 		

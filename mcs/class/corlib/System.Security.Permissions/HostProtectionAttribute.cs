@@ -39,12 +39,16 @@ namespace System.Security.Permissions {
 
 		private HostProtectionResource _resources;
 
+#if BOOTSTRAP_BASIC
+		public HostProtectionAttribute (SecurityAction action = SecurityAction.LinkDemand)
+#else
 		public HostProtectionAttribute ()
 			: base (SecurityAction.LinkDemand) 
 		{
 		}
 
 		public HostProtectionAttribute (SecurityAction action)
+#endif
 			: base (action) 
 		{
 			if (action != SecurityAction.LinkDemand) {

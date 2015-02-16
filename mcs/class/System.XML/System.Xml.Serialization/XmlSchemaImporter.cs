@@ -36,7 +36,7 @@ using System.CodeDom.Compiler;
 using System.Xml.Schema;
 using System.Collections;
 using System.Collections.Generic;
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 using System.Configuration;
 using System.Xml.Serialization.Configuration;
 #endif
@@ -44,7 +44,7 @@ using System.Xml.Serialization.Configuration;
 namespace System.Xml.Serialization 
 {
 	public class XmlSchemaImporter
-#if NET_2_0 && !MOBILE
+#if !MOBILE
 		: SchemaImporter
 #endif
 	{
@@ -161,7 +161,7 @@ namespace System.Xml.Serialization
 
 		void InitializeExtensions ()
 		{
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 			SerializationSectionGroup root = ConfigurationManager.GetSection ("system.xml.serialization") as SerializationSectionGroup;
 			if (root == null)
 				return;
@@ -346,7 +346,6 @@ namespace System.Xml.Serialization
 			return new XmlMembersMapping (mapping);
 		}
 		
-#if NET_2_0
 		[MonoTODO]
 		public XmlMembersMapping ImportMembersMapping (string name, string ns, SoapSchemaMember[] members)
 		{
@@ -371,7 +370,6 @@ namespace System.Xml.Serialization
 				(XmlSchemaType) schemas.Find (typeName, typeof (XmlSchemaSimpleType));
 			return ImportTypeCommon (typeName, typeName, stype, true);
 		}
-#endif
 		
 		internal XmlMembersMapping ImportEncodedMembersMapping (string name, string ns, SoapSchemaMember[] members, bool hasWrapperElement)
 		{
@@ -961,12 +959,8 @@ namespace System.Xml.Serialization
 							// It is a simple list (space separated list).
 							// Since this is not supported, map as a single item value
 							member = new XmlTypeMapMemberElement ();
-#if NET_2_0
 							// In MS.NET those types are mapped to a string
 							typeData = TypeTranslator.GetTypeData(typeof(string));
-#else
-							typeData = typeData.ListItemTypeData;
-#endif
 						}
 						else
 							member = new XmlTypeMapMemberList ();

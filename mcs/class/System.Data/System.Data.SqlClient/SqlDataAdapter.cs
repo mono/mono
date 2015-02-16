@@ -42,26 +42,11 @@ namespace System.Data.SqlClient {
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
 
-#if NET_2_0	
 	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter, IDataAdapter, ICloneable
-#else
-	public sealed class SqlDataAdapter :  DbDataAdapter, IDbDataAdapter
-#endif
 	{
 		#region Fields
 
-#if !NET_2_0
-		bool disposed;
-#endif
-#if ONLY_1_0 || ONLY_1_1
-		SqlCommand _selectCommand;
-		SqlCommand _insertCommand;
-		SqlCommand _updateCommand;
-		SqlCommand _deleteCommand;		
-#endif
-#if NET_2_0
 		int updateBatchSize;
-#endif
 		#endregion
 
 		#region Constructors
@@ -73,9 +58,7 @@ namespace System.Data.SqlClient {
 		public SqlDataAdapter (SqlCommand selectCommand) 
 		{
 			SelectCommand = selectCommand;
-#if NET_2_0
 			UpdateBatchSize = 1;
-#endif
 		}
 
 		public SqlDataAdapter (string selectCommandText, SqlConnection selectConnection) 
@@ -92,91 +75,47 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
-#if !NET_2_0
-		[DataSysDescription ("Used during Update for deleted rows in DataSet.")]
-#endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new SqlCommand DeleteCommand {
 			get { 
-#if NET_2_0
 				return (SqlCommand)base.DeleteCommand; 
-#else
-				return _deleteCommand;
-#endif
 			}
 			set { 
-#if NET_2_0
 				base.DeleteCommand = value; 
-#else
-				_deleteCommand = value;
-#endif
 			}
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Used during Update for new rows in DataSet.")]
-#endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new SqlCommand InsertCommand {
 			get { 
-#if NET_2_0				
 				return (SqlCommand)base.InsertCommand; 
-#else
-				return _insertCommand;
-#endif
 			}
 			set { 
-#if NET_2_0				
 				base.InsertCommand = value; 
-#else
-				_insertCommand = value;
-#endif
 			}
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Used during Fill/FillSchema.")]
-#endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new SqlCommand SelectCommand {
 			get { 
-#if NET_2_0
 				return (SqlCommand)base.SelectCommand; 
-#else
-				return _selectCommand;
-#endif
 			}
 			set { 
-#if NET_2_0
 				base.SelectCommand = value; 
-#else
-				_selectCommand = value;
-#endif
 			}
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Used during Update for modified rows in DataSet.")]
-#endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new  SqlCommand UpdateCommand {
 			get { 
-#if NET_2_0
 				return (SqlCommand)base.UpdateCommand; 
-#else
-				return _updateCommand;
-#endif
 			}
 			set { 
-#if NET_2_0
 				base.UpdateCommand = value; 
-#else
-				_updateCommand = value;
-#endif
 			}
 		}
 		
@@ -199,7 +138,6 @@ namespace System.Data.SqlClient {
 			set { DeleteCommand = (SqlCommand) value; }
 		}
 
-#if NET_2_0
 		public override int UpdateBatchSize {
 			get { return updateBatchSize; }
 			set {
@@ -208,7 +146,6 @@ namespace System.Data.SqlClient {
 				updateBatchSize = value; 
 			}
 		}
-#endif
 
 		#endregion // Properties
 
@@ -225,19 +162,6 @@ namespace System.Data.SqlClient {
 			return new SqlRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
-#if !NET_2_0
-		protected override void Dispose (bool disposing)
-		{
-			if (!disposed) {
-				if (disposing) {
-					// Release managed resources
-				}
-				// Release unmanaged resources
-				disposed = true;
-			}
-			base.Dispose (disposing);
-		}
-#endif
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
 		{
@@ -251,15 +175,12 @@ namespace System.Data.SqlClient {
 				RowUpdating (this, (SqlRowUpdatingEventArgs) value);
 		}
 
-#if NET_2_0		
 		[MonoTODO]
 		object ICloneable.Clone()
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
-#if NET_2_0
 		// All the batch methods, should be implemented, if supported,
 		// by individual providers 
 
@@ -298,19 +219,12 @@ namespace System.Data.SqlClient {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		#endregion // Methods
 
 		#region Events and Delegates
 
-#if ONLY_1_1
-		[DataSysDescription ("Event triggered before every DataRow during Update.")]
-#endif
 		public event SqlRowUpdatedEventHandler RowUpdated;
 
-#if ONLY_1_1
-		[DataSysDescription ("Event triggered after every DataRow during Update.")]
-#endif
 		public event SqlRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates

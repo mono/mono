@@ -34,11 +34,7 @@ using System.IO;
 using System.Text;
 using Mono.Xml;
 
-#if NET_2_0
 using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
-#else
-using XmlTextReaderImpl = System.Xml.XmlTextReader;
-#endif
 
 namespace System.Xml
 {

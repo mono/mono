@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_4_0
 
 using System;
 using System.Collections;
@@ -95,13 +94,11 @@ namespace System.ServiceModel.Configuration
 			}
 		}
 		
-#if NET_4_0		
 		internal ConfigurationPropertyCollection PropertiesInternal {
 			get {
 				return Properties;
 			}
 		}
-#endif
 
 		public static StandardEndpointsSection GetSection (System.Configuration.Configuration config) {
 			ServiceModelSectionGroup sm = ServiceModelSectionGroup.GetSectionGroup (config);
@@ -125,4 +122,3 @@ namespace System.ServiceModel.Configuration
 
 }
 
-#endif

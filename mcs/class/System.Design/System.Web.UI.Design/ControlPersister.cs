@@ -75,7 +75,6 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoNotSupported ("")]
 		public static string PersistTemplate (ITemplate template, IDesignerHost host)
 		{
@@ -87,6 +86,5 @@ namespace System.Web.UI.Design
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

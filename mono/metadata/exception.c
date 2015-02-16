@@ -87,10 +87,12 @@ mono_exception_from_name_domain (MonoDomain *domain, MonoImage *image,
 MonoException *
 mono_exception_from_token (MonoImage *image, guint32 token)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoObject *o;
 
-	klass = mono_class_get (image, token);
+	klass = mono_class_get_checked (image, token, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME handle the error. */
 
 	o = mono_object_new (mono_domain_get (), klass);
 	g_assert (o != NULL);
@@ -197,7 +199,9 @@ MonoException *
 mono_exception_from_token_two_strings (MonoImage *image, guint32 token,
 									   MonoString *a1, MonoString *a2)
 {
-	MonoClass *klass = mono_class_get (image, token);
+	MonoError error;
+	MonoClass *klass = mono_class_get_checked (image, token, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME handle the error. */
 
 	return create_exception_two_strings (klass, a1, a2);
 }
@@ -771,12 +775,25 @@ mono_get_exception_reflection_type_load (MonoArray *types, MonoArray *exceptions
 MonoException *
 mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception)
 {
-	MonoRuntimeWrappedException *ex = (MonoRuntimeWrappedException*)
-		mono_exception_from_name (mono_get_corlib (), "System.Runtime.CompilerServices",
-								  "RuntimeWrappedException");
+	MonoClass *klass;
+	MonoObject *o;
+	MonoMethod *method;
+	MonoDomain *domain = mono_domain_get ();
+	gpointer params [16];
 
-   MONO_OBJECT_SETREF (ex, wrapped_exception, wrapped_exception);
-   return (MonoException*)ex;
+	klass = mono_class_from_name (mono_get_corlib (), "System.Runtime.CompilerServices", "RuntimeWrappedException");
+	g_assert (klass);
+
+	o = mono_object_new (domain, klass);
+	g_assert (o != NULL);
+
+	method = mono_class_get_method_from_name (klass, ".ctor", 1);
+	g_assert (method);
+
+	params [0] = wrapped_exception;
+	mono_runtime_invoke (method, o, params, NULL);
+
+	return (MonoException *)o;
 }	
 
 static gboolean

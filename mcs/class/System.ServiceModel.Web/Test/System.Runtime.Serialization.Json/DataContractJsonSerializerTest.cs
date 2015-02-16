@@ -1191,6 +1191,15 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			return ser.ReadObject (xr);
 		}
 
+		public T Deserialize<T>(string json)
+		{
+			var bytes = Encoding.Unicode.GetBytes (json);
+			using (MemoryStream stream = new MemoryStream (bytes)) {
+				var serializer = new DataContractJsonSerializer (typeof(T));
+				return (T)serializer.ReadObject (stream);	
+			}
+		}
+
 		[Test]
 		public void IsStartObject ()
 		{
@@ -1541,7 +1550,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		public void TestHashtableSerialization ()
 		{
 			var collection = new HashtableContainer ();
-			var expectedOutput = "{\"Items\":[{\"Key\":\"key1\",\"Value\":\"banana\"},{\"Key\":\"key2\",\"Value\":\"apple\"}]}";
+			var expectedOutput = "{\"Items\":[{\"Key\":\"key2\",\"Value\":\"apple\"},{\"Key\":\"key1\",\"Value\":\"banana\"}]}";
 			
 			var serializer = new DataContractJsonSerializer (collection.GetType ());
 			var stream = new MemoryStream ();
@@ -1819,6 +1828,50 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			serializer.WriteObject (stream, o);
 		}
 		
+		// properly deserialize object with a polymorphic property (known derived type)
+		[Test]
+		public void Bug23058()
+		{
+			string serializedObj = @"{""PolymorphicProperty"":{""__type"":""KnownDerivedType:#MonoTests.System.Runtime.Serialization.Json"",""BaseTypeProperty"":""Base"",""DerivedProperty"":""Derived 1""},""Name"":""Parent2""}";
+			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
+
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.GetType ().FullName, "MonoTests.System.Runtime.Serialization.Json.KnownDerivedType");
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.BaseTypeProperty, "Base");
+			Assert.AreEqual ((deserializedObj.PolymorphicProperty as KnownDerivedType).DerivedProperty, "Derived 1");
+			Assert.AreEqual (deserializedObj.Name, "Parent2");
+		}
+
+		// properly deserialize object with a polymorphic property (base type with __type hint)
+		[Test]
+		public void DeserializeBaseTypePropHint()
+		{
+			string serializedObj = @"{""PolymorphicProperty"":{""__type"":""BaseType:#MonoTests.System.Runtime.Serialization.Json"",""BaseTypeProperty"":""Base""},""Name"":""Parent2""}";
+			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
+
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.GetType ().FullName, "MonoTests.System.Runtime.Serialization.Json.BaseType");
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.BaseTypeProperty, "Base");
+		}
+
+		// properly deserialize object with a polymorphic property (base type with __type hint)
+		[Test]
+		public void DeserializeBaseTypePropNoHint()
+		{
+			string serializedObj = @"{""PolymorphicProperty"":{""BaseTypeProperty"":""Base""},""Name"":""Parent2""}";
+			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
+
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.GetType ().FullName, "MonoTests.System.Runtime.Serialization.Json.BaseType");
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.BaseTypeProperty, "Base");
+		}
+
+		// properly fail deserializing object with a polymorphic property (unknown derived type)
+		[ExpectedException (typeof (SerializationException))]
+		[Test]
+		public void FailDeserializingUnknownTypeProp()
+		{
+			string serializedObj = @"{""PolymorphicProperty"":{""__type"":""UnknownDerivedType:#MonoTests.System.Runtime.Serialization.Json"",""BaseTypeProperty"":""Base"",""DerivedProperty"":""Derived 1""},""Name"":""Parent2""}";
+			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
+		}
+			
 		#endregion
 	}
 	
@@ -2037,6 +2090,42 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		public long CodedServerTimeUTC { get; set; }
 		public DateTime ServerTimeUTC { get; set; }
 	}
+
+	#region polymorphism test helper classes
+
+	[DataContract]
+	[KnownType (typeof (KnownDerivedType))]
+	public class ParentType
+	{
+		[DataMember]
+		public string Name { get; set; }
+
+		[DataMember]
+		public BaseType PolymorphicProperty { get; set; }
+	}
+
+	[DataContract]
+	public class BaseType
+	{
+		[DataMember]
+		public string BaseTypeProperty { get; set; }
+	}
+
+	[DataContract]
+	public class KnownDerivedType : BaseType
+	{
+		[DataMemberAttribute]
+		public string DerivedProperty { get; set; }
+	}
+
+	[DataContract]
+	public class UnknownDerivedType : BaseType
+	{
+		[DataMember]
+		public string DerivedProperty { get; set; }
+	}
+
+	#endregion
 }
 
 [DataContract]

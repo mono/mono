@@ -37,17 +37,12 @@ namespace System.Data
 	/// <summary>
 	/// Specifies the type of SQL query to be used by the OleDbRowUpdatedEventArgs, OleDbRowUpdatingEventArgs, SqlRowUpdatedEventArgs, or SqlRowUpdatingEventArgs class.
 	/// </summary>
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum StatementType
 	{
 		Select = 0,
 		Insert = 1,
 		Update = 2,
-#if NET_2_0
 		Batch = 4,
-#endif
 		Delete = 3
 	}
 }

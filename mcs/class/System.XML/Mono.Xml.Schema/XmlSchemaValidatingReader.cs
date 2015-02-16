@@ -38,7 +38,6 @@ using System.Xml.XPath;
 using Mono.Xml;
 #endif
 
-#if NET_2_0
 
 using System.Collections.Generic;
 using QName = System.Xml.XmlQualifiedName;
@@ -818,4 +817,3 @@ namespace Mono.Xml.Schema
 	}
 }
 
-#endif

@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.ListView
+// System.Web.UI.WebControls.ListViewDataItem
 //
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_3_5
 using System;
 
 namespace System.Web.UI.WebControls
@@ -52,20 +51,5 @@ namespace System.Web.UI.WebControls
 			return base.OnBubbleEvent (source, e);
 		}
 		
-		public virtual object DataItem {
-			get;
-			set;
-		}
-		
-		public virtual int DataItemIndex {
-			get;
-			private set;
-		}
-		
-		public virtual int DisplayIndex {
-			get;
-			private set;
-		}
 	}
 }
-#endif

@@ -29,7 +29,6 @@
 //
 using System;
 
-#if NET_2_0
 namespace System.Data {
 	public enum SerializationFormat 
 	{
@@ -37,4 +36,3 @@ namespace System.Data {
 		Binary
 	}
 }
-#endif

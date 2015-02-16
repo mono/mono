@@ -49,7 +49,6 @@ namespace System.EnterpriseServices {
 		{
 		}
 
-#if NET_2_0
 		public RegistrationException ()
 			: this ("Registration error")
 		{
@@ -59,7 +58,6 @@ namespace System.EnterpriseServices {
 			: base (msg, innerException)
 		{
 		}
-#endif
 
 		#endregion // Constructors
 

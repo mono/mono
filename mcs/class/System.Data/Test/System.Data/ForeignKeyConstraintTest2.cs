@@ -610,7 +610,6 @@ namespace MonoTests.System.Data
 
 			return ds1;
 		}
-#if NET_2_0
 		[Test]
 		public void ForeignConstraint_DateTimeModeTest()
 		{
@@ -632,7 +631,6 @@ namespace MonoTests.System.Data
 				Assert.Fail("#1");
 			} catch (InvalidOperationException e) {}
 		}
-#endif
 
 		[Test] // bug #79689
 		public void ParentChildSameColumn ()

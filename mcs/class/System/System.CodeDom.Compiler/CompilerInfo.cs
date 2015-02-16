@@ -103,9 +103,7 @@ namespace System.CodeDom.Compiler {
 			return CreateProvider (ProviderOptions);
 		}
 
-#if NET_4_0
 		public		
-#endif
 		CodeDomProvider CreateProvider (IDictionary<string, string> providerOptions)
 		{
 			Type providerType = CodeDomProviderType;

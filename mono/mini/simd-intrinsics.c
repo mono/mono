@@ -28,7 +28,7 @@ TODO add support for fusing a XMOVE into a simd op in mono_spill_global_vars.
 TODO add stuff to man pages
 TODO document this under /docs
 TODO make passing a xmm as argument not cause it to be LDADDR'ed (introduce an OP_XPUSH)
-TODO revamp the .ctor sequence as it looks very fragile, maybe use a var just like iconv_to_r8_raw. (or just pinst sse ops) 
+TODO revamp the .ctor sequence as it looks very fragile, maybe use a var just like move_i4_to_f. (or just pinst sse ops) 
 TODO figure out what's wrong with OP_STOREX_MEMBASE_REG and OP_STOREX_MEMBASE (the 2nd is for imm operands)
 TODO maybe add SSE3 emulation on top of SSE2, or just implement the corresponding functions using SSE2 intrinsics.
 TODO pass simd arguments in registers or, at least, add SSE support for pushing large (>=16) valuetypes 
@@ -772,13 +772,15 @@ mono_simd_simplify_indirection (MonoCompile *cfg)
 
 			num_sregs = mono_inst_get_src_registers (ins, sregs);
 			for (j = 0; j < num_sregs; ++j) {
-				if (sregs [i] == var->dreg)
+				if (sregs [j] == var->dreg)
 					found = TRUE;
 			}
 			/*We can avoid inserting the XZERO if the first use doesn't depend on the zero'ed value.*/
 			if (ins->dreg == var->dreg && !found) {
+				DEBUG (printf ("[simd-simplify] INGORING R%d on BB %d because first op is a def", i, target_bb [var->dreg]->block_num););
 				break;
 			} else if (found) {
+				DEBUG (printf ("[simd-simplify] Adding XZERO for R%d on BB %d: ", i, target_bb [var->dreg]->block_num); );
 				MonoInst *tmp;
 				MONO_INST_NEW (cfg, tmp, OP_XZERO);
 				tmp->dreg = var->dreg;
@@ -791,8 +793,10 @@ mono_simd_simplify_indirection (MonoCompile *cfg)
 	}
 
 	for (ins = first_bb->code; ins; ins = ins->next) {
-		if (ins->opcode == OP_XZERO && (vreg_flags [ins->dreg] & VREG_SINGLE_BB_USE))
+		if (ins->opcode == OP_XZERO && (vreg_flags [ins->dreg] & VREG_SINGLE_BB_USE)) {
+			DEBUG (printf ("[simd-simplify] Nullify %d on first BB: ", ins->dreg); mono_print_ins(ins));
 			NULLIFY_INS (ins);
+		}
 	}
 
 	g_free (vreg_flags);
@@ -847,16 +851,6 @@ load_simd_vreg (MonoCompile *cfg, MonoMethod *cmethod, MonoInst *src, gboolean *
 	g_warning ("load_simd_vreg:: could not infer source simd (%d) vreg for op", src->type);
 	mono_print_ins (src);
 	g_assert_not_reached ();
-}
-
-static MonoInst*
-get_int_to_float_spill_area (MonoCompile *cfg)
-{
-	if (!cfg->iconv_raw_var) {
-		cfg->iconv_raw_var = mono_compile_create_var (cfg, &mono_defaults.int32_class->byval_arg, OP_LOCAL);
-		cfg->iconv_raw_var->flags |= MONO_INST_VOLATILE; /*FIXME, use the don't regalloc flag*/
-	}	
-	return cfg->iconv_raw_var;
 }
 
 /*We share the var with fconv_to_r8_x to save some stack space.*/
@@ -926,7 +920,7 @@ get_simd_vreg_or_expanded_scalar (MonoCompile *cfg, MonoMethod *cmethod, MonoIns
 	MONO_ADD_INS (cfg->cbb, ins);
 
 	if (expand_op == OP_EXPAND_R4)
-		ins->backend.spill_var = get_int_to_float_spill_area (cfg);
+		ins->backend.spill_var = mini_get_int_to_float_spill_area (cfg);
 	else if (expand_op == OP_EXPAND_R8)
 		ins->backend.spill_var = get_double_spill_area (cfg);
 
@@ -1088,7 +1082,7 @@ simd_intrinsic_emit_setter (const SimdIntrinsc *intrinsic, MonoCompile *cfg, Mon
 		ins->sreg2 = args [1]->dreg;
 		ins->inst_c0 = intrinsic->opcode;
 		if (sig->params [0]->type == MONO_TYPE_R4)
-			ins->backend.spill_var = get_int_to_float_spill_area (cfg);
+			ins->backend.spill_var = mini_get_int_to_float_spill_area (cfg);
 		else if (sig->params [0]->type == MONO_TYPE_R8)
 			ins->backend.spill_var = get_double_spill_area (cfg);
 		MONO_ADD_INS (cfg->cbb, ins);
@@ -1153,13 +1147,13 @@ simd_intrinsic_emit_getter (const SimdIntrinsc *intrinsic, MonoCompile *cfg, Mon
 	MONO_ADD_INS (cfg->cbb, ins);
 
 	if (sig->ret->type == MONO_TYPE_R4) {
-		MONO_INST_NEW (cfg, ins, OP_ICONV_TO_R8_RAW);
+		MONO_INST_NEW (cfg, ins, cfg->r4fp ? OP_ICONV_TO_R4_RAW : OP_MOVE_I4_TO_F);
 		ins->klass = mono_defaults.single_class;
 		ins->sreg1 = vreg;
-		ins->type = STACK_R8;
+		ins->type = cfg->r4_stack_type;
 		ins->dreg = alloc_freg (cfg);
-		ins->backend.spill_var = get_int_to_float_spill_area (cfg);
-		MONO_ADD_INS (cfg->cbb, ins);	
+		ins->backend.spill_var = mini_get_int_to_float_spill_area (cfg);
+		MONO_ADD_INS (cfg->cbb, ins);
 	}
 	return ins;
 }
@@ -1219,7 +1213,7 @@ simd_intrinsic_emit_ctor (const SimdIntrinsc *intrinsic, MonoCompile *cfg, MonoM
 
 		MONO_ADD_INS (cfg->cbb, ins);
 		if (sig->params [0]->type == MONO_TYPE_R4)
-			ins->backend.spill_var = get_int_to_float_spill_area (cfg);
+			ins->backend.spill_var = mini_get_int_to_float_spill_area (cfg);
 		else if (sig->params [0]->type == MONO_TYPE_R8)
 			ins->backend.spill_var = get_double_spill_area (cfg);
 
@@ -1580,7 +1574,7 @@ mono_emit_vector_ldelema (MonoCompile *cfg, MonoType *array_type, MonoInst *arr,
 static MonoInst*
 emit_array_extension_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	if (!strcmp ("GetVector", cmethod->name) || !strcmp ("GetVectorAligned", cmethod->name)) {
+	if ((!strcmp ("GetVector", cmethod->name) || !strcmp ("GetVectorAligned", cmethod->name)) && fsig->param_count == 2) {
 		MonoInst *load;
 		int addr = mono_emit_vector_ldelema (cfg, fsig->params [0], args [0], args [1], TRUE);
 
@@ -1593,7 +1587,7 @@ emit_array_extension_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 
 		return load;
 	}
-	if (!strcmp ("SetVector", cmethod->name) || !strcmp ("SetVectorAligned", cmethod->name)) {
+	if ((!strcmp ("SetVector", cmethod->name) || !strcmp ("SetVectorAligned", cmethod->name)) && fsig->param_count == 3) {
 		MonoInst *store;
 		int vreg = get_simd_vreg (cfg, cmethod, args [1]);
 		int addr = mono_emit_vector_ldelema (cfg, fsig->params [0], args [0], args [2], TRUE);
@@ -1606,7 +1600,7 @@ emit_array_extension_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 
 		return store;
 	}
-	if (!strcmp ("IsAligned", cmethod->name)) {
+	if (!strcmp ("IsAligned", cmethod->name) && fsig->param_count == 2) {
 		MonoInst *ins;
 		int addr = mono_emit_vector_ldelema (cfg, fsig->params [0], args [0], args [1], FALSE);
 
@@ -1623,7 +1617,7 @@ emit_array_extension_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 static MonoInst*
 emit_simd_runtime_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	if (!strcmp ("get_AccelMode", cmethod->name)) {
+	if (!strcmp ("get_AccelMode", cmethod->name) && fsig->param_count == 0) {
 		MonoInst *ins;
 		EMIT_NEW_ICONST (cfg, ins, simd_supported_versions);
 		return ins;
@@ -1636,7 +1630,8 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 {
 	const char *class_name;
 
-	if (strcmp ("Mono.Simd", cmethod->klass->name_space))
+	if (strcmp ("Mono.Simd", cmethod->klass->image->assembly->aname.name) ||
+	    strcmp ("Mono.Simd", cmethod->klass->name_space))
 		return NULL;
 
 	class_name = cmethod->klass->name;

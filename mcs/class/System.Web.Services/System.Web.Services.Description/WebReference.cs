@@ -34,15 +34,11 @@ using System.CodeDom;
 
 namespace System.Web.Services.Description 
 {
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	sealed class WebReference
 	{
 		DiscoveryClientDocumentCollection _documents;
-#if !TARGET_J2EE && !MOBILE
+#if !MOBILE
 		CodeNamespace _proxyCode;
 		ServiceDescriptionImportWarnings _warnings;
 #endif
@@ -51,7 +47,7 @@ namespace System.Web.Services.Description
 		string _appSettingBaseUrl;
 		StringCollection _validationWarnings;
 		
-#if !TARGET_J2EE && !MOBILE
+#if !MOBILE
 		public WebReference (DiscoveryClientDocumentCollection documents, CodeNamespace proxyCode)
 		{
 			if (documents == null) throw new ArgumentNullException ("documents");
@@ -94,7 +90,7 @@ namespace System.Web.Services.Description
 			get { return _protocolName; }
 			set { _protocolName = value; }
 		}
-#if !TARGET_J2EE && !MOBILE
+#if !MOBILE
 		public CodeNamespace ProxyCode {
 			get { return _proxyCode; }
 		}

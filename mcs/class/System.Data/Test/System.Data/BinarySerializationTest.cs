@@ -1,4 +1,3 @@
-#if NET_2_0
 
 using System;
 using System.Data;
@@ -752,5 +751,4 @@ public class BinarySerializationTest
 	}
 }
 
-#endif
 }

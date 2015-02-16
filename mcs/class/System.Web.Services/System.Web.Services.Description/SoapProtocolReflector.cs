@@ -74,7 +74,6 @@ namespace System.Web.Services.Description {
 		{
 			SoapMethodStubInfo method = (SoapMethodStubInfo) MethodStubInfo;
 			bool existing = false;
-#if NET_2_0
 			if (Parent != null) {
 				if (Parent.MappedMessagesIn.ContainsKey (method.MethodInfo))
 					existing = true;
@@ -83,7 +82,6 @@ namespace System.Web.Services.Description {
 					Parent.MappedMessagesOut [method.MethodInfo] = OutputMessage;
 				}
 			}
-#endif
 			if (!existing)
 				ImportMessageParts ();
 			ExtensionReflector.ReflectMethod ();
@@ -208,7 +206,6 @@ namespace System.Web.Services.Description {
 		}
 	}
 
-#if NET_2_0
 	internal class Soap12ProtocolReflector : SoapProtocolReflector
 	{
 		SoapExtensionReflector reflector;
@@ -227,5 +224,4 @@ namespace System.Web.Services.Description {
 			get { return reflector; }
 		}
 	}
-#endif
 }

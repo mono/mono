@@ -35,9 +35,6 @@ namespace System.Data
 	/// <summary>
 	/// Represents the method that will handle the the ColumnChanging event.
 	/// </summary>
-#if !NET_2_0
-	[Serializable]
-#endif
 	public delegate void DataColumnChangeEventHandler(object sender, DataColumnChangeEventArgs e);
 
 }

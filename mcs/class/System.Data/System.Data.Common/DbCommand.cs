@@ -33,10 +33,8 @@
 using System.ComponentModel;
 using System.Data;
 
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace System.Data.Common {
 	public abstract class DbCommand : Component, IDbCommand, IDisposable
@@ -150,7 +148,6 @@ namespace System.Data.Common {
 
 		public abstract void Prepare ();
 		
-#if NET_4_5
 		protected virtual Task<DbDataReader> ExecuteDbDataReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
 		{
 			if (cancellationToken.IsCancellationRequested) {
@@ -236,7 +233,6 @@ namespace System.Data.Common {
 			}
 		}
 
-#endif
 		
 		#endregion // Methods
 

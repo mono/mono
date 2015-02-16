@@ -36,11 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Data.OleDb
 {
-#if NET_2_0
 	public sealed class OleDbDataReader : DbDataReader, IDisposable
-#else
-	public sealed class OleDbDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
-#endif
 	{
 		#region Fields
 		
@@ -72,9 +68,7 @@ namespace System.Data.OleDb
 		#region Properties
 
 		public
-#if NET_2_0
 		override
-#endif
 		int Depth {
 			get {
 				return 0; // no nested selects supported
@@ -82,9 +76,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int FieldCount {
 			get {
 				if (currentResult < 0 || currentResult >= gdaResults.Count)
@@ -96,9 +88,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool IsClosed {
 			get {
 				return !open;
@@ -106,9 +96,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		object this[string name] {
 			get {
 				int pos;
@@ -127,9 +115,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		object this[int index] {
 			get {
 				return (object) GetValue (index);
@@ -137,9 +123,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int RecordsAffected {
 			get {
 				int total_rows;
@@ -162,32 +146,26 @@ namespace System.Data.OleDb
 		
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif
 		bool HasRows {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override int VisibleFieldCount {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 		#endregion
 
 		#region Methods
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Close ()
 		{
 			for (int i = 0; i < gdaResults.Count; i++) {
@@ -204,9 +182,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool GetBoolean (int ordinal)
 		{
 			IntPtr value;
@@ -225,9 +201,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		byte GetByte (int ordinal)
 		{
 			IntPtr value;
@@ -247,9 +221,7 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif
 		long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			throw new NotImplementedException ();
@@ -257,9 +229,7 @@ namespace System.Data.OleDb
 		
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public
-#if NET_2_0
 		override
-#endif
 		char GetChar (int ordinal)
 		{
 			IntPtr value;
@@ -279,34 +249,26 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif
 		long GetChars (int ordinal, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public new OleDbDataReader GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		protected override DbDataReader GetDbDataReader (int ordinal)
 		{
 			return this.GetData (ordinal);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		string GetDataTypeName (int index)
 		{
 			IntPtr attrs;
@@ -328,9 +290,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		DateTime GetDateTime (int ordinal)
 		{
 			IntPtr value;
@@ -371,18 +331,14 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif
 		decimal GetDecimal (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		double GetDouble (int ordinal)
 		{
 			IntPtr value;
@@ -401,9 +357,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		Type GetFieldType (int index)
 		{
 			IntPtr value;
@@ -436,9 +390,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		float GetFloat (int ordinal)
 		{
 			IntPtr value;
@@ -458,18 +410,14 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif
 		Guid GetGuid (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		short GetInt16 (int ordinal)
 		{
 			IntPtr value;
@@ -488,9 +436,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int GetInt32 (int ordinal)
 		{
 			IntPtr value;
@@ -509,9 +455,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		long GetInt64 (int ordinal)
 		{
 			IntPtr value;
@@ -530,9 +474,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		string GetName (int index)
 		{
 			if (currentResult == -1)
@@ -543,9 +485,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int GetOrdinal (string name)
 		{
 			if (currentResult == -1)
@@ -560,9 +500,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		DataTable GetSchemaTable ()
 		{
 			DataTable dataTableSchema = null;
@@ -686,9 +624,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		string GetString (int ordinal)
 		{
 			IntPtr value;
@@ -713,9 +649,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		object GetValue (int ordinal)
 		{
 			IntPtr value;
@@ -749,35 +683,20 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif
 		int GetValues (object[] values)
 		{
 			throw new NotImplementedException ();
 		}
 
-#if !NET_2_0
-		[MonoTODO]
-		IDataReader IDataRecord.GetData (int ordinal)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
-#if NET_2_0
 		public override IEnumerator GetEnumerator()
-#else
-		IEnumerator IEnumerable.GetEnumerator ()
-#endif
 		{
 			return new DbEnumerator(this);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool IsDBNull (int ordinal)
 		{
 			IntPtr value;
@@ -794,9 +713,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool NextResult ()
 		{
 			int i = currentResult + 1;
@@ -809,9 +726,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool Read ()
 		{
 			if (currentResult < 0 || currentResult >= gdaResults.Count)
@@ -854,11 +769,6 @@ namespace System.Data.OleDb
 			Dispose (true);
 		}
 
-#if ONLY_1_1
-		~OleDbDataReader () {
-			Dispose (false);
-		}
-#endif
 		#endregion // Destructors
 	}
 }

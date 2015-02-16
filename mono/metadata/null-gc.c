@@ -13,6 +13,7 @@
 #include <mono/metadata/runtime.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-counters.h>
 
 #ifdef HAVE_NULL_GC
 
@@ -21,6 +22,8 @@ mono_gc_base_init (void)
 {
 	MonoThreadInfoCallbacks cb;
 	int dummy;
+
+	mono_counters_init ();
 
 	memset (&cb, 0, sizeof (cb));
 	/* TODO: This casts away an incompatible pointer type warning in the same
@@ -231,8 +234,14 @@ mono_gc_is_critical_method (MonoMethod *method)
 	return FALSE;
 }
 
+int
+mono_gc_get_aligned_size_for_allocator (int size)
+{
+	return size;
+}
+
 MonoMethod*
-mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box)
+mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size)
 {
 	return NULL;
 }

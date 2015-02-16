@@ -1,0 +1,18 @@
+Mono Symbolicate Tool - README
+
+symbolicate is a tool that converts a stack trace with `<filename unknown>:0`
+into one with file names and line numbers.
+
+Usage
+-----------------------------
+
+The tool takes as input an exe, a file with stack traces and optionaly one or
+more directories where referenced assemblies mdb files are located.
+
+The output of calling this tool will be the provided file with
+stack traces where `<filename unknown>:0` parts are replaced by
+a file name and a line number.
+
+To use the tool, run the following command:
+
+	mono symbolicate.exe your.exe filewithstacktraces [mdbfolders]

@@ -193,11 +193,7 @@ namespace System.Windows.Forms.Design
 					host.DestroyComponent ((IComponent)component);
 				}
 			}
-#if NET_2_0
 			selection.SetSelectedComponents (selectedComponents, SelectionTypes.Remove);
-#else
-			selection.SetSelectedComponents (selectedComponents);
-#endif
 			transaction.Commit ();
 		}
 

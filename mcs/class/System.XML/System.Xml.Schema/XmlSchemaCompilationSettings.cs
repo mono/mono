@@ -35,11 +35,7 @@ using System.Xml.Serialization;
 
 namespace System.Xml.Schema
 {
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	sealed class XmlSchemaCompilationSettings
 	{
 		public XmlSchemaCompilationSettings ()

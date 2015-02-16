@@ -82,7 +82,6 @@ namespace System.Reflection {
 			get;
 		}
 
-#if NET_4_0
 		public override bool Equals (object obj)
 		{
 			return obj == (object) this;
@@ -114,13 +113,10 @@ namespace System.Reflection {
 		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
 			throw new NotImplementedException ();
 		}
-#endif
 
-#if NET_4_5
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
-#endif
 
 #if !MOBILE
 		void _MemberInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

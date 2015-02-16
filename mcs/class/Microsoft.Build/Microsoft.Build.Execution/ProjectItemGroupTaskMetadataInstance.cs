@@ -38,21 +38,17 @@ namespace Microsoft.Build.Execution
 			Condition = xml.Condition;
 			Name = xml.Name;
 			Value = xml.Value;
-			#if NET_4_5
 			ConditionLocation = xml.ConditionLocation;
 			Location = xml.Location;
-			#endif
 		}
 		public string Condition { get; private set; }
 
 		public string Name { get; private set; }
 
 		public string Value { get; private set; }
-		#if NET_4_5
 		public ElementLocation ConditionLocation { get; private set; }
 
 		public ElementLocation Location { get; private set; }
-		#endif
 	}
 }
 

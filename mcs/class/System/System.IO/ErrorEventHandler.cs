@@ -29,8 +29,5 @@
 
 namespace System.IO {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public delegate void ErrorEventHandler (object sender, ErrorEventArgs e);
 }

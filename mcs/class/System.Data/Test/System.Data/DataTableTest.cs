@@ -43,6 +43,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Xml;
+using System.Text;
 
 using MonoTests.System.Data.Utils;
 
@@ -4114,6 +4115,58 @@ namespace MonoTests.System.Data
 				dtr.ReadXmlSchema (reader1);
 				Assert.Fail ("#1");
 			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
+		public void ReadXmlSchemeWithoutScheme ()
+		{
+			const string xml = @"<CustomElement />";
+			using (var s = new StringReader (xml)) {
+				DataTable dt = new DataTable ();
+				dt.ReadXmlSchema (s);
+				Assert.AreEqual ("", dt.TableName);
+			}
+		}
+
+		[Test]
+		public void ReadXmlSchemeWithScheme ()
+		{
+			const string xml = @"<CustomElement>
+				  <xs:schema id='NewDataSet' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
+					<xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:MainDataTable='row' msdata:Locale=''>
+					  <xs:complexType>
+						<xs:choice minOccurs='0' maxOccurs='unbounded'>
+						  <xs:element name='row' msdata:Locale=''>
+							<xs:complexType>
+							  <xs:sequence>
+								<xs:element name='Text' type='xs:string' minOccurs='0' />
+							  </xs:sequence>
+							</xs:complexType>
+						  </xs:element>
+						</xs:choice>
+					  </xs:complexType>
+					</xs:element>
+				  </xs:schema>
+				</CustomElement>";
+			using (var s = new StringReader (xml)) {
+				DataTable dt = new DataTable ();
+				dt.ReadXmlSchema (s);
+				Assert.AreEqual ("row", dt.TableName);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ReadXmlSchemeWithBadScheme ()
+		{
+			const string xml = @"<CustomElement>
+				  <xs:schema id='NewDataSet' xmlns='' xmlns:xs='http://www.w3.org/2001/BAD' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
+				  </xs:schema>
+				</CustomElement>";
+			using (var s = new StringReader (xml)) {
+				DataTable dt = new DataTable ();
+				dt.ReadXmlSchema (s);
 			}
 		}
 

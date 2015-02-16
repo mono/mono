@@ -64,9 +64,7 @@ namespace System.Web.Services.Description {
 		XmlSchemas xmlSchemas;
 		XmlSchemas soapSchemas;
 		
-#if NET_2_0
 		ArrayList asyncTypes = new ArrayList ();
-#endif
 
 		#endregion // Fields
 
@@ -178,7 +176,6 @@ namespace System.Web.Services.Description {
 			get { return soapSchemas; }
 		}
 		
-#if NET_2_0
 		internal CodeGenerationOptions CodeGenerationOptions {
 			get { return descriptionImporter.CodeGenerationOptions; }
 		}
@@ -190,7 +187,6 @@ namespace System.Web.Services.Description {
 		internal ImportContext ImportContext {
 			get { return descriptionImporter.Context; }
 		}
-#endif
 
 		#endregion // Properties
 
@@ -330,17 +326,13 @@ namespace System.Web.Services.Description {
 						methodName = method.Name;
 						if (operation.Documentation != null && operation.Documentation != "")
 							AddComments (method, operation.Documentation);
-#if NET_2_0
 						if (Style == ServiceDescriptionImportStyle.Client)
 							AddAsyncMembers (method.Name, method);
-#endif
 					}
 				}
 				
-#if NET_2_0
 			if (Style == ServiceDescriptionImportStyle.Client)
 				AddAsyncTypes ();
-#endif
 				
 				EndClass ();
 			}
@@ -545,18 +537,13 @@ namespace System.Web.Services.Description {
 				XmlSchemaImport import = ob as XmlSchemaImport;
 				if (import == null)
 					continue;
-#if NET_2_0
 				if (import.Namespace == Soap11BindingExtensionReflector.EncodingNamespace
 				    || import.Namespace == Soap12BindingExtensionReflector.EncodingNamespace)
-#else
-				if (import.Namespace == Soap11BindingExtensionReflector.EncodingNamespace)
-#endif
 					return true;
 			}
 			return false;
 		}
 		
-#if NET_2_0
 
 		void AddAsyncTypes ()
 		{
@@ -579,9 +566,7 @@ namespace System.Web.Services.Description {
 			string argsClassName = classNames.AddUnique (messageName + "CompletedEventArgs", null);
 			CodeTypeDeclaration argsClass = new CodeTypeDeclaration (argsClassName);
 			argsClass.Attributes |= MemberAttributes.Public;
-#if NET_2_0
 			argsClass.IsPartial = true;
-#endif
 			argsClass.BaseTypes.Add (new CodeTypeReference ("System.ComponentModel.AsyncCompletedEventArgs"));
 
 			CodeMemberField resultsField = new CodeMemberField (typeof(object[]), "results");
@@ -750,7 +735,6 @@ namespace System.Web.Services.Description {
 			inv2.Parameters.Add (userStateVar);
 			return inv2;
 		}
-#endif
 		
 		[MonoTODO]
 		public void AddExtensionWarningComments (CodeCommentStatementCollection comments, ServiceDescriptionFormatExtensionCollection extensions) 

@@ -31,7 +31,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, b.Text, "A13");
 			Assert.AreEqual (ContentAlignment.MiddleCenter, b.TextAlign, "A14");
 
-#if NET_2_0
 			Assert.AreEqual (false, b.AutoEllipsis, "A1");
 			Assert.AreEqual (false, b.AutoSize, "A2");
 			Assert.AreEqual (string.Empty, b.ImageKey, "A10");
@@ -39,10 +38,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, b.UseCompatibleTextRendering, "A16");
 			Assert.AreEqual (true, b.UseMnemonic, "A17");
 			Assert.AreEqual (true, b.UseVisualStyleBackColor, "A18");
-#endif
 		}
 		
-#if NET_2_0
 		[Test]
 		public void FlatButtonAppearanceTest ()
 		{
@@ -218,7 +215,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, b.ImageIndex, "D14");
 			Assert.AreEqual (string.Empty, b.ImageKey, "D15");
 		}
-#endif
 		[Test]
 		public void ImageTest ()
 		{

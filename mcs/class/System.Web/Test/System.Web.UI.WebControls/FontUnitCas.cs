@@ -41,11 +41,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
 	public class FontUnitCas : AspNetHostingNone {
-#else
-	public class FontUnitCas: AspNetHostingMinimal {
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
@@ -55,9 +51,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.FontUnitConstructors_Pixel ();
 			unit.FontUnitConstructors_Point ();
 			unit.UnitEquality ();
-#if NET_2_0
 			unit.FontUnit_IFormatProviderToString ();
-#endif
 		}
 
 		// LinkDemand

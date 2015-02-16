@@ -52,11 +52,7 @@ using System.Runtime.Serialization.Formatters;
 namespace System.Runtime.Remoting
 {
 	[System.Runtime.InteropServices.ComVisible (true)]
-#if NET_4_0
 	static
-#else
-	sealed
-#endif
 	public class RemotingServices 
 	{
 		// Holds the identities of the objects, using uri as index
@@ -95,9 +91,6 @@ namespace System.Runtime.Remoting
 			FieldSetterMethod = typeof(object).GetMethod ("FieldSetter", BindingFlags.NonPublic|BindingFlags.Instance);
 			FieldGetterMethod = typeof(object).GetMethod ("FieldGetter", BindingFlags.NonPublic|BindingFlags.Instance);
 		}
-#if !NET_4_0
-		private RemotingServices () {}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static object InternalExecute (MethodBase method, Object obj,

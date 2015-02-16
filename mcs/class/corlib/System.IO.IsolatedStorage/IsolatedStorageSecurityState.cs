@@ -28,7 +28,6 @@
 
 using System.Security;
 
-#if NET_4_0
 
 namespace System.IO.IsolatedStorage
 {
@@ -65,5 +64,4 @@ namespace System.IO.IsolatedStorage
 	}
 }
 
-#endif
 

@@ -92,7 +92,6 @@ namespace System.ServiceModel
 		{
 		}
 
-#if NET_4_0
 		protected DuplexClientBase (object instance, ServiceEndpoint endpoint)
 			: this (new InstanceContext (instance), endpoint)
 		{
@@ -102,7 +101,6 @@ namespace System.ServiceModel
 			: base (instance, endpoint)
 		{
 		}
-#endif
 
 		public IDuplexContextChannel InnerDuplexChannel {
 			get { return (IDuplexContextChannel) base.InnerChannel; }

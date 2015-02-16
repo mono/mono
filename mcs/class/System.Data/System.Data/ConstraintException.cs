@@ -46,12 +46,10 @@ namespace System.Data
 		{
 		}
 
-#if NET_2_0
 		public ConstraintException (string message, Exception innerException)
 			: base (message, innerException)
 		{
 		}
-#endif
 
 		protected ConstraintException (SerializationInfo info, StreamingContext context)
 			: base (info, context)

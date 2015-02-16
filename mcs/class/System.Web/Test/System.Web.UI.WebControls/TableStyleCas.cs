@@ -63,14 +63,12 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.MergeWith_Empty ();
 			unit.MergeWith ();
 			unit.GridLines_VS ();
-#if NET_2_0
 			unit.FillStyleAttributes_Null_Resolver ();
 			unit.FillStyleAttributes_Css_Null ();
 			unit.FillStyleAttributes_Empty ();
 			unit.FillStyleAttributes_NotCss ();
 			unit.FillStyleAttributes_Css_WithoutResolution ();
 			unit.FillStyleAttributes_Css_WithResolution ();
-#endif
 		}
 
 		// LinkDemand

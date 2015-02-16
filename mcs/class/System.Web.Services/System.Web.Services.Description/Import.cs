@@ -32,9 +32,7 @@ using System.Xml.Serialization;
 using System.Web.Services.Configuration;
 
 namespace System.Web.Services.Description {
-#if NET_2_0
 	[XmlFormatExtensionPoint ("Extensions")]
-#endif
 	public sealed class Import : DocumentableItem {
 
 		#region Fields
@@ -42,9 +40,7 @@ namespace System.Web.Services.Description {
 		string location;
 		string ns;
 		ServiceDescription serviceDescription;
-#if NET_2_0
 		ServiceDescriptionFormatExtensionCollection extensions;
-#endif
 
 		#endregion // Fields
 
@@ -52,9 +48,7 @@ namespace System.Web.Services.Description {
 		
 		public Import ()
 		{
-#if NET_2_0
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
-#endif
 			location = String.Empty;
 			ns = String.Empty;
 			serviceDescription = null;
@@ -81,12 +75,10 @@ namespace System.Web.Services.Description {
 			get { return serviceDescription; }
 		}
 
-#if NET_2_0
 		[XmlIgnore]
 		public override ServiceDescriptionFormatExtensionCollection Extensions { 
 			get { return extensions; }
 		}
-#endif
 
 		#endregion // Properties
 

@@ -6,8 +6,8 @@ Mono.Threading/CSnzi.cs
 Mono.Threading/Snzi.cs
 Mono.Threading/SpinLockWrapper.cs
 Mono.Threading/ReaderWriterLockSlimmer.cs
-../corlib/System.Threading/AtomicBoolean.cs
+Mono.Threading/AtomicBoolean.cs
 ../corlib/System.Collections.Concurrent/ConcurrentOrderedList.cs
-../corlib/System.Threading.Tasks/CyclicDeque.cs
-../corlib/System.Threading.Tasks/IConcurrentDeque.cs
-../corlib/System.Threading.Tasks/PopResult.cs
+Mono.Threading.Tasks/CyclicDeque.cs
+Mono.Threading.Tasks/IConcurrentDeque.cs
+Mono.Threading.Tasks/PopResult.cs

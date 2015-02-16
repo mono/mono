@@ -243,11 +243,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    ;{0}" +
 				"    DoB(){0}" +
 				"    {0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC(){0}" +
 				"End If{0}", NewLine), Generate (), "#3");
 
@@ -258,19 +254,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    ;{0}" +
 				"    DoB(){0}" +
 				"    {0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC(){0}" +
 				"Else{0}" +
 				"    DoD(){0}" +
-#if NET_2_0
 				"B{0}" +
-#else
-				"    B{0}" +
-#endif
 				"    ;{0}" +
 				"    DoE(){0}" +
 				"    {0}" +
@@ -285,19 +273,11 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    ;{0}" +
 				"    DoB(){0}" +
 				"    {0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC(){0}" +
 				"Else{0}" +
 				"    DoD(){0}" +
-#if NET_2_0
 				"B{0}" +
-#else
-				"    B{0}" +
-#endif
 				"    ;{0}" +
 				"    DoE(){0}" +
 				"    {0}" +
@@ -312,11 +292,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"If true == false Then{0}" +
 				"Else{0}" +
 				"    DoD(){0}" +
-#if NET_2_0
 				"B{0}" +
-#else
-				"    B{0}" +
-#endif
 				"    ;{0}" +
 				"    DoE(){0}" +
 				"    {0}" +
@@ -331,11 +307,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    ;{0}" +
 				"    DoB(){0}" +
 				"    {0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC(){0}" +
 				"End If{0}", NewLine), Generate (), "#7");
 		}
@@ -422,17 +394,9 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    ;{0}" +
 				"    DoB(){0}" +
 				"test:{0}" +
-#if NET_2_0
 				"C{0}" +
-#else
-				"    C{0}" +
-#endif
 				"    {0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC(){0}" +
 				"    testInt = (testInt + 1){0}" +
 				"Loop{0}", NewLine), Generate (), "#5");
@@ -454,11 +418,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			cls.Statement = new CodeSnippetStatement ("A");
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"class:{0}" +
-#if NET_2_0
 				"A{0}",
-#else
-				"    A{0}",
-#endif
 				NewLine), Generate (), "#3");
 		}
 
@@ -575,19 +535,10 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Try {0}" +
 				"    goto exit{0}" +
 				"Catch ex1 As System.ArgumentException{0}" + 
-#if NET_2_0
 				"Catch __exception As System.ApplicationException{0}" +
-#else
-				"Catch  As System.ApplicationException{0}" +
-#endif
 				"Finally{0}" +
-#if NET_2_0
 				"A{0}" +
 				"B{0}" +
-#else
-				"    A{0}" +
-				"    B{0}" +
-#endif
 				"End Try{0}", NewLine), Generate (), "#1");
 
 			options.ElseOnClosing = true;
@@ -595,19 +546,10 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Try {0}" +
 				"    goto exit{0}" +
 				"Catch ex1 As System.ArgumentException{0}" +
-#if NET_2_0
 				"Catch __exception As System.ApplicationException{0}" +
-#else
-				"Catch  As System.ApplicationException{0}" +
-#endif
 				"Finally{0}" +
-#if NET_2_0
 				"A{0}" +
 				"B{0}" +
-#else
-				"    A{0}" +
-				"    B{0}" +
-#endif
 				"End Try{0}", NewLine), Generate (), "#2");
 
 			statement = new CodeTryCatchFinallyStatement ();
@@ -630,11 +572,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			statement = cvds;
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"Dim __exception As System.Void{0}", 
-#else
-				"Dim  As System.Void{0}", 
-#endif
 				NewLine), Generate (), "#1");
 
 			cvds.Name = "class";
@@ -655,11 +593,7 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			cvds.Name = null;
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"Dim __exception As Integer = 25{0}", 
-#else
-				"Dim  As Integer = 25{0}", 
-#endif
 				NewLine), Generate (), "#6");
 		}
 	}

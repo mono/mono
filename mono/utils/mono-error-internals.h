@@ -33,6 +33,9 @@ void
 mono_error_set_assembly_load (MonoError *error, const char *assembly_name, const char *msg_format, ...) MONO_INTERNAL;
 
 void
+mono_error_set_assembly_load_simple (MonoError *error, const char *assembly_name, gboolean refection_only) MONO_INTERNAL;
+
+void
 mono_error_set_type_load_class (MonoError *error, MonoClass *klass, const char *msg_format, ...) MONO_INTERNAL;
 
 void
@@ -67,6 +70,9 @@ mono_error_set_from_loader_error (MonoError *error) MONO_INTERNAL;
 
 MonoException*
 mono_error_prepare_exception (MonoError *error, MonoError *error_out) MONO_INTERNAL;
+
+MonoException*
+mono_error_convert_to_exception (MonoError *error) MONO_INTERNAL;
 
 void
 mono_error_raise_exception (MonoError *error) MONO_INTERNAL;

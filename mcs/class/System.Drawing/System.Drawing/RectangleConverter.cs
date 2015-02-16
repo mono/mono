@@ -73,6 +73,8 @@ namespace System.Drawing {
 			if (s == null)
 				return base.ConvertFrom (context, culture, value);
 
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
 			string [] subs = s.Split (culture.TextInfo.ListSeparator.ToCharArray ());
 
 			Int32Converter converter = new Int32Converter ();
@@ -124,7 +126,6 @@ namespace System.Drawing {
 		public override object CreateInstance (ITypeDescriptorContext context,
 						       IDictionary propertyValues)
 		{
-#if NET_2_0
 			object ox = propertyValues ["X"];
 			object oy = propertyValues ["Y"];
 			object ow = propertyValues ["Width"];
@@ -136,12 +137,6 @@ namespace System.Drawing {
 			int y = (int) oy;
 			int width = (int) ow;
 			int height = (int) oh;
-#else
-			int x = (int) propertyValues ["X"];
-			int y = (int) propertyValues ["Y"];
-			int width = (int) propertyValues ["Width"];
-			int height = (int) propertyValues ["Height"];
-#endif
 			return new Rectangle (x, y, width, height);
 		}
 

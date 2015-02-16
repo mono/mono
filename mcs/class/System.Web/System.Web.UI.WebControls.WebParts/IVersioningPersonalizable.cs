@@ -28,7 +28,6 @@
 //
 
 
-#if NET_2_0
 
 using System.Collections;
 
@@ -39,5 +38,4 @@ namespace System.Web.UI.WebControls.WebParts
 		void Load (IDictionary unknownProperties);
 	}
 }
-#endif
 

@@ -80,7 +80,6 @@ namespace System.IO.Compression
 			this.leaveOpen = leaveOpen;
 		}
 		
-#if NET_4_5
 		public DeflateStream (Stream stream, CompressionLevel compressionLevel)
 			: this (stream, compressionLevel, false, false)
 		{
@@ -95,7 +94,6 @@ namespace System.IO.Compression
 			: this (stream, CompressionMode.Compress, leaveOpen, gzip)
 		{
 		}		
-#endif
 
 		protected override void Dispose (bool disposing)
 		{

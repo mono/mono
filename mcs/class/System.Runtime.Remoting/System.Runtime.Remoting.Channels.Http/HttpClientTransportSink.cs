@@ -137,10 +137,8 @@ namespace System.Runtime.Remoting.Channels.Http
 				request.AllowAutoRedirect = false;
 			if (channel.Credentials != null)
 				request.Credentials = channel.Credentials;
-#if NET_2_0
 			else if (channel.UseDefaultCredentials == true)
 				request.UseDefaultCredentials = true;
-#endif
 			else if (channel.Username != null && channel.Username.Length > 0) {
 				if (channel.Domain != null && channel.Domain.Length > 0) {
 					request.Credentials = new NetworkCredential (channel.Username, channel.Password,

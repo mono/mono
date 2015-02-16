@@ -53,11 +53,7 @@ namespace MonoTests.System.Data.OleDb {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PermissionState_Invalid ()
 		{
 			PermissionState ps = (PermissionState)Int32.MinValue;

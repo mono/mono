@@ -73,6 +73,8 @@ namespace MonoTests.System.Reflection
 	{
 	}
 
+	// Disable this warning, as the purpose of this struct is to poke at the internal via reflection
+	#pragma warning disable 649
 	class FieldInvokeMatrix
 	{
 		public Byte field_Byte;
@@ -102,6 +104,7 @@ namespace MonoTests.System.Reflection
 		public Int64Enum field_Int64Enum;
 		public UInt64Enum field_UInt64Enum;
 	}
+	#pragma warning restore 649
 
 	public enum ByteEnum : byte
 	{
@@ -229,7 +232,6 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if NET_2_0
 		[Test] // GetFieldFromHandle (RuntimeFieldHandle, RuntimeTypeHandle)
 		public void GetFieldFromHandle2_DeclaringType_Zero ()
 		{
@@ -312,7 +314,6 @@ namespace MonoTests.System.Reflection
 
 			FieldInfo fi2 = FieldInfo.GetFieldFromHandle (fh, th);
 		}
-#endif
 
 		[Test]
 		public void PseudoCustomAttributes ()
@@ -376,10 +377,13 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#I4");
 		}
 
+		// Disable "field not used warning", this is intended.
+#pragma warning disable 649
 		class Foo {
 			public static int static_field;
 			public int field;
 		}
+#pragma warning restore 649
 
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetValueWrongObject ()
@@ -513,6 +517,10 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public unsafe void GetSetValuePointers ()
 		{
+			Pointer p0 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
+			int *p0i = (int*)Pointer.Unbox (p0);
+			Assert.AreEqual (IntPtr.Zero, new IntPtr (p0i));
+
 			int i = 5;
 			void *p = &i;
 			typeof (FieldInfoTest).GetField ("ip").SetValue (null, (IntPtr)p);
@@ -1359,16 +1367,24 @@ namespace MonoTests.System.Reflection
 
 	}
 
+	// We do not refernece the field, that is expected
+#pragma warning disable 169
 	// Helper classes
 	class RefOnlyFieldClass 
 	{
 		// Helper property
 		static int RefOnlyField;
 	}
-
+#pragma warning restore 169
+	
 	class NonPublicFieldClass
 	{
 		protected int protectedField;
+
+		public void Dummy ()
+		{
+			protectedField = 1;
+		}
 	}
 
 	public class FieldInfoTest<T>

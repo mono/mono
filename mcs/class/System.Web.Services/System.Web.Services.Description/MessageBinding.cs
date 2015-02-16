@@ -34,18 +34,11 @@ using System.Xml.Serialization;
 namespace System.Web.Services.Description
 {
 	public abstract class MessageBinding :
-#if NET_2_0
 		NamedItem
-#else
-		DocumentableItem 
-#endif
 	{
 
 		#region Fields
 
-#if !NET_2_0
-		string name;
-#endif
 		OperationBinding operationBinding;
 
 		#endregion // Fields
@@ -60,19 +53,6 @@ namespace System.Web.Services.Description
 
 		#region Properties
 
-#if !NET_2_0
-		[XmlIgnore]
-		public abstract ServiceDescriptionFormatExtensionCollection Extensions { 	
-			get;
-		}
-
-//		[DefaultValue (null)]
-		[XmlAttribute ("name", DataType = "NMTOKEN")]	
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
 
 //		[XmlIgnore]
 		public OperationBinding OperationBinding {

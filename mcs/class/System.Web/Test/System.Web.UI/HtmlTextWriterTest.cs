@@ -381,12 +381,7 @@ namespace MonoTests.System.Web.UI {
 			w.RenderBeginTag ("div");
 			w.RenderEndTag ();
 
-#if NET_2_0
 			Assert.AreEqual ("<div style=\"background-image:url(http://www.go-mono.com/);\">\n\n</div>", sw.ToString ());
-#else
-			// the url(...) is missing in fx 1.x
-			Assert.AreEqual ("<div style=\"background-image:http://www.go-mono.com/;\">\n\n</div>", sw.ToString ());
-#endif
 		}
 
 		[Test]
@@ -399,13 +394,9 @@ namespace MonoTests.System.Web.UI {
 			w1.AddStyleAttribute ("mystyle", "my value&space");
 			w1.RenderBeginTag ("div");
 			w1.RenderEndTag ();
-#if NET_2_0
 			Assert.AreEqual ("my value&space", w1.StyleValue_At_AddStyleAttribute, "StyleValue_At_AddStyleAttribute");
 			Assert.AreEqual ("my value&amp;space", w1.StyleValue_At_OnStyleAttributeRender, "StyleValue_At_OnStyleAttributeRender");
 			Assert.AreEqual ("<div style=\"mystyle:my value&amp;space;\">\n\n</div>", sw.ToString ());
-#else
-			Assert.AreEqual ("<div style=\"mystyle:my value&space;\">\n\n</div>", sw.ToString ());
-#endif
 		}
 
 		[Test]
@@ -450,7 +441,6 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("mystyle:my value&amp;space;", sw.ToString ());
 		}
 		
-#if NET_2_0
 		[Test]
 		public void WriteStyleAttribute_BackgroundImage1 () 
 		{
@@ -513,7 +503,6 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("<div style=\"BackGround-Image:url(http://www.mainsoft.com/space%20here?a=b&amp;c=d);\">\n\n</div>", sw.ToString ());
 		}
 
-#endif
 
 		[Test]
 		public void AddStyleAttribute2 ()
@@ -554,14 +543,12 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("<div>\n\n</div>", sw.ToString ());
 		}
 
-#if NET_2_0
 		[Test]
 		public void WriteBreakTest ()
 		{
 			w.WriteBreak ();
 			Assert.AreEqual ("<br />", sw.ToString (), "WriteBreakTest01");
 		}
-#endif
 		
 		class MyHttpTextWriter : HtmlTextWriter {
 			int i = 0;

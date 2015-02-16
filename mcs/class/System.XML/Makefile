@@ -13,7 +13,7 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac, $(PROFILE))
+PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
 
 LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0618,0612,0642
 ifeq (2.1, $(FRAMEWORK_VERSION))
@@ -66,7 +66,7 @@ EXTRA_DISTFILES = \
 	$(nist_dom_files:%=Test/System.Xml/nist_dom/%)
 
 System.Xml.XPath/$(PROFILE)_Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
-	(cd System.Xml.XPath; $(topdir)/../jay/jay -ct < $(topdir)/../jay/skeleton.cs Parser.jay >> $(PROFILE)_Parser.cs)
+	(cd System.Xml.XPath; $(topdir)/../jay/jay -ct < $(topdir)/../jay/skeleton.cs Parser.jay > $(PROFILE)_Parser.cs)
 
 Mono.Xml.Xsl/$(PROFILE)_PatternParser.jay: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	sed "s/\%start Expr/\%start Pattern/" $< >$@

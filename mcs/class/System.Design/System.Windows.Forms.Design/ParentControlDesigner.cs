@@ -35,9 +35,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Design;
 using System.Collections;
-#if NET_2_0
 using System.Windows.Forms.Design.Behavior;
-#endif
 
 namespace System.Windows.Forms.Design
 
@@ -538,12 +536,10 @@ namespace System.Windows.Forms.Design
 			}
 		}
 
-#if NET_2_0
 		protected override void OnDragComplete (DragEventArgs de)
 		{
 			base.OnDragComplete (de);
 		}
-#endif
 
 		Point _mouseDownPoint = Point.Empty;
 
@@ -664,7 +660,6 @@ namespace System.Windows.Forms.Design
 		}
 
 #region NET_2_0 Stubs
-#if NET_2_0
 		[MonoTODO]
 		protected virtual bool AllowControlLasso {
 			get { return false; }
@@ -725,7 +720,6 @@ namespace System.Windows.Forms.Design
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 #endregion
 
 	}

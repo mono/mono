@@ -77,7 +77,6 @@ namespace System.ServiceModel.Configuration
 			get { return (ExtensionsSection) GetSection ("system.serviceModel/extensions"); }
 		}
 
-#if NET_4_0
 		public static ProtocolMappingSection ProtocolMappingSection {
 			get {
 				return (ProtocolMappingSection) GetSection ("system.serviceModel/protocolMapping");
@@ -89,7 +88,6 @@ namespace System.ServiceModel.Configuration
 				return (StandardEndpointsSection) GetSection ("system.serviceModel/standardEndpoints");
 			}
 		}
-#endif
 
 		public static Binding CreateBinding (string binding, string bindingConfiguration)
 		{
@@ -124,9 +122,7 @@ namespace System.ServiceModel.Configuration
 
 				if (cached_assemblies.Contains (ass))
 					continue;
-#if NET_4_0
 				if (!ass.IsDynamic)
-#endif
 					cached_assemblies.Add (ass);
 
 				foreach (var t in ass.GetTypes ()) {
@@ -151,7 +147,6 @@ namespace System.ServiceModel.Configuration
 			return null;
 		}
 
-#if NET_4_0
 		public static Binding GetBindingByProtocolMapping (Uri address)
 		{
 			ProtocolMappingElement el = ConfigUtil.ProtocolMappingSection.ProtocolMappingCollection [address.Scheme];
@@ -207,7 +202,6 @@ namespace System.ServiceModel.Configuration
 			
 			return inst;
 		}
-#endif
 
 		public static KeyedByTypeCollection<IEndpointBehavior>  CreateEndpointBehaviors (string bindingConfiguration)
 		{

@@ -22,6 +22,10 @@ public class TestsBase
 	static string base_static_s = "C";
 #pragma warning restore 0414
 #pragma warning restore 0169
+
+	public virtual string virtual_method () {
+		return "V1";
+	}
 }
 
 public enum AnEnum {
@@ -303,6 +307,7 @@ public class Tests : TestsBase, ITest2
 		regress ();
 		gc_suspend ();
 		set_ip ();
+		step_filters ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -1158,6 +1163,12 @@ public class Tests : TestsBase, ITest2
 		AppDomain.Unload (domain);
 
 		domains_3 ();
+
+		typeof (Tests).GetMethod ("called_from_invoke").Invoke (null, null);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void called_from_invoke () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1357,13 +1368,35 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void set_ip () {
-		int i, j;
+		int i = 0, j;
 
-		i = 1;
+		i ++;
+		i ++;
 		set_ip_1 ();
-		i = 5;
+		i ++;
 		j = 5;
 		set_ip_2 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void step_filters () {
+		ClassWithCctor.cctor_filter ();
+	}
+
+	class ClassWithCctor {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static ClassWithCctor () {
+			int i = 1;
+			int j = 2;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void cctor_filter () {
+		}
+	}
+
+	public override string virtual_method () {
+		return "V2";
 	}
 }
 

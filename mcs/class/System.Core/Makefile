@@ -4,23 +4,23 @@ include ../../build/rules.make
 
 LIBRARY = System.Core.dll
 
-LIB_MCS_FLAGS = -d:INSIDE_SYSCORE -d:LIBC /r:System.dll -unsafe
+REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,PFX_LEGACY_3_5
+LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) -d:INSIDE_SYSCORE -d:LIBC /r:System.dll -unsafe
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif
 
-ifeq (monodroid, $(PROFILE))
-LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT,ANDROID
-endif
+MOBILE_DYNAMIC := $(filter monodroid xammac mobile, $(PROFILE))
+MOBILE_STATIC := $(filter mobile_static monotouch monotouch_runtime, $(PROFILE))
 
-ifeq (xammac, $(PROFILE))
+ifdef MOBILE_DYNAMIC
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT
 endif
 
 system_core_plain_libdir = $(the_libdir_base)plaincore
 
-ifeq (monotouch, $(subst _runtime,,$(PROFILE)))
+ifdef MOBILE_STATIC
 extra_test_flags := -exclude:NotWorkingInterpreter
 system_core_library_deps = $(the_libdir_base)Mono.Dynamic.Interpreter.dll $(system_core_plain_libdir)/System.Core.dll
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR

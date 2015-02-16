@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-071</name>
+    </assembly>
+    <members>
+        <member name="M:Test`1.X{N#G{T[,,][]}}#Consume(Y{N.G{`0[0:,0:,0:][]}})">
+            <summary>This is the consume method.</summary>
+        </member>
+    </members>
+</doc>

@@ -266,12 +266,13 @@ namespace Microsoft.Cci.Pdb {
               bits.ReadUInt32(out block.parent);
               bits.ReadUInt32(out block.end);
               bits.ReadUInt32(out block.len);
-              bits.ReadUInt32(out this.address);
+              bits.ReadUInt32(out block.off);
               bits.ReadUInt16(out block.seg);
               bits.SkipCString(out block.name);
               bits.Position = stop;
+			  this.address = block.off;
 
-              scopes[scope] = new PdbScope(block, bits, out slotToken);
+              scopes[scope] = new PdbScope(this.address, block, bits, out slotToken);
               bits.Position = (int)block.end;
               break;
             }
@@ -324,7 +325,6 @@ namespace Microsoft.Cci.Pdb {
         case 2: this.ReadForwardedToModuleInfo(bits); break;
         case 3: this.ReadIteratorLocals(bits); break;
         case 4: this.ReadForwardIterator(bits); break;
-        default: throw new PdbDebugException("Unknown custom metadata item kind: {0}", kind);
       }
       bits.Position = savedPosition+(int)numberOfBytesInItem;
     }

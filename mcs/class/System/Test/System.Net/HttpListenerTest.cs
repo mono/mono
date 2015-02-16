@@ -26,7 +26,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -36,6 +35,14 @@ using NUnit.Framework;
 namespace MonoTests.System.Net {
 	[TestFixture]
 	public class HttpListenerTest {
+
+		int port;
+
+		[SetUp]
+		public void SetUp () {
+			port = new Random ().Next (7777, 8000);
+		}
+
 		[Test]
 		public void DefaultProperties ()
 		{
@@ -115,7 +122,7 @@ namespace MonoTests.System.Net {
 					socket.Listen(1);
 				}
 			}
-			catch(Exception ex) {
+			catch(Exception) {
 				//Can be AccessDeniedException(ports 80/443 need root access) or
 				//SocketException because other application is listening
 				return false;
@@ -152,10 +159,12 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void TwoListeners_SameAddress ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener1 = new HttpListener ();
-			listener1.Prefixes.Add ("http://127.0.0.1:7777/");
+			listener1.Prefixes.Add ("http://127.0.0.1:" + port + "/");
 			HttpListener listener2 = new HttpListener ();
-			listener2.Prefixes.Add ("http://127.0.0.1:7777/hola/");
+			listener2.Prefixes.Add ("http://127.0.0.1:" + port + "/hola/");
 			listener1.Start ();
 			listener2.Start ();
 		}
@@ -164,10 +173,12 @@ namespace MonoTests.System.Net {
 		[ExpectedException (typeof (HttpListenerException))]
 		public void TwoListeners_SameURL ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener1 = new HttpListener ();
-			listener1.Prefixes.Add ("http://127.0.0.1:7777/hola/");
+			listener1.Prefixes.Add ("http://127.0.0.1:" + port + "/hola/");
 			HttpListener listener2 = new HttpListener ();
-			listener2.Prefixes.Add ("http://127.0.0.1:7777/hola/");
+			listener2.Prefixes.Add ("http://127.0.0.1:" + port + "/hola/");
 			listener1.Start ();
 			listener2.Start ();
 		}
@@ -176,8 +187,10 @@ namespace MonoTests.System.Net {
 		[ExpectedException (typeof (HttpListenerException))]
 		public void MultipleSlashes ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola////");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola////");
 			// this one throws on Start(), not when adding it.
 			listener.Start ();
 		}
@@ -186,8 +199,10 @@ namespace MonoTests.System.Net {
 		[ExpectedException (typeof (HttpListenerException))]
 		public void PercentSign ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola%3E/");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola%3E/");
 			// this one throws on Start(), not when adding it.
 			listener.Start ();
 		}
@@ -202,8 +217,10 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void CloseTwice ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola/");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
 			listener.Start ();
 			listener.Close ();
 			listener.Close ();
@@ -212,8 +229,10 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void StartStopStart ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola/");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
 			listener.Start ();
 			listener.Stop ();
 			listener.Start ();
@@ -223,8 +242,10 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void StartStopDispose ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			using (HttpListener listener = new HttpListener ()){
-				listener.Prefixes.Add ("http://localhost:7777/hola/");
+				listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
 				listener.Start ();
 				listener.Stop ();
 			}
@@ -240,8 +261,10 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void AbortTwice ()
 		{
+			if (!CanOpenPort (port))
+				Assert.Ignore ("port");
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://localhost:7777/hola/");
+			listener.Prefixes.Add ("http://localhost:" + port + "/hola/");
 			listener.Start ();
 			listener.Abort ();
 			listener.Abort ();
@@ -450,7 +473,57 @@ namespace MonoTests.System.Net {
 				Event.Close ();
 			}
 		}
+
+		[Test]
+		public void ConnectionReuse ()
+		{
+			var uri = "http://localhost:1338/";
+
+			HttpListener listener = new HttpListener ();
+			listener.Prefixes.Add (uri);
+			listener.Start ();
+
+			IPEndPoint expectedIpEndPoint = CreateListenerRequest (listener, uri);
+
+			Assert.AreEqual (expectedIpEndPoint, CreateListenerRequest (listener, uri), "reuse1");
+			Assert.AreEqual (expectedIpEndPoint, CreateListenerRequest (listener, uri), "reuse2");
+		}
+
+		public IPEndPoint CreateListenerRequest (HttpListener listener, string uri)
+		{
+			IPEndPoint ipEndPoint = null;
+			listener.BeginGetContext ((result) => ipEndPoint = ListenerCallback (result), listener);
+
+			var request = (HttpWebRequest) WebRequest.Create (uri);
+			request.Method = "POST";
+
+			// We need to write something
+			request.GetRequestStream ().Write (new byte [] {(byte)'a'}, 0, 1);
+			request.GetRequestStream ().Dispose ();
+
+			// Send request, socket is created or reused.
+			var response = request.GetResponse ();
+
+			// Close response so socket can be reused.
+			response.Close ();
+
+			return ipEndPoint;
+		}
+
+		public static IPEndPoint ListenerCallback (IAsyncResult result)
+		{
+			var listener = (HttpListener) result.AsyncState;
+			var context = listener.EndGetContext (result);
+			var clientEndPoint = context.Request.RemoteEndPoint;
+
+			// Disposing InputStream should not avoid socket reuse
+			context.Request.InputStream.Dispose ();
+
+			// Close OutputStream to send response
+			context.Response.OutputStream.Close ();
+
+			return clientEndPoint;
+		}
 	}
 }
-#endif
 

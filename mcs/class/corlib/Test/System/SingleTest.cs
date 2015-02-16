@@ -169,7 +169,6 @@ namespace MonoTests.System
 			Assert.AreEqual (float.PositiveInfinity, float.Parse (posInf, NumberStyles.Float, CultureInfo.CurrentCulture), "+Inf#5");
 		}
 
-#if NET_2_0
 		[Test] // bug #72221
 		[ExpectedException (typeof (ArgumentException))]
 		public void HexNumber_WithHexToParse ()
@@ -185,6 +184,5 @@ namespace MonoTests.System
 			float f;
 			Single.TryParse ("0", NumberStyles.HexNumber, null, out f);
 		}
-#endif
 	}
 }

@@ -57,11 +57,7 @@ namespace MonoCasTests.System.Web.UI {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (HttpException))]
-#endif
 		public void LoadControl_Deny_Unrestricted ()
 		{
 			NonAbstractTemplateControl tc = new NonAbstractTemplateControl ();
@@ -70,11 +66,7 @@ namespace MonoCasTests.System.Web.UI {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (HttpException))]
-#endif
 		public void LoadTemplate_Deny_Unrestricted ()
 		{
 			NonAbstractTemplateControl tc = new NonAbstractTemplateControl ();
@@ -91,11 +83,7 @@ namespace MonoCasTests.System.Web.UI {
 				tc.ParseControl (null);
 			}
 			catch (NullReferenceException) {
-#if NET_2_0
 				throw;
-#else
-				Assert.Ignore ("NRE");
-#endif
 			}
 		}
 
@@ -108,11 +96,7 @@ namespace MonoCasTests.System.Web.UI {
 				TemplateControl.ReadStringResource (null);
 			}
 			catch (TypeInitializationException) {
-#if NET_2_0
 				Assert.Ignore ("exception during initialization");
-#else
-				throw;
-#endif
 			}
 		}
 
@@ -133,7 +117,6 @@ namespace MonoCasTests.System.Web.UI {
 			tc.CommitTransaction -= new EventHandler (Handler);
 			tc.Error -= new EventHandler (Handler);
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (TypeInitializationException))]
@@ -153,6 +136,5 @@ namespace MonoCasTests.System.Web.UI {
 				// mono
 			}
 		}
-#endif
 	}
 }

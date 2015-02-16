@@ -27,11 +27,7 @@
 //
 namespace System.Xml
 {
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	enum NewLineHandling
 	{
 		Replace,

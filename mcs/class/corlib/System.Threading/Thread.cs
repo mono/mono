@@ -406,12 +406,10 @@ namespace System.Threading {
 			ResetAbort_internal ();
 		}
 
-#if NET_4_0
 		[HostProtectionAttribute (SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public extern static bool Yield ();
-#endif
 
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -587,11 +585,12 @@ namespace System.Threading {
 
 		public ThreadPriority Priority {
 			get {
-				return(ThreadPriority.Lowest);
+				return (ThreadPriority)GetPriority (Internal);
 			}
 			
 			set {
-				// FIXME: Implement setter.
+				// FIXME: This doesn't do anything yet
+				SetPriority (Internal, (int)value);
 			}
 		}
 
@@ -603,6 +602,12 @@ namespace System.Threading {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Abort_internal (InternalThread thread, object stateInfo);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static int GetPriority (InternalThread thread);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void SetPriority (InternalThread thread, int priority);
 
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Abort () 
@@ -867,6 +872,32 @@ namespace System.Threading {
 			internal set {
 				_ec = value;
 			}
+		}
+
+		internal bool HasExecutionContext {
+			get {
+				return _ec != null;
+			}
+		}
+
+		internal void BranchExecutionContext (out ExecutionContext.Switcher switcher)
+		{
+			if (_ec == null) {
+				switcher =  new ExecutionContext.Switcher ();
+			} else {
+				switcher = new ExecutionContext.Switcher (_ec);
+				_ec.CopyOnWrite = true;
+			}
+		}
+
+		internal void RestoreExecutionContext (ref ExecutionContext.Switcher switcher)
+		{
+			if (switcher.IsEmpty) {
+				_ec = null;
+				return;
+			}
+
+			switcher.Restore (_ec);
 		}
 
 		public int ManagedThreadId {

@@ -39,9 +39,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaAttribute : XmlSchemaAnnotated
 	{
 		private object attributeType;
-#if NET_2_0
 		private XmlSchemaSimpleType attributeSchemaType;
-#endif
 		private string defaultValue;
 		private string fixedValue;
 		private string validatedDefaultValue;
@@ -158,9 +156,7 @@ namespace System.Xml.Schema
 		}
 
 		[XmlIgnore]
-#if NET_2_0
 		[Obsolete]
-#endif
 		public object AttributeType 
 		{
 			get{
@@ -171,7 +167,6 @@ namespace System.Xml.Schema
 			}
 		}
 
-#if NET_2_0
 		[XmlIgnore]
 		public XmlSchemaSimpleType AttributeSchemaType
 		{
@@ -182,7 +177,6 @@ namespace System.Xml.Schema
 					return attributeSchemaType;
 			}
 		}
-#endif
 
 		// Post compilation default value (normalized)
 		internal string ValidatedDefaultValue
@@ -451,7 +445,6 @@ namespace System.Xml.Schema
 			else
 				validatedUse = Use;
 
-#if NET_2_0
 			if (attributeType != null) {
 				attributeSchemaType = attributeType as XmlSchemaSimpleType;
 				if (attributeType == XmlSchemaSimpleType.AnySimpleType)
@@ -459,7 +452,6 @@ namespace System.Xml.Schema
 				if (attributeSchemaType == null)
 					attributeSchemaType = XmlSchemaType.GetBuiltInSimpleType (SchemaTypeName);
 			}
-#endif
 
 			ValidationId = schema.ValidationId;
 			return errorCount;

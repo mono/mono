@@ -441,11 +441,9 @@ namespace System.Reflection {
 			return GetMethodBody (mhandle);
 		}
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
-#endif
 	}
 	
 	[Serializable()]
@@ -574,6 +572,12 @@ namespace System.Reflection {
 			}
 		}
 		
+		public override bool ContainsGenericParameters {
+			get {
+				return DeclaringType.ContainsGenericParameters;
+			}
+		}
+
 		public override Type ReflectedType {
 			get {
 				return reftype;
@@ -631,10 +635,8 @@ namespace System.Reflection {
 			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Constructor);
 		}
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
-#endif
 	}
 }

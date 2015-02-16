@@ -817,6 +817,12 @@ namespace System.Windows.Forms {
 				else
 					SelectedIndex = (SelectedIndex + TabCount - 1) % TabCount;
 				ke.Handled = true;
+			} else if (ke.KeyCode == Keys.PageUp && (ke.KeyData & Keys.Control) != 0) {
+				SelectedIndex = (SelectedIndex + TabCount - 1) % TabCount;
+				ke.Handled = true;
+			} else if (ke.KeyCode == Keys.PageDown && (ke.KeyData & Keys.Control) != 0) {
+				SelectedIndex = (SelectedIndex + 1) % TabCount;
+				ke.Handled = true;
 			} else if (ke.KeyCode == Keys.Home) {
 				SelectedIndex = 0;
 				ke.Handled = true;

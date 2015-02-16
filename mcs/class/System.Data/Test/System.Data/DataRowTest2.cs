@@ -1165,63 +1165,26 @@ namespace MonoTests.System.Data
 			Assert.IsFalse (dr.IsNull (dc1), "#B5");
 			Assert.AreEqual (1, _eventsFired.Count, "#B6");
 
-#if NET_2_0
 			dr [dc1] = null;
-#else
-			try {
-				dr [dc1] = null;
-				Assert.Fail ("#B1");
-			} catch (ArgumentException ex) {
-				// Cannot set Column 'Col1' to be null.
-				// Please use DBNull instead
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("'Col1'") != -1, "#B5");
-				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#B6");
-				Assert.AreEqual (2, _eventsFired.Count, "#B7");
-			}
-			dr [dc1] = DBNull.Value;
-#endif
 
-#if NET_2_0
 			Assert.AreEqual (3, _eventsFired.Count, "#C1");
-#else
-			Assert.AreEqual (4, _eventsFired.Count, "#C1");
-#endif
 			Assert.AreEqual (addressA, dr [dc0], "#C2");
 			Assert.IsFalse (dr.IsNull (dc0), "#C3");
 			Assert.AreSame (DBNull.Value, dr [dc1], "#C4");
 			Assert.IsTrue (dr.IsNull (dc1), "#C5");
-#if NET_2_0
 			Assert.AreEqual (3, _eventsFired.Count, "#C6");
-#else
-			Assert.AreEqual (4, _eventsFired.Count, "#C6");
-#endif
 
 			dr [dc0] = DBNull.Value;
-#if NET_2_0
 			Assert.AreEqual (5, _eventsFired.Count, "#D1");
-#else
-			Assert.AreEqual (6, _eventsFired.Count, "#D1");
-#endif
 			Assert.AreSame (DBNull.Value, dr [dc0], "#D2");
 			Assert.IsTrue (dr.IsNull (dc0), "#D3");
 			Assert.AreSame (DBNull.Value, dr [dc1], "#D4");
 			Assert.IsTrue (dr.IsNull (dc1), "#D5");
-#if NET_2_0
 			Assert.AreEqual (5, _eventsFired.Count, "#D6");
-#else
-			Assert.AreEqual (6, _eventsFired.Count, "#D6");
-#endif
 
 			dr.BeginEdit ();
 			dr [dc1] = personC;
-#if NET_2_0
 			Assert.AreEqual (7, _eventsFired.Count, "#E1");
-#else
-			Assert.AreEqual (8, _eventsFired.Count, "#E1");
-#endif
 			Assert.AreSame (DBNull.Value, dr [dc0], "#E2");
 			Assert.IsTrue (dr.IsNull (dc0), "#E3");
 			Assert.AreEqual (personC, dr [dc1], "#E4");
@@ -1231,63 +1194,35 @@ namespace MonoTests.System.Data
 			Assert.IsTrue (dr.IsNull (dc0), "#E7");
 			Assert.AreEqual (personC, dr [dc1], "#E8");
 			Assert.IsFalse (dr.IsNull (dc1), "#E9");
-#if NET_2_0
 			Assert.AreEqual (7, _eventsFired.Count, "#E10");
-#else
-			Assert.AreEqual (8, _eventsFired.Count, "#E10");
-#endif
 
 			dr [dc1] = DBNull.Value;
-#if NET_2_0
 			Assert.AreEqual (9, _eventsFired.Count, "#F1");
-#else
-			Assert.AreEqual (10, _eventsFired.Count, "#F1");
-#endif
 			Assert.AreSame (DBNull.Value, dr [dc0], "#F2");
 			Assert.IsTrue (dr.IsNull (dc0), "#F3");
 			Assert.AreSame (DBNull.Value, dr [dc1], "#F4");
 			Assert.IsTrue (dr.IsNull (dc1), "#F5");
-#if NET_2_0
 			Assert.AreEqual (9, _eventsFired.Count, "#F6");
-#else
-			Assert.AreEqual (10, _eventsFired.Count, "#F6");
-#endif
 
 			dr [dc2] = null;
-#if NET_2_0
 			Assert.AreEqual (11, _eventsFired.Count, "#G1");
-#else
-			Assert.AreEqual (12, _eventsFired.Count, "#G1");
-#endif
 			Assert.AreSame (DBNull.Value, dr [dc0], "#G2");
 			Assert.IsTrue (dr.IsNull (dc0), "#G3");
 			Assert.AreSame (DBNull.Value, dr [dc1], "#G4");
 			Assert.IsTrue (dr.IsNull (dc1), "#G5");
 			Assert.AreSame (DBNull.Value, dr [dc2], "#G6");
 			Assert.IsTrue (dr.IsNull (dc2), "#G7");
-#if NET_2_0
 			Assert.AreEqual (11, _eventsFired.Count, "#G8");
-#else
-			Assert.AreEqual (12, _eventsFired.Count, "#G8");
-#endif
 
 			dr [dc2] = DBNull.Value;
-#if NET_2_0
 			Assert.AreEqual (13, _eventsFired.Count, "#H1");
-#else
-			Assert.AreEqual (14, _eventsFired.Count, "#H1");
-#endif
 			Assert.AreSame (DBNull.Value, dr [dc0], "#H2");
 			Assert.IsTrue (dr.IsNull (dc0), "#H3");
 			Assert.AreSame (DBNull.Value, dr [dc1], "#H4");
 			Assert.IsTrue (dr.IsNull (dc1), "#H5");
 			Assert.AreSame (DBNull.Value, dr [dc2], "#H6");
 			Assert.IsTrue (dr.IsNull (dc2), "#H7");
-#if NET_2_0
 			Assert.AreEqual (13, _eventsFired.Count, "#H8");
-#else
-			Assert.AreEqual (14, _eventsFired.Count, "#H8");
-#endif
 
 			int index = 0;
 
@@ -1305,24 +1240,12 @@ namespace MonoTests.System.Data
 			Assert.IsNull (colChangeArgs.ProposedValue, "#J3");
 			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#J4");
 
-#if ONLY_1_1
-			evt = (EventInfo) _eventsFired [index++];
-			Assert.AreEqual ("ColumnChanging", evt.Name, "#K1");
-			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc1, colChangeArgs.Column, "#K2");
-			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#K3");
-			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#K4");
-#endif
 
 			evt = (EventInfo) _eventsFired [index++];
 			Assert.AreEqual ("ColumnChanged", evt.Name, "#L1");
 			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
 			Assert.AreSame (dc1, colChangeArgs.Column, "#L2");
-#if NET_2_0
 			Assert.IsNull (colChangeArgs.ProposedValue, "#L3");
-#else
-			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#L3");
-#endif
 			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#L4");
 
 			evt = (EventInfo) _eventsFired [index++];
@@ -1487,23 +1410,7 @@ namespace MonoTests.System.Data
 			Assert.AreSame (personA, dr [1], "#B3");
 			Assert.IsFalse (dr.IsNull (1), "#B4");
 
-#if NET_2_0
 			dr [1] = null;
-#else
-			try {
-				dr [1] = null;
-				Assert.Fail ("#B1");
-			} catch (ArgumentException ex) {
-				// Cannot set Column 'Col1' to be null.
-				// Please use DBNull instead
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("'Col1'") != -1, "#B5");
-				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#B6");
-			}
-			dr [1] = DBNull.Value;
-#endif
 
 			Assert.AreEqual (addressA, dr [0], "#C1");
 			Assert.IsFalse (dr.IsNull (0), "#C2");
@@ -1657,11 +1564,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-#if NET_2_0
 				Assert.AreEqual ("name", ex.ParamName, "#A5");
-#else
-				Assert.AreEqual ("key", ex.ParamName, "#A5");
-#endif
 			}
 
 			try {
@@ -1671,11 +1574,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-#if NET_2_0
 				Assert.AreEqual ("name", ex.ParamName, "#B5");
-#else
-				Assert.AreEqual ("key", ex.ParamName, "#B5");
-#endif
 			}
 		}
 
@@ -1718,23 +1617,7 @@ namespace MonoTests.System.Data
 			Assert.AreSame (personA, dr ["Col1"], "#B3");
 			Assert.IsFalse (dr.IsNull ("Col1"), "#B4");
 
-#if NET_2_0
 			dr ["Col1"] = null;
-#else
-			try {
-				dr ["Col1"] = null;
-				Assert.Fail ("#B1");
-			} catch (ArgumentException ex) {
-				// Cannot set Column 'Col1' to be null.
-				// Please use DBNull instead
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("'Col1'") != -1, "#B5");
-				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#B6");
-			}
-			dr ["Col1"] = DBNull.Value;
-#endif
 
 			Assert.AreEqual (addressA, dr ["Col0"], "#C1");
 			Assert.IsFalse (dr.IsNull ("Col0"), "#C2");
@@ -2867,7 +2750,6 @@ namespace MonoTests.System.Data
 			_rowChanged = true;
 		}
 
-#if NET_2_0
 		[Test]
 		public void SetAdded_test()
 		{
@@ -2981,7 +2863,6 @@ namespace MonoTests.System.Data
 			table.RejectChanges ();
 			Assert.AreEqual(row.RowState, DataRowState.Unchanged, "#3");
 		}
-#endif
 		[Test]
 		public void DataRowExpressionDefaultValueTest ()
 		{

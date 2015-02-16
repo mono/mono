@@ -53,9 +53,7 @@ namespace System.Runtime.Remoting.Lifetime {
 			_sponsorshipTimeout = TimeSpan.FromMinutes (2);
 		}
 
-#if NET_4_0
 		[Obsolete("Call the static methods directly on this type instead", true)]
-#endif
 		public LifetimeServices ()
 		{
 		}

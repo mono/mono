@@ -410,10 +410,8 @@ namespace System.Reflection {
 				ToString(), MemberTypes.Property);
 		}
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
-#endif
 	}
 }

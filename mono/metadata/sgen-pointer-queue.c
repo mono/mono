@@ -17,6 +17,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "utils/mono-compiler.h"
 #include "metadata/sgen-gc.h"
 #include "metadata/sgen-pointer-queue.h"
 
@@ -28,13 +29,23 @@ sgen_pointer_queue_clear (SgenPointerQueue *queue)
 	queue->next_slot = 0;
 }
 
+void
+sgen_pointer_queue_init (SgenPointerQueue *queue, int mem_type)
+{
+	queue->next_slot = 0;
+	queue->size = 0;
+	queue->data = NULL;
+	queue->mem_type = mem_type;
+}
+
 static void
 realloc_queue (SgenPointerQueue *queue)
 {
 	size_t new_size = queue->size ? queue->size + queue->size/2 : 1024;
-	void **new_data = sgen_alloc_internal_dynamic (sizeof (void*) * new_size, INTERNAL_MEM_PIN_QUEUE, TRUE);
+	void **new_data = sgen_alloc_internal_dynamic (sizeof (void*) * new_size, queue->mem_type, TRUE);
+
 	memcpy (new_data, queue->data, sizeof (void*) * queue->next_slot);
-	sgen_free_internal_dynamic (queue->data, sizeof (void*) * queue->size, INTERNAL_MEM_PIN_QUEUE);
+	sgen_free_internal_dynamic (queue->data, sizeof (void*) * queue->size, queue->mem_type);
 	queue->data = new_data;
 	queue->size = new_size;
 	SGEN_LOG (4, "Reallocated pointer queue to size: %lu", new_size);
@@ -47,6 +58,14 @@ sgen_pointer_queue_add (SgenPointerQueue *queue, void *ptr)
 		realloc_queue (queue);
 
 	queue->data [queue->next_slot++] = ptr;
+}
+
+void*
+sgen_pointer_queue_pop (SgenPointerQueue *queue)
+{
+	g_assert (queue->next_slot);
+
+	return queue->data [--queue->next_slot];
 }
 
 size_t
@@ -64,6 +83,27 @@ sgen_pointer_queue_search (SgenPointerQueue *queue, void *addr)
 	return first;
 }
 
+/*
+ * Removes all NULL pointers from the queue.
+ */
+void
+sgen_pointer_queue_remove_nulls (SgenPointerQueue *queue)
+{
+	void **start, **cur, **end;
+	start = cur = queue->data;
+	end = queue->data + queue->next_slot;
+	while (cur < end) {
+		if (*cur)
+			*start++ = *cur++;
+		else
+			++cur;
+	}
+	queue->next_slot = start - queue->data;
+}
+
+/*
+ * Sorts the pointers in the queue, then removes duplicates.
+ */
 void
 sgen_pointer_queue_sort_uniq (SgenPointerQueue *queue)
 {
@@ -77,12 +117,38 @@ sgen_pointer_queue_sort_uniq (SgenPointerQueue *queue)
 	end = queue->data + queue->next_slot;
 	while (cur < end) {
 		*start = *cur++;
-		while (*start == *cur && cur < end)
+		while (cur < end && *start == *cur)
 			cur++;
 		start++;
 	};
 	queue->next_slot = start - queue->data;
 	SGEN_LOG (5, "Pointer queue reduced to size: %lu", queue->next_slot);
+}
+
+/*
+ * Does a linear search through the pointer queue to find `ptr`.  Returns the index if
+ * found, otherwise (size_t)-1.
+ */
+size_t
+sgen_pointer_queue_find (SgenPointerQueue *queue, void *ptr)
+{
+	size_t i;
+	for (i = 0; i < queue->next_slot; ++i)
+		if (queue->data [i] == ptr)
+			return i;
+	return (size_t)-1;
+}
+
+gboolean
+sgen_pointer_queue_is_empty (SgenPointerQueue *queue)
+{
+	return !queue->next_slot;
+}
+
+void
+sgen_pointer_queue_free (SgenPointerQueue *queue)
+{
+	sgen_free_internal_dynamic (queue->data, sizeof (void*) * queue->size, queue->mem_type);
 }
 
 #endif

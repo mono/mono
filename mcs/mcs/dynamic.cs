@@ -289,6 +289,13 @@ namespace Mono.CSharp
 
 		protected bool DoResolveCore (ResolveContext rc)
 		{
+			foreach (var arg in arguments) {
+				if (arg.Type == InternalType.VarOutType) {
+					// Should be special error message about dynamic dispatch
+					rc.Report.Error (8047, arg.Expr.Location, "Declaration expression cannot be used in this context");
+				}
+			}
+
 			if (rc.CurrentTypeParameters != null && rc.CurrentTypeParameters[0].IsMethodTypeParameter)
 				context_mvars = rc.CurrentTypeParameters;
 
@@ -780,7 +787,7 @@ namespace Mono.CSharp
 
 			if (member != null && member.HasTypeArguments) {
 				TypeArguments ta = member.TypeArguments;
-				if (ta.Resolve (ec)) {
+				if (ta.Resolve (ec, false)) {
 					var targs = new ArrayInitializer (ta.Count, loc);
 					foreach (TypeSpec t in ta.Arguments)
 						targs.Add (new TypeOf (t, loc));

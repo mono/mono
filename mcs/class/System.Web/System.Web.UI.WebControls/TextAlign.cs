@@ -27,9 +27,6 @@
 //
 
 namespace System.Web.UI.WebControls {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum TextAlign {
 		Left = 0x01,
 		Right

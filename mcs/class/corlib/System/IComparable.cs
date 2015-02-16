@@ -39,13 +39,7 @@ namespace System {
 		int CompareTo (object obj);
 	}
 	
-#if NET_4_0
 	public interface IComparable <in T> {
 		int CompareTo (T other);
 	}
-#else
-	public interface IComparable <T> {
-		int CompareTo (T other);
-	}
-#endif
 }

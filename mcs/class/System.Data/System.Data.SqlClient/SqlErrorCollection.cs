@@ -105,13 +105,11 @@ namespace System.Data.SqlClient {
 			return list.GetEnumerator ();
 		}
 
-#if NET_2_0
 		public void CopyTo (SqlError[] array, int index)
 		{
 			list.CopyTo (array, index);
 		}
 
-#endif // NET_2_0
 
 		#endregion		
 	}

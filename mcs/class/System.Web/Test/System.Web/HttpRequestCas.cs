@@ -125,12 +125,9 @@ namespace MonoCasTests.System.Web {
 			Assert.IsNull (request.UserHostAddress, "UserHostAddress");
 			Assert.IsNull (request.UserHostName, "UserHostName");
 			Assert.IsNull (request.UserLanguages, "UserLanguages");
-#if NET_2_0
 			Assert.IsFalse (request.IsLocal, "IsLocal");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		[AspNetHostingPermission (SecurityAction.Deny, Level = AspNetHostingPermissionLevel.Low)]
 		[ExpectedException (typeof (SecurityException))]
@@ -146,9 +143,6 @@ namespace MonoCasTests.System.Web {
 		{
 			Assert.IsNotNull (request.ClientCertificate, "ClientCertificate");
 		}
-#else
-		// ClientCertificate fails before hitting the SecurityException
-#endif
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]

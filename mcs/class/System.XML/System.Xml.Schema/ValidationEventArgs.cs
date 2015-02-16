@@ -28,11 +28,7 @@ namespace System.Xml.Schema
 	/// <summary>
 	/// Summary description for ValidationEventArgs.
 	/// </summary>
-#if NET_2_0
 	public class ValidationEventArgs : EventArgs
-#else
-	public sealed class ValidationEventArgs : EventArgs
-#endif
 	{
 		private XmlSchemaException exception;
 		private string message;

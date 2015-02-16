@@ -32,9 +32,7 @@ using System.Net;
 using System.Security;
 using System.Security.Policy;
 using System.Security.Permissions;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Xml
 {
@@ -135,7 +133,6 @@ namespace System.Xml
 			return resolver.ResolveUri (baseUri, relativeUri);
 		}
 
-#if NET_4_5
 		public override Task<object> GetEntityAsync (
 			Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
@@ -149,7 +146,6 @@ namespace System.Xml
 			}
 			return resolver.GetEntityAsync (absoluteUri, role, ofObjectToReturn);
 		}
-#endif
 #endregion
 
 	}

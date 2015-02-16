@@ -41,9 +41,7 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ValidationProperty("SelectedItem")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
 	public class ListBox : ListControl, IPostBackDataHandler {
 
 		public ListBox ()
@@ -51,7 +49,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Browsable(false)]
-#if NET_2_0 && HAVE_CONTROL_ADAPTERS
+#if HAVE_CONTROL_ADAPTERS
 		public virtual new
 #else		
 		public override
@@ -62,7 +60,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Browsable(false)]
-#if NET_2_0 && HAVE_CONTROL_ADAPTERS
+#if HAVE_CONTROL_ADAPTERS
 		public virtual new
 #else		
 		public override
@@ -73,7 +71,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Browsable(false)]
-#if NET_2_0 && HAVE_CONTROL_ADAPTERS
+#if HAVE_CONTROL_ADAPTERS
 		public virtual new
 #else		
 		public override
@@ -83,9 +81,6 @@ namespace System.Web.UI.WebControls {
 			set { base.BorderWidth = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(4)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -115,46 +110,24 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(false)]
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override string ToolTip {
-			get { return String.Empty; }
-			set { /* Tooltip is always String.Empty */ }
-		}
-#endif		
 
-#if NET_2_0
 		public virtual int[] GetSelectedIndices ()
 		{
 			return (int []) GetSelectedIndicesInternal ().ToArray (typeof (int));
 		}
-#endif		
 		
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
-#if NET_2_0
 			if (ID != null)
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
-#else
-			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
-#endif
 
 			if (AutoPostBack) {
-#if NET_2_0
 				string onchange = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
 				onchange = String.Concat ("setTimeout('", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
-#else
-				writer.AddAttribute (HtmlTextWriterAttribute.Onchange,
-						     BuildScriptAttribute ("onchange",
-									   Page.ClientScript.GetPostBackClientHyperlink (this, "")));
-#endif
 			}
 			
 			if (SelectionMode == ListSelectionMode.Multiple)
@@ -166,7 +139,6 @@ namespace System.Web.UI.WebControls {
 			base.AddAttributesToRender (writer);
 		}
 
-#if NET_2_0
 		PostBackOptions GetPostBackOptions () {
 			PostBackOptions options = new PostBackOptions (this);
 			options.ActionUrl = null;
@@ -180,31 +152,9 @@ namespace System.Web.UI.WebControls {
 
 			return options;
 		}
-#endif		
 
-#if ONLY_1_1
-		protected override void RenderContents (HtmlTextWriter writer)
-		{
-			foreach (ListItem item in Items) {
-				if (item.Selected) {
-					writer.AddAttribute (HtmlTextWriterAttribute.Selected, "selected", false);
-				}
-				writer.AddAttribute (HtmlTextWriterAttribute.Value, item.Value, true);
-				writer.RenderBeginTag (HtmlTextWriterTag.Option);
-				
-				string encoded = HttpUtility.HtmlEncode (item.Text);
-				writer.Write (encoded);
-				writer.RenderEndTag ();
-				writer.WriteLine ();
-			}
-		}
-#endif
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
@@ -213,23 +163,17 @@ namespace System.Web.UI.WebControls {
 				page.RegisterRequiresPostBack (this);
 		}
 
-#if NET_2_0
 		protected virtual
-#endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-#if NET_2_0
 			EnsureDataBound ();
-#endif
 			string [] values = postCollection.GetValues (postDataKey);
 			if (values == null || values.Length == 0) {
 				int prev_index = SelectedIndex;
 				SelectedIndex = -1;
 				return (prev_index != -1);
 			}
-#if NET_2_0
 			ValidateEvent (UniqueID, values [0]);
-#endif
 
 			if (SelectionMode == ListSelectionMode.Single)
 				return SelectSingle (values);
@@ -272,15 +216,11 @@ namespace System.Web.UI.WebControls {
 			return false;
 		}
 
-#if NET_2_0
 		protected virtual
-#endif
 		void RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
 			if (CausesValidation)
 				Page.Validate (ValidationGroup);
-#endif
 			OnSelectedIndexChanged (EventArgs.Empty);
 		}
 			
@@ -294,12 +234,10 @@ namespace System.Web.UI.WebControls {
 		{
 			RaisePostDataChangedEvent ();
 		}
-#if NET_2_0
 		internal override bool MultiSelectOk ()
 		{
 			return this.SelectionMode == ListSelectionMode.Multiple;
 		}
-#endif
 	}
 }
 

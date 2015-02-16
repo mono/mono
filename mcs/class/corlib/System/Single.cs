@@ -143,7 +143,6 @@ namespace System
 			return *((int*)&f);
 		}
 
-#if	NET_4_0
 		public static bool operator==(float left, float right)
 		{
 			return left == right;
@@ -173,7 +172,6 @@ namespace System
 		{
 			return left <= right;
 		}
-#endif
 
 		public static bool IsInfinity (float f)
 		{
@@ -293,12 +291,12 @@ namespace System
 
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			return System.Convert.ToChar (m_value);
+			throw new InvalidCastException(Environment.GetResourceString("InvalidCast_FromTo", "Single", "Char"));
 		}
 
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			return System.Convert.ToDateTime (m_value);
+            throw new InvalidCastException(Environment.GetResourceString("InvalidCast_FromTo", "Single", "DateTime"));
 		}
 
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
@@ -336,11 +334,9 @@ namespace System
 			return System.Convert.ToSingle (m_value);
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("targetType");
-			return System.Convert.ToType (m_value, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)

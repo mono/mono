@@ -8,16 +8,9 @@
 
 RUNTIME = mono
 
-ifeq ($(PROFILE), net_2_0)
-	nunit_MONO_PATH="../../../../../class/lib/net_2_0"
-	CSCOMPILE=gmcs
-	XSPSERVER=xsp2
-else
-	nunit_MONO_PATH="../../../../../class/lib/net_1_1"
-	CSCOMPILE=mcs
-	XSPSERVER=xsp
-endif
-
+nunit_MONO_PATH="../../../../../class/lib/net_4_5"
+CSCOMPILE=mcs
+XSPSERVER=xsp4
 
 TEST_PROG=bin/MainsoftWebApp.dll
 

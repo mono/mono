@@ -25,6 +25,11 @@
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
+#if defined (__APPLE__)
+#include <mach/message.h>
+#include <mach/mach_host.h>
+#include <mach/host_info.h>
+#endif
 #if defined (__NetBSD__) || defined (__APPLE__)
 #include <sys/sysctl.h>
 #endif
@@ -224,6 +229,9 @@ typedef struct {
 	int num_instances;
 	/* variable length data follows */
 	char name [1];
+	// string name
+	// string help
+	// SharedCounter counters_info [num_counters]
 } SharedCategory;
 
 typedef struct {
@@ -231,6 +239,7 @@ typedef struct {
 	unsigned int category_offset;
 	/* variable length data follows */
 	char instance_name [1];
+	// string name
 } SharedInstance;
 
 typedef struct {
@@ -238,6 +247,8 @@ typedef struct {
 	guint8 seq_num;
 	/* variable length data follows */
 	char name [1];
+	// string name
+	// string help
 } SharedCounter;
 
 typedef struct {
@@ -449,6 +460,76 @@ mono_determine_physical_ram_size (void)
 #endif
 }
 
+static guint64
+mono_determine_physical_ram_available_size (void)
+{
+#if defined (TARGET_WIN32)
+	MEMORYSTATUSEX memstat;
+
+	memstat.dwLength = sizeof (memstat);
+	GlobalMemoryStatusEx (&memstat);
+	return (guint64)memstat.ullAvailPhys;
+
+#elif defined (__NetBSD__)
+	struct vmtotal vm_total;
+	guint64 page_size;
+	int mib [2];
+	size_t len;
+
+
+	mib = {
+		CTL_VM,
+#if defined (VM_METER)
+		VM_METER
+#else
+		VM_TOTAL
+#endif
+	};
+	len = sizeof (vm_total);
+	sysctl (mib, 2, &vm_total, &len, NULL, 0);
+
+	mib = {
+		CTL_HW,
+		HW_PAGESIZE
+	};
+	len = sizeof (page_size);
+	sysctl (mib, 2, &page_size, &len, NULL, 0
+
+	return ((guint64) value.t_free * page_size) / 1024;
+#elif defined (__APPLE__)
+	mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
+	vm_statistics_data_t vmstat;
+	if (KERN_SUCCESS != host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vmstat, &count)) {
+		g_warning ("Mono was unable to retrieve memory usage!");
+		return 0;
+	}
+
+	return (guint64) vmstat.free_count;
+
+#elif defined (HAVE_SYSCONF)
+	guint64 page_size = 0, num_pages = 0;
+
+	/* sysconf works on most *NIX operating systems, if your system doesn't have it or if it
+	 * reports invalid values, please add your OS specific code below. */
+#ifdef _SC_PAGESIZE
+	page_size = (guint64)sysconf (_SC_PAGESIZE);
+#endif
+
+#ifdef _SC_AVPHYS_PAGES
+	num_pages = (guint64)sysconf (_SC_AVPHYS_PAGES);
+#endif
+
+	if (!page_size || !num_pages) {
+		g_warning ("Your operating system's sysconf (3) function doesn't correctly report physical memory size!");
+		return 0;
+	}
+
+	return page_size * num_pages;
+#else
+	return 0;
+#endif
+}
+
 void
 mono_perfcounters_init (void)
 {
@@ -478,9 +559,10 @@ perfctr_type_compress (int type)
 	return 2;
 }
 
-static unsigned char*
-shared_data_find_room (int size)
+static SharedHeader*
+shared_data_reserve_room (int size, int ftype)
 {
+	SharedHeader* header;
 	unsigned char *p = (unsigned char *)shared_area + shared_area->data_start;
 	unsigned char *end = (unsigned char *)shared_area + shared_area->size;
 
@@ -490,7 +572,7 @@ shared_data_find_room (int size)
 		unsigned short *next;
 		if (*p == FTYPE_END) {
 			if (size < (end - p))
-				return p;
+				goto res;
 			return NULL;
 		}
 		if (p + 4 > end)
@@ -499,12 +581,20 @@ shared_data_find_room (int size)
 		if (*p == FTYPE_DELETED) {
 			/* we reuse only if it's the same size */
 			if (*next == size) {
-				return p;
+				goto res;
 			}
 		}
 		p += *next;
 	}
 	return NULL;
+
+res:
+	header = (SharedHeader*)p;
+	header->ftype = ftype;
+	header->extra = 0; /* data_offset could overflow here, so we leave this field unused */
+	header->size = size;
+
+	return header;
 }
 
 typedef gboolean (*SharedFunc) (SharedHeader *header, void *data);
@@ -610,7 +700,8 @@ find_custom_counter (SharedCategory* cat, MonoString *name)
 		SharedCounter *counter = (SharedCounter*)p;
 		if (mono_string_compare_ascii (name, counter->name) == 0)
 			return counter;
-		p += 1 + strlen (p + 1) + 1; /* skip counter type and name */
+		p += 2; /* skip counter type */
+		p += strlen (p) + 1; /* skip counter name */
 		p += strlen (p) + 1; /* skip counter help */
 	}
 	return NULL;
@@ -619,7 +710,7 @@ find_custom_counter (SharedCategory* cat, MonoString *name)
 typedef struct {
 	unsigned int cat_offset;
 	SharedCategory* cat;
-	MonoString *instance;
+	char *name;
 	SharedInstance* result;
 	GSList *list;
 } InstanceSearch;
@@ -631,8 +722,8 @@ instance_search (SharedHeader *header, void *data)
 	if (header->ftype == FTYPE_INSTANCE) {
 		SharedInstance *ins = (SharedInstance*)header;
 		if (search->cat_offset == ins->category_offset) {
-			if (search->instance) {
-				if (mono_string_compare_ascii (search->instance, ins->instance_name) == 0) {
+			if (search->name) {
+				if (strcmp (search->name, ins->instance_name) == 0) {
 					search->result = ins;
 					return FALSE;
 				}
@@ -645,12 +736,12 @@ instance_search (SharedHeader *header, void *data)
 }
 
 static SharedInstance*
-find_custom_instance (SharedCategory* cat, MonoString *instance)
+find_custom_instance (SharedCategory* cat, char *name)
 {
 	InstanceSearch search;
 	search.cat_offset = (char*)cat - (char*)shared_area;
 	search.cat = cat;
-	search.instance = instance;
+	search.name = name;
 	search.list = NULL;
 	search.result = NULL;
 	foreach_shared_item (instance_search, &search);
@@ -663,7 +754,7 @@ get_custom_instances_list (SharedCategory* cat)
 	InstanceSearch search;
 	search.cat_offset = (char*)cat - (char*)shared_area;
 	search.cat = cat;
-	search.instance = NULL;
+	search.name = NULL;
 	search.list = NULL;
 	search.result = NULL;
 	foreach_shared_item (instance_search, &search);
@@ -896,10 +987,13 @@ mono_mem_counter (ImplVtable *vtable, MonoBoolean only_value, MonoCounterSample 
 	sample->counterType = predef_counters [predef_categories [CATEGORY_MONO_MEM].first_counter + id].type;
 	switch (id) {
 	case COUNTER_MEM_NUM_OBJECTS:
-		sample->rawValue = mono_stats.new_object_count;
+		sample->rawValue = 0;
 		return TRUE;
 	case COUNTER_MEM_PHYS_TOTAL:
 		sample->rawValue = mono_determine_physical_ram_size ();;
+		return TRUE;
+	case COUNTER_MEM_PHYS_AVAILABLE:
+		sample->rawValue = mono_determine_physical_ram_available_size ();;
 		return TRUE;
 	}
 	return FALSE;
@@ -1140,41 +1234,33 @@ custom_writable_update (ImplVtable *vtable, MonoBoolean do_incr, gint64 value)
 }
 
 static SharedInstance*
-custom_get_instance (SharedCategory *cat, SharedCounter *scounter, MonoString* instance)
+custom_get_instance (SharedCategory *cat, SharedCounter *scounter, char* name)
 {
 	SharedInstance* inst;
-	unsigned char *ptr;
 	char *p;
 	int size, data_offset;
-	char *name;
-	inst = find_custom_instance (cat, instance);
+	inst = find_custom_instance (cat, name);
 	if (inst)
 		return inst;
-	name = mono_string_to_utf8 (instance);
 	size = sizeof (SharedInstance) + strlen (name);
 	size += 7;
 	size &= ~7;
 	data_offset = size;
 	size += (sizeof (guint64) * cat->num_counters);
 	perfctr_lock ();
-	ptr = shared_data_find_room (size);
-	if (!ptr) {
+	inst = (SharedInstance*) shared_data_reserve_room (size, FTYPE_INSTANCE);
+	if (!inst) {
 		perfctr_unlock ();
 		g_free (name);
 		return NULL;
 	}
-	inst = (SharedInstance*)ptr;
-	inst->header.extra = 0; /* data_offset could overflow here, so we leave this field unused */
-	inst->header.size = size;
 	inst->category_offset = (char*)cat - (char*)shared_area;
 	cat->num_instances++;
 	/* now copy the variable data */
 	p = inst->instance_name;
 	strcpy (p, name);
 	p += strlen (name) + 1;
-	inst->header.ftype = FTYPE_INSTANCE;
 	perfctr_unlock ();
-	g_free (name);
 
 	return inst;
 }
@@ -1193,24 +1279,33 @@ custom_vtable (SharedCounter *scounter, SharedInstance* inst, char *data)
 	return (ImplVtable*)vtable;
 }
 
+static gpointer
+custom_get_value_address (SharedCounter *scounter, SharedInstance* sinst)
+{
+	int offset = sizeof (SharedInstance) + strlen (sinst->instance_name);
+	offset += 7;
+	offset &= ~7;
+	offset += scounter->seq_num * sizeof (guint64);
+	return (char*)sinst + offset;
+}
+
 static void*
 custom_get_impl (SharedCategory *cat, MonoString* counter, MonoString* instance, int *type)
 {
 	SharedCounter *scounter;
 	SharedInstance* inst;
-	int size;
+	char *name;
 
 	scounter = find_custom_counter (cat, counter);
 	if (!scounter)
 		return NULL;
 	*type = simple_type_to_type [scounter->type];
-	inst = custom_get_instance (cat, scounter, instance);
+	name = mono_string_to_utf8 (counter);
+	inst = custom_get_instance (cat, scounter, name);
+	g_free (name);
 	if (!inst)
 		return NULL;
-	size = sizeof (SharedInstance) + strlen (inst->instance_name);
-	size += 7;
-	size &= ~7;
-	return custom_vtable (scounter, inst, (char*)inst + size + scounter->seq_num * sizeof (guint64));
+	return custom_vtable (scounter, inst, custom_get_value_address (scounter, inst));
 }
 
 static const CategoryDesc*
@@ -1383,7 +1478,6 @@ mono_perfcounter_create (MonoString *category, MonoString *help, int type, MonoA
 	char *name = NULL;
 	char *chelp = NULL;
 	char **counter_info = NULL;
-	unsigned char *ptr;
 	char *p;
 	SharedCategory *cat;
 
@@ -1419,14 +1513,11 @@ mono_perfcounter_create (MonoString *category, MonoString *help, int type, MonoA
 	if (size > 65535)
 		goto failure;
 	perfctr_lock ();
-	ptr = shared_data_find_room (size);
-	if (!ptr) {
+	cat = (SharedCategory*) shared_data_reserve_room (size, FTYPE_CATEGORY);
+	if (!cat) {
 		perfctr_unlock ();
 		goto failure;
 	}
-	cat = (SharedCategory*)ptr;
-	cat->header.extra = type;
-	cat->header.size = size;
 	cat->num_counters = num_counters;
 	cat->counters_data_size = counters_data_size;
 	/* now copy the vaiable data */
@@ -1445,7 +1536,6 @@ mono_perfcounter_create (MonoString *category, MonoString *help, int type, MonoA
 		strcpy (p, counter_info [i * 2 + 1]);
 		p += strlen (counter_info [i * 2 + 1]) + 1;
 	}
-	cat->header.ftype = FTYPE_CATEGORY;
 
 	perfctr_unlock ();
 	result = TRUE;
@@ -1466,6 +1556,8 @@ int
 mono_perfcounter_instance_exists (MonoString *instance, MonoString *category, MonoString *machine)
 {
 	const CategoryDesc *cdesc;
+	SharedInstance *sinst;
+	char *name;
 	/* no support for counters on other machines */
 	/*FIXME: machine appears to be wrong
 	if (mono_string_compare_ascii (machine, "."))
@@ -1476,7 +1568,10 @@ mono_perfcounter_instance_exists (MonoString *instance, MonoString *category, Mo
 		scat = find_custom_category (category);
 		if (!scat)
 			return FALSE;
-		if (find_custom_instance (scat, instance))
+		name = mono_string_to_utf8 (instance);
+		sinst = find_custom_instance (scat, name);
+		g_free (name);
+		if (sinst)
 			return TRUE;
 	} else {
 		/* FIXME: search instance */
@@ -1539,7 +1634,8 @@ mono_perfcounter_counter_names (MonoString *category, MonoString *machine)
 		res = mono_array_new (domain, mono_get_string_class (), scat->num_counters);
 		for (i = 0; i < scat->num_counters; ++i) {
 			mono_array_setref (res, i, mono_string_new (domain, p + 1));
-			p += 1 + strlen (p + 1) + 1; /* skip counter type and name */
+			p += 2; /* skip counter type */
+			p += strlen (p) + 1; /* skip counter name */
 			p += strlen (p) + 1; /* skip counter help */
 		}
 		perfctr_unlock ();
@@ -1691,6 +1787,65 @@ mono_perfcounter_instance_names (MonoString *category, MonoString *machine)
 		return mono_array_new (mono_domain_get (), mono_get_string_class (), 0);
 	}
 }
+
+typedef struct {
+	PerfCounterEnumCallback cb;
+	void *data;
+} PerfCounterForeachData;
+
+static gboolean
+mono_perfcounter_foreach_shared_item (SharedHeader *header, gpointer data)
+{
+	int i;
+	char *p, *name, *help;
+	unsigned char type;
+	int seq_num;
+	void *addr;
+	SharedCategory *cat;
+	SharedCounter *counter;
+	SharedInstance *inst;
+	PerfCounterForeachData *foreach_data = data;
+
+	if (header->ftype == FTYPE_CATEGORY) {
+		cat = (SharedCategory*)header;
+
+		p = cat->name;
+		p += strlen (p) + 1; /* skip category name */
+		p += strlen (p) + 1; /* skip category help */
+
+		for (i = 0; i < cat->num_counters; ++i) {
+			counter = (SharedCounter*) p;
+			type = (unsigned char)*p++;
+			seq_num = (int)*p++;
+			name = p;
+			p += strlen (p) + 1;
+			help = p;
+			p += strlen (p) + 1;
+
+			inst = custom_get_instance (cat, counter, name);
+			if (!inst)
+				return FALSE;
+			addr = custom_get_value_address (counter, inst);
+			if (!foreach_data->cb (cat->name, name, type, addr ? *(gint64*)addr : 0, foreach_data->data))
+				return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+void
+mono_perfcounter_foreach (PerfCounterEnumCallback cb, gpointer data)
+{
+	PerfCounterForeachData foreach_data = { cb, data };
+
+	perfctr_lock ();
+
+	foreach_shared_item (mono_perfcounter_foreach_shared_item, &foreach_data);
+
+	perfctr_unlock ();
+}
+
 #else
 void*
 mono_perfcounter_get_impl (MonoString* category, MonoString* counter, MonoString* instance, MonoString* machine, int *type, MonoBoolean *custom)

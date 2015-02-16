@@ -40,11 +40,12 @@ using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Diagnostics.Contracts;
 
 namespace System {
 
 	[ComVisible (true)]
-	public static class Environment {
+	public static partial class Environment {
 
 		/*
 		 * This is the version number of the corlib-runtime interface. When
@@ -56,7 +57,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 111;
+		private const int mono_corlib_version = 117;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -85,10 +86,7 @@ namespace System {
 			ProgramFiles = 0x26,
 			MyPictures = 0x27,
 			CommonProgramFiles = 0x2b,
-#if NET_4_0
 			MyVideos = 0x0e,
-#endif
-#if NET_4_0
 			NetworkShortcuts = 0x13,
 			Fonts = 0x14,
 			CommonStartMenu = 0x16,
@@ -112,14 +110,9 @@ namespace System {
 			LocalizedResources = 0x39,
 			CommonOemLinks = 0x3a,
 			CDBurning = 0x3b,
-#endif
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		enum SpecialFolderOption {
 			None = 0,
 			DoNotVerify = 0x4000,
@@ -170,13 +163,11 @@ namespace System {
 			}
 		}
 		
-#if NET_4_5
 		public static int CurrentManagedThreadId {
 			get {
 				return Thread.CurrentThread.ManagedThreadId;
 			}
 		}
-#endif
 
 		/// <summary>
 		/// Gets or sets the exit code of this process
@@ -242,7 +233,7 @@ namespace System {
 		public static OperatingSystem OSVersion {
 			get {
 				if (os == null) {
-					Version v = Version.CreateFromString (GetOSVersionString ());
+					Version v = CreateVersionFromString (GetOSVersionString ());
 					PlatformID p = Platform;
 					if (p == PlatformID.MacOSX)
 						p = PlatformID.Unix;
@@ -250,6 +241,75 @@ namespace System {
 				}
 				return os;
 			}
+		}
+
+
+		// a very gentle way to construct a Version object which takes 
+		// the first four numbers in a string as the version
+		internal static Version CreateVersionFromString (string info)
+		{
+			int major = 0;
+			int minor = 0;
+			int build = 0;
+			int revision = 0;
+			int state = 1;
+			int number = -1; // string may not begin with a digit
+
+			if (info == null)
+				return new Version (0, 0, 0, 0);
+
+			for (int i=0; i < info.Length; i++) {
+				char c = info [i];
+				if (Char.IsDigit (c)) {
+					if (number < 0) {
+						number = (c - '0');
+					}
+					else {
+						number = (number * 10) + (c - '0');
+					}
+				}
+				else if (number >= 0) {
+					// assign
+					switch (state) {
+					case 1:
+						major = number;
+						break;
+					case 2:
+						minor = number;
+						break;
+					case 3:
+						build = number;
+						break;
+					case 4:
+						revision = number;
+						break;
+					}
+					number = -1;
+					state ++;
+				}
+				// ignore end of string
+				if (state == 5)
+					break;
+			}
+
+			// Last number
+			if (number >= 0) {
+				switch (state) {
+				case 1:
+					major = number;
+					break;
+				case 2:
+					minor = number;
+					break;
+				case 3:
+					build = number;
+					break;
+				case 4:
+					revision = number;
+					break;
+				}
+			}
+			return new Version (major, minor, build, revision);
 		}
 
 		/// <summary>
@@ -331,6 +391,11 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode=true)]
 		public extern static void Exit (int exitCode);
+
+		internal static void _Exit (int exitCode)
+		{
+			Exit (exitCode);
+		}
 
 		/// <summary>
 		/// Substitute environment variables in the argument "name"
@@ -475,9 +540,6 @@ namespace System {
 		}
 #endif
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string GetWindowsFolderPath (int folder);
-
 		/// <summary>
 		/// Returns the fully qualified path of the
 		/// folder specified by the "folder" parameter
@@ -486,9 +548,13 @@ namespace System {
 		{
 			return GetFolderPath (folder, SpecialFolderOption.None);
 		}
-#if NET_4_0
+
+// for monotouch, not monotouch_runtime
+#if !(MONOTOUCH && FULL_AOT_RUNTIME)
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static string GetWindowsFolderPath (int folder);
+
 		public
-#endif
 		static string GetFolderPath(SpecialFolder folder, SpecialFolderOption option)
 		{
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
@@ -577,38 +643,15 @@ namespace System {
 
 			// personal == ~
 			case SpecialFolder.Personal:
-#if MONOTOUCH
-				return Path.Combine (home, "Documents");
-#else
 				return home;
-#endif
+
 			// use FDO's CONFIG_HOME. This data will be synced across a network like the windows counterpart.
 			case SpecialFolder.ApplicationData:
-#if MONOTOUCH
-			{
-				string dir = Path.Combine (Path.Combine (home, "Documents"), ".config");
-				if (option == SpecialFolderOption.Create){
-					if (!Directory.Exists (dir))
-						Directory.CreateDirectory (dir);
-				}
-				return dir;
-			}
-#else
 				return config;
-#endif
+
 			//use FDO's DATA_HOME. This is *NOT* synced
 			case SpecialFolder.LocalApplicationData:
-#if MONOTOUCH
-			{
-				string dir = Path.Combine (home, "Documents");
-				if (!Directory.Exists (dir))
-					Directory.CreateDirectory (dir);
-
-				return dir;
-			}
-#else
 				return data;
-#endif
 
 			case SpecialFolder.Desktop:
 			case SpecialFolder.DesktopDirectory:
@@ -628,11 +671,8 @@ namespace System {
 			
 			case SpecialFolder.Templates:
 				return ReadXdgUserDir (config, home, "XDG_TEMPLATES_DIR", "Templates");
-#if NET_4_0
 			case SpecialFolder.MyVideos:
 				return ReadXdgUserDir (config, home, "XDG_VIDEOS_DIR", "Videos");
-#endif
-#if NET_4_0
 			case SpecialFolder.CommonTemplates:
 				return "/usr/share/templates";
 			case SpecialFolder.Fonts:
@@ -640,7 +680,6 @@ namespace System {
 					return Path.Combine (home, "Library", "Fonts");
 				
 				return Path.Combine (home, ".fonts");
-#endif
 			// these simply dont exist on Linux
 			// The spec says if a folder doesnt exist, we
 			// should return ""
@@ -662,11 +701,9 @@ namespace System {
 				else
 					return String.Empty;
 
-#if NET_4_0
 				// #2873
 			case SpecialFolder.UserProfile:
 				return home;
-#endif
 
 			case SpecialFolder.Programs:
 			case SpecialFolder.SendTo:
@@ -677,7 +714,6 @@ namespace System {
 			case SpecialFolder.Recent:
 			case SpecialFolder.CommonProgramFiles:
 			case SpecialFolder.System:
-#if NET_4_0
 			case SpecialFolder.NetworkShortcuts:
 			case SpecialFolder.CommonStartMenu:
 			case SpecialFolder.CommonPrograms:
@@ -698,15 +734,15 @@ namespace System {
 			case SpecialFolder.LocalizedResources:
 			case SpecialFolder.CommonOemLinks:
 			case SpecialFolder.CDBurning:
-#endif
 				return String.Empty;
 			// This is where data common to all users goes
 			case SpecialFolder.CommonApplicationData:
 				return "/usr/share";
 			default:
 				throw new ArgumentException ("Invalid SpecialFolder");
-                        }
-                }
+			}
+		}
+#endif
 
 		
 		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
@@ -850,15 +886,17 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
+		internal static void FailFast (String message, uint exitCode)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
-#if NET_4_0
 		public static bool Is64BitOperatingSystem {
 			get { return IntPtr.Size == 8; } // FIXME: is this good enough?
 		}
@@ -866,13 +904,8 @@ namespace System {
 		public static int SystemPageSize {
 			get { return GetPageSize (); }
 		}
-#endif
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		static bool Is64BitProcess {
 			get { return IntPtr.Size == 8; }
 		}
@@ -884,7 +917,7 @@ namespace System {
 		}
 
 		// private methods
-#if MOBILE 
+#if (MONOTOUCH || MONODROID || XAMMAC)
 		internal const bool IsRunningOnWindows = false;
 #else
 		internal static bool IsRunningOnWindows {
@@ -938,6 +971,17 @@ namespace System {
 			get {
 				return Environment.Platform == PlatformID.MacOSX;
 			}
+		}
+
+		internal static bool IsCLRHosted {
+			get {
+				return false;
+			}
+		}
+
+		internal static void TriggerCodeContractFailure(ContractFailureKind failureKind, String message, String condition, String exceptionAsString)
+		{
+
 		}
 	}
 }

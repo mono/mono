@@ -42,36 +42,17 @@ namespace System.Data.OleDb
 	/// Provides a means of automatically generating single-table commands used to reconcile changes made to a DataSet with the associated database. This class cannot be inherited.
 	/// </summary>
 	public sealed class OleDbCommandBuilder :
-#if NET_2_0
 		DbCommandBuilder
-#else
-		Component
-#endif
 	{
 		#region Fields
 
 		OleDbDataAdapter adapter;
-#if ONLY_1_1
-		string quotePrefix;
-		string quoteSuffix;
-		private DataTable		_schema;
-		private string			_tableName;
-		private OleDbCommand	_insertCommand;
-		private OleDbCommand	_updateCommand;
-		private OleDbCommand	_deleteCommand;
-
-		bool _disposed;
-#endif
 		#endregion // Fields
 
 		#region Constructors
 		
 		public OleDbCommandBuilder ()
 		{
-#if !NET_2_0
-			quotePrefix = String.Empty;
-			quoteSuffix = String.Empty;
-#endif
 		}
 
 		public OleDbCommandBuilder (OleDbDataAdapter adapter) 
@@ -84,9 +65,6 @@ namespace System.Data.OleDb
 
 		#region Properties
 
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("The DataAdapter for which to automatically generate OleDbCommands")]
-#endif
 		[DefaultValue (null)]
 		public new OleDbDataAdapter DataAdapter {
 			get {
@@ -97,37 +75,11 @@ namespace System.Data.OleDb
 			}
 		}
 
-#if !NET_2_0
-		[BrowsableAttribute (false)]
-		[DataSysDescriptionAttribute ("The prefix string wrapped around sql objects")]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public string QuotePrefix {
-			get {
-				return quotePrefix;
-			}
-			set {
-				quotePrefix = value;
-			}
-		}
-
-		[BrowsableAttribute (false)]
-		[DataSysDescriptionAttribute ("The suffix string wrapped around sql objects")]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public string QuoteSuffix {
-			get {
-				return quoteSuffix;
-			}
-			set {
-				quoteSuffix = value;
-			}
-		}
-#endif
 
 		#endregion // Properties
 
 		#region Methods
 
-#if NET_2_0
 		protected override void ApplyParameterInfo (DbParameter parameter,
 				                                    DataRow datarow,
 				                                    StatementType statementType,
@@ -143,7 +95,6 @@ namespace System.Data.OleDb
 			}
 			p.DbType = (DbType) datarow ["ProviderType"];
 		}
-#endif
 
 		[MonoTODO]
 		public static void DeriveParameters (OleDbCommand command)
@@ -157,26 +108,6 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-#if ONLY_1_1
-		protected override void Dispose (bool disposing)
-		{
-			if (_disposed)
-				return;
-			
-			if (disposing) {
-				// dispose managed resource
-				if (_insertCommand != null) _insertCommand.Dispose ();
-				if (_updateCommand != null) _updateCommand.Dispose ();
-				if (_deleteCommand != null) _deleteCommand.Dispose ();
-
-				_insertCommand = null;
-				_updateCommand = null;
-				_deleteCommand = null;
-				_schema = null;
-			}
-			_disposed = true;
-		}
-#endif
 
 		[MonoTODO]
 		public new OleDbCommand GetDeleteCommand ()
@@ -184,13 +115,11 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public new OleDbCommand GetDeleteCommand (bool useColumnsForParameterNames)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public new OleDbCommand GetInsertCommand ()
@@ -198,7 +127,6 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public new OleDbCommand GetInsertCommand (bool useColumnsForParameterNames)
 		{
@@ -220,7 +148,6 @@ namespace System.Data.OleDb
 			return GetParameterName (parameterOrdinal);
 		}
                 
-#endif
 
 		[MonoTODO]
 		public new OleDbCommand GetUpdateCommand ()
@@ -228,7 +155,6 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public new OleDbCommand GetUpdateCommand (bool useColumnsForParameterNames)
 		{
@@ -264,41 +190,6 @@ namespace System.Data.OleDb
 		{
 			throw new NotImplementedException ();
 		}
-#else
-		private OleDbCommand SelectCommand
-		{
-			get {
-				if (DataAdapter == null)
-					return null;
-				return DataAdapter.SelectCommand;
-			}
-		}
-
-		public void RefreshSchema ()
-		{
-			// creates metadata
-			if (SelectCommand == null)
-				throw new InvalidOperationException ("SelectCommand should be valid");
-			if (SelectCommand.Connection == null)
-				throw new InvalidOperationException ("SelectCommand's Connection should be valid");
-			
-			CommandBehavior behavior = CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo;
-			if (SelectCommand.Connection.State != ConnectionState.Open) {
-				SelectCommand.Connection.Open ();
-				behavior |= CommandBehavior.CloseConnection;
-			}
-			
-			OleDbDataReader reader = SelectCommand.ExecuteReader (behavior);
-			_schema = reader.GetSchemaTable ();
-			reader.Close ();
-			
-			// force creation of commands
-			_insertCommand 	= null;
-			_updateCommand 	= null;
-			_deleteCommand 	= null;
-			_tableName	= String.Empty;
-		}
-#endif
 
 		#endregion // Methods
 	}

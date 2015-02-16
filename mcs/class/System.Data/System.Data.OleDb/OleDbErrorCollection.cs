@@ -106,12 +106,10 @@ namespace System.Data.OleDb
 			((OleDbError[]) (items.ToArray ())).CopyTo (array, index);
 		}
 
-#if NET_2_0
 		public void CopyTo (OleDbError [] array, int index)
 		{
 			items.CopyTo (array, index);
 		}
-#endif
 
 		public IEnumerator GetEnumerator ()
 		{

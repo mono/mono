@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Net.Mail;
@@ -44,9 +43,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEvent ("SendingMail")]
 	[Designer ("System.Web.UI.Design.WebControls.PasswordRecoveryDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class PasswordRecovery : CompositeControl
-#if NET_4_0
 	, IRenderOuterTable
-#endif
 	{
 		static readonly object answerLookupErrorEvent = new object ();
 		static readonly object sendingMailEvent = new object ();
@@ -56,9 +53,7 @@ namespace System.Web.UI.WebControls
 		static readonly object verifyingUserEvent = new object ();
 		
 		public static readonly string SubmitButtonCommandName = "Submit";
-#if NET_4_0
 		bool renderOuterTable = true;
-#endif
 		TableItemStyle _failureTextStyle;
 		TableItemStyle _hyperLinkStyle;
 		TableItemStyle _instructionTextStyle;
@@ -249,13 +244,11 @@ namespace System.Web.UI.WebControls
 			get { return ViewState.GetString ("QuestionTitleText", "Identity Confirmation"); }
 			set { ViewState ["QuestionTitleText"] = value; }
 		}
-#if NET_4_0
 		[DefaultValue (true)]
 		public virtual bool RenderOuterTable {
 			get { return renderOuterTable; }
 			set { renderOuterTable = value; }
 		}
-#endif
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]	
@@ -1007,29 +1000,23 @@ namespace System.Web.UI.WebControls
 		abstract class BasePasswordRecoveryContainer : Control, INamingContainer
 		{
 			protected readonly PasswordRecovery _owner = null;
-#if NET_4_0
 			bool renderOuterTable;
-#endif
 			Table _table;
 			TableCell _containerCell = null;
 
 			public BasePasswordRecoveryContainer (PasswordRecovery owner)
 			{
 				_owner = owner;
-#if NET_4_0
 				renderOuterTable = _owner.RenderOuterTable;
 				if (renderOuterTable)
-#endif
 					InitTable ();
 			}
 
 			public void InstantiateTemplate (ITemplate template)
 			{
-#if NET_4_0
 				if (!renderOuterTable)
 					template.InstantiateIn (this);
 				else
-#endif					
 					template.InstantiateIn (_containerCell);
 			}
 
@@ -1445,4 +1432,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

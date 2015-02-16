@@ -47,13 +47,11 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cls.Label, "#2");
 			Assert.AreEqual (string.Empty, cls.Label, "#3");
 
-#if NET_2_0
 			Assert.IsNotNull (cls.StartDirectives, "#4");
 			Assert.AreEqual (0, cls.StartDirectives.Count, "#5");
 
 			Assert.IsNotNull (cls.EndDirectives, "#6");
 			Assert.AreEqual (0, cls.EndDirectives.Count, "#7");
-#endif
 
 			Assert.IsNotNull (cls.UserData, "#8");
 			Assert.AreEqual (typeof(ListDictionary), cls.UserData.GetType (), "#9");
@@ -95,13 +93,11 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cls.Label, "#2");
 			Assert.AreSame (label, cls.Label, "#3");
 
-#if NET_2_0
 			Assert.IsNotNull (cls.StartDirectives, "#4");
 			Assert.AreEqual (0, cls.StartDirectives.Count, "#5");
 
 			Assert.IsNotNull (cls.EndDirectives, "#6");
 			Assert.AreEqual (0, cls.EndDirectives.Count, "#7");
-#endif
 
 			Assert.IsNotNull (cls.UserData, "#8");
 			Assert.AreEqual (typeof(ListDictionary), cls.UserData.GetType (), "#9");
@@ -125,13 +121,11 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cls.Label, "#2");
 			Assert.AreSame (label, cls.Label, "#3");
 
-#if NET_2_0
 			Assert.IsNotNull (cls.StartDirectives, "#4");
 			Assert.AreEqual (0, cls.StartDirectives.Count, "#5");
 
 			Assert.IsNotNull (cls.EndDirectives, "#6");
 			Assert.AreEqual (0, cls.EndDirectives.Count, "#7");
-#endif
 
 			Assert.IsNotNull (cls.UserData, "#8");
 			Assert.AreEqual (typeof(ListDictionary), cls.UserData.GetType (), "#9");

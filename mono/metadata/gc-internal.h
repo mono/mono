@@ -13,22 +13,14 @@
 #include <glib.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/threads-types.h>
-#include <mono/metadata/sgen-conf.h>
 #include <mono/utils/gc_wrapper.h>
 
 typedef struct {
-	int minor_gc_count;
-	int major_gc_count;
-	long long minor_gc_time;
-	long long major_gc_time;
-#ifdef HEAVY_STATISTICS
-	unsigned long long gray_queue_section_alloc;
-	unsigned long long gray_queue_section_free;
-	unsigned long long gray_queue_enqueue_fast_path;
-	unsigned long long gray_queue_dequeue_fast_path;
-	unsigned long long gray_queue_enqueue_slow_path;
-	unsigned long long gray_queue_dequeue_slow_path;
-#endif
+	guint minor_gc_count;
+	guint major_gc_count;
+	guint64 minor_gc_time;
+	guint64 major_gc_time;
+	guint64 major_gc_time_concurrent;
 } GCStats;
 
 #define mono_domain_finalizers_lock(domain) mono_mutex_lock (&(domain)->finalizable_objects_hash_lock);
@@ -228,7 +220,8 @@ typedef struct {
 	int alloc_type;
 } AllocatorWrapperInfo;
 
-MonoMethod* mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box) MONO_INTERNAL;
+int mono_gc_get_aligned_size_for_allocator (int size) MONO_INTERNAL;
+MonoMethod* mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size) MONO_INTERNAL;
 MonoMethod* mono_gc_get_managed_array_allocator (MonoClass *klass) MONO_INTERNAL;
 MonoMethod *mono_gc_get_managed_allocator_by_type (int atype) MONO_INTERNAL;
 
@@ -336,6 +329,8 @@ void mono_gc_set_skip_thread (gboolean skip) MONO_INTERNAL;
  * Return whenever GC is disabled
  */
 gboolean mono_gc_is_disabled (void) MONO_INTERNAL;
+
+void mono_gc_set_string_length (MonoString *str, gint32 new_length) MONO_INTERNAL;
 
 #if defined(__MACH__)
 void mono_gc_register_mach_exception_thread (pthread_t thread) MONO_INTERNAL;

@@ -25,7 +25,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -68,7 +67,6 @@ namespace System.Threading
 			this.valueFactory = valueFactory;
 		}
 
-#if NET_4_5
 		public ThreadLocal (bool trackAllValues) : this () {
 			if (trackAllValues)
 				throw new NotImplementedException ();
@@ -78,7 +76,6 @@ namespace System.Threading
 			if (trackAllValues)
 				throw new NotImplementedException ();
 		}
-#endif
 
 		public void Dispose ()
 		{
@@ -151,7 +148,6 @@ namespace System.Threading
 			}
 		}
 
-#if NET_4_5
 		public IList<T> Values {
 			get {
 				if (tls_offset == 0)
@@ -159,7 +155,6 @@ namespace System.Threading
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 		public override string ToString ()
 		{
@@ -168,4 +163,3 @@ namespace System.Threading
 		
 	}
 }
-#endif

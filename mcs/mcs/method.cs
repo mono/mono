@@ -165,6 +165,11 @@ namespace Mono.CSharp {
 			return s + parameters.GetSignatureForDocumentation ();
 		}
 
+		public virtual void PrepareEmit ()
+		{
+			parameters.ResolveDefaultValues (this);
+		}
+
 		public MethodSpec Spec {
 			get { return spec; }
 		}
@@ -816,8 +821,10 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public virtual void PrepareEmit ()
+		public override void PrepareEmit ()
 		{
+			base.PrepareEmit ();
+
 			var mb = MethodData.DefineMethodBuilder (Parent);
 
 			if (CurrentTypeParameters != null) {
@@ -1498,15 +1505,6 @@ namespace Mono.CSharp {
 							"`{0}': Struct constructors cannot call base constructors", caller_builder.GetSignatureForError ());
 						return this;
 					}
-				} else {
-					//
-					// It is legal to have "this" initializers that take no arguments
-					// in structs
-					//
-					// struct D { public D (int a) : this () {}
-					//
-					if (ec.CurrentType.IsStruct && argument_list == null)
-						return this;
 				}
 
 				base_ctor = ConstructorLookup (ec, type, ref argument_list, loc);
@@ -1663,12 +1661,6 @@ namespace Mono.CSharp {
 		protected override bool CheckBase ()
 		{
 			if ((ModFlags & Modifiers.STATIC) != 0) {
-				if (!parameters.IsEmpty) {
-					Report.Error (132, Location, "`{0}': The static constructor must be parameterless",
-						GetSignatureForError ());
-					return false;
-				}
-
 				if ((caching_flags & Flags.MethodOverloadsExist) != 0)
 					Parent.MemberCache.CheckExistingMembersOverloads (this, parameters);
 
@@ -1682,12 +1674,6 @@ namespace Mono.CSharp {
 
 			if ((caching_flags & Flags.MethodOverloadsExist) != 0)
 				Parent.MemberCache.CheckExistingMembersOverloads (this, parameters);
-
-			if (Parent.PartialContainer.Kind == MemberKind.Struct && parameters.IsEmpty) {
-				Report.Error (568, Location, 
-					"Structs cannot contain explicit parameterless constructors");
-				return false;
-			}
 
 			CheckProtectedModifier ();
 			
@@ -1717,6 +1703,11 @@ namespace Mono.CSharp {
 					Report.Error (8037, Location, "`{0}': Instance constructor of type with primary constructor must specify `this' constructor initializer",
 						GetSignatureForError ());
 				}
+			}
+
+			if ((ModFlags & Modifiers.EXTERN) != 0 && Initializer != null) {
+				Report.Error (8091, Location, "`{0}': Contructors cannot be extern and have a constructor initializer",
+					GetSignatureForError ());
 			}
 
 			var ca = ModifiersExtensions.MethodAttr (ModFlags) | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName;

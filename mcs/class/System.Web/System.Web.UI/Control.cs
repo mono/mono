@@ -49,9 +49,7 @@ using System.Web.UI.Adapters;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 
-#if NET_4_0
 using System.Web.Routing;
-#endif
 
 namespace System.Web.UI
 {
@@ -107,13 +105,11 @@ namespace System.Web.UI
 		TemplateControl _templateControl;
 		bool _isChildControlStateCleared;
 		string _templateSourceDirectory;
-#if NET_4_0
 		ViewStateMode viewStateMode;
 		ClientIDMode? clientIDMode;
 		ClientIDMode? effectiveClientIDMode;
 		Version renderingCompatibility;
 		bool? renderingCompatibilityOld;
-#endif
 		/*************/
 		int stateMask;
 		const int ENABLE_VIEWSTATE = 1;
@@ -149,9 +145,7 @@ namespace System.Web.UI
 			stateMask = ENABLE_VIEWSTATE | VISIBLE | AUTOID | BINDING_CONTAINER | AUTO_EVENT_WIREUP;
 			if (this is INamingContainer)
 				stateMask |= IS_NAMING_CONTAINER;
-#if NET_4_0
 			viewStateMode = ViewStateMode.Inherit;
-#endif
 		}
 		
 		ControlAdapter adapter;
@@ -198,9 +192,7 @@ namespace System.Web.UI
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never), Browsable (false)]
-#if NET_4_0
 		[Bindable (false)]
-#endif
 		public Control BindingContainer {
 			get {
 				Control container = NamingContainer;
@@ -218,16 +210,11 @@ namespace System.Web.UI
 			get {
 				if (clientID != null)
 					return clientID;
-#if NET_4_0
 				clientID = GetClientID ();
-#else
-				clientID = UniqueID2ClientID (UniqueID);
-#endif				
 				stateMask |= ID_SET;
 				return clientID;
 			}
 		}
-#if NET_4_0
 		[Bindable (false)]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -455,7 +442,6 @@ namespace System.Web.UI
 				sb.Append (value.ToString ());
 			}
 		}
-#endif
 		internal string UniqueID2ClientID (string uniqueId)
 		{
 			if (String.IsNullOrEmpty (uniqueId))
@@ -527,11 +513,9 @@ namespace System.Web.UI
 				for (Control control = this; control != null; control = control.Parent) {
 					if (!control.EnableViewState)
 						return false;
-#if NET_4_0
 					ViewStateMode vsm = control.ViewStateMode;
 					if (vsm != ViewStateMode.Inherit)
 						return vsm == ViewStateMode.Enabled;
-#endif
 				}
 				
 				return true;
@@ -545,9 +529,7 @@ namespace System.Web.UI
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("The container that this control is part of. The control's name has to be unique within the container.")]
-#if NET_4_0
 		[Bindable (false)]
-#endif
 		public virtual Control NamingContainer {
 			get {
 				if (_namingContainer == null && _parent != null) {
@@ -582,9 +564,7 @@ namespace System.Web.UI
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("The parent control of this control.")]
-#if NET_4_0
 		[Bindable (false)]
-#endif
 		public virtual Control Parent { //DIT
 			get { return _parent; }
 		}
@@ -599,9 +579,7 @@ namespace System.Web.UI
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_4_0
 		[Bindable (false)]
-#endif
 		public TemplateControl TemplateControl {
 			get { return TemplateControlInternal; }
 
@@ -619,7 +597,6 @@ namespace System.Web.UI
 			}
 		}
 
-#if !TARGET_J2EE
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("A virtual directory containing the parent of the control.")]
@@ -655,7 +632,6 @@ namespace System.Web.UI
 				return _templateSourceDirectory;
 			}
 		}
-#endif
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -673,10 +649,6 @@ namespace System.Web.UI
 				string prefix = container.UniqueID;
 				if (container == Page || prefix == null) {
 					uniqueID = _userId;
-#if TARGET_J2EE
-					if (getFacesContext () != null)
-						uniqueID = getFacesContext ().getExternalContext ().encodeNamespace (uniqueID);
-#endif
 					return uniqueID;
 				}
 
@@ -819,11 +791,7 @@ namespace System.Web.UI
 		void NullifyUniqueID ()
 		{
 			uniqueID = null;
-#if NET_4_0
 			ClearCachedClientID ();
-#else
-			clientID = null;
-#endif
 			if (!HasControls ())
 				return;
 
@@ -1553,37 +1521,6 @@ namespace System.Web.UI
 			if (relativeUrl.Length == 0)
 				return String.Empty;
 
-#if TARGET_J2EE
-			relativeUrl = ResolveClientUrlInternal (relativeUrl);
-
-			javax.faces.context.FacesContext faces = getFacesContext ();
-			if (faces == null)
-				return relativeUrl;
-
-			string url;
-			if (relativeUrl.IndexOf (':') >= 0)
-				url = ResolveAppRelativeFromFullPath (relativeUrl);
-			else if (VirtualPathUtility.IsAbsolute (relativeUrl))
-				url = VirtualPathUtility.ToAppRelative (relativeUrl);
-			else
-				return faces.getApplication ().getViewHandler ().getResourceURL (faces, relativeUrl);
-
-			if (VirtualPathUtility.IsAppRelative (url)) {
-				url = url.Substring (1);
-				url = url.Length == 0 ? "/" : url;
-				return faces.getApplication ().getViewHandler ().getResourceURL (faces, url);
-			}
-			return relativeUrl;
-		}
-		
-		string ResolveClientUrlInternal (string relativeUrl) {
-			if (relativeUrl.StartsWith (J2EE.J2EEConsts.ACTION_URL_PREFIX, StringComparison.Ordinal))
-				return CreateActionUrl (relativeUrl.Substring (J2EE.J2EEConsts.ACTION_URL_PREFIX.Length));
-
-			if (relativeUrl.StartsWith (J2EE.J2EEConsts.RENDER_URL_PREFIX, StringComparison.Ordinal))
-				return ResolveClientUrl (relativeUrl.Substring (J2EE.J2EEConsts.RENDER_URL_PREFIX.Length));
-
-#endif
 			if (VirtualPathUtility.IsAbsolute (relativeUrl) || relativeUrl.IndexOf (':') >= 0)
 				return relativeUrl;
 
@@ -1719,11 +1656,7 @@ namespace System.Web.UI
 			
 			stateMask |= PRERENDERED;
 		}
-#if NET_4_0
 		internal virtual
-#else
-		internal
-#endif
 		void InitRecursive (Control namingContainer)
 		{
 #if MONO_TRACE
@@ -2118,7 +2051,6 @@ namespace System.Web.UI
 				return false;
 			}
 		}
-#if NET_4_0
 		[ThemeableAttribute(false)]
 		[DefaultValue (ViewStateMode.Inherit)]
 		public virtual ViewStateMode ViewStateMode {
@@ -2184,6 +2116,5 @@ namespace System.Web.UI
 
 			return UniqueID.Substring (idx + 1);
 		}
-#endif
 	}
 }

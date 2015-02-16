@@ -188,20 +188,13 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
-	#if NET_2_0
 		[ExpectedException (typeof (AccessViolationException))]
-	#else
-		[ExpectedException (typeof (NullReferenceException))]
-	#endif
 		public void ToLogFont_Null ()
 		{
 			Font f = new Font ("Arial", 10);
 			f.ToLogFont (null);
 		}
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Font_StringNull_Float ()
 		{
 			string family = null;

@@ -6,7 +6,6 @@
 //
 // Copyright (C) 2006 Novell, Inc.
 //
-#if NET_2_0
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -47,4 +46,3 @@ namespace MonoTests.System.Diagnostics
 		}
 	}
 }
-#endif

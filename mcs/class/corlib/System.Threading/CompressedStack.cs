@@ -76,12 +76,7 @@ namespace System.Threading {
 		// NOTE: This method doesn't show in the class library status page because
 		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
 		// But it's there!
-#if NET_4_0
 		[SecurityCritical]
-#else
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-#endif
 		static public CompressedStack GetCompressedStack ()
 		{
 			// Note: CompressedStack.GetCompressedStack doesn't return null
@@ -101,22 +96,14 @@ namespace System.Threading {
 		}
 
 		[MonoTODO ("incomplete")]
-#if NET_4_0
 		[SecurityCritical]
-#else
-		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]
-#endif
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
 		}
 
-#if NET_4_0
 		[SecurityCritical]
-#else
-		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
-#endif
 		static public void Run (CompressedStack compressedStack, ContextCallback callback, object state)
 		{
 			if (compressedStack == null)

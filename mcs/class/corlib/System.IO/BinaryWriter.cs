@@ -51,15 +51,14 @@ namespace System.IO {
 		int maxCharsPerRound;
 		bool disposed;
 
-		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8UnmarkedUnsafe)
+		protected BinaryWriter() : this (Stream.Null, EncodingHelper.UTF8UnmarkedUnsafe)
 		{
 		}
 
-		public BinaryWriter(Stream output) : this(output, Encoding.UTF8UnmarkedUnsafe)
+		public BinaryWriter(Stream output) : this(output, EncodingHelper.UTF8UnmarkedUnsafe)
 		{
 		}
 		
-#if NET_4_5
 		readonly bool leave_open;
 		
 		public BinaryWriter(Stream output, Encoding encoding)
@@ -68,11 +67,6 @@ namespace System.IO {
 		}
 		
 		public BinaryWriter(Stream output, Encoding encoding, bool leaveOpen)
-#else
-		const bool leave_open = false;
-		
-		public BinaryWriter(Stream output, Encoding encoding)
-#endif
 		{
 			if (output == null) 
 				throw new ArgumentNullException("output");
@@ -81,9 +75,7 @@ namespace System.IO {
 			if (!output.CanWrite)
 				throw new ArgumentException(Locale.GetText ("Stream does not support writing or already closed."));
 
-#if NET_4_5
 			leave_open = leaveOpen;
-#endif
 			OutStream = output;
 			m_encoding = encoding;
 			buffer = new byte [16];
@@ -100,11 +92,7 @@ namespace System.IO {
 			Dispose (true);
 		}
 
-#if NET_4_0
 		public void Dispose ()
-#else
-		void IDisposable.Dispose() 
-#endif
 		{
 			Dispose (true);
 		}

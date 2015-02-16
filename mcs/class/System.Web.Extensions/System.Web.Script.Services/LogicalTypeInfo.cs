@@ -40,10 +40,8 @@ using System.Web.Script.Serialization;
 using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
-#if NET_3_5
 using System.ServiceModel;
 using System.ServiceModel.Description;
-#endif
 
 namespace System.Web.Script.Services
 {
@@ -59,11 +57,9 @@ namespace System.Web.Script.Services
 	{
 		public static LogicalTypeInfo CreateTypeInfo (Type t, string filePath)
 		{
-#if NET_3_5
 			if (t.GetCustomAttributes (typeof (ServiceContractAttribute), false).Length > 0)
 				return new WcfLogicalTypeInfo (t, filePath);
 			else
-#endif
 				return new AsmxLogicalTypeInfo (t, filePath);
 		}
 
@@ -145,24 +141,7 @@ return this._invoke({0}.get_path(), '{1}',{2},{{{3}}},succeededCallback,failedCa
 			public abstract void Invoke (HttpRequest request, HttpResponse response);
 		}
 
-#if !TARGET_J2EE
 		static Hashtable _type_to_logical_type = Hashtable.Synchronized (new Hashtable ());
-#else
-		const string type_to_logical_type_key = "System.Web.Script.Services.LogicalTypeInfo";
-		static Hashtable _type_to_logical_type {
-			get {
-				Hashtable hash = (Hashtable) AppDomain.CurrentDomain.GetData (type_to_logical_type_key);
-
-				if (hash != null)
-					return hash;
-
-				AppDomain.CurrentDomain.SetData (type_to_logical_type_key, Hashtable.Synchronized (new Hashtable ()));
-
-
-				return (Hashtable) AppDomain.CurrentDomain.GetData (type_to_logical_type_key);
-			}
-		}
-#endif
 
 		static internal LogicalTypeInfo GetLogicalTypeInfo (Type t, string filePath) {
 			Hashtable type_to_manager = _type_to_logical_type;
@@ -411,7 +390,7 @@ if (typeof({0}) === 'undefined') {{", className);
 				var ret = new Dictionary <string, object> ();
 
 				for (int i = nvc.Count - 1; i >= 0; i--)
-					ret.Add (nvc.GetKey (i), JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal (nvc.Get (i)));
+					ret.Add (nvc.GetKey (i), nvc.Get (i));
 
 				return ret;
 			}
@@ -594,7 +573,6 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 		}
 	}
 
-#if NET_3_5
 	internal class WcfLogicalTypeInfo : LogicalTypeInfo
 	{
 		ContractDescription cd;
@@ -695,5 +673,4 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 			}
 		}
 	}
-#endif
 }

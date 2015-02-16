@@ -6,6 +6,10 @@
 #include <asm/sigcontext.h>
 #endif
 
+#ifdef HAVE_UCONTEXT_H
+#include <ucontext.h>
+#endif
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -16,9 +20,6 @@
 
 #if defined(TARGET_X86)
 
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__APPLE__) || defined(__DragonFly__)
-#include <ucontext.h>
-#endif
 #if defined(__APPLE__)
 #include <AvailabilityMacros.h>
 #endif
@@ -87,7 +88,7 @@
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [EIP])
 #else
 
-#if defined(TARGET_ANDROID)
+#if defined(PLATFORM_ANDROID) && !defined(HAVE_UCONTEXT_H)
 /* No ucontext.h as of NDK v6b */
 typedef int greg_t;
 #define NGREG 19
@@ -153,10 +154,6 @@ typedef struct ucontext {
 #endif
 
 #elif defined(TARGET_AMD64)
-
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-#include <ucontext.h>
-#endif
 
 #if defined(__APPLE__)
 	#define UCONTEXT_REG_RAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__rax)

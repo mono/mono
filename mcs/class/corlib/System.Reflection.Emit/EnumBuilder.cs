@@ -44,11 +44,7 @@ namespace System.Reflection.Emit {
 	[ComDefaultInterface (typeof (_EnumBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class EnumBuilder : 
-#if NET_4_5
 		TypeInfo
-#else
-		Type
-#endif
 		, _EnumBuilder
 	{
 		private TypeBuilder _tb;
@@ -166,12 +162,10 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-#if NET_4_0
 		public override Type GetEnumUnderlyingType ()
 		{
 			return _underlyingType;
 		}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void setup_enum_type (Type t);
@@ -426,7 +420,6 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-#if NET_4_5
 		public override bool IsConstructedGenericType {
 			get { return false; }
 		}
@@ -435,7 +428,6 @@ namespace System.Reflection.Emit {
 		{
 			return base.IsAssignableFrom (typeInfo);
 		}
-#endif
 
 	}
 }

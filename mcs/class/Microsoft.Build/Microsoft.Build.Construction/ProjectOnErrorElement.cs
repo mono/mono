@@ -62,9 +62,7 @@ namespace Microsoft.Build.Construction
                         }
                 }
                 
-                #if NET_4_5
                 public 
-                #endif
                 ElementLocation ExecuteTargetsAttributeLocation { get; set; }
         }
 }

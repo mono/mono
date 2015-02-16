@@ -121,9 +121,7 @@ namespace System.Data
 		/// dimensional Array, starting at the specified InternalDataCollectionBase index.
 		/// </summary>
 		public
-#if NET_2_0
 		virtual
-#endif
 		void CopyTo (Array ar, int index)
 		{
   			list.CopyTo (ar, index);
@@ -133,9 +131,7 @@ namespace System.Data
   		/// Gets an IEnumerator for the collection.
   		/// </summary>
 		public
-#if NET_2_0
 		virtual
-#endif
 		IEnumerator GetEnumerator ()
   		{
   			return list.GetEnumerator ();

@@ -130,7 +130,6 @@ namespace System.ServiceModel
 			if (endpoint == null)
 				throw new InvalidOperationException (String.Format ("Client endpoint configuration '{0}' was not found in {1} endpoints.", endpointConfig, client.Endpoints.Count));
 
-#if NET_4_0
 			var binding = String.IsNullOrEmpty (endpoint.Binding) ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
 			var contractType = ConfigUtil.GetTypeFromConfigString (endpoint.Contract, NamedConfigCategory.Contract);
 			if (contractType == null)
@@ -151,7 +150,6 @@ namespace System.ServiceModel
 				if (binding == null && endpoint.Address != null) // look for protocol mapping
 					Endpoint.Binding = ConfigUtil.GetBindingByProtocolMapping (endpoint.Address);
 			}
-#endif
 			if (Endpoint.Binding == null)
 				Endpoint.Binding = ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
 			if (Endpoint.Address == null)

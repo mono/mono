@@ -73,13 +73,6 @@ namespace System.Web.Handlers
 			IHttpHandler currentHandler = context.CurrentHandler;
 			if (currentHandler == null)
 				return;
-#if TARGET_J2EE
-			if (!(currentHandler is Page) && currentHandler is IServiceProvider) {
-				pageType = (Type) ((IServiceProvider) currentHandler).GetService (typeof (Type));
-				if (pageType == null)
-					return;
-			}
-#endif
 			Type pageType = currentHandler.GetType ();
 			if (typeof (Page).IsAssignableFrom (pageType) && !String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
 				IHttpHandler h = RestHandler.GetHandler (context, pageType, request.FilePath);
@@ -94,10 +87,6 @@ namespace System.Web.Handlers
 			HttpContext context = app.Context;
 			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true") {
 				Page p = context.CurrentHandler as Page;
-#if TARGET_J2EE
-				if (p == null && context.CurrentHandler is IServiceProvider)
-					p = (Page) ((IServiceProvider) context.CurrentHandler).GetService (typeof (Page));
-#endif
 				ScriptManager sm = ScriptManager.GetCurrentInternal (p);
 				if (context.Response.StatusCode == 302) {
 					context.Response.StatusCode = 200;

@@ -39,9 +39,7 @@ namespace Microsoft.Build.Framework
 		string	senderName;
 		int	threadId;
 		DateTime	timestamp;
-#if NET_3_5
 		BuildEventContext context;
-#endif
 
 		protected BuildEventArgs ()
 			: this (null, null, null)
@@ -54,9 +52,7 @@ namespace Microsoft.Build.Framework
 		{
 		}
 
-#if NET_4_0
 		protected
-#endif
 		BuildEventArgs (string message, string helpKeyword,
 		                string senderName, DateTime eventTimestamp)
 		{
@@ -65,9 +61,7 @@ namespace Microsoft.Build.Framework
 			this.senderName = senderName;
 			this.threadId = Thread.CurrentThread.GetHashCode ();
 			this.timestamp = eventTimestamp;
-#if NET_3_5
 			this.context = BuildEventContext.NewInstance ();
-#endif
 		}
 
 		public string HelpKeyword {
@@ -76,18 +70,14 @@ namespace Microsoft.Build.Framework
 			}
 		}
 
-#if NET_4_0
 		virtual
-#endif
 		public string Message {
 			get {
 				return message;
 			}
-#if NET_4_0			
 			protected set {
 				message = value;
 			}
-#endif
 		}
 
 		public string SenderName {
@@ -109,7 +99,6 @@ namespace Microsoft.Build.Framework
 			}
 		}
 
-#if NET_3_5
 		public BuildEventContext BuildEventContext {
 			get { return context; }
 			set {
@@ -118,7 +107,6 @@ namespace Microsoft.Build.Framework
 				context = value;
 			}
 		}
-#endif
 	}
 }
 

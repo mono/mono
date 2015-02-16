@@ -50,10 +50,8 @@ namespace MonoTests.System.Data.OleDb {
 			Assert.AreEqual (KeyRestrictionBehavior.AllowOnly, a.KeyRestrictionBehavior, "KeyRestrictionBehavior");
 			Assert.AreEqual (String.Empty, a.KeyRestrictions, "KeyRestrictions");
 			Assert.AreEqual (String.Empty, a.Provider, "Provider");
-#if NET_2_0
 			Assert.IsFalse (a.ShouldSerializeConnectionString (), "ShouldSerializeConnectionString");
 			Assert.IsFalse (a.ShouldSerializeKeyRestrictions (), "ShouldSerializeConnectionString");
-#endif
 			OleDbPermission odp = (OleDbPermission)a.CreatePermission ();
 			Assert.IsFalse (odp.IsUnrestricted (), "IsUnrestricted");
 		}
@@ -139,11 +137,7 @@ namespace MonoTests.System.Data.OleDb {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void KeyRestrictionBehavior_Invalid ()
 		{
 			OleDbPermissionAttribute a = new OleDbPermissionAttribute (SecurityAction.Assert);
@@ -182,12 +176,8 @@ namespace MonoTests.System.Data.OleDb {
 			Assert.AreEqual ("Mono", a.Provider, "Mono");
 
 			OleDbPermission odp = (OleDbPermission) a.CreatePermission ();
-#if NET_2_0
 			// provider isn't even supplied to permission in fx 2.0
 			Assert.AreEqual (String.Empty, odp.Provider, "CreatePermission.Provider");
-#else
-			Assert.AreEqual ("Mono", odp.Provider, "CreatePermission.Provider");
-#endif
 		}
 
 		[Test]

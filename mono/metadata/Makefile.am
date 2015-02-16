@@ -66,7 +66,7 @@ else
 noinst_LTLIBRARIES = $(boehm_libraries) $(sgen_libraries)
 endif
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\"
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\" $(SHARED_CFLAGS)
 
 #
 # Make sure any prefix changes are updated in the binaries too.
@@ -108,8 +108,8 @@ common_sources = \
 	debug-helpers.c		\
 	debug-mono-symfile.h	\
 	debug-mono-symfile.c	\
-	decimal.c		\
-	decimal.h		\
+	decimal-ms.c		\
+	decimal-ms.h		\
 	domain-internals.h	\
 	environment.c		\
 	environment.h		\
@@ -124,6 +124,7 @@ common_sources = \
 	icall.c			\
 	icall-def.h		\
 	image.c			\
+	jit-info.c		\
 	loader.c		\
 	locales.c		\
 	locales.h		\
@@ -147,7 +148,6 @@ common_sources = \
 	mono-debug.h		\
 	mono-debug.c		\
 	mono-debug-debugger.h	\
-	mono-debug-debugger.c	\
 	mono-endian.c		\
 	mono-endian.h		\
 	mono-hash.h		\
@@ -157,6 +157,8 @@ common_sources = \
 	mono-perfcounters.h	\
 	mono-perfcounters-def.h	\
 	mono-ptr-array.h	\
+	mono-route.c		\
+	mono-route.h		\
 	mono-wsq.c		\
 	mono-wsq.h		\
 	monitor.h		\
@@ -173,8 +175,10 @@ common_sources = \
 	profiler-private.h	\
 	rand.h			\
 	rand.c			\
+	remoting.h		\
+	remoting.c		\
 	runtime.c		\
-	security.c		\
+	mono-security.c		\
 	security.h		\
 	security-core-clr.c	\
 	security-core-clr.h	\
@@ -190,6 +194,7 @@ common_sources = \
 	threadpool.c		\
 	threadpool.h		\
 	threadpool-internals.h	\
+	tpool-poll.c	\
 	verify.c		\
 	verify-internals.h	\
 	wrapper-types.h	\
@@ -222,9 +227,6 @@ sgen_sources = \
 	sgen-gc.c		\
 	sgen-internal.c		\
 	sgen-marksweep.c	\
-	sgen-marksweep-fixed.c	\
-	sgen-marksweep-par.c	\
-	sgen-marksweep-fixed-par.c	\
 	sgen-los.c		\
 	sgen-protocol.c \
 	sgen-bridge.c		\
@@ -251,9 +253,11 @@ sgen_sources = \
 	sgen-major-copy-object.h \
 	sgen-minor-copy-object.h \
 	sgen-copy-object.h \
-	sgen-major-scan-object.h \
+	sgen-marksweep-scan-object-concurrent.h \
 	sgen-minor-scan-object.h \
+	sgen-marksweep-drain-gray-stack.h	\
 	sgen-protocol.h		\
+	sgen-protocol-def.h		\
 	sgen-scan-object.h	\
 	sgen-nursery-allocator.c	\
 	sgen-hash-table.c	\
@@ -271,7 +275,8 @@ sgen_sources = \
 	sgen-layout-stats.c	\
 	sgen-layout-stats.h	\
 	sgen-qsort.c	\
-	sgen-qsort.h
+	sgen-qsort.h	\
+	sgen-tagged-pointer.h
 
 libmonoruntime_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
 libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES)
@@ -342,4 +347,4 @@ endif
 endif
 
 EXTRA_DIST = make-bundle.pl sample-bundle $(win32_sources) $(unix_sources) $(null_sources) runtime.h \
-		tpool-poll.c tpool-epoll.c tpool-kqueue.c Makefile.am.in
+		tpool-poll.c tpool-epoll.c tpool-kqueue.c

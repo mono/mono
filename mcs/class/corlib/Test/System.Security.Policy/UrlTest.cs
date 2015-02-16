@@ -56,11 +56,7 @@ namespace MonoTests.System.Security.Policy {
 		public void Url_NoProtocol () 
 		{
 			Url u = new Url ("index.html");
-#if NET_2_0
 			Assert.AreEqual ("index.html", u.Value, "Value");
-#else
-			Assert.AreEqual ("file://INDEX.HTML", u.Value, "Value");
-#endif
 		}
 
 		[Test]
@@ -70,17 +66,10 @@ namespace MonoTests.System.Security.Policy {
 			Url u2 = new Url ("ftp://www.go-mono.com");
 			Url u3 = new Url ("http://www.go-mono.com");
 			Url u4 = new Url ("https://www.go-mono.com");
-#if NET_2_0
 			Assert.AreEqual ("file://mono/index.html", u1.Value, "file.Value");
 			Assert.AreEqual ("ftp://www.go-mono.com", u2.Value, "ftp.Value");
 			Assert.AreEqual ("http://www.go-mono.com", u3.Value, "http.Value");
 			Assert.AreEqual ("https://www.go-mono.com", u4.Value, "https.Value");
-#else
-			Assert.AreEqual ("file://MONO/INDEX.HTML", u1.Value, "file.Value");
-			Assert.AreEqual ("ftp://www.go-mono.com/", u2.Value, "ftp.Value");
-			Assert.AreEqual ("http://www.go-mono.com/", u3.Value, "http.Value");
-			Assert.AreEqual ("https://www.go-mono.com/", u4.Value, "https.Value");
-#endif
 		}
 
 		[Test]
@@ -106,12 +95,8 @@ namespace MonoTests.System.Security.Policy {
 			Url u = new Url (url);
 
 			Assert.IsTrue (u.Value.StartsWith (url), "Value");
-#if NET_2_0
 			// no spaces in XML, no ending '/' on url
 			Assert.AreEqual ("<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "<Url>http://www.go-mono.com</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString (), "ToString");
-#else
-			Assert.AreEqual ("<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "   <Url>http://www.go-mono.com/</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString (), "ToString");
-#endif
 			Url u2 = (Url) u.Copy ();
 			Assert.AreEqual (u.Value, u2.Value, "Copy.Value");
 			Assert.AreEqual (u.GetHashCode (), u2.GetHashCode (), "Copy.GetHashCode");
@@ -125,15 +110,10 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Url_InvalidSite () 
 		{
 			Url u = new Url ("http://www.go-mono.*");
-#if NET_2_0
 			Assert.AreEqual ("http://www.go-mono.*", u.Value, "Value");
-#endif
 		}
 
 		[Test]
@@ -164,13 +144,8 @@ namespace MonoTests.System.Security.Policy {
 		public void Url_LoneStar () 
 		{
 			Url u = new Url ("*");
-#if NET_2_0
 			Assert.AreEqual ("*", u.Value, "Value");
 			Assert.AreEqual ("<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "<Url>*</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString (), "ToString");
-#else
-			Assert.AreEqual ("file://*", u.Value, "Value");
-			Assert.AreEqual ("<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "   <Url>file://*</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString (), "ToString");
-#endif
 			Url u2 = (Url) u.Copy ();
 			Assert.AreEqual (u.Value, u2.Value, "Copy.Value");
 			Assert.AreEqual (u.GetHashCode (), u2.GetHashCode (), "Copy.GetHashCode");

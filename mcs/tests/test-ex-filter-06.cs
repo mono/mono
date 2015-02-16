@@ -8,7 +8,7 @@ class C
 	{
 		try {
 			throw null;
-		} catch (T t) if (t.Message != null) {
+		} catch (T t) when (t.Message != null) {
 			return 0;
 		}
 	}

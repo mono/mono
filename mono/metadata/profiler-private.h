@@ -73,9 +73,12 @@ void mono_profiler_gc_roots       (int num, void **objects, int *root_types, uin
 
 void mono_profiler_code_chunk_new (gpointer chunk, int size) MONO_INTERNAL;
 void mono_profiler_code_chunk_destroy (gpointer chunk) MONO_INTERNAL;
-void mono_profiler_code_buffer_new (gpointer buffer, int size, MonoProfilerCodeBufferType type, void *data) MONO_INTERNAL;
+void mono_profiler_code_buffer_new (gpointer buffer, int size, MonoProfilerCodeBufferType type, gconstpointer data) MONO_INTERNAL;
 
 void mono_profiler_runtime_initialized (void) MONO_INTERNAL;
+
+int64_t mono_profiler_get_sampling_rate (void) MONO_INTERNAL;
+MonoProfileSamplingMode mono_profiler_get_sampling_mode (void) MONO_INTERNAL;
 
 #endif /* __MONO_PROFILER_PRIVATE_H__ */
 

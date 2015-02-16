@@ -122,7 +122,6 @@ namespace System.ServiceModel.Configuration
 			set { base [log_entire_message] = value; }
 		}
 
-#if NET_4_0
 		[ConfigurationProperty ("logKnownPii",
 			 Options = ConfigurationPropertyOptions.None,
 			DefaultValue = false)]
@@ -130,7 +129,6 @@ namespace System.ServiceModel.Configuration
 			get { return (bool) base [log_known_pii]; }
 			set { base [log_known_pii] = value; }
 		}
-#endif
 
 		[ConfigurationProperty ("logMalformedMessages",
 			 Options = ConfigurationPropertyOptions.None,

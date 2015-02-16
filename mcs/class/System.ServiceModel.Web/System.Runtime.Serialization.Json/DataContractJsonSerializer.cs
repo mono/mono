@@ -84,7 +84,17 @@ namespace System.Runtime.Serialization.Json
 				throw new ArgumentOutOfRangeException ("maxItemsInObjectGraph");
 
 			this.type = type;
-			known_types = new ReadOnlyCollection<Type> (knownTypes != null ? knownTypes.ToArray () : Type.EmptyTypes);
+
+			var knownTypesFromAttributes = new List<Type> ();
+
+			foreach (var attr in type.GetCustomAttributes (typeof (KnownTypeAttribute), false))
+				knownTypesFromAttributes.Add ((attr as KnownTypeAttribute).Type);
+
+			if (knownTypes != null)
+				knownTypesFromAttributes.AddRange (knownTypes);
+
+			known_types = new ReadOnlyCollection<Type> (knownTypesFromAttributes);
+
 			root = rootName;
 			max_items = maxItemsInObjectGraph;
 			ignore_extension = ignoreExtensionDataObject;
@@ -107,13 +117,11 @@ namespace System.Runtime.Serialization.Json
 		{
 		}
 
-#if NET_4_5
 		public DataContractJsonSerializer (Type type, DataContractJsonSerializerSettings settings)
 			: this (type, settings.RootName, settings.KnownTypes, settings.MaxItemsInObjectGraph, settings.IgnoreExtensionDataObject,
 			        settings.DataContractSurrogate, false)
 		{
 		}
-#endif
 
         #endregion
 
@@ -134,8 +142,6 @@ namespace System.Runtime.Serialization.Json
 		public bool IgnoreExtensionDataObject {
 			get { return ignore_extension; }
 		}
-
-		[MonoTODO]
 		public ReadOnlyCollection<Type> KnownTypes {
 			get { return known_types; }
 		}
@@ -263,7 +269,6 @@ namespace System.Runtime.Serialization.Json
 			writer.WriteEndElement ();
 		}
 
-#if NET_4_5
 		[MonoTODO]
 		public DateTimeFormat DateTimeFormat {
 			get { throw new NotImplementedException (); }
@@ -283,7 +288,6 @@ namespace System.Runtime.Serialization.Json
 		public bool UseSimpleDictionaryFormat {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 	}
 }

@@ -124,6 +124,7 @@ namespace MonoTests.System.Runtime.Caching
 			Assert.AreEqual (1, monitor.FilePaths.Count, "#A2-1");
 			Assert.AreEqual (missingFile, monitor.FilePaths [0], "#A2-2");
 			Assert.AreEqual (missingFile + "701CE1722770000FFFFFFFFFFFFFFFF", monitor.UniqueId, "#A2-4");
+			monitor.Dispose ();
 
 			paths.Add (missingFile);
 			monitor = new HostFileChangeMonitor (paths);
@@ -131,6 +132,7 @@ namespace MonoTests.System.Runtime.Caching
 			Assert.AreEqual (missingFile, monitor.FilePaths [0], "#A3-2");
 			Assert.AreEqual (missingFile, monitor.FilePaths [1], "#A3-3");
 			Assert.AreEqual (missingFile + "701CE1722770000FFFFFFFFFFFFFFFF", monitor.UniqueId, "#A3-4");
+			monitor.Dispose ();
 		}
 
 		[Test]
@@ -153,11 +155,12 @@ namespace MonoTests.System.Runtime.Caching
 
 			// Just checks if it doesn't throw any exception for dupes
 			monitor = new HostFileChangeMonitor (paths);
+			monitor.Dispose ();
 		}
 
 		static Tuple <string, string, string, IList <string>> SetupMonitoring ()
 		{
-			string testPath = Path.Combine (Path.GetTempPath (), "Dispose_Calls_StopMonitoring");
+			string testPath = Path.Combine (Path.GetTempPath (), "HostFileChangeMonitorTest", "Dispose_Calls_StopMonitoring");
 			if (!Directory.Exists (testPath))
 				Directory.CreateDirectory (testPath);
 
@@ -297,6 +300,7 @@ namespace MonoTests.System.Runtime.Caching
 				list.Add (setup.Item1);
 				monitor = new HostFileChangeMonitor (list);
 				Assert.AreEqual (sb.ToString (), monitor.UniqueId, "#A3");
+				monitor.Dispose ();
 			} finally {
 				CleanupMonitoring (setup);
 			}

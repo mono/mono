@@ -315,11 +315,9 @@ namespace System.Web.UI.WebControls
 			bool need_span = ControlStyleCreated && !ControlStyle.IsEmpty;
 			bool enabled = IsEnabled;
 			if (!enabled) {
-#if NET_4_0
 				if (!RenderingCompatibilityLessThan40)
 					ControlStyle.PrependCssClass (DisabledCssClass);
 				else
-#endif
 					w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 				need_span = true;
 			}

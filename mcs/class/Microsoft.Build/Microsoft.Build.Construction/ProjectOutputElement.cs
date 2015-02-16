@@ -57,13 +57,11 @@ namespace Microsoft.Build.Construction
                         get { return taskParameter ?? String.Empty; }
                         set { taskParameter = value; }
                 }
-                #if NET_4_5
                 ElementLocation taskParameterLocation;
                 public ElementLocation TaskParameterLocation {
                         get { return taskParameterLocation; }
                         set { taskParameterLocation = value; }
                 }
-                #endif
                 internal override string XmlName {
                         get { return "Output"; }
                 }

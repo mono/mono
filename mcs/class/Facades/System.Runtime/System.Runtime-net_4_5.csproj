@@ -31,7 +31,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -39,7 +39,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1616,1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -88,8 +88,8 @@
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
       <Name>System-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="../../System.ComponentModel.Composition/System.ComponentModel.Composition-net_4_5.csproj">
-      <Project>{51392CAD-5DCF-443F-8ECF-C9113DF3B91A}</Project>
+    <ProjectReference Include="../../System.ComponentModel.Composition.4.5/System.ComponentModel.Composition-net_4_5.csproj">
+      <Project>{81352E26-6AB7-4AA3-8FB1-28A476E82748}</Project>
       <Name>System.ComponentModel.Composition-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../../System.Core/System.Core-net_4_5.csproj">

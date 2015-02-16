@@ -518,6 +518,8 @@ enum Mono_Posix_FcntlCommand {
 	#define Mono_Posix_FcntlCommand_F_GETOWN   Mono_Posix_FcntlCommand_F_GETOWN
 	Mono_Posix_FcntlCommand_F_GETSIG         = 0x0000000b,
 	#define Mono_Posix_FcntlCommand_F_GETSIG   Mono_Posix_FcntlCommand_F_GETSIG
+	Mono_Posix_FcntlCommand_F_NOCACHE        = 0x00000030,
+	#define Mono_Posix_FcntlCommand_F_NOCACHE  Mono_Posix_FcntlCommand_F_NOCACHE
 	Mono_Posix_FcntlCommand_F_NOTIFY         = 0x00000402,
 	#define Mono_Posix_FcntlCommand_F_NOTIFY   Mono_Posix_FcntlCommand_F_NOTIFY
 	Mono_Posix_FcntlCommand_F_SETFD          = 0x00000002,

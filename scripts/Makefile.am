@@ -36,16 +36,12 @@ bin_SCRIPTS = \
 	mono-test-install	\
 	peverify			\
 	mcs					\
-	gmcs				\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
-if INSTALL_4_0
+if INSTALL_4_5
 bin_SCRIPTS += $(scripts_4_0)
 bin_SCRIPTS += dmcs
-endif
-
-if INSTALL_4_5
 bin_SCRIPTS += xbuild
 endif
 
@@ -76,6 +72,7 @@ scripts_4_0 = \
 	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
 	caspol$(SCRIPT_SUFFIX)			\
+	cert-sync$(SCRIPT_SUFFIX)		\
 	cert2spc$(SCRIPT_SUFFIX)		\
 	certmgr$(SCRIPT_SUFFIX)			\
 	chktrust$(SCRIPT_SUFFIX)		\
@@ -156,7 +153,6 @@ EXTRA_DIST =			\
 	xbuild.in			\
 	update_submodules		\
 	mcs.in				\
-	gmcs.in				\
 	dmcs.in				\
 	mono-test-install	\
 	mono-heapviz		\
@@ -164,11 +160,7 @@ EXTRA_DIST =			\
 	get-cygwin-deps.sh	\
 	mono-configuration-crypto.in
 
-if USE_JIT
 mono_interp = mono
-else
-mono_interp = mint
-endif
 
 if HOST_WIN32
 if CROSS_COMPILING
@@ -199,14 +191,6 @@ REWRITE2_1 = $(REWRITE) -e 's,@''framework_version@,2.1,g'
 if INSTALL_4_5
 REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.5,g'
 REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.5,g'
-else 
-if INSTALL_4_0
-REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.0,g'
-REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.0,g'
-else
-REWRITE4 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
-REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
-endif
 endif
 
 peverify: peverify.in Makefile
@@ -215,10 +199,6 @@ peverify: peverify.in Makefile
 
 mcs: mcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
-	mv -f $@.tmp $@
-
-gmcs: gmcs.in Makefile
-	$(REWRITE_COMMON) $(srcdir)/gmcs.in > $@.tmp
 	mv -f $@.tmp $@
 
 dmcs: dmcs.in Makefile
@@ -234,7 +214,7 @@ mono-service2: mono-service.in Makefile
 	mv -f $@.tmp $@
 
 nunit-console$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
-	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE4_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv -f $@.tmp $@
 
 nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
@@ -267,7 +247,7 @@ $(scripts_defaults): $(SCRIPT_IN) Makefile
 
 $(scripts_2_0): $(SCRIPT_IN) Makefile
 	n=`echo $@ | sed 's,$(COMPAT_2_0_SUFFIX)$$,,'`; \
-	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE4) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv -f $@.tmp $@
 
 $(scripts_4_0): $(SCRIPT_IN) Makefile

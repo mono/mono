@@ -51,15 +51,11 @@ using System.Threading;
 
 namespace System.Web.Services.Protocols 
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class SoapHttpClientProtocol : HttpWebClientProtocol 
 	{
 		SoapTypeStubInfo type_info;
-#if NET_2_0
 		SoapProtocolVersion soapVersion;
-#endif
 
 		#region SoapWebClientAsyncResult class
 
@@ -218,20 +214,16 @@ namespace System.Web.Services.Protocols
 			return request;
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected virtual
-#endif
 		XmlReader GetReaderForMessage (
 			SoapClientMessage message, int bufferSize)
 		{
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected virtual
-#endif
 		XmlWriter GetWriterForMessage (
 			SoapClientMessage message, int bufferSize)
 		{
@@ -291,11 +283,7 @@ namespace System.Web.Services.Protocols
 			string ctype;
 			Encoding encoding = WebServiceHelper.GetContentEncoding (response.ContentType, out ctype);
 			ctype = ctype.ToLower (CultureInfo.InvariantCulture);
-#if NET_2_0
 			if ((!message.IsSoap12 || ctype != "application/soap+xml") && ctype != "text/xml")
-#else
-			if (ctype != "text/xml")
-#endif
 				WebServiceHelper.InvalidOperation (
 					String.Format ("Not supported Content-Type in the response: '{0}'", response.ContentType),
 					response, encoding);
@@ -322,13 +310,11 @@ namespace System.Web.Services.Protocols
 				WebServiceHelper.ReadSoapMessage (xml_reader, msi, SoapHeaderDirection.Out, message.IsSoap12, out content, out headers);
 			}
 
-#if NET_2_0
 			if (content is Soap12Fault) {
 				SoapException ex = WebServiceHelper.Soap12FaultToSoapException ((Soap12Fault) content);
 				message.SetException (ex);
 			}
 			else
-#endif
 			if (content is Fault) {
 				Fault fault = (Fault) content;
 				SoapException ex = new SoapException (fault.faultstring, fault.faultcode, fault.faultactor, fault.detail);
@@ -383,7 +369,6 @@ namespace System.Web.Services.Protocols
 			}
 		}
 		
-#if NET_2_0
 
 		[MonoTODO ("Do something with this")]
 		[System.Runtime.InteropServices.ComVisible(false)]
@@ -416,7 +401,6 @@ namespace System.Web.Services.Protocols
 				info.Callback (args);
 		}
 
-#endif
 
 		#endregion // Methods
 	}

@@ -494,7 +494,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert.AreEqual (new StreamReader (s, Encoding.UTF8).ReadToEnd (), expected);
 		}
 
-#if NET_2_0
+		[Test]
+		public void OrdinalSortForAttributes ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			string xml = "<foo Aa=\"one\" Bb=\"two\" aa=\"three\" bb=\"four\"><bar></bar></foo>";
+			doc.LoadXml (xml);
+
+			transform.LoadInput (doc);
+			Stream s = (Stream) transform.GetOutput ();
+			string output = Stream2String (s);
+			Assert.AreEqual (xml, output);
+		}
+
 		[Test]
 		public void PrefixlessNamespaceOutput ()
 		{
@@ -532,6 +544,5 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			new XmlDsigExcC14NTransform ().GetDigestedOutput (null);
 		}
-#endif
 	}    
 }

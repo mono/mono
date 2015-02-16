@@ -41,9 +41,7 @@ namespace System.Net
 		string password;
 		string domain;
 		
-#if NET_4_0
 		SecureString securePassword;
-#endif
 
 		// Constructors
 		public NetworkCredential ()
@@ -62,7 +60,6 @@ namespace System.Net
 			this.domain = domain;
 		}
 
-#if NET_4_0
 		public NetworkCredential (string userName, SecureString password)
 		{
 			this.userName = userName;
@@ -74,7 +71,6 @@ namespace System.Net
 		{
 			this.domain = domain;
 		}
-#endif
 		// Properties
 
 		public string Domain {
@@ -92,7 +88,6 @@ namespace System.Net
 			set { password = value; }
 		}
 
-#if NET_4_0
 		public SecureString SecurePassword {
 			get { return securePassword; }
 			set {
@@ -103,7 +98,6 @@ namespace System.Net
 				}
 			}
 		}
-#endif
 
 		public NetworkCredential GetCredential (Uri uri, string authType)
 		{

@@ -99,7 +99,6 @@ public class AssemblyBuilderTest
 		return mb;
 	}
 
-#if NET_2_0
 	[Test]
 	[Category ("NotWorking")]
 	public void ManifestModule ()
@@ -124,7 +123,6 @@ public class AssemblyBuilderTest
 		Assert.AreSame (mb2, ab.ManifestModule, "#C3");
 		Assert.AreSame (mb1, mb2, "#C4");
 	}
-#endif
 
 	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
@@ -1080,28 +1078,14 @@ public class AssemblyBuilderTest
 		filename = Path.Combine (tempDir, "TestSetCustomAttributeA.dll");
 		check = AssemblyName.GetAssemblyName (filename);
 		Assert.AreEqual (CultureInfo.InvariantCulture, check.CultureInfo, "#A1");
-#if NET_2_0
 		Assert.AreEqual (AssemblyNameFlags.None, check.Flags, "#A2");
-#else
-		Assert.AreEqual (AssemblyNameFlags.PublicKey, check.Flags, "#A2");
-#endif
 		Assert.AreEqual ("TestSetCustomAttributeA, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", check.FullName, "#A3");
-#if NET_2_0
 		Assert.IsNull (check.GetPublicKey (), "#A4");
-#else
-		Assert.AreEqual (new byte [0], check.GetPublicKey (), "#A4");
-#endif
-#if NET_2_0
 		Assert.AreEqual (new byte [0], check.GetPublicKeyToken (), "#A5");
-#else
-		Assert.IsNull (check.GetPublicKeyToken (), "#A5");
-#endif
 		Assert.AreEqual (AssemblyHashAlgorithm.SHA1, check.HashAlgorithm, "#A6");
 		Assert.IsNull (check.KeyPair, "#A7");
 		Assert.AreEqual ("TestSetCustomAttributeA", check.Name, "#A8");
-#if NET_2_0
 		//Assert.AreEqual (ProcessorArchitecture.MSIL, check.ProcessorArchitecture, "#A9");
-#endif
 		Assert.AreEqual (new Version (0, 0, 0, 0), check.Version, "#A10");
 		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, check.VersionCompatibility, "#A11");
 
@@ -1130,9 +1114,7 @@ public class AssemblyBuilderTest
 		an.CultureInfo = new CultureInfo ("nl-BE");
 		an.Flags = AssemblyNameFlags.Retargetable;
 		an.Name = "TestSetCustomAttributeB";
-#if NET_2_0
 		an.ProcessorArchitecture = ProcessorArchitecture.IA64;
-#endif
 		an.Version = new Version (1, 3, 5, 7);
 		an.VersionCompatibility = AssemblyVersionCompatibility.SameDomain;
 
@@ -1155,28 +1137,14 @@ public class AssemblyBuilderTest
 		filename = Path.Combine (tempDir, "TestSetCustomAttributeB.dll");
 		check = AssemblyName.GetAssemblyName (filename);
 		Assert.AreEqual ("nl-BE", check.CultureInfo.Name, "#B1");
-#if NET_2_0
 		Assert.AreEqual (AssemblyNameFlags.Retargetable, check.Flags, "#B2");
-#else
-		Assert.AreEqual (AssemblyNameFlags.PublicKey | AssemblyNameFlags.Retargetable, check.Flags, "#B2");
-#endif
 		Assert.AreEqual ("TestSetCustomAttributeB, Version=1.3.5.7, Culture=nl-BE, PublicKeyToken=null, Retargetable=Yes", check.FullName, "#B3");
-#if NET_2_0
 		Assert.IsNull (check.GetPublicKey (), "#B4");
-#else
-		Assert.AreEqual (new byte [0], check.GetPublicKey (), "#B4");
-#endif
-#if NET_2_0
 		Assert.AreEqual (new byte [0], check.GetPublicKeyToken (), "#B5");
-#else
-		Assert.IsNull (check.GetPublicKeyToken (), "#B5");
-#endif
 		Assert.AreEqual (AssemblyHashAlgorithm.SHA1, check.HashAlgorithm, "#B6");
 		Assert.IsNull (check.KeyPair, "#B7");
 		Assert.AreEqual ("TestSetCustomAttributeB", check.Name, "#B8");
-#if NET_2_0
 		//Assert.AreEqual (ProcessorArchitecture.MSIL, check.ProcessorArchitecture, "#B9");
-#endif
 		Assert.AreEqual (new Version (1, 3, 5, 7), check.Version, "#B10");
 		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, check.VersionCompatibility, "#B11");
 
@@ -1268,17 +1236,10 @@ public class AssemblyBuilderTest
 		AssemblyName check = AssemblyName.GetAssemblyName (filename);
 		// no exception is thrown (file not found)
 		// because it's not AssemblyBuilder.Save job to do the signing :-/
-#if NET_2_0
 		Assert.AreEqual (AssemblyNameFlags.None, check.Flags, "#1");
 		Assert.IsNull (check.GetPublicKey (), "#2");
 		Assert.IsNotNull (check.GetPublicKeyToken (), "#3a");
 		Assert.AreEqual (0, check.GetPublicKeyToken ().Length, "#3b");
-#else
-		Assert.AreEqual (AssemblyNameFlags.PublicKey, check.Flags, "#1");
-		Assert.IsNotNull (check.GetPublicKey (), "#2a");
-		Assert.AreEqual (0, check.GetPublicKey ().Length, "#2b");
-		Assert.IsNull (check.GetPublicKeyToken (), "#3");
-#endif
 		Assert.IsTrue (check.FullName.IndexOf ("Version=0.0.0.0") != -1, "#4");
 		Assert.IsTrue (check.FullName.IndexOf ("Culture=neutral") != -1, "#5");
 		Assert.IsTrue (check.FullName.IndexOf ("PublicKeyToken=null") != -1, "#6");
@@ -1300,17 +1261,10 @@ public class AssemblyBuilderTest
 		AssemblyName check = AssemblyName.GetAssemblyName (filename);
 		// no public key is inserted into the assembly
 		// because it's not AssemblyBuilder.Save job to do the signing :-/
-#if NET_2_0
 		Assert.AreEqual (AssemblyNameFlags.None, check.Flags, "#1");
 		Assert.IsNull (check.GetPublicKey (), "#2");
 		Assert.IsNotNull (check.GetPublicKeyToken (), "#3a");
 		Assert.AreEqual (0, check.GetPublicKeyToken ().Length, "#3b");
-#else
-		Assert.AreEqual (AssemblyNameFlags.PublicKey, check.Flags, "#1");
-		Assert.IsNotNull (check.GetPublicKey (), "#2a");
-		Assert.AreEqual (0, check.GetPublicKey ().Length, "#2b");
-		Assert.IsNull (check.GetPublicKeyToken (), "#3");
-#endif
 		Assert.IsTrue (check.FullName.IndexOf ("Version=0.0.0.0") != -1, "#4");
 		Assert.IsTrue (check.FullName.IndexOf ("Culture=neutral") != -1, "#5");
 		Assert.IsTrue (check.FullName.IndexOf ("PublicKeyToken=null") != -1, "#6");
@@ -1468,9 +1422,7 @@ public class AssemblyBuilderTest
 			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, refs [0].HashAlgorithm, "#D2:HashAlgorithm");
 			Assert.IsNull (refs [0].KeyPair, "#D2:KeyPair");
 			Assert.AreEqual ("mscorlib", refs [0].Name, "#D2:Name");
-#if NET_2_0
 			Assert.AreEqual (ProcessorArchitecture.None, refs [0].ProcessorArchitecture, "#D2:PA");
-#endif
 
 			string FxVersion;
 #if MOBILE
@@ -1507,9 +1459,7 @@ public class AssemblyBuilderTest
 			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, refs [0].HashAlgorithm, "#E2:HashAlgorithm");
 			Assert.IsNull (refs [0].KeyPair, "#E2:KeyPair");
 			Assert.AreEqual (an1.Name, refs [0].Name, "#E2:Name");
-#if NET_2_0
 			Assert.AreEqual (ProcessorArchitecture.None, refs [0].ProcessorArchitecture, "#E2:PA");
-#endif
 			Assert.AreEqual (new Version (3, 0, 0, 0), refs [0].Version, "#E2:Version");
 			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
 				refs [0].VersionCompatibility, "#E2:VersionCompatibility");
@@ -1537,9 +1487,7 @@ public class AssemblyBuilderTest
 			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, refs [0].HashAlgorithm, "#F2:HashAlgorithm");
 			Assert.IsNull (refs [0].KeyPair, "#F2:KeyPair");
 			Assert.AreEqual (an1.Name, refs [0].Name, "#F2:Name");
-#if NET_2_0
 			Assert.AreEqual (ProcessorArchitecture.None, refs [0].ProcessorArchitecture, "#F2:PA");
-#endif
 			Assert.AreEqual (new Version (3, 0, 0, 0), refs [0].Version, "#F2:Version");
 			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
 				refs [0].VersionCompatibility, "#F2:VersionCompatibility");
@@ -1557,9 +1505,7 @@ public class AssemblyBuilderTest
 			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, refs [1].HashAlgorithm, "#F3:HashAlgorithm");
 			Assert.IsNull (refs [1].KeyPair, "#F3:KeyPair");
 			Assert.AreEqual (an2.Name, refs [1].Name, "#F3:Name");
-#if NET_2_0
 			Assert.AreEqual (ProcessorArchitecture.None, refs [1].ProcessorArchitecture, "#F3:PA");
-#endif
 			Assert.AreEqual (new Version (1, 2, 3, 4), refs [1].Version, "#F3:Version");
 			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
 				refs [1].VersionCompatibility, "#F3:VersionCompatibility");
@@ -1616,13 +1562,7 @@ public class AssemblyBuilderTest
 		Assert.IsTrue (abName.GetPublicKey ().Length > 0, "#B3b");
 		Assert.IsNotNull (abName.GetPublicKeyToken (), "#B4a");
 		Assert.IsTrue (abName.GetPublicKeyToken ().Length > 0, "#B4b");
-#if NET_2_0
 		Assert.AreEqual (fullName, abName.FullName, "#B5");
-#else
-		//Assert.AreEqual ("AssemblyNameTest_PublicKey, Version=1.2.3.4, PublicKeyToken=0eea7ce65f35f2d8", abName.FullName, "#B5");
-		Assert.IsTrue (abName.FullName.IndexOf ("AssemblyNameTest_PublicKey, Version=1.2.3.4") != -1, "#B5a");
-		Assert.IsTrue (abName.FullName.IndexOf ("PublicKeyToken=0eea7ce65f35f2d8") != -1, "#B5b");
-#endif
 
 		ab.Save ("AssemblyNameTest_PublicKey.dll");
 		AssemblyName bakedName = AssemblyName.GetAssemblyName (Path.Combine(
@@ -1653,18 +1593,10 @@ public class AssemblyBuilderTest
 
 		AssemblyName abName = ab.GetName ();
 		Assert.IsNotNull (abName.CultureInfo != null, "#B1");
-#if NET_2_0
 		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#B2a");
 		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#B2a");
 		Assert.AreEqual (AssemblyNameFlags.PublicKey, abName.Flags, "#B3");
 		Assert.AreEqual (fullName, abName.FullName, "#B4");
-#else
-		Assert.AreEqual (CultureInfo.InvariantCulture, abName.CultureInfo, "#B2");
-		Assert.AreEqual (AssemblyNameFlags.PublicKey, abName.Flags, "#B3");
-		//Assert.AreEqual ("AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4, PublicKeyToken=0eea7ce65f35f2d8", abName.FullName, "#B4");
-		Assert.IsTrue (abName.FullName.IndexOf ("AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4") != -1, "#B4a");
-		Assert.IsTrue (abName.FullName.IndexOf ("PublicKeyToken=0eea7ce65f35f2d8") != -1, "#B4b");
-#endif
 
 		ab.Save ("AssemblyNameTest_MoreCultureInfo.dll");
 
@@ -1673,12 +1605,8 @@ public class AssemblyBuilderTest
 
 		Assert.IsNotNull (bakedName.CultureInfo, "#C1");
 
-#if NET_2_0
 		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#C2a");
 		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#C2b");
-#else
-		Assert.AreEqual (CultureInfo.InvariantCulture, bakedName.CultureInfo, "#C2");
-#endif
 		Assert.AreEqual (fullName, bakedName.FullName, "#C3");
 	}
 
@@ -1880,25 +1808,17 @@ public class AssemblyBuilderTest
 				assemblyName, AssemblyBuilderAccess.Save, tempDir);
 			ab.Save (assemblyName.Name + ".dll");
 
-#if NET_2_0
 			// on .NET 2.0, the full name of the AssemblyBuilder matches the
 			// fully qualified assembly name
 			Assert.AreEqual (fullName, ab.FullName, "#1");
-#else
-			//Assert.AreEqual (abName, ab.FullName, "#1");
-#endif
 
 			AssemblyName an = ab.GetName ();
 
 			Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#2");
 			Assert.IsNotNull (an.GetPublicKey (), "#3a");
 			Assert.AreEqual (0, an.GetPublicKey ().Length, "#3b");
-#if NET_2_0
 			Assert.IsNotNull (an.GetPublicKeyToken (), "#4a");
 			Assert.AreEqual (0, an.GetPublicKeyToken ().Length, "#4b");
-#else
-			Assert.IsNull (an.GetPublicKeyToken (), "#4");
-#endif
 
 			// load assembly in separate domain, so we can clean-up after the 
 			// test

@@ -17,7 +17,9 @@ typedef enum {
 	DomainJitCodeHashLock,
 	IcallLock,
 	AssemblyBindingLock,
-	MarshalLock
+	MarshalLock,
+	ClassesLock,
+	LoaderGlobalDataLock
 } RuntimeLocks;
 
 #ifdef LOCK_TRACER

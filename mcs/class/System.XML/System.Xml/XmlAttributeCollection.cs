@@ -36,11 +36,7 @@ using Mono.Xml;
 
 namespace System.Xml
 {
-#if NET_2_0
 	public sealed class XmlAttributeCollection : XmlNamedNodeMap, ICollection
-#else
-	public class XmlAttributeCollection : XmlNamedNodeMap, ICollection
-#endif
 	{
 		XmlElement ownerElement;
 		XmlDocument ownerDocument;
@@ -62,33 +58,21 @@ namespace System.Xml
 		}
 
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
-#if NET_2_0
 		public XmlAttribute this [string name] {
-#else
-		public virtual XmlAttribute this [string name] {
-#endif
 			get {
 				return (XmlAttribute) GetNamedItem (name);
 			}
 		}
 
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
-#if NET_2_0
 		public XmlAttribute this [int i] {
-#else
-		public virtual XmlAttribute this [int i] {
-#endif
 			get {
 				return (XmlAttribute) Nodes [i];
 			}
 		}
 
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
-#if NET_2_0
 		public XmlAttribute this [string localName, string namespaceURI] {
-#else
-		public virtual XmlAttribute this [string localName, string namespaceURI] {
-#endif
 			get {
 				return (XmlAttribute) GetNamedItem (localName, namespaceURI);
 			}
@@ -98,11 +82,7 @@ namespace System.Xml
 			get { return this; }
 		}
 
-#if NET_2_0
 		public XmlAttribute Append (XmlAttribute node) 
-#else
-		public virtual XmlAttribute Append (XmlAttribute node) 
-#endif
 		{
 			SetNamedItem (node);
 			return node;
@@ -121,11 +101,7 @@ namespace System.Xml
 			array.CopyTo (Nodes.ToArray (typeof(XmlAttribute)), index);
 		}
 
-#if NET_2_0
 		public XmlAttribute InsertAfter (XmlAttribute newNode, XmlAttribute refNode)
-#else
-		public virtual XmlAttribute InsertAfter (XmlAttribute newNode, XmlAttribute refNode)
-#endif
 		{
 			if (refNode == null) {
 				if (Count == 0)
@@ -140,11 +116,7 @@ namespace System.Xml
 			throw new ArgumentException ("refNode not found in this collection.");
 		}
 
-#if NET_2_0
 		public XmlAttribute InsertBefore (XmlAttribute newNode, XmlAttribute refNode)
-#else
-		public virtual XmlAttribute InsertBefore (XmlAttribute newNode, XmlAttribute refNode)
-#endif
 		{
 			if (newNode.OwnerDocument != ownerDocument)
 				throw new ArgumentException ("different document created this newNode.");
@@ -170,20 +142,12 @@ namespace System.Xml
 			return newNode;
 		}
 
-#if NET_2_0
 		public XmlAttribute Prepend (XmlAttribute node) 
-#else
-		public virtual XmlAttribute Prepend (XmlAttribute node) 
-#endif
 		{
 			return this.InsertAfter (node, null);
 		}
 
-#if NET_2_0
 		public XmlAttribute Remove (XmlAttribute node) 
-#else
-		public virtual XmlAttribute Remove (XmlAttribute node) 
-#endif
 		{
 			if (IsReadOnly)
 				throw new ArgumentException ("This attribute collection is read-only.");
@@ -222,11 +186,7 @@ namespace System.Xml
 			return retAttr;
 		}
 
-#if NET_2_0
 		public void RemoveAll () 
-#else
-		public virtual void RemoveAll () 
-#endif
 		{
 			int current = 0;
 			while (current < Count) {
@@ -238,11 +198,7 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public XmlAttribute RemoveAt (int i) 
-#else
-		public virtual XmlAttribute RemoveAt (int i) 
-#endif
 		{
 			if(Count <= i)
 				return null;

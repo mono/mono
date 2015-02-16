@@ -37,11 +37,7 @@ namespace System.Reflection {
 	[ComVisible (true)]
 	[Serializable]
 	public class TypeDelegator : 
-#if NET_4_5
 		TypeInfo, IReflectableType
-#else
-		Type
-#endif
 	{
 		protected Type typeImpl;
 	
@@ -260,7 +256,6 @@ namespace System.Reflection {
 			}
 		}
 
-#if NET_4_5
 		public override bool IsConstructedGenericType {
 			get { return typeImpl.IsConstructedGenericType; }
 		}
@@ -272,7 +267,6 @@ namespace System.Reflection {
 
 			return IsAssignableFrom (typeInfo.AsType ());
 		}
-#endif
 
 	}
 }

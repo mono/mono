@@ -14,11 +14,7 @@ using System;
 using System.IO;
 using System.Text;
 
-#if NET_2_0
 using DecoderException = System.Text.DecoderFallbackException;
-#else
-using DecoderException = System.ArgumentException;
-#endif
 
 using AssertType = NUnit.Framework.Assert;
 
@@ -164,19 +160,12 @@ namespace MonoTests.System.Text
 			UTF8Encoding u = new UTF8Encoding (true, false);
 
 			byte[] data = new byte [] { 0xC0, 0xAF };
-#if NET_2_0
 			Assert.AreEqual (2, u.GetCharCount (data), "#A0");
 			string s = u.GetString (data);
 			Assert.AreEqual ("\uFFFD\uFFFD", s, "#A1");
-#else
-			Assert.AreEqual (0, u.GetCharCount (data), "#A0");
-			string s = u.GetString (data);
-			Assert.AreEqual (String.Empty, s, "#A1");
-#endif
 
 			data = new byte [] { 0x30, 0x31, 0xC0, 0xAF, 0x30, 0x32 };
 			s = u.GetString (data);
-#if NET_2_0
 			Assert.AreEqual (6, s.Length, "#B1");
 			Assert.AreEqual (0x30, (int) s [0], "#B2");
 			Assert.AreEqual (0x31, (int) s [1], "#B3");
@@ -184,13 +173,6 @@ namespace MonoTests.System.Text
 			Assert.AreEqual (0xFFFD, (int) s [3], "#B5");
 			Assert.AreEqual (0x30, (int) s [4], "#B6");
 			Assert.AreEqual (0x32, (int) s [5], "#B7");
-#else
-			Assert.AreEqual (4, s.Length, "#B1");
-			Assert.AreEqual (0x30, (int) s [0], "#B2");
-			Assert.AreEqual (0x31, (int) s [1], "#B3");
-			Assert.AreEqual (0x30, (int) s [2], "#B4");
-			Assert.AreEqual (0x32, (int) s [3], "#B5");
-#endif
 		}
 
 		// UTF8 decoding tests from http://www.cl.cam.ac.uk/~mgk25/
@@ -758,13 +740,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 			public void T5_IllegalCodePosition_1_UTF16Surrogates_511 () 
 		{
 			byte[] data = { 0xED, 0xA0, 0x80 };
@@ -774,13 +750,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_512 () 
 		{
 			byte[] data = { 0xED, 0xAD, 0xBF };
@@ -790,13 +760,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_513 ()
 		{
 			byte[] data = { 0xED, 0xAE, 0x80 };
@@ -806,13 +770,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_514 () 
 		{
 			byte[] data = { 0xED, 0xAF, 0xBF };
@@ -822,13 +780,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_515 ()
 		{
 			byte[] data = { 0xED, 0xB0, 0x80 };
@@ -838,13 +790,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_516 () 
 		{
 			byte[] data = { 0xED, 0xBE, 0x80 };
@@ -854,13 +800,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_517 () 
 		{
 			byte[] data = { 0xED, 0xBF, 0xBF };
@@ -870,13 +810,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_521 () 
 		{
 			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xB0, 0x80 };
@@ -887,13 +821,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_522 () 
 		{
 			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xBF, 0xBF };
@@ -904,13 +832,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_523 () 
 		{
 			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xB0, 0x80 };
@@ -921,13 +843,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_524 () 
 		{
 			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xBF, 0xBF };
@@ -938,13 +854,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_525 () 
 		{
 			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xB0, 0x80 };
@@ -955,13 +865,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_526 () 
 		{
 			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xBF, 0x8F };
@@ -972,13 +876,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_527 () 
 		{
 			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xB0, 0x80 };
@@ -989,13 +887,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-// MS Fx 1.1 accept this
-		[Category ("NotDotNet")]
-		[ExpectedException (typeof (DecoderException))]
-#endif
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_528 () 
 		{
 			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xBF, 0xBF };
@@ -1045,7 +937,6 @@ namespace MonoTests.System.Text
 			Assert.AreEqual ('A', chars [1], "#2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void CloneNotReadOnly ()
 		{
@@ -1054,15 +945,9 @@ namespace MonoTests.System.Text
 			Assert.AreEqual (false, e.IsReadOnly);
 			e.EncoderFallback = new EncoderExceptionFallback ();
 		}
-#endif
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DecoderFallbackException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotDotNet")] // MS Bug
-#endif
 		public void Bug77315 ()
 		{
 			new UTF8Encoding (false, true).GetString (
@@ -1079,22 +964,14 @@ namespace MonoTests.System.Text
 			e.GetBytes (chars, 0, 1, bytes, 0, false);
 			try {
 				int ret = e.GetBytes (chars, 1, 0, bytes, 0, true);
-#if NET_2_0
 				Assert.AreEqual (0, ret, "drop insufficient char in 2.0: char[]");
-#else
-				Assert.Fail ("ArgumentException is expected: char[]");
-#endif
 			} catch (ArgumentException) {
 			}
 
 			string s = "\uD800";
 			try {
 				int ret = Encoding.UTF8.GetBytes (s, 0, 1, bytes, 0);
-#if NET_2_0
 				Assert.AreEqual (0, ret, "drop insufficient char in 2.0: string");
-#else
-				Assert.Fail ("ArgumentException is expected: string");
-#endif
 			} catch (ArgumentException) {
 			}
 		}
@@ -1127,7 +1004,6 @@ namespace MonoTests.System.Text
 			}
 		}
 
-#if NET_2_0
 		[Test] // bug #77550
 		public void DecoderFallbackSimple ()
 		{
@@ -1165,7 +1041,6 @@ namespace MonoTests.System.Text
 				Encoding.UTF8.GetString(buf);
 			}
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -1280,6 +1155,47 @@ namespace MonoTests.System.Text
 			//	F4		80..8F	80..BF 80..BF
 			data = new byte [] { 0xF4, 0x8F, 0xB0, 0xC0 };
 			t.TestDecoderFallback (data, "??", new byte [] { 0xF4, 0x8F, 0xB0 }, new byte [] { 0xC0 });
+		}
+
+		[Test]
+		public void DecoderBug23771 ()
+		{
+			var input = "\u733F"; // 'mono' on Japanese, 3bytes in UTF-8.
+			var encoded = Encoding.UTF8.GetBytes (input);
+			var decoder = Encoding.UTF8.GetDecoder ();
+			var chars = new char [10]; // Just enough space to decode.
+			var result = new StringBuilder ();
+			var bytes = new byte [1]; // Simulates chunked input bytes.
+			// Specify encoded bytes separetely.
+			foreach (var b in encoded) {
+				bytes [0] = b;
+				int bytesUsed, charsUsed;
+				bool completed;
+				decoder.Convert (bytes, 0, bytes.Length, chars, 0, chars.Length, false, out bytesUsed, out charsUsed, out completed);
+				result.Append (chars, 0, charsUsed);
+				// Expected outputs are written in bottom.
+				//Debug.Print ("bytesUsed:{0}, charsUsed:{1}, completed:{2}, result:'{3}'", bytesUsed, charsUsed, completed, result);
+			}
+
+			// Expected: NO assertion error.
+			Assert.AreEqual (input, result.ToString (), "#1");
+
+			/*
+			 * Expected Debug outputs are:
+			 * bytesUsed:1, charsUsed:0, completed:True, result:''
+			 * bytesUsed:1, charsUsed:0, completed:True, result:''
+			 * bytesUsed:1, charsUsed:1, completed:True, result:'猿'
+			 * 
+			 * -- Note: '猿' is U+733F (1char in UTF-16)
+			 * 
+			 * Actual Debug output are:
+			 * bytesUsed:3, charsUsed:1, completed:False, result:'�'
+			 * bytesUsed:3, charsUsed:1, completed:False, result:'��'
+			 * bytesUsed:3, charsUsed:1, completed:False, result:'���'
+			 * 
+			 * All output parameters are not match.
+			 * -- Note: '�' is decoder fallback char (U+FFFD)
+			 */
 		}
 	}
 }

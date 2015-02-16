@@ -5,7 +5,8 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS)		\
 	$(LIBGC_CPPFLAGS)	\
 	-DMONO_BINDIR=\""$(bindir)"\"	\
-	-I$(top_srcdir)	
+	-I$(top_srcdir) \
+	$(SHARED_CFLAGS)
 
 libwapiincludedir = $(includedir)/mono-$(API_VER)/mono/io-layer
 
@@ -34,7 +35,8 @@ OTHER_H = \
 	uglify.h	\
 	versioninfo.h	\
 	wait.h		\
-	wapi.h
+	wapi.h		\
+	wapi-remap.h
 
 OTHER_SRC = \
 	access.h		\

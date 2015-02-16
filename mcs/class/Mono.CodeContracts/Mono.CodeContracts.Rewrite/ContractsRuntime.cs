@@ -195,11 +195,7 @@ namespace Mono.CodeContracts.Rewrite {
 				TypeReference typeContractFailureKind = this.module.Import (typeof (ContractFailureKind));
 				TypeReference typeString = this.module.Import (typeof (string));
 				TypeReference typeException = this.module.Import (typeof (Exception));
-#if NET_4_5
 				var helper = typeof (ContractHelper);
-#else
-				var helper = typeof (System.Diagnostics.Contracts.Internal.ContractHelper);
-#endif
 				MethodReference mRaiseContractFailedEvent = this.module.Import (helper.GetMethod ("RaiseContractFailedEvent"));
 				// Create method
 				MethodDefinition method = new MethodDefinition ("ReportFailure",

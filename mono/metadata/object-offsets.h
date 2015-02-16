@@ -73,6 +73,7 @@ DECL_OFFSET(MonoDelegate, method)
 DECL_OFFSET(MonoDelegate, method_code)
 
 DECL_OFFSET(MonoInternalThread, tid)
+DECL_OFFSET(MonoInternalThread, small_id)
 DECL_OFFSET(MonoInternalThread, static_data)
 
 DECL_OFFSET(MonoMulticastDelegate, prev)
@@ -110,9 +111,8 @@ DECL_OFFSET(MonoTypedRef, klass)
 DECL_OFFSET(MonoTypedRef, value)
 
 //Internal structs
-DECL_OFFSET(MonoThreadsSync, owner)
+DECL_OFFSET(MonoThreadsSync, status)
 DECL_OFFSET(MonoThreadsSync, nest)
-DECL_OFFSET(MonoThreadsSync, entry_count)
 
 #if defined (HAVE_SGEN_GC) && !defined (HAVE_KW_THREAD)
 DECL_OFFSET(SgenThreadInfo, tlab_next_addr)
@@ -162,24 +162,30 @@ DECL_OFFSET(MonoLMF, ebp)
 DECL_OFFSET(MonoLMF, eip)
 #endif
 
-#ifdef TARGET_ARM
+#if defined(TARGET_ARM) || defined(TARGET_ARM64)
 DECL_OFFSET (MonoContext, pc)
 DECL_OFFSET (MonoContext, regs)
 DECL_OFFSET (MonoContext, fregs)
 
 DECL_OFFSET(MonoLMF, method)
 DECL_OFFSET(MonoLMF, lmf_addr)
-DECL_OFFSET(MonoLMF, sp)
-DECL_OFFSET(MonoLMF, fp)
-DECL_OFFSET(MonoLMF, ip)
-DECL_OFFSET(MonoLMF, iregs)
-DECL_OFFSET(MonoLMF, fregs)
 
 DECL_OFFSET(SeqPointInfo, bp_addrs)
 DECL_OFFSET(SeqPointInfo, ss_trigger_page)
 
 DECL_OFFSET(DynCallArgs, res)
 DECL_OFFSET(DynCallArgs, res2)
+#endif
+
+#if defined(TARGET_ARM)
+DECL_OFFSET(MonoLMF, sp)
+DECL_OFFSET(MonoLMF, fp)
+DECL_OFFSET(MonoLMF, ip)
+DECL_OFFSET(MonoLMF, iregs)
+DECL_OFFSET(MonoLMF, fregs)
+#elif defined(TARGET_ARM64)
+DECL_OFFSET(MonoLMF, pc)
+DECL_OFFSET(MonoLMF, gregs)
 #endif
 
 #ifdef TARGET_AMD64

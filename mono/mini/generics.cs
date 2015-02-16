@@ -913,6 +913,7 @@ class Tests
 		}
 	}
 
+	[Category ("GSHAREDVT")]
 	static int test_0_synchronized_gshared () {
 		var c = new SyncClass<string> ();
 		if (c.getInstance () != typeof (string))
@@ -1087,6 +1088,57 @@ class Tests
 
         var s = f2 (f);
 		return s == "A" ? 0 : 1;
+	}
+
+    public interface ICovariant<out R>
+    {
+    }
+
+    // Deleting the `out` modifier from this line stop the problem
+    public interface IExtCovariant<out R> : ICovariant<R>
+    {
+    }
+
+    public class Sample<R> : ICovariant<R>
+    {
+    }
+
+    public interface IMyInterface
+    {
+    }
+
+	public static int test_0_variant_cast_cache () {
+		object covariant = new Sample<IMyInterface>();
+
+		var foo = (ICovariant<IMyInterface>)(covariant);
+
+		try {
+			var extCovariant = (IExtCovariant<IMyInterface>)covariant;
+			return 1;
+		} catch {
+			return 0;
+		}
+	}
+
+	struct FooStruct2 {
+		public int a1, a2, a3;
+	}
+
+	class MyClass<T> where T: struct {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public MyClass(int a1, int a2, int a3, int a4, int a5, int a6, Nullable<T> a) {
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static MyClass<T> foo () {
+			Nullable<T> a = new Nullable<T> ();
+			return new MyClass<T> (0, 0, 0, 0, 0, 0, a);
+		}
+	}
+
+	public static int test_0_newobj_generic_context () {
+		MyClass<FooStruct2>.foo ();
+		return 0;
 	}
 }
 

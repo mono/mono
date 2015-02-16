@@ -100,7 +100,6 @@ namespace System.Data.SqlClient
             return Add(param);
         }
 
-#if NET_2_0
 		public void AddRange (SqlParameter [] values)
 		{
 			base.AddRange (values);
@@ -135,7 +134,6 @@ namespace System.Data.SqlClient
 		{
 			base.Remove (value);
 		}
-#endif
 		#endregion // Methods
 
     }

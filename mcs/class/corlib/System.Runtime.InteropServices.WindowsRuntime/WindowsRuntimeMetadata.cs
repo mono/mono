@@ -1,4 +1,3 @@
-#if NET_4_5
 //
 // WindowsRuntimeMetadata.cs
 //
@@ -49,5 +48,4 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 #pragma warning restore 0067
 	}
 }
-#endif
 

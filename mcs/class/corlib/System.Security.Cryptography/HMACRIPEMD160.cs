@@ -38,7 +38,7 @@ namespace System.Security.Cryptography {
 	public class HMACRIPEMD160 : HMAC {
 
 		public HMACRIPEMD160 () 
-			: this (KeyBuilder.Key (8))
+			: this (KeyBuilder.Key (64))
 		{
 		}
 

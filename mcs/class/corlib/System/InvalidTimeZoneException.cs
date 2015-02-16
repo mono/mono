@@ -24,8 +24,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if NET_4_0
-
 using System.Runtime.CompilerServices;
 
 namespace System
@@ -33,10 +31,11 @@ namespace System
 	[Serializable]
 #if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
-#elif NET_4_0
+#else
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
-	public class InvalidTimeZoneException : Exception
+	public
+	class InvalidTimeZoneException : Exception
 	{
 		public InvalidTimeZoneException () : base ()
 		{}
@@ -51,5 +50,3 @@ namespace System
 		{}
 	}
 }
-
-#endif

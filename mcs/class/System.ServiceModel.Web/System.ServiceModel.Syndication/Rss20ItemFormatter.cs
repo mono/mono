@@ -203,10 +203,9 @@ namespace System.ServiceModel.Syndication
 						Item.Links.Add (l);
 						continue;
 					case "guid":
+						Item.Id = reader.ReadElementContentAsString ();
 						if (reader.GetAttribute ("isPermaLink") == "true")
-							Item.AddPermalink (CreateUri (reader.ReadElementContentAsString ()));
-						else
-							Item.Id = reader.ReadElementContentAsString ();
+							Item.AddPermalink (CreateUri (Item.Id));
 						continue;
 					case "pubDate":
 						Item.PublishDate = FromRFC822DateString (reader.ReadElementContentAsString ());

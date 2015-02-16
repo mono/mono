@@ -15,11 +15,6 @@ LIB_MCS_FLAGS = \
 		/r:System.Web.Abstractions.dll \
 		/r:System.Web.Routing.dll
 
-ifeq (2.0, $(FRAMEWORK_VERSION))
-# This is a .NET 3.5 only assembly, but built during the 2.0 build
-LIB_MCS_FLAGS += -d:NET_3_5
-endif
-
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 endif
@@ -186,7 +181,7 @@ endif
 EXTRA_DISTFILES = $(foreach resource,$(TEST_RESOURCE_FILES), $(shell echo $(subst \`,\\\`,$(resource)) | cut -d ',' -f 1))
 
 # This is a .NET 3.5+ assembly
-VALID_PROFILE := $(filter net_2_0 net_4_0 net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Web.DynamicData.dll
 NO_INSTALL = yes

@@ -210,6 +210,14 @@ struct MyTypeImplicitOnly
 	}
 }
 
+struct StructWithUserConstructor
+{
+	public StructWithUserConstructor ()
+	{
+
+	}
+}
+
 class MemberAccessData
 {
 	public bool BoolValue;
@@ -721,6 +729,13 @@ class Tester
 		AssertNodeType (e9, ExpressionType.Call);
 		e9.Compile ().Invoke (1);
 	}		
+
+	void CallTest_10 ()
+	{
+		Expression<Func<string>> e = () => $"{int.MaxValue}";
+		AssertNodeType (e, ExpressionType.Call);
+		Assert (int.MaxValue.ToString (), e.Compile ().Invoke ());
+	}
 
 	void CoalesceTest ()
 	{
@@ -2188,6 +2203,17 @@ class Tester
 		Expression<Func<MyEnum>> e = () => new MyEnum ();
 		AssertNodeType (e, ExpressionType.New);
 		Assert<MyEnum> (0, e.Compile ().Invoke ());
+	}
+
+	void NewTest_8 ()
+	{
+		Expression<Func<DateTime>> e = () => new DateTime ();
+		AssertNodeType (e, ExpressionType.New);
+		Assert (null, ((NewExpression)e.Body).Constructor, "default ctor");
+
+		Expression<Func<StructWithUserConstructor>> e2 = () => new StructWithUserConstructor ();
+		AssertNodeType (e2, ExpressionType.New);
+		Assert ("Void .ctor()", ((NewExpression)e2.Body).Constructor.ToString (), "user ctor");
 	}
 
 	void NotTest ()

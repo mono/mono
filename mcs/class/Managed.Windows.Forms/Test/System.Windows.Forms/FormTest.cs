@@ -619,15 +619,11 @@ namespace MonoTests.System.Windows.Forms
 				
 				Assert.AreEqual ("VisibleChanged", f.Reason, "#00");
 				Assert.AreEqual (1, log.CountEvents ("Closing"), "#01");
-#if NET_2_0
 				Assert.AreEqual (1, log.CountEvents ("FormClosing"), "#02");
-#endif
 				Assert.AreEqual (1, log.CountEvents ("HandleDestroyed"), "#03");
 
 				Assert.AreEqual (0, log.CountEvents ("Closed"), "#04");
-#if NET_2_0
 				Assert.AreEqual (0, log.CountEvents ("FormClosed"), "#05");
-#endif
 				Assert.AreEqual (0, log.CountEvents ("Disposed"), "#06");
 			}
 
@@ -637,15 +633,11 @@ namespace MonoTests.System.Windows.Forms
 
 				Assert.AreEqual ("Bombed", f.Reason, "#A0");
 				Assert.AreEqual (1, log.CountEvents ("Closing"), "#A1");
-#if NET_2_0
 				Assert.AreEqual (1, log.CountEvents ("FormClosing"), "#A2");
-#endif
 				Assert.AreEqual (1, log.CountEvents ("HandleDestroyed"), "#A3");
 
 				Assert.AreEqual (1, log.CountEvents ("Closed"), "#A4");
-#if NET_2_0
 				Assert.AreEqual (1, log.CountEvents ("FormClosed"), "#A5");
-#endif
 				Assert.AreEqual (0, log.CountEvents ("Disposed"), "#A6");
 			}
 
@@ -656,16 +648,12 @@ namespace MonoTests.System.Windows.Forms
 				f.ShowDialog ();
 
 				Assert.AreEqual ("VisibleChanged", f.Reason, "#B0");
-#if NET_2_0
 				Assert.AreEqual (1, log.CountEvents ("Closing"), "#B1");
 				Assert.AreEqual (1, log.CountEvents ("FormClosing"), "#B2");
-#endif
 				Assert.AreEqual (1, log.CountEvents ("HandleDestroyed"), "#B3");
 
-#if NET_2_0
 				Assert.AreEqual (1, log.CountEvents ("Closed"), "#B4");
 				Assert.AreEqual (1, log.CountEvents ("FormClosed"), "#B5");
-#endif
 				Assert.AreEqual (0, log.CountEvents ("Disposed"), "#B6");
 			}
 
@@ -677,15 +665,11 @@ namespace MonoTests.System.Windows.Forms
 
 				Assert.AreEqual ("Bombed", f.Reason, "#C0");
 				Assert.AreEqual (1, log.CountEvents ("Closing"), "#C1");
-#if NET_2_0
 				Assert.AreEqual (1, log.CountEvents ("FormClosing"), "#C2");
-#endif
 				Assert.AreEqual (1, log.CountEvents ("HandleDestroyed"), "#C3");
 
 				Assert.AreEqual (1, log.CountEvents ("Closed"), "#C4");
-#if NET_2_0
 				Assert.AreEqual (1, log.CountEvents ("FormClosed"), "#C5");
-#endif
 				Assert.AreEqual (0, log.CountEvents ("Disposed"), "#C6");
 				
 				Assert.AreEqual (DialogResult.Cancel, f.DialogResult, "#C7");
@@ -1359,13 +1343,13 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TABSTOP | WindowStyles.WS_THICKFRAME | WindowStyles.WS_SYSMENU | WindowStyles.WS_CAPTION | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#22-Style");
 				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#22-ExStyle");
 			}
-#if NET_2_0
+
 			using (frm = new Form ()) {
 				frm.ShowIcon = !frm.ShowIcon;
 				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#23-Style");
 				Assert.AreEqual (WindowExStyles.WS_EX_LEFT | WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_DLGMODALFRAME | WindowExStyles.WS_EX_CONTROLPARENT | WindowExStyles.WS_EX_APPWINDOW, ((WindowExStyles)TestHelper.GetCreateParams (frm).ExStyle), "#23-ExStyle");
 			}
-#endif		
+
 			using (frm = new Form ()) {
 				frm.ShowInTaskbar = !frm.ShowInTaskbar;
 				Assert.AreEqual (WindowStyles.WS_TILED | WindowStyles.WS_TILEDWINDOW | WindowStyles.WS_CLIPCHILDREN, ((WindowStyles)TestHelper.GetCreateParams (frm).Style), "#24-Style");
@@ -2013,22 +1997,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (myform.IsDisposed, "A2");
 
 			myform.Close ();
-#if NET_2_0
+
 			Assert.IsTrue (myform.IsDisposed, "A3");
-#else
-			Assert.IsFalse (myform.Visible, "A4");
-			Assert.IsFalse (myform.IsDisposed, "A5");
-
-			myform.Show ();
-
-			Assert.IsTrue (myform.Visible, "A6");
-			Assert.IsFalse (myform.IsDisposed, "A7");
-
-			myform.Close ();
-
-			Assert.IsFalse (myform.Visible, "A8");
-			Assert.IsTrue (myform.IsDisposed, "A9");
-#endif
 		}
 
 		[Test]
@@ -2041,13 +2011,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (f.Visible, "A1");
 			f.Close ();
 			Assert.AreEqual (0, f.close_count, "A2");
-#if NET_2_0
 			Assert.IsTrue (f.IsDisposed, "A3");
-#else
-			f.Show ();
-			f.Close ();
-			Assert.AreEqual (1, f.close_count, "A4");
-#endif
 		}
 
 		class WMCloseWatcher : Form {
@@ -2104,7 +2068,6 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 		
-#if NET_2_0
 		[Test]
 		public void FormClosingEvents ()
 		{
@@ -2307,7 +2270,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Size (292, 266), f.Size, "A3");
 			Assert.AreEqual (new Size (292, 266), f.ClientSize, "A4");
 		}
-#endif
 
 		[Test]  // bug #438866
 		public void MinMaxSize ()
@@ -2475,7 +2437,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void AutoSizeGrowOnly ()
 		{
@@ -2609,7 +2570,7 @@ namespace MonoTests.System.Windows.Forms
 				base.ScaleControl (factor, specified);
 			}
 		}
-#endif
+
 		[Test]
 		public void Bug325436 ()
 		{
@@ -2638,7 +2599,6 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
-#if NET_2_0
 		#region PreferredSize
 		[Test]
 		public void PreferredSize ()
@@ -2667,7 +2627,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 		#endregion
-#endif
+
 		private class MockForm : Form
 		{
 			public bool CloseOnLoad {
@@ -2741,7 +2701,6 @@ namespace MonoTests.System.Windows.Forms
 			private DialogResult _dialogResult = DialogResult.None;
 		}
 		
-#if NET_2_0
 		[Test]
 		public void RestoreBounds ()
 		{
@@ -2904,7 +2863,6 @@ namespace MonoTests.System.Windows.Forms
 			f.AutoScaleMode = AutoScaleMode.None;
 			Assert.AreEqual (false, f.AutoScale, "A3");
 		}
-#endif
 
 		[Test] // Bug #359098
 		public void AutoScaleBounds ()
@@ -2926,7 +2884,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Rectangle (  5,   5,  60, 47), new Rectangle (a.listBox1.Location, a.listBox1.Size), "A12");
 			a.Dispose ();
 
-#if NET_2_0
 			a = new AutoScaleForm (true);
 			a.Show ();
 			Assert.AreEqual (new Size (184, 104), a.ClientSize, "B0");
@@ -2943,7 +2900,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Rectangle (  4, 54,  38, 12), new Rectangle (a.button1.Location, a.button1.ClientSize), "B11");
 			Assert.AreEqual (new Rectangle (  4,  4,  50, 39), new Rectangle (a.listBox1.Location, a.listBox1.ClientSize), "B12");
 			a.Dispose ();
-#endif
 		}
 
 		[Test]
@@ -3043,11 +2999,9 @@ namespace MonoTests.System.Windows.Forms
 				textBox2, richTextBox1, listView1, treeView1, vScrollBar1, hScrollBar1 } );
 
 			if (use_new_auto_scale) {
-#if NET_2_0
 				AutoScaleMode = AutoScaleMode.Dpi;
 				SizeF s = CurrentAutoScaleDimensions;
 				AutoScaleDimensions = new SizeF (s.Width * 2, s.Height * 2);
-#endif
 			}
 			else {
 				AutoScale = true;

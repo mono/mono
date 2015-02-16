@@ -33,7 +33,6 @@ namespace System.ServiceModel.Channels
 	public class BindingParameterCollection
 		: KeyedByTypeCollection<object>
 	{
-#if NET_4_5
 		protected override Type GetKeyForItem (object item)
 		{
 			return base.GetKeyForItem (item);
@@ -48,6 +47,5 @@ namespace System.ServiceModel.Channels
 		{
 			base.SetItem (index, item);
 		}
-#endif
 	}
 }

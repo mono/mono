@@ -2527,9 +2527,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (OutOfMemoryException))]
-#endif
 		public void Widen_NoPoint ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {

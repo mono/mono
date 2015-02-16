@@ -17,9 +17,6 @@
 using System;
 
 namespace System.Data.OracleClient {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum OracleType
 	{
 		BFile = 0x01,

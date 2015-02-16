@@ -190,8 +190,16 @@ public class UInt64Test
 		UInt64.Parse ("123", new DateTimeFormatInfo ());
 
 		Assert.AreEqual (734561, UInt64.Parse ("734561\0"), "C#43");
-		Assert.AreEqual (734561, UInt64.Parse ("734561\0\0\0    \0"), "C#44");
-		Assert.AreEqual (734561, UInt64.Parse ("734561\0\0\0    "), "C#45");
+		try {
+			UInt64.Parse ("734561\0\0\0    \0");
+			Assert.Fail ("C#44");
+		} catch (FormatException) {}
+
+		try {		
+			UInt64.Parse ("734561\0\0\0    ");
+			Assert.Fail ("C#45");
+		} catch (FormatException) {}
+
 		Assert.AreEqual (734561, UInt64.Parse ("734561\0\0\0"), "C#46");
 
 		Assert.AreEqual (0, UInt64.Parse ("0+", NumberStyles.Any), "#50");

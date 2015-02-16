@@ -26,7 +26,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_5
 
 using System;
 using System.Net;
@@ -61,6 +60,7 @@ namespace System.Net.WebSockets
 		const int HeaderMaxLength = 14;
 		byte[] headerBuffer;
 		byte[] sendBuffer;
+		long remaining;
 
 		public ClientWebSocket ()
 		{
@@ -226,32 +226,43 @@ namespace System.Net.WebSockets
 			ValidateArraySegment (buffer);
 			return Task.Run (() => {
 				EnsureWebSocketState (WebSocketState.Open, WebSocketState.CloseSent);
-				// First read the two first bytes to know what we are doing next
-				connection.Read (req, headerBuffer, 0, 2);
-				var isLast = (headerBuffer[0] >> 7) > 0;
-				var isMasked = (headerBuffer[1] >> 7) > 0;
-				int mask = 0;
-				var type = WireToMessageType ((byte)(headerBuffer[0] & 0xF));
-				long length = headerBuffer[1] & 0x7F;
-				int offset = 0;
-				if (length == 126) {
-					offset = 2;
-					connection.Read (req, headerBuffer, 2, offset);
-					length = (headerBuffer[2] << 8) | headerBuffer[3];
-				} else if (length == 127) {
-					offset = 8;
-					connection.Read (req, headerBuffer, 2, offset);
-					length = 0;
-					for (int i = 2; i <= 9; i++)
-						length = (length << 8) | headerBuffer[i];
-				}
 
-				if (isMasked) {
-					connection.Read (req, headerBuffer, 2 + offset, 4);
-					for (int i = 0; i < 4; i++) {
-						var pos = i + offset + 2;
-						mask = (mask << 8) | headerBuffer[pos];
+				bool isLast;
+				WebSocketMessageType type;
+				long length;
+
+				if (remaining == 0) {
+					// First read the two first bytes to know what we are doing next
+					connection.Read (req, headerBuffer, 0, 2);
+					isLast = (headerBuffer[0] >> 7) > 0;
+					var isMasked = (headerBuffer[1] >> 7) > 0;
+					int mask = 0;
+					type = WireToMessageType ((byte)(headerBuffer[0] & 0xF));
+					length = headerBuffer[1] & 0x7F;
+					int offset = 0;
+					if (length == 126) {
+						offset = 2;
+						connection.Read (req, headerBuffer, 2, offset);
+					length = (headerBuffer[2] << 8) | headerBuffer[3];
+					} else if (length == 127) {
+						offset = 8;
+						connection.Read (req, headerBuffer, 2, offset);
+						length = 0;
+						for (int i = 2; i <= 9; i++)
+							length = (length << 8) | headerBuffer[i];
 					}
+
+					if (isMasked) {
+						connection.Read (req, headerBuffer, 2 + offset, 4);
+						for (int i = 0; i < 4; i++) {
+							var pos = i + offset + 2;
+							mask = (mask << 8) | headerBuffer[pos];
+						}
+					}
+				} else {
+					isLast = (headerBuffer[0] >> 7) > 0;
+					type = WireToMessageType ((byte)(headerBuffer[0] & 0xF));
+					length = remaining;
 				}
 
 				if (type == WebSocketMessageType.Close) {
@@ -264,8 +275,9 @@ namespace System.Net.WebSockets
 				} else {
 					var readLength = (int)(buffer.Count < length ? buffer.Count : length);
 					connection.Read (req, buffer.Array, buffer.Offset, readLength);
+					remaining = length - readLength;
 
-					return new WebSocketReceiveResult ((int)length, type, isLast);
+					return new WebSocketReceiveResult ((int)readLength, type, isLast && remaining == 0);
 				}
 			});
 		}
@@ -305,7 +317,7 @@ namespace System.Net.WebSockets
 			var opCode = MessageTypeToWire (type);
 			var length = buffer.Count;
 
-			headerBuffer[0] = (byte)(opCode | (endOfMessage ? 0 : 0x80));
+			headerBuffer[0] = (byte)(opCode | (endOfMessage ? 0x80 : 0));
 			if (length < 126) {
 				headerBuffer[1] = (byte)length;
 			} else if (length <= ushort.MaxValue) {
@@ -375,4 +387,3 @@ namespace System.Net.WebSockets
 	}
 }
 
-#endif

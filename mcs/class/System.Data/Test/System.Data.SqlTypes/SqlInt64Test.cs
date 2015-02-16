@@ -35,10 +35,8 @@ using System;
 using System.Xml;
 using System.Data.SqlTypes;
 
-#if NET_2_0
 using System.Xml.Serialization;
 using System.IO;
-#endif
 
 using NUnit.Framework;
 
@@ -139,11 +137,9 @@ namespace MonoTests.System.Data.SqlTypes
 				Assert.AreEqual (typeof (OverflowException), e.GetType (), "#D19");
 			}
 
-#if NET_2_0
 			// Modulus ()
 			Assert.AreEqual ((SqlInt64)36, SqlInt64.Modulus (Test164, Test64), "#D20");
 			Assert.AreEqual ((SqlInt64)64, SqlInt64.Modulus (Test64, Test164), "#D21");
-#endif
 		}
 
 		[Test]
@@ -662,7 +658,6 @@ namespace MonoTests.System.Data.SqlTypes
 			short TestShort = 14;
 			Assert.AreEqual ((long) 14, ((SqlInt64) TestShort).Value, "#G01");
 		}
-#if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
 		{
@@ -718,6 +713,5 @@ namespace MonoTests.System.Data.SqlTypes
 				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
 			}
 		}
-#endif
 	}
 }

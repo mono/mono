@@ -108,11 +108,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual (true, copy.Font.Italic, "CopyFrom#1");
 			Assert.AreEqual (true, copy.Font.Bold, "CopyFrom#2");
-#if NET_2_0
 			Assert.AreEqual (false, copy.Font.Underline, "CopyFrom#3");
-#else
-			Assert.AreEqual (true, copy.Font.Underline, "CopyFrom#3");
-#endif
 		}
 		
 		[Test]
@@ -140,11 +136,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			copy2.Font.Overline = true;
 			copy2.Font.CopyFrom (copy.Font);
 
-#if NET_2_0
 			Assert.AreEqual (false, copy2.Font.Overline, "MergeWith#5");
-#else
-			Assert.AreEqual (true, copy2.Font.Overline, "MergeWith#5");
-#endif
 		}
 
 		[Test]

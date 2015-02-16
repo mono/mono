@@ -632,11 +632,6 @@ namespace System.Data {
 		#endregion
 	}
 
-#if !NET_2_0
-	[Serializable]
-	partial class DataRelationCollection {
-	}
-#else
 	partial class DataRelationCollection {
 		public void CopyTo (DataRelation [] array, int index)
 		{
@@ -669,5 +664,4 @@ namespace System.Data {
 			si.AddValue ("DataSet.Relations", l, typeof (ArrayList));
 		}
 	}
-#endif
 }

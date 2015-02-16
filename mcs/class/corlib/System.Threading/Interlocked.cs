@@ -46,6 +46,10 @@ namespace System.Threading
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static int CompareExchange(ref int location1, int value, int comparand, ref bool succeeded);
+
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static object CompareExchange(ref object location1, object value, object comparand);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -118,10 +122,8 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long Add(ref long location1, long value);
 
-#if NET_4_5
 		public static void MemoryBarrier () {
 			Thread.MemoryBarrier ();
 		}
-#endif
 	}
 }

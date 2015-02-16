@@ -277,6 +277,18 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
+		[Test]
+		public void GetRawConstantValue () {
+            EnumBuilder enumBuilder = module.DefineEnum ("gggg",
+                TypeAttributes.Public, typeof(int));
+            enumBuilder.DefineLiteral ("TF", 4);
+
+            enumBuilder.CreateType ();
+
+            var fields = enumBuilder.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+			Assert.AreEqual (4, fields[0].GetRawConstantValue ());
+		}
+
 		// Return a unique type name
 		private string genTypeName ()
 		{

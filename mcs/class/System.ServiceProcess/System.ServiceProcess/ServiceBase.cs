@@ -41,9 +41,6 @@ using System.Threading;
 
 namespace System.ServiceProcess
 {
-#if ONLY_1_1
-	[Designer ("Microsoft.VisualStudio.Install.UserNTServiceDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, "System.ComponentModel.Design.IRootDesigner")]
-#endif
 	[InstallerType (typeof (ServiceProcessInstaller))]
 	public class ServiceBase : Component
 	{

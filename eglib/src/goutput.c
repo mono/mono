@@ -132,6 +132,7 @@ g_assertion_message (const gchar *format, ...)
 	va_start (args, format);
 	g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, format, args);
 	va_end (args);
+	exit (0);
 }
 
 
@@ -176,7 +177,7 @@ default_stderr_handler (const gchar *message)
 }
 
 
-#elif MONOTOUCH
+#elif defined(HOST_IOS)
 #include <asl.h>
 
 static int

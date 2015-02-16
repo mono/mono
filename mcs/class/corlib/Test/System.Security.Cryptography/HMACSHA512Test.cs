@@ -26,6 +26,9 @@ namespace MonoTests.System.Security.Cryptography {
 
 	public class SelectableHmacSha512: HMAC {
 
+		// Legacy parameter explanation:
+		// http://blogs.msdn.com/shawnfa/archive/2007/01/31/please-do-not-use-the-net-2-0-hmacsha512-and-hmacsha384-classes.aspx
+
 		public SelectableHmacSha512 (byte[] key, bool legacy)
 		{
 			HashName = "SHA512";
@@ -43,7 +46,6 @@ namespace MonoTests.System.Security.Cryptography {
 	public class HMACSHA512Test : KeyedHashAlgorithmTest {
 
 		protected HMACSHA512 algo;
-		private bool legacy;
 
 		[SetUp]
 		public override void SetUp () 
@@ -51,8 +53,6 @@ namespace MonoTests.System.Security.Cryptography {
 			algo = new HMACSHA512 ();
 			algo.Key = new byte [8];
 			hash = algo;
-			// http://blogs.msdn.com/shawnfa/archive/2007/01/31/please-do-not-use-the-net-2-0-hmacsha512-and-hmacsha384-classes.aspx
-			legacy = (new HS512 ().BlockSize == 64);
 		}
 
 		// the hash algorithm only exists as a managed implementation
@@ -88,6 +88,7 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual (512, algo.HashSize, "HMACSHA512.HashSize");
 			Assert.AreEqual (1, algo.InputBlockSize, "HMACSHA512.InputBlockSize");
 			Assert.AreEqual (1, algo.OutputBlockSize, "HMACSHA512.OutputBlockSize");
+			Assert.AreEqual (128, algo.Key.Length, "HMACSHA512.Key.Length");
 			Assert.AreEqual ("System.Security.Cryptography.HMACSHA512", algo.ToString (), "HMACSHA512.ToString()");
 		}
 

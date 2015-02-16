@@ -13,7 +13,7 @@ using System.ComponentModel;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using System.ComponentModel.Design;
 using System.Globalization;
-
+using System.Linq;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -227,6 +227,8 @@ namespace MonoTests.System.ComponentModel
 		
 		public MyComponent  ()
 		{
+			// A workaround for aggressive linker
+			Disposed -= null;
 		}
 		
 		public MyComponent (ISite site)
@@ -1078,11 +1080,11 @@ namespace MonoTests.System.ComponentModel
 
 			test.ResetMethodsCalled ();
 			prop = TypeDescriptor.GetDefaultProperty (test);
-			Assert.AreEqual ("6", test.methods_called, "#5");
+			Assert.AreEqual ("63", test.methods_called, "#5");
 
 			test.ResetMethodsCalled ();
 			events = TypeDescriptor.GetEvents (test);
-			Assert.AreEqual ("2", test.methods_called, "#6");
+			Assert.AreEqual ("1", test.methods_called, "#6");
 
 			test.ResetMethodsCalled ();
 			events = TypeDescriptor.GetEvents (test, new Attribute[0]);
@@ -1090,7 +1092,7 @@ namespace MonoTests.System.ComponentModel
 
 			test.ResetMethodsCalled ();
 			events = TypeDescriptor.GetEvents (test, false);
-			Assert.AreEqual ("2", test.methods_called, "#8");
+			Assert.AreEqual ("1", test.methods_called, "#8");
 		}
 
 		[Test]
@@ -1236,14 +1238,12 @@ namespace MonoTests.System.ComponentModel
 
 			// Test from bug #76686
 			Assert.AreEqual  (typeof (Int32Converter), TypeDescriptor.GetConverter ((int?) 1).GetType (), "#28");
-#if MOBILE
-			Assert.IsFalse (TypeDescriptor.GetConverter (typeof (Component)) is ComponentConverter, "#29");
-			Assert.IsFalse (TypeDescriptor.GetConverter (new Component()) is ComponentConverter, "#30");
-#else
+			new ComponentConverter (null); // Needed for MT linker
 			Assert.IsTrue (TypeDescriptor.GetConverter (typeof (Component)) is ComponentConverter, "#29");
 			Assert.IsTrue (TypeDescriptor.GetConverter (new Component()) is ComponentConverter, "#30");
-#endif
 			Assert.AreEqual (typeof (NullableConverter), TypeDescriptor.GetConverter (typeof (int?)).GetType (), "#31");
+			new DateTimeOffsetConverter (); // Needed for MT linker
+			Assert.AreEqual (typeof (DateTimeOffsetConverter), TypeDescriptor.GetConverter (typeof (DateTimeOffset)).GetType (), "#32");
 		}
 		
 		[Test]
@@ -1521,7 +1521,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual ("Length", pc [0].Name, "#2");
 		}
 
-#if NET_4_0
 		[Test]
 		public void InterfaceType ()
 		{
@@ -1533,6 +1532,150 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsFalse (interface_type.IsInterface, "#A4");
 			Assert.IsFalse (interface_type.IsPublic, "#A5");
 		}
-#endif
+
+		[Test]
+		public void DynamicAttributesShouldBeReturnedForType()
+		{
+			var testType = typeof(AttrTestClass);
+			TypeDescriptor.AddAttributes(testType, new ProviderTestAttribute());
+			var registeredAttributeTypes = TypeDescriptor.GetAttributes(testType).Cast<Attribute>().Select(attr => attr.GetType()).ToArray();
+			Assert.AreEqual(2, registeredAttributeTypes.Length);
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(ProviderTestAttribute)), "Contains-1");
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(SerializableAttribute)), "Contains-2");
+		}
+
+		[Test]
+		public void DynamicAttributesShouldBeReturnedForInstance()
+		{
+			var testObj = new AttrTestClass();
+			TypeDescriptor.AddAttributes(testObj, new ProviderTestAttribute());
+			var registeredAttributeTypes = TypeDescriptor.GetAttributes(testObj).Cast<Attribute>().Select(attr => attr.GetType()).ToArray();
+			Assert.AreEqual(2, registeredAttributeTypes.Length);
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(ProviderTestAttribute)), "Contains-1");
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(SerializableAttribute)), "Contains-2");
+		}
+
+		[Test]
+		public void CustomTypeDescriptorsShouldBeUsedForType()
+		{
+			var testType = typeof(CustomDescriptorTestClass);
+			TypeDescriptor.AddProvider(new CustomDescriptionTestProvider(), testType);
+
+			var registeredAttributeTypes = TypeDescriptor.GetAttributes(testType).Cast<Attribute>().Select(attr => attr.GetType()).ToArray();
+			Assert.AreEqual(1, registeredAttributeTypes.Length);
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(ProviderTestAttribute)), "Contains-1");
+
+			var registeredPropertyDescriptorTypes = TypeDescriptor.GetProperties(testType).Cast<PropertyDescriptor>().Select(prop => prop.GetType()).ToArray();
+			Assert.AreEqual(1, registeredPropertyDescriptorTypes.Length);
+			Assert.IsTrue (registeredPropertyDescriptorTypes.Contains (typeof(ProviderTestPropertyDescriptor)), "Contains-2");
+		}
+
+		[Test]
+		public void CustomTypeDescriptorsShouldBeUsedForInstance()
+		{
+			var testObj = new CustomDescriptorTestClass();
+			TypeDescriptor.AddProvider(new CustomDescriptionTestProvider(), testObj);
+
+			var registeredAttributeTypes = TypeDescriptor.GetAttributes(testObj).Cast<Attribute>().Select(attr => attr.GetType()).ToArray();
+			Assert.AreEqual(1, registeredAttributeTypes.Length);
+			Assert.IsTrue (registeredAttributeTypes.Contains (typeof(ProviderTestAttribute)), "Contains-1");
+
+			var registeredPropertyDescriptorTypes = TypeDescriptor.GetProperties(testObj).Cast<PropertyDescriptor>().Select(prop => prop.GetType()).ToArray();
+			Assert.AreEqual(1, registeredPropertyDescriptorTypes.Length);
+			Assert.IsTrue (registeredPropertyDescriptorTypes.Contains (typeof(ProviderTestPropertyDescriptor)), "Contains-2");
+		}
+
+		private class CustomDescriptionTestProvider : TypeDescriptionProvider
+		{
+			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
+			{
+				return new CustomTestProvider();
+			}
+		}
+
+		private class CustomTestProvider : CustomTypeDescriptor
+		{
+			public CustomTestProvider()
+			{
+			}
+
+			public override AttributeCollection GetAttributes()
+			{
+				return new AttributeCollection(new ProviderTestAttribute());
+			}
+
+			public override PropertyDescriptorCollection GetProperties()
+			{
+				return new PropertyDescriptorCollection(new PropertyDescriptor[] { new ProviderTestPropertyDescriptor() });
+			}
+		}
+
+		private class ProviderTestAttribute : Attribute
+		{
+		}
+
+		private class ProviderTestPropertyDescriptor : PropertyDescriptor
+		{
+			public ProviderTestPropertyDescriptor()
+				: base("test", new Attribute[0])
+			{
+			}
+
+			public override bool CanResetValue(object component)
+			{
+				return false;
+			}
+
+			public override object GetValue(object component)
+			{
+				return null;
+			}
+
+			public override void ResetValue(object component)
+			{
+			}
+
+			public override void SetValue(object component, object value)
+			{
+			}
+
+			public override bool ShouldSerializeValue(object component)
+			{
+				return false;
+			}
+
+			public override Type ComponentType
+			{
+				get
+				{
+					return typeof(object);
+				}
+			}
+
+			public override bool IsReadOnly
+			{
+				get
+				{
+					return false;
+				}
+			}
+
+			public override Type PropertyType
+			{
+				get
+				{
+					return typeof(object);
+				}
+			}
+		}
+
+		[Serializable]
+		private class AttrTestClass
+		{
+		}
+
+		private class CustomDescriptorTestClass
+		{
+		}
 	}
 }

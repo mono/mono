@@ -1,6 +1,9 @@
 //
 // monop -- a semi-clone of javap
 //
+// TODO:
+//   Dump all attributes.
+//
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //	John Luke  (john.luke@gmail.com)
@@ -36,11 +39,15 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+using IKVM.Reflection;
 using System.Text;
 using Mono.CSharp;
+using Type=IKVM.Reflection.Type;
 
 class MonoP {
+	static Universe universe = new Universe(UniverseOptions.EnableFunctionPointers | UniverseOptions.ResolveMissingMembers | UniverseOptions.DisablePseudoCustomAttributeRetrieval);
+	static Assembly mscorlib;
+	static Type obsolete_attribute;
 	static string assembly;
 	
 	// very common namespaces, all in corlib
@@ -49,7 +56,7 @@ class MonoP {
 		"System.Collections",
 		"System.Reflection",
 		"System.Text",
-		"System.IO"
+		"System.IO",
 	};
 	
 	static readonly string [] common_assemblies = {
@@ -62,8 +69,12 @@ class MonoP {
 	static readonly string [] common_ns = {
 		"System.Xml",
 		"System.Web",
+		"Foundation",
+		"CoreFoundation",
+		"CoreGraphics",
+		"UIKit",
 		"Gtk",
-		"GLib"
+		"GLib",
 	};
 	
 	static Type GetType (string tname, bool ignoreCase)
@@ -72,9 +83,9 @@ class MonoP {
 		if (assembly != null) {
 			Assembly a = GetAssembly (assembly, true);
 			t = a.GetType (tname, false, ignoreCase);
-		} else 
-			t = Type.GetType (tname, false, ignoreCase);
-
+		} else {
+			t = mscorlib.GetType (tname, false, ignoreCase);
+		}
 		return t;
 	}
 	
@@ -86,6 +97,7 @@ class MonoP {
 
 		string [] assemblies = GetKnownAssemblyNames ();
 		for (int i = 0; i < assemblies.Length; i++) {
+			Console.WriteLine ("Loading {0}", assemblies[i]);
 			Assembly a = GetAssembly (assemblies [i], false);
 			if (a == null)
 				continue;
@@ -117,6 +129,11 @@ class MonoP {
 
 	static string [] GetKnownAssemblyNames ()
 	{
+		Console.WriteLine (options.PublicDir);
+		if (options.Style == "xios" || options.Style == "xand"){
+			return Directory.GetFiles (options.PublicDir, "*.dll");
+		}
+		
 		Process p = new Process ();
 		p.StartInfo.UseShellExecute = false;
 		p.StartInfo.RedirectStandardOutput = true;
@@ -157,21 +174,12 @@ class MonoP {
 		try {
 			// if it exists try to use LoadFrom
 			if (File.Exists (assembly))
-				a = Assembly.LoadFrom (assembly);
-			// if it looks like a fullname try that
-			else if (assembly.Split (',').Length == 4)
-				a = Assembly.Load (assembly);
-			// see if MONO_PATH has it
+				a = universe.LoadFile (assembly);
 			else
 				a = LoadFromMonoPath (assembly);
 		} catch {
 			// ignore exception it gets handled below
 		}
-
-		// last try partial name
-		// this (apparently) is exception safe
-		if (a == null)
-			a = Assembly.LoadWithPartialName (assembly);
 
 		if (a == null && exit) {
 			Console.WriteLine ("Could not load {0}", MonoP.assembly);
@@ -189,7 +197,7 @@ class MonoP {
 		foreach (string path in paths) {	
 			string apath = Path.Combine (path, assembly);
 			if (File.Exists (apath))
-				return Assembly.LoadFrom (apath);	
+				return universe.LoadFile (apath);	
 		}
 		return null;
 	}
@@ -213,13 +221,6 @@ class MonoP {
 		Console.WriteLine ();
 		Console.WriteLine ("Assembly Information:");
 
-		object[] cls = a.GetCustomAttributes (typeof (CLSCompliantAttribute), false);
-		if (cls.Length > 0) {
-			CLSCompliantAttribute cca = cls[0] as CLSCompliantAttribute;
-			if (cca.IsCompliant)
-				Console.WriteLine ("[CLSCompliant]");
-		}
-
 		foreach (string ai in a.ToString ().Split (','))
 			Console.WriteLine (ai.Trim ());
 			
@@ -229,9 +230,9 @@ class MonoP {
 
 		int obsolete_count = 0;
 		foreach (Type t in types) {
-			if (filter_obsolete && t.IsDefined (typeof (ObsoleteAttribute), false))
-				obsolete_count ++;
-			else 
+			if (filter_obsolete && t.IsDefined (obsolete_attribute, false))
+				obsolete_count++;
+			else
 				Console.WriteLine (t.FullName);
 		}
 
@@ -240,7 +241,7 @@ class MonoP {
 	
 	internal static void Completion (string prefix)
 	{
-		foreach (Type t in typeof (object).Assembly.GetExportedTypes ()) {
+		foreach (Type t in mscorlib.GetExportedTypes ()) {
 			if (t.Name.StartsWith (prefix)) {
 				if (Array.IndexOf (v_common_ns, t.Namespace) != -1) {
 					Console.WriteLine (t.Name);
@@ -281,13 +282,6 @@ class MonoP {
 	{
 		Assembly a = GetAssembly (assembly, true);
 
-		object[] cls = a.GetCustomAttributes (typeof (CLSCompliantAttribute), false);
-		if (cls.Length > 0) {
-			CLSCompliantAttribute cca = cls[0] as CLSCompliantAttribute;
-			if (cca.IsCompliant)
-				Console.WriteLine ("[CLSCompliant]");
-		}
-
 		foreach (string ai in a.ToString ().Split (','))
 			Console.WriteLine (ai.Trim ());
 			
@@ -297,19 +291,27 @@ class MonoP {
 		
 		var sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);				
 		foreach (Type t in types) {
-			if (filter_obsolete && t.IsDefined (typeof (ObsoleteAttribute), false))
+			if (filter_obsolete && t.IsDefined (obsolete_attribute, false))
 				continue;
 
-			new Outline (t, sw, true, show_private, filter_obsolete).OutlineType ();
+			new Outline (universe, mscorlib, t, sw, true, show_private, filter_obsolete).OutlineType ();
 		}
 		sw.Flush ();
 	}
+
+	static Options options = new Options ();
 	
 	static void Main (string [] args)
 	{
-		Options options = new Options ();
 		if (!options.ProcessArgs (args))
 			return;
+		
+		if (options.Style == null)
+			mscorlib = universe.LoadFile (typeof (int).Assembly.Location);
+		else
+			mscorlib = universe.LoadFile (Path.Combine (options.PublicDir, "mscorlib.dll"));
+						      
+		obsolete_attribute = mscorlib.GetType ("System.ObsoleteAttribute");
 		
 		if (options.AssemblyReference != null) {
 			assembly = options.AssemblyReference;
@@ -327,11 +329,12 @@ class MonoP {
 				}
 			}
 		}
-
+		
 		string message = null;
 		string tname = options.Type;
 		Type t = null;
 		int count;
+
 
 		if (options.Search) {
 			string matches = SearchTypes (tname, ref t, out count);
@@ -364,6 +367,8 @@ class MonoP {
 			foreach (string assm in GetKnownAssemblyNames ()) {
 				try {
 					Assembly a = GetAssembly (assm, false);
+					if (a == null)
+						continue;
 					t = a.GetType (tname, false, true);
 					if (t != null) {
 						message = String.Format ("{0} is included in the {1} assembly.",
@@ -380,7 +385,8 @@ class MonoP {
 							goto found;
 						}
 					}
-				} catch {
+				} catch (Exception e){
+					Console.WriteLine ("Failure: " + e);
 				}
 			}
 		}
@@ -395,7 +401,7 @@ class MonoP {
 		// This gets us nice buffering
 		//
 		StreamWriter sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);				
-		new Outline (t, sw, options.DeclaredOnly, options.ShowPrivate, options.FilterObsolete).OutlineType ();
+		new Outline (universe, mscorlib, t, sw, options.DeclaredOnly, options.ShowPrivate, options.FilterObsolete).OutlineType ();
 		sw.Flush ();
 
 		if (message != null)

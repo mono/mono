@@ -32,11 +32,7 @@ using System.Reflection;
 
 namespace System.Web.Services.Protocols
 {
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	sealed class SoapHeaderMapping // It used to be HeaderInfo class until Mono 1.2
 	{
 		MemberInfo member;

@@ -110,7 +110,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 		}
 	}
 
-#if NET_4_0
 	protected override void Dispose (bool disposing)
 	{
 		// zeroize buffer
@@ -125,7 +124,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 		}
 		base.Dispose (disposing);
 	}
-#endif
 
 	private void Prepare (string strPassword, byte[] rgbSalt, string strHashName, int iterations) 
 	{

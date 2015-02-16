@@ -134,15 +134,9 @@ namespace System.Web.Configuration
 
 			try {
 				using (RegistryKey rk = OpenRegistryKey (key, true)) {
-#if NET_2_0
 					rk.SetValue ("AutoGenKey", buf, RegistryValueKind.Binary);
 					rk.SetValue ("AutoGenKeyCreationTime", DateTime.Now.Ticks, RegistryValueKind.QWord);
 					rk.SetValue ("AutoGenKeyFormat", 2, RegistryValueKind.DWord);
-#else
-					rk.SetValue ("AutoGenKey", buf);
-					rk.SetValue ("AutoGenKeyCreationTime", DateTime.Now.Ticks);
-					rk.SetValue ("AutoGenKeyFormat", 2);
-#endif
 					rk.Flush (); // we want it synchronous
 				}
 			} catch (Exception ex) {

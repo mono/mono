@@ -40,9 +40,7 @@ namespace System.Xml.Schema
 	/// XmlSchemaCollection is originally designed to be conformant to 
 	/// W3C specification).
 	/// </summary>
-#if NET_2_0
 	[Obsolete ("Use XmlSchemaSet.")]
-#endif
 	public sealed class XmlSchemaCollection : ICollection, IEnumerable
 	{
 		//private fields

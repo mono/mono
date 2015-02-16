@@ -29,10 +29,6 @@
 
 namespace System
 {
-#if NET_4_0
 	public delegate bool Predicate <in T> (T obj);
-#else
-	public delegate bool Predicate <T> (T obj);
-#endif	
 }
 

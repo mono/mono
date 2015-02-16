@@ -42,9 +42,7 @@ namespace System.Data
 		#region Constructors
 
 		public DBConcurrencyException ()
-#if NET_2_0
 			: base ("Concurrency violation.")
-#endif
 		{
 		}
 
@@ -58,11 +56,7 @@ namespace System.Data
 		{
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		DBConcurrencyException (string message, Exception inner, DataRow[] dataRows)
 			: base (message, inner)
 		{
@@ -86,7 +80,6 @@ namespace System.Data
 			set { rows = new DataRow [] { value };}
 		}
 
-#if NET_2_0
 		public int RowCount {
 			get {
 				if (rows != null)
@@ -94,13 +87,11 @@ namespace System.Data
 				return 0;
 			}
 		}
-#endif
 
 		#endregion // Properties
 
 		#region Methods
 
-#if NET_2_0
 		[MonoTODO]
 		public void CopyToRows (DataRow [] array)
 		{
@@ -112,7 +103,6 @@ namespace System.Data
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		public override void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			if (si == null)

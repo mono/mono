@@ -34,20 +34,14 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 #if NET_2_1
 using XmlSchemaException = System.Xml.XmlException;
 #else
 using Mono.Xml.Schema;
 #endif
 
-#if NET_2_0
 using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
-#else
-using XmlTextReaderImpl = System.Xml.XmlTextReader;
-#endif
 
 namespace Mono.Xml
 {
@@ -283,7 +277,6 @@ namespace Mono.Xml
 		}
 	}
 
-#if NET_2_0
 	class DictionaryBase : List<KeyValuePair<string,DTDNode>>
 	{
 		public IEnumerable<DTDNode> Values {
@@ -293,7 +286,6 @@ namespace Mono.Xml
 			}
 		}
 	}
-#endif
 	internal class DTDCollectionBase : DictionaryBase
 	{
 		DTDObjectModel root;
@@ -307,7 +299,6 @@ namespace Mono.Xml
 			get { return root; }
 		}
 
-#if NET_2_0
 		public DictionaryBase InnerHashtable {
 			get { return this; }
 		}
@@ -332,30 +323,6 @@ namespace Mono.Xml
 					return p.Value;
 			return null;
 		}
-#else
-		public ICollection Keys {
-			get { return InnerHashtable.Keys; }
-		}
-
-		public ICollection Values {
-			get { return InnerHashtable.Values; }
-		}
-
-		protected void BaseAdd (string name, object value)
-		{
-			InnerHashtable.Add (name, value);
-		}
-
-		public bool Contains (string key)
-		{
-			return InnerHashtable.Contains (key);
-		}
-
-		protected object BaseGet (string name)
-		{
-			return InnerHashtable [name];
-		}
-#endif
 	}
 
 	internal class DTDElementDeclarationCollection : DTDCollectionBase

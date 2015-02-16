@@ -31,7 +31,6 @@
 //
 
 
-#if NET_2_0
 namespace System.Data {
 	public enum UpdateOptions 
 	{
@@ -41,5 +40,4 @@ namespace System.Data {
 		UpdateChildren
 	}
 }
-#endif // NET_2_0
 

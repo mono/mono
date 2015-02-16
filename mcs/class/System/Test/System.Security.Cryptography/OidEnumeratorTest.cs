@@ -7,7 +7,6 @@
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 
@@ -78,4 +77,3 @@ namespace MonoTests.System.Security.Cryptography {
 	}
 }
 
-#endif

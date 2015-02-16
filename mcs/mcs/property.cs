@@ -337,18 +337,22 @@ namespace Mono.CSharp
 					ModFlags |= method.ModFlags;
 					flags = method.flags;
 				} else {
-					if (container.Kind == MemberKind.Interface)
-						Report.Error (275, Location, "`{0}': accessibility modifiers may not be used on accessors in an interface",
-							GetSignatureForError ());
-					else if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
-						Report.Error (442, Location, "`{0}': abstract properties cannot have private accessors", GetSignatureForError ());
-					}
-
 					CheckModifiers (ModFlags);
 					ModFlags |= (method.ModFlags & (~Modifiers.AccessibilityMask));
 					ModFlags |= Modifiers.PROPERTY_CUSTOM;
-					flags = ModifiersExtensions.MethodAttr (ModFlags);
-					flags |= (method.flags & (~MethodAttributes.MemberAccessMask));
+
+					if (container.Kind == MemberKind.Interface) {
+						Report.Error (275, Location, "`{0}': accessibility modifiers may not be used on accessors in an interface",
+							GetSignatureForError ());
+					} else if ((ModFlags & Modifiers.PRIVATE) != 0) {
+						if ((method.ModFlags & Modifiers.ABSTRACT) != 0) {
+							Report.Error (442, Location, "`{0}': abstract properties cannot have private accessors", GetSignatureForError ());
+						}
+
+						ModFlags &= ~Modifiers.VIRTUAL;
+					}
+
+					flags = ModifiersExtensions.MethodAttr (ModFlags) | MethodAttributes.SpecialName;
 				}
 
 				CheckAbstractAndExtern (block != null);
@@ -531,7 +535,12 @@ namespace Mono.CSharp
 						ok = false;
 					}
 				} else if (Get.HasCustomAccessModifier || base_prop.HasDifferentAccessibility) {
-					if (!CheckAccessModifiers (Get, base_prop.Get)) {
+					if (!base_prop.Get.IsAccessible (this)) {
+						// Same as csc but it should be different error code
+						Report.Error (115, Get.Location, "`{0}' is marked as an override but no accessible `get' accessor found to override",
+							GetSignatureForError ());
+						ok = false;
+					} else if (!CheckAccessModifiers (Get, base_prop.Get)) {
 						Error_CannotChangeAccessModifiers (Get, base_prop.Get);
 						ok = false;
 					}
@@ -547,6 +556,12 @@ namespace Mono.CSharp
 						GetSignatureForError (), base_prop.GetSignatureForError ());
 					ok = false;
 				}
+
+				if (Get.IsCompilerGenerated) {
+					Report.Error (8080, Location, "`{0}': Auto-implemented properties must override all accessors of the overridden property",
+						GetSignatureForError ());
+					ok = false;
+				}
 			} else {
 				if (!base_prop.HasSet) {
 					if (ok) {
@@ -557,7 +572,12 @@ namespace Mono.CSharp
 						ok = false;
 					}
 				} else if (Set.HasCustomAccessModifier || base_prop.HasDifferentAccessibility) {
-					if (!CheckAccessModifiers (Set, base_prop.Set)) {
+					if (!base_prop.Set.IsAccessible (this)) {
+						// Same as csc but it should be different error code
+						Report.Error (115, Set.Location, "`{0}' is marked as an override but no accessible `set' accessor found to override",
+							GetSignatureForError ());
+						ok = false;
+					} else if (!CheckAccessModifiers (Set, base_prop.Set)) {
 						Error_CannotChangeAccessModifiers (Set, base_prop.Set);
 						ok = false;
 					}
@@ -728,12 +748,12 @@ namespace Mono.CSharp
 			
 	public class Property : PropertyBase
 	{
-		public sealed class BackingField : Field
+		public sealed class BackingFieldDeclaration : Field
 		{
 			readonly Property property;
 			const Modifiers DefaultModifiers = Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | Modifiers.DEBUGGER_HIDDEN;
 
-			public BackingField (Property p, bool readOnly)
+			public BackingFieldDeclaration (Property p, bool readOnly)
 				: base (p.Parent, p.type_expr, DefaultModifiers | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				new MemberName ("<" + p.GetFullName (p.MemberName) + ">k__BackingField", p.Location), null)
 			{
@@ -756,8 +776,6 @@ namespace Mono.CSharp
 
 		static readonly string[] attribute_target_auto = new string[] { "property", "field" };
 
-		Field backing_field;
-
 		public Property (TypeDefinition parent, FullNamedExpression type, Modifiers mod,
 				 MemberName name, Attributes attrs)
 			: base (parent, type, mod,
@@ -767,6 +785,8 @@ namespace Mono.CSharp
 				name, attrs)
 		{
 		}
+
+		public BackingFieldDeclaration BackingField { get; private set; }
 
 		public Expression Initializer { get; set; }
 
@@ -778,7 +798,7 @@ namespace Mono.CSharp
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.Field) {
-				backing_field.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				BackingField.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
 
@@ -788,20 +808,20 @@ namespace Mono.CSharp
 		void CreateAutomaticProperty ()
 		{
 			// Create backing field
-			backing_field = new BackingField (this, Initializer != null && Set == null);
-			if (!backing_field.Define ())
+			BackingField = new BackingFieldDeclaration (this, Initializer == null && Set == null);
+			if (!BackingField.Define ())
 				return;
 
 			if (Initializer != null) {
-				backing_field.Initializer = Initializer;
-				Parent.RegisterFieldForInitialization (backing_field, new FieldInitializer (backing_field, Initializer, Location));
-				backing_field.ModFlags |= Modifiers.READONLY;
+				BackingField.Initializer = Initializer;
+				Parent.RegisterFieldForInitialization (BackingField, new FieldInitializer (BackingField, Initializer, Location));
+				BackingField.ModFlags |= Modifiers.READONLY;
 			}
 
-			Parent.PartialContainer.Members.Add (backing_field);
+			Parent.PartialContainer.Members.Add (BackingField);
 
-			FieldExpr fe = new FieldExpr (backing_field, Location);
-			if ((backing_field.ModFlags & Modifiers.STATIC) == 0)
+			FieldExpr fe = new FieldExpr (BackingField, Location);
+			if ((BackingField.ModFlags & Modifiers.STATIC) == 0)
 				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
 
 			//
@@ -839,7 +859,7 @@ namespace Mono.CSharp
 						GetSignatureForError ());
 
 				if (IsInterface)
-					Report.Error (8053, Location, "`{0}': Properties inside interfaces cannot have initializers",
+					Report.Error (8052, Location, "`{0}': Properties inside interfaces cannot have initializers",
 						GetSignatureForError ());
 
 				if (Compiler.Settings.Version < LanguageVersion.V_6)
@@ -848,14 +868,9 @@ namespace Mono.CSharp
 
 			if (auto) {
 				if (Get == null) {
-					Report.Error (8052, Location, "Auto-implemented property `{0}' must have get accessor",
+					Report.Error (8051, Location, "Auto-implemented property `{0}' must have get accessor",
 						GetSignatureForError ());
 					return false;
-				}
-
-				if (Initializer == null && AccessorSecond == null) {
-					Report.Error (8051, Location, "Auto-implemented property `{0}' must have set accessor or initializer",
-						GetSignatureForError ());
 				}
 
 				if (Compiler.Settings.Version < LanguageVersion.V_3 && Initializer == null)
@@ -1739,6 +1754,13 @@ namespace Mono.CSharp
 		public override string GetSignatureForDocumentation ()
 		{
 			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
+		}
+
+		public override void PrepareEmit ()
+		{
+			parameters.ResolveDefaultValues (this);
+
+			base.PrepareEmit ();
 		}
 
 		protected override bool VerifyClsCompliance ()

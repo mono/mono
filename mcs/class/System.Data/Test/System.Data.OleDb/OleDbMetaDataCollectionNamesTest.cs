@@ -29,7 +29,6 @@
 using System.Data.OleDb;
 using NUnit.Framework;
 
-#if NET_2_0
 namespace MonoTests.System.Data.OleDb
 {
         [TestFixture]
@@ -50,4 +49,3 @@ namespace MonoTests.System.Data.OleDb
                 }
         }
 }
-#endif

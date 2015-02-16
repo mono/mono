@@ -323,9 +323,7 @@ namespace Microsoft.Build.BuildEngine {
 				Reevaluate ();
 			}
 
-#if NET_4_0
 			ProcessBeforeAndAfterTargets ();
-#endif
 
 			if (targetNames == null || targetNames.Length == 0) {
 				if (defaultTargets != null && defaultTargets.Length != 0) {
@@ -404,7 +402,6 @@ namespace Microsoft.Build.BuildEngine {
 			return sb.ToString ();
 		}
 
-#if NET_4_0
 		void ProcessBeforeAndAfterTargets ()
 		{
 			var beforeTable = Targets.AsIEnumerable ()
@@ -440,7 +437,6 @@ namespace Microsoft.Build.BuildEngine {
 			expr.Parse (targets, ParseOptions.AllowItemsNoMetadataAndSplit);
 			return (string []) expr.ConvertTo (this, typeof (string []));
 		}
-#endif
 
 		[MonoTODO]
 		public string [] GetConditionedPropertyValues (string propertyName)
@@ -1427,6 +1423,10 @@ namespace Microsoft.Build.BuildEngine {
 				return t;
 
 			return default (T);
+		}
+
+		internal string ThisFileFullPath {
+			get { return this_file_property_stack.Peek (); }
 		}
 
 		// Used for MSBuild*This* set of properties

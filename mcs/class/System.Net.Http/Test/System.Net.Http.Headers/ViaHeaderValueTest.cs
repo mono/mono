@@ -101,12 +101,12 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual ("1.1", res.ProtocolVersion, "#3");
 			Assert.AreEqual ("1.1 nowhere.com", res.ToString (), "#4");
 
-			res = ViaHeaderValue.Parse ("foo / 1.1 nowhere.com:43   ( lalala ) ");
+			res = ViaHeaderValue.Parse ("foo / 1.1 nowhere.com:43   ( lal ( a ) la ) ");
 			Assert.AreEqual ("foo", res.ProtocolName, "#10");
 			Assert.AreEqual ("1.1", res.ProtocolVersion, "#11");
 			Assert.AreEqual ("nowhere.com:43", res.ReceivedBy, "#12");
-			Assert.AreEqual ("( lalala )", res.Comment, "#13");
-			Assert.AreEqual ("foo/1.1 nowhere.com:43 ( lalala )", res.ToString (), "#14");
+			Assert.AreEqual ("( lal ( a ) la )", res.Comment, "#13");
+			Assert.AreEqual ("foo/1.1 nowhere.com:43 ( lal ( a ) la )", res.ToString (), "#14");
 		}
 
 		[Test]

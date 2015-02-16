@@ -29,8 +29,8 @@
       </sequencepoints>
       <locals />
       <scopes>
-        <entry index="0" start="0x2" end="0x2" />
-        <entry index="1" start="0xa" end="0xa" />
+        <entry index="0" start="0x1" end="0x2" />
+        <entry index="1" start="0x9" end="0xa" />
       </scopes>
     </method>
     <method token="0x6000004">
@@ -45,11 +45,11 @@
         <entry il="0x12" row="28" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="e" il_index="0" scope_ref="0" />
+        <entry name="e" il_index="0" scope_ref="2" />
       </locals>
       <scopes>
-        <entry index="0" start="0x2" end="0x2" />
-        <entry index="1" start="0xa" end="0xc" />
+        <entry index="0" start="0x1" end="0x2" />
+        <entry index="1" start="0x8" end="0xc" />
       </scopes>
     </method>
     <method token="0x6000005">
@@ -67,13 +67,13 @@
         <entry il="0x19" row="43" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="e" il_index="0" scope_ref="0" />
-        <entry name="e" il_index="1" scope_ref="0" />
+        <entry name="e" il_index="0" scope_ref="2" />
+        <entry name="e" il_index="1" scope_ref="3" />
       </locals>
       <scopes>
-        <entry index="0" start="0x2" end="0x2" />
-        <entry index="1" start="0xa" end="0xc" />
-        <entry index="2" start="0x14" end="0x19" />
+        <entry index="0" start="0x1" end="0x2" />
+        <entry index="1" start="0x8" end="0xc" />
+        <entry index="2" start="0x12" end="0x19" />
       </scopes>
     </method>
     <method token="0x6000006">
@@ -87,8 +87,8 @@
       </sequencepoints>
       <locals />
       <scopes>
-        <entry index="0" start="0x2" end="0x2" />
-        <entry index="1" start="0x9" end="0x9" />
+        <entry index="0" start="0x1" end="0x2" />
+        <entry index="1" start="0x8" end="0x9" />
       </scopes>
     </method>
     <method token="0x6000007">
@@ -105,12 +105,12 @@
         <entry il="0x15" row="67" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="e" il_index="0" scope_ref="0" />
+        <entry name="e" il_index="0" scope_ref="2" />
       </locals>
       <scopes>
-        <entry index="0" start="0x2" end="0x2" />
-        <entry index="1" start="0xa" end="0xc" />
-        <entry index="2" start="0x13" end="0x13" />
+        <entry index="0" start="0x1" end="0x2" />
+        <entry index="1" start="0x8" end="0xc" />
+        <entry index="2" start="0x12" end="0x13" />
       </scopes>
     </method>
   </methods>

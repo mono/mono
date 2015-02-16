@@ -37,7 +37,6 @@ using System.Xml;
 using System.Globalization;
 using System.Web.Util;
 
-#if NET_2_0
 
 namespace System.Web.Configuration {
 
@@ -266,5 +265,4 @@ namespace System.Web.Configuration {
 
 }
 
-#endif
 

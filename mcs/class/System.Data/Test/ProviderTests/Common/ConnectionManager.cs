@@ -31,24 +31,15 @@
 using System;
 using System.Configuration;
 using System.Data;
-#if NET_2_0
 using System.Data.Common;
-#endif
 
-#if ONLY_1_1
-using Mono.Data;
-#endif
 
 namespace MonoTests.System.Data
 {
 	public class ConnectionManager
 	{
 		private static ConnectionManager Instance;
-#if NET_2_0
 		private DbConnection _connection;
-#else
-		private IDbConnection _connection;
-#endif
 		private string _connectionString;
 		private EngineConfig _engine;
 
@@ -64,26 +55,16 @@ namespace MonoTests.System.Data
 				throw new ArgumentException ("PROVIDER_TESTS_CONNECTION environment variable is not set.");
 
 			ConnectionConfig [] connections = (ConnectionConfig [])
-#if NET_2_0
 				ConfigurationManager.GetSection ("providerTests");
-#else
-				ConfigurationSettings.GetConfig ("providerTests");
-#endif
 			foreach (ConnectionConfig connConfig in connections) {
 				if (connConfig.Name != connection_name)
 					continue;
 
 				_connectionString = connConfig.ConnectionString;
-#if NET_2_0
 				DbProviderFactory factory = DbProviderFactories.GetFactory (
 					connConfig.Factory);
 				_connection = factory.CreateConnection ();
 				_connection.ConnectionString = _connectionString;
-#else
-				_connection = ProviderFactory.CreateConnection (
-					string.Concat ("factory=", connConfig.Factory,
-						";", _connectionString));
-#endif
 				_connectionString = _connection.ConnectionString;
 				_engine = connConfig.Engine;
 				return;
@@ -97,11 +78,7 @@ namespace MonoTests.System.Data
 		}
 
 		public
-#if NET_2_0
 		DbConnection
-#else
-		IDbConnection
-#endif
 		Connection {
 			get {return _connection;}
 		}

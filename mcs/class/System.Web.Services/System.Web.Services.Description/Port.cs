@@ -36,19 +36,12 @@ namespace System.Web.Services.Description
 {
 	[XmlFormatExtensionPoint ("Extensions")]
 	public sealed class Port :
-#if NET_2_0
 		NamedItem
-#else
-		DocumentableItem 
-#endif
 	{
 		#region Fields
 
 		XmlQualifiedName binding;
 		ServiceDescriptionFormatExtensionCollection extensions;
-#if !NET_2_0
-		string name;
-#endif
 		Service service;
 
 		#endregion // Fields
@@ -59,9 +52,6 @@ namespace System.Web.Services.Description
 		{
 			binding = null;
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
-#if !NET_2_0
-			name = String.Empty;
-#endif
 			service = null;
 		}
 		
@@ -77,20 +67,11 @@ namespace System.Web.Services.Description
 
 		[XmlIgnore]
 		public 
-#if NET_2_0
 		override
-#endif
 		ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get { return extensions; }
 		}
 
-#if !NET_2_0
-		[XmlAttribute ("name", DataType = "NCName")]	
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
 
 //		[XmlIgnore]
 		public Service Service {

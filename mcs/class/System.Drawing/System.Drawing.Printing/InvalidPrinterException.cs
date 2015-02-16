@@ -35,9 +35,7 @@ using System.Security.Permissions;
 
 namespace System.Drawing.Printing {
 
-#if NET_2_0
 	[Serializable]
-#endif
 	public class InvalidPrinterException : SystemException {
 
 //		private PrinterSettings settings;

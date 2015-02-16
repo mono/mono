@@ -42,16 +42,19 @@ namespace Microsoft.Build.BuildEngine {
 			if (whenElement == null)
 				throw new ArgumentNullException ("whenElement");
 			this.whenElement = whenElement;
-			foreach (XmlElement xe in whenElement.ChildNodes) {
-				switch (xe.Name) {
+			foreach (XmlNode node in whenElement.ChildNodes) {
+				switch (node.NodeType) {
+				case XmlNodeType.Element:
+					var xe = (XmlElement)node;
+					switch (xe.Name) {
 					case "ItemGroup":
 						BuildItemGroup big = new BuildItemGroup (xe, parentProject, null, true);
-						//big.BindToXml (xe);
+							//big.BindToXml (xe);
 						groupingCollection.Add (big);
 						break;
 					case "PropertyGroup":
 						BuildPropertyGroup bpg = new BuildPropertyGroup (xe, parentProject, null, true);
-						//bpg.BindToXml (xe);
+							//bpg.BindToXml (xe);
 						groupingCollection.Add (bpg);
 						break;
 					case "Choose":
@@ -59,7 +62,13 @@ namespace Microsoft.Build.BuildEngine {
 						groupingCollection.Add (bc);
 						break;
 					default:
-						throw new InvalidProjectFileException ( string.Format ("Invalid element '{0}' in When.", xe.Name));
+						throw new InvalidProjectFileException (string.Format ("Invalid element '{0}' in When.", xe.Name));
+					}
+					break;
+				case XmlNodeType.Comment:
+					break;
+				default:
+					throw new InvalidProjectFileException (string.Format ("Invalid element '{0}' in When Condition.", node.NodeType));
 				}
 			}
 		}

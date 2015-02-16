@@ -203,7 +203,6 @@ namespace System.ServiceModel
 			return AddServiceEndpointCore (cd, binding, ea, listenUri);
 		}
 
-#if NET_4_0
 		public virtual void AddServiceEndpoint (ServiceEndpoint endpoint)
 		{
 			if (endpoint == null)
@@ -224,7 +223,6 @@ namespace System.ServiceModel
 
 			Description.Endpoints.Add (endpoint);
 		}
-#endif
 
 		Type PopulateType (string typeName)
 		{
@@ -323,10 +321,8 @@ namespace System.ServiceModel
 			
 			if (service != null)
 				LoadConfigurationSection (service);
-#if NET_4_0
 			// simplified configuration
 			AddServiceBehaviors (String.Empty, false);
-#endif
 			// TODO: consider commonBehaviors here
 
 			// ensure ServiceAuthorizationBehavior
@@ -346,13 +342,8 @@ namespace System.ServiceModel
 
 		void AddServiceBehaviors (string configurationName, bool throwIfNotFound)
 		{
-#if NET_4_0
 			if (configurationName == null)
 				return;
-#else
-			if (String.IsNullOrEmpty (configurationName))
-				return;
-#endif
 			ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors [configurationName];
 			if (behavior == null) {
 				if (throwIfNotFound)
@@ -384,7 +375,6 @@ namespace System.ServiceModel
 			foreach (ServiceEndpointElement endpoint in service.Endpoints) {
 				ServiceEndpoint se;
 
-#if NET_4_0
 				var binding = String.IsNullOrEmpty (endpoint.Binding) ? null : ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
 
 				if (!String.IsNullOrEmpty (endpoint.Kind)) {
@@ -404,10 +394,6 @@ namespace System.ServiceModel
 						binding = ConfigUtil.GetBindingByProtocolMapping (endpoint.Address);
 					se = AddServiceEndpoint (endpoint.Contract, binding, endpoint.Address);
 				}
-#else
-				var binding = ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration);
-				se = AddServiceEndpoint (endpoint.Contract, binding, endpoint.Address);
-#endif
 
 				// endpoint behaviors
 				EndpointBehaviorElement epbehavior = ConfigUtil.BehaviorsSection.EndpointBehaviors [endpoint.BehaviorConfiguration];
@@ -488,7 +474,6 @@ namespace System.ServiceModel
 			foreach (ServiceEndpoint endPoint in Description.Endpoints)
 				endPoint.Validate ();
 
-#if NET_4_0
 			// In 4.0, it seems that if there is no configured ServiceEndpoint, infer them from the service type.
 			if (Description.Endpoints.Count == 0) {
 				foreach (Type iface in Description.ServiceType.GetInterfaces ())
@@ -502,7 +487,6 @@ namespace System.ServiceModel
 							AddServiceEndpoint (iface.FullName, binding, baddr);
 						}
 			}
-#endif
 
 			if (Description.Endpoints.FirstOrDefault (e => e.Contract != mex_contract && !e.IsSystemEndpoint) == null)
 				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange endpoint) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");

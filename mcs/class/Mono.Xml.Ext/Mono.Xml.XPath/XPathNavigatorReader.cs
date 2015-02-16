@@ -205,12 +205,8 @@ namespace Mono.Xml.XPath
 
 		public override bool IsDefault {
 			get {
-#if NET_2_0
 				IXmlSchemaInfo si = current as IXmlSchemaInfo;
 				return si != null && si.IsDefault;
-#else
-				return false; // no way to check this.
-#endif
 			}
 		}
 

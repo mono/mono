@@ -69,13 +69,8 @@ namespace MonoTests.System.Security {
 		{
 			// no exception is thrown
 			PermissionSet ps = new PermissionSet (null);
-#if NET_2_0
 			Assert.IsTrue (!ps.IsUnrestricted (), "PermissionStateNull.IsUnrestricted");
 			Assert.IsTrue (ps.IsEmpty (), "PermissionStateNull.IsEmpty");
-#else
-			Assert.IsTrue (ps.IsUnrestricted (), "PermissionStateNull.IsUnrestricted");
-			Assert.IsTrue (!ps.IsEmpty (), "PermissionStateNull.IsEmpty");
-#endif
 			Assert.IsTrue (!ps.IsReadOnly, "PermissionStateNull.IsReadOnly");
 			Assert.AreEqual (ps.ToXml ().ToString (), ps.ToString (), "PermissionStateNull.ToXml().ToString()==ToString()");
 			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
@@ -150,14 +145,9 @@ namespace MonoTests.System.Security {
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			result = ps.AddPermission (zip);
 			Assert.IsNotNull (result, "Add(ZoneIdentityPermission)");
-#if NET_2_0
 			// Identity permissions aren't added to unrestricted permission sets in 2.0
 			Assert.AreEqual (SecurityZone.NoZone, (result as ZoneIdentityPermission).SecurityZone, "ZoneIdentityPermission");
 			Assert.AreEqual (0, ps.Count, "1");
-#else
-			Assert.AreEqual (zip.SecurityZone, (result as ZoneIdentityPermission).SecurityZone, "ZoneIdentityPermission");
-			Assert.AreEqual (1, ps.Count, "1");
-#endif
 		}
 
 		[Test]
@@ -291,9 +281,6 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-#if !NET_2_0
-		[Ignore ("Don't know why it doesn't work under Fx 1.1")]
-#endif
 		public void ConvertPermissionSet_BinaryToBinary ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
@@ -306,9 +293,6 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-#if !NET_2_0
-		[Ignore ("Don't know why it doesn't work under Fx 1.1")]
-#endif
 		public void ConvertPermissionSet_XmlToBinary ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
@@ -335,11 +319,7 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (XmlSyntaxException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void ConvertPermissionSet_XmlAsciiToXmlUnicode ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
@@ -391,12 +371,8 @@ namespace MonoTests.System.Security {
 			Assert.IsNotNull (result, "2.Add");
 			copy = ps.Copy ();
 			Assert.IsTrue (copy.IsUnrestricted (), "3.State");
-#if NET_2_0
 			// Identity permissions aren't added to unrestricted permission sets in 2.0
 			Assert.AreEqual (0, copy.Count, "3.Count");
-#else
-			Assert.AreEqual (1, copy.Count, "3.Count");
-#endif
 		}
 
 		[Test]
@@ -546,20 +522,11 @@ namespace MonoTests.System.Security {
 			se.AddAttribute ("Unrestricted", "true");
 			ps2.FromXml (se);
 			Assert.IsTrue (ps2.IsUnrestricted (), "FromXml-Unrestricted.IsUnrestricted");
-#if NET_2_0
 			Assert.AreEqual (0, ps2.Count, "Unrestricted.Count");
-#else
-			// IPermission not shown in XML but still present in Count
-			Assert.AreEqual (1, ps2.Count, "Unrestricted.Count");
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (TypeLoadException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_PermissionWithoutNamespace ()
 		{
 			SecurityElement child = new SecurityElement ("IPermission");
@@ -577,11 +544,7 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (TypeLoadException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_PermissionOutsideCorlib ()
 		{
 			SecurityElement child = new SecurityElement ("IPermission");
@@ -629,7 +592,6 @@ namespace MonoTests.System.Security {
 			}
 			Assert.AreEqual (1, i, "Count");
 		}
-#if NET_2_0
 		[Test]
 		public void GetHashCode_ ()
 		{
@@ -641,7 +603,6 @@ namespace MonoTests.System.Security {
 			PermissionSet copy = ps.Copy ();
 			Assert.IsTrue (ps.GetHashCode () != copy.GetHashCode (), "Copy");
 		}
-#endif
 		[Test]
 		public void GetPermission_Null ()
 		{
@@ -742,14 +703,9 @@ namespace MonoTests.System.Security {
 			Compare ("UPS1 N UPS2", ups1.Intersect (ups2), true, 0);
 			Compare ("UPS2 N UPS1", ups2.Intersect (ups1), true, 0);
 			ups2.AddPermission (zip);
-#if NET_2_0
 			// Identity permissions aren't added to unrestricted permission sets in 2.0
 			Compare ("UPS1 N UPS2+ZIP", ups1.Intersect (ups2), true, 0);
 			Compare ("UPS2+ZIP N UPS1", ups2.Intersect (ups1), true, 0);
-#else
-			Compare ("UPS1 N UPS2+ZIP", ups1.Intersect (ups2), true, 1);
-			Compare ("UPS2+ZIP N UPS1", ups2.Intersect (ups1), true, 1);
-#endif
 		}
 
 		[Test]
@@ -768,12 +724,8 @@ namespace MonoTests.System.Security {
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
 			Assert.IsTrue (!ps.IsEmpty (), "Unrestricted.IsEmpty");
 			ps.AddPermission (new ZoneIdentityPermission (SecurityZone.NoZone));
-#if NET_2_0
 			// Identity permissions aren't added to unrestricted permission sets in 2.0
 			Assert.AreEqual (0, ps.Count, "Count==0");
-#else
-			Assert.AreEqual (1, ps.Count, "Count==1");
-#endif
 			Assert.IsTrue (!ps.IsEmpty ());	// yes empty!, "Zip.IsEmpty");
 		}
 
@@ -837,12 +789,8 @@ namespace MonoTests.System.Security {
 			Assert.IsTrue (!ups1.IsSubsetOf (ps1), "Unrestricted.IsSubset(PS1)");
 
 			PermissionSet ups2 = new PermissionSet (PermissionState.Unrestricted);
-#if NET_2_0
 			// as ZoneIdentityPermission isn't added UPS1Z == UPS2
 			Assert.IsTrue (ups1.IsSubsetOf (ups2), "UPS1Z.IsSubset(UPS2)");
-#else
-			Assert.IsTrue (!ups1.IsSubsetOf (ups2), "UPS1Z.IsSubset(UPS2)");
-#endif
 			Assert.IsTrue (ups2.IsSubsetOf (ups1), "UPS2.IsSubset(UPS1Z)");
 			ups2.AddPermission (zip);
 			Assert.IsTrue (ups1.IsSubsetOf (ups2), "UPS1Z.IsSubset(UPS2Z)");
@@ -864,11 +812,7 @@ namespace MonoTests.System.Security {
 			Assert.IsTrue (ps3.IsSubsetOf (ps1), "PS3.IsSubset(PS1)");
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
-#if NET_2_0
 			Assert.IsTrue (ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
-#else
-			Assert.IsTrue (!ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
-#endif
 			Assert.IsTrue (!ups1.IsSubsetOf (ps1), "Unrestricted.IsSubset(PS1)");
 		}
 
@@ -906,11 +850,7 @@ namespace MonoTests.System.Security {
 			Assert.IsTrue (ps3.IsSubsetOf (ps1), "PS3.IsSubset(PS1)");
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
-#if NET_2_0
 			Assert.IsTrue (ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
-#else
-			Assert.IsTrue (!ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
-#endif
 			Assert.IsTrue (!ups1.IsSubsetOf (ps1), "Unrestricted.IsSubset(PS1)");
 		}
 
@@ -945,13 +885,9 @@ namespace MonoTests.System.Security {
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			ps.AddPermission (zip);
 			ZoneIdentityPermission removed = (ZoneIdentityPermission)ps.RemovePermission (typeof (ZoneIdentityPermission));
-#if NET_2_0
 			// identity permissions aren't added to unrestricted permission sets
 			// so they cannot be removed later (hence the null)
 			Assert.IsNull (removed, "ZoneIdentityPermission");
-#else
-			Assert.IsNotNull (removed, "ZoneIdentityPermission");
-#endif
 		}
 
 		[Test]
@@ -1002,13 +938,9 @@ namespace MonoTests.System.Security {
 			ZoneIdentityPermission zipr = (ZoneIdentityPermission)ps.SetPermission (zip);
 			Assert.AreEqual (1, ps.Count, "ZoneIdentityPermission");
 			Assert.AreEqual (SecurityZone.MyComputer, zipr.SecurityZone, "SecurityZone");
-#if NET_2_0
 			// Adding a non unrestricted identity permission now results in 
 			// a permission set loosing it's unrestricted status
 			Assert.IsTrue (!ps.IsUnrestricted (), "State-Unrestricted-2");
-#else
-			Assert.IsTrue (ps.IsUnrestricted (), "State-Unrestricted-2");
-#endif
 			zip = new ZoneIdentityPermission (SecurityZone.Intranet);
 			zipr = (ZoneIdentityPermission)ps.SetPermission (zip);
 			Assert.AreEqual (1, ps.Count, "ZoneIdentityPermission-2");
@@ -1103,7 +1035,6 @@ namespace MonoTests.System.Security {
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
 			ups1.AddPermission (zip);
-#if NET_2_0
 			// Identity permissions aren't added to unrestricted permission sets in 2.0
 			Compare ("PS1 U Unrestricted", ps1.Union (ups1), true, 0);
 			Compare ("Unrestricted U PS1", ups1.Union (ps1), true, 0);
@@ -1113,18 +1044,7 @@ namespace MonoTests.System.Security {
 			ups2.AddPermission (zip);
 			Compare ("UPS1 U UPS2+ZIP", ups1.Union (ups2), true, 0);
 			Compare ("UPS2+ZIP U UPS1", ups2.Union (ups1), true, 0);
-#else
-			Compare ("PS1 U Unrestricted", ps1.Union (ups1), true, 1);
-			Compare ("Unrestricted U PS1", ups1.Union (ps1), true, 1);
-			PermissionSet ups2 = new PermissionSet (PermissionState.Unrestricted);
-			Compare ("UPS1 U UPS2", ups1.Union (ups1), true, 1);
-			Compare ("UPS2 U UPS1", ups2.Union (ups1), true, 1);
-			ups2.AddPermission (zip);
-			Compare ("UPS1 U UPS2+ZIP", ups1.Union (ups2), true, 1);
-			Compare ("UPS2+ZIP U UPS1", ups2.Union (ups1), true, 1);
-#endif
 		}
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")] // requires imperative stack modifiers
 		[ExpectedException (typeof (ExecutionEngineException))]
@@ -1141,7 +1061,6 @@ namespace MonoTests.System.Security {
 			ups.Assert ();
 			PermissionSet.RevertAssert ();
 		}
-#endif
 		[Test]
 		public void Assert_NonCasPermission ()
 		{

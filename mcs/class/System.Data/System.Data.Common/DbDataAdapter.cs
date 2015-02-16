@@ -43,11 +43,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Data.Common
 {
-#if NET_2_0
 	public abstract class DbDataAdapter : DataAdapter, IDbDataAdapter, IDataAdapter, ICloneable
-#else
-	public abstract class DbDataAdapter : DataAdapter, ICloneable
-#endif
 	{
 		#region Fields
 
@@ -55,12 +51,10 @@ namespace System.Data.Common
 		const string DefaultSourceColumnName = "Column";
 		CommandBehavior _behavior = CommandBehavior.Default;
 
-#if NET_2_0
 		IDbCommand _selectCommand;
 		IDbCommand _updateCommand;
 		IDbCommand _deleteCommand;
 		IDbCommand _insertCommand;
-#endif
 
 		#endregion // Fields
 		
@@ -78,7 +72,6 @@ namespace System.Data.Common
 
 		#region Properties
 
-#if NET_2_0
 		protected internal CommandBehavior FillCommandBehavior {
 			get { return _behavior; }
 			set { _behavior = value; }
@@ -172,23 +165,11 @@ namespace System.Data.Common
 					throw new NotSupportedException ();
 			}
 		}
-#endif
 
 		#endregion // Properties
 		
-		#region Events
-
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Fill")]
-		[DataSysDescription ("Event triggered when a recoverable error occurs during Fill.")]
-		public event FillErrorEventHandler FillError;
-
-#endif
-		#endregion // Events
-
 		#region Methods
 
-#if NET_2_0
 		protected virtual RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
 									     StatementType statementType,
 									     DataTableMapping tableMapping)
@@ -224,18 +205,6 @@ namespace System.Data.Common
 				}
 			}
 		}
-#else
-		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
-									     StatementType statementType,
-									     DataTableMapping tableMapping);
-
-		protected abstract RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command,
-									       StatementType statementType,
-									       DataTableMapping tableMapping);
-
-		protected abstract void OnRowUpdated (RowUpdatedEventArgs value);
-		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);
-#endif
 
 		protected override void Dispose (bool disposing)
 		{
@@ -278,12 +247,6 @@ namespace System.Data.Common
 			return Fill (dataSet, 0, 0, srcTable, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
-#if !NET_2_0
-		protected virtual int Fill (DataTable dataTable, IDataReader dataReader)
-		{
-			return base.FillInternal (dataTable, dataReader);
-		}
-#endif
 
 		protected virtual int Fill (DataTable dataTable, IDbCommand command, CommandBehavior behavior)
 		{
@@ -302,7 +265,6 @@ namespace System.Data.Common
 			return this.Fill (dataSet, startRecord, maxRecords, srcTable, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public int Fill (int startRecord, int maxRecords, params DataTable[] dataTables)
 		{
@@ -314,12 +276,6 @@ namespace System.Data.Common
 		{
 			throw new NotImplementedException ();
 		}
-#else
-		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords)
-		{
-			return base.FillInternal (dataSet, srcTable, dataReader, startRecord, maxRecords);
-		}
-#endif
 
 		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior)
 		{
@@ -338,7 +294,6 @@ namespace System.Data.Common
 				startRecord, maxRecords);
 		}
 
-#if NET_2_0
 		/// <summary>
 		/// Fills the given datatable using values from reader. if a value 
 		/// for a column is  null, that will be filled with default value. 
@@ -407,7 +362,6 @@ namespace System.Data.Common
 			}
 			return counter;
 		}
-#endif // NET_2_0
 
 		public override DataTable [] FillSchema (DataSet dataSet, SchemaType schemaType)
 		{
@@ -684,9 +638,6 @@ namespace System.Data.Common
 				try {
 					if (command != null) {
 						DataColumnMappingCollection columnMappings = tableMapping.ColumnMappings;
-#if ONLY_1_1
-						IDataParameter nullCheckParam = null;
-#endif
 						foreach (IDataParameter parameter in command.Parameters) {
 							if ((parameter.Direction & ParameterDirection.Input) == 0)
 								continue;
@@ -697,7 +648,6 @@ namespace System.Data.Common
 								rowVersion = DataRowVersion.Original;
 
 							string dsColumnName = parameter.SourceColumn;
-#if NET_2_0
 							if (columnMappings.Contains(dsColumnName)) {
 								dsColumnName = columnMappings [dsColumnName].DataSetColumn;
 								parameter.Value = row [dsColumnName, rowVersion];
@@ -706,21 +656,8 @@ namespace System.Data.Common
 							}
 
 							DbParameter nullCheckParam = parameter as DbParameter;
-#else
-							if (columnMappings.Contains(dsColumnName))
-								dsColumnName = columnMappings [dsColumnName].DataSetColumn;
-							if (dsColumnName == null || dsColumnName.Length == 0) {
-								nullCheckParam = parameter;
-								continue;
-							}
-							parameter.Value = row [dsColumnName, rowVersion];
-#endif
 
-#if NET_2_0
 							if (nullCheckParam != null && nullCheckParam.SourceColumnNullMapping) {
-#else
-							if (nullCheckParam != null) {
-#endif
 								if (parameter.Value != null && parameter.Value != DBNull.Value)
 									nullCheckParam.Value = 0;
 								else
@@ -836,10 +773,8 @@ namespace System.Data.Common
 					case UpdateStatus.SkipAllRemainingRows:
 						return updateCount;
 					}
-#if NET_2_0
 					if (!AcceptChangesDuringUpdate)
 						continue;
-#endif
 					row.AcceptChanges ();
 				} catch (Exception e) {
 					row.RowError = e.Message;
@@ -891,7 +826,6 @@ namespace System.Data.Common
 			return Update (dataTable, tableMapping);
 		}
 
-#if NET_2_0
 		// All the batch methods, should be implemented, if supported,
 		// by individual providers
 
@@ -936,18 +870,6 @@ namespace System.Data.Common
 		{
 			return new NotSupportedException ("Method is not supported.");
 		}
-#else
-		internal override void OnFillErrorInternal (FillErrorEventArgs value)
-		{
-			OnFillError (value);
-		}
-
-		protected virtual void OnFillError (FillErrorEventArgs value)
-		{
-			if (FillError != null)
-				FillError (this, value);
-		}
-#endif
 		#endregion // Methods
 	}
 }

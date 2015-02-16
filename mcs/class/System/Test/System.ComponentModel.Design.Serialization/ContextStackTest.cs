@@ -58,7 +58,6 @@ namespace MonoTests.System.ComponentModel.Design.Serialization
 			Assert.AreSame (two, stack [0], "#6");
 			Assert.AreSame (two, stack.Current, "#7");
 
-#if NET_2_0
 			string three = "three";
 			stack.Append (three);
 
@@ -72,15 +71,11 @@ namespace MonoTests.System.ComponentModel.Design.Serialization
 			Assert.AreSame (three, stack[0], "#13");
 			Assert.AreSame (three, stack.Current, "#14");
 			Assert.AreSame (three, stack.Pop (), "#15");
-#else
-			Assert.AreSame (two, stack.Pop (), "#15");
-#endif
 
 			Assert.IsNull (stack.Pop (), "#16");
 			Assert.IsNull (stack.Current, "#17");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Append_Context_Null ()
 		{
@@ -95,7 +90,6 @@ namespace MonoTests.System.ComponentModel.Design.Serialization
 				Assert.AreEqual ("context", ex.ParamName, "#5");
 			}
 		}
-#endif
 
 		[Test] // Item (Int32)
 		public void Indexer1 ()

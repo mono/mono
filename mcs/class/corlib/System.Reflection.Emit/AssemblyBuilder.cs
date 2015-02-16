@@ -458,6 +458,14 @@ namespace System.Reflection.Emit
 		}
 */
 
+		public static AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			return new AssemblyBuilder (name, null, access, false);
+		}
+
 		public ModuleBuilder DefineDynamicModule (string name)
 		{
 			return DefineDynamicModule (name, name, false, true);
@@ -775,9 +783,7 @@ namespace System.Reflection.Emit
 		internal bool IsRun {
 			get {
 				return access == (uint)AssemblyBuilderAccess.Run || access == (uint)AssemblyBuilderAccess.RunAndSave
-#if NET_4_0
 					 || access == (uint)AssemblyBuilderAccess.RunAndCollect
-#endif
 				;
 
 			}
@@ -1068,7 +1074,6 @@ namespace System.Reflection.Emit
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		public override Type GetType (string name, bool throwOnError, bool ignoreCase)
 		{
 			if (name == null)
@@ -1188,7 +1193,6 @@ namespace System.Reflection.Emit
 		public override string FullName {
 			get { return base.FullName; }
 		}
-#endif
 	}
 }
 #endif

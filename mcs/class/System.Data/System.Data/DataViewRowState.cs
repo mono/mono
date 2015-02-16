@@ -40,9 +40,6 @@ namespace System.Data
 	/// </summary>
 	[Flags]
 	[EditorAttribute("Microsoft.VSDesigner.Data.Design.DataViewRowStateEditor, "+Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+Consts.AssemblySystem_Drawing )]
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum DataViewRowState
 	{
 		None = 0,

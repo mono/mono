@@ -120,17 +120,16 @@ namespace System
 			set { help_link = value; }
 		}
 
-#if NET_4_5
 		public int HResult {
 			get { return hresult; }
 			protected set { hresult = value; }
 		}
-#else
-		protected int HResult {
-			get { return hresult; }
-			set { hresult = value; }
+        
+		internal void SetErrorCode(int hr)
+		{
+			HResult = hr;
 		}
-#endif
+
 		internal void SetMessage (string s)
 		{
 			message = s;
@@ -159,7 +158,6 @@ namespace System
 			}
 		}
 		
-#if NET_4_0
 		[MonoTODO]
 		protected event EventHandler<SafeSerializationEventArgs> SerializeObjectState {
 			add {
@@ -167,7 +165,6 @@ namespace System
 			remove {
 			}
 		}
-#endif
 
 		public virtual string Source {
 			get {
@@ -208,12 +205,12 @@ namespace System
 					if (internal_name != null)
 						sb.Append (internal_name);
 					else
-						sb.AppendFormat ("<0x{0:x5}> {1}", frame.GetNativeOffset (), unknown);
+						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
 				} else {
 					GetFullNameForStackTrace (sb, frame.GetMethod ());
 
 					if (frame.GetILOffset () == -1)
-						sb.AppendFormat (" <0x{0:x5}> ", frame.GetNativeOffset ());
+						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> ", frame.GetMethodAddress (), frame.GetNativeOffset ());
 					else
 						sb.AppendFormat (" [0x{0:x5}] ", frame.GetILOffset ());
 

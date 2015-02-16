@@ -30,9 +30,6 @@
 
 namespace System.Drawing.Drawing2D {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum CompositingQuality {
 		AssumeLinear = 4,
 		Default = 0,

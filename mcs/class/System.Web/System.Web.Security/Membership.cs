@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
@@ -42,57 +41,6 @@ namespace System.Web.Security
 {
 	public static class Membership
 	{
-#if TARGET_J2EE
-		const string Membership_providers = "Membership.providers";
-		static MembershipProviderCollection providers {
-			get {
-				object o = AppDomain.CurrentDomain.GetData (Membership_providers);
-				if (o == null) {
-					lock (AppDomain.CurrentDomain) {
-						o = AppDomain.CurrentDomain.GetData (Membership_providers);
-						if (o == null) {
-							MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
-							MembershipProviderCollection local_providers = new MembershipProviderCollection ();
-							ProvidersHelper.InstantiateProviders (section.Providers, local_providers, typeof (MembershipProvider));
-							AppDomain.CurrentDomain.SetData (Membership_providers, local_providers);
-							o = local_providers;
-						}
-					}
-				}
-
-				return (MembershipProviderCollection) o;
-			}
-		}
-		static MembershipProvider provider {
-			get {
-				MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
-				MembershipProvider p = providers [section.DefaultProvider];
-				if (p == null)
-					throw new ConfigurationErrorsException ("Default Membership Provider could not be found: Cannot instantiate provider: '" + section.DefaultProvider + "'.");
-				return p;
-			}
-		}
-		static int onlineTimeWindow {
-			get {
-				MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
-				return (int) section.UserIsOnlineTimeWindow.TotalMinutes;
-			}
-		}
-		static string hashAlgorithmType {
-			get {
-				MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
-				string ret = section.HashAlgorithmType;
-
-				if (ret == String.Empty) {
-					MachineKeySection mks = WebConfigurationManager.GetSection ("system.web/machineKey") as MachineKeySection;
-					return mks.Validation;
-				}
-
-				return ret;
-			}
-		}
-		
-#else
 		static MembershipProviderCollection providers;
 		static MembershipProvider provider;
 		static int onlineTimeWindow;
@@ -119,7 +67,6 @@ namespace System.Web.Security
 			if (String.IsNullOrEmpty (hashAlgorithmType))
 				hashAlgorithmType = "SHA1";
 		}
-#endif
 
 		public static MembershipUser CreateUser (string username, string password)
 		{
@@ -370,5 +317,4 @@ namespace System.Web.Security
 		}
 	}
 }
-#endif
 

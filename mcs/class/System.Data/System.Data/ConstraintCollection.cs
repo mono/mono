@@ -68,9 +68,6 @@ namespace System.Data {
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		Constraint this [string name] {
 			get {
 				int index = IndexOf (name);
@@ -79,9 +76,6 @@ namespace System.Data {
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		Constraint this [int index] {
 			get {
 				if (index < 0 || index >= List.Count)
@@ -175,9 +169,6 @@ namespace System.Data {
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		Constraint Add (string name, DataColumn column, bool primaryKey)
 		{
 			UniqueConstraint uc = new UniqueConstraint (name, column, primaryKey);
@@ -186,9 +177,6 @@ namespace System.Data {
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		Constraint Add (string name, DataColumn primaryKeyColumn, DataColumn foreignKeyColumn)
 		{
 			ForeignKeyConstraint fc = new ForeignKeyConstraint (name, primaryKeyColumn, foreignKeyColumn);
@@ -197,9 +185,6 @@ namespace System.Data {
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		Constraint Add (string name, DataColumn[] columns, bool primaryKey)
 		{
 			UniqueConstraint uc = new UniqueConstraint (name, columns, primaryKey);
@@ -208,9 +193,6 @@ namespace System.Data {
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		Constraint Add (string name, DataColumn[] primaryKeyColumns, DataColumn[] foreignKeyColumns)
 		{
 			ForeignKeyConstraint fc = new ForeignKeyConstraint (name, primaryKeyColumns, foreignKeyColumns);
@@ -302,9 +284,6 @@ namespace System.Data {
 		}
 
 		public
-#if !NET_2_0
-		virtual
-#endif
 		int IndexOf (string constraintName)
 		{
 			//LAMESPEC: Spec doesn't say case insensitive
@@ -363,11 +342,7 @@ namespace System.Data {
 		}
 
 
-#if !NET_2_0
-		protected virtual
-#else
 		internal
-#endif
 		void OnCollectionChanged (CollectionChangeEventArgs ccevent)
 		{
 			if (null != CollectionChanged)
@@ -375,16 +350,10 @@ namespace System.Data {
 		}
 	}
 
-#if NET_2_0
 	sealed partial class ConstraintCollection {
 		public void CopyTo (Constraint [] array, int index)
 		{
 			base.CopyTo (array, index);
 		}
 	}
-#else
-	[Serializable]
-	partial class ConstraintCollection {
-	}
-#endif
 }

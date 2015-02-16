@@ -20,9 +20,7 @@ namespace MonoTests.SystemWeb.Framework
 		public string Body
 		{
 			get { return _body; }
-#if NET_2_0
 			internal
-#endif
 			set { _body = value; }
 		}
 
@@ -32,9 +30,7 @@ namespace MonoTests.SystemWeb.Framework
 		public HttpStatusCode StatusCode
 		{
 			get { return _statusCode; }
-#if NET_2_0
 			internal
-#endif
 			set { _statusCode = value; }
 		}
 
@@ -44,9 +40,7 @@ namespace MonoTests.SystemWeb.Framework
 		public string StatusDescription
 		{
 			get { return _statusDescription; }
-#if NET_2_0
 			internal
-#endif
 			set { _statusDescription = value; }
 		}
 	}

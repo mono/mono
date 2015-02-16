@@ -415,8 +415,6 @@ ves_icall_System_GC_InternalCollect (int generation)
 gint64
 ves_icall_System_GC_GetTotalMemory (MonoBoolean forceCollection)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	if (forceCollection)
 		mono_gc_collect (mono_gc_max_generation ());
 	return mono_gc_get_used_size ();
@@ -425,8 +423,6 @@ ves_icall_System_GC_GetTotalMemory (MonoBoolean forceCollection)
 void
 ves_icall_System_GC_KeepAlive (MonoObject *obj)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	/*
 	 * Does nothing.
 	 */
@@ -1070,6 +1066,7 @@ finalizer_thread (gpointer unused)
 		 */
 
 		g_assert (mono_domain_get () == mono_get_root_domain ());
+		mono_gc_set_skip_thread (TRUE);
 
 		if (wait) {
 		/* An alertable wait is required so this thread can be suspended on windows */
@@ -1080,6 +1077,7 @@ finalizer_thread (gpointer unused)
 #endif
 		}
 		wait = TRUE;
+		mono_gc_set_skip_thread (FALSE);
 
 		mono_threads_perform_thread_dump ();
 
@@ -1149,19 +1147,11 @@ mono_gc_init (void)
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_NORMAL].entries);
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_PINNED].entries);
 
-	mono_counters_register ("Created object count", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &mono_stats.new_object_count);
-	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.minor_gc_count);
-	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.major_gc_count);
-	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.minor_gc_time);
-	mono_counters_register ("Major GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.major_gc_time);
-#ifdef HEAVY_STATISTICS
-	mono_counters_register ("Gray Queue alloc section", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_section_alloc);
-	mono_counters_register ("Gray Queue free section", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_section_free);
-	mono_counters_register ("Gray Queue enqueue fast path", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_enqueue_fast_path);
-	mono_counters_register ("Gray Queue dequeue fast path", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_dequeue_fast_path);
-	mono_counters_register ("Gray Queue enqueue slow path", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_enqueue_slow_path);
-	mono_counters_register ("Gray Queue dequeue slow path", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_dequeue_slow_path);
-#endif
+	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_UINT, &gc_stats.minor_gc_count);
+	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_UINT, &gc_stats.major_gc_count);
+	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &gc_stats.minor_gc_time);
+	mono_counters_register ("Major GC time", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &gc_stats.major_gc_time);
+	mono_counters_register ("Major GC time concurrent", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &gc_stats.major_gc_time_concurrent);
 
 	mono_gc_base_init ();
 
@@ -1231,7 +1221,7 @@ mono_gc_cleanup (void)
 				ret = WaitForSingleObjectEx (gc_thread->handle, INFINITE, TRUE);
 				g_assert (ret == WAIT_OBJECT_0);
 
-				mono_thread_join ((gpointer)gc_thread->tid);
+				mono_thread_join (GUINT_TO_POINTER (gc_thread->tid));
 			}
 		}
 		gc_thread = NULL;

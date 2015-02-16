@@ -43,9 +43,7 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectCollection constraints;
 		private string defaultValue;
 		private object elementType;
-#if NET_2_0
 		private XmlSchemaType elementSchemaType;
-#endif
 		private XmlSchemaDerivationMethod final;
 		private string fixedValue;
 		private XmlSchemaForm form;
@@ -216,9 +214,7 @@ namespace System.Xml.Schema
 		}
 
 		[XmlIgnore]
-#if NET_2_0
 		[Obsolete]
-#endif
 		public object ElementType 
 		{
 			get {
@@ -229,7 +225,6 @@ namespace System.Xml.Schema
 			}
 		}
 
-#if NET_2_0
 		[XmlIgnore]
 		public XmlSchemaType ElementSchemaType
 		{
@@ -240,7 +235,6 @@ namespace System.Xml.Schema
 					return elementSchemaType;
 			}
 		}
-#endif
 
 		[XmlIgnore]
 		public XmlSchemaDerivationMethod BlockResolved 
@@ -745,7 +739,6 @@ namespace System.Xml.Schema
 			foreach (XmlSchemaIdentityConstraint ident in Constraints)
 				ident.Validate (h, schema);
 
-#if NET_2_0
 			if (elementType != null) {
 				elementSchemaType = elementType as XmlSchemaType;
 				if (elementType == XmlSchemaSimpleType.AnySimpleType)
@@ -753,7 +746,6 @@ namespace System.Xml.Schema
 				if (elementSchemaType == null)
 					elementSchemaType = XmlSchemaType.GetBuiltInSimpleType (SchemaTypeName);
 			}
-#endif
 
 			ValidationId = schema.ValidationId;
 			return errorCount;

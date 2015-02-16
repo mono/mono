@@ -801,9 +801,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS.NET 1.x does not escape spaces in a type name, bug is fixed in .NET 2.0
-#endif
 		public void ExportClass_TestSpace ()
 		{
 			XmlSchemas schemas = Export (typeof (TestSpace), "NSTestSpace");
@@ -1584,9 +1581,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSEmployeeSchema\" elementFormDefault=\"qualified\" targetNamespace=\"NSEmployeeSchema\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-#if ONLY_1_1
-				"  <xs:import namespace=\"urn:types-devx-com\" />{0}" +
-#endif
 				"  <xs:element name=\"EmployeeSchema\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
@@ -1619,9 +1613,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-#if ONLY_1_1
-				"  <xs:import namespace=\"urn:types-devx-com\" />{0}" +
-#endif
 				"  <xs:element name=\"EmployeeSchema\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
@@ -1699,9 +1690,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void ExportXmlSerializable_SchemaProvider ()
 		{
 			XmlSchemas schemas = Export (typeof (EmployeeSchemaProvider), "NSEmployeeSchemaProvider");
@@ -1713,20 +1701,8 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSEmployeeSchemaProvider\" elementFormDefault=\"qualified\" targetNamespace=\"NSEmployeeSchemaProvider\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-#if NET_2_0
 				"  <xs:import namespace=\"urn:types-devx-com\" />{0}" +
 				"  <xs:element name=\"employeeRoot\" nillable=\"true\" xmlns:q1=\"urn:types-devx-com\" type=\"q1:employeeRoot\" />{0}" +
-#else
-				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"EmployeeSchemaProvider\" nillable=\"true\">{0}" +
-				"    <xs:complexType>{0}" +
-				"      <xs:sequence>{0}" +
-				"        <xs:element ref=\"xs:schema\" />{0}" +
-				"        <xs:any />{0}" +
-				"      </xs:sequence>{0}" +
-				"    </xs:complexType>{0}" +
-				"  </xs:element>{0}" +
-#endif
 				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (EmployeeSchemaProvider));
@@ -1738,20 +1714,8 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-#if NET_2_0
 				"  <xs:import namespace=\"urn:types-devx-com\" />{0}" +
 				"  <xs:element name=\"employeeRoot\" nillable=\"true\" xmlns:q1=\"urn:types-devx-com\" type=\"q1:employeeRoot\" />{0}" +
-#else
-				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"EmployeeSchemaProvider\" nillable=\"true\">{0}" +
-				"    <xs:complexType>{0}" +
-				"      <xs:sequence>{0}" +
-				"        <xs:element ref=\"xs:schema\" />{0}" +
-				"        <xs:any />{0}" +
-				"      </xs:sequence>{0}" +
-				"    </xs:complexType>{0}" +
-				"  </xs:element>{0}" +
-#endif
 				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 
 			schemas = Export (typeof (PrimitiveSchemaProvider), "NSPrimitiveSchemaProvider");
@@ -1763,27 +1727,13 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSPrimitiveSchemaProvider\" elementFormDefault=\"qualified\" targetNamespace=\"NSPrimitiveSchemaProvider\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-#if NET_2_0
 				//"  <xs:import />{0}" +
 				"  <xs:element name=\"int\" nillable=\"true\" type=\"xs:int\" />{0}" +
-#else
-				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"PrimitiveSchemaProvider\" nillable=\"true\">{0}" +
-				"    <xs:complexType>{0}" +
-				"      <xs:sequence>{0}" +
-				"        <xs:element ref=\"xs:schema\" />{0}" +
-				"        <xs:any />{0}" +
-				"      </xs:sequence>{0}" +
-				"    </xs:complexType>{0}" +
-				"  </xs:element>{0}" +
-#endif
 				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ().Replace("<xs:import />" + Environment.NewLine, "")), "#6");
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // support for XmlSchemaProvider is not implemented
-#endif
 		public void ExportXmlSerializable_SchemaProvider1 () {
 			XmlSchemas schemas = Export (typeof (PrimitiveSchemaProvider));
 			Assert.AreEqual (1, schemas.Count, "#1");
@@ -1794,27 +1744,13 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-#if NET_2_0
 				"  <xs:element name=\"int\" nillable=\"true\" type=\"xs:int\" />{0}" +
-#else
-				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"PrimitiveSchemaProvider\" nillable=\"true\">{0}" +
-				"    <xs:complexType>{0}" +
-				"      <xs:sequence>{0}" +
-				"        <xs:element ref=\"xs:schema\" />{0}" +
-				"        <xs:any />{0}" +
-				"      </xs:sequence>{0}" +
-				"    </xs:complexType>{0}" +
-				"  </xs:element>{0}" +
-#endif
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#8");
 		}
 
 		[Test]
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#if NET_2_0
 		[Category ("NotWorking")] // support for XmlSchemaProvider is not implemented
-#endif
 		public void ExportXmlSerializable_Container ()
 		{
 			XmlSchemas schemas = Export (typeof (XmlSerializableContainer), "NSXmlSerializableContainer");
@@ -1828,9 +1764,7 @@ namespace MonoTests.System.XmlSerialization
 				"<xs:schema xmlns:tns=\"NSXmlSerializableContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSXmlSerializableContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
 				"  <xs:import namespace=\"urn:types-devx-com\" />{0}" +
-#if NET_2_0
 				"  <xs:import />{0}" +
-#endif
 				"  <xs:element name=\"XmlSerializableContainer\" nillable=\"true\" type=\"tns:XmlSerializableContainer\" />{0}" +
 				"  <xs:complexType name=\"XmlSerializableContainer\">{0}" +
 				"    <xs:sequence>{0}" +
@@ -1849,18 +1783,7 @@ namespace MonoTests.System.XmlSerialization
 				"          </xs:sequence>{0}" +
 				"        </xs:complexType>{0}" +
 				"      </xs:element>{0}" +
-#if NET_2_0
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"SlaveSchemaProvider\" xmlns:q1=\"urn:types-devx-com\" type=\"q1:employeeRoot\" />{0}" +
-#else
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"SlaveSchemaProvider\">{0}" +
-				"        <xs:complexType>{0}" +
-				"          <xs:sequence>{0}" +
-				"            <xs:element ref=\"xs:schema\" />{0}" +
-				"            <xs:any />{0}" +
-				"          </xs:sequence>{0}" +
-				"        </xs:complexType>{0}" +
-				"      </xs:element>{0}" +
-#endif
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"NativeSchema\">{0}" +
 				"        <xs:complexType>{0}" +
 				"          <xs:sequence>{0}" +
@@ -1868,7 +1791,6 @@ namespace MonoTests.System.XmlSerialization
 				"          </xs:sequence>{0}" +
 				"        </xs:complexType>{0}" +
 				"      </xs:element>{0}" +
-#if NET_2_0
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"NativeSchemaProvider\" type=\"xs:int\" />{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q2=\"urn:types-devx-com\" ref=\"q2:SlaveNamespace\" />{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q3=\"urn:types-devx-com\" ref=\"q3:SlaveSchemaNamespace\" />{0}" +
@@ -1880,26 +1802,6 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q9=\"urn:types-devx-com\" ref=\"q9:SlaveSchemaProviderNSOnly\" />{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q10=\"urn:types-devx-com\" ref=\"q10:NativeSchemaNSOnly\" />{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q11=\"urn:types-devx-com\" ref=\"q11:NativeSchemaProviderNSOnly\" />{0}" +
-#else
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"NativeSchemaProvider\">{0}" +
-				"        <xs:complexType>{0}" +
-				"          <xs:sequence>{0}" +
-				"            <xs:element ref=\"xs:schema\" />{0}" +
-				"            <xs:any />{0}" +
-				"          </xs:sequence>{0}" +
-				"        </xs:complexType>{0}" +
-				"      </xs:element>{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q1=\"urn:types-devx-com\" ref=\"q1:SlaveNamespace\" />{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q2=\"urn:types-devx-com\" ref=\"q2:SlaveSchemaNamespace\" />{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q3=\"urn:types-devx-com\" ref=\"q3:SlaveSchemaProviderNamespace\" />{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q4=\"urn:types-devx-com\" ref=\"q4:NativeSchemaNamespace\" />{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q5=\"urn:types-devx-com\" ref=\"q5:NativeSchemaProviderNamespace\" />{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q6=\"urn:types-devx-com\" ref=\"q6:SlaveNSOnly\" />{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q7=\"urn:types-devx-com\" ref=\"q7:SlaveSchemaNSOnly\" />{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q8=\"urn:types-devx-com\" ref=\"q8:SlaveSchemaProviderNSOnly\" />{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q9=\"urn:types-devx-com\" ref=\"q9:NativeSchemaNSOnly\" />{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" xmlns:q10=\"urn:types-devx-com\" ref=\"q10:NativeSchemaProviderNSOnly\" />{0}" +
-#endif
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
@@ -1911,9 +1813,7 @@ namespace MonoTests.System.XmlSerialization
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"urn:types-devx-com\" targetNamespace=\"urn:types-devx-com\" id=\"EmployeeSchema\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-#if NET_2_0
 				"  <xs:import />{0}" +
-#endif
 				"  <xs:complexType name=\"employeeRoot\">{0}" +
 				"    <xs:attribute name=\"firstName\" />{0}" +
 				"    <xs:attribute name=\"lastName\" />{0}" +
@@ -1935,18 +1835,7 @@ namespace MonoTests.System.XmlSerialization
 				"      </xs:sequence>{0}" +
 				"    </xs:complexType>{0}" +
 				"  </xs:element>{0}" +
-#if NET_2_0
 				"  <xs:element name=\"SlaveSchemaProviderNamespace\" type=\"tns:employeeRoot\" />{0}" +
-#else
-				"  <xs:element name=\"SlaveSchemaProviderNamespace\">{0}" +
-				"    <xs:complexType>{0}" +
-				"      <xs:sequence>{0}" +
-				"        <xs:element ref=\"xs:schema\" />{0}" +
-				"        <xs:any />{0}" +
-				"      </xs:sequence>{0}" +
-				"    </xs:complexType>{0}" +
-				"  </xs:element>{0}" +
-#endif
 				"  <xs:element name=\"NativeSchemaNamespace\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
@@ -1954,18 +1843,7 @@ namespace MonoTests.System.XmlSerialization
 				"      </xs:sequence>{0}" +
 				"    </xs:complexType>{0}" +
 				"  </xs:element>{0}" +
-#if NET_2_0
 				"  <xs:element name=\"NativeSchemaProviderNamespace\" type=\"xs:int\" />{0}" +
-#else
-				"  <xs:element name=\"NativeSchemaProviderNamespace\">{0}" +
-				"    <xs:complexType>{0}" +
-				"      <xs:sequence>{0}" +
-				"        <xs:element ref=\"xs:schema\" />{0}" +
-				"        <xs:any />{0}" +
-				"      </xs:sequence>{0}" +
-				"    </xs:complexType>{0}" +
-				"  </xs:element>{0}" +
-#endif
 				"  <xs:element name=\"SlaveNSOnly\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
@@ -1981,18 +1859,7 @@ namespace MonoTests.System.XmlSerialization
 				"      </xs:sequence>{0}" +
 				"    </xs:complexType>{0}" +
 				"  </xs:element>{0}" +
-#if NET_2_0
 				 "  <xs:element name=\"SlaveSchemaProviderNSOnly\" type=\"tns:employeeRoot\" />{0}" +
-#else
-				"  <xs:element name=\"SlaveSchemaProviderNSOnly\">{0}" +
-				"    <xs:complexType>{0}" +
-				"      <xs:sequence>{0}" +
-				"        <xs:element ref=\"xs:schema\" />{0}" +
-				"        <xs:any />{0}" +
-				"      </xs:sequence>{0}" +
-				"    </xs:complexType>{0}" +
-				"  </xs:element>{0}" +
-#endif
 				"  <xs:element name=\"NativeSchemaNSOnly\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
@@ -2000,18 +1867,7 @@ namespace MonoTests.System.XmlSerialization
 				"      </xs:sequence>{0}" +
 				"    </xs:complexType>{0}" +
 				"  </xs:element>{0}" +
-#if NET_2_0
 				"  <xs:element name=\"NativeSchemaProviderNSOnly\" type=\"xs:int\" />{0}" +
-#else
-				"  <xs:element name=\"NativeSchemaProviderNSOnly\">{0}" +
-				"    <xs:complexType>{0}" +
-				"      <xs:sequence>{0}" +
-				"        <xs:element ref=\"xs:schema\" />{0}" +
-				"        <xs:any />{0}" +
-				"      </xs:sequence>{0}" +
-				"    </xs:complexType>{0}" +
-				"  </xs:element>{0}" +
-#endif
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#3");
 
 			sw.GetStringBuilder ().Length = 0;
@@ -2041,11 +1897,7 @@ namespace MonoTests.System.XmlSerialization
 			types.Add (new TypeDescription (typeof (uint), true, "unsignedInt", "UnsignedInt"));
 			types.Add (new TypeDescription (typeof (ulong), true, "unsignedLong", "UnsignedLong"));
 			types.Add (new TypeDescription (typeof (DateTime), true, "dateTime", "DateTime"));
-#if NET_2_0
 			types.Add (new TypeDescription (typeof (XmlQualifiedName), true, "QName", "QName", true));
-#else
-			types.Add (new TypeDescription (typeof (XmlQualifiedName), true, "QName", "QName"));
-#endif
 			types.Add (new TypeDescription (typeof (string), true, "string", "String", true));
 
 			foreach (TypeDescription typeDesc in types) {
@@ -2152,11 +2004,7 @@ namespace MonoTests.System.XmlSerialization
 			types.Add (new TypeDescription (typeof (uint[]), true, "unsignedInt", "UnsignedInt", true));
 			types.Add (new TypeDescription (typeof (ulong[]), true, "unsignedLong", "UnsignedLong", true));
 			types.Add (new TypeDescription (typeof (DateTime[]), true, "dateTime", "DateTime", true));
-#if NET_2_0
 			types.Add (new TypeDescription (typeof (XmlQualifiedName[]), true, "QName", "QName", true, true));
-#else
-			types.Add (new TypeDescription (typeof (XmlQualifiedName[]), true, "QName", "QName", true));
-#endif
 			types.Add (new TypeDescription (typeof (string[]), true, "string", "String", true, true));
 
 			foreach (TypeDescription typeDesc in types) {
@@ -2512,31 +2360,19 @@ namespace MonoTests.System.XmlSerialization
 			}
 		}
 
-#if NET_2_0
 		[XmlSchemaProvider ("CreateEmployeeSchema")]
-#endif
 		public class EmployeeSchemaProvider : EmployeeSchema
 		{
-#if NET_2_0
 			public static XmlQualifiedName CreateEmployeeSchema (XmlSchemaSet schemaSet)
 			{
 				schemaSet.Add (CreateSchema ());
 				return new XmlQualifiedName ("employeeRoot", "urn:types-devx-com");
 			}
-#else
-			public override XmlSchema GetSchema ()
-			{
-				return null;
-			}
-#endif
 		}
 
-#if NET_2_0
 		[XmlSchemaProvider ("CreateLuckyNumberSchema")]
-#endif
 		public class PrimitiveSchemaProvider : IXmlSerializable
 		{
-#if NET_2_0
 			public static XmlQualifiedName CreateLuckyNumberSchema (XmlSchemaSet schemaSet)
 			{
 				XmlSchema schema = new XmlSchema ();
@@ -2551,7 +2387,6 @@ namespace MonoTests.System.XmlSerialization
 				schemaSet.Add (schema);
 				return typeName;
 			}
-#endif
 
 			public XmlSchema GetSchema ()
 			{

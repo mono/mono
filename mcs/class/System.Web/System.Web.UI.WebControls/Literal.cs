@@ -38,20 +38,15 @@ namespace System.Web.UI.WebControls {
 	[ControlBuilder(typeof(LiteralControlBuilder))]
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultProperty("Text")]
-#if NET_2_0
 	[Designer ("System.Web.UI.Design.WebControls.LiteralDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#endif		
 	public class Literal : Control
-#if NET_2_0
 	, ITextControl
-#endif	
 	{
 
 		public Literal ()
 		{
 		}
 
-#if NET_2_0
 		[DefaultValue (LiteralMode.Transform)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -66,15 +61,12 @@ namespace System.Web.UI.WebControls {
 				ViewState ["Mode"] = value;
 			}
 		}
-#endif		
 
 		[Bindable(true)]
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
-#if NET_2_0
 		[Localizable (true)]
-#endif		
 		public string Text {
 			get {
 				return ViewState.GetString ("Text", String.Empty);
@@ -84,13 +76,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void Focus ()
 		{
 			throw new NotSupportedException ();
 		}
-#endif		
 
 		protected override ControlCollection CreateControlCollection ()
 		{
@@ -110,18 +100,12 @@ namespace System.Web.UI.WebControls {
 			      obj.GetType ()));
 		}
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void Render (HtmlTextWriter output)
 		{
-#if NET_2_0
 			if (Mode == LiteralMode.Encode)
 				output.Write (HttpUtility.HtmlEncode (Text));
 			else
-#endif
 			output.Write (Text);
 		}
 	}

@@ -34,7 +34,6 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #ifdef HAVE_PTHREAD_H
 #include <pthread.h>
 #endif
-#include <signal.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/dtrace.h>
@@ -67,7 +66,6 @@ NurseryClearPolicy sgen_get_nursery_clear_policy (void) MONO_INTERNAL;
 #define SGEN_TV_DECLARE(name) gint64 name
 #define SGEN_TV_GETTIME(tv) tv = mono_100ns_ticks ()
 #define SGEN_TV_ELAPSED(start,end) (int)((end-start))
-#define SGEN_TV_ELAPSED_MS(start,end) ((SGEN_TV_ELAPSED((start),(end)) + 5000) / 10000)
 
 #if !defined(__MACH__) && !MONO_MACH_ARCH_SUPPORTED && defined(HAVE_PTHREAD_KILL)
 #define SGEN_POSIX_STW 1
@@ -144,8 +142,8 @@ struct _GCMemSection {
 	 */
 	char **scan_starts;
 	/* in major collections indexes in the pin_queue for objects that pin this section */
-	void **pin_queue_start;
-	size_t pin_queue_num_entries;
+	size_t pin_queue_first_entry;
+	size_t pin_queue_last_entry;
 	size_t num_scan_start;
 };
 
@@ -160,7 +158,6 @@ struct _GCMemSection {
 		mono_mutex_lock (&gc_mutex);			\
 		MONO_GC_LOCKED ();				\
 	} while (0)
-#define TRYLOCK_GC (mono_mutex_trylock (&gc_mutex) == 0)
 #define UNLOCK_GC do { sgen_gc_unlock (); } while (0)
 
 extern LOCK_DECLARE (sgen_interruption_mutex);
@@ -190,14 +187,10 @@ extern LOCK_DECLARE (sgen_interruption_mutex);
 #endif
 
 #ifdef HEAVY_STATISTICS
-#define HEAVY_STAT(x)	x
-
-extern long long stat_objects_alloced_degraded;
-extern long long stat_bytes_alloced_degraded;
-extern long long stat_copy_object_called_major;
-extern long long stat_objects_copied_major;
-#else
-#define HEAVY_STAT(x)
+extern guint64 stat_objects_alloced_degraded;
+extern guint64 stat_bytes_alloced_degraded;
+extern guint64 stat_copy_object_called_major;
+extern guint64 stat_objects_copied_major;
 #endif
 
 #define SGEN_ASSERT(level, a, ...) do {	\
@@ -215,11 +208,6 @@ extern long long stat_objects_copied_major;
 	if (G_UNLIKELY ((level) <= SGEN_MAX_DEBUG_LEVEL && (level) <= gc_debug_level)) {	\
 		if (cond)	\
 			mono_gc_printf (gc_debug_file, format, ##__VA_ARGS__);	\
-} } while (0)
-
-#define SGEN_LOG_DO(level, fun) do {	\
-	if (G_UNLIKELY ((level) <= SGEN_MAX_DEBUG_LEVEL && (level) <= gc_debug_level)) {	\
-		fun;	\
 } } while (0)
 
 extern int gc_debug_level;
@@ -314,86 +302,67 @@ typedef struct {
 	mword desc;
 } GCVTable;
 
-/* these bits are set in the object vtable: we could merge them since an object can be
- * either pinned or forwarded but not both.
- * We store them in the vtable slot because the bits are used in the sync block for
- * other purposes: if we merge them and alloc the sync blocks aligned to 8 bytes, we can change
+/*
+ * We use the lowest three bits in the vtable pointer of objects to tag whether they're
+ * forwarded, pinned, and/or cemented.  These are the valid states:
+ *
+ * | State            | bits |
+ * |------------------+------+
+ * | default          |  000 |
+ * | forwarded        |  001 |
+ * | pinned           |  010 |
+ * | pinned, cemented |  110 |
+ *
+ * We store them in the vtable slot because the bits are used in the sync block for other
+ * purposes: if we merge them and alloc the sync blocks aligned to 8 bytes, we can change
  * this and use bit 3 in the syncblock (with the lower two bits both set for forwarded, that
  * would be an invalid combination for the monitor and hash code).
- * The values are already shifted.
- * The forwarding address is stored in the sync block.
  */
-#define SGEN_FORWARDED_BIT 1
-#define SGEN_PINNED_BIT 2
-#define SGEN_VTABLE_BITS_MASK 0x3
+
+#include "sgen-tagged-pointer.h"
+
+#define SGEN_VTABLE_BITS_MASK	SGEN_TAGGED_POINTER_MASK
+
+#define SGEN_POINTER_IS_TAGGED_FORWARDED(p)	SGEN_POINTER_IS_TAGGED_1((p))
+#define SGEN_POINTER_TAG_FORWARDED(p)		SGEN_POINTER_TAG_1((p))
+
+#define SGEN_POINTER_IS_TAGGED_PINNED(p)	SGEN_POINTER_IS_TAGGED_2((p))
+#define SGEN_POINTER_TAG_PINNED(p)		SGEN_POINTER_TAG_2((p))
+
+#define SGEN_POINTER_IS_TAGGED_CEMENTED(p)	SGEN_POINTER_IS_TAGGED_4((p))
+#define SGEN_POINTER_TAG_CEMENTED(p)		SGEN_POINTER_TAG_4((p))
+
+#define SGEN_POINTER_UNTAG_VTABLE(p)		SGEN_POINTER_UNTAG_ALL((p))
 
 /* returns NULL if not forwarded, or the forwarded address */
-#define SGEN_OBJECT_IS_FORWARDED(obj) (((mword*)(obj))[0] & SGEN_FORWARDED_BIT ? (void*)(((mword*)(obj))[0] & ~SGEN_VTABLE_BITS_MASK) : NULL)
-#define SGEN_OBJECT_IS_PINNED(obj) (((mword*)(obj))[0] & SGEN_PINNED_BIT)
+#define SGEN_VTABLE_IS_FORWARDED(vtable) (SGEN_POINTER_IS_TAGGED_FORWARDED ((vtable)) ? SGEN_POINTER_UNTAG_VTABLE ((vtable)) : NULL)
+#define SGEN_OBJECT_IS_FORWARDED(obj) (SGEN_VTABLE_IS_FORWARDED (((mword*)(obj))[0]))
+
+#define SGEN_VTABLE_IS_PINNED(vtable) SGEN_POINTER_IS_TAGGED_PINNED ((vtable))
+#define SGEN_OBJECT_IS_PINNED(obj) (SGEN_VTABLE_IS_PINNED (((mword*)(obj))[0]))
+
+#define SGEN_OBJECT_IS_CEMENTED(obj) (SGEN_POINTER_IS_TAGGED_CEMENTED (((mword*)(obj))[0]))
 
 /* set the forwarded address fw_addr for object obj */
 #define SGEN_FORWARD_OBJECT(obj,fw_addr) do {				\
-		((mword*)(obj))[0] = (mword)(fw_addr) | SGEN_FORWARDED_BIT; \
+		*(void**)(obj) = SGEN_POINTER_TAG_FORWARDED ((fw_addr));	\
 	} while (0)
 #define SGEN_PIN_OBJECT(obj) do {	\
-		((mword*)(obj))[0] |= SGEN_PINNED_BIT;	\
+		*(void**)(obj) = SGEN_POINTER_TAG_PINNED (*(void**)(obj)); \
 	} while (0)
+#define SGEN_CEMENT_OBJECT(obj) do {	\
+		*(void**)(obj) = SGEN_POINTER_TAG_CEMENTED (*(void**)(obj)); \
+	} while (0)
+/* Unpins and uncements */
 #define SGEN_UNPIN_OBJECT(obj) do {	\
-		((mword*)(obj))[0] &= ~SGEN_PINNED_BIT;	\
+		*(void**)(obj) = SGEN_POINTER_UNTAG_VTABLE (*(void**)(obj)); \
 	} while (0)
 
 /*
  * Since we set bits in the vtable, use the macro to load it from the pointer to
  * an object that is potentially pinned.
  */
-#define SGEN_LOAD_VTABLE(addr) ((*(mword*)(addr)) & ~SGEN_VTABLE_BITS_MASK)
-
-static inline MONO_ALWAYS_INLINE void
-GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, char* obj)
-{
-#if defined(SGEN_GRAY_OBJECT_ENQUEUE) || SGEN_MAX_DEBUG_LEVEL >= 9
-	sgen_gray_object_enqueue (queue, obj);
-#else
-	if (G_UNLIKELY (!queue->first || queue->cursor == GRAY_LAST_CURSOR_POSITION (queue->first))) {
-		sgen_gray_object_enqueue (queue, obj);
-	} else {
-		HEAVY_STAT (gc_stats.gray_queue_enqueue_fast_path ++);
-
-		*++queue->cursor = obj;
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-		binary_protocol_gray_enqueue (queue, queue->cursor, obj);
-#endif
-	}
-
-	PREFETCH (obj);
-#endif
-}
-
-static inline MONO_ALWAYS_INLINE void
-GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, char** obj)
-{
-#if defined(SGEN_GRAY_OBJECT_ENQUEUE) || SGEN_MAX_DEBUG_LEVEL >= 9
-	*obj = sgen_gray_object_enqueue (queue);
-#else
-	if (!queue->first) {
-		HEAVY_STAT (gc_stats.gray_queue_dequeue_fast_path ++);
-
-		*obj = NULL;
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-		binary_protocol_gray_dequeue (queue, queue->cursor, *obj);
-#endif
-	} else if (G_UNLIKELY (queue->cursor == GRAY_FIRST_CURSOR_POSITION (queue->first))) {
-		*obj = sgen_gray_object_dequeue (queue);
-	} else {
-		HEAVY_STAT (gc_stats.gray_queue_dequeue_fast_path ++);
-
-		*obj = *queue->cursor--;
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-		binary_protocol_gray_dequeue (queue, queue->cursor + 1, *obj);
-#endif
-	}
-#endif
-}
+#define SGEN_LOAD_VTABLE(addr)	SGEN_POINTER_UNTAG_ALL (*(void**)(addr))
 
 /*
 List of what each bit on of the vtable gc bits means. 
@@ -476,6 +445,7 @@ enum {
 	INTERNAL_MEM_TOGGLEREF_DATA,
 	INTERNAL_MEM_CARDTABLE_MOD_UNION,
 	INTERNAL_MEM_BINARY_PROTOCOL,
+	INTERNAL_MEM_TEMPORARY,
 	INTERNAL_MEM_MAX
 };
 
@@ -500,7 +470,7 @@ struct _ObjectList {
 };
 
 typedef void (*CopyOrMarkObjectFunc) (void**, SgenGrayQueue*);
-typedef void (*ScanObjectFunc) (char*, SgenGrayQueue*);
+typedef void (*ScanObjectFunc) (char *obj, mword desc, SgenGrayQueue*);
 typedef void (*ScanVTypeFunc) (char*, mword desc, SgenGrayQueue* BINARY_PROTOCOL_ARG (size_t size));
 
 typedef struct
@@ -525,10 +495,6 @@ void sgen_free_internal (void *addr, int type) MONO_INTERNAL;
 void* sgen_alloc_internal_dynamic (size_t size, int type, gboolean assert_on_failure) MONO_INTERNAL;
 void sgen_free_internal_dynamic (void *addr, size_t size, int type) MONO_INTERNAL;
 
-void** sgen_find_optimized_pin_queue_area (void *start, void *end, size_t *num) MONO_INTERNAL;
-void sgen_find_section_pin_queue_start_end (GCMemSection *section) MONO_INTERNAL;
-void sgen_pin_objects_in_section (GCMemSection *section, ScanCopyContext ctx) MONO_INTERNAL;
-
 void sgen_pin_stats_register_object (char *obj, size_t size);
 void sgen_pin_stats_register_global_remset (char *obj);
 void sgen_pin_stats_print_class_stats (void);
@@ -537,7 +503,6 @@ void sgen_sort_addresses (void **array, size_t size) MONO_INTERNAL;
 void sgen_add_to_global_remset (gpointer ptr, gpointer obj) MONO_INTERNAL;
 
 int sgen_get_current_collection_generation (void) MONO_INTERNAL;
-gboolean sgen_collection_is_parallel (void) MONO_INTERNAL;
 gboolean sgen_collection_is_concurrent (void) MONO_INTERNAL;
 gboolean sgen_concurrent_collection_in_progress (void) MONO_INTERNAL;
 
@@ -600,7 +565,7 @@ static inline gboolean
 sgen_nursery_is_to_space (char *object)
 {
 	size_t idx = (object - sgen_nursery_start) >> SGEN_TO_SPACE_GRANULE_BITS;
-	size_t byte = idx / 8;
+	size_t byte = idx >> 3;
 	size_t bit = idx & 0x7;
 
 	SGEN_ASSERT (4, sgen_ptr_in_nursery (object), "object %p is not in nursery [%p - %p]", object, sgen_get_nursery_start (), sgen_get_nursery_end ());
@@ -634,10 +599,8 @@ typedef struct {
 	gboolean is_split;
 
 	char* (*alloc_for_promotion) (MonoVTable *vtable, char *obj, size_t objsize, gboolean has_references);
-	char* (*par_alloc_for_promotion) (MonoVTable *vtable, char *obj, size_t objsize, gboolean has_references);
 
 	SgenObjectOperations serial_ops;
-	SgenObjectOperations parallel_ops;
 
 	void (*prepare_to_space) (char *to_space_bitmap, size_t space_bitmap_size);
 	void (*clear_fragments) (void);
@@ -655,6 +618,27 @@ extern SgenMinorCollector sgen_minor_collector;
 void sgen_simple_nursery_init (SgenMinorCollector *collector) MONO_INTERNAL;
 void sgen_split_nursery_init (SgenMinorCollector *collector) MONO_INTERNAL;
 
+/* Updating references */
+
+#ifdef SGEN_CHECK_UPDATE_REFERENCE
+static inline void
+sgen_update_reference (void **p, void *o, gboolean allow_null)
+{
+	if (!allow_null)
+		SGEN_ASSERT (0, o, "Cannot update a reference with a NULL pointer");
+	SGEN_ASSERT (0, !sgen_is_worker_thread (mono_native_thread_id_get ()), "Can't update a reference in the worker thread");
+	*p = o;
+}
+
+#define SGEN_UPDATE_REFERENCE_ALLOW_NULL(p,o)	sgen_update_reference ((void**)(p), (void*)(o), TRUE)
+#define SGEN_UPDATE_REFERENCE(p,o)		sgen_update_reference ((void**)(p), (void*)(o), FALSE)
+#else
+#define SGEN_UPDATE_REFERENCE_ALLOW_NULL(p,o)	(*(void**)(p) = (void*)(o))
+#define SGEN_UPDATE_REFERENCE(p,o)		SGEN_UPDATE_REFERENCE_ALLOW_NULL ((p), (o))
+#endif
+
+/* Major collector */
+
 typedef void (*sgen_cardtable_block_callback) (mword start, mword size);
 void sgen_major_collector_iterate_live_block_ranges (sgen_cardtable_block_callback callback) MONO_INTERNAL;
 
@@ -668,10 +652,15 @@ typedef enum {
 	ITERATE_OBJECTS_SWEEP_ALL = ITERATE_OBJECTS_SWEEP | ITERATE_OBJECTS_NON_PINNED | ITERATE_OBJECTS_PINNED
 } IterateObjectsFlags;
 
+typedef struct
+{
+	size_t num_scanned_objects;
+	size_t num_unique_scanned_objects;
+} ScannedObjectCounts;
+
 typedef struct _SgenMajorCollector SgenMajorCollector;
 struct _SgenMajorCollector {
 	size_t section_size;
-	gboolean is_parallel;
 	gboolean is_concurrent;
 	gboolean supports_cardtable;
 	gboolean sweeps_lazily;
@@ -697,7 +686,6 @@ struct _SgenMajorCollector {
 	SgenObjectOperations major_concurrent_ops;
 
 	void* (*alloc_object) (MonoVTable *vtable, size_t size, gboolean has_references);
-	void* (*par_alloc_object) (MonoVTable *vtable, size_t size, gboolean has_references);
 	void (*free_pinned_object) (char *obj, size_t size);
 	void (*iterate_objects) (IterateObjectsFlags flags, IterateObjectCallbackFunc callback, void *data);
 	void (*free_non_pinned_object) (char *obj, size_t size);
@@ -715,7 +703,8 @@ struct _SgenMajorCollector {
 	void (*start_nursery_collection) (void);
 	void (*finish_nursery_collection) (void);
 	void (*start_major_collection) (void);
-	void (*finish_major_collection) (void);
+	void (*finish_major_collection) (ScannedObjectCounts *counts);
+	gboolean (*drain_gray_stack) (ScanCopyContext ctx);
 	void (*have_computed_minor_collection_allowance) (void);
 	gboolean (*ptr_is_in_non_pinned_space) (char *ptr, char **start);
 	gboolean (*obj_is_from_pinned_alloc) (char *obj);
@@ -775,7 +764,7 @@ slow_object_get_size (MonoVTable *vtable, MonoObject* o)
 	 * mono_array_length_fast not using the object's vtable.
 	 */
 	if (klass == mono_defaults.string_class) {
-		return sizeof (MonoString) + 2 * mono_string_length_fast ((MonoString*) o) + 2;
+		return G_STRUCT_OFFSET (MonoString, chars) + 2 * mono_string_length_fast ((MonoString*) o) + 2;
 	} else if (klass->rank) {
 		MonoArray *array = (MonoArray*)o;
 		size_t size = sizeof (MonoArray) + klass->sizes.element_size * mono_array_length_fast (array);
@@ -791,22 +780,44 @@ slow_object_get_size (MonoVTable *vtable, MonoObject* o)
 	}
 }
 
+static inline mword
+sgen_vtable_get_descriptor (MonoVTable *vtable)
+{
+	return (mword)vtable->gc_descr;
+}
+
+static inline mword
+sgen_obj_get_descriptor (char *obj)
+{
+	MonoVTable *vtable = ((MonoObject*)obj)->vtable;
+	SGEN_ASSERT (9, !SGEN_POINTER_IS_TAGGED_ANY (vtable), "Object can't be tagged");
+	return sgen_vtable_get_descriptor (vtable);
+}
+
+static inline mword
+sgen_obj_get_descriptor_safe (char *obj)
+{
+	MonoVTable *vtable = (MonoVTable*)SGEN_LOAD_VTABLE (obj);
+	return sgen_vtable_get_descriptor (vtable);
+}
+
 /*
  * This function can be called on an object whose first word, the
  * vtable field, is not intact.  This is necessary for the parallel
  * collector.
  */
-static inline mword
+static MONO_NEVER_INLINE mword
 sgen_par_object_get_size (MonoVTable *vtable, MonoObject* o)
 {
 	mword descr = (mword)vtable->gc_descr;
-	mword type = descr & 0x7;
+	mword type = descr & DESC_TYPE_MASK;
 
-	if (type == DESC_TYPE_RUN_LENGTH || type == DESC_TYPE_SMALL_BITMAP) {
+	if (type == DESC_TYPE_RUN_LENGTH || type == DESC_TYPE_SMALL_PTRFREE) {
 		mword size = descr & 0xfff8;
-		if (size == 0) /* This is used to encode a string */
-			return sizeof (MonoString) + 2 * mono_string_length_fast ((MonoString*) o) + 2;
+		SGEN_ASSERT (9, size >= sizeof (MonoObject), "Run length object size to small");
 		return size;
+	} else if (descr == SGEN_DESC_STRING) {
+		return G_STRUCT_OFFSET (MonoString, chars) + 2 * mono_string_length_fast ((MonoString*) o) + 2;
 	} else if (type == DESC_TYPE_VECTOR) {
 		int element_size = ((descr) >> VECTOR_ELSIZE_SHIFT) & MAX_ELEMENT_SIZE;
 		MonoArray *array = (MonoArray*)o;
@@ -832,6 +843,22 @@ sgen_safe_object_get_size (MonoObject *obj)
                obj = (MonoObject*)forwarded;
 
        return sgen_par_object_get_size ((MonoVTable*)SGEN_LOAD_VTABLE (obj), obj);
+}
+
+/*
+ * This variant guarantees to return the exact size of the object
+ * before alignment. Needed for canary support.
+ */
+static inline guint
+sgen_safe_object_get_size_unaligned (MonoObject *obj)
+{
+       char *forwarded;
+
+       if ((forwarded = SGEN_OBJECT_IS_FORWARDED (obj))) {
+               obj = (MonoObject*)forwarded;
+       }
+
+       return slow_object_get_size ((MonoVTable*)SGEN_LOAD_VTABLE (obj), obj);
 }
 
 const char* sgen_safe_name (void* obj) MONO_INTERNAL;
@@ -985,7 +1012,7 @@ gboolean sgen_los_object_is_pinned (char *obj) MONO_INTERNAL;
 void sgen_clear_nursery_fragments (void) MONO_INTERNAL;
 void sgen_nursery_allocator_prepare_for_pinning (void) MONO_INTERNAL;
 void sgen_nursery_allocator_set_nursery_bounds (char *nursery_start, char *nursery_end) MONO_INTERNAL;
-mword sgen_build_nursery_fragments (GCMemSection *nursery_section, void **start, size_t num_entries, SgenGrayQueue *unpin_queue) MONO_INTERNAL;
+mword sgen_build_nursery_fragments (GCMemSection *nursery_section, SgenGrayQueue *unpin_queue) MONO_INTERNAL;
 void sgen_init_nursery_allocator (void) MONO_INTERNAL;
 void sgen_nursery_allocator_init_heavy_stats (void) MONO_INTERNAL;
 void sgen_alloc_init_heavy_stats (void) MONO_INTERNAL;
@@ -1000,7 +1027,6 @@ void sgen_nursery_alloc_prepare_for_minor (void) MONO_INTERNAL;
 void sgen_nursery_alloc_prepare_for_major (void) MONO_INTERNAL;
 
 char* sgen_alloc_for_promotion (char *obj, size_t objsize, gboolean has_references) MONO_INTERNAL;
-char* sgen_par_alloc_for_promotion (char *obj, size_t objsize, gboolean has_references) MONO_INTERNAL;
 
 /* TLS Data */
 
@@ -1131,7 +1157,7 @@ void sgen_check_major_refs (void);
 void sgen_check_whole_heap (gboolean allow_missing_pinning);
 void sgen_check_whole_heap_stw (void) MONO_INTERNAL;
 void sgen_check_objref (char *obj);
-void sgen_check_major_heap_marked (void) MONO_INTERNAL;
+void sgen_check_heap_marked (gboolean nursery_must_be_pinned) MONO_INTERNAL;
 void sgen_check_nursery_objects_pinned (gboolean pinned) MONO_INTERNAL;
 void sgen_scan_for_registered_roots_in_domain (MonoDomain *domain, int root_type) MONO_INTERNAL;
 void sgen_check_for_xdomain_refs (void) MONO_INTERNAL;
@@ -1168,6 +1194,37 @@ void sgen_env_var_error (const char *env_var, const char *fallback, const char *
 void sgen_qsort (void *base, size_t nel, size_t width, int (*compar) (const void*, const void*)) MONO_INTERNAL;
 gint64 sgen_timestamp (void) MONO_INTERNAL;
 
+/*
+ * Canary (guard word) support
+ * Notes:
+ * - CANARY_SIZE must be multiple of word size in bytes
+ * - Canary space is not included on checks against SGEN_MAX_SMALL_OBJ_SIZE
+ */
+ 
+gboolean nursery_canaries_enabled (void) MONO_INTERNAL;
+
+#define CANARY_SIZE 8
+#define CANARY_STRING  "koupepia"
+
+#define CANARIFY_SIZE(size) if (nursery_canaries_enabled ()) {	\
+			size = size + CANARY_SIZE;	\
+		}
+
+#define CANARIFY_ALLOC(addr,size) if (nursery_canaries_enabled ()) {	\
+				memcpy ((char*) (addr) + (size), CANARY_STRING, CANARY_SIZE);	\
+			}
+
+#define CANARY_VALID(addr) (strncmp ((char*) (addr), CANARY_STRING, CANARY_SIZE) == 0)
+
+#define CHECK_CANARY_FOR_OBJECT(addr) if (nursery_canaries_enabled ()) {	\
+				char* canary_ptr = (char*) (addr) + sgen_safe_object_get_size_unaligned ((MonoObject *) (addr));	\
+				if (!CANARY_VALID(canary_ptr)) {	\
+					char canary_copy[CANARY_SIZE +1];	\
+					strncpy (canary_copy, canary_ptr, CANARY_SIZE);	\
+					canary_copy[CANARY_SIZE] = 0;	\
+					g_error ("CORRUPT CANARY:\naddr->%p\ntype->%s\nexcepted->'%s'\nfound->'%s'\n", (char*) addr, ((MonoObject*)addr)->vtable->klass->name, CANARY_STRING, canary_copy);	\
+				} }
+				 
 #endif /* HAVE_SGEN_GC */
 
 #endif /* __MONO_SGENGC_H__ */

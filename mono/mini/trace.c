@@ -10,7 +10,6 @@
  */
 
 #include <config.h>
-#include <signal.h>
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
@@ -140,7 +139,7 @@ static int is_filenamechar (char p)
 		return TRUE;
 	if (p >= '0' && p <= '9')
 		return TRUE;
-	if (p == '.' || p == ':' || p == '_' || p == '-')
+	if (p == '.' || p == ':' || p == '_' || p == '-' || p == '`')
 		return TRUE;
 	return FALSE;
 }

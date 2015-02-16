@@ -627,11 +627,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		public
-#if NET_4_0
 		ITaskItem[]
-#else
-		string[]
-#endif
 		InstalledAssemblyTables { get; set; }
 
 		[Output]
@@ -685,11 +681,9 @@ namespace Microsoft.Build.Tasks {
 			get { return suggestedRedirects; }
 		}
 
-#if NET_4_0
 		public string TargetFrameworkMoniker { get; set; }
 
 		public string TargetFrameworkMonikerDisplayName { get; set; }
-#endif
 
 		public string TargetFrameworkVersion { get; set; }
 

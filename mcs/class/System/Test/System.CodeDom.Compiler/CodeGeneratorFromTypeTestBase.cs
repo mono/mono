@@ -184,10 +184,8 @@ namespace MonoTests.System.CodeDom.Compiler
 		[Test]
 		public abstract void EntryPointMethodTest ();
 		
-#if NET_2_0
 		[Test]
 		public abstract void PartialTypeTest ();
-#endif
 
 		protected string GenerateDefaultType (CodeGeneratorOptions options)
 		{
@@ -1109,7 +1107,6 @@ namespace MonoTests.System.CodeDom.Compiler
 			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-#if NET_2_0
 		protected string GenerateGenericCodeTypeReferences (CodeGeneratorOptions options)
 		{
 			CodeTypeDeclaration td = new CodeTypeDeclaration ("Test");
@@ -1131,6 +1128,5 @@ namespace MonoTests.System.CodeDom.Compiler
 			TypeDeclaration.IsPartial = true;
 			return GenerateCodeFromType (TypeDeclaration, options);
 		}
-#endif
 	}
 }

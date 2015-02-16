@@ -20,15 +20,18 @@
 #if HAVE_SYS_MMAN_H
 #include <sys/mman.h>
 #endif
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <signal.h>
 #include <errno.h>
 #endif
 
 #include "mono-mmap.h"
+#include "mono-mmap-internal.h"
 #include "mono-proclib.h"
 
 #ifndef MAP_ANONYMOUS
@@ -481,6 +484,7 @@ mono_mprotect (void *addr, size_t length, int flags)
 	}
 	return 0;
 }
+
 #endif // HAVE_MMAP
 
 #if defined(HAVE_SHM_OPEN) && !defined (DISABLE_SHARED_PERFCOUNTERS)
@@ -607,7 +611,7 @@ mono_shared_area (void)
 	header->stats_start = sizeof (SAreaHeader);
 	header->stats_end = sizeof (SAreaHeader);
 
-	atexit (mono_shared_area_remove);
+	mono_atexit (mono_shared_area_remove);
 	return res;
 }
 
@@ -728,3 +732,31 @@ mono_valloc_aligned (size_t size, size_t alignment, int flags)
 	return aligned;
 }
 #endif
+
+int
+mono_pages_not_faulted (void *addr, size_t size)
+{
+#ifdef HAVE_MINCORE
+	int i;
+	gint64 count;
+	int pagesize = mono_pagesize ();
+	int npages = (size + pagesize - 1) / pagesize;
+	char *faulted = g_malloc0 (sizeof (char*) * npages);
+
+	if (mincore (addr, size, faulted) != 0) {
+		count = -1;
+	} else {
+		count = 0;
+		for (i = 0; i < npages; ++i) {
+			if (faulted [i] != 0)
+				++count;
+		}
+	}
+
+	g_free (faulted);
+
+	return count;
+#else
+	return -1;
+#endif
+}

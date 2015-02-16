@@ -11,11 +11,7 @@ using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
 
-#if NET_2_0
 using ValidationException = System.Xml.Schema.XmlSchemaValidationException;
-#else
-using ValidationException = System.Xml.Schema.XmlSchemaException;
-#endif
 
 namespace MonoTests.System.Xml
 {
@@ -48,10 +44,8 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotDotNet")]
 		// MS.NET throws XmlSchemaException, not -ValidationException.
-#endif
 		[ExpectedException (typeof (ValidationException))]
 		public void ValidateRootElementOnlyInvalid ()
 		{

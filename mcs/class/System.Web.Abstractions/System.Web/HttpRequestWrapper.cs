@@ -40,16 +40,12 @@ using System.Security.Principal;
 using System.Text;
 using System.Web.Caching;
 
-#if NET_4_0
 using System.Security.Authentication.ExtendedProtection;
 using System.Web.Routing;
-#endif
 
 namespace System.Web
 {
-#if NET_4_0
         [TypeForwardedFrom ("System.Web.Abstractions, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HttpRequestWrapper : HttpRequestBase
@@ -133,11 +129,9 @@ namespace System.Web
 		public override string HttpMethod {
 			get { return w.HttpMethod; }
 		}
-#if NET_4_0
 		public override ChannelBinding HttpChannelBinding {
 			get { return w.HttpChannelBinding; }
 		}
-#endif
 		public override Stream InputStream {
 			get { return w.InputStream; }
 		}
@@ -194,18 +188,24 @@ namespace System.Web
 			get { return w.RequestType; }
 			set { w.RequestType = value; }
 		}
-#if NET_4_0
 		public override RequestContext RequestContext {
 			get { return w.RequestContext; }
 			internal set { w.RequestContext = value; }	
 		}
-#endif
 		public override NameValueCollection ServerVariables {
 			get { return w.ServerVariables; }
 		}
 
 		public override int TotalBytes {
 			get { return w.TotalBytes; }
+		}
+
+		public override UnvalidatedRequestValuesBase Unvalidated { 
+			get { return new UnvalidatedRequestValuesWrapper (w.Unvalidated); } 
+		}
+
+		public override ReadEntityBodyMode ReadEntityBodyMode {
+			get { return ReadEntityBodyMode.Classic; }
 		}
 
 		public override Uri Url {
@@ -230,6 +230,11 @@ namespace System.Web
 
 		public override string [] UserLanguages {
 			get { return w.UserLanguages; }
+		}
+
+		public void Abort ()
+		{
+			w.WorkerRequest.CloseConnection();
 		}
 
 		public override byte [] BinaryRead (int count)

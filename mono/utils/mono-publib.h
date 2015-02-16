@@ -44,14 +44,18 @@ typedef unsigned __int64	uint64_t;
 
 #include <stdint.h>
 
+#ifdef __GNUC__
+#define MONO_API_EXPORT __attribute__ ((visibility ("default")))
+#else
 #define MONO_API_EXPORT
+#endif
 #define MONO_API_IMPORT
 
 #endif /* end of compiler-specific stuff */
 
-#if !defined(MONO_STATIC_BUILD) && defined(MONO_DLL_EXPORT)
+#if defined(MONO_DLL_EXPORT)
 	#define MONO_API MONO_API_EXPORT
-#elif !defined(MONO_STATIC_BUILD)
+#elif defined(MONO_DLL_IMPORT)
 	#define MONO_API MONO_API_IMPORT
 #else
 	#define MONO_API

@@ -1,8 +1,8 @@
 // CS0121: The call is ambiguous between the following methods or properties: `A.B.X.Test(int)' and `A.C.X.Test(int)'
 // Line: 31
 
-using A.B.X;
-using A.C.X;
+using static A.B.X;
+using static A.C.X;
 
 namespace A.B
 {

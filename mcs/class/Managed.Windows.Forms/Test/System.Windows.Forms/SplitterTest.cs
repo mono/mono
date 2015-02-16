@@ -43,7 +43,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Splitter.SplitPosition, position_with_capture, "1");
 		}
 		
-#if NET_2_0
 		[Test]
 		public void DefaultCursor ()
 		{
@@ -56,6 +55,5 @@ namespace MonoTests.System.Windows.Forms
 		{
 			public Cursor PublicDefaultCursor { get { return base.DefaultCursor; } }
 		}
-#endif
 	}
 }

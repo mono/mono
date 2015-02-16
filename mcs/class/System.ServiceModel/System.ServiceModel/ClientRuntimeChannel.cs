@@ -71,7 +71,7 @@ namespace System.ServiceModel.MonoInternal
 		#region delegates
 		readonly ProcessDelegate _processDelegate;
 
-		delegate object ProcessDelegate (MethodBase method, string operationName, object [] parameters, OperationContext context);
+		delegate object ProcessDelegate (MethodBase method, string operationName, bool isAsync, ref object [] parameters, OperationContext context);
 
 		readonly RequestDelegate requestDelegate;
 
@@ -438,7 +438,11 @@ namespace System.ServiceModel.MonoInternal
 
 		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState)
 		{
-			return _processDelegate.BeginInvoke (method, operationName, parameters, OperationContext.Current, callback, asyncState);
+			var p = parameters;
+			var retval = _processDelegate.BeginInvoke (method, operationName, true, ref p, OperationContext.Current, callback, asyncState);
+			if (p != parameters)
+				throw new InvalidOperationException ();
+			return retval;
 		}
 
 		public object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result)
@@ -447,19 +451,35 @@ namespace System.ServiceModel.MonoInternal
 				throw new ArgumentNullException ("result");
 			if (parameters == null)
 				throw new ArgumentNullException ("parameters");
-			// FIXME: the method arguments should be verified to be 
-			// identical to the arguments in the corresponding begin method.
-			return _processDelegate.EndInvoke (result);
+
+			object[] p = parameters;
+			var retval = _processDelegate.EndInvoke (ref p, result);
+			if (p == parameters)
+				return retval;
+
+			if (p.Length != parameters.Length)
+				throw new InvalidOperationException ();
+			Array.Copy (p, parameters, p.Length);
+			return retval;
 		}
 
 		public object Process (MethodBase method, string operationName, object [] parameters, OperationContext context)
+		{
+			var p = parameters;
+			var retval = Process (method, operationName, false, ref p, context);
+			if (p != parameters)
+				throw new InvalidOperationException ();
+			return retval;
+		}
+
+		object Process (MethodBase method, string operationName, bool isAsync, ref object [] parameters, OperationContext context)
 		{
 			var previousContext = OperationContext.Current;
 			try {
 				// Inherit the context from the calling thread
 				OperationContext.Current = context;
 
-				return DoProcess (method, operationName, parameters, context);
+				return DoProcess (method, operationName, isAsync, ref parameters, context);
 			} catch (Exception ex) {
 				throw;
 			} finally {
@@ -468,7 +488,7 @@ namespace System.ServiceModel.MonoInternal
 			}
 		}
 
-		object DoProcess (MethodBase method, string operationName, object [] parameters, OperationContext context)
+		object DoProcess (MethodBase method, string operationName, bool isAsync, ref object [] parameters, OperationContext context)
 		{
 			if (AllowInitializationUI)
 				DisplayInitializationUI ();
@@ -478,7 +498,7 @@ namespace System.ServiceModel.MonoInternal
 				Open ();
 
 			if (!od.IsOneWay)
-				return Request (od, parameters, context);
+				return Request (od, isAsync, ref parameters, context);
 			else {
 				Output (od, parameters, context);
 				return null;
@@ -504,7 +524,7 @@ namespace System.ServiceModel.MonoInternal
 			Send (CreateRequest (op, parameters, context), OperationTimeout);
 		}
 
-		object Request (OperationDescription od, object [] parameters, OperationContext context)
+		object Request (OperationDescription od, bool isAsync, ref object [] parameters, OperationContext context)
 		{
 			ClientOperation op = runtime.Operations [od.Name];
 			object [] inspections = new object [runtime.MessageInspectors.Count];
@@ -545,10 +565,15 @@ namespace System.ServiceModel.MonoInternal
 			for (int i = 0; i < inspections.Length; i++)
 				runtime.MessageInspectors [i].AfterReceiveReply (ref res, inspections [i]);
 
-			if (op.DeserializeReply)
-				return op.Formatter.DeserializeReply (res, parameters);
-			else
+			if (!op.DeserializeReply)
 				return res;
+
+			if (isAsync && od.EndMethod != null) {
+				var endParams = od.EndMethod.GetParameters ();
+				parameters = new object [endParams.Length - 1];
+			}
+
+			return op.Formatter.DeserializeReply (res, parameters);
 		}
 
 		#region Message-based Request() and Send()

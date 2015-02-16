@@ -42,9 +42,6 @@ namespace System.Data
 	/// Represents the default settings for ApplyDefaultSort, DataViewManager, RowFilter, RowStateFilter, Sort, and Table for DataViews created from the DataViewManager.
 	/// </summary>
 	[TypeConverterAttribute (typeof (ExpandableObjectConverter))]
-#if !NET_2_0
-	[Serializable]
-#endif
 	public class DataViewSetting
 	{
 		#region Fields

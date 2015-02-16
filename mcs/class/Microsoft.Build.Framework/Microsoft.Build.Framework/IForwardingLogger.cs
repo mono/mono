@@ -1,6 +1,5 @@
 using System;
 
-#if NET_4_0
 
 namespace Microsoft.Build.Framework
 {
@@ -11,5 +10,4 @@ namespace Microsoft.Build.Framework
 	}
 }
 
-#endif
 

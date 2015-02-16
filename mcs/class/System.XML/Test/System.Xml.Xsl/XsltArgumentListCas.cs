@@ -69,9 +69,6 @@ namespace MonoCasTests.System.Xml.Xsl {
 
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, SkipVerification = true)]
-#if !NET_2_0
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void AddExtensionObject_LinkDemand ()
 		{
 			// requires FullTrust, so denying anything break the requirements

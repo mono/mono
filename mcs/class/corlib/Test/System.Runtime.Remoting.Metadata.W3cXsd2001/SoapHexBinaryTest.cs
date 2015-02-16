@@ -106,7 +106,6 @@ namespace MonoTests.System.Runtime.Remoting.Metadata.W3cXsd2001
 			SoapHexBinary shb;
 			
 			xsdHexBinary = "3f789ABG";
-#if NET_2_0
 			try {
 				SoapHexBinary.Parse (xsdHexBinary);
 				Assert.Fail ("#A1");
@@ -119,13 +118,6 @@ namespace MonoTests.System.Runtime.Remoting.Metadata.W3cXsd2001
 				Assert.IsTrue (ex.Message.IndexOf ("xsd:hexBinary") != -1, "#A5");
 				Assert.IsTrue (ex.Message.IndexOf (xsdHexBinary) != -1, "#A6");
 			}
-#else
-			shb = SoapHexBinary.Parse (xsdHexBinary);
-			Assert.AreEqual ("hexBinary", shb.GetXsdType (), "#A1");
-			Assert.AreEqual ("3F789AB0", shb.ToString (), "#A2");
-			Assert.AreEqual (new byte [] { 63, 120, 154, 176 }, shb.Value, "#A3");
-
-#endif
 
 			xsdHexBinary = "3f789AbCE";
 			try {
@@ -142,7 +134,6 @@ namespace MonoTests.System.Runtime.Remoting.Metadata.W3cXsd2001
 			}
 
 			xsdHexBinary = "3f789GbC";
-#if NET_2_0
 			try {
 				shb = SoapHexBinary.Parse (xsdHexBinary);
 				Assert.Fail ("#C1");
@@ -155,15 +146,8 @@ namespace MonoTests.System.Runtime.Remoting.Metadata.W3cXsd2001
 				Assert.IsTrue (ex.Message.IndexOf ("xsd:hexBinary") != -1, "#C5");
 				Assert.IsTrue (ex.Message.IndexOf (xsdHexBinary) != -1, "#C6");
 			}
-#else
-			shb = SoapHexBinary.Parse (xsdHexBinary);
-			Assert.AreEqual ("hexBinary", shb.GetXsdType (), "#C1");
-			Assert.AreEqual ("3F7890BC", shb.ToString (), "#C2");
-			Assert.AreEqual (new byte [] { 63, 120, 144, 188 }, shb.Value, "#C3");
-#endif
 
 			xsdHexBinary = "3f-89ABC";
-#if NET_2_0
 			try {
 				shb = SoapHexBinary.Parse (xsdHexBinary);
 				Assert.Fail ("#D1");
@@ -176,12 +160,6 @@ namespace MonoTests.System.Runtime.Remoting.Metadata.W3cXsd2001
 				Assert.IsTrue (ex.Message.IndexOf ("xsd:hexBinary") != -1, "#D5");
 				Assert.IsTrue (ex.Message.IndexOf (xsdHexBinary) != -1, "#D6");
 			}
-#else
-			shb = SoapHexBinary.Parse (xsdHexBinary);
-			Assert.AreEqual ("hexBinary", shb.GetXsdType (), "#D1");
-			Assert.AreEqual ("3F089ABC", shb.ToString (), "#D2");
-			Assert.AreEqual (new byte [] { 63, 8, 154, 188 }, shb.Value, "#D3");
-#endif
 		}
 
 		[Test]

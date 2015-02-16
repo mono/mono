@@ -51,6 +51,30 @@ namespace MonoTests.System.Net.Http.Headers
 				Assert.Fail ("#2");
 			} catch (FormatException) {
 			}
+
+			try {
+				new NameValueHeaderValue ("\x7f", null);
+				Assert.Fail ("#3");
+			} catch (FormatException) {
+			}
+
+			try {
+				new NameValueHeaderValue ("arg", "\x7f");
+				Assert.Fail ("#4");
+			} catch (FormatException) {
+			}
+		}
+
+		[Test]
+		public void Ctor_ValidArguments ()
+		{
+			NameValueHeaderValue nvh;
+			
+			nvh = new NameValueHeaderValue ("arg", "~");
+			Assert.AreEqual ("~", nvh.Value, "#1");
+			
+			nvh = new NameValueHeaderValue ("arg", "\"\x7f\x80\"");
+			Assert.AreEqual ("\"\x7f\x80\"", nvh.Value, "#2");
 		}
 
 		[Test]

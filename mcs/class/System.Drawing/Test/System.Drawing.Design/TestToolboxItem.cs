@@ -59,7 +59,6 @@ namespace MonoTests.System.Drawing.Design {
 			{
 				return GetType (host, an, tn, r);
 			}
-#if NET_2_0
 			public object Filter (string propertyName, object value)
 			{
 				return FilterPropertyValue (propertyName, value);
@@ -74,7 +73,6 @@ namespace MonoTests.System.Drawing.Design {
 			{
 				return ValidatePropertyValue (propertyName, value);
 			}
-#endif
 		}
 
 		[TestFixtureSetUp]
@@ -96,7 +94,6 @@ namespace MonoTests.System.Drawing.Design {
 			Assert.AreEqual (typeof (ToolboxItemFilterAttribute[]), item.Filter.GetType (), "Filter/Type");
 			Assert.AreEqual (0, item.Filter.Count, "Filter");
 			Assert.AreEqual (String.Empty, item.TypeName, "TypeName");
-#if NET_2_0
 			Assert.IsNull (item.Company, "Company");
 			Assert.AreEqual (".NET Component", item.ComponentType, "ComponentType");
 			Assert.IsNull (item.DependentAssemblies, "DependentAssemblies");
@@ -104,7 +101,6 @@ namespace MonoTests.System.Drawing.Design {
 			Assert.IsFalse (item.IsTransient, "IsTransient");
 			Assert.AreEqual (0, item.Properties.Count, "Properties");
 			Assert.AreEqual (String.Empty, item.Version, "Version");
-#endif
 		}
 
 		[Test]
@@ -121,7 +117,6 @@ namespace MonoTests.System.Drawing.Design {
 			Assert.AreEqual (0, item.Filter.Count, "Filter");
 			item.TypeName = null;
 			Assert.AreEqual (String.Empty, item.TypeName, "TypeName");
-#if NET_2_0
 			item.Company = null;
 			Assert.AreEqual (String.Empty, item.Company, "Company");
 			// can't assign null without a NRE
@@ -134,7 +129,6 @@ namespace MonoTests.System.Drawing.Design {
 			Assert.AreEqual (9, item.Properties.Count, "Properties");
 			item.Lock ();
 			Assert.AreEqual (9, item.Properties.Count, "Properties/Lock");
-#endif
 		}
 
 		[Test]
@@ -214,7 +208,6 @@ namespace MonoTests.System.Drawing.Design {
 			item.Lock ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestNewProperties  ()
 		{
@@ -445,6 +438,5 @@ namespace MonoTests.System.Drawing.Design {
 			// only documented case
 			new OurToolboxItem ()._ValidatePropertyValue ("IsTransient", new object ());
 		}
-#endif
 	}
 }

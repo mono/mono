@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Web.Services.Configuration;
 using System.Xml.Serialization;
@@ -44,4 +43,3 @@ namespace System.Web.Services.Description
 	}
 }
 
-#endif

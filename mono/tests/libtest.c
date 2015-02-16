@@ -33,7 +33,9 @@ typedef int (STDCALL *SimpleDelegate) (int a);
 
 #if defined(WIN32) && defined (_MSC_VER)
 #define LIBTEST_API __declspec(dllexport)
-#else 
+#elif defined(__GNUC__)
+#define LIBTEST_API  __attribute__ ((visibility ("default")))
+#else
 #define LIBTEST_API
 #endif
 
@@ -254,6 +256,28 @@ LIBTEST_API int STDCALL
 mono_return_int_su (union su a) {
 	// printf ("Got value %d\n", a.i1);
 	return a.i1;
+}
+
+struct FI {
+	float f1;
+	float f2;
+	float f3;
+};
+
+struct NestedFloat {
+	struct FI fi;
+	float f4;
+};
+
+LIBTEST_API struct NestedFloat STDCALL
+mono_return_nested_float (void)
+{
+	struct NestedFloat f;
+	f.fi.f1 = 1.0;
+	f.fi.f2 = 2.0;
+	f.fi.f3 = 3.0;
+	f.f4 = 4.0;
+	return f;
 }
 
 LIBTEST_API int STDCALL  
@@ -3518,7 +3542,6 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 	gpointer test_method, ex = NULL;
 	gpointer (STDCALL *CreateObject)(gpointer*);
 
-
 	if (!mono_method_get_unmanaged_thunk)
 		return 1;
 
@@ -5309,6 +5332,20 @@ mono_test_marshal_return_lpwstr (void)
 
 	memcpy (res, tmp, 8);
 	g_free (tmp);
+
+	return res;
+}
+
+typedef struct {
+	double d;
+} SingleDoubleStruct;
+
+LIBTEST_API SingleDoubleStruct STDCALL
+mono_test_marshal_return_single_double_struct (void)
+{
+	SingleDoubleStruct res;
+
+	res.d = 3.0;
 
 	return res;
 }

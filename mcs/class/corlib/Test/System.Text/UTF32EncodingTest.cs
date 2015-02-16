@@ -1,4 +1,3 @@
-#if NET_2_0
 using System;
 using System.Text;
 
@@ -10,18 +9,17 @@ namespace MonoTests.System.Text
 	public class UTF32EncodingTest
 	{
 		[Test] // GetByteCount (Char [])
-		[Category ("NotDotNet")] // A1/B1 return 24 on MS
 		public void GetByteCount1 ()
 		{
 			char [] chars = new char[] { 'z', 'a', '\u0306',
 				'\u01FD', '\u03B2', '\uD8FF', '\uDCFF' };
 
 			UTF32Encoding le = new UTF32Encoding (false, true);
-			Assert.AreEqual (28, le.GetByteCount (chars), "#A1");
+			Assert.AreEqual (24, le.GetByteCount (chars), "#A1");
 			Assert.AreEqual (0, le.GetByteCount (new char [0]), "#A2");
 
 			UTF32Encoding be = new UTF32Encoding (true, true);
-			Assert.AreEqual (28, be.GetByteCount (chars), "#B1");
+			Assert.AreEqual (24, be.GetByteCount (chars), "#B1");
 			Assert.AreEqual (0, be.GetByteCount (new char [0]), "#B2");
 		}
 
@@ -41,17 +39,16 @@ namespace MonoTests.System.Text
 		}
 
 		[Test] // GetByteCount (String)
-		[Category ("NotDotNet")] // A1/B1 return 24 on MS
 		public void GetByteCount2 ()
 		{
 			string s = "za\u0306\u01FD\u03B2\uD8FF\uDCFF";
 
 			UTF32Encoding le = new UTF32Encoding (false, true);
-			Assert.AreEqual (28, le.GetByteCount (s), "#A1");
+			Assert.AreEqual (24, le.GetByteCount (s), "#A1");
 			Assert.AreEqual (0, le.GetByteCount (string.Empty), "#A2");
 
 			UTF32Encoding be = new UTF32Encoding (true, true);
-			Assert.AreEqual (28, be.GetByteCount (s), "#B1");
+			Assert.AreEqual (24, be.GetByteCount (s), "#B1");
 			Assert.AreEqual (0, be.GetByteCount (string.Empty), "#B2");
 		}
 
@@ -277,4 +274,3 @@ namespace MonoTests.System.Text
 		}
 	}
 }
-#endif

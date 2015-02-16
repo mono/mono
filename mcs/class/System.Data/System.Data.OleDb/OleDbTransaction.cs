@@ -33,11 +33,7 @@ using System.Data.Common;
 
 namespace System.Data.OleDb
 {
-#if NET_2_0
 	public sealed class OleDbTransaction : DbTransaction, IDbTransaction
-#else
-	public sealed class OleDbTransaction : MarshalByRefObject, IDbTransaction, IDisposable
-#endif
 	{
 		#region Fields
 
@@ -106,22 +102,12 @@ namespace System.Data.OleDb
 			}
 		}
 
-#if NET_2_0
 		protected override DbConnection DbConnection {
 			get { return connection; }
 		}
-#else
-		IDbConnection IDbTransaction.Connection {
-			get {
-				return connection;
-			}
-		}
-#endif
 		
 		public
-#if NET_2_0
 		override
-#endif
 		IsolationLevel IsolationLevel {
 			get {
 				if (!isOpen)
@@ -160,9 +146,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Commit ()
 		{
 			if (!isOpen)
@@ -175,17 +159,8 @@ namespace System.Data.OleDb
 			isOpen = false;
 		}
 
-#if ONLY_1_1
-		~OleDbTransaction ()
-		{
-			libgda.FreeObject (gdaTransaction);
-			gdaTransaction = IntPtr.Zero;
-		}
-#endif
 
-#if NET_2_0
 		protected override
-#endif
 		void Dispose (bool disposing)
 		{
 			if (!disposed) {
@@ -194,22 +169,12 @@ namespace System.Data.OleDb
 				disposed = true;
 			}
 
-#if NET_2_0
 			base.Dispose (disposing);
-#endif
 		}
 
-#if !NET_2_0
-		void IDisposable.Dispose ()
-		{
-			Dispose (true);
-		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Rollback ()
 		{
 			if (!isOpen)

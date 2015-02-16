@@ -42,9 +42,7 @@ namespace System.Web.UI
 	{
 		ScriptManager _scriptManager;
 		ScriptReferenceCollection _scripts;
-#if NET_3_5
 		CompositeScriptReference _compositeScript;
-#endif
 		ServiceReferenceCollection _services;
 		AuthenticationServiceManager _authenticationService;
 		ProfileServiceManager _profileService;
@@ -84,7 +82,6 @@ namespace System.Web.UI
 				return _scripts;
 			}
 		}
-#if NET_3_5
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Category ("Behavior")]
 		[DefaultValue (null)]
@@ -97,7 +94,6 @@ namespace System.Web.UI
 				return _compositeScript;
 			}
 		}
-#endif
 		[MergableProperty (false)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Category ("Behavior")]

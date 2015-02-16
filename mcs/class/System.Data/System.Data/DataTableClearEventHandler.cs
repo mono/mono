@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.Data
 {
 	/// <summary>
@@ -39,4 +38,3 @@ namespace System.Data
 	public delegate void DataTableClearEventHandler(object sender, DataTableClearEventArgs e);
 
 }
-#endif // NET_2_0

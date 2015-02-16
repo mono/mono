@@ -20,7 +20,6 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class KeyEventArgsTest : TestHelper
 	{
-#if NET_2_0
 		[Test]
 		public void SuppressKeyPressTest ()
 		{
@@ -40,6 +39,5 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (kea.Handled, "#06");
 			
 		}
-#endif
 	}
 }

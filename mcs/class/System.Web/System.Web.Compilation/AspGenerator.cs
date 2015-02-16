@@ -945,9 +945,7 @@ namespace System.Web.Compilation
 			case TagType.DataBinding:
 			case TagType.CodeRenderExpression:
 			case TagType.CodeRender:
-#if NET_4_0
 			case TagType.CodeRenderEncode:
-#endif
 				if (isApplication)
 					throw new ParseException (location, "Invalid content for application file.");
 			
@@ -1450,9 +1448,7 @@ namespace System.Web.Compilation
 					return CodeConstructType.ExpressionSnippet;
 
 				case TagType.CodeRender:
-#if NET_4_0
 				case TagType.CodeRenderEncode:
-#endif
 					return CodeConstructType.CodeSnippet;
 
 				case TagType.DataBinding:
@@ -1485,10 +1481,8 @@ namespace System.Web.Compilation
 				b = new CodeRenderBuilder (code, true, location);
 			else if (tagtype == TagType.DataBinding)
 				b = new DataBindingBuilder (code, location);
-#if NET_4_0
 			else if (tagtype == TagType.CodeRenderEncode)
 				b = new CodeRenderBuilder (code, true, location, true);
-#endif
 			else
 				throw new HttpException ("Should never happen");
 
@@ -1593,11 +1587,9 @@ namespace System.Web.Compilation
 					case TagType.CodeRenderExpression:
 						builder.AppendSubBuilder (new CodeRenderBuilder (tagid, true, location));
 						break;
-#if NET_4_0
 					case TagType.CodeRenderEncode:
 						builder.AppendSubBuilder (new CodeRenderBuilder (tagid, true, location, true));
 						break;
-#endif
 					case TagType.DataBinding:
 						builder.AppendSubBuilder (new DataBindingBuilder (tagid, location));
 						break;

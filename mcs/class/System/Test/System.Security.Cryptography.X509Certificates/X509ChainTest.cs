@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 
@@ -41,7 +40,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 	[TestFixture]
 	public class X509ChainTest {
 
-		private X509Certificate2Collection empty;
+		//private X509Certificate2Collection empty;
 		private X509Certificate2Collection collection;
 
 		private X509Certificate2 cert_empty;
@@ -56,7 +55,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			cert1 = new X509Certificate2 (X509Certificate2Test.farscape_pfx, "farscape", X509KeyStorageFlags.Exportable);
 			cert2 = new X509Certificate2 (Encoding.ASCII.GetBytes (X509Certificate2Test.base64_cert));
 
-			empty = new X509Certificate2Collection ();
+			//empty = new X509Certificate2Collection ();
 			collection = new X509Certificate2Collection ();
 			collection.Add (cert1);
 			collection.Add (cert2);
@@ -297,4 +296,3 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 	}
 }
 
-#endif

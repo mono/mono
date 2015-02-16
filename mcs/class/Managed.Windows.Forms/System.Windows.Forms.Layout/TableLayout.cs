@@ -368,7 +368,20 @@ namespace System.Windows.Forms.Layout
 			}
 
 			if (total_width > 0)
-				panel.column_widths[col_styles.Count - 1] += total_width;
+			{
+				// Find the last column that isn't an Absolute SizeType, and give it
+				// all this free space.  (Absolute sized columns need to retain their
+				// absolute width if at all possible!)
+				int col = col_styles.Count - 1;
+				for (; col >= 0; --col)
+				{
+					if (col_styles[col].SizeType != SizeType.Absolute)
+						break;
+				}
+				if (col < 0)
+					col = col_styles.Count - 1;
+				panel.column_widths[col] += total_width;
+			}
 
 			// Figure up all the row heights
 			int total_height = parentDisplayRectangle.Height - (border_width * (rows + 1));
@@ -464,7 +477,20 @@ namespace System.Windows.Forms.Layout
 			}
 
 			if (total_height > 0)
-				panel.row_heights[row_styles.Count - 1] += total_height;
+			{
+				// Find the last row that isn't an Absolute SizeType, and give it
+				// all this free space.  (Absolute sized rows need to retain their
+				// absolute height if at all possible!)
+				int row = row_styles.Count - 1;
+				for (; row >= 0; --row)
+				{
+					if (row_styles[row].SizeType != SizeType.Absolute)
+						break;
+				}
+				if (row < 0)
+					row = row_styles.Count - 1;
+				panel.row_heights[row] += total_height;
+			}
 		}
 		
 		private void LayoutControls (TableLayoutPanel panel)

@@ -168,7 +168,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.AreEqual (Path.DirectorySeparatorChar, nais.PublicSeparatorExternal, "SeparatorExternal");
 			Assert.AreEqual ('.', nais.PublicSeparatorInternal, "SeparatorInternal");
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void IsolatedStorage_ApplicationIdentity ()
@@ -184,14 +183,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage ();
 			object o = nais.AssemblyIdentity;
 		}
-#else
-		[Test]
-		public void IsolatedStorage_AssemblyIdentity ()
-		{
-			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage ();
-			Assert.IsNull (nais.AssemblyIdentity, "AssemblyIdentity");
-		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
