@@ -328,7 +328,7 @@ namespace System.IO {
 					return 0;
 
 				if (input_buffer [0] == 0xef && input_buffer [1] == 0xbb && input_buffer [2] == 0xbf){
-					this.encoding = Encoding.UTF8Unmarked;
+					this.encoding = EncodingHelper.UTF8Unmarked;
 					return 3;
 				}
 
@@ -343,7 +343,7 @@ namespace System.IO {
 				if (input_buffer [0] == 0 && input_buffer [1] == 0
 					&& input_buffer [2] == 0xfe && input_buffer [3] == 0xff)
 				{
-					this.encoding = Encoding.BigEndianUTF32;
+					this.encoding = EncodingHelper.BigEndianUTF32;
 					return 4;
 				}
 

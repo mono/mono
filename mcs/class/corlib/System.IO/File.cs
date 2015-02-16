@@ -575,7 +575,7 @@ namespace System.IO
 
 		public static void WriteAllText (string path, string contents)
 		{
-			WriteAllText (path, contents, Encoding.UTF8Unmarked);
+			WriteAllText (path, contents, EncodingHelper.UTF8Unmarked);
 		}
 
 		public static void WriteAllText (string path, string contents, Encoding encoding)

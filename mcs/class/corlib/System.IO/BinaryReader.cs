@@ -58,7 +58,7 @@ namespace System.IO {
 		private bool m_disposed;
 		
 		public BinaryReader(Stream input) 
-			: this(input, Encoding.UTF8UnmarkedUnsafe)
+			: this(input, EncodingHelper.UTF8UnmarkedUnsafe)
 		{
 		}
 		
