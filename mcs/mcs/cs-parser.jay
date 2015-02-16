@@ -3611,12 +3611,12 @@ member_initializer
 
 		lbag.AddLocation ($$, GetLocation ($3));
 	  }
-	| OPEN_BRACKET_EXPR expression_list CLOSE_BRACKET ASSIGN initializer_value
+	| OPEN_BRACKET_EXPR argument_list CLOSE_BRACKET ASSIGN initializer_value
 	  {
 		if (lang_version < LanguageVersion.V_6)
 			FeatureIsNotAvailable (GetLocation ($1), "dictionary initializer");
 
-		$$ = new DictionaryElementInitializer ((List<Expression>)$2, (Expression) $5, GetLocation ($1));
+		$$ = new DictionaryElementInitializer ((Arguments)$2, (Expression) $5, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($4));
 	  }
 	| OPEN_BRACE CLOSE_BRACE

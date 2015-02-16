@@ -321,11 +321,15 @@ namespace System
 			string [] parameters = Uri.UnescapeDataString (candidate.Query.Substring (1)).Split ('&'); // chop first '?'
 			foreach (string parameter in parameters) {
 				string [] pair = parameter.Split ('=');
-				m.QueryParameters.Add (pair [0], pair [1]);
-				if (!query_params.ContainsKey (pair [0]))
-					continue;
-				string templateName = query_params [pair [0]];
-				vc.Add (templateName, pair [1]);
+				if (pair.Length > 0) {
+					m.QueryParameters.Add (pair [0], pair.Length == 2 ? pair [1] : null);
+					if (!query_params.ContainsKey (pair [0]))
+						continue;
+					if (pair.Length > 1) {
+						string templateName = query_params [pair [0]];
+						vc.Add (templateName, pair [1]);
+					}
+				}
 			}
 
 			return m;
