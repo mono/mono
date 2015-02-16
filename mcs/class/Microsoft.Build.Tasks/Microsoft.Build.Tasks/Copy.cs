@@ -235,7 +235,7 @@ namespace Microsoft.Build.Tasks {
 					Log.LogMessage ("Copying failed. Retries left: {0}.", i);
 
 					if (i == 0)
-						throw ex;
+						throw;
 
 					Thread.Sleep (retryDelayMilliseconds);
 				}
