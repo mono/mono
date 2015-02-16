@@ -204,6 +204,23 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreSame (expected, t.BaseType, "#1");
 			
 		}
+
+		class Nested
+		{
+			public class Inner {}
+		}
+
+		public class Nested2
+		{
+			public class Inner {}
+		}
+
+		[Test]
+		public void TestsClassInnerStuff ()
+		{
+			CollectionAssert.Contains(typeof(Nested).Assembly.GetExportedTypes (), typeof(Nested.Inner));
+			CollectionAssert.Contains(typeof(Nested).Assembly.GetExportedTypes (), typeof(Nested2.Inner));
+		}
 	}
 }
 
