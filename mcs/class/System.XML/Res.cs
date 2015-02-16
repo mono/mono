@@ -991,7 +991,7 @@ namespace System.Xml
 		public const string Sch_ElementFromGroupBase3 = "Sch_ElementFromGroupBase3";
 		public const string Sch_ElementInMixedWithFixed = "Sch_ElementInMixedWithFixed";
 		public const string Sch_ElementMissing = "Sch_ElementMissing";
-		public const string Sch_ElementName = "Sch_ElementName";
+		public const string Sch_ElementName = "'{0}' element";
 		public const string Sch_ElementNameAndNamespace = "Sch_ElementNameAndNamespace";
 		public const string Sch_ElementNameRef = "Sch_ElementNameRef";
 		public const string Sch_ElementNotAllowed = "Sch_ElementNotAllowed";
@@ -1071,7 +1071,8 @@ namespace System.Xml
 		public const string Sch_InvalidElementBlockValue = "Sch_InvalidElementBlockValue";
 		public const string Sch_InvalidElementContent = "Sch_InvalidElementContent";
 		public const string Sch_InvalidElementContentComplex = "Sch_InvalidElementContentComplex";
-		public const string Sch_InvalidElementContentExpecting = "Sch_InvalidElementContentExpecting";
+		// There are two places that use this message, but they have different number of arguments...! One has 3, anoher has 4. We cannot fail at 3 args.
+		public const string Sch_InvalidElementContentExpecting = "Invalid start element. Within {0}, got {1}, while expected {2}.";
 		public const string Sch_InvalidElementContentExpectingComplex = "Sch_InvalidElementContentExpectingComplex";
 		public const string Sch_InvalidElementDefaultValue = "Sch_InvalidElementDefaultValue";
 		public const string Sch_InvalidElementFinalValue = "Sch_InvalidElementFinalValue";
