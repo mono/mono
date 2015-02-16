@@ -996,6 +996,11 @@ namespace Mono.CSharp {
 			return members;
 		}
 
+		protected static void Error_NamedArgument (NamedArgument na, Report Report)
+		{
+			Report.Error (1742, na.Location, "An element access expression cannot use named argument");
+		}
+
 		protected virtual void Error_NegativeArrayIndex (ResolveContext ec, Location loc)
 		{
 			throw new NotImplementedException ();
@@ -1169,7 +1174,7 @@ namespace Mono.CSharp {
 			if (source.type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (source));
-				return new DynamicConversion (btypes.Int, CSharpBinderFlags.ConvertArrayIndex, args, loc).Resolve (ec);
+				return new DynamicConversion (btypes.Int, CSharpBinderFlags.ConvertArrayIndex, args, source.loc).Resolve (ec);
 			}
 
 			Expression converted;
@@ -1204,6 +1209,27 @@ namespace Mono.CSharp {
 				return converted;
 
 			return new ArrayIndexCast (converted, btypes.Int).Resolve (ec);
+		}
+
+		public Expression MakePointerAccess (ResolveContext rc, TypeSpec type, Arguments args)
+		{
+			if (args.Count != 1){
+				rc.Report.Error (196, loc, "A pointer must be indexed by only one value");
+				return null;
+			}
+
+			var arg = args [0];
+			if (arg is NamedArgument)
+				Error_NamedArgument ((NamedArgument) arg, rc.Report);
+
+			var index = arg.Expr.Resolve (rc);
+			if (index == null)
+				return null;
+
+			index = ConvertExpressionToArrayIndex (rc, index, true);
+
+			Expression p = new PointerArithmetic (Binary.Operator.Addition, this, index, type, loc);
+			return new Indirection (p, loc);
 		}
 
 		//

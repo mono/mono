@@ -10195,13 +10195,13 @@ namespace Mono.CSharp
 				};
 
 			if (type.IsPointer)
-				return MakePointerAccess (ec, type);
+				return Expr.MakePointerAccess (ec, type, Arguments);
 
 			FieldExpr fe = Expr as FieldExpr;
 			if (fe != null) {
 				var ff = fe.Spec as FixedFieldSpec;
 				if (ff != null) {
-					return MakePointerAccess (ec, ff.ElementType);
+					return Expr.MakePointerAccess (ec, ff.ElementType, Arguments);
 				}
 			}
 
@@ -10243,27 +10243,6 @@ namespace Mono.CSharp
 			return ConditionalAccess || Expr.HasConditionalAccess ();
 		}
 
-		Expression MakePointerAccess (ResolveContext rc, TypeSpec type)
-		{
-			if (Arguments.Count != 1){
-				rc.Report.Error (196, loc, "A pointer must be indexed by only one value");
-				return null;
-			}
-
-			var arg = Arguments[0];
-			if (arg is NamedArgument)
-				Error_NamedArgument ((NamedArgument) arg, rc.Report);
-
-			var index = arg.Expr.Resolve (rc);
-			if (index == null)
-				return null;
-
-			index = ConvertExpressionToArrayIndex (rc, index, true);
-
-			Expression p = new PointerArithmetic (Binary.Operator.Addition, Expr, index, type, loc);
-			return new Indirection (p, loc);
-		}
-		
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			Expression expr;
@@ -10298,11 +10277,6 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should never be reached");
-		}
-
-		public static void Error_NamedArgument (NamedArgument na, Report Report)
-		{
-			Report.Error (1742, na.Location, "An element access expression cannot use named argument");
 		}
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
@@ -11767,12 +11741,10 @@ namespace Mono.CSharp
 	{
 		readonly Arguments args;
 
-		public DictionaryElementInitializer (List<Expression> arguments, Expression initializer, Location loc)
+		public DictionaryElementInitializer (Arguments arguments, Expression initializer, Location loc)
 			: base (null, initializer, loc)
 		{
-			this.args = new Arguments (arguments.Count);
-			foreach (var arg in arguments)
-				this.args.Add (new Argument (arg));
+			this.args = arguments;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -11788,6 +11760,11 @@ namespace Mono.CSharp
 
 			if (type.IsArray) {
 				target = new ArrayAccess (new ElementAccess (init, args, loc), loc);
+				return true;
+			}
+
+			if (type.IsPointer) {
+				target = init.MakePointerAccess (rc, type, args);
 				return true;
 			}
 
