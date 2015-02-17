@@ -557,7 +557,7 @@ namespace Mono.CSharp
 					ok = false;
 				}
 
-				if (Get.IsCompilerGenerated) {
+				if ((ModFlags & Modifiers.AutoProperty) != 0) {
 					Report.Error (8080, Location, "`{0}': Auto-implemented properties must override all accessors of the overridden property",
 						GetSignatureForError ());
 					ok = false;
@@ -867,6 +867,7 @@ namespace Mono.CSharp
 			}
 
 			if (auto) {
+				ModFlags |= Modifiers.AutoProperty;
 				if (Get == null) {
 					Report.Error (8051, Location, "Auto-implemented property `{0}' must have get accessor",
 						GetSignatureForError ());
