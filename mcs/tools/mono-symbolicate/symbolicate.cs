@@ -7,7 +7,7 @@ namespace Symbolicate
 {
 	public class Program
 	{
-		static Regex regex = new Regex (@"\w*at (?<MethodName>.+) \((?<MethodParams>.*)\) \[0x(?<IL>.+)\] in <filename unknown>:0");
+		static Regex regex = new Regex (@"\w*at (?<MethodName>.+) \((?<MethodParams>.*)\) *(\[0x(?<IL>.+)\]|<0x.* \+ 0x(?<NativeOffset>.+)>) in <filename unknown>:0");
 
 		public static int Main (String[] args)
 		{
@@ -44,10 +44,13 @@ namespace Symbolicate
 
 			var methodName = match.Groups ["MethodName"].Value;
 			var methodParams = ParseParametersTypes (match.Groups ["MethodParams"].Value);
-			var ilOffset = int.Parse (match.Groups ["IL"].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+
+			var isOffsetIL = !string.IsNullOrEmpty (match.Groups ["IL"].Value);
+			var offsetVarName = (isOffsetIL)? "IL" : "NativeOffset";
+			var offset = int.Parse (match.Groups [offsetVarName].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
 			Location location;
-			if (!locProvider.TryGetLocation (methodName, methodParams, ilOffset, out location))
+			if (!locProvider.TryGetLocation (methodName, methodParams, offset, isOffsetIL, out location))
 				return line;
 
 			return line.Replace ("<filename unknown>:0", string.Format ("{0}:{1}", location.FileName, location.Line));
