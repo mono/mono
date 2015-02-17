@@ -21,6 +21,10 @@ $(error Unknown framework version)
 endif
 endif
 
+ifndef NO_SIGN_ASSEMBLY
+LIB_MCS_FLAGS += --getresourcestrings:ReferenceSources/mscorlib.txt
+endif
+
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 

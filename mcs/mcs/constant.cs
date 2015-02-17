@@ -2090,7 +2090,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.Emit (OpCodes.Ldstr, Value);
+			var str = Value;
+			if (ec.Module.GetResourceStrings != null && !ec.Module.GetResourceStrings.TryGetValue (str, out str)) {
+				str = Value;
+			}
+
+			ec.Emit (OpCodes.Ldstr, str);
 		}
 
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType, TypeSpec parameterType)

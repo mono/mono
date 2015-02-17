@@ -1426,7 +1426,6 @@ ReferenceSources/CultureData.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
-ReferenceSources/mscorlib.txt.cs
 ReferenceSources/ParseNumbers.cs
 ReferenceSources/TimeZoneInfoOptions.cs
 ReferenceSources/AppDomain.cs

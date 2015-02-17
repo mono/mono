@@ -23,6 +23,7 @@ NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 NO_INSTALL = yes
 FRAMEWORK_VERSION = 4.0
+BOOTSTRAP_PROFILE = yes
 
 # Compiler all using same bootstrap compiler
 LIBRARY_COMPILE = $(BOOT_COMPILE)

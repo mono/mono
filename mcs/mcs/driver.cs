@@ -362,6 +362,9 @@ namespace Mono.CSharp
 #endif
 			module.InitializePredefinedTypes ();
 
+			if (settings.GetResourceStrings != null)
+				module.LoadGetResourceStrings (settings.GetResourceStrings);
+
 			tr.Start (TimeReporter.TimerType.ModuleDefinitionTotal);
 			module.Define ();
 			tr.Stop (TimeReporter.TimerType.ModuleDefinitionTotal);
