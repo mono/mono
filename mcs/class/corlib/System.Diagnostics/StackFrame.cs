@@ -59,6 +59,9 @@ namespace System.Diagnostics {
 		#pragma warning restore 649
 		#endregion
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static int GetILOffsetFromFile (string path, int methodToken, int nativeOffset);
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool get_frame_info (int skip, bool needFileInfo, out MethodBase method,
 						   out int iloffset, out int native_offset,
