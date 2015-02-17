@@ -22,14 +22,10 @@ RELEASE_FILE = $(OUT_DIR)/release.out
 SYMBOLICATE_FILE = $(OUT_DIR)/symbolicate.out
 SYMBOLICATE_EXPECTED_FILE = Test/symbolicate.expected
 
-build-test:
-	@mkdir -p $(OUT_DIR)
-	@$(MCS) -debug $(TEST_CS) -out:$(TEST_EXE)
-
-check: all build-test
-	@MONO_DEBUG=gen-compact-seq-points $(MONO) $(TEST_EXE) > $(RELEASE_FILE)
-	@$(MONO) $(LIB_PATH)/symbolicate.exe $(TEST_EXE) $(RELEASE_FILE) | sed "s/\[.*Test\//in /" > $(SYMBOLICATE_FILE)
-	@DIFF=$$(diff $(SYMBOLICATE_FILE) $(SYMBOLICATE_EXPECTED_FILE)); \
+CHECK_DIFF = @\
+	MONO_DEBUG=gen-compact-seq-points $(MONO) $(TEST_EXE) > $(RELEASE_FILE); \
+	$(MONO) $(LIB_PATH)/$(PROGRAM) $(TEST_EXE) $(RELEASE_FILE) | sed "s/).*Test\//) in /" > $(SYMBOLICATE_FILE); \
+	DIFF=$$(diff $(SYMBOLICATE_FILE) $(SYMBOLICATE_EXPECTED_FILE)); \
 	if [ ! -z "$$DIFF" ]; then \
 		echo "Symbolicate tests failed."; \
 		echo "If $(SYMBOLICATE_FILE) is correct copy it to $(SYMBOLICATE_EXPECTED_FILE)."; \
@@ -37,3 +33,17 @@ check: all build-test
 		echo "$$DIFF"; \
 		exit 1; \
 	fi
+
+clean-test:
+	rm -rf $(OUT_DIR)
+
+build-test: clean-test
+	@mkdir -p $(OUT_DIR)
+	@$(MCS) --debug $(TEST_CS) -out:$(TEST_EXE)
+
+check: all build-test
+	@echo "Checking $(PROGRAM) without AOT"
+	$(CHECK_DIFF)
+	@echo "Checking $(PROGRAM) with AOT"
+	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot $(TEST_EXE) > /dev/null
+	$(CHECK_DIFF)
