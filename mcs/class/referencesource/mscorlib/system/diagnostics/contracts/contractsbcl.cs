@@ -448,33 +448,33 @@ namespace System.Runtime.CompilerServices
             // If we got here, the user selected Ignore.  Continue.
         }
 
-        private static String GetResourceNameForFailure(ContractFailureKind failureKind)
+        private static String GetResourceNameForFailure(ContractFailureKind failureKind, bool withCondition = false)
         {
             String resourceName = null;
             switch (failureKind)
             {
                 case ContractFailureKind.Assert:
-                    resourceName = "AssertionFailed";
+                    resourceName = withCondition ? "AssertionFailed_Cnd" : "AssertionFailed";
                     break;
 
                 case ContractFailureKind.Assume:
-                    resourceName = "AssumptionFailed";
+                    resourceName = withCondition ? "AssumptionFailed_Cnd" : "AssumptionFailed";
                     break;
 
                 case ContractFailureKind.Precondition:
-                    resourceName = "PreconditionFailed";
+                    resourceName = withCondition ? "PreconditionFailed_Cnd" : "PreconditionFailed";
                     break;
 
                 case ContractFailureKind.Postcondition:
-                    resourceName = "PostconditionFailed";
+                    resourceName = withCondition ? "PostconditionFailed_Cnd" : "PostconditionFailed";
                     break;
 
                 case ContractFailureKind.Invariant:
-                    resourceName = "InvariantFailed";
+                    resourceName = withCondition ? "InvariantFailed_Cnd" : "InvariantFailed";
                     break;
 
                 case ContractFailureKind.PostconditionOnException:
-                    resourceName = "PostconditionOnExceptionFailed";
+                    resourceName = withCondition ? "PostconditionOnExceptionFailed_Cnd" : "PostconditionOnExceptionFailed";
                     break;
 
                 default:
@@ -490,7 +490,7 @@ namespace System.Runtime.CompilerServices
 #endif
         private static String GetDisplayMessage(ContractFailureKind failureKind, String userMessage, String conditionText)
         {
-            String resourceName = GetResourceNameForFailure(failureKind);
+            String resourceName = GetResourceNameForFailure(failureKind, !String.IsNullOrEmpty(conditionText));
             // Well-formatted English messages will take one of four forms.  A sentence ending in
             // either a period or a colon, the condition string, then the message tacked 
             // on to the end with two spaces in front.
@@ -499,7 +499,6 @@ namespace System.Runtime.CompilerServices
             // error message.  Let's leverage Silverlight's default error message there.
             String failureMessage;
             if (!String.IsNullOrEmpty(conditionText)) {
-                resourceName += "_Cnd";
                 failureMessage = Environment.GetResourceString(resourceName, conditionText);
             }
             else {
