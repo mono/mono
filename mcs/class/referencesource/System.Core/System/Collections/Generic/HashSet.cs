@@ -61,6 +61,9 @@ namespace System.Collections.Generic {
     [Serializable()]
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
     public class HashSet<T> : ICollection<T>, ISerializable, IDeserializationCallback, ISet<T>
+#if MONO
+        , IReadOnlyCollection<T>
+#endif
 #endif
     {
 

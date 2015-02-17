@@ -9,7 +9,11 @@ namespace System.Collections.Generic {
 #endif
     [DebuggerTypeProxy(typeof(System_DictionaryDebugView<,>))]
     [DebuggerDisplay("Count = {Count}")]        
-    public class SortedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary {
+    public class SortedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary
+#if MONO
+        , IReadOnlyDictionary<TKey, TValue>, IReadOnlyCollection<KeyValuePair<TKey, TValue>>
+#endif
+    {
 #if !FEATURE_NETCORE
         [NonSerialized]
 #endif
@@ -146,6 +150,20 @@ namespace System.Collections.Generic {
                 return Values;
             }
         }
+
+#if MONO
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys {
+            get {                
+                return Keys;
+            }
+        }
+
+        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values {
+            get {                
+                return Values;
+            }
+        }
+#endif
         
         public void Add(TKey key, TValue value) {
             if( key == null) {
