@@ -2838,12 +2838,6 @@ namespace Mono.CSharp {
 							ErrorIsInaccesible (rc, me.GetSignatureForError (), loc);
 						}
 					} else {
-						// LAMESPEC: again, ignores InvocableOnly
-						if (variable != null) {
-							rc.Report.SymbolRelatedToPreviousError (variable.Location, Name);
-							rc.Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", Name);
-						}
-
 						//
 						// MemberLookup does not check accessors availability, this is actually needed for properties only
 						//
@@ -2882,11 +2876,6 @@ namespace Mono.CSharp {
 				//
 				if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0 && !variable_found) {
 					if (IsPossibleTypeOrNamespace (rc)) {
-						if (variable != null) {
-							rc.Report.SymbolRelatedToPreviousError (variable.Location, Name);
-							rc.Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", Name);
-						}
-
 						return ResolveAsTypeOrNamespace (rc, false);
 					}
 				}
