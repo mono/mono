@@ -209,7 +209,38 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.LoadXml (documentString);
 		}
 
-#if NET_4_0
+		[Test]
+		public void TestImportEmptyVariableWithConditionFalse ()
+		{
+			string documentString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Import Project='$(ImportPath)' Condition='false' />
+				<Target Name='Build' />
+			</Project>";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsTrue (project.Build ("Build"), "Build failed");
+		}
+
+		[Test]
+		public void TestImportProjectWithConditionReferencingExtensionPath ()
+		{
+			string documentString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Import Project='$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets' Condition=""Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets')""  />
+				<Target Name='Build' />
+			</Project>";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsTrue (project.Build ("Build"), "Build failed");
+		}
+
 		[Test]
 		public void TestImportWildcard ()
 		{
@@ -264,7 +295,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				File.Delete (second_project);
 			}
 		}
-#endif
 
 	}
 }
