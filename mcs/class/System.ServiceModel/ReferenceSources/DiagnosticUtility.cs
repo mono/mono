@@ -3,6 +3,9 @@
 //
 // Copyright 2015 Xamarin Inc
 //
+using System;
+using System.Diagnostics;
+
 namespace System.ServiceModel {
 	
 	static partial class DiagnosticUtility {
@@ -11,6 +14,16 @@ namespace System.ServiceModel {
 			return new ArgumentException ("Argument null or empty", arg);
 		}
 
+		[Conditional("DEBUG")]
+		public static void DebugAssert(bool condition, string format, params object[] parameters)
+		{
+			if (condition)
+				return;
+			Console.WriteLine ("Assert failure: " + format, parameters);
+			Environment.Exit (1);
+		}
+ 
+ 		
 		internal static partial class ExceptionUtility {
 
 			public static Exception ThrowHelperArgumentNull (string arg)

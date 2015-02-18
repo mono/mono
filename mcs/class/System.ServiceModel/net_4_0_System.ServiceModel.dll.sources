@@ -41,6 +41,7 @@ System.ServiceModel.Channels/HttpCookieContainerBindingElement.cs
 ../System.ServiceModel.Web/System.ServiceModel.Syndication/UrlSyndicationContent.cs
 ../System.ServiceModel.Web/System.ServiceModel.Syndication/Workspace.cs
 ../System.ServiceModel.Web/System.ServiceModel.Syndication/XmlSyndicationContent.cs
+../../../external/referencesource/System.ServiceModel/Serialization/System/Xml/XmlBinaryNodeType.cs
 ../../../external/referencesource/System.ServiceModel/System/UriTemplate.cs
 ../../../external/referencesource/System.ServiceModel/System/UriTemplateCompoundPathSegment.cs
 ../../../external/referencesource/System.ServiceModel/System/UriTemplateEquivalenceComparer.cs
@@ -54,6 +55,10 @@ System.ServiceModel.Channels/HttpCookieContainerBindingElement.cs
 ../../../external/referencesource/System.ServiceModel/System/UriTemplatePathSegment.cs
 ../../../external/referencesource/System.ServiceModel/System/UriTemplateVariablePathSegment.cs
 ../../../external/referencesource/System.ServiceModel/System/UriTemplateVariableQueryValue.cs
+../../../external/referencesource/System.ServiceModel/System/ServiceModel/ServiceModelDictionary.cs
+../../../external/referencesource/System.ServiceModel/System/ServiceModel/ServiceModelStrings.cs
+../../../external/referencesource/System.ServiceModel/System/ServiceModel/ServiceModelStringsVersion1.cs
+../../../external/referencesource/System.ServiceModel/System/ServiceModel/XD.cs
 ../System.ServiceModel.Web/System/UriTemplateTable.cs
 ReferenceSources/DiagnosticUtility.cs
 ReferenceSources/SR.cs
