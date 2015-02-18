@@ -149,8 +149,11 @@ namespace Symbolicate
 
 		public void AddDirectory (string directory)
 		{
-			if (Directory.Exists (directory))
-				throw new ArgumentException ("Directory " + directory + " does not exist.");
+			directory = Path.GetFullPath (directory);
+			if (!Directory.Exists (directory)) {
+				Console.Error.WriteLine ("Directory " + directory + " does not exist.");
+				return;
+			}
 
 			directories.Add (directory);
 		}
