@@ -692,7 +692,7 @@ namespace System.IO
 			result.BytesRead = -1;
 			result.Count = numBytes;
 			result.OriginalCount = numBytes;
-
+/*
 			if (buf_dirty) {
 				MemoryStream ms = new MemoryStream ();
 				FlushBuffer (ms);
@@ -703,7 +703,7 @@ namespace System.IO
 				array = ms.ToArray ();
 				numBytes = array.Length;
 			}
-
+*/
 			WriteDelegate w = WriteInternal;
 			return w.BeginInvoke (array, offset, numBytes, userCallback, stateObject);	
 		}
@@ -1012,20 +1012,21 @@ namespace System.IO
 			return(count);
 		}
 
-		void FlushBuffer (Stream st)
+		void FlushBuffer ()
 		{
 			if (buf_dirty) {
-				MonoIOError error;
+//				if (st == null) {
+					MonoIOError error;
 
-				if (CanSeek == true && !isExposed) {
-					MonoIO.Seek (safeHandle, buf_start, SeekOrigin.Begin, out error);
+					if (CanSeek == true && !isExposed) {
+						MonoIO.Seek (safeHandle, buf_start, SeekOrigin.Begin, out error);
 
-					if (error != MonoIOError.ERROR_SUCCESS) {
-						// don't leak the path information for isolated storage
-						throw MonoIO.GetException (GetSecureFileName (name), error);
+						if (error != MonoIOError.ERROR_SUCCESS) {
+							// don't leak the path information for isolated storage
+							throw MonoIO.GetException (GetSecureFileName (name), error);
+						}
 					}
-				}
-				if (st == null) {
+
 					int wcount = buf_length;
 					int offset = 0;
 					while (wcount > 0){
@@ -1037,9 +1038,9 @@ namespace System.IO
 						wcount -= n;
 						offset += n;
 					}
-				} else {
-					st.Write (buf, 0, buf_length);
-				}
+//				} else {
+//					st.Write (buf, 0, buf_length);
+//				}
 			}
 
 			buf_start += buf_offset;
@@ -1047,15 +1048,10 @@ namespace System.IO
 			buf_dirty = false;
 		}
 
-		private void FlushBuffer ()
-		{
-			FlushBuffer (null);
-		}
-
 		private void FlushBufferIfDirty ()
 		{
 			if (buf_dirty)
-				FlushBuffer (null);
+				FlushBuffer ();
 		}
 
 		private void RefillBuffer ()
