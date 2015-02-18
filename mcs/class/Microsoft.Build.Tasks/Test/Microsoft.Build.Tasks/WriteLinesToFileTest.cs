@@ -210,7 +210,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			string[] actual = File.ReadAllLines (full_filepath);
 			Assert.AreEqual (expected != null ? expected.Length : 0, actual.Length, "Number of lines written don't match");
 
-			if (expected != null)
+			if (expected == null)
 				return;
 			int i = 0;
 			foreach (string line in actual)
