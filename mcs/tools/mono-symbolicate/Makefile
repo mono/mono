@@ -39,7 +39,7 @@ clean-test:
 
 build-test: clean-test
 	@mkdir -p $(OUT_DIR)
-	@$(MCS) --debug $(TEST_CS) -out:$(TEST_EXE)
+	@$(MCS) -debug $(TEST_CS) -out:$(TEST_EXE)
 
 check: all build-test
 	@echo "Checking $(PROGRAM) without AOT"
