@@ -40,11 +40,11 @@ namespace System.IO.Compression {
 	{
 		private DeflateStream deflateStream;
 
-		public GZipStream (Stream stream, CompressionMode mode) :
+		public GZipStream (Stream compressedStream, CompressionMode mode) :
 			this (compressedStream, mode, false) {
 		}
 
-		public GZipStream (Stream stream, CompressionMode mode, bool leaveOpen) {
+		public GZipStream (Stream compressedStream, CompressionMode mode, bool leaveOpen) {
 			this.deflateStream = new DeflateStream (compressedStream, mode, leaveOpen, true);
 		}
 		
