@@ -100,7 +100,8 @@ scripts_4_0 = \
 	ccrewrite$(SCRIPT_SUFFIX)		\
 	cccheck$(SCRIPT_SUFFIX)			\
 	mdbrebase$(SCRIPT_SUFFIX)		\
-	ikdasm$(SCRIPT_SUFFIX)
+	ikdasm$(SCRIPT_SUFFIX)			\
+	mono-symbolicate$(SCRIPT_SUFFIX)
 
 MDOC_SUBCOMMANDS = \
 	mdoc-assemble \

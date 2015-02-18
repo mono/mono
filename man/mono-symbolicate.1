@@ -1,0 +1,39 @@
+.\" 
+.\" mono-symbolicate manual page.
+.\" Copyright 2015 Xamarin
+.\" Author:
+.\"   Marcos Henrich <marcos.henrich@xamarin.com>
+.\"
+.TH "mono-symbolicate" 1
+.SH NAME
+mono-symbolicate \- Mono Symbolicate Tool
+.SH SYNOPSIS
+.PP
+.B mono-symbolicate exefile stacktracesfile [directories...]
+.SH DESCRIPTION
+mono-symbolicate is a tool that converts a stack trace with <filename unknown>:0
+into one with file names and line numbers.
+.PP
+The output of calling this tool will be the provided
+.I stacktracesfile
+where <filename unknown>:0 parts are replaced by
+a file name and a line number.
+.PP
+For the tool to work it needs to load referenced assemblies, it will first look
+in the same folder as
+.I exefile
+then from one of the provided
+.I directories.
+.PP
+The tool assumes that the folder with a referenced assembly called for example
+name.dll will also include name.dll.mdb,
+if the referenced assembly is AOT compiled then the tool is also expecting to find
+name.dll.msym.
+.SH AUTHOR
+Written by Marcos Henrich
+.SH COPYRIGHT
+Copyright (C) 2015 Xamarin.
+.SH MAILING LISTS
+Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com for details
