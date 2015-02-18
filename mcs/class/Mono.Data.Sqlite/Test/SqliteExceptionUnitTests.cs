@@ -24,11 +24,7 @@ namespace MonoTests.Mono.Data.Sqlite
 		}
 		
 		[Test]
-#if NET_2_0
 		[ExpectedException(typeof(SqliteException))]
-#else
-		[ExpectedException(typeof(SqliteSyntaxException))]
-#endif
 		public void WrongSyntax()
 		{
 			SqliteCommand insertCmd = new SqliteCommand("INSERT INTO t1 VALUES (,')",_conn);

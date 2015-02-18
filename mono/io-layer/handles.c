@@ -13,7 +13,9 @@
 #include <pthread.h>
 #include <errno.h>
 #include <unistd.h>
+#ifdef HAVE_SIGNAL_H
 #include <signal.h>
+#endif
 #include <string.h>
 #include <sys/types.h>
 #ifdef HAVE_SYS_SOCKET_H
@@ -220,16 +222,7 @@ static void handle_cleanup (void)
 int
 wapi_getdtablesize (void)
 {
-#ifdef HAVE_GETRLIMIT
-	struct rlimit limit;
-	int res;
-
-	res = getrlimit (RLIMIT_NOFILE, &limit);
-	g_assert (res == 0);
-	return limit.rlim_cur;
-#else
-	return getdtablesize ();
-#endif
+	return eg_getdtablesize ();
 }
 
 /*
@@ -1652,7 +1645,7 @@ wapi_share_info_hash (gconstpointer data)
 	return s->inode;
 }
 
-gboolean _wapi_handle_get_or_set_share (dev_t device, ino_t inode,
+gboolean _wapi_handle_get_or_set_share (guint64 device, guint64 inode,
 					guint32 new_sharemode,
 					guint32 new_access,
 					guint32 *old_sharemode,

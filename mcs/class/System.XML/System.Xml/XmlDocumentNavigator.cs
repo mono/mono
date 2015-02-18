@@ -208,7 +208,6 @@ namespace System.Xml
 			get { return (NsNode != null) ? String.Empty : node.Prefix; }
 		}
 
-#if NET_2_0
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return NsNode != null ? null : node.SchemaInfo; }
 		}
@@ -216,7 +215,6 @@ namespace System.Xml
 		public override object UnderlyingObject {
 			get { return node; }
 		}
-#endif
 
 		public override string Value {
 			get {
@@ -358,13 +356,6 @@ namespace System.Xml
 			return false;
 		}
 
-#if NET_2_0
-#else
-		public override bool MoveToFirst ()
-		{
-			return MoveToFirstImpl ();
-		}
-#endif
 
 		public override bool MoveToFirstAttribute ()
 		{
@@ -749,77 +740,49 @@ namespace System.Xml
 			return null;
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		override string LookupNamespace (string prefix)
 		{
 			// FIXME: optimize
 			return base.LookupNamespace (prefix);
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		override string LookupPrefix (string namespaceUri)
 		{
 			// FIXME: optimize
 			return base.LookupPrefix (namespaceUri);
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		override bool MoveToChild (XPathNodeType type)
 		{
 			// FIXME: optimize
 			return base.MoveToChild (type);
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		override bool MoveToChild (string localName, string namespaceURI)
 		{
 			// FIXME: optimize
 			return base.MoveToChild (localName, namespaceURI);
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		override bool MoveToNext (string localName, string namespaceURI)
 		{
 			// FIXME: optimize
 			return base.MoveToNext (localName, namespaceURI);
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		override bool MoveToNext (XPathNodeType type)
 		{
 			// FIXME: optimize
 			return base.MoveToNext (type);
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		override bool MoveToFollowing (string localName,
 			string namespaceURI, XPathNavigator end)
 		{
@@ -827,11 +790,7 @@ namespace System.Xml
 			return base.MoveToFollowing (localName, namespaceURI, end);
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		override bool MoveToFollowing (XPathNodeType type,
 			XPathNavigator end)
 		{

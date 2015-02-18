@@ -139,7 +139,6 @@ namespace System {
 			return (*((long*)&d)).GetHashCode ();
 		}
 
-#if	NET_4_0
 		public static bool operator==(double left, double right)
 		{
 			return left == right;
@@ -169,7 +168,6 @@ namespace System {
 		{
 			return left <= right;
 		}
-#endif
 
 		public static bool IsInfinity (double d)
 		{
@@ -277,7 +275,7 @@ namespace System {
 
 				if (sidx == len) {
 					if (!tryParse)
-						exc = Int32.GetFormatException ();
+						exc = GetFormatException ();
 					return false;
 				}
 			}
@@ -532,7 +530,7 @@ namespace System {
 					double retVal;
 					if (!ParseImpl (p, out retVal)) {
 						if (!tryParse)
-							exc = Int32.GetFormatException ();
+							exc = GetFormatException ();
 						return false;
 					}
 					if (IsPositiveInfinity(retVal) || IsNegativeInfinity(retVal)) {
@@ -594,6 +592,11 @@ namespace System {
 			return NumberFormatter.NumberToString (format, m_value, provider);
 		}
 
+		static Exception GetFormatException ()
+		{
+			return new FormatException ("Input string was not in the correct format");
+		}
+
 		// =========== IConvertible Methods =========== //
 
 		public TypeCode GetTypeCode ()
@@ -601,11 +604,9 @@ namespace System {
 			return TypeCode.Double;
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("targetType");
-			return System.Convert.ToType (m_value, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)

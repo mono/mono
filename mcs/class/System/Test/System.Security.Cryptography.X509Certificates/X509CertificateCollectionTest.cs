@@ -238,11 +238,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			// works by object reference (not value)
 			X509Certificate x = new X509Certificate (cert_a);
 			Assert.IsTrue (!Object.ReferenceEquals (x509a, x), "!ReferenceEquals");
-#if NET_2_0
 			Assert.AreEqual (0, c.IndexOf (x), "A-x");
-#else
-			Assert.AreEqual (-1, c.IndexOf (x), "A-x");
-#endif
 		}
 
 		[Test]
@@ -279,9 +275,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Remove_ByValue () 
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();

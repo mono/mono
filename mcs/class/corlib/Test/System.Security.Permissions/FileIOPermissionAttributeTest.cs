@@ -52,12 +52,10 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (a.PathDiscovery, "PathDiscovery");
 			Assert.IsNull (a.Read, "Read");
 			Assert.IsNull (a.Write, "Write");
-#if NET_2_0
 			Assert.IsNotNull (a.AllFiles, "AllFiles");
 			Assert.IsNotNull (a.AllLocalFiles, "AllLocalFiles");
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 
 			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
 			Assert.IsFalse (a.Unrestricted, "Unrestricted");
@@ -108,12 +106,10 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (filename, attr.PathDiscovery, "All=PathDiscovery");
 			Assert.AreEqual (filename, attr.Read, "All=Read");
 			Assert.AreEqual (filename, attr.Write, "All=Write");
-#if NET_2_0
 			Assert.IsNotNull (attr.AllFiles, "AllFiles");
 			Assert.IsNotNull (attr.AllLocalFiles, "AllLocalFiles");
 			Assert.IsNull (attr.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (attr.ViewAccessControl, "ViewAccessControl");
-#endif
 			FileIOPermission p = (FileIOPermission)attr.CreatePermission ();
 			filename = Path.GetFullPath (filename);
 			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.Append) [0], "All=FileIOPermissionAttribute-Append");
@@ -140,12 +136,10 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (attr.PathDiscovery, "PathDiscovery=null");
 			Assert.IsNull (attr.Read, "Read=null");
 			Assert.IsNull (attr.Write, "Write=null");
-#if NET_2_0
 			Assert.IsNotNull (attr.AllFiles, "AllFiles");
 			Assert.IsNotNull (attr.AllLocalFiles, "AllLocalFiles");
 			Assert.IsNull (attr.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (attr.ViewAccessControl, "ViewAccessControl");
-#endif
 			FileIOPermission p = (FileIOPermission)attr.CreatePermission ();
 			filename = Path.GetFullPath (filename);
 			Assert.AreEqual (filename, p.GetPathList (FileIOPermissionAccess.Append) [0], "Append=FileIOPermissionAttribute-Append");
@@ -164,12 +158,10 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (filename, attr.PathDiscovery, "PathDiscovery=PathDiscovery");
 			Assert.IsNull (attr.Read, "Read=null");
 			Assert.IsNull (attr.Write, "Write=null");
-#if NET_2_0
 			Assert.IsNotNull (attr.AllFiles, "AllFiles");
 			Assert.IsNotNull (attr.AllLocalFiles, "AllLocalFiles");
 			Assert.IsNull (attr.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (attr.ViewAccessControl, "ViewAccessControl");
-#endif
 			FileIOPermission p = (FileIOPermission)attr.CreatePermission ();
 			filename = Path.GetFullPath (filename);
 			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Append), "PathDiscovery=FileIOPermissionAttribute-Append");
@@ -188,12 +180,10 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (attr.PathDiscovery, "PathDiscovery=null");
 			Assert.AreEqual (filename, attr.Read, "Read=Read");
 			Assert.IsNull (attr.Write, "Write=null");
-#if NET_2_0
 			Assert.IsNotNull (attr.AllFiles, "AllFiles");
 			Assert.IsNotNull (attr.AllLocalFiles, "AllLocalFiles");
 			Assert.IsNull (attr.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (attr.ViewAccessControl, "ViewAccessControl");
-#endif
 			FileIOPermission p = (FileIOPermission)attr.CreatePermission ();
 			filename = Path.GetFullPath (filename);
 			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Append), "PathDiscovery=FileIOPermissionAttribute-Append");
@@ -202,7 +192,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (p.GetPathList (FileIOPermissionAccess.Write), "PathDiscovery=FileIOPermissionAttribute-Write");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ChangeAccessControl ()
 		{
@@ -274,7 +263,6 @@ namespace MonoTests.System.Security.Permissions {
 			a.ViewAndModify = "mono";
 			Assert.AreEqual ("ViewAndModify", "mono", a.ViewAndModify);
 		}
-#endif
 
 		[Test]
 		public void Write () 

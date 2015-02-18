@@ -67,13 +67,11 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cvds.Type, "#11");
 			Assert.AreEqual (typeof (void).FullName, cvds.Type.BaseType, "#12");
 
-#if NET_2_0
 			Assert.IsNotNull (cvds.StartDirectives, "#13");
 			Assert.AreEqual (0, cvds.StartDirectives.Count, "#14");
 
 			Assert.IsNotNull (cvds.EndDirectives, "#15");
 			Assert.AreEqual (0, cvds.EndDirectives.Count, "#16");
-#endif
 
 			Assert.IsNull (cvds.LinePragma, "#17");
 
@@ -153,11 +151,7 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Constructor3_NullType ()
 		{
 			CodeVariableDeclarationStatement cvds = new CodeVariableDeclarationStatement (
@@ -240,11 +234,7 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Constructor6_NullType ()
 		{
 			CodeVariableDeclarationStatement cvds = new CodeVariableDeclarationStatement (

@@ -31,9 +31,7 @@ using System.ServiceModel;
 namespace System.ServiceModel.Channels
 {
 	public sealed class HttpRequestMessageProperty
-#if NET_4_5
 		: IMessageProperty
-#endif
 	{
 		public static string Name {
 			get { return "httpRequest"; }
@@ -67,7 +65,6 @@ namespace System.ServiceModel.Channels
 		}
 		
 		
-#if NET_4_5
 		IMessageProperty IMessageProperty.CreateCopy ()
 		{
 			var copy = new HttpRequestMessageProperty ();
@@ -78,6 +75,5 @@ namespace System.ServiceModel.Channels
 			copy.suppress_entity = suppress_entity;
 			return copy;
 		}
-#endif
 	}
 }

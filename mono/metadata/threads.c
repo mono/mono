@@ -14,7 +14,6 @@
 #include <config.h>
 
 #include <glib.h>
-#include <signal.h>
 #include <string.h>
 
 #include <mono/metadata/object.h>
@@ -44,7 +43,11 @@
 
 #include <mono/metadata/gc-internal.h>
 
-#if defined(PLATFORM_ANDROID) && !defined(TARGET_ARM64)
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
+
+#if defined(PLATFORM_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
 #define USE_TKILL_ON_ANDROID 1
 #endif
 
@@ -583,13 +586,11 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	info = mono_thread_info_current ();
 	g_assert (info);
 	internal->thread_info = info;
-
+	internal->small_id = info->small_id;
 
 	tid=internal->tid;
 
 	SET_CURRENT_OBJECT (internal);
-
-	mono_monitor_init_tls ();
 
 	/* Every thread references the appdomain which created it */
 	mono_thread_push_appdomain_ref (domain);
@@ -924,6 +925,7 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 	info = mono_thread_info_current ();
 	g_assert (info);
 	thread->thread_info = info;
+	thread->small_id = info->small_id;
 
 	current_thread = new_thread_with_internal (domain, thread);
 
@@ -937,8 +939,6 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 
 	SET_CURRENT_OBJECT (thread);
 	mono_domain_set (domain, TRUE);
-
-	mono_monitor_init_tls ();
 
 	thread_adjust_static_data (thread);
 
@@ -1248,6 +1248,17 @@ void
 ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name)
 {
 	mono_thread_set_name_internal (this_obj, name, TRUE);
+}
+
+int
+ves_icall_System_Threading_Thread_GetPriority (MonoInternalThread *thread)
+{
+	return ThreadPriority_Lowest;
+}
+
+void
+ves_icall_System_Threading_Thread_SetPriority (MonoInternalThread *thread, int priority)
+{
 }
 
 /* If the array is already in the requested domain, we just return it,
@@ -1760,6 +1771,13 @@ gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int(gint32 *locati
 	return InterlockedCompareExchange(location, value, comparand);
 }
 
+gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int_Success(gint32 *location, gint32 value, gint32 comparand, MonoBoolean *success)
+{
+	gint32 r = InterlockedCompareExchange(location, value, comparand);
+	*success = r == comparand;
+	return r;
+}
+
 MonoObject * ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject **location, MonoObject *value, MonoObject *comparand)
 {
 	MonoObject *res;
@@ -1969,7 +1987,7 @@ void mono_thread_current_check_pending_interrupt ()
 int  
 mono_thread_get_abort_signal (void)
 {
-#ifdef HOST_WIN32
+#if defined (HOST_WIN32) || !defined (HAVE_SIGACTION)
 	return -1;
 #elif defined(PLATFORM_ANDROID)
 	return SIGUNUSED;
@@ -3996,13 +4014,13 @@ mono_thread_alloc_tls (MonoReflectionType *type)
 	return tls_offset;
 }
 
-void
-mono_thread_destroy_tls (uint32_t tls_offset)
+static void
+destroy_tls (MonoDomain *domain, uint32_t tls_offset)
 {
 	MonoTlsDataRecord *prev = NULL;
 	MonoTlsDataRecord *cur;
 	guint32 size = 0;
-	MonoDomain *domain = mono_domain_get ();
+
 	mono_domain_lock (domain);
 	cur = domain->tlsrec_list;
 	while (cur) {
@@ -4023,6 +4041,12 @@ mono_thread_destroy_tls (uint32_t tls_offset)
 		mono_special_static_data_free_slot (tls_offset, size);
 }
 
+void
+mono_thread_destroy_tls (uint32_t tls_offset)
+{
+	destroy_tls (mono_domain_get (), tls_offset);
+}
+
 /*
  * This is just to ensure cleanup: the finalizers should have taken care, so this is not perf-critical.
  */
@@ -4030,7 +4054,7 @@ void
 mono_thread_destroy_domain_tls (MonoDomain *domain)
 {
 	while (domain->tlsrec_list)
-		mono_thread_destroy_tls (domain->tlsrec_list->tls_offset);
+		destroy_tls (domain, domain->tlsrec_list->tls_offset);
 }
 
 static MonoClassField *local_slots = NULL;
@@ -4475,7 +4499,7 @@ mono_thread_kill (MonoInternalThread *thread, int signal)
 	/* Workaround pthread_kill abort() in NaCl glibc. */
 	return -1;
 #endif
-#ifdef HOST_WIN32
+#if defined (HOST_WIN32) || !defined (HAVE_SIGACTION)
 	/* Win32 uses QueueUserAPC and callers of this are guarded */
 	g_assert_not_reached ();
 #else

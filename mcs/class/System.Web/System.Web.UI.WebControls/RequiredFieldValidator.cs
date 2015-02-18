@@ -34,22 +34,13 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
-#if NET_2_0
 	[ToolboxData ("<{0}:RequiredFieldValidator runat=\"server\" ErrorMessage=\"RequiredFieldValidator\"></{0}:RequiredFieldValidator>")]
-#else
-	[ToolboxData ("<{0}:RequiredFieldValidator runat=server ErrorMessage=\"RequiredFieldValidator\"></{0}:RequiredFieldValidator>")]
-#endif
 	public class RequiredFieldValidator : BaseValidator {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
-#if NET_2_0
 				RegisterExpandoAttribute (ClientID, "evaluationfunction", "RequiredFieldValidatorEvaluateIsValid");
 				RegisterExpandoAttribute (ClientID, "initialvalue", InitialValue, true);
-#else
-				w.AddAttribute ("evaluationfunction", "RequiredFieldValidatorEvaluateIsValid", false);
-				w.AddAttribute ("initialvalue", InitialValue);
-#endif
 			}
 
 			base.AddAttributesToRender (w);
@@ -61,11 +52,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 
-#if NET_2_0
 		[Themeable(false)]
-#else
-		[Bindable(true)]
-#endif
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]

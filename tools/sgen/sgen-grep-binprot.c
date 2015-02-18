@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <glib.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #define SGEN_BINARY_PROTOCOL
 #define MONO_INTERNAL
@@ -13,64 +15,121 @@
 #define TYPE(t)		((t) & 0x7f)
 #define WORKER(t)	((t) & 0x80)
 
+#define MAX_ENTRY_SIZE (1 << 10)
+#define BUFFER_SIZE (1 << 20)
+
+typedef struct {
+	int file;
+	char *buffer;
+	const char *end;
+	const char *pos;
+} EntryStream;
+
+static void
+init_stream (EntryStream *stream, int file)
+{
+	stream->file = file;
+	stream->buffer = g_malloc0 (BUFFER_SIZE);
+	stream->end = stream->buffer + BUFFER_SIZE;
+	stream->pos = stream->end;
+}
+
+static void
+close_stream (EntryStream *stream)
+{
+	g_free (stream->buffer);
+}
+
+static gboolean
+refill_stream (EntryStream *in, size_t size)
+{
+	size_t remainder = in->end - in->pos;
+	ssize_t refilled;
+	g_assert (size > 0);
+	g_assert (in->pos >= in->buffer);
+	if (in->pos + size <= in->end)
+		return TRUE;
+	memmove (in->buffer, in->pos, remainder);
+	in->pos = in->buffer;
+	refilled = read (in->file, in->buffer + remainder, BUFFER_SIZE - remainder);
+	if (refilled < 0)
+		return FALSE;
+	g_assert (refilled + remainder <= BUFFER_SIZE);
+	in->end = in->buffer + refilled + remainder;
+	return in->end - in->buffer >= size;
+}
+
+static ssize_t
+read_stream (EntryStream *stream, void *out, size_t size)
+{
+	if (refill_stream (stream, size)) {
+		memcpy (out, stream->pos, size);
+		stream->pos += size;
+		return size;
+	}
+	return 0;
+}
+
 static int
-read_entry (FILE *in, void **data)
+read_entry (EntryStream *stream, void *data)
 {
 	unsigned char type;
-	int size;
+	ssize_t size;
 
-	if (fread (&type, 1, 1, in) != 1)
+	if (read_stream (stream, &type, 1) <= 0)
 		return SGEN_PROTOCOL_EOF;
 	switch (TYPE (type)) {
-	case SGEN_PROTOCOL_COLLECTION_FORCE: size = sizeof (SGenProtocolCollectionForce); break;
-	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollectionBegin); break;
-	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollectionEnd); break;
-	case SGEN_PROTOCOL_CONCURRENT_START: size = 0; break;
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE: size = 0; break;
-	case SGEN_PROTOCOL_CONCURRENT_FINISH: size = 0; break;
-	case SGEN_PROTOCOL_WORLD_STOPPING: size = sizeof (SGenProtocolWorldStopping); break;
-	case SGEN_PROTOCOL_WORLD_STOPPED: size = sizeof (SGenProtocolWorldStopped); break;
-	case SGEN_PROTOCOL_WORLD_RESTARTING: size = sizeof (SGenProtocolWorldRestarting); break;
-	case SGEN_PROTOCOL_WORLD_RESTARTED: size = sizeof (SGenProtocolWorldRestarted); break;
-	case SGEN_PROTOCOL_ALLOC: size = sizeof (SGenProtocolAlloc); break;
-	case SGEN_PROTOCOL_ALLOC_PINNED: size = sizeof (SGenProtocolAlloc); break;
-	case SGEN_PROTOCOL_ALLOC_DEGRADED: size = sizeof (SGenProtocolAlloc); break;
-	case SGEN_PROTOCOL_COPY: size = sizeof (SGenProtocolCopy); break;
-	case SGEN_PROTOCOL_PIN_STAGE: size = sizeof (SGenProtocolPinStage); break;
-	case SGEN_PROTOCOL_PIN: size = sizeof (SGenProtocolPin); break;
-	case SGEN_PROTOCOL_MARK: size = sizeof (SGenProtocolMark); break;
-	case SGEN_PROTOCOL_SCAN_BEGIN: size = sizeof (SGenProtocolScanBegin); break;
-	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: size = sizeof (SGenProtocolScanVTypeBegin); break;
-	case SGEN_PROTOCOL_SCAN_PROCESS_REFERENCE: size = sizeof (SGenProtocolScanProcessReference); break;
-	case SGEN_PROTOCOL_WBARRIER: size = sizeof (SGenProtocolWBarrier); break;
-	case SGEN_PROTOCOL_GLOBAL_REMSET: size = sizeof (SGenProtocolGlobalRemset); break;
-	case SGEN_PROTOCOL_PTR_UPDATE: size = sizeof (SGenProtocolPtrUpdate); break;
-	case SGEN_PROTOCOL_CLEANUP: size = sizeof (SGenProtocolCleanup); break;
-	case SGEN_PROTOCOL_EMPTY: size = sizeof (SGenProtocolEmpty); break;
-	case SGEN_PROTOCOL_THREAD_SUSPEND: size = sizeof (SGenProtocolThreadSuspend); break;
-	case SGEN_PROTOCOL_THREAD_RESTART: size = sizeof (SGenProtocolThreadRestart); break;
-	case SGEN_PROTOCOL_THREAD_REGISTER: size = sizeof (SGenProtocolThreadRegister); break;
-	case SGEN_PROTOCOL_THREAD_UNREGISTER: size = sizeof (SGenProtocolThreadUnregister); break;
-	case SGEN_PROTOCOL_MISSING_REMSET: size = sizeof (SGenProtocolMissingRemset); break;
-	case SGEN_PROTOCOL_CARD_SCAN: size = sizeof (SGenProtocolCardScan); break;
-	case SGEN_PROTOCOL_CEMENT: size = sizeof (SGenProtocolCement); break;
-	case SGEN_PROTOCOL_CEMENT_RESET: size = 0; break;
-	case SGEN_PROTOCOL_DISLINK_UPDATE: size = sizeof (SGenProtocolDislinkUpdate); break;
-	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: size = sizeof (SGenProtocolDislinkUpdateStaged); break;
-	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: size = sizeof (SGenProtocolDislinkProcessStaged); break;
-	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN: size = sizeof (SGenProtocolDomainUnload); break;
-	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END: size = sizeof (SGenProtocolDomainUnload); break;
-	case SGEN_PROTOCOL_GRAY_ENQUEUE: size = sizeof (SGenProtocolGrayQueue); break;
-	case SGEN_PROTOCOL_GRAY_DEQUEUE: size = sizeof (SGenProtocolGrayQueue); break;
+
+#define BEGIN_PROTOCOL_ENTRY0(method) \
+	case PROTOCOL_ID(method): size = 0; break;
+#define BEGIN_PROTOCOL_ENTRY1(method,t1,f1) \
+	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+#define BEGIN_PROTOCOL_ENTRY2(method,t1,f1,t2,f2) \
+	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+#define BEGIN_PROTOCOL_ENTRY3(method,t1,f1,t2,f2,t3,f3) \
+	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+#define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+#define BEGIN_PROTOCOL_ENTRY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+#define BEGIN_PROTOCOL_ENTRY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	case PROTOCOL_ID(method): size = sizeof (PROTOCOL_STRUCT(method)); break;
+
+#define BEGIN_PROTOCOL_ENTRY_HEAVY0(method) \
+	BEGIN_PROTOCOL_ENTRY0 (method)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY1(method,t1,f1) \
+	BEGIN_PROTOCOL_ENTRY1 (method,t1,f1)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY2(method,t1,f1,t2,f2) \
+	BEGIN_PROTOCOL_ENTRY2 (method,t1,f1,t2,f2)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY3(method,t1,f1,t2,f2,t3,f3) \
+	BEGIN_PROTOCOL_ENTRY3 (method,t1,f1,t2,f2,t3,f3)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	BEGIN_PROTOCOL_ENTRY4 (method,t1,f1,t2,f2,t3,f3,t4,f4)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	BEGIN_PROTOCOL_ENTRY5 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
+
+#define FLUSH()
+
+#define DEFAULT_PRINT()
+#define CUSTOM_PRINT(_)
+
+#define IS_ALWAYS_MATCH(_)
+#define MATCH_INDEX(_)
+#define IS_VTABLE_MATCH(_)
+
+#define END_PROTOCOL_ENTRY
+#define END_PROTOCOL_ENTRY_HEAVY
+
+#include <mono/metadata/sgen-protocol-def.h>
+
 	default: assert (0);
 	}
 
 	if (size) {
-		*data = malloc (size);
-		if (fread (*data, size, 1, in) != 1)
-			assert (0);
-	} else {
-		*data = NULL;
+		size_t size_read = read_stream (stream, data, size);
+		g_assert (size_read == size);
 	}
 
 	return (int)type;
@@ -80,254 +139,298 @@ static gboolean
 is_always_match (int type)
 {
 	switch (TYPE (type)) {
-	case SGEN_PROTOCOL_COLLECTION_FORCE:
-	case SGEN_PROTOCOL_COLLECTION_BEGIN:
-	case SGEN_PROTOCOL_COLLECTION_END:
-	case SGEN_PROTOCOL_CONCURRENT_START:
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE:
-	case SGEN_PROTOCOL_CONCURRENT_FINISH:
-	case SGEN_PROTOCOL_WORLD_STOPPING:
-	case SGEN_PROTOCOL_WORLD_STOPPED:
-	case SGEN_PROTOCOL_WORLD_RESTARTING:
-	case SGEN_PROTOCOL_WORLD_RESTARTED:
-	case SGEN_PROTOCOL_THREAD_SUSPEND:
-	case SGEN_PROTOCOL_THREAD_RESTART:
-	case SGEN_PROTOCOL_THREAD_REGISTER:
-	case SGEN_PROTOCOL_THREAD_UNREGISTER:
-	case SGEN_PROTOCOL_CEMENT_RESET:
-	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN:
-	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END:
-		return TRUE;
-	default:
-		return FALSE;
+#define BEGIN_PROTOCOL_ENTRY0(method) \
+	case PROTOCOL_ID(method):
+#define BEGIN_PROTOCOL_ENTRY1(method,t1,f1) \
+	case PROTOCOL_ID(method):
+#define BEGIN_PROTOCOL_ENTRY2(method,t1,f1,t2,f2) \
+	case PROTOCOL_ID(method):
+#define BEGIN_PROTOCOL_ENTRY3(method,t1,f1,t2,f2,t3,f3) \
+	case PROTOCOL_ID(method):
+#define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	case PROTOCOL_ID(method):
+#define BEGIN_PROTOCOL_ENTRY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	case PROTOCOL_ID(method):
+#define BEGIN_PROTOCOL_ENTRY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	case PROTOCOL_ID(method):
+
+#define BEGIN_PROTOCOL_ENTRY_HEAVY0(method) \
+	BEGIN_PROTOCOL_ENTRY0 (method)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY1(method,t1,f1) \
+	BEGIN_PROTOCOL_ENTRY1 (method,t1,f1)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY2(method,t1,f1,t2,f2) \
+	BEGIN_PROTOCOL_ENTRY2 (method,t1,f1,t2,f2)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY3(method,t1,f1,t2,f2,t3,f3) \
+	BEGIN_PROTOCOL_ENTRY3 (method,t1,f1,t2,f2,t3,f3)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	BEGIN_PROTOCOL_ENTRY4 (method,t1,f1,t2,f2,t3,f3,t4,f4)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	BEGIN_PROTOCOL_ENTRY5 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
+
+#define FLUSH()
+
+#define DEFAULT_PRINT()
+#define CUSTOM_PRINT(_)
+
+#define IS_ALWAYS_MATCH(is_always_match) \
+		return is_always_match;
+#define MATCH_INDEX(_)
+#define IS_VTABLE_MATCH(_)
+
+#define END_PROTOCOL_ENTRY
+#define END_PROTOCOL_ENTRY_HEAVY
+
+#include <mono/metadata/sgen-protocol-def.h>
+
+	default: assert (0);
 	}
 }
 
 #define WORKER_PREFIX(t)	(WORKER ((t)) ? "w" : " ")
 
+enum { NO_COLOR = -1 };
+
+typedef struct {
+	int type;
+	const char *name;
+	void *data;
+	/* The index of the ANSI color with which to highlight
+	 * this entry, or NO_COLOR for no highlighting.
+	 */
+	int color;
+} PrintEntry;
+
+
+#define TYPE_INT 0
+#define TYPE_LONGLONG 1
+#define TYPE_SIZE 2
+#define TYPE_POINTER 3
+
 static void
-print_entry (int type, void *data)
+print_entry_content (int entries_size, PrintEntry *entries, gboolean color_output)
+{
+	int i;
+	for (i = 0; i < entries_size; ++i) {
+		printf ("%s%s ", i == 0 ? "" : " ", entries [i].name);
+		if (color_output && entries [i].color != NO_COLOR)
+			/* Set foreground color, excluding black & white. */
+			printf ("\x1B[%dm", 31 + (entries [i].color % 6));
+		switch (entries [i].type) {
+		case TYPE_INT:
+			printf ("%d", *(int*) entries [i].data);
+			break;
+		case TYPE_LONGLONG:
+			printf ("%lld", *(long long*) entries [i].data);
+			break;
+		case TYPE_SIZE:
+			printf ("%lu", *(size_t*) entries [i].data);
+			break;
+		case TYPE_POINTER:
+			printf ("%p", *(gpointer*) entries [i].data);
+			break;
+		default:
+			assert (0);
+		}
+		if (color_output && entries [i].color != NO_COLOR)
+			/* Reset foreground color to default. */
+			printf ("\x1B[0m");
+	}
+}
+
+static int
+index_color (int index, int num_nums, int *match_indices)
+{
+	int result;
+	for (result = 0; result < num_nums + 1; ++result)
+		if (index == match_indices [result])
+			return result;
+	return NO_COLOR;
+}
+
+static void
+print_entry (int type, void *data, int num_nums, int *match_indices, gboolean color_output)
 {
 	const char *always_prefix = is_always_match (type) ? "  " : "";
 	printf ("%s%s ", WORKER_PREFIX (type), always_prefix);
 
 	switch (TYPE (type)) {
-	case SGEN_PROTOCOL_COLLECTION_FORCE: {
-		SGenProtocolCollectionForce *entry = data;
-		printf ("collection force generation %d\n", entry->generation);
-		break;
+
+#define BEGIN_PROTOCOL_ENTRY0(method) \
+	case PROTOCOL_ID(method): { \
+		const int pes_size G_GNUC_UNUSED = 0; \
+		PrintEntry pes [1] G_GNUC_UNUSED; \
+		printf ("%s", #method + strlen ("binary_protocol_"));
+#define BEGIN_PROTOCOL_ENTRY1(method,t1,f1) \
+	case PROTOCOL_ID(method): { \
+		PROTOCOL_STRUCT (method) *entry = data; \
+		const int pes_size G_GNUC_UNUSED = 1; \
+		PrintEntry pes [1] G_GNUC_UNUSED; \
+		pes [0].type = t1; \
+		pes [0].name = #f1; \
+		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
+		printf ("%s ", #method + strlen ("binary_protocol_"));
+#define BEGIN_PROTOCOL_ENTRY2(method,t1,f1,t2,f2) \
+	case PROTOCOL_ID(method): { \
+		PROTOCOL_STRUCT (method) *entry = data; \
+		const int pes_size G_GNUC_UNUSED = 2; \
+		PrintEntry pes [2] G_GNUC_UNUSED; \
+		pes [0].type = t1; \
+		pes [0].name = #f1; \
+		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
+		pes [1].type = t2; \
+		pes [1].name = #f2; \
+		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
+		printf ("%s ", #method + strlen ("binary_protocol_"));
+#define BEGIN_PROTOCOL_ENTRY3(method,t1,f1,t2,f2,t3,f3) \
+	case PROTOCOL_ID(method): { \
+		PROTOCOL_STRUCT (method) *entry = data; \
+		const int pes_size G_GNUC_UNUSED = 3; \
+		PrintEntry pes [3] G_GNUC_UNUSED; \
+		pes [0].type = t1; \
+		pes [0].name = #f1; \
+		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
+		pes [1].type = t2; \
+		pes [1].name = #f2; \
+		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
+		pes [2].type = t3; \
+		pes [2].name = #f3; \
+		pes [2].data = &entry->f3; \
+		pes [2].color = index_color(2, num_nums, match_indices); \
+		printf ("%s ", #method + strlen ("binary_protocol_"));
+#define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	case PROTOCOL_ID(method): { \
+		PROTOCOL_STRUCT (method) *entry = data; \
+		const int pes_size G_GNUC_UNUSED = 4; \
+		PrintEntry pes [4] G_GNUC_UNUSED; \
+		pes [0].type = t1; \
+		pes [0].name = #f1; \
+		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
+		pes [1].type = t2; \
+		pes [1].name = #f2; \
+		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
+		pes [2].type = t3; \
+		pes [2].name = #f3; \
+		pes [2].data = &entry->f3; \
+		pes [2].color = index_color(2, num_nums, match_indices); \
+		pes [3].type = t4; \
+		pes [3].name = #f4; \
+		pes [3].data = &entry->f4; \
+		pes [3].color = index_color(3, num_nums, match_indices); \
+		printf ("%s ", #method + strlen ("binary_protocol_"));
+#define BEGIN_PROTOCOL_ENTRY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	case PROTOCOL_ID(method): { \
+		PROTOCOL_STRUCT (method) *entry = data; \
+		const int pes_size G_GNUC_UNUSED = 5; \
+		PrintEntry pes [5] G_GNUC_UNUSED; \
+		pes [0].type = t1; \
+		pes [0].name = #f1; \
+		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
+		pes [1].type = t2; \
+		pes [1].name = #f2; \
+		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
+		pes [2].type = t3; \
+		pes [2].name = #f3; \
+		pes [2].data = &entry->f3; \
+		pes [2].color = index_color(2, num_nums, match_indices); \
+		pes [3].type = t4; \
+		pes [3].name = #f4; \
+		pes [3].data = &entry->f4; \
+		pes [3].color = index_color(3, num_nums, match_indices); \
+		pes [4].type = t5; \
+		pes [4].name = #f5; \
+		pes [4].data = &entry->f5; \
+		pes [4].color = index_color(4, num_nums, match_indices); \
+		printf ("%s ", #method + strlen ("binary_protocol_"));
+#define BEGIN_PROTOCOL_ENTRY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	case PROTOCOL_ID(method): { \
+		PROTOCOL_STRUCT (method) *entry = data; \
+		const int pes_size G_GNUC_UNUSED = 6; \
+		PrintEntry pes [6] G_GNUC_UNUSED; \
+		pes [0].type = t1; \
+		pes [0].name = #f1; \
+		pes [0].data = &entry->f1; \
+		pes [0].color = index_color(0, num_nums, match_indices); \
+		pes [1].type = t2; \
+		pes [1].name = #f2; \
+		pes [1].data = &entry->f2; \
+		pes [1].color = index_color(1, num_nums, match_indices); \
+		pes [2].type = t3; \
+		pes [2].name = #f3; \
+		pes [2].data = &entry->f3; \
+		pes [2].color = index_color(2, num_nums, match_indices); \
+		pes [3].type = t4; \
+		pes [3].name = #f4; \
+		pes [3].data = &entry->f4; \
+		pes [3].color = index_color(3, num_nums, match_indices); \
+		pes [4].type = t5; \
+		pes [4].name = #f5; \
+		pes [4].data = &entry->f5; \
+		pes [4].color = index_color(4, num_nums, match_indices); \
+		pes [5].type = t6; \
+		pes [5].name = #f6; \
+		pes [5].data = &entry->f6; \
+		pes [5].color = index_color(5, num_nums, match_indices); \
+		printf ("%s ", #method + strlen ("binary_protocol_"));
+
+#define BEGIN_PROTOCOL_ENTRY_HEAVY0(method) \
+	BEGIN_PROTOCOL_ENTRY0 (method)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY1(method,t1,f1) \
+	BEGIN_PROTOCOL_ENTRY1 (method,t1,f1)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY2(method,t1,f1,t2,f2) \
+	BEGIN_PROTOCOL_ENTRY2 (method,t1,f1,t2,f2)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY3(method,t1,f1,t2,f2,t3,f3) \
+	BEGIN_PROTOCOL_ENTRY3 (method,t1,f1,t2,f2,t3,f3)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	BEGIN_PROTOCOL_ENTRY4 (method,t1,f1,t2,f2,t3,f3,t4,f4)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	BEGIN_PROTOCOL_ENTRY5 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
+
+#define FLUSH()
+
+#define DEFAULT_PRINT() \
+	print_entry_content (pes_size, pes, color_output);
+#define CUSTOM_PRINT(print) \
+	print;
+
+#define IS_ALWAYS_MATCH(_)
+#define MATCH_INDEX(_)
+#define IS_VTABLE_MATCH(_)
+
+#define END_PROTOCOL_ENTRY \
+		printf ("\n"); \
+		break; \
 	}
-	case SGEN_PROTOCOL_COLLECTION_BEGIN: {
-		SGenProtocolCollectionBegin *entry = data;
-		printf ("collection begin %d generation %d\n", entry->index, entry->generation);
-		break;
-	}
-	case SGEN_PROTOCOL_COLLECTION_END: {
-		SGenProtocolCollectionEnd *entry = data;
-		long long scanned = entry->num_scanned_objects;
-		long long unique = entry->num_unique_scanned_objects;
-		printf ("collection end %d generation %d scanned %lld unique %lld %0.2f%%\n", entry->index, entry->generation, scanned, unique, unique ? 100.0 * (double) scanned / (double) unique : 0.0);
-		break;
-	}
-	case SGEN_PROTOCOL_CONCURRENT_START: {
-		printf ("concurrent start\n");
-		break;
-	}
-	case SGEN_PROTOCOL_CONCURRENT_UPDATE: {
-		printf ("concurrent update\n");
-		break;
-	}
-	case SGEN_PROTOCOL_CONCURRENT_FINISH: {
-		printf ("concurrent finish\n");
-		break;
-	}
-	case SGEN_PROTOCOL_WORLD_STOPPING: {
-		SGenProtocolWorldStopping *entry = data;
-		printf ("world stopping timestamp %lld\n", entry->timestamp);
-		break;
-	}
-	case SGEN_PROTOCOL_WORLD_STOPPED: {
-		SGenProtocolWorldStopped *entry = data;
-		long long total = entry->total_major_cards + entry->total_los_cards;
-		long long marked = entry->marked_major_cards + entry->marked_los_cards;
-		printf ("world stopped timestamp %lld total %lld marked %lld %0.2f%%\n", entry->timestamp, total, marked, 100.0 * (double) marked / (double) total);
-		break;
-	}
-	case SGEN_PROTOCOL_WORLD_RESTARTING: {
-		SGenProtocolWorldRestarting *entry = data;
-		long long total = entry->total_major_cards + entry->total_los_cards;
-		long long marked = entry->marked_major_cards + entry->marked_los_cards;
-		printf ("world restarting generation %d timestamp %lld total %lld marked %lld %0.2f%%\n", entry->generation, entry->timestamp, total, marked, 100.0 * (double) marked / (double) total);
-		break;
-	}
-	case SGEN_PROTOCOL_WORLD_RESTARTED: {
-		SGenProtocolWorldRestarted *entry = data;
-		printf ("world restarted generation %d timestamp %lld\n", entry->generation, entry->timestamp);
-		break;
-	}
-	case SGEN_PROTOCOL_ALLOC: {
-		SGenProtocolAlloc *entry = data;
-		printf ("alloc obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_ALLOC_PINNED: {
-		SGenProtocolAlloc *entry = data;
-		printf ("alloc pinned obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_ALLOC_DEGRADED: {
-		SGenProtocolAlloc *entry = data;
-		printf ("alloc degraded obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_COPY: {
-		SGenProtocolCopy *entry = data;
-		printf ("copy from %p to %p vtable %p size %d\n", entry->from, entry->to, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_PIN_STAGE: {
-		SGenProtocolPinStage *entry = data;
-		printf ("pin stage addr ptr %p addr %p\n", entry->addr_ptr, entry->addr);
-		break;
-	}
-	case SGEN_PROTOCOL_PIN: {
-		SGenProtocolPin *entry = data;
-		printf ("pin obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_MARK: {
-		SGenProtocolMark *entry = data;
-		printf ("mark obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_SCAN_BEGIN: {
-		SGenProtocolScanBegin *entry = data;
-		printf ("scan_begin obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
-		SGenProtocolScanVTypeBegin *entry = data;
-		printf ("scan_vtype_begin obj %p size %d\n", entry->obj, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_SCAN_PROCESS_REFERENCE: {
-		SGenProtocolScanProcessReference *entry = data;
-		printf ("scan_process_reference obj %p ptr %p value %p\n", entry->obj, entry->ptr, entry->value);
-		break;
-	}
-	case SGEN_PROTOCOL_WBARRIER: {
-		SGenProtocolWBarrier *entry = data;
-		printf ("wbarrier ptr %p value %p value_vtable %p\n", entry->ptr, entry->value, entry->value_vtable);
-		break;
-	}
-	case SGEN_PROTOCOL_GLOBAL_REMSET: {
-		SGenProtocolGlobalRemset *entry = data;
-		printf ("global_remset ptr %p value %p value_vtable %p\n", entry->ptr, entry->value, entry->value_vtable);
-		break;
-	}
-	case SGEN_PROTOCOL_PTR_UPDATE: {
-		SGenProtocolPtrUpdate *entry = data;
-		printf ("ptr_update ptr %p old_value %p new_value %p vtable %p size %d\n",
-				entry->ptr, entry->old_value, entry->new_value, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_CLEANUP: {
-		SGenProtocolCleanup *entry = data;
-		printf ("cleanup ptr %p vtable %p size %d\n", entry->ptr, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_EMPTY: {
-		SGenProtocolEmpty *entry = data;
-		printf ("empty start %p size %d\n", entry->start, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_THREAD_SUSPEND: {
-		SGenProtocolThreadSuspend *entry = data;
-		printf ("thread_suspend thread %p ip %p\n", entry->thread, entry->stopped_ip);
-		break;
-	}
-	case SGEN_PROTOCOL_THREAD_RESTART: {
-		SGenProtocolThreadRestart *entry = data;
-		printf ("thread_restart thread %p\n", entry->thread);
-		break;
-	}
-	case SGEN_PROTOCOL_THREAD_REGISTER: {
-		SGenProtocolThreadRegister *entry = data;
-		printf ("thread_register thread %p\n", entry->thread);
-		break;
-	}
-	case SGEN_PROTOCOL_THREAD_UNREGISTER: {
-		SGenProtocolThreadUnregister *entry = data;
-		printf ("thread_unregister thread %p\n", entry->thread);
-		break;
-	}
-	case SGEN_PROTOCOL_MISSING_REMSET: {
-		SGenProtocolMissingRemset *entry = data;
-		printf ("missing_remset obj %p obj_vtable %p offset %d value %p value_vtable %p value_pinned %d\n",
-				entry->obj, entry->obj_vtable, entry->offset, entry->value, entry->value_vtable, entry->value_pinned);
-		break;
-	}
-	case SGEN_PROTOCOL_CARD_SCAN: {
-		SGenProtocolCardScan *entry = data;
-		printf ("card_scan start %p size %d\n", entry->start, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_CEMENT: {
-		SGenProtocolCement *entry = data;
-		printf ("cement obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
-		break;
-	}
-	case SGEN_PROTOCOL_CEMENT_RESET: {
-		printf ("cement_reset\n");
-		break;
-	}
-	case SGEN_PROTOCOL_DISLINK_UPDATE: {
-		SGenProtocolDislinkUpdate *entry = data;
-		printf ("dislink_update link %p obj %p staged %d", entry->link, entry->obj, entry->staged);
-		if (entry->obj)
-			printf (" track %d\n", entry->track);
-		else
-			printf ("\n");
-		break;
-	}
-	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: {
-		SGenProtocolDislinkUpdateStaged *entry = data;
-		printf ("dislink_update_staged link %p obj %p index %d", entry->link, entry->obj, entry->index);
-		if (entry->obj)
-			printf (" track %d\n", entry->track);
-		else
-			printf ("\n");
-		break;
-	}
-	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: {
-		SGenProtocolDislinkProcessStaged *entry = data;
-		printf ("dislink_process_staged link %p obj %p index %d\n", entry->link, entry->obj, entry->index);
-		break;
-	}
-	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN: {
-		SGenProtocolDomainUnload *entry = data;
-		printf ("dislink_unload_begin domain %p\n", entry->domain);
-		break;
-	}
-	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END: {
-		SGenProtocolDomainUnload *entry = data;
-		printf ("dislink_unload_end domain %p\n", entry->domain);
-		break;
-	}
-	case SGEN_PROTOCOL_GRAY_ENQUEUE: {
-		SGenProtocolGrayQueue *entry = data;
-		printf ("enqueue queue %p cursor %p value %p\n", entry->queue, entry->cursor, entry->value);
-		break;
-	}
-	case SGEN_PROTOCOL_GRAY_DEQUEUE: {
-		SGenProtocolGrayQueue *entry = data;
-		printf ("dequeue queue %p cursor %p value %p\n", entry->queue, entry->cursor, entry->value);
-		break;
-	}
-	default:
-		assert (0);
+#define END_PROTOCOL_ENTRY_HEAVY \
+	END_PROTOCOL_ENTRY
+
+#include <mono/metadata/sgen-protocol-def.h>
+
+	default: assert (0);
 	}
 }
+
+#undef TYPE_INT
+#undef TYPE_LONGLONG
+#undef TYPE_SIZE
+#undef TYPE_POINTER
+
+#define TYPE_INT int
+#define TYPE_LONGLONG long long
+#define TYPE_SIZE size_t
+#define TYPE_POINTER gpointer
 
 static gboolean
 matches_interval (gpointer ptr, gpointer start, int size)
@@ -335,102 +438,70 @@ matches_interval (gpointer ptr, gpointer start, int size)
 	return ptr >= start && (char*)ptr < (char*)start + size;
 }
 
-static gboolean
-is_match (gpointer ptr, int type, void *data)
+/* Returns the index of the field where a match was found,
+ * BINARY_PROTOCOL_NO_MATCH for no match, or
+ * BINARY_PROTOCOL_MATCH for a match with no index.
+ */
+static int
+match_index (gpointer ptr, int type, void *data)
 {
 	switch (TYPE (type)) {
-	case SGEN_PROTOCOL_ALLOC:
-	case SGEN_PROTOCOL_ALLOC_PINNED:
-	case SGEN_PROTOCOL_ALLOC_DEGRADED: {
-		SGenProtocolAlloc *entry = data;
-		return matches_interval (ptr, entry->obj, entry->size);
+
+#define BEGIN_PROTOCOL_ENTRY0(method) \
+	case PROTOCOL_ID (method): {
+#define BEGIN_PROTOCOL_ENTRY1(method,t1,f1) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY2(method,t1,f1,t2,f2) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY3(method,t1,f1,t2,f2,t3,f3) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+
+#define BEGIN_PROTOCOL_ENTRY_HEAVY0(method) \
+	BEGIN_PROTOCOL_ENTRY0 (method)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY1(method,t1,f1) \
+	BEGIN_PROTOCOL_ENTRY1 (method,t1,f1)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY2(method,t1,f1,t2,f2) \
+	BEGIN_PROTOCOL_ENTRY2 (method,t1,f1,t2,f2)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY3(method,t1,f1,t2,f2,t3,f3) \
+	BEGIN_PROTOCOL_ENTRY3 (method,t1,f1,t2,f2,t3,f3)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	BEGIN_PROTOCOL_ENTRY4 (method,t1,f1,t2,f2,t3,f3,t4,f4)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	BEGIN_PROTOCOL_ENTRY5 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
+
+#define FLUSH()
+
+#define DEFAULT_PRINT()
+#define CUSTOM_PRINT(_)
+
+#define IS_ALWAYS_MATCH(_)
+#define MATCH_INDEX(block) \
+		return (block);
+#define IS_VTABLE_MATCH(_)
+
+#define END_PROTOCOL_ENTRY \
+		break; \
 	}
-	case SGEN_PROTOCOL_COPY: {
-		SGenProtocolCopy *entry = data;
-		return matches_interval (ptr, entry->from, entry->size) || matches_interval (ptr, entry->to, entry->size);
-	}
-	case SGEN_PROTOCOL_PIN_STAGE: {
-		SGenProtocolPinStage *entry = data;
-		return ptr == entry->addr_ptr || ptr == entry->addr;
-	}
-	case SGEN_PROTOCOL_PIN: {
-		SGenProtocolPin *entry = data;
-		return matches_interval (ptr, entry->obj, entry->size);
-	}
-	case SGEN_PROTOCOL_MARK: {
-		SGenProtocolMark *entry = data;
-		return matches_interval (ptr, entry->obj, entry->size);
-	}
-	case SGEN_PROTOCOL_SCAN_BEGIN: {
-		SGenProtocolScanBegin *entry = data;
-		return matches_interval (ptr, entry->obj, entry->size);
-	}
-	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
-		SGenProtocolScanVTypeBegin *entry = data;
-		return matches_interval (ptr, entry->obj, entry->size);
-	}
-	case SGEN_PROTOCOL_SCAN_PROCESS_REFERENCE: {
-		SGenProtocolScanProcessReference *entry = data;
-		return ptr == entry->obj || ptr == entry->ptr || ptr == entry->value;
-	}
-	case SGEN_PROTOCOL_WBARRIER: {
-		SGenProtocolWBarrier *entry = data;
-		return ptr == entry->ptr || ptr == entry->value;
-	}
-	case SGEN_PROTOCOL_GLOBAL_REMSET: {
-		SGenProtocolGlobalRemset *entry = data;
-		return ptr == entry->ptr || ptr == entry->value;
-	}
-	case SGEN_PROTOCOL_PTR_UPDATE: {
-		SGenProtocolPtrUpdate *entry = data;
-		return ptr == entry->ptr ||
-			matches_interval (ptr, entry->old_value, entry->size) ||
-			matches_interval (ptr, entry->new_value, entry->size);
-	}
-	case SGEN_PROTOCOL_CLEANUP: {
-		SGenProtocolCleanup *entry = data;
-		return matches_interval (ptr, entry->ptr, entry->size);
-	}
-	case SGEN_PROTOCOL_EMPTY: {
-		SGenProtocolEmpty *entry = data;
-		return matches_interval (ptr, entry->start, entry->size);
-	}
-	case SGEN_PROTOCOL_MISSING_REMSET: {
-		SGenProtocolMissingRemset *entry = data;
-		return ptr == entry->obj || ptr == entry->value || ptr == (char*)entry->obj + entry->offset;
-	}
-	case SGEN_PROTOCOL_CARD_SCAN: {
-		SGenProtocolCardScan *entry = data;
-		return matches_interval (ptr, entry->start, entry->size);
-	}
-	case SGEN_PROTOCOL_CEMENT: {
-		SGenProtocolCement *entry = data;
-		return matches_interval (ptr, entry->obj, entry->size);
-	}
-	case SGEN_PROTOCOL_DISLINK_UPDATE: {
-		SGenProtocolDislinkUpdate *entry = data;
-		return ptr == entry->obj || ptr == entry->link;
-	}
-	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: {
-		SGenProtocolDislinkUpdateStaged *entry = data;
-		return ptr == entry->obj || ptr == entry->link;
-	}
-	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: {
-		SGenProtocolDislinkProcessStaged *entry = data;
-		return ptr == entry->obj || ptr == entry->link;
-	}
-	case SGEN_PROTOCOL_GRAY_ENQUEUE: {
-		SGenProtocolGrayQueue *entry = data;
-		return ptr == entry->cursor || ptr == entry->value;
-	}
-	case SGEN_PROTOCOL_GRAY_DEQUEUE: {
-		SGenProtocolGrayQueue *entry = data;
-		return ptr == entry->cursor || ptr == entry->value;
-	}
-	default:
-		if (is_always_match (type))
-			return TRUE;
-		assert (0);
+#define END_PROTOCOL_ENTRY_HEAVY \
+	END_PROTOCOL_ENTRY
+
+#include <mono/metadata/sgen-protocol-def.h>
+
+	default: assert (0);
 	}
 }
 
@@ -438,58 +509,75 @@ static gboolean
 is_vtable_match (gpointer ptr, int type, void *data)
 {
 	switch (TYPE (type)) {
-	case SGEN_PROTOCOL_ALLOC:
-	case SGEN_PROTOCOL_ALLOC_PINNED:
-	case SGEN_PROTOCOL_ALLOC_DEGRADED: {
-		SGenProtocolAlloc *entry = data;
-		return ptr == entry->vtable;
+
+#define BEGIN_PROTOCOL_ENTRY0(method) \
+	case PROTOCOL_ID (method): {
+#define BEGIN_PROTOCOL_ENTRY1(method,t1,f1) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY2(method,t1,f1,t2,f2) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY3(method,t1,f1,t2,f2,t3,f3) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+#define BEGIN_PROTOCOL_ENTRY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	case PROTOCOL_ID (method): { \
+		PROTOCOL_STRUCT (method) *entry G_GNUC_UNUSED = data;
+
+#define BEGIN_PROTOCOL_ENTRY_HEAVY0(method) \
+	BEGIN_PROTOCOL_ENTRY0 (method)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY1(method,t1,f1) \
+	BEGIN_PROTOCOL_ENTRY1 (method,t1,f1)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY2(method,t1,f1,t2,f2) \
+	BEGIN_PROTOCOL_ENTRY2 (method,t1,f1,t2,f2)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY3(method,t1,f1,t2,f2,t3,f3) \
+	BEGIN_PROTOCOL_ENTRY3 (method,t1,f1,t2,f2,t3,f3)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
+	BEGIN_PROTOCOL_ENTRY4 (method,t1,f1,t2,f2,t3,f3,t4,f4)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
+	BEGIN_PROTOCOL_ENTRY5 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5)
+#define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
+	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
+
+#define FLUSH()
+
+#define DEFAULT_PRINT()
+#define CUSTOM_PRINT(_)
+
+#define IS_ALWAYS_MATCH(_)
+#define MATCH_INDEX(block) \
+		return (block);
+#define IS_VTABLE_MATCH(_)
+
+#define END_PROTOCOL_ENTRY \
+		break; \
 	}
-	case SGEN_PROTOCOL_COPY: {
-		SGenProtocolCopy *entry = data;
-		return ptr == entry->vtable;
-	}
-	case SGEN_PROTOCOL_PIN: {
-		SGenProtocolPin *entry = data;
-		return ptr == entry->vtable;
-	}
-	case SGEN_PROTOCOL_SCAN_BEGIN: {
-		SGenProtocolScanBegin *entry = data;
-		return ptr == entry->vtable;
-	}
-	case SGEN_PROTOCOL_WBARRIER: {
-		SGenProtocolWBarrier *entry = data;
-		return ptr == entry->value_vtable;
-	}
-	case SGEN_PROTOCOL_GLOBAL_REMSET: {
-		SGenProtocolGlobalRemset *entry = data;
-		return ptr == entry->value_vtable;
-	}
-	case SGEN_PROTOCOL_PTR_UPDATE: {
-		SGenProtocolPtrUpdate *entry = data;
-		return ptr == entry->vtable;
-	}
-	case SGEN_PROTOCOL_CLEANUP: {
-		SGenProtocolCleanup *entry = data;
-		return ptr == entry->vtable;
-	}
-	case SGEN_PROTOCOL_MISSING_REMSET: {
-		SGenProtocolMissingRemset *entry = data;
-		return ptr == entry->obj_vtable || ptr == entry->value_vtable;
-	}
-	case SGEN_PROTOCOL_CEMENT: {
-		SGenProtocolCement *entry = data;
-		return ptr == entry->vtable;
-	}
-	default:
-		return FALSE;
+#define END_PROTOCOL_ENTRY_HEAVY \
+	END_PROTOCOL_ENTRY
+
+#include <mono/metadata/sgen-protocol-def.h>
+
+	default: assert (0);
 	}
 }
+
+#undef TYPE_INT
+#undef TYPE_LONGLONG
+#undef TYPE_SIZE
+#undef TYPE_POINTER
 
 int
 main (int argc, char *argv[])
 {
 	int type;
-	void *data;
+	void *data = g_malloc0 (MAX_ENTRY_SIZE);
 	int num_args = argc - 1;
 	int num_nums = 0;
 	int num_vtables = 0;
@@ -501,7 +589,11 @@ main (int argc, char *argv[])
 	gboolean pause_times_stopped = FALSE;
 	gboolean pause_times_concurrent = FALSE;
 	gboolean pause_times_finish = FALSE;
+	gboolean color_output = FALSE;
 	long long pause_times_ts = 0;
+	const char *input_path = NULL;
+	int input_file;
+	EntryStream stream;
 
 	for (i = 0; i < num_args; ++i) {
 		char *arg = argv [i + 1];
@@ -513,6 +605,11 @@ main (int argc, char *argv[])
 		} else if (!strcmp (arg, "-v") || !strcmp (arg, "--vtable")) {
 			vtables [num_vtables++] = strtoul (next_arg, NULL, 16);
 			++i;
+		} else if (!strcmp (arg, "-c") || !strcmp (arg, "--color")) {
+			color_output = TRUE;
+		} else if (!strcmp (arg, "-i") || !strcmp (arg, "--input")) {
+			input_path = next_arg;
+			++i;
 		} else {
 			nums [num_nums++] = strtoul (arg, NULL, 16);
 		}
@@ -523,11 +620,13 @@ main (int argc, char *argv[])
 	if (pause_times)
 		assert (!dump_all);
 
-	while ((type = read_entry (stdin, &data)) != SGEN_PROTOCOL_EOF) {
+	input_file = input_path ? open (input_path, O_RDONLY) : STDIN_FILENO;
+	init_stream (&stream, input_file);
+	while ((type = read_entry (&stream, data)) != SGEN_PROTOCOL_EOF) {
 		if (pause_times) {
 			switch (type) {
-			case SGEN_PROTOCOL_WORLD_STOPPING: {
-				SGenProtocolWorldStopping *entry = data;
+			case PROTOCOL_ID (binary_protocol_world_stopping): {
+				PROTOCOL_STRUCT (binary_protocol_world_stopping) *entry = data;
 				assert (!pause_times_stopped);
 				pause_times_concurrent = FALSE;
 				pause_times_finish = FALSE;
@@ -535,14 +634,14 @@ main (int argc, char *argv[])
 				pause_times_stopped = TRUE;
 				break;
 			}
-			case SGEN_PROTOCOL_CONCURRENT_FINISH:
+			case PROTOCOL_ID (binary_protocol_concurrent_finish):
 				pause_times_finish = TRUE;
-			case SGEN_PROTOCOL_CONCURRENT_START:
-			case SGEN_PROTOCOL_CONCURRENT_UPDATE:
+			case PROTOCOL_ID (binary_protocol_concurrent_start):
+			case PROTOCOL_ID (binary_protocol_concurrent_update):
 				pause_times_concurrent = TRUE;
 				break;
-			case SGEN_PROTOCOL_WORLD_RESTARTED: {
-				SGenProtocolWorldRestarted *entry = data;
+			case PROTOCOL_ID (binary_protocol_world_restarted): {
+				PROTOCOL_STRUCT (binary_protocol_world_restarted) *entry = data;
 				assert (pause_times_stopped);
 				printf ("pause-time %d %d %d %lld %lld\n",
 						entry->generation,
@@ -555,12 +654,13 @@ main (int argc, char *argv[])
 			}
 			}
 		} else {
-			gboolean match = num_nums == 0 ? is_match (NULL, type, data) : FALSE;
+			int match_indices [num_nums + 1];
+			gboolean match = is_always_match (type);
+			match_indices [num_nums] = num_nums == 0 ? match_index (NULL, type, data) : BINARY_PROTOCOL_NO_MATCH;
+			match = match_indices [num_nums] != BINARY_PROTOCOL_NO_MATCH;
 			for (i = 0; i < num_nums; ++i) {
-				if (is_match ((gpointer) nums [i], type, data)) {
-					match = TRUE;
-					break;
-				}
+				match_indices [i] = match_index ((gpointer) nums [i], type, data);
+				match = match || match_indices [i] != BINARY_PROTOCOL_NO_MATCH;
 			}
 			if (!match) {
 				for (i = 0; i < num_vtables; ++i) {
@@ -573,10 +673,13 @@ main (int argc, char *argv[])
 			if (dump_all)
 				printf (match ? "* " : "  ");
 			if (match || dump_all)
-				print_entry (type, data);
+				print_entry (type, data, num_nums, match_indices, color_output);
 		}
-		free (data);
 	}
+	close_stream (&stream);
+	if (input_path)
+		close (input_file);
+	g_free (data);
 
 	return 0;
 }

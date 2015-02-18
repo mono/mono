@@ -55,9 +55,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.TextAlign_Values ();
 			unit.Render ();
 			unit.CheckboxViewstateTextNull ();
-#if NET_2_0
 			unit.CheckboxViewstateValidation ();
-#endif
 		}
 
 		// LinkDemand

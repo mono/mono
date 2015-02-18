@@ -64,12 +64,10 @@ namespace System.IO.IsolatedStorage {
 #endif
 			}
 
-#if NET_4_0
 			if (isf.IsDisposed)
 				throw new ObjectDisposedException ("IsolatedStorageFile");
 			if (isf.IsClosed)
 				throw new InvalidOperationException ("Storage needs to be open for this operation.");
-#endif
 
 			// ensure that the _root_ isolated storage can be (and is) created.
 			FileInfo fi = new FileInfo (isf.Root);
@@ -212,12 +210,10 @@ namespace System.IO.IsolatedStorage {
 			base.Flush ();
 		}
 
-#if NET_4_0
 		public override void Flush (bool flushToDisk)
 		{
 			base.Flush (flushToDisk);
 		}
-#endif
 
 		public override int Read (byte[] buffer, int offset, int count)
 		{

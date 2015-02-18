@@ -140,7 +140,7 @@ if NACL_CODEGEN
 check-local:
 else
 check-local: mcs-compileall mcs-do-test-profiles
-	$(MAKE) ONLY_CENTUM_TESTS=yes mcs-do-run-test-profiles
+	$(MAKE) mcs-do-run-test-profiles
 endif
 
 # Compile all mcs tests

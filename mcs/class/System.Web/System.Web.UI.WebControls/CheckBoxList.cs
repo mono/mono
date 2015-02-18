@@ -95,11 +95,7 @@ namespace System.Web.UI.WebControls
 			get { return (RepeatLayout) ViewState.GetInt ("RepeatLayout", (int) RepeatLayout.Table); }
 			set {
 				bool outOfRange;
-#if NET_4_0
 				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.OrderedList;
-#else
-				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.Flow;
-#endif
 				if (outOfRange)
 					throw new ArgumentOutOfRangeException ("value");
 				ViewState ["RepeatLayout"] = value;
@@ -298,14 +294,12 @@ namespace System.Web.UI.WebControls
 				check_box.Attributes.Clear ();
 			if (item.HasAttributes)
 				check_box.Attributes.CopyFrom (item.Attributes);
-#if NET_4_0
 			if (!RenderingCompatibilityLessThan40) {
 				var attrs = check_box.InputAttributes;
 			
 				attrs.Clear ();
 				attrs.Add ("value", item.Value);
 			}
-#endif
 			check_box.RenderControl (writer);
 		}
 

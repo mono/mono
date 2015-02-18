@@ -48,22 +48,12 @@ namespace MonoTests.System.Windows.Forms {
 			default_rect = new Rectangle (Int32.MinValue, Int32.MinValue, Int32.MaxValue, Int32.MaxValue);
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_NullGraphics ()
 		{
 			new PaintEventArgs (null, default_rect);
 		}
-#else
-		[Test]
-		public void Constructor_NullGraphics ()
-		{
-			PaintEventArgs pea = new PaintEventArgs (null, default_rect);
-			Assert.IsNull (pea.Graphics, "Graphics");
-			Assert.AreEqual (default_rect, pea.ClipRectangle);
-		}
-#endif
 		[Test]
 		public void Constructor ()
 		{
@@ -118,10 +108,8 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-#if NET_2_0
 		// under MS runtime it throws an exception under nunit-console, but not when running under NUnit GUI
 		[Category ("NotDotNet")]
-#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void Dispose_True ()
 		{
@@ -136,10 +124,8 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-#if NET_2_0
 		// under MS runtime it throws an exception under nunit-console, but not when running under NUnit GUI
 		[Category ("NotDotNet")]
-#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void Dispose_False ()
 		{

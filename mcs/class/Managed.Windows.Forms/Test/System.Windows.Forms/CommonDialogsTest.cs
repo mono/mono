@@ -286,7 +286,6 @@ Failures:
 			fbd.RootFolder = (Environment.SpecialFolder)12;
 		}
 
-#if NET_2_0
 		[Test]
 		public void CommonDialogPropertyTag ()
 		{
@@ -311,7 +310,6 @@ Failures:
 				throw new Exception ("The method or operation is not implemented.");
 			}
 		}
-#endif
 	}
 }
 

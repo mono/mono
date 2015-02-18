@@ -2,16 +2,7 @@ thisdir=class/System.Data/Test/ProviderTests
 
 include ../../../../build/rules.make
 
-LIB_MCS_FLAGS += /r:System.Data,System.Data.OracleClient,System,System.Xml,nunit.framework
-
-ifeq (net_1_0, $(PROFILE))
-LIB_MCS_FLAGS += /r:Mono.Data.dll
-endif
-ifeq (net_1_1, $(PROFILE))
-LIB_MCS_FLAGS += /r:Mono.Data.dll
-else
-LIB_MCS_FLAGS += /r:System.Configuration.dll
-endif
+LIB_MCS_FLAGS += /r:System.Data,System.Data.OracleClient,System,System.Xml,nunit.framework,System.Configuration
 
 DATABASE=sqlserver
 ifndef CONNECTION

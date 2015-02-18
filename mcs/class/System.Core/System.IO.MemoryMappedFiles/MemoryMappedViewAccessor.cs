@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 
 using System;
 using System.IO;
@@ -94,4 +93,3 @@ namespace System.IO.MemoryMappedFiles
 	}
 }
 
-#endif

@@ -109,6 +109,8 @@ namespace MonoTests.System.Threading.Tasks
 
 		Task[] tasks;
 		const int max = 6;
+		object cleanup_mutex = new object ();
+		List<Task> cleanup_list;
 		
 		[SetUp]
 		public void Setup()
@@ -116,13 +118,35 @@ namespace MonoTests.System.Threading.Tasks
 			ThreadPool.GetMinThreads (out workerThreads, out completionPortThreads);
 			ThreadPool.SetMinThreads (1, 1);
 
-			tasks = new Task[max];			
+			tasks = new Task[max];
+			cleanup_list = new List<Task> ();
 		}
 		
 		[TearDown]
 		public void Teardown()
 		{
 			ThreadPool.SetMinThreads (workerThreads, completionPortThreads);
+			Task[] l = null;
+			lock (cleanup_mutex) {
+				l = cleanup_list.ToArray ();
+			}
+			try {
+				Task.WaitAll (l);
+			} catch (Exception) {
+			}
+		}
+
+		void AddToCleanup (Task[] tasks) {
+			lock (cleanup_mutex) {
+				foreach (var t in tasks)
+					cleanup_list.Add (t);
+			}
+		}
+
+		void AddToCleanup (Task task) {
+			lock (cleanup_mutex) {
+				cleanup_list.Add (task);
+			}
 		}
 		
 		void InitWithDelegate(Action action)
@@ -130,6 +154,7 @@ namespace MonoTests.System.Threading.Tasks
 			for (int i = 0; i < max; i++) {
 				tasks[i] = Task.Factory.StartNew(action);
 			}
+			AddToCleanup (tasks);
 		}
 		
 		[Test]
@@ -212,11 +237,11 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			var mre = new ManualResetEventSlim (false);
 			var tasks = new Task[] {
-				Task.Factory.StartNew (delegate { mre.Wait (1000); }),
+				Task.Factory.StartNew (delegate { mre.Wait (5000); }),
 				Task.Factory.StartNew (delegate { throw new ApplicationException (); })
 			};
 
-			Assert.AreEqual (1, Task.WaitAny (tasks, 1000), "#1");
+			Assert.AreEqual (1, Task.WaitAny (tasks, 3000), "#1");
 			Assert.IsFalse (tasks[0].IsCompleted, "#2");
 			Assert.IsTrue (tasks[1].IsFaulted, "#3");
 
@@ -286,6 +311,7 @@ namespace MonoTests.System.Threading.Tasks
 				for (int i = 0; i < tasks.Length; i++) {
 					tasks[i] = Task.Factory.StartNew (delegate { Thread.Sleep (0); });
 				}
+				AddToCleanup (tasks);
 
 				Assert.IsTrue (Task.WaitAll (tasks, 5000));
 			}
@@ -492,13 +518,26 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (true, previouslyQueued);
 		}
 
-		[Test, ExpectedException (typeof (InvalidOperationException))]
+		[Test]
 		public void CreationWhileInitiallyCanceled ()
 		{
 			var token = new CancellationToken (true);
 			var task = new Task (() => { }, token);
-			Assert.AreEqual (TaskStatus.Canceled, task.Status);
-			task.Start ();
+
+			try {
+				task.Start ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				task.Wait ();
+				Assert.Fail ("#2");
+			} catch (AggregateException e) {
+				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#3");
+			}
+
+			Assert.IsTrue (task.IsCanceled, "#4");
 		}
 
 		[Test]
@@ -508,25 +547,25 @@ namespace MonoTests.System.Threading.Tasks
 			try {
 				task.ContinueWith (null);
 				Assert.Fail ("#1");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException e) {
 			}
 
 			try {
 				task.ContinueWith (delegate { }, null);
 				Assert.Fail ("#2");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException e) {
 			}
 
 			try {
 				task.ContinueWith (delegate { }, TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.NotOnCanceled);
 				Assert.Fail ("#3");
-			} catch (ArgumentException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 
 			try {
 				task.ContinueWith (delegate { }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.NotOnRanToCompletion);
 				Assert.Fail ("#4");
-			} catch (ArgumentException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 
@@ -985,7 +1024,7 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void Start_NullArgument ()
 		{
-			var t = Task.Factory.StartNew (delegate () { });
+			var t = new Task (() => { });
 			try {
 				t.Start (null);
 				Assert.Fail ();
@@ -1850,7 +1889,7 @@ namespace MonoTests.System.Threading.Tasks
 			bool? is_bg = null;
 			var t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; });
 			t.Start ();
-			Assert.IsTrue (t.Wait (100));
+			t.Wait ();
 			Assert.IsTrue ((bool)is_tp, "#1");
 			Assert.IsTrue ((bool)is_bg, "#2");
 
@@ -1858,8 +1897,7 @@ namespace MonoTests.System.Threading.Tasks
 			is_bg = null;
 			t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; }, TaskCreationOptions.LongRunning);
 			t.Start ();
-
-			Assert.IsTrue (t.Wait (100));
+			t.Wait ();
 			Assert.IsFalse ((bool) is_tp, "#11");
 			Assert.IsTrue ((bool) is_bg, "#12");
 		}

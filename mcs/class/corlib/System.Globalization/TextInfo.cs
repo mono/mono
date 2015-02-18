@@ -36,6 +36,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -47,6 +48,43 @@ namespace System.Globalization {
 	[MonoTODO ("IDeserializationCallback isn't implemented.")]
 	public class TextInfo: IDeserializationCallback, ICloneable
 	{
+		static TextInfo ()
+		{
+			unsafe {
+				GetDataTablePointersLite (out to_lower_data_low, out to_lower_data_high, out to_upper_data_low, out to_upper_data_high);
+			}
+		}
+		
+		private readonly unsafe static ushort *to_lower_data_low;
+		private readonly unsafe static ushort *to_lower_data_high;
+		private readonly unsafe static ushort *to_upper_data_low;
+		private readonly unsafe static ushort *to_upper_data_high;
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		private unsafe static extern void GetDataTablePointersLite (out ushort *to_lower_data_low, out ushort *to_lower_data_high,
+			out ushort *to_upper_data_low, out ushort *to_upper_data_high);
+
+		static char ToLowerInvariant (char c)
+		{
+			unsafe {
+				if (c <= ((char)0x24cf))
+					return (char) to_lower_data_low [c];
+				if (c >= ((char)0xff21))
+					return (char) to_lower_data_high[c - 0xff21];
+			}
+			return c;
+		}
+
+		static char ToUpperInvariant (char c)
+		{
+			unsafe {
+				if (c <= ((char)0x24e9))
+					return (char) to_upper_data_low [c];
+				if (c >= ((char)0xff21))
+					return (char) to_upper_data_high [c - 0xff21];
+			}
+			return c;
+		}
+		
 		[StructLayout (LayoutKind.Sequential)]
 		struct Data {
 			public int ansi;
@@ -311,7 +349,7 @@ namespace System.Globalization {
 				return (char) (c + 0x20);
 
 			if (ci == null || ci.LCID == 0x7F)
-				return Char.ToLowerInvariant (c);
+				return ToLowerInvariant (c);
 
 			switch (c) {
 			case '\u0049': // Latin uppercase I
@@ -341,7 +379,7 @@ namespace System.Globalization {
 			case '\u03d4':  // ? it is not in ICU
 				return '\u03cb';
 			}
-			return Char.ToLowerInvariant (c);
+			return ToLowerInvariant (c);
 		}
 
 		public virtual char ToUpper (char c)
@@ -353,7 +391,7 @@ namespace System.Globalization {
 				return (char) (c - 0x20);
 
 			if (ci == null || ci.LCID == 0x7F)
-				return Char.ToUpperInvariant (c);
+				return ToUpperInvariant (c);
 
 			switch (c) {
 			case '\u0069': // Latin lowercase i
@@ -391,7 +429,7 @@ namespace System.Globalization {
 			// not handled here.
 			}
 
-			return Char.ToUpperInvariant (c);
+			return ToUpperInvariant (c);
 		}
 
 		private char ToTitleCase (char c)
@@ -501,6 +539,16 @@ namespace System.Globalization {
 		public virtual object Clone ()
 		{
 			return new TextInfo (this);
+		}
+
+		internal int GetCaseInsensitiveHashCode (string str)
+		{
+			return StringComparer.CurrentCultureIgnoreCase.GetHashCode (str);
+		}
+
+		internal static int GetHashCodeOrdinalIgnoreCase (string s)
+		{
+			return s.GetCaseInsensitiveHashCode ();
 		}
 	}
 }

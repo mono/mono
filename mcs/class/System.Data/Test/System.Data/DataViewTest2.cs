@@ -1166,7 +1166,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(DataViewRowState.CurrentRows, view.RowStateFilter, "#4");
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestEquals_SameTableDiffViewProp()
 		{
@@ -1342,6 +1341,5 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (2, newTable1.Rows [1][1], "#16");
 			Assert.AreEqual (1, newTable1.Rows [2][1], "#17");
 		}
-#endif
 	}
 }

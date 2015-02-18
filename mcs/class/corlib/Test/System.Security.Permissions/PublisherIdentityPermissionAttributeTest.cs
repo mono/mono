@@ -208,11 +208,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#else
 		[Category ("NotWorking")]
-#endif
 		public void Unrestricted () 
 		{
 			PublisherIdentityPermissionAttribute a = new PublisherIdentityPermissionAttribute (SecurityAction.Assert);

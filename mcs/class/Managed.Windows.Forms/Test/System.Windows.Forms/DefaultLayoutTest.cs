@@ -3,9 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -507,7 +505,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestDockFillWithPadding ()
 		{
@@ -524,7 +521,6 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
-#endif
 
 		[Test]
 		public void Bug82762 ()
@@ -569,7 +565,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (200, c1.Width, "A1");
 		}
 		
-#if NET_2_0
 		[Test]
 		public void DockedAutoSizeControls ()
 		{
@@ -592,7 +587,6 @@ namespace MonoTests.System.Windows.Forms
 			f.Close ();
 			f.Dispose ();
 		}
-#endif
 		
 		[Test]  // bug #81199
 		public void NestedControls ()
@@ -751,7 +745,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void DockingPreferredSize ()
 		{
@@ -795,7 +788,6 @@ namespace MonoTests.System.Windows.Forms
 				return Size.Empty;
 			}
 		}
-#endif
 
 		[Test]
 		public void ResettingDockToNone ()
@@ -1085,7 +1077,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (37, panel.Width, "Width");
 		}
 
-#if NET_2_0
 		[Test]
 		public void AutoSizeGrowOnlyControls_ShrinkWhenDocked ()
 		{
@@ -1203,6 +1194,5 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
-#endif
 	}
 }

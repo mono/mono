@@ -59,13 +59,8 @@ namespace MonoTests.System.Data
 				
 				cb = new OdbcCommandBuilder (da);
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("INSERT INTO employee (id, lname) VALUES (?, ?)",
 						cmd.CommandText, "#A1");
-#else
-				Assert.AreEqual ("INSERT INTO employee( id , lname ) VALUES ( ? , ? )",
-						cmd.CommandText, "#A1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#A2");
 				AssertInsertParameters (cmd, "#A3:");
 
@@ -73,13 +68,8 @@ namespace MonoTests.System.Data
 				cb.QuotePrefix = "\"";
 
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("INSERT INTO \"employee (\"id, \"lname) VALUES (?, ?)",
 						cmd.CommandText, "#B1");
-#else
-				Assert.AreEqual ("INSERT INTO \"employee( \"id , \"lname ) VALUES ( ? , ? )",
-						cmd.CommandText, "#B1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#B2");
 				AssertInsertParameters (cmd, "#B3:");
 
@@ -87,13 +77,8 @@ namespace MonoTests.System.Data
 				cb.QuoteSuffix = "´";
 
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("INSERT INTO employee´ (id´, lname´) VALUES (?, ?)",
 						cmd.CommandText, "#C1");
-#else
-				Assert.AreEqual ("INSERT INTO employee´( id´ , lname´ ) VALUES ( ? , ? )",
-						cmd.CommandText, "#C1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertInsertParameters (cmd, "#C3:");
 
@@ -102,13 +87,8 @@ namespace MonoTests.System.Data
 				cb.QuoteSuffix = "´";
 
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("INSERT INTO \"employee´ (\"id´, \"lname´) VALUES (?, ?)",
 						cmd.CommandText, "#D1");
-#else
-				Assert.AreEqual ("INSERT INTO \"employee´( \"id´ , \"lname´ ) VALUES ( ? , ? )",
-						cmd.CommandText, "#D1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#D2");
 				AssertInsertParameters (cmd, "#D3:");
 			} finally {
@@ -136,13 +116,8 @@ namespace MonoTests.System.Data
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("INSERT INTO employee (id, lname) VALUES (?, ?)",
 						cmd.CommandText, "#1");
-#else
-				Assert.AreEqual ("INSERT INTO employee( id , lname ) VALUES ( ? , ? )",
-						cmd.CommandText, "#1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#2");
 				AssertInsertParameters (cmd, "#3:");
 			} finally {
@@ -167,13 +142,8 @@ namespace MonoTests.System.Data
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("UPDATE employee SET id = ?, lname = ? WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
 						cmd.CommandText, "#A1");
-#else
-				Assert.AreEqual ("UPDATE employee SET id = ? , lname = ? WHERE ( (id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)) )",
-						cmd.CommandText, "#A1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#A2");
 				AssertUpdateParameters (cmd, "#A3:");
 
@@ -181,13 +151,8 @@ namespace MonoTests.System.Data
 				cb.QuotePrefix = "\"";
 
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("UPDATE \"employee SET \"id = ?, \"lname = ? WHERE ((\"id = ?) AND ((? = 1 AND \"lname IS NULL) OR (\"lname = ?)))",
 						cmd.CommandText, "#B1");
-#else
-				Assert.AreEqual ("UPDATE \"employee SET \"id = ? , \"lname = ? WHERE ( (\"id = ?) AND ((? = 1 AND \"lname IS NULL) OR (\"lname = ?)) )",
-						cmd.CommandText, "#B1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#B2");
 				AssertUpdateParameters (cmd, "#B3:");
 
@@ -195,13 +160,8 @@ namespace MonoTests.System.Data
 				cb.QuoteSuffix = "´";
 
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("UPDATE employee´ SET id´ = ?, lname´ = ? WHERE ((id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)))",
 						cmd.CommandText, "#C1");
-#else
-				Assert.AreEqual ("UPDATE employee´ SET id´ = ? , lname´ = ? WHERE ( (id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)) )",
-						cmd.CommandText, "#C1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertUpdateParameters (cmd, "#C3:");
 
@@ -210,13 +170,8 @@ namespace MonoTests.System.Data
 				cb.QuoteSuffix = "´";
 
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("UPDATE \"employee´ SET \"id´ = ?, \"lname´ = ? WHERE ((\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)))",
 						cmd.CommandText, "#D1");
-#else
-				Assert.AreEqual ("UPDATE \"employee´ SET \"id´ = ? , \"lname´ = ? WHERE ( (\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)) )",
-						cmd.CommandText, "#D1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#D2");
 				AssertUpdateParameters (cmd, "#D3:");
 			} finally {
@@ -256,16 +211,13 @@ namespace MonoTests.System.Data
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreSame (rows [0], ex.Row, "#5");
-#if NET_2_0
 					Assert.AreEqual (1, ex.RowCount, "#6");
-#endif
 				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetInsertCommandTest_option_true ()
 		{
@@ -397,7 +349,6 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-#endif
 
 		[Test]
 		public void GetDeleteCommandTest ()
@@ -415,13 +366,8 @@ namespace MonoTests.System.Data
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				cmd = cb.GetDeleteCommand ();
 
-#if NET_2_0
 				Assert.AreEqual ("DELETE FROM employee WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
 						cmd.CommandText, "#A1");
-#else
-				Assert.AreEqual ("DELETE FROM  employee WHERE ( (id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)) )",
-						cmd.CommandText, "#A1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#A2");
 				AssertDeleteParameters (cmd, "#A3:");
 
@@ -429,13 +375,8 @@ namespace MonoTests.System.Data
 				cb.QuotePrefix = "\"";
 
 				cmd = cb.GetDeleteCommand ();
-#if NET_2_0
 				Assert.AreEqual ("DELETE FROM \"employee WHERE ((\"id = ?) AND ((? = 1 AND \"lname IS NULL) OR (\"lname = ?)))",
 						cmd.CommandText, "#B1");
-#else
-				Assert.AreEqual ("DELETE FROM  \"employee WHERE ( (\"id = ?) AND ((? = 1 AND \"lname IS NULL) OR (\"lname = ?)) )",
-						cmd.CommandText, "#B1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#B2");
 				AssertDeleteParameters (cmd, "#B3:");
 
@@ -443,13 +384,8 @@ namespace MonoTests.System.Data
 				cb.QuoteSuffix = "´";
 
 				cmd = cb.GetDeleteCommand ();
-#if NET_2_0
 				Assert.AreEqual ("DELETE FROM employee´ WHERE ((id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)))",
 						cmd.CommandText, "#C1");
-#else
-				Assert.AreEqual ("DELETE FROM  employee´ WHERE ( (id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)) )",
-						cmd.CommandText, "#C1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertDeleteParameters (cmd, "#C3:");
 
@@ -458,13 +394,8 @@ namespace MonoTests.System.Data
 				cb.QuoteSuffix = "´";
 
 				cmd = cb.GetDeleteCommand ();
-#if NET_2_0
 				Assert.AreEqual ("DELETE FROM \"employee´ WHERE ((\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)))",
 						cmd.CommandText, "#D1");
-#else
-				Assert.AreEqual ("DELETE FROM  \"employee´ WHERE ( (\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)) )",
-						cmd.CommandText, "#D1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#D2");
 				AssertDeleteParameters (cmd, "#D3:");
 			} finally {
@@ -475,9 +406,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
-#endif
 		public void QuotePrefix_DeleteCommand_Generated ()
 		{
 			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
@@ -515,9 +444,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
-#endif
 		public void QuotePrefix_InsertCommand_Generated ()
 		{
 			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
@@ -555,9 +482,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
-#endif
 		public void QuotePrefix_UpdateCommand_Generated ()
 		{
 			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
@@ -595,9 +520,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
-#endif
 		public void QuoteSuffix_DeleteCommand_Generated ()
 		{
 			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
@@ -635,9 +558,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
-#endif
 		public void QuoteSuffix_InsertCommand_Generated ()
 		{
 			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
@@ -675,9 +596,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
-#endif
 		public void QuoteSuffix_UpdateCommand_Generated ()
 		{
 			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
@@ -714,7 +633,6 @@ namespace MonoTests.System.Data
 			}
 		}
 
-#if NET_2_0
 		[Test] // QuoteIdentifier (String, OdbcConnection)
 		public void QuoteIdentifier2 ()
 		{
@@ -793,25 +711,16 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-#endif
 
 		void AssertInsertParameters (OdbcCommand cmd, string prefix)
 		{
 			Assert.AreEqual (2, cmd.Parameters.Count, prefix + "Count");
 			Assert.AreEqual (DbType.Int32, cmd.Parameters [0].DbType, prefix + "DbType (0)");
-#if NET_2_0
 			Assert.AreEqual ("p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
-#else
-			Assert.AreEqual ("@p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
-#endif
 			Assert.AreEqual ("id", cmd.Parameters [0].SourceColumn, prefix + "SourceColumn (0)");
 			Assert.IsNull (cmd.Parameters [0].Value, prefix + "Value (0)");
 			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [1].DbType, prefix + "DbType (1)");
-#if NET_2_0
 			Assert.AreEqual ("p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
-#else
-			Assert.AreEqual ("@p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
-#endif
 			Assert.AreEqual ("lname", cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
 			Assert.IsNull (cmd.Parameters [1].Value, prefix + "Value (1)");
 		}
@@ -820,44 +729,23 @@ namespace MonoTests.System.Data
 		{
 			Assert.AreEqual (5, cmd.Parameters.Count, prefix + "Count");
 			Assert.AreEqual (DbType.Int32, cmd.Parameters [0].DbType, prefix + "DbType (0)");
-#if NET_2_0
 			Assert.AreEqual ("p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
-#else
-			Assert.AreEqual ("@p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
-#endif
 			Assert.AreEqual ("id", cmd.Parameters [0].SourceColumn, prefix + "SourceColumn (0)");
 			Assert.IsNull (cmd.Parameters [0].Value, prefix + "Value (0)");
 			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [1].DbType, prefix + "DbType (1)");
-#if NET_2_0
 			Assert.AreEqual ("p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
-#else
-			Assert.AreEqual ("@p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
-#endif
 			Assert.AreEqual ("lname", cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
 			Assert.IsNull (cmd.Parameters [1].Value, prefix + "Value (1)");
 			Assert.AreEqual (DbType.Int32, cmd.Parameters [2].DbType, prefix + "DbType (2)");
-#if NET_2_0
 			Assert.AreEqual ("p3", cmd.Parameters [2].ParameterName, prefix + "ParameterName (2)");
-#else
-			Assert.AreEqual ("@p3", cmd.Parameters [2].ParameterName, prefix + "ParameterName (2)");
-#endif
 			Assert.AreEqual ("id", cmd.Parameters [2].SourceColumn, prefix + "SourceColumn (2)");
 			Assert.IsNull (cmd.Parameters [2].Value, prefix + "Value (2)");
 			Assert.AreEqual (DbType.Int32, cmd.Parameters [3].DbType, prefix + "DbType (3)");
-#if NET_2_0
 			Assert.AreEqual ("p4", cmd.Parameters [3].ParameterName, prefix + "ParameterName (3)");
 			Assert.AreEqual ("lname", cmd.Parameters [3].SourceColumn, prefix + "SourceColumn (3)");
-#else
-			Assert.AreEqual ("@p4", cmd.Parameters [3].ParameterName, prefix + "ParameterName (3)");
-			Assert.AreEqual (string.Empty, cmd.Parameters [3].SourceColumn, prefix + "SourceColumn (3)");
-#endif
 			Assert.AreEqual (1, cmd.Parameters [3].Value, prefix + "Value (3)");
 			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [4].DbType, prefix + "DbType (4)");
-#if NET_2_0
 			Assert.AreEqual ("p5", cmd.Parameters [4].ParameterName, prefix + "ParameterName (4)");
-#else
-			Assert.AreEqual ("@p5", cmd.Parameters [4].ParameterName, prefix + "ParameterName (4)");
-#endif
 			Assert.AreEqual ("lname", cmd.Parameters [4].SourceColumn, prefix + "SourceColumn (4)");
 			Assert.IsNull (cmd.Parameters [4].Value, prefix + "Value (4)");
 		}
@@ -866,28 +754,15 @@ namespace MonoTests.System.Data
 		{
 			Assert.AreEqual (3, cmd.Parameters.Count, prefix + "Count");
 			Assert.AreEqual (DbType.Int32, cmd.Parameters [0].DbType, prefix + "DbType (0)");
-#if NET_2_0
 			Assert.AreEqual ("p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
-#else
-			Assert.AreEqual ("@p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
-#endif
 			Assert.AreEqual ("id", cmd.Parameters [0].SourceColumn, prefix + "SourceColumn (0)");
 			Assert.IsNull (cmd.Parameters [0].Value, prefix + "Value (0)");
 			Assert.AreEqual (DbType.Int32, cmd.Parameters [1].DbType, prefix + "DbType (1)");
-#if NET_2_0
 			Assert.AreEqual ("p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
 			Assert.AreEqual ("lname", cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
-#else
-			Assert.AreEqual ("@p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
-			Assert.AreEqual (string.Empty, cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
-#endif
 			Assert.AreEqual (1, cmd.Parameters [1].Value, prefix + "Value (1)");
 			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [2].DbType, prefix + "DbType (2)");
-#if NET_2_0
 			Assert.AreEqual ("p3", cmd.Parameters [2].ParameterName, prefix + "ParameterName (2)");
-#else
-			Assert.AreEqual ("@p3", cmd.Parameters [2].ParameterName, prefix + "ParameterName (2)");
-#endif
 			Assert.AreEqual ("lname", cmd.Parameters [2].SourceColumn, prefix + "SourceColumn (2)");
 			Assert.IsNull (cmd.Parameters [2].Value, prefix + "Value (2)");
 		}

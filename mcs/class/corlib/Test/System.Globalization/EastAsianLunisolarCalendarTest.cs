@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -46,7 +45,6 @@ namespace MonoTests.System.Globalization
 		static KoreanLunisolarCalendar kr = new KoreanLunisolarCalendar ();
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ToDateTime ()
 		{
 			Assert.AreEqual (new DateTime (2000, 2, 5), cn.ToDateTime (2000, 1, 1, 0, 0, 0, 0), "cn1");
@@ -86,7 +84,6 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ToDateTimeOutOfRange ()
 		{
 			try {
@@ -101,34 +98,6 @@ namespace MonoTests.System.Globalization
 			}
 		}
 
-		[Test]
-		[Category ("NotWorking")]
-		public void GetYear ()
-		{
-			Assert.AreEqual (1901, cn.GetYear (new DateTime (1901, 2, 19, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#1");
-			Assert.AreEqual (1901, cn.GetYear (new DateTime (1902, 2, 07, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#2");
-			Assert.AreEqual (1902, cn.GetYear (new DateTime (1902, 2, 08, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#3");
-			Assert.AreEqual (1902, cn.GetYear (new DateTime (1903, 1, 28, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#4");
-			Assert.AreEqual (1903, cn.GetYear (new DateTime (1903, 1, 29, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#5");
-			// there was a leap month
-			Assert.AreEqual (1903, cn.GetYear (new DateTime (1904, 2, 15, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#6");
-			Assert.AreEqual (1904, cn.GetYear (new DateTime (1904, 2, 16, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#7");
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void GetYear2 ()
-		{
-			Assert.AreEqual (1999, cn.GetYear (new DateTime (2000, 2, 4, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#1");
-			Assert.AreEqual (2000, cn.GetYear (new DateTime (2000, 2, 5, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#2");
-			Assert.AreEqual (11, jp.GetYear (new DateTime (2000, 2, 4, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#3");
-			Assert.AreEqual (12, jp.GetYear (new DateTime (2000, 2, 5, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#4");
-			Assert.AreEqual (88, tw.GetYear (new DateTime (2000, 2, 4, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#5");
-			Assert.AreEqual (89, tw.GetYear (new DateTime (2000, 2, 5, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#6");
-			Assert.AreEqual (1999, cn.GetYear (new DateTime (2000, 2, 4, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#7");
-			Assert.AreEqual (2000, cn.GetYear (new DateTime (2000, 2, 5, 0, 0, 0, DateTimeKind.Utc).ToLocalTime ()), "#8");
-		}
-
 		bool [] leapYears = new bool [] {
 			false, true, false, false, true,
 			false, true, false, false, true,
@@ -137,7 +106,6 @@ namespace MonoTests.System.Globalization
 			};
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsLeapYear ()
 		{
 			//Assert.IsFalse (cn.IsLeapYear (1901), "#cn1901");
@@ -159,7 +127,6 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsLeapMonth ()
 		{
 			Dictionary<int,int> d = new Dictionary<int,int> ();
@@ -227,4 +194,3 @@ namespace MonoTests.System.Globalization
 	}
 }
 
-#endif

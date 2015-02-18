@@ -29,9 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.IO;
 using System.Security.Permissions;
 using System.Text;
@@ -42,13 +40,9 @@ using Mono.Xml.Schema;
 namespace System.Xml
 {
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-#if NET_2_0
 	[Obsolete("Use XmlReader created by XmlReader.Create() method using"
 		+ " appropriate XmlReaderSettings instead.")]
 	public class XmlValidatingReader : XmlReader, IXmlLineInfo, IXmlNamespaceResolver, IHasXmlParserContext
-#else
-	public class XmlValidatingReader : XmlReader, IXmlLineInfo, IHasXmlParserContext
-#endif
 	{
 
 		#region Fields
@@ -103,11 +97,9 @@ namespace System.Xml
 			get { return validatingReader == null ? sourceReader.BaseURI : validatingReader.BaseURI; }
 		}
 
-#if NET_2_0
 		public override bool CanReadBinaryContent {
 			get { return true; }
 		}
-#endif
 
 		// This property for this class always return true.
 		public override bool CanResolveEntity {
@@ -158,26 +150,8 @@ namespace System.Xml
 			get { return validatingReader == null ? false : validatingReader.IsEmptyElement; }
 		}
 
-#if NET_2_0
-#else
-		public override string this [int i] { 
-			get { return GetAttribute (i); }
-		}
 
-		public override string this [string name] { 
-			get { return GetAttribute (name); }
-		}
-
-		public override string this [string localName, string namespaceName] { 
-			get { return GetAttribute (localName, namespaceName); }
-		}
-#endif
-
-#if NET_2_0
 		public int LineNumber {
-#else
-		int IXmlLineInfo.LineNumber {
-#endif
 			get {
 				if (IsDefault)
 					return 0;
@@ -186,11 +160,7 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public int LinePosition {
-#else
-		int IXmlLineInfo.LinePosition {
-#endif
 			get {
 				if (IsDefault)
 					return 0;
@@ -298,12 +268,10 @@ namespace System.Xml
 			get { return schemaInfo.SchemaType; }
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override XmlReaderSettings Settings {
 			get { return validatingReader == null ? sourceReader.Settings : validatingReader.Settings; }
 		}
-#endif
 
 		[MonoTODO]
 		// We decided not to support XDR schema; it is obsolete.
@@ -391,18 +359,12 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			return ((IHasXmlParserContext) this).ParserContext.NamespaceManager.GetNamespacesInScope (scope);
 		}
-#endif
 
-#if NET_2_0
 		public bool HasLineInfo ()
-#else
-		bool IXmlLineInfo.HasLineInfo ()
-#endif
 		{
 			IXmlLineInfo info = validatingReader as IXmlLineInfo;
 			return info != null ? info.HasLineInfo () : false;
@@ -416,7 +378,6 @@ namespace System.Xml
 				return sourceReader.LookupNamespace (prefix);
 		}
 
-#if NET_2_0
 		string IXmlNamespaceResolver.LookupPrefix (string ns)
 		{
 			IXmlNamespaceResolver res = null;
@@ -428,7 +389,6 @@ namespace System.Xml
 				res.LookupNamespace (ns) :
 				null;
 		}
-#endif
 
 
 		public override void MoveToAttribute (int i)
@@ -577,7 +537,6 @@ namespace System.Xml
 				throw e.Exception;
 		}
 
-#if NET_2_0
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public override int ReadContentAsBase64 (byte [] buffer, int index, int count)
 		{
@@ -613,7 +572,6 @@ namespace System.Xml
 			else
 				return sourceReader.ReadElementContentAsBinHex (buffer, index, count);
 		}
-#endif
 		#endregion // Methods
 
 		#region Events and Delegates

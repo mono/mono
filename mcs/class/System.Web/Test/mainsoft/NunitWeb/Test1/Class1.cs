@@ -21,7 +21,6 @@ namespace Test1
 			WebTest.Unload ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void RenderSiteMapPath ()
 		{
@@ -69,7 +68,6 @@ namespace Test1
 			MasterPage mp = p.Master;
 			Assert.IsNotNull (mp);
 		}
-#endif
 		[Test]
 		public void TestStyle ()
 		{
@@ -100,13 +98,10 @@ namespace Test1
 			LiteralControl lcb = new LiteralControl ("aaa");
 			LiteralControl lce = new LiteralControl ("bbb");
 			p.Controls.Add (lcb);
-#if NET_2_0
 			Menu menu = new Menu ();
 			p.Controls.Add (menu);
-#endif
 			p.Controls.Add (lce);
 		}
-#if NET_2_0
 		[Test]
 		public void TestSkin ()
 		{
@@ -128,7 +123,6 @@ namespace Test1
 			string res = new WebTest ("MyPageWithTheme.aspx").Run ();
 			Debug.WriteLine (res);			
 		}
-#endif
 		[Test]
 		public void UnloadTest ()
 		{

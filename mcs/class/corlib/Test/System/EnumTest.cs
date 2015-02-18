@@ -635,11 +635,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#G2");
 				Assert.IsNull (ex.InnerException, "#G3");
 				Assert.IsNotNull (ex.Message, "#G4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'huh?'") != -1, "#G5");
-#else
-				Assert.IsTrue (ex.Message.IndexOf ("huh?") != -1, "#G5");
-#endif
 				Assert.IsNull (ex.ParamName, "#G6");
 			}
 
@@ -653,11 +649,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#H2");
 				Assert.IsNull (ex.InnerException, "#H3");
 				Assert.IsNotNull (ex.Message, "#H4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'test'") != -1, "#H5");
-#else
-				Assert.IsTrue (ex.Message.IndexOf ("test") != -1, "#H5");
-#endif
 				Assert.IsNull (ex.ParamName, "#H6");
 			}
 
@@ -756,9 +748,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")]
-#endif
 		public void ToObject_EnumType_UInt64 ()
 		{
 			object value = Enum.ToObject (typeof (TestingEnum3), 0);
@@ -1159,6 +1148,24 @@ namespace MonoTests.System
 			bool has = f.HasFlag (Foo.negative);
 		}
 #endif
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void HasFlagNull ()
+		{
+			SomeEnum x = SomeEnum.a;
+
+			x.HasFlag (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void HasFlagWrongType ()
+		{
+			SomeEnum x = SomeEnum.a;
+
+			x.HasFlag (SomeByteEnum.a);
+		}
 
 		[Flags]
 		enum SomeEnum

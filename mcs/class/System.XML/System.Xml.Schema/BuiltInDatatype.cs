@@ -35,11 +35,7 @@ using System.Xml.Schema;
 using System.Globalization;
 using System.Security.Cryptography;
 
-#if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
-#else
-using NSResolver = System.Xml.XmlNamespaceManager;
-#endif
 
 
 namespace Mono.Xml.Schema
@@ -82,11 +78,9 @@ namespace Mono.Xml.Schema
 		{
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.AnyAtomicType; }
 		}
-#endif
 
 		static readonly char [] whitespaceArray = new char [] {' '};
 
@@ -200,7 +194,6 @@ namespace Mono.Xml.Schema
 						 XmlSchemaFacet.Facet.enumeration | XmlSchemaFacet.Facet.whiteSpace; 
 	}
 
-#if NET_2_0
 	internal class XdtAnyAtomicType : XsdAnySimpleType
 	{
 		internal XdtAnyAtomicType ()
@@ -222,7 +215,6 @@ namespace Mono.Xml.Schema
 			get { return XmlTypeCode.UntypedAtomic; }
 		}
 	}
-#endif
 
 	// xs:string
 	internal class XsdString : XsdAnySimpleType
@@ -239,11 +231,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.String; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -278,11 +268,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.NormalizedString; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -303,11 +291,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Token; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -327,11 +313,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Language; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -351,11 +335,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.NMTOKEN; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.NmToken; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -386,12 +368,10 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.NMTOKENS; }
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Item; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string []); }
@@ -428,11 +408,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Name; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -463,11 +441,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.NCName; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.NCName; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -498,11 +474,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.ID; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Id; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -527,11 +501,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.IDREF; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Idref; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -556,12 +528,10 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.IDREFS; }
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Item; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string []); }
@@ -597,11 +567,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.ENTITY; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Entity; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -622,12 +590,10 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.ENTITIES; }
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Item; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string []); }
@@ -668,11 +634,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.NOTATION; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Notation; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -716,11 +680,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.None; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Decimal; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (decimal); }
@@ -776,11 +738,9 @@ namespace Mono.Xml.Schema
 		{
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Integer; }
 		}
-#endif
 
 		// Here it may be bigger than int's (or long's) MaxValue.
 		public override Type ValueType {
@@ -808,11 +768,9 @@ namespace Mono.Xml.Schema
 	// xs:Long
 	internal class XsdLong : XsdInteger
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Long; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (long); }
@@ -848,11 +806,9 @@ namespace Mono.Xml.Schema
 	// xs:Int
 	internal class XsdInt : XsdLong
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Int; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (int); }
@@ -889,11 +845,9 @@ namespace Mono.Xml.Schema
 	// xs:Short
 	internal class XsdShort : XsdInt
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Short; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (short); }
@@ -929,11 +883,9 @@ namespace Mono.Xml.Schema
 	// xs:Byte
 	internal class XsdByte : XsdShort
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Byte; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (sbyte); }
@@ -970,11 +922,9 @@ namespace Mono.Xml.Schema
 //	[CLSCompliant (false)]
 	internal class XsdNonNegativeInteger : XsdInteger
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.NonNegativeInteger; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (decimal); }
@@ -997,11 +947,9 @@ namespace Mono.Xml.Schema
 //	[CLSCompliant (false)]
 	internal class XsdUnsignedLong : XsdNonNegativeInteger
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.UnsignedLong; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (ulong); }
@@ -1038,11 +986,9 @@ namespace Mono.Xml.Schema
 //	[CLSCompliant (false)]
 	internal class XsdUnsignedInt : XsdUnsignedLong
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.UnsignedInt; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (uint); }
@@ -1080,11 +1026,9 @@ namespace Mono.Xml.Schema
 //	[CLSCompliant (false)]
 	internal class XsdUnsignedShort : XsdUnsignedInt
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.UnsignedShort; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (ushort); }
@@ -1121,11 +1065,9 @@ namespace Mono.Xml.Schema
 //	[CLSCompliant (false)]
 	internal class XsdUnsignedByte : XsdUnsignedShort
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.UnsignedByte; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (byte); }
@@ -1163,11 +1105,9 @@ namespace Mono.Xml.Schema
 //	[CLSCompliant (false)]
 	internal class XsdPositiveInteger : XsdNonNegativeInteger
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.PositiveInteger; }
 		}
-#endif
 
 		// It returns decimal, instead of int or long.
 		// Maybe MS developers thought about big integer...
@@ -1190,11 +1130,9 @@ namespace Mono.Xml.Schema
 	// xs:nonPositiveInteger
 	internal class XsdNonPositiveInteger : XsdInteger
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.NonPositiveInteger; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (decimal); }
@@ -1215,11 +1153,9 @@ namespace Mono.Xml.Schema
 	// xs:negativeInteger
 	internal class XsdNegativeInteger : XsdNonPositiveInteger
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.NegativeInteger; }
 		}
-#endif
 
 		public override Type ValueType {
 
@@ -1241,11 +1177,9 @@ namespace Mono.Xml.Schema
 	// xs:float
 	internal class XsdFloat : XsdAnySimpleType
 	{
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Float; }
 		}
-#endif
 
 		internal XsdFloat ()
 		{
@@ -1328,11 +1262,9 @@ namespace Mono.Xml.Schema
 			get { return XsdOrderedFacet.Total; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Double; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (double); }
@@ -1373,11 +1305,9 @@ namespace Mono.Xml.Schema
 		{
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Base64Binary; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (byte[]); }
@@ -1469,11 +1399,9 @@ namespace Mono.Xml.Schema
 			get { return stringAllowedFacets; } 
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.HexBinary; }
 		}
-#endif
 
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.None; }
@@ -1514,11 +1442,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.QName; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.QName; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (XmlQualifiedName); }
@@ -1565,11 +1491,9 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Boolean; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (bool); }
@@ -1611,11 +1535,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.AnyUri; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (Uri); }
@@ -1715,11 +1637,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Duration; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (TimeSpan); }
@@ -1775,7 +1695,6 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-#if NET_2_0
 	// xdt:dayTimeDuration
 	internal class XdtDayTimeDuration : XsdDuration
 	{
@@ -1859,7 +1778,6 @@ namespace Mono.Xml.Schema
 	 
 		}
 	}
-#endif
 
 	// xs:dateTime
 	internal class XsdDateTime : XsdAnySimpleType
@@ -1877,11 +1795,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.DateTime; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (DateTime); }
@@ -1947,11 +1863,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Date; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (DateTime); }
@@ -2034,11 +1948,9 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.Time; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (DateTime); }
@@ -2090,11 +2002,9 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.GYearMonth; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (DateTime); }
@@ -2141,11 +2051,9 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.GMonthDay; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (DateTime); }
@@ -2192,11 +2100,9 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.GYear; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (DateTime); }
@@ -2245,11 +2151,9 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.GMonth; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (DateTime); }
@@ -2297,11 +2201,9 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
-#if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.GDay; }
 		}
-#endif
 
 		public override Type ValueType {
 			get { return typeof (DateTime); }

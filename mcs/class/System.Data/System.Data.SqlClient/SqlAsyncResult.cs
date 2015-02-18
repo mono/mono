@@ -31,7 +31,6 @@
 //
 
 
-#if NET_2_0
 using System;
 using System.Threading;
 
@@ -136,4 +135,3 @@ namespace System.Data.SqlClient
         }
 }
 
-#endif // NET_2_0

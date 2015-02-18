@@ -61,13 +61,11 @@ namespace System.ServiceModel.Description
 			DefaultOutgoingResponseFormat = WebMessageFormat.Xml;
 		}
 
-#if NET_4_0
 		public virtual bool AutomaticFormatSelectionEnabled { get; set; }
 
 		public virtual bool FaultExceptionEnabled { get; set; }
 
 		public virtual bool HelpEnabled { get; set; }
-#endif
 
 		public virtual WebMessageBodyStyle DefaultBodyStyle { get; set; }
 

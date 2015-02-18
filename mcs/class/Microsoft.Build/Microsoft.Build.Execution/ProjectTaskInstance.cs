@@ -47,7 +47,6 @@ namespace Microsoft.Build.Execution
 				throw new NotSupportedException ();
 				}).ToArray ();
 			Parameters = new Dictionary<string,string> (xml.Parameters);
-			#if NET_4_5
 			MSBuildArchitecture = xml.MSBuildArchitecture;
 			MSBuildRuntime = xml.MSBuildRuntime;
 			
@@ -56,7 +55,6 @@ namespace Microsoft.Build.Execution
 			location = xml.Location;
 			MSBuildArchitectureLocation = xml.MSBuildArchitectureLocation;
 			MSBuildRuntimeLocation = xml.MSBuildRuntimeLocation;
-			#endif
 		}
 		
 		string condition;
@@ -66,27 +64,18 @@ namespace Microsoft.Build.Execution
 		
 		ElementLocation condition_location, location;
 		
-		#if NET_4_5
 		public
-		#else
-		internal
-		#endif
 		override ElementLocation ConditionLocation {
 			get { return condition_location; }
 		}
 
-		#if NET_4_5
 		public
-		#else
-		internal
-		#endif
 		override ElementLocation Location {
 			get { return location; }
 		}
 		
 		public string ContinueOnError { get; private set; }
 		
-		#if NET_4_5
 		public ElementLocation ContinueOnErrorLocation { get; private set; }
 
 		public string MSBuildArchitecture { get; private set; }
@@ -96,7 +85,6 @@ namespace Microsoft.Build.Execution
 		public string MSBuildRuntime { get; private set; }
 
 		public ElementLocation MSBuildRuntimeLocation { get; private set; }
-		#endif
 		
 		public string Name { get; private set; }
 

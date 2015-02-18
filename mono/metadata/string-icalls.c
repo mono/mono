@@ -11,7 +11,6 @@
 #include <config.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <signal.h>
 #include <string.h>
 #include "mono/utils/mono-membar.h"
 #include <mono/metadata/string-icalls.h>
@@ -44,7 +43,6 @@ MonoString  *
 ves_icall_System_String_InternalIntern (MonoString *str)
 {
 	MonoString *res;
-	MONO_ARCH_SAVE_REGS;
 
 	res = mono_string_intern(str);
 	if (!res)
@@ -55,8 +53,6 @@ ves_icall_System_String_InternalIntern (MonoString *str)
 MonoString * 
 ves_icall_System_String_InternalIsInterned (MonoString *str)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return mono_string_is_interned(str);
 }
 

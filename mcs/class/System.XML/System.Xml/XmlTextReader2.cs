@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
 
@@ -254,16 +253,9 @@ namespace System.Xml
 			get { return entity != null ? ReadState.Interactive : source.ReadState; }
 		}
 
-#if NET_4_0
 		[MonoTODO]
 		public DtdProcessing DtdProcessing { get; set; }
-#endif
 
-#if !NET_4_5
-		public override XmlReaderSettings Settings {
-			get { return base.Settings; }
-		}
-#endif
 
 		public override string Value {
 			get { return Current.Value; }
@@ -724,4 +716,3 @@ namespace System.Xml
 	}
 }
 
-#endif

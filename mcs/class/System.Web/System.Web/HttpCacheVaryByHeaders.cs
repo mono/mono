@@ -66,11 +66,7 @@ namespace System.Web
 
 		Hashtable fields;
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		HttpCacheVaryByHeaders ()
 		{
 			/* the field names are meant to be case insensitive */

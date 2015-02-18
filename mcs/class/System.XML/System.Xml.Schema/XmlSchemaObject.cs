@@ -89,12 +89,8 @@ namespace System.Xml.Schema
 			set{ sourceUri = value; } 
 		}
 
-#if NET_2_0
 		[XmlIgnore]
 		public
-#else
-		internal
-#endif
 		XmlSchemaObject Parent {
 			get { return parent; }
 			set { parent = value; }

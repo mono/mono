@@ -1,6 +1,7 @@
 SUBDIRS = net_2_0 net_4_0 net_4_5
 
 monodir = $(sysconfdir)/mono
+monolldbdir = $(libdir)/mono/lldb
 
 EXTRA_DIST =  	\
 	config.in \
@@ -12,7 +13,8 @@ EXTRA_DIST =  	\
 	reactive.pc.in xbuild12.pc \
 	net_1_1/machine.config \
 	gdb/mono-gdb.py \
-	gdb/gdb-python.diff
+	gdb/gdb-python.diff	\
+	lldb/mono.py
 
 pkgconfigdir = $(libdir)/pkgconfig
 
@@ -31,6 +33,7 @@ DISTCLEANFILES= mono-2.pc mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nuni
 mono_DATA =  config \
 	     browscap.ini
 
+monolldb_DATA = lldb/mono.py
 gdbdir = $(bindir)
 
 mono-sgen-gdb.py: gdb/mono-gdb.py

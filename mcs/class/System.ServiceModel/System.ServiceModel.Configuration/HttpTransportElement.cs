@@ -35,10 +35,8 @@ using System.Configuration;
 using System.Net;
 using System.Net.Security;
 using System.Reflection;
-#if NET_4_0
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Authentication.ExtendedProtection.Configuration;
-#endif
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.IdentityModel.Claims;
@@ -142,16 +140,13 @@ namespace System.ServiceModel.Configuration
 					_properties.Add (new ConfigurationProperty ("transferMode", typeof (TransferMode), "Buffered", null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("unsafeConnectionNtlmAuthentication", typeof (bool), "false", new BooleanConverter (), null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("useDefaultWebProxy", typeof (bool), "true", new BooleanConverter (), null, ConfigurationPropertyOptions.None));
-#if NET_4_0
 					_properties.Add (new ConfigurationProperty ("decompressionEnabled", typeof (bool), false, new BooleanConverter (), null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("extendedProtectionPolicy", typeof (ExtendedProtectionPolicyElement), null, new ExtendedProtectionPolicyTypeConverter (), null, ConfigurationPropertyOptions.None));
-#endif
 				}
 				return _properties;
 			}
 		}
 
-#if NET_4_0
 		[ConfigurationProperty ("decompressionEnabled",
 			 Options = ConfigurationPropertyOptions.None)]
 		public bool DecompressionEnabled {
@@ -165,7 +160,6 @@ namespace System.ServiceModel.Configuration
 			get { return (ExtendedProtectionPolicyElement) base ["extendedProtectionPolicy"]; }
 			set { base ["extendedProtectionPolicy"] = value; }
 		}
-#endif
 
 		[ConfigurationProperty ("proxyAddress",
 			 Options = ConfigurationPropertyOptions.None,
@@ -234,11 +228,9 @@ namespace System.ServiceModel.Configuration
 			b.TransferMode = TransferMode;
 			b.UnsafeConnectionNtlmAuthentication = UnsafeConnectionNtlmAuthentication;
 			b.UseDefaultWebProxy = UseDefaultWebProxy;
-#if NET_4_0
 			b.DecompressionEnabled = DecompressionEnabled;
 			// FIXME: enable this.
 			//b.ExtendedProtectionPolicy = ExtendedProtectionPolicy.BuildPolicy ();
-#endif
 		}
 
 		public override void CopyFrom (ServiceModelExtensionElement from)
@@ -257,7 +249,6 @@ namespace System.ServiceModel.Configuration
 			TransferMode = e.TransferMode;
 			UnsafeConnectionNtlmAuthentication = e.UnsafeConnectionNtlmAuthentication;
 			UseDefaultWebProxy = e.UseDefaultWebProxy;
-#if NET_4_0
 			DecompressionEnabled = e.DecompressionEnabled;
 			// FIXME: enable this.
 			/*
@@ -265,7 +256,6 @@ namespace System.ServiceModel.Configuration
 			foreach (var sne in ExtendedProtectionPolicy.CustomServiceNames)
 				ExtendedProtectionPolicy.CustomServiceNames.Add (sne);
 			*/
-#endif
 		}
 
 		protected override TransportBindingElement CreateDefaultBindingElement ()
@@ -289,7 +279,6 @@ namespace System.ServiceModel.Configuration
 			TransferMode = b.TransferMode;
 			UnsafeConnectionNtlmAuthentication = b.UnsafeConnectionNtlmAuthentication;
 			UseDefaultWebProxy = b.UseDefaultWebProxy;
-#if NET_4_0
 			DecompressionEnabled = b.DecompressionEnabled;
 			// FIXME: enable this.
 			/*
@@ -297,7 +286,6 @@ namespace System.ServiceModel.Configuration
 			foreach (var sn in b.ExtendedProtectionPolicy.CustomServiceNames)
 				ExtendedProtectionPolicy.CustomServiceNames.Add (new ServiceNameElement () { Name = sn.ToString () });
 			*/
-#endif
 		}
 	}
 }

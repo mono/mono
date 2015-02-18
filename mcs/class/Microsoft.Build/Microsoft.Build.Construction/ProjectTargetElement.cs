@@ -112,7 +112,6 @@ namespace Microsoft.Build.Construction
                         get { return "Target"; }
                 }
 
-#if NET_4_5
                  public ElementLocation AfterTargetsLocation { get; private set; }
                  public ElementLocation BeforeTargetsLocation { get; private set; }
                  public ElementLocation DependsOnTargetsLocation { get; private set; }
@@ -121,17 +120,6 @@ namespace Microsoft.Build.Construction
                  public ElementLocation NameLocation { get; private set; }
                  public ElementLocation OutputsLocation { get; private set; }
                  public ElementLocation ReturnsLocation { get; private set; }
-#else
-                 internal ElementLocation AfterTargetsLocation { get; set; }
-                 internal ElementLocation BeforeTargetsLocation { get; set; }
-                 internal ElementLocation DependsOnTargetsLocation { get; set; }
-                 internal ElementLocation InputsLocation { get; set; }
-                 internal ElementLocation KeepDuplicateOutputsLocation { get; set; }
-                 internal ElementLocation LabelLocation { get; set; }
-                 internal ElementLocation NameLocation { get; set; }
-                 internal ElementLocation OutputsLocation { get; set; }
-                 internal ElementLocation ReturnsLocation { get; set; }
-#endif
 
                 internal override ProjectElement LoadChildElement (XmlReader reader)
                 {

@@ -843,13 +843,11 @@ namespace System.Web
 		{
 		}
 
-#if NET_4_0
 		public virtual string GetOutputCacheProviderName (HttpContext context)
 		{
 			// LAMESPEC: doesn't throw ProviderException if context is null
 			return OutputCache.DefaultProviderName;
 		}
-#endif
 		
 		public virtual string GetVaryByCustomString (HttpContext context, string custom)
 		{
@@ -1168,11 +1166,9 @@ namespace System.Web
 			Delegate eventHandler;
 			if (stop_processing)
 				yield return true;
-#if NET_4_0
 			HttpRequest req = context.Request;
 			if (req != null)
 				req.Validate ();
-#endif
 			context.MapRequestHandlerDone = false;
 			StartTimer ("BeginRequest");
 			eventHandler = Events [BeginRequestEvent];

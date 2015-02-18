@@ -3219,7 +3219,7 @@ namespace Mono.CSharp {
 							continue;
 
 						if (!applicable[cii])
-							break;
+							continue;
 
 						//
 						// For each exact bound U of Xi all types Uj which are not identical
@@ -3236,7 +3236,7 @@ namespace Mono.CSharp {
 							continue;
 
 						if (!applicable[cii])
-							break;
+							continue;
 
 						//
 						// For each lower bound U of Xi all types Uj to which there is not an implicit conversion
@@ -3255,7 +3255,7 @@ namespace Mono.CSharp {
 							continue;
 
 						if (!applicable[cii])
-							break;
+							continue;
 
 						//
 						// For each upper bound U of Xi all types Uj from which there is not an implicit conversion

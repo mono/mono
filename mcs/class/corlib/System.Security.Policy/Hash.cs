@@ -42,9 +42,7 @@ namespace System.Security.Policy {
 [Serializable]
 [ComVisible (true)]
 public sealed class Hash :
-#if NET_4_0
 		EvidenceBase,
-#endif
 		ISerializable, IBuiltInEvidence {
 
 	private Assembly assembly;

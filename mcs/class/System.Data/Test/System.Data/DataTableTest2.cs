@@ -2404,7 +2404,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (6, result [0][0], "# incorrect sorting order");
 		}
 
-#if NET_2_0
 		[Test]
 		public void DataTable_Clone ()
 		{
@@ -2521,7 +2520,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (2, t3.Rows.Count, "#4");
 			Assert.AreEqual (1, t3.Rows [0][1], "#5");
 		}
-#endif
 
 		internal class DataRowsComparer : IComparer<DataRow>
 		{

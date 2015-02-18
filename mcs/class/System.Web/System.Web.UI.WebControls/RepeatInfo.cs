@@ -42,7 +42,6 @@ namespace System.Web.UI.WebControls {
 		public void RenderRepeater (HtmlTextWriter w, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
 		{
 			PrintValues (user);
-#if NET_4_0
 			RepeatLayout layout = RepeatLayout;
 			bool listLayout = layout == RepeatLayout.OrderedList || layout == RepeatLayout.UnorderedList;
 
@@ -59,19 +58,14 @@ namespace System.Web.UI.WebControls {
 				if (cols > 1)
 					throw new InvalidOperationException ("The UnorderedList and OrderedList layouts do not support multi-column layouts.");
 			}
-#endif
 			if (RepeatDirection == RepeatDirection.Vertical) {
-#if NET_4_0
 				if (listLayout)
 					RenderList (w, user, controlStyle, baseControl);
 				else
-#endif
 					RenderVert (w, user, controlStyle, baseControl);
 			} else {
-#if NET_4_0
 				if (listLayout)
 						throw new InvalidOperationException ("The UnorderedList and OrderedList layouts only support vertical layout.");
-#endif
 				RenderHoriz (w, user, controlStyle, baseControl);
 			}
 		}
@@ -80,7 +74,6 @@ namespace System.Web.UI.WebControls {
 		{
 			w.Write ("<br />");
 		}
-#if NET_4_0
 		void RenderList (HtmlTextWriter w, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
 		{
 			int items = user.RepeatedItemCount;
@@ -99,7 +92,6 @@ namespace System.Web.UI.WebControls {
 			
 			w.RenderEndTag ();
 		}
-#endif
 		void RenderVert (HtmlTextWriter w, IRepeatInfoUser user, Style controlStyle, WebControl baseControl) 
 		{
 			int itms = user.RepeatedItemCount;
@@ -436,7 +428,6 @@ namespace System.Web.UI.WebControls {
 				case RepeatLayout.Flow:
 					c = new Label ();
 					break;
-#if NET_4_0
 				case RepeatLayout.OrderedList:
 					c = new WebControl (HtmlTextWriterTag.Ol);
 					break;
@@ -444,7 +435,6 @@ namespace System.Web.UI.WebControls {
 				case RepeatLayout.UnorderedList:
 					c = new WebControl (HtmlTextWriterTag.Ul);
 					break;
-#endif
 				default:
 					throw new InvalidOperationException (String.Format ("Unsupported RepeatLayout value '{0}'.", RepeatLayout));
 			}
@@ -498,11 +488,7 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				bool outOfRange;
-#if NET_4_0
 				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.OrderedList;
-#else
-				outOfRange = value < RepeatLayout.Table || value > RepeatLayout.Flow;
-#endif
 				if (outOfRange)
 					throw new ArgumentOutOfRangeException ();	
 				layout = value;

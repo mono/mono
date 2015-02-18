@@ -27,7 +27,6 @@
 //
 //
 
-#if NET_2_0
 namespace System.Web.Management
 {
 	public sealed class WebEventCodes
@@ -107,4 +106,3 @@ namespace System.Web.Management
 		public const int WebExtendedBase = 0x186A0;
 	}
 }
-#endif

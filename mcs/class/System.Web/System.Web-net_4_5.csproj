@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,612,618,618,1699,612,618,618</NoWarn>
+    <NoWarn>1699,612,618,618</NoWarn>
     <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
@@ -23,17 +23,17 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,612,618,618,1699,612,618,618</NoWarn>
+    <NoWarn>1699,612,618,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,612,618,618,1699,612,618,618</NoWarn>
+    <NoWarn>1699,612,618,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;INSIDE_SYSTEM_WEB;WEBSERVICES_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -48,7 +48,6 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\corlib\System.Collections.Concurrent\SplitOrderedList.cs" />
     <Compile Include="..\Managed.Windows.Forms\System.Resources\ByteArrayFromResXHandler.cs" />
     <Compile Include="..\Managed.Windows.Forms\System.Resources\FileRefHandler.cs" />
     <Compile Include="..\Managed.Windows.Forms\System.Resources\InMemoryHandler.cs" />
@@ -111,6 +110,7 @@
     <Compile Include="Mono.Web.Util\SettingsMapping.cs" />
     <Compile Include="Mono.Web.Util\SettingsMappingManager.cs" />
     <Compile Include="Mono.Web.Util\SettingsMappingWhat.cs" />
+    <Compile Include="System.Collections.Concurrent\SplitOrderedList.cs" />
     <Compile Include="System.Web.Caching\AggregateCacheDependency.cs" />
     <Compile Include="System.Web.Caching\Cache.cs" />
     <Compile Include="System.Web.Caching\CacheDependency.cs" />
@@ -471,6 +471,7 @@
     <Compile Include="System.Web.Security\MachineKeyProtection.cs" />
     <Compile Include="System.Web.Security\Membership.cs" />
     <Compile Include="System.Web.Security\MembershipHelper.cs" />
+    <Compile Include="System.Web.Security\MembershipPasswordAttribute.cs" />
     <Compile Include="System.Web.Security\PassportAuthenticationEventArgs.cs" />
     <Compile Include="System.Web.Security\PassportAuthenticationEventHandler.cs" />
     <Compile Include="System.Web.Security\PassportAuthenticationModule.cs" />
@@ -1345,6 +1346,9 @@
     <Compile Include="System.Web\TraceData.cs" />
     <Compile Include="System.Web\TraceManager.cs" />
     <Compile Include="System.Web\TraceMode.cs" />
+    <Compile Include="System.Web\UnvalidatedRequestValues.cs" />
+    <Compile Include="System.Web\UnvalidatedRequestValuesBase.cs" />
+    <Compile Include="System.Web\UnvalidatedRequestValuesWrapper.cs" />
     <Compile Include="System.Web\VirtualPath.cs" />
     <Compile Include="System.Web\VirtualPathUtility.cs" />
     <Compile Include="System.Web\WebCategoryAttribute.cs" />
@@ -1407,6 +1411,10 @@
     <ProjectReference Include="../System.Runtime.Serialization.Formatters.Soap/System.Runtime.Serialization.Formatters.Soap-net_4_5.csproj">
       <Project>{B12AABBC-30D1-4885-BF3F-A53B970F68FB}</Project>
       <Name>System.Runtime.Serialization.Formatters.Soap-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.ComponentModel.DataAnnotations/System.ComponentModel.DataAnnotations-net_4_5.csproj">
+      <Project>{63EC4158-FFAC-4867-8003-CF6054C8DF0B}</Project>
+      <Name>System.ComponentModel.DataAnnotations-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Configuration/System.Configuration-net_4_5.csproj">
       <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>

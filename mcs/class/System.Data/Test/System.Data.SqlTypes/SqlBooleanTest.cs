@@ -969,7 +969,6 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual ((byte)0, SqlBoolean.Zero.ByteValue, "Zero field does not work correctly");
 
 		}
-#if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
 		{
@@ -1064,7 +1063,6 @@ namespace MonoTests.System.Data.SqlTypes
 			NUnit.Framework.Assert.IsTrue ((z1 <= x).Value, "#A11");
 			NUnit.Framework.Assert.IsTrue ((z1 <= y).Value, "#A12");
 		}
-#endif
 	}
 }
 

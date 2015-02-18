@@ -79,17 +79,11 @@ namespace MonoTests.SystemWeb.Framework
 				throw new InvalidOperationException ("Method '" + methodName + "' cannot be found in type '" + type + "'.");
 
 			if (mi.IsAbstract ||
-#if NET_2_0
 			    mi.IsGenericMethodDefinition ||
-#endif
 			    mi.ReturnType != typeof (void) || mi.GetParameters ().Length > 0)
 				throw new InvalidOperationException ("Method '" + methodName + "' must return void and take no parameters.");
 
-#if NET_2_0
 			ret = Delegate.CreateDelegate (typeof (SetupHandler), null, mi, false) as SetupHandler;
-#else
-			ret = Delegate.CreateDelegate (typeof (SetupHandler), mi) as SetupHandler;
-#endif
 			if (ret == null)
 				throw new InvalidOperationException ("Failed to create a delegate to method '" + methodName + "'.");
 

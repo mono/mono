@@ -28,12 +28,10 @@
 
 
 namespace System.Xml {
-#if NET_4_0
 	public enum DtdProcessing 
 	{
 		Prohibit = 0,
 		Ignore = 1,
 		Parse = 2
 	}
-#endif
 }

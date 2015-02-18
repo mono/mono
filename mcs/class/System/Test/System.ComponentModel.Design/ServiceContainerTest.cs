@@ -104,7 +104,6 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.IsNull (parent.GetService (typeof (ICollection)), "#F2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void AddService1_Disposed ()
 		{
@@ -130,7 +129,6 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.IsNotNull (service, "#C1");
 			Assert.AreSame (serviceInstance2, service, "#C2");
 		}
-#endif
 
 		[Test] // AddService (Type, Object)
 		public void AddService1_ServiceInstance_Null ()
@@ -219,7 +217,6 @@ namespace MonoTests.System.ComponentModel.Design
 			}
 		}
 
-#if NET_2_0
 		[Test] // AddService (Type, ServiceCreatorCallback)
 		public void AddService2_Disposed ()
 		{
@@ -243,7 +240,6 @@ namespace MonoTests.System.ComponentModel.Design
 			service = sc.GetService (typeof (Svc));
 			Assert.IsNotNull (service, "#C");
 		}
-#endif
 
 		[Test] // AddService (Type, ServiceCreatorCallback)
 		public void AddService2_ServiceType_Null ()
@@ -300,7 +296,6 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.AreSame (serviceInstance1, parent.GetService (serviceType1), "#C2");
 		}
 
-#if NET_2_0
 		[Test] // AddService (Type, Object, Boolean)
 		public void AddService3_Disposed ()
 		{
@@ -331,7 +326,6 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.AreSame (serviceInstance1, sc.GetService (serviceType1), "#B3");
 			Assert.AreSame (serviceInstance2, sc.GetService (serviceType2), "#B4");
 		}
-#endif
 
 		[Test] // AddService (Type, Object, Boolean)
 		public void AddService3_ServiceInstance_Null ()
@@ -482,22 +476,14 @@ namespace MonoTests.System.ComponentModel.Design
 			ServiceContainer sc1 = new ServiceContainer ();
 
 			Assert.AreSame (sc1, sc1.GetService (typeof (IServiceContainer)), "#A1");
-#if NET_2_0
 			Assert.AreSame (sc1, sc1.GetService (typeof(ServiceContainer)), "#A2");
-#else
-			Assert.IsNull (sc1.GetService (typeof (ServiceContainer)), "#A2");
-#endif
 
 			ServiceContainer sc2 = new ServiceContainer ();
 			sc1.AddService (typeof (IServiceContainer), sc2);
 			sc1.AddService (typeof (ServiceContainer), sc2);
 
 			Assert.AreSame (sc1, sc1.GetService (typeof (IServiceContainer)), "#B1");
-#if NET_2_0
 			Assert.AreSame (sc1, sc1.GetService (typeof(ServiceContainer)), "#B2");
-#else
-			Assert.AreSame (sc2, sc1.GetService (typeof (ServiceContainer)), "#B2");
-#endif
 		}
 
 		[Test]
@@ -617,7 +603,6 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.IsNull (parent.GetService (serviceType1), "#K2");
 		}
 
-#if NET_2_0
 		[Test] // RemoveService (Type)
 		public void RemoveService1_Disposed ()
 		{
@@ -635,7 +620,6 @@ namespace MonoTests.System.ComponentModel.Design
 
 			sc.RemoveService (typeof (DateTime));
 		}
-#endif
 
 		[Test] // RemoveService (Type)
 		public void RemoveService1_ServiceType_Null ()
@@ -724,7 +708,6 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.IsNull (parent.GetService (serviceType1), "#H2");
 		}
 
-#if NET_2_0
 		[Test] // RemoveService (Type, Boolean)
 		public void RemoveService2_Disposed ()
 		{
@@ -756,7 +739,6 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.IsNull (sc.GetService (serviceType1), "#B1");
 			Assert.IsNull (sc.GetService (serviceType2), "#B2");
 		}
-#endif
 
 		[Test] // RemoveService (Type, Boolean)
 		public void RemoveService2_ServiceType_Null ()

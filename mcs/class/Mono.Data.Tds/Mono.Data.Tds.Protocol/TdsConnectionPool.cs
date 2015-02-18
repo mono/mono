@@ -262,7 +262,6 @@ retry:
 			}
 		}
 
-#if NET_2_0
 		public void ResetConnectionPool ()
 		{
 			lock (available) {
@@ -284,7 +283,6 @@ retry:
 				Monitor.PulseAll (available);
 			}
 		}
-#endif
 		#endregion // Methods
 	}
 }

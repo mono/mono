@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Diagnostics.Contracts;
 
 namespace System.Globalization
 {
@@ -60,7 +61,7 @@ namespace System.Globalization
 		bool m_useUserOverride;
 		[NonSerialized]
 		volatile NumberFormatInfo numInfo;
-		volatile DateTimeFormatInfo dateTimeInfo;
+		internal volatile DateTimeFormatInfo dateTimeInfo;
 		volatile TextInfo textInfo;
 		private string m_name;
 		
@@ -98,6 +99,9 @@ namespace System.Globalization
 		[NonSerialized]
 		// Used by Thread.set_CurrentCulture
 		internal byte[] cached_serialized_form;
+
+		[NonSerialized]internal CultureData m_cultureData;
+ 		[NonSerialized]internal bool m_isInherited;
 		
 		internal const int InvariantCultureId = 0x7F;
 		const int CalendarTypeBits = 8;
@@ -378,10 +382,7 @@ namespace System.Globalization
 
 			RegionInfo.ClearCachedData ();
 			TimeZone.ClearCachedData ();
-			DateTime.ClearCachedData ();
-#if NET_4_5
 			TimeZoneInfo.ClearCachedData ();
-#endif
 		}
 
 		public virtual object Clone()
@@ -418,6 +419,11 @@ namespace System.Globalization
 			// since it must not be read-only
 			if (neutral && infos.Length > 0 && infos [0] == null) {
 				infos [0] = (CultureInfo) InvariantCulture.Clone ();
+			}
+
+			for (int i = 1; i < infos.Length; ++i) {
+				var ci = infos [i];
+				infos [i].m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.iso2lang);
 			}
 
 			return infos;
@@ -484,14 +490,6 @@ namespace System.Globalization
 
 		internal void CheckNeutral ()
 		{
-#if !NET_4_0
-			if (IsNeutralCulture) {
-				throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
-						"a neutral culture. It can not be used in formatting " +
-						"and parsing and therefore cannot be set as the thread's " +
-						"current culture.");
-			}
-#endif
 		}
 
 		public virtual NumberFormatInfo NumberFormat {
@@ -529,17 +527,10 @@ namespace System.Globalization
 				if (!constructed) Construct ();
 				CheckNeutral ();
 
-				// TODO: Have to lock because construct_datetime_format is not atomic
-				lock (this) {
-					if (cultureID == InvariantCultureId && m_isReadOnly)
-						dateTimeInfo = DateTimeFormatInfo.InvariantInfo;
-					else if (dateTimeInfo == null) {
-						dateTimeInfo = new DateTimeFormatInfo (this, m_isReadOnly);
-						if (cultureID != InvariantCultureId)
-							construct_datetime_format ();
-					}
-				}
-
+				var temp = new DateTimeFormatInfo (m_cultureData, Calendar);
+				temp.m_isReadOnly = m_isReadOnly;
+				System.Threading.Thread.MemoryBarrier();
+				dateTimeInfo = temp;
 				return dateTimeInfo;
 			}
 
@@ -615,9 +606,6 @@ namespace System.Globalization
 		private extern static CultureInfo [] internal_get_cultures (bool neutral, bool specific, bool installed);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void construct_datetime_format ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void construct_number_format ();
 
 		private void ConstructInvariant (bool read_only)
@@ -639,7 +627,7 @@ namespace System.Globalization
 			iso3lang="IVL";
 			iso2lang="iv";
 			win3lang="IVL";
-			default_calendar_type = 1 << CalendarTypeBits;
+			default_calendar_type = 1 << CalendarTypeBits | (int) GregorianCalendarTypes.Localized;
 		}
 
 		private unsafe TextInfo CreateTextInfo (bool readOnly)
@@ -665,6 +653,7 @@ namespace System.Globalization
 			if (culture == InvariantCultureId) {
 				/* Short circuit the invariant culture */
 				ConstructInvariant (read_only);
+				m_cultureData = CultureData.Invariant;
 				return;
 			}
 
@@ -673,12 +662,10 @@ namespace System.Globalization
 				// Be careful not to cause recursive CultureInfo initialization
 				//
 				var msg = string.Format (InvariantCulture, "Culture ID {0} (0x{1}) is not a supported culture.", culture.ToString (InvariantCulture), culture.ToString ("X4", InvariantCulture));
-#if NET_4_0
 				throw new CultureNotFoundException ("culture", msg);
-#else
-				throw new ArgumentException (msg, "culture");
-#endif
 			}
+
+			m_cultureData = CultureData.GetCultureData (m_name, m_useUserOverride, datetime_index, CalendarType, iso2lang);
 		}
 
 		public CultureInfo (string name) : this (name, true) {}
@@ -694,16 +681,20 @@ namespace System.Globalization
 			constructed = true;
 			m_isReadOnly = read_only;
 			m_useUserOverride = useUserOverride;
+			m_isInherited = GetType() != typeof(System.Globalization.CultureInfo);
 
 			if (name.Length == 0) {
 				/* Short circuit the invariant culture */
 				ConstructInvariant (read_only);
+				m_cultureData = CultureData.Invariant;
 				return;
 			}
 
 			if (!construct_internal_locale_from_name (name.ToLowerInvariant ())) {
 				throw CreateNotFoundException (name);
 			}
+
+			m_cultureData = CultureData.GetCultureData (m_name, useUserOverride, datetime_index, CalendarType, iso2lang);
 		}
 
 		// This is used when creating by specific name and creating by
@@ -820,6 +811,7 @@ namespace System.Globalization
 			if (ci.IsNeutralCulture)
 				ci = CreateSpecificCultureFromNeutral (ci.Name);
 
+			ci.m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.iso2lang);
 			return ci;
 		}
 
@@ -993,6 +985,23 @@ namespace System.Globalization
 			return new CultureInfo (id);
 		}
 
+		internal int CalendarType {
+			get {
+				switch (default_calendar_type >> CalendarTypeBits) {
+				case 1:
+					return Calendar.CAL_GREGORIAN;
+				case 2:
+					return Calendar.CAL_THAI;
+				case 3:
+					return Calendar.CAL_UMALQURA;
+				case 4:
+					return Calendar.CAL_HIJRI;
+				default:
+					throw new NotImplementedException ("CalendarType");
+				}
+			}
+		}
+
 		static Calendar CreateCalendar (int calendarType)
 		{
 			string name = null;
@@ -1016,20 +1025,15 @@ namespace System.Globalization
 
 			Type type = Type.GetType (name, false);
 			if (type == null)
-				return CreateCalendar (1 << CalendarTypeBits); // return invariant calandar if not found
+				return new GregorianCalendar (GregorianCalendarTypes.Localized); // return invariant calendar if not found
 			return (Calendar) Activator.CreateInstance (type);
 		}
 
 		static Exception CreateNotFoundException (string name)
 		{
-#if NET_4_0
 			return new CultureNotFoundException ("name", "Culture name " + name + " is not supported.");
-#else
-			return new ArgumentException ("Culture name " + name + " is not supported.", "name");
-#endif
 		}
 		
-#if NET_4_5
 		public static CultureInfo DefaultThreadCurrentCulture {
 			get {
 				return Thread.default_culture;
@@ -1047,6 +1051,30 @@ namespace System.Globalization
 				Thread.default_ui_culture = value;
 			}
 		}
-#endif
+
+#region reference sources
+		// TODO:
+		internal static readonly bool IsTaiwanSku;
+
+        //
+        // CheckDomainSafetyObject throw if the object is customized object which cannot be attached to 
+        // other object (like CultureInfo or DateTimeFormatInfo).
+        //
+
+        internal static void CheckDomainSafetyObject(Object obj, Object container)
+        {
+            if (obj.GetType().Assembly != typeof(System.Globalization.CultureInfo).Assembly) {
+                
+                throw new InvalidOperationException(
+                            String.Format(
+                                CultureInfo.CurrentCulture, 
+                                Environment.GetResourceString("InvalidOperation_SubclassedObject"), 
+                                obj.GetType(),
+                                container.GetType()));
+            }
+            Contract.EndContractBlock();
+        }
+
+#endregion
 	}
 }

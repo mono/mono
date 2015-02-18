@@ -43,17 +43,12 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-#if NET_4_0
 using System.Security.Authentication.ExtendedProtection;
-#endif
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net {
 	public sealed class HttpListenerRequest
 	{
-#if NET_4_0
 		class Context : TransportContext
 		{
 			public override ChannelBinding GetChannelBinding (ChannelBindingKind kind)
@@ -61,7 +56,6 @@ namespace System.Net {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 		string [] accept_types;
 		Encoding content_encoding;
@@ -512,7 +506,6 @@ namespace System.Net {
 			return context.Connection.ClientCertificate;
 		}
 
-#if NET_4_0
 		[MonoTODO]
 		public string ServiceName {
 			get {
@@ -525,9 +518,7 @@ namespace System.Net {
 				return new Context ();
 			}
 		}
-#endif
 		
-#if NET_4_5
 		[MonoTODO]
 		public bool IsWebSocketRequest {
 			get {
@@ -539,7 +530,6 @@ namespace System.Net {
 		{
 			return Task<X509Certificate2>.Factory.FromAsync (BeginGetClientCertificate, EndGetClientCertificate, null);
 		}
-#endif
 	}
 }
 #endif

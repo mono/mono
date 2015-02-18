@@ -30,11 +30,9 @@ namespace System.Data.Services
 {
 	public sealed class ProcessRequestArgs
 	{
-#if NET_4_0
 		public DataServiceOperationContext OperationContext {
 			get; private set;
 		}
-#endif
 		public bool IsBatchOperation {
 			get; private set;
 		}

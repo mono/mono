@@ -2289,7 +2289,7 @@ static int tls_gs_offset;
 gboolean
 mono_x86_have_tls_get (void)
 {
-#ifdef __APPLE__
+#ifdef TARGET_MACH
 	static gboolean have_tls_get = FALSE;
 	static gboolean inited = FALSE;
 	guint32 *ins;
@@ -3174,7 +3174,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_push_membase (code, ins->inst_basereg, 0xf0f0f0f0);
 			break;
 		case OP_MOVE:
-			x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
+			if (ins->dreg != ins->sreg1)
+				x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
 			break;
 		case OP_TAILCALL: {
 			MonoCallInst *call = (MonoCallInst*)ins;
@@ -3700,6 +3701,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FMOVE:
 			/* Not needed on the fp stack */
 			break;
+		case OP_MOVE_F_TO_I4:
+			x86_fst_membase (code, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, FALSE, TRUE);
+			x86_mov_reg_membase (code, ins->dreg, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, 4);
+			break;
+		case OP_MOVE_I4_TO_F:
+			x86_mov_membase_reg (code, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, ins->sreg1, 4);
+			x86_fld_membase (code, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, FALSE);
+			break;
 		case OP_FADD:
 			x86_fp_op_reg (code, X86_FADD, 1, TRUE);
 			break;
@@ -4213,14 +4222,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_MEMORY_BARRIER: {
-			/* x86 only needs barrier for StoreLoad and FullBarrier */
-			switch (ins->backend.memory_barrier_kind) {
-			case StoreLoadBarrier:
-			case FullBarrier:
-				/* http://blogs.sun.com/dave/resource/NHM-Pipeline-Blog-V2.txt */
+			if (ins->backend.memory_barrier_kind == MONO_MEMORY_BARRIER_SEQ) {
 				x86_prefix (code, X86_LOCK_PREFIX);
 				x86_alu_membase_imm (code, X86_ADD, X86_ESP, 0, 0);
-				break;
 			}
 			break;
 		}
@@ -4318,6 +4322,69 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			x86_prefix (code, X86_LOCK_PREFIX);
 			x86_cmpxchg_membase_reg (code, ins->sreg1, ins->inst_offset, ins->sreg2);
+			break;
+		}
+		case OP_ATOMIC_LOAD_I1: {
+			x86_widen_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, TRUE, FALSE);
+			break;
+		}
+		case OP_ATOMIC_LOAD_U1: {
+			x86_widen_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, FALSE, FALSE);
+			break;
+		}
+		case OP_ATOMIC_LOAD_I2: {
+			x86_widen_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, TRUE, TRUE);
+			break;
+		}
+		case OP_ATOMIC_LOAD_U2: {
+			x86_widen_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, FALSE, TRUE);
+			break;
+		}
+		case OP_ATOMIC_LOAD_I4:
+		case OP_ATOMIC_LOAD_U4: {
+			x86_mov_reg_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, 4);
+			break;
+		}
+		case OP_ATOMIC_LOAD_R4:
+		case OP_ATOMIC_LOAD_R8: {
+			x86_fld_membase (code, ins->inst_basereg, ins->inst_offset, ins->opcode == OP_ATOMIC_LOAD_R8);
+			break;
+		}
+		case OP_ATOMIC_STORE_I1:
+		case OP_ATOMIC_STORE_U1:
+		case OP_ATOMIC_STORE_I2:
+		case OP_ATOMIC_STORE_U2:
+		case OP_ATOMIC_STORE_I4:
+		case OP_ATOMIC_STORE_U4: {
+			int size;
+
+			switch (ins->opcode) {
+			case OP_ATOMIC_STORE_I1:
+			case OP_ATOMIC_STORE_U1:
+				size = 1;
+				break;
+			case OP_ATOMIC_STORE_I2:
+			case OP_ATOMIC_STORE_U2:
+				size = 2;
+				break;
+			case OP_ATOMIC_STORE_I4:
+			case OP_ATOMIC_STORE_U4:
+				size = 4;
+				break;
+			}
+
+			x86_mov_membase_reg (code, ins->inst_destbasereg, ins->inst_offset, ins->sreg1, size);
+
+			if (ins->backend.memory_barrier_kind == MONO_MEMORY_BARRIER_SEQ)
+				x86_mfence (code);
+			break;
+		}
+		case OP_ATOMIC_STORE_R4:
+		case OP_ATOMIC_STORE_R8: {
+			x86_fst_membase (code, ins->inst_destbasereg, ins->inst_offset, ins->opcode == OP_ATOMIC_STORE_R8, TRUE);
+
+			if (ins->backend.memory_barrier_kind == MONO_MEMORY_BARRIER_SEQ)
+				x86_mfence (code);
 			break;
 		}
 		case OP_CARD_TABLE_WBARRIER: {
@@ -4863,10 +4930,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_XZERO:
 			x86_sse_alu_pd_reg_reg (code, X86_SSE_PXOR, ins->dreg, ins->dreg);
 			break;
-		case OP_ICONV_TO_R8_RAW:
-			x86_mov_membase_reg (code, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, ins->sreg1, 4);
-			x86_fld_membase (code, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, FALSE);
-			break;
 
 		case OP_FCONV_TO_R8_X:
 			x86_fst_membase (code, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, TRUE, TRUE);
@@ -5056,6 +5119,7 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 		case MONO_PATCH_INFO_RGCTX_FETCH:
 		case MONO_PATCH_INFO_GENERIC_CLASS_INIT:
 		case MONO_PATCH_INFO_MONITOR_ENTER:
+		case MONO_PATCH_INFO_MONITOR_ENTER_V4:
 		case MONO_PATCH_INFO_MONITOR_EXIT:
 		case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 #if defined(__native_client_codegen__) && defined(__native_client__)
@@ -5882,7 +5946,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			opcode = OP_ROUND;
 		}
 		
-		if (opcode) {
+		if (opcode && fsig->param_count == 1) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
 			ins->dreg = mono_alloc_freg (cfg);
@@ -5891,7 +5955,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 		}
 
 		if (cfg->opt & MONO_OPT_CMOV) {
-			int opcode = 0;
+			opcode = 0;
 
 			if (strcmp (cmethod->name, "Min") == 0) {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
@@ -5901,7 +5965,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 					opcode = OP_IMAX;
 			}		
 
-			if (opcode) {
+			if (opcode && fsig->param_count == 2) {
 				MONO_INST_NEW (cfg, ins, opcode);
 				ins->type = STACK_I4;
 				ins->dreg = mono_alloc_ireg (cfg);
@@ -5913,7 +5977,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 
 #if 0
 		/* OP_FREM is not IEEE compatible */
-		else if (strcmp (cmethod->name, "IEEERemainder") == 0) {
+		else if (strcmp (cmethod->name, "IEEERemainder") == 0 && fsig->param_count == 2) {
 			MONO_INST_NEW (cfg, ins, OP_FREM);
 			ins->inst_i0 = args [0];
 			ins->inst_i1 = args [1];
@@ -6712,6 +6776,22 @@ mono_arch_opcode_supported (int opcode)
 	case OP_ATOMIC_ADD_I4:
 	case OP_ATOMIC_EXCHANGE_I4:
 	case OP_ATOMIC_CAS_I4:
+	case OP_ATOMIC_LOAD_I1:
+	case OP_ATOMIC_LOAD_I2:
+	case OP_ATOMIC_LOAD_I4:
+	case OP_ATOMIC_LOAD_U1:
+	case OP_ATOMIC_LOAD_U2:
+	case OP_ATOMIC_LOAD_U4:
+	case OP_ATOMIC_LOAD_R4:
+	case OP_ATOMIC_LOAD_R8:
+	case OP_ATOMIC_STORE_I1:
+	case OP_ATOMIC_STORE_I2:
+	case OP_ATOMIC_STORE_I4:
+	case OP_ATOMIC_STORE_U1:
+	case OP_ATOMIC_STORE_U2:
+	case OP_ATOMIC_STORE_U4:
+	case OP_ATOMIC_STORE_R4:
+	case OP_ATOMIC_STORE_R8:
 		return TRUE;
 	default:
 		return FALSE;

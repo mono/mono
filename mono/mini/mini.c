@@ -12,7 +12,6 @@
 
 #define MONO_LLVM_IN_MINI 1
 #include <config.h>
-#include <signal.h>
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
@@ -22,6 +21,9 @@
 #include <math.h>
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
 #endif
 
 #include <mono/utils/memcheck.h>
@@ -138,9 +140,6 @@ mono_breakpoint_info_index [MONO_BREAKPOINT_ARRAY_SIZE];
 
 /* Whenever to check for pending exceptions in managed-to-native wrappers */
 gboolean check_for_pending_exc = TRUE;
-
-/* Whenever to disable passing/returning small valuetypes in registers for managed methods */
-gboolean disable_vtypes_in_regs = FALSE;
 
 static GSList *tramp_infos;
 
@@ -1381,6 +1380,20 @@ mono_compile_make_var_load (MonoCompile *cfg, MonoInst *dest, gssize var_index) 
 	dest->klass = dest->inst_i0->klass;
 }
 
+MonoInst*
+mini_get_int_to_float_spill_area (MonoCompile *cfg)
+{
+#ifdef TARGET_X86
+	if (!cfg->iconv_raw_var) {
+		cfg->iconv_raw_var = mono_compile_create_var (cfg, &mono_defaults.int32_class->byval_arg, OP_LOCAL);
+		cfg->iconv_raw_var->flags |= MONO_INST_VOLATILE; /*FIXME, use the don't regalloc flag*/
+	}
+	return cfg->iconv_raw_var;
+#else
+	return NULL;
+#endif
+}
+
 #endif
 
 void
@@ -1494,7 +1507,7 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 				/* Only two instructions */
 				opcode = bb->code->opcode;
 
-				if ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM)) {
+				if ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM) || (opcode == OP_RCOMPARE)) {
 					/* NEW IR */
 					mono_bblock_insert_before_ins (bb, bb->code, inst);
 				} else {
@@ -1503,7 +1516,7 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 			} else {
 				opcode = bb->last_ins->prev->opcode;
 
-				if ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM)) {
+				if ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM) || (opcode == OP_RCOMPARE)) {
 					/* NEW IR */
 					mono_bblock_insert_before_ins (bb, bb->last_ins->prev, inst);
 				} else {
@@ -3247,6 +3260,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
 	case MONO_PATCH_INFO_JIT_TLS_ID:
 	case MONO_PATCH_INFO_MONITOR_ENTER:
+	case MONO_PATCH_INFO_MONITOR_ENTER_V4:
 	case MONO_PATCH_INFO_MONITOR_EXIT:
 	case MONO_PATCH_INFO_GOT_OFFSET:
 		return (ji->type << 8);
@@ -3261,6 +3275,8 @@ mono_patch_info_hash (gconstpointer data)
 		return g_str_hash (ji->data.target);
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
 		return (ji->type << 8) | (gsize)ji->data.del_tramp->klass | (gsize)ji->data.del_tramp->method | (gsize)ji->data.del_tramp->virtual;
+	case MONO_PATCH_INFO_LDSTR_LIT:
+		return g_str_hash (ji->data.target);
 	default:
 		printf ("info type: %d\n", ji->type);
 		mono_print_ji (ji); printf ("\n");
@@ -3543,9 +3559,12 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_TYPE_FROM_HANDLE: {
 		gpointer handle;
 		MonoClass *handle_class;
+		MonoError error;
 
-		handle = mono_ldtoken (patch_info->data.token->image, 
-							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL);
+		handle = mono_ldtoken_checked (patch_info->data.token->image, 
+							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, &error);
+		if (!mono_error_ok (&error))
+			g_error ("Could not patch ldtoken due to %s", mono_error_get_message (&error));
 		mono_class_init (handle_class);
 		mono_class_init (mono_class_from_mono_type (handle));
 
@@ -3556,9 +3575,12 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_LDTOKEN: {
 		gpointer handle;
 		MonoClass *handle_class;
+		MonoError error;
 		
-		handle = mono_ldtoken (patch_info->data.token->image,
-							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL);
+		handle = mono_ldtoken_checked (patch_info->data.token->image,
+							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, &error);
+   		if (!mono_error_ok (&error))
+   			g_error ("Could not patch ldtoken due to %s", mono_error_get_message (&error));
 		mono_class_init (handle_class);
 		
 		target = handle;
@@ -3663,6 +3685,9 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_MONITOR_ENTER:
 		target = mono_create_monitor_enter_trampoline ();
 		break;
+	case MONO_PATCH_INFO_MONITOR_ENTER_V4:
+		target = mono_create_monitor_enter_v4_trampoline ();
+		break;
 	case MONO_PATCH_INFO_MONITOR_EXIT:
 		target = mono_create_monitor_exit_trampoline ();
 		break;
@@ -3710,6 +3735,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	}
 	case MONO_PATCH_INFO_OBJC_SELECTOR_REF: {
 		target = NULL;
+		break;
+	}
+	case MONO_PATCH_INFO_LDSTR_LIT: {
+		target = mono_string_new (domain, patch_info->data.target);
 		break;
 	}
 	default:
@@ -3965,6 +3994,9 @@ mono_codegen (MonoCompile *cfg)
 
 		if (cfg->opt & MONO_OPT_PEEPHOLE)
 			mono_arch_peephole_pass_2 (cfg, bb);
+
+		if (cfg->gen_seq_points && !cfg->gen_seq_points_debug_data)
+			bb_deduplicate_op_il_seq_points (cfg, bb);
 	}
 
 	if (cfg->prof_options & MONO_PROFILE_COVERAGE)
@@ -4639,6 +4671,7 @@ get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGeneri
 MonoMethod*
 mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gsharedvt)
 {
+	MonoError error;
 	MonoGenericContext shared_context;
 	MonoMethod *declaring_method, *res;
 	gboolean partial = FALSE;
@@ -4690,7 +4723,9 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 		partial = TRUE;
 	}
 
-    res = mono_class_inflate_generic_method (declaring_method, &shared_context);
+    res = mono_class_inflate_generic_method_checked (declaring_method, &shared_context, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+
 	if (!partial) {
 		/* The result should be an inflated method whose parent is not inflated */
 		g_assert (!res->klass->is_inflated);
@@ -4860,6 +4895,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		cfg->generic_sharing_context = (MonoGenericSharingContext*)&cfg->gsctx;
 	cfg->compile_llvm = try_llvm;
 	cfg->token_info_hash = g_hash_table_new (NULL, NULL);
+
+	if (!mono_debug_count ())
+		cfg->opt &= ~MONO_OPT_FLOAT32;
+	cfg->r4fp = (cfg->opt & MONO_OPT_FLOAT32) ? 1 : 0;
+	cfg->r4_stack_type = cfg->r4fp ? STACK_R4 : STACK_R8;
 
 	if (cfg->gen_seq_points)
 		cfg->seq_points = g_ptr_array_new ();
@@ -6129,8 +6169,11 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 			if (method->is_inflated)
 				ctx = mono_method_get_context (method);
 			method = info->d.synchronized_inner.method;
-			if (ctx)
-				method = mono_class_inflate_generic_method (method, ctx);
+			if (ctx) {
+				MonoError error;
+				method = mono_class_inflate_generic_method_checked (method, ctx, &error);
+				g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			}
 		}
 	}
 
@@ -6552,8 +6595,8 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		gpointer *args;
 		static RuntimeInvokeDynamicFunction dyn_runtime_invoke;
 		int i, pindex;
-		guint8 buf [128];
-		guint8 retval [128];
+		guint8 buf [256];
+		guint8 retval [256];
 
 		if (!dyn_runtime_invoke) {
 			invoke = mono_marshal_get_runtime_invoke_dynamic ();
@@ -6599,7 +6642,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigfpe_signal_handler)
 {
 	MonoException *exc = NULL;
 	MonoJitInfo *ji;
-	void *info = MONO_SIG_HANDLER_GET_INFO ();
+	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
 	ji = mono_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context (ctx));
@@ -6621,7 +6664,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigfpe_signal_handler)
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_handle_native_sigsegv (SIGSEGV, ctx);
+		mono_handle_native_sigsegv (SIGSEGV, ctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			return;
@@ -6652,6 +6695,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	gpointer fault_addr = NULL;
 #ifdef HAVE_SIG_INFO
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
+#else
+	void *info = NULL;
 #endif
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
@@ -6665,7 +6710,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	}
 #endif
 
-#if !defined(HOST_WIN32) && defined(HAVE_SIG_INFO)
+#if defined(HAVE_SIG_INFO)
+#if !defined(HOST_WIN32)
 	fault_addr = info->si_addr;
 	if (mono_aot_is_pagefault (info->si_addr)) {
 		mono_aot_handle_pagefault (info->si_addr);
@@ -6677,17 +6723,18 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	if (!mono_domain_get () || !jit_tls) {
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
-		mono_handle_native_sigsegv (SIGSEGV, ctx);
+		mono_handle_native_sigsegv (SIGSEGV, ctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			return;
 		}
 	}
+#endif
 
 	ji = mono_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context (ctx));
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-	if (mono_handle_soft_stack_ovf (jit_tls, ji, ctx, (guint8*)info->si_addr))
+	if (mono_handle_soft_stack_ovf (jit_tls, ji, ctx, info, (guint8*)info->si_addr))
 		return;
 
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
@@ -6715,7 +6762,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!ji && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_arch_handle_altstack_exception (ctx, info->si_addr, FALSE);
+		mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
 	}
 #else
 
@@ -6723,7 +6770,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_handle_native_sigsegv (SIGSEGV, ctx);
+		mono_handle_native_sigsegv (SIGSEGV, ctx, info);
 
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
@@ -7485,9 +7532,12 @@ register_icalls (void)
 	register_opcode_emulation (OP_FCONV_TO_U4, "__emul_fconv_to_u4", "uint32 double", mono_fconv_u4, "mono_fconv_u4", FALSE);
 	register_opcode_emulation (OP_FCONV_TO_OVF_I8, "__emul_fconv_to_ovf_i8", "long double", mono_fconv_ovf_i8, "mono_fconv_ovf_i8", FALSE);
 	register_opcode_emulation (OP_FCONV_TO_OVF_U8, "__emul_fconv_to_ovf_u8", "ulong double", mono_fconv_ovf_u8, "mono_fconv_ovf_u8", FALSE);
+	register_opcode_emulation (OP_RCONV_TO_OVF_I8, "__emul_rconv_to_ovf_i8", "long float", mono_rconv_ovf_i8, "mono_rconv_ovf_i8", FALSE);
+	register_opcode_emulation (OP_RCONV_TO_OVF_U8, "__emul_rconv_to_ovf_u8", "ulong float", mono_rconv_ovf_u8, "mono_rconv_ovf_u8", FALSE);
 
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_I8
 	register_opcode_emulation (OP_FCONV_TO_I8, "__emul_fconv_to_i8", "long double", mono_fconv_i8, "mono_fconv_i8", FALSE);
+	register_opcode_emulation (OP_RCONV_TO_I8, "__emul_rconv_to_i8", "long float", mono_rconv_i8, "mono_rconv_i8", FALSE);
 #endif
 #ifdef MONO_ARCH_EMULATE_CONV_R8_UN
 	register_opcode_emulation (OP_ICONV_TO_R_UN, "__emul_iconv_to_r_un", "double int32", mono_conv_to_r8_un, "mono_conv_to_r8_un", FALSE);

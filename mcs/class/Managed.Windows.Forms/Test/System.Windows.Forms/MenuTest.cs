@@ -33,9 +33,7 @@ namespace MonoTests.System.Windows.Forms
 			MainMenu mymainmenu = new MainMenu ();
 			Assert.AreEqual (RightToLeft.Inherit, mymainmenu.RightToLeft,"#6");
 			
-#if NET_2_0
 			Assert.IsNull (mymenu.Tag);
-#endif
 		}
 
 		[Test]

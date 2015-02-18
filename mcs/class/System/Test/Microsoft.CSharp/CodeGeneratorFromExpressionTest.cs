@@ -97,7 +97,6 @@ namespace MonoTests.Microsoft.CSharp
 				sb.Length = 0;
 				Assert.AreEqual ("void", Generate (new CodeTypeReferenceExpression (""), sw), "#10");
 				sb.Length = 0;
-#if NET_2_0
 				Assert.AreEqual ("byte", Generate (new CodeTypeReferenceExpression (typeof (byte)), sw), "#11");
 				sb.Length = 0;
 				Assert.AreEqual ("decimal", Generate (new CodeTypeReferenceExpression (typeof (decimal)), sw), "#12");
@@ -114,24 +113,6 @@ namespace MonoTests.Microsoft.CSharp
 				sb.Length = 0;
 				Assert.AreEqual ("float", Generate (new CodeTypeReferenceExpression (typeof (float)), sw), "#18");
 				sb.Length = 0;
-#else
-				Assert.AreEqual (typeof (byte).FullName, Generate (new CodeTypeReferenceExpression (typeof (byte)), sw), "#19");
-				sb.Length = 0;
-				Assert.AreEqual (typeof (decimal).FullName, Generate (new CodeTypeReferenceExpression (typeof (decimal)), sw), "#20");
-				sb.Length = 0;
-				Assert.AreEqual (typeof (double).FullName, Generate (new CodeTypeReferenceExpression (typeof (double)), sw), "#21");
-				sb.Length = 0;
-				Assert.AreEqual (typeof (sbyte).FullName, Generate (new CodeTypeReferenceExpression (typeof (sbyte)), sw), "#22");
-				sb.Length = 0;
-				Assert.AreEqual (typeof (ushort).FullName, Generate (new CodeTypeReferenceExpression (typeof (ushort)), sw), "#23");
-				sb.Length = 0;
-				Assert.AreEqual (typeof (uint).FullName, Generate (new CodeTypeReferenceExpression (typeof (uint)), sw), "#24");
-				sb.Length = 0;
-				Assert.AreEqual (typeof (ulong).FullName, Generate (new CodeTypeReferenceExpression (typeof (ulong)), sw), "#25");
-				sb.Length = 0;
-				Assert.AreEqual (typeof (float).FullName, Generate (new CodeTypeReferenceExpression (typeof (float)), sw), "#26");
-				sb.Length = 0;
-#endif
 				sw.Close ();
 			}
 		}
@@ -253,17 +234,9 @@ namespace MonoTests.Microsoft.CSharp
 				sb.Length = 0;
 				Assert.AreEqual ("'\\''", Generate (new CodePrimitiveExpression ('\''), sw), "#39");
 				sb.Length = 0;
-#if NET_2_0
 				Assert.AreEqual ("'\\u2028'", Generate (new CodePrimitiveExpression ('\u2028'), sw), "#40");
-#else
-				Assert.AreEqual ("'\\u8232'", Generate (new CodePrimitiveExpression ('\u2028'), sw), "#40");
-#endif
 				sb.Length = 0;
-#if NET_2_0
 				Assert.AreEqual ("'\\u2029'", Generate (new CodePrimitiveExpression ('\u2029'), sw), "#41");
-#else
-				Assert.AreEqual ("'\\u8233'", Generate (new CodePrimitiveExpression ('\u2029'), sw), "#41");
-#endif
 				sb.Length = 0;
 				Assert.AreEqual ("'\u2030'", Generate (new CodePrimitiveExpression ('\u2030'), sw), "#42");
 				sw.Close ();
@@ -271,9 +244,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_SByte ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -285,9 +255,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_UInt16 ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -299,9 +266,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_UInt32 ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -313,9 +277,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_UInt64 ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -506,7 +467,6 @@ namespace MonoTests.Microsoft.CSharp
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void DefaultValueExpressionTest ()
 		{
@@ -518,7 +478,6 @@ namespace MonoTests.Microsoft.CSharp
 				sw.Close ();
 			}
 		}
-#endif
 
 		[Test]
 		public void DelegateInvokeTest ()

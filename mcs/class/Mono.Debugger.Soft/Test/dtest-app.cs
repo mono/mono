@@ -1163,6 +1163,12 @@ public class Tests : TestsBase, ITest2
 		AppDomain.Unload (domain);
 
 		domains_3 ();
+
+		typeof (Tests).GetMethod ("called_from_invoke").Invoke (null, null);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void called_from_invoke () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1362,11 +1368,12 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void set_ip () {
-		int i, j;
+		int i = 0, j;
 
-		i = 1;
+		i ++;
+		i ++;
 		set_ip_1 ();
-		i = 5;
+		i ++;
 		j = 5;
 		set_ip_2 ();
 	}

@@ -34,11 +34,7 @@ using System.CodeDom;
 
 namespace System.Web.Services.Description 
 {
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	sealed class WebReference
 	{
 		DiscoveryClientDocumentCollection _documents;

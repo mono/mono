@@ -7,7 +7,6 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-#if NET_2_0
 namespace System.Web.Properties {
     using System;
     
@@ -385,4 +384,3 @@ namespace System.Web.Properties {
         }
     }
 }
-#endif

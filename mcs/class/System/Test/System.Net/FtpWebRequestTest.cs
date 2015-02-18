@@ -7,9 +7,9 @@
 //
 // Copyright (c) 2006,2007,2008 Novell, Inc. (http://www.novell.com)
 //
-#if NET_2_0
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -23,6 +23,31 @@ namespace MonoTests.System.Net
 	{
 		FtpWebRequest defaultRequest;
 		
+		private string _tempDirectory;
+		private string _tempFile;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			_tempDirectory = Path.Combine (Path.GetTempPath (), "MonoTests.System.Net.FileWebRequestTest");
+			_tempFile = Path.Combine (_tempDirectory, "FtpWebRequestTest.tmp");
+			if (!Directory.Exists (_tempDirectory)) {
+				Directory.CreateDirectory (_tempDirectory);
+			} else {
+				// ensure no files are left over from previous runs
+				string [] files = Directory.GetFiles (_tempDirectory, "*");
+				foreach (string file in files)
+					File.Delete (file);
+			}
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (Directory.Exists (_tempDirectory))
+				Directory.Delete (_tempDirectory, true);
+		}
+
 		[TestFixtureSetUp]
 		public void Init ()
 		{
@@ -183,13 +208,15 @@ namespace MonoTests.System.Net
 				ftp.KeepAlive = false;
 				ftp.Timeout = 5000;
 				ftp.Method = WebRequestMethods.Ftp.UploadFile;
-				ftp.ContentLength = 1;
+				ftp.ContentLength = 10;
 				ftp.UseBinary = true;
 				Stream stream = ftp.GetRequestStream ();
-				stream.WriteByte (0);
+				for (int i = 0; i < 10; i++)
+					stream.WriteByte ((byte)i);
 				stream.Close ();
 				FtpWebResponse response = (FtpWebResponse) ftp.GetResponse ();
 				Assert.IsTrue ((int) response.StatusCode >= 200 && (int) response.StatusCode < 300, "UP#01");
+				Assert.AreEqual (10, sp.result.Count, "UP#02");
 				response.Close ();
 			} catch (Exception) {
 				if (!String.IsNullOrEmpty (sp.Where))
@@ -198,6 +225,24 @@ namespace MonoTests.System.Net
 			} finally {
 				sp.Stop ();
 			}
+		}
+
+		[Test]
+		public void UploadFile_WebClient ()
+		{
+			ServerPut sp = new ServerPut ();
+			File.WriteAllText (_tempFile, "0123456789");
+			sp.Start ();
+
+			using (WebClient m_WebClient = new WebClient())
+			{
+				string uri = String.Format ("ftp://{0}:{1}/uploads/file.txt", sp.IPAddress, sp.Port);
+				
+				m_WebClient.UploadFile(uri, _tempFile);
+			}
+			Assert.AreEqual (10, sp.result.Count, "WebClient/Ftp#01");
+	    
+			sp.Stop ();
 		}
 
 		[Test]
@@ -464,6 +509,8 @@ namespace MonoTests.System.Net
 		}
 
 		class ServerPut : FtpServer {
+			public List<byte> result = new List<byte> ();
+			
 			protected override void Run ()
 			{
 				Socket client = control.Accept ();
@@ -511,8 +558,12 @@ namespace MonoTests.System.Net
 				writer.Flush ();
 
 				Socket data_cnc = data.Accept ();
-				byte [] dontcare = new byte [1];
-				data_cnc.Receive (dontcare, 1, SocketFlags.None);
+				var datastr = new NetworkStream (data_cnc, false);
+				int ch;
+				while ((ch = datastr.ReadByte ()) != -1){
+					result.Add ((byte)ch);
+
+				}
 				data_cnc.Close ();
 				writer.WriteLine ("226 File received Ok");
 				writer.Flush ();
@@ -635,5 +686,4 @@ namespace MonoTests.System.Net
 	}
 }
 
-#endif
 

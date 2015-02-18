@@ -54,7 +54,6 @@ namespace System.Xml {
 
 		static readonly string [] datetimeFormats = {
 		  // dateTime
-#if NET_2_0
 		  "yyyy-MM-ddTHH:mm:sszzz",
 		  "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz",
 		  "yyyy-MM-ddTHH:mm:ssZ",
@@ -67,57 +66,6 @@ namespace System.Xml {
 		  "HH:mm:ss.FFFFFFFzzz",
 		  "HH:mm:ssZ",
 		  "HH:mm:ss.FFFFFFFZ",
-#else // it is not required in trunk but should make it easy to backport...
-		  "yyyy-MM-ddTHH:mm:sszzz",
-		  "yyyy-MM-ddTHH:mm:ss.fzzz",
-		  "yyyy-MM-ddTHH:mm:ss.ffzzz",
-		  "yyyy-MM-ddTHH:mm:ss.fffzzz",
-		  "yyyy-MM-ddTHH:mm:ss.ffffzzz",
-		  "yyyy-MM-ddTHH:mm:ss.fffffzzz",
-		  "yyyy-MM-ddTHH:mm:ss.ffffffzzz",
-		  "yyyy-MM-ddTHH:mm:ss.fffffffzzz",
-		  "yyyy-MM-ddTHH:mm:ssZ",
-		  "yyyy-MM-ddTHH:mm:ss.fZ",
-		  "yyyy-MM-ddTHH:mm:ss.ffZ",
-		  "yyyy-MM-ddTHH:mm:ss.fffZ",
-		  "yyyy-MM-ddTHH:mm:ss.ffffZ",
-		  "yyyy-MM-ddTHH:mm:ss.fffffZ",
-		  "yyyy-MM-ddTHH:mm:ss.ffffffZ",
-		  "yyyy-MM-ddTHH:mm:ss.fffffffZ",
-		  "yyyy-MM-ddTHH:mm:ss",
-		  "yyyy-MM-ddTHH:mm:ss.f",
-		  "yyyy-MM-ddTHH:mm:ss.ff",
-		  "yyyy-MM-ddTHH:mm:ss.fff",
-		  "yyyy-MM-ddTHH:mm:ss.ffff",
-		  "yyyy-MM-ddTHH:mm:ss.fffff",
-		  "yyyy-MM-ddTHH:mm:ss.ffffff",
-		  "yyyy-MM-ddTHH:mm:ss.fffffff",
-		  // time
-		  "HH:mm:ss",
-		  "HH:mm:ss.f",
-		  "HH:mm:ss.ff",
-		  "HH:mm:ss.fff",
-		  "HH:mm:ss.ffff",
-		  "HH:mm:ss.fffff",
-		  "HH:mm:ss.ffffff",
-		  "HH:mm:ss.fffffff",
-		  "HH:mm:sszzz",
-		  "HH:mm:ss.fzzz",
-		  "HH:mm:ss.ffzzz",
-		  "HH:mm:ss.fffzzz",
-		  "HH:mm:ss.ffffzzz",
-		  "HH:mm:ss.fffffzzz",
-		  "HH:mm:ss.ffffffzzz",
-		  "HH:mm:ss.fffffffzzz",
-		  "HH:mm:ssZ",
-		  "HH:mm:ss.fZ",
-		  "HH:mm:ss.ffZ",
-		  "HH:mm:ss.fffZ",
-		  "HH:mm:ss.ffffZ",
-		  "HH:mm:ss.fffffZ",
-		  "HH:mm:ss.ffffffZ",
-		  "HH:mm:ss.fffffffZ",
-#endif
 		  // date
 		  "yyyy-MM-dd",
 		  "yyyy-MM-ddzzz",
@@ -316,15 +264,12 @@ namespace System.Xml {
 #endif
 		}
 
-#if NET_2_0
 		[Obsolete]
-#endif
 		public static DateTime ToDateTime (string s)
 		{
 			return ToDateTime (s, datetimeFormats);
 		}
 		
-#if NET_2_0
 		public static DateTime ToDateTime (string s, XmlDateTimeSerializationMode dateTimeOption)
 		{
 			switch (dateTimeOption) {
@@ -338,7 +283,6 @@ namespace System.Xml {
 				return new DateTime (ToDateTime(s, datetimeFormats, _defaultStyle | DateTimeStyles.RoundtripKind).Ticks, DateTimeKind.Unspecified);
 			}
 		}
-#endif
 		public static DateTime ToDateTime(string s, string format)
 		{
 			//DateTimeFormatInfo d = new DateTimeFormatInfo();
@@ -574,15 +518,12 @@ namespace System.Xml {
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
-#if NET_2_0
 		[Obsolete]
-#endif
 		public static string ToString (DateTime value)
 		{
 			return value.ToString ("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture);
 		}
 
-#if NET_2_0
 		public static string ToString (DateTime value, XmlDateTimeSerializationMode dateTimeOption)
 		{
 			// Unlike usual DateTime formatting, it preserves
@@ -610,7 +551,6 @@ namespace System.Xml {
 					CultureInfo.InvariantCulture);
 			}
 		}
-#endif
 
 		public static string ToString(DateTime value, string format)
 		{
@@ -790,11 +730,7 @@ namespace System.Xml {
 			return token;
 		}
 
-#if NET_2_0
 		public static string VerifyNMTOKEN (string name)
-#else
-		internal static string VerifyNMTOKEN (string name)
-#endif
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
@@ -837,7 +773,6 @@ namespace System.Xml {
 			return bufIndex - offset;
 		}
 
-#if NET_2_0 // actually NET_3_5
 
 		public static DateTimeOffset ToDateTimeOffset (string s)
 		{
@@ -874,9 +809,7 @@ namespace System.Xml {
 			return new Uri (s, UriKind.RelativeOrAbsolute);
 		}
 
-#endif
 
-#if NET_4_0
 		public static bool IsNCNameChar (char ch)
 		{
 			return XmlChar.IsNCNameChar (ch);
@@ -934,6 +867,5 @@ namespace System.Xml {
 				return content;
 			throw new XmlException (string.Format ("Invalid XML character was found in the content, at index {0}.", idx));
 		}
-#endif
 	}
 }

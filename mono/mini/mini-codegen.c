@@ -580,6 +580,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_IOR_IMM:
 	case OP_IXOR_IMM:
 	case OP_SUB_IMM:
+	case OP_STORE_MEMBASE_IMM:
 		printf (" [%d]", (int)ins->inst_imm);
 		break;
 	case OP_ADD_IMM:
@@ -2355,6 +2356,8 @@ mono_opcode_to_cond (int opcode)
 	case OP_LCEQ:
 	case OP_FBEQ:
 	case OP_FCEQ:
+	case OP_RBEQ:
+	case OP_RCEQ:
 	case OP_COND_EXC_EQ:
 	case OP_COND_EXC_IEQ:
 	case OP_CMOV_IEQ:
@@ -2393,6 +2396,8 @@ mono_opcode_to_cond (int opcode)
 	case OP_LCLT:
 	case OP_FBLT:
 	case OP_FCLT:
+	case OP_RBLT:
+	case OP_RCLT:
 	case OP_COND_EXC_LT:
 	case OP_COND_EXC_ILT:
 	case OP_CMOV_ILT:
@@ -2405,6 +2410,8 @@ mono_opcode_to_cond (int opcode)
 	case OP_LCGT:
 	case OP_FBGT:
 	case OP_FCGT:
+	case OP_RBGT:
+	case OP_RCGT:
 	case OP_COND_EXC_GT:
 	case OP_COND_EXC_IGT:
 	case OP_CMOV_IGT:
@@ -2435,6 +2442,8 @@ mono_opcode_to_cond (int opcode)
 	case OP_LCLT_UN:
 	case OP_FBLT_UN:
 	case OP_FCLT_UN:
+	case OP_RBLT_UN:
+	case OP_RCLT_UN:
 	case OP_COND_EXC_LT_UN:
 	case OP_COND_EXC_ILT_UN:
 	case OP_CMOV_ILT_UN:
@@ -2447,6 +2456,8 @@ mono_opcode_to_cond (int opcode)
 	case OP_LCGT_UN:
 	case OP_FCGT_UN:
 	case OP_FBGT_UN:
+	case OP_RCGT_UN:
+	case OP_RBGT_UN:
 	case OP_COND_EXC_GT_UN:
 	case OP_COND_EXC_IGT_UN:
 	case OP_CMOV_IGT_UN:
@@ -2747,6 +2758,55 @@ mini_exception_id_by_name (const char *name)
 		return MONO_EXC_ARGUMENT;
 	g_error ("Unknown intrinsic exception %s\n", name);
 	return -1;
+}
+
+gboolean
+mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize)
+{
+	MonoClass *klass;
+	gpointer iter;
+	MonoClassField *field;
+	MonoType *ftype, *prev_ftype = NULL;
+	int nfields = 0;
+
+	klass = mono_class_from_mono_type (t);
+	iter = NULL;
+	while ((field = mono_class_get_fields (klass, &iter))) {
+		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
+			continue;
+		ftype = mono_field_get_type (field);
+		ftype = mini_native_type_replace_type (ftype);
+
+		if (MONO_TYPE_ISSTRUCT (ftype)) {
+			int nested_nfields, nested_esize;
+
+			if (!mini_type_is_hfa (ftype, &nested_nfields, &nested_esize))
+				return FALSE;
+			if (nested_esize == 4)
+				ftype = &mono_defaults.single_class->byval_arg;
+			else
+				ftype = &mono_defaults.double_class->byval_arg;
+			if (prev_ftype && prev_ftype->type != ftype->type)
+				return FALSE;
+			prev_ftype = ftype;
+			nfields += nested_nfields;
+			// FIXME: Nested float structs are aligned to 8 bytes
+			if (ftype->type == MONO_TYPE_R4)
+				return FALSE;
+		} else {
+			if (!(!ftype->byref && (ftype->type == MONO_TYPE_R4 || ftype->type == MONO_TYPE_R8)))
+				return FALSE;
+			if (prev_ftype && prev_ftype->type != ftype->type)
+				return FALSE;
+			prev_ftype = ftype;
+			nfields ++;
+		}
+	}
+	if (nfields == 0 || nfields > 4)
+		return FALSE;
+	*out_nfields = nfields;
+	*out_esize = prev_ftype->type == MONO_TYPE_R4 ? 4 : 8;
+	return TRUE;
 }
 
 #endif /* DISABLE_JIT */

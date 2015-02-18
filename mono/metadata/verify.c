@@ -26,10 +26,10 @@
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/mono-basic-block.h>
 #include <mono/metadata/attrdefs.h>
+#include <mono/metadata/class-internals.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/monobitset.h>
 #include <string.h>
-#include <signal.h>
 #include <ctype.h>
 
 static MiniVerifierMode verifier_mode = MONO_VERIFIER_MODE_OFF;
@@ -974,20 +974,22 @@ static MonoMethod*
 verifier_load_method (VerifyContext *ctx, int token, const char *opcode) {
 	MonoMethod* method;
 
+
 	if (ctx->method->wrapper_type != MONO_WRAPPER_NONE) {
 		method = mono_method_get_wrapper_data (ctx->method, (guint32)token);
 	} else {
+		MonoError error;
 		if (!IS_METHOD_DEF_OR_REF_OR_SPEC (token) || !token_bounds_check (ctx->image, token)) {
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid method token 0x%08x for %s at 0x%04x", token, opcode, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 			return NULL;
 		}
 
-		method = mono_get_method_full (ctx->image, token, NULL, ctx->generic_context);
+		method = mono_get_method_checked (ctx->image, token, NULL, ctx->generic_context, &error);
+		mono_error_cleanup (&error); /* FIXME don't swallow this error */
 	}
 
-	if (!method || mono_loader_get_last_error ()) {
+	if (!method) {
 		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Cannot load method from token 0x%08x for %s at 0x%04x", token, opcode, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
-		mono_loader_clear_error ();
 		return NULL;
 	}
 	
@@ -2983,6 +2985,12 @@ stack_slot_is_complex_type_not_reference_type (ILStackDesc *slot)
 	return stack_slot_get_type (slot) == TYPE_COMPLEX && !MONO_TYPE_IS_REFERENCE (slot->type) && !stack_slot_is_boxed_value (slot);
 }
 
+static gboolean
+stack_slot_is_reference_value (ILStackDesc *slot)
+{
+	return stack_slot_get_type (slot) == TYPE_COMPLEX && (MONO_TYPE_IS_REFERENCE (slot->type) || stack_slot_is_boxed_value (slot));
+}
+
 static void
 do_branch_op (VerifyContext *ctx, signed int delta, const unsigned char table [TYPE_MAX][TYPE_MAX])
 {
@@ -3056,7 +3064,8 @@ do_cmp_op (VerifyContext *ctx, const unsigned char table [TYPE_MAX][TYPE_MAX], g
 	a = stack_pop (ctx);
 
 	if (opcode == CEE_CGT_UN) {
-		if (stack_slot_get_type (a) == TYPE_COMPLEX && stack_slot_get_type (b) == TYPE_COMPLEX) {
+		if ((stack_slot_is_reference_value (a) && stack_slot_is_null_literal (b)) ||
+			(stack_slot_is_reference_value (b) && stack_slot_is_null_literal (a))) {
 			stack_push_val (ctx, TYPE_I4, &mono_defaults.int32_class->byval_arg);
 			return;
 		}
@@ -3079,7 +3088,11 @@ do_cmp_op (VerifyContext *ctx, const unsigned char table [TYPE_MAX][TYPE_MAX], g
 	}
 
 	if(res == TYPE_INV) {
-		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf("Compare instruction applyed to ill formed stack (%s x %s) at 0x%04x", stack_slot_get_name (a), stack_slot_get_name (b), ctx->ip_offset));
+		char *left_type = stack_slot_full_name (a);
+		char *right_type = stack_slot_full_name (b);
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf("Compare instruction applyed to ill formed stack (%s x %s) at 0x%04x", left_type, right_type, ctx->ip_offset));
+		g_free (left_type);
+		g_free (right_type);
 	} else if (res & NON_VERIFIABLE_RESULT) {
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Compare instruction is not verifiable (%s x %s) at 0x%04x", stack_slot_get_name (a), stack_slot_get_name (b), ctx->ip_offset)); 
  		res = res & ~NON_VERIFIABLE_RESULT;
@@ -3596,6 +3609,7 @@ do_conversion (VerifyContext *ctx, int kind)
 static void
 do_load_token (VerifyContext *ctx, int token) 
 {
+	MonoError error;
 	gpointer handle;
 	MonoClass *handle_class;
 	if (!check_overflow (ctx))
@@ -3625,11 +3639,12 @@ do_load_token (VerifyContext *ctx, int token)
 			return;
 		}
 
-		handle = mono_ldtoken (ctx->image, token, &handle_class, ctx->generic_context);
+		handle = mono_ldtoken_checked (ctx->image, token, &handle_class, ctx->generic_context, &error);
 	}
 
 	if (!handle) {
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid token 0x%x for ldtoken at 0x%04x", token, ctx->ip_offset));
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid token 0x%x for ldtoken at 0x%04x due to %s", token, ctx->ip_offset, mono_error_get_message (&error)));
+		mono_error_cleanup (&error);
 		return;
 	}
 	if (handle_class == mono_defaults.typehandle_class) {

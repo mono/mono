@@ -185,25 +185,6 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 			{
 				GHTSubTestUnexpectedExceptionCaught(ex);
 			}
-#if !NET_2_0
-			GHTActiveSubTest = GHTSubTest9;
-			try 
-			{
-				Repeater9.DataSource = GHTTests.GHDataSources.DSDataSet();
-				Repeater9.DataMember = "NonExist";
-				Repeater9.DataBind();
-				GHTSubTestAddResult(Repeater9.DataMember);
-				GHTSubTestExpectedExceptionNotCaught("HttpException");
-			}
-			catch (HttpException ex) 
-			{
-				GHTSubTestExpectedExceptionCaught(ex);
-			}
-			catch (Exception ex) 
-			{
-				GHTSubTestUnexpectedExceptionCaught(ex);
-			}
-#endif
 			GHTTestEnd();
 		}
 	}

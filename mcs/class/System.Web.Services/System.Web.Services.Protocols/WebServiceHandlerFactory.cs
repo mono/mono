@@ -40,10 +40,8 @@ using System.Web.Services.Configuration;
 using System.Web.SessionState;
 using System.Web.UI;
 using System.Collections.Specialized;
-#if NET_2_0
 using WSConfig = System.Web.Services.Configuration.WebServicesSection;
 using WSProtocol = System.Web.Services.Configuration.WebServiceProtocols;
-#endif
 
 namespace System.Web.Services.Protocols
 {
@@ -102,43 +100,27 @@ namespace System.Web.Services.Protocols
 			string fp = filePath != null ? filePath.Replace (HttpRuntime.AppDomainAppPath, "/").Replace (Path.DirectorySeparatorChar, '/') : null;
 
 			Type type;
-#if NET_2_0
 			type = BuildManager.GetCompiledType (url);
-#else
-			type = WebServiceParser.GetCompiledType (fp, context);
-#endif
 
 			WSProtocol protocol = GuessProtocol (context, verb);
-#if NET_2_0
 			context.Items ["WebServiceSoapVersion"] =
 				protocol == WSProtocol.HttpSoap12 ?
 				SoapProtocolVersion.Soap12 :
 				SoapProtocolVersion.Default;
-#endif
 			bool supported = false;
 			IHttpHandler handler = null;
 
 			supported = WSConfig.IsSupported (protocol);
 			if (!supported) {
 				switch (protocol) {
-#if NET_2_0
 					default:
 						if (((protocol & WSProtocol.AnyHttpSoap) != WSProtocol.Unknown) &&
 							(WSConfig.Current.EnabledProtocols & WSProtocol.AnyHttpSoap) != WSProtocol.Unknown)
 							throw new InvalidOperationException ("Possible SOAP version mismatch.");
 						break;
-#endif
 					case WSProtocol.HttpPost:
 						if (WSConfig.IsSupported (WSProtocol.HttpPostLocalhost)) {
-#if NET_2_0
 							supported = context.Request.IsLocal;
-#else
-							string localAddr = context.Request.ServerVariables ["LOCAL_ADDR"];
-
-							supported = localAddr != null &&
-								(localAddr == context.Request.ServerVariables ["REMOTE_ADDR"] ||
-								IPAddress.IsLoopback (IPAddress.Parse (localAddr)));
-#endif
 						}
 						break;
 				}
@@ -193,12 +175,8 @@ namespace System.Web.Services.Protocols
 				if (context.Request.RequestType == "GET")
 					return WSProtocol.Documentation;
 				else
-#if NET_2_0
 					return context.Request.Headers ["SOAPAction"] != null ?
 						WSProtocol.HttpSoap : WSProtocol.HttpSoap12;
-#else
-					return WSProtocol.HttpSoap;
-#endif
 			}
 			else
 			{

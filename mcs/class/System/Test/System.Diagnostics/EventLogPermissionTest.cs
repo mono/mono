@@ -45,10 +45,8 @@ namespace MonoTests.System.Diagnostics {
 			EventLogPermissionAccess.Browse,
 			EventLogPermissionAccess.Instrument,
 			EventLogPermissionAccess.Audit,
-#if NET_2_0
 			EventLogPermissionAccess.Write,
 			EventLogPermissionAccess.Administer,
-#endif
 		};
 
 		[Test]
@@ -90,9 +88,7 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PermissionState_Bad ()
 		{
 			PermissionState ps = (PermissionState)77;
@@ -235,11 +231,7 @@ namespace MonoTests.System.Diagnostics {
 		public void IsSubset_Null ()
 		{
 			EventLogPermission elp = new EventLogPermission (PermissionState.None);
-#if NET_2_0
 			Assert.IsTrue (elp.IsSubsetOf (null), "null");
-#else
-			Assert.IsFalse (elp.IsSubsetOf (null), "null");
-#endif
 		}
 
 		[Test]
@@ -359,12 +351,7 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		// Problem inherited from ResourcePermissionBase
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void FromXml_Null ()
 		{
 			EventLogPermission elp = new EventLogPermission (PermissionState.None);
@@ -372,9 +359,7 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongTag ()
 		{
 			EventLogPermission elp = new EventLogPermission (PermissionState.None);
@@ -386,9 +371,7 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongTagCase ()
 		{
 			EventLogPermission elp = new EventLogPermission (PermissionState.None);

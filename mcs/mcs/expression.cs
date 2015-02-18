@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SLE = System.Linq.Expressions;
+using System.Text;
 
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
@@ -10194,13 +10195,13 @@ namespace Mono.CSharp
 				};
 
 			if (type.IsPointer)
-				return MakePointerAccess (ec, type);
+				return Expr.MakePointerAccess (ec, type, Arguments);
 
 			FieldExpr fe = Expr as FieldExpr;
 			if (fe != null) {
 				var ff = fe.Spec as FixedFieldSpec;
 				if (ff != null) {
-					return MakePointerAccess (ec, ff.ElementType);
+					return Expr.MakePointerAccess (ec, ff.ElementType, Arguments);
 				}
 			}
 
@@ -10242,27 +10243,6 @@ namespace Mono.CSharp
 			return ConditionalAccess || Expr.HasConditionalAccess ();
 		}
 
-		Expression MakePointerAccess (ResolveContext rc, TypeSpec type)
-		{
-			if (Arguments.Count != 1){
-				rc.Report.Error (196, loc, "A pointer must be indexed by only one value");
-				return null;
-			}
-
-			var arg = Arguments[0];
-			if (arg is NamedArgument)
-				Error_NamedArgument ((NamedArgument) arg, rc.Report);
-
-			var index = arg.Expr.Resolve (rc);
-			if (index == null)
-				return null;
-
-			index = ConvertExpressionToArrayIndex (rc, index, true);
-
-			Expression p = new PointerArithmetic (Binary.Operator.Addition, Expr, index, type, loc);
-			return new Indirection (p, loc);
-		}
-		
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			Expression expr;
@@ -10297,11 +10277,6 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should never be reached");
-		}
-
-		public static void Error_NamedArgument (NamedArgument na, Report Report)
-		{
-			Report.Error (1742, na.Location, "An element access expression cannot use named argument");
 		}
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
@@ -11766,12 +11741,10 @@ namespace Mono.CSharp
 	{
 		readonly Arguments args;
 
-		public DictionaryElementInitializer (List<Expression> arguments, Expression initializer, Location loc)
+		public DictionaryElementInitializer (Arguments arguments, Expression initializer, Location loc)
 			: base (null, initializer, loc)
 		{
-			this.args = new Arguments (arguments.Count);
-			foreach (var arg in arguments)
-				this.args.Add (new Argument (arg));
+			this.args = arguments;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -11787,6 +11760,11 @@ namespace Mono.CSharp
 
 			if (type.IsArray) {
 				target = new ArrayAccess (new ElementAccess (init, args, loc), loc);
+				return true;
+			}
+
+			if (type.IsPointer) {
+				target = init.MakePointerAccess (rc, type, args);
 				return true;
 			}
 
@@ -12371,6 +12349,180 @@ namespace Mono.CSharp
 			: base (expr)
 		{
 			this.loc = loc;
+		}
+	}
+
+	public class InterpolatedString : Expression
+	{
+		readonly StringLiteral start, end;
+		readonly List<Expression> interpolations;
+		Arguments arguments;
+
+		public InterpolatedString (StringLiteral start, List<Expression> interpolations, StringLiteral end)
+		{
+			this.start = start;
+			this.end = end;
+			this.interpolations = interpolations;
+			loc = start.Location;
+		}
+
+		public Expression ConvertTo (ResolveContext rc, TypeSpec type)
+		{
+			var factory = rc.Module.PredefinedTypes.FormattableStringFactory.Resolve ();
+			if (factory == null)
+				return null;
+
+			var ma = new MemberAccess (new TypeExpression (factory, loc), "Create", loc);
+			var res = new Invocation (ma, arguments).Resolve (rc);
+			if (res != null && res.Type != type)
+				res = Convert.ExplicitConversion (rc, res, type, loc);
+
+			return res;
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			if (interpolations == null)
+				return false;
+
+			foreach (var expr in interpolations) {
+				if (expr.ContainsEmitWithAwait ())
+					return true;
+			}
+
+			return false;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext rc)
+		{
+			var best = ResolveBestFormatOverload (rc);
+			if (best == null)
+				return null;
+			
+			Expression instance = new NullLiteral (loc);
+			var args = Arguments.CreateForExpressionTree (rc, arguments, instance, new TypeOfMethod (best, loc));
+			return CreateExpressionFactoryCall (rc, "Call", args);	
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			string str;
+
+			if (interpolations == null) {
+				str = start.Value;
+				arguments = new Arguments (1);
+			} else {
+				for (int i = 0; i < interpolations.Count; i += 2) {
+					var ipi = (InterpolatedStringInsert)interpolations [i];
+					ipi.Resolve (rc);
+				}
+	
+				arguments = new Arguments (interpolations.Count);
+
+				var sb = new StringBuilder (start.Value);
+				for (int i = 0; i < interpolations.Count; ++i) {
+					if (i % 2 == 0) {
+						sb.Append ('{').Append (i / 2);
+						var isi = (InterpolatedStringInsert)interpolations [i];
+						if (isi.Alignment != null) {
+							sb.Append (',');
+							var value = isi.ResolveAligment (rc);
+							if (value != null)
+								sb.Append (value.Value);
+						}
+
+						if (isi.Format != null) {
+							sb.Append (':');
+							sb.Append (isi.Format);
+						}
+
+						sb.Append ('}');
+						arguments.Add (new Argument (interpolations [i]));
+					} else {
+						sb.Append (((StringLiteral)interpolations [i]).Value);
+					}
+				}
+
+				sb.Append (end.Value);
+				str = sb.ToString ();
+			}
+
+			arguments.Insert (0, new Argument (new StringLiteral (rc.BuiltinTypes, str, start.Location)));
+
+			eclass = ExprClass.Value;
+			type = rc.BuiltinTypes.String;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			// No interpolation, convert to simple string result (needs to match string.Format unescaping)
+			if (interpolations == null) {
+				var str = start.Value.Replace ("{{", "{").Replace ("}}", "}");
+				if (str != start.Value)
+					new StringConstant (ec.BuiltinTypes, str, loc).Emit (ec);
+				else
+					start.Emit (ec);
+
+				return;
+			}
+
+			var best = ResolveBestFormatOverload (new ResolveContext (ec.MemberContext));
+			if (best == null)
+				return;
+
+			var ca = new CallEmitter ();
+			ca.Emit (ec, best, arguments, loc);
+		}
+
+		MethodSpec ResolveBestFormatOverload (ResolveContext rc)
+		{
+			var members = MemberCache.FindMembers (rc.BuiltinTypes.String, "Format", true);
+			var res = new OverloadResolver (members, OverloadResolver.Restrictions.NoBaseMembers, loc);
+			return res.ResolveMember<MethodSpec> (rc, ref arguments);
+		}
+	}
+
+	public class InterpolatedStringInsert : CompositeExpression
+	{
+		public InterpolatedStringInsert (Expression expr)
+			: base (expr)
+		{
+		}
+
+		public Expression Alignment { get; set; }
+		public string Format { get; set; }
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			var expr = base.DoResolve (rc);
+			if (expr == null)
+				return null;
+
+			//
+			// For better error reporting, assumes the built-in implementation uses object
+			// as argument(s)
+			//
+			return Convert.ImplicitConversionRequired (rc, expr, rc.BuiltinTypes.Object, expr.Location);
+		}
+
+		public int? ResolveAligment (ResolveContext rc)
+		{
+			var c = Alignment.ResolveLabelConstant (rc);
+			if (c == null)
+				return null;
+			
+			c = c.ImplicitConversionRequired (rc, rc.BuiltinTypes.Int);
+			if (c == null)
+				return null;
+			
+			var value = (int) c.GetValueAsLong ();
+			if (value > 32767 || value < -32767) {
+				rc.Report.Warning (8094, 1, Alignment.Location, 
+					"Alignment value has a magnitude greater than 32767 and may result in a large formatted string");
+			}
+
+			return value;
 		}
 	}
 }

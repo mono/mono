@@ -1,2 +1,3 @@
-SUBDIRS = locale-builder sgen
+SUBDIRS = locale-builder sgen monograph
+
 

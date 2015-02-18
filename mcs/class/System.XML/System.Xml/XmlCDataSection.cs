@@ -54,11 +54,9 @@ namespace System.Xml
 			get { return XmlNodeType.CDATA; }
 		}
 
-#if NET_2_0
 		public override XmlNode ParentNode {
 			get { return base.ParentNode; }
 		}
-#endif
 
 		#endregion
 

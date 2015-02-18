@@ -130,9 +130,7 @@ namespace I18N.CJK
 		{
 			int charIndex = 0;
 			int byteIndex = 0;
-#if NET_2_0
 			EncoderFallbackBuffer buffer = null;
-#endif
 
 			// Convert the characters into their byte form.
 			int posn = byteIndex;
@@ -243,14 +241,9 @@ namespace I18N.CJK
 					}
 					else
 					{
-#if NET_2_0
 						HandleFallback (ref buffer,
 							chars, ref charIndex, ref charCount,
 							bytes, ref posn, ref byteCount, null);
-#else
-						// Invalid character.
-						bytes[posn++] = (byte)'?';
-#endif
 					}
 					continue;
 				}
@@ -295,13 +288,9 @@ namespace I18N.CJK
 				}
 				if(value == 0)
 				{
-#if NET_2_0
 					HandleFallback (ref buffer,
 						chars, ref charIndex, ref charCount,
 						bytes, ref posn, ref byteCount, null);
-#else
-					bytes[posn++] = (byte)'?';
-#endif
 				}
 				else if(value < 0x0100)
 				{
@@ -424,9 +413,7 @@ namespace I18N.CJK
 		public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
 		{
 			int byteCount = bytes.Length;
-#if NET_2_0
 			EncoderFallbackBuffer buffer = null;
-#endif
 
 			// Convert the characters into their byte form.
 			int posn = byteIndex;
@@ -533,13 +520,8 @@ namespace I18N.CJK
 					}
 					else
 					{
-#if NET_2_0
 						HandleFallback (ref buffer, chars, ref i, ref charCount, bytes, 
 							ref byteIndex, ref byteCount, null);
-#else
-						// Invalid character.
-						bytes[posn++] = (byte)'?';
-#endif
 					}
 					continue;
 				}
@@ -584,12 +566,8 @@ namespace I18N.CJK
 				}
 				if (value == 0)
 				{
-#if NET_2_0
 					HandleFallback (ref buffer, chars, ref charIndex, ref charCount,
 						bytes, ref posn, ref byteCount, null);
-#else
-					bytes[posn++] = (byte)'?';
-#endif
 				}
 				else if (value < 0x0100)
 				{
@@ -762,9 +740,7 @@ namespace I18N.CJK
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int GetCharCount (byte [] bytes, int index, int count, bool refresh)
 		{
 			CheckRange (bytes, index, count);
@@ -814,9 +790,7 @@ namespace I18N.CJK
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int GetChars (
 			byte [] bytes, int byteIndex, int byteCount,
 			char [] chars, int charIndex, bool refresh)

@@ -8,7 +8,6 @@
 // (c) 2006 Marek Habersack
 //
 
-#if NET_2_0
 using System;
 using System.ComponentModel;
 using System.Reflection;
@@ -278,4 +277,3 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 }
-#endif

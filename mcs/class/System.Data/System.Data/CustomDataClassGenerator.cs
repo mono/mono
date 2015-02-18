@@ -102,7 +102,6 @@ namespace System.Data
 			new Generator (ds, cns, gen, options).Run ();
 		}
 
-#if NET_2_0
 		public static void CreateDataSetClasses (DataSet ds,
 			CodeNamespace cns, CodeDomProvider codeProvider,
 			ClassGeneratorOptions options)
@@ -118,7 +117,6 @@ namespace System.Data
 		{
 			new Generator (ds, cunit, cns, codeProvider, options).Run ();
 		}
-#endif
 		public static string MakeSafeName (string name, ICodeGenerator codeGen)
 		{
 			if (name == null || codeGen == null)
@@ -129,7 +127,6 @@ namespace System.Data
 			return MakeSafeNameInternal (name);
 		}
 		
-#if NET_2_0
 		public static string MakeSafeName (string name, CodeDomProvider provider)
 		{
 			if (name == null || provider == null)
@@ -139,7 +136,6 @@ namespace System.Data
 
 			return MakeSafeNameInternal (name);
 		}
-#endif
 		
 		public static string MakeSafeNameInternal (string name)
 		{
@@ -298,7 +294,6 @@ namespace System.Data
 		}
 	}
 	
-#if NET_2_0
 #if DATACLASS_GENERATOR_STANDALONE
 	public class ClassCodeDomProviderOptions : ClassGeneratorOptions
 #else
@@ -412,7 +407,6 @@ namespace System.Data
 				return CustomDataClassGenerator.MakeSafeName (source, provider);
 		}		
 	}
-#endif  // NET_2_0
 	
 #if DATACLASS_GENERATOR_STANDALONE
 	public abstract class ClassGeneratorOptions
@@ -455,7 +449,6 @@ namespace System.Data
 			if (opts == null)
 				opts = new ClassICodeGeneratorOptions (codeGen);
 		}
-#if NET_2_0
 		public Generator (DataSet ds, CodeNamespace cns, CodeDomProvider codeProvider, 
 		                  ClassGeneratorOptions options)
 		{
@@ -477,7 +470,6 @@ namespace System.Data
 			if (opts == null)
 				opts = new ClassCodeDomProviderOptions (codeProvider);
 		}
-#endif
 		public void Run ()
 		{
 			// using decls
@@ -523,7 +515,6 @@ namespace System.Data
 				}
 			}
 
-#if NET_2_0
 			if (cunit == null)
 				return;
 			
@@ -536,7 +527,6 @@ namespace System.Data
 				cnsTA.Types.Add (dtAdapter);
 				cunit.Namespaces.Add (cnsTA);
 			}
-#endif
 		}
 		
 		private CodeThisReferenceExpression This ()
@@ -1813,7 +1803,6 @@ namespace System.Data
 
 #endregion
 
-#if NET_2_0
 #region Table Adapter class
 		
 		private CodeTypeDeclaration GenerateTableAdapterType (TableAdapterSchemaInfo taInfo)
@@ -2345,7 +2334,6 @@ namespace System.Data
 		}
 		
 #endregion
-#endif	//NET_2_0
 
 	}
 	

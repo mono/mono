@@ -168,7 +168,6 @@ public class CryptoConfigTest {
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# KeyValue/DSAKeyValue", "System.Security.Cryptography.Xml.DSAKeyValue");
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# KeyValue/RSAKeyValue", "System.Security.Cryptography.Xml.RSAKeyValue");
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# RetrievalMethod", "System.Security.Cryptography.Xml.KeyInfoRetrievalMethod");
-#if NET_2_0
 		CreateFromName ("http://www.w3.org/2001/04/xmlenc#sha256", "System.Security.Cryptography.SHA256Managed");
 		CreateFromName ("http://www.w3.org/2001/04/xmlenc#sha384", null);
 		CreateFromName ("http://www.w3.org/2001/04/xmlenc#sha512", "System.Security.Cryptography.SHA512Managed");
@@ -177,47 +176,30 @@ public class CryptoConfigTest {
 		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#hmac-sha384", "System.Security.Cryptography.HMACSHA384");
 		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#hmac-sha512", "System.Security.Cryptography.HMACSHA512");
 		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160", "System.Security.Cryptography.HMACRIPEMD160");
-#endif
 	}
 
 	[Test]
 	public void CreateFromName_UpperCase () 
 	{
 		CreateFromName ("SHA", "System.Security.Cryptography.SHA1CryptoServiceProvider");
-#if NET_2_0
 		CreateFromName ("SYSTEM.SECURITY.CRYPTOGRAPHY.TRIPLEDES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
 		CreateFromName ("HTTP://WWW.W3.ORG/2000/09/XMLDSIG#DSA-SHA1", "System.Security.Cryptography.DSASignatureDescription");
-#else
-		CreateFromName ("SYSTEM.SECURITY.CRYPTOGRAPHY.TRIPLEDES", null);  
-		CreateFromName ("HTTP://WWW.W3.ORG/2000/09/XMLDSIG#DSA-SHA1", null);
-#endif
 	}
 
 	[Test]
 	public void CreateFromName_LowerCase () 
 	{
-#if NET_2_0
 		CreateFromName ("sha", "System.Security.Cryptography.SHA1CryptoServiceProvider");
 		CreateFromName ("system.security.cryptography.tripledes", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
-#else
-		CreateFromName ("sha", null);
-		CreateFromName ("system.security.cryptography.tripledes", null);  
-#endif
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1", "System.Security.Cryptography.DSASignatureDescription");
 	}
 
 	[Test]
 	public void CreateFromName_MixedCase () 
 	{
-#if NET_2_0
 		CreateFromName ("ShA", "System.Security.Cryptography.SHA1CryptoServiceProvider");
 		CreateFromName ("SyStEm.SeCuRiTy.CrYpToGrApHy.TrIpLeDeS", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
 		CreateFromName ("hTtP://wWw.W3.oRg/2000/09/xMlDsIg#dSa-sHa1", "System.Security.Cryptography.DSASignatureDescription");
-#else
-		CreateFromName ("ShA", null);
-		CreateFromName ("SyStEm.SeCuRiTy.CrYpToGrApHy.TrIpLeDeS", null);  
-		CreateFromName ("hTtP://wWw.W3.oRg/2000/09/xMlDsIg#dSa-sHa1", null);
-#endif
 	}
 
 	// Tests created using "A Layer Man Guide to ASN.1" from RSA, page 19-20
@@ -228,11 +210,7 @@ public class CryptoConfigTest {
 	static byte[] oidmd5withRSAEncryption = { 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x04 };
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
-#else
-	[ExpectedException (typeof (NullReferenceException))]
-#endif
 	public void EncodeOIDNull () 
 	{
 		byte[] o = CryptoConfig.EncodeOID (null);
@@ -329,7 +307,6 @@ public class CryptoConfigTest {
 		MapNameToOID ("MD5", "1.2.840.113549.2.5");
 		MapNameToOID ("System.Security.Cryptography.MD5", "1.2.840.113549.2.5");
 		MapNameToOID ("System.Security.Cryptography.MD5CryptoServiceProvider", "1.2.840.113549.2.5");
-#if NET_2_0
 		MapNameToOID ("SHA256", "2.16.840.1.101.3.4.2.1");
 		MapNameToOID ("System.Security.Cryptography.SHA256", "2.16.840.1.101.3.4.2.1");
 		MapNameToOID ("System.Security.Cryptography.SHA256Managed", "2.16.840.1.101.3.4.2.1");
@@ -342,33 +319,12 @@ public class CryptoConfigTest {
 		MapNameToOID ("RIPEMD160", "1.3.36.3.2.1");
 		MapNameToOID ("System.Security.Cryptography.RIPEMD160", "1.3.36.3.2.1");
 		MapNameToOID ("System.Security.Cryptography.RIPEMD160Managed", "1.3.36.3.2.1");
-#else
-		MapNameToOID ("SHA256", "2.16.840.1.101.3.4.1");
-//		MapNameToOID ("SHA-256", "2.16.840.1.101.3.4.1");
-		MapNameToOID ("System.Security.Cryptography.SHA256", "2.16.840.1.101.3.4.1");
-		MapNameToOID ("System.Security.Cryptography.SHA256Managed", "2.16.840.1.101.3.4.1");
-		MapNameToOID ("SHA384", "2.16.840.1.101.3.4.2");
-//		MapNameToOID ("SHA-384", "2.16.840.1.101.3.4.2");
-		MapNameToOID ("System.Security.Cryptography.SHA384", "2.16.840.1.101.3.4.2");
-		MapNameToOID ("System.Security.Cryptography.SHA384Managed", "2.16.840.1.101.3.4.2");
-		MapNameToOID ("SHA512", "2.16.840.1.101.3.4.3");
-//		MapNameToOID ("SHA-512", "2.16.840.1.101.3.4.3");
-		MapNameToOID ("System.Security.Cryptography.SHA512", "2.16.840.1.101.3.4.3");
-		MapNameToOID ("System.Security.Cryptography.SHA512Managed", "2.16.840.1.101.3.4.3");
-#endif
 		// LAMESPEC: only documentated in ".NET Framework Security" book
 		MapNameToOID ("TripleDESKeyWrap", "1.2.840.113549.1.9.16.3.6");
-#if NET_2_0
 		// new OID defined in Fx 2.0
 		MapNameToOID ("DES", "1.3.14.3.2.7");
 		MapNameToOID ("TripleDES", "1.2.840.113549.3.7");
 		MapNameToOID ("RC2", "1.2.840.113549.3.2");
-#else
-		// no OID defined before Fx 2.0
-		MapNameToOID ("DES", null);
-		MapNameToOID ("TripleDES", null);
-		MapNameToOID ("RC2", null);
-#endif
 		MapNameToOID ("RSA", null);
 		MapNameToOID ("DSA", null);
 		MapNameToOID ("3DES", null);
@@ -387,7 +343,6 @@ public class CryptoConfigTest {
 		MapNameToOID ("RandomNumberGenerator", null);
 		MapNameToOID ("System.Security.Cryptography.RandomNumberGenerator", null);
 		MapNameToOID ("System.Security.Cryptography.KeyedHashAlgorithm", null);
-#if NET_2_0
 		MapNameToOID ("HMAC", null);
 		MapNameToOID ("System.Security.Cryptography.HMAC", null);
 		MapNameToOID ("HMACMD5", null);
@@ -400,7 +355,6 @@ public class CryptoConfigTest {
 		MapNameToOID ("System.Security.Cryptography.HMACSHA384", null);
 		MapNameToOID ("HMACSHA512", null);
 		MapNameToOID ("System.Security.Cryptography.HMACSHA512", null);
-#endif
 		MapNameToOID ("HMACSHA1", null);
 		MapNameToOID ("System.Security.Cryptography.HMACSHA1", null);
 		MapNameToOID ("MACTripleDES", null);
@@ -413,35 +367,21 @@ public class CryptoConfigTest {
 	public void MapNameToOID_UpperCase () 
 	{
 		MapNameToOID ("SHA1", "1.3.14.3.2.26");
-#if NET_2_0
 		MapNameToOID ("SYSTEM.SECURITY.CRYPTOGRAPHY.MD5CRYPTOSERVICEPROVIDER", "1.2.840.113549.2.5");
-#else
-		MapNameToOID ("SYSTEM.SECURITY.CRYPTOGRAPHY.MD5CRYPTOSERVICEPROVIDER", null);
-#endif
 	}
 
 	[Test]
 	public void MapNameToOID_LowerCase () 
 	{
-#if NET_2_0
 		MapNameToOID ("sha1", "1.3.14.3.2.26");
 		MapNameToOID ("system.security.cryptography.md5cryptoserviceprovider", "1.2.840.113549.2.5");
-#else
-		MapNameToOID ("sha1", null);
-		MapNameToOID ("system.security.cryptography.md5cryptoserviceprovider", null);
-#endif
 	}
 
 	[Test]
 	public void MapNameToOID_MixedCase () 
 	{
-#if NET_2_0
 		MapNameToOID ("sHa1", "1.3.14.3.2.26");
 		MapNameToOID ("SySteM.SeCuRiTy.CrYpToGrApHy.Md5cRyPtOsErViCePrOvIdEr", "1.2.840.113549.2.5");
-#else
-		MapNameToOID ("sHa1", null);
-		MapNameToOID ("SySteM.SeCuRiTy.CrYpToGrApHy.Md5cRyPtOsErViCePrOvIdEr", null);
-#endif
 	}
 
 	[Test]

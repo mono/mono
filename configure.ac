@@ -306,7 +306,6 @@ case "$host" in
 		platform_darwin=yes
 		target_mach=yes
 		CPPFLAGS="$CPPFLAGS -no-cpp-precomp -D_THREAD_SAFE -DGC_MACOSX_THREADS -DPLATFORM_MACOSX -DUSE_MMAP -DUSE_MUNMAP"
-		CPPFLAGS="$CPPFLAGS -DGetCurrentProcess=MonoGetCurrentProcess -DGetCurrentThread=MonoGetCurrentThread -DCreateEvent=MonoCreateEvent"
 		libmono_cflags="-D_THREAD_SAFE"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
@@ -441,8 +440,8 @@ AM_ICONV()
 
 AM_CONDITIONAL(NO_VERSION_SCRIPT, test x$no_version_script = xyes)
 
-AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h libproc.h)
-AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/sem.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h)
+AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h sys/sysctl.h libproc.h)
+AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/sem.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h arpa/inet.h)
 AC_CHECK_HEADERS([linux/netlink.h linux/rtnetlink.h],
                   [], [], [#include <stddef.h>
 		  #include <sys/socket.h>
@@ -530,11 +529,23 @@ AC_CACHE_CHECK([for clang],
 WARN=''
 if test x"$GCC" = xyes; then
         WARN='-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes  -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value'
+
+		# We require C99 with some GNU extensions, e.g. `linux` macro
+		CFLAGS="$CFLAGS -std=gnu99"
+
 		# The runtime code does not respect ANSI C strict aliasing rules
 		CFLAGS="$CFLAGS -fno-strict-aliasing"
 
 		# We rely on signed overflow to behave
 		CFLAGS="$CFLAGS -fwrapv"
+
+		# Don't export any symbols by default
+		CFLAGS="$CFLAGS -fvisibility=hidden"
+		CFLAGS_FOR_EGLIB="$CFLAGS_FOR_EGLIB -fvisibility=hidden"
+		CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+
+		# Export symbols marked by MONO_API
+		CFLAGS="$CFLAGS -DMONO_DLL_EXPORT"
 
 		ORIG_CFLAGS=$CFLAGS
 		CFLAGS="$CFLAGS -Wdeclaration-after-statement"
@@ -1145,6 +1156,12 @@ AC_TRY_COMPILE([
 
 AC_CHECK_HEADERS(nacl/nacl_dyncode.h)
 
+dnl ***********************************
+dnl *** Checks for signals
+dnl ***********************************
+AC_CHECK_HEADERS(signal.h)
+AC_CHECK_FUNCS(sigaction)
+
 if test x$target_win32 = xno; then
 
 	dnl hires monotonic clock support
@@ -1520,15 +1537,122 @@ if test x$target_win32 = xno; then
 	])
 	
 	dnl **********************************
+	dnl *** Check for getaddrinfo ***
+	dnl **********************************
+	AC_MSG_CHECKING(for getaddrinfo)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <netdb.h>
+	], [
+		getaddrinfo(NULL,NULL,NULL,NULL);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETADDRINFO, 1, [Have getaddrinfo])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
 	dnl *** Check for gethostbyname2_r ***
 	dnl **********************************
 	AC_MSG_CHECKING(for gethostbyname2_r)
-		AC_TRY_LINK([#include <netdb.h>], [
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <netdb.h>
+	], [
+
 		gethostbyname2_r(NULL,0,NULL,NULL,0,NULL,NULL);
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_GETHOSTBYNAME2_R, 1, [Have gethostbyname2_r])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
+	dnl *** Check for gethostbyname2 ***
+	dnl **********************************
+	AC_MSG_CHECKING(for gethostbyname2)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <netdb.h>
+	], [
+		gethostbyname2(NULL,0);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETHOSTBYNAME2, 1, [Have gethostbyname2])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
+	dnl *** Check for gethostbyname ***
+	dnl **********************************
+	AC_MSG_CHECKING(for gethostbyname)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <netdb.h>
+	], [
+		gethostbyname(NULL);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETHOSTBYNAME, 1, [Have gethostbyname])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
+	dnl *** Check for getprotobyname ***
+	dnl **********************************
+	AC_MSG_CHECKING(for getprotobyname)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <netdb.h>
+	], [
+		getprotobyname(NULL);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETPROTOBYNAME, 1, [Have getprotobyname])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
+	dnl *** Check for getnameinfo ***
+	dnl **********************************
+	AC_MSG_CHECKING(for getnameinfo)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <netdb.h>
+	], [
+		getnameinfo (NULL, 0, NULL, 0, NULL, 0, 0);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETNAMEINFO, 1, [Have getnameinfo])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+
+	dnl **********************************
+	dnl *** Check for inet_ntop ***
+	dnl **********************************
+	AC_MSG_CHECKING(for inet_ntop)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <arpa/inet.h>
+	], [
+		inet_ntop (0, NULL, NULL, 0);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_INET_NTOP, 1, [Have inet_ntop])
 	], [
 		AC_MSG_RESULT(no)
 	])
@@ -1598,11 +1722,23 @@ if test x$target_win32 = xno; then
 	AC_CHECK_FUNCS(pthread_attr_getstack pthread_attr_getstacksize)
 	AC_CHECK_FUNCS(pthread_get_stacksize_np pthread_get_stackaddr_np)
 
-	dnl ***********************************
-	dnl *** Checks for signals
-	dnl ***********************************
-	AC_CHECK_HEADERS(signal.h)
-	AC_CHECK_FUNCS(sigaction)
+	dnl **********************************
+	dnl *** Check for mincore ***
+	dnl **********************************
+	AC_MSG_CHECKING(for mincore)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <sys/types.h>
+		#include <sys/mman.h>
+	], [
+		mincore(NULL, 0, NULL);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_MINCORE, 1, [Have mincore])
+	], [
+		AC_MSG_RESULT(no)
+	])
 
 	dnl ***********************************
 	dnl *** Checks for working __thread ***
@@ -2156,6 +2292,97 @@ else
 			AC_MSG_RESULT(no)
 		])
 	])
+
+	dnl **********************************
+	dnl *** Check for getaddrinfo ***
+	dnl **********************************
+	AC_MSG_CHECKING(for getaddrinfo)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <winsock2.h>
+		#include <ws2tcpip.h>
+	], [
+		getaddrinfo(NULL,NULL,NULL,NULL);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETADDRINFO, 1, [Have getaddrinfo])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
+	dnl *** Check for gethostbyname ***
+	dnl **********************************
+	AC_MSG_CHECKING(for gethostbyname)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <winsock2.h>
+		#include <ws2tcpip.h>
+	], [
+		gethostbyname(NULL);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETHOSTBYNAME, 1, [Have gethostbyname])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
+	dnl *** Check for getprotobyname ***
+	dnl **********************************
+	AC_MSG_CHECKING(for getprotobyname)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <winsock2.h>
+		#include <ws2tcpip.h>
+	], [
+		getprotobyname(NULL);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETPROTOBYNAME, 1, [Have getprotobyname])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
+	dnl *** Check for getnameinfo ***
+	dnl **********************************
+	AC_MSG_CHECKING(for getnameinfo)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <winsock2.h>
+		#include <ws2tcpip.h>
+	], [
+		getnameinfo (NULL, 0, NULL, 0, NULL, 0, 0);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETNAMEINFO, 1, [Have getnameinfo])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
+	dnl *** Check for inet_ntop ***
+	dnl **********************************
+	AC_MSG_CHECKING(for inet_ntop)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <winsock2.h>
+		#include <ws2tcpip.h>
+	], [
+		inet_ntop (0, NULL, NULL, 0);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_INET_NTOP, 1, [Have inet_ntop])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
 	AC_CHECK_DECLS(InterlockedExchange64, [], [], [[#include <windows.h>]])
 	AC_CHECK_DECLS(InterlockedCompareExchange64, [], [], [[#include <windows.h>]])
 	AC_CHECK_DECLS(InterlockedDecrement64, [], [], [[#include <windows.h>]])
@@ -2491,7 +2718,9 @@ if test "x$enable_llvm" = "xyes"; then
          -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore \
          -lLLVMSupport -lstdc++"
        LLVM_LIBS="$LLVM_LIBS $LLVM_SYSTEM_LIBS"
-       llvm_api_version=1
+
+       llvm_config_path=$with_llvm/include/llvm/Config/llvm-config.h
+       llvm_api_version=`awk '/MONO_API_VERSION/ { print $3 }' $llvm_config_path`
    fi  
 
    if test "x$llvm_api_version" = "x"; then
@@ -2822,6 +3051,18 @@ if test "x$host" != "x$target"; then
 		with_tls=pthread
 		target_mach=no
 		;;
+   x86_64*-linux-*)
+		TARGET=AMD64;
+		arch_target=amd64;
+		AC_DEFINE(TARGET_AMD64, 1, [...])
+		AC_DEFINE(TARGET_ANDROID, 1, [...])
+		CPPFLAGS="$CPPFLAGS"
+		sgen_supported=true
+		# Can't use tls, since it depends on the runtime detection of tls offsets
+		# in mono-compiler.h
+		with_tls=pthread
+		target_mach=no
+		;;
    aarch64*-linux-*)
 		TARGET=ARM64;
 		arch_target=arm64;
@@ -2878,6 +3119,46 @@ SPARC64)
 	;;
 esac
 
+dnl *************
+dnl *** VTUNE ***
+dnl *************
+
+AC_ARG_ENABLE(vtune,[  --enable-vtune	Enable the VTUNE back-end], enable_vtune=$enableval, enable_vtune=no)
+AC_ARG_WITH(vtune, [  --with-vtune=<vtune prefix>	Enable jit vtune profiling], enable_vtune=yes,)
+
+AM_CONDITIONAL(HAVE_VTUNE, test x$enable_vtune = xyes)
+
+if test "x$enable_vtune" = "xyes"; then
+	if test "x$with_vtune" = "x"; then
+		VTUNE_PATH=/opt/intel/vtune_amplifier_xe
+	else
+		VTUNE_PATH=$with_vtune
+	fi
+	VTUNE_INCLUDE=$VTUNE_PATH/include
+	case "$TARGET" in
+	X86)
+		VTUNE_LIB=$VTUNE_PATH/lib32
+		;;
+	AMD64)
+		VTUNE_LIB=$VTUNE_PATH/lib64
+		;;
+	*)
+		AC_MSG_ERROR([Unsupported target $TARGET for VTUNE.])
+		;;
+	esac
+	if test ! -f $VTUNE_INCLUDE/jitprofiling.h; then
+		AC_MSG_ERROR([VTUNE $VTUNE_INCLUDE/jitprofiling.h not found.])
+	fi
+	if test ! -f $VTUNE_LIB/libjitprofiling.a; then
+		AC_MSG_ERROR([VTUNE $VTUNE_LIB/libjitprofiling.a not found.])
+	fi
+
+	VTUNE_CFLAGS=-I$VTUNE_INCLUDE
+	VTUNE_LIBS="-L/$VTUNE_LIB/ -ljitprofiling"
+
+	AC_SUBST(VTUNE_LIBS)
+	AC_SUBST(VTUNE_CFLAGS)
+fi
 dnl Use GCC atomic ops if they work on the target.
 if test x$GCC = "xyes"; then
 	case $TARGET in
@@ -3582,7 +3863,6 @@ mono/tests/cas/threads/Makefile
 mono/tests/gc-descriptors/Makefile
 mono/unit-tests/Makefile
 mono/benchmark/Makefile
-mono/monograph/Makefile
 mono/io-layer/Makefile
 mono/mini/Makefile
 mono/profiler/Makefile
@@ -3624,6 +3904,7 @@ data/config
 tools/Makefile
 tools/locale-builder/Makefile
 tools/sgen/Makefile
+tools/monograph/Makefile
 runtime/Makefile
 msvc/Makefile
 po/Makefile

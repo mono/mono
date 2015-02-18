@@ -33,7 +33,6 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Web.Security;
 
-#if NET_2_0
 
 namespace System.Web.Configuration {
 
@@ -182,4 +181,3 @@ namespace System.Web.Configuration {
 	}
 }
 
-#endif

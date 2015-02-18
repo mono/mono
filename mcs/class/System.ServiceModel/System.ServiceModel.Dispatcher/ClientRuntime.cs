@@ -98,7 +98,6 @@ namespace System.ServiceModel.Dispatcher
 		}
 #endif
 
-#if NET_4_5
 		[MonoTODO]
 		public ICollection<ClientOperation> ClientOperations {
 			get { throw new NotImplementedException (); }
@@ -108,7 +107,6 @@ namespace System.ServiceModel.Dispatcher
 		public ICollection<IClientMessageInspector> ClientMessageInspectors {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		public bool ManualAddressing {
 			get { return manual_addressing; }

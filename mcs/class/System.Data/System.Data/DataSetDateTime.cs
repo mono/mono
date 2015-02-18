@@ -30,7 +30,6 @@
 
 using System;
 
-#if NET_2_0
 namespace System.Data
 {
 	public enum DataSetDateTime 
@@ -41,4 +40,3 @@ namespace System.Data
 		Utc = 4
 	}
 }
-#endif

@@ -113,7 +113,6 @@ namespace System.Drawing {
 		public override object CreateInstance (ITypeDescriptorContext context,
 						       IDictionary propertyValues)
 		{
-#if NET_2_0
 			object ox = propertyValues ["X"];
 			object oy = propertyValues ["Y"];
 			if ((ox == null) || (oy == null))
@@ -121,10 +120,6 @@ namespace System.Drawing {
 
 			int x = (int) ox;
 			int y = (int) oy;
-#else
-			int x = (int) propertyValues ["X"];
-			int y = (int) propertyValues ["Y"];
-#endif
 			return new Point (x, y);
 		}
 

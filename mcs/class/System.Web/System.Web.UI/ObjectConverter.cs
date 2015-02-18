@@ -32,9 +32,6 @@ namespace System.Web.UI
 {
 	[Obsolete ("The recommended alternative is System.Convert and String.Format. http://go.microsoft.com/fwlink/?linkid=14202")]
 	// CAS - no InheritanceDemand here as the class is sealed
-#if !NET_4_0
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
 	public sealed class ObjectConverter
 	{
 		public ObjectConverter ()

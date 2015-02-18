@@ -44,9 +44,7 @@ namespace System.Data.OleDb
 	{
 		#region Constructors
 
-#if NET_2_0
 		[ObsoleteAttribute ("OleDbPermission() has been deprecated.  Use the OleDbPermission(PermissionState.None) constructor.  http://go.microsoft.com/fwlink/?linkid=14202", true)]
-#endif
 		public OleDbPermission ()
 		{
 		}
@@ -55,9 +53,7 @@ namespace System.Data.OleDb
 		{
 		}
 
-#if NET_2_0
 		[ObsoleteAttribute ("OleDbPermission() has been deprecated.  Use the OleDbPermission(PermissionState.None) constructor.  http://go.microsoft.com/fwlink/?linkid=14202", true)]
-#endif
 		public OleDbPermission (PermissionState state, bool allowBlankPassword) : base(state, allowBlankPassword)
 		{
 		}

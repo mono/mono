@@ -459,10 +459,6 @@ namespace MonoTests.System.Text {
 	}
 	
 	[Test]
-#if ONLY_1_1
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	[Category ("NotWorking")] // Mono follows 2.0 behaviour in this case
-#endif
 	public void MaxCapacity_Overflow3 ()
 	{
 		//

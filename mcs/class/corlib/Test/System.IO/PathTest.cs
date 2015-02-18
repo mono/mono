@@ -584,10 +584,6 @@ namespace MonoTests.System.IO
 				{"root//dir", "root\\dir"},
 				{"root/.              /", "root\\"},
 				{"root/..             /", ""},
-#if !NET_2_0
-				{"root/      .              /", "root\\"},
-				{"root/      ..             /", ""},
-#endif
 				{"root/./", "root\\"},
 				{"root/..                      /", ""},
 				{".//", ""}
@@ -626,10 +622,6 @@ namespace MonoTests.System.IO
 				{"root//dir", "root\\dir"},
 				{"root/.              /", "root\\"},
 				{"root/..             /", ""},
-#if !NET_2_0
-				{"root/      .              /", "root\\"},
-				{"root/      ..             /", ""},
-#endif
 				{"root/./", "root\\"},
 				{"root/..                      /", ""},
 				{".//", ""}
@@ -671,10 +663,6 @@ namespace MonoTests.System.IO
 				{"root//dir", "root\\dir"},
 				{"root/.              /", "root\\"},
 				{"root/..             /", ""},
-#if !NET_2_0
-				{"root/      .              /", "root\\"},
-				{"root/      ..             /", ""},
-#endif
 				{"root/./", "root\\"},
 				{"root/..                      /", ""},
 				{".//", ""}
@@ -866,12 +854,8 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotWorking")] // we also throw ArgumentException on 1.0 profile
-#endif
 		public void GetPathRoot_Path_InvalidPathChars ()
 		{
-#if NET_2_0
 			try {
 				Path.GetPathRoot ("hi\0world");
 				Assert.Fail ("#1");
@@ -882,9 +866,6 @@ namespace MonoTests.System.IO
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNull (ex.ParamName, "#5");
 			}
-#else
-			Assert.AreEqual (String.Empty, Path.GetPathRoot ("hi\0world"));
-#endif
 		}
 
 		[Test]
@@ -1098,20 +1079,14 @@ namespace MonoTests.System.IO
 		{
 			char[] invalid = Path.InvalidPathChars;
 			if (Windows) {
-#if NET_2_0
 				Assert.AreEqual (36, invalid.Length, "Length");
-#else
-				Assert.AreEqual (15, invalid.Length, "Length");
-#endif
+
 				foreach (char c in invalid) {
 					int i = (int) c;
-#if NET_2_0
+
 					if (i < 32)
 						continue;
-#else
-					if ((i == 0) || (i == 8) || ((i > 15) && (i < 19)) || ((i > 19) && (i < 26)))
-						continue;
-#endif
+
 					// in both 1.1 SP1 and 2.0
 					if ((i == 34) || (i == 60) || (i == 62) || (i == 124))
 						continue;
@@ -1143,7 +1118,6 @@ namespace MonoTests.System.IO
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetInvalidFileNameChars_Values ()
 		{
@@ -1266,7 +1240,7 @@ namespace MonoTests.System.IO
 				}
 			}
 		}
-#endif
+
 #if NET_4_0
 		string Concat (string sep, params string [] parms)
 		{

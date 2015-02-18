@@ -497,7 +497,6 @@ namespace MonoTests.System.Runtime.InteropServices
 				Marshal.FreeCoTaskMem (ptr);
 			}
 		}
-#if NET_2_0
 		private const string NotSupported = "Not supported before Windows 2000 Service Pack 3";
 		private static char[] PlainText = new char[] { 'a', 'b', 'c' };
 		private static byte[] AsciiPlainText = new byte[] { (byte) 'a', (byte) 'b', (byte) 'c' };
@@ -663,7 +662,6 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.Ignore (NotSupported);
 			}
 		}
-#endif
 
 #if !NET_2_1
 		[Test]
@@ -780,7 +778,6 @@ namespace MonoTests.System.Runtime.InteropServices
 			Assert.IsNull (Marshal.PtrToStructure (IntPtr.Zero, typeof (SimpleStruct2)));
 		}
 		
-#if NET_2_0
 		[Test]
 		public void TestGetExceptionForHR ()
 		{
@@ -793,7 +790,6 @@ namespace MonoTests.System.Runtime.InteropServices
 			ex = Marshal.GetExceptionForHR (E_INVALIDARG);
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "E_INVALIDARG");
 		}
-#endif
 		bool RunningOnUnix {
 			get {
 				int p = (int) Environment.OSVersion.Platform;

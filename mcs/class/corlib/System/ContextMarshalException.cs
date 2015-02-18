@@ -38,9 +38,6 @@ namespace System
 {
 	[Serializable]
 	[ComVisible (true)]
-#if !NET_4_0
-	[Obsolete ("this type is obsoleted in 2.0 profile")]
-#endif
 	public class ContextMarshalException : SystemException
 	{
 		const int Result = unchecked ((int)0x80131504);

@@ -51,10 +51,8 @@ namespace System.Reflection {
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
 	public partial class Assembly : ICustomAttributeProvider {
-#elif NET_4_0
-	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #else
-	public partial class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
+	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #endif
 		internal class ResolveEventHolder {
 			public event ModuleResolveEventHandler ModuleResolve;
@@ -79,11 +77,7 @@ namespace System.Reflection {
 		private bool fromByteArray;
 		private string assemblyName;
 
-#if NET_4_0
 		protected
-#else
-		internal
-#endif
 		Assembly () 
 		{
 			resolve_event_holder = new ResolveEventHolder ();
@@ -207,13 +201,9 @@ namespace System.Reflection {
 			}
 		}
 
-		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-
-			UnitySerializationHolder.GetAssemblyData (this, info, context);
+			throw new NotImplementedException ();
 		}
 
 		public virtual bool IsDefined (Type attributeType, bool inherit)
@@ -478,9 +468,7 @@ namespace System.Reflection {
 			return LoadFrom (assemblyFile, false);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
 			Assembly a = LoadFrom (assemblyFile, false);
@@ -493,9 +481,7 @@ namespace System.Reflection {
 			return a;
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[MonoTODO("This overload is not currently implemented")]
 		// FIXME: What are we missing?
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
@@ -503,24 +489,18 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		[MonoTODO]
 		public static Assembly LoadFrom (String assemblyFile, byte [] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
-#if NET_4_0
 		public static Assembly UnsafeLoadFrom (String assemblyFile)
 		{
 			return LoadFrom (assemblyFile);
 		}
-#endif
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly LoadFile (String path, Evidence securityEvidence)
 		{
 			if (path == null)
@@ -541,9 +521,7 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (assemblyString);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif		
 		public static Assembly Load (String assemblyString, Evidence assemblySecurity)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyString, assemblySecurity);
@@ -554,9 +532,7 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (assemblyRef);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyRef, assemblySecurity);
@@ -572,22 +548,18 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly Load (Byte[] rawAssembly, Byte[] rawSymbolStore,
 					     Evidence securityEvidence)
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 
-#if NET_4_0
 		[MonoLimitation ("Argument securityContextSource is ignored")]
 		public static Assembly Load (byte [] rawAssembly, byte [] rawSymbolStore, SecurityContextSource securityContextSource)
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore);
 		}
-#endif
 
 		public static Assembly ReflectionOnlyLoad (byte[] rawAssembly)
 		{
@@ -621,9 +593,7 @@ namespace System.Reflection {
 
 		[MonoTODO ("Not implemented")]
 		public
-#if NET_4_0
 		virtual
-#endif
 		Module LoadModule (string moduleName, byte [] rawModule, byte [] rawSymbolStore)
 		{
 			throw new NotImplementedException ();
@@ -676,9 +646,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		Object CreateInstance (String typeName, Boolean ignoreCase,
 					      BindingFlags bindingAttr, Binder binder,
 					      Object[] args, CultureInfo culture,
@@ -755,9 +723,7 @@ namespace System.Reflection {
 		[MonoTODO ("Currently it always returns zero")]
 		[ComVisible (false)]
 		public
-#if NET_4_0
 		virtual
-#endif
 		long HostContext {
 			get { return 0; }
 		}
@@ -875,7 +841,6 @@ namespace System.Reflection {
 			}
 		}
 		
-#if NET_4_0
 		public virtual PermissionSet PermissionSet {
 			get { return this.GrantedPermissionSet; }
 		}
@@ -883,11 +848,9 @@ namespace System.Reflection {
 		public virtual SecurityRuleSet SecurityRuleSet {
 			get { throw CreateNIE (); }
 		}
-#endif
 
 #endif
 
-#if NET_4_0
 		static Exception CreateNIE ()
 		{
 			return new NotImplementedException ("Derived classes must implement it");
@@ -968,9 +931,7 @@ namespace System.Reflection {
 				return true;
 			return !left.Equals (right);
 		}
-#endif
 
-#if NET_4_5
 		public virtual IEnumerable<TypeInfo> DefinedTypes {
 			get {
 				foreach (var type in GetTypes ()) {
@@ -990,6 +951,5 @@ namespace System.Reflection {
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
-#endif
 	}
 }

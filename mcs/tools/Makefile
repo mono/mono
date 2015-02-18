@@ -1,6 +1,6 @@
 thisdir = tools
 
-per_profile_dirs = \
+net_4_5_dirs := \
 	al		\
 	linker		\
 	tuner		\
@@ -13,10 +13,7 @@ per_profile_dirs = \
 	resgen		\
 	gacutil		\
 	wsdl		\
-	xbuild
-
-net_4_0_dirs := \
-	$(per_profile_dirs) \
+	xbuild		\
 	csharp		\
 	corcompare	\
 	compiler-tester	\
@@ -47,17 +44,13 @@ net_4_0_dirs := \
 	cccheck		\
 	security	\
 	mdbrebase	\
-	ikdasm
-
-net_2_0_dirs := \
-	$(per_profile_dirs)
+	ikdasm		\
+	symbolicate
 
 build_SUBDIRS = gacutil security culevel
-net_4_0_SUBDIRS := $(net_4_0_dirs) $(basic_SUBDIRS)
-net_4_5_SUBDIRS := $(net_4_0_SUBDIRS)
+net_4_5_SUBDIRS := $(net_4_5_dirs)
 
-SUBDIRS = $(basic_SUBDIRS) $(net_2_0_dirs)
-DIST_SUBDIRS = $(SUBDIRS) $(net_4_0_dirs)
+SUBDIRS = $(basic_SUBDIRS) $(net_4_5_dirs)
 
 include ../build/rules.make
 

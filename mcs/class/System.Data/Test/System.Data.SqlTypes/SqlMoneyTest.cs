@@ -337,11 +337,11 @@ namespace MonoTests.System.Data.SqlTypes
 
                         // ToSqlString ()
                         Assert.AreEqual ( "6464.6464", Test1.ToSqlString ().Value, "#M26");
-                        Assert.AreEqual ( "90000.0000", Test2.ToSqlString ().Value, "#M27");
+                        Assert.AreEqual ( "90000.00", Test2.ToSqlString ().Value, "#M27");
 
                         // ToString ()
                         Assert.AreEqual ( "6464.6464", Test1.ToString (), "#M28");
-                        Assert.AreEqual ( "90000.0000", Test2.ToString (), "#M29");
+                        Assert.AreEqual ( "90000.00", Test2.ToString (), "#M29");
                 }
 
                 // OPERATORS
@@ -559,14 +559,12 @@ namespace MonoTests.System.Data.SqlTypes
 				Assert.AreEqual ( typeof (OverflowException), e.GetType (), "#Y05");
 			}
 		}
-#if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlMoney.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("decimal", qualifiedName.Name, "#A01");
 		}
-#endif
         }
 }
 

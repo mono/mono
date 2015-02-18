@@ -150,6 +150,8 @@ namespace Mono.CSharp {
 		public bool BreakOnInternalError;
 		#endregion
 
+		public string GetResourceStrings;
+
 		public bool ShowFullPaths;
 
 		//
@@ -1448,7 +1450,7 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			default:
-				if (arg.StartsWith ("--fatal", StringComparison.Ordinal)){
+				if (arg.StartsWith ("--fatal", StringComparison.Ordinal)) {
 					int fatal = 1;
 					if (arg.StartsWith ("--fatal=", StringComparison.Ordinal))
 						int.TryParse (arg.Substring (8), out fatal);
@@ -1473,6 +1475,17 @@ namespace Mono.CSharp {
 						settings.StdLibRuntimeVersion = RuntimeVersion.v4;
 						break;
 					}
+					return ParseResult.Success;
+				}
+
+				if (arg.StartsWith ("--getresourcestrings:", StringComparison.Ordinal)) {
+					string file = arg.Substring (21).Trim ();
+					if (file.Length < 1) {
+						Error_RequiresArgument (arg);
+						return ParseResult.Error;
+					}
+
+					settings.GetResourceStrings = file;
 					return ParseResult.Success;
 				}
 

@@ -32,9 +32,7 @@
 
 using System.Collections;
 using System.Threading;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 //TODO: logging
 namespace System.Net {
@@ -288,12 +286,10 @@ namespace System.Net {
 			disposed = true;
 		}
 
-#if NET_4_5
 		public Task<HttpListenerContext> GetContextAsync ()
 		{
 			return Task<HttpListenerContext>.Factory.FromAsync (BeginGetContext, EndGetContext, null);
 		}
-#endif
 
 		internal void CheckDisposed ()
 		{

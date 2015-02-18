@@ -39,11 +39,7 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
-#if NET_2_0
 	[ToolboxData ("<{0}:RegularExpressionValidator runat=\"server\" ErrorMessage=\"RegularExpressionValidator\"></{0}:RegularExpressionValidator>")]
-#else
-	[ToolboxData ("<{0}:RegularExpressionValidator runat=server ErrorMessage=\"RegularExpressionValidator\"></{0}:RegularExpressionValidator>")]
-#endif
 	public class RegularExpressionValidator : BaseValidator
 	{
 		public RegularExpressionValidator ()
@@ -53,15 +49,9 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
-#if NET_2_0
 				RegisterExpandoAttribute (ClientID, "evaluationfunction", "RegularExpressionValidatorEvaluateIsValid");
 				if (ValidationExpression.Length > 0)
 					RegisterExpandoAttribute (ClientID, "validationexpression", ValidationExpression, true);
-#else
-				w.AddAttribute ("evaluationfunction", "RegularExpressionValidatorEvaluateIsValid", false);
-				if (ValidationExpression != "")
-					w.AddAttribute ("validationexpression", ValidationExpression);
-#endif
 			}
 
 			base.AddAttributesToRender (w);
@@ -83,11 +73,7 @@ namespace System.Web.UI.WebControls {
 			return Regex.IsMatch (GetControlValidationValue(ControlToValidate), expr.ToString ());
 		}
 
-#if NET_2_0
 		[Themeable (false)]
-#else
-		[Bindable(true)]
-#endif
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.WebControls.RegexTypeEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("")]

@@ -44,11 +44,7 @@ namespace System.Data.OleDb
 	[ListBindable (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing)]
 	public sealed class OleDbParameterCollection :
-#if NET_2_0
 		DbParameterCollection, IList, ICollection, IDataParameterCollection
-#else
-		MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
-#endif
 	{
 		#region Fields
 
@@ -66,14 +62,8 @@ namespace System.Data.OleDb
 	
 		#region Properties
 
-#if ONLY_1_1
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		int Count {
 			get { return list.Count; }
 		}
@@ -101,7 +91,6 @@ namespace System.Data.OleDb
 			}
 		}
 
-#if NET_2_0
 		public override bool IsFixedSize {
 			get {
 				return list.IsFixedSize;
@@ -125,39 +114,6 @@ namespace System.Data.OleDb
 				return list.SyncRoot;
 			}
 		}
-#else
-		bool IList.IsFixedSize {
-			get { return false; }
-		}
-
-		bool IList.IsReadOnly {
-			get { return false; }
-		}
-
-		bool ICollection.IsSynchronized {
-			get { return list.IsSynchronized; }
-		}
-
-		object ICollection.SyncRoot {
-			get { return list.SyncRoot; }
-		}
-
-		object IList.this[int index] {
-			get { return list[index]; }
-			set { list[index] = value; }
-		}
-
-		object IDataParameterCollection.this [string index] {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-#endif
 
 		internal IntPtr GdaParameterList {
 			[MonoTODO]
@@ -175,13 +131,9 @@ namespace System.Data.OleDb
 
 		#region Methods
 
-#if NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		int Add (object value)
 		{
 			if (!(value is OleDbParameter))
@@ -199,21 +151,17 @@ namespace System.Data.OleDb
 			return value;
 		}
 
-#if NET_2_0
 		[Obsolete("OleDbParameterCollection.Add(string, value) is now obsolete. Use OleDbParameterCollection.AddWithValue(string, object) instead.")]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-#endif
 		public OleDbParameter Add (string parameterName, object value)
 		{
 			return Add (new OleDbParameter (parameterName, value));
 		}
 
-#if NET_2_0
 		public OleDbParameter AddWithValue (string parameterName, object value)
 		{
 			return Add (new OleDbParameter (parameterName, value));
 		}
-#endif
 
 		public OleDbParameter Add (string parameterName, OleDbType oleDbType)
 		{
@@ -230,7 +178,6 @@ namespace System.Data.OleDb
 			return Add (new OleDbParameter (parameterName, oleDbType, size, sourceColumn));
 		}
 
-#if NET_2_0
 		public override void AddRange(Array values)
 		{
 			if (values == null)
@@ -248,12 +195,9 @@ namespace System.Data.OleDb
 			foreach (OleDbParameter value in values)
 				Add (value);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Clear()
 		{
 			foreach (OleDbParameter p in list)
@@ -262,9 +206,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool Contains (object value)
 		{
 			if (!(value is OleDbParameter))
@@ -273,9 +215,7 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool Contains (string value)
 		{
 			foreach (OleDbParameter p in list)
@@ -284,39 +224,30 @@ namespace System.Data.OleDb
 			return false;
 		}
 
-#if NET_2_0
 		public bool Contains (OleDbParameter value)
 		{
 			return IndexOf (value) != -1;
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void CopyTo (Array array, int index)
 		{
 			list.CopyTo (array, index);
 		}
 
-#if NET_2_0
 		public void CopyTo(OleDbParameter[] array, int index)
 		{
 			CopyTo (array, index);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		IEnumerator GetEnumerator()
 		{
 			return list.GetEnumerator ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected override DbParameter GetParameter (int index)
 		{
@@ -328,12 +259,9 @@ namespace System.Data.OleDb
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		int IndexOf (object value)
 		{
 			if (!(value is OleDbParameter))
@@ -341,17 +269,13 @@ namespace System.Data.OleDb
 			return IndexOf (((OleDbParameter) value).ParameterName);
 		}
 
-#if NET_2_0
 		public int IndexOf(OleDbParameter value)
 		{
 			return IndexOf (value);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		int IndexOf (string parameterName)
 		{
 			for (int i = 0; i < Count; i += 1)
@@ -361,42 +285,32 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Insert (int index, object value)
 		{
 			list.Insert (index, value);
 		}
 
-#if NET_2_0
 		public void Insert (int index, OleDbParameter value)
 		{
 			Insert (index, value);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Remove (object value)
 		{
 			((OleDbParameter) value).Container = null;
 			list.Remove (value);
 		}
 
-#if NET_2_0
 		public void Remove (OleDbParameter value)
 		{
 			Remove (value);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void RemoveAt (int index)
 		{
 			this [index].Container = null;
@@ -404,15 +318,12 @@ namespace System.Data.OleDb
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void RemoveAt (string parameterName)
 		{
 			RemoveAt (IndexOf (parameterName));
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected override void SetParameter (int index, DbParameter value)
 		{
@@ -424,7 +335,6 @@ namespace System.Data.OleDb
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		#endregion // Methods
 	}

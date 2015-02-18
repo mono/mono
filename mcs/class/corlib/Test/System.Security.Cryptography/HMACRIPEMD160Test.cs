@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -417,12 +416,14 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void Invariants ()
 		{
+			var hmac = new HMACRIPEMD160 ();
 			Assert.IsTrue (hmac.CanReuseTransform, "HMACRIPEMD160.CanReuseTransform");
 			Assert.IsTrue (hmac.CanTransformMultipleBlocks, "HMACRIPEMD160.CanTransformMultipleBlocks");
 			Assert.AreEqual ("RIPEMD160", hmac.HashName, "HMACRIPEMD160.HashName");
 			Assert.AreEqual (160, hmac.HashSize, "HMACRIPEMD160.HashSize");
 			Assert.AreEqual (1, hmac.InputBlockSize, "HMACRIPEMD160.InputBlockSize");
 			Assert.AreEqual (1, hmac.OutputBlockSize, "HMACRIPEMD160.OutputBlockSize");
+			Assert.AreEqual (64, hmac.Key.Length, "HMACRIPEMD160.Key.Length");
 			Assert.AreEqual ("System.Security.Cryptography.HMACRIPEMD160", hmac.ToString (), "HMACRIPEMD160.ToString()");
 		}
 
@@ -435,4 +436,3 @@ namespace MonoTests.System.Security.Cryptography {
 	}
 }
 
-#endif

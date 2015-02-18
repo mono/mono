@@ -55,10 +55,8 @@ namespace System.IO
 		SparseFile = 0x00200,
 		System = 0x00004,
 		Temporary = 0x00100,
-#if NET_4_5
 		IntegrityStream = 0x8000,
 		NoScrubData = 0x20000,
-#endif
 		//
 		// This flag is used internall by Mono to make it Executable
 		//

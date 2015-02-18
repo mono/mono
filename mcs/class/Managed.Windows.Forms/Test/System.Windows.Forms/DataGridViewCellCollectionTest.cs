@@ -22,7 +22,6 @@
 // 
 // Copyright (c) 2007 Gert Driesen
 
-#if NET_2_0
 
 using System;
 using System.Data;
@@ -302,4 +301,3 @@ namespace MonoTests.System.Windows.Forms
 	}
 }
 
-#endif

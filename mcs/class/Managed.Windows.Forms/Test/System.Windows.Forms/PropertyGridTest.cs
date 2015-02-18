@@ -32,44 +32,24 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, eventLogger.EventsRaised, "#A2");
 			pg.PropertySort = PropertySort.Alphabetical;
 			Assert.AreEqual (PropertySort.Alphabetical, pg.PropertySort, "#A3");
-#if NET_2_0
 			Assert.AreEqual (1, eventLogger.EventsRaised, "#A4");
 			Assert.AreEqual (1, eventLogger.CountEvents ("PropertySortChanged"), "#A5");
-#else
-			Assert.AreEqual (0, eventLogger.EventsRaised, "#A4");
-#endif
 			pg.PropertySort = PropertySort.NoSort;
 			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#A6");
-#if NET_2_0
 			Assert.AreEqual (2, eventLogger.EventsRaised, "#A7");
 			Assert.AreEqual (2, eventLogger.CountEvents ("PropertySortChanged"), "#A8");
-#else
-			Assert.AreEqual (0, eventLogger.EventsRaised, "#A7");
-#endif
 			pg.PropertySort = PropertySort.NoSort;
 			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#A9");
-#if NET_2_0
 			Assert.AreEqual (2, eventLogger.EventsRaised, "#A10");
 			Assert.AreEqual (2, eventLogger.CountEvents ("PropertySortChanged"), "#A11");
-#else
-			Assert.AreEqual (0, eventLogger.EventsRaised, "#A10");
-#endif
 			pg.PropertySort = PropertySort.CategorizedAlphabetical;
 			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#A12");
-#if NET_2_0
 			Assert.AreEqual (3, eventLogger.EventsRaised, "#A13");
 			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#A14");
-#else
-			Assert.AreEqual (0, eventLogger.EventsRaised, "#A13");
-#endif
 			pg.PropertySort = PropertySort.Categorized;
 			Assert.AreEqual (PropertySort.Categorized, pg.PropertySort, "#A14");
-#if NET_2_0
 			Assert.AreEqual (3, eventLogger.EventsRaised, "#A15");
 			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#A16");
-#else
-			Assert.AreEqual (0, eventLogger.EventsRaised, "#A17");
-#endif
 
 			pg = new PropertyGrid ();
 			eventLogger = new EventLogger (pg);
@@ -78,54 +58,26 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B2");
 			pg.PropertySort = PropertySort.Alphabetical;
 			Assert.AreEqual (PropertySort.Alphabetical, pg.PropertySort, "#B3");
-#if NET_2_0
 			Assert.AreEqual (1, eventLogger.CountEvents ("PropertySortChanged"), "#B4");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B4");
-#endif
 			pg.PropertySort = PropertySort.NoSort;
 			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#B5");
-#if NET_2_0
 			Assert.AreEqual (2, eventLogger.CountEvents ("PropertySortChanged"), "#B6");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B6");
-#endif
 			pg.PropertySort = PropertySort.CategorizedAlphabetical;
 			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#B7");
-#if NET_2_0
 			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#B8");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B8");
-#endif
 			pg.PropertySort = PropertySort.CategorizedAlphabetical;
 			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#B9");
-#if NET_2_0
 			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#B10");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B10");
-#endif
 
 			pg.SelectedObject = null;
 			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#C1");
-#if NET_2_0
 			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#C2");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#C2");
-#endif
 			pg.PropertySort = PropertySort.Alphabetical;
 			Assert.AreEqual (PropertySort.Alphabetical, pg.PropertySort, "#C3");
-#if NET_2_0
 			Assert.AreEqual (4, eventLogger.CountEvents ("PropertySortChanged"), "#C4");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#C4");
-#endif
 			pg.PropertySort = PropertySort.NoSort;
 			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#C5");
-#if NET_2_0
 			Assert.AreEqual (5, eventLogger.CountEvents ("PropertySortChanged"), "#C6");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#C6");
-#endif
 
 			pg.SelectedObject = new Button ();
 
@@ -135,32 +87,16 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 
 			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#D1");
-#if NET_2_0
 			Assert.AreEqual (5, eventLogger.CountEvents ("PropertySortChanged"), "#D2");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#D2");
-#endif
 			pg.PropertySort = PropertySort.Alphabetical;
 			Assert.AreEqual (PropertySort.Alphabetical, pg.PropertySort, "#D3");
-#if NET_2_0
 			Assert.AreEqual (6, eventLogger.CountEvents ("PropertySortChanged"), "#D4");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#D4");
-#endif
 			pg.PropertySort = PropertySort.Categorized;
 			Assert.AreEqual (PropertySort.Categorized, pg.PropertySort, "#D5");
-#if NET_2_0
 			Assert.AreEqual (7, eventLogger.CountEvents ("PropertySortChanged"), "#D6");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#D6");
-#endif
 			pg.PropertySort = PropertySort.CategorizedAlphabetical;
 			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#D7");
-#if NET_2_0
 			Assert.AreEqual (7, eventLogger.CountEvents ("PropertySortChanged"), "#D8");
-#else
-			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#D8");
-#endif
 
 			form.Dispose ();
 		}
@@ -169,7 +105,6 @@ namespace MonoTests.System.Windows.Forms
 		public void PropertySort_Invalid ()
 		{
 			PropertyGrid pg = new PropertyGrid ();
-#if NET_2_0
 			EventLogger eventLogger = new EventLogger (pg);
 			try {
 				pg.PropertySort = (PropertySort) 666;
@@ -188,10 +123,6 @@ namespace MonoTests.System.Windows.Forms
 
 				Assert.AreEqual (0, eventLogger.EventsRaised, "#10");
 			}
-#else
-			pg.PropertySort = (PropertySort) 666;
-			Assert.AreEqual ((PropertySort) 666, pg.PropertySort);
-#endif
 		}
 
 		[Test]

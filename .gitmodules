@@ -31,5 +31,5 @@
 	url = git://github.com/mono/referencesource
 	branch = mono
 [submodule "external/reference-assemblies"]
-	path = external/reference-assemblies
+	path = external/binary-reference-assemblies
 	url = git://github.com/mono/reference-assemblies.git

@@ -36,11 +36,9 @@ namespace Microsoft.Build.Execution
 			condition = xml.Condition;
 			ExecuteTargets = xml.ExecuteTargetsAttribute;
 			//this.FullPath = fullPath;
-			#if NET_4_5
 			condition_location = xml.ConditionLocation;
 			ExecuteTargetsLocation = xml.ExecuteTargetsAttributeLocation;
 			location = xml.Location;
-			#endif
 		}
 		
 		readonly string condition;
@@ -53,27 +51,15 @@ namespace Microsoft.Build.Execution
 		
 		readonly ElementLocation condition_location, location;
 		
-		#if NET_4_5
 		public
-		#else
-		internal
-		#endif
 		override ElementLocation ConditionLocation {
 			get { return condition_location; }
 		}
 
-		#if NET_4_5
 		public
-		#else
-		internal
-		#endif
 		ElementLocation ExecuteTargetsLocation { get; private set; }
 
-		#if NET_4_5
 		public
-		#else
-		internal
-		#endif
 		override ElementLocation Location {
 			get { return location; }
 		}

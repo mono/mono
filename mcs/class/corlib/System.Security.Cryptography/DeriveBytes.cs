@@ -31,11 +31,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Cryptography {
 
 	[ComVisible (true)]
-#if NET_4_0
 	public abstract class DeriveBytes : IDisposable {
-#else
-	public abstract class DeriveBytes {
-#endif
 		protected DeriveBytes ()
 		{
 		}
@@ -44,7 +40,6 @@ namespace System.Security.Cryptography {
 
 		public abstract void Reset ();
 
-#if NET_4_0
 		private bool m_disposed;
 
 		public void Dispose ()
@@ -61,6 +56,5 @@ namespace System.Security.Cryptography {
 				m_disposed = true;
 			}
 		}
-#endif
 	}
 }

@@ -29,7 +29,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-#if NET_4_0
 
 namespace System.Runtime {
 
@@ -54,5 +53,4 @@ namespace System.Runtime {
 	}
 }
 
-#endif
 

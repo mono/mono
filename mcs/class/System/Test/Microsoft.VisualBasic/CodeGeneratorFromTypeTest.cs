@@ -76,11 +76,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"Friend MustInherit Class Test1{0}" +
-#else
-				"MustInherit Class Test1{0}" +
-#endif
 				"    Inherits Integer{0}" +
 				"    Implements System.Security.Principal.IIdentity, String, System.Security.IPermission{0}" +
 				"End Class{0}", NewLine), code);
@@ -106,11 +102,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#if NET_2_0
 				"    Private Event __exception As System.Void{0}" +
-#else
-				"    Private Event  As System.Void{0}" +
-#endif
 				"End Class{0}", NewLine), code);
 		}
 
@@ -132,11 +124,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Event Click As Integer Implements IPolicy.Click , IWhatever.Click{0}" +
-#else
-				"    Friend Event Click As Integer{0}" +
-#endif
 				"End Class{0}", NewLine), code);
 		}
 
@@ -151,11 +139,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Event System_Int32_Click As Integer Implements Integer.Click{0}" +
-#else
-				"    Protected Event Click As Integer{0}" +
-#endif
 				"End Class{0}", NewLine), code);
 		}
 
@@ -170,11 +154,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Event System_Int32_Click As Integer Implements IPolicy.Click{0}" +
-#else
-				"    Public Event Click As Integer{0}" +
-#endif
 				"End Class{0}", NewLine), code);
 		}
 
@@ -187,11 +167,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#if NET_2_0
 				"    Private __exception As System.Void{0}" +
-#else
-				"    Private  As System.Void{0}" +
-#endif
 				"End Class{0}", NewLine), code);
 		}
 
@@ -225,11 +201,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public MustInherit Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public MustOverride Property Name() As String{0}" +
-#else
-				"    Public MustOverride Property Name As String{0}" +
-#endif
 				"        Get{0}" +
 				"        Set{0}" +
 				"    End Property{0}" +
@@ -243,11 +215,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Shared WriteOnly Property Name() As String{0}" +
-#else
-				"    Public Shared WriteOnly Property Name As String{0}" +
-#endif
 				"        Set{0}" +
 				"        End Set{0}" +
 				"    End Property{0}" +
@@ -263,11 +231,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#if NET_2_0
 				"    Private Property () As System.Void{0}" +
-#else
-				"    Private Property  As System.Void{0}" +
-#endif
 				"    End Property{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -280,11 +244,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Property Name() As Integer{0}" +
-#else
-				"    Public Overridable Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -297,11 +257,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Overridable ReadOnly Property Name() As Integer{0}" +
-#else
-				"    Protected Overridable ReadOnly Property Name As Integer{0}" +
-#endif
 				"        Get{0}" +
 				"        End Get{0}" +
 				"    End Property{0}" +
@@ -316,11 +272,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Overridable WriteOnly Property Name() As Integer{0}" +
-#else
-				"    Friend WriteOnly Property Name As Integer{0}" +
-#endif
 				"        Set{0}" +
 				"        End Set{0}" +
 				"    End Property{0}" +
@@ -335,11 +287,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Overridable Property Name() As Integer{0}" +
-#else
-				"    Protected Overridable Property Name As Integer{0}" +
-#endif
 				"        Get{0}" +
 				"        End Get{0}" +
 				"        Set{0}" +
@@ -348,11 +296,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"End Class{0}", NewLine), code);
 		}
 
-#if ONLY_1_1
-		// A bug in MS.NET 1.x causes MemberAttributes.FamilyOrAssembly to be 
-		// generated as Protected
-		[Category ("NotDotNet")]
-#endif
 		[Test]
 		public override void PropertyMembersTypeFamilyOrAssembly ()
 		{
@@ -361,20 +304,11 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Friend Property Name() As Integer{0}" +
-#else
-				"    Protected Friend Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Class{0}", NewLine), code);
 		}
 
-#if ONLY_1_1
-		// A bug in MS.NET 1.x causes MemberAttributes.Assembly to be generated
-		// as Protected
-		[Category ("NotDotNet")]
-#endif
 		[Test]
 		public override void PropertyMembersTypeAssembly ()
 		{
@@ -383,11 +317,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Overridable Property Name() As Integer{0}" +
-#else
-				"    Friend Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -433,11 +363,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Property iTem() As Integer{0}" +
-#else
-				"    Public Overridable Property iTem As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -485,11 +411,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Property Name() As Integer Implements IPolicy.Name , IWhatever.Name{0}" +
-#else
-				"    Public Overridable Property Name As Integer Implements IPolicy.Name , IWhatever.Name{0}" +
-#endif
 				"    End Property{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -505,11 +427,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Overloads Overridable Property Name() As Integer{0}" +
-#else
-				"    Protected Overloads Overridable Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -525,11 +443,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overloads Overridable Property Name() As Integer{0}" +
-#else
-				"    Public Overloads Overridable Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"    {0}" +
 				"    Private Overloads Property Name(ByVal value1 As Object) As Integer{0}" +
@@ -548,11 +462,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Property Name() As Integer{0}" +
-#else
-				"    Public Overridable Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"    {0}" +
 				"    Property System_Int32_Name(ByVal value1 As Object) As Integer Implements Integer.Name{0}" +
@@ -600,11 +510,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Private Shadows Property Name() As Integer{0}" +
-#else
-				"    Private Shadows Property Name As Integer{0}" +
-#endif
 				"        Get{0}" +
 				"        End Get{0}" +
 				"        Set{0}" +
@@ -646,11 +552,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef __exception As Integer) As Integer{0}" +
-#else
-				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef  As Integer) As Integer{0}" +
-#endif
 				"    End Function{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -662,11 +564,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Overridable Function Execute() As Integer Implements IPolicy.Execute , IWhatever.Execute{0}" +
-#else
-				"    Friend Function Execute() As Integer Implements IPolicy.Execute , IWhatever.Execute{0}" +
-#endif
 				"    End Function{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -682,11 +580,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Overloads Overridable Function Execute() As Integer{0}" +
-#else
-				"    Friend Overloads Function Execute() As Integer{0}" +
-#endif
 				"    End Function{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -768,11 +662,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef __exception As Integer) As Integer{0}" +
-#else
-				"    Public Overridable Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef  As Integer) As Integer{0}" +
-#endif
 				"    End Function{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -907,10 +797,8 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#endif
 				"    Shared Sub New(){0}" +
 				"    End Sub{0}" +
 				"End Class{0}", NewLine), code);
@@ -923,16 +811,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    <A()>  _{0}" +
-#endif
 				"    Public Shared Sub Main(){0}" +
 				"        Dim x As Test.InnerType{0}" +
 				"    End Sub{0}" +
 				"End Class{0}", NewLine), code);
 		}
 		
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -941,7 +826,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Partial Public Class Test1{0}" +
 				"End Class{0}", NewLine), code);
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -1418,9 +1302,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			string code = GenerateEntryPointMethod (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Delegate Sub Test1(){0}{0}" +
-#if NET_2_0
 				"<A()>  _{0}" +
-#endif
 				"Public Shared Sub Main(){0}" +
 				"    Dim x As Test.InnerType{0}" +
 				"End Sub{0}", NewLine), code);
@@ -1437,7 +1319,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Delegate Sub A(ByVal param As type){0}", NewLine), code);
 		}
 		
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -1445,7 +1326,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Delegate Sub Test1(){0}", NewLine), code);
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -1505,11 +1385,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"Friend Interface Test1{0}" +
-#else
-				"Interface Test1{0}" +
-#endif
 				"    Inherits Integer, System.Security.Principal.IIdentity, String, System.Security.IPermission{0}" +
 				"End Interface{0}", NewLine), code);
 		}
@@ -1534,11 +1410,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#if NET_2_0
 				"    Private Event __exception As System.Void{0}" +
-#else
-				"    Private Event  As System.Void{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1560,11 +1432,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Event Click As Integer Implements IPolicy.Click , IWhatever.Click{0}" +
-#else
-				"    Friend Event Click As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1575,11 +1443,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Event System_Int32_Click As Integer Implements Integer.Click{0}" +
-#else
-				"    Protected Event Click As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1590,11 +1454,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Event System_Int32_Click As Integer Implements IPolicy.Click{0}" +
-#else
-				"    Public Event Click As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1638,11 +1498,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#if NET_2_0
 				"    Property () As System.Void{0}" +
-#else
-				"    Property  As System.Void{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1654,11 +1510,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Property Name() As Integer{0}" +
-#else
-				"    Property Name As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1670,11 +1522,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    ReadOnly Property Name() As Integer{0}" +
-#else
-				"    ReadOnly Property Name As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1686,11 +1534,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    WriteOnly Property Name() As Integer{0}" +
-#else
-				"    WriteOnly Property Name As Integer{0}" +
-#endif
  				"End Interface{0}", NewLine), code);
 		}
 
@@ -1702,11 +1546,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Property Name() As Integer{0}" +
-#else
-				"    Property Name As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1718,11 +1558,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Property Name() As Integer{0}" +
-#else
-				"    Property Name As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1734,11 +1570,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Property Name() As Integer{0}" +
-#else
-				"    Property Name As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1773,11 +1605,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Property iTem() As Integer{0}" +
-#else
-				"    Property iTem As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1812,11 +1640,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Property Name() As Integer Implements IPolicy.Name , IWhatever.Name{0}" +
-#else
-				"    Property Name As Integer Implements IPolicy.Name , IWhatever.Name{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1827,11 +1651,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Property Name() As Integer{0}" +
-#else
-				"    Property Name As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1842,11 +1662,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Property Name() As Integer{0}" +
-#else
-				"    Property Name As Integer{0}" +
-#endif
  				"    {0}" +
 				"    Property Name(ByVal value1 As Object) As Integer{0}" +
 				"End Interface{0}", NewLine), code);
@@ -1859,11 +1675,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Property Name() As Integer{0}" +
-#else
-				"    Property Name As Integer{0}" +
-#endif
 				"    {0}" +
 				"    Property System_Int32_Name(ByVal value1 As Object) As Integer Implements Integer.Name{0}" +
 				"End Interface{0}", NewLine), code);
@@ -1899,11 +1711,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Shadows Property Name() As Integer{0}" +
-#else
-				"    Shadows Property Name As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -1938,11 +1746,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef __exception As Integer) As Integer{0}" +
-#else
-				"    Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef  As Integer) As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -2023,11 +1827,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef __exception As Integer) As Integer{0}" +
-#else
-				"    Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef  As Integer) As Integer{0}" +
-#endif
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -2143,16 +1943,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    <A()>  _{0}" +
-#endif
 				"    Public Shared Sub Main(){0}" +
 				"        Dim x As Test.InnerType{0}" +
 				"    End Sub{0}" +
 				"End Interface{0}", NewLine), code);
 		}
 		
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -2161,7 +1958,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Partial Public Interface Test1{0}" +
 				"End Interface{0}", NewLine), code);
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -2221,11 +2017,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"Friend Structure Test1{0}" +
-#else
-				"Structure Test1{0}" +
-#endif
 				"    Implements Integer, System.Security.Principal.IIdentity, String, System.Security.IPermission{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2250,11 +2042,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#if NET_2_0
 				"    Private Event __exception As System.Void{0}" +
-#else
-				"    Private Event  As System.Void{0}" +
-#endif
 				"End Structure{0}", NewLine), code);
 		}
 
@@ -2276,11 +2064,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Event Click As Integer Implements IPolicy.Click , IWhatever.Click{0}" +
-#else
-				"    Friend Event Click As Integer{0}" +
-#endif
 				"End Structure{0}", NewLine), code);
 		}
 
@@ -2291,11 +2075,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Event System_Int32_Click As Integer Implements Integer.Click{0}" +
-#else
-				"    Protected Event Click As Integer{0}" +
-#endif
 				"End Structure{0}", NewLine), code);
 		}
 
@@ -2306,11 +2086,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Event System_Int32_Click As Integer Implements IPolicy.Click{0}" +
-#else
-				"    Public Event Click As Integer{0}" +
-#endif
 				"End Structure{0}", NewLine), code);
 		}
 
@@ -2323,11 +2099,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#if NET_2_0
 				"    Private __exception As System.Void{0}" +
-#else
-				"    Private  As System.Void{0}" +
-#endif
 				"End Structure{0}", NewLine), code);
 		}
 
@@ -2363,11 +2135,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#if NET_2_0
 				"    Private Property () As System.Void{0}" +
-#else
-				"    Private Property  As System.Void{0}" +
-#endif
 				"    End Property{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2380,11 +2148,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Property Name() As Integer{0}" +
-#else
-				"    Public Overridable Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2397,11 +2161,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Overridable ReadOnly Property Name() As Integer{0}" +
-#else
-				"    Protected Overridable ReadOnly Property Name As Integer{0}" +
-#endif
 				"        Get{0}" +
 				"        End Get{0}" +
 				"    End Property{0}" +
@@ -2416,11 +2176,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Overridable WriteOnly Property Name() As Integer{0}" +
-#else
-				"    Friend WriteOnly Property Name As Integer{0}" +
-#endif
 				"        Set{0}" +
 				"        End Set{0}" +
 				"    End Property{0}" +
@@ -2435,11 +2191,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Overridable Property Name() As Integer{0}" +
-#else
-				"    Protected Overridable Property Name As Integer{0}" +
-#endif
 				"        Get{0}" +
 				"        End Get{0}" +
 				"        Set{0}" +
@@ -2448,11 +2200,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"End Structure{0}", NewLine), code);
 		}
 
-#if ONLY_1_1
-		// A bug in MS.NET 1.x causes MemberAttributes.FamilyOrAssembly to be 
-		// generated as Protected
-		[Category ("NotDotNet")]
-#endif
 		[Test]
 		public override void PropertyMembersTypeFamilyOrAssembly ()
 		{
@@ -2461,11 +2208,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Friend Property Name() As Integer{0}" +
-#else
-				"    Protected Friend Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2478,11 +2221,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Overridable Property Name() As Integer{0}" +
-#else
-				"    Friend Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2520,11 +2259,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Property iTem() As Integer{0}" +
-#else
-				"    Public Overridable Property iTem As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2566,11 +2301,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Property Name() As Integer Implements IPolicy.Name , IWhatever.Name{0}" +
-#else
-				"    Public Overridable Property Name As Integer Implements IPolicy.Name , IWhatever.Name{0}" +
-#endif
 				"    End Property{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2582,11 +2313,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Protected Overloads Overridable Property Name() As Integer{0}" +
-#else
-				"    Protected Overloads Overridable Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2598,11 +2325,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overloads Overridable Property Name() As Integer{0}" +
-#else
-				"    Public Overloads Overridable Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"    {0}" +
 				"    Private Overloads Property Name(ByVal value1 As Object) As Integer{0}" +
@@ -2617,11 +2340,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Property Name() As Integer{0}" +
-#else
-				"    Public Overridable Property Name As Integer{0}" +
-#endif
 				"    End Property{0}" +
 				"    {0}" +
 				"    Property System_Int32_Name(ByVal value1 As Object) As Integer Implements Integer.Name{0}" +
@@ -2661,11 +2380,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Private Shadows Property Name() As Integer{0}" +
-#else
-				"    Private Shadows Property Name As Integer{0}" +
-#endif
 				"        Get{0}" +
 				"        End Get{0}" +
 				"        Set{0}" +
@@ -2707,11 +2422,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef __exception As Integer) As Integer{0}" +
-#else
-				"    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef  As Integer) As Integer{0}" +
-#endif
 				"    End Function{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2723,11 +2434,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Overridable Function Execute() As Integer Implements IPolicy.Execute , IWhatever.Execute{0}" +
-#else
-				"    Friend Function Execute() As Integer Implements IPolicy.Execute , IWhatever.Execute{0}" +
-#endif
 				"    End Function{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2739,11 +2446,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Friend Overloads Overridable Function Execute() As Integer{0}" +
-#else
-				"    Friend Overloads Function Execute() As Integer{0}" +
-#endif
 				"    End Function{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2809,11 +2512,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    Public Overridable Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef __exception As Integer) As Integer{0}" +
-#else
-				"    Public Overridable Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef  As Integer) As Integer{0}" +
-#endif
 				"    End Function{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2856,9 +2555,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
 				"    Private Sub New(){0}" +
-#if ONLY_1_1
-				"        MyBase.New{0}" +
-#endif
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2872,9 +2568,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Structure Test1{0}" +
 				"    {0}" +
 				"    Public Sub New(ByVal value1 As Object, ByVal value2 As Object, ByRef index As Integer, ByRef count As Integer){0}" +
-#if ONLY_1_1
-				"        MyBase.New{0}" +
-#endif
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2888,9 +2581,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Structure Test1{0}" +
 				"    {0}" +
 				"    Private Sub New(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer){0}" +
-#if ONLY_1_1
-				"        MyBase.New{0}" +
-#endif
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -2954,10 +2644,8 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
-#endif
 				"    Shared Sub New(){0}" +
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
@@ -2970,16 +2658,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    <A()>  _{0}" +
-#endif
 				"    Public Shared Sub Main(){0}" +
 				"        Dim x As Test.InnerType{0}" +
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
 		}
 		
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -2988,7 +2673,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Partial Public Structure Test1{0}" +
 				"End Structure{0}", NewLine), code);
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -3048,11 +2732,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"Friend Enum Test1 As Integer{0}" +
-#else
-				"Enum Test1 As Integer{0}" +
-#endif
 				"End Enum{0}", NewLine), code);
 		}
 
@@ -3565,16 +3245,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Enum Test1{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    <A()>  _{0}" +
-#endif
 				"    Public Shared Sub Main(){0}" +
 				"        Dim x As Test.InnerType{0}" +
 				"    End Sub{0}" +
 				"End Enum{0}", NewLine), code);
 		}
 		
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -3583,6 +3260,5 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Partial Public Enum Test1{0}" +
 				"End Enum{0}", NewLine), code);
 		}
-#endif
 	}
 }

@@ -290,7 +290,6 @@ namespace MonoTests.System.Windows.Forms
 			myform.Dispose ();
 		}
 
-#if NET_2_0
 		// Fails on 1.1 (both MS and Mono) because SelectedIndex is set
 		[Test]
 		public void Text_SelectionMode_None ()
@@ -355,7 +354,6 @@ namespace MonoTests.System.Windows.Forms
 			clb.SelectionMode = SelectionMode.One;
 			Assert.IsTrue (clb.allow_selection, "#2");
 		}
-#endif
 
 		[Test]
 		public void Text_SelectionMode_One ()
@@ -553,11 +551,9 @@ namespace MonoTests.System.Windows.Forms
 
 		public class MockCheckedListBox : CheckedListBox
 		{
-#if NET_2_0
 			public bool allow_selection {
 				get { return base.AllowSelection; }
 			}
-#endif
 		}
 
 		//--------------------------------------------------------------

@@ -31,12 +31,10 @@ namespace System
 	[Serializable]
 #if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
-#elif NET_4_0
+#else
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
-#if NET_4_0
 	public
-#endif
 	class InvalidTimeZoneException : Exception
 	{
 		public InvalidTimeZoneException () : base ()

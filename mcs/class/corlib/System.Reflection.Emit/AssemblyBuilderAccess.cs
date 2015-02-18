@@ -41,9 +41,7 @@ namespace System.Reflection.Emit
 		Save = 2,
 		RunAndSave = 3,
 		ReflectionOnly = 6,
-#if NET_4_0
 		RunAndCollect = 9
-#endif
   }
 }
 #endif

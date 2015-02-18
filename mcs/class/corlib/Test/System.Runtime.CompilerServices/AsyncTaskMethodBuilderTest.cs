@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_5
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,12 +38,15 @@ namespace MonoTests.System.Runtime.CompilerServices
 	[TestFixture]
 	public class AsyncTaskMethodBuilderTest
 	{
+#if !MONOTOUCH
+		// For some reason MT excludes CallContext handling
+
 		[Test]
 		public void CallContextFlow ()
 		{
 			CallContext.LogicalSetData ("name0", "0");
 
-			Task.WhenAll (Work ("A"), Work ("B")).Wait ();
+			Assert.IsTrue (Task.WhenAll (Work ("A"), Work ("B")).Wait (4000), "#0");
 			Assert.IsNull (CallContext.LogicalGetData ("A"), "#A");
 			Assert.IsNull (CallContext.LogicalGetData ("B"), "#B");
 		}
@@ -60,7 +61,6 @@ namespace MonoTests.System.Runtime.CompilerServices
 			var found = CallContext.LogicalGetData ("name");
 			Assert.AreEqual (name, found, "#2" + name);
 		}
+#endif
 	}
 }
-
-#endif

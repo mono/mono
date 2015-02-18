@@ -61,9 +61,9 @@ namespace System.Runtime.InteropServices
 		// MonoSafeHandle
 		//
 		protected IntPtr handle;
-		IntPtr invalid_handle_value;
 		int refcount;
 		bool owns_handle;
+		bool closed, disposed;
 		
 #if NET_2_1
 		protected SafeHandle ()
@@ -74,7 +74,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle)
 		{
-			invalid_handle_value = invalidHandleValue;
+			handle = invalidHandleValue;
 
 			if (!ownsHandle) {
 				GC.SuppressFinalize (this);
@@ -88,31 +88,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Close ()
 		{
-			if (refcount == 0)
-				throw new ObjectDisposedException (GetType ().FullName);
-
-			int newcount = 0, current = 0;
-			bool registered = false;
-			RuntimeHelpers.PrepareConstrainedRegions ();
-			try {
-				do {
-					current = refcount;
-					newcount = current-1;
-
-					// perform changes in finally to avoid async interruptions
-					try {}
-					finally {
-						if (Interlocked.CompareExchange (ref refcount, newcount, current) == current)
-							registered = true;
-					}
-				} while (!registered);
-			} finally {
-				if (registered && newcount == 0 && owns_handle && !IsInvalid){
-					ReleaseHandle ();
-					handle = invalid_handle_value;
-					refcount = -1;
-				}
-			}
+			Dispose ();
 		}
 
 		//
@@ -127,8 +103,8 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public void DangerousAddRef (ref bool success)
 		{
-			if (refcount <= 0)
-				throw new ObjectDisposedException (GetType ().FullName);
+			if (closed)
+				throw new ObjectDisposedException ("SafeHandle was closed");
 
 			bool registered = false;
 			int newcount, current;
@@ -159,29 +135,13 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public IntPtr DangerousGetHandle ()
 		{
-			if (refcount <= 0){
-				throw new ObjectDisposedException (GetType ().FullName);
-			}
-
 			return handle;
 		}
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void DangerousRelease ()
 		{
-			if (refcount <= 0)
-				throw new ObjectDisposedException (GetType ().FullName);
-
-			int newcount, current;
-			do {
-				current = refcount;
-				newcount = current-1;
-			} while (Interlocked.CompareExchange (ref refcount, newcount, current) != current);
-
-			if (newcount == 0 && owns_handle && !IsInvalid){
-				ReleaseHandle ();
-				handle = invalid_handle_value;
-			}
+			RunRelease ();
 		}
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
@@ -198,18 +158,51 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void SetHandleAsInvalid ()
 		{
-			handle = invalid_handle_value;
+			closed = true;
 		}
 		
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing) {
-				Close ();
+				if (disposed)
+					return;
+
+				RunRelease ();
+				disposed = true;
 			} else {
-				if (owns_handle && !IsInvalid){
+				if (owns_handle && !closed && !IsInvalid){
 					ReleaseHandle ();
-					handle = invalid_handle_value;
+				}
+			}
+		}
+
+		void RunRelease ()
+		{
+			if (refcount == 0)
+				throw new ObjectDisposedException (GetType ().FullName);
+
+			int newcount = 0, current = 0;
+			bool registered = false;
+			RuntimeHelpers.PrepareConstrainedRegions ();
+			try {
+				do {
+					current = refcount;
+					newcount = current-1;
+
+					// perform changes in finally to avoid async interruptions
+					try {}
+					finally {
+						if (Interlocked.CompareExchange (ref refcount, newcount, current) == current)
+							registered = true;
+					}
+				} while (!registered);
+			} finally {
+				if (registered && newcount == 0) {
+					if (owns_handle && !closed && !IsInvalid)
+						ReleaseHandle ();
+
+					closed = true;
 				}
 			}
 		}
@@ -226,7 +219,7 @@ namespace System.Runtime.InteropServices
 		public bool IsClosed {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			get {
-				return refcount <= 0;
+				return closed;
 			}
 		}
 

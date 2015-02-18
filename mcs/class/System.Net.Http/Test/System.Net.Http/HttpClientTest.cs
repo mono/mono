@@ -83,6 +83,73 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
+		class CustomStream : Stream
+		{
+			public override void Flush ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			int pos;
+
+			public override int Read (byte[] buffer, int offset, int count)
+			{
+				++pos;
+				if (pos > 4)
+					return 0;
+
+				return 11;
+			}
+
+			public override long Seek (long offset, SeekOrigin origin)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override void SetLength (long value)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override void Write (byte[] buffer, int offset, int count)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override bool CanRead {
+				get {
+					return true;
+				}
+			}
+
+			public override bool CanSeek {
+				get {
+					return false;
+				}
+			}
+
+			public override bool CanWrite {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public override long Length {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public override long Position {
+				get {
+					throw new NotImplementedException ();
+				}
+				set {
+					throw new NotImplementedException ();
+				}
+			}
+		}
+
 		const int WaitTimeout = 5000;
 
 		string port, TestHost, LocalServer;
@@ -182,7 +249,7 @@ namespace MonoTests.System.Net.Http
 
 			var httpClient = new HttpClient (handler) {
 				BaseAddress = new Uri ("https://google.com"),
-				Timeout = TimeSpan.FromSeconds (1)
+				Timeout = TimeSpan.FromMilliseconds (1)
 			};
 
 			try {
@@ -683,6 +750,31 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Send_Content_Put_CustomStream ()
+		{
+			bool passed = false;
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				passed = 44 == request.ContentLength64;
+				passed &= request.ContentType == null;
+			});
+
+			try {
+				var client = new HttpClient ();
+				var r = new HttpRequestMessage (HttpMethod.Put, LocalServer);
+				r.Content = new StreamContent (new CustomStream ());
+				var response = client.SendAsync (r).Result;
+
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#1");
+				Assert.IsTrue (passed, "#2");
+			} finally {
+				listener.Abort ();
+
+				listener.Close ();
+			}
+		}
+
+		[Test]
 		public void Send_Timeout ()
 		{
 			var mh = new HttpMessageHandlerMock ();
@@ -845,8 +937,10 @@ namespace MonoTests.System.Net.Http
 				chandler.AllowAutoRedirect = true;
 				var client = new HttpClient (chandler);
 
-				var resp = client.GetAsync (LocalServer).Result;
-				Assert.AreEqual ("http://xamarin.com/", resp.RequestMessage.RequestUri.AbsoluteUri, "#1");
+				var r = client.GetAsync (LocalServer);
+				Assert.IsTrue (r.Wait (WaitTimeout), "#1");
+				var resp = r.Result;
+				Assert.AreEqual ("http://xamarin.com/", resp.RequestMessage.RequestUri.AbsoluteUri, "#2");
 			} finally {
 				listener.Abort ();
 				listener.Close ();

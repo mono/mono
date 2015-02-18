@@ -37,9 +37,7 @@ namespace System.Runtime.Remoting.Channels.Http
 
 	public class HttpClientChannel : BaseChannelWithProperties,
 		IChannel, IChannelSender
-#if NET_2_0
 		, ISecurableChannel
-#endif
 	{
 		string name = "http client";
 		int priority = 1;
@@ -270,7 +268,6 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		#endregion
 		
-#if NET_2_0
 		#region ISecurableChannel
 		
 		public bool IsSecured
@@ -282,7 +279,6 @@ namespace System.Runtime.Remoting.Channels.Http
 		}
 		
 		#endregion
-#endif
 		
 		#region Internal properties
 		

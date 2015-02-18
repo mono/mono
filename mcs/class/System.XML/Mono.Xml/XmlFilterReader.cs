@@ -30,7 +30,6 @@
 // Similar to SAX DefaultHandler
 //
 
-#if NET_2_0
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -53,7 +52,6 @@ namespace Mono.Xml
 
 		#region Properties
 
-#if NET_2_0
 		public override bool CanReadBinaryContent {
 			get { return reader.CanReadBinaryContent; }
 		}
@@ -61,7 +59,6 @@ namespace Mono.Xml
 		public override bool CanReadValueChunk {
 			get { return reader.CanReadValueChunk; }
 		}
-#endif
 
 		// This is the only one non-overriden property.
 		public XmlReader Reader {
@@ -284,4 +281,3 @@ namespace Mono.Xml
 	}
 }
 
-#endif

@@ -62,9 +62,7 @@ namespace MonoTests.System.Data.OracleClient
 		{
 			OracleCommand cmd = new OracleCommand ();
 			Assert.AreEqual (string.Empty, cmd.CommandText, "#1");
-#if NET_2_0
 			Assert.AreEqual (0, cmd.CommandTimeout, "#2");
-#endif
 			Assert.AreEqual (CommandType.Text, cmd.CommandType, "#3");
 			Assert.IsNull (cmd.Connection, "#4");
 			Assert.IsNull (cmd.Container, "#5");
@@ -81,9 +79,7 @@ namespace MonoTests.System.Data.OracleClient
 		{
 			OracleCommand cmd = new OracleCommand (COMMAND_TEXT);
 			Assert.AreEqual (COMMAND_TEXT, cmd.CommandText, "#A1");
-#if NET_2_0
 			Assert.AreEqual (0, cmd.CommandTimeout, "#A2");
-#endif
 			Assert.AreEqual (CommandType.Text, cmd.CommandType, "#A3");
 			Assert.IsNull (cmd.Connection, "#A4");
 			Assert.IsNull (cmd.Container, "#A5");
@@ -96,9 +92,7 @@ namespace MonoTests.System.Data.OracleClient
 
 			cmd = new OracleCommand ((string) null);
 			Assert.AreEqual (string.Empty, cmd.CommandText, "#B1");
-#if NET_2_0
 			Assert.AreEqual (0, cmd.CommandTimeout, "#B2");
-#endif
 			Assert.AreEqual (CommandType.Text, cmd.CommandType, "#B3");
 			Assert.IsNull (cmd.Connection, "#B4");
 			Assert.IsNull (cmd.Container, "#B5");
@@ -118,9 +112,7 @@ namespace MonoTests.System.Data.OracleClient
 
 			cmd = new OracleCommand (COMMAND_TEXT, conn);
 			Assert.AreEqual (COMMAND_TEXT, cmd.CommandText, "#A1");
-#if NET_2_0
 			Assert.AreEqual (0, cmd.CommandTimeout, "#A2");
-#endif
 			Assert.AreEqual (CommandType.Text, cmd.CommandType, "#A3");
 			Assert.AreSame (conn, cmd.Connection, "#A4");
 			Assert.IsNull (cmd.Container, "#A5");
@@ -133,9 +125,7 @@ namespace MonoTests.System.Data.OracleClient
 
 			cmd = new OracleCommand ((string) null, conn);
 			Assert.AreEqual (string.Empty, cmd.CommandText, "#B1");
-#if NET_2_0
 			Assert.AreEqual (0, cmd.CommandTimeout, "#B2");
-#endif
 			Assert.AreEqual (CommandType.Text, cmd.CommandType, "#B3");
 			Assert.AreSame (conn, cmd.Connection, "#B4");
 			Assert.IsNull (cmd.Container, "#B5");
@@ -148,9 +138,7 @@ namespace MonoTests.System.Data.OracleClient
 
 			cmd = new OracleCommand (COMMAND_TEXT, (OracleConnection) null);
 			Assert.AreEqual (COMMAND_TEXT, cmd.CommandText, "#C1");
-#if NET_2_0
 			Assert.AreEqual (0, cmd.CommandTimeout, "#C2");
-#endif
 			Assert.AreEqual (CommandType.Text, cmd.CommandType, "#C3");
 			Assert.IsNull (cmd.Connection, "#C4");
 			Assert.IsNull (cmd.Container, "#C5");
@@ -170,9 +158,7 @@ namespace MonoTests.System.Data.OracleClient
 
 			cmd = new OracleCommand (COMMAND_TEXT, conn, (OracleTransaction) null);
 			Assert.AreEqual (COMMAND_TEXT, cmd.CommandText, "#A1");
-#if NET_2_0
 			Assert.AreEqual (0, cmd.CommandTimeout, "#A2");
-#endif
 			Assert.AreEqual (CommandType.Text, cmd.CommandType, "#A3");
 			Assert.AreSame (conn, cmd.Connection, "#A4");
 			Assert.IsNull (cmd.Container, "#A5");
@@ -185,9 +171,7 @@ namespace MonoTests.System.Data.OracleClient
 
 			cmd = new OracleCommand ((string) null, conn, (OracleTransaction) null);
 			Assert.AreEqual (string.Empty, cmd.CommandText, "#B1");
-#if NET_2_0
 			Assert.AreEqual (0, cmd.CommandTimeout, "#B2");
-#endif
 			Assert.AreEqual (CommandType.Text, cmd.CommandType, "#B3");
 			Assert.AreSame (conn, cmd.Connection, "#B4");
 			Assert.IsNull (cmd.Container, "#B5");
@@ -200,9 +184,7 @@ namespace MonoTests.System.Data.OracleClient
 
 			cmd = new OracleCommand (COMMAND_TEXT, (OracleConnection) null, (OracleTransaction) null);
 			Assert.AreEqual (COMMAND_TEXT, cmd.CommandText, "#C1");
-#if NET_2_0
 			Assert.AreEqual (0, cmd.CommandTimeout, "#C2");
-#endif
 			Assert.AreEqual (CommandType.Text, cmd.CommandType, "#C3");
 			Assert.IsNull (cmd.Connection, "#C4");
 			Assert.IsNull (cmd.Container, "#C5");
@@ -235,7 +217,6 @@ namespace MonoTests.System.Data.OracleClient
 			Assert.AreEqual (string.Empty, cmd.CommandText, "#4");
 		}
 
-#if NET_2_0
 		[Test]
 		public void CommandTimeout ()
 		{
@@ -247,7 +228,6 @@ namespace MonoTests.System.Data.OracleClient
 			command.CommandTimeout = int.MinValue;
 			Assert.AreEqual (0, command.CommandTimeout, "#4");
 		}
-#endif
 
 		[Test]
 		public void ConnectionTimeout_IDbConnection ()

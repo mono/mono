@@ -21,21 +21,21 @@ namespace MonoTests.System.Diagnostics.Contracts {
 		/// or exception is slightly different.
 		/// </summary>
 		[Test]
-		[Ignore ("This causes NUnit crash on .NET 4.0")]
+		//[Ignore ("This causes NUnit crash on .NET 4.0")]
 		public void TestAssumeMessage ()
 		{
 			try {
 				Contract.Assume (false);
 				Assert.Fail ("TestAssumeMessage() exception not thrown #1");
 			} catch (Exception ex) {
-				Assert.IsInstanceOfType (typeof(NotImplementedException), ex, "TestAssumeMessage() wrong exception type #1");
+				Assert.AreEqual ("Assumption failed.", ex.Message);
 			}
 
 			try {
 				Contract.Assume (false, "Message");
 				Assert.Fail ("TestAssumeMessage() exception not thrown #1");
 			} catch (Exception ex) {
-				Assert.IsInstanceOfType (typeof(NotImplementedException), ex, "TestAssumeMessage() wrong exception type #1");
+				Assert.AreEqual ("Assumption failed.  Message", ex.Message);
 			}
 		}
 

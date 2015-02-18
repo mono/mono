@@ -54,15 +54,6 @@ install-local:
 	$(INSTALL_LIB) $(mcs_aot_image) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 endif
 
-# No mcs in net 2.0
-MSCORLIB_PROFILE := $(filter net_2_0, $(PROFILE))
-ifdef MSCORLIB_PROFILE
-all-local: $(mscorlib_aot_image)
-install-local:
-	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-	$(INSTALL_LIB) $(mscorlib_aot_image) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
-endif
-
 endif
 
 endif

@@ -48,13 +48,9 @@ namespace System.Globalization {
 		AllCultures = 7,
 		UserCustomCulture = 8,
 		ReplacementCultures = 16,
-#if NET_4_0
 		[Obsolete]
-#endif
 		WindowsOnlyCultures = 32,
-#if NET_4_0
 		[Obsolete]
-#endif
 		FrameworkCultures = 64,
 	} // CultureTypes
 

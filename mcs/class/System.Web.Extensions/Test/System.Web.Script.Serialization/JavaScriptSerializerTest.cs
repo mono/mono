@@ -347,11 +347,7 @@ namespace MonoTests.System.Web.Script.Serialization
 		[Category ("NotDotNet")]
 		public void TestDefaults () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
-#if NET_3_5
 			Assert.AreEqual (2097152, ser.MaxJsonLength);
-#else
-			Assert.AreEqual (102400, ser.MaxJsonLength);
-#endif
 			Assert.AreEqual (100, ser.RecursionLimit);
 			//List<JavaScriptConverter> l = new List<JavaScriptConverter> ();
 			//l.Add (new MyJavaScriptConverter ());

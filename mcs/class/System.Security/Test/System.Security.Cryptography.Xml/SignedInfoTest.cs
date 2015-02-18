@@ -147,11 +147,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
 		// urn:foo is'nt accepted when calling GetXml
 		[ExpectedException (typeof (CryptographicException))]
 		[Category ("NotWorking")]
-#endif
 		public void GetXmlWithSetProperty ()
 		{
 			XmlDocument doc = new XmlDocument ();

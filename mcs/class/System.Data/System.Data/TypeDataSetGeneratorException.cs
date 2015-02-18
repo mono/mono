@@ -63,7 +63,6 @@ namespace System.Data
 				errorList.Add (info.GetString("KEY_ARRAYVALUES" + i));
 		}
 
-#if NET_2_0
 		public TypedDataSetGeneratorException (String message) : base (message)
 		{
 		}
@@ -72,7 +71,6 @@ namespace System.Data
 			: base (message, innerException)
 		{
 		}
-#endif
 		#endregion //Constructors
 
 		public ArrayList ErrorList {

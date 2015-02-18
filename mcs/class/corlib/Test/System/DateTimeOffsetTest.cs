@@ -672,7 +672,7 @@ namespace MonoTests.System {
 		[Test]
 		public void TestPartialDateTimeParsing ()
 		{
-			var now = DateTime.Now;
+			var now = DateTime.UtcNow;
 			const DateTimeStyles style = DateTimeStyles.AssumeUniversal;
 
 			//year

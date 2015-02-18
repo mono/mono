@@ -20,4 +20,3 @@ Microsoft.Build.Utilities/ToolTask.cs
 Mono.XBuild.Utilities/MonoLocationHelper.cs
 Mono.XBuild.Utilities/ReservedNameUtils.cs
 Mono.XBuild.Utilities/MSBuildUtils.cs
-../System/System.Collections.Specialized/ProcessStringDictionary.cs

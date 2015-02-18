@@ -51,9 +51,7 @@ namespace MonoCasTests.System.Web.UI.HtmlControls {
 			unit.ViewState ();
 			unit.Name_InsideNaming ();
 			unit.RenderChildren ();
-#if NET_2_0
 			unit.ControlCollection ();
-#endif
 		}
 
 		public override Type Type {

@@ -29,18 +29,12 @@
 //
 
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.Xml.Schema;
 
 namespace System.Xml.Serialization
 {
-#if NET_2_0
 	public class XmlSchemas : CollectionBase, IEnumerable<XmlSchema>
-#else
-	public class XmlSchemas : CollectionBase
-#endif
 	{
 
 		#region Fields
@@ -74,7 +68,6 @@ namespace System.Xml.Serialization
 			get { return (XmlSchema) table[ns!=null?ns:""]; }
 		}
 		
-#if NET_2_0
 		[MonoTODO]
 		public bool IsCompiled 
 		{
@@ -88,7 +81,6 @@ namespace System.Xml.Serialization
 				if (fullCompile || !xs.IsCompiled)
 					xs.Compile (handler);
 		}
-#endif
 
 
 		#endregion // Properties
@@ -107,7 +99,6 @@ namespace System.Xml.Serialization
 				Add (schema);
 		}
 
-#if NET_2_0
 		[MonoNotSupported("")]
 		public int Add (XmlSchema schema, Uri baseUri)
 		{
@@ -119,20 +110,17 @@ namespace System.Xml.Serialization
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public bool Contains (XmlSchema schema)
 		{
 			return List.Contains (schema);
 		}
 
-#if NET_2_0
 		[MonoNotSupported("")]
 		public bool Contains (string targetNamespace)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public void CopyTo (XmlSchema[] array, int index) 
 		{
@@ -158,7 +146,6 @@ namespace System.Xml.Serialization
 			}
 			else {
 				object fschema = Find (schema, name, type);
-#if NET_2_0
 				if (fschema == null) {
 				   	// still didn't find it
 					// (possibly table[name.Namespace] was overwritten in table due to duplicate "" keys),
@@ -168,7 +155,6 @@ namespace System.Xml.Serialization
 						if (ob != null) return ob;
 					}
 				}
-#endif
 				return fschema;
 			}
 		}
@@ -199,13 +185,11 @@ namespace System.Xml.Serialization
 			else return res;
 		}
 
-#if NET_2_0
 		[MonoNotSupported("")]
 		public IList GetSchemas (string ns)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public int IndexOf (XmlSchema schema)
 		{
@@ -260,12 +244,10 @@ namespace System.Xml.Serialization
 			List.Remove (schema);
 		}
 
-#if NET_2_0
 		IEnumerator<XmlSchema> IEnumerable<XmlSchema>.GetEnumerator ()
 		{
 			return new XmlSchemaEnumerator (this);
 		}
-#endif
 
 		#endregion // Methods
 	}

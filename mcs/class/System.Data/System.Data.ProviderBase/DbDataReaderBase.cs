@@ -32,7 +32,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Collections;
 using System.Data.Common;
@@ -82,9 +81,7 @@ namespace System.Data.ProviderBase {
 			get { throw new NotImplementedException (); }
 		}
 
-#if NET_2_0
 		protected abstract bool IsValidRow { get; }
-#endif
 
 		[MonoTODO]
 		public override object this [[Optional] int index] {
@@ -307,4 +304,3 @@ namespace System.Data.ProviderBase {
 	}
 }
 
-#endif

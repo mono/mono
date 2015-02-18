@@ -310,6 +310,22 @@ atomic_add_i4: src1:b src2:i dest:i len:16
 atomic_exchange_i4: src1:b src2:i dest:a len:24
 atomic_cas_i4: src1:b src2:i src3:a dest:a len:24
 memory_barrier: len:16
+atomic_load_i1: dest:y src1:b len:7
+atomic_load_u1: dest:y src1:b len:7
+atomic_load_i2: dest:i src1:b len:7
+atomic_load_u2: dest:i src1:b len:7
+atomic_load_i4: dest:i src1:b len:7
+atomic_load_u4: dest:i src1:b len:7
+atomic_load_r4: dest:f src1:b len:10
+atomic_load_r8: dest:f src1:b len:10
+atomic_store_i1: dest:b src1:y len:10
+atomic_store_u1: dest:b src1:y len:10
+atomic_store_i2: dest:b src1:i len:10
+atomic_store_u2: dest:b src1:i len:10
+atomic_store_i4: dest:b src1:i len:10
+atomic_store_u4: dest:b src1:i len:10
+atomic_store_r4: dest:b src1:f len:10
+atomic_store_r8: dest:b src1:f len:10
 
 card_table_wbarrier: src1:a src2:i clob:d len:34
 
@@ -395,6 +411,8 @@ long_conv_to_r4_2: dest:f src1:i src2:i len:14
 long_conv_to_r_un_2: dest:f src1:i src2:i len:40
 
 fmove: dest:f src1:f
+move_f_to_i4: dest:i src1:f len:17
+move_i4_to_f: dest:f src1:i len:17
 float_conv_to_r4: dest:f src1:f  len:12
 
 load_mem: dest:i len:9
@@ -597,8 +615,6 @@ extract_u2: dest:i src1:x len:10
 extract_i1: dest:i src1:x len:10
 extract_u1: dest:i src1:x len:10
 extract_r8: dest:f src1:x len:8 
-
-iconv_to_r8_raw: dest:f src1:i len:17 
 
 insert_i2: dest:x src1:x src2:i len:5 clob:1
 

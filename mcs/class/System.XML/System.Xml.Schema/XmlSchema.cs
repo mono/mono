@@ -476,11 +476,7 @@ namespace System.Xml.Schema
 			if (this.SourceUri != null && this.SourceUri != String.Empty)
 				baseUri = new Uri (this.SourceUri);
 			Uri abs = resolver.ResolveUri (baseUri, relativeUri);
-#if NET_2_0
 			return abs != null ? abs.OriginalString : String.Empty;
-#else
- 			return abs != null ? abs.ToString () : String.Empty;
-#endif
 		}
 
 		void ProcessExternal (ValidationEventHandler handler, List<CompiledSchemaMemo> handledUris, XmlResolver resolver, XmlSchemaExternal ext, XmlSchemaSet col)

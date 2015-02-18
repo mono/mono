@@ -36,9 +36,7 @@ namespace System.Web.SessionState {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class StateRuntime : IStateRuntime {
 
-#if NET_2_0
 		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public StateRuntime ()
 		{
@@ -53,7 +51,6 @@ namespace System.Web.SessionState {
 		{
 			throw new NotImplementedException ();
 		}
-#if NET_2_0
 		[MonoTODO("Not implemented")]
 		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
 		public void ProcessRequest (IntPtr tracker, int verb, string uri, int exclusive,
@@ -62,7 +59,6 @@ namespace System.Web.SessionState {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		[MonoTODO("Not implemented")]
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void StopProcessing ()

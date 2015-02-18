@@ -2283,7 +2283,6 @@ namespace MonoTests.System.Data
 
 				Assert.IsTrue (reader.Read (), "#D1");
 				if (conn is SqlConnection) {
-#if NET_2_0
 					try {
 						reader.GetBytes (0, 0, null, 0, 0);
 						Assert.Fail ("#D2");
@@ -2295,9 +2294,6 @@ namespace MonoTests.System.Data
 						Assert.IsNull (ex.InnerException, "#D4");
 						Assert.IsNotNull (ex.Message, "#D5");
 					}
-#else
-					Assert.AreEqual (0, reader.GetBytes (0, 0, null, 0, 0), "#D2");
-#endif
 				} else {
 					Assert.AreEqual (-1, reader.GetBytes (0, 0, null, 0, 0), "#D2");
 				}
@@ -2315,7 +2311,6 @@ namespace MonoTests.System.Data
 
 				Assert.IsTrue (reader.Read (), "#H1");
 				if (conn is SqlConnection) {
-#if NET_2_0
 					try {
 						reader.GetBytes (0, 5, null, 3, 4);
 						Assert.Fail ("#H2");
@@ -2327,9 +2322,6 @@ namespace MonoTests.System.Data
 						Assert.IsNull (ex.InnerException, "#H4");
 						Assert.IsNotNull (ex.Message, "#H5");
 					}
-#else
-					Assert.AreEqual (0, reader.GetBytes (0, 5, null, 3, 4), "#H2");
-#endif
 				} else {
 					Assert.AreEqual (-1, reader.GetBytes (0, 5, null, 3, 4), "#H2");
 				}

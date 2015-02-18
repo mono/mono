@@ -7,6 +7,7 @@
 //      Miguel de Icaza (miguel@novell.com)
 //      Eric Butler (eric@extremeboredom.net)
 //      Marek Habersack (mhabersack@novell.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (c) 2006-2008 Novell, Inc. (http://www.novell.com)
 //
@@ -41,38 +42,20 @@ using System.Globalization;
 
 namespace System.Net.NetworkInformation {
 	public abstract class NetworkInterface {
-#if MONOTOUCH
-		internal const bool runningOnUnix = true;
-#else
-		static Version windowsVer51 = new Version (5, 1);
-		static internal readonly bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
-#endif	
+
+		static readonly NetworkInterfaceFactory nif = NetworkInterfaceFactory.Create ();
+
 		protected NetworkInterface ()
 		{
 		}
 
 		public static NetworkInterface [] GetAllNetworkInterfaces ()
 		{
-#if MONOTOUCH
-			return MacOsNetworkInterface.ImplGetAllNetworkInterfaces ();
-#else
-			if (runningOnUnix) {
-				try {
-					if (Platform.IsMacOS || Platform.IsFreeBSD)
-						return MacOsNetworkInterface.ImplGetAllNetworkInterfaces ();
-					else
-						return LinuxNetworkInterface.ImplGetAllNetworkInterfaces ();
-				} catch (SystemException ex) {
-					throw ex;
-				} catch {
-					return new NetworkInterface [0];
-				}
-			} else {
-				if (Environment.OSVersion.Version >= windowsVer51)
-					return Win32NetworkInterface2.ImplGetAllNetworkInterfaces ();
+			try {
+				return nif.GetAllNetworkInterfaces ();
+			} catch {
 				return new NetworkInterface [0];
 			}
-#endif
 		}
 
 		[MonoTODO("Always returns true")]
@@ -80,30 +63,10 @@ namespace System.Net.NetworkInformation {
 		{
 			return true;
 		}
-
-		internal static string ReadLine (string path)
-		{
-			using (FileStream fs = File.OpenRead (path)){
-				using (StreamReader sr = new StreamReader (fs)){
-					return sr.ReadLine ();
-				}
-			}
-		}
 		
-		[MonoTODO("Only works on Linux. Returns 0 on other systems.")]
 		public static int LoopbackInterfaceIndex {
 			get {
-				// Disable warning for code not reachable, due to runningOnUnix being always true on Monotouch
-#pragma warning disable 162
-				if (runningOnUnix) {
-					try {
-						return UnixNetworkInterface.IfNameToIndex ("lo");
-					} catch  {
-						return 0;
-					}
-				} else
-					return 0;
-#pragma warning restore 162
+				return nif.GetLoopbackInterfaceIndex ();
 			}
 		}
 
@@ -122,10 +85,361 @@ namespace System.Net.NetworkInformation {
 		public abstract bool SupportsMulticast { get; }
 	}
 
+	abstract class NetworkInterfaceFactory
+	{
+		internal abstract class UnixNetworkInterfaceAPI : NetworkInterfaceFactory
+		{
+			[DllImport("libc")]
+			public static extern int if_nametoindex(string ifname);
+
+			[DllImport ("libc")]
+			protected static extern int getifaddrs (out IntPtr ifap);
+
+			[DllImport ("libc")]
+			protected static extern void freeifaddrs (IntPtr ifap);
+		}
+
+		class MacOsNetworkInterfaceAPI : UnixNetworkInterfaceAPI
+		{
+			public override NetworkInterface [] GetAllNetworkInterfaces ()
+			{
+				const int AF_INET  = 2;
+				const int AF_INET6 = 30;
+				const int AF_LINK  = 18;
+
+				var interfaces = new Dictionary <string, MacOsNetworkInterface> ();
+				IntPtr ifap;
+				if (getifaddrs (out ifap) != 0)
+					throw new SystemException ("getifaddrs() failed");
+
+				try {
+					IntPtr next = ifap;
+					while (next != IntPtr.Zero) {
+						MacOsStructs.ifaddrs addr = (MacOsStructs.ifaddrs) Marshal.PtrToStructure (next, typeof (MacOsStructs.ifaddrs));
+						IPAddress address = IPAddress.None;
+						string    name = addr.ifa_name;
+						int       index = -1;
+						byte[]    macAddress = null;
+						NetworkInterfaceType type = NetworkInterfaceType.Unknown;
+
+						if (addr.ifa_addr != IntPtr.Zero) {
+							// optain IPAddress
+							MacOsStructs.sockaddr sockaddr = (MacOsStructs.sockaddr) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr));
+
+							if (sockaddr.sa_family == AF_INET6) {
+								MacOsStructs.sockaddr_in6 sockaddr6 = (MacOsStructs.sockaddr_in6) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_in6));
+								address = new IPAddress (sockaddr6.sin6_addr.u6_addr8, sockaddr6.sin6_scope_id);
+							} else if (sockaddr.sa_family == AF_INET) {
+								MacOsStructs.sockaddr_in sockaddrin = (MacOsStructs.sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_in));
+								address = new IPAddress (sockaddrin.sin_addr);
+							} else if (sockaddr.sa_family == AF_LINK) {
+								MacOsStructs.sockaddr_dl sockaddrdl = new MacOsStructs.sockaddr_dl ();
+								sockaddrdl.Read (addr.ifa_addr);
+
+								macAddress = new byte [(int) sockaddrdl.sdl_alen];
+								// copy mac address from sdl_data field starting at last index pos of interface name into array macaddress, starting
+								// at index 0
+								Array.Copy (sockaddrdl.sdl_data, sockaddrdl.sdl_nlen, macAddress, 0, Math.Min (macAddress.Length, sockaddrdl.sdl_data.Length - sockaddrdl.sdl_nlen));
+
+								index = sockaddrdl.sdl_index;
+
+								int hwtype = (int) sockaddrdl.sdl_type;
+								if (Enum.IsDefined (typeof (MacOsArpHardware), hwtype)) {
+									switch ((MacOsArpHardware) hwtype) {
+										case MacOsArpHardware.ETHER:
+											type = NetworkInterfaceType.Ethernet;
+											break;
+
+										case MacOsArpHardware.ATM:
+											type = NetworkInterfaceType.Atm;
+											break;
+										
+										case MacOsArpHardware.SLIP:
+											type = NetworkInterfaceType.Slip;
+											break;
+										
+										case MacOsArpHardware.PPP:
+											type = NetworkInterfaceType.Ppp;
+											break;
+										
+										case MacOsArpHardware.LOOPBACK:
+											type = NetworkInterfaceType.Loopback;
+											macAddress = null;
+											break;
+
+										case MacOsArpHardware.FDDI:
+											type = NetworkInterfaceType.Fddi;
+											break;
+									}
+								}
+							}
+						}
+
+						MacOsNetworkInterface iface = null;
+
+						// create interface if not already present
+						if (!interfaces.TryGetValue (name, out iface)) {
+							iface = new MacOsNetworkInterface (name, addr.ifa_flags);
+							interfaces.Add (name, iface);
+						}
+
+						// if a new address has been found, add it
+						if (!address.Equals (IPAddress.None))
+							iface.AddAddress (address);
+
+						// set link layer info, if iface has macaddress or is loopback device
+						if (macAddress != null || type == NetworkInterfaceType.Loopback)
+							iface.SetLinkLayerInfo (index, macAddress, type);
+
+						next = addr.ifa_next;
+					}
+				} finally {
+					freeifaddrs (ifap);
+				}
+
+				NetworkInterface [] result = new NetworkInterface [interfaces.Count];
+				int x = 0;
+				foreach (NetworkInterface thisInterface in interfaces.Values) {
+					result [x] = thisInterface;
+					x++;
+				}
+				return result;
+			}
+
+			public override int GetLoopbackInterfaceIndex ()
+			{
+				return if_nametoindex ("lo0");
+			}
+		}
+
+		class LinuxNetworkInterfaceAPI : UnixNetworkInterfaceAPI
+		{
+			static void FreeInterfaceAddresses (IntPtr ifap)
+			{
+#if MONODROID
+				AndroidPlatform.FreeInterfaceAddresses (ifap);
+#else
+				freeifaddrs (ifap);
+#endif
+			}
+
+			static int GetInterfaceAddresses (out IntPtr ifap)
+			{
+#if MONODROID
+				return AndroidPlatform.GetInterfaceAddresses (out ifap);
+#else
+				return getifaddrs (out ifap);
+#endif
+			}
+
+			public override NetworkInterface [] GetAllNetworkInterfaces ()
+			{
+				const int AF_INET   = 2;
+				const int AF_INET6  = 10;
+				const int AF_PACKET = 17;
+
+				var interfaces = new Dictionary <string, LinuxNetworkInterface> ();
+				IntPtr ifap;
+				if (GetInterfaceAddresses (out ifap) != 0)
+					throw new SystemException ("getifaddrs() failed");
+
+				try {
+					IntPtr next = ifap;
+					while (next != IntPtr.Zero) {
+						ifaddrs   addr = (ifaddrs) Marshal.PtrToStructure (next, typeof (ifaddrs));
+						IPAddress address = IPAddress.None;
+						string    name = addr.ifa_name;
+						int       index = -1;
+						byte[]    macAddress = null;
+						NetworkInterfaceType type = NetworkInterfaceType.Unknown;
+						int       nullNameCount = 0;
+
+						if (addr.ifa_addr != IntPtr.Zero) {
+							sockaddr_in sockaddr = (sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_in));
+
+							if (sockaddr.sin_family == AF_INET6) {
+								sockaddr_in6 sockaddr6 = (sockaddr_in6) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_in6));
+								address = new IPAddress (sockaddr6.sin6_addr.u6_addr8, sockaddr6.sin6_scope_id);
+							} else if (sockaddr.sin_family == AF_INET) {
+								address = new IPAddress (sockaddr.sin_addr);
+							} else if (sockaddr.sin_family == AF_PACKET) {
+								sockaddr_ll sockaddrll = (sockaddr_ll) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_ll));
+								if (((int)sockaddrll.sll_halen) > sockaddrll.sll_addr.Length){
+									Console.Error.WriteLine ("Got a bad hardware address length for an AF_PACKET {0} {1}",
+												 sockaddrll.sll_halen, sockaddrll.sll_addr.Length);
+									next = addr.ifa_next;
+									continue;
+								}
+								
+								macAddress = new byte [(int) sockaddrll.sll_halen];
+								Array.Copy (sockaddrll.sll_addr, 0, macAddress, 0, macAddress.Length);
+								index = sockaddrll.sll_ifindex;
+
+								int hwtype = (int)sockaddrll.sll_hatype;
+								if (Enum.IsDefined (typeof (LinuxArpHardware), hwtype)) {
+									switch ((LinuxArpHardware)hwtype) {
+										case LinuxArpHardware.EETHER:
+											goto case LinuxArpHardware.ETHER;
+											
+										case LinuxArpHardware.ETHER:
+											type = NetworkInterfaceType.Ethernet;
+											break;
+
+										case LinuxArpHardware.PRONET:
+											type = NetworkInterfaceType.TokenRing;
+											break;
+
+										case LinuxArpHardware.ATM:
+											type = NetworkInterfaceType.Atm;
+											break;
+										
+										case LinuxArpHardware.SLIP:
+										case LinuxArpHardware.CSLIP:
+										case LinuxArpHardware.SLIP6:
+										case LinuxArpHardware.CSLIP6:
+											type = NetworkInterfaceType.Slip;
+											break;
+										
+										case LinuxArpHardware.PPP:
+											type = NetworkInterfaceType.Ppp;
+											break;
+										
+										case LinuxArpHardware.LOOPBACK:
+											type = NetworkInterfaceType.Loopback;
+											macAddress = null;
+											break;
+
+										case LinuxArpHardware.FDDI:
+											type = NetworkInterfaceType.Fddi;
+											break;
+
+										case LinuxArpHardware.SIT:
+										case LinuxArpHardware.IPDDP:
+										case LinuxArpHardware.IPGRE:
+										case LinuxArpHardware.IP6GRE:
+										case LinuxArpHardware.TUNNEL6:
+										case LinuxArpHardware.TUNNEL:
+											type = NetworkInterfaceType.Tunnel;
+											break;
+									}
+								}
+							}
+						}
+
+						LinuxNetworkInterface iface = null;
+
+						if (String.IsNullOrEmpty (name))
+							name = "\0" + (++nullNameCount).ToString ();
+						
+						if (!interfaces.TryGetValue (name, out iface)) {
+							iface = new LinuxNetworkInterface (name);
+							interfaces.Add (name, iface);
+						}
+
+						if (!address.Equals (IPAddress.None))
+							iface.AddAddress (address);
+
+						if (macAddress != null || type == NetworkInterfaceType.Loopback) {
+							if (type == NetworkInterfaceType.Ethernet) {
+								if (Directory.Exists(iface.IfacePath + "wireless")) {
+									type = NetworkInterfaceType.Wireless80211;
+								}
+							}
+							iface.SetLinkLayerInfo (index, macAddress, type);
+						}
+
+						next = addr.ifa_next;
+					}
+				} finally {
+					FreeInterfaceAddresses (ifap);
+				}
+
+				NetworkInterface [] result = new NetworkInterface [interfaces.Count];
+				int x = 0;
+				foreach (NetworkInterface thisInterface in interfaces.Values) {
+					result [x] = thisInterface;
+					x++;
+				}
+				return result;
+			}
+
+			public override int GetLoopbackInterfaceIndex ()
+			{
+				return if_nametoindex ("lo");
+			}
+		}
+
+		class Win32NetworkInterfaceAPI : NetworkInterfaceFactory
+		{
+			[DllImport ("iphlpapi.dll", SetLastError = true)]
+			static extern int GetAdaptersAddresses (uint family, uint flags, IntPtr reserved, byte [] info, ref int size);
+
+			unsafe static Win32_IP_ADAPTER_ADDRESSES [] GetAdaptersAddresses ()
+			{
+				byte [] bytes = null;
+				int len = 0;
+				GetAdaptersAddresses (0, 0, IntPtr.Zero, bytes, ref len);
+				bytes = new byte [len];
+				int ret = GetAdaptersAddresses (0, 0, IntPtr.Zero, bytes, ref len);
+				if (ret != 0)
+					throw new NetworkInformationException (ret);
+
+				List<Win32_IP_ADAPTER_ADDRESSES> l = new List<Win32_IP_ADAPTER_ADDRESSES> ();
+				fixed (byte* ptr = bytes) {
+					Win32_IP_ADAPTER_ADDRESSES info;
+					for (IntPtr p = (IntPtr) ptr; p != IntPtr.Zero; p = info.Next) {
+						info = new Win32_IP_ADAPTER_ADDRESSES ();
+						Marshal.PtrToStructure (p, info);
+						l.Add (info);
+					}
+				}
+				return l.ToArray ();
+			}
+
+			public override NetworkInterface [] GetAllNetworkInterfaces ()
+			{
+	//			Win32_IP_ADAPTER_INFO [] ai = GetAdaptersInfo ();
+				Win32_IP_ADAPTER_ADDRESSES [] aa = GetAdaptersAddresses ();
+				NetworkInterface [] ret = new NetworkInterface [aa.Length];
+				for (int i = 0; i < ret.Length; i++)
+					ret [i] = new Win32NetworkInterface2 (aa [i]);
+				return ret;
+			}
+
+			public override int GetLoopbackInterfaceIndex ()
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
+		public abstract NetworkInterface [] GetAllNetworkInterfaces ();
+		public abstract int GetLoopbackInterfaceIndex ();
+
+		public static NetworkInterfaceFactory Create ()
+		{
+#if MONOTOUCH
+			return new MacOsNetworkInterfaceAPI ();
+#else
+			Version windowsVer51 = new Version (5, 1);
+			bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
+
+			if (runningOnUnix) {
+				if (Platform.IsMacOS || Platform.IsFreeBSD)
+					return new MacOsNetworkInterfaceAPI ();
+					
+				return new LinuxNetworkInterfaceAPI ();
+			}
+
+			if (Environment.OSVersion.Version >= windowsVer51)
+				return new Win32NetworkInterfaceAPI ();
+
+			throw new NotImplementedException ();
+#endif
+		}
+	}
+
 	abstract class UnixNetworkInterface : NetworkInterface
 	{
-		[DllImport("libc")]
-		static extern int if_nametoindex(string ifname);
 
 		protected IPv4InterfaceStatistics ipv4stats;
 		protected IPInterfaceProperties ipproperties;
@@ -142,11 +456,6 @@ namespace System.Net.NetworkInformation {
 			addresses = new List<IPAddress> ();
 		}
 
-		public static int IfNameToIndex (string ifname)
-		{
-			return if_nametoindex(ifname);
-		}
-		
 		internal void AddAddress (IPAddress address)
 		{
 			addresses.Add (address);
@@ -209,6 +518,12 @@ namespace System.Net.NetworkInformation {
 				return 1000000;
 			}
 		}
+
+		internal int NameIndex {
+			get {
+				return NetworkInterfaceFactory.UnixNetworkInterfaceAPI.if_nametoindex (Name);
+			}
+		}
 	}
 
 	//
@@ -217,18 +532,8 @@ namespace System.Net.NetworkInformation {
 	//
 	// For this to work, we have to create this on the factory above.
 	//
-	class LinuxNetworkInterface : UnixNetworkInterface
+	sealed class LinuxNetworkInterface : UnixNetworkInterface
 	{
-		[DllImport ("libc")]
-		static extern int getifaddrs (out IntPtr ifap);
-
-		[DllImport ("libc")]
-		static extern void freeifaddrs (IntPtr ifap);
-
-		const int AF_INET   = 2;
-		const int AF_INET6  = 10;
-		const int AF_PACKET = 17;
-		
 		//NetworkInterfaceType type;
 		string               iface_path;
 		string               iface_operstate_path;
@@ -238,152 +543,7 @@ namespace System.Net.NetworkInformation {
 			get { return iface_path; }
 		}
 		
-		static int GetInterfaceAddresses (out IntPtr ifap)
-		{
-#if MONODROID
-			return AndroidPlatform.GetInterfaceAddresses (out ifap);
-#else
-			return getifaddrs (out ifap);
-#endif
-		}
-
-		static void FreeInterfaceAddresses (IntPtr ifap)
-		{
-#if MONODROID
-			AndroidPlatform.FreeInterfaceAddresses (ifap);
-#else
-			freeifaddrs (ifap);
-#endif
-		}
-		
-		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
-		{
-			var interfaces = new Dictionary <string, LinuxNetworkInterface> ();
-			IntPtr ifap;
-			if (GetInterfaceAddresses (out ifap) != 0)
-				throw new SystemException ("getifaddrs() failed");
-
-			try {
-				IntPtr next = ifap;
-				while (next != IntPtr.Zero) {
-					ifaddrs   addr = (ifaddrs) Marshal.PtrToStructure (next, typeof (ifaddrs));
-					IPAddress address = IPAddress.None;
-					string    name = addr.ifa_name;
-					int       index = -1;
-					byte[]    macAddress = null;
-					NetworkInterfaceType type = NetworkInterfaceType.Unknown;
-					int       nullNameCount = 0;
-
-					if (addr.ifa_addr != IntPtr.Zero) {
-						sockaddr_in sockaddr = (sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_in));
-
-						if (sockaddr.sin_family == AF_INET6) {
-							sockaddr_in6 sockaddr6 = (sockaddr_in6) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_in6));
-							address = new IPAddress (sockaddr6.sin6_addr.u6_addr8, sockaddr6.sin6_scope_id);
-						} else if (sockaddr.sin_family == AF_INET) {
-							address = new IPAddress (sockaddr.sin_addr);
-						} else if (sockaddr.sin_family == AF_PACKET) {
-							sockaddr_ll sockaddrll = (sockaddr_ll) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_ll));
-							if (((int)sockaddrll.sll_halen) > sockaddrll.sll_addr.Length){
-								Console.Error.WriteLine ("Got a bad hardware address length for an AF_PACKET {0} {1}",
-											 sockaddrll.sll_halen, sockaddrll.sll_addr.Length);
-								next = addr.ifa_next;
-								continue;
-							}
-							
-							macAddress = new byte [(int) sockaddrll.sll_halen];
-							Array.Copy (sockaddrll.sll_addr, 0, macAddress, 0, macAddress.Length);
-							index = sockaddrll.sll_ifindex;
-
-							int hwtype = (int)sockaddrll.sll_hatype;
-							if (Enum.IsDefined (typeof (LinuxArpHardware), hwtype)) {
-								switch ((LinuxArpHardware)hwtype) {
-									case LinuxArpHardware.EETHER:
-										goto case LinuxArpHardware.ETHER;
-										
-									case LinuxArpHardware.ETHER:
-										type = NetworkInterfaceType.Ethernet;
-										break;
-
-									case LinuxArpHardware.PRONET:
-										type = NetworkInterfaceType.TokenRing;
-										break;
-
-									case LinuxArpHardware.ATM:
-										type = NetworkInterfaceType.Atm;
-										break;
-									
-									case LinuxArpHardware.SLIP:
-									case LinuxArpHardware.CSLIP:
-									case LinuxArpHardware.SLIP6:
-									case LinuxArpHardware.CSLIP6:
-										type = NetworkInterfaceType.Slip;
-										break;
-									
-									case LinuxArpHardware.PPP:
-										type = NetworkInterfaceType.Ppp;
-										break;
-									
-									case LinuxArpHardware.LOOPBACK:
-										type = NetworkInterfaceType.Loopback;
-										macAddress = null;
-										break;
-
-									case LinuxArpHardware.FDDI:
-										type = NetworkInterfaceType.Fddi;
-										break;
-
-									case LinuxArpHardware.SIT:
-									case LinuxArpHardware.IPDDP:
-									case LinuxArpHardware.IPGRE:
-									case LinuxArpHardware.IP6GRE:
-									case LinuxArpHardware.TUNNEL6:
-									case LinuxArpHardware.TUNNEL:
-										type = NetworkInterfaceType.Tunnel;
-										break;
-								}
-							}
-						}
-					}
-
-					LinuxNetworkInterface iface = null;
-
-					if (String.IsNullOrEmpty (name))
-						name = "\0" + (++nullNameCount).ToString ();
-					
-					if (!interfaces.TryGetValue (name, out iface)) {
-						iface = new LinuxNetworkInterface (name);
-						interfaces.Add (name, iface);
-					}
-
-					if (!address.Equals (IPAddress.None))
-						iface.AddAddress (address);
-
-					if (macAddress != null || type == NetworkInterfaceType.Loopback) {
-						if (type == NetworkInterfaceType.Ethernet) {
-							if (Directory.Exists(iface.IfacePath + "wireless")) {
-								type = NetworkInterfaceType.Wireless80211;
-							}
-						}
-						iface.SetLinkLayerInfo (index, macAddress, type);
-					}
-
-					next = addr.ifa_next;
-				}
-			} finally {
-				FreeInterfaceAddresses (ifap);
-			}
-
-			NetworkInterface [] result = new NetworkInterface [interfaces.Count];
-			int x = 0;
-			foreach (NetworkInterface thisInterface in interfaces.Values) {
-				result [x] = thisInterface;
-				x++;
-			}
-			return result;
-		}
-		
-		LinuxNetworkInterface (string name)
+		internal LinuxNetworkInterface (string name)
 			: base (name)
 		{
 			iface_path = "/sys/class/net/" + name + "/";
@@ -460,124 +620,22 @@ namespace System.Net.NetworkInformation {
 				}
 			}
 		}
+
+		internal static string ReadLine (string path)
+		{
+			using (FileStream fs = File.OpenRead (path)){
+				using (StreamReader sr = new StreamReader (fs)){
+					return sr.ReadLine ();
+				}
+			}
+		}		
 	}
 
-	class MacOsNetworkInterface : UnixNetworkInterface
+	sealed class MacOsNetworkInterface : UnixNetworkInterface
 	{
-		[DllImport ("libc")]
-		static extern int getifaddrs (out IntPtr ifap);
-
-		[DllImport ("libc")]
-		static extern void freeifaddrs (IntPtr ifap);
-
-		const int AF_INET  = 2;
-		const int AF_INET6 = 30;
-		const int AF_LINK  = 18;
-
 		private uint _ifa_flags;
-		
-		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
-		{
-			var interfaces = new Dictionary <string, MacOsNetworkInterface> ();
-			IntPtr ifap;
-			if (getifaddrs (out ifap) != 0)
-				throw new SystemException ("getifaddrs() failed");
 
-			try {
-				IntPtr next = ifap;
-				while (next != IntPtr.Zero) {
-					MacOsStructs.ifaddrs addr = (MacOsStructs.ifaddrs) Marshal.PtrToStructure (next, typeof (MacOsStructs.ifaddrs));
-					IPAddress address = IPAddress.None;
-					string    name = addr.ifa_name;
-					int       index = -1;
-					byte[]    macAddress = null;
-					NetworkInterfaceType type = NetworkInterfaceType.Unknown;
-
-					if (addr.ifa_addr != IntPtr.Zero) {
-						// optain IPAddress
-						MacOsStructs.sockaddr sockaddr = (MacOsStructs.sockaddr) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr));
-
-						if (sockaddr.sa_family == AF_INET6) {
-							MacOsStructs.sockaddr_in6 sockaddr6 = (MacOsStructs.sockaddr_in6) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_in6));
-							address = new IPAddress (sockaddr6.sin6_addr.u6_addr8, sockaddr6.sin6_scope_id);
-						} else if (sockaddr.sa_family == AF_INET) {
-							MacOsStructs.sockaddr_in sockaddrin = (MacOsStructs.sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_in));
-							address = new IPAddress (sockaddrin.sin_addr);
-						} else if (sockaddr.sa_family == AF_LINK) {
-							MacOsStructs.sockaddr_dl sockaddrdl = new MacOsStructs.sockaddr_dl ();
-							sockaddrdl.Read (addr.ifa_addr);
-
-							macAddress = new byte [(int) sockaddrdl.sdl_alen];
-							// copy mac address from sdl_data field starting at last index pos of interface name into array macaddress, starting
-							// at index 0
-							Array.Copy (sockaddrdl.sdl_data, sockaddrdl.sdl_nlen, macAddress, 0, Math.Min (macAddress.Length, sockaddrdl.sdl_data.Length - sockaddrdl.sdl_nlen));
-
-							index = sockaddrdl.sdl_index;
-
-							int hwtype = (int) sockaddrdl.sdl_type;
-							if (Enum.IsDefined (typeof (MacOsArpHardware), hwtype)) {
-								switch ((MacOsArpHardware) hwtype) {
-									case MacOsArpHardware.ETHER:
-										type = NetworkInterfaceType.Ethernet;
-										break;
-
-									case MacOsArpHardware.ATM:
-										type = NetworkInterfaceType.Atm;
-										break;
-									
-									case MacOsArpHardware.SLIP:
-										type = NetworkInterfaceType.Slip;
-										break;
-									
-									case MacOsArpHardware.PPP:
-										type = NetworkInterfaceType.Ppp;
-										break;
-									
-									case MacOsArpHardware.LOOPBACK:
-										type = NetworkInterfaceType.Loopback;
-										macAddress = null;
-										break;
-
-									case MacOsArpHardware.FDDI:
-										type = NetworkInterfaceType.Fddi;
-										break;
-								}
-							}
-						}
-					}
-
-					MacOsNetworkInterface iface = null;
-
-					// create interface if not already present
-					if (!interfaces.TryGetValue (name, out iface)) {
-						iface = new MacOsNetworkInterface (name, addr.ifa_flags);
-						interfaces.Add (name, iface);
-					}
-
-					// if a new address has been found, add it
-					if (!address.Equals (IPAddress.None))
-						iface.AddAddress (address);
-
-					// set link layer info, if iface has macaddress or is loopback device
-					if (macAddress != null || type == NetworkInterfaceType.Loopback)
-						iface.SetLinkLayerInfo (index, macAddress, type);
-
-					next = addr.ifa_next;
-				}
-			} finally {
-				freeifaddrs (ifap);
-			}
-
-			NetworkInterface [] result = new NetworkInterface [interfaces.Count];
-			int x = 0;
-			foreach (NetworkInterface thisInterface in interfaces.Values) {
-				result [x] = thisInterface;
-				x++;
-			}
-			return result;
-		}
-		
-		MacOsNetworkInterface (string name, uint ifa_flags)
+		internal MacOsNetworkInterface (string name, uint ifa_flags)
 			: base (name)
 		{
 			_ifa_flags = ifa_flags;
@@ -619,20 +677,7 @@ namespace System.Net.NetworkInformation {
 		static extern int GetAdaptersInfo (byte [] info, ref int size);
 
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
-		static extern int GetAdaptersAddresses (uint family, uint flags, IntPtr reserved, byte [] info, ref int size);
-
-		[DllImport ("iphlpapi.dll", SetLastError = true)]
 		static extern int GetIfEntry (ref Win32_MIB_IFROW row);
-
-		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
-		{
-//			Win32_IP_ADAPTER_INFO [] ai = GetAdaptersInfo ();
-			Win32_IP_ADAPTER_ADDRESSES [] aa = GetAdaptersAddresses ();
-			NetworkInterface [] ret = new NetworkInterface [aa.Length];
-			for (int i = 0; i < ret.Length; i++)
-				ret [i] = new Win32NetworkInterface2 (aa [i]);
-			return ret;
-		}
 
 		public static Win32_IP_ADAPTER_INFO GetAdapterInfoByIndex (int index)
 		{
@@ -665,34 +710,12 @@ namespace System.Net.NetworkInformation {
 			return l.ToArray ();
 		}
 
-		unsafe static Win32_IP_ADAPTER_ADDRESSES [] GetAdaptersAddresses ()
-		{
-			byte [] bytes = null;
-			int len = 0;
-			GetAdaptersAddresses (0, 0, IntPtr.Zero, bytes, ref len);
-			bytes = new byte [len];
-			int ret = GetAdaptersAddresses (0, 0, IntPtr.Zero, bytes, ref len);
-			if (ret != 0)
-				throw new NetworkInformationException (ret);
-
-			List<Win32_IP_ADAPTER_ADDRESSES> l = new List<Win32_IP_ADAPTER_ADDRESSES> ();
-			fixed (byte* ptr = bytes) {
-				Win32_IP_ADAPTER_ADDRESSES info;
-				for (IntPtr p = (IntPtr) ptr; p != IntPtr.Zero; p = info.Next) {
-					info = new Win32_IP_ADAPTER_ADDRESSES ();
-					Marshal.PtrToStructure (p, info);
-					l.Add (info);
-				}
-			}
-			return l.ToArray ();
-		}
-
 		Win32_IP_ADAPTER_ADDRESSES addr;
 		Win32_MIB_IFROW mib4, mib6;
 		Win32IPv4InterfaceStatistics ip4stats;
 		IPInterfaceProperties ip_if_props;
 
-		Win32NetworkInterface2 (Win32_IP_ADAPTER_ADDRESSES addr)
+		internal Win32NetworkInterface2 (Win32_IP_ADAPTER_ADDRESSES addr)
 		{
 			this.addr = addr;
 			mib4 = default (Win32_MIB_IFROW);

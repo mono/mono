@@ -8,7 +8,6 @@
 // (C) 2004 Novell, Inc. <http://www.novell.com>
 // 
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -366,5 +365,4 @@ namespace MonoTests.System.IO.Compression
 	}
 }
 
-#endif
 

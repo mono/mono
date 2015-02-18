@@ -32,9 +32,7 @@
 
 using System.Text;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO {
 	
@@ -58,15 +56,13 @@ namespace System.IO {
 		private bool iflush;
 		private bool preamble_done;
 
-#if NET_4_5
 		readonly bool leave_open;
 		IDecoupledTask async_task;
-#endif
 
-		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 1);
+		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, EncodingHelper.UTF8Unmarked, 1);
 
 		public StreamWriter (Stream stream)
-			: this (stream, Encoding.UTF8Unmarked, DefaultBufferSize) {}
+			: this (stream, EncodingHelper.UTF8Unmarked, DefaultBufferSize) {}
 
 		public StreamWriter (Stream stream, Encoding encoding)
 			: this (stream, encoding, DefaultBufferSize) {}
@@ -83,18 +79,12 @@ namespace System.IO {
 				preamble_done = true;
 		}
 
-#if NET_4_5
 		public StreamWriter (Stream stream, Encoding encoding, int bufferSize)
 			: this (stream, encoding, bufferSize, false)
 		{
 		}
 		
 		public StreamWriter (Stream stream, Encoding encoding, int bufferSize, bool leaveOpen)
-#else
-		const bool leave_open = false;
-
-		public StreamWriter (Stream stream, Encoding encoding, int bufferSize)
-#endif
 		{
 			if (null == stream)
 				throw new ArgumentNullException("stream");
@@ -105,19 +95,17 @@ namespace System.IO {
 			if (!stream.CanWrite)
 				throw new ArgumentException ("Can not write to stream");
 
-#if NET_4_5
 			leave_open = leaveOpen;
-#endif
 			internalStream = stream;
 
 			Initialize(encoding, bufferSize);
 		}
 
 		public StreamWriter (string path)
-			: this (path, false, Encoding.UTF8Unmarked, DefaultFileBufferSize) {}
+			: this (path, false, EncodingHelper.UTF8Unmarked, DefaultFileBufferSize) {}
 
 		public StreamWriter (string path, bool append)
-			: this (path, append, Encoding.UTF8Unmarked, DefaultFileBufferSize) {}
+			: this (path, append, EncodingHelper.UTF8Unmarked, DefaultFileBufferSize) {}
 
 		public StreamWriter (string path, bool append, Encoding encoding)
 			: this (path, append, encoding, DefaultFileBufferSize) {}
@@ -273,7 +261,6 @@ namespace System.IO {
 			}
 		}		
 
-#if NET_4_5
 		async Task FlushCoreAsync ()
 		{
 			await DecodeAsync ().ConfigureAwait (false);
@@ -346,7 +333,6 @@ namespace System.IO {
 				decode_pos += todo;
 			}
 		}	
-#endif
 
 		public override void Write (char[] buffer, int index, int count) 
 		{
@@ -413,13 +399,10 @@ namespace System.IO {
 			if (byte_buf == null)
 				throw new ObjectDisposedException ("StreamWriter");
 
-#if NET_4_5
 			if (async_task != null && !async_task.IsCompleted)
 				throw new InvalidOperationException ();
-#endif
 		}
 
-#if NET_4_5
 		public override Task FlushAsync ()
 		{
 			CheckState ();
@@ -559,6 +542,5 @@ namespace System.IO {
 			async_task = res = new DecoupledTask (WriteAsyncCore (value, true));
 			return res.Task;
 		}
-#endif
 	}
 }

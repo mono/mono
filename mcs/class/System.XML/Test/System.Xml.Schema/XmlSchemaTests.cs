@@ -430,7 +430,6 @@ namespace MonoTests.System.Xml
 
 			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/extension-attr-redefine-1.xsd");
 
-#if NET_2_0
 			XmlSchemaSet xss = new XmlSchemaSet ();
 			xss.Add (schema);
 			if (StrictMsCompliant) {
@@ -450,23 +449,6 @@ namespace MonoTests.System.Xml
 			settings.ValidationType = ValidationType.Schema;
 			settings.Schemas = xss;
 			XmlReader vr = XmlReader.Create (sr, settings);
-#else
-			if (StrictMsCompliant) {
-				schema.Compile (null);
-			} else {
-				try {
-					schema.Compile (null);
-					Assert.Fail ();
-				} catch (XmlSchemaException) {
-				}
-				return;
-			}
-
-			XmlValidatingReader vr = new XmlValidatingReader (xml,
-				XmlNodeType.Document, null);
-			vr.Schemas.Add (schema);
-			vr.ValidationType = ValidationType.Schema;
-#endif
 
 			try {
 				vr.Read ();
@@ -482,7 +464,6 @@ namespace MonoTests.System.Xml
 
 			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/extension-attr-redefine-2.xsd");
 
-#if NET_2_0
 			XmlSchemaSet xss = new XmlSchemaSet ();
 			xss.Add (schema);
 			xss.Compile ();
@@ -493,14 +474,6 @@ namespace MonoTests.System.Xml
 			settings.ValidationType = ValidationType.Schema;
 			settings.Schemas = xss;
 			XmlReader vr = XmlReader.Create (sr, settings);
-#else
-			schema.Compile (null);
-
-			XmlValidatingReader vr = new XmlValidatingReader (xml,
-				XmlNodeType.Document, null);
-			vr.Schemas.Add (schema);
-			vr.ValidationType = ValidationType.Schema;
-#endif
 
 			while (vr.Read ()) ;
 		}
@@ -512,7 +485,6 @@ namespace MonoTests.System.Xml
 
 			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/extension-attr-redefine-3.xsd");
 
-#if NET_2_0
 			XmlSchemaSet xss = new XmlSchemaSet ();
 			xss.Add (schema);
 			if (StrictMsCompliant) {
@@ -532,28 +504,10 @@ namespace MonoTests.System.Xml
 			settings.ValidationType = ValidationType.Schema;
 			settings.Schemas = xss;
 			XmlReader vr = XmlReader.Create (sr, settings);
-#else
-			if (StrictMsCompliant) {
-				schema.Compile (null);
-			} else {
-				try {
-					schema.Compile (null);
-					Assert.Fail ();
-				} catch (XmlSchemaException) {
-				}
-				return;
-			}
-
-			XmlValidatingReader vr = new XmlValidatingReader (xml,
-				XmlNodeType.Document, null);
-			vr.Schemas.Add (schema);
-			vr.ValidationType = ValidationType.Schema;
-#endif
 
 			while (vr.Read ()) ;
 		}
 
-#if NET_2_0
 
 		internal class XmlTestResolver : XmlResolver
 		{			
@@ -627,7 +581,6 @@ namespace MonoTests.System.Xml
 			// Parse the file. 
 			while (reader.Read()) {}
 		}
-#endif
 
 		[Test]
 		public void TestImportSchemaThatIncludesAnother ()

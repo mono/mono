@@ -130,12 +130,10 @@ namespace System.Drawing.Design
 		{
 			return new Bitmap (stream);
 		}
-#if NET_2_0
 		[MonoTODO]
 		protected virtual Type[] GetImageExtenders ()
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

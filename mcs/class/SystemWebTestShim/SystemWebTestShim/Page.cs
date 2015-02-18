@@ -33,7 +33,6 @@ using System.Web;
 
 namespace SystemWebTestShim {
 	public class Page : Orig.Page {
-#if NET_2_0
 		public new string RawViewState {
 #if TARGET_DOTNET
 			set; private get;
@@ -48,6 +47,5 @@ namespace SystemWebTestShim {
 			base.SetContext (ctx);
 #endif
 		}
-#endif
 	}
 }

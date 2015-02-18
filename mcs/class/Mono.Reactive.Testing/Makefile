@@ -37,7 +37,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618
 
 EXTRA_DISTFILES = more_build_args
 
-VALID_PROFILE := $(filter net_4_0 net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Mono.Reactive.Testing.dll
 NO_TEST = yes

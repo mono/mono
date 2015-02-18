@@ -41,11 +41,9 @@ using System.Collections;
 using System.Data;
 using System.ComponentModel;
 using System.Diagnostics;
-#if NET_2_0
 using System.Collections.Generic;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
-#endif
 
 namespace MonoTests.System.Web.UI.WebControls {
 
@@ -183,7 +181,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 	[TestFixture]
 	public class DataGridTest {
 
-#if NET_2_0
 		[TestFixtureSetUp()]
 		public void FixtureSetup () 
 		{
@@ -195,7 +192,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest.Unload ();
 		}
-#endif
 
 		[Test]
 		public void Defaults ()
@@ -232,11 +228,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TagName ()
 		{
 			DataGridPoker p = new DataGridPoker ();
-#if NET_2_0
 			Assert.AreEqual (p.GetTagName (), "table", "A1");
-#else
-			Assert.AreEqual (p.GetTagName (), "span", "A1");
-#endif
 		}
 
 		[Test]
@@ -467,17 +459,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			p.BackImageUrl = "foobar url";
 
 			// The styles get stored in the view state
-#if NET_2_0
 			Assert.AreEqual (vs.Count, 0, "A1");
 			Assert.IsNull (vs ["BackImageUrl"], "A2");
 			Assert.IsNull (vs ["GridLines"], "A3");
 			Assert.IsNull (vs ["CellSpacing"], "A4");
-#else
-			Assert.AreEqual (vs.Count, 3, "A1");
-			Assert.AreEqual (vs ["BackImageUrl"], "foobar url", "A2");
-			Assert.AreEqual (vs ["GridLines"], GridLines.Both, "A3");
-			Assert.AreEqual (vs ["CellSpacing"], 0, "A4");
-#endif
 		}
 
 		private bool cancel_command;
@@ -960,11 +945,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			p.TrackState ();
 
 			object [] vs = (object []) p.SaveState ();
-#if NET_2_0
 			Assert.AreEqual (vs.Length, 11, "A1");
-#else
-			Assert.AreEqual (vs.Length, 10, "A1");
-#endif
 
 			// By default the viewstate is all null
 			for (int i = 0; i < vs.Length; i++)
@@ -1022,7 +1003,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			columns = p.CreateColumns (source, true);
 
 			vs = (object []) p.SaveState ();
-#if NET_2_0
 			Assert.IsNull (vs [9], "A12");
 			p.BackImageUrl = "foobar url";
 			vs = (object []) p.SaveState ();
@@ -1033,13 +1013,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			object [] cols = (object []) vs [10];
 			Assert.AreEqual (cols.Length, 3, "A13");
-#else
-			Assert.IsNotNull (vs [9], "A12");
-			Assert.AreEqual (vs [9].GetType (), typeof (object []), "A12");
-
-			object [] cols = (object []) vs [9];
-			Assert.AreEqual (cols.Length, 3, "A13");
-#endif
 		}
 
 		[Test]
@@ -1352,7 +1325,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (0, p.DataKeys.Count, "A3");
 		}
 
-#if NET_2_0
 		public class data
 		{
 			private static ArrayList _data = new ArrayList ();
@@ -1926,7 +1898,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			}
 		}
 
-#endif
 
 		class MyTemplate : ITemplate {
 			string text;

@@ -63,4 +63,41 @@ partial class SR
 	public const string SynchronizationLockException_MisMatchedRead = "SynchronizationLockException_MisMatchedRead";
 	public const string SynchronizationLockException_MisMatchedUpgrade = "SynchronizationLockException_MisMatchedUpgrade";
 	public const string SynchronizationLockException_MisMatchedWrite = "SynchronizationLockException_MisMatchedWrite";
+
+	public const string Arg_ArrayPlusOffTooSmall = "Arg_ArrayPlusOffTooSmall";
+	public const string Arg_HSCapacityOverflow = "Arg_HSCapacityOverflow";
+	public const string ArgumentOutOfRange_NeedNonNegNum = "ArgumentOutOfRange_NeedNonNegNum";
+	public const string InvalidOperation_EnumFailedVersion = "InvalidOperation_EnumFailedVersion";
+	public const string InvalidOperation_EnumOpCantHappen = "InvalidOperation_EnumOpCantHappen";
+	public const string Serialization_MissingKeys = "Serialization_MissingKeys";
+
+	public const string Cryptography_ArgECDHKeySizeMismatch = "Cryptography_ArgECDHKeySizeMismatch";
+	public const string Cryptography_ArgECDHRequiresECDHKey = "Cryptography_ArgECDHRequiresECDHKey";
+	public const string Cryptography_ArgECDsaRequiresECDsaKey = "Cryptography_ArgECDsaRequiresECDsaKey";
+	public const string Cryptography_ArgExpectedECDiffieHellmanCngPublicKey = "Cryptography_ArgExpectedECDiffieHellmanCngPublicKey";
+	public const string Cryptography_DecryptWithNoKey = "Cryptography_DecryptWithNoKey";
+	public const string Cryptography_ECXmlSerializationFormatRequired = "Cryptography_ECXmlSerializationFormatRequired";
+	public const string Cryptography_InvalidAlgorithmGroup = "Cryptography_InvalidAlgorithmGroup";
+	public const string Cryptography_InvalidAlgorithmName = "Cryptography_InvalidAlgorithmName";
+	public const string Cryptography_InvalidCipherMode = "Cryptography_InvalidCipherMode";
+	public const string Cryptography_InvalidIVSize = "Cryptography_InvalidIVSize";
+	public const string Cryptography_InvalidKeyBlobFormat = "Cryptography_InvalidKeyBlobFormat";
+	public const string Cryptography_InvalidKeySize = "Cryptography_InvalidKeySize";
+	public const string Cryptography_InvalidPadding = "Cryptography_InvalidPadding";
+	public const string Cryptography_InvalidProviderName = "Cryptography_InvalidProviderName";
+	public const string Cryptography_MissingDomainParameters = "Cryptography_MissingDomainParameters";
+	public const string Cryptography_MissingIV = "Cryptography_MissingIV";
+	public const string Cryptography_MissingPublicKey = "Cryptography_MissingPublicKey";
+	public const string Cryptography_MustTransformWholeBlock = "Cryptography_MustTransformWholeBlock";
+	public const string Cryptography_NonCompliantFIPSAlgorithm = "Cryptography_NonCompliantFIPSAlgorithm";
+	public const string Cryptography_OpenEphemeralKeyHandleWithoutEphemeralFlag = "Cryptography_OpenEphemeralKeyHandleWithoutEphemeralFlag";
+	public const string Cryptography_OpenInvalidHandle = "Cryptography_OpenInvalidHandle";
+	public const string Cryptography_PartialBlock = "Cryptography_PartialBlock";
+	public const string Cryptography_PlatformNotSupported = "Cryptography_PlatformNotSupported";
+	public const string Cryptography_TlsRequiresLabelAndSeed = "Cryptography_TlsRequiresLabelAndSeed";
+	public const string Cryptography_TransformBeyondEndOfBuffer = "Cryptography_TransformBeyondEndOfBuffer";
+	public const string Cryptography_UnexpectedXmlNamespace = "Cryptography_UnexpectedXmlNamespace";
+	public const string Cryptography_UnknownEllipticCurve = "Cryptography_UnknownEllipticCurve";
+	public const string Cryptography_UnknownEllipticCurveAlgorithm = "Cryptography_UnknownEllipticCurveAlgorithm";
+	public const string Cryptography_UnknownPaddingMode = "Cryptography_UnknownPaddingMode";
 }

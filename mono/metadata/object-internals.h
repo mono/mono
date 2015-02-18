@@ -286,11 +286,6 @@ typedef struct {
 } MonoTypeLoadException;
 
 typedef struct {
-	MonoException base;
-	MonoObject *wrapped_exception;
-} MonoRuntimeWrappedException;
-
-typedef struct {
 	MonoObject   object;
 	MonoObject  *async_state;
 	MonoObject  *handle;
@@ -531,6 +526,37 @@ typedef struct {
 	MonoString *icu_name;
 	gpointer ICU_collator;
 } MonoCompareInfo;
+
+typedef struct {
+	MonoObject obj;
+	MonoString *NativeName;
+	MonoArray *ShortDatePatterns;
+	MonoArray *YearMonthPatterns;
+	MonoArray *LongDatePatterns;
+	MonoString *MonthDayPattern;
+
+	MonoArray *EraNames;
+	MonoArray *AbbreviatedEraNames;
+	MonoArray *AbbreviatedEnglishEraNames;
+	MonoArray *DayNames;
+	MonoArray *AbbreviatedDayNames;
+	MonoArray *SuperShortDayNames;
+	MonoArray *MonthNames;
+	MonoArray *AbbreviatedMonthNames;
+	MonoArray *GenitiveMonthNames;
+	MonoArray *GenitiveAbbreviatedMonthNames;
+} MonoCalendarData;
+
+typedef struct {
+	MonoObject obj;
+	MonoString *AMDesignator;
+	MonoString *PMDesignator;
+	MonoString *TimeSeparator;
+	MonoArray *LongTimePatterns;
+	MonoArray *ShortTimePatterns;
+	guint32 FirstDayOfWeek;
+	guint32 CalendarWeekRule;
+} MonoCultureData;
 
 typedef struct {
 	MonoObject obj;

@@ -47,7 +47,6 @@ namespace MonoCasTests.System.CodeDom {
 			if (!SecurityManager.SecurityEnabled)
 				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Constructor0_Deny_Unrestricted ()
@@ -63,7 +62,6 @@ namespace MonoCasTests.System.CodeDom {
 			ctr.Options = CodeTypeReferenceOptions.GlobalReference;
 			Assert.AreEqual (0, ctr.TypeArguments.Count, "TypeArguments");
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Constructor1_Deny_Unrestricted ()
@@ -75,11 +73,9 @@ namespace MonoCasTests.System.CodeDom {
 			ctr.ArrayElementType = new CodeTypeReference ("System.String");
 			Assert.AreEqual (0, ctr.ArrayRank, "ArrayRank");
 			ctr.ArrayRank = 1;
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, ctr.Options, "Options");
 			ctr.Options = CodeTypeReferenceOptions.GenericTypeParameter;
 			Assert.AreEqual (0, ctr.TypeArguments.Count, "TypeArguments");
-#endif
 		}
 
 		[Test]
@@ -93,11 +89,9 @@ namespace MonoCasTests.System.CodeDom {
 			ctr.ArrayElementType = new CodeTypeReference ("System.String");
 			Assert.AreEqual (0, ctr.ArrayRank, "ArrayRank");
 			ctr.ArrayRank = 1;
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, ctr.Options, "Options");
 			ctr.Options = CodeTypeReferenceOptions.GenericTypeParameter;
 			Assert.AreEqual (0, ctr.TypeArguments.Count, "TypeArguments");
-#endif
 		}
 
 		[Test]
@@ -112,13 +106,10 @@ namespace MonoCasTests.System.CodeDom {
 			ctr.ArrayElementType = new CodeTypeReference ("System.String");
 			ctr.BaseType = String.Empty;
 			ctr.ArrayRank = 0;
-#if NET_2_0
 			Assert.AreEqual ((CodeTypeReferenceOptions) 0, ctr.Options, "Options");
 			ctr.Options = CodeTypeReferenceOptions.GenericTypeParameter;
 			Assert.AreEqual (0, ctr.TypeArguments.Count, "TypeArguments");
-#endif
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Constructor4_Deny_Unrestricted ()
@@ -184,7 +175,6 @@ namespace MonoCasTests.System.CodeDom {
 			ctr.Options = CodeTypeReferenceOptions.GenericTypeParameter;
 			Assert.AreEqual (1, ctr.TypeArguments.Count, "TypeArguments");
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void LinkDemand_Deny_Unrestricted ()

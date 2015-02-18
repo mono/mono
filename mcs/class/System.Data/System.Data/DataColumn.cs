@@ -166,7 +166,6 @@ namespace System.Data {
 			}
 		}
 
-#if NET_2_0
 		DataSetDateTime _datetimeMode = DataSetDateTime.UnspecifiedLocal;
 		[DefaultValue (DataSetDateTime.UnspecifiedLocal)]
 		[RefreshProperties (RefreshProperties.All)]
@@ -199,12 +198,8 @@ namespace System.Data {
 						       _datetimeMode, value));
 			}
 		}
-#endif
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether null values are allowed in this column.")]
-#endif
 		[DefaultValue (true)]
 		public bool AllowDBNull {
 			get { return _allowDBNull; }
@@ -234,9 +229,6 @@ namespace System.Data {
 		///		when added to the columns collection, is equal to the default value.
 		///	</remarks>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether the column automatically increments itself for new rows added to the table.  The type of this column must be Int16, Int32, or Int64.")]
-#endif
 		[DefaultValue (false)]
 		[RefreshProperties (RefreshProperties.All)]
 		public bool AutoIncrement {
@@ -261,9 +253,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the starting value for an AutoIncrement column.")]
-#endif
 		[DefaultValue (0)]
 		public long AutoIncrementSeed {
 			get { return _autoIncrementSeed; }
@@ -274,9 +263,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the increment used by an AutoIncrement column.")]
-#endif
 		[DefaultValue (1)]
 		public long AutoIncrementStep {
 			get { return _autoIncrementStep; }
@@ -317,17 +303,11 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the default user-interface caption for this column.")]
-#endif
 		public string Caption {
 			get { return _caption == null ? ColumnName : _caption; }
 			set { _caption = value == null ? String.Empty : value; }
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Indicates how this column persists in XML: as an attribute, element, simple content node, or nothing.")]
-#endif
 		[DefaultValue (MappingType.Element)]
 		public virtual MappingType ColumnMapping {
 			get { return _columnMapping; }
@@ -335,9 +315,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the name used to look up this column in the Columns collection of a DataTable.")]
-#endif
 		[RefreshProperties (RefreshProperties.All)]
 		[DefaultValue ("")]
 		public string ColumnName {
@@ -373,9 +350,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the type of data stored in this column.")]
-#endif
 		[DefaultValue (typeof (string))]
 		[RefreshProperties (RefreshProperties.All)]
 		[TypeConverterAttribute (typeof (ColumnTypeConverter))]
@@ -399,10 +373,8 @@ namespace System.Data {
 
 				Type prevType = _dataContainer != null ? _dataContainer.Type : null; // current
 
-#if NET_2_0
 				if (_dataContainer != null && _dataContainer.Type == typeof (DateTime))
 					_datetimeMode = DataSetDateTime.UnspecifiedLocal;
-#endif
 				_dataContainer = DataContainer.Create (value, this);
 
 				//Check AutoIncrement status, make compatible datatype
@@ -426,9 +398,6 @@ namespace System.Data {
 		/// <exception cref="System.InvalidCastException"></exception>
 		/// <exception cref="System.ArgumentException"></exception>
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the default column value used when adding new rows to the table.")]
-#endif
 		[TypeConverterAttribute (typeof (System.Data.DefaultValueTypeConverter))]
 		public object DefaultValue {
 			get { return _defaultValue; }
@@ -452,11 +421,7 @@ namespace System.Data {
 						_defaultValue = Convert.ChangeType (value, DataType);
 					} catch (InvalidCastException) {
 						string msg = String.Format ("Default Value of type '{0}' is not compatible with column type '{1}'", value.GetType (), DataType);
-#if NET_2_0
 						throw new DataException (msg);
-#else
-						throw new ArgumentException (msg);
-#endif
 					}
 			}
 
@@ -466,9 +431,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the value that this column computes for each row based on other columns instead of taking user input.")]
-#endif
 		[DefaultValue ("")]
 		[RefreshProperties (RefreshProperties.All)]
 		public string Expression {
@@ -533,20 +495,12 @@ namespace System.Data {
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The collection that holds custom user information.")]
-#endif
 		public PropertyCollection ExtendedProperties {
 			get { return _extendedProperties; }
-#if NET_2_0
 			internal set { _extendedProperties = value; }
-#endif
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the maximum length of the value this column allows. ")]
-#endif
 		[DefaultValue (-1)] //Default == -1 no max length
 		public int MaxLength {
 			get { return _maxLength; }
@@ -562,9 +516,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the XML uri for elements or attributes stored in this column.")]
-#endif
 		public string Namespace {
 			get {
 				if (_nameSpace != null)
@@ -579,18 +530,12 @@ namespace System.Data {
 		//Need a good way to set the Ordinal when the column is added to a columnCollection.
 		[Browsable (false)]
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the index of this column in the Columns collection.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Ordinal {
 			get { return _ordinal; }
-#if NET_2_0
 			internal set { _ordinal = value; }
-#endif
 		}
 
-#if NET_2_0
 		public void SetOrdinal (int ordinal)
 		{
 			if (_ordinal == -1)
@@ -598,17 +543,8 @@ namespace System.Data {
 			_table.Columns.MoveColumn (_ordinal, ordinal);
 			_ordinal = ordinal;
 		}
-#else
-		internal void SetOrdinal(int ordinal)
-		{
-			_ordinal = ordinal;
-		}
-#endif
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the Prefix used for this DataColumn in xml representation.")]
-#endif
 		[DefaultValue ("")]
 		public string Prefix {
 			get { return _prefix; }
@@ -616,9 +552,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether this column allows changes once a row has been added to the table.")]
-#endif
 		[DefaultValue (false)]
 		public bool ReadOnly {
 			get { return _readOnly; }
@@ -627,21 +560,13 @@ namespace System.Data {
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Returns the DataTable to which this column belongs.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataTable Table {
 			get { return _table; }
-#if NET_2_0
 			internal set { _table = value; }
-#endif
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether this column should restrict its values in the rows of the table to be unique.")]
-#endif
 		[DefaultValue (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Unique {
@@ -726,10 +651,8 @@ namespace System.Data {
 			//Copy.Site
 			//we do not copy the unique value - it will be copyied when copying the constraints.
 			//Copy.Unique = Column.Unique;
-#if NET_2_0
 			if (DataType == typeof (DateTime))
 				copy.DateTimeMode = _datetimeMode;
-#endif
 
 			return copy;
 		}
@@ -893,7 +816,6 @@ namespace System.Data {
 		{
 			if (DataType != col.DataType)
 				return false;
-#if NET_2_0
 			if (DataType != typeof (DateTime))
 				return true;
 
@@ -905,13 +827,11 @@ namespace System.Data {
 
 			if (col.DateTimeMode == DataSetDateTime.Local || col.DateTimeMode == DataSetDateTime.Utc)
 				return false;
-#endif
 			return true;
 		}
 
 		internal static object GetDefaultValueForType (Type type)
 		{
-#if NET_2_0
 			if (type == null)
 				return DBNull.Value;
 			if (type.Namespace == "System.Data.SqlTypes" && type.Assembly == typeof (DataColumn).Assembly) {
@@ -949,7 +869,6 @@ namespace System.Data {
 				if (type == typeof (SqlXml))
 					return SqlXml.Null;
 			}
-#endif
 			return DBNull.Value;
 		}
 

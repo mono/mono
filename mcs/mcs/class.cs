@@ -359,12 +359,8 @@ namespace Mono.CSharp
 			return MemberName.GetSignatureForError ();
 		}
 
-		public string GetSignatureForMetadata ()
+		public virtual string GetSignatureForMetadata ()
 		{
-			if (Parent is TypeDefinition) {
-				return Parent.GetSignatureForMetadata () + "+" + TypeNameParser.Escape (MemberName.Basename);
-			}
-
 			var sb = new StringBuilder ();
 			CreateMetadataName (sb);
 			return sb.ToString ();
@@ -1126,6 +1122,15 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override string GetSignatureForMetadata ()
+		{
+			if (Parent is TypeDefinition) {
+				return Parent.GetSignatureForMetadata () + "+" + TypeNameParser.Escape (FilterNestedName (MemberName.Basename));
+			}
+
+			return base.GetSignatureForMetadata ();
+		}
+
 		public virtual void SetBaseTypes (List<FullNamedExpression> baseTypes)
 		{
 			type_bases = baseTypes;
@@ -1725,21 +1730,14 @@ namespace Mono.CSharp
 
 			foreach (var member in members) {
 				var pbm = member as PropertyBasedMember;
-				if (pbm != null)
+				if (pbm != null) {
 					pbm.PrepareEmit ();
+					continue;
+				}
 
-				var pm = member as IParametersMember;
-				if (pm != null) {
-					var mc = member as MethodOrOperator;
-					if (mc != null) {
-						mc.PrepareEmit ();
-					}
-
-					var p = pm.Parameters;
-					if (p.IsEmpty)
-						continue;
-
-					((ParametersCompiled) p).ResolveDefaultValues (member);
+				var mc = member as MethodCore;
+				if (mc != null) {
+					mc.PrepareEmit ();
 					continue;
 				}
 
@@ -3025,7 +3023,7 @@ namespace Mono.CSharp
 					if (ff == null)
 						continue;
 
-					ff.CharSet = (CharSet) System.Enum.Parse (typeof (CharSet), value.GetValue ().ToString ());
+					ff.CharSetValue = (CharSet) System.Enum.Parse (typeof (CharSet), value.GetValue ().ToString ());
 				}
 			}
 		}

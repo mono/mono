@@ -57,9 +57,7 @@ namespace System.Web.Services.Description {
 
 		[XmlIgnore]
 		public 
-#if NET_2_0
 		override
-#endif
 		ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get { return extensions; }
 		}

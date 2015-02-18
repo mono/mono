@@ -30,22 +30,59 @@
 //
 
 using System;
-using System.Reflection;
 using System.Collections;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
+#if STATIC
+using IKVM.Reflection;
+using Type=IKVM.Reflection.Type;
+#else
+using System.Reflection;
+#endif
 
 namespace Mono.CSharp {
 public class Outline {
-
 	bool declared_only;
 	bool show_private;
 	bool filter_obsolete;
 	
 	IndentedTextWriter o;
 	Type t;
+	Type type_multicast_delegate, type_object, type_value_type, type_int, type_flags_attribute, type_obsolete_attribute, type_param_array_attribute;
 	
+#if STATIC
+	Universe universe;
+	Assembly mscorlib;
+
+	public Outline (System.Type t, TextWriter output, bool declared_only, bool show_private, bool filter_obsolete)
+	{
+		throw new NotImplementedException ();
+	}
+	
+	public Outline (Universe universe, Assembly mscorlib, Type t, TextWriter output, bool declared_only, bool show_private, bool filter_obsolete)
+	{
+		if (universe == null)
+			throw new ArgumentNullException ("universe");
+		if (mscorlib == null)
+			throw new ArgumentNullException ("mscorlib");
+		this.universe = universe;
+		this.mscorlib = mscorlib;
+		this.t = t;
+		this.o = new IndentedTextWriter (output, "\t");
+		this.declared_only = declared_only;
+		this.show_private = show_private;
+		this.filter_obsolete = filter_obsolete;
+
+		type_multicast_delegate = mscorlib.GetType("System.MulticastDelegate");
+		type_object = mscorlib.GetType ("System.Object");
+		type_value_type = mscorlib.GetType ("System.ValueType");
+		type_int = mscorlib.GetType ("System.Int32");
+		type_flags_attribute = mscorlib.GetType ("System.FlagsAttribute");
+		type_obsolete_attribute = mscorlib.GetType ("System.ObsoleteAttribute");
+		type_param_array_attribute = mscorlib.GetType ("System.ParamArrayAttribute");
+	}
+#else
 	public Outline (Type t, TextWriter output, bool declared_only, bool show_private, bool filter_obsolete)
 	{
 		this.t = t;
@@ -53,7 +90,16 @@ public class Outline {
 		this.declared_only = declared_only;
 		this.show_private = show_private;
 		this.filter_obsolete = filter_obsolete;
+
+		type_multicast_delegate = typeof (System.MulticastDelegate);
+		type_object = typeof (object);
+		type_value_type = typeof (ValueType);
+		type_int = typeof (int);
+		type_flags_attribute = typeof (FlagsAttribute);
+		type_obsolete_attribute = typeof (ObsoleteAttribute);
+		type_param_array_attribute = typeof (ParamArrayAttribute);
 	}
+#endif
 
 	public void OutlineType ()
         {
@@ -62,7 +108,7 @@ public class Outline {
 		OutlineAttributes ();
 		o.Write (GetTypeVisibility (t));
 		
-		if (t.IsClass && !t.IsSubclassOf (typeof (System.MulticastDelegate))) {
+		if (t.IsClass && !t.IsSubclassOf (type_multicast_delegate)) {
 			if (t.IsSealed)
 				o.Write (t.IsAbstract ? " static" : " sealed");
 			else if (t.IsAbstract)
@@ -76,7 +122,7 @@ public class Outline {
 		Type [] interfaces = (Type []) Comparer.Sort (TypeGetInterfaces (t, declared_only));
 		Type parent = t.BaseType;
 
-		if (t.IsSubclassOf (typeof (System.MulticastDelegate))) {
+		if (t.IsSubclassOf (type_multicast_delegate)) {
 			MethodInfo method;
 
 			method = t.GetMethod ("Invoke");
@@ -88,20 +134,18 @@ public class Outline {
 			OutlineParams (method.GetParameters ());
 			o.Write (")");
 
-#if NET_2_0
 			WriteGenericConstraints (t.GetGenericArguments ());
-#endif			
 	
 			o.WriteLine (";"); 
 			return;
 		}
 		
 		o.Write (GetTypeName (t));
-		if (((parent != null && parent != typeof (object) && parent != typeof (ValueType)) || interfaces.Length != 0) && ! t.IsEnum) {
+		if (((parent != null && parent != type_object && parent != type_value_type) || interfaces.Length != 0) && ! t.IsEnum) {
 			first = true;
 			o.Write (" : ");
 			
-			if (parent != null && parent != typeof (object) && parent != typeof (ValueType)) {
+			if (parent != null && parent != type_object && parent != type_value_type) {
 				o.Write (FormatType (parent));
 				first = false;
 			}
@@ -115,13 +159,11 @@ public class Outline {
 		}
 
 		if (t.IsEnum) {
-			Type underlyingType = System.Enum.GetUnderlyingType (t);
-			if (underlyingType != typeof (int))
+			Type underlyingType = t.GetEnumUnderlyingType ();
+			if (underlyingType != type_int)
 				o.Write (" : {0}", FormatType (underlyingType));
 		}
-#if NET_2_0
 		WriteGenericConstraints (t.GetGenericArguments ());
-#endif		
 		o.WriteLine (" {");
 		o.Indent++;
 
@@ -260,8 +302,12 @@ public class Outline {
 			if (first)
 				o.WriteLine ();
 			first = false;
-			
+
+#if STATIC
+			new Outline (universe, mscorlib, ntype, o, declared_only, show_private, filter_obsolete).OutlineType ();
+#else
 			new Outline (ntype, o, declared_only, show_private, filter_obsolete).OutlineType ();
+#endif
 		}
 		
 		o.Indent--; o.WriteLine ("}");
@@ -284,20 +330,21 @@ public class Outline {
 		if (t.IsSerializable)
 			o.WriteLine ("[Serializable]");
 
-		if (t.IsDefined (typeof (System.FlagsAttribute), true))
+		if (t.IsDefined (type_flags_attribute, true))
 			o.WriteLine ("[Flags]");
 
-		if (t.IsDefined (typeof (System.ObsoleteAttribute), true))
+		if (t.IsDefined (type_obsolete_attribute, true))
 			o.WriteLine ("[Obsolete]");
 	}
 
 	void OutlineMemberAttribute (MemberInfo mi)
 	{
-		if (!mi.IsDefined (typeof (System.ObsoleteAttribute), false))
-			return;
-		var oa = mi.GetCustomAttributes (typeof (System.ObsoleteAttribute), false) [0] as ObsoleteAttribute;
-		var msg = oa.Message;
-		o.WriteLine ("[Obsolete{0}]", msg == null || msg == "" ? "" : string.Format ("(\"{0}\")", msg));
+		var attrs = mi.GetCustomAttributesData ();
+		if (attrs.Count > 0)
+			o.WriteLine ("");
+		
+		foreach (var attr in attrs)
+			o.WriteLine (attr);
 	}
 	
 	void OutlineEvent (EventInfo ei)
@@ -396,15 +443,11 @@ public class Outline {
 		}
 
 		o.Write (mi.Name);
-#if NET_2_0
 		o.Write (FormatGenericParams (mi.GetGenericArguments ()));
-#endif
 		o.Write (" (");
 		OutlineParams (mi.GetParameters ());
 		o.Write (")");
-#if NET_2_0
 		WriteGenericConstraints (mi.GetGenericArguments ());
-#endif
 		o.Write (";");
 	}
 	
@@ -433,7 +476,7 @@ public class Outline {
 			if (p.ParameterType.IsByRef) {
 				o.Write (p.IsOut ? "out " : "ref ");
 				o.Write (FormatType (p.ParameterType.GetElementType ()));
-			} else if (p.IsDefined (typeof (ParamArrayAttribute), false)) {
+			} else if (p.IsDefined (type_param_array_attribute, false)) {
 				o.Write ("params ");
 				o.Write (FormatType (p.ParameterType));
 			} else {
@@ -462,7 +505,7 @@ public class Outline {
 		o.Write (" ");
 		o.Write (fi.Name);
 		if (fi.IsLiteral) { 
-			object v = fi.GetValue (this);
+			object v = fi.GetRawConstantValue ();
 
 			// TODO: Escape values here
 			o.Write (" = ");
@@ -471,7 +514,7 @@ public class Outline {
 			else if (v is string)
 				o.Write ("\"{0}\"", v);
 			else
-				o.Write (fi.GetValue (this));
+				o.Write (fi.GetRawConstantValue ());
 		}
 		o.Write (";");
 	}
@@ -529,12 +572,12 @@ public class Outline {
 		return null;
 	}
 
-	static string GetTypeKind (Type t)
+	string GetTypeKind (Type t)
 	{
 		if (t.IsEnum)
 			return "enum";
 		if (t.IsClass) {
-			if (t.IsSubclassOf (typeof (System.MulticastDelegate)))
+			if (t.IsSubclassOf (type_multicast_delegate))
 				return "delegate";
 			else
 				return "class";
@@ -563,7 +606,6 @@ public class Outline {
                 }
 	}
 
-#if NET_2_0
 	string FormatGenericParams (Type [] args)
 	{
 		StringBuilder sb = new StringBuilder ();
@@ -579,7 +621,6 @@ public class Outline {
 		sb.Append (">");
 		return sb.ToString ();
 	}
-#endif
 
 	// TODO: fine tune this so that our output is less verbose. We need to figure
 	// out a way to do this while not making things confusing.
@@ -593,6 +634,8 @@ public class Outline {
 			return t.ToString ();
 		
 		if (!type.StartsWith ("System.")) {
+			if (type.IndexOf (".") == -1)
+				return type;
 			if (t.Namespace == this.t.Namespace)
 				return t.Name;
 			return type;
@@ -679,9 +722,7 @@ public class Outline {
 	void GetTypeName (StringBuilder sb, Type t)
 	{
 		sb.Append (RemoveGenericArity (t.Name));
-#if NET_2_0
 		sb.Append (FormatGenericParams (t.GetGenericArguments ()));
-#endif
 	}
 
 	string GetFullName (Type t)
@@ -693,12 +734,10 @@ public class Outline {
 
 	void GetFullName_recursed (StringBuilder sb, Type t, bool recursed)
 	{
-#if NET_2_0
 		if (t.IsGenericParameter) {
 			sb.Append (t.Name);
 			return;
 		}
-#endif
 
 		if (t.DeclaringType != null) {
 			GetFullName_recursed (sb, t.DeclaringType, true);
@@ -716,7 +755,6 @@ public class Outline {
 		GetTypeName (sb, t);
 	}
 
-#if NET_2_0
 	void WriteGenericConstraints (Type [] args)
 	{
 
@@ -731,13 +769,13 @@ public class Outline {
 				GenericParameterAttributes.DefaultConstructorConstraint
 			};
 			
-			if (t.BaseType != typeof (object) || ifaces.Length != 0 || attrs != 0) {
+			if (t.BaseType != type_object || ifaces.Length != 0 || attrs != 0) {
 				o.Write (" where ");
 				o.Write (FormatType (t));
 				o.Write (" : ");
 			}
 
-			if (t.BaseType != typeof (object)) {
+			if (t.BaseType != type_object) {
 				o.Write (FormatType (t.BaseType));
 				first = false;
 			}
@@ -772,7 +810,6 @@ public class Outline {
 			}
 		}
 	}
-#endif
  
 	string OperatorFromName (string name)
 	{
@@ -833,7 +870,7 @@ public class Outline {
 		if (show_private)
 			return true;
 
-		if (filter_obsolete && mi.IsDefined (typeof (ObsoleteAttribute), false))
+		if (filter_obsolete && mi.IsDefined (type_obsolete_attribute, false))
 			return false;
 		
 		switch (mi.MemberType) {
@@ -921,8 +958,6 @@ public class Comparer : IComparer  {
 		Type type1 = (Type) a;
 		Type type2 = (Type) b;
 
-		if (type1.IsSubclassOf (typeof (System.MulticastDelegate)) != type2.IsSubclassOf (typeof (System.MulticastDelegate)))
-				return (type1.IsSubclassOf (typeof (System.MulticastDelegate)))? -1:1;
 		return string.Compare (type1.Name, type2.Name);
 			
 	}

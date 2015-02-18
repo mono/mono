@@ -22,9 +22,7 @@ public class MyScrollBar : HScrollBar
      public MyScrollBar () : base ()
 	     {}
 	     
-#if NET_2_0
 		public Padding PublicDefaultMargin { get { return base.DefaultMargin; } }
-#endif
 
 	    protected override void OnBackColorChanged (EventArgs e)
 	     {
@@ -329,11 +327,7 @@ public class MyScrollBar : HScrollBar
 	       }
 
 	    [Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-	   [ExpectedException (typeof (ArgumentException))]
-#endif
 	   public void ExceptionValueTest ()
 	       {
 		       MyScrollBar myscrlbar = new MyScrollBar ();
@@ -344,11 +338,7 @@ public class MyScrollBar : HScrollBar
 	       }
 
 	    [Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-	   [ExpectedException (typeof (ArgumentException))]
-#endif
 	   public void ExceptionSmallChangeTest ()
 	       {
 		       MyScrollBar myscrlbar = new MyScrollBar ();
@@ -356,11 +346,7 @@ public class MyScrollBar : HScrollBar
 	       }
 
 	    [Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-	   [ExpectedException (typeof (ArgumentException))]
-#endif
 	   public void ExceptionLargeChangeTest ()
 	       {
 		       MyScrollBar myscrlbar = new MyScrollBar ();
@@ -376,7 +362,6 @@ public class MyScrollBar : HScrollBar
 					myscrlbar.ToString (), "T5");
 	       }
 
-#if NET_2_0
 	   [Test]
 	   public void DefaultMarginTest ()
 	   {
@@ -467,7 +452,6 @@ public class MyScrollBar : HScrollBar
 			Assert.AreEqual (0, s.Maximum, "A2");
 			Assert.AreEqual (0, s.Value, "A3");
 		}
-#endif
 
 		[Test]
 		public void LargeSmallerThanSmallChange ()
@@ -1655,7 +1639,6 @@ public class MyScrollBar2 : HScrollBar
 	       }
     }
     
-#if NET_2_0
     [TestFixture]
     public class ScrollEventArgsTest : TestHelper
     {
@@ -1691,5 +1674,4 @@ public class MyScrollBar2 : HScrollBar
 		Assert.AreEqual (ScrollEventType.EndScroll, e.Type, "A16");
 	}
     }
-#endif
 }

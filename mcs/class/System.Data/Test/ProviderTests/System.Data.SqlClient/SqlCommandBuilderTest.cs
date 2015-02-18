@@ -33,9 +33,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-#if NET_2_0
 using System.Data.SqlTypes;
-#endif
 using Mono.Data;
 
 using NUnit.Framework;
@@ -90,15 +88,9 @@ namespace MonoTests.System.Data
 				
 				cb = new SqlCommandBuilder (da);
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("INSERT INTO [employee] ([id], " +
 					"[fname], [lname]) VALUES (@p1, @p2, @p3)",
 					cmd.CommandText, "#A1");
-#else
-				Assert.AreEqual ("INSERT INTO employee( id , " +
-					"fname , lname ) VALUES ( @p1 , @p2 , @p3 )",
-					cmd.CommandText, "#A1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#A2");
 				AssertInsertParameters (cmd, false, "#A3:");
 				Assert.AreSame (cmd, cb.GetInsertCommand (), "#A4");
@@ -106,35 +98,19 @@ namespace MonoTests.System.Data
 				cb.RefreshSchema ();
 				cb.QuotePrefix = "\"";
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("INSERT INTO \"employee] (\"id], " +
 					"\"fname], \"lname]) VALUES (@p1, @p2, @p3)",
 					cmd.CommandText, "#B1");
-#else
-				Assert.AreEqual ("INSERT INTO \"employee( \"id , " +
-					"\"fname , \"lname ) VALUES ( @p1 , @p2 , @p3 )",
-					cmd.CommandText, "#B1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#B2");
 				AssertInsertParameters (cmd, false, "#B3:");
 				Assert.AreSame (cmd, cb.GetInsertCommand (), "#B4");
 
 				cb.RefreshSchema ();
-#if NET_2_0
 				cb.QuoteSuffix = "\"";
-#else
-				cb.QuoteSuffix = "´";
-#endif
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("INSERT INTO \"employee\" (\"id\", "
 					+ "\"fname\", \"lname\") VALUES (@p1, @p2, @p3)",
 					cmd.CommandText, "#C1");
-#else
-				Assert.AreEqual ("INSERT INTO \"employee´( \"id´ , " +
-					"\"fname´ , \"lname´ ) VALUES ( @p1 , @p2 , @p3 )",
-					cmd.CommandText, "#C1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertInsertParameters (cmd, false, "#C3");
 				Assert.AreSame (cmd, cb.GetInsertCommand (), "#C4");
@@ -160,15 +136,9 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("INSERT INTO [employee] " +
 					"([id], [fname], [lname]) VALUES " +
 					"(@p1, @p2, @p3)", cmd.CommandText, "#1");
-#else
-				Assert.AreEqual ("INSERT INTO employee( id , " +
-					"fname , lname ) VALUES ( @p1 , @p2 , " +
-					"@p3 )", cmd.CommandText, "#1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#2");
 				AssertInsertParameters (cmd, false, "#3:");
 			} finally {
@@ -177,7 +147,6 @@ namespace MonoTests.System.Data
 			}
 		}
 
-#if NET_2_0
 		[Test] // GetInsertCommand (Boolean)
 		public void GetInsertCommand2 ()
 		{
@@ -227,7 +196,6 @@ namespace MonoTests.System.Data
 					cmd.Dispose ();
 			}
 		}
-#endif
 
 		[Test] // GetUpdateCommand ()
 		public void GetUpdateCommand1 ()
@@ -245,20 +213,11 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("UPDATE [employee] SET [id] = @p1, " +
 					"[fname] = @p2, [lname] = @p3 WHERE (([id] = @p4) " +
 					"AND ([fname] = @p5) AND ((@p6 = 1 " +
 					"AND [lname] IS NULL) OR ([lname] = @p7)))",
 					cmd.CommandText, "#A1");
-#else
-				Assert.AreEqual ("UPDATE employee SET id = @p1 , " +
-					"fname = @p2 , lname = @p3 WHERE ( (id = @p4) " +
-					"AND ((@p5 = 1 AND fname IS NULL) OR " +
-					"(fname = @p6)) AND ((@p7 = 1 AND " +
-					"lname IS NULL) OR (lname = @p8)) )",
-					cmd.CommandText, "#A1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#A2");
 				AssertUpdateParameters (cmd, false, "#A3:");
 				Assert.AreSame (cmd, cb.GetUpdateCommand (), "#A4");
@@ -266,45 +225,23 @@ namespace MonoTests.System.Data
 				cb.RefreshSchema ();
 				cb.QuotePrefix = "\"";
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("UPDATE \"employee] SET \"id] = @p1, " +
 					"\"fname] = @p2, \"lname] = @p3 WHERE ((\"id] = @p4) " +
 					"AND (\"fname] = @p5) AND ((@p6 = 1 " +
 					"AND \"lname] IS NULL) OR (\"lname] = @p7)))",
 					cmd.CommandText, "#B1");
-#else
-				Assert.AreEqual ("UPDATE \"employee SET \"id = @p1 , " +
-					"\"fname = @p2 , \"lname = @p3 WHERE ( (\"id = @p4) " +
-					"AND ((@p5 = 1 AND \"fname IS NULL) OR " +
-					"(\"fname = @p6)) AND ((@p7 = 1 AND " +
-					"\"lname IS NULL) OR (\"lname = @p8)) )",
-					cmd.CommandText, "#B1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#B2");
 				AssertUpdateParameters (cmd, false, "#B3:");
 				Assert.AreSame (cmd, cb.GetUpdateCommand (), "#B4");
 
 				cb.RefreshSchema ();
-#if NET_2_0
 				cb.QuoteSuffix = "\"";
-#else
-				cb.QuoteSuffix = "´";
-#endif
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("UPDATE \"employee\" SET \"id\" = @p1, " +
 					"\"fname\" = @p2, \"lname\" = @p3 WHERE ((\"id\" = @p4) " +
 					"AND (\"fname\" = @p5) AND ((@p6 = 1 " +
 					"AND \"lname\" IS NULL) OR (\"lname\" = @p7)))",
 					cmd.CommandText, "#C1");
-#else
-				Assert.AreEqual ("UPDATE \"employee´ SET \"id´ = @p1 , " +
-					"\"fname´ = @p2 , \"lname´ = @p3 WHERE ( (\"id´ = @p4) " +
-					"AND ((@p5 = 1 AND \"fname´ IS NULL) OR " +
-					"(\"fname´ = @p6)) AND ((@p7 = 1 AND " +
-					"\"lname´ IS NULL) OR (\"lname´ = @p8)) )",
-					cmd.CommandText, "#C1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertUpdateParameters (cmd, false, "#C3:");
 				Assert.AreSame (cmd, cb.GetUpdateCommand (), "#C4");
@@ -336,20 +273,11 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("UPDATE [#tmp_table] SET [id] = @p1, " +
 					"[value] = @p2 WHERE (([id] = @p3) AND (" +
 					"[counter] = @p4) AND ((@p5 = 1 AND [value] IS NULL) " +
 					"OR ([value] = @p6)))", cmd.CommandText, "#1");
 				Assert.AreEqual (6, cmd.Parameters.Count, "#2");
-#else
-				Assert.AreEqual ("UPDATE #tmp_table SET id = @p1 , " +
-					"value = @p2 WHERE ( (id = @p3) AND (" +
-					"(@p4 = 1 AND counter IS NULL) OR (counter = @p5)) " +
-					"AND ((@p6 = 1 AND value IS NULL) OR (value = @p7)) )",
-					cmd.CommandText, "#1");
-				Assert.AreEqual (7, cmd.Parameters.Count, "#2");
-#endif
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
@@ -382,7 +310,6 @@ namespace MonoTests.System.Data
 			}
 		}
 
-#if NET_2_0
 		[Test] // GetUpdateCommand (Boolean)
 		public void GetUpdateCommand2 ()
 		{
@@ -545,7 +472,6 @@ namespace MonoTests.System.Data
 					cmd.Dispose ();
 			}
 		}
-#endif
 
 		[Test]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()
@@ -573,9 +499,7 @@ namespace MonoTests.System.Data
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
 				Assert.AreSame (rows [0], ex.Row, "#6");
-#if NET_2_0
 				Assert.AreEqual (1, ex.RowCount, "#7");
-#endif
 			}
 		}
 
@@ -605,9 +529,7 @@ namespace MonoTests.System.Data
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.AreSame (rows [0], ex.Row, "#5");
-#if NET_2_0
 				Assert.AreEqual (1, ex.RowCount, "#6");
-#endif
 			}
 		}
 
@@ -627,18 +549,10 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetDeleteCommand ();
-#if NET_2_0
 				Assert.AreEqual ("DELETE FROM [employee] WHERE " +
 					"(([id] = @p1) AND ([fname] = @p2) AND " +
 					"((@p3 = 1 AND [lname] IS NULL) OR " +
 					"([lname] = @p4)))", cmd.CommandText, "#A1");
-#else
-				Assert.AreEqual ("DELETE FROM  employee WHERE ( " +
-					"(id = @p1) AND ((@p2 = 1 AND fname IS NULL) " +
-					"OR (fname = @p3)) AND ((@p4 = 1 AND " +
-					"lname IS NULL) OR (lname = @p5)) )",
-					cmd.CommandText, "#A1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#A2");
 				AssertDeleteParameters (cmd, false, "#A3:");
 				Assert.AreSame (cmd, cb.GetDeleteCommand (), "#A4");
@@ -647,42 +561,22 @@ namespace MonoTests.System.Data
 				cb.QuotePrefix = "\"";
 				cmd = cb.GetDeleteCommand ();
 
-#if NET_2_0
 				Assert.AreEqual ("DELETE FROM \"employee] WHERE " +
 					"((\"id] = @p1) AND (\"fname] = @p2) AND " +
 					"((@p3 = 1 AND \"lname] IS NULL) OR " +
 					"(\"lname] = @p4)))", cmd.CommandText, "#B1");
-#else
-				Assert.AreEqual ("DELETE FROM  \"employee WHERE ( " +
-					"(\"id = @p1) AND ((@p2 = 1 AND \"fname IS NULL) " +
-					"OR (\"fname = @p3)) AND ((@p4 = 1 AND " +
-					"\"lname IS NULL) OR (\"lname = @p5)) )",
-					cmd.CommandText, "#B1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#B2");
 				AssertDeleteParameters (cmd, false, "#B3:");
 				Assert.AreSame (cmd, cb.GetDeleteCommand (), "#B4");
 
 				cb.RefreshSchema ();
-#if NET_2_0
 				cb.QuoteSuffix = "\"";
-#else
-				cb.QuoteSuffix = "´";
-#endif
 				cmd = cb.GetDeleteCommand ();
 
-#if NET_2_0
 				Assert.AreEqual ("DELETE FROM \"employee\" WHERE " +
 					"((\"id\" = @p1) AND (\"fname\" = @p2) AND " +
 					"((@p3 = 1 AND \"lname\" IS NULL) OR " +
 					"(\"lname\" = @p4)))", cmd.CommandText, "#C1");
-#else
-				Assert.AreEqual ("DELETE FROM  \"employee´ WHERE ( " +
-					"(\"id´ = @p1) AND ((@p2 = 1 AND \"fname´ IS NULL) " +
-					"OR (\"fname´ = @p3)) AND ((@p4 = 1 AND " +
-					"\"lname´ IS NULL) OR (\"lname´ = @p5)) )",
-					cmd.CommandText, "#C1");
-#endif
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertDeleteParameters (cmd, false, "#C3:");
 				Assert.AreSame (cmd, cb.GetDeleteCommand (), "#C4");
@@ -714,20 +608,11 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetDeleteCommand ();
-#if NET_2_0
 				Assert.AreEqual ("DELETE FROM [#tmp_table] WHERE " +
 					"(([id] = @p1) AND ([counter] = @p2) AND " +
 					"((@p3 = 1 AND [value] IS NULL) OR ([value] = @p4)))",
 					cmd.CommandText, "#1");
 				Assert.AreEqual (4, cmd.Parameters.Count, "#2");
-#else
-				Assert.AreEqual ("DELETE FROM  #tmp_table WHERE ( " +
-					"(id = @p1) AND ((@p2 = 1 AND counter IS NULL) " +
-					"OR (counter = @p3)) AND ((@p4 = 1 AND value " +
-					"IS NULL) OR (value = @p5)) )",
-					cmd.CommandText, "#1");
-				Assert.AreEqual (5, cmd.Parameters.Count, "#2");
-#endif
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
@@ -755,7 +640,6 @@ namespace MonoTests.System.Data
 			}
 		}
 
-#if NET_2_0
 		[Test] // GetDeleteCommand ()
 		public void GetDeleteCommand2 ()
 		{
@@ -873,13 +757,11 @@ namespace MonoTests.System.Data
 					cmd.Dispose ();
 			}
 		}
-#endif
 
 		[Test]
 		public void DefaultProperties ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
-#if NET_2_0
 			Assert.AreEqual ("[", cb.QuotePrefix, "#5");
 			Assert.AreEqual ("]", cb.QuoteSuffix, "#6");
 			Assert.AreEqual (".", cb.CatalogSeparator, "#2");
@@ -889,12 +771,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("[monotest]", cb.QuoteIdentifier ("monotest"), "#7");
 			Assert.AreEqual ("\"monotest\"", cb.UnquoteIdentifier ("\"monotest\""), "#8");
 			//Assert.AreEqual (cb.ConflictOption.CompareAllSearchableValues, cb.ConflictDetection);
-#else
-			Assert.AreEqual ("", cb.QuotePrefix, "#5");
-			Assert.AreEqual ("", cb.QuoteSuffix, "#6");
-			//Assert.AreEqual ("\"monotest\"", cb.QuoteIdentifier ("monotest"), "#7");
-			//Assert.AreEqual ("monotest", cb.UnquoteIdentifier ("\"monotest\""), "#8");
-#endif
 			// FIXME: test SetAllValues
 		}
 
@@ -1027,11 +903,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetDeleteCommand ();
-#if NET_2_0
 				Assert.AreEqual ("[", cb.QuotePrefix, "#1");
-#else
-				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#1");
-#endif
 				try {
 					cb.QuotePrefix = "\"";
 					Assert.Fail ("#2");
@@ -1043,11 +915,7 @@ namespace MonoTests.System.Data
 					Assert.IsNull (ex.InnerException, "#4");
 					Assert.IsNotNull (ex.Message, "#5");
 				}
-#if NET_2_0
 				Assert.AreEqual ("[", cb.QuotePrefix, "#6");
-#else
-				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#6");
-#endif
 				cb.RefreshSchema ();
 				cb.QuotePrefix = "\"";
 			} finally {
@@ -1069,11 +937,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("[", cb.QuotePrefix, "#1");
-#else
-				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#1");
-#endif
 				try {
 					cb.QuotePrefix = "\"";
 					Assert.Fail ("#2");
@@ -1085,11 +949,7 @@ namespace MonoTests.System.Data
 					Assert.IsNull (ex.InnerException, "#4");
 					Assert.IsNotNull (ex.Message, "#5");
 				}
-#if NET_2_0
 				Assert.AreEqual ("[", cb.QuotePrefix, "#6");
-#else
-				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#6");
-#endif
 				cb.RefreshSchema ();
 				cb.QuotePrefix = "\"";
 			} finally {
@@ -1111,11 +971,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("[", cb.QuotePrefix, "#1");
-#else
-				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#1");
-#endif
 				try {
 					cb.QuotePrefix = "\"";
 					Assert.Fail ("#2");
@@ -1127,11 +983,7 @@ namespace MonoTests.System.Data
 					Assert.IsNull (ex.InnerException, "#4");
 					Assert.IsNotNull (ex.Message, "#5");
 				}
-#if NET_2_0
 				Assert.AreEqual ("[", cb.QuotePrefix, "#6");
-#else
-				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#6");
-#endif
 				cb.RefreshSchema ();
 				cb.QuotePrefix = "\"";
 			} finally {
@@ -1153,11 +1005,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetDeleteCommand ();
-#if NET_2_0
 				Assert.AreEqual ("]", cb.QuoteSuffix, "#1");
-#else
-				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#1");
-#endif
 				try {
 					cb.QuoteSuffix = "\"";
 					Assert.Fail ("#2");
@@ -1169,11 +1017,7 @@ namespace MonoTests.System.Data
 					Assert.IsNull (ex.InnerException, "#4");
 					Assert.IsNotNull (ex.Message, "#5");
 				}
-#if NET_2_0
 				Assert.AreEqual ("]", cb.QuoteSuffix, "#6");
-#else
-				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#6");
-#endif
 				cb.RefreshSchema ();
 				cb.QuoteSuffix = "\"";
 			} finally {
@@ -1195,11 +1039,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetInsertCommand ();
-#if NET_2_0
 				Assert.AreEqual ("]", cb.QuoteSuffix, "#1");
-#else
-				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#1");
-#endif
 				try {
 					cb.QuoteSuffix = "\"";
 					Assert.Fail ("#2");
@@ -1211,11 +1051,7 @@ namespace MonoTests.System.Data
 					Assert.IsNull (ex.InnerException, "#4");
 					Assert.IsNotNull (ex.Message, "#5");
 				}
-#if NET_2_0
 				Assert.AreEqual ("]", cb.QuoteSuffix, "#6");
-#else
-				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#6");
-#endif
 				cb.RefreshSchema ();
 				cb.QuoteSuffix = "\"";
 			} finally {
@@ -1237,11 +1073,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				cmd = cb.GetUpdateCommand ();
-#if NET_2_0
 				Assert.AreEqual ("]", cb.QuoteSuffix, "#1");
-#else
-				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#1");
-#endif
 				try {
 					cb.QuoteSuffix = "\"";
 					Assert.Fail ("#2");
@@ -1253,11 +1085,7 @@ namespace MonoTests.System.Data
 					Assert.IsNull (ex.InnerException, "#4");
 					Assert.IsNotNull (ex.Message, "#5");
 				}
-#if NET_2_0
 				Assert.AreEqual ("]", cb.QuoteSuffix, "#6");
-#else
-				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#6");
-#endif
 				cb.RefreshSchema ();
 				cb.QuoteSuffix = "\"";
 			} finally {
@@ -1270,11 +1098,7 @@ namespace MonoTests.System.Data
 		{
 			SqlParameter param;
 
-#if NET_2_0
 			Assert.AreEqual (4, cmd.Parameters.Count, prefix + "Count");
-#else
-			Assert.AreEqual (5, cmd.Parameters.Count, prefix + "Count");
-#endif
 
 			param = cmd.Parameters [0];
 			Assert.AreEqual (DbType.Int32, param.DbType, prefix + "DbType (0)");
@@ -1294,159 +1118,85 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (0)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (0)");
 			Assert.AreEqual ("id", param.SourceColumn, prefix + "SourceColumn (0)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (0)");
-#endif
 			Assert.AreEqual (DataRowVersion.Original, param.SourceVersion, prefix + "SourceVersion (0)");
 			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (0)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (0)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (0)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (0)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (0)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (0)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (0)");
-#endif
 
-#if ONLY_1_1
-			param = cmd.Parameters [1];
-			Assert.AreEqual (DbType.Int32, param.DbType, prefix + "DbType (1)");
-			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (1)");
-			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (1)");
-			Assert.AreEqual (0, param.Offset, prefix + "Offset (1)");
-			Assert.AreEqual ("@p2", param.ParameterName, prefix + "ParameterName (1)");
-			Assert.AreEqual (0, param.Precision, prefix + "Precision (1)");
-			Assert.AreEqual (0, param.Scale, prefix + "Scale (1)");
-			//Assert.AreEqual (0, param.Size, prefix + "Size (1)");
-			Assert.AreEqual (string.Empty, param.SourceColumn, prefix + "SourceColumn (1)");
-			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (1)");
-			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (1)");
-			Assert.AreEqual (1, param.Value, prefix + "Value (1)");
-#endif
 
-#if NET_2_0
 			param = cmd.Parameters [1];
-#else
-			param = cmd.Parameters [2];
-#endif
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (2)");
 			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (2)");
 			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (2)");
 			Assert.AreEqual (0, param.Offset, prefix + "Offset (2)");
-#if NET_2_0
 			if (useColumnsForParameterNames)
 				Assert.AreEqual ("@Original_fname", param.ParameterName, prefix + "ParameterName (2)");
 			else
 				Assert.AreEqual ("@p2", param.ParameterName, prefix + "ParameterName (2)");
-#else
-			Assert.AreEqual ("@p3", param.ParameterName, prefix + "ParameterName (2)");
-#endif
 			Assert.AreEqual (0, param.Precision, prefix + "Precision (2)");
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (2)");
 			Assert.AreEqual (0, param.Size, prefix + "Size (2)");
 			Assert.AreEqual ("fname", param.SourceColumn, prefix + "SourceColumn (2)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (2)");
-#endif
 			Assert.AreEqual (DataRowVersion.Original, param.SourceVersion, prefix + "SourceVersion (2)");
 			Assert.AreEqual (SqlDbType.VarChar, param.SqlDbType, prefix + "SqlDbType (2)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (2)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (2)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (2)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (2)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (2)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (2)");
-#endif
 
-#if NET_2_0
 			param = cmd.Parameters [2];
-#else
-			param = cmd.Parameters [3];
-#endif
 			Assert.AreEqual (DbType.Int32, param.DbType, prefix + "DbType (3)");
 			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (3)");
-#if NET_2_0
 			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (3)");
-#else
-			Assert.IsTrue (param.IsNullable, prefix + "IsNullable (3)");
-#endif
 			Assert.AreEqual (0, param.Offset, prefix + "Offset (3)");
-#if NET_2_0
 			if (useColumnsForParameterNames)
 				Assert.AreEqual ("@IsNull_lname", param.ParameterName, prefix + "ParameterName (3)");
 			else
 				Assert.AreEqual ("@p3", param.ParameterName, prefix + "ParameterName (3)");
-#else
-			Assert.AreEqual ("@p4", param.ParameterName, prefix + "ParameterName (3)");
-#endif
 			Assert.AreEqual (0, param.Precision, prefix + "Precision (3)");
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (3)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (3)");
-#if NET_2_0
 			Assert.AreEqual ("lname", param.SourceColumn, prefix + "SourceColumn (3)");
 			Assert.IsTrue (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (3)");
 			Assert.AreEqual (DataRowVersion.Original, param.SourceVersion, prefix + "SourceVersion (3)");
-#else
-			Assert.AreEqual (string.Empty, param.SourceColumn, prefix + "SourceColumn (3)");
-			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (3)");
-#endif
 			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (3)");
-#if NET_2_0
 			Assert.AreEqual (new SqlInt32 (1), param.SqlValue, prefix + "SqlValue (3)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (3)");
-#endif
 			Assert.AreEqual (1, param.Value, prefix + "Value (3)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (3)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (3)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (3)");
-#endif
 
-#if NET_2_0
 			param = cmd.Parameters [3];
-#else
-			param = cmd.Parameters [4];
-#endif
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (4)");
 			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (4)");
-#if NET_2_0
 			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (4)");
-#else
-			Assert.IsTrue (param.IsNullable, prefix + "IsNullable (4)");
-#endif
 			Assert.AreEqual (0, param.Offset, prefix + "Offset (4)");
-#if NET_2_0
 			if (useColumnsForParameterNames)
 				Assert.AreEqual ("@Original_lname", param.ParameterName, prefix + "ParameterName (4)");
 			else
 				Assert.AreEqual ("@p4", param.ParameterName, prefix + "ParameterName (4)");
-#else
-			Assert.AreEqual ("@p5", param.ParameterName, prefix + "ParameterName (4)");
-#endif
 			Assert.AreEqual (0, param.Precision, prefix + "Precision (4)");
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (4)");
 			Assert.AreEqual (0, param.Size, prefix + "Size (4)");
 			Assert.AreEqual ("lname", param.SourceColumn, prefix + "SourceColumn (4)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (4)");
-#endif
 			Assert.AreEqual (DataRowVersion.Original, param.SourceVersion, prefix + "SourceVersion (4)");
 			Assert.AreEqual (SqlDbType.VarChar, param.SqlDbType, prefix + "SqlDbType (4)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (4)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (4)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (4)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (4)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (4)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (4)");
-#endif
 		}
 
 		static void AssertInsertParameters (SqlCommand cmd, bool useColumnsForParameterNames, string prefix)
@@ -1473,21 +1223,15 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (0)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (0)");
 			Assert.AreEqual ("id", param.SourceColumn, prefix + "SourceColumn (0)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (0)");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (0)");
 			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (0)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (0)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (0)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (0)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (0)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (0)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (0)");
-#endif
 
 			param = cmd.Parameters [1];
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (1)");
@@ -1502,30 +1246,20 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (1)");
 			Assert.AreEqual (0, param.Size, prefix + "Size (1)");
 			Assert.AreEqual ("fname", param.SourceColumn, prefix + "SourceColumn (1)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (1)");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (1)");
 			Assert.AreEqual (SqlDbType.VarChar, param.SqlDbType, prefix + "SqlDbType (1)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (1)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (1)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (1)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (1)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (1)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (1)");
-#endif
 
 			param = cmd.Parameters [2];
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (2)");
 			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (2)");
-#if NET_2_0
 			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (2)");
-#else
-			Assert.IsTrue (param.IsNullable, prefix + "IsNullable (2)");
-#endif
 			Assert.AreEqual (0, param.Offset, prefix + "Offset (2)");
 			if (useColumnsForParameterNames)
 				Assert.AreEqual ("@lname", param.ParameterName, prefix + "ParameterName (2)");
@@ -1535,32 +1269,22 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (2)");
 			Assert.AreEqual (0, param.Size, prefix + "Size (2)");
 			Assert.AreEqual ("lname", param.SourceColumn, prefix + "SourceColumn (2)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (2)");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (2)");
 			Assert.AreEqual (SqlDbType.VarChar, param.SqlDbType, prefix + "SqlDbType (2)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (2)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (2)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (2)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (2)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (2)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (2)");
-#endif
 		}
 
 		static void AssertUpdateParameters (SqlCommand cmd, bool useColumnsForParameterNames, string prefix)
 		{
 			SqlParameter param;
 
-#if NET_2_0
 			Assert.AreEqual (7, cmd.Parameters.Count, prefix + "Count");
-#else
-			Assert.AreEqual (8, cmd.Parameters.Count, prefix + "Count");
-#endif
 
 			param = cmd.Parameters [0];
 			Assert.AreEqual (DbType.Int32, param.DbType, prefix + "DbType (0)");
@@ -1580,21 +1304,15 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (0)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (0)");
 			Assert.AreEqual ("id", param.SourceColumn, prefix + "SourceColumn (0)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (0)");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (0)");
 			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (0)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (0)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (0)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (0)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (0)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (0)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (0)");
-#endif
 
 			param = cmd.Parameters [1];
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (1)");
@@ -1609,30 +1327,20 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (1)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (1)");
 			Assert.AreEqual ("fname", param.SourceColumn, prefix + "SourceColumn (1)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (1)");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (1)");
 			Assert.AreEqual (SqlDbType.VarChar, param.SqlDbType, prefix + "SqlDbType (1)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (1)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (1)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (1)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (1)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (1)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (1)");
-#endif
 
 			param = cmd.Parameters [2];
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (2)");
 			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (2)");
-#if NET_2_0
 			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (2)");
-#else
-			Assert.IsTrue (param.IsNullable, prefix + "IsNullable (2)");
-#endif
 			Assert.AreEqual (0, param.Offset, prefix + "Offset (2)");
 			if (useColumnsForParameterNames)
 				Assert.AreEqual ("@lname", param.ParameterName, prefix + "ParameterName (2)");
@@ -1642,21 +1350,15 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (2)");
 			Assert.AreEqual (0, param.Size, prefix + "Size (2)");
 			Assert.AreEqual ("lname", param.SourceColumn, prefix + "SourceColumn (2)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (2)");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (2)");
 			Assert.AreEqual (SqlDbType.VarChar, param.SqlDbType, prefix + "SqlDbType (2)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (2)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (2)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (2)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (2)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (2)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (2)");
-#endif
 
 			param = cmd.Parameters [3];
 			Assert.AreEqual (DbType.Int32, param.DbType, prefix + "DbType (3)");
@@ -1676,43 +1378,18 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (3)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (3)");
 			Assert.AreEqual ("id", param.SourceColumn, prefix + "SourceColumn (3)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (3)");
-#endif
 			Assert.AreEqual (DataRowVersion.Original, param.SourceVersion, prefix + "SourceVersion (3)");
 			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (3)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (3)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (3)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (3)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (3)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (3)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (3)");
-#endif
 
-#if ONLY_1_1
-			param = cmd.Parameters [4];
-			Assert.AreEqual (DbType.Int32, param.DbType, prefix + "DbType (4)");
-			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (4)");
-			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (4)");
-			Assert.AreEqual (0, param.Offset, prefix + "Offset (4)");
-			Assert.AreEqual ("@p5", param.ParameterName, prefix + "ParameterName (4)");
-			Assert.AreEqual (0, param.Precision, prefix + "Precision (4)");
-			Assert.AreEqual (0, param.Scale, prefix + "Scale (4)");
-			//Assert.AreEqual (0, param.Size, prefix + "Size (4)");
-			Assert.AreEqual (string.Empty, param.SourceColumn, prefix + "SourceColumn (4)");
-			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (4)");
-			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (4)");
-			Assert.AreEqual (1, param.Value, prefix + "Value (4)");
-#endif
 
-#if NET_2_0
 			param = cmd.Parameters [4];
-#else
-			param = cmd.Parameters [5];
-#endif
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (5)");
 			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (5)");
 			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (5)");
@@ -1720,115 +1397,66 @@ namespace MonoTests.System.Data
 			if (useColumnsForParameterNames)
 				Assert.AreEqual ("@Original_fname", param.ParameterName, prefix + "ParameterName (5)");
 			else
-#if NET_2_0
 				Assert.AreEqual ("@p5", param.ParameterName, prefix + "ParameterName (5)");
-#else
-				Assert.AreEqual ("@p6", param.ParameterName, prefix + "ParameterName (5)");
-#endif
 			Assert.AreEqual (0, param.Precision, prefix + "Precision (5)");
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (5)");
 			Assert.AreEqual (0, param.Size, prefix + "Size (5)");
 			Assert.AreEqual ("fname", param.SourceColumn, prefix + "SourceColumn (5)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (5)");
-#endif
 			Assert.AreEqual (DataRowVersion.Original, param.SourceVersion, prefix + "SourceVersion (5)");
 			Assert.AreEqual (SqlDbType.VarChar, param.SqlDbType, prefix + "SqlDbType (5)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (5)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (5)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (5)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (5)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (5)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (5)");
-#endif
 
-#if NET_2_0
 			param = cmd.Parameters [5];
-#else
-			param = cmd.Parameters [6];
-#endif
 			Assert.AreEqual (DbType.Int32, param.DbType, prefix + "DbType (6)");
 			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (6)");
-#if NET_2_0
 			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (6)");
-#else
-			Assert.IsTrue (param.IsNullable, prefix + "IsNullable (6)");
-#endif
 			Assert.AreEqual (0, param.Offset, prefix + "Offset (6)");
 			if (useColumnsForParameterNames)
 				Assert.AreEqual ("@IsNull_lname", param.ParameterName, prefix + "ParameterName (6)");
 			else
-#if NET_2_0
 				Assert.AreEqual ("@p6", param.ParameterName, prefix + "ParameterName (6)");
-#else
-				Assert.AreEqual ("@p7", param.ParameterName, prefix + "ParameterName (6)");
-#endif
 			Assert.AreEqual (0, param.Precision, prefix + "Precision (6)");
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (6)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (6)");
-#if NET_2_0
 			Assert.AreEqual ("lname", param.SourceColumn, prefix + "SourceColumn (6)");
 			Assert.IsTrue (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (6)");
 			Assert.AreEqual (DataRowVersion.Original, param.SourceVersion, prefix + "SourceVersion (6)");
-#else
-			Assert.AreEqual (string.Empty, param.SourceColumn, prefix + "SourceColumn (6)");
-			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, prefix + "SourceVersion (6)");
-#endif
 			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (6)");
-#if NET_2_0
 			Assert.AreEqual (new SqlInt32 (1), param.SqlValue, prefix + "SqlValue (6)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (6)");
-#endif
 			Assert.AreEqual (1, param.Value, prefix + "Value (6)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (6)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (6)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (6)");
-#endif
 
-#if NET_2_0
 			param = cmd.Parameters [6];
-#else
-			param = cmd.Parameters [7];
-#endif
 			Assert.AreEqual (DbType.AnsiString, param.DbType, prefix + "DbType (7)");
 			Assert.AreEqual (ParameterDirection.Input, param.Direction, prefix + "Direction (7)");
-#if NET_2_0
 			Assert.IsFalse (param.IsNullable, prefix + "IsNullable (7)");
-#else
-			Assert.IsTrue (param.IsNullable, prefix + "IsNullable (7)");
-#endif
 			Assert.AreEqual (0, param.Offset, prefix + "Offset (7)");
 			if (useColumnsForParameterNames)
 				Assert.AreEqual ("@Original_lname", param.ParameterName, prefix + "ParameterName (7)");
 			else
-#if NET_2_0
 				Assert.AreEqual ("@p7", param.ParameterName, prefix + "ParameterName (7)");
-#else
-				Assert.AreEqual ("@p8", param.ParameterName, prefix + "ParameterName (7)");
-#endif
 			Assert.AreEqual (0, param.Precision, prefix + "Precision (7)");
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (7)");
 			Assert.AreEqual (0, param.Size, prefix + "Size (7)");
 			Assert.AreEqual ("lname", param.SourceColumn, prefix + "SourceColumn (7)");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, prefix + "SourceColumnNullMapping (7)");
-#endif
 			Assert.AreEqual (DataRowVersion.Original, param.SourceVersion, prefix + "SourceVersion (7)");
 			Assert.AreEqual (SqlDbType.VarChar, param.SqlDbType, prefix + "SqlDbType (7)");
-#if NET_2_0
 			Assert.IsNull (param.SqlValue, prefix + "SqlValue (7)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (7)");
-#endif
 			Assert.IsNull (param.Value, prefix + "Value (7)");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionDatabase, prefix + "XmlSchemaCollectionDatabase (7)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (7)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (7)");
-#endif
 		}
 
 		static int ClientVersion {

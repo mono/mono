@@ -384,6 +384,11 @@ namespace System.Globalization
 		{
 			return(LCID);
 		}
+
+		internal int GetHashCodeOfString (string source, CompareOptions options)
+		{
+			return GetSortKey (source, options).GetHashCode ();
+        }
 		
 		public virtual SortKey GetSortKey(string source)
 		{

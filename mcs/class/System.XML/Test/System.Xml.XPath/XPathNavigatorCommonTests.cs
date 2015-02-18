@@ -425,7 +425,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (2, iter.Count, "#1");
 		}
 
-#if NET_2_0
 
 		[Test]
 		// bug #78067
@@ -462,7 +461,6 @@ namespace MonoTests.System.Xml
 			xr.Read (); // should be at x:val
 			Assert.AreEqual ("urn:x", xr.LookupNamespace ("x"), "#1");
 		}
-#endif
 
 		[Test]
 		public void GetNamespaceConsistentTree ()

@@ -37,9 +37,7 @@ namespace System.Xml.Schema
 		private XmlQualifiedName itemTypeName;
 		const string xmlname = "list";
 		private object validatedListItemType;
-#if NET_2_0
 		private XmlSchemaSimpleType validatedListItemSchemaType;
-#endif
 
 		public XmlSchemaSimpleTypeList()
 		{
@@ -66,7 +64,6 @@ namespace System.Xml.Schema
 			}
 		}
 
-#if NET_2_0
 		// LAMESPEC: this name is really ambiguous. Actually it just
 		// holds compiled itemType, not baseType of the itemType.
 		[XmlIgnore]
@@ -79,7 +76,6 @@ namespace System.Xml.Schema
 			// buggy.
 			set { }
 		}
-#endif
 
 		internal object ValidatedListItemType
 		{
@@ -145,12 +141,10 @@ namespace System.Xml.Schema
 			else if (!schema.IsNamespaceAbsent (itemTypeName.Namespace))
 				error (h, "Referenced base list item schema type " + itemTypeName + " was not found.");
 
-#if NET_2_0
 			XmlSchemaSimpleType st = validatedListItemType as XmlSchemaSimpleType;
 			if (st == null && validatedListItemType != null)
 				st = XmlSchemaType.GetBuiltInSimpleType (((XmlSchemaDatatype) validatedListItemType).TypeCode);
 			validatedListItemSchemaType = st;
-#endif
 
 			ValidationId = schema.ValidationId;
 			return errorCount;

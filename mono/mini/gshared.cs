@@ -1575,6 +1575,124 @@ public class Tests
 			return 1;
 		return 0;
 	}
+
+	struct EmptyStruct {
+	}
+
+	public struct BStruct {
+		public int a, b, c, d;
+	}
+
+	interface IFoo3<T> {
+		int Bytes (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+				   byte b1, byte b2, byte b3, byte b4, byte b5, byte b6, byte b7, byte b8);
+		int SBytes (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+					sbyte b1, sbyte b2, sbyte b3, sbyte b4);
+		int Shorts (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+					short b1, short b2, short b3, short b4);
+		int UShorts (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+					ushort b1, ushort b2, ushort b3, ushort b4);
+		int Ints (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+				  int i1, int i2, int i3, int i4);
+		int UInts (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+				   uint i1, uint i2, uint i3, uint i4);
+		int Structs (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+					 BStruct s);
+	}
+
+	class Foo3<T> : IFoo3<T> {
+		public int Bytes (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+						  byte b1, byte b2, byte b3, byte b4, byte b5, byte b6, byte b7, byte b8) {
+			return b1 + b2 + b3 + b4 + b5 + b6 + b7 + b8;
+		}
+		public int SBytes (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+						  sbyte b1, sbyte b2, sbyte b3, sbyte b4) {
+			return b1 + b2 + b3 + b4;
+		}
+		public int Shorts (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+						   short b1, short b2, short b3, short b4) {
+			return b1 + b2 + b3 + b4;
+		}
+		public int UShorts (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+							ushort b1, ushort b2, ushort b3, ushort b4) {
+			return b1 + b2 + b3 + b4;
+		}
+		public int Ints (T t, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8,
+						   int i1, int i2, int i3, int i4) {
+			return i1 + i2 + i3 + i4;
+		}
+		public int UInts (T t, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8,
+						  uint i1, uint i2, uint i3, uint i4) {
+			return (int)(i1 + i2 + i3 + i4);
+		}
+		public int Structs (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+							BStruct s) {
+			return s.a + s.b + s.c + s.d;
+		}
+	}
+
+	// Passing small normal arguments on the stack
+	public static int test_0_arm64_small_stack_args () {
+		IFoo3<EmptyStruct> o = (IFoo3<EmptyStruct>)Activator.CreateInstance (typeof (Foo3<>).MakeGenericType (new Type [] { typeof (EmptyStruct) }));
+		int res = o.Bytes (new EmptyStruct (), 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8);
+		if (res != 36)
+			return 1;
+		int res2 = o.SBytes (new EmptyStruct (), 1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4);
+		if (res2 != -10)
+			return 2;
+		int res3 = o.Shorts (new EmptyStruct (), 1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4);
+		if (res3 != -10)
+			return 3;
+		int res4 = o.UShorts (new EmptyStruct (), 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4);
+		if (res4 != 10)
+			return 4;
+		int res5 = o.Ints (new EmptyStruct (), 1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4);
+		if (res5 != -10)
+			return 5;
+		int res6 = o.UInts (new EmptyStruct (), 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4);
+		if (res6 != 10)
+			return 6;
+		return 0;
+	}
+
+	// Passing vtype normal arguments on the stack
+	public static int test_0_arm64_vtype_stack_args () {
+		IFoo3<EmptyStruct> o = (IFoo3<EmptyStruct>)Activator.CreateInstance (typeof (Foo3<>).MakeGenericType (new Type [] { typeof (EmptyStruct) }));
+		int res = o.Structs (new EmptyStruct (), 1, 2, 3, 4, 5, 6, 7, 8, new BStruct () { a = 1, b = 2, c = 3, d = 4 });
+		if (res != 10)
+			return 1;
+		return 0;
+	}
+
+	interface IFoo4<T> {
+		T Get(T[,] arr, T t);
+	}
+
+	class Foo4<T> : IFoo4<T> {
+		public T Get(T[,] arr, T t) {
+			arr [1, 1] = t;
+			return arr [1, 1];
+		}
+	}
+
+	struct AStruct {
+		public int a, b;
+	}
+
+	public static int test_0_multi_dim_arrays_2 () {
+		IFoo4<int> foo = new Foo4<int> ();
+		var arr = new int [10, 10];
+		int res = foo.Get (arr, 10);
+		if (res != 10)
+			return 1;
+
+		IFoo4<AStruct> foo2 = new Foo4<AStruct> ();
+		var arr2 = new AStruct [10, 10];
+		var res2 = foo2.Get (arr2, new AStruct () { a = 1, b = 2 });
+		if (res2.a != 1 || res2.b != 2)
+			return 2;
+		return 0;
+	}
 }
 
 // #13191

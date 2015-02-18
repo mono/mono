@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Mono.CompilerServices.SymbolWriter;
 using System.Linq;
+using System.IO;
 
 #if STATIC
 using IKVM.Reflection;
@@ -413,6 +414,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public Dictionary<string, string> GetResourceStrings { get; private set; }
+
 		#endregion
 
 		public override void Accept (StructuralVisitor visitor)
@@ -715,6 +718,32 @@ namespace Mono.CSharp
 		{
 			// TODO: This setter is quite ugly but I have not found a way around it yet
 			this.assembly = assembly;
+		}
+
+		public void LoadGetResourceStrings (string fileName)
+		{
+			if (!File.Exists (fileName)) {
+				Report.Error (1566, "Error reading resource file `{0}'", fileName);
+				return;
+			}
+
+			foreach (var l in File.ReadLines (fileName)) {
+				if (GetResourceStrings == null)
+					GetResourceStrings = new Dictionary<string, string> ();
+
+				var line = l.Trim ();
+				if (line.Length == 0 || line [0] == '#' || line [0] == ';')
+					continue;
+				
+				var epos = line.IndexOf ('=');
+				if (epos < 0)
+					continue;
+
+				var key = line.Substring (0, epos).Trim ();
+				var value = line.Substring (epos + 1).Trim ();
+
+				GetResourceStrings [key] = value;
+			}
 		}
 	}
 }

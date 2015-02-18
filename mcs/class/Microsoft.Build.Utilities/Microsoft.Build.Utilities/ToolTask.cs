@@ -40,15 +40,14 @@ using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Mono.XBuild.Utilities;
 using System.Threading;
+using System.Collections.Generic;
 
 using SCS = System.Collections.Specialized;
 
 namespace Microsoft.Build.Utilities
 {
 	public abstract class ToolTask : Task
-#if NET_4_0
 		, ICancelableTask
-#endif	
 	{
 		int			exitCode;
 		int			timeout;
@@ -58,9 +57,7 @@ namespace Microsoft.Build.Utilities
 		MessageImportance	standardOutputLoggingImportance;
 		StringBuilder toolOutput;
 		bool typeLoadException;
-#if NET_4_0
 		ManualResetEvent canceled;
-#endif
 
 		protected ToolTask ()
 			: this (null, null)
@@ -81,9 +78,7 @@ namespace Microsoft.Build.Utilities
 			this.HelpKeywordPrefix = helpKeywordPrefix;
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
-#if NET_4_0
 			canceled = new ManualResetEvent (false);
-#endif
 		}
 
 		[MonoTODO]
@@ -406,29 +401,29 @@ namespace Microsoft.Build.Utilities
 		// EnvironmentOverride is Obsolete'd in 4.0
 		//
 		// Returns the final set of environment variables and logs them
-		SCS.StringDictionary GetAndLogEnvironmentVariables ()
+		Dictionary<string, string> GetAndLogEnvironmentVariables ()
 		{
 			var env_vars = GetEnvironmentVariables ();
 			if (env_vars == null)
 				return env_vars;
 
 			Log.LogMessage (MessageImportance.Low, "Environment variables being passed to the tool:");
-			foreach (DictionaryEntry entry in env_vars)
+			foreach (var entry in env_vars)
 				Log.LogMessage (MessageImportance.Low, "\t{0}={1}", (string)entry.Key, (string)entry.Value);
 
 			return env_vars;
 		}
 
-		SCS.StringDictionary GetEnvironmentVariables ()
+		Dictionary<string, string> GetEnvironmentVariables ()
 		{
-			if (EnvironmentVariables == null || EnvironmentVariables.Length == 0)
-				return EnvironmentOverride;
+			var env_vars = new Dictionary<string, string> (StringComparer.InvariantCultureIgnoreCase);
 
-			var env_vars = new SCS.ProcessStringDictionary ();
-			foreach (string pair in EnvironmentVariables) {
-				string [] key_value = pair.Split ('=');
-				if (!String.IsNullOrEmpty (key_value [0]))
-					env_vars [key_value [0]] = key_value.Length > 1 ? key_value [1] : String.Empty;
+			if (EnvironmentVariables != null) {
+				foreach (string pair in EnvironmentVariables) {
+					string [] key_value = pair.Split ('=');
+					if (!String.IsNullOrEmpty (key_value [0]))
+						env_vars [key_value [0]] = key_value.Length > 1 ? key_value [1] : String.Empty;
+				}
 			}
 
 			if (EnvironmentOverride != null)
@@ -506,7 +501,6 @@ namespace Microsoft.Build.Utilities
 			set { toolPath  = value; }
 		}
 
-#if NET_4_0
 		protected ManualResetEvent ToolCanceled {
 			get {
 				return canceled;
@@ -517,7 +511,6 @@ namespace Microsoft.Build.Utilities
 		{
 			canceled.Set ();
 		}
-#endif
 
 #if XBUILD_12
 		protected MessageImportance StandardErrorImportanceToUse {

@@ -181,28 +181,18 @@ namespace System.Net.Mail {
 			set { priority = value; }
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		Encoding HeadersEncoding {
 			get { return headersEncoding; }
 			set { headersEncoding = value; } 
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		MailAddressCollection ReplyToList {
 			get { return replyTo; }
 		}
 
-#if NET_4_0
 		[Obsolete ("Use ReplyToList instead")]
-#endif
 		public MailAddress ReplyTo {
 			get {
 				if (replyTo.Count == 0)

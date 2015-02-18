@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_3_5
 using System;
 using System.ComponentModel;
 
@@ -35,9 +34,7 @@ namespace System.Web.UI.WebControls
 {
 	[ToolboxItemAttribute (false)]
 	public class ListViewItem : Control, INamingContainer
-#if NET_4_0
 	, IDataItemContainer
-#endif
 	{
 		internal ListViewItem ()
 			: this (ListViewItemType.DataItem)
@@ -65,7 +62,6 @@ namespace System.Web.UI.WebControls
 			private set;
 		}
 		
-#if NET_4_0
 		public virtual object DataItem {
 			get;
 			set;
@@ -80,7 +76,5 @@ namespace System.Web.UI.WebControls
 			get;
 			protected set;
 		}
-#endif
 	}
 }
-#endif

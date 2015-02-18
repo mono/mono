@@ -182,17 +182,12 @@ namespace Mainsoft.Web.Util {
 			int last = url.LastIndexOf ('/');
 
 			if (last > 0) {
-#if NET_2_0
 				return RemoveDoubleSlashes (url.Substring (0, last));
-#else
-				return url.Substring (0, last);
-#endif
 			}
 
 			return "/";
 		}
 
-#if NET_2_0
 		internal static string RemoveDoubleSlashes (string input)
 		{
 			// MS VirtualPathUtility removes duplicate '/'
@@ -204,7 +199,6 @@ namespace Mainsoft.Web.Util {
 
 			return str;
 		}
-#endif
 
 		internal static string GetFile (string url)
 		{

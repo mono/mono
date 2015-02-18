@@ -9,7 +9,6 @@
 // (C)2006 Novell Inc,
 //
 
-#if NET_2_0
 
 using System.Threading;
 
@@ -85,4 +84,3 @@ namespace System.Transactions
 	}
 }
 
-#endif

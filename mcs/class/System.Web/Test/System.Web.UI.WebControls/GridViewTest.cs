@@ -29,7 +29,6 @@
 // ondatasourceviewchanged(),onpagepreload(),RaiseCallbackEvent(),RaisePostbackEvent  
 
 
-#if NET_2_0
 
 
 using NUnit.Framework;
@@ -3279,4 +3278,3 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 
-#endif

@@ -337,18 +337,22 @@ namespace Mono.CSharp
 					ModFlags |= method.ModFlags;
 					flags = method.flags;
 				} else {
-					if (container.Kind == MemberKind.Interface)
-						Report.Error (275, Location, "`{0}': accessibility modifiers may not be used on accessors in an interface",
-							GetSignatureForError ());
-					else if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
-						Report.Error (442, Location, "`{0}': abstract properties cannot have private accessors", GetSignatureForError ());
-					}
-
 					CheckModifiers (ModFlags);
 					ModFlags |= (method.ModFlags & (~Modifiers.AccessibilityMask));
 					ModFlags |= Modifiers.PROPERTY_CUSTOM;
-					flags = ModifiersExtensions.MethodAttr (ModFlags);
-					flags |= (method.flags & (~MethodAttributes.MemberAccessMask));
+
+					if (container.Kind == MemberKind.Interface) {
+						Report.Error (275, Location, "`{0}': accessibility modifiers may not be used on accessors in an interface",
+							GetSignatureForError ());
+					} else if ((ModFlags & Modifiers.PRIVATE) != 0) {
+						if ((method.ModFlags & Modifiers.ABSTRACT) != 0) {
+							Report.Error (442, Location, "`{0}': abstract properties cannot have private accessors", GetSignatureForError ());
+						}
+
+						ModFlags &= ~Modifiers.VIRTUAL;
+					}
+
+					flags = ModifiersExtensions.MethodAttr (ModFlags) | MethodAttributes.SpecialName;
 				}
 
 				CheckAbstractAndExtern (block != null);
@@ -531,7 +535,12 @@ namespace Mono.CSharp
 						ok = false;
 					}
 				} else if (Get.HasCustomAccessModifier || base_prop.HasDifferentAccessibility) {
-					if (!CheckAccessModifiers (Get, base_prop.Get)) {
+					if (!base_prop.Get.IsAccessible (this)) {
+						// Same as csc but it should be different error code
+						Report.Error (115, Get.Location, "`{0}' is marked as an override but no accessible `get' accessor found to override",
+							GetSignatureForError ());
+						ok = false;
+					} else if (!CheckAccessModifiers (Get, base_prop.Get)) {
 						Error_CannotChangeAccessModifiers (Get, base_prop.Get);
 						ok = false;
 					}
@@ -547,6 +556,12 @@ namespace Mono.CSharp
 						GetSignatureForError (), base_prop.GetSignatureForError ());
 					ok = false;
 				}
+
+				if ((ModFlags & Modifiers.AutoProperty) != 0) {
+					Report.Error (8080, Location, "`{0}': Auto-implemented properties must override all accessors of the overridden property",
+						GetSignatureForError ());
+					ok = false;
+				}
 			} else {
 				if (!base_prop.HasSet) {
 					if (ok) {
@@ -557,7 +572,12 @@ namespace Mono.CSharp
 						ok = false;
 					}
 				} else if (Set.HasCustomAccessModifier || base_prop.HasDifferentAccessibility) {
-					if (!CheckAccessModifiers (Set, base_prop.Set)) {
+					if (!base_prop.Set.IsAccessible (this)) {
+						// Same as csc but it should be different error code
+						Report.Error (115, Set.Location, "`{0}' is marked as an override but no accessible `set' accessor found to override",
+							GetSignatureForError ());
+						ok = false;
+					} else if (!CheckAccessModifiers (Set, base_prop.Set)) {
 						Error_CannotChangeAccessModifiers (Set, base_prop.Set);
 						ok = false;
 					}
@@ -847,6 +867,7 @@ namespace Mono.CSharp
 			}
 
 			if (auto) {
+				ModFlags |= Modifiers.AutoProperty;
 				if (Get == null) {
 					Report.Error (8051, Location, "Auto-implemented property `{0}' must have get accessor",
 						GetSignatureForError ());
@@ -1734,6 +1755,13 @@ namespace Mono.CSharp
 		public override string GetSignatureForDocumentation ()
 		{
 			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
+		}
+
+		public override void PrepareEmit ()
+		{
+			parameters.ResolveDefaultValues (this);
+
+			base.PrepareEmit ();
 		}
 
 		protected override bool VerifyClsCompliance ()

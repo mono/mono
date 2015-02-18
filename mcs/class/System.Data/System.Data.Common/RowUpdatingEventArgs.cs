@@ -34,9 +34,6 @@
 
 namespace System.Data.Common {
 	public
-#if !NET_2_0
-	abstract
-#endif
 	class RowUpdatingEventArgs : EventArgs
 	{
 		#region Fields
@@ -53,11 +50,7 @@ namespace System.Data.Common {
 
 		#region Constructors
 
-#if NET_2_0
 		public
-#else
-		protected
-#endif
 		RowUpdatingEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
 			this.dataRow = dataRow;
@@ -99,14 +92,12 @@ namespace System.Data.Common {
 			get { return tableMapping; }
 		}
 
-		#if NET_2_0
 		
 		protected virtual IDbCommand BaseCommand {
 			get { return this.command; }	
 			set { this.command = value; }
 		}
 
-		#endif
 
 		#endregion // Properties
 	}

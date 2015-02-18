@@ -128,9 +128,7 @@ namespace System.Reflection {
 		/// </summary>
 		Serializable = 8192,
 
-#if NET_4_5
 		WindowsRuntime = 16384,
-#endif
 
 		/// <summary>
 		/// </summary>

@@ -40,10 +40,8 @@ using System.Web.Script.Serialization;
 using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
-#if NET_3_5
 using System.ServiceModel;
 using System.ServiceModel.Description;
-#endif
 
 namespace System.Web.Script.Services
 {
@@ -59,11 +57,9 @@ namespace System.Web.Script.Services
 	{
 		public static LogicalTypeInfo CreateTypeInfo (Type t, string filePath)
 		{
-#if NET_3_5
 			if (t.GetCustomAttributes (typeof (ServiceContractAttribute), false).Length > 0)
 				return new WcfLogicalTypeInfo (t, filePath);
 			else
-#endif
 				return new AsmxLogicalTypeInfo (t, filePath);
 		}
 
@@ -577,7 +573,6 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 		}
 	}
 
-#if NET_3_5
 	internal class WcfLogicalTypeInfo : LogicalTypeInfo
 	{
 		ContractDescription cd;
@@ -678,5 +673,4 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 			}
 		}
 	}
-#endif
 }

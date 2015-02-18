@@ -37,9 +37,6 @@ namespace System.Reflection {
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
 	public
-#if !NET_4_0
-	sealed
-#endif
 	class MethodBody {
 #pragma warning disable 649
 		#region Sync with reflection.h
@@ -52,18 +49,12 @@ namespace System.Reflection {
 		#endregion
 #pragma warning restore 649
 
-#if NET_4_0
 		protected
-#else
-		internal
-#endif
 		MethodBody () {
 		}
 
 		public
-#if NET_4_0
 	virtual
-#endif
 		IList<ExceptionHandlingClause> ExceptionHandlingClauses {
 			get {
 				return Array.AsReadOnly<ExceptionHandlingClause> (clauses);
@@ -71,9 +62,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		IList<LocalVariableInfo> LocalVariables {
 			get {
 				return Array.AsReadOnly<LocalVariableInfo> (locals);
@@ -81,9 +70,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		bool InitLocals {
 			get {
 				return init_locals;
@@ -91,9 +78,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		int LocalSignatureMetadataToken {
 			get {
 				return sig_token;
@@ -102,9 +87,7 @@ namespace System.Reflection {
 
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		int MaxStackSize {
 			get {
 				return max_stack;
@@ -112,9 +95,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		byte[] GetILAsByteArray () {
 			return il;
 		}

@@ -66,7 +66,7 @@ EXTRA_DISTFILES = \
 	$(nist_dom_files:%=Test/System.Xml/nist_dom/%)
 
 System.Xml.XPath/$(PROFILE)_Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
-	(cd System.Xml.XPath; $(topdir)/../jay/jay -ct < $(topdir)/../jay/skeleton.cs Parser.jay >> $(PROFILE)_Parser.cs)
+	(cd System.Xml.XPath; $(topdir)/../jay/jay -ct < $(topdir)/../jay/skeleton.cs Parser.jay > $(PROFILE)_Parser.cs)
 
 Mono.Xml.Xsl/$(PROFILE)_PatternParser.jay: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	sed "s/\%start Expr/\%start Pattern/" $< >$@

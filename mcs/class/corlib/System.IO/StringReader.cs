@@ -32,9 +32,7 @@
 using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO {
 	[Serializable]
@@ -155,7 +153,6 @@ namespace System.IO {
 			return toEnd;
 		}
 
-#if NET_4_5
 		//
 		// All async methods return finished task with a result as it's faster
 		// than setting up async call
@@ -179,7 +176,6 @@ namespace System.IO {
 		{
 			return Task.FromResult (ReadToEnd ());
 		}
-#endif
 
 		static void ObjectDisposedException ()
 		{

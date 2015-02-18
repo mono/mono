@@ -48,13 +48,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-#if NET_4_0
 [assembly: AssemblyVersion("4.84.0.0")]
-#elif NET_2_0
-[assembly: AssemblyVersion("2.84.0.0")]
-#else
-	#error "No profile"
-#endif
 
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("SharpZipLib.pub")]

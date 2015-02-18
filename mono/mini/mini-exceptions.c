@@ -12,8 +12,11 @@
 
 #include <config.h>
 #include <glib.h>
-#include <signal.h>
 #include <string.h>
+
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
 
 #ifdef HAVE_EXECINFO_H
 #include <execinfo.h>
@@ -53,6 +56,10 @@
 #include "trace.h"
 #include "debugger-agent.h"
 #include "seq-points.h"
+
+#ifdef ENABLE_EXTENSION_MODULE
+#include "../../../mono-extensions/mono/mini/mini-exceptions.c"
+#endif
 
 #ifndef MONO_ARCH_CONTEXT_DEF
 #define MONO_ARCH_CONTEXT_DEF
@@ -547,6 +554,7 @@ get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 static MonoMethod*
 get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 {
+	MonoError error;
 	MonoGenericContext context;
 	MonoMethod *method;
 	
@@ -556,7 +564,8 @@ get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 
 	method = jinfo_get_method (ji);
 	method = mono_method_get_declaring_generic_method (method);
-	method = mono_class_inflate_generic_method (method, &context);
+	method = mono_class_inflate_generic_method_checked (method, &context, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 
 	return method;
 }
@@ -691,7 +700,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		}
 		else
 			MONO_OBJECT_SETREF (sf, method, mono_method_get_object (domain, method, NULL));
-		sf->method_address = (gint64) ji->code_start;
+		sf->method_address = (gsize) ji->code_start;
 		sf->native_offset = (char *)ip - (char *)ji->code_start;
 
 		/*
@@ -2091,7 +2100,7 @@ mono_altstack_restore_prot (mgreg_t *regs, guint8 *code, gpointer *tramp_data, g
 }
 
 gboolean
-mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, guint8* fault_addr)
+mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, guint8* fault_addr)
 {
 	/* we got a stack overflow in the soft-guard pages
 	 * There are two cases:
@@ -2119,7 +2128,7 @@ mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 		mono_mprotect ((char*)jit_tls->stack_ovf_guard_base + jit_tls->stack_ovf_guard_size - guard_size, guard_size, MONO_MMAP_READ|MONO_MMAP_WRITE);
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 		if (ji) {
-			mono_arch_handle_altstack_exception (ctx, fault_addr, TRUE);
+			mono_arch_handle_altstack_exception (ctx, siginfo, fault_addr, TRUE);
 			handled = TRUE;
 		}
 #endif
@@ -2263,7 +2272,7 @@ static gboolean handling_sigsegv = FALSE;
  * information and aborting.
  */
 void
-mono_handle_native_sigsegv (int signal, void *ctx)
+mono_handle_native_sigsegv (int signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
 #ifdef MONO_ARCH_USE_SIGACTION
 	struct sigaction sa;
@@ -2339,6 +2348,8 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 	}
 #endif
  }
+#elif defined (ENABLE_EXTENSION_MODULE)
+	mono_extension_handle_native_sigsegv (ctx, info);
 #endif
 
 	/*
@@ -2380,7 +2391,7 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 #else
 
 void
-mono_handle_native_sigsegv (int signal, void *ctx)
+mono_handle_native_sigsegv (int signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
 	g_assert_not_reached ();
 }

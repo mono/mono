@@ -48,7 +48,6 @@
 #
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
-memory_barrier: len:8 clob:a
 nop: len:4
 relaxed_nop: len:4
 break: len:4
@@ -77,6 +76,7 @@ localloc: dest:i src1:i len:60
 compare: src1:i src2:i len:4
 compare_imm: src1:i len:12
 fcompare: src1:f src2:f len:12
+rcompare: src1:f src2:f len:12
 oparglist: src1:i len:12
 setlret: src1:i src2:i len:12
 checkthis: src1:b len:4
@@ -89,6 +89,9 @@ voidcall_membase: src1:b len:16 clob:c
 fcall: dest:g len:28 clob:c
 fcall_reg: dest:g src1:i len:16 clob:c
 fcall_membase: dest:g src1:b len:24 clob:c
+rcall: dest:g len:28 clob:c
+rcall_reg: dest:g src1:i len:16 clob:c
+rcall_membase: dest:g src1:b len:24 clob:c
 lcall: dest:l len:20 clob:c
 lcall_reg: dest:l src1:i len:8 clob:c
 lcall_membase: dest:l src1:b len:16 clob:c
@@ -136,6 +139,8 @@ loadu4_memindex: dest:i src1:b src2:i len:4
 loadu4_mem: dest:i len:8
 move: dest:i src1:i len:4
 fmove: dest:f src1:f len:4
+move_f_to_i4: dest:i src1:f len:28
+move_i4_to_f: dest:f src1:i len:8
 add_imm: dest:i src1:i len:12
 sub_imm: dest:i src1:i len:12
 mul_imm: dest:i src1:i len:12
@@ -197,6 +202,31 @@ float_cneq: dest:y src1:f src2:f len:20
 float_cge: dest:y src1:f src2:f len:20
 float_cle: dest:y src1:f src2:f len:20
 float_conv_to_u: dest:i src1:f len:36
+
+# R4 opcodes
+r4_conv_to_i1: dest:i src1:f len:88
+r4_conv_to_i2: dest:i src1:f len:88
+r4_conv_to_i4: dest:i src1:f len:88
+r4_conv_to_u1: dest:i src1:f len:88
+r4_conv_to_u2: dest:i src1:f len:88
+r4_conv_to_u4: dest:i src1:f len:88
+r4_conv_to_r4: dest:f src1:f len:16
+r4_conv_to_r8: dest:f src1:f len:16
+r4_add: dest:f src1:f src2:f len:4
+r4_sub: dest:f src1:f src2:f len:4
+r4_mul: dest:f src1:f src2:f len:4
+r4_div: dest:f src1:f src2:f len:4
+r4_rem: dest:f src1:f src2:f len:16
+r4_neg: dest:f src1:f len:4
+r4_ceq: dest:i src1:f src2:f len:16
+r4_cgt: dest:i src1:f src2:f len:16
+r4_cgt_un: dest:i src1:f src2:f len:20
+r4_clt: dest:i src1:f src2:f len:16
+r4_clt_un: dest:i src1:f src2:f len:20
+r4_cneq: dest:y src1:f src2:f len:20
+r4_cge: dest:y src1:f src2:f len:20
+r4_cle: dest:y src1:f src2:f len:20
+
 setfret: src1:f len:12
 aot_const: dest:i len:16
 objc_get_selector: dest:i len:32
@@ -351,3 +381,20 @@ gc_param_slot_liveness_def: len:0
 atomic_add_i4: dest:i src1:i src2:i len:64
 atomic_exchange_i4: dest:i src1:i src2:i len:64
 atomic_cas_i4: dest:i src1:i src2:i src3:i len:64
+memory_barrier: len:8 clob:a
+atomic_load_i1: dest:i src1:b len:28
+atomic_load_u1: dest:i src1:b len:28
+atomic_load_i2: dest:i src1:b len:28
+atomic_load_u2: dest:i src1:b len:28
+atomic_load_i4: dest:i src1:b len:28
+atomic_load_u4: dest:i src1:b len:28
+atomic_load_r4: dest:f src1:b len:80
+atomic_load_r8: dest:f src1:b len:32
+atomic_store_i1: dest:b src1:i len:28
+atomic_store_u1: dest:b src1:i len:28
+atomic_store_i2: dest:b src1:i len:28
+atomic_store_u2: dest:b src1:i len:28
+atomic_store_i4: dest:b src1:i len:28
+atomic_store_u4: dest:b src1:i len:28
+atomic_store_r4: dest:b src1:f len:80
+atomic_store_r8: dest:b src1:f len:32

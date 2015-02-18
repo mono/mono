@@ -70,9 +70,7 @@ namespace System.Web.Services.Description
 			httpBinding = (HttpBinding) Binding.Extensions.Find (typeof(HttpBinding));
 
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (ClassName);
-#if NET_2_0
 			codeClass.IsPartial = true;
-#endif
 
 			string location = null;
 			if (Port != null) {
@@ -288,7 +286,6 @@ namespace System.Web.Services.Description
 			return method;
 		}		
 
-#if NET_2_0
 		internal override CodeExpression BuildInvokeAsync (string messageName, CodeArrayCreateExpression paramsArray, CodeExpression delegateField, CodeExpression userStateVar)
 		{
 			HttpOperationBinding httpOper = OperationBinding.Extensions.Find (typeof (HttpOperationBinding)) as HttpOperationBinding;
@@ -307,7 +304,6 @@ namespace System.Web.Services.Description
 			inv2.Parameters.Add (userStateVar);
 			return inv2;
 		}
-#endif
 		
 		protected virtual Type GetInMimeFormatter ()
 		{

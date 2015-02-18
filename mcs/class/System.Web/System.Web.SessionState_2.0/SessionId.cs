@@ -48,19 +48,6 @@ namespace System.Web.SessionState {
 			return MachineKeySectionUtils.GetHexString (key);
 		}
 
-#if !NET_2_0
-		internal static string Lookup (HttpRequest request, bool cookieless)
-		{
-			if (cookieless)
-				return (string) request.Headers [SessionStateModule.HeaderName];
-
-			HttpCookie cookie = request.Cookies [SessionStateModule.CookieName];
-			if (cookie == null)
-				return null;
-
-			return cookie.Value;
-		}
-#endif
 	}
 
 }

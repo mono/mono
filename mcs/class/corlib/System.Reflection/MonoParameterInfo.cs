@@ -38,23 +38,15 @@ using System.Text;
 
 namespace System.Reflection
 {
-#if NET_4_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 	class MonoParameterInfo : ParameterInfo {
-#else
-	public partial class ParameterInfo {
-#endif
 
 #if !FULL_AOT_RUNTIME
-#if NET_4_0
 		internal MonoParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
-#else
-		internal ParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
-#endif
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			if (pb != null) {
@@ -70,11 +62,7 @@ namespace System.Reflection
 #endif
 
 		/*FIXME this constructor looks very broken in the position parameter*/
-#if NET_4_0
 		internal MonoParameterInfo (ParameterInfo pinfo, Type type, MemberInfo member, int position) {
-#else
-		internal ParameterInfo (ParameterInfo pinfo, Type type, MemberInfo member, int position) {
-#endif
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			if (pinfo != null) {
@@ -88,11 +76,7 @@ namespace System.Reflection
 			}
 		}
 
-#if NET_4_0
 		internal MonoParameterInfo (ParameterInfo pinfo, MemberInfo member) {
-#else
-		internal ParameterInfo (ParameterInfo pinfo, MemberInfo member) {
-#endif
 			this.ClassImpl = pinfo.ParameterType;
 			this.MemberImpl = member;
 			this.NameImpl = pinfo.Name;
@@ -103,11 +87,7 @@ namespace System.Reflection
 		}
 
 		/* to build a ParameterInfo for the return type of a method */
-#if NET_4_0
 		internal MonoParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
-#else
-		internal ParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
-#endif
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			this.NameImpl = "";
@@ -116,11 +96,7 @@ namespace System.Reflection
 			this.marshalAs = marshalAs;
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		object DefaultValue {
 			get {
 				if (ClassImpl == typeof (Decimal)) {
@@ -132,17 +108,13 @@ namespace System.Reflection
 					/* default values for DateTime are encoded using a custom attribute */
 					DateTimeConstantAttribute[] attrs = (DateTimeConstantAttribute[])GetCustomAttributes (typeof (DateTimeConstantAttribute), false);
 					if (attrs.Length > 0)
-						return new DateTime (attrs [0].Ticks);
+						return attrs [0].Value;
 				}
 				return DefaultValueImpl;
 			}
 		}
 
-#if NET_4_0
 		public override
-#else
-		public
-#endif
 		object RawDefaultValue {
 			get {
 				/*FIXME right now DefaultValue doesn't throw for reflection-only assemblies. Change this once the former is fixed.*/
@@ -151,9 +123,7 @@ namespace System.Reflection
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		int MetadataToken {
 			get {
 				if (MemberImpl is PropertyInfo) {
@@ -172,22 +142,14 @@ namespace System.Reflection
 
 
 		public
-#if NET_4_0
 		override
-#else
-		virtual
-#endif
 		object[] GetCustomAttributes (bool inherit)
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 
 		public
-#if NET_4_0
 		override
-#else
-		virtual
-#endif
 		object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
@@ -195,28 +157,18 @@ namespace System.Reflection
 
 
 		public
-#if NET_4_0
 		override
-#else
-		virtual
-#endif
 		bool IsDefined( Type attributeType, bool inherit) {
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
-#endif
 
 
 		public
-#if NET_4_0
 		override
-#else
-		virtual
-#endif
 		Type[] GetOptionalCustomModifiers () {
 			Type[] types = GetTypeModifiers (true);
 			if (types == null)
@@ -225,11 +177,7 @@ namespace System.Reflection
 		}
 
 		public
-#if NET_4_0
 		override
-#else
-		virtual
-#endif
 		Type[] GetRequiredCustomModifiers () {
 			Type[] types = GetTypeModifiers (false);
 			if (types == null)
@@ -237,7 +185,6 @@ namespace System.Reflection
 			return types;
 		}
 
-#if NET_4_5
 		public override bool HasDefaultValue {
 			get { 
 				object defaultValue = DefaultValue;
@@ -250,6 +197,5 @@ namespace System.Reflection
 				return true;
 			}
 		}
-#endif
 	}
 }

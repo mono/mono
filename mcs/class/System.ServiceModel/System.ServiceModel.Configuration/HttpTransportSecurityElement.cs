@@ -35,10 +35,8 @@ using System.Configuration;
 using System.Net;
 using System.Net.Security;
 using System.Reflection;
-#if NET_4_0
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Authentication.ExtendedProtection.Configuration;
-#endif
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.IdentityModel.Claims;
@@ -84,18 +82,14 @@ namespace System.ServiceModel.Configuration
 				typeof (string), "", new StringConverter (), null,
 				ConfigurationPropertyOptions.None);
 
-#if NET_4_0
 			extended_protection_policy = new ConfigurationProperty ("extendedProtectionPolicy",
 				typeof (ExtendedProtectionPolicyElement), null, new ExtendedProtectionPolicyTypeConverter (), null,
 				ConfigurationPropertyOptions.None);
-#endif
 
 			properties.Add (client_credential_type);
 			properties.Add (proxy_credential_type);
 			properties.Add (realm);
-#if NET_4_0
 			properties.Add (extended_protection_policy);
-#endif
 		}
 
 		public HttpTransportSecurityElement ()
@@ -113,14 +107,12 @@ namespace System.ServiceModel.Configuration
 			set { base [client_credential_type] = value; }
 		}
 
-#if NET_4_0
 		[ConfigurationProperty ("extendedProtectionPolicy",
 			 Options = ConfigurationPropertyOptions.None)]
 		public ExtendedProtectionPolicyElement extendedProtectionPolicy {
 			get { return (ExtendedProtectionPolicyElement) base [extended_protection_policy]; }
 			set { base [extended_protection_policy] = value; }
 		}
-#endif
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
@@ -150,10 +142,8 @@ namespace System.ServiceModel.Configuration
 			security.ClientCredentialType = ClientCredentialType;
 			security.ProxyCredentialType = ProxyCredentialType;
 			security.Realm = Realm;
-#if NET_4_0
 			// FIXME: enable this
 			// security.ExtendedProtectionPolicy = ExtendedProtectionPolicy.BuildPolicy ();
-#endif
 		}
 	}
 

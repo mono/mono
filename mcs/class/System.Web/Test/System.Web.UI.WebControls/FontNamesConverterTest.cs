@@ -66,29 +66,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			// list of font names separated by comma.
 			// Why does the CanConvertFrom() and CanConvertTo() then indicate that it cannot handle string[]???
 			// It obviously works:
-#if ONLY_1_1
-			Assert.AreEqual (name_array, conv.ConvertFrom(null, null, name_list), "B7");
-			Assert.AreEqual (name_list, conv.ConvertTo(null, null, name_array, typeof(string)), "B8");
-
-			// Special cases
-			Assert.AreEqual ("", conv.ConvertTo(null, null, new string[0], typeof(string)), "B9");
-#endif
 			Assert.AreEqual ("", conv.ConvertTo(null, null, null, typeof(string)), "B10");
 			Assert.AreEqual (new string[0], conv.ConvertFrom(null, null, ""), "B11");
-#if ONLY_1_1
-			// Roundtrip
-			Assert.AreEqual (name_list, conv.ConvertTo(null, null, conv.ConvertFrom(null, null, name_list), typeof(string)), "B12");
-
-			// Whitespace (leading and trailing)
-			Assert.AreEqual (name_array, conv.ConvertFrom(null, null, "Arial, Courier"), "B13");
-			Assert.AreEqual (new string[] { "Arial\nCourier" }, conv.ConvertFrom(null, null, "Arial\nCourier\n"), "B14");
-			Assert.AreEqual (name_array, conv.ConvertFrom(null, null, "Arial,\nCourier\r\n"), "B15");
-			Assert.AreEqual (new string[] { "Arial", "Courier" }, conv.ConvertFrom(null, null, "Arial\n,\nCourier\n"), "B16");
-
-			// This is stupid behaviour and prevents roundtripping; why trim in ConvertFrom and not in ConvertTo?
-			Assert.AreEqual ("Arial\n,Courier\n", conv.ConvertTo(null, null, new string[] { "Arial\n", "Courier\n" }, typeof(string)), "B17");
-			Assert.AreEqual ("Arial,\n,Courier\n", conv.ConvertTo(null, null, new string[] { "Arial,\n", "Courier\n" }, typeof(string)), "B18");
-#endif
 		}
 	}
 }

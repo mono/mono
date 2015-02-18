@@ -349,7 +349,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			}
 		}
 
-#if NET_3_5
 		bool Build (string projectXml, ILogger logger)
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
@@ -786,7 +785,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			3, "COMPILE: input1a;input1b - output1", "COMPILE: input2a;input2b - output2");
 		}
 
-		#endif
 
 		[Test]
 		public void TestTargetOutputsIncludingMetadata ()

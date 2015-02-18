@@ -32,9 +32,7 @@ using System.Web.UI.WebControls;
 
 namespace System.Web.UI.Design
 {
-#if NET_2_0
 	[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 	public interface ITemplateEditingFrame : IDisposable
 	{
 		void Close (bool saveChanges);

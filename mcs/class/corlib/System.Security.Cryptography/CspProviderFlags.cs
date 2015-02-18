@@ -43,9 +43,7 @@ namespace System.Security.Cryptography {
 		UseArchivableKey = 16,
 		UseNonExportableKey = 4,
 		UseUserProtectedKey = 32,
-#if NET_4_0
 		CreateEphemeralKey = 128
-#endif
 	}
 }
 

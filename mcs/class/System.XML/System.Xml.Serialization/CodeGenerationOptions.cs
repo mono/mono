@@ -33,12 +33,7 @@ using System;
 namespace System.Xml.Serialization 
 {
 	[Flags]
-#if NET_2_0
 	public
-#else
-	[Serializable]
-	internal
-#endif
 	enum CodeGenerationOptions
 	{
 		[XmlIgnore]

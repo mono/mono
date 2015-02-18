@@ -606,15 +606,9 @@ namespace System.Xml.Schema
 				one.ValidatedFixedValue == another.ValidatedFixedValue;
 		}
 
-#if NET_2_0
 		public static object ReadTypedValue (XmlReader reader,
 			object type, IXmlNamespaceResolver nsResolver,
 			StringBuilder tmpBuilder)
-#else
-		public static object ReadTypedValue (XmlReader reader,
-			object type, XmlNamespaceManager nsResolver,
-			StringBuilder tmpBuilder)
-#endif
 		{
 			if (tmpBuilder == null)
 				tmpBuilder = new StringBuilder ();

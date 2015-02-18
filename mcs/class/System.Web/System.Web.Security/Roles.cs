@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Configuration.Provider;
 using System.Web.Configuration;
@@ -253,4 +252,3 @@ namespace System.Web.Security {
 	}
 }
 
-#endif

@@ -791,11 +791,7 @@ namespace System.Xml
 				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
 				case TypeCode.Byte: return XmlConvert.ToByte (value);
 				case TypeCode.Char: return (char)XmlConvert.ToInt32 (value);
-#if NET_2_0
 				case TypeCode.DateTime: return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
-#else
-				case TypeCode.DateTime: return XmlConvert.ToDateTime (value);
-#endif
 				case TypeCode.Decimal: return XmlConvert.ToDecimal (value);
 				case TypeCode.Double: return XmlConvert.ToDouble (value);
 				case TypeCode.Int16: return XmlConvert.ToInt16 (value);

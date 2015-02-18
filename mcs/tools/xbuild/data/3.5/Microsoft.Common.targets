@@ -85,7 +85,10 @@
 			Text="OutDir property must end with a slash."/>
 	</Target>
 
-	<Target Name="PrepareForBuild">
+	<PropertyGroup>
+		<PrepareForBuildDependsOn>AssignLinkMetadata</PrepareForBuildDependsOn>
+	</PropertyGroup>
+	<Target Name="PrepareForBuild" DependsOnTargets="$(PrepareForBuildDependsOn)">
 		<Message Importance="High" Text="Configuration: $(Configuration) Platform: $(Platform)"/>
 
 		<!-- Look for app.config, if $(AppConfig) is specified, then use that. Else look in
@@ -103,6 +106,18 @@
 		<MakeDir
 			Directories="$(OutDir);$(IntermediateOutputPath);@(DocFileItem->'%(RelativeDir)')"
 		/>
+	</Target>
+
+	<Target Name="AssignLinkMetadata">
+	    <AssignLinkMetadata Items="@(EmbeddedResource)" Condition="'@(EmbeddedResource)' != '' and '%(EmbeddedResource.DefiningProjectFullPath)' != '$(MSBuildProjectFullPath)'">
+	      <Output TaskParameter="OutputItems" ItemName="_EmbeddedResourceWithLinkAssigned" />
+	    </AssignLinkMetadata>
+
+	    <ItemGroup>
+			<EmbeddedResource Remove="@(_EmbeddedResourceWithLinkAssigned)" />
+			<EmbeddedResource Include="@(_EmbeddedResourceWithLinkAssigned)" />
+			<_EmbeddedResourceWithLinkAssigned Remove="@(_EmbeddedResourceWithLinkAssigned)" />
+	    </ItemGroup>
 	</Target>
 
 	<PropertyGroup>

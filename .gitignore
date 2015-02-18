@@ -109,6 +109,10 @@ GRTAGS
 GSYMS
 GTAGS
 
+# Doxygen
+docs/doxygen*
+docs/perlmod*
+
 
 ##############################################################################
 # Mono-specific patterns

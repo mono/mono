@@ -95,7 +95,6 @@ namespace MonoTests.System.Net {
 			Assert.IsFalse (wp.IsUnrestricted (), "!IsUnrestricted");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Accept_Null ()
 		{
@@ -104,31 +103,6 @@ namespace MonoTests.System.Net {
 			Assert.IsNull (a.Accept, "Accept");
 			Assert.IsNull (a.Connect, "Connect");
 		}
-#else
-
-		[Test]
-		// Strangely, although you can set Accept to value of null, you cannot
-		// then examine the value without throwing a NullRef
-		[ExpectedException (typeof (NullReferenceException))]
-		public void Accept_Null ()
-		{
-			WebPermissionAttribute a = new WebPermissionAttribute (SecurityAction.Assert);
-			a.Accept = null; // legal
-			Assert.IsNull (a.Connect, "Connect");
-		}
-
-		[Test]
-		// Strangely, although you can set Accept to value of null, you cannot
-		// then examine the value without throwing a NullRef
-		[ExpectedException (typeof (NullReferenceException))]
-		public void Accept_Null2 ()
-		{
-			WebPermissionAttribute a = new WebPermissionAttribute (SecurityAction.Assert);
-			a.Accept = null; // legal
-			Assert.IsNull (a.Accept, "Accept");
-		}
-
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -172,7 +146,6 @@ namespace MonoTests.System.Net {
 			a.AcceptPattern = "\\";
 		}
 
-#if NET_2_0
 		[Test]
 		public void AcceptPattern ()
 		{
@@ -181,7 +154,6 @@ namespace MonoTests.System.Net {
 			Assert.AreEqual ("\b(?", a.AcceptPattern, "AcceptPattern");
 			Assert.IsNull (a.ConnectPattern, "ConnectPattern");
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -201,7 +173,6 @@ namespace MonoTests.System.Net {
 			a.Accept = "\\";
 		}
 
-#if NET_2_0
 		[Test]
 		public void Connect_Null ()
 		{
@@ -210,25 +181,6 @@ namespace MonoTests.System.Net {
 			Assert.IsNull (a.Accept, "Accept");
 			Assert.IsNull (a.Connect, "Connect");
 		}
-#else
-		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void Connect_Null ()
-		{
-			WebPermissionAttribute a = new WebPermissionAttribute (SecurityAction.Assert);
-			a.Connect = null; // legal
-			Assert.IsNull (a.Accept, "Accept");
-		}
-
-		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void Connect_Null2 ()
-		{
-			WebPermissionAttribute a = new WebPermissionAttribute (SecurityAction.Assert);
-			a.Connect = null; // legal
-			Assert.IsNull (a.Connect, "Connect");
-		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -248,7 +200,6 @@ namespace MonoTests.System.Net {
 			a.Connect = null;
 		}
 
-#if NET_2_0
 		[Test]
 		public void Connect ()
 		{
@@ -257,7 +208,6 @@ namespace MonoTests.System.Net {
 			Assert.IsNull (a.Accept, "Accept");
 			Assert.AreEqual ("/", a.Connect, "Connect");
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -276,7 +226,6 @@ namespace MonoTests.System.Net {
 			a.ConnectPattern = "\\";
 		}
 
-#if NET_2_0
 		[Test]
 		public void ConnectPattern ()
 		{
@@ -285,7 +234,6 @@ namespace MonoTests.System.Net {
 			Assert.IsNull (a.AcceptPattern, "AcceptPattern");
 			Assert.AreEqual ("\b(?", a.ConnectPattern, "ConnectPattern");
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -305,7 +253,6 @@ namespace MonoTests.System.Net {
 			a.Connect = "\\";
 		}
 
-#if NET_2_0
 		[Test]
 		public void CreatePermission_InvalidRegex ()
 		{
@@ -315,7 +262,6 @@ namespace MonoTests.System.Net {
 			WebPermission wp = (WebPermission) a.CreatePermission ();
 			Assert.IsNotNull (wp, "CreatePermission");
 		}
-#endif
 
 		[Test]
 		public void Attributes ()

@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_5
 
 namespace System.Reflection
 {
@@ -44,4 +43,3 @@ namespace System.Reflection
 	}
 }
 
-#endif

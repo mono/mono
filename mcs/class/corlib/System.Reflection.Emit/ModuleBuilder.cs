@@ -583,8 +583,7 @@ namespace System.Reflection.Emit {
 		{
 			if (method == null)
 				throw new ArgumentNullException ("method");
-			if (method.DeclaringType.Module != this)
-				throw new InvalidOperationException ("The method is not in this module");
+
 			return new MethodToken (GetToken (method));
 		}
 
@@ -821,7 +820,6 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}
@@ -961,7 +959,6 @@ namespace System.Reflection.Emit {
 				return base.MetadataToken;
 			}
 		}
-#endif
 	}
 
 	internal class ModuleBuilderTokenGenerator : TokenGenerator {

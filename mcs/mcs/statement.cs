@@ -2914,9 +2914,7 @@ namespace Mono.CSharp {
 
 				if (!s.Resolve (bc)) {
 					ok = false;
-					if (!bc.IsInProbingMode)
-						statements [ix] = new EmptyStatement (s.loc);
-
+					statements [ix] = new EmptyStatement (s.loc);
 					continue;
 				}
 			}
@@ -3219,14 +3217,14 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			if (Parent != null)
+				ec.BeginScope ();
+
 			EmitScopeInitialization (ec);
 
 			if (ec.EmitAccurateDebugInfo && !IsCompilerGenerated && ec.Mark (StartLocation)) {
 				ec.Emit (OpCodes.Nop);
 			}
-
-			if (Parent != null)
-				ec.BeginScope ();
 
 			DoEmit (ec);
 
@@ -3279,7 +3277,7 @@ namespace Mono.CSharp {
 				//
 				// We are the first storey on path and 'this' has to be hoisted
 				//
-				if (storey.HoistedThis == null) {
+				if (storey.HoistedThis == null || !(storey.Parent is HoistedStoreyClass)) {
 					foreach (ExplicitBlock ref_block in Original.ParametersBlock.TopBlock.ThisReferencesFromChildrenBlock) {
 						//
 						// ThisReferencesFromChildrenBlock holds all reference even if they
@@ -3736,13 +3734,13 @@ namespace Mono.CSharp {
 						if (list != null) {
 							var list_clone = new List<LabeledStatement> ();
 							foreach (var lentry in list) {
-								list_clone.Add (RemapLabeledStatement (lentry, lentry.Block, clonectx.RemapBlockCopy (lentry.Block)));
+								list_clone.Add (RemapLabeledStatement (lentry, clonectx.RemapBlockCopy (lentry.Block)));
 							}
 
 							target.labels.Add (entry.Key, list_clone);
 						} else {
 							var labeled = (LabeledStatement) entry.Value;
-							target.labels.Add (entry.Key, RemapLabeledStatement (labeled, labeled.Block, clonectx.RemapBlockCopy (labeled.Block)));
+							target.labels.Add (entry.Key, RemapLabeledStatement (labeled, clonectx.RemapBlockCopy (labeled.Block)));
 						}
 					}
 
@@ -3884,8 +3882,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static LabeledStatement RemapLabeledStatement (LabeledStatement stmt, Block src, Block dst)
+		LabeledStatement RemapLabeledStatement (LabeledStatement stmt, Block dst)
 		{
+			var src = stmt.Block;
+
+			//
+			// Cannot remap label block if the label was not yet cloned which
+			// can happen in case of anonymous method inside anoynymous method
+			// with a label. But in this case we don't care because goto cannot
+			// jump of out anonymous method
+			//
+			if (src.ParametersBlock != this)
+				return stmt;
+
 			var src_stmts = src.Statements;
 			for (int i = 0; i < src_stmts.Count; ++i) {
 				if (src_stmts[i] == stmt)
@@ -5922,7 +5931,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (!TypeSpec.IsReferenceType (expr.Type)) {
+			if (!TypeSpec.IsReferenceType (expr.Type) && expr.Type != InternalType.ErrorType) {
 				ec.Report.Error (185, loc,
 					"`{0}' is not a reference type as required by the lock statement",
 					expr.Type.GetSignatureForError ());
@@ -6309,32 +6318,15 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				//
-				// The rules for the possible declarators are pretty wise,
-				// but the production on the grammar is more concise.
-				//
-				// So we have to enforce these rules here.
-				//
-				// We do not resolve before doing the case 1 test,
-				// because the grammar is explicit in that the token &
-				// is present, so we need to test for this particular case.
-				//
-
-				if (initializer is Cast) {
-					bc.Report.Error (254, initializer.Location, "The right hand side of a fixed statement assignment may not be a cast expression");
-					return null;
-				}
-
-				initializer = initializer.Resolve (bc);
-
-				if (initializer == null)
+				var res = initializer.Resolve (bc);
+				if (res == null)
 					return null;
 
 				//
 				// Case 1: Array
 				//
-				if (initializer.Type.IsArray) {
-					TypeSpec array_type = TypeManager.GetElementType (initializer.Type);
+				if (res.Type.IsArray) {
+					TypeSpec array_type = TypeManager.GetElementType (res.Type);
 
 					//
 					// Provided that array_type is unmanaged,
@@ -6346,7 +6338,7 @@ namespace Mono.CSharp {
 					// and T* is implicitly convertible to the
 					// pointer type given in the fixed statement.
 					//
-					ArrayPtr array_ptr = new ArrayPtr (initializer, array_type, loc);
+					ArrayPtr array_ptr = new ArrayPtr (res, array_type, loc);
 
 					Expression converted = Convert.ImplicitConversionRequired (bc, array_ptr.Resolve (bc), li.Type, loc);
 					if (converted == null)
@@ -6356,8 +6348,8 @@ namespace Mono.CSharp {
 					// fixed (T* e_ptr = (e == null || e.Length == 0) ? null : converted [0])
 					//
 					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
-						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc)),
-						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc)))),
+						new Binary (Binary.Operator.Equality, res, new NullLiteral (loc)),
+						new Binary (Binary.Operator.Equality, new MemberAccess (res, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc)))),
 							new NullLiteral (loc),
 							converted, loc);
 
@@ -6369,33 +6361,39 @@ namespace Mono.CSharp {
 				//
 				// Case 2: string
 				//
-				if (initializer.Type.BuiltinType == BuiltinTypeSpec.Type.String) {
-					return new StringEmitter (initializer, li).Resolve (bc);
+				if (res.Type.BuiltinType == BuiltinTypeSpec.Type.String) {
+					return new StringEmitter (res, li).Resolve (bc);
 				}
 
 				// Case 3: fixed buffer
-				if (initializer is FixedBufferPtr) {
-					return new ExpressionEmitter (initializer, li);
+				if (res is FixedBufferPtr) {
+					return new ExpressionEmitter (res, li);
 				}
+
+				bool already_fixed = true;
 
 				//
 				// Case 4: & object.
 				//
-				bool already_fixed = true;
-				Unary u = initializer as Unary;
-				if (u != null && u.Oper == Unary.Operator.AddressOf) {
-					IVariableReference vr = u.Expr as IVariableReference;
-					if (vr == null || !vr.IsFixed) {
-						already_fixed = false;
+				Unary u = res as Unary;
+				if (u != null) {
+					if (u.Oper == Unary.Operator.AddressOf) {
+						IVariableReference vr = u.Expr as IVariableReference;
+						if (vr == null || !vr.IsFixed) {
+							already_fixed = false;
+						}
 					}
+				} else if (initializer is Cast) {
+					bc.Report.Error (254, initializer.Location, "The right hand side of a fixed statement assignment may not be a cast expression");
+					return null;
 				}
 
 				if (already_fixed) {
 					bc.Report.Error (213, loc, "You cannot use the fixed statement to take the address of an already fixed expression");
 				}
 
-				initializer = Convert.ImplicitConversionRequired (bc, initializer, li.Type, loc);
-				return new ExpressionEmitter (initializer, li);
+				res = Convert.ImplicitConversionRequired (bc, res, li.Type, loc);
+				return new ExpressionEmitter (res, li);
 			}
 		}
 
@@ -6499,6 +6497,31 @@ namespace Mono.CSharp {
 
 	public class Catch : Statement
 	{
+		class CatchVariableStore : Statement
+		{
+			readonly Catch ctch;
+
+			public CatchVariableStore (Catch ctch)
+			{
+				this.ctch = ctch;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				// Emits catch variable debug information inside correct block
+				ctch.EmitCatchVariableStore (ec);
+			}
+
+			protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+			{
+				return true;
+			}
+		}
+
 		class FilterStatement : Statement
 		{
 			readonly Catch ctch;
@@ -6628,9 +6651,6 @@ namespace Mono.CSharp {
 				ec.BeginExceptionFilterBlock ();
 				ec.Emit (OpCodes.Isinst, IsGeneral ? ec.BuiltinTypes.Object : CatchType);
 
-				if (li != null)
-					EmitCatchVariableStore (ec);
-
 				if (Block.HasAwait) {
 					Block.EmitScopeInitialization (ec);
 				} else {
@@ -6645,14 +6665,15 @@ namespace Mono.CSharp {
 			else
 				ec.BeginCatchBlock (CatchType);
 
-			if (li != null) {
-				EmitCatchVariableStore (ec);
-			} else {
+			if (li == null)
 				ec.Emit (OpCodes.Pop);
-			}
 
-			if (!Block.HasAwait)
+			if (Block.HasAwait) {
+				if (li != null)
+					EmitCatchVariableStore (ec);
+			} else {
 				Block.Emit (ec);
+			}
 		}
 
 		void EmitCatchVariableStore (EmitContext ec)
@@ -6660,9 +6681,9 @@ namespace Mono.CSharp {
 			li.CreateBuilder (ec);
 
 			//
-			// Special case hoisted catch variable, we have to use a temporary variable
-			// to pass via anonymous storey initialization with the value still on top
-			// of the stack
+			// For hoisted catch variable we have to use a temporary local variable
+			// for captured variable initialization during storey setup because variable
+			// needs to be on the stack after storey instance for stfld operation
 			//
 			if (li.HoistedVariant != null) {
 				hoisted_temp = new LocalTemporary (li.Type);
@@ -6678,6 +6699,9 @@ namespace Mono.CSharp {
 			using (bc.Set (ResolveContext.Options.CatchScope)) {
 				if (type_expr == null) {
 					if (CreateExceptionVariable (bc.Module.Compiler.BuiltinTypes.Object)) {
+						if (!block.HasAwait || Filter != null)
+							block.AddScopeStatement (new CatchVariableStore (this));
+
 						Expression source = new EmptyExpression (li.Type);
 						assign = new CompilerAssign (new LocalVariableReference (li, Location.Null), source, Location.Null);
 						Block.AddScopeStatement (new StatementExpression (assign, Location.Null));
@@ -6700,6 +6724,9 @@ namespace Mono.CSharp {
 						Expression source = new EmptyExpression (li.Type);
 						if (li.Type.IsGenericParameter)
 							source = new UnboxCast (source, li.Type);
+
+						if (!block.HasAwait || Filter != null)
+							block.AddScopeStatement (new CatchVariableStore (this));
 
 						//
 						// Uses Location.Null to hide from symbol file

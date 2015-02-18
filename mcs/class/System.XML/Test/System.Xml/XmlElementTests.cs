@@ -317,9 +317,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("This test is very implementation dependent and thus .NET 2.0 does not pass. That's why I said http://primates.ximian.com/~atsushi/blog/archives/000416.html and http://svn.myrealbox.com/viewcvs/trunk/mono/web/xml-classes?rev=23598")]
-#endif
 		public void RemoveDoesNotRemoveDefaultAttributes ()
 		{
 			string dtd = "<!DOCTYPE root [<!ELEMENT root EMPTY><!ATTLIST root   foo CDATA 'def'   bar CDATA #IMPLIED>]>";
@@ -561,19 +559,14 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void SetNullPrefix ()
 		{
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<root/>");
 			doc.DocumentElement.Prefix = null;
 
-#if NET_2_0
 			Assert.AreEqual (string.Empty, doc.DocumentElement.Prefix, "#1");
 			AssertClearPrefix ((string) null);
-#endif
 		}
 
 		[Test]

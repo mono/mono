@@ -44,9 +44,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-#if NET_2_0
 using System.Data.Sql;
-#endif
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
@@ -54,12 +52,8 @@ using System.Xml;
 namespace System.Data.SqlClient {
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
-#if NET_2_0
 	[DefaultEventAttribute ("RecordsAffected")]
 	public sealed class SqlCommand : DbCommand, IDbCommand, ICloneable
-#else
-	public sealed class SqlCommand : Component, IDbCommand, ICloneable
-#endif // NET_2_0
 	{
 		#region Fields
 
@@ -75,11 +69,9 @@ namespace System.Data.SqlClient {
 		CommandBehavior behavior = CommandBehavior.Default;
 		SqlParameterCollection parameters;
 		string preparedStatement;
-#if NET_2_0
 		bool disposed;
 		SqlNotificationRequest notification;
 		bool notificationAutoEnlist;
-#endif
 
 		#endregion // Fields
 
@@ -109,9 +101,7 @@ namespace System.Data.SqlClient {
 			this.updatedRowSource = UpdateRowSource.Both;
 
 			this.commandTimeout = DEFAULT_COMMAND_TIMEOUT;
-#if NET_2_0
 			notificationAutoEnlist = true;
-#endif
 			designTimeVisible = true;
 			parameters = new SqlParameterCollection (this);
 		}
@@ -138,16 +128,11 @@ namespace System.Data.SqlClient {
 			get { return behavior; }
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Command text to execute.")]
-#endif
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshProperties (RefreshProperties.All)]
 		public
-#if NET_2_0
 		override
-#endif //NET_2_0
 		string CommandText {
 			get {
 				if (commandText == null)
@@ -161,47 +146,28 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Time to wait for command to execute.")]
-		[DefaultValue (DEFAULT_COMMAND_TIMEOUT)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif //NET_2_0
 		int CommandTimeout {
 			get { return commandTimeout; }
 			set { 
 				if (value < 0)
-#if NET_2_0
 					throw new ArgumentException ("The property value assigned is less than 0.",
 						"CommandTimeout");
-#else
-					throw new ArgumentException ("The property value assigned is less than 0.");
-#endif
 				commandTimeout = value; 
 			}
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("How to interpret the CommandText.")]
-#endif
 		[DefaultValue (CommandType.Text)]
 		[RefreshProperties (RefreshProperties.All)]
 		public
-#if NET_2_0
 		override
-#endif //NET_2_0
 		CommandType CommandType {
 			get { return commandType; }
 			set { 
 				if (value == CommandType.TableDirect)
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("CommandType.TableDirect is not supported " +
 						"by the Mono SqlClient Data Provider.");
-#else
-					throw new ArgumentException ("CommandType.TableDirect is not supported by the Mono SqlClient Data Provider.");
-#endif
 
 				ExceptionHelper.CheckEnumValue (typeof (CommandType), value);
 				commandType = value; 
@@ -209,22 +175,13 @@ namespace System.Data.SqlClient {
 		}
 
 		[DefaultValue (null)]
-#if !NET_2_0
-		[DataSysDescription ("Connection used by the command.")]
-#endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]		
 		public
-#if NET_2_0
 		new
-#endif //NET_2_0
 		SqlConnection Connection {
 			get { return connection; }
 			set
 			{
-#if ONLY_1_1
-				if (connection != null && connection.DataReader != null)
-					throw new InvalidOperationException ("The connection is busy fetching data.");
-#endif
 				connection = value;
 			}
 		}
@@ -232,26 +189,17 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DefaultValue (true)]
 		[DesignOnly (true)]
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif //NET_2_0
 		bool DesignTimeVisible {
 			get { return designTimeVisible; } 
 			set { designTimeVisible = value; }
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("The parameters collection.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public
-#if NET_2_0
 		new
-#endif //NET_2_0
 		SqlParameterCollection Parameters {
 			get { return parameters; }
 		}
@@ -260,34 +208,8 @@ namespace System.Data.SqlClient {
 			get { return Connection.Tds; }
 		}
 
-#if !NET_2_0
-		IDbConnection IDbCommand.Connection {
-			get { return Connection; }
-			set { 
-				if (!(value == null || value is SqlConnection))
-					throw new InvalidCastException ("The value was not a valid SqlConnection.");
-				Connection = (SqlConnection) value;
-			}
-		}
-
-		IDataParameterCollection IDbCommand.Parameters {
-			get { return Parameters; }
-		}
-
-		IDbTransaction IDbCommand.Transaction {
-			get { return Transaction; }
-			set {
-				if (!(value == null || value is SqlTransaction))
-					throw new ArgumentException ();
-				Transaction = (SqlTransaction) value; 
-			}
-		}
-#endif
 
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("The transaction used by the command.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new SqlTransaction Transaction {
 			get {
@@ -297,22 +219,13 @@ namespace System.Data.SqlClient {
 			}
 			set
 			{
-#if ONLY_1_1
-				if (connection != null && connection.DataReader != null)
-					throw new InvalidOperationException ("The connection is busy fetching data.");
-#endif
 				transaction = value;
 			}
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
-#endif
 		[DefaultValue (UpdateRowSource.Both)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		UpdateRowSource UpdatedRowSource {
 			get { return updatedRowSource; }
 			set {
@@ -321,7 +234,6 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SqlNotificationRequest Notification {
@@ -334,15 +246,12 @@ namespace System.Data.SqlClient {
 			get { return notificationAutoEnlist; }
 			set { notificationAutoEnlist = value; }
 		}
-#endif
 		#endregion // Fields
 
 		#region Methods
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Cancel ()
 		{
 			if (Connection == null || Connection.Tds == null)
@@ -350,12 +259,10 @@ namespace System.Data.SqlClient {
 			Connection.Tds.Cancel ();
 		}
 
-#if NET_2_0
 		public SqlCommand Clone ()
 		{
 			return new SqlCommand (commandText, connection, transaction, commandType, updatedRowSource, designTimeVisible, commandTimeout, parameters);
 		}
-#endif // NET_2_0
 
 		internal void CloseDataReader ()
 		{
@@ -558,9 +465,7 @@ namespace System.Data.SqlClient {
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery", false);
@@ -604,18 +509,12 @@ namespace System.Data.SqlClient {
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		object ExecuteScalar ()
 		{
 			try {
 				object result = null;
-#if NET_2_0
 				ValidateCommand ("ExecuteScalar", false);
-#else
-				ValidateCommand ("ExecuteReader", false);
-#endif
 				behavior = CommandBehavior.Default;
 				Execute (true);
 
@@ -683,24 +582,7 @@ namespace System.Data.SqlClient {
 
 		}
 
-#if !NET_2_0
-		IDbDataParameter IDbCommand.CreateParameter ()
-		{
-			return CreateParameter ();
-		}
 
-		IDataReader IDbCommand.ExecuteReader ()
-		{
-			return ExecuteReader ();
-		}
-
-		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
-		{
-			return ExecuteReader (behavior);
-		}
-#endif
-
-#if NET_2_0
 		protected override void Dispose (bool disposing)
 		{
 			if (disposed) return;
@@ -712,18 +594,13 @@ namespace System.Data.SqlClient {
 			base.Dispose (disposing);
 			disposed = true;
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Prepare ()
 		{
-#if NET_2_0
 			if (Connection == null)
 				throw new NullReferenceException ();
-#endif
 
 			if (CommandType == CommandType.StoredProcedure || CommandType == CommandType.Text && Parameters.Count == 0)
 				return;
@@ -758,11 +635,7 @@ namespace System.Data.SqlClient {
 			if (Transaction == null && Connection.Transaction != null)
 				throw new InvalidOperationException (String.Format (
 					"{0} requires a transaction if the command's connection is in a pending transaction.",
-#if NET_2_0
 					method));
-#else
-					"Execute"));
-#endif
 			if (Transaction != null && Transaction.Connection != Connection)
 				throw new InvalidOperationException ("The connection does not have the same transaction as the command.");
 			if (Connection.State != ConnectionState.Open)
@@ -773,15 +646,12 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
 			if (Connection.XmlReader != null)
 				throw new InvalidOperationException ("There is already an open XmlReader associated with this Connection which must be closed first.");
-#if NET_2_0
 			if (async && !Connection.AsyncProcessing)
 				throw new InvalidOperationException ("This Connection object is not " + 
 					"in Asynchronous mode. Use 'Asynchronous" +
 					" Processing = true' to set it.");
-#endif // NET_2_0
 		}
 
-#if NET_2_0
 		protected override DbParameter CreateDbParameter ()
 		{
 			return CreateParameter ();
@@ -805,11 +675,9 @@ namespace System.Data.SqlClient {
 			get { return Transaction; }
 			set { Transaction = (SqlTransaction) value; }
 		}
-#endif // NET_2_0
 
 		#endregion // Methods
 
-#if NET_2_0
 		#region Asynchronous Methods
 
 		internal IAsyncResult BeginExecuteInternal (CommandBehavior behavior, 
@@ -1020,6 +888,5 @@ namespace System.Data.SqlClient {
 		#endregion // Asynchronous Methods
 
 		public event StatementCompletedEventHandler StatementCompleted;
-#endif // NET_2_0
 	}
 }

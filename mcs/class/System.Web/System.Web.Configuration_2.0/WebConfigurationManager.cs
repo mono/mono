@@ -28,7 +28,6 @@
 // Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 
 using System;
 using System.IO;
@@ -699,4 +698,3 @@ namespace System.Web.Configuration {
 #endregion
 }
 
-#endif

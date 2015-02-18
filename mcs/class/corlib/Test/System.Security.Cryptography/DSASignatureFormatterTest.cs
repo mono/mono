@@ -68,9 +68,7 @@ public class DSASignatureFormatterTest {
 	}
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
-#endif
 	public void Constructor_Null () 
 	{
 		DSASignatureFormatter fmt = new DSASignatureFormatter (null);
@@ -105,9 +103,7 @@ public class DSASignatureFormatterTest {
 	}
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
-#endif
 	public void SetKey_Null ()
 	{
 		fmt.SetKey (null);

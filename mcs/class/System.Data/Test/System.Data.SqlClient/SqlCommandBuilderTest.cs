@@ -26,10 +26,8 @@
 // SOFTWARE.
 
 using System;
-#if NET_2_0
 using System.Data;
 using System.Data.Common;
-#endif
 using System.Data.SqlClient;
 
 using NUnit.Framework;
@@ -39,7 +37,6 @@ namespace MonoTests.System.Data.Odbc
 	[TestFixture]
 	public class SqlCommandBuilderTest
 	{
-#if NET_2_0
 		[Test]
 		public void CatalogLocationTest ()
 		{
@@ -227,13 +224,11 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual ("unquotedIdentifier", ex.ParamName, "#5");
 			}
 		}
-#endif
 
 		[Test]
 		public void QuotePrefix ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
-#if NET_2_0
 			Assert.AreEqual ("[", cb.QuotePrefix, "#A1");
 			Assert.AreEqual ("]", cb.QuoteSuffix, "#A2");
 			cb.QuotePrefix = "\"";
@@ -242,31 +237,8 @@ namespace MonoTests.System.Data.Odbc
 			cb.QuotePrefix = "[";
 			Assert.AreEqual ("[", cb.QuotePrefix, "#C1");
 			Assert.AreEqual ("]", cb.QuoteSuffix, "#C2");
-#else
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#A1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#A2");
-			cb.QuotePrefix = "\"";
-			Assert.AreEqual ("\"", cb.QuotePrefix, "#B1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#B2");
-			cb.QuotePrefix = string.Empty;
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#C1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#C2");
-			cb.QuotePrefix = "x";
-			Assert.AreEqual ("x", cb.QuotePrefix, "#D1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#D2");
-			cb.QuotePrefix = null;
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#E1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#E2");
-			cb.QuotePrefix = "mono";
-			Assert.AreEqual ("mono", cb.QuotePrefix, "#F1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#F2");
-			cb.QuotePrefix = " ";
-			Assert.AreEqual (" ", cb.QuotePrefix, "#G1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#G2");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void QuotePrefix_Value_Invalid ()
 		{
@@ -294,13 +266,11 @@ namespace MonoTests.System.Data.Odbc
 				}
 			}
 		}
-#endif
 
 		[Test]
 		public void QuoteSuffix ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
-#if NET_2_0
 			Assert.AreEqual ("[", cb.QuotePrefix, "#A1");
 			Assert.AreEqual ("]", cb.QuoteSuffix, "#A2");
 			cb.QuoteSuffix = "\"";
@@ -309,31 +279,8 @@ namespace MonoTests.System.Data.Odbc
 			cb.QuoteSuffix = "]";
 			Assert.AreEqual ("[", cb.QuotePrefix, "#C1");
 			Assert.AreEqual ("]", cb.QuoteSuffix, "#C2");
-#else
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#A1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#A2");
-			cb.QuoteSuffix = "\"";
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#B1");
-			Assert.AreEqual ("\"", cb.QuoteSuffix, "#B2");
-			cb.QuoteSuffix = string.Empty;
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#C1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#C2");
-			cb.QuoteSuffix = "x";
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#D1");
-			Assert.AreEqual ("x", cb.QuoteSuffix, "#D2");
-			cb.QuoteSuffix = null;
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#E1");
-			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#E2");
-			cb.QuoteSuffix = "mono";
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#F1");
-			Assert.AreEqual ("mono", cb.QuoteSuffix, "#F2");
-			cb.QuoteSuffix = " ";
-			Assert.AreEqual (string.Empty, cb.QuotePrefix, "#G1");
-			Assert.AreEqual (" ", cb.QuoteSuffix, "#G2");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void QuoteSuffix_Value_Invalid ()
 		{
@@ -399,6 +346,5 @@ namespace MonoTests.System.Data.Odbc
 				}
 			}
 		}
-#endif
 	}
 }

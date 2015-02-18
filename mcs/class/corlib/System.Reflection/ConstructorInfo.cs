@@ -114,7 +114,6 @@ namespace System.Reflection {
 		}
 #endif
 
-#if NET_4_0
 		public override bool Equals (object obj)
 		{
 			return obj == (object) this;
@@ -142,7 +141,6 @@ namespace System.Reflection {
 				return true;
 			return !left.Equals (right);
 		}
-#endif
 
 	}
 }

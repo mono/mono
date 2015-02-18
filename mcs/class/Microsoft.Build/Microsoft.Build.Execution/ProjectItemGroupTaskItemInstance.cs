@@ -41,7 +41,6 @@ namespace Microsoft.Build.Execution
 			ItemType = xml.ItemType;
 			Metadata = xml.Metadata.Select (m => new ProjectItemGroupTaskMetadataInstance (m)).ToArray ();
 			Remove = xml.Remove;
-			#if NET_4_5
 			KeepDuplicates = xml.KeepDuplicates;
 			KeepMetadata = xml.KeepMetadata;
 			RemoveMetadata = xml.RemoveMetadata;
@@ -53,7 +52,6 @@ namespace Microsoft.Build.Execution
 			KeepDuplicatesLocation = xml.KeepDuplicatesLocation;
 			RemoveLocation = xml.RemoveLocation;
 			RemoveMetadataLocation = xml.RemoveMetadataLocation;			
-			#endif
 		}
 		
 		public string Condition { get; private set; }
@@ -73,7 +71,6 @@ namespace Microsoft.Build.Execution
 		public string Remove { get; private set; }
 
 		public string RemoveMetadata { get; private set; }
-		#if NET_4_5
 		public ElementLocation ConditionLocation { get; private set; }
 
 		public ElementLocation ExcludeLocation { get; private set; }
@@ -89,7 +86,6 @@ namespace Microsoft.Build.Execution
 		public ElementLocation RemoveLocation { get; private set; }
 
 		public ElementLocation RemoveMetadataLocation { get; private set; }
-		#endif
 	}
 }
 

@@ -189,7 +189,6 @@ namespace System.Threading
 			}
 		}
 
-#if NET_4_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
 
@@ -224,16 +223,11 @@ namespace System.Threading
 			try_enter_with_atomic_var (obj, millisecondsTimeout, ref lockTaken);
 		}		
 
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool Monitor_test_owner (object obj);
 
-#if NET_4_5		
 		public
-#else
-		internal
-#endif
 		static bool IsEntered (object obj)
 		{
 			return Monitor_test_owner(obj);

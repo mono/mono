@@ -165,10 +165,8 @@ namespace System.Reflection {
 				ToString(), MemberTypes.Event);
 		}
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
-#endif
 	}
 }

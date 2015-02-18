@@ -53,9 +53,7 @@ namespace System.Resources
 		protected string BaseNameField;
 		protected Assembly MainAssembly;
 		// Maps cultures to ResourceSet objects
-#if NET_4_0
 		[Obsolete ("Use InternalGetResourceSet instead.")]
-#endif
 		protected Hashtable ResourceSets;
 		
 		private bool ignoreCase;

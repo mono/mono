@@ -265,9 +265,7 @@ namespace System.Web.UI.HtmlControls
 			if (req != null) {
 				XhtmlConformanceSection xhtml = WebConfigurationManager.GetSection ("system.web/xhtmlConformance") as XhtmlConformanceSection;
 				if (xhtml == null || xhtml.Mode != XhtmlConformanceMode.Strict)
-#if NET_4_0
 					if (RenderingCompatibilityLessThan40)
-#endif
 						// LAMESPEC: MSDN says the 'name' attribute is rendered only in
 						// Legacy mode, this is not true.
 						w.WriteAttribute ("name", Name);

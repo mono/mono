@@ -324,12 +324,9 @@ namespace System
 			return Convert.ToSingle (Value, provider);
 		}
 
-		object IConvertible.ToType (Type targetType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (targetType == null)
-				throw new ArgumentNullException ("targetType");
-
-			return Convert.ToType (this, targetType, provider, false);
+			return Convert.DefaultToType ((IConvertible)this, type, provider);
 		}
 
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
@@ -681,7 +678,6 @@ namespace System
 			return true;
 		}
 
-#if NET_4_0
 		public static bool TryParse<TEnum> (string value, out TEnum result) where TEnum : struct
 		{
 			return TryParse (value, false, out result);
@@ -704,7 +700,6 @@ namespace System
 
 			return Parse (tenum_type, value, ignoreCase, out result);
 		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern int compare_value_to (object other);
@@ -1061,15 +1056,18 @@ namespace System
 					"\"x\",\"F\",\"f\",\"D\" or \"d\".");
 		}
 
-#if NET_4_0
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern bool InternalHasFlag (Enum a, Enum b);
+
 		public bool HasFlag (Enum flag)
 		{
-			var val = get_value ();
-			ulong mvalue = GetValue (val, Type.GetTypeCode (val.GetType ()));
-			ulong fvalue = GetValue (flag, Type.GetTypeCode (flag.GetType ()));
+			if (flag == null)
+				throw new ArgumentNullException ("flag");
 
-			return ((mvalue & fvalue) == fvalue);
+			if (!this.GetType ().IsEquivalentTo (flag.GetType ()))
+				throw new ArgumentException (Environment.GetResourceString ("Argument_EnumTypeDoesNotMatch", flag.GetType (), this.GetType ()));
+
+			return InternalHasFlag (this, flag);
 		}
-#endif
 	}
 }

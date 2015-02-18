@@ -64,6 +64,7 @@ namespace MonoTests.System {
 			ci.NumberFormat.NumberDecimalDigits = 3;
 		}
 
+		[Test]
 		public void TestChangeType() {
 			int iTest = 1;
 			try {
@@ -93,7 +94,11 @@ namespace MonoTests.System {
 				iTest++;
 				Assert.AreEqual ((float)1234, Convert.ChangeType(tryInt16, typeof(float), ci), "#A12");
 				iTest++;
-				Assert.AreEqual (null, Convert.ChangeType(null, null, ci), "#A13");
+				try {
+					Assert.AreEqual (null, Convert.ChangeType(null, null, ci), "#A13");
+					Assert.Fail ("#F13");
+				} catch (ArgumentNullException) {
+				}
 
 				iTest++;
 				Assert.AreEqual ((decimal)0, Convert.ChangeType(tryByte, TypeCode.Decimal, ci), "#A14");
@@ -202,6 +207,7 @@ namespace MonoTests.System {
 
 		}		
 
+		[Test]
 		public void TestGetTypeCode() {
 			int marker = 1;
 			try {
@@ -241,6 +247,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestIsDBNull() {
 			Assert.AreEqual (false, Convert.IsDBNull(tryInt32), "#C01");
 			Assert.AreEqual (true, Convert.IsDBNull(Convert.DBNull), "#C02");
@@ -249,6 +256,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (false, Convert.IsDBNull(tryFloat), "#C05");
 		}
 		
+		[Test]
 		public void TestToBoolean() {
 			tryObj = (object)tryDbl;
 			
@@ -304,6 +312,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestToByte() {
 			
 			Assert.AreEqual ((byte)1, Convert.ToByte(boolTrue), "#E01");
@@ -464,6 +473,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestToChar(){
 			tryByte = 58;
 			Assert.AreEqual (':', Convert.ToChar(tryByte), "#F01");
@@ -631,6 +641,7 @@ namespace MonoTests.System {
 			Convert.ToDateTime("20002-25-01");
 		} */
 
+		[Test]
 		public void TestToDateTime() {
 			string dateString = "01/01/2002";
 			int iTest = 1;
@@ -786,11 +797,7 @@ namespace MonoTests.System {
 				Assert.Fail ();
 			}
 			catch (Exception e) {
-#if NET_2_0
 				Assert.AreEqual (typeof(FormatException), e.GetType(), "#G28");
-#else
-				Assert.AreEqual (typeof(ArgumentOutOfRangeException), e.GetType(), "#G28");
-#endif
 			}
 
 			try {
@@ -857,6 +864,7 @@ namespace MonoTests.System {
 
 		}
 
+		[Test]
 		public void TestToDecimal() {
 			Assert.AreEqual ((decimal)1, Convert.ToDecimal(boolTrue), "#H01");
 			Assert.AreEqual ((decimal)0, Convert.ToDecimal(boolFalse), "#H02");
@@ -964,6 +972,7 @@ namespace MonoTests.System {
 			}
 		}
 		
+		[Test]
 		public void TestToDouble() {
 			int iTest = 1;
 			try {
@@ -1078,6 +1087,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestToInt16() {
 			Assert.AreEqual ((short)0, Convert.ToInt16(boolFalse), "#J01");
 			Assert.AreEqual ((short)1, Convert.ToInt16(boolTrue), "#J02");
@@ -1284,6 +1294,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestToInt32() {
 			long tryMax = long.MaxValue;
 			long tryMin = long.MinValue;
@@ -1461,6 +1472,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestToInt64() {
 			decimal longMax = long.MaxValue;
 			longMax += 1000000;
@@ -1600,6 +1612,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestToSByte() {
 			int iTest = 1;
 			try {
@@ -1853,6 +1866,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestToSingle() {
 			int iTest = 1;
 			try {
@@ -1954,6 +1968,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestToString() {
 			
 			tryByte = 123;
@@ -2031,6 +2046,7 @@ namespace MonoTests.System {
 			}			
 		}
 
+		[Test]
 		public void TestToUInt16() {
 			Assert.AreEqual ((ushort)0, Convert.ToUInt16(boolFalse), "#P01");
 			Assert.AreEqual ((ushort)1, Convert.ToUInt16(boolTrue), "#P02");
@@ -2239,6 +2255,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestSignedToInt() {
 		  //  String cannot contain a minus sign if the base is not 10.
 		  // But can if it is ten, and + is allowed everywhere.
@@ -2270,6 +2287,7 @@ namespace MonoTests.System {
 
 		}
 	
+		[Test]
 		public void TestToUInt32() {
 			Assert.AreEqual ((uint)1, Convert.ToUInt32(boolTrue), "#Q01");
 			Assert.AreEqual ((uint)0, Convert.ToUInt32(boolFalse), "#Q02");
@@ -2461,6 +2479,7 @@ namespace MonoTests.System {
 			}
 		}
 
+		[Test]
 		public void TestToUInt64() 
 		{
 			int iTest = 1;
@@ -2714,6 +2733,7 @@ namespace MonoTests.System {
 				Assert.AreEqual (bb [i], b2 [i], "#0" + (i + 2));
 		}
 		
+		[Test]
 		public void TestToBase64CharArray ()
 		{
 			byte[] byteArr = {33, 127, 255, 109, 170, 54};
@@ -2808,6 +2828,7 @@ namespace MonoTests.System {
 			Convert.ToBase64CharArray (byteArr, 0, byteArr.Length, result, Int32.MaxValue);
 		}
 
+		[Test]
 		public void TestToBase64String() {
 			byte[] byteArr = {33, 127, 255, 109, 170, 54};
 			string expectedStr = "IX//bao2";
@@ -2922,18 +2943,16 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[ExpectedException (typeof (FormatException))]
 		public void FromBase64CharArray_Empty ()
 		{
-			Convert.FromBase64CharArray (new char[0], 0, 0);
+			Assert.AreEqual (new byte [0], Convert.FromBase64CharArray (new char[0], 0, 0));
 		}
 
 		[Test]
-		[ExpectedException (typeof (FormatException))]
 		public void FormatBase64CharArray_OnlyWhitespace ()
 		{
-			Convert.FromBase64CharArray (new char[3] {' ', 
-				'\r', '\t'}, 0, 3);
+			Assert.AreEqual (new byte [0], Convert.FromBase64CharArray (new char[3] {' ', 
+				'\r', '\t'}, 0, 3));
 		}
 
 		[Test]
@@ -3442,6 +3461,28 @@ namespace MonoTests.System {
 			Assert.AreEqual (Int64.MinValue, Convert.ToInt64 ("-9223372036854775808", 10), "-9223372036854775808,10");
 			Assert.AreEqual (Int64.MinValue, Convert.ToInt64 ("1000000000000000000000", 8), "1000000000000000000000,8");
 			Assert.AreEqual (Int64.MinValue, Convert.ToInt64 ("1000000000000000000000000000000000000000000000000000000000000000", 2), "1000000000000000000000000000000000000000000000000000000000000000,2");
+		}
+
+		[Test]
+		public void MoreOverflows ()
+		{
+			try {
+				Convert.ToInt16 ("ffff7fff", 16);
+				Assert.Fail ("#1");
+			} catch (OverflowException) {
+			}
+
+			try {
+				Convert.ToSByte ("ffff7fff", 16);
+				Assert.Fail ("#2");
+			} catch (OverflowException) {
+			}
+
+			try {
+				Convert.ToUInt32 ("4294967298", 10);
+				Assert.Fail ("#3");
+			} catch (OverflowException) {
+			}
 		}
 
 		// signed types

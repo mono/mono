@@ -59,11 +59,7 @@ namespace System.Data.OracleClient
 
 	[DefaultEvent ("InfoMessage")]
 	public sealed class OracleConnection :
-#if NET_2_0
 		Common.DbConnection, ICloneable
-#else
-		Component, ICloneable, IDbConnection
-#endif
 	{
 		#region Fields
 
@@ -102,25 +98,14 @@ namespace System.Data.OracleClient
 
 		#region Properties
 
-#if NET_2_0
 		[MonoTODO ("Currently not respected.")]
 		public override int ConnectionTimeout {
 			get { return 0; }
 		}
-#else
-		[MonoTODO ("Currently not respected.")]
-		int IDbConnection.ConnectionTimeout {
-			get { return 0; }
-		}
-#endif
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Database {
-#else
-		string IDbConnection.Database {
-#endif
 			[MonoTODO]
 			get { return String.Empty; }
 		}
@@ -146,15 +131,11 @@ namespace System.Data.OracleClient
 			get { return oci.SessionHandle; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif
 		string DataSource {
 			get {
 				return conInfo.Database;
@@ -164,25 +145,17 @@ namespace System.Data.OracleClient
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif		
 		ConnectionState State {
 			get { return state; }
 		}
 
 		[DefaultValue ("")]
-#if NET_2_0
 		[SettingsBindableAttribute (true)]
-#else
-		[RecommendedAsConfigurable (true)]
-#endif
 		[RefreshProperties (RefreshProperties.All)]
 		[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.OracleConnectionStringEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public
-#if NET_2_0
 		override
-#endif
 		string ConnectionString {
 			get {
 				if (parsedConnectionString == null)
@@ -198,9 +171,7 @@ namespace System.Data.OracleClient
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif		
 		string ServerVersion {
 			get {
 				if (this.State != ConnectionState.Open)
@@ -245,18 +216,14 @@ namespace System.Data.OracleClient
 		#region Methods
 
 		public
-#if NET_2_0
 		new
-#endif
 		OracleTransaction BeginTransaction ()
 		{
 			return BeginTransaction (IsolationLevel.ReadCommitted);
 		}
 
 		public
-#if NET_2_0
 		new
-#endif
 		OracleTransaction BeginTransaction (IsolationLevel il)
 		{
 			if (state == ConnectionState.Closed)
@@ -276,19 +243,13 @@ namespace System.Data.OracleClient
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		public override void ChangeDatabase (string value)
-#else
-		void IDbConnection.ChangeDatabase (string value)
-#endif
 		{
 			throw new NotImplementedException ();
 		}
 
 		public
-#if NET_2_0
 		new
-#endif
 		OracleCommand CreateCommand ()
 		{
 			OracleCommand command = new OracleCommand ();
@@ -305,22 +266,6 @@ namespace System.Data.OracleClient
 			return con;
 		}
 
-#if !NET_2_0
-		IDbTransaction IDbConnection.BeginTransaction ()
-		{
-			return BeginTransaction ();
-		}
-
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel il)
-		{
-			return BeginTransaction (il);
-		}
-
-		IDbCommand IDbConnection.CreateCommand ()
-		{
-			return CreateCommand ();
-		}
-#endif
 
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
@@ -402,9 +347,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif		
 		void Open ()
 		{
 			if (State == ConnectionState.Open)
@@ -459,18 +402,9 @@ namespace System.Data.OracleClient
 			OnStateChange (a);
 		}
 
-#if !NET_2_0
-		private void OnStateChange (StateChangeEventArgs e) 
-		{
-			if (StateChange != null)
-				StateChange (this, e);
-		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Close ()
 		{
 			if (transaction != null)
@@ -485,7 +419,6 @@ namespace System.Data.OracleClient
 			CreateStateChange (ConnectionState.Open, ConnectionState.Closed);
 		}
 
-#if NET_2_0
 		protected override Common.DbTransaction BeginDbTransaction (IsolationLevel isolationLevel)
 		{
 			return BeginTransaction (isolationLevel);
@@ -495,7 +428,6 @@ namespace System.Data.OracleClient
 		{
 			return CreateCommand ();
 		}
-#endif
 
 		private void PersistSecurityInfo ()
 		{
@@ -745,11 +677,7 @@ namespace System.Data.OracleClient
 		#endregion // Methods
 
 		public event OracleInfoMessageEventHandler InfoMessage;
-#if !NET_2_0
-		public event StateChangeEventHandler StateChange;
-#endif
 
-#if NET_2_0
 		public override DataTable GetSchema ()
 		{
 			if (State != ConnectionState.Open)
@@ -1289,7 +1217,6 @@ namespace System.Data.OracleClient
 
 			return dt;
 		}
-#endif
 	}
 }
 

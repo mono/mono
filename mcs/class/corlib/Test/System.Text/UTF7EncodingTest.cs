@@ -260,22 +260,16 @@ namespace MonoTests.System.Text
                 }
         
                 [Test]
-#if NET_2_0
                 [Category ("NotWorking")]
-#endif
                 public void TestMaxByteCount()
                 {
                         UTF7Encoding UTF7enc = new UTF7Encoding ();
-#if NET_2_0
                         Assert.AreEqual (152, UTF7enc.GetMaxByteCount(50), "UTF #1");
-#else
-                        Assert.AreEqual (136, UTF7enc.GetMaxByteCount(50), "UTF #1");
-#endif
                 }
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotDotNet")] // MS bug
+		[Ignore ("referencesource bug")]
 		public void Bug77315 ()
 		{
 			string s = new UTF7Encoding ().GetString (

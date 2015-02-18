@@ -29,11 +29,7 @@ namespace System.Data.Common
 			string msg = string.Format (CultureInfo.InvariantCulture,
 				"The {0} enumeration value, {1}, is invalid.",
 				enumeration, value);
-#if NET_2_0
 			return new ArgumentOutOfRangeException (enumeration, msg);
-#else
-			return new ArgumentException (msg);
-#endif
 		}
 
 		internal static ArgumentOutOfRangeException InvalidDataRowVersion (DataRowVersion value)

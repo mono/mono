@@ -25,7 +25,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.UI.WebControls.WebParts {
 	[Serializable]
         public enum WebPartPageMenuMode {
@@ -33,4 +32,3 @@ namespace System.Web.UI.WebControls.WebParts {
 		DropDown = 1				
         }
 }
-#endif

@@ -45,7 +45,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			base.RenderAttributes (writer);
 			return writer.InnerWriter.ToString ();
 		}
-#if NET_2_0
 		public bool LoadPost (string key, NameValueCollection nvc)
 		{
 			return base.LoadPostData (key, nvc);
@@ -55,7 +54,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		{
 			base.RaisePostDataChangedEvent ();
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -241,7 +239,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsTrue (attrs.IndexOf ("value=\"hola&lt;&amp;\"") >= 0);
 		}
 
-#if NET_2_0
 		[Test]
 		public void RaisePostBackEvent ()
 		{
@@ -293,6 +290,5 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsFalse (rb.LoadPost ("id1", nvc), "LoadPostData");
 			Assert.AreEqual ("id1", rb.Value, "Value");
 		}
-#endif
 	}
 }

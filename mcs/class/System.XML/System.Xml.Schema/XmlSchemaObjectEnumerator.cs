@@ -29,9 +29,6 @@ namespace System.Xml.Schema
 	/// <summary>
 	/// Summary description for XmlSchemaObjectEnumerator.
 	/// </summary>
-#if !NET_2_0
-	sealed
-#endif
 	public class XmlSchemaObjectEnumerator : IEnumerator
 	{
 		private IEnumerator ienum;

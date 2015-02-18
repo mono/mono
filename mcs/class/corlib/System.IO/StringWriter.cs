@@ -33,9 +33,7 @@
 using System.Globalization;
 using System.Text;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.IO
 {
@@ -140,7 +138,6 @@ namespace System.IO
 			internalString.Append (buffer, index, count);
 		}
 
-#if NET_4_5
 		public override Task FlushAsync ()
 		{
 			// it appears to do nothing
@@ -186,6 +183,5 @@ namespace System.IO
 			WriteLine (value);
 			return TaskConstants.Finished;
 		}
-#endif
 	}
 }

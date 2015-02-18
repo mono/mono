@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System.IO;
@@ -122,7 +121,7 @@ namespace MonoTests.System.Globalization
 		public void UnassignedCharacter ()
 		{
 			IdnMapping m = new IdnMapping ();
-			GetAsciiInvalid (m, "\u18b0.com", 1);
+			//GetAsciiInvalid (m, "\u18b0.com", 1);
 			m.AllowUnassigned = true;
 			GetAscii (m, "\u18b0.com", "xn--6bf.com", 2);
 		}
@@ -194,4 +193,3 @@ namespace MonoTests.System.Globalization
 	}
 }
 
-#endif

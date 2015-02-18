@@ -31,9 +31,6 @@
 using System;
 
 namespace System.Configuration.Install {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum UninstallAction {
 		NoAction=0x01,
 		Remove=0x00

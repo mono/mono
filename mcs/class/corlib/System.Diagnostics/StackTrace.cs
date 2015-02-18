@@ -45,6 +45,15 @@ namespace System.Diagnostics {
 	[MonoTODO ("Serialized objects are not compatible with .NET")]
 	public class StackTrace {
 
+        // TraceFormat is Used to specify options for how the 
+        // string-representation of a StackTrace should be generated.
+        internal enum TraceFormat 
+        {
+            Normal,
+            TrailingNewLine,        // include a trailing new line character
+            NoResourceLookup    // to prevent infinite resource recusion
+        }
+
 		public const int METHODS_TO_SKIP = 0;
 
 		private StackFrame[] frames;
@@ -148,9 +157,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoLimitation ("Not possible to create StackTraces from other threads")]
-#if NET_4_5
 		[Obsolete]
-#endif
 		public StackTrace (Thread targetThread, bool needFileInfo)
 		{
 			if (targetThread == Thread.CurrentThread){
@@ -233,6 +240,12 @@ namespace System.Diagnostics {
 				}
 			}
 			return sb.ToString ();
+		}
+
+		internal String ToString (TraceFormat traceFormat)
+		{
+			// TODO:
+			return ToString ();
 		}
 	}
 }

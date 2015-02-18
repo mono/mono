@@ -123,9 +123,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // hangs on .NET 1.1
-#endif
 		public void HandleOutAttributeParameters ()
 		{
 			XmlReflectionMember m = new XmlReflectionMember ();

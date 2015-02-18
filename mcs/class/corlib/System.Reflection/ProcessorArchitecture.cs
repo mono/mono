@@ -40,9 +40,7 @@ namespace System.Reflection {
 		X86 = 2,
 		IA64 = 3,
 		Amd64 = 4,
-#if NET_4_5
 		Arm = 5
-#endif
 	}
 }
 

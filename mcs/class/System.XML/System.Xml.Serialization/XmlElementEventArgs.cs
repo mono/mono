@@ -42,9 +42,7 @@ namespace System.Xml.Serialization
 		private int lineNumber;
 		private int linePosition;
 		private object obj;
-#if NET_2_0		
 		private string expectedElements;
-#endif
 
 		internal XmlElementEventArgs(XmlElement attr, int lineNum, int linePos, object source)
 		{
@@ -74,11 +72,9 @@ namespace System.Xml.Serialization
 			get{ return obj; }
 		}
 
-#if NET_2_0
 		public string ExpectedElements {
 			get { return expectedElements; }
 			internal set { expectedElements = value; }
 		}
-#endif
 	}
 }

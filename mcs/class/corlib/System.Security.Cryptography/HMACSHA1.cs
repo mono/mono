@@ -52,7 +52,7 @@ namespace System.Security.Cryptography {
 	public class HMACSHA1 : HMAC {
 
 		public HMACSHA1 ()
-			: this (KeyBuilder.Key (8))
+			: this (KeyBuilder.Key (64))
 		{
 		}
 

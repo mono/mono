@@ -1,6 +1,7 @@
 Microsoft.Win32/RegistryKeyTest.cs
 Mono/DataConvertTest.cs
 ../Mono/DataConverter.cs
+../../System.Runtime.Caching/Test/Common/AssertExtensions.cs
 System/ActivatorTest.cs
 System/AppDomainManagerTest.cs
 System/AppDomainSetupTest.cs
@@ -57,6 +58,7 @@ System/DateTimeTest.cs
 System/DecimalFormatterTest.cs
 System/DecimalTest2.cs
 System/DecimalTest.cs
+System/DecimalTest-Microsoft.cs
 System.Diagnostics/DebuggerDisplayAttributeTest.cs
 System.Diagnostics/DebuggerTypeProxyAttribute.cs
 System.Diagnostics/StackFrameTest.cs
@@ -101,6 +103,7 @@ System.IO/DirectoryTest.cs
 System.IO/FileInfoTest.cs
 System.IO/FileNotFoundExceptionTest.cs
 System.IO/FileStreamTest.cs
+System.IO/FileStreamSafeHandleTest.cs
 System.IO/FileSystemInfoTest.cs
 System.IO/FileTest.cs
 System.IO/MemoryStreamTest.cs
@@ -145,6 +148,7 @@ System.Reflection/ParameterInfoTest.cs
 System.Reflection/PropertyInfoTest.cs
 System.Reflection/ReflectedTypeTest.cs
 System.Reflection/TypeDelegatorTest.cs
+System.Reflection/VisibilityTest.cs
 System.Reflection.Emit/AssemblyBuilderTest.cs
 System.Reflection.Emit/AssemblyBuilderAccessTest.cs
 System.Reflection.Emit/ConstructorBuilderTest.cs
@@ -420,6 +424,10 @@ System.Threading/VolatileTest.cs
 System.Threading/ThreadPoolTest.cs
 System/TimeSpanTest.cs
 System/TimeZoneTest.cs
+System/TimeZoneInfoTest.cs
+System/TimeZoneInfo.AdjustmentRuleTest.cs
+System/TimeZoneInfo.SerializationTest.cs
+System/TimeZoneInfo.TransitionTimeTest.cs
 System/TypeTest.cs
 System/UInt16Test.cs
 System/UInt32Test.cs

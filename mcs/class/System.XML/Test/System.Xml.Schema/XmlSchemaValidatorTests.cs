@@ -7,7 +7,6 @@
 // (C) 2008 Novell Inc.
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -454,4 +453,3 @@ namespace MonoTests.System.Xml
 	}
 }
 
-#endif

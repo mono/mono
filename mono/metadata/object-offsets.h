@@ -73,6 +73,7 @@ DECL_OFFSET(MonoDelegate, method)
 DECL_OFFSET(MonoDelegate, method_code)
 
 DECL_OFFSET(MonoInternalThread, tid)
+DECL_OFFSET(MonoInternalThread, small_id)
 DECL_OFFSET(MonoInternalThread, static_data)
 
 DECL_OFFSET(MonoMulticastDelegate, prev)
@@ -110,9 +111,8 @@ DECL_OFFSET(MonoTypedRef, klass)
 DECL_OFFSET(MonoTypedRef, value)
 
 //Internal structs
-DECL_OFFSET(MonoThreadsSync, owner)
+DECL_OFFSET(MonoThreadsSync, status)
 DECL_OFFSET(MonoThreadsSync, nest)
-DECL_OFFSET(MonoThreadsSync, entry_count)
 
 #if defined (HAVE_SGEN_GC) && !defined (HAVE_KW_THREAD)
 DECL_OFFSET(SgenThreadInfo, tlab_next_addr)
@@ -186,6 +186,9 @@ DECL_OFFSET(MonoLMF, fregs)
 #elif defined(TARGET_ARM64)
 DECL_OFFSET(MonoLMF, pc)
 DECL_OFFSET(MonoLMF, gregs)
+DECL_OFFSET(DynCallArgs, fpregs)
+DECL_OFFSET(DynCallArgs, n_fpargs)
+DECL_OFFSET(DynCallArgs, n_fpret)
 #endif
 
 #ifdef TARGET_AMD64

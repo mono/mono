@@ -55,37 +55,21 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#else
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
 		public void TestHasElementTypeEnumBuilderIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			bool hasElementType = enumBuilder.HasElementType;
-#if NET_2_0
 			Assert.IsFalse (hasElementType);
-#else
-			Assert.Fail ("Should have failed: " + hasElementType);
-#endif
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (NotSupportedException))]
-		[Category ("ValueAdd")] // Is this worth fixing, or is this considered, "extra value"?
-#endif
 		public void TestHasElementTypeEnumBuilderComplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
 			enumBuilder.CreateType ();
 			bool hasElementType = enumBuilder.HasElementType;
-#if NET_2_0
 			Assert.IsFalse (hasElementType);
-#else
-			Assert.Fail ("Should have failed: " + hasElementType);
-#endif
 		}
 
 		[Test]
@@ -110,16 +94,11 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue (fieldBuilder.IsStatic, "#2");
 			Assert.IsTrue (fieldBuilder.IsLiteral, "#3");
 			Assert.AreEqual (_fieldName, fieldBuilder.Name, "#4");
-#if NET_2_0
 			Assert.IsFalse (enumType == fieldBuilder.DeclaringType, "#5");
 			Assert.IsFalse (enumBuilder == fieldBuilder.DeclaringType, "#6");
 			Assert.AreEqual (enumType.FullName, fieldBuilder.DeclaringType.FullName, "#7");
 			Assert.IsFalse (enumType == fieldBuilder.FieldType, "#8");
 			Assert.AreEqual (enumBuilder, fieldBuilder.FieldType, "#9");
-#else
-			Assert.AreEqual (enumType, fieldBuilder.DeclaringType, "#5");
-			Assert.AreEqual (_enumType, fieldBuilder.FieldType, "#6");
-#endif
 		}
 
 		[Test]
@@ -185,24 +164,13 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue (fi.IsStatic, "#3");
 			Assert.AreEqual (enumBuilder, fieldBuilder.FieldType, "#4");
 			Assert.IsFalse (enumType == fieldBuilder.FieldType, "#5");
-#if NET_2_0
 			Assert.AreEqual (enumType.FullName, fieldBuilder.FieldType.FullName, "#6");
 			Assert.IsFalse (_enumType == fieldBuilder.FieldType, "#7");
-#else
-			Assert.IsFalse (enumType.FullName == fieldBuilder.FieldType.FullName, "#6");
-			Assert.AreEqual (_enumType, fieldBuilder.FieldType, "#7");
-#endif
 
 			object fieldValue = fi.GetValue (enumType);
-#if NET_2_0
 			Assert.IsFalse (_fieldValue == fieldValue, "#8");
 			Assert.IsTrue (fieldValue.GetType ().IsEnum, "#9");
 			Assert.AreEqual (enumType, fieldValue.GetType (), "#10");
-#else
-			Assert.AreEqual (_fieldValue, fieldValue, "#8");
-			Assert.IsFalse (fieldValue.GetType ().IsEnum, "#9");
-			Assert.AreEqual (_enumType, fieldValue.GetType (), "#10");
-#endif
 			Assert.AreEqual (_fieldValue, (int) fieldValue, "#11");
 		}
 
@@ -348,10 +316,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNotNull (type.Namespace, "#V7");
 			Assert.IsNotNull (type.UnderlyingSystemType, "#V8");
 
-#if ONLY_1_1
-			// on .NET 2.0, module is name is fixed to 
-			Assert.AreEqual (_moduleName, type.Module.Name, "#V9");
-#endif
 			Assert.AreEqual (_enumNamespace, type.Namespace, "#V10");
 			Assert.AreEqual (_enumName, type.Name, "#V11");
 			Assert.AreEqual (typeof (Enum), type.BaseType, "#V12");

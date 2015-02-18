@@ -10,7 +10,6 @@
 // Copyright (C) 2004, 2009 Novell (http://www.novell.com)
 //
 
-#if NET_2_0
 using System;
 using System.Collections;
 using System.IO;
@@ -1315,4 +1314,3 @@ namespace MonoTests.System.IO
 		}
 	}
 }
-#endif

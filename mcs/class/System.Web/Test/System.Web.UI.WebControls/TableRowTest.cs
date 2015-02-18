@@ -54,9 +54,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		Style ControlStyle { get; }
 		HorizontalAlign HorizontalAlign { get; set; }
 		VerticalAlign VerticalAlign { get; set; }
-#if NET_2_0
 		TableRowSection TableSection { get; set; }
-#endif
 	}
 
 	public class TestTableRow : TableRow, ITableRowTest {
@@ -114,9 +112,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (0, tr.Cells.Count, "Cells.Count");
 			Assert.AreEqual (HorizontalAlign.NotSet, tr.HorizontalAlign, "HorizontalAlign");
 			Assert.AreEqual (VerticalAlign.NotSet, tr.VerticalAlign, "VerticalAlign");
-#if NET_2_0
 			Assert.AreEqual (TableRowSection.TableBody, tr.TableSection, "TableSection");
-#endif
 			Assert.AreEqual ("tr", tr.Tag, "TagName");
 			Assert.AreEqual (0, tr.Attributes.Count, "Attributes.Count-2");
 			Assert.AreEqual (0, tr.StateBag.Count, "ViewState.Count-2");
@@ -130,13 +126,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (HorizontalAlign.NotSet, tr.HorizontalAlign, "HorizontalAlign");
 			tr.VerticalAlign = VerticalAlign.NotSet;
 			Assert.AreEqual (VerticalAlign.NotSet, tr.VerticalAlign, "VerticalAlign");
-#if NET_2_0
 			tr.TableSection = TableRowSection.TableBody;
 			Assert.AreEqual (TableRowSection.TableBody, tr.TableSection, "TableSection");
 			Assert.AreEqual (3, tr.StateBag.Count, "ViewState.Count-1");
-#else
-			Assert.AreEqual (2, tr.StateBag.Count, "ViewState.Count-1");
-#endif
 			Assert.AreEqual (0, tr.Attributes.Count, "Attributes.Count");
 		}
 
@@ -155,7 +147,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (HorizontalAlign.NotSet, tr.HorizontalAlign, "HorizontalAlign");
 			tr.VerticalAlign = VerticalAlign.NotSet;
 			Assert.AreEqual (VerticalAlign.NotSet, tr.VerticalAlign, "VerticalAlign");
-#if NET_2_0
 			tr.TableSection = TableRowSection.TableFooter;
 			Assert.AreEqual (TableRowSection.TableFooter, tr.TableSection, "TableFooter");
 			tr.TableSection = TableRowSection.TableHeader;
@@ -163,9 +154,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			tr.TableSection = TableRowSection.TableBody;
 			Assert.AreEqual (TableRowSection.TableBody, tr.TableSection, "TableBody");
 			Assert.AreEqual (3, tr.StateBag.Count, "ViewState.Count-1");
-#else
-			Assert.AreEqual (2, tr.StateBag.Count, "ViewState.Count-1");
-#endif
 			Assert.AreEqual (0, tr.Attributes.Count, "Attributes.Count");
 		}
 
@@ -186,7 +174,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TableRow tr = GetNewTableRow ();
 			tr.VerticalAlign = (VerticalAlign)Int32.MinValue;
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void TableSection_Invalid ()
@@ -194,7 +181,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TableRow tr = GetNewTableRow ();
 			tr.TableSection = (TableRowSection)Int32.MinValue;
 		}
-#endif
 		[Test]
 		public void Render ()
 		{
@@ -227,7 +213,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			s = tr.Render ();
 			Assert.IsTrue ((s.ToLower ().IndexOf (" valign=\"bottom\"") > 0), "VerticalAlign.Bottom");
 			tr.VerticalAlign = VerticalAlign.NotSet;
-#if NET_2_0
 			// TableSection has no influence over the "row" rendering
 			tr.TableSection = TableRowSection.TableFooter;
 			s = tr.Render ();
@@ -238,7 +223,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			tr.TableSection = TableRowSection.TableBody;
 			s = tr.Render ();
 			Assert.AreEqual ("<tr>\n\n</tr>", s, "TableRowSection.TableBody");
-#endif
 		}
 
 		[Test]

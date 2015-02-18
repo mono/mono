@@ -49,9 +49,7 @@ namespace System.Runtime.InteropServices
 		ImportAsX86 = 256,
 		ReflectionOnlyLoading = 4096,
 		SerializableValueClasses = 32,
-#if NET_4_0
 		NoDefineVersionResource = 8192
-#endif
 	}
 }
 #endif

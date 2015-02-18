@@ -34,20 +34,16 @@ using System.Web;
 
 namespace System.Web.Routing
 {
-#if NET_4_0
 	[TypeForwardedFrom ("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class RequestContext
 	{
-#if NET_4_0
 		public RequestContext ()
 		{
 			HttpContext = null;
 			RouteData = null;
 		}
-#endif
 		public RequestContext (HttpContextBase httpContext, RouteData routeData)
 		{
 			if (httpContext == null)
@@ -59,12 +55,7 @@ namespace System.Web.Routing
 			RouteData = routeData;
 		}
 
-#if NET_4_0
 		public virtual HttpContextBase HttpContext { get; set; }
 		public virtual RouteData RouteData { get; set; }
-#else
-		public HttpContextBase HttpContext { get; private set; }
-		public RouteData RouteData { get; private set; }
-#endif
 	}
 }

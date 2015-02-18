@@ -47,14 +47,6 @@ namespace MonoTests.System.Xml
 
 		// Testing Core Funcetion Library functions defined at: http://www.w3.org/TR/xpath#corelib
 		[Test]
-#if !NET_2_0
-		// .NET 2.0 is fixed for last() to return 1 for the
-		// initial context position. Someone thinks we should follow
-		// the fix, but in reality we should just discard this
-		// pointless test. The positional value under those conditions
-		// does not make any sense.
-		[Category ("NotDotNet")]
-#endif
 		public void CoreFunctionNodeSetLast ()
 		{
 			expression = navigator.Compile("last()");
@@ -69,15 +61,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if !NET_2_0
-		// .NET 2.0 is fixed for position() to return 1 for the
-		// initial context position. Someone thinks we should follow
-		// the fix, but in reality we should just discard this
-		// pointless test. The positional value under those conditions
-		// does not make any sense.
-//		[Category ("NotWorking")]
-		[Category ("NotDotNet")]
-#endif
 		public void CoreFunctionNodeSetPosition ()
 		{
 			expression = navigator.Compile("position()");

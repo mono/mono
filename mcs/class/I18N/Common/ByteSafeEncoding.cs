@@ -51,11 +51,9 @@ public abstract class ByteSafeEncoding : MonoSafeEncoding
 	protected bool isMailNewsDisplay;
 	protected bool isMailNewsSave;
 	protected int windowsCodePage;
-#if NET_2_0
 	static byte [] isNormalized;
 	static byte [] isNormalizedComputed;
 	static byte [] normalization_bytes;
-#endif
 
 	// Constructor.
 	protected ByteSafeEncoding(int codePage, char[] toChars,
@@ -81,7 +79,6 @@ public abstract class ByteSafeEncoding : MonoSafeEncoding
 				this.windowsCodePage = windowsCodePage;
 			}
 
-#if NET_2_0
 	public override bool IsAlwaysNormalized (NormalizationForm form)
 	{
 		if (form != NormalizationForm.FormC)
@@ -117,7 +114,6 @@ public abstract class ByteSafeEncoding : MonoSafeEncoding
 	public override bool IsSingleByte {
 		get { return true; }
 	}
-#endif
 
 	public override int GetByteCount(String s)
 	{

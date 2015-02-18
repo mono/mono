@@ -41,17 +41,9 @@ using System.ComponentModel;
 
 namespace System.Data.Odbc
 {
-#if NET_2_0
 	[TypeConverterAttribute ("System.Data.Odbc.OdbcParameter+OdbcParameterConverter, " + Consts.AssemblySystem_Data)]
-#else
-	[TypeConverterAttribute (typeof (OdbcParameterConverter))]
-#endif
 	public sealed class OdbcParameter :
-#if NET_2_0
 	DbParameter,
-#else
-	MarshalByRefObject,
-#endif // NET_2_0
 	ICloneable, IDbDataParameter, IDataParameter
 	{
 		#region Fields
@@ -144,17 +136,10 @@ namespace System.Data.Odbc
 			set { container = value; }
 		}
 
-#if ONLY_1_1
-		[BrowsableAttribute (false)]
-		[RefreshPropertiesAttribute (RefreshProperties.All)]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#endif
 		[OdbcCategory ("Data")]
 		[OdbcDescriptionAttribute ("The parameter generic type")]
 		public
-#if NET_2_0
 		override
-#endif
 		DbType DbType {
 			get { return _typeMap.DbType; }
 			set { 
@@ -167,31 +152,17 @@ namespace System.Data.Odbc
 
 		[OdbcCategory ("Data")]
 		[OdbcDescriptionAttribute ("Input, output, or bidirectional parameter")]  
-#if NET_2_0
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
-#else
-		[DefaultValue (ParameterDirection.Input)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
 		}
 
-#if ONLY_1_1
-		[BrowsableAttribute (false)]
-		[DesignOnlyAttribute (true)]
-		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
-		[DefaultValue (false)]
-#endif
 		[OdbcDescriptionAttribute ("A design-time property used for strongly typed code generation")]
 		public
-#if NET_2_0
 		override
-#endif
 		bool IsNullable {
 			get { return isNullable; }
 			set { isNullable = value; }
@@ -201,9 +172,7 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("The parameter native type")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[OdbcCategory ("Data")]
-#if NET_2_0
 		[DbProviderSpecificTypeProperty (true)]
-#endif
 		public OdbcType OdbcType {
 			get { return _typeMap.OdbcType; }
 			set {
@@ -215,13 +184,8 @@ namespace System.Data.Odbc
 		}
 
 		[OdbcDescription ("DataParameter_ParameterName")]
-#if ONLY_1_1
-		[DefaultValue ("")]
-#endif
 		public 
-#if NET_2_0
 		override
-#endif
 		string ParameterName {
 			get { return name; }
 			set { name = value; }
@@ -245,13 +209,8 @@ namespace System.Data.Odbc
 		
 		[OdbcDescription ("DbDataParameter_Size")]
 		[OdbcCategory ("DataCategory_Data")]
-#if ONLY_1_1
-		[DefaultValue (0)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		int Size {
 			get { return size; }
 			set { size = value; }
@@ -259,13 +218,8 @@ namespace System.Data.Odbc
 
 		[OdbcDescription ("DataParameter_SourceColumn")]
 		[OdbcCategory ("DataCategory_Data")]
-#if ONLY_1_1
-		[DefaultValue ("")]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
@@ -273,13 +227,8 @@ namespace System.Data.Odbc
 		
 		[OdbcDescription ("DataParameter_SourceVersion")]
 		[OdbcCategory ("DataCategory_Data")]
-#if ONLY_1_1
-		[DefaultValue ("Current")]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
@@ -288,15 +237,9 @@ namespace System.Data.Odbc
 		[TypeConverter (typeof(StringConverter))]
 		[OdbcDescription ("DataParameter_Value")]
 		[OdbcCategory ("DataCategory_Data")]
-#if ONLY_1_1
-		[DefaultValue (null)]
-#else
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		object Value {
 			get { return _value; }
 			set { _value = value; }
@@ -528,7 +471,6 @@ namespace System.Data.Odbc
 				throw new ArgumentException ("Unsupported Native Type!");
 		}
 
-#if NET_2_0
 		public override bool SourceColumnNullMapping {
 			get { return false; }
 			set { }
@@ -543,7 +485,6 @@ namespace System.Data.Odbc
 		{
 			_typeMap = OdbcTypeConverter.GetTypeMap (OdbcType.NVarChar);
 		}
-#endif
 
 		#endregion
 	}

@@ -62,9 +62,7 @@ namespace MonoCasTests.System.Web.Hosting {
 
 		[Test]
 		[AspNetHostingPermission (SecurityAction.Deny, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void Constructor_Deny_AspNetHostingPermission ()
 		{
 			new ISAPIRuntime ();
@@ -93,15 +91,9 @@ namespace MonoCasTests.System.Web.Hosting {
 			try {
 				isapi.ProcessRequest (IntPtr.Zero, 0);
 			}
-#if NET_2_0
 			catch (AccessViolationException) {
 				// fx2.0
 			}
-#else
-			catch (NullReferenceException) {
-				// fx1.x
-			}
-#endif
 			catch (NotImplementedException) {
 				// mono
 			}
@@ -111,34 +103,22 @@ namespace MonoCasTests.System.Web.Hosting {
 			catch (NotImplementedException) {
 				// mono
 			}
-#if NET_2_0
 			try {
 				isapi.InitializeLifetimeService ();
 			}
 			catch (NotImplementedException) {
 				// mono
 			}
-#endif
 		}
 
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void StopProcessing_Deny_UnmanagedCode ()
 		{
 			try {
 				isapi.StopProcessing ();
 			}
-#if ONLY_1_1
-			catch (TypeInitializationException) {
-				// fx 1.x
-			}
-			catch (NotImplementedException) {
-				// mono
-			}
-#endif
 			finally {
 			}
 		}
@@ -150,11 +130,6 @@ namespace MonoCasTests.System.Web.Hosting {
 			try {
 				isapi.StopProcessing ();
 			}
-#if ONLY_1_1
-			catch (TypeInitializationException) {
-				// fx 1.x
-			}
-#endif
 			catch (NotImplementedException) {
 				// mono
 			}

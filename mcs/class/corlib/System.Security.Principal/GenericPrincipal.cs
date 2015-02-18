@@ -29,20 +29,14 @@
 //
 
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Security.Claims;
-#endif
 
 namespace System.Security.Principal {
 
 	[Serializable]
 	[ComVisible (true)]
 	public class GenericPrincipal :
-#if NET_4_5
 		ClaimsPrincipal
-#else
-		IPrincipal
-#endif
 	{
 
 		// field names are serialization compatible with .net
@@ -67,20 +61,12 @@ namespace System.Security.Principal {
 			get { return m_roles; }
 		}
 
-#if NET_4_5
 		override
-#else
-		virtual
-#endif
 		public IIdentity Identity {
 			get { return m_identity; }
 		}
 
-#if NET_4_5
 		override
-#else
-		virtual
-#endif
 		public bool IsInRole (string role)
 		{
 			if (m_roles == null)

@@ -408,7 +408,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, mycmbbox.SelectionStart, "#15");
 			Assert.AreEqual (false, mycmbbox.Sorted, "#16");
 			Assert.AreEqual ("", mycmbbox.Text, "#17");
-#if NET_2_0
 			Assert.AreEqual (true, mycmbbox.AutoCompleteCustomSource != null, "#18");
 			Assert.AreEqual (AutoCompleteMode.None, mycmbbox.AutoCompleteMode, "#19");
 			Assert.AreEqual (AutoCompleteSource.None, mycmbbox.AutoCompleteSource, "#20");
@@ -424,7 +423,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("{Width=0, Height=0}", mycmbbox.MinimumSize.ToString (), "#27");
 			Assert.AreEqual ("{Left=0,Top=0,Right=0,Bottom=0}", mycmbbox.Padding.ToString (), "#28");
 			
-#endif
 		}
 
 		[Test]
@@ -442,7 +440,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (h, cb.PreferredHeight, "A3");
 		}
 		
-#if NET_2_0
 		[Test]
 		public void ResetTextTest ()
 		{
@@ -531,7 +528,6 @@ namespace MonoTests.System.Windows.Forms
 			cmbbox.Padding = new Padding (21);
 			Assert.AreEqual ("{Left=21,Top=21,Right=21,Bottom=21}", cmbbox.Padding.ToString (), "#01");
 		}
-#endif
 
 		[Test]
 		public void BeginEndUpdateTest ()
@@ -598,20 +594,7 @@ namespace MonoTests.System.Windows.Forms
 
 			ComboBox cmbbox = new ComboBox ();
 			cmbbox.Items.AddRange (new object [] { "BA", "BB" });
-#if NET_2_0
 			Assert.AreEqual (0, cmbbox.FindString ("b", 1));
-#else
-			try {
-				cmbbox.FindString ("b", 1);
-				Assert.Fail ("#1");
-			} catch (ArgumentOutOfRangeException ex) {
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("startIndex", ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test]
@@ -698,20 +681,7 @@ namespace MonoTests.System.Windows.Forms
 
 			ComboBox cmbbox = new ComboBox ();
 			cmbbox.Items.AddRange (new object [] { "AB", "BA", "AB", "BA" });
-#if NET_2_0
 			Assert.AreEqual (1, cmbbox.FindStringExact ("BA", 3));
-#else
-			try {
-				cmbbox.FindString ("BA", 3);
-				Assert.Fail ("#1");
-			} catch (ArgumentOutOfRangeException ex) {
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("startIndex", ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test]
@@ -792,7 +762,6 @@ namespace MonoTests.System.Windows.Forms
 				cmbbox.DropDownWidth = 0;
 				Assert.Fail ("#B1");
 			}
-#if NET_2_0
 			catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
@@ -800,14 +769,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("DropDownWidth", ex.ParamName, "#B5");
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
-#else
-			catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNotNull (ex.Message, "#B3");
-				Assert.IsNull (ex.ParamName, "#B4");
-				Assert.IsNull (ex.InnerException, "#B5");
-			}
-#endif
 		}
 
 		[Test]
@@ -822,7 +783,6 @@ namespace MonoTests.System.Windows.Forms
 				cmbbox.ItemHeight = 0;
 				Assert.Fail ("#B1");
 			}
-#if NET_2_0
 			catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
@@ -830,14 +790,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("ItemHeight", ex.ParamName, "#B5");
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
-#else
-			catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNotNull (ex.Message, "#B3");
-				Assert.IsNull (ex.ParamName, "#B4");
-				Assert.IsNull (ex.InnerException, "#B5");
-			}
-#endif
 		}
 
 		[Test]
@@ -1377,7 +1329,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, cb.SelectedItem, "A4");
 		}
 		
-#if NET_2_0
 		[Test]
 		public void BehaviorAutoSize ()
 		{
@@ -1520,7 +1471,6 @@ namespace MonoTests.System.Windows.Forms
 				base.ScaleControl (factor, specified);
 			}
 		}
-#endif
 
 		private struct ComboVal
 		{
@@ -1636,9 +1586,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -1663,9 +1611,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("value", ex.ParamName, "#6");
-#endif
 			}
 		}
 

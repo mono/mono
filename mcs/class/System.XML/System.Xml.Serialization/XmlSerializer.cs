@@ -232,7 +232,6 @@ namespace System.Xml.Serialization
 			get { return typeMapping; }
 		}
 
-#if NET_2_0
 
 		[MonoTODO]
 		public XmlSerializer (Type type,
@@ -244,7 +243,6 @@ namespace System.Xml.Serialization
 			Evidence evidence)
 		{
 		}
-#endif
 
 #endregion // Constructors
 
@@ -467,13 +465,8 @@ namespace System.Xml.Serialization
 
 				if (namespaces == null || namespaces.Count == 0) {
 					namespaces = new XmlSerializerNamespaces ();
-#if NET_2_0
 					namespaces.Add ("xsi", XmlSchema.InstanceNamespace);
 					namespaces.Add ("xsd", XmlSchema.Namespace);
-#else
-					namespaces.Add ("xsd", XmlSchema.Namespace);
-					namespaces.Add ("xsi", XmlSchema.InstanceNamespace);
-#endif
 				}
 
 				xsWriter.Initialize (xmlWriter, namespaces);
@@ -769,6 +762,8 @@ namespace System.Xml.Serialization
 				cp.ReferencedAssemblies.Add ("System.Xml");
 			if (!cp.ReferencedAssemblies.Contains ("System.Data"))
 				cp.ReferencedAssemblies.Add ("System.Data");
+			if (!cp.ReferencedAssemblies.Contains ("System.Web.Services"))
+				cp.ReferencedAssemblies.Add ("System.Web.Services");
 			
 			CompilerResults res = comp.CompileAssemblyFromFile (cp, file);
 			if (res.Errors.HasErrors || res.CompiledAssembly == null) {
@@ -804,17 +799,10 @@ namespace System.Xml.Serialization
 		}
 #endif
 		
-#if NET_2_0
 		GenerationBatch LoadFromSatelliteAssembly (GenerationBatch batch)
 		{
 			return batch;
 		}
-#else
-		GenerationBatch LoadFromSatelliteAssembly (GenerationBatch batch)
-		{
-			return batch;
-		}
-#endif
 		
 #endregion // Methods
 	}

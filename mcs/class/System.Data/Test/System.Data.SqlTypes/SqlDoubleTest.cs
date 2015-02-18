@@ -34,14 +34,10 @@
 using System;
 using System.Data.SqlTypes;
 using System.Globalization;
-#if NET_2_0
 using System.IO;
-#endif
 using System.Threading;
 using System.Xml;
-#if NET_2_0
 using System.Xml.Serialization;
-#endif
 
 using NUnit.Framework;
 
@@ -590,7 +586,6 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlSingle TestSingle64 = new SqlSingle (64);
 			Assert.AreEqual ((double) 64, ((SqlDouble) TestSingle64).Value, "#Y01");
 		}
-#if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
 		{
@@ -646,6 +641,5 @@ namespace MonoTests.System.Data.SqlTypes
 				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
 			}
 		}
-#endif
 	}
 }

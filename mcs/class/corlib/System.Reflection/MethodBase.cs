@@ -242,7 +242,6 @@ namespace System.Reflection {
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		public override bool Equals (object obj)
 		{
 			return obj == (object) this;
@@ -288,13 +287,10 @@ namespace System.Reflection {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
-#if NET_4_5
 		public virtual MethodImplAttributes MethodImplementationFlags {
 			get { return GetMethodImplementationFlags (); }
 		}
-#endif
 
 #if !MOBILE
 		void _MethodBase.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

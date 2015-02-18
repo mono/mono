@@ -200,7 +200,6 @@ namespace MonoTests.System.Security.Permissions {
 			intersect = (IsolatedStorageFilePermission)union.Intersect (small);
 			Assert.AreEqual (small.UsageAllowed, intersect.UsageAllowed, "Intersect-UsageAllowed-2");
 			Assert.AreEqual (small.UserQuota, intersect.UserQuota, "Intersect-UserQuota-2");
-#if NET_2_0
 			small.UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByUser;
 			small.UserQuota = 3;
 			union = (IsolatedStorageFilePermission)union.Union (small);
@@ -252,7 +251,6 @@ namespace MonoTests.System.Security.Permissions {
 			intersect = (IsolatedStorageFilePermission)union.Intersect (small);
 			Assert.AreEqual (small.UsageAllowed, intersect.UsageAllowed, "Intersect-UsageAllowed-6");
 			Assert.AreEqual (small.UserQuota, intersect.UserQuota, "Intersect-UserQuota-6");
-#endif
 			small.UsageAllowed = IsolatedStorageContainment.DomainIsolationByRoamingUser;
 			small.UserQuota = 7;
 			union = (IsolatedStorageFilePermission)union.Union (small);
@@ -280,7 +278,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (IsolatedStorageContainment.AssemblyIsolationByRoamingUser, union.UsageAllowed, "AssemblyIsolationByRoamingUser");
 			Assert.AreEqual (7, union.UserQuota, "7c");
 			Assert.IsFalse (union.IsUnrestricted (), "IsUnrestricted-7c");
-#if NET_2_0
 			small.UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByRoamingUser;
 			small.UserQuota = 8;
 			union = (IsolatedStorageFilePermission)union.Union (small);
@@ -293,7 +290,6 @@ namespace MonoTests.System.Security.Permissions {
 			intersect = (IsolatedStorageFilePermission)union.Intersect (small);
 			Assert.AreEqual (small.UsageAllowed, intersect.UsageAllowed, "Intersect-UsageAllowed-8");
 			Assert.AreEqual (small.UserQuota, intersect.UserQuota, "Intersect-UserQuota-8");
-#endif
 			small.UsageAllowed = IsolatedStorageContainment.AdministerIsolatedStorageByUser;
 			small.UserQuota = 9;
 			union = (IsolatedStorageFilePermission)union.Union (small);

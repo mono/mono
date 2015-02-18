@@ -90,7 +90,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void RestartNotSupportedExceptionTest ()
@@ -318,6 +317,5 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (false, IsInOpenForms (), "#Dispose-B");
 			}
 		}
-#endif
 	}
 }

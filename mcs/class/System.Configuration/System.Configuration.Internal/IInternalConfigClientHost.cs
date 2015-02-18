@@ -26,7 +26,6 @@
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 
 using System;
 
@@ -44,4 +43,3 @@ namespace System.Configuration.Internal
 	}
 }
 
-#endif

@@ -10,6 +10,7 @@ namespace System.IO {
 	class LogcatTextWriter : TextWriter {
 
 		const string LibLog = "/system/lib/liblog.so";
+		const string LibLog64 = "/system/lib64/liblog.so";
 
 		TextWriter stdout;
 		readonly string appname;
@@ -63,10 +64,10 @@ namespace System.IO {
 
 		public static bool IsRunningOnAndroid ()
 		{
-			return File.Exists (LibLog);
+			return File.Exists (LibLog) || File.Exists (LibLog64);
 		}
 
-		[DllImport (LibLog)]
+		[DllImport ("liblog")]
 		static extern void __android_log_print (LogLevel level, string appname, string format, string args, IntPtr zero);
 
 		static void Log (LogLevel level, string appname, string log)

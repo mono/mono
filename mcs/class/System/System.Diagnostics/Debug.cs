@@ -76,16 +76,18 @@ namespace System.Diagnostics {
 			TraceImpl.Assert (condition, message, detailMessage);
 		}
 
-#if NET_4_0
 		[Conditional ("DEBUG")]
 		public static void Assert (bool condition, string message,
 			string detailMessageFormat, params object [] args)
 		{
+			if (condition)
+				// Return early to avoid the string formatting
+				return;
+
 			TraceImpl.Assert (condition,
 				message,
 				string.Format (detailMessageFormat, args));
 		}
-#endif
 
 		[Conditional("DEBUG")]
 		public static void Close ()
@@ -185,13 +187,11 @@ namespace System.Diagnostics {
 			TraceImpl.WriteLine (message);
 		}
 
-#if NET_4_0
 		[Conditional("DEBUG")]
 		public static void WriteLine (string format, params object [] args)
 		{
 			TraceImpl.WriteLine (string.Format (format, args));
 		}
-#endif
 
 		[Conditional("DEBUG")]
 		public static void WriteLine (object value, string category)

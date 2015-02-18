@@ -1,4 +1,3 @@
-#if NET_4_5
 //
 // DefaultInterfaceAttribute.cs
 //
@@ -43,4 +42,3 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 		}
 	}
 }
-#endif

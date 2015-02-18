@@ -34,7 +34,6 @@ namespace MonoTests.System.Drawing.Printing
 	[TestFixture]
 	public class PaperSourceTest
 	{
-#if NET_2_0
 		[Test]
 		public void KindTest ()
 		{
@@ -91,7 +90,6 @@ namespace MonoTests.System.Drawing.Printing
 			Assert.AreEqual ((PaperSourceKind)(int.MinValue), ps.Kind, "Kind #7");
 			Assert.AreEqual (int.MinValue, ps.RawKind, "RawKind #7");
 		}
-#endif
 
 	}
 

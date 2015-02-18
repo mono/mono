@@ -40,9 +40,7 @@ namespace System.Security.Policy
 	[Serializable]
 	[ComVisible (true)]
 	public sealed class ApplicationTrust :
-#if NET_4_0
 		EvidenceBase,
-#endif
 		ISecurityEncodable {
 
 		private ApplicationIdentity _appid;
@@ -65,11 +63,7 @@ namespace System.Security.Policy
 			_appid = applicationIdentity;
 		}
 		
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		ApplicationTrust (PermissionSet defaultGrantSet, IEnumerable<StrongName> fullTrustAssemblies)
 		{
 			if (defaultGrantSet == null)
@@ -205,13 +199,11 @@ namespace System.Security.Policy
 			return se;
 		}
 		
-#if NET_4_0		
 		public IList<StrongName> FullTrustAssemblies {
 			get {
 				return fullTrustAssemblies;
 			}
 		}
-#endif		
 
 		// internal stuff
 

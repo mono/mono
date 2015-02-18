@@ -907,7 +907,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("PT0S", XmlConvert.ToString (TimeSpan.FromSeconds (0)));
 		}
 
-#if NET_2_0
 		[Test]
 		public void VerifyTOKEN ()
 		{
@@ -1026,6 +1025,13 @@ namespace MonoTests.System.Xml
 			XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000", m);
 			XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000Z", m);
 			XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000+09:00", m);
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public void XmlDateTimeSerializationModeBadFormats ()
+		{
+			XmlDateTimeSerializationMode m = XmlDateTimeSerializationMode.RoundtripKind;
 
 			try {
 				XmlConvert.ToDateTime ("0001-02-03T", m);
@@ -1080,7 +1086,6 @@ namespace MonoTests.System.Xml
 				XmlConvert.ToDateTime ("2009-12-15T08:44:05.2700544Z", mode);
 			}
 		}
-#endif
 	}
 }
 

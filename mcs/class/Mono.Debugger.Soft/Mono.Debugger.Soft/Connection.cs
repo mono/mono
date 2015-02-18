@@ -417,7 +417,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 38;
+		internal const int MINOR_VERSION = 40;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1216,6 +1216,8 @@ namespace Mono.Debugger.Soft
 
 		bool disconnected;
 
+		internal ManualResetEvent DisconnectedEvent = new ManualResetEvent (false);
+
 		void receiver_thread_main () {
 			while (!closed) {
 				try {
@@ -1232,6 +1234,7 @@ namespace Mono.Debugger.Soft
 
 			lock (reply_packets_monitor) {
 				disconnected = true;
+				DisconnectedEvent.Set ();
 				Monitor.PulseAll (reply_packets_monitor);
 				TransportClose ();
 			}
@@ -1635,13 +1638,14 @@ namespace Mono.Debugger.Soft
 			SendReceive (CommandSet.VM, (int)CmdVM.SET_PROTOCOL_VERSION, new PacketWriter ().WriteInt (major).WriteInt (minor));
 		}
 
-		internal long[] VM_GetThreads () {
-			var res = SendReceive (CommandSet.VM, (int)CmdVM.ALL_THREADS, null);
-			int len = res.ReadInt ();
-			long[] arr = new long [len];
-			for (int i = 0; i < len; ++i)
-				arr [i] = res.ReadId ();
-			return arr;
+		internal void VM_GetThreads (Action<long[]> resultCallaback) {
+			Send (CommandSet.VM, (int)CmdVM.ALL_THREADS, null, (res) => {
+				int len = res.ReadInt ();
+				long[] arr = new long [len];
+				for (int i = 0; i < len; ++i)
+					arr [i] = res.ReadId ();
+				resultCallaback(arr);
+			}, 1);
 		}
 
 		internal void VM_Suspend () {
@@ -2475,6 +2479,7 @@ namespace Mono.Debugger.Soft
 		{
 			closed = true;
 			disconnected = true;
+			DisconnectedEvent.Set ();
 			TransportClose ();
 		}
 	}

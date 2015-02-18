@@ -30,20 +30,14 @@
 
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-#if NET_4_5
 using System.Security.Claims;
-#endif
 
 namespace System.Security.Principal {
 
 	[Serializable]
 	[ComVisible (true)]
 	public class GenericIdentity :
-#if NET_4_5
 		ClaimsIdentity
-#else
-		IIdentity
-#endif
 	{
 
 		// field names are serialization compatible with .net
@@ -61,9 +55,7 @@ namespace System.Security.Principal {
 			m_name = name;
 			m_type = type;
 
-#if NET_4_5
 			AddDefaultClaim (name);
-#endif
 		}
 
 		public GenericIdentity (string name)
@@ -71,52 +63,36 @@ namespace System.Security.Principal {
 		{
 		}
 
-#if NET_4_5
 		protected GenericIdentity (GenericIdentity identity)
 			: base (identity)
 		{
 		}
-#endif
 
-#if NET_4_5
 		override
-#else
-		virtual
-#endif
 		public string AuthenticationType {
 			get {
 				return m_type;
 			}
 		}
 
-#if NET_4_5
 		override
-#else
-		virtual
-#endif
 		public string Name {
 			get {
 				return m_name;
 			}
 		}
 
-#if NET_4_5
 		override
-#else
-		virtual
-#endif
 		public bool IsAuthenticated {
 			get {
 				return (m_name.Length > 0);
 			}
 		}
 
-#if NET_4_5
 		public override IEnumerable<Claim> Claims {
 			get {
 				return base.Claims;
 			}
 		}
-#endif
 	}
 }

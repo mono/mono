@@ -221,7 +221,6 @@ namespace MonoTests.System.Windows.Forms
 			((IList)listview.CheckedItems).Add (5);
 		}
 
-#if NET_2_0
 		[Test, ExpectedException (typeof (InvalidOperationException))]
 		public void CheckedItemCollectionTest_ContainsKey_ExceptionTest ()
 		{
@@ -261,7 +260,6 @@ namespace MonoTests.System.Windows.Forms
 			listview.VirtualMode = true;
 			listview.CheckedItems.IndexOfKey (String.Empty);
 		}
-#endif
 
 		[Test]
 		public void CheckedItemCollectionTest_Indexer_ExceptionTest ()
@@ -281,7 +279,6 @@ namespace MonoTests.System.Windows.Forms
 			} catch (ArgumentOutOfRangeException) {
 			}
 
-#if NET_2_0
 			listview.VirtualMode = true;
 
 			try {
@@ -295,7 +292,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail ("#A4");
 			} catch (InvalidOperationException) {
 			}
-#endif
 			// Avoid mcs 168 warning
 			Assert.IsNull (item, "#A5");
 		}
@@ -373,19 +369,13 @@ namespace MonoTests.System.Windows.Forms
 			ListView listview = new ListView ();
 
 			// Properties
-#if !NET_2_0
-			Assert.AreEqual (true, listview.SelectedIndices.IsReadOnly, "SelectedIndexCollectionTest_PropertiesTest#1");
-			Assert.AreEqual (true, ((IList)listview.SelectedIndices).IsFixedSize, "SelectedIndexCollectionTest_PropertiesTest#4");
-#else
 			Assert.AreEqual (false, listview.SelectedIndices.IsReadOnly, "SelectedIndexCollectionTest_PropertiesTest#1");
 			Assert.AreEqual (false, ((IList)listview.SelectedIndices).IsFixedSize, "SelectedIndexCollectionTest_PropertiesTest#4");
-#endif
 			Assert.AreEqual (false, ((ICollection)listview.SelectedIndices).IsSynchronized, "SelectedIndexCollectionTest_PropertiesTest#2");
 			Assert.AreEqual (listview.SelectedIndices, ((ICollection)listview.SelectedIndices).SyncRoot, "SelectedIndexCollectionTest_PropertiesTest#3");
 			Assert.AreEqual (0, listview.SelectedIndices.Count, "SelectedIndexCollectionTest_PropertiesTest#5");
 		}
 
-#if NET_2_0
 		[Test]
 		public void SelectedIndexCollectionTest_AddTest ()
 		{
@@ -635,24 +625,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, listview.Items [0].Selected, "SelectedIndexCollectionTest_RemoveTest#18");
 			listview.Dispose ();
 		}
-#endif
 
 		// Exceptions
-#if !NET_2_0
-		[Test, ExpectedException (typeof (NotSupportedException))]
-		public void SelectedIndexCollectionTest_Add_ExceptionTest ()
-		{
-			ListView listview = new ListView ();
-			((IList)listview.SelectedIndices).Add (5);
-		}
-
-		[Test, ExpectedException (typeof (NotSupportedException))]
-		public void SelectedIndexCollectionTest_Remove_ExceptionTest ()
-		{
-			ListView listview = new ListView ();
-			((IList)listview.SelectedIndices).Remove (5);
-		}
-#endif
 
 		[Test, ExpectedException (typeof (NotSupportedException))]
 		public void SelectedIndexCollectionTest_RemoveAt_ExceptionTest ()
@@ -661,7 +635,6 @@ namespace MonoTests.System.Windows.Forms
 			((IList)listview.SelectedIndices).RemoveAt (5);
 		}
 
-#if NET_2_0
 		[Test]
 		public void SelectedIndexCollectionTest_Remove_ExceptionTest ()
 		{
@@ -711,7 +684,6 @@ namespace MonoTests.System.Windows.Forms
 			} catch (ArgumentOutOfRangeException) {
 			}
 		}
-#endif
 
 		/*
 			SelectedItemCollection
@@ -929,7 +901,6 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void SelectedItemCollectionTest_IndexOfKey ()
 		{
@@ -1013,7 +984,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (lvi6, lvw.SelectedItems ["F name"], "#B2");
 			lvw.Dispose ();
 		}
-#endif
 
 		[Test]
 		public void SelectedItemCollectionTest_Order ()
@@ -1094,7 +1064,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (item, lvw.Items [0], "#C7");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ListViewItemCollectionTest_Add_Group ()
 		{
@@ -1164,7 +1133,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, lvg2.Items.Count, "#G2");
 			Assert.AreEqual (lvg2, lvi.Group, "#G3");
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))] // An item cannot be added more than once. To add an item again, you need to clone it
@@ -1192,28 +1160,21 @@ namespace MonoTests.System.Windows.Forms
 
 			ListViewItem item4 = lv1.Items.Add("Item4", 4);
 			Assert.AreEqual(item4, lv1.Items[0], "#D1");
-#if NET_2_0
 			Assert.AreEqual(string.Empty, lv1.Items[0].Name, "#D2");
-#endif
 			Assert.AreEqual("Item4", lv1.Items[0].Text, "#D3");
 			Assert.AreEqual(4, lv1.Items[0].ImageIndex, "#D4");
 
 			string text = null;
 			ListViewItem item5 = lv1.Items.Add(text);
 			Assert.AreEqual(item5, lv1.Items[1], "#E1");
-#if NET_2_0
 			Assert.AreEqual(string.Empty, lv1.Items[1].Name, "#E2");
-#endif
 			Assert.AreEqual(string.Empty, lv1.Items[1].Text, "#E3");
 
 			ListViewItem item6 = lv1.Items.Add(null, 5);
 			Assert.AreEqual(item6, lv1.Items[2], "#F1");
-#if NET_2_0
 			Assert.AreEqual(string.Empty, lv1.Items[2].Name, "#F2");
-#endif
 			Assert.AreEqual(string.Empty, lv1.Items[2].Text, "#F3");
 			Assert.AreEqual(5, lv1.Items[2].ImageIndex, "#F4");
-#if NET_2_0
 			ListViewItem item1 = lv1.Items.Add("ItemKey1", "Item1", 1);
 			Assert.AreEqual(item1, lv1.Items[3], "#A1");
 			Assert.AreEqual("ItemKey1", lv1.Items[3].Name, "#A2");
@@ -1249,7 +1210,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual("ItemKey8", lv1.Items[8].Name, "#I2");
 			Assert.AreEqual("Item8", lv1.Items[8].Text, "#I3");
 			Assert.AreEqual(string.Empty, lv1.Items[8].ImageKey, "#I4");
-#endif
 		}
 
 		[Test]
@@ -1336,7 +1296,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (itemA.ListView, "#B2");
 			Assert.IsNull (itemB.ListView, "#B3");
 		}
-#if NET_2_0
 		[Test]
 		public void ListViewItemCollectionTest_Clear_Groups ()
 		{
@@ -1403,7 +1362,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, itemA.Group, "#F5");
 			//Assert.AreEqual (null, itemB.Group, "#F6"); // Bogus impl again
 		}
-#endif
 
 		[Test]
 		public void ListViewItemCollectionTest_Insert ()
@@ -1452,7 +1410,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, item.Index, "#E6");
 			Assert.AreSame (item, lvw.Items [2], "#E7");
 		}
-#if NET_2_0
 		[Test]
 		public void ListViewItemCollectionTest_Insert_Group ()
 		{
@@ -1522,7 +1479,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, lvg2.Items.Count, "#G2");
 			Assert.AreEqual (lvg2, lvi.Group, "#G3");
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))] // An item cannot be added more than once. To add an item again, you need to clone it
@@ -1617,7 +1573,6 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void ListViewItemCollectionTest_Remove_Groups ()
 		{
@@ -1670,7 +1625,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (lvw, itemA.ListView, "#F3");
 			Assert.AreEqual (null, itemA.Group, "#F4");
 		}
-#endif
 
 		[Test]
 		public void ListViewItemCollectionTest_RemoveAt ()
@@ -1751,7 +1705,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, lv.Items.Count);
 		}
 		
-#if NET_2_0
 		[Test]
 		public void ListViewItemCollectionTest_RemoveByKey ()
 		{
@@ -2106,7 +2059,6 @@ namespace MonoTests.System.Windows.Forms
 		{
 			args.Item = items [args.ItemIndex];
 		}
-#endif
 
 	}
 }

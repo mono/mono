@@ -157,52 +157,72 @@ create_names_array_idx_dynamic (const guint16 *names, int ml)
 	return ret;
 }
 
-void
-ves_icall_System_Globalization_CultureInfo_construct_datetime_format (MonoCultureInfo *this)
+MonoBoolean
+ves_icall_System_Globalization_CalendarData_fill_calendar_data (MonoCalendarData *this, MonoString *name, gint32 calendar_index)
 {
 	MonoDomain *domain;
-	MonoDateTimeFormatInfo *datetime;
 	const DateTimeFormatEntry *dfe;
+	const CultureInfoNameEntry *ne;
+	const CultureInfoEntry *ci;
+	char *n;
 
-	MONO_ARCH_SAVE_REGS;
+	n = mono_string_to_utf8 (name);
+	ne = mono_binary_search (n, culture_name_entries, NUM_CULTURE_ENTRIES,
+			sizeof (CultureInfoNameEntry), culture_name_locator);
+	g_free (n);
+	if (ne == NULL) {
+		return FALSE;
+	}
 
-	g_assert (this->datetime_index >= 0);
-
-	datetime = this->datetime_format;
-	dfe = &datetime_format_entries [this->datetime_index];
+	ci = &culture_entries [ne->culture_entry_index];
+	dfe = &datetime_format_entries [ci->datetime_format_index];
 
 	domain = mono_domain_get ();
 
-	datetime->readOnly = this->is_read_only;
-	MONO_OBJECT_SETREF (datetime, AbbreviatedDayNames, create_names_array_idx (dfe->abbreviated_day_names, 
-			NUM_DAYS));
-	MONO_OBJECT_SETREF (datetime, AbbreviatedMonthNames, create_names_array_idx (dfe->abbreviated_month_names,
-			NUM_MONTHS));
-	MONO_OBJECT_SETREF (datetime, AMDesignator, mono_string_new (domain, idx2string (dfe->am_designator)));
-	datetime->CalendarWeekRule = dfe->calendar_week_rule;
-	MONO_OBJECT_SETREF (datetime, DateSeparator, mono_string_new (domain, idx2string (dfe->date_separator)));
-	MONO_OBJECT_SETREF (datetime, DayNames, create_names_array_idx (dfe->day_names, NUM_DAYS));
-	MONO_OBJECT_SETREF (datetime, ShortestDayNames, create_names_array_idx (dfe->shortest_day_names, NUM_DAYS));
-	datetime->FirstDayOfWeek = dfe->first_day_of_week;
-	MONO_OBJECT_SETREF (datetime, LongDatePattern, mono_string_new (domain, idx2string (dfe->long_date_pattern)));
-	MONO_OBJECT_SETREF (datetime, LongTimePattern, mono_string_new (domain, idx2string (dfe->long_time_pattern)));
-	MONO_OBJECT_SETREF (datetime, MonthDayPattern, mono_string_new (domain, idx2string (dfe->month_day_pattern)));
-	MONO_OBJECT_SETREF (datetime, MonthNames, create_names_array_idx (dfe->month_names, NUM_MONTHS));
-	MONO_OBJECT_SETREF (datetime, PMDesignator, mono_string_new (domain, idx2string (dfe->pm_designator)));
-	MONO_OBJECT_SETREF (datetime, ShortDatePattern, mono_string_new (domain, idx2string (dfe->short_date_pattern)));
-	MONO_OBJECT_SETREF (datetime, ShortTimePattern, mono_string_new (domain, idx2string (dfe->short_time_pattern)));
-	MONO_OBJECT_SETREF (datetime, TimeSeparator, mono_string_new (domain, idx2string (dfe->time_separator)));
-	MONO_OBJECT_SETREF (datetime, YearMonthPattern, mono_string_new (domain, idx2string (dfe->year_month_pattern)));
-	MONO_OBJECT_SETREF (datetime, ShortDatePatterns, create_names_array_idx_dynamic (dfe->short_date_patterns,
+	MONO_OBJECT_SETREF (this, NativeName, mono_string_new (domain, idx2string (ci->nativename)));
+	MONO_OBJECT_SETREF (this, ShortDatePatterns, create_names_array_idx_dynamic (dfe->short_date_patterns,
 			NUM_SHORT_DATE_PATTERNS));
-	MONO_OBJECT_SETREF (datetime, LongDatePatterns, create_names_array_idx_dynamic (dfe->long_date_patterns,
+	MONO_OBJECT_SETREF (this, YearMonthPatterns, create_names_array_idx_dynamic (dfe->year_month_patterns,
+			NUM_YEAR_MONTH_PATTERNS));
+
+	MONO_OBJECT_SETREF (this, LongDatePatterns, create_names_array_idx_dynamic (dfe->long_date_patterns,
 			NUM_LONG_DATE_PATTERNS));
-	MONO_OBJECT_SETREF (datetime, ShortTimePatterns, create_names_array_idx_dynamic (dfe->short_time_patterns,
-			NUM_SHORT_TIME_PATTERNS));
-	MONO_OBJECT_SETREF (datetime, LongTimePatterns, create_names_array_idx_dynamic (dfe->long_time_patterns,
+	MONO_OBJECT_SETREF (this, MonthDayPattern, mono_string_new (domain, idx2string (dfe->month_day_pattern)));
+
+	MONO_OBJECT_SETREF (this, DayNames, create_names_array_idx (dfe->day_names, NUM_DAYS));
+	MONO_OBJECT_SETREF (this, AbbreviatedDayNames, create_names_array_idx (dfe->abbreviated_day_names, 
+			NUM_DAYS));
+	MONO_OBJECT_SETREF (this, SuperShortDayNames, create_names_array_idx (dfe->shortest_day_names, NUM_DAYS));
+	MONO_OBJECT_SETREF (this, MonthNames, create_names_array_idx (dfe->month_names, NUM_MONTHS));
+	MONO_OBJECT_SETREF (this, AbbreviatedMonthNames, create_names_array_idx (dfe->abbreviated_month_names,
+			NUM_MONTHS));
+	MONO_OBJECT_SETREF (this, GenitiveMonthNames, create_names_array_idx (dfe->month_genitive_names, NUM_MONTHS));
+	MONO_OBJECT_SETREF (this, GenitiveAbbreviatedMonthNames, create_names_array_idx (dfe->abbreviated_month_genitive_names, NUM_MONTHS));
+
+	return TRUE;
+}
+
+void
+ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCultureData *this, gint32 datetime_index)
+{
+	MonoDomain *domain;
+	const DateTimeFormatEntry *dfe;
+
+	g_assert (datetime_index >= 0);
+
+	dfe = &datetime_format_entries [datetime_index];
+
+	domain = mono_domain_get ();
+
+	MONO_OBJECT_SETREF (this, AMDesignator, mono_string_new (domain, idx2string (dfe->am_designator)));
+	MONO_OBJECT_SETREF (this, PMDesignator, mono_string_new (domain, idx2string (dfe->pm_designator)));
+	MONO_OBJECT_SETREF (this, TimeSeparator, mono_string_new (domain, idx2string (dfe->time_separator)));
+	MONO_OBJECT_SETREF (this, LongTimePatterns, create_names_array_idx_dynamic (dfe->long_time_patterns,
 			NUM_LONG_TIME_PATTERNS));
-	MONO_OBJECT_SETREF (datetime, GenitiveMonthNames, create_names_array_idx (dfe->month_genitive_names, NUM_MONTHS));
-	MONO_OBJECT_SETREF (datetime, GenitiveAbbreviatedMonthNames, create_names_array_idx (dfe->abbreviated_month_genitive_names, NUM_MONTHS));
+	MONO_OBJECT_SETREF (this, ShortTimePatterns, create_names_array_idx_dynamic (dfe->short_time_patterns,
+			NUM_SHORT_TIME_PATTERNS));
+	this->FirstDayOfWeek = dfe->first_day_of_week;
+	this->CalendarWeekRule = dfe->calendar_week_rule;
 }
 
 void
@@ -211,8 +231,6 @@ ves_icall_System_Globalization_CultureInfo_construct_number_format (MonoCultureI
 	MonoDomain *domain;
 	MonoNumberFormatInfo *number;
 	const NumberFormatEntry *nfe;
-
-	MONO_ARCH_SAVE_REGS;
 
 	g_assert (this->number_format != 0);
 	if (this->number_index < 0)
@@ -321,8 +339,6 @@ region_info_entry_from_lcid (int lcid)
 {
 	const RegionInfoEntry *entry;
 	const CultureInfoEntry *ne;
-
-	MONO_ARCH_SAVE_REGS;
 
 	ne = mono_binary_search (&lcid, culture_entries, NUM_CULTURE_ENTRIES, sizeof (CultureInfoEntry), culture_lcid_locator);
 
@@ -473,8 +489,6 @@ ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void)
 	MonoString* ret;
 	MonoDomain *domain;
 
-	MONO_ARCH_SAVE_REGS;
-
 	locale = get_current_locale_name ();
 	if (locale == NULL)
 		return NULL;
@@ -492,8 +506,6 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (
 {
 	const CultureInfoEntry *ci;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	ci = culture_info_entry_from_lcid (lcid);
 	if(ci == NULL)
 		return FALSE;
@@ -508,8 +520,6 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (
 	const CultureInfoNameEntry *ne;
 	char *n;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	n = mono_string_to_utf8 (name);
 	ne = mono_binary_search (n, culture_name_entries, NUM_CULTURE_ENTRIES,
 			sizeof (CultureInfoNameEntry), culture_name_locator);
@@ -531,8 +541,6 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_specif
 	gchar *locale;
 	gboolean ret;
 
-	MONO_ARCH_SAVE_REGS;
-
 	locale = mono_string_to_utf8 (name);
 	ret = construct_culture_from_specific_name (ci, locale);
 	g_free (locale);
@@ -546,8 +554,6 @@ ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid (M
 {
 	const RegionInfoEntry *ri;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	ri = region_info_entry_from_lcid (lcid);
 	if(ri == NULL)
 		return FALSE;
@@ -562,8 +568,6 @@ ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name (M
 	const RegionInfoNameEntry *ne;
 	char *n;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	n = mono_string_to_utf8 (name);
 	ne = mono_binary_search (n, region_name_entries, NUM_REGION_ENTRIES,
 		sizeof (RegionInfoNameEntry), region_name_locator);
@@ -589,8 +593,6 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 	const CultureInfoEntry *ci;
 	gint i, len;
 	gboolean is_neutral;
-
-	MONO_ARCH_SAVE_REGS;
 
 	domain = mono_domain_get ();
 
@@ -641,8 +643,6 @@ void ves_icall_System_Globalization_CompareInfo_construct_compareinfo (MonoCompa
 
 int ves_icall_System_Globalization_CompareInfo_internal_compare (MonoCompareInfo *this, MonoString *str1, gint32 off1, gint32 len1, MonoString *str2, gint32 off2, gint32 len2, gint32 options)
 {
-	MONO_ARCH_SAVE_REGS;
-	
 	/* Do a normal ascii string compare, as we only know the
 	 * invariant locale if we dont have ICU
 	 */
@@ -660,8 +660,6 @@ void ves_icall_System_Globalization_CompareInfo_assign_sortkey (MonoCompareInfo 
 	MonoArray *arr;
 	gint32 keylen, i;
 
-	MONO_ARCH_SAVE_REGS;
-	
 	keylen=mono_string_length (source);
 	
 	arr=mono_array_new (mono_domain_get (), mono_get_byte_class (),
@@ -675,31 +673,23 @@ void ves_icall_System_Globalization_CompareInfo_assign_sortkey (MonoCompareInfo 
 
 int ves_icall_System_Globalization_CompareInfo_internal_index (MonoCompareInfo *this, MonoString *source, gint32 sindex, gint32 count, MonoString *value, gint32 options, MonoBoolean first)
 {
-	MONO_ARCH_SAVE_REGS;
-	
 	return(string_invariant_indexof (source, sindex, count, value, first));
 }
 
 int ves_icall_System_Globalization_CompareInfo_internal_index_char (MonoCompareInfo *this, MonoString *source, gint32 sindex, gint32 count, gunichar2 value, gint32 options, MonoBoolean first)
 {
-	MONO_ARCH_SAVE_REGS;
-	
 	return(string_invariant_indexof_char (source, sindex, count, value,
 					      first));
 }
 
 int ves_icall_System_Threading_Thread_current_lcid (void)
 {
-	MONO_ARCH_SAVE_REGS;
-	
 	/* Invariant */
 	return(0x007F);
 }
 
 MonoString *ves_icall_System_String_InternalReplace_Str_Comp (MonoString *this, MonoString *old, MonoString *new, MonoCompareInfo *comp)
 {
-	MONO_ARCH_SAVE_REGS;
-	
 	/* Do a normal ascii string compare and replace, as we only
 	 * know the invariant locale if we dont have ICU
 	 */

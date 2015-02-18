@@ -26,7 +26,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.Configuration
 {
         public enum ProcessModelComImpersonationLevel
@@ -38,4 +37,3 @@ namespace System.Web.Configuration
                 Impersonate
         }
 }
-#endif

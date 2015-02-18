@@ -1,4 +1,3 @@
-#if NET_4_0
 using System;
 
 namespace Microsoft.Build.Framework
@@ -10,4 +9,3 @@ namespace Microsoft.Build.Framework
 	}
 }
 
-#endif

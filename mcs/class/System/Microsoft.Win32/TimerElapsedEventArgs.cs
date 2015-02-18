@@ -35,9 +35,6 @@ namespace Microsoft.Win32 {
 
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-#if ONLY_1_1
-	[ComVisible (false)]
-#endif
 	public class TimerElapsedEventArgs : System.EventArgs
 	{
 		System.IntPtr mytimerId;

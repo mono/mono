@@ -92,7 +92,19 @@ namespace System.Windows.Forms
 			// used tends to be small, this is a good performance gain for
 			// not too much memory.
 			if (text.Length == 1) {
-				string key = font.GetHashCode ().ToString () + "|" + text;
+				// If g.VisibleClipBounds is {X=0, Y=0, Width=1, Height=1}, then some characters
+				// (in some fonts for some point sizes) return a different width then when the
+				// VisibleClipBounds has a different (usually but not always more reasonable) value.
+				// This state of the Graphics object can occur during initialization of text boxes
+				// with preset Text values. See https://bugzilla.xamarin.com/show_bug.cgi?id=26258
+				// for more details.
+				string sep;
+				var bounds = g.VisibleClipBounds;
+				if (bounds.Width == 1 && bounds.Height == 1 && bounds.X == 0 && bounds.Y == 0)
+					sep = "-1x1|";
+				else
+					sep = "|";
+				string key = font.GetHashCode ().ToString () + sep + text;
 				
 				if (measure_cache.ContainsKey (key)) {
 					return (SizeF)measure_cache[key];

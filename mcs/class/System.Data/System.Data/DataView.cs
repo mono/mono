@@ -111,9 +111,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows deletes.")]
-#endif
 		[DefaultValue (true)]
 		public bool AllowDelete {
 			get { return allowDelete; }
@@ -121,9 +118,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows edits.")]
-#endif
 		[DefaultValue (true)]
 		public bool AllowEdit {
 			get { return allowEdit; }
@@ -131,9 +125,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows new rows to be added.")]
-#endif
 		[DefaultValue (true)]
 		public bool AllowNew {
 			get { return allowNew; }
@@ -141,9 +132,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether to use the default sort if the Sort property is not set.")]
-#endif
 		[DefaultValue (false)]
 		[RefreshProperties (RefreshProperties.All)]
 		public bool ApplyDefaultSort {
@@ -168,17 +156,11 @@ namespace System.Data
 		// get the count of rows in the DataView after RowFilter
 		// and RowStateFilter have been applied
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("Returns the number of items currently in this view.")]
-#endif
 		public int Count {
 			get { return rowCache.Length; }
 		}
 
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("This returns a pointer to back to the DataViewManager that owns this DataSet (if any).")]
-#endif
 		public DataViewManager DataViewManager {
 			get { return dataViewManager; }
 		}
@@ -196,9 +178,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates an expression used to filter the data returned by this DataView.")]
-#endif
 		[DefaultValue ("")]
 		public virtual string RowFilter {
 			get { return rowFilter; }
@@ -229,9 +208,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the versions of data returned by this DataView.")]
-#endif
 		[DefaultValue (DataViewRowState.CurrentRows)]
 		public DataViewRowState RowStateFilter {
 			get { return rowState; }
@@ -253,9 +229,6 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the order in which data is returned by this DataView.")]
-#endif
 		[DefaultValue ("")]
 		public string Sort {
 			get {
@@ -295,9 +268,6 @@ namespace System.Data
 
 		[TypeConverter (typeof (DataTableTypeConverter))]
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the table this DataView uses to get data.")]
-#endif
 		[DefaultValue (null)]
 		[RefreshProperties (RefreshProperties.All)]
 		public DataTable Table {
@@ -489,15 +459,9 @@ namespace System.Data
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates that the data returned by this DataView has somehow changed.")]
-#endif
 		public event ListChangedEventHandler ListChanged;
 
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("Indicates whether the view is open.  ")]
-#endif
 		protected bool IsOpen {
 			get { return isOpen; }
 		}
@@ -1073,7 +1037,6 @@ namespace System.Data
 		}
 	}
 
-#if NET_2_0
 	partial class DataView : IBindingListView {
 		string IBindingListView.Filter {
 			get { return ((DataView) this).RowFilter; }
@@ -1247,5 +1210,4 @@ namespace System.Data
 			return newTable;
 		}
 	}
-#endif
 }

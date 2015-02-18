@@ -93,13 +93,8 @@ namespace System.Security.Cryptography.Xml
 		[MonoTODO ("Evaluation of extension function here() results in different from MS.NET (is MS.NET really correct??).")]
 		public override object GetOutput () 
 		{
-#if NET_2_0
 			if ((xpath == null) || (doc == null))
 				return new XmlDsigNodeList (new ArrayList ());
-#else
-			if (xpath == null)
-				return new XmlDsigNodeList (new ArrayList ());
-#endif
 			// evaluate every time since input or xpath might have changed.
 			string x = null;
 			for (int i = 0; i < xpath.Count; i++) {

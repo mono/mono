@@ -452,7 +452,6 @@ namespace System.Web.Compilation
 		
 		protected virtual void AddStatementsToInitMethodTop (ControlBuilder builder, CodeMemberMethod method)
 		{
-#if NET_4_0
 			ClientIDMode? mode = parser.ClientIDMode;
 			if (mode.HasValue) {
 				var cimRef = new CodeTypeReferenceExpression (typeof (ClientIDMode));
@@ -464,7 +463,6 @@ namespace System.Web.Compilation
 
 				method.Statements.Add (assign);
 			}
-#endif
 		}
 
 		protected virtual void AddStatementsToInitMethodBottom (ControlBuilder builder, CodeMemberMethod method)
@@ -1215,13 +1213,11 @@ namespace System.Web.Compilation
 				parms.Add (new CodeDelegateCreateExpression (
 							      new CodeTypeReference (typeof (System.Web.UI.BuildMethod)),
 							      thisRef, child.Method.Name));
-#if NET_4_0
 				string value = pca.ProviderName;
 				if (!String.IsNullOrEmpty (value) && String.Compare (OutputCache.DEFAULT_PROVIDER_NAME, value, StringComparison.Ordinal) != 0)
 					parms.Add (new CodePrimitiveExpression (value));
 				else
 					parms.Add (new CodePrimitiveExpression (null));
-#endif
 				methodStatements.Add (AddLinePragma (build, parent));
 				if (parent.HasAspCode)
 					AddRenderControl (parent);
@@ -1394,12 +1390,10 @@ namespace System.Web.Compilation
 		CodeExpression GetWrappedCodeExpression (CodeRenderBuilder cr)
 		{
 			var ret = new CodeSnippetExpression (cr.Code);
-#if NET_4_0
 			if (cr.HtmlEncode) {
 				var encodeRef = new CodeMethodReferenceExpression (new CodeTypeReferenceExpression (typeof (HttpUtility)), "HtmlEncode");
 				return new CodeMethodInvokeExpression (encodeRef, new CodeExpression[] { ret });
 			} else
-#endif
 				return ret;
 		}
 		

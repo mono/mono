@@ -29,9 +29,7 @@
 //
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
@@ -39,11 +37,7 @@ using System.Xml;
 using System.Xml.Schema;
 using Mono.Xml;
 
-#if NET_2_0
 using ValException = System.Xml.Schema.XmlSchemaValidationException;
-#else
-using ValException = System.Xml.Schema.XmlSchemaException;
-#endif
 
 using QName = System.Xml.XmlQualifiedName;
 using ContentProc = System.Xml.Schema.XmlSchemaContentProcessing;
@@ -1732,7 +1726,6 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-#if NET_2_0
 		public XmlSchemaType ActualSchemaType {
 			get {
 				object at = ActualType;
@@ -1745,7 +1738,6 @@ namespace Mono.Xml.Schema
 				return st;
 			}
 		}
-#endif
 
 		public bool IsInvalid {
 			get { return State == XsdValidationState.Invalid; }

@@ -310,9 +310,6 @@ namespace MonoTests.System.Diagnostics
 		///   Tests whether getting file line number works.
 		/// </summary>
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // .NET 1.1 is off by one
-#endif
 		[Category ("LLVMNotWorking")]
 		public void TestGetFileLineNumber ()
 		{
@@ -332,9 +329,6 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting file column number works.
 		/// </summary>
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // .NET 1.1 is off by one
-#endif
 		[Category ("NotWorking")] // bug #45730 - Column numbers always zero
 		public void TestGetFileColumnNumber ()
 		{

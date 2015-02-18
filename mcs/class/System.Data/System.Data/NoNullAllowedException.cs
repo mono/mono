@@ -47,12 +47,10 @@ namespace System.Data
 		{
 		}
 
-#if NET_2_0
 		public NoNullAllowedException (string message, Exception innerException)
 			: base (message, innerException)
 		{
 		}
-#endif
 
 		protected NoNullAllowedException (SerializationInfo info, StreamingContext context)
 			: base (info, context)

@@ -62,7 +62,6 @@ namespace System.Web.Handlers
 		}
 
 		#endregion
-#if NET_3_5
 		void AppendResourceScriptContents (StringWriter sw, CompositeEntry entry)
 		{
 			if (entry.Assembly == null || entry.Attribute == null || String.IsNullOrEmpty (entry.NameOrPath))
@@ -179,7 +178,6 @@ namespace System.Web.Handlers
 			if (notifyScriptLoaded)
 				OutputScriptLoadedNotification (response.Output);
 		}
-#endif
 		void OutputScriptLoadedNotification (TextWriter writer)
 		{
 			writer.WriteLine ();
@@ -190,13 +188,11 @@ namespace System.Web.Handlers
 		{
 			HttpRequest request = context.Request;
 			bool notifyScriptLoaded = request.QueryString ["n"] == "t";
-#if NET_3_5
 			List <CompositeEntry> compositeEntries = CompositeScriptReference.GetCompositeScriptEntries (request.RawUrl);
 			if (compositeEntries != null) {
 				SendCompositeScript (context, request, notifyScriptLoaded, compositeEntries);
 				return;
 			}
-#endif
 			EmbeddedResource res;
 			Assembly assembly;			
 			SendEmbeddedResource (context, out res, out assembly);
@@ -247,7 +243,6 @@ namespace System.Web.Handlers
 			if (notifyScriptLoaded)
 				OutputScriptLoadedNotification (writer);
 		}
-#if NET_3_5
 		static void CheckIfResourceIsCompositeScript (string resourceName, ref bool includeTimeStamp)
 		{
 			bool isCompositeScript = resourceName.StartsWith (CompositeScriptReference.COMPOSITE_SCRIPT_REFERENCE_PREFIX, StringComparison.Ordinal);
@@ -261,7 +256,6 @@ namespace System.Web.Handlers
 		{
 			return false;
 		}
-#endif
 		// TODO: add value cache?
 		static string GetScriptStringLiteral (string value)
 		{
