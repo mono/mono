@@ -12,6 +12,7 @@
 	</PropertyGroup>
 
 	<Target Name="ImplicitlyExpandTargetFramework"
+		Condition="'$(ImplicitlyExpandTargetFramework)' == 'true'"
 		DependsOnTargets="$(ImplicitlyExpandTargetFrameworkDependsOn)">
 
 		<ItemGroup>
