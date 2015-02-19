@@ -96,6 +96,15 @@ namespace System.IO {
         // This should be initialized to Environment.NewLine, but
         // to avoid loading Environment unnecessarily so I've duplicated
         // the value here.
+#if MONO
+        static string InitialNewLine {
+            get {
+                return Environment.NewLine;
+            }
+        }
+
+        protected char[] CoreNewLine = InitialNewLine.ToCharArray ();
+#else
 #if !PLATFORM_UNIX
         private const String InitialNewLine = "\r\n";
 
@@ -106,7 +115,7 @@ namespace System.IO {
         protected char[] CoreNewLine = new char[] {'\n'};
 
 #endif // !PLATFORM_UNIX
-
+#endif
         // Can be null - if so, ask for the Thread's CurrentCulture every time.
         private IFormatProvider InternalFormatProvider;
 
