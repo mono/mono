@@ -362,8 +362,8 @@ namespace System.IO {
 
 			var canonicalize = true;
 			if (path.Length >= 2 &&
-				IsDsc (path [0]) &&
-				IsDsc (path [1])) {
+				IsDirectorySeparator (path [0]) &&
+				IsDirectorySeparator (path [1])) {
 				if (path.Length == 2 || path.IndexOf (path [0], 2) < 0)
 					throw new ArgumentException ("UNC paths should be of the form \\\\server\\share.");
 
@@ -390,8 +390,8 @@ namespace System.IO {
 						path = cwd + DirectorySeparatorChar + path;					
 				} else if (DirectorySeparatorChar == '\\' &&
 					path.Length >= 2 &&
-					IsDsc (path [0]) &&
-					!IsDsc (path [1])) { // like `\abc\def'
+					IsDirectorySeparator (path [0]) &&
+					!IsDirectorySeparator (path [1])) { // like `\abc\def'
 					string current = Directory.InsecureGetCurrentDirectory();
 					if (current [1] == VolumeSeparatorChar)
 						path = current.Substring (0, 2) + path;
@@ -404,16 +404,16 @@ namespace System.IO {
 			    path = CanonicalizePath (path);
 
 			// if the original ended with a [Alt]DirectorySeparatorChar then ensure the full path also ends with one
-			if (IsDsc (end) && (path [path.Length - 1] != DirectorySeparatorChar))
+			if (IsDirectorySeparator (end) && (path [path.Length - 1] != DirectorySeparatorChar))
 				path += DirectorySeparatorChar;
 
 			return path;
 		}
 
-		static bool IsDsc (char c) {
+		internal static bool IsDirectorySeparator (char c) {
 			return c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
 		}
-		
+
 		public static string GetPathRoot (string path)
 		{
 			if (path == null)
@@ -427,36 +427,36 @@ namespace System.IO {
 			
 			if (DirectorySeparatorChar == '/') {
 				// UNIX
-				return IsDsc (path [0]) ? DirectorySeparatorStr : String.Empty;
+				return IsDirectorySeparator (path [0]) ? DirectorySeparatorStr : String.Empty;
 			} else {
 				// Windows
 				int len = 2;
 
-				if (path.Length == 1 && IsDsc (path [0]))
+				if (path.Length == 1 && IsDirectorySeparator (path [0]))
 					return DirectorySeparatorStr;
 				else if (path.Length < 2)
 					return String.Empty;
 
-				if (IsDsc (path [0]) && IsDsc (path[1])) {
+				if (IsDirectorySeparator (path [0]) && IsDirectorySeparator (path[1])) {
 					// UNC: \\server or \\server\share
 					// Get server
-					while (len < path.Length && !IsDsc (path [len])) len++;
+					while (len < path.Length && !IsDirectorySeparator (path [len])) len++;
 
 					// Get share
 					if (len < path.Length) {
 						len++;
-						while (len < path.Length && !IsDsc (path [len])) len++;
+						while (len < path.Length && !IsDirectorySeparator (path [len])) len++;
 					}
 
 					return DirectorySeparatorStr +
 						DirectorySeparatorStr +
 						path.Substring (2, len - 2).Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
-				} else if (IsDsc (path [0])) {
+				} else if (IsDirectorySeparator (path [0])) {
 					// path starts with '\' or '/'
 					return DirectorySeparatorStr;
 				} else if (path[1] == VolumeSeparatorChar) {
 					// C:\folder
-					if (path.Length >= 3 && (IsDsc (path [2]))) len++;
+					if (path.Length >= 3 && (IsDirectorySeparator (path [2]))) len++;
 				} else
 					return Directory.GetCurrentDirectory ().Substring (0, 2);// + path.Substring (0, len);
 				return path.Substring (0, len);
@@ -628,11 +628,11 @@ namespace System.IO {
 		static string GetServerAndShare (string path)
 		{
 			int len = 2;
-			while (len < path.Length && !IsDsc (path [len])) len++;
+			while (len < path.Length && !IsDirectorySeparator (path [len])) len++;
 
 			if (len < path.Length) {
 				len++;
-				while (len < path.Length && !IsDsc (path [len])) len++;
+				while (len < path.Length && !IsDirectorySeparator (path [len])) len++;
 			}
 
 			return path.Substring (2, len - 2).Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
@@ -646,8 +646,8 @@ namespace System.IO {
 				return false;
 
 			// UNC handling
-			if (IsDsc (root[0]) && IsDsc (root[1])) {
-				if (!(IsDsc (path[0]) && IsDsc (path[1])))
+			if (IsDirectorySeparator (root[0]) && IsDirectorySeparator (root[1])) {
+				if (!(IsDirectorySeparator (path[0]) && IsDirectorySeparator (path[1])))
 					return false;
 
 				string rootShare = GetServerAndShare (root);
@@ -664,7 +664,7 @@ namespace System.IO {
 				return false;
 			if ((root.Length > 2) && (path.Length > 2)) {
 				// but don't directory compare the directory separator
-				return (IsDsc (root[2]) && IsDsc (path[2]));
+				return (IsDirectorySeparator (root[2]) && IsDirectorySeparator (path[2]));
 			}
 			return true;
 		}
@@ -692,7 +692,7 @@ namespace System.IO {
 			int target = 0;
 
 			bool isUnc = Environment.IsRunningOnWindows &&
-				root.Length > 2 && IsDsc (root[0]) && IsDsc (root[1]);
+				root.Length > 2 && IsDirectorySeparator (root[0]) && IsDirectorySeparator (root[1]);
 
 			// Set an overwrite limit for UNC paths since '\' + server + share
 			// must not be eliminated by the '..' elimination algorithm.
@@ -728,7 +728,7 @@ namespace System.IO {
 
 					if (isUnc) {
 						return ret;
-					} else if (!IsDsc (path[0]) && SameRoot (root, path)) {
+					} else if (!IsDirectorySeparator (path[0]) && SameRoot (root, path)) {
 						if (ret.Length <= 2 && !ret.EndsWith (DirectorySeparatorStr)) // '\' after "c:"
 							ret += Path.DirectorySeparatorChar;
 						return ret;
@@ -736,10 +736,10 @@ namespace System.IO {
 						string current = Directory.GetCurrentDirectory ();
 						if (current.Length > 1 && current[1] == Path.VolumeSeparatorChar) {
 							// DOS local file path
-							if (ret.Length == 0 || IsDsc (ret[0]))
+							if (ret.Length == 0 || IsDirectorySeparator (ret[0]))
 								ret += '\\';
 							return current.Substring (0, 2) + ret;
-						} else if (IsDsc (current[current.Length - 1]) && IsDsc (ret[0]))
+						} else if (IsDirectorySeparator (current[current.Length - 1]) && IsDirectorySeparator (ret[0]))
 							return current + ret.Substring (1);
 						else
 							return current + ret;
