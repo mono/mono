@@ -77,7 +77,7 @@ public sealed class BufferedStream : Stream {
     private Int32 _readLen;                               // Number of bytes read in buffer from _stream.
     private Int32 _writePos;                              // Write pointer within shared buffer.
           
-#if !FEATURE_PAL && FEATURE_ASYNC_IO
+#if FEATURE_ASYNC_IO
     private BeginEndAwaitableAdapter _beginEndAwaitable;  // Used to be able to await a BeginXxx call and thus to share code
                                                           // between the APM and Async pattern implementations
 
@@ -156,7 +156,7 @@ public sealed class BufferedStream : Stream {
     }
 
 
-#if !FEATURE_PAL && FEATURE_ASYNC_IO
+#if FEATURE_ASYNC_IO
     private void EnsureBeginEndAwaitableAllocated() {
         // We support only a single ongoing async operation and enforce this with a semaphore,
         // so singleton is fine and no need to worry about a ---- here.
@@ -278,7 +278,7 @@ public sealed class BufferedStream : Stream {
         } finally {
             _stream = null;
             _buffer = null;
-#if !FEATURE_PAL && FEATURE_ASYNC_IO
+#if FEATURE_ASYNC_IO
             _lastSyncCompletedReadTask = null;
 #endif  // !FEATURE_PAL && FEATURE_ASYNC_IO
 
@@ -328,7 +328,7 @@ public sealed class BufferedStream : Stream {
         _writePos = _readPos = _readLen = 0;
     }
 
-#if !FEATURE_PAL && FEATURE_ASYNC_IO
+#if FEATURE_ASYNC_IO
     public override Task FlushAsync(CancellationToken cancellationToken) {
 
         if (cancellationToken.IsCancellationRequested)
@@ -448,7 +448,7 @@ public sealed class BufferedStream : Stream {
     }
 
 
-#if !FEATURE_PAL && FEATURE_ASYNC_IO
+#if FEATURE_ASYNC_IO
     private async Task FlushWriteAsync(CancellationToken cancellationToken) {
 
         Contract.Assert(_readPos == 0 && _readLen == 0,
@@ -562,7 +562,7 @@ public sealed class BufferedStream : Stream {
     }
 
 
-#if !FEATURE_PAL && FEATURE_ASYNC_IO
+#if FEATURE_ASYNC_IO
     public override IAsyncResult BeginRead(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state) {
 
         if (buffer == null)
