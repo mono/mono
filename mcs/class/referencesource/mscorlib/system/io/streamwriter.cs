@@ -756,7 +756,7 @@ namespace System.IO
 
             CheckAsyncTaskInProgress();
 
-            Task task = WriteAsyncInternal(this, value, charBuffer, charPos, charLen, CoreNewLine, autoFlush, appendNewLine: true);
+            Task task = WriteAsyncInternal(this, value ?? "", charBuffer, charPos, charLen, CoreNewLine, autoFlush, appendNewLine: true);
             _asyncWriteTask = task;
 
             return task;
