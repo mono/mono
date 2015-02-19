@@ -580,6 +580,11 @@ namespace System.IO {
         }
         
         public virtual byte[] ToArray() {
+#if MONO
+            // Bug fix for BCL bug when _buffer is null
+            if (_length - _origin == 0)
+                return EmptyArray<byte>.Value;
+#endif
             BCLDebug.Perf(_exposable, "MemoryStream::GetBuffer will let you avoid a copy.");
             byte[] copy = new byte[_length - _origin];
             Buffer.InternalBlockCopy(_buffer, _origin, copy, 0, _length - _origin);
