@@ -141,13 +141,13 @@ namespace System
 		{
 #if !NET_2_1
 			if (!Environment.IsRunningOnWindows && ConsoleDriver.IsConsole) {
-				StreamWriter w = new CStreamWriter (OpenStandardOutput (0), outputEncoding);
+				StreamWriter w = new CStreamWriter (OpenStandardOutput (0), outputEncoding, true);
 				w.AutoFlush = true;
-				stdout = TextWriter.Synchronized (w, true);
+				stdout = TextWriter.Synchronized (w);
 
-				w = new CStreamWriter (OpenStandardOutput (0), outputEncoding);
+				w = new CStreamWriter (OpenStandardOutput (0), outputEncoding, true);
 				w.AutoFlush = true;
-				stderr = TextWriter.Synchronized (w, true);
+				stderr = TextWriter.Synchronized (w);
 				
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
 			} else {
@@ -161,7 +161,7 @@ namespace System
 				stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
 				((StreamWriter)stdout).AutoFlush = true;
 #endif
-				stdout = TextWriter.Synchronized (stdout, true);
+				stdout = TextWriter.Synchronized (stdout);
 
 #if MONOTOUCH && FULL_AOT_RUNTIME
 				stderr = new NSLogWriter ();
@@ -169,7 +169,7 @@ namespace System
 				stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
 				((StreamWriter)stderr).AutoFlush = true;
 #endif
-				stderr = TextWriter.Synchronized (stderr, true);
+				stderr = TextWriter.Synchronized (stderr);
 
 				stdin = new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding);
 				stdin = TextReader.Synchronized (stdin);

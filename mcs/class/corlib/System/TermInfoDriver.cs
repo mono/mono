@@ -176,7 +176,7 @@ namespace System {
 
 			if (!(Console.stdout is CStreamWriter)) {
 				// Application set its own stdout, we need a reference to the real stdout
-				stdout = new CStreamWriter (Console.OpenStandardOutput (0), Console.OutputEncoding);
+				stdout = new CStreamWriter (Console.OpenStandardOutput (0), Console.OutputEncoding, false);
 				((StreamWriter) stdout).AutoFlush = true;
 			} else {
 				stdout = (CStreamWriter) Console.stdout;

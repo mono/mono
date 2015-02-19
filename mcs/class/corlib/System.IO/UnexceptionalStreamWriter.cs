@@ -52,7 +52,7 @@ namespace System.IO {
 */
 		public UnexceptionalStreamWriter (Stream stream,
 						  Encoding encoding)
-			: base (stream, encoding)
+			: base (stream, encoding, DefaultBufferSize, true)
 		{
 		}
 /*
