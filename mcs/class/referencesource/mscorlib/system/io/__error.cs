@@ -19,7 +19,9 @@
 
 using System;
 using System.Runtime.InteropServices;
+#if !MONO
 using Win32Native = Microsoft.Win32.Win32Native;
+#endif
 using System.Text;
 using System.Globalization;
 using System.Security;
@@ -126,7 +128,7 @@ namespace System.IO {
 
             return path;
         }
-
+#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         internal static void WinIOError() {
             int errorCode = Marshal.GetLastWin32Error();
@@ -216,7 +218,7 @@ namespace System.IO {
                 break;
             }
         }
-    
+#endif
         internal static void WriteNotSupported() {
             throw new NotSupportedException(Environment.GetResourceString("NotSupported_UnwritableStream"));
         }
@@ -224,11 +226,12 @@ namespace System.IO {
         internal static void WriterClosed() {
             throw new ObjectDisposedException(null, Environment.GetResourceString("ObjectDisposed_WriterClosed"));
         }
-
+#if !MONO
         // From WinError.h
         internal const int ERROR_FILE_NOT_FOUND = Win32Native.ERROR_FILE_NOT_FOUND;
         internal const int ERROR_PATH_NOT_FOUND = Win32Native.ERROR_PATH_NOT_FOUND;
         internal const int ERROR_ACCESS_DENIED  = Win32Native.ERROR_ACCESS_DENIED;
         internal const int ERROR_INVALID_PARAMETER = Win32Native.ERROR_INVALID_PARAMETER;
+#endif
     }
 }
