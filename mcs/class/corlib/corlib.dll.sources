@@ -331,7 +331,6 @@ System.Globalization/TextInfo.cs
 System.Globalization/UnicodeCategory.cs
 System.IO/BinaryReader.cs
 System.IO/BinaryWriter.cs
-System.IO/BufferedStream.cs
 System.IO/Directory.cs
 System.IO/DirectoryInfo.cs
 System.IO/DirectoryNotFoundException.cs
@@ -1562,6 +1561,7 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/globalization/umalquracalendar.cs
 
 ../../../external/referencesource/mscorlib/system/io/__error.cs
+../../../external/referencesource/mscorlib/system/io/bufferedstream.cs
 ../../../external/referencesource/mscorlib/system/io/memorystream.cs
 ../../../external/referencesource/mscorlib/system/io/stream.cs
 ../../../external/referencesource/mscorlib/system/io/streamreader.cs
@@ -1659,6 +1659,7 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/threading/timeout.cs
 ../../../external/referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
 
+../../../external/referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskFactory.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/FutureFactory.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskScheduler.cs
@@ -1675,4 +1676,6 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskExceptionHolder.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
+../../../external/referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
+
 
