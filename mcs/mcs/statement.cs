@@ -3994,7 +3994,12 @@ namespace Mono.CSharp {
 			iter = ec.CurrentIterator;
 			
 			if (iter != null && !ec.IsInProbingMode)
-				finally_host = iter.CreateFinallyHost (this);
+			{		
+				TryFinally tryFinally = this as TryFinally;
+				
+				if(tryFinally != null)			
+					finally_host = iter.CreateFinallyHost (this);
+			}
 			
 			return true;
 		}
