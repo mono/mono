@@ -79,7 +79,8 @@ namespace System.Net
 		Queue queue;
 		bool reused;
 		int position;
-		HttpWebRequest priority_request;		
+		HttpWebRequest priority_request;
+		bool ntlm_keepAlive;
 		NetworkCredential ntlm_credentials;
 		bool ntlm_authenticated;
 		bool unsafe_sharing;
@@ -851,6 +852,7 @@ namespace System.Net
 					cncHeader = cncHeader.ToLower ();
 					keepAlive = (this.keepAlive && cncHeader.IndexOf ("keep-alive", StringComparison.Ordinal) != -1);
 				}
+				keepAlive |= ntlm_keepAlive;
 
 				if ((socket != null && !socket.Connected) ||
 				   (!keepAlive || (cncHeader != null && cncHeader.IndexOf ("close", StringComparison.Ordinal) != -1))) {
@@ -861,6 +863,7 @@ namespace System.Net
 				if (priority_request != null) {
 					SendRequest (priority_request);
 					priority_request = null;
+					ntlm_keepAlive = false;
 				} else {
 					SendNext ();
 				}
@@ -1245,6 +1248,7 @@ namespace System.Net
 
 		internal void ResetNtlm ()
 		{
+			ntlm_keepAlive = false;
 			ntlm_authenticated = false;
 			ntlm_credentials = null;
 			unsafe_sharing = false;
@@ -1261,6 +1265,11 @@ namespace System.Net
 		// -Used for NTLM authentication
 		internal HttpWebRequest PriorityRequest {
 			set { priority_request = value; }
+		}
+
+		internal bool NtlmKeepAlive {
+			get { return ntlm_keepAlive; }
+			set { ntlm_keepAlive = value; }
 		}
 
 		internal bool NtlmAuthenticated {

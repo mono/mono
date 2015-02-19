@@ -1172,6 +1172,12 @@ namespace System.Net
 				webHeaders.RemoveAndAdd (connectionHeader, "close");
 			}
 
+			// NTLM requires connection to be kept alive for the request executed after successful authentication.
+			// http://www.benjaminathawes.com/2010/10/14/ntlms-dependency-on-http-keep-alives-another-cause-of-the-dreaded-401-1-error/
+			if (auth_state.NtlmAuthState == NtlmAuthState.Challenge && version == HttpVersion.Version11) {
+			        webHeaders.RemoveAndAdd (connectionHeader, "keep-alive");
+			}
+
 			webHeaders.SetInternal ("Host", Host);
 			if (cookieContainer != null) {
 				string cookieHeader = cookieContainer.GetCookieHeader (actualUri);
@@ -1387,6 +1393,7 @@ namespace System.Net
 			if (wce != null) {
 				WebConnection cnc = wce.Connection;
 				cnc.PriorityRequest = this;
+				cnc.NtlmKeepAlive = auth_state.NtlmAuthState == NtlmAuthState.Response;
 				ICredentials creds = !isProxy ? credentials : proxy.Credentials;
 				if (creds != null) {
 					cnc.NtlmCredential = creds.GetCredential (requestUri, "NTLM");

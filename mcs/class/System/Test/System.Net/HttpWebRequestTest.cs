@@ -1757,8 +1757,26 @@ namespace MonoTests.System.Net
 
 			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
+
+		[Test]
+		public void NtlmAuthentication_KeepAlive ()
+		{
+			NtlmAuthentication (true);
+		}
+
+		[Test]
+		public void NtlmAuthentication_ConnectionClose ()
+		{
+			NtlmAuthentication (false);
+		}
+
 		[Test]
 		public void NtlmAuthentication ()
+		{
+			NtlmAuthentication (null);
+		}
+
+		private void NtlmAuthentication (bool? keepAlive)
 		{
 			NtlmServer server = new NtlmServer ();
 			server.Start ();
@@ -1767,6 +1785,9 @@ namespace MonoTests.System.Net
 			HttpWebRequest request = (HttpWebRequest) WebRequest.Create (url);
 			request.Timeout = 5000;
 			request.Credentials = new NetworkCredential ("user", "password", "domain");
+			if (keepAlive.HasValue) {
+				request.KeepAlive = keepAlive.Value;
+			}
 			HttpWebResponse resp = (HttpWebResponse) request.GetResponse ();
 			string res = null;
 			using (StreamReader reader = new StreamReader (resp.GetResponseStream ())) {
@@ -1779,53 +1800,98 @@ namespace MonoTests.System.Net
 
 		class NtlmServer : HttpServer {
 			public string Where = "";
+			private Socket client;
+
 			protected override void Run ()
 			{
-				Where = "before accept";
-				Socket client = sock.Accept ();
-				NetworkStream ns = new NetworkStream (client, false);
-				StreamReader reader = new StreamReader (ns, Encoding.ASCII);
-				string line;
-				Where = "first read";
-				while ((line = reader.ReadLine ()) != null) {
-					if (line.Trim () == String.Empty) {
-						break;
-					}
-				}
-				Where = "first write";
-				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
-				writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
-						"WWW-Authenticate: NTLM\r\n" +
-						"Content-Length: 5\r\n\r\nWRONG");
+				FirstStep ();
+				SecondStep ();
+				ThirdStep ();
+			}
 
-				writer.Flush ();
-				Where = "second read";
-				while ((line = reader.ReadLine ()) != null) {
-					if (line.Trim () == String.Empty) {
-						break;
-					}
-				}
-				Where = "second write";
-				writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
-						"WWW-Authenticate: NTLM TlRMTVNTUAACAAAAAAAAADgAAAABggAC8GDhqIONH3sAAAAAAAAAAAAAAAA4AAAABQLODgAAAA8=\r\n" +
-						"Content-Length: 5\r\n\r\nWRONG");
-				writer.Flush ();
+			private void FirstStep ()
+			{
+				bool closeConnection = false;
 
-				Where = "third read";
-				while ((line = reader.ReadLine ()) != null) {
-					if (line.Trim () == String.Empty) {
-						break;
+				client = sock.Accept();
+				using (NetworkStream ns = new NetworkStream (client, false))
+				using (StreamReader reader = new StreamReader (ns, Encoding.ASCII))
+				using (StreamWriter writer = new StreamWriter (ns, Encoding.ASCII)) {
+					string line;
+					Where = "first read";
+					while ((line = reader.ReadLine ()) != null) {
+						string trimmedLine = line.Trim ();
+						if (trimmedLine == String.Empty) {
+							break;
+						}
+						if (trimmedLine.Equals ("Connection: Close", StringComparison.InvariantCultureIgnoreCase)) {
+							closeConnection = true;
+						}
 					}
+					Where = "first write";
+					writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
+							"WWW-Authenticate: NTLM\r\n" +
+							"Content-Length: 5\r\n\r\nWRONG");
+					writer.Flush ();
 				}
-				Where = "third write";
-				writer.Write (  "HTTP/1.1 200 OK\r\n" +
-						"Keep-Alive: true\r\n" +
-						"Content-Length: 2\r\n\r\nOK");
-				writer.Flush ();
-				Thread.Sleep (1000);
-				writer.Close ();
-				reader.Close ();
-				client.Close ();
+
+				if (closeConnection) {
+					client.Close();
+					client = sock.Accept();
+				}
+			}
+
+			private void SecondStep ()
+			{
+				bool closeConnection = false;
+
+				using (NetworkStream ns = new NetworkStream (client, false))
+				using (StreamReader reader = new StreamReader (ns, Encoding.ASCII))
+				using (StreamWriter writer = new StreamWriter (ns, Encoding.ASCII)) {
+					string line;
+					Where = "second read";
+					while ((line = reader.ReadLine ()) != null) {
+						string trimmedLine = line.Trim ();
+						if (trimmedLine == String.Empty) {
+							break;
+						}
+
+						if (trimmedLine.Equals ("Connection: Close", StringComparison.InvariantCultureIgnoreCase)) {
+							closeConnection = true;
+						}
+					}
+					Where = "second write";
+					writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
+							"WWW-Authenticate: NTLM TlRMTVNTUAACAAAAAAAAADgAAAABggAC8GDhqIONH3sAAAAAAAAAAAAAAAA4AAAABQLODgAAAA8=\r\n" +
+							"Connection: Keep-Alive\r\n" +
+							"Content-Length: 5\r\n\r\nWRONG");
+					writer.Flush ();
+				}
+
+				if (closeConnection) {
+					client.Close();
+					client = sock.Accept();
+				}
+			}
+
+			private void ThirdStep ()
+			{
+				using (NetworkStream ns = new NetworkStream (client, false))
+				using (StreamReader reader = new StreamReader (ns, Encoding.ASCII))
+				using (StreamWriter writer = new StreamWriter (ns, Encoding.ASCII)) {
+					string line;
+					Where = "third read";
+					while ((line = reader.ReadLine ()) != null) {
+						if (line.Trim () == String.Empty) {
+							break;
+						}
+					}
+					Where = "third write";
+					writer.Write (  "HTTP/1.1 200 OK\r\n" +
+							"Connection: Keep-Alive\r\n" +
+							"Content-Length: 2\r\n\r\nOK");
+					writer.Flush ();
+				}
 			}
 		}
 
