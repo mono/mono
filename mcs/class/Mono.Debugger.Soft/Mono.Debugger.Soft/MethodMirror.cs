@@ -257,7 +257,7 @@ namespace Mono.Debugger.Soft
 					locals [i] = new LocalVariable (vm, this, i, pi[i].ParameterType.Id, pi[i].Name, -1, -1, true);
 
 				for (int i = 0; i < li.names.Length; ++i)
-					locals [i + pi.Length] = new LocalVariable (vm, this, i, li.types [i], li.names [i], li.live_range_start [i], li.live_range_end [i], false);
+					locals [i + pi.Length] = new LocalVariable (vm, this, li.index [i], li.types [i], li.names [i], li.live_range_start [i], li.live_range_end [i], false);
 			}
 			return locals;
 		}

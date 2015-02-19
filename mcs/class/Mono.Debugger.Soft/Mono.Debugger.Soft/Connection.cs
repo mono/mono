@@ -115,6 +115,7 @@ namespace Mono.Debugger.Soft
 	struct LocalsInfo {
 		public long[] types;
 		public string[] names;
+		public int[] index;
 		public int[] live_range_start;
 		public int[] live_range_end;
 	}
@@ -418,7 +419,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 42;
+		internal const int MINOR_VERSION = 43;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1914,6 +1915,15 @@ namespace Mono.Debugger.Soft
 			info.types = new long [nlocals];
 			for (int i = 0; i < nlocals; ++i)
 				info.types [i] = res.ReadId ();
+			info.index = new int [nlocals];
+			if (Version.AtLeast(2, 43)) {
+				for (int i = 0; i < nlocals; ++i)
+					info.index [i] = res.ReadInt();
+			}
+			else {
+				for (int i = 0; i < nlocals; ++i)
+					info.index [i] = i;
+			}
 			info.names = new string [nlocals];
 			for (int i = 0; i < nlocals; ++i)
 				info.names [i] = res.ReadString ();

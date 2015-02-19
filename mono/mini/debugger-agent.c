@@ -268,7 +268,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 42
+#define MINOR_VERSION 43
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -8439,7 +8439,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 			return ERR_INVALID_ARGUMENT;
 
 		locals = mono_debug_lookup_locals (method);
-		if (!locals) {
+		if (!locals || !CHECK_PROTOCOL_VERSION (2, 43)) {
 			buffer_add_int (buf, header->num_locals);
 			/* Types */
 			for (i = 0; i < header->num_locals; ++i) {
@@ -8474,6 +8474,35 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 					buffer_add_int (buf, locals->locals [i].block->start_offset);
 					buffer_add_int (buf, locals->locals [i].block->end_offset);
 				} else {
+					buffer_add_int (buf, 0);
+					buffer_add_int (buf, header->code_size);
+				}
+			}
+		} else {
+			/* local info available */
+			buffer_add_int (buf, locals->num_locals);
+
+			/* types */
+			for (i = 0; i < locals->num_locals; ++i) {
+				/* safety; point to var 0 if the index is out of range */
+				if (locals->locals [i].index < 0 || locals->locals [i].index >= header->num_locals)
+					locals->locals [i].index = 0;
+				buffer_add_typeid (buf, domain, mono_class_from_mono_type (header->locals [locals->locals [i].index]));
+			}
+			for (i = 0; i < locals->num_locals; ++i)
+				buffer_add_int (buf, locals->locals [i].index);
+
+			/* names */
+			for (i = 0; i < locals->num_locals; ++i)
+				buffer_add_string (buf, locals->locals [i].name);
+
+			/* ranges */
+			for (i = 0; i < locals->num_locals; ++i) {
+				if (locals->locals [i].block) {
+					buffer_add_int (buf, locals->locals [i].block->start_offset);
+					buffer_add_int (buf, locals->locals [i].block->end_offset);
+				}
+				else {
 					buffer_add_int (buf, 0);
 					buffer_add_int (buf, header->code_size);
 				}
