@@ -1,0 +1,151 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Entity.Design Error Messages
+;
+EntityStoreGeneratorSchemaNotLoaded=The store metadata has not been generated yet. Call GenerateStoreMetadata first.
+EntityModelGeneratorSchemaNotLoaded=The model metadata has not been generated yet. Call GenerateModelMetadata first.
+StonglyTypedAccessToNullValue=The value for column '{0}' in table '{1}' is DBNull.
+NoPrimaryKeyDefined=The table/view '{0}' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+InvalidTypeForPrimaryKey=The table/view '{0}' has column '{1}' defined as a primary key, but the column type '{2}' is not a valid type for a key in the EDM. An attempt will be made to define the table/view as a read-only table/view.
+CannotCreateEntityWithNoPrimaryKeyDefined=The table/view '{0}' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+TableReferencedByAssociationWasNotFound=The table '{0}' is referenced by a relationship, but cannot be found.
+TableReferencedByTvfWasNotFound=The return table of the function '{0}' is not defined. Either all columns have been excluded or the table has no columns. The function has been excluded. To use the function, you will need to review your schema, specify the return type of the function, and uncomment it.
+UnsupportedDataType=The data type '{0}' is currently not supported for the target .NET Framework version; the column '{2}' in table '{1}' was excluded.
+UnsupportedDataTypeUnknownType=The data type of the column '{0}' is currently not supported so the column '{0}' in table '{1}' was excluded.
+UnsupportedFunctionReturnDataType=The function '{0}' has a return data type '{1}' that is currently not supported for the target .NET Framework version. The function was excluded.
+UnsupportedFunctionParameterDataType=The function '{0}' has a parameter '{1}' at parameter index {2} that has a data type '{3}' which is currently not supported for the target .NET Framework version. The function was excluded.
+UnsupportedDataTypeForTarget=The data type '{0}' is not supported for the target .NET Framework version. The column '{2}' in the table '{1}' was excluded from the model. To use the data type '{0}', target the .NET Framework 4.5 or higher.
+UnsupportedFunctionReturnDataTypeForTarget=The function '{0}' returns the data type '{1}' that is not supported for the target .NET Framework version. The function was excluded from the model. To use the data type '{0}', target the .NET Framework 4.5 or higher.
+UnsupportedFunctionParameterDataTypeForTarget=The function '{0}' has the parameter '{1}' at the parameter index {2} that has the data type '{3}' which is not supported for the target .NET Framework version. The function was excluded from the model. To use the data type '{0}', target the .NET Framework 4.5 or higher.
+UnsupportedDbRelationship=The relationship '{0}' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
+ParameterDirectionNotValid=The function '{0}' has a parameter '{1}' that has a parameter direction value '{2}', which is not valid. Please use 'IN', 'OUT', or 'INOUT'.
+InvalidStringArgument=Parameter '{0}' is not valid. String arguments cannot be empty.
+Serialization_UnknownGlobalItem=The GlobalItem of type '{0}' is not a serializable type.
+ReservedNamespace=The namespace '{0}' is a system namespace, and cannot be used.
+ColumnFacetValueOutOfRange=The facet '{0}' with a value '{1}' is outside the range {2}-{3} specified by the facet description.  The column '{4}' in the table '{5}' was excluded.
+AssociationMissingKeyColumn=The association between '{0}' and '{1}' will not be created because the key column '{2}' was not found to be part of the table definition (see previous warnings).
+SingleStoreEntityContainerExpected=The StoreItemCollection collection must contain exactly one EntityContainer.
+InvalidNonStoreEntityContainer=The EntityContainer '{0}' is not a store EntityContainer.
+ExcludedColumnWasAKeyColumnEntityIsInvalid=The column '{0}' on the table/view '{1}' was excluded, and is a key column.  The table/view has been excluded.  Please fix the entity in the schema file, and uncomment.
+ExcludedColumnWasAKeyColumnEntityIsReadOnly=The column '{0}' on the table/view '{1}' was excluded, and is a key column.  The remaining key(s) were used and table/view has been created as read-only.
+ModelGeneration_UnGeneratableType=The GlobalItem of type '{0}' has no model generation patterns defined.
+DuplicateEntityContainerName=An EntityContainer with the name '{0}' already exists in the EdmItemCollection containing the EntityContainer '{1}'. Please choose a different model EntityContainer name.
+ProviderFactoryReturnedNullFactory=The '{0}' DbProviderFactory returned a null value from the CreateConnection method.
+ProviderSchemaErrors=The provider returned schema mapping information that is not valid.
+InvalidNamespaceNameArgument=The namespaceName parameter '{0}' contains characters that are not valid.
+InvalidEntityContainerNameArgument=The modelEntityContainerName parameter '{0}' contains characters that are not valid.
+EntityClient_InvalidStoreProvider=The specified store provider '{0}' cannot be found in the configuration, or '{0}' is not valid.
+DbProviderServicesInformationLocationPath=DbProviderServices://{0}/{1}
+UnsupportedForeignKeyPattern=The relationship '{0}' uses the set of foreign keys '{1}' that are partially contained in the set of primary keys '{2}' of the table '{3}'.  The set of foreign keys must be fully contained in the set of primary keys, or fully not contained in the set of primary keys to be mapped to a model.
+UnsupportedQueryViewInEntityContainerMapping=The EntitySetMapping in EntityContainerMapping for entity container '{0}' contains a query view. Query views are not allowed in compile time view generation, so the view for this EntityContainerMapping will not be generated.
+SharedForeignKey=Foreign key constraint '{0}' has been omitted from the storage model. Column '{1}' of table '{2}' is a foreign key participating in multiple relationships. A one-to-one Entity Model will not validate since data inconsistency is possible.
+UnmappedFunctionImport=The function import '{0}' is not mapped to a store function. A function import needs to be mapped for successful execution.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.EntityModel.EntityClassGenerator
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+CannotChangePropertyReturnType=The return data type of property '{0}' on the type '{1}' cannot be changed.
+CannotChangePropertyReturnTypeToNull=The return data type of property '{0}' on the type '{1}' cannot be changed to null.
+CodeGenSourceFilePathIsNotAFile=The parameter must specify a single file, not multiple.
+InvalidAttributeSuppliedForType=The custom attribute supplied for type '{0}' is not valid.
+InvalidMemberSuppliedForType=The additional member supplied for type '{0}' is not valid.
+InvalidInterfaceSuppliedForType=The additional interface supplied for type '{0}' is not valid.
+InvalidAttributeSuppliedForProperty=The custom attribute supplied for property '{0}' is not valid.
+InvalidGetStatementSuppliedForProperty=The additional get statement supplied for property '{0}' is not valid.
+InvalidSetStatementSuppliedForProperty=The additional Set statement supplied for property '{0}' is not valid.
+PropertyExistsWithDifferentCase=The property '{0}' differs only in case from an existing property, and is not compatible with the current language option.
+EntitySetExistsWithDifferentCase=The entity set '{0}' differs only in case from an existing entity set, and is not compatible with the current language option.
+ItemExistsWithDifferentCase=The {0} '{1}' differs only in case from an existing {0}, and is not compatible with the current language option.
+NullAdditionalSchema=The value in the parameter {0} at index {1} is null.
+DuplicateClassName=The {0} '{1}' has the same name as the {2} '{1}'. Duplicate names are not allowed. You must change the name of either the {0} or the {2}.
+TargetEntityFrameworkVersionToNewForEntityClassGenerator=The EntityClassGenerator is only for use with EntityFrameworkVersions.Version1 and the schemas provided have newer versions of the Model schema.  Consider using EntityCodeGenerator or a template.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.EntityModel.Emitters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MissingPropertyDocumentation=There are no comments for property {0} in the schema.
+MissingComplexTypeDocumentation=There are no comments for ComplexType {0} in the schema.
+MissingDocumentation=There are no comments for {0} in the schema.
+MissingDocumentationNoName=There are no comments in the schema.
+NamespaceComments=Original file name: {0}\nGeneration date: {1}\n
+FactoryMethodSummaryComment=Create a new {0} object.
+FactoryParamCommentGeneral=Initial value of {0}.
+CtorSummaryComment=Initialize a new {0} object.
+EmptyCtorSummaryComment=Initializes a new {0} object using the connection string found in the '{1}' section of the application configuration file.
+GeneratedNavigationPropertyNameConflict=The NavigationProperty '{0}' on the type '{1}' is the source of a generated property '{2}' which conflicts with a member of the same name.
+GeneratedPropertyAccessibilityConflict=Property '{0}' has '{1}' Get property and '{2}' Set property accessibility specified. {1} and {2} modifiers cannot be combined within a single Property.
+EntityTypeAndSetAccessibilityConflict=EntityType '{0}' has '{1}' accessibility and EntitySet '{2}' has a get property with '{3}' accessibility. The get property of the EntitySet must not have less restrictive access than the containing EntityType has.
+GeneratedFactoryMethodNameConflict=The member '{0}' on the type '{1}' conflicts with the generated factory method.
+MetadataItemErrorsFoundDuringGeneration=Errors Found During Generation:
+UnableToGenerateForeignKeyPropertiesForV1=Foreign keys may only be generated when targeting version 4.0 of the .NET Framework or higher.
+UnableToGenerateFunctionImportParameterName=Unable to generate function import parameter name for the parameter '{0}' of the store function '{1}'. The store function will be ignored and the function import will not be generated.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Entity.Design.EntityViewGenerator
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TypeComments=The type contains views for EntitySets and AssociationSets that were generated at design time.
+GetViewAtMethodComments=The method returns the view for the index given.
+ConstructorComments=The constructor stores the views for the extents and also the hash values generated based on the metadata and mapping closure and views.
+IndividualViewComments=return view for {0}
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Entity.Design.MetadataItemCollectionFactory
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TargetVersionSchemaVersionMismatch=The target Entity Framework version requires the edmx schema version {0} or lower. The specified schema is version {1}.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Entity.Design.PluralizationServices
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DuplicateEntryInUserDictionary=The {0} value '{1}' already exists in the user-defined dictionary.
+UnsupportedLocaleForPluralizationServices=The culture '{0}' is not supported.   Pluralization is currently only supported for the English language.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; CodeGeneration Templates
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Template_DuplicateTopLevelType=The type name '{0}' is used for both an EntityContainer and a type.  Duplicates are not allowed, please change one of the names.
+Template_ConflictingGeneratedNavPropName=The NavigationProperty '{0}' on the type '{1}' is the source of a generated property '{2}' which conflicts with a member of the same name.
+Template_FactoryMethodNameConflict=The member '{0}' on the type '{1}' conflicts with the generated factory method.
+Template_CaseInsensitiveTypeConflict=The Type '{0}' is not unique.  This may be caused by the types only differing in case which is not compatible with the current language option.
+Template_CaseInsensitiveEntitySetConflict=The EntitySet '{0}.{1}' differs only in case from an existing EntitySet, and is not compatible with the current language option.
+Template_CaseInsensitiveMemberConflict=The Member '{0}.{1}' differs only in case from an existing Member, and is not compatible with the current language option.
+Template_GenCommentAddToMethodCs=Deprecated Method for adding a new object to the {0} EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+Template_GenCommentAddToMethodVb=Deprecated Method for adding a new object to the {0} EntitySet. Consider using the .Add method of the associated ObjectSet(Of T) property instead.
+Template_CommentNoDocumentation=No Metadata Documentation available.
+Template_CommentFactoryMethodParam=Initial value of the {0} property.
+Template_GeneratedCodeCommentLine1=    This code was generated from a template.
+Template_GeneratedCodeCommentLine2=    Manual changes to this file may cause unexpected behavior in your application.
+Template_GeneratedCodeCommentLine3=    Manual changes to this file will be overwritten if the code is regenerated.
+Template_ContextDefaultCtorComment=Initializes a new {0} object using the connection string found in the '{1}' section of the application configuration file.
+Template_ContextCommonCtorComment=Initialize a new {0} object.
+Template_FactoryMethodComment=Create a new {0} object.
+Template_RegionRelationships=EDM Relationship Metadata
+Template_RegionContexts=Contexts
+Template_RegionObjectSetProperties=ObjectSet Properties
+Template_RegionAddToMethods=AddTo Methods
+Template_RegionFunctionImports=Function Imports
+Template_RegionEntities=Entities
+Template_RegionNavigationProperties=Navigation Properties
+Template_RegionComplexTypes=ComplexTypes
+Template_RegionFactoryMethod=Factory Method
+Template_RegionPrimitiveProperties=Primitive Properties
+Template_RegionSimpleProperties=Simple Properties
+Template_RegionComplexProperties=Complex Properties
+Template_RegionEnumTypes=Enums
+Template_RegionConstructors=Constructors
+Template_RegionPartialMethods=Partial Methods
+Template_ReplaceVsItemTemplateToken=Please overwrite the replacement token '$edmxInputFile$' with the actual name of the .edmx file you would like to generate from.
+Template_CurrentlyRunningTemplate=Currently Running Template
+Template_UnsupportedSchema=The input file appears to be using a schema version not supported by this template. This may lead to compile errors. Please use 'Add New Generated Item' to add an updated template.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; EntityCodeGenerator
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+EdmSchemaNotValid=The EDM Schema argument is not valid.
+EdmSchemaFileNotFound=Could not find file '{0}'.
+EntityCodeGenTargetTooLow=The EntityCodeGenerator is not for targeting EntityFrameworkVersions.Version1.  Consider using EntityClassGenerator or a template.
+DefaultTargetVersionTooLow=The default target Entity Framework version requires the edmx schema version {0} or lower. The specified schema is version {1}. To avoid this warning specify the target Entity Framework version explicitly. You can do this by using the EdmGen.exe command-line tool with the targetVersion option, or by including the targetEntityFrameworkVersion parameter when calling the GenerateCode method.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Copy from System.Data.Entity
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+EntityClient_DoesNotImplementIServiceProvider=The store provider factory type '{0}' does not implement the IServiceProvider interface. Use a store provider that implements this interface.
+EntityClient_ReturnedNullOnProviderMethod=A null was returned after calling the '{0}' method on a store provider instance of type '{1}'. The store provider might not be functioning correctly.
