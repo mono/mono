@@ -379,6 +379,17 @@ namespace System.IO
             }
             return charBuffer[charPos];
         }
+
+#if MONO
+        //
+        // Used internally by our console, as it previously depended on Peek() being a
+        // routine that would not block.
+        //
+        internal bool DataAvailable ()
+        {
+            return charPos < charLen;
+        }
+#endif
         
         public override int Read() {
             if (stream == null)
