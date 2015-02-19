@@ -240,6 +240,9 @@ namespace System.IO {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public unsafe virtual void Write(double value)
         {
+#if MONO
+            OutStream.Write (Mono.Security.BitConverterLE.GetBytes (value), 0, 8);
+#else
             ulong TmpValue = *(ulong *)&value;
             _buffer[0] = (byte) TmpValue;
             _buffer[1] = (byte) (TmpValue >> 8);
@@ -250,6 +253,7 @@ namespace System.IO {
             _buffer[6] = (byte) (TmpValue >> 48);
             _buffer[7] = (byte) (TmpValue >> 56);
             OutStream.Write(_buffer, 0, 8);
+#endif
         }
 
         public virtual void Write(decimal value)
@@ -343,12 +347,16 @@ namespace System.IO {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public unsafe virtual void Write(float value)
         {
+#if MONO
+            OutStream.Write (Mono.Security.BitConverterLE.GetBytes (value), 0, 4);
+#else
             uint TmpValue = *(uint *)&value;
             _buffer[0] = (byte) TmpValue;
             _buffer[1] = (byte) (TmpValue >> 8);
             _buffer[2] = (byte) (TmpValue >> 16);
             _buffer[3] = (byte) (TmpValue >> 24);
             OutStream.Write(_buffer, 0, 4);
+#endif
         }
     
     

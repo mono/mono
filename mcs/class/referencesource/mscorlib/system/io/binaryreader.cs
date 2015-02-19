@@ -226,13 +226,20 @@ namespace System.IO {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public virtual unsafe float ReadSingle() {
             FillBuffer(4);
+#if MONO
+            return Mono.Security.BitConverterLE.ToSingle (m_buffer, 0);
+#else
             uint tmpBuffer = (uint)(m_buffer[0] | m_buffer[1] << 8 | m_buffer[2] << 16 | m_buffer[3] << 24);
             return *((float*)&tmpBuffer);
+#endif
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         public virtual unsafe double ReadDouble() {
             FillBuffer(8);
+#if MONO
+            return Mono.Security.BitConverterLE.ToDouble (m_buffer, 0);
+#else
             uint lo = (uint)(m_buffer[0] | m_buffer[1] << 8 |
                 m_buffer[2] << 16 | m_buffer[3] << 24);
             uint hi = (uint)(m_buffer[4] | m_buffer[5] << 8 |
@@ -240,6 +247,7 @@ namespace System.IO {
 
             ulong tmpBuffer = ((ulong)hi) << 32 | lo;
             return *((double*)&tmpBuffer);
+#endif
         }
 
         public virtual decimal ReadDecimal() {
