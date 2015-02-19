@@ -148,6 +148,11 @@ namespace System.IO
 		}
 #endif
 
+		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options, string msgPath, bool bFromProxy, bool useLongPath, bool checkHost)
+			: this (path, mode, access, share, bufferSize, false, options)
+		{
+		}
+
 		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync, bool anonymous)
 			: this (path, mode, access, share, bufferSize, anonymous, isAsync ? FileOptions.Asynchronous : FileOptions.None)
 		{

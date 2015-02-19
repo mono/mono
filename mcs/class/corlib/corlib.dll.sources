@@ -362,12 +362,6 @@ System.IO/PathTooLongException.cs
 System.IO/SearchOption.cs
 System.IO/SearchPattern.cs
 System.IO/SeekOrigin.cs
-System.IO/StreamReader.cs
-System.IO/StreamWriter.cs
-System.IO/StringReader.cs
-System.IO/StringWriter.cs
-System.IO/TextReader.cs
-System.IO/TextWriter.cs
 System.IO/UnexceptionalStreamReader.cs
 System.IO/UnexceptionalStreamWriter.cs
 System.IO/UnmanagedMemoryAccessor.cs
@@ -1413,6 +1407,7 @@ System.Collections.Concurrent/ConcurrentOrderedList.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 System.Threading/ThreadLocal.cs
 
+ReferenceSources/__ConsoleStream.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
@@ -1569,6 +1564,12 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/io/__error.cs
 ../../../external/referencesource/mscorlib/system/io/memorystream.cs
 ../../../external/referencesource/mscorlib/system/io/stream.cs
+../../../external/referencesource/mscorlib/system/io/streamreader.cs
+../../../external/referencesource/mscorlib/system/io/streamwriter.cs
+../../../external/referencesource/mscorlib/system/io/stringreader.cs
+../../../external/referencesource/mscorlib/system/io/stringwriter.cs
+../../../external/referencesource/mscorlib/system/io/textreader.cs
+../../../external/referencesource/mscorlib/system/io/textwriter.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
