@@ -212,7 +212,7 @@ namespace System
 			try {
 				return new FileStream (handle, access, false, bufferSize, false, bufferSize == 0);
 			} catch (IOException) {
-				return new NullStream ();
+				return Stream.Null;
 			}
 		}
 
