@@ -18,5 +18,10 @@ namespace System
 		static public void Log (string message)
 		{
 		}
+
+		[Conditional("_DEBUG")]
+		internal static void Perf (bool expr, string msg)
+		{
+		}
 	}
 }

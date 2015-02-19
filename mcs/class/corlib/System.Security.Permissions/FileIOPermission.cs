@@ -112,6 +112,10 @@ namespace System.Security.Permissions {
 			throw new NotImplementedException ();
 		}
 
+		internal FileIOPermission (FileIOPermissionAccess access, string[] pathList, bool checkForDuplicates, bool needFullPath)
+		{
+		}
+
 		public FileIOPermissionAccess AllFiles {
 			get { return m_AllFilesAccess; } 
 			set {
