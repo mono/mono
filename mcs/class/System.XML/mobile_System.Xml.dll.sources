@@ -3,6 +3,8 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 Dummy.cs
+System.Xml.Res.cs
+System.Xml.Utils.Res.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/Assembly.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/ISourceLineInfo.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/ListBase.cs
@@ -480,7 +482,6 @@ Dummy.cs
 ../../../external/referencesource/System.Xml/System/Xml/Xslt/XsltException.cs
 ../../../external/referencesource/System.Xml/System/Xml/Xslt/XslTransform.cs
 ../../../external/referencesource/System.Xml/System/Xml/Xslt/XsltSettings.cs
-Res.cs
 System.Xml.Serialization/CodeGenerationOptions.cs
 System.Xml.Serialization/CodeIdentifier.cs
 System.Xml.Serialization/CodeIdentifiers.cs
