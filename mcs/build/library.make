@@ -68,7 +68,7 @@ endif
 
 ifdef RESOURCE_STRINGS
 ifdef BOOTSTRAP_PROFILE
-MCS_FLAGS_INTERNAL += --getresourcestrings:$(RESOURCE_STRINGS)
+MCS_FLAGS_INTERNAL += $(RESOURCE_STRINGS:%=--getresourcestrings:%)
 endif
 endif
 
