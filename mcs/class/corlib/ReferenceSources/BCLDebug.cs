@@ -2,6 +2,14 @@ using System.Diagnostics;
 
 namespace System
 {
+    internal enum LogLevel {
+        Trace  = 0,
+        Status = 20,
+        Warning= 40,
+        Error  = 50,
+        Panic  = 100,
+    }
+
 	static class BCLDebug
 	{
 		[Conditional("_DEBUG")]
@@ -16,6 +24,16 @@ namespace System
 
 		[Conditional("_DEBUG")]
 		static public void Log (string message)
+		{
+		}
+
+		[Conditional("_DEBUG")]
+		static public void Log (string switchName, string message)
+		{
+		}
+
+		[Conditional("_DEBUG")]
+		public static void Log (string switchName, LogLevel level, params object[] messages)
 		{
 		}
 
