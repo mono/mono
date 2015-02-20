@@ -11,23 +11,22 @@
     <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
-    
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>
-    </RootNamespace>
     <AssemblyName>System.Xml</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,618,612,642</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;CONFIGURATION_DEP;MONO_HYBRID_SYSTEM_XML</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <OutputPath>..\lib\net_4_5</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoStdLib>false</NoStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,6 +35,9 @@
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <OutputPath>..\lib\net_4_5</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoStdLib>false</NoStdLib>
   </PropertyGroup>
   <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
   Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
@@ -49,177 +51,6 @@
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="Mono.Xml.Schema\XmlSchemaValidatingReader.cs" />
-    <Compile Include="Mono.Xml.Schema\XsdIdentityPath.cs" />
-    <Compile Include="Mono.Xml.Schema\XsdIdentityState.cs" />
-    <Compile Include="Mono.Xml.Schema\XsdKeyTable.cs" />
-    <Compile Include="Mono.Xml.Schema\XsdParticleValidationState.cs" />
-    <Compile Include="Mono.Xml.Schema\XsdValidatingReader.cs" />
-    <Compile Include="Mono.Xml.Schema\XsdWildcard.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathDocument.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathDocument2.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathDocumentBuilder.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathDocumentBuilder2.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathDocumentWriter.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathDocumentWriter2.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathNavigator.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathNavigator2.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathNode.cs" />
-    <Compile Include="Mono.Xml.XPath\DTMXPathNode2.cs" />
-    <Compile Include="Mono.Xml.XPath\IdPattern.cs" />
-    <Compile Include="Mono.Xml.XPath\KeyPattern.cs" />
-    <Compile Include="Mono.Xml.XPath\LocationPathPattern.cs" />
-    <Compile Include="Mono.Xml.XPath\Pattern.cs" />
-    <Compile Include="Mono.Xml.XPath\UnionPattern.cs" />
-    <Compile Include="Mono.Xml.XPath\XPathEditableDocument.cs" />
-    <Compile Include="Mono.Xml.XPath\XPathNavigatorReader.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslApplyImports.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslApplyTemplates.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslAttribute.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslAvt.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslCallTemplate.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslChoose.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslComment.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslCompiledElement.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslCopy.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslCopyOf.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslElement.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslFallback.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslForEach.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslIf.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslLiteralElement.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslMessage.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslNotSupportedOperation.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslNumber.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslOperation.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslProcessingInstruction.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslTemplateContent.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslText.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslValueOf.cs" />
-    <Compile Include="Mono.Xml.Xsl.Operations\XslVariable.cs" />
-    <Compile Include="Mono.Xml.Xsl\Attribute.cs" />
-    <Compile Include="Mono.Xml.Xsl\Compiler.cs" />
-    <Compile Include="Mono.Xml.Xsl\Debug.cs" />
-    <Compile Include="Mono.Xml.Xsl\Emitter.cs" />
-    <Compile Include="Mono.Xml.Xsl\GenericOutputter.cs" />
-    <Compile Include="Mono.Xml.Xsl\HtmlEmitter.cs" />
-    <Compile Include="Mono.Xml.Xsl\MSXslScriptManager.cs" />
-    <Compile Include="Mono.Xml.Xsl\Outputter.cs" />
-    <Compile Include="Mono.Xml.Xsl\ScriptCompilerInfo.cs" />
-    <Compile Include="Mono.Xml.Xsl\TextEmitter.cs" />
-    <Compile Include="Mono.Xml.Xsl\TextOutputter.cs" />
-    <Compile Include="Mono.Xml.Xsl\XmlWriterEmitter.cs" />
-    <Compile Include="Mono.Xml.Xsl\XslAttributeSet.cs" />
-    <Compile Include="Mono.Xml.Xsl\XslDecimalFormat.cs" />
-    <Compile Include="Mono.Xml.Xsl\XslFunctions.cs" />
-    <Compile Include="Mono.Xml.Xsl\XslKey.cs" />
-    <Compile Include="Mono.Xml.Xsl\XslOutput.cs" />
-    <Compile Include="Mono.Xml.Xsl\XslSortEvaluator.cs" />
-    <Compile Include="Mono.Xml.Xsl\XslStylesheet.cs" />
-    <Compile Include="Mono.Xml.Xsl\XsltCompiledContext.cs" />
-    <Compile Include="Mono.Xml.Xsl\XsltDebuggerWrapper.cs" />
-    <Compile Include="Mono.Xml.Xsl\XslTemplate.cs" />
-    <Compile Include="Mono.Xml.Xsl\XslTransformProcessor.cs" />
-    <Compile Include="Mono.Xml\IHasXmlParserContext.cs" />
-    <Compile Include="Mono.Xml\IHasXmlSchemaInfo.cs" />
-    <Compile Include="Mono.Xml\SubtreeXmlReader.cs" />
-    <Compile Include="Mono.Xml\XmlFilterReader.cs" />
-    <Compile Include="Mono.Xml\XmlNodeWriter.cs" />
-    <Compile Include="System.Xml.Schema\BuiltInDatatype.cs" />
-    <Compile Include="System.Xml.Schema\IXmlSchemaInfo.cs" />
-    <Compile Include="System.Xml.Schema\SchemaDataValueType.cs" />
-    <Compile Include="System.Xml.Schema\ValidationEventArgs.cs" />
-    <Compile Include="System.Xml.Schema\ValidationHandler.cs" />
-    <Compile Include="System.Xml.Schema\XmlAtomicValue.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchema.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaAll.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaAnnotated.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaAnnotation.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaAny.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaAnyAttribute.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaAppInfo.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaAttribute.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaAttributeGroup.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaAttributeGroupRef.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaChoice.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaCollection.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaCollectionEnumerator.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaCompilationSettings.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaComplexContent.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaComplexContentExtension.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaComplexContentRestriction.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaComplexType.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaContent.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaContentModel.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaContentProcessing.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaContentType.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaDatatype.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaDatatypeVariety.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaDerivationMethod.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaDocumentation.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaElement.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaEnumerationFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaException.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaExternal.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaForm.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaFractionDigitsFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaGroup.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaGroupBase.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaGroupRef.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaIdentityConstraint.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaImport.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaInclude.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaInference.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaInferenceException.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaInfo.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaKey.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaKeyref.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaLengthFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaMaxExclusiveFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaMaxInclusiveFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaMaxLengthFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaMinExclusiveFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaMinInclusiveFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaMinLengthFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaNotation.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaNumericFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaObject.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaObjectCollection.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaObjectEnumerator.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaObjectTable.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaParticle.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaPatternFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaReader.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaRedefine.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSequence.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSerializer.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSimpleContent.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSimpleContentExtension.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSimpleContentRestriction.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSimpleType.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSimpleTypeContent.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSimpleTypeList.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSimpleTypeRestriction.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaSimpleTypeUnion.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaTotalDigitsFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaType.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaUnique.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaUse.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaUtil.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaValidationException.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaValidationFlags.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaValidator.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaValidity.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaWhiteSpaceFacet.cs" />
-    <Compile Include="System.Xml.Schema\XmlSchemaXPath.cs" />
-    <Compile Include="System.Xml.Schema\XmlSeverityType.cs" />
-    <Compile Include="System.Xml.Schema\XmlTypeCode.cs" />
-    <Compile Include="System.Xml.Schema\XmlValueConverter.cs" />
-    <Compile Include="System.Xml.Schema\XmlValueGetter.cs" />
-    <Compile Include="System.Xml.Serialization.Advanced\SchemaImporterExtension.cs" />
-    <Compile Include="System.Xml.Serialization.Advanced\SchemaImporterExtensionCollection.cs" />
     <Compile Include="System.Xml.Serialization.Configuration\DateTimeSerializationSection.cs" />
     <Compile Include="System.Xml.Serialization.Configuration\SchemaImporterExtensionElement.cs" />
     <Compile Include="System.Xml.Serialization.Configuration\SchemaImporterExtensionElementCollection.cs" />
@@ -228,7 +59,6 @@
     <Compile Include="System.Xml.Serialization.Configuration\XmlSerializerSection.cs" />
     <Compile Include="System.Xml.Serialization\CodeExporter.cs" />
     <Compile Include="System.Xml.Serialization\CodeGenerationOptions.cs" />
-    <Compile Include="System.Xml.Serialization\CodeIdentifier.cs" />
     <Compile Include="System.Xml.Serialization\CodeIdentifiers.cs" />
     <Compile Include="System.Xml.Serialization\ImportContext.cs" />
     <Compile Include="System.Xml.Serialization\IXmlSerializable.cs" />
@@ -291,11 +121,9 @@
     <Compile Include="System.Xml.Serialization\XmlReflectionImporter.cs" />
     <Compile Include="System.Xml.Serialization\XmlReflectionMember.cs" />
     <Compile Include="System.Xml.Serialization\XmlRootAttribute.cs" />
-    <Compile Include="System.Xml.Serialization\XmlSchemaEnumerator.cs" />
     <Compile Include="System.Xml.Serialization\XmlSchemaExporter.cs" />
     <Compile Include="System.Xml.Serialization\XmlSchemaImporter.cs" />
     <Compile Include="System.Xml.Serialization\XmlSchemaProviderAttribute.cs" />
-    <Compile Include="System.Xml.Serialization\XmlSchemas.cs" />
     <Compile Include="System.Xml.Serialization\XmlSerializationCollectionFixupCallback.cs" />
     <Compile Include="System.Xml.Serialization\XmlSerializationFixupCallback.cs" />
     <Compile Include="System.Xml.Serialization\XmlSerializationGeneratedCode.cs" />
@@ -309,7 +137,6 @@
     <Compile Include="System.Xml.Serialization\XmlSerializerAssemblyAttribute.cs" />
     <Compile Include="System.Xml.Serialization\XmlSerializerFactory.cs" />
     <Compile Include="System.Xml.Serialization\XmlSerializerImplementation.cs" />
-    <Compile Include="System.Xml.Serialization\XmlSerializerNamespaces.cs" />
     <Compile Include="System.Xml.Serialization\XmlSerializerVersionAttribute.cs" />
     <Compile Include="System.Xml.Serialization\XmlTextAttribute.cs" />
     <Compile Include="System.Xml.Serialization\XmlTypeAttribute.cs" />
@@ -319,123 +146,1755 @@
     <Compile Include="System.Xml.Serialization\XmlTypeMapMemberElement.cs" />
     <Compile Include="System.Xml.Serialization\XmlTypeMapMemberNamespaces.cs" />
     <Compile Include="System.Xml.Serialization\XmlTypeMapping.cs" />
-    <Compile Include="System.Xml.XPath\DefaultContext.cs" />
-    <Compile Include="System.Xml.XPath\Expression.cs" />
-    <Compile Include="System.Xml.XPath\Iterator.cs" />
-    <Compile Include="System.Xml.XPath\IXPathNavigable.cs" />
-    <Compile Include="System.Xml.XPath\Tokenizer.cs" />
-    <Compile Include="System.Xml.XPath\XmlCaseOrder.cs" />
-    <Compile Include="System.Xml.XPath\XmlDataType.cs" />
-    <Compile Include="System.Xml.XPath\XmlSortOrder.cs" />
-    <Compile Include="System.Xml.XPath\XPathComparer.cs" />
-    <Compile Include="System.Xml.XPath\XPathDocument.cs" />
-    <Compile Include="System.Xml.XPath\XPathException.cs" />
-    <Compile Include="System.Xml.XPath\XPathExpression.cs" />
-    <Compile Include="System.Xml.XPath\XPathItem.cs" />
-    <Compile Include="System.Xml.XPath\XPathNamespaceScope.cs" />
-    <Compile Include="System.Xml.XPath\XPathNavigator.cs" />
-    <Compile Include="System.Xml.XPath\XPathNodeIterator.cs" />
-    <Compile Include="System.Xml.XPath\XPathNodeType.cs" />
-    <Compile Include="System.Xml.XPath\XPathResultType.cs" />
-    <Compile Include="System.Xml.Xsl\IXsltContextFunction.cs" />
-    <Compile Include="System.Xml.Xsl\IXsltContextVariable.cs" />
-    <Compile Include="System.Xml.Xsl\XslCompiledTransform.cs" />
-    <Compile Include="System.Xml.Xsl\XsltArgumentList.cs" />
-    <Compile Include="System.Xml.Xsl\XsltCompileException.cs" />
-    <Compile Include="System.Xml.Xsl\XsltContext.cs" />
-    <Compile Include="System.Xml.Xsl\XsltException.cs" />
-    <Compile Include="System.Xml.Xsl\XsltMessageEncounteredEventArgs.cs" />
-    <Compile Include="System.Xml.Xsl\XsltMessageEncounteredEventHandler.cs" />
-    <Compile Include="System.Xml.Xsl\XslTransform.cs" />
-    <Compile Include="System.Xml.Xsl\XsltSettings.cs" />
-    <Compile Include="System.Xml\ConformanceLevel.cs" />
-    <Compile Include="System.Xml\DefaultXmlWriter.cs" />
-    <Compile Include="System.Xml\DTDAutomata.cs" />
-    <Compile Include="System.Xml\DTDObjectModel.cs" />
-    <Compile Include="System.Xml\DtdProcessing.cs" />
-    <Compile Include="System.Xml\DTDReader.cs" />
-    <Compile Include="System.Xml\DTDValidatingReader2.cs" />
-    <Compile Include="System.Xml\EntityHandling.cs" />
-    <Compile Include="System.Xml\EntityResolvingXmlReader.cs" />
-    <Compile Include="System.Xml\Formatting.cs" />
-    <Compile Include="System.Xml\IHasXmlChildNode.cs" />
-    <Compile Include="System.Xml\IHasXmlNode.cs" />
-    <Compile Include="System.Xml\IXmlLineInfo.cs" />
-    <Compile Include="System.Xml\IXmlNamespaceResolver.cs" />
-    <Compile Include="System.Xml\MonoFIXAttribute.cs" />
-    <Compile Include="System.Xml\NamespaceHandling.cs" />
-    <Compile Include="System.Xml\NameTable.cs" />
-    <Compile Include="System.Xml\NewLineHandling.cs" />
-    <Compile Include="System.Xml\ReadState.cs" />
-    <Compile Include="System.Xml\ValidationType.cs" />
-    <Compile Include="System.Xml\WhitespaceHandling.cs" />
-    <Compile Include="System.Xml\WriteState.cs" />
-    <Compile Include="System.Xml\XmlAttribute.cs" />
-    <Compile Include="System.Xml\XmlAttributeCollection.cs" />
-    <Compile Include="System.Xml\XmlCDataSection.cs" />
-    <Compile Include="System.Xml\XmlChar.cs" />
-    <Compile Include="System.Xml\XmlCharacterData.cs" />
-    <Compile Include="System.Xml\XmlComment.cs" />
-    <Compile Include="System.Xml\XmlConstructs.cs" />
-    <Compile Include="System.Xml\XmlConvert.cs" />
-    <Compile Include="System.Xml\XmlDateTimeSerializationMode.cs" />
-    <Compile Include="System.Xml\XmlDeclaration.cs" />
-    <Compile Include="System.Xml\XmlDocument.cs" />
-    <Compile Include="System.Xml\XmlDocumentFragment.cs" />
-    <Compile Include="System.Xml\XmlDocumentNavigator.cs" />
-    <Compile Include="System.Xml\XmlDocumentType.cs" />
-    <Compile Include="System.Xml\XmlElement.cs" />
-    <Compile Include="System.Xml\XmlEntity.cs" />
-    <Compile Include="System.Xml\XmlEntityReference.cs" />
-    <Compile Include="System.Xml\XmlException.cs" />
-    <Compile Include="System.Xml\XmlImplementation.cs" />
-    <Compile Include="System.Xml\XmlInputStream.cs" />
-    <Compile Include="System.Xml\XmlIteratorNodeList.cs" />
-    <Compile Include="System.Xml\XmlLinkedNode.cs" />
-    <Compile Include="System.Xml\XmlNamedNodeMap.cs" />
-    <Compile Include="System.Xml\XmlNameEntry.cs" />
-    <Compile Include="System.Xml\XmlNameEntryCache.cs" />
-    <Compile Include="System.Xml\XmlNamespaceManager.cs" />
-    <Compile Include="System.Xml\XmlNamespaceScope.cs" />
-    <Compile Include="System.Xml\XmlNameTable.cs" />
-    <Compile Include="System.Xml\XmlNode.cs" />
-    <Compile Include="System.Xml\XmlNodeArrayList.cs" />
-    <Compile Include="System.Xml\XmlNodeChangedAction.cs" />
-    <Compile Include="System.Xml\XmlNodeChangedEventArgs.cs" />
-    <Compile Include="System.Xml\XmlNodeChangedEventHandler.cs" />
-    <Compile Include="System.Xml\XmlNodeList.cs" />
-    <Compile Include="System.Xml\XmlNodeListChildren.cs" />
-    <Compile Include="System.Xml\XmlNodeOrder.cs" />
-    <Compile Include="System.Xml\XmlNodeReader2.cs" />
-    <Compile Include="System.Xml\XmlNodeReaderImpl.cs" />
-    <Compile Include="System.Xml\XmlNodeType.cs" />
-    <Compile Include="System.Xml\XmlNotation.cs" />
-    <Compile Include="System.Xml\XmlOutputMethod.cs" />
-    <Compile Include="System.Xml\XmlParserContext.cs" />
-    <Compile Include="System.Xml\XmlParserInput.cs" />
-    <Compile Include="System.Xml\XmlProcessingInstruction.cs" />
-    <Compile Include="System.Xml\XmlQualifiedName.cs" />
-    <Compile Include="System.Xml\XmlReader.cs" />
-    <Compile Include="System.Xml\XmlReaderBinarySupport.cs" />
-    <Compile Include="System.Xml\XmlReaderSettings.cs" />
-    <Compile Include="System.Xml\XmlResolver.cs" />
-    <Compile Include="System.Xml\XmlSecureResolver.cs" />
-    <Compile Include="System.Xml\XmlSignificantWhitespace.cs" />
-    <Compile Include="System.Xml\XmlSpace.cs" />
-    <Compile Include="System.Xml\XmlText.cs" />
-    <Compile Include="System.Xml\XmlTextReader.cs" />
-    <Compile Include="System.Xml\XmlTextReader2.cs" />
-    <Compile Include="System.Xml\XmlTextWriter2.cs" />
-    <Compile Include="System.Xml\XmlTokenizedType.cs" />
-    <Compile Include="System.Xml\XmlUrlResolver.cs" />
-    <Compile Include="System.Xml\XmlValidatingReader.cs" />
-    <Compile Include="System.Xml\XmlWhitespace.cs" />
-    <Compile Include="System.Xml\XmlWriter.cs" />
-    <Compile Include="System.Xml\XmlWriterSettings.cs" />
-    <Compile Include="System.Xml\XQueryConvert.cs" />
-    <Compile Include="Mono.Xml.Xsl\net_4_5_PatternParser.cs" />
-    <Compile Include="Mono.Xml.Xsl\net_4_5_PatternTokenizer.cs" />
-    <Compile Include="System.Xml.XPath\net_4_5_Parser.cs" />  </ItemGroup>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Assembly.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Assembly.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\ISourceLineInfo.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\ISourceLineInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\ListBase.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\ListBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Pair.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Pair.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QueryReaderSettings.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QueryReaderSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\SourceLineInfo.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\SourceLineInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPathConvert.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPathConvert.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlILCommand.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlILCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlIlGenerator.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlIlGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlNodeKindFlags.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlNodeKindFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlQualifiedNameTest.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlQualifiedNameTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlQueryCardinality.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlQueryCardinality.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlQueryType.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlQueryType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlQueryTypeFactory.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XmlQueryTypeFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XslException.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XslException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\GenerateHelper.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\GenerateHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\IteratorDescriptor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\IteratorDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\OptimizerPatterns.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\OptimizerPatterns.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\StaticDataManager.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\StaticDataManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\TailCallAnalyzer.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\TailCallAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILAnnotation.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILAnnotation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILConstructAnalyzer.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILConstructAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILModule.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILModule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILOptimization.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILOptimization.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILOptimizerVisitor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlILOptimizerVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlIlTrace.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlIlTrace.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlIlTypeHelper.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlIlTypeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlIlVisitor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\IlGen\XmlIlVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilBinary.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilBinary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilChoice.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilChoice.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilCloneVisitor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilCloneVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilDataSource.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilDataSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilExpression.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilFactory.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilFunction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilInvoke.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilInvoke.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilInvokeEarlyBound.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilInvokeEarlyBound.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilInvokeLateBound.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilInvokeLateBound.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilIterator.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilList.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilLiteral.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilLiteral.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilLoop.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilLoop.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilName.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilName.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilNode.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilNodeType.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilNodeType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilParameter.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilPatternFactory.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilPatternFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilPatternVisitor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilPatternVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilReference.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilReference.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilReplaceVisitor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilReplaceVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilScopedVisitor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilScopedVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilSortKey.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilSortKey.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilStrConcat.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilStrConcat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilTargetType.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilTargetType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilTernary.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilTernary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilTypeChecker.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilTypeChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilUnary.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilUnary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilValidationVisitor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilValidationVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilVisitor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilXmlReader.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilXmlReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilXmlWriter.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\QilXmlWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\SerializationHints.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\SerializationHints.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\SubstitutionList.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\SubstitutionList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\WhitespaceRule.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\QIL\WhitespaceRule.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\ContentIterators.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\ContentIterators.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\DecimalFormatter.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\DecimalFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\DocumentOrderComparer.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\DocumentOrderComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\DodSequenceMerge.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\DodSequenceMerge.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\EarlyBoundInfo.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\EarlyBoundInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\NumberFormatter.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\NumberFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\RtfNavigator.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\RtfNavigator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\SetIterators.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\SetIterators.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\SiblingIterators.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\SiblingIterators.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\StringConcat.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\StringConcat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\TreeIterators.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\TreeIterators.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\WhitespaceRuleLookup.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\WhitespaceRuleLookup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\WhitespaceRuleReader.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\WhitespaceRuleReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlAggregates.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlAggregates.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlAttributeCache.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlAttributeCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlCollation.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlCollation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlExtensionFunction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlExtensionFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlILIndex.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlILIndex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlILStorageConverter.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlILStorageConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlIterators.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlIterators.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlNavigatorFilter.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlNavigatorFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlNavigatorStack.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlNavigatorStack.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQueryContext.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQueryContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQueryOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQueryOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQueryRuntime.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQueryRuntime.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQuerySequence.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQuerySequence.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQueryStaticData.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlQueryStaticData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlRawWriterWrapper.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlRawWriterWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlSequenceWriter.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlSequenceWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlSortKey.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlSortKey.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlSortKeyAccumulator.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XmlSortKeyAccumulator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XslNumber.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XslNumber.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XsltConvert.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XsltConvert.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XsltFunctions.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XsltFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XsltLibrary.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Runtime\XsltLibrary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\IXPathEnvironment.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\IXPathEnvironment.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\IXpathBuilder.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\IXpathBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathAxis.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathAxis.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathBuilder.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathCompileException.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathCompileException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathContext.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathOperator.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathOperator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathParser.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathQilFactory.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathQilFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathScanner.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XPath\XPathScanner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Compiler.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Compiler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\CompilerScopeManager.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\CompilerScopeManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Focus.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Focus.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\IErrorHelper.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\IErrorHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\InvokeGenerator.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\InvokeGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\KeyMatchBuilder.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\KeyMatchBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Keywords.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Keywords.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\MatcherBuilder.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\MatcherBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\OutputScopeManager.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\OutputScopeManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\QilGenerator.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\QilGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\QilGeneratorEnv.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\QilGeneratorEnv.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\QilStrConcatenator.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\QilStrConcatenator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Scripts.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Scripts.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Stylesheet.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\Stylesheet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XPathPatternBuilder.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XPathPatternBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XPathPatternParser.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XPathPatternParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XslAst.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XslAst.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XslAstAnalyzer.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XslAstAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XslFlags.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XslFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XslVisitor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XslVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XsltInput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XsltInput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XsltLoader.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XsltLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XsltQilFactory.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\Xslt\XsltQilFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Action.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Action.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ActionFrame.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ActionFrame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ApplyImportsAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ApplyImportsAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ApplyTemplatesAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ApplyTemplatesAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\AttributeAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\AttributeAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\AttributeSetAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\AttributeSetAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Avt.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Avt.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\AvtEvent.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\AvtEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\BeginEvent.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\BeginEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\BuilderInfo.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\BuilderInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CallTemplateAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CallTemplateAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ChooseAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ChooseAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CommentAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CommentAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CompiledAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CompiledAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Compiler.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Compiler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ContainerAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ContainerAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyAttributesAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyAttributesAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyCodeAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyCodeAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyNamespacesAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyNamespacesAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyNodesetAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyNodesetAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyOfAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\CopyOfAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\DbgCompiler.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\DbgCompiler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\DocumentScope.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\DocumentScope.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ElementAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ElementAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\EndEvent.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\EndEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Event.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Event.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ForeachAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ForeachAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\HtmlProps.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\HtmlProps.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\IfAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\IfAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\InputScope.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\InputScope.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\InputScopeManager.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\InputScopeManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\MessageAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\MessageAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NamespaceDecl.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NamespaceDecl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NamespaceEvent.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NamespaceEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NavigatorInput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NavigatorInput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NavigatorOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NavigatorOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NewInstructionAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NewInstructionAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NumberAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\NumberAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\OutKeywords.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\OutKeywords.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\OutputScope.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\OutputScope.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\OutputScopeManager.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\OutputScopeManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\PrefixQname.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\PrefixQname.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ProcessingInstructionAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ProcessingInstructionAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Processor.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Processor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ReaderOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ReaderOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\RecordBuilder.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\RecordBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\RecordOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\RecordOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\RootAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\RootAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\SequentialOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\SequentialOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\SortAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\SortAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\StateMachine.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\StateMachine.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\StringOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\StringOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Stylesheet.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Stylesheet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TemplateAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TemplateAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TemplateBaseAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TemplateBaseAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TemplateLookupAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TemplateLookupAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Templatemanager.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\Templatemanager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TextAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TextAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TextEvent.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TextEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TextOnlyOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TextOnlyOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TextOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TextOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TheQuery.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\TheQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\UseAttributesetsAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\UseAttributesetsAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ValueOfAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\ValueOfAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\VariableAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\VariableAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\WithParamAction.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\WithParamAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\WriterOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\WriterOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\XsltCompileContext.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\XsltCompileContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\XsltDebugger.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\XsltDebugger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\XsltOutput.cs">
+      <Link>referencesource\System.Data.SqlXml\System\Xml\Xsl\XsltOld\XsltOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\InternalApis\NDP_Common\inc\Win8Helpers.cs">
+      <Link>referencesource\System.Xml\InternalApis\NDP_Common\inc\Win8Helpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\AsyncHelper.cs">
+      <Link>referencesource\System.Xml\System\Xml\AsyncHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Base64Decoder.cs">
+      <Link>referencesource\System.Xml\System\Xml\Base64Decoder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Base64Encoder.cs">
+      <Link>referencesource\System.Xml\System\Xml\Base64Encoder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Base64EncoderAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Base64EncoderAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\BinHexDecoder.cs">
+      <Link>referencesource\System.Xml\System\Xml\BinHexDecoder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\BinHexEncoder.cs">
+      <Link>referencesource\System.Xml\System\Xml\BinHexEncoder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\BinHexEncoderAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\BinHexEncoderAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\BitStack.cs">
+      <Link>referencesource\System.Xml\System\Xml\BitStack.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Bits.cs">
+      <Link>referencesource\System.Xml\System\Xml\Bits.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\ByteStack.cs">
+      <Link>referencesource\System.Xml\System\Xml\ByteStack.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\DiagnosticsSwitches.cs">
+      <Link>referencesource\System.Xml\System\Xml\DiagnosticsSwitches.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\EmptyEnumerator.cs">
+      <Link>referencesource\System.Xml\System\Xml\EmptyEnumerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\HWStack.cs">
+      <Link>referencesource\System.Xml\System\Xml\HWStack.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\IApplicationResourceStreamResolver.cs">
+      <Link>referencesource\System.Xml\System\Xml\IApplicationResourceStreamResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\IHasXmlNode.cs">
+      <Link>referencesource\System.Xml\System\Xml\IHasXmlNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\IXmlLineInfo.cs">
+      <Link>referencesource\System.Xml\System\Xml\IXmlLineInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\IXmlNamespaceResolver.cs">
+      <Link>referencesource\System.Xml\System\Xml\IXmlNamespaceResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\LineInfo.cs">
+      <Link>referencesource\System.Xml\System\Xml\LineInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\MTNameTable.cs">
+      <Link>referencesource\System.Xml\System\Xml\MTNameTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\NameTable.cs">
+      <Link>referencesource\System.Xml\System\Xml\NameTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Ref.cs">
+      <Link>referencesource\System.Xml\System\Xml\Ref.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\ValidateNames.cs">
+      <Link>referencesource\System.Xml\System\Xml\ValidateNames.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlCharType.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlCharType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlComplianceUtil.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlComplianceUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlConvert.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlConvert.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlDownloadManager.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlDownloadManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlDownloadManagerAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlDownloadManagerAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlEncoding.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlEncoding.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlException.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlNameTable.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlNameTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlNamespaceScope.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlNamespaceScope.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlNamespacemanager.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlNamespacemanager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlNodeOrder.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlNodeOrder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlNodeType.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlNodeType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlNullResolver.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlNullResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlQualifiedName.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlQualifiedName.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlReservedNs.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlReservedNs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlResolver.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlResolverAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlResolverAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlSecureResolver.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlSecureResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlSecureResolverAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlSecureResolverAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlUrlResolver.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlUrlResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlUrlResolverAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlUrlResolverAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XmlXapResolver.cs">
+      <Link>referencesource\System.Xml\System\Xml\XmlXapResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Assembly\System.Xml.Assembly.cs">
+      <Link>referencesource\System.Xml\System\Xml\Assembly\System.Xml.Assembly.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\BinaryXml\BinXmltoken.cs">
+      <Link>referencesource\System.Xml\System\Xml\BinaryXml\BinXmltoken.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\BinaryXml\SqlUtils.cs">
+      <Link>referencesource\System.Xml\System\Xml\BinaryXml\SqlUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\BinaryXml\XmlBinaryReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\BinaryXml\XmlBinaryReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\BinaryXml\XmlBinaryReaderAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\BinaryXml\XmlBinaryReaderAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\Shape.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\Shape.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\ShapeGenerator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\ShapeGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\XPathDocumentBuilder.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\XPathDocumentBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\XPathDocumentIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\XPathDocumentIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\XPathDocumentNavigator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\XPathDocumentNavigator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\XPathDocumentView.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\XPathDocumentView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\XPathNode.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\XPathNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\XPathNodeHelper.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\XPathNodeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\XPathNodeInfoAtom.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\XPathNodeInfoAtom.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\XPathNodeView.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\XPathNodeView.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Cache\XPathNodeViewPropertyDescriptor.cs">
+      <Link>referencesource\System.Xml\System\Xml\Cache\XPathNodeViewPropertyDescriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\BinaryCompatibility.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\BinaryCompatibility.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\CharEntityEncoderFallback.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\CharEntityEncoderFallback.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\ConformanceLevel.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\ConformanceLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\DtdProcessing.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\DtdProcessing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\EntityHandling.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\EntityHandling.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\HtmlEncodedRawTextWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\HtmlEncodedRawTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\HtmlTernaryTree.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\HtmlTernaryTree.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\HtmlUtf8RawTextWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\HtmlUtf8RawTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\IDtdInfo.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\IDtdInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\IDtdParser.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\IDtdParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\IDtdParserAdapter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\IDtdParserAdapter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\IDtdParserAdapterAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\IDtdParserAdapterAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\IDtdParserAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\IDtdParserAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\IRemovableWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\IRemovableWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\IValidationEventHandling.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\IValidationEventHandling.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\IncrementalReadDecoders.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\IncrementalReadDecoders.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\NamespaceHandling.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\NamespaceHandling.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\NewLineHandling.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\NewLineHandling.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\QueryOutputWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\QueryOutputWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\QueryOutputWriterV1.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\QueryOutputWriterV1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\ReadContentAsBinaryHelper.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\ReadContentAsBinaryHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\ReadContentAsBinaryHelperAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\ReadContentAsBinaryHelperAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\ReadOnlyTernaryTree.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\ReadOnlyTernaryTree.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\ReadState.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\ReadState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\SecureStringHasher.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\SecureStringHasher.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\TextEncodedRawTextWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\TextEncodedRawTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\TextUtf8RawTextWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\TextUtf8RawTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\ValidatingReaderNodeData.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\ValidatingReaderNodeData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\ValidationType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\ValidationType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\WhitespaceHandling.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\WhitespaceHandling.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlAsyncCheckReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlAsyncCheckReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlAsyncCheckWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlAsyncCheckWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlAutoDetectWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlAutoDetectWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlCharCheckingReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlCharCheckingReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlCharCheckingReaderAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlCharCheckingReaderAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlCharCheckingWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlCharCheckingWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlCharCheckingWriterAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlCharCheckingWriterAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlConfiguration.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlConfiguration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlEncodedRawTextWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlEncodedRawTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlEncodedRawTextWriterAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlEncodedRawTextWriterAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlEventCache.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlEventCache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlParserContext.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlParserContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlRawWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlRawWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlRawWriterAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlRawWriterAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlReaderAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlReaderAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlReaderSettings.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlReaderSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlSpace.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlSpace.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlSubtreeReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlSubtreeReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlSubtreeReaderAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlSubtreeReaderAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlTextEncoder.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlTextEncoder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlTextReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlTextReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlTextReaderImpl.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlTextReaderImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlTextReaderImplAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlTextReaderImplAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlTextReaderImplHelpers.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlTextReaderImplHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlTextReaderImplHelpersAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlTextReaderImplHelpersAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlTextWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlUtf8RawTextWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlUtf8RawTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlUtf8RawTextWriterAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlUtf8RawTextWriterAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlValidatingReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlValidatingReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlValidatingReaderImpl.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlValidatingReaderImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlValidatingReaderImplAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlValidatingReaderImplAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWellFormedWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWellFormedWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWellFormedWriterAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWellFormedWriterAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWellFormedWriterHelpers.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWellFormedWriterHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWellFormedWriterHelpersAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWellFormedWriterHelpersAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWrappingReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWrappingReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWrappingReaderAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWrappingReaderAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWrappingWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWrappingWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWrappingWriterAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWrappingWriterAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWriterAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWriterAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XmlWriterSettings.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XmlWriterSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XsdCachingReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XsdCachingReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XsdCachingReaderAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XsdCachingReaderAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XsdValidatingReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XsdValidatingReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Core\XsdValidatingReaderAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Core\XsdValidatingReaderAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\DocumentSchemaValidator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\DocumentSchemaValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\DocumentXPathNavigator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\DocumentXPathNavigator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\DocumentXmlWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\DocumentXmlWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\DomNameTable.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\DomNameTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XPathNodeList.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XPathNodeList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlAttribute.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlAttributeCollection.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlAttributeCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlCDataSection.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlCDataSection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlCharacterData.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlCharacterData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlChildEnumerator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlChildEnumerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlChildNodes.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlChildNodes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlComment.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlComment.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlDeclaration.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlDeclaration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlDocument.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlDocument.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlDocumentFragment.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlDocumentFragment.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlDocumentType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlDocumentType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlDomTextWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlDomTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlElement.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlElement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlElementList.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlElementList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlEntity.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlEntityReference.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlEntityReference.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlEventChangedAction.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlEventChangedAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlImplementation.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlImplementation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlLinkedNode.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlLinkedNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlLoader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlName.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlName.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlNamedNodeMap.SmallXmlNodeList.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlNamedNodeMap.SmallXmlNodeList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlNamedNodemap.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlNamedNodemap.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlNode.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlNodeChangedEventArgs.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlNodeChangedEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlNodeChangedEventHandler.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlNodeChangedEventHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlNodeList.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlNodeList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlNodeReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlNodeReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlNotation.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlNotation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlProcessingInstruction.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlProcessingInstruction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlSignificantWhiteSpace.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlSignificantWhiteSpace.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlText.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlText.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlUnspecifiedAttribute.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlUnspecifiedAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Dom\XmlWhitespace.cs">
+      <Link>referencesource\System.Xml\System\Xml\Dom\XmlWhitespace.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Resolvers\XmlKnownDtds.cs">
+      <Link>referencesource\System.Xml\System\Xml\Resolvers\XmlKnownDtds.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Resolvers\XmlPreloadedResolver.cs">
+      <Link>referencesource\System.Xml\System\Xml\Resolvers\XmlPreloadedResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Resolvers\XmlPreloadedResolverAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Resolvers\XmlPreloadedResolverAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\Asttree.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\Asttree.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\AutoValidator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\AutoValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\BaseProcessor.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\BaseProcessor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\BaseValidator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\BaseValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\BitSet.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\BitSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\Chameleonkey.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\Chameleonkey.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\CompiledidEntityConstraint.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\CompiledidEntityConstraint.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\ConstraintStruct.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\ConstraintStruct.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\ContentValidator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\ContentValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\DataTypeImplementation.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\DataTypeImplementation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\DtdParser.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\DtdParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\DtdParserAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\DtdParserAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\DtdValidator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\DtdValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\FacetChecker.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\FacetChecker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\IXmlSchemaInfo.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\IXmlSchemaInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\NamespaceList.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\NamespaceList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\Parser.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\Parser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\ParserAsync.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\ParserAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\Preprocessor.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\Preprocessor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaAttDef.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaAttDef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaBuilder.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaCollectionCompiler.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaCollectionCompiler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaCollectionpreProcessor.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaCollectionpreProcessor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaDeclBase.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaDeclBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaElementDecl.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaElementDecl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaEntity.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaInfo.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaNames.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaNames.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaNamespacemanager.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaNamespacemanager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaNotation.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaNotation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaSetCompiler.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaSetCompiler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\SchemaType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\SchemaType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\ValidationEventArgs.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\ValidationEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\ValidationEventHandler.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\ValidationEventHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\ValidationState.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\ValidationState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XdrBuilder.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XdrBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XdrValidator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XdrValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlAtomicValue.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlAtomicValue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchema.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchema.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaAll.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaAll.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaAnnotated.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaAnnotated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaAnnotation.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaAnnotation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaAny.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaAny.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaAnyAttribute.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaAnyAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaAppInfo.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaAppInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaAttribute.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaAttributeGroup.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaAttributeGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaAttributeGroupref.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaAttributeGroupref.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaChoice.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaChoice.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaCollection.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaCompilationSettings.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaCompilationSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaComplexContent.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaComplexContent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaComplexContentExtension.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaComplexContentExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaComplexContentRestriction.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaComplexContentRestriction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaComplexType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaComplexType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaContent.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaContent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaContentModel.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaContentModel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaContentProcessing.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaContentProcessing.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaContentType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaContentType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaDataType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaDataType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaDerivationMethod.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaDerivationMethod.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaDocumentation.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaDocumentation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaElement.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaElement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaException.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaExternal.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaExternal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaFacet.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaFacet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaForm.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaForm.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaGroup.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaGroupBase.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaGroupBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaGroupRef.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaGroupRef.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaIdEntityConstraint.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaIdEntityConstraint.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaImport.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaImport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaInclude.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaInclude.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaInfo.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaNotation.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaNotation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaObject.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaObjectCollection.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaObjectCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaObjectTable.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaObjectTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaParticle.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaParticle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaRedefine.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaRedefine.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSequence.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSequence.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSet.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleContent.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleContent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleContentExtension.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleContentExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleContentRestriction.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleContentRestriction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleTypeContent.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleTypeContent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleTypeList.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleTypeList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleTypeRestriction.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleTypeRestriction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleTypeUnion.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSimpleTypeUnion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaSubstitutionGroup.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaSubstitutionGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaUse.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaUse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaValidationException.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaValidationException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaValidator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSchemaValidity.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSchemaValidity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlSeverityType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlSeverityType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlTokenizedType.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlTokenizedType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlTypeCode.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlTypeCode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XmlValueConverter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XmlValueConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XsdBuilder.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XsdBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XsdDateTime.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XsdDateTime.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XsdDuration.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XsdDuration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\XsdValidator.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\XsdValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\Inference\Infer.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\Inference\Infer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Schema\Inference\XmlSchemaInferenceException.cs">
+      <Link>referencesource\System.Xml\System\Xml\Schema\Inference\XmlSchemaInferenceException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\IXPathNavigable.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\IXPathNavigable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathDocument.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathDocument.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathException.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathExpr.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathExpr.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathItem.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathNamespaceScope.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathNamespaceScope.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathNavigator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathNavigator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathNavigatorKeyComparer.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathNavigatorKeyComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathNavigatorReader.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathNavigatorReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathNodeIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathNodeIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\XPathNodeType.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\XPathNodeType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\AbsoluteQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\AbsoluteQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\AstNode.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\AstNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\AttributeQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\AttributeQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\Axis.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\Axis.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\BaseAxisQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\BaseAxisQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\BooleanExpr.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\BooleanExpr.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\BooleanFunctions.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\BooleanFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\CacheAxisQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\CacheAxisQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\CacheChildrenQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\CacheChildrenQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\CacheOutputQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\CacheOutputQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\ChildrenQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\ChildrenQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\ClonableStack.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\ClonableStack.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\CompiledXPathExpr.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\CompiledXPathExpr.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\ContextQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\ContextQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\DescendantBaseQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\DescendantBaseQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\DescendantQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\DescendantQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\DescendantoverDescendantQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\DescendantoverDescendantQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\DocumentorderQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\DocumentorderQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\EmptyQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\EmptyQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\ExtensionQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\ExtensionQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\Filter.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\Filter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\FilterQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\FilterQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\FollowingQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\FollowingQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\FollowingSibling.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\FollowingSibling.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\ForwardPositionQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\ForwardPositionQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\Function.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\Function.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\FunctionQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\FunctionQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\Group.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\Group.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\GroupQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\GroupQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\IdQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\IdQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\IteratorFilter.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\IteratorFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\LogicalExpr.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\LogicalExpr.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\MergeFilterQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\MergeFilterQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\NamespaceQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\NamespaceQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\NodeFunctions.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\NodeFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\NumberFunctions.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\NumberFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\NumericExpr.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\NumericExpr.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\Operand.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\Operand.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\OperandQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\OperandQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\Operator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\Operator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\ParentQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\ParentQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\PrecedingQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\PrecedingQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\PrecedingSibling.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\PrecedingSibling.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\Query.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\Query.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\QueryBuilder.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\QueryBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\ResetableIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\ResetableIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\ReversePositionQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\ReversePositionQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\Root.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\Root.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\SortQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\SortQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\StringFunctions.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\StringFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\UnionExpr.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\UnionExpr.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\ValueQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\ValueQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\Variable.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\Variable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\VariableQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\VariableQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathAncestorIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathAncestorIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathAncestorQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathAncestorQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathArrayIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathArrayIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathAxisIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathAxisIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathChildIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathChildIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathDescendantIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathDescendantIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathEmptyIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathEmptyIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathMultyIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathMultyIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathParser.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathScanner.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathScanner.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathSelectionIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathSelectionIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathSelfQuery.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathSelfQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\XPath\Internal\XPathSingletonIterator.cs">
+      <Link>referencesource\System.Xml\System\Xml\XPath\Internal\XPathSingletonIterator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Xslt\XslCompiledTransform.cs">
+      <Link>referencesource\System.Xml\System\Xml\Xslt\XslCompiledTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Xslt\XslTransform.cs">
+      <Link>referencesource\System.Xml\System\Xml\Xslt\XslTransform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Xslt\XsltArgumentList.cs">
+      <Link>referencesource\System.Xml\System\Xml\Xslt\XsltArgumentList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Xslt\XsltContext.cs">
+      <Link>referencesource\System.Xml\System\Xml\Xslt\XsltContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Xslt\XsltException.cs">
+      <Link>referencesource\System.Xml\System\Xml\Xslt\XsltException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Xslt\XsltSettings.cs">
+      <Link>referencesource\System.Xml\System\Xml\Xslt\XsltSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\misc\HResults.cs">
+      <Link>referencesource\System.Xml\misc\HResults.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\misc\InvariantComparer.cs">
+      <Link>referencesource\System.Xml\misc\InvariantComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\misc\PrivilegedConfigurationManager.cs">
+      <Link>referencesource\System.Xml\misc\PrivilegedConfigurationManager.cs</Link>
+    </Compile>
+    <Compile Include="Dummy.cs" />
+    <Compile Include="Res.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Serialization\XmlSerializerNamespaces.cs">
+      <Link>referencesource\System.Xml\System\Xml\Serialization\XmlSerializerNamespaces.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Serialization\ImportContext.cs">
+      <Link>referencesource\System.Xml\System\Xml\Serialization\ImportContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Serialization\SchemaObjectWriter.cs">
+      <Link>referencesource\System.Xml\System\Xml\Serialization\SchemaObjectWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Serialization\Advanced\SchemaImporterExtension.cs">
+      <Link>referencesource\System.Xml\System\Xml\Serialization\Advanced\SchemaImporterExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Serialization\CodeIdentifier.cs">
+      <Link>referencesource\System.Xml\System\Xml\Serialization\CodeIdentifier.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\external\referencesource\System.Xml\System\Xml\Serialization\XmlSchemas.cs">
+      <Link>referencesource\System.Xml\System\Xml\Serialization\XmlSchemas.cs</Link>
+    </Compile>
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -446,46 +1905,36 @@
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 mono $(ProjectDir)\..\..\..\msvc\scripts\prepare.exe $(ProjectDir)..\.. xml
-$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\System.Xml.XPath\Parser.jay > $(ProjectDir)\System.Xml.XPath\Parser.cs
-echo "#define XSLT_PATTERN" > $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
-$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Mono.Xml.Xsl\PatternParser.jay >> $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
-echo "#define XSLT_PATTERN" > $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
-cat $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\System.Xml.XPath\Parser.jay &gt; $(ProjectDir)\System.Xml.XPath\Parser.cs
+echo "#define XSLT_PATTERN" &gt; $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Mono.Xml.Xsl\PatternParser.jay &gt;&gt; $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
+echo "#define XSLT_PATTERN" &gt; $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
+cat $(ProjectDir)\System.Xml.XPath\Tokenizer.cs &gt;&gt; $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
 
     </PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
  $(ProjectDir)\..\..\..\msvc\scripts\prepare.exe $(ProjectDir)..\.. xml
-$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\System.Xml.XPath\Parser.jay > $(ProjectDir)\System.Xml.XPath\Parser.cs
-echo "#define XSLT_PATTERN" > $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
-$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Mono.Xml.Xsl\PatternParser.jay >> $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
-echo "#define XSLT_PATTERN" > $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
-type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\System.Xml.XPath\Parser.jay &gt; $(ProjectDir)\System.Xml.XPath\Parser.cs
+echo "#define XSLT_PATTERN" &gt; $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Mono.Xml.Xsl\PatternParser.jay &gt;&gt; $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
+echo "#define XSLT_PATTERN" &gt; $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
+type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs &gt;&gt; $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
 
     </PreBuildEvent>
-
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
-
     </PostBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
-
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
-      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System/System-bare-net_4_5.csproj">
-      <Project>{91CDF14E-F60F-4AB7-BC9D-5CBD7E669076}</Project>
-      <Name>System-bare-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_5.csproj">
-      <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
-      <Name>System.Configuration-net_4_5</Name>
-    </ProjectReference>
+    <Folder Include="Properties\" />
+    <Folder Include="referencesource\" />
+    <Folder Include="referencesource\System.Xml\System\Xml\Serialization\" />
+    <Folder Include="referencesource\System.Xml\System\Xml\Serialization\Advanced\" />
+    <Folder Include="System.Xml.Serialization.Advanced\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
 </Project>
-

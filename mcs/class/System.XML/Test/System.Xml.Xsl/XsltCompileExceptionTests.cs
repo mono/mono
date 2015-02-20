@@ -36,7 +36,7 @@ using System.Security.Permissions;
 using System.Security.Policy;
 using System.Xml.Xsl;
 
-namespace MonoCasTests.System.Xml.Xsl
+namespace MonoTests.System.Xml.Xsl
 {
 	[TestFixture]
 	public class XsltCompileExceptionTests {

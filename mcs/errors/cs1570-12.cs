@@ -1,4 +1,4 @@
-// CS1570: XML documentation comment on `Test' is not well-formed XML markup (Cannot insert specified type of node as a child of this node.)
+// CS1570: XML documentation comment on `Test' is not well-formed XML markup (Cannot insert specified type of node as a child of this node. Line 3, position 3.)
 // Line: 13
 // Compiler options: -doc:dummy.xml -warnaserror -warn:1
 

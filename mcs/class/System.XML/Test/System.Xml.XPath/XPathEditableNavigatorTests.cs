@@ -772,6 +772,7 @@ namespace MonoTests.System.Xml.XPath
 		}
 
 		[Test]
+		[Ignore ("Microsoft reference source causes InvalidOperationException")]
 		public void WriteAttributeOnAppendedChild ()
 		{
 			XmlDocument x = new XmlDocument ();
