@@ -117,7 +117,7 @@ namespace System.Resources {
                 {
                     if (localResourceSets.TryGetValue(culture.Name, out rs))
                     {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                         if (FrameworkEventSource.IsInitialized)
                         {
                             FrameworkEventSource.Log.ResourceManagerFoundResourceSetInCacheUnexpected(_mediator.BaseName, _mediator.MainAssembly, culture.Name);
@@ -129,7 +129,7 @@ namespace System.Resources {
                 stream = GetManifestResourceStream(satellite, fileName, ref stackMark);
             }
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized)
             {
                 if (stream != null)
@@ -146,7 +146,7 @@ namespace System.Resources {
             // 4a. Found a stream; create a ResourceSet if possible
             if (createIfNotExists && stream != null && rs == null)
             {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                 if (FrameworkEventSource.IsInitialized)
                 {
                     FrameworkEventSource.Log.ResourceManagerCreatingResourceSet(_mediator.BaseName, _mediator.MainAssembly, culture.Name, fileName);
@@ -167,7 +167,7 @@ namespace System.Resources {
                 }
             }
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (!createIfNotExists && stream != null && rs == null) 
             {
                 if (FrameworkEventSource.IsInitialized)
@@ -220,7 +220,7 @@ namespace System.Resources {
             if (lookForCulture.Name == _mediator.NeutralResourcesCulture.Name &&
                 _mediator.FallbackLoc == UltimateResourceFallbackLocation.MainAssembly)
             {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                 if (FrameworkEventSource.IsInitialized)
                 {
                     FrameworkEventSource.Log.ResourceManagerNeutralResourcesSufficient(_mediator.BaseName, _mediator.MainAssembly, lookForCulture.Name);
@@ -264,7 +264,7 @@ namespace System.Resources {
                 fallbackLocation = (UltimateResourceFallbackLocation)fallback;
             }
             else {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                 if (FrameworkEventSource.IsInitialized) {
                     FrameworkEventSource.Log.ResourceManagerNeutralResourceAttributeMissing(a);
                 }
@@ -507,7 +507,7 @@ namespace System.Resources {
                 }
             }
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized)
             {
                 if (canonicalName != null)
@@ -541,7 +541,7 @@ namespace System.Resources {
             // We should not assume we can skip this security check,
             // which means satellites must always use public manifest resources
             // if you want to support semi-trusted code.  </STRIP>
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (s!=null) {
                 if (FrameworkEventSource.IsInitialized)
                 {
@@ -580,6 +580,7 @@ namespace System.Resources {
 
             catch (FileLoadException fle)
             {
+#if !MONO                
                 // Ignore cases where the loader gets an access
                 // denied back from the OS.  This showed up for
                 // href-run exe's at one point.  
@@ -588,6 +589,7 @@ namespace System.Resources {
                 {
                     Contract.Assert(false, "[This assert catches satellite assembly build/deployment problems - report this message to your build lab & loc engineer]" + Environment.NewLine + "GetSatelliteAssembly failed for culture " + lookForCulture.Name + " and version " + (_mediator.SatelliteContractVersion == null ? _mediator.MainAssembly.GetVersion().ToString() : _mediator.SatelliteContractVersion.ToString()) + " of assembly " + _mediator.MainAssembly.GetSimpleName() + " with error code 0x" + hr.ToString("X", CultureInfo.InvariantCulture) + Environment.NewLine + "Exception: " + fle);
                 }
+#endif
             }
 
             // Don't throw for zero-length satellite assemblies, for compat with v1
@@ -596,7 +598,7 @@ namespace System.Resources {
                 Contract.Assert(false, "[This assert catches satellite assembly build/deployment problems - report this message to your build lab & loc engineer]" + Environment.NewLine + "GetSatelliteAssembly failed for culture " + lookForCulture.Name + " and version " + (_mediator.SatelliteContractVersion == null ? _mediator.MainAssembly.GetVersion().ToString() : _mediator.SatelliteContractVersion.ToString()) + " of assembly " + _mediator.MainAssembly.GetSimpleName() + Environment.NewLine + "Exception: " + bife);
             }
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized)
             {
                 if (satellite != null)

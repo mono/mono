@@ -331,7 +331,7 @@ namespace System.Resources {
             ResourceManagerMediator mediator = new ResourceManagerMediator(this);
             resourceGroveler = new FileBasedResourceGroveler(mediator);
 
-#if !FEATURE_CORECLR   // PAL doesn't support eventing, and we don't compile event providers for coreclr
+#if !FEATURE_CORECLR && !MONO  // PAL doesn't support eventing, and we don't compile event providers for coreclr
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled()) {
                 CultureInfo culture = CultureInfo.InvariantCulture;
                 String defaultResName = GetResourceFileName(culture);
@@ -516,7 +516,7 @@ namespace System.Resources {
 
             _neutralResourcesCulture = ManifestBasedResourceGroveler.GetNeutralResourcesLanguage(MainAssembly, ref _fallbackLoc);
 
-#if !FEATURE_CORECLR   // PAL doesn't support eventing, and we don't compile event providers for coreclr
+#if !FEATURE_CORECLR && !MONO   // PAL doesn't support eventing, and we don't compile event providers for coreclr
             if (_bUsingModernResourceManagement == false)
             {
                 if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled()) {
@@ -576,7 +576,7 @@ namespace System.Resources {
         // creating a new ResourceManager isn't quite the correct behavior.
         public virtual void ReleaseAllResources()
         {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized)
             {
                 FrameworkEventSource.Log.ResourceManagerReleasingResources(BaseNameField, MainAssembly);
@@ -769,7 +769,7 @@ namespace System.Resources {
             CultureInfo foundCulture = null;
             lock (localResourceSets) {
                 if (localResourceSets.TryGetValue(requestedCulture.Name, out rs)) {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                     if (FrameworkEventSource.IsInitialized) {
                         FrameworkEventSource.Log.ResourceManagerFoundResourceSetInCache(BaseNameField, MainAssembly, requestedCulture.Name);
                     }
@@ -782,7 +782,7 @@ namespace System.Resources {
 
             foreach (CultureInfo currentCultureInfo in mgr)
             {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                 if (FrameworkEventSource.IsInitialized)
                 {
                     FrameworkEventSource.Log.ResourceManagerLookingForResourceSet(BaseNameField, MainAssembly, currentCultureInfo.Name);
@@ -790,7 +790,7 @@ namespace System.Resources {
 #endif
                 lock(localResourceSets) {
                     if (localResourceSets.TryGetValue(currentCultureInfo.Name, out rs)) {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                         if (FrameworkEventSource.IsInitialized)
                         {
                             FrameworkEventSource.Log.ResourceManagerFoundResourceSetInCache(BaseNameField, MainAssembly, currentCultureInfo.Name);
@@ -1243,7 +1243,7 @@ namespace System.Resources {
                     culture = Thread.CurrentThread.GetCurrentUICultureNoAppX();
                 }
     
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                 if (FrameworkEventSource.IsInitialized)
                 {
                     FrameworkEventSource.Log.ResourceManagerLookupStarted(BaseNameField, MainAssembly, culture.Name);
@@ -1287,7 +1287,7 @@ namespace System.Resources {
                     }
                 }
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                 if (FrameworkEventSource.IsInitialized)
                 {
                     FrameworkEventSource.Log.ResourceManagerLookupFailed(BaseNameField, MainAssembly, culture.Name);
@@ -1339,7 +1339,7 @@ namespace System.Resources {
                 culture = Thread.CurrentThread.GetCurrentUICultureNoAppX();
             }
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized)
             {
                 FrameworkEventSource.Log.ResourceManagerLookupStarted(BaseNameField, MainAssembly, culture.Name);
@@ -1397,7 +1397,7 @@ namespace System.Resources {
                 }
             }
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized)
             {
                 FrameworkEventSource.Log.ResourceManagerLookupFailed(BaseNameField, MainAssembly, culture.Name);
@@ -1446,7 +1446,7 @@ namespace System.Resources {
             // The config file told us what satellites might be installed.
             int pos = Array.IndexOf(installedSatellites, lookForCulture.Name);
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled()) {
                 if (pos < 0) {
                     FrameworkEventSource.Log.ResourceManagerCultureNotFoundInConfigFile(BaseNameField, MainAssembly, lookForCulture.Name);
@@ -1536,7 +1536,7 @@ namespace System.Resources {
                 for(int i=0; i<satellites.Length; i++) {
                     String cultureName = (String)list[i];
                     satellites[i] = cultureName;
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                     if (FrameworkEventSource.IsInitialized)
                     {
                         FrameworkEventSource.Log.ResourceManagerAddingCultureFromConfigFile(BaseNameField, MainAssembly, cultureName);
