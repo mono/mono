@@ -109,7 +109,7 @@ namespace System.Resources
 
 			protected override void Dispose (bool disposing)
 			{
-				if (_isOpen) {
+				if (!closed) {
 					Marshal.FreeHGlobal (ptr);
 				}
 

@@ -41,7 +41,7 @@ namespace System.IO
 	public class UnmanagedMemoryStream : Stream
 	{
 		long length;
-		bool closed;
+		internal bool closed;
 		long capacity;
 		FileAccess fileaccess;
 		IntPtr initial_pointer;
