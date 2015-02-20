@@ -21,9 +21,7 @@ $(error Unknown framework version)
 endif
 endif
 
-ifdef BOOTSTRAP_PROFILE
-LIB_MCS_FLAGS += --getresourcestrings:../../../external/referencesource/mscorlib/mscorlib.txt
-endif
+RESOURCE_STRINGS = ../../../external/referencesource/mscorlib/mscorlib.txt
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
@@ -64,7 +62,6 @@ EXTRA_DISTFILES = \
 	Test/resources/415628.bin		\
 	Test/resources/Fergie.GED		\
 	Test/resources/culture-*.cs		\
-	../../../external/referencesource/mscorlib/mscorlib.txt		\
 	$(RESOURCE_FILES) \
 	$(TEST_RESOURCES:.resources=.resx)
 

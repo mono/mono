@@ -27,6 +27,8 @@ LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 $(REFERENCE_SOURCES_FLAGS) -uns
 TEST_MCS_FLAGS += -r:System.Configuration
 PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
 
+RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
+
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
 endif

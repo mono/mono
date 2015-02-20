@@ -14,6 +14,8 @@ LIB_MCS_FLAGS = \
 		/r:System.Core.dll \
 		$(RESOURCE_FILES:%=/resource:%)
 
+RESOURCE_STRINGS = ../../../external/referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
+
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += /d:NET_3_0 /r:System.Data.dll /r:System.Configuration.dll
 endif
