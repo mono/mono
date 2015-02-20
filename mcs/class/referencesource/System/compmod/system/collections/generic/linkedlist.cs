@@ -14,13 +14,9 @@ namespace System.Collections.Generic {
 #if SILVERLIGHT
     public class LinkedList<T>: ICollection<T>, System.Collections.ICollection
 #else
-
     [Serializable()]    
     public class LinkedList<T>: ICollection<T>, System.Collections.ICollection
            ,ISerializable, IDeserializationCallback 
-#if MONO
-           , IReadOnlyCollection<T>
-#endif
 #endif
     {
         // This LinkedList is a doubly-Linked circular list.
