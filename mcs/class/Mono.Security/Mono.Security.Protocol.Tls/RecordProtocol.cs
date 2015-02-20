@@ -671,18 +671,23 @@ namespace Mono.Security.Protocol.Tls
 
 		public void SendAlert(AlertDescription description)
 		{
+			#if BROKEN_ALERTS
 			this.SendAlert(new Alert(description));
+			#endif
 		}
 
 		public void SendAlert(
 			AlertLevel			level, 
 			AlertDescription	description)
 		{
+			#if BROKEN_ALERTS
 			this.SendAlert(new Alert(level, description));
+			#endif
 		}
 
 		public void SendAlert(Alert alert)
 		{
+			#if BROKEN_ALERTS
 			AlertLevel level;
 			AlertDescription description;
 			bool close;
@@ -705,6 +710,7 @@ namespace Mono.Security.Protocol.Tls
 			if (close) {
 				this.context.SentConnectionEnd = true;
 			}
+			#endif
 		}
 
 		#endregion
