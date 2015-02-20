@@ -22,7 +22,7 @@ endif
 endif
 
 ifdef BOOTSTRAP_PROFILE
-LIB_MCS_FLAGS += --getresourcestrings:ReferenceSources/mscorlib.txt
+LIB_MCS_FLAGS += --getresourcestrings:../../../external/referencesource/mscorlib/mscorlib.txt
 endif
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
@@ -64,7 +64,7 @@ EXTRA_DISTFILES = \
 	Test/resources/415628.bin		\
 	Test/resources/Fergie.GED		\
 	Test/resources/culture-*.cs		\
-	ReferenceSources/mscorlib.txt		\
+	../../../external/referencesource/mscorlib/mscorlib.txt		\
 	$(RESOURCE_FILES) \
 	$(TEST_RESOURCES:.resources=.resx)
 
