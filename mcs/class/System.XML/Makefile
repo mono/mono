@@ -13,6 +13,10 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
+# FIXME: use below, once mcs got fixed.
+#RESOURCE_STRINGS = ../../../external/referencesource/System.Xml/System.Xml.txt
+#	../../../external/referencesource/System.Data.SqlXml/System.Xml.Utils.txt
+
 PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
 
 LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0618,0612,0642 -unsafe -d:ASYNC -d:DISABLE_CAS_USE -d:MONO_HYBRID_SYSTEM_XML
