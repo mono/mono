@@ -39,7 +39,8 @@ namespace System.Configuration
 	{
 		SectionGroupInfo group;
 		Configuration config;
-		
+		static readonly object lockObject = new object();
+		 
 		internal ConfigurationSectionCollection (Configuration config, SectionGroupInfo group)
 			: base (StringComparer.Ordinal)
 		{
@@ -60,15 +61,17 @@ namespace System.Configuration
 		public ConfigurationSection this [string name]
 		{
 			get {
-				ConfigurationSection sec = BaseGet (name) as ConfigurationSection;
-				if (sec == null) {
-					SectionInfo secData = group.Sections [name] as SectionInfo;
-					if (secData == null) return null;
-					sec = config.GetSectionInstance (secData, true);
-					if (sec == null) return null;
-					BaseSet (name, sec);
+				lock(lockObject) {
+					ConfigurationSection sec = BaseGet (name) as ConfigurationSection;
+					if (sec == null) {
+						SectionInfo secData = group.Sections [name] as SectionInfo;
+						if (secData == null) return null;
+						sec = config.GetSectionInstance (secData, true);
+						if (sec == null) return null;
+						BaseSet (name, sec);
+					}
+					return sec;
 				}
-				return sec;
 			}
 		}
 	
