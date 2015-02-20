@@ -30,12 +30,4 @@ EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES) \
 	Test/Resources/Schemas/*.xsd \
 	Test/System.Runtime.Serialization/one.xml
 
-VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
-ifndef VALID_PROFILE
-LIBRARY_NAME = dummy-System.Runtime.Serialization.dll
-NO_INSTALL = yes
-NO_SIGN_ASSEMBLY = yes
-NO_TEST = yes
-endif
-
 include ../../build/library.make
