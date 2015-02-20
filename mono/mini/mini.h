@@ -105,7 +105,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 107
+#define MONO_AOT_FILE_VERSION 108
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -199,7 +199,6 @@ typedef struct MonoAotFileInfo
 	gpointer extra_method_table;
 	gpointer got_info_offsets;
 	gpointer llvm_got_info_offsets;
-	gpointer methods_end;
 	gpointer unwind_info;
 	gpointer mem_end;
 	gpointer image_table;
@@ -706,7 +705,12 @@ typedef enum {
 	/* Vtype passed as one int array argument */
 	LLVMArgAsIArgs,
 	/* Vtype passed as a set of fp arguments */
-	LLVMArgAsFpArgs
+	LLVMArgAsFpArgs,
+	/*
+	 * Only for returns, a structure which
+	 * consists of floats/doubles.
+	 */
+	LLVMArgFpStruct,
 } LLVMArgStorage;
 
 typedef struct {
@@ -718,12 +722,14 @@ typedef struct {
 	 */
 	LLVMArgStorage pair_storage [8];
 	/*
-	 * Only if storage == LLVMArgAsIArgs/LLVMArgAsFpArgs.
+	 * Only if storage == LLVMArgAsIArgs/LLVMArgAsFpArgs/LLVMArgFpStruct.
 	 * If storage == LLVMArgAsFpArgs, this is the number of arguments
 	 * used to pass the value.
+	 * If storage == LLVMArgFpStruct, this is the number of fields
+	 * in the structure.
 	 */
 	int nslots;
-	/* Only if storage == LLVMArgAsFpArgs (4/8) */
+	/* Only if storage == LLVMArgAsFpArgs/LLVMArgFpStruct (4/8) */
 	int esize;
 } LLVMArgInfo;
 
@@ -1610,6 +1616,7 @@ typedef struct {
 	guint32 got_offset, ex_info_offset, method_info_offset, method_index;
 	/* Symbol used to refer to this method in generated assembly */
 	char *asm_symbol;
+	char *asm_debug_symbol;
 	char *llvm_method_name;
 	int castclass_cache_index;
 
@@ -2588,7 +2595,7 @@ void     mono_resume_unwind                     (MonoContext *ctx) MONO_LLVM_INT
 MonoJitInfo * mono_find_jit_info                (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *res, MonoJitInfo *prev_ji, MonoContext *ctx, MonoContext *new_ctx, char **trace, MonoLMF **lmf, int *native_offset, gboolean *managed) MONO_INTERNAL;
 
 typedef gboolean (*MonoExceptionFrameWalk)      (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data);
-gboolean mono_exception_walk_trace              (MonoException *ex, MonoExceptionFrameWalk func, gpointer user_data);
+MONO_API gboolean mono_exception_walk_trace     (MonoException *ex, MonoExceptionFrameWalk func, gpointer user_data);
 void mono_restore_context                       (MonoContext *ctx) MONO_INTERNAL;
 guint8* mono_jinfo_get_unwind_info              (MonoJitInfo *ji, guint32 *unwind_info_len) MONO_INTERNAL;
 int  mono_jinfo_get_epilog_size                 (MonoJitInfo *ji) MONO_INTERNAL;
@@ -2620,7 +2627,7 @@ void mono_set_cast_details                      (MonoClass *from, MonoClass *to)
  * If no hook has been installed, the runtime will print a message before aborting.
  */
 typedef void  (*MonoUnhandledExceptionFunc)         (MonoObject *exc, gpointer user_data);
-void          mono_install_unhandled_exception_hook (MonoUnhandledExceptionFunc func, gpointer user_data);
+MONO_API void mono_install_unhandled_exception_hook (MonoUnhandledExceptionFunc func, gpointer user_data);
 void          mono_invoke_unhandled_exception_hook  (MonoObject *exc);
 
 /* Dominator/SSA methods */
@@ -2789,9 +2796,9 @@ void mono_cfg_add_try_hole (MonoCompile *cfg, MonoExceptionClause *clause, guint
 
 void mono_cfg_set_exception (MonoCompile *cfg, int type) MONO_INTERNAL;
 gboolean mini_type_is_reference (MonoCompile *cfg, MonoType *type) MONO_INTERNAL;
-gboolean mini_type_is_vtype (MonoCompile *cfg, MonoType *t); /* should be internal but it's used by llvm */
-gboolean mini_type_var_is_vt (MonoCompile *cfg, MonoType *type); /* should be internal but it's used by llvm */
-gboolean mini_is_gsharedvt_klass (MonoCompile *cfg, MonoClass *klass); /* should be internal but it's used by llvm */
+gboolean mini_type_is_vtype (MonoCompile *cfg, MonoType *t) MONO_LLVM_INTERNAL;
+gboolean mini_type_var_is_vt (MonoCompile *cfg, MonoType *type) MONO_LLVM_INTERNAL;
+gboolean mini_is_gsharedvt_klass (MonoCompile *cfg, MonoClass *klass) MONO_LLVM_INTERNAL;
 gboolean mini_is_gsharedvt_type (MonoCompile *cfg, MonoType *t) MONO_INTERNAL;
 gboolean mini_is_gsharedvt_signature (MonoCompile *cfg, MonoMethodSignature *sig) MONO_INTERNAL;
 gboolean mini_is_gsharedvt_type_gsctx (MonoGenericSharingContext *gsctx, MonoType *t) MONO_INTERNAL;

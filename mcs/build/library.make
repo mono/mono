@@ -66,6 +66,12 @@ else
 the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE)/
 endif
 
+ifdef RESOURCE_STRINGS
+ifdef BOOTSTRAP_PROFILE
+MCS_FLAGS_INTERNAL += --getresourcestrings:$(RESOURCE_STRINGS)
+endif
+endif
+
 #
 # The bare directory contains the plain versions of System and System.Xml
 #

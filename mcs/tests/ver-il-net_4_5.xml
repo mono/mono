@@ -20500,6 +20500,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-autoproperty-16.cs">
+    <type name="A">
+      <method name="Int32 get_Foo()" attrs="3526">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 get_Foo()" attrs="2246">
+        <size>9</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Void TestList(System.Collections.Generic.List`1[System.Int32], Int32)" attrs="145">
@@ -51188,6 +51209,77 @@
       </method>
     </type>
   </test>
+  <test name="test-914.cs">
+    <type name="ClassMain">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-915.cs">
+    <type name="ClassMain">
+      <method name="Void Main()" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-916.cs">
+    <type name="Foo">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo+Nested">
+      <method name="Int32 bar()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-917.cs">
+    <type name="Foo">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo+Nested">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="Foo+Nested+bar">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-918.cs">
+    <type name="Test">
+      <method name="Void Foo()" attrs="129">
+        <size>30</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-92.cs">
     <type name="Outer">
       <method name="Void .ctor()" attrs="6278">
@@ -55284,6 +55376,60 @@
       </method>
       <method name="Int32 &lt;Main&gt;m__1(Int32)" attrs="145">
         <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-174.cs">
+    <type name="F">
+      <method name="Int32 Invoke(Int32)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Void Main()" attrs="145">
+        <size>38</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-175.cs">
+    <type name="F">
+      <method name="Int32 Invoke(Int32)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Void Main()" attrs="145">
+        <size>38</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0(Int32)" attrs="145">
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

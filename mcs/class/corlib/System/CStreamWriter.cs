@@ -39,8 +39,8 @@ namespace System.IO {
 	class CStreamWriter : StreamWriter {
 		TermInfoDriver driver;
 
-		public CStreamWriter (Stream stream, Encoding encoding)
-			: base (stream, encoding)
+		public CStreamWriter (Stream stream, Encoding encoding, bool leaveOpen)
+			: base (stream, encoding, DefaultBufferSize, leaveOpen)
 		{
 			driver = (TermInfoDriver) ConsoleDriver.driver;
 		}

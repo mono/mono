@@ -310,9 +310,6 @@ System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
 System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
-../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
-../../../external/referencesource/mscorlib/system/globalization/charunicodeinfo.cs
-../../../external/referencesource/mscorlib/system/globalization/globalizationassembly.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
 System.Globalization/CultureInfo.cs
@@ -334,7 +331,6 @@ System.Globalization/TextInfo.cs
 System.Globalization/UnicodeCategory.cs
 System.IO/BinaryReader.cs
 System.IO/BinaryWriter.cs
-System.IO/BufferedStream.cs
 System.IO/Directory.cs
 System.IO/DirectoryInfo.cs
 System.IO/DirectoryNotFoundException.cs
@@ -356,7 +352,6 @@ System.IO/FileStreamAsyncResult.cs
 System.IO/FileSystemInfo.cs
 System.IO/IOException.cs
 System.IO/LogcatTextWriter.cs
-System.IO/MemoryStream.cs
 System.IO/MonoIO.cs
 System.IO/MonoIOError.cs
 System.IO/MonoFileType.cs
@@ -366,13 +361,6 @@ System.IO/PathTooLongException.cs
 System.IO/SearchOption.cs
 System.IO/SearchPattern.cs
 System.IO/SeekOrigin.cs
-System.IO/Stream.cs
-System.IO/StreamReader.cs
-System.IO/StreamWriter.cs
-System.IO/StringReader.cs
-System.IO/StringWriter.cs
-System.IO/TextReader.cs
-System.IO/TextWriter.cs
 System.IO/UnexceptionalStreamReader.cs
 System.IO/UnexceptionalStreamWriter.cs
 System.IO/UnmanagedMemoryAccessor.cs
@@ -1418,6 +1406,7 @@ System.Collections.Concurrent/ConcurrentOrderedList.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 System.Threading/ThreadLocal.cs
 
+ReferenceSources/__ConsoleStream.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
@@ -1426,7 +1415,6 @@ ReferenceSources/CultureData.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
-ReferenceSources/mscorlib.txt.cs
 ReferenceSources/ParseNumbers.cs
 ReferenceSources/TimeZoneInfoOptions.cs
 ReferenceSources/AppDomain.cs
@@ -1572,6 +1560,17 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/globalization/thaibuddhistcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/umalquracalendar.cs
 
+../../../external/referencesource/mscorlib/system/io/__error.cs
+../../../external/referencesource/mscorlib/system/io/bufferedstream.cs
+../../../external/referencesource/mscorlib/system/io/memorystream.cs
+../../../external/referencesource/mscorlib/system/io/stream.cs
+../../../external/referencesource/mscorlib/system/io/streamreader.cs
+../../../external/referencesource/mscorlib/system/io/streamwriter.cs
+../../../external/referencesource/mscorlib/system/io/stringreader.cs
+../../../external/referencesource/mscorlib/system/io/stringwriter.cs
+../../../external/referencesource/mscorlib/system/io/textreader.cs
+../../../external/referencesource/mscorlib/system/io/textwriter.cs
+
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
 
@@ -1660,6 +1659,7 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/threading/timeout.cs
 ../../../external/referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
 
+../../../external/referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskFactory.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/FutureFactory.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskScheduler.cs
@@ -1676,4 +1676,6 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskExceptionHolder.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
+../../../external/referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
+
 

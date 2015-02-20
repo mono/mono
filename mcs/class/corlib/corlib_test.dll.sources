@@ -148,6 +148,7 @@ System.Reflection/ParameterInfoTest.cs
 System.Reflection/PropertyInfoTest.cs
 System.Reflection/ReflectedTypeTest.cs
 System.Reflection/TypeDelegatorTest.cs
+System.Reflection/VisibilityTest.cs
 System.Reflection.Emit/AssemblyBuilderTest.cs
 System.Reflection.Emit/AssemblyBuilderAccessTest.cs
 System.Reflection.Emit/ConstructorBuilderTest.cs

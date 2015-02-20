@@ -1,6 +1,3 @@
-// CS0135: `bar' conflicts with a declaration in a child block
-// Line: 13
-
 public class Foo
 {
 	public static class Nested
@@ -10,7 +7,7 @@ public class Foo
 			return 0;
 		}
 		
-		public static void Bar ()
+		public static void Main ()
 		{
 			var i = bar ();
 			{

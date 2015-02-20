@@ -12,7 +12,7 @@ gc_lib=$(LIBGC_STATIC_LIBS)
 endif
 
 runtime_lib=	\
-	../mini/$(LIBMONO_LA) \
+	$(metadata_lib) \
 	$(top_builddir)/mono/io-layer/libwapi.la	\
 	$(top_builddir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV) \
@@ -50,6 +50,7 @@ monodis_LDADD = 			\
 	libmonodis.a			\
 	$(runtime_lib)			\
 	$(LLVM_LIBS)			\
+	$(LLVM_LDFLAGS)			\
 	$(GLIB_LIBS)			\
 	$(LIBICONV)
 

@@ -640,7 +640,7 @@ emit_code_bytes (MonoAotCompile *acfg, const guint8* buf, int size)
 
 /* ARCHITECTURE SPECIFIC CODE */
 
-#if defined(TARGET_X86) || defined(TARGET_AMD64) || defined(TARGET_ARM) || defined(TARGET_POWERPC)
+#if defined(TARGET_X86) || defined(TARGET_AMD64) || defined(TARGET_ARM) || defined(TARGET_POWERPC) || defined(TARGET_ARM64)
 #define EMIT_DWARF_INFO 1
 #endif
 
@@ -5011,6 +5011,7 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		 * - it allows the setting of breakpoints of aot-ed methods.
 		 */
 		debug_sym = get_debug_sym (method, "", acfg->method_label_hash);
+		cfg->asm_debug_symbol = g_strdup (debug_sym);
 
 		if (acfg->need_no_dead_strip)
 			fprintf (acfg->fp, "	.no_dead_strip %s\n", debug_sym);
@@ -6825,8 +6826,12 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 					}
 					add_generic_class_with_depth (acfg, m->klass, depth + 5, "method");
 				}
-				if (m->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED && !strcmp (m->name, "ElementAddr"))
-					add_extra_method_with_depth (acfg, m, depth + 1);
+				if (m->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED) {
+					WrapperInfo *info = mono_marshal_get_wrapper_info (m);
+
+					if (info && info->subtype == WRAPPER_SUBTYPE_ELEMENT_ADDR)
+						add_extra_method_with_depth (acfg, m, depth + 1);
+				}
 				break;
 			}
 			case MONO_PATCH_INFO_VTABLE: {
@@ -7187,7 +7192,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	 * return OverwriteComplete;
 	 * Here, if 'Earlier' refers to a memset, and Later has no size info, it mistakenly thinks the memset is redundant.
 	 */
-	opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify");
+	opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify");
 #if 1
 	command = g_strdup_printf ("%sopt -f %s -o \"%s.opt.bc\" \"%s.bc\"", acfg->aot_opts.llvm_path, opts, acfg->tmpbasename, acfg->tmpbasename);
 	aot_printf (acfg, "Executing opt: %s\n", command);
@@ -7334,11 +7339,8 @@ emit_code (MonoAotCompile *acfg)
 			emit_method_code (acfg, cfg);
 	}
 
-	sprintf (symbol, "methods_end");
 	emit_section_change (acfg, ".text", 0);
 	emit_alignment_code (acfg, 8);
-	emit_label (acfg, symbol);
-
 	emit_label (acfg, "jit_code_end");
 
 	/* To distinguish it from the next symbol */
@@ -7446,6 +7448,7 @@ emit_code (MonoAotCompile *acfg)
 #endif
 		}
 	}
+	emit_int32 (acfg, 0);
 }
 
 static void
@@ -8313,7 +8316,6 @@ emit_file_info (MonoAotCompile *acfg)
 		emit_pointer (acfg, "llvm_got_info_offsets");
 	else
 		emit_pointer (acfg, NULL);
-	emit_pointer (acfg, "methods_end");
 	emit_pointer (acfg, "unwind_info");
 	emit_pointer (acfg, "mem_end");
 	emit_pointer (acfg, "image_table");
@@ -8485,7 +8487,7 @@ emit_dwarf_info (MonoAotCompile *acfg)
 
 		sprintf (symbol2, "%sme_%x", acfg->temp_prefix, i);
 
-		mono_dwarf_writer_emit_method (acfg->dwarf, cfg, cfg->method, cfg->asm_symbol, symbol2, cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, mono_debug_find_method (cfg->jit_info->d.method, mono_domain_get ()));
+		mono_dwarf_writer_emit_method (acfg->dwarf, cfg, cfg->method, cfg->asm_symbol, symbol2, cfg->asm_debug_symbol, cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, mono_debug_find_method (cfg->jit_info->d.method, mono_domain_get ()));
 	}
 #endif
 }
@@ -8941,7 +8943,6 @@ static void aot_dump (MonoAotCompile *acfg)
 		MonoCompile *cfg;
 		MonoMethod *method;
 		MonoClass *klass;
-		int index;
 
 		cfg = acfg->cfgs [i];
 		if (!cfg)
@@ -9360,6 +9361,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 				cfg->asm_symbol = get_debug_sym (cfg->orig_method, "", acfg->method_label_hash);
 			else
 				cfg->asm_symbol = g_strdup_printf ("%s%sm_%x", acfg->temp_prefix, acfg->llvm_label_prefix, method_index);
+			cfg->asm_debug_symbol = cfg->asm_symbol;
 		}
 	}
 

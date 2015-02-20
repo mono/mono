@@ -6,17 +6,16 @@ namespace System
 	{
 		internal static string GetResourceString (string key)
 		{
-			return Messages.GetMessage (key);
+			return key;
 		}
 
 		internal static string GetResourceString (string key, CultureInfo culture)
 		{
-			return GetResourceString (key);
+			return key;
 		}
 
 		internal static string GetResourceString (string key, params object[] values)
 		{
-			key = Messages.GetMessage (key);
 			return string.Format (CultureInfo.InvariantCulture, key, values);
 		}
 	}

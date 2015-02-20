@@ -156,7 +156,7 @@ endif
 if LOADED_LLVM
 lib_LTLIBRARIES += libmono-llvm.la
 libmono_llvm_la_SOURCES = mini-llvm.c mini-llvm-cpp.cpp
-libmono_llvm_la_LIBADD = $(LLVM_LIBS) $(LLVM_LDFLAGS)
+libmono_llvm_la_LIBADD = $(GLIB_LIBS) $(LLVM_LIBS) $(LLVM_LDFLAGS)
 if PLATFORM_DARWIN
 libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 else
@@ -660,12 +660,15 @@ rcheck: mono $(regtests)
 if NACL_CODEGEN
 	for i in $(regtests); do echo "running test $$i"; $(RUNTIME) $$i --exclude 'NaClDisable' || exit 1; done
 else
-	$(RUNTIME) --regression $(regtests)
+	-($(RUNTIME) --regression $(regtests); echo $$? > regressionexitcode.out) | ./emitnunit.pl
+	exit $$(cat regressionexitcode.out)
 endif
 
 check-seq-points: mono $(regtests)
-	for i in $(regtests); do ./test_op_il_seq_point.sh $$i || exit 1; done
-	for i in $(regtests); do ./test_op_il_seq_point.sh $$i --aot || exit 1; done
+	rm -f TestResults_op_il_seq_point.xml
+	for i in $(regtests); do ./test_op_il_seq_point.sh $$i || (./test_op_il_seq_point_headerfooter.sh; exit 1) || exit 1; done
+	for i in $(regtests); do ./test_op_il_seq_point.sh $$i --aot || (./test_op_il_seq_point_headerfooter.sh; exit 1) || exit 1; done
+	./test_op_il_seq_point_headerfooter.sh
 
 gctest: mono gc-test.exe
 	MONO_DEBUG_OPTIONS=clear-nursery-at-gc $(RUNTIME) --regression gc-test.exe
@@ -727,7 +730,7 @@ docu: mini.sgm
 check-local: rcheck check-seq-points
 
 clean-local:
-	rm -f mono a.out gmon.out *.o buildver-boehm.h buildver-sgen.h test.exe
+	rm -f mono a.out gmon.out *.o buildver-boehm.h buildver-sgen.h test.exe regressionexitcode.out TestResults_op_il_seq_point.xml*
 
 pkgconfigdir = $(libdir)/pkgconfig
 
@@ -750,6 +753,7 @@ EXTRA_DIST = TestDriver.cs ldscript ldscript.mono \
 	$(darwin_sources) Info.plist		\
 	$(posix_sources)					\
 	test_op_il_seq_point.sh			\
+	test_op_il_seq_point_headerfooter.sh	\
 	Makefile.am.in
 
 version.h: Makefile

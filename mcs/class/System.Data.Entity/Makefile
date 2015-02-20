@@ -7,4 +7,6 @@ LIB_MCS_FLAGS = -r:System.dll -r:System.Core.dll -r:System.Data.dll -r:System.Xm
 				-r:System.Runtime.Serialization.dll -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll \
 				-warn:2
 
+RESOURCE_STRINGS = ../../../external/referencesource/System.Data.Entity/System.Data.Entity.txt
+
 include ../../build/library.make
