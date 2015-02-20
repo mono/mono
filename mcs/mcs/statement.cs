@@ -3916,10 +3916,11 @@ namespace Mono.CSharp {
 	{
 		bool code_follows;
 		Iterator iter;
+		Method finally_host;
 
 		protected abstract void EmitPreTryBody (EmitContext ec);
 		protected abstract void EmitTryBody (EmitContext ec);
-		protected abstract void EmitFinallyBody (EmitContext ec);
+		public abstract void EmitFinallyBody (EmitContext ec);
 
 		protected sealed override void DoEmit (EmitContext ec)
 		{
@@ -3961,7 +3962,19 @@ namespace Mono.CSharp {
 			}
 
 			ig.MarkLabel (start_finally);
-			EmitFinallyBody (ec);
+			
+			if (finally_host != null) 
+			{
+				finally_host.Define();
+				finally_host.Emit();
+				
+				IteratorStorey parent = (IteratorStorey)finally_host.Parent;
+				parent.AddMember (finally_host);
+				
+				Invocation.EmitCall (ec, true, new CompilerGeneratedThis (ec.CurrentType, loc), finally_host.MethodBuilder, new Arguments (0), loc);
+			} 
+			else
+				EmitFinallyBody (ec);
 
 			ig.EndExceptionBlock ();
 		}
@@ -3979,6 +3992,15 @@ namespace Mono.CSharp {
 				ec.NeedReturnLabel ();
 
 			iter = ec.CurrentIterator;
+			
+			if (iter != null && !ec.IsInProbingMode)
+			{		
+				TryFinally tryFinally = this as TryFinally;
+				
+				if(tryFinally != null)			
+					finally_host = iter.CreateFinallyHost (this);
+			}
+			
 			return true;
 		}
 
@@ -4065,7 +4087,10 @@ namespace Mono.CSharp {
 
 			ig.BeginFinallyBlock ();
 
-			EmitFinallyBody (ec);
+			if (finally_host != null)
+				Invocation.EmitCall (ec, true, new CompilerGeneratedThis (ec.CurrentType, loc), finally_host.MethodBuilder, new Arguments (0), loc);
+			else
+				EmitFinallyBody (ec);
 
 			ig.EndExceptionBlock ();
 		}
@@ -4136,7 +4161,7 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			temp.Emit (ec);
 			ec.ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
@@ -4712,7 +4737,7 @@ namespace Mono.CSharp {
 			stmt.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			fini.Emit (ec);
 		}
@@ -4928,7 +4953,7 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			if (!TypeManager.IsStruct (expr_type)) {
@@ -5022,7 +5047,7 @@ namespace Mono.CSharp {
 			stmt.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label skip = ig.DefineLabel ();
@@ -5762,7 +5787,7 @@ namespace Mono.CSharp {
 					parent.EmitLoopBody (ec);
 				}
 
-				protected override void EmitFinallyBody (EmitContext ec)
+				public override void EmitFinallyBody (EmitContext ec)
 				{
 					Expression instance = parent.enumerator;
 					if (!TypeManager.IsValueType (parent.enumerator_type)) {
