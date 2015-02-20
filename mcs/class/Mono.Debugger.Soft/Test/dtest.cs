@@ -3744,6 +3744,42 @@ public class DebuggerTests
 		// Make sure we are still in the cctor
 		Assert.AreEqual (".cctor", e.Thread.GetFrames ()[0].Location.Method.Name);
 	}
+
+	[Test]
+	public void DebugLocalsReused () {
+		TearDown ();
+		Start (true, Path.Combine ("Test", "DebugLocals.exe") );
+
+		var req1 = vm.SetBreakpoint (entry_point, entry_point.Locations.First (a => a.LineNumber == 14).ILOffset);
+		var req2 = vm.SetBreakpoint (entry_point, entry_point.Locations.First (a => a.LineNumber == 18).ILOffset);
+
+		Event e = null;
+
+		while (true) {
+			vm.Resume ();
+			e = GetNextEvent ();
+			if (e is BreakpointEvent)
+				break;
+		}
+		req1.Disable ();
+		
+		var locals = e.Thread.GetFrames()[0].GetVisibleVariables();
+		Assert.AreEqual (1, locals.Count);
+		Assert.AreEqual ("testa", locals[0].Name);
+		
+		while (true) {
+			vm.Resume ();
+			e = GetNextEvent ();
+			if (e is BreakpointEvent)
+				break;
+		}
+		req2.Disable ();
+		
+		locals = e.Thread.GetFrames()[0].GetVisibleVariables();
+		Assert.AreEqual (1, locals.Count);
+		Assert.AreEqual ("testb", locals[0].Name);
+	}
+	
 }
 
 }
