@@ -152,6 +152,15 @@ namespace Microsoft.Build.BuildEngine {
 						project_attribute.IndexOf ("$(MSBuildExtensionsPath32)") >= 0 ||
 						project_attribute.IndexOf ("$(MSBuildExtensionsPath64)") >= 0;
 
+			bool condn_has_extn_ref = condition_attribute.IndexOf ("$(MSBuildExtensionsPath)") >= 0 ||
+						condition_attribute.IndexOf ("$(MSBuildExtensionsPath32)") >= 0 ||
+						condition_attribute.IndexOf ("$(MSBuildExtensionsPath64)") >= 0;
+
+			// we can skip the following logic in case the condition doesn't reference any extension paths
+			// and it evaluates to false since nothing would change anyway
+			if (!condn_has_extn_ref && !ConditionParser.ParseAndEvaluate (condition_attribute, project))
+				return;
+
 			string importingFile = importingProject != null ? importingProject.FullFileName : project.FullFileName;
 			DirectoryInfo base_dir_info = null;
 			if (!String.IsNullOrEmpty (importingFile))
