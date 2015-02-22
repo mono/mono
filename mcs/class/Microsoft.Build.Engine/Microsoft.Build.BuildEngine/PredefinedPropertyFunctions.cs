@@ -150,7 +150,14 @@ namespace Microsoft.Build.BuildEngine
 
 		public static string MakeRelative (string basePath, string path)
 		{
-			throw new NotImplementedException ("MakeRelative");
+			if (String.IsNullOrEmpty (basePath))
+				return path;
+
+			var uriBasePath = new Uri (basePath, UriKind.Absolute);
+			var uriPath = new Uri (path);
+
+			var uriRelative = uriBasePath.MakeRelativeUri (uriPath);
+			return Uri.UnescapeDataString (uriRelative.ToString ()).Replace ('/', '\\'); // msbuild uses backslash paths everywhere
 		}
 
 		public static string ValueOrDefault (string value, string defaultValue)
