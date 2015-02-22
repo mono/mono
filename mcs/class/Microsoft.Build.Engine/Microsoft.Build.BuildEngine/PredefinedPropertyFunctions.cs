@@ -153,6 +153,10 @@ namespace Microsoft.Build.BuildEngine
 			if (String.IsNullOrEmpty (basePath))
 				return path;
 
+			// ensure trailing slash for basePath
+			if (basePath [basePath.Length - 1] != '\\' && basePath [basePath.Length - 1] != '/')
+				basePath += '/';
+
 			var uriBasePath = new Uri (basePath, UriKind.Absolute);
 			var uriPath = new Uri (path);
 
