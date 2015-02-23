@@ -5,7 +5,7 @@ using System.Threading;
 using System.Security.Permissions;
 using System.Runtime.CompilerServices;
 #if FEATURE_NETCORE
-using System.Core;  // for strongly typed resources
+//using System.Core;  // for strongly typed resources
 #endif
 
 namespace System.Threading
@@ -53,12 +53,10 @@ namespace System.Threading
     /// for more than a few instructions (in particular, we never call event APIs
     /// or in fact any non-trivial API while holding the spin lock).   
     /// </summary>
-#if !DISABLE_CAS_USE
 #if !FEATURE_NETCORE
     [HostProtection(SecurityAction.LinkDemand, Synchronization=true, ExternalThreading=true)]
 #endif
     [HostProtection(MayLeakOnAbort = true)]
-#endif
     public class ReaderWriterLockSlim : IDisposable
     {
         //Specifying if the lock can be reacquired recursively.
