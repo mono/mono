@@ -1194,7 +1194,7 @@ namespace System.Net.Sockets {
 
 		// Closes the socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Close_internal(IntPtr socket, out int error);
+		internal extern static void Close_internal(IntPtr socket, out int error);
 
 		public void Close ()
 		{
