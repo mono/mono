@@ -586,10 +586,16 @@ namespace Mono.Security.Protocol.Tls
 					break;
 				}
 			}
+			catch (TlsException ex)
+			{
+				// FIXME: should the send alert also be done asynchronously here and below?
+				this.protocol.SendAlert(ex.Alert);
+				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
+			}
 			catch (Exception ex)
 			{
+				this.protocol.SendAlert(AlertDescription.InternalError);
 				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
-				throw;
 			}
 		}
 
