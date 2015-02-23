@@ -494,11 +494,8 @@ namespace System.Text
                 {
                     // No fallback, maybe we can do it fast
 #if !NO_FAST_UNICODE_LOOP
-#if BIGENDIAN       // If endianess is backwards then each pair of bytes would be backwards.
-                    if ( bigEndian &&
-#else
-                    if ( !bigEndian &&
-#endif // BIGENDIAN
+					// If endianess is backwards then each pair of bytes would be backwards.
+                    if ( (bigEndian ^ BitConverter.IsLittleEndian) &&
 
 #if WIN64           // 64 bit CPU needs to be long aligned for this to work.
                           charLeftOver == 0 && (unchecked((long)chars) & 7) == 0)
@@ -778,11 +775,8 @@ namespace System.Text
                 {
                     // No fallback, maybe we can do it fast
 #if !NO_FAST_UNICODE_LOOP
-#if BIGENDIAN           // If endianess is backwards then each pair of bytes would be backwards.
-                    if ( bigEndian &&
-#else
-                    if ( !bigEndian &&
-#endif // BIGENDIAN
+					// If endianess is backwards then each pair of bytes would be backwards.
+                    if ( (bigEndian ^ BitConverter.IsLittleEndian) &&
 #if WIN64           // 64 bit CPU needs to be long aligned for this to work, 32 bit CPU needs to be 32 bit aligned
                         (unchecked((long)chars) & 7) == 0 && (unchecked((long)bytes) & 7) == 0 &&
 #else
@@ -863,11 +857,7 @@ namespace System.Text
                     // Also somehow this optimizes the above loop?  It seems to cause something above
                     // to get enregistered, but I haven't figured out how to make that happen without this loop.
                     else if ((charLeftOver == 0) &&
-#if BIGENDIAN
-                        bigEndian &&
-#else
-                        !bigEndian &&
-#endif // BIGENDIAN
+                        (bigEndian ^ BitConverter.IsLittleEndian) &&
 
 #if WIN64
                         (unchecked((long)chars) & 7) != (unchecked((long)bytes) & 7) &&  // Only do this if chars & bytes are out of line, otherwise faster loop'll be faster next time
@@ -1200,11 +1190,7 @@ namespace System.Text
                 // If we're aligned then maybe we can do it fast
                 // This'll hurt if we're unaligned because we'll always test but never be aligned
 #if !NO_FAST_UNICODE_LOOP
-#if BIGENDIAN
-                if (bigEndian &&
-#else // BIGENDIAN
-                if (!bigEndian &&
-#endif // BIGENDIAN
+                if ((bigEndian ^ BitConverter.IsLittleEndian) &&
 #if WIN64 // win64 has to be long aligned
                     (unchecked((long)bytes) & 7) == 0 &&
 #else
@@ -1527,11 +1513,7 @@ namespace System.Text
                 // If we're aligned then maybe we can do it fast
                 // This'll hurt if we're unaligned because we'll always test but never be aligned
 #if !NO_FAST_UNICODE_LOOP
-#if BIGENDIAN
-                if (bigEndian &&
-#else // BIGENDIAN
-                if (!bigEndian &&
-#endif // BIGENDIAN
+                if ((bigEndian ^ BitConverter.IsLittleEndian) &&
 #if WIN64 // win64 has to be long aligned
                     (unchecked((long)chars) & 7) == 0 && (unchecked((long)bytes) & 7) == 0 &&
 #else
