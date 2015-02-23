@@ -273,6 +273,48 @@ namespace System.ComponentModel {
         /// </devdoc>
         protected virtual string GetLocalizedString(string value) {
 #if !SILVERLIGHT
+#if MONO
+            switch (value) {
+            case "Action":
+                return "PropertyCategoryAction";
+            case "Appearance":
+                return "PropertyCategoryAppearance";
+            case "Behavior":
+                return "PropertyCategoryBehavior";
+            case "Data":
+                return "PropertyCategoryData";
+            case "DDE":
+                return "PropertyCategoryDDE";
+            case "Design":
+                return "PropertyCategoryDesign";
+            case "DragDrop":
+                return "PropertyCategoryDragDrop";
+            case "Focus":
+                return "PropertyCategoryFocus";
+            case "Font":
+                return "PropertyCategoryFont";
+            case "Key":
+                return "PropertyCategoryKey";
+            case "List":
+                return "PropertyCategoryList";
+            case "Layout":
+                return "PropertyCategoryLayout";
+            case "Default":
+                return "PropertyCategoryDefault";
+            case "Mouse":
+                return "PropertyCategoryMouse";
+            case "Position":
+                return "PropertyCategoryPosition";
+            case "Text":
+                return "PropertyCategoryText";
+            case "Scale":
+                return "PropertyCategoryScale";
+            case "WindowStyle":
+                return "PropertyCategoryWindowStyle";
+            case "Config":
+                return "PropertyCategoryConfig";
+            }
+#endif
             return (string)SR.GetObject("PropertyCategory" + value);
 #else
             bool usedFallback;
