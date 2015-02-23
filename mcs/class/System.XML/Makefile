@@ -71,6 +71,8 @@ EXTRA_DISTFILES = \
 	$(xmlfiles_files:%=Test/XmlFiles/%) \
 	$(nist_dom_files:%=Test/System.Xml/nist_dom/%)
 
+include ../../build/library.make
+
 ifeq (bare/,$(intermediate))
 build-bare:
 else
