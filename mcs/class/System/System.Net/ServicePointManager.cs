@@ -186,6 +186,14 @@ namespace System.Net
 		}		
 		
 		// Properties
+
+		/*
+		 * Hack for bug #19334.
+		 * 
+		 */
+		public static bool Mono_Suppress_TLS_Alerts {
+			get; set;
+		}
 		
 		[Obsolete ("Use ServerCertificateValidationCallback instead", false)]
 		public static ICertificatePolicy CertificatePolicy {
