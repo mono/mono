@@ -12,12 +12,6 @@ partial class SR
 {
 	public static object GetObject (string name)
 	{
-		// The PropertyGrid code in WinForms and the corresponding tests
-		// rely on PropertyCategoryDefault returning the correct value.
-		// Handle this special case until we have proper resource lookup. 
-		if (name == "PropertyCategoryDefault")
-			return "Misc";
-
 		return name;
 	}
 
