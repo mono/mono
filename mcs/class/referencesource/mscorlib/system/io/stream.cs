@@ -786,7 +786,7 @@ namespace System.IO {
             return new SyncStream(stream);
         }
 
-#if !FEATURE_PAL  // This method shouldn't have been exposed in Dev10 (we revised object invariants after locking down).
+#if !FEATURE_PAL || MONO // This method shouldn't have been exposed in Dev10 (we revised object invariants after locking down).
         [Obsolete("Do not call or override this method.")]
         protected virtual void ObjectInvariant() 
         {
