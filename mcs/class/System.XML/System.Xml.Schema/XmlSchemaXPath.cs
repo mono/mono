@@ -301,7 +301,8 @@ namespace System.Xml.Schema
 			path.LinePosition = reader.LinePosition;
 			path.SourceUri = reader.BaseURI;
 
-			XmlNamespaceManager currentMgr = XmlSchemaUtil.GetParserContext (reader.Reader).NamespaceManager;
+			XmlParserContext parserCtx = XmlSchemaUtil.GetParserContext (reader.Reader);
+			XmlNamespaceManager currentMgr = parserCtx != null ? parserCtx.NamespaceManager : null;
 			if (currentMgr != null) {
 				path.nsmgr = new XmlNamespaceManager (reader.NameTable);
 				IEnumerator e = currentMgr.GetEnumerator ();
