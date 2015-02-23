@@ -202,6 +202,18 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int Available_internal(IntPtr socket, out int error);
 
+		private static int Available_internal (SafeSocketHandle safeHandle, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Available_internal (safeHandle.DangerousGetHandle (), out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		public int Available {
 			get {
 				if (disposed && closed)
@@ -404,6 +416,18 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, int family, out int error);
 
+		private static SocketAddress LocalEndPoint_internal(SafeSocketHandle safeHandle, int family, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return LocalEndPoint_internal (safeHandle.DangerousGetHandle (), family, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		// Wish:  support non-IP endpoints.
 		public EndPoint LocalEndPoint {
 			get {
@@ -528,6 +552,19 @@ namespace System.Net.Sockets
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr Accept_internal(IntPtr sock, out int error, bool blocking);
+
+		private static SafeSocketHandle Accept_internal(SafeSocketHandle safeHandle, out int error, bool blocking)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				var ret = Accept_internal (safeHandle.DangerousGetHandle (), out error, blocking);
+				return new SafeSocketHandle (ret, true);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		public Socket Accept() {
 			if (disposed && closed)
@@ -1091,6 +1128,20 @@ namespace System.Net.Sockets
 							 SocketAddress sa,
 							 out int error);
 
+		private static void Bind_internal (SafeSocketHandle safeHandle,
+							 SocketAddress sa,
+							 out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Bind_internal (safeHandle.DangerousGetHandle (), sa, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		public void Bind(EndPoint local_end) {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -1181,6 +1232,18 @@ namespace System.Net.Sockets
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void Disconnect_internal(IntPtr sock, bool reuse, out int error);
+
+		private static void Disconnect_internal(SafeSocketHandle safeHandle, bool reuse, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Disconnect_internal (safeHandle.DangerousGetHandle (), reuse, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		/* According to the docs, the MS runtime will throw
 		 * PlatformNotSupportedException if the platform is
@@ -1373,6 +1436,20 @@ namespace System.Net.Sockets
 			SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val,
 			out int error);
 
+		private static void GetSocketOption_arr_internal (SafeSocketHandle safeHandle,
+			SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val,
+			out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				GetSocketOption_arr_internal (safeHandle.DangerousGetHandle (), level, name, ref byte_val, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		public void GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
 		{
 			if (disposed && closed)
@@ -1415,6 +1492,19 @@ namespace System.Net.Sockets
 		extern static int WSAIoctl (IntPtr sock, int ioctl_code, byte [] input,
 			byte [] output, out int error);
 
+		private static int WSAIoctl (SafeSocketHandle safeHandle, int ioctl_code, byte [] input,
+			byte [] output, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return WSAIoctl (safeHandle.DangerousGetHandle (), ioctl_code, input, output, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		public int IOControl (int ioctl_code, byte [] in_value, byte [] out_value)
 		{
 			if (disposed)
@@ -1440,6 +1530,18 @@ namespace System.Net.Sockets
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Listen_internal(IntPtr sock, int backlog, out int error);
+
+		private static void Listen_internal (SafeSocketHandle safeHandle, int backlog, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Listen_internal (safeHandle.DangerousGetHandle (), backlog, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		public void Listen (int backlog)
 		{
@@ -1656,6 +1758,24 @@ namespace System.Net.Sockets
 							    ref SocketAddress sockaddr,
 							    out int error);
 
+		private static int RecvFrom_internal (SafeSocketHandle safeHandle,
+							    byte[] buffer,
+							    int offset,
+							    int count,
+							    SocketFlags flags,
+							    ref SocketAddress sockaddr,
+							    out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return RecvFrom_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, ref sockaddr, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		public int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags flags,
 					ref EndPoint remoteEP)
 		{
@@ -1857,6 +1977,18 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool SendFile (IntPtr sock, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags);
 
+		private static bool SendFile (SafeSocketHandle safeHandle, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return SendFile (safeHandle.DangerousGetHandle (), filename, pre_buffer, post_buffer, flags);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		public void SendFile (string fileName)
 		{
 			if (disposed && closed)
@@ -1971,6 +2103,24 @@ namespace System.Net.Sockets
 							  SocketFlags flags,
 							  SocketAddress sa,
 							  out int error);
+
+		private static int SendTo_internal (SafeSocketHandle safeHandle,
+							  byte[] buffer,
+							  int offset,
+							  int count,
+							  SocketFlags flags,
+							  SocketAddress sa,
+							  out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return SendTo_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, sa, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		public int SendTo (byte [] buffer, int offset, int size, SocketFlags flags,
 				   EndPoint remote_end)
