@@ -173,7 +173,7 @@ namespace Microsoft.Build.Utilities
 		}
 		public override string ToString ()
 		{
-			return escapedItemSpec;
+			return ItemSpec;
 		}
 		
 		public string ItemSpec {

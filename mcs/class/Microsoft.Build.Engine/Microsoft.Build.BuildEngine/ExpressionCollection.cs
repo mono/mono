@@ -233,11 +233,11 @@ namespace Microsoft.Build.BuildEngine {
 			// Trim and Remove empty items
 			List<ITaskItem> toRemove = new List<ITaskItem> ();
 			for (int i = 0; i < finalItems.Count; i ++) {
-				string s = finalItems [i].ItemSpec.Trim ();
+				string s = ((ITaskItem2)finalItems [i]).EvaluatedIncludeEscaped.Trim ();
 				if (s.Length == 0)
 					toRemove.Add (finalItems [i]);
 				else
-					finalItems [i].ItemSpec = s;
+					((ITaskItem2)finalItems [i]).EvaluatedIncludeEscaped = s;
 			}
 			foreach (ITaskItem ti in toRemove)
 				finalItems.Remove (ti);
