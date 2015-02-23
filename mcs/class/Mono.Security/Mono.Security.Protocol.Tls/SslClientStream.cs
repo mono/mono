@@ -429,10 +429,8 @@ namespace Mono.Security.Protocol.Tls
 		{
 			NegotiateAsyncResult negotiate = result.AsyncState as NegotiateAsyncResult;
 
-			#if BROKEN_EXCEPTIONS
 			try
 			{
-			#endif
 				switch (negotiate.State)
 				{
 				case NegotiateState.SentClientHello:
@@ -588,13 +586,11 @@ namespace Mono.Security.Protocol.Tls
 					break;
 				}
 			}
-		#if BROKEN_EXCEPTIONS
 			catch (Exception ex)
 			{
 				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
 				throw;
 			}
-		#endif
 		}
 
 		#endregion
