@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Core.dll
 
-REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,PFX_LEGACY_3_5
+REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,PFX_LEGACY_3_5,FEATURE_NETCORE
 LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) -d:INSIDE_SYSCORE -d:LIBC /r:System.dll -unsafe
 RESOURCE_STRINGS = ../../../external/referencesource/System.Core/System.Core.txt
 

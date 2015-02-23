@@ -7,13 +7,13 @@ System.IO.MemoryMappedFiles/MemoryMappedViewStream.cs
 System.IO.MemoryMappedFiles/MemoryMappedViewAccessor.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
-System.Linq.Expressions/Extensions.cs
-System.Linq.Expressions/ExpressionTransformer.cs
-System.Linq.Expressions/DynamicExpressionVisitor.cs
 
 ReferenceSources/SR.cs
 ReferenceSources/Error.cs
 ReferenceSources/Strings.cs
+
+../../../external/referencesource/System.Core/Microsoft/Scripting/Ast/DynamicExpression.cs
+../../../external/referencesource/System.Core/Microsoft/Scripting/Ast/ExpressionVisitor.cs
 
 ../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/Action.cs
 ../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/Extension.cs
