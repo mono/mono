@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Posix.dll
+LOCAL_MCS_FLAGS = -lib:$(bare_libdir)
 # Don't warn about [Obsolete] members, as there are now *lots* of [Obsolete]
 # members, generating volumes of output.
 LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /nowarn:0618,612
