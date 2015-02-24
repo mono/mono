@@ -329,8 +329,6 @@ System.Globalization/StringInfo.cs
 System.Globalization/TextElementEnumerator.cs
 System.Globalization/TextInfo.cs
 System.Globalization/UnicodeCategory.cs
-System.IO/BinaryReader.cs
-System.IO/BinaryWriter.cs
 System.IO/Directory.cs
 System.IO/DirectoryInfo.cs
 System.IO/DirectoryNotFoundException.cs
@@ -1560,6 +1558,8 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/globalization/umalquracalendar.cs
 
 ../../../external/referencesource/mscorlib/system/io/__error.cs
+../../../external/referencesource/mscorlib/system/io/binaryreader.cs
+../../../external/referencesource/mscorlib/system/io/binarywriter.cs
 ../../../external/referencesource/mscorlib/system/io/bufferedstream.cs
 ../../../external/referencesource/mscorlib/system/io/memorystream.cs
 ../../../external/referencesource/mscorlib/system/io/stream.cs
