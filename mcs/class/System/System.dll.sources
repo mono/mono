@@ -206,6 +206,7 @@ System.Diagnostics/CounterSampleCalculator.cs
 System.Diagnostics/CounterSample.cs
 System.Diagnostics/DataReceivedEventArgs.cs
 System.Diagnostics/DataReceivedEventHandler.cs
+System.Diagnostics/DefaultTraceListener.cs
 System.Diagnostics/DiagnosticsConfigurationHandler.cs
 System.Diagnostics/EntryWrittenEventArgs.cs
 System.Diagnostics/EntryWrittenEventHandler.cs
@@ -714,7 +715,6 @@ ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/ConfigurationManagerInternalFactory.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
-ReferenceSources/SafeNativeMethods.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/Socket.cs
 ReferenceSources/SR.cs
@@ -1056,7 +1056,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/ConsoleTraceListener.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/CorrelationManager.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/Debug.cs
-../../../external/referencesource/System/compmod/system/diagnostics/DefaultTraceListener.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/DelimitedListTraceListener.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/DiagnosticsConfiguration.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/FilterElement.cs
