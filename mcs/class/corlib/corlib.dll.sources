@@ -348,6 +348,7 @@ System.IO/FileShare.cs
 System.IO/FileStream.cs
 System.IO/FileStreamAsyncResult.cs
 System.IO/FileSystemInfo.cs
+System.IO/HGlobalUnmanagedMemoryStream.cs
 System.IO/IOException.cs
 System.IO/LogcatTextWriter.cs
 System.IO/MonoIO.cs

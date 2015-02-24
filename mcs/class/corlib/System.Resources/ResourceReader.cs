@@ -97,26 +97,6 @@ namespace System.Resources
 			}
 		}
 
-		unsafe class HGlobalUnmanagedMemoryStream : UnmanagedMemoryStream
-		{
-			IntPtr ptr;
-
-			public HGlobalUnmanagedMemoryStream (byte* pointer, long length, IntPtr ptr)
-				: base (pointer, length, length, FileAccess.ReadWrite)
-			{
-				this.ptr = ptr;
-			}
-
-			protected override void Dispose (bool disposing)
-			{
-				if (_isOpen) {
-					Marshal.FreeHGlobal (ptr);
-				}
-
-				base.Dispose (disposing);
-			}
-		}
-		
 		BinaryReader reader;
 		object readerLock = new object ();
 		IFormatter formatter;
