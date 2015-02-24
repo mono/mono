@@ -89,8 +89,9 @@ namespace System.Net.Http.Headers
 			}
 
 			t = token.Value;
-			if (t == Token.Type.SeparatorSemicolon && (!NameValueHeaderValue.TryParseParameters (lexer, out parameters, out t) || t != Token.Type.End))
+			if (t == Token.Type.SeparatorSemicolon && !NameValueHeaderValue.TryParseParameters (lexer, out parameters, out t)) {
 				return false;
+			}
 
 			parsedValue = new MediaTypeWithQualityHeaderValue ();
 			parsedValue.media_type = media;
