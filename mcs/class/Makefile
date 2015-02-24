@@ -108,7 +108,6 @@ net_4_5_dirs := \
 	Microsoft.VisualC		\
 	Cscompmgd			\
 	PEAPI				\
-	Npgsql				\
 	Commons.Xml.Relaxng		\
 	Novell.Directory.Ldap		\
 	Mono.Security.Win32		\
