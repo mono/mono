@@ -428,7 +428,8 @@ namespace Mono.Security.Protocol.Tls
 		private void NegotiateAsyncWorker (IAsyncResult result)
 		{
 			NegotiateAsyncResult negotiate = result.AsyncState as NegotiateAsyncResult;
-
+			var state = negotiate.State;
+			
 			try
 			{
 				switch (negotiate.State)
@@ -589,12 +590,23 @@ namespace Mono.Security.Protocol.Tls
 			catch (TlsException ex)
 			{
 				// FIXME: should the send alert also be done asynchronously here and below?
-				this.protocol.SendAlert(ex.Alert);
+				Console.WriteLine ("TlsException when handling state {1}: {0}", ex, state);
+				try {
+					this.protocol.SendAlert(ex.Alert);
+				} catch (Exception ex2) {
+					Console.WriteLine ("TLS: Send Alert raised an exception: {0}", ex2);
+				}
+				
 				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
 			}
 			catch (Exception ex)
 			{
-				this.protocol.SendAlert(AlertDescription.InternalError);
+				Console.WriteLine ("General Exception: {0} when handling state {1}", ex, state);
+				try {
+					this.protocol.SendAlert(AlertDescription.InternalError);
+				} catch (Exception ex2) {
+					Console.WriteLine ("TLS: Send Alert raised an exception: {0}", ex2);
+				}
 				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
 			}
 		}

@@ -26,7 +26,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading;
-
+using System.Net;
 using Mono.Security.Protocol.Tls.Handshake;
 
 namespace Mono.Security.Protocol.Tls
