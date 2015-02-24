@@ -111,8 +111,10 @@ namespace System.Diagnostics {
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         private void InitializeSettings() {
             // don't use the property setters here to avoid infinite recursion.
+#if CONFIGURATION_DEP
             assertUIEnabled = DiagnosticsConfiguration.AssertUIEnabled;
             logFileName = DiagnosticsConfiguration.LogFileName;
+#endif
             settingsInitialized = true;
         }
 

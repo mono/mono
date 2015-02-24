@@ -3,7 +3,7 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-
+#if XML_DEP
 using System;
 using System.Text;
 using System.Xml;
@@ -335,3 +335,4 @@ namespace System.Diagnostics {
         }
     }
 }
+#endif

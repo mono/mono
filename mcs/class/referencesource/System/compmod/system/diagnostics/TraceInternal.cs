@@ -34,11 +34,13 @@ namespace System.Diagnostics {
                         if (listeners == null) {
                             // We only need to check that the main section exists.  Everything else will get 
                             // created for us if it doesn't exist already. 
+#if CONFIGURATION_DEP
                             SystemDiagnosticsSection configSectionSav = DiagnosticsConfiguration.SystemDiagnosticsSection;
                             if (configSectionSav != null) {
                                 listeners = configSectionSav.Trace.Listeners.GetRuntimeObject();
                             }
                             else {
+#endif
                                 // If machine.config was deleted the code will get to here
                                 // supply at least something to prevent the world from coming to
                                 // an abrupt end. 
@@ -47,7 +49,9 @@ namespace System.Diagnostics {
                                 defaultListener.IndentLevel = indentLevel;
                                 defaultListener.IndentSize = indentSize;
                                 listeners.Add(defaultListener);
+#if CONFIGURATION_DEP
                             }
+#endif
                         }
                     }
                 }
@@ -269,6 +273,7 @@ namespace System.Diagnostics {
         }        
 
         private static void InitializeSettings() {
+#if CONFIGURATION_DEP
             // we want to redo this logic exactly once if the last time we entered the config
             // system was still initializing.  (ASURT 111941, VSWhidbey 149552)
             if (!settingsInitialized || (defaultInitialized && DiagnosticsConfiguration.IsInitialized())) {
@@ -289,6 +294,7 @@ namespace System.Diagnostics {
                     }
                 }
             }
+#endif
         }
 
         // This method refreshes all the data from the configuration file, so that updated to the configuration file are mirrored

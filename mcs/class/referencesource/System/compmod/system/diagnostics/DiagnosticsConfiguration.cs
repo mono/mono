@@ -4,6 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+#if CONFIGURATION_DEP
 namespace System.Diagnostics {
     using System;
     using System.Reflection;
@@ -255,3 +256,4 @@ namespace System.Diagnostics {
     }
 }
 
+#endif

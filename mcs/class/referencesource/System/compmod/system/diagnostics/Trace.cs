@@ -163,7 +163,9 @@ namespace System.Diagnostics {
         }
 
         public static void Refresh() {
+#if CONFIGURATION_DEP
             DiagnosticsConfiguration.Refresh();
+#endif
             Switch.RefreshAll();
             TraceSource.RefreshAll();
             TraceInternal.Refresh();

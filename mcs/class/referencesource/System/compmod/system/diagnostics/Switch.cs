@@ -6,6 +6,9 @@
 
 /*
  */
+#if !CONFIGURATION_DEP
+using SwitchElementsCollection = System.Object;
+#endif
 
 namespace System.Diagnostics {
     using System;
@@ -19,7 +22,9 @@ namespace System.Diagnostics {
     using System.Collections.Specialized;
     using System.Globalization;
     using System.Configuration;
+#if XML_DEP
     using System.Xml.Serialization;
+#endif
     using System.Diagnostics.CodeAnalysis;
     
     /// <devdoc>
@@ -97,7 +102,9 @@ namespace System.Diagnostics {
             }
         }
 
+#if XML_DEP
         [XmlIgnore]
+#endif
         public StringDictionary Attributes {
             get {
                 Initialize();
@@ -164,6 +171,7 @@ namespace System.Diagnostics {
             set {
                 Initialize();
                 switchValueString = value;
+#if CONFIGURATION_DEP
                 try {
                     OnValueChanged();
                 }
@@ -176,6 +184,9 @@ namespace System.Diagnostics {
                 catch (OverflowException e) {
                     throw new ConfigurationErrorsException(SR.GetString(SR.BadConfigSwitchValue, DisplayName), e);
                 }
+#else
+                OnValueChanged();
+#endif
             }
         }
 
@@ -204,6 +215,7 @@ namespace System.Diagnostics {
                         }
                     }
 
+#if CONFIGURATION_DEP
                     if (switchSettings != null) {
                         SwitchElement mySettings = switchSettings[displayName];
                         if (mySettings != null) {
@@ -231,11 +243,14 @@ namespace System.Diagnostics {
                             OnValueChanged();
                         }
                     } else {
+#endif
                         // We don't use the property here because we don't want to catch exceptions 
                         // and rethrow them as ConfigurationException.  In this case there's no config. 
                         switchValueString = defaultValue;
                         OnValueChanged();
+#if CONFIGURATION_DEP
                     }
+#endif
 
                     initialized = true;
                     initializing = false;
@@ -249,11 +264,13 @@ namespace System.Diagnostics {
             if (switchSettings != null)
                 return true;
 
+#if CONFIGURATION_DEP
             if (!DiagnosticsConfiguration.CanInitialize())
                 return false;
 
             // This hashtable is case-insensitive.
             switchSettings = DiagnosticsConfiguration.SwitchSettings;
+#endif
             return true;
         }
 

@@ -74,6 +74,7 @@ namespace System.Diagnostics {
                     if (_initCalled)
                         return;
                     
+#if CONFIGURATION_DEP
                     SourceElementsCollection sourceElements = DiagnosticsConfiguration.Sources;
     
                     if (sourceElements != null) {
@@ -99,6 +100,7 @@ namespace System.Diagnostics {
                             NoConfigInit();
                     }
                     else
+#endif
                         NoConfigInit();
     
                     _initCalled = true;
@@ -173,6 +175,7 @@ namespace System.Diagnostics {
                 return;
             }
 
+#if CONFIGURATION_DEP
             SourceElementsCollection sources = DiagnosticsConfiguration.Sources;
 
             if (sources != null) {
@@ -233,6 +236,7 @@ namespace System.Diagnostics {
                     attributes = null;
                 }
             }
+#endif
         }
         
         [Conditional("TRACE")]

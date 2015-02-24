@@ -19,6 +19,7 @@ namespace System.Diagnostics {
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         internal static object GetRuntimeObject(string className, Type baseType, string initializeData) {
             Object newObject = null;
+#if CONFIGURATION_DEP
             Type objectType = null;
 
             if (className.Length == 0) {
@@ -106,20 +107,27 @@ namespace System.Diagnostics {
                 else
                     throw new ConfigurationErrorsException(SR.GetString(SR.Could_not_create_type_instance, className));
             }
+#endif
 
             return newObject;
         }
 
+#if !MOBILE
         // Our own tracelisteners that needs extra config validation 
         internal static bool IsOwnedTL(Type type) {
             return (typeof(EventLogTraceListener) == type  
                     || IsOwnedTextWriterTL(type)); 
         }
         internal static bool IsOwnedTextWriterTL(Type type) {
+#if XML_DEP
             return (typeof(XmlWriterTraceListener) == type)  
                     || (typeof(DelimitedListTraceListener) == type)
                     || (typeof(TextWriterTraceListener) == type); 
+#else
+            return false;
+#endif
         }
+#endif
         
         private static object ConvertToBaseTypeOrEnum(string value, Type type) {
             if (type.IsEnum)
@@ -129,6 +137,7 @@ namespace System.Diagnostics {
         }
 
         internal static void VerifyAttributes(IDictionary attributes, String[] supportedAttributes, object parent) {
+#if CONFIGURATION_DEP
             foreach (string key in attributes.Keys) {
                 bool found = false;
                 if (supportedAttributes != null) {
@@ -140,6 +149,7 @@ namespace System.Diagnostics {
                 if (!found)
                     throw new ConfigurationErrorsException(SR.GetString(SR.AttributeNotSupported, key, parent.GetType().FullName));
             }
+#endif
         }
         
     }

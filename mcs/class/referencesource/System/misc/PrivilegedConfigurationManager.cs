@@ -3,7 +3,7 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-
+#if CONFIGURATION_DEP
 
 namespace System.Configuration {
 
@@ -25,3 +25,4 @@ namespace System.Configuration {
         }
     }
 }
+#endif

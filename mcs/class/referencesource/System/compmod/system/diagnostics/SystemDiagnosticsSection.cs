@@ -3,6 +3,7 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
+#if CONFIGURATION_DEP
 using System.Configuration;
 
 namespace System.Diagnostics {
@@ -79,3 +80,4 @@ namespace System.Diagnostics {
     }
 }
     
+#endif
