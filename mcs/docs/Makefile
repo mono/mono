@@ -104,8 +104,7 @@ MONO_DIRS = \
 	$(classdir)/Mono.Posix/$(doc_en)                   \
 	$(classdir)/Mono.Security.Win32/$(doc_en)          \
 	$(classdir)/Mono.Security/$(doc_en)                \
-	$(classdir)/Mono.Simd/$(doc_en)                    \
-	$(classdir)/Npgsql/$(doc_en)
+	$(classdir)/Mono.Simd/$(doc_en)
 
 NOVELL_DIRS = \
 	$(topdir)/class/Novell.Directory.Ldap/Documentation/en
