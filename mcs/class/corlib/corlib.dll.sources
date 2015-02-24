@@ -364,7 +364,6 @@ System.IO/SeekOrigin.cs
 System.IO/UnexceptionalStreamReader.cs
 System.IO/UnexceptionalStreamWriter.cs
 System.IO/UnmanagedMemoryAccessor.cs
-System.IO/UnmanagedMemoryStream.cs
 System.IO.IsolatedStorage/INormalizeForIsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorageException.cs
@@ -1570,6 +1569,7 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/io/stringwriter.cs
 ../../../external/referencesource/mscorlib/system/io/textreader.cs
 ../../../external/referencesource/mscorlib/system/io/textwriter.cs
+../../../external/referencesource/mscorlib/system/io/unmanagedmemorystream.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs

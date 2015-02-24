@@ -1072,18 +1072,7 @@ namespace MonoTests.System.IO
 		{
 			UnmanagedMemoryStream ums = new UnmanagedMemoryStream(mem_byteptr,
 				length, capacity, FileAccess.ReadWrite);
-			try {
-				ums.Position = 0x80000000;
-				Assert.Fail ("#1");
-			} catch (ArgumentOutOfRangeException ex) {
-				// MemoryStream length must be non-negative and less than
-				// 2^31 - 1 - origin
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("value", ex.ParamName, "#6");
-			}
+			ums.Position = 0x80000000;
 			ums.Close();
 		}
 

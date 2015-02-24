@@ -70,7 +70,7 @@ namespace System.Reflection {
 
 			protected override void Dispose (bool disposing)
 			{
-				if (!closed) {
+				if (_isOpen) {
 					/* 
 					 * The returned pointer points inside metadata, so
 					 * we have to increase the refcount of the module, and decrease
