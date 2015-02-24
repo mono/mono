@@ -603,11 +603,12 @@ namespace Mono.Security.Protocol.Tls
 			{
 				Console.WriteLine ("General Exception: {0} when handling state {1}", ex, state);
 				try {
-					this.protocol.SendAlert(AlertDescription.InternalError);
+					this.protocol.SendAlert(ref ex);
 				} catch (Exception ex2) {
 					Console.WriteLine ("TLS: Send Alert raised an exception: {0}", ex2);
+				} finally {
+					negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
 				}
-				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
 			}
 		}
 
