@@ -193,8 +193,6 @@ net_4_5_dirs := \
 	System.Web.Http \
 	System.Web.Http.SelfHost \
 	System.Web.Http.WebHost \
-	EntityFramework	\
-	EntityFramework.SqlServer	\
 	Mono.CodeContracts \
 	System.IO.Compression \
 	System.IO.Compression.FileSystem \

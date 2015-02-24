@@ -10,9 +10,6 @@
 [submodule "external/debian-snapshot"]
 	path = external/debian-snapshot
 	url = git://github.com/directhex/mono-snapshot.git
-[submodule "external/entityframework"]
-	path = external/entityframework
-	url = git://github.com/mono/entityframework.git
 [submodule "external/rx"]
 	path = external/rx
 	url = git://github.com/mono/rx.git
