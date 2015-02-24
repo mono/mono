@@ -150,7 +150,7 @@ namespace System.Xml.Serialization
 			}
 #endif
 			deleteTempFiles = (db == null || db == "no");
-#if !NET_2_1
+#if !NET_2_1 && CONFIGURATION_DEP
 			// DiagnosticsSection
 			ConfigurationSection table = (ConfigurationSection) ConfigurationSettings.GetConfig("system.diagnostics");
 			var bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
