@@ -6,6 +6,11 @@ LIBRARY = System.Net.dll
 LIB_REFS = System System.Core System.Xml
 LIB_MCS_FLAGS =  -unsafe
 
+EXTRA_TEST_TARGETS = Tls_Compat
+
+Tls_Compat:
+	cd Test/Tls_Compat && make check
+
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif

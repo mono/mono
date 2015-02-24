@@ -52,9 +52,8 @@ ifdef HAVE_CS_TESTS
 test_assemblies += $(test_lib)
 endif
 
-ifdef test_assemblies
 check: run-test
-test-local: $(test_assemblies)
+test-local: $(test_assemblies) $(EXTRA_TEST_TARGETS)
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
@@ -93,9 +92,6 @@ run-test-ondotnet-lib: test-local
 	ok=:; \
 	$(TEST_HARNESS) $(test_assemblies) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(TEST_HARNESS_OUTPUT_ONDOTNET) -xml=TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
 	$(TEST_HARNESS_POSTPROC_ONDOTNET) ; $$ok
-
-
-endif # test_assemblies
 
 TEST_FILES =
 
