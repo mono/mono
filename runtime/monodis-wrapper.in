@@ -1,6 +1,5 @@
 #! /bin/sh
 r='@mono_build_root@'
 MONO_CFG_DIR='@mono_cfg_dir@'
-MONO_SHARED_DIR=$r/runtime
-export MONO_CFG_DIR MONO_SHARED_DIR
+export MONO_CFG_DIR
 exec "$r/libtool" --mode=execute -dlopen "$r/mono/mini/libmono-2.0.la" "$r/mono/dis/monodis" "$@"
