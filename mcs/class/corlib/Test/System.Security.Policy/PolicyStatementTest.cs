@@ -189,7 +189,6 @@ namespace MonoTests.System.Security.Policy {
 
 			Assert.AreEqual (ps1.ToXml ().ToString (), ps2.ToXml ().ToString (), "Xml");
 		}
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
 		public void Equals ()
@@ -212,6 +211,5 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsTrue (unr3.Equals (unr2), "unr3.Equals (unr2)");
 			Assert.IsTrue (unr2.Equals (unr3), "unr2.Equals (unr3)");
 		}
-#endif
 	}
 }

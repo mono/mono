@@ -100,6 +100,20 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Ctor_RelativeOrAbsoluteUri ()
+		{
+			var uri = new Uri ("/", UriKind.RelativeOrAbsolute);
+			new HttpRequestMessage (HttpMethod.Get, uri);
+
+			uri = new Uri ("file://", UriKind.RelativeOrAbsolute);
+			try {
+				new HttpRequestMessage (HttpMethod.Get, uri);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
 		public void Ctor_RelativeUriString ()
 		{
 			var client = new HttpClient ();
@@ -107,6 +121,18 @@ namespace MonoTests.System.Net.Http
 			var req = new HttpRequestMessage (HttpMethod.Get, "Computer");
 			// HttpRequestMessage does not rewrite it here.
 			Assert.IsFalse (req.RequestUri.IsAbsoluteUri);
+		}
+
+		[Test]
+		public void Ctor_RelativeOrAbsoluteUriString ()
+		{
+			new HttpRequestMessage (HttpMethod.Get, "/");
+
+			try {
+				new HttpRequestMessage (HttpMethod.Get, "file://");
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
 		}
 
 		[Test]
@@ -437,6 +463,62 @@ namespace MonoTests.System.Net.Http
 						new ProductInfoHeaderValue ("MonoDevelop", null),
 						new ProductInfoHeaderValue ("(Unix 3.13.0; amd64; en-US; Octokit 0.3.4)")
 				});
+
+			Assert.IsTrue (se, "#1");
+			Assert.AreEqual ("MonoDevelop (Unix 3.13.0; amd64; en-US; Octokit 0.3.4)", headers.UserAgent.ToString (), "#2");
+		}
+
+		[Test]
+		public void Headers_UserAgentExtraWithTabs ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			var headers = message.Headers;
+
+			headers.Add ("User-Agent", "A \t  \t B");
+
+			var se = headers.UserAgent.SequenceEqual (
+				new[] {
+						new ProductInfoHeaderValue ("A", null),
+						new ProductInfoHeaderValue ("B", null)
+				});
+
+			Assert.IsTrue (se, "#1");
+			Assert.AreEqual ("A B", headers.UserAgent.ToString (), "#2");
+		}
+
+		[Test]
+		public void Headers_UserAgentInvalid ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			var headers = message.Headers;
+
+			try {
+				headers.Add ("User-Agent", "A(B)");
+				Assert.Fail ("#1");
+			} catch (FormatException) {
+			}
+		}
+
+		[Test]
+		public void Headers_AcceptMulti ()
+		{
+			var request = new HttpRequestMessage();
+			var headers = request.Headers;
+
+			headers.Add("Accept", "application/vnd.github.moondragon+json; charset=utf-8,application/vnd.github.v3+json; charset=utf-8");
+
+			var se = headers.Accept.SequenceEqual (
+				new[] {
+					new MediaTypeHeaderValue ("application/vnd.github.moondragon+json") {
+						CharSet = "utf-8"
+					},
+					new MediaTypeHeaderValue ("application/vnd.github.v3+json") {
+						CharSet = "utf-8"
+					}
+				});
+
+			Assert.IsTrue (se, "#1");
+			Assert.AreEqual ("application/vnd.github.moondragon+json; charset=utf-8, application/vnd.github.v3+json; charset=utf-8", headers.Accept.ToString (), "#2");
 		}
 
 		[Test]

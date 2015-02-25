@@ -462,6 +462,14 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void MatchIgnoreQueryParamNoValue ()
+		{
+			var t = new UriTemplate ("/{a}/*", true);
+			var m = t.Match (new Uri ("http://s"), new Uri ("http://s/a/b?foo"));
+			Assert.AreEqual (1, m.QueryParameters.Keys.Count, "#1");
+		}
+
+		[Test]
 		public void IgnoreTrailingSlash ()
 		{
 			var t = new UriTemplate ("/{foo}/{bar}", true);

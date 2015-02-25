@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -741,7 +740,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void IDictionary_Add_Null_2 ()
 		{
 			IDictionary d = new Dictionary<int, int> ();
@@ -1130,7 +1129,6 @@ namespace MonoTests.System.Collections.Generic {
 			c.CopyTo (new MyClass [1], 0);
 		}
 
-		[Test, ExpectedException (typeof (ArgumentException))]
 		public void ICollectionCopyTo_ex1 ()
 		{
 			var d = new Dictionary<int, string> ();
@@ -1232,4 +1230,3 @@ BgcAAAABMQEAAAAL";
 	}
 }
 
-#endif // NET_2_0

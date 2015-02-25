@@ -91,16 +91,12 @@ namespace MonoCasTests.System {
 			unit.Segments3 ();
 			unit.Segments5 ();
 			unit.UnixLocalPath ();
-#if NET_2_0
 			unit.PortMax ();
-#endif
 		}
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if NET_2_0
 		[Category ("NotDotNet")] // tests needs to be updated for 2.0
-#endif
 		public void UnitTest2Reuse ()
 		{
 			UriTest2 unit = new UriTest2 ();
@@ -109,7 +105,6 @@ namespace MonoCasTests.System {
 			unit.MoreUnescape ();
 			unit.UriScheme ();
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		[Category ("NotWorking")]
@@ -122,7 +117,6 @@ namespace MonoCasTests.System {
 			unit.TryCreate_Uri_String_Uri ();
 			unit.TryCreate_Uri_Uri_Uri ();
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void LinkDemand_Deny_Unrestricted ()

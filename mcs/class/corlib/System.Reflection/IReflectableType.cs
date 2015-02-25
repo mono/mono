@@ -26,7 +26,6 @@
 //
 //
 
-#if NET_4_5
 
 namespace System.Reflection
 {
@@ -35,4 +34,3 @@ namespace System.Reflection
 		TypeInfo GetTypeInfo ();
 	}
 }
-#endif

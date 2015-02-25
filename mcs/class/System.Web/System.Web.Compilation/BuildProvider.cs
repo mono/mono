@@ -45,9 +45,7 @@ namespace System.Web.Compilation
 {
 	public abstract class BuildProvider
 	{
-#if NET_4_0
 		static Dictionary <string, Type> registeredBuildProviderTypes;
-#endif
 		ArrayList ref_assemblies;
 		
 		ICollection vpath_deps;
@@ -136,7 +134,6 @@ namespace System.Web.Compilation
 			// MS also throws a NullReferenceException here when not hosted.
 			return VirtualPathProvider.OpenFile (virtualPath);
 		}
-#if NET_4_0
 		public static void RegisterBuildProvider (string extension, Type providerType)
 		{
 			if (String.IsNullOrEmpty (extension))
@@ -181,7 +178,6 @@ namespace System.Web.Compilation
 			
 			return Activator.CreateInstance (type, null) as global::System.Web.Compilation.BuildProvider;
 		}
-#endif
 		public virtual CompilerType CodeCompilerType {
 			get { return null; } // Documented to return null
 		}

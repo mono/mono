@@ -49,11 +49,7 @@ namespace MonoTests.System.Diagnostics {
 			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 			Assert.AreEqual (".", a.MachineName, "MachineName");
 			Assert.AreEqual ("*", a.CategoryName, "CategoryName");
-#if NET_2_0
 			Assert.AreEqual (PerformanceCounterPermissionAccess.Write, a.PermissionAccess, "PermissionAccess");
-#else
-			Assert.AreEqual (PerformanceCounterPermissionAccess.Browse, a.PermissionAccess, "PermissionAccess");
-#endif
 			PerformanceCounterPermission sp = (PerformanceCounterPermission)a.CreatePermission ();
 			Assert.IsFalse (sp.IsUnrestricted (), "IsUnrestricted");
 		}
@@ -151,9 +147,7 @@ namespace MonoTests.System.Diagnostics {
 						case 13:
 						case 32:
 						case 92:
-#if NET_2_0
 						case 133:
-#endif
 						case 160:
 							// known invalid chars
 							break;
@@ -179,12 +173,10 @@ namespace MonoTests.System.Diagnostics {
 			Assert.AreEqual (PerformanceCounterPermissionAccess.Instrument, a.PermissionAccess, "Instrument");
 			a.PermissionAccess = PerformanceCounterPermissionAccess.None;
 			Assert.AreEqual (PerformanceCounterPermissionAccess.None, a.PermissionAccess, "None");
-#if NET_2_0
 			a.PermissionAccess = PerformanceCounterPermissionAccess.Read;
 			Assert.AreEqual (PerformanceCounterPermissionAccess.Read, a.PermissionAccess, "Read");
 			a.PermissionAccess = PerformanceCounterPermissionAccess.Write;
 			Assert.AreEqual (PerformanceCounterPermissionAccess.Write, a.PermissionAccess, "Write");
-#endif
 		}
 
 		[Test]

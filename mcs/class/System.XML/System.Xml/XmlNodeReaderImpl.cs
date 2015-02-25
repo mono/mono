@@ -34,23 +34,15 @@
 //
 
 using System;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.Xml;
 using System.Text;
 using Mono.Xml;
-#if NET_2_0
 using System.Xml.Schema;
-#endif
 
 namespace System.Xml
 {
-#if NET_2_0
 	internal class XmlNodeReaderImpl : XmlReader, IHasXmlParserContext, IXmlNamespaceResolver
-#else
-	internal class XmlNodeReaderImpl : XmlReader, IHasXmlParserContext
-#endif
 	{
 		XmlDocument document;
 		XmlNode startNode;
@@ -109,7 +101,6 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public override bool CanReadBinaryContent {
 			get { return true; }
 		}
@@ -117,15 +108,6 @@ namespace System.Xml
 		public override bool CanReadValueChunk {
 			get { return true; }
 		}
-#else
-		internal override bool CanReadBinaryContent {
-			get { return true; }
-		}
-
-		internal override bool CanReadValueChunk {
-			get { return true; }
-		}
-#endif
 
 		public override bool CanResolveEntity {
 			get { return false; }
@@ -208,20 +190,6 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
-#else
-		public override string this [int i] {
-			get { return GetAttribute (i); }
-		}
-
-		public override string this [string name] {
-			get { return GetAttribute (name); }
-		}
-
-		public override string this [string name, string namespaceURI] {
-			get { return GetAttribute (name, namespaceURI); }
-		}
-#endif
 
 		public override string LocalName {
 			get {
@@ -292,24 +260,14 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
-#else
-		public override char QuoteChar {
-			get {
-				return '"';
-			}
-		}
-#endif
 
 		public override ReadState ReadState {
 			get { return state; }
 		}
 
-#if NET_2_0
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return current != null ? current.SchemaInfo : null; }
 		}
-#endif
 
 		public override string Value {
 			get {
@@ -465,7 +423,6 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			IDictionary<string, string> table = new Dictionary<string, string> ();
@@ -489,7 +446,6 @@ namespace System.Xml
 				table.Add (XmlNamespaceManager.PrefixXml, XmlNamespaceManager.XmlnsXml);
 			return table;
 		}
-#endif
 
 		private XmlElement GetCurrentElement ()
 		{
@@ -545,7 +501,6 @@ namespace System.Xml
 			return null;
 		}
 
-#if NET_2_0
 		public string LookupPrefix (string ns)
 		{
 			return LookupPrefix (ns, false);
@@ -584,7 +539,6 @@ namespace System.Xml
 			}
 			return null;
 		}
-#endif
 
 		public override void MoveToAttribute (int attributeIndex)
 		{
@@ -703,10 +657,8 @@ namespace System.Xml
 				return false;
 			}
 
-#if NET_2_0
 			if (Binary != null)
 				Binary.Reset ();
-#endif
 
 			bool ret = ReadContent ();
 			ownerLinkedNode = current;

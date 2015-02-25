@@ -819,12 +819,10 @@ namespace Microsoft.Win32 {
 			return CreateSubKey (rkey, keyname, true);
 		}
 
-#if NET_4_0
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyname, RegistryOptions options)
 		{
 			return CreateSubKey (rkey, keyname, true, options == RegistryOptions.Volatile);
 		}
-#endif
 
 		public RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName)
 		{
@@ -848,12 +846,10 @@ namespace Microsoft.Win32 {
 			return result;
 		}
 
-#if NET_4_0
 		public RegistryKey FromHandle (SafeRegistryHandle handle)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		
 		public void Flush (RegistryKey rkey)
 		{
@@ -991,12 +987,10 @@ namespace Microsoft.Win32 {
 			return RegistryValueKind.Unknown;
 		}
 
-#if NET_4_0
 		public IntPtr GetHandle (RegistryKey key)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		
 	}
 }

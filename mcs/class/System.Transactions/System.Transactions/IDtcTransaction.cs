@@ -7,7 +7,6 @@
 // (C)2005 Novell Inc,
 //
 
-#if NET_2_0
 
 // Well, am not interested in implementing DTC support...
 using System;
@@ -28,4 +27,3 @@ namespace System.Transactions
 	}
 }
 
-#endif

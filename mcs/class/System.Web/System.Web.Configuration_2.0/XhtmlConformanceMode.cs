@@ -26,7 +26,6 @@
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.Configuration
 {
 	public enum XhtmlConformanceMode
@@ -36,4 +35,3 @@ namespace System.Web.Configuration
 		Strict
 	}
 }
-#endif

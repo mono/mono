@@ -71,19 +71,13 @@ namespace System.Xml.Serialization
 			return new InvalidOperationException ("There was an error reflecting '" + map.TypeFullName + "': " + message);
 		}
 
-#if NET_2_0
 		static readonly ParameterModifier [] empty_modifiers = new ParameterModifier [0];
-#endif		
 
 		public static void CheckSerializableType (Type type, bool allowPrivateConstructors)
 		{
 			if (type.IsArray) return;
 			
-#if NET_2_0
 			if (!allowPrivateConstructors && type.GetConstructor (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, empty_modifiers) == null && !type.IsAbstract && !type.IsValueType)
-#else
-			if (!allowPrivateConstructors && type.GetConstructor (Type.EmptyTypes) == null && !type.IsAbstract && !type.IsValueType)
-#endif
 				throw new InvalidOperationException (type.FullName + " cannot be serialized because it does not have a default public constructor");
 				
 			if (type.IsInterface && !TypeTranslator.GetTypeData (type).IsListType)

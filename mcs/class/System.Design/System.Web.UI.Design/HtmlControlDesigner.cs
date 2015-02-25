@@ -38,21 +38,15 @@ namespace System.Web.UI.Design
 		protected override void Dispose (bool disposing) { throw new NotImplementedException (); }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use ControlDesigner.Tag instead")]
-#endif
 		protected virtual void OnBehaviorAttached () { throw new NotImplementedException (); }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use ControlDesigner.Tag instead")]
-#endif
 		protected virtual void OnBehaviorDetaching () { throw new NotImplementedException (); }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use DataBinding.Changed event instead")]
-#endif
 		protected virtual void OnBindingsCollectionChanged (string propName) { throw new NotImplementedException (); }
 
 		[MonoTODO]
@@ -65,27 +59,20 @@ namespace System.Web.UI.Design
 		protected override void PreFilterProperties (IDictionary properties) { throw new NotImplementedException (); }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use ControlDesigner.Tag instead")]
-#endif
 		public IHtmlControlDesignerBehavior Behavior { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 
 		[MonoTODO]
 		public DataBindingCollection DataBindings { get { throw new NotImplementedException (); } }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use new WebFormsRootDesigner feature instead. It is not used anymore", true)]
-#endif
 		protected object DesignTimeElement { get { throw new NotImplementedException (); } }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Code serialization is not supported in 2.0 anymore")]
-#endif
 		public virtual bool ShouldCodeSerialize { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 
-#if NET_2_0
 		public ExpressionBindingCollection Expressions {
 			get { throw new NotImplementedException (); }
 		}
@@ -94,6 +81,5 @@ namespace System.Web.UI.Design
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

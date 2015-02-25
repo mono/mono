@@ -40,13 +40,11 @@ namespace System.Web.UI.Design
 		{
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public static DataTable CreateDummyDataBoundDataTable ()
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public static DataTable CreateDummyDataTable ()
@@ -60,13 +58,11 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public static DataTable CreateSampleDataTable (IEnumerable referenceData, bool useDataBoundData)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public static PropertyDescriptorCollection GetDataFields (IEnumerable dataSource)

@@ -37,9 +37,6 @@ using System.Data;
 namespace System.Data.Common
 {
 	public
-#if !NET_2_0
-	abstract
-#endif
 	class RowUpdatedEventArgs : EventArgs
 	{
 		#region Fields
@@ -56,11 +53,7 @@ namespace System.Data.Common
 
 		#region Constructors
 
-#if NET_2_0
 		public
-#else
-		protected
-#endif
 		RowUpdatedEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
 			this.dataRow = dataRow;
@@ -108,17 +101,14 @@ namespace System.Data.Common
 			get { return tableMapping; }
 		}
 
-#if NET_2_0
 		public int RowCount {
 			get { return 0; }
 		}
-#endif
 
 		#endregion // Properties
 
 		#region Methods
 
-#if NET_2_0
 		public void CopyToRows (DataRow[] array)
 		{
 		}
@@ -126,7 +116,6 @@ namespace System.Data.Common
 		public void CopyToRows (DataRow[] array, int arrayIndex)
 		{
 		}
-#endif
 
 		#endregion //Methods
 	}

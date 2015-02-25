@@ -49,15 +49,23 @@ namespace System
 		public MonoCMethod default_ctor;
 	}
 		
+	abstract class RuntimeType : TypeInfo
+	{
+		internal RuntimeAssembly GetRuntimeAssembly ()
+		{
+			return (RuntimeAssembly) Assembly;
+		}
+
+		internal virtual bool IsSzArray {
+			get {
+				return IsArrayImpl () && GetArrayRank () == 1;
+			}
+		}
+	}
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	sealed class MonoType : 
-#if NET_4_5
-		TypeInfo
-#else
-		Type
-#endif
-		, ISerializable
+	sealed class MonoType : RuntimeType, ISerializable
 	{
 		[NonSerialized]
 		MonoTypeInfo type_info;
@@ -216,6 +224,28 @@ namespace System
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type[] GetInterfaces();
+
+		public override InterfaceMapping GetInterfaceMap (Type interfaceType)
+		{
+			if (!IsSystemType)
+				throw new NotSupportedException ("Derived classes must provide an implementation.");
+			if (interfaceType == null)
+				throw new ArgumentNullException ("interfaceType");
+			if (!interfaceType.IsSystemType)
+				throw new ArgumentException ("interfaceType", "Type is an user type");
+			InterfaceMapping res;
+			if (!interfaceType.IsInterface)
+				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "interfaceType");
+			if (IsInterface)
+				throw new ArgumentException ("'this' type cannot be an interface itself");
+			res.TargetType = this;
+			res.InterfaceType = interfaceType;
+			GetInterfaceMapData (this, interfaceType, out res.TargetMethods, out res.InterfaceMethods);
+			if (res.TargetMethods == null)
+				throw new ArgumentException (Locale.GetText ("Interface not found"), "interfaceType");
+
+			return res;
+		}
 		
 		public override MemberInfo[] GetMembers( BindingFlags bindingAttr)
 		{
@@ -635,7 +665,7 @@ namespace System
 
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			UnitySerializationHolder.GetTypeData (this, info, context);
+			UnitySerializationHolder.GetUnitySerializationInfo(info, this);
 		}
 
 		public override string ToString()
@@ -682,7 +712,6 @@ namespace System
 			return res;
 		}
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
@@ -694,7 +723,6 @@ namespace System
 
 			return Enum.GetValues (this);
 		}
-#endif
 
 		static MethodBase CheckMethodSecurity (MethodBase mb)
 		{
@@ -714,7 +742,6 @@ namespace System
 #endif
 		}
 
-#if NET_4_0
 		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int get_core_clr_security_level ();
@@ -739,7 +766,6 @@ namespace System
 				return GetStructLayoutAttribute ();
 			}
 		}
-#endif
 
 		internal override bool IsUserType {
 			get {
@@ -747,12 +773,10 @@ namespace System
 			}
 		}
 
-#if NET_4_5
 		public override bool IsConstructedGenericType {
 			get {
 				return IsGenericType && !ContainsGenericParameters;
 			}
 		}
-#endif
 	}
 }

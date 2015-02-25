@@ -11,9 +11,11 @@
 #include <config.h>
 
 #include <glib.h>
-#include <signal.h>
 #include <string.h>
 
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
 #ifdef HAVE_UCONTEXT_H
 #include <ucontext.h>
 #endif
@@ -55,7 +57,7 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	}
 #endif
 
-	mono_handle_native_sigsegv (SIGSEGV, NULL);
+	mono_handle_native_sigsegv (SIGSEGV, NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -759,7 +761,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 
 	/* Pass the ctx parameter in TLS */
-	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
+	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 
 	mctx = jit_tls->ex_ctx;
 	mono_arch_setup_async_callback (&mctx, handle_signal_exception, obj);
@@ -769,26 +771,14 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 #else
 	MonoContext mctx;
 
-	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
+	mono_sigctx_to_monoctx (sigctx, &mctx);
 
 	mono_handle_exception (&mctx, obj);
 
-	mono_arch_monoctx_to_sigctx (&mctx, sigctx);
+	mono_monoctx_to_sigctx (&mctx, sigctx);
 
 	return TRUE;
 #endif
-}
-
-void
-mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
-{
-	mono_sigctx_to_monoctx (sigctx, mctx);
-}
-
-void
-mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
-{
-	mono_monoctx_to_sigctx (mctx, sigctx);
 }
 
 gpointer
@@ -846,7 +836,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 }
 
 void
-mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean stack_ovf)
+mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
 {
 #if defined(MONO_ARCH_USE_SIGACTION)
 	MonoException *exc = NULL;
@@ -858,7 +848,7 @@ mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean
 	if (stack_ovf)
 		exc = mono_domain_get ()->stack_overflow_ex;
 	if (!ji)
-		mono_handle_native_sigsegv (SIGSEGV, sigctx);
+		mono_handle_native_sigsegv (SIGSEGV, sigctx, siginfo);
 
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.

@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-#if NET_4_0
 	[Obsolete]
-#endif
 	[Serializable]
 	[ComVisible (true)]
 	public sealed class ExecutionEngineException : SystemException

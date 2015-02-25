@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Json;
@@ -865,6 +866,18 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			var deserializedValue = serializer.ReadObject (serializedStream);
 			Assert.AreEqual (typeof (decimal), deserializedValue.GetType ());
 			Assert.AreEqual (testValue, (decimal) deserializedValue);
+		}
+
+		[Test]
+		public void IEnumerableTest ()
+		{
+			string json = "[\"A\", \"B\"]";
+			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json))) {
+				DataContractJsonSerializer jsonSerializer = new
+					DataContractJsonSerializer(typeof(IEnumerable<string>));
+				var result = jsonSerializer.ReadObject(stream);
+				Assert.AreEqual (typeof (List<string>), result.GetType ());
+			}
 		}
 	}
 }

@@ -38,7 +38,7 @@ namespace System.Security.Cryptography {
 	public class HMACSHA256 : HMAC {
 
 		public HMACSHA256 () 
-			: this (KeyBuilder.Key (8))
+			: this (KeyBuilder.Key (64))
 		{
 		}
 

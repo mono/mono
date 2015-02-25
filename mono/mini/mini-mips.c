@@ -3305,8 +3305,8 @@ emit_reserve_param_area (MonoCompile *cfg, guint8 *code)
 	if (ppc_is_imm16 (-size)) {
 		ppc_stwu (code, ppc_r0, -size, ppc_sp);
 	} else {
-		ppc_load (code, ppc_r11, -size);
-		ppc_stwux (code, ppc_r0, ppc_sp, ppc_r11);
+		ppc_load (code, ppc_r12, -size);
+		ppc_stwux (code, ppc_r0, ppc_sp, ppc_r12);
 	}
 #endif
 	return code;
@@ -3327,8 +3327,8 @@ emit_unreserve_param_area (MonoCompile *cfg, guint8 *code)
 	if (ppc_is_imm16 (size)) {
 		ppc_stwu (code, ppc_r0, size, ppc_sp);
 	} else {
-		ppc_load (code, ppc_r11, size);
-		ppc_stwux (code, ppc_r0, ppc_sp, ppc_r11);
+		ppc_load (code, ppc_r12, size);
+		ppc_stwux (code, ppc_r0, ppc_sp, ppc_r12);
 	}
 #endif
 	return code;
@@ -3394,6 +3394,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL:
 			break;
+		case OP_IL_SEQ_POINT:
+			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
+			break;
 		case OP_SEQ_POINT: {
 			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
 				guint32 addr = (guint32)ss_trigger_page;
@@ -3431,9 +3434,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mips_mfhi (code, ins->dreg+1);
 			break;
 		case OP_MEMORY_BARRIER:
-#if 0
-			ppc_sync (code);
-#endif
+			mips_sync (code, 0);
 			break;
 		case OP_STOREI1_MEMBASE_IMM:
 			mips_load_const (code, mips_temp, ins->inst_imm);
@@ -3719,8 +3720,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_DIV_IMM:
 			g_assert_not_reached ();
 #if 0
-			ppc_load (code, ppc_r11, ins->inst_imm);
-			ppc_divwod (code, ins->dreg, ins->sreg1, ppc_r11);
+			ppc_load (code, ppc_r12, ins->inst_imm);
+			ppc_divwod (code, ins->dreg, ins->sreg1, ppc_r12);
 			ppc_mfspr (code, ppc_r0, ppc_xer);
 			ppc_andisd (code, ppc_r0, ppc_r0, (1<<14));
 			/* FIXME: use OverflowException for 0x80000000/-1 */
@@ -3911,6 +3912,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ins->dreg != ins->sreg1) {
 				mips_fmovd (code, ins->dreg, ins->sreg1);
 			}
+			break;
+		case OP_MOVE_F_TO_I4:
+			mips_cvtsd (code, mips_ftemp, ins->sreg1);
+			mips_mfc1 (code, ins->dreg, mips_ftemp);
+			break;
+		case OP_MOVE_I4_TO_F:
+			mips_mtc1 (code, ins->dreg, ins->sreg1);
+			mips_cvtds (code, ins->dreg, ins->dreg);
 			break;
 		case OP_MIPS_CVTSD:
 			/* Convert from double to float and leave it there */

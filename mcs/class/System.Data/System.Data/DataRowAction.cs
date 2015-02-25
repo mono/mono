@@ -38,17 +38,12 @@ namespace System.Data
 	/// This enumeration has a FlagsAttribute that allows a bitwise combination of its member values.
 	/// </summary>
 	[Flags]
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum DataRowAction
 	{
                 Add                             = 16,
                 Change                          = 2,
-#if NET_2_0
                 ChangeCurrentAndOriginal        = 64,
                 ChangeOriginal                  = 32,
-#endif // NET_2_0
                 Commit                          = 8,
                 Delete                          = 1,
                 Nothing                         = 0,

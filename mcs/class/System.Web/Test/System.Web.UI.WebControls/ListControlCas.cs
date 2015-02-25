@@ -67,10 +67,8 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.SelectedIndex ();
 			unit.Render ();
 			unit.ItemsOk ();
-#if NET_2_0
 			unit.ControlState ();
 			unit.ItemsTooHigh ();
-#endif
 		}
 	}
 }

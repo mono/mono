@@ -268,7 +268,10 @@ System.Net.Mail/SmtpPermissionAttributeTest.cs
 System.Net.Mail/SmtpServer.cs
 System.Net.Mime/ContentDispositionTest.cs
 System.Net.Mime/ContentTypeTest.cs
+System.Net.NetworkInformation/IPInterfacePropertiesTest.cs
+System.Net.NetworkInformation/NetworkInterfaceTest.cs
 System.Net.NetworkInformation/PhysicalAddressTest.cs
+System.Net.NetworkInformation/PingTest.cs
 System.Net.Security/SslStreamTest.cs
 System.Runtime.Versioning/FrameworkNameTest.cs
 System.Security.AccessControl/SemaphoreSecurityTest.cs
@@ -321,6 +324,7 @@ System.Text.RegularExpressions/RegexReplaceTests.cs
 System.Text.RegularExpressions/RegexTrial.cs
 System.Text.RegularExpressions/RegexTest.cs
 System.Text.RegularExpressions/RegexBugs.cs
+System.Text.RegularExpressions/RegexBugs_Long.cs
 System.Text.RegularExpressions/RegexMatchTests.cs
 System.Text.RegularExpressions/RegexReplace.cs
 System.Text.RegularExpressions/RegexResultTests.cs

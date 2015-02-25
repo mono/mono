@@ -134,9 +134,6 @@ struct sigcontext {
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
 
-#define MONO_ARCH_RETREG1 X86_EAX
-#define MONO_ARCH_RETREG2 X86_EDX
-
 /*This is the max size of the locals area of a given frame. I think 1MB is a safe default for now*/
 #define MONO_ARCH_MAX_FRAME_SIZE 0x100000
 
@@ -201,7 +198,6 @@ typedef struct {
 /* Enables OP_LSHL, OP_LSHL_IMM, OP_LSHR, OP_LSHR_IMM, OP_LSHR_UN, OP_LSHR_UN_IMM */
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
 
-#define MONO_ARCH_BIGMUL_INTRINS 1
 #define MONO_ARCH_NEED_DIV_CHECK 1
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
@@ -220,6 +216,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #if defined(__linux__) || defined (__APPLE__)
 #define MONO_ARCH_MONITOR_OBJECT_REG X86_EAX
+#define MONO_ARCH_MONITOR_LOCK_TAKEN_REG X86_EDX
 #endif
 #if !defined(__native_client_codegen__)
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
@@ -239,8 +236,6 @@ typedef struct {
 #ifndef TARGET_WIN32
 #define MONO_ARCH_AOT_SUPPORTED 1
 #endif
-
-#define MONO_ARCH_ENABLE_MONITOR_IL_FASTPATH 1
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_HAVE_LLVM_IMT_TRAMPOLINE 1

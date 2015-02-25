@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System;
 using NUnit.Framework;
 using System.Drawing;
@@ -124,4 +123,3 @@ namespace MonoTests.System.Windows.Forms
 
 	}
 }
-#endif

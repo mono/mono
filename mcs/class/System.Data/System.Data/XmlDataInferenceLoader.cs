@@ -78,9 +78,7 @@ namespace System.Data
 		public DataColumn SimpleContent;
 		public DataColumn PrimaryKey;
 		public DataColumn ReferenceKey;
-#if NET_2_0
 		public int lastElementIndex = -1;
-#endif
 
 		// Parent TableMapping
 		public TableMapping ParentTable;
@@ -288,9 +286,7 @@ namespace System.Data
 			if (col != null) {
 				if (col.ColumnMapping != MappingType.Element)
 					throw new DataException (String.Format ("Column {0} is already mapped to {1}.", localName, col.ColumnMapping));
-#if NET_2_0
 				table.lastElementIndex = table.Elements.IndexOf (col);
-#endif
 				return;
 			}
 			if (table.ChildTables [localName] != null)
@@ -302,11 +298,7 @@ namespace System.Data
 			col = new DataColumn (localName, typeof (string));
 			col.Namespace = el.NamespaceURI;
 			col.Prefix = el.Prefix;
-#if NET_2_0
 			table.Elements.Insert (++table.lastElementIndex, col);
-#else
-			table.Elements.Add (col);
-#endif
 		}
 
 		private void CheckExtraneousElementColumn (TableMapping parentTable, XmlElement el)
@@ -382,9 +374,7 @@ namespace System.Data
 
 			foreach (XmlAttribute attr in el.Attributes) {
 				if (attr.NamespaceURI == XmlConstants.XmlnsNS
-#if NET_2_0
 					|| attr.NamespaceURI == XmlConstants.XmlNS
-#endif
 					)
 					continue;
 				if (ignoredNamespaces != null &&
@@ -527,9 +517,7 @@ namespace System.Data
 
 			foreach (XmlAttribute attr in el.Attributes) {
 				if (attr.NamespaceURI == XmlConstants.XmlnsNS 
-#if NET_2_0
 					|| attr.NamespaceURI == XmlConstants.XmlNS
-#endif
 					)
 					continue;
 				if (ignoredNamespaces != null && ignoredNamespaces.Contains (attr.NamespaceURI))
@@ -570,9 +558,7 @@ namespace System.Data
 		{
 			foreach (XmlAttribute attr in top.Attributes) {
 				if (attr.NamespaceURI == XmlConstants.XmlnsNS
-#if NET_2_0
 					|| attr.NamespaceURI == XmlConstants.XmlNS
-#endif
 					)
 					continue;
 				if (ignoredNamespaces != null &&
@@ -602,9 +588,7 @@ namespace System.Data
 		{
 			foreach (XmlAttribute attr in el.Attributes) {
 				if (attr.NamespaceURI == XmlConstants.XmlnsNS
-#if NET_2_0
 					|| attr.NamespaceURI == XmlConstants.XmlNS
-#endif
 					)
 					continue;
 				return false;

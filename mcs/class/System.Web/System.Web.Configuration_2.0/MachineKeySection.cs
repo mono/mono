@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.ComponentModel;
@@ -47,9 +46,7 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty validationKeyProp;
 		static ConfigurationPropertyCollection properties;
 		static MachineKeyValidationConverter converter = new MachineKeyValidationConverter ();
-#if NET_4_0
 		MachineKeyValidation validation;
-#endif
 
 		static MachineKeySection ()
 		{
@@ -61,17 +58,10 @@ namespace System.Web.Configuration {
 								       PropertyHelper.WhiteSpaceTrimStringConverter,
 								       PropertyHelper.NonEmptyStringValidator,
 								       ConfigurationPropertyOptions.None);
-#if NET_4_0
 			validationProp = new ConfigurationProperty ("validation", typeof (string), "HMACSHA256",
 								    PropertyHelper.WhiteSpaceTrimStringConverter,
 								    PropertyHelper.NonEmptyStringValidator,
 								    ConfigurationPropertyOptions.None);
-#else
-			validationProp = new ConfigurationProperty ("validation", typeof (MachineKeyValidation), 
-								    MachineKeyValidation.SHA1, converter,
-								    PropertyHelper.DefaultValidator,
-								    ConfigurationPropertyOptions.None);
-#endif
 			validationKeyProp = new ConfigurationProperty ("validationKey", typeof (string), "AutoGenerate,IsolateApps",
 								       PropertyHelper.WhiteSpaceTrimStringConverter,
 								       PropertyHelper.NonEmptyStringValidator,
@@ -88,7 +78,6 @@ namespace System.Web.Configuration {
 			Config.AutoGenerate (MachineKeyRegistryStorage.KeyType.Validation);
 		}
 
-#if NET_4_0
 		public MachineKeySection ()
 		{
 			// get DefaultValue from ValidationAlgorithm
@@ -99,7 +88,6 @@ namespace System.Web.Configuration {
 		public MachineKeyCompatibilityMode CompatibilityMode {
 			get; set;
 		}
-#endif
 
 		protected internal override void Reset (ConfigurationElement parentElement)
 		{
@@ -132,7 +120,6 @@ namespace System.Web.Configuration {
 			}
 		}
 
-#if NET_4_0
 		// property exists for backward compatibility
 		public MachineKeyValidation Validation {
 			get { return validation; }
@@ -163,14 +150,6 @@ namespace System.Web.Configuration {
 				base[validationProp] = value;
 			}
 		}
-#else
-		[TypeConverter (typeof (MachineKeyValidationConverter))]
-		[ConfigurationProperty ("validation", DefaultValue = "SHA1")]
-		public MachineKeyValidation Validation {
-			get { return (MachineKeyValidation) base [validationProp];}
-			set { base[validationProp] = value; }
-		}
-#endif
 
 		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
 		[StringValidator (MinLength = 1)]
@@ -287,9 +266,6 @@ namespace System.Web.Configuration {
 		byte[] AutoGenerate (MachineKeyRegistryStorage.KeyType type)
 		{
 			byte[] key = null;
-#if TARGET_J2EE
-			{
-#else
 			try {
 				key = MachineKeyRegistryStorage.Retrieve (type);
 
@@ -301,7 +277,6 @@ namespace System.Web.Configuration {
 			} catch (Exception) {
 				key = null;
 			}
-#endif
 			// some algorithms have special needs for key (e.g. length, parity, weak keys...) 
 			// so we better ask them to provide a default key (than to generate/use bad ones)
 			if (key == null) {
@@ -309,13 +284,10 @@ namespace System.Web.Configuration {
 					key = DecryptionTemplate.Key;
 				else if (type == MachineKeyRegistryStorage.KeyType.Validation)
 					key = ValidationTemplate.Key;
-#if !TARGET_J2EE
 				MachineKeyRegistryStorage.Store (key, type);
-#endif
 			}
 			return key;
 		}
 	}
 }
 
-#endif

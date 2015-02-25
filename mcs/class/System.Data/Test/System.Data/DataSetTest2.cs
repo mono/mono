@@ -3154,7 +3154,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(0, pc.Count , "DS374");
 		}
 
-#if NET_2_0
 		// Test for bug #76517
 		[Test] public void SchemaSerializationModeTest ()
 		{
@@ -3168,7 +3167,6 @@ namespace MonoTests.System.Data
 				//ok 	
 			}	
 		}	
-#endif
 
 		///<?xml version="1.0" encoding="utf-16"?>
 		///<xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
@@ -3485,7 +3483,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (typeof (string), ds.Tables [0].Columns [0].DataType, "#5");
         	}
 
-#if NET_2_0               
                [Test]
                public void MergeTest_SameDataSet_536194 ()
                {
@@ -3498,9 +3495,7 @@ namespace MonoTests.System.Data
                        dataSet.Merge(dataTable);
                        Assert.AreEqual (1, dataSet.Tables.Count, "1");
                }
-#endif
 
-#if NET_2_0
 		[Test]	
         	public void LoadTest1 ()
         	{
@@ -3597,7 +3592,6 @@ namespace MonoTests.System.Data
 				i++;
 			}
 		}
-#endif
 		private void AssertDataTableValues (DataTable dt)
 		{
 			Assert.AreEqual ("data1", dt.Rows[0]["_ID"], "1");

@@ -25,9 +25,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
-#if NET_2_0
 using System.Data.Common;
-#endif
 using System.Data.SqlTypes;
 using System.Data.OracleClient.Oci;
 using System.Globalization;
@@ -38,11 +36,7 @@ namespace System.Data.OracleClient
 {
 	[TypeConverter (typeof(OracleParameter.OracleParameterConverter))]
 	public sealed class OracleParameter : 
-#if NET_2_0
 		DbParameter, IDbDataParameter, ICloneable,
-#else
-		MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable,
-#endif
 		IDisposable
 	{
 		#region Fields
@@ -56,9 +50,7 @@ namespace System.Data.OracleClient
 		byte precision;
 		byte scale;
 		string srcColumn;
-#if NET_2_0
 		bool sourceColumnNullMapping;
-#endif
 		DataRowVersion srcVersion;
 		DbType dbType = DbType.AnsiString;
 		int offset;
@@ -133,13 +125,11 @@ namespace System.Data.OracleClient
 			SourceVersion = DataRowVersion.Current;
 			InferOracleType (value);			
 			this.indicator = OciCalls.AllocateClear (sizeof(short));
-#if NET_2_0
 			// Find the OciType before inferring for the size
 			if (value != null && value != DBNull.Value) {
 				this.sizeSet = true;
 				this.size = InferSize ();
 			}
-#endif
 		}
 
 		public OracleParameter (string name, OracleType oracleType)
@@ -157,7 +147,6 @@ namespace System.Data.OracleClient
 		{
 		}
 
-#if NET_2_0
 		public OracleParameter (string name, OracleType oracleType, int size, ParameterDirection direction, string sourceColumn, DataRowVersion sourceVersion, bool sourceColumnNullMapping, object value)
 		{
 			this.name = name;
@@ -179,7 +168,6 @@ namespace System.Data.OracleClient
 			SourceVersion = sourceVersion;
 			this.indicator = OciCalls.AllocateClear (sizeof(short));
 		}
-#endif
 
 		public OracleParameter (string name, OracleType oracleType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
 		{
@@ -226,28 +214,16 @@ namespace System.Data.OracleClient
 			set { Marshal.WriteInt16(indicator, value); }
 		}
 
-#if !NET_2_0
-		[Browsable (false)]
-		[RefreshProperties (RefreshProperties.All)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		DbType DbType {
 			get { return dbType; }
 			set { SetDbType (value); }
 		}
 
-#if !NET_2_0
-		[DefaultValue (ParameterDirection.Input)]
-#endif
 		[RefreshProperties (RefreshProperties.All)]
 		public
-#if NET_2_0
 		override
-#endif
 		ParameterDirection Direction {
 			get { return direction; }
 			set { 
@@ -257,26 +233,14 @@ namespace System.Data.OracleClient
 			}
 		}
 
-#if !NET_2_0
-		[Browsable (false)]
-		[DesignOnly (true)]
-		[DefaultValue (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		bool IsNullable {
 			get { return isNullable; }
 			set { isNullable = value; }
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#else
-		[DefaultValue (0)]
-#endif
 		[Browsable (false)]
 		public int Offset {
 			get { return offset; }
@@ -285,9 +249,7 @@ namespace System.Data.OracleClient
 
 		[DefaultValue (OracleType.VarChar)]
 		[RefreshProperties (RefreshProperties.All)]
-#if NET_2_0
 		[DbProviderSpecificTypeProperty (true)]
-#endif
 		public OracleType OracleType {
 			get { return oracleType; }
 			set { 
@@ -296,13 +258,8 @@ namespace System.Data.OracleClient
 			}
 		}
 
-#if !NET_2_0
-		[DefaultValue ("")]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		string ParameterName {
 			get {
 				if (name == null)
@@ -312,37 +269,24 @@ namespace System.Data.OracleClient
 			set { name = value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Obsolete("Set the precision of a decimal use the Math classes.")]
-#else
-		[DefaultValue (0)]
-#endif
 		public byte Precision {
 			get { return precision; }
 			set { /* NO EFFECT*/ }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Obsolete("Set the precision of a decimal use the Math classes.")]
-#else
-		[DefaultValue (0)]
-#endif
 		public byte Scale {
 			get { return scale; }
 			set { /* NO EFFECT*/ }
 		}
 
-#if !NET_2_0
-		[DefaultValue (0)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		int Size {
 			get { return size; }
 			set {
@@ -352,59 +296,40 @@ namespace System.Data.OracleClient
 			}
 		}
 
-#if !NET_2_0
-		[DefaultValue ("")]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		string SourceColumn {
 			get { return srcColumn; }
 			set { srcColumn = value; }
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override bool SourceColumnNullMapping {
 			get { return sourceColumnNullMapping; }
 			set { sourceColumnNullMapping = value; }
 		}
-#endif
 
-#if !NET_2_0
-		[DefaultValue ("Current")]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		DataRowVersion SourceVersion {
 			get { return srcVersion; }
 			set { srcVersion = value; }
 		}
 
-#if !NET_2_0
-		[DefaultValue (null)]
-#endif
 		[RefreshProperties (RefreshProperties.All)]
 		[TypeConverter (typeof(StringConverter))]
 		public
-#if NET_2_0
 		override
-#endif
 		object Value {
 			get { return this.value; }
 			set {
 				this.value = value;
 				if (!oracleTypeSet)
 					InferOracleType (value);
-#if NET_2_0
 				if (value != null && value != DBNull.Value) {
 					this.size = InferSize ();
 					this.sizeSet = true;
 				}
-#endif
 			}
 		}
 
@@ -1242,7 +1167,6 @@ namespace System.Data.OracleClient
 				oracleType = type;
 		}
 
-#if NET_2_0
 		public override void ResetDbType ()
 		{
 			ResetOracleType ();
@@ -1253,7 +1177,6 @@ namespace System.Data.OracleClient
 			oracleTypeSet = false;
 			InferOracleType (value);
 		}
-#endif // NET_2_0
 
 		public override string ToString ()
 		{

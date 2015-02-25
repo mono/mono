@@ -82,7 +82,6 @@ namespace MonoCasTests.Microsoft.Win32 {
 				// mono
 			}
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void DisplaySettingsChanging_Deny_Unrestricted ()
@@ -95,7 +94,6 @@ namespace MonoCasTests.Microsoft.Win32 {
 				// mono
 			}
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void EventsThreadShutdown_Deny_Unrestricted ()
@@ -198,7 +196,6 @@ namespace MonoCasTests.Microsoft.Win32 {
 				// mono
 			}
 		}
-#if NET_2_0
 		private void SessionSwitchCallback (object o, SessionSwitchEventArgs args)
 		{
 		}
@@ -215,7 +212,6 @@ namespace MonoCasTests.Microsoft.Win32 {
 				// mono
 			}
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void TimeChanged_Deny_Unrestricted ()

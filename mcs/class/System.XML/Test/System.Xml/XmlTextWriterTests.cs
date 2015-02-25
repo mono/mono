@@ -512,9 +512,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS.NET 1.1 does not allow zero-length namespace URI
-#endif
 		public void WriteStartElement_Prefix_EmptyNamespace ()
 		{
 			xtw.WriteStartElement ("x", "whatever", "");
@@ -1007,9 +1004,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS.NET 1.1 does not allow zero-length namespace URI
-#endif
 		public void NamespacesPrefixWithEmptyAndNullNamespaceEmpty ()
 		{
 			xtw.WriteStartElement ("foo", "bar", "");
@@ -2345,7 +2339,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("<root xmlns:abc=\"uri:abcnamespace\"><abc:def /></root>", sw.ToString ());
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void RejectWritingAtErrorState ()
@@ -2357,6 +2350,5 @@ namespace MonoTests.System.Xml
 
 			xtw.WriteStartElement ("foo");
 		}
-#endif
 	}
 }

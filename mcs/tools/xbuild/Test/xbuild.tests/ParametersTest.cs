@@ -19,7 +19,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
 using NUnit.Framework;
 using Mono.XBuild.CommandLine;
 using System.IO;
@@ -54,5 +53,4 @@ namespace xbuild.tests
 	}
 }
 
-#endif
 

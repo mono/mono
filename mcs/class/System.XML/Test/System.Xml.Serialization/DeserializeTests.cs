@@ -280,7 +280,6 @@ namespace MonoTests.System.XmlSerialization
 
 		#region GenericsDeseralizationTests
 
-#if NET_2_0
 		[Test]
 		public void TestDeserializeGenSimpleClassString ()
 		{
@@ -512,7 +511,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("six", complex.nestedinner.inner);
 			Assert.AreEqual (6, complex.nestedinner.something);
 		}
-#endif
 
 		#endregion //GenericsDeseralizationTests
 

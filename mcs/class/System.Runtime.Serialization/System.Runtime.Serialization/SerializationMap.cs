@@ -29,7 +29,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -996,6 +995,10 @@ namespace System.Runtime.Serialization
 				string s = null;
 				foreach (EnumMemberInfo emi in enum_members) {
 					long f = Convert.ToInt64 (emi.Value);
+					if (f == val) {
+						s = emi.XmlName;
+						break;
+					}
 					if ((f & val) == f)
 						s += (s != null ? " " : String.Empty) + emi.XmlName;
 				}
@@ -1117,4 +1120,3 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
-#endif

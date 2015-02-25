@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-extern long long stat_scan_object_called_nursery;
+extern guint64 stat_scan_object_called_nursery;
 
 #if defined(SGEN_SIMPLE_NURSERY)
 #define SERIAL_SCAN_OBJECT simple_nursery_serial_scan_object
@@ -38,6 +38,7 @@ extern long long stat_scan_object_called_nursery;
 #define HANDLE_PTR(ptr,obj)	do {	\
 		void *__old = *(ptr);	\
 		SGEN_OBJECT_LAYOUT_STATISTICS_MARK_BITMAP ((obj), (ptr)); \
+		binary_protocol_scan_process_reference ((obj), (ptr), __old); \
 		if (__old) {	\
 			SERIAL_COPY_OBJECT_FROM_OBJ ((ptr), queue);	\
 			SGEN_COND_LOG (9, __old != *(ptr), "Overwrote field at %p with %p (was: %p)", (ptr), *(ptr), __old); \
@@ -53,6 +54,8 @@ SERIAL_SCAN_OBJECT (char *start, mword desc, SgenGrayQueue *queue)
 	sgen_descriptor_count_scanned_object (desc);
 #endif
 
+	SGEN_ASSERT (9, sgen_get_current_collection_generation () == GENERATION_NURSERY, "Must not use minor scan during major collection.");
+
 #define SCAN_OBJECT_PROTOCOL
 #include "sgen-scan-object.h"
 
@@ -64,6 +67,8 @@ static void
 SERIAL_SCAN_VTYPE (char *start, mword desc, SgenGrayQueue *queue BINARY_PROTOCOL_ARG (size_t size))
 {
 	SGEN_OBJECT_LAYOUT_STATISTICS_DECLARE_BITMAP;
+
+	SGEN_ASSERT (9, sgen_get_current_collection_generation () == GENERATION_NURSERY, "Must not use minor scan during major collection.");
 
 	/* The descriptors include info about the MonoObject header as well */
 	start -= sizeof (MonoObject);

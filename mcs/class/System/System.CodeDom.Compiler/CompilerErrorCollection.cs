@@ -34,9 +34,6 @@ using System.Security.Permissions;
 namespace System.CodeDom.Compiler {
 
 	[Serializable]
-#if ONLY_1_1
-	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
-#endif
 	public class CompilerErrorCollection : CollectionBase
 	{
 		public CompilerErrorCollection ()

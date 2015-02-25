@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Configuration.Provider;
 using System.Web.Configuration;
@@ -38,25 +37,6 @@ using System.Configuration;
 namespace System.Web.Security {
 
 	public static class Roles {
-#if TARGET_J2EE
-		const string Roles_cookie_protection = "Roles.cookie_protection";
-		static RoleManagerSection config {
-			get {
-				return (RoleManagerSection) WebConfigurationManager.GetSection ("system.web/roleManager");
-			}
-		}
-
-		const string Roles_providersCollection = "Roles.providersCollection";
-		static RoleProviderCollection providersCollection {
-			get {
-				return (RoleProviderCollection)AppDomain.CurrentDomain.GetData (Roles_providersCollection);
-			}
-
-			set {
-				AppDomain.CurrentDomain.SetData (Roles_providersCollection, value);
-			}
-		}
-#else
 		static RoleManagerSection config;
 		static RoleProviderCollection providersCollection;
 
@@ -64,7 +44,6 @@ namespace System.Web.Security {
 		{
 			config = (RoleManagerSection)WebConfigurationManager.GetSection ("system.web/roleManager");
 		}
-#endif
 
 
 		public static void AddUsersToRole (string [] usernames, string rolename)
@@ -273,4 +252,3 @@ namespace System.Web.Security {
 	}
 }
 
-#endif

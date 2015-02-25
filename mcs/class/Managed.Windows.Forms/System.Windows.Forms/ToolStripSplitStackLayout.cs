@@ -44,8 +44,11 @@ namespace System.Windows.Forms
 					return false;
 					
 				Rectangle ts_rect = ts.DisplayRectangle;
-					
-				if (ts.Orientation == Orientation.Horizontal)					
+
+				// Mono hasn't yet implemented ToolStripLayoutStyle.Table, so it comes here
+				// for layout.  The default (minimal) Table layout is 1 column, any number of rows,
+				// which translates effectively to Vertical orientation.
+				if (ts.Orientation == Orientation.Horizontal && ts.LayoutStyle != ToolStripLayoutStyle.Table)
 					LayoutHorizontalToolStrip (ts, ts_rect);
 				else
 					LayoutVerticalToolStrip (ts, ts_rect);
@@ -176,6 +179,7 @@ namespace System.Windows.Forms
 			ToolStripItemPlacement[] placement = new ToolStripItemPlacement[ts.Items.Count];
 			Size proposedSize = new Size (bounds.Width, 0);
 			int[] heights = new int[ts.Items.Count];
+			int[] widths = new int[ts.Items.Count];	// needed if ts.LayoutStyle == ToolStripLayoutStyle.Table
 			int total_height = 0;
 			int toolstrip_height = bounds.Height;
 			int i = 0;
@@ -184,7 +188,9 @@ namespace System.Windows.Forms
 			foreach (ToolStripItem tsi in ts.Items) {
 				overflow[i] = tsi.Overflow;
 				placement[i] = tsi.Overflow == ToolStripItemOverflow.Always ? ToolStripItemPlacement.Overflow : ToolStripItemPlacement.Main;
-				heights[i] = tsi.GetPreferredSize (proposedSize).Height + tsi.Margin.Vertical;
+				var size = tsi.GetPreferredSize (proposedSize);
+				heights[i] = size.Height + tsi.Margin.Vertical;
+				widths[i] = size.Width + tsi.Margin.Horizontal;
 				if (!tsi.Available)
 					placement[i] = ToolStripItemPlacement.None;
 				total_height += placement[i] == ToolStripItemPlacement.Main ? heights[i] : 0;
@@ -237,6 +243,9 @@ namespace System.Windows.Forms
 			// Now we should know where everything goes, so lay everything out
 			foreach (ToolStripItem tsi in ts.Items) {
 				tsi.SetPlacement (placement[i]);
+				// Table layout is defined to lay out items flush left.
+				if (ts.LayoutStyle == ToolStripLayoutStyle.Table)
+					button_width = widths[i];
 
 				if (placement[i] == ToolStripItemPlacement.Main) {
 					if (tsi.Alignment == ToolStripItemAlignment.Left) {

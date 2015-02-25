@@ -67,10 +67,8 @@ namespace MonoCasTests.System {
 
 			unit.GetReady ();
 			unit.ToStringTest ();
-#if NET_2_0
 			unit.GetReady ();
 			unit.DefaultPort ();
-#endif
 		}
 
 		[Test]

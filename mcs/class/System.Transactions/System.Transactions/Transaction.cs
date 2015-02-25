@@ -9,7 +9,6 @@
 // (C)2006 Novell Inc,
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Permissions;
@@ -519,4 +518,3 @@ namespace System.Transactions
   }
 }
 
-#endif

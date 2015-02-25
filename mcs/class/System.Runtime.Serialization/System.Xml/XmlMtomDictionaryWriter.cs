@@ -44,6 +44,8 @@ namespace System.Xml
 			var settings = new XmlWriterSettings ();
 			settings.Encoding = encoding;
 			settings.OmitXmlDeclaration = true;
+			settings.ConformanceLevel = ConformanceLevel.Fragment;
+			settings.NewLineChars = "\r\n";
 			xml_writer_settings = settings;
 
 			// FIXME: actually it does not likely use ContentType.ToString() but writes those header items by own.
@@ -134,7 +136,8 @@ namespace System.Xml
 
 		public override void WriteEndDocument ()
 		{
-			w.WriteEndDocument ();
+			// We don't call w.WriteEndElement() because that causes state error
+			// (which is correct; MTOM writer just does not expect it).
 		}
 
 		public override void WriteEndElement ()
@@ -182,13 +185,15 @@ namespace System.Xml
 		public override void WriteStartDocument ()
 		{
 			CheckState ();
-			w.WriteStartDocument ();
+			// We don't call w.WriteStartDocument() because that causes state error
+			// (which is correct; MTOM writer just does not expect it).
 		}
 
 		public override void WriteStartDocument (bool standalone)
 		{
 			CheckState ();
-			w.WriteStartDocument (standalone);
+			// We don't call w.WriteStartDocument() because that causes state error
+			// (which is correct; MTOM writer just does not expect it).
 		}
 
 		public override void WriteStartElement (string prefix, string localName, string namespaceURI)
@@ -206,16 +211,21 @@ namespace System.Xml
 			get { return w.WriteState; }
 		}
 
+		static readonly char [] eol_chars = "\r\n".ToCharArray ();
+
 		public override void WriteString (string text)
 		{
 			CheckState ();
 
 			int i1, i2 = 0;
 			do {
-				i1 = text.IndexOf ('\r', i2);
+				i1 = text.IndexOfAny (eol_chars, i2);
 				if (i1 >= 0) {
 					w.WriteString (text.Substring (i2, i1 - i2));
-					WriteCharEntity ('\r');
+					if (text [i1] == '\r')
+						w.WriteCharEntity ('\r');
+					else
+						w.WriteRaw ("\r\n");
 					i2 = i1 + 1;
 				} else {
 					w.WriteString (text.Substring (i2));
@@ -248,12 +258,14 @@ namespace System.Xml
 		{
 			if (w == null && write_headers)
 				WriteMimeHeaders ();
+			
 			if (w == null || w.WriteState == WriteState.Closed || w.WriteState == WriteState.Error)
 				w = CreateWriter ();
 		}
 
 		void WriteMimeHeaders ()
 		{
+			w.Flush ();
 			writer.Write ("MIME-Version: 1.0\r\n");
 			writer.Write ("Content-Type: ");
 			writer.Write (content_type.ToString ());
@@ -293,6 +305,7 @@ namespace System.Xml
 			if (section_count > 1)
 				return;
 
+			w.Flush ();
 			writer.Write ("\r\n");
 			writer.Write ("--");
 			writer.Write (content_type.Boundary);

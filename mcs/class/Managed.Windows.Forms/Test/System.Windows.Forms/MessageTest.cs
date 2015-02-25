@@ -29,7 +29,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("msg=0x2 (WM_DESTROY) hwnd=0x7b wparam=0xea lparam=0x159 result=0x2", msg.ToString ());
 		}
 
-#if NET_2_0
 		[Test]
 		public void Equality ()
 		{
@@ -69,6 +68,5 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (msg1 != msg4, "A3");
 			Assert.IsFalse (msg1 != msg5, "A4");
 		}
-#endif
 	}
 }

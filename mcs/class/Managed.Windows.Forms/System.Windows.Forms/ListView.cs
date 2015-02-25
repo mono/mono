@@ -1031,6 +1031,7 @@ namespace System.Windows.Forms
 
 				virtual_list_size = value;
 				if (virtual_mode) {
+					focused_item_index = -1;
 					selected_indices.Reset ();
 					Redraw (true);
 				}
@@ -2669,6 +2670,12 @@ namespace System.Windows.Forms
 					} else {
 						clicked_item.Selected = true;
 					}
+
+					// Side-effects of changing the selection can possibly result in ItemsMouseUp() being called and
+					// and clicked_item being set to null.  (See Xamarin bug 23591.)  In such a case, assume
+					// that there's nothing more we can do here.
+					if (clicked_item == null)
+						return;
 
 					if (owner.VirtualMode && changed) {
 						// Broken event - It's not fired from Item.Selected also

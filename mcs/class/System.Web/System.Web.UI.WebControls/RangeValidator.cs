@@ -37,11 +37,7 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
-#if NET_2_0
 	[ToolboxData("<{0}:RangeValidator runat=\"server\" ErrorMessage=\"RangeValidator\"></{0}:RangeValidator>")]
-#else
-	[ToolboxData("<{0}:RangeValidator runat=server ErrorMessage=\"RangeValidator\"></{0}:RangeValidator>")]
-#endif
 	public class RangeValidator : BaseCompareValidator {
 		#region Public Constructors
 		public RangeValidator() {
@@ -49,11 +45,7 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
-#if NET_2_0
 		[Themeable (false)]
-#else
-		[Bindable(true)]
-#endif
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -67,11 +59,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[Themeable (false)]
-#else
-		[Bindable(true)]
-#endif
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -91,15 +79,9 @@ namespace System.Web.UI.WebControls {
 			base.AddAttributesToRender (writer);
 
 			if (RenderUplevel) {
-#if NET_2_0
 				RegisterExpandoAttribute (ClientID, "evaluationfunction", "RangeValidatorEvaluateIsValid");
 				RegisterExpandoAttribute (ClientID, "minimumvalue", MinimumValue, true);
 				RegisterExpandoAttribute (ClientID, "maximumvalue", MaximumValue, true);
-#else
-				writer.AddAttribute("evaluationfunction", "RangeValidatorEvaluateIsValid", false); // FIXME - we need to define this in client code
-				writer.AddAttribute("minimumValue", MinimumValue.ToString(Helpers.InvariantCulture));
-				writer.AddAttribute("maximumValue", MaximumValue.ToString(Helpers.InvariantCulture));
-#endif
 			}
 		}
 

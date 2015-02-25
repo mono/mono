@@ -336,7 +336,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Unit a = new Unit ("34. 4pt");
 		}
 
-#if NET_2_0
 		class MyFormatProvider : IFormatProvider
 		{
 			public object GetFormat (Type format_type)
@@ -447,7 +446,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			a1 = new Unit (1.5);
 			Assert.AreEqual ("1px", a1.ToString (mfp), "A26");
 		}
-#endif
 	}
 }
 

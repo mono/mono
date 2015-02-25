@@ -7,6 +7,7 @@ Microsoft.Build.Tasks/AppDomainIsolatedTaskExtension.cs
 Microsoft.Build.Tasks/AspNetCompiler.cs
 Microsoft.Build.Tasks/AssemblyResolver.cs
 Microsoft.Build.Tasks/AssignCulture.cs
+Microsoft.Build.Tasks/AssignLinkMetadata.cs
 Microsoft.Build.Tasks/AssignProjectConfiguration.cs
 Microsoft.Build.Tasks/AssignTargetPath.cs
 Microsoft.Build.Tasks/CallTarget.cs

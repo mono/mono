@@ -34,9 +34,7 @@ using System;
 using System.Text;
 using System.Xml.XPath;
 using Mono.Xml;
-#if NET_2_0
 using System.Xml.Schema;
-#endif
 
 namespace System.Xml
 {
@@ -47,9 +45,7 @@ namespace System.Xml
 		private XmlNameEntry name;
 		internal bool isDefault;
 		XmlLinkedNode lastLinkedChild;
-#if NET_2_0
 		private IXmlSchemaInfo schemaInfo;
-#endif
 
 		#endregion
 
@@ -204,12 +200,10 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return schemaInfo; }
 			internal set { schemaInfo = value; }
 		}
-#endif
 
 		public virtual bool Specified {
 			get {
@@ -252,7 +246,6 @@ namespace System.Xml
 
 		#region Methods
 
-#if NET_2_0
 		public override XmlNode AppendChild (XmlNode newChild)
 		{
 			return base.AppendChild (newChild);
@@ -282,7 +275,6 @@ namespace System.Xml
 		{
 			return base.ReplaceChild (newChild, oldChild);
 		}
-#endif
 
 		public override XmlNode CloneNode (bool deep)
 		{

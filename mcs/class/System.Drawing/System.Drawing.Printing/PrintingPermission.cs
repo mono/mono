@@ -199,17 +199,10 @@ namespace System.Drawing.Printing {
 				throw new ArgumentNullException (parameterName);
 
 			string c = se.Attribute ("class");
-#if NET_2_0
 			if (c == null) {
 				string msg = Locale.GetText ("Missing 'class' attribute.");
 				throw new ArgumentException (msg, parameterName);
 			}
-#else
-			if ((c == null) || (String.Compare (c, 0, "System.Drawing.Printing.PrintingPermission", 0, 42) != 0)) {
-				string msg = Locale.GetText ("Wrong 'class' attribute.");
-				throw new ArgumentException (msg, parameterName);
-			}
-#endif
 			// we assume minimum version if no version number is supplied
 			int version = minimumVersion;
 			string v = se.Attribute ("version");
@@ -223,12 +216,6 @@ namespace System.Drawing.Printing {
 					throw new ArgumentException (msg, parameterName, e);
 				}
 			}
-#if !NET_2_0
-			else {
-				string msg = Locale.GetText ("Missing 'version' attribute.");
-				throw new ArgumentException (msg, parameterName);
-			}
-#endif
 
 			if ((version < minimumVersion) || (version > maximumVersion)) {
 				string msg = Locale.GetText ("Unknown version '{0}', expected versions between ['{1}','{2}'].");

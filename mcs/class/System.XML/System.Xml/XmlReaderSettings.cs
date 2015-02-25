@@ -54,16 +54,12 @@ namespace System.Xml
 		private XsValidationFlags validationFlags;
 		private ValidationType validationType;
 		private XmlResolver xmlResolver;
-#if NET_4_0
 		private DtdProcessing dtdProcessing;
-#endif
 		private long maxCharactersFromEntities;
 		private long maxCharactersInDocument;
 
-#if NET_4_5
 		private bool isReadOnly;
 		private bool isAsync;
-#endif
 
 		public XmlReaderSettings ()
 		{
@@ -75,9 +71,7 @@ namespace System.Xml
 		public XmlReaderSettings Clone ()
 		{
 			var clone = (XmlReaderSettings) MemberwiseClone ();
-#if NET_4_5
 			clone.isReadOnly = false;
-#endif
 			return clone;
 		}
 
@@ -99,9 +93,7 @@ namespace System.Xml
 				XsValidationFlags.AllowXmlAttributes;
 			validationType = ValidationType.None;
 			xmlResolver = new XmlUrlResolver ();
-#if NET_4_5
 			isAsync = false;
-#endif
 		}
 
 		public bool CheckCharacters {
@@ -118,7 +110,6 @@ namespace System.Xml
 			get { return conformance; }
 			set { conformance = value; }
 		}
-#if NET_4_0
 		public DtdProcessing DtdProcessing {
 			get { return dtdProcessing; }
 			set {
@@ -126,7 +117,6 @@ namespace System.Xml
 				prohibitDtd = (value == DtdProcessing.Prohibit);
 			}
 		}
-#endif
 		public long MaxCharactersFromEntities {
 			get { return maxCharactersFromEntities; }
 			set { maxCharactersFromEntities = value; }
@@ -163,9 +153,7 @@ namespace System.Xml
 			set { linePositionOffset = value; }
 		}
 
-#if NET_4_0
 		[ObsoleteAttribute("Use DtdProcessing property instead")]
-#endif
 		public bool ProhibitDtd {
 			get { return prohibitDtd; }
 			set { prohibitDtd = value; }
@@ -221,7 +209,6 @@ namespace System.Xml
 			set { xmlResolver = value; }
 		}
 
-#if NET_4_5
 		internal void SetReadOnly ()
 		{
 			isReadOnly = true;
@@ -244,6 +231,5 @@ namespace System.Xml
 				isAsync = value;
 			}
 		}
-#endif
 	}
 }

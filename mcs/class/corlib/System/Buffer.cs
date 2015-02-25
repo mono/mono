@@ -114,5 +114,10 @@ namespace System {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static bool BlockCopyInternal (Array src, int src_offset, Array dest, int dest_offset, int count);
+
+		internal static bool InternalBlockCopy (Array src, int src_offset, Array dest, int dest_offset, int count)
+		{
+			return BlockCopyInternal (src, src_offset, dest, dest_offset, count);
+		}
 	}
 }

@@ -1,7 +1,3 @@
-System/TimeZoneInfoTest.cs
-System/TimeZoneInfo.AdjustmentRuleTest.cs
-System/TimeZoneInfo.SerializationTest.cs
-System/TimeZoneInfo.TransitionTimeTest.cs
 System.Collections.Generic/HashSetTest.cs
 System.IO.MemoryMappedFiles/MemoryMappedFileTest.cs
 System.IO.Pipes/PipeSecurityTest.cs

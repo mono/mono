@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -53,5 +52,4 @@ namespace Microsoft.Win32.SafeHandles {
 		static extern int RegCloseKey (IntPtr keyHandle);
 	}
 }
-#endif
 

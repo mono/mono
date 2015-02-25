@@ -68,10 +68,8 @@ namespace MonoCasTests.System.CodeDom {
 			ctd.IsStruct = true;
 			Assert.AreEqual (0, ctd.Members.Count, "Members");
 			Assert.AreEqual (TypeAttributes.Public, ctd.TypeAttributes, "TypeAttributes");
-#if NET_2_0
 			Assert.IsFalse (ctd.IsPartial, "IsPartial");
 			ctd.IsPartial = true;
-#endif
 			ctd.PopulateBaseTypes += new EventHandler (Handler);
 			ctd.PopulateBaseTypes -= new EventHandler (Handler);
 			ctd.PopulateMembers += new EventHandler (Handler);
@@ -94,10 +92,8 @@ namespace MonoCasTests.System.CodeDom {
 			ctd.IsStruct = true;
 			Assert.AreEqual (0, ctd.Members.Count, "Members");
 			Assert.AreEqual (TypeAttributes.Public, ctd.TypeAttributes, "TypeAttributes");
-#if NET_2_0
 			Assert.IsFalse (ctd.IsPartial, "IsPartial");
 			ctd.IsPartial = true;
-#endif
 			ctd.PopulateBaseTypes += new EventHandler (Handler);
 			ctd.PopulateBaseTypes -= new EventHandler (Handler);
 			ctd.PopulateMembers += new EventHandler (Handler);

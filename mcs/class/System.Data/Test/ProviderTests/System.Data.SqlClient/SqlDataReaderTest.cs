@@ -541,25 +541,12 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandText += "from string_family where id=1";
 			reader = cmd.ExecuteReader ();
 			reader.Read ();
-#if NET_2_0
 			try {
 				long totalsize = reader.GetBytes (0, 0, null, 0, 0);
 				Assert.AreEqual (4, totalsize, "#1");
 			} finally {
 				reader.Close ();
 			}
-#else
-			try {
-				reader.GetBytes (0, 0, null, 0, 0);
-				Assert.Fail ("#1");
-			} catch (InvalidCastException ex) {
-				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#4");
-			} finally {
-				reader.Close ();
-			}
-#endif
 			
 			byte[] asciiArray = (new ASCIIEncoding ()).GetBytes ("text");
 			byte[] unicodeArray = (new UnicodeEncoding ()).GetBytes ("nt\u092d\u093ext");
@@ -585,7 +572,6 @@ namespace MonoTests.System.Data.SqlClient
 			
 			// Test if msdotnet behavior s followed when null value 
 			// is read using GetBytes 
-#if NET_2_0
 			try {
 				reader.GetBytes (2, 0, null, 0, 0);
 				Assert.Fail ("#7");
@@ -597,10 +583,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.Fail ("#8");
 			} catch (SqlNullValueException) {
 			}
-#else
-			Assert.AreEqual (0, reader.GetBytes (2, 0, null, 0, 0), "#7");
-			Assert.AreEqual (0, reader.GetBytes (2, 0, buffer, 0, 10), "#8");
-#endif
 			reader.Close ();
 			// do i need to test for image/binary values also ??? 
 		}
@@ -665,7 +647,6 @@ namespace MonoTests.System.Data.SqlClient
 				using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SingleResult)) {
 					Assert.IsTrue (reader.Read ());
 
-#if NET_2_0
 					try {
 						reader.GetBytes (0, -1L, null, 0, 0);
 						Assert.Fail ("#C1");
@@ -690,21 +671,12 @@ namespace MonoTests.System.Data.SqlClient
 						Assert.IsNotNull (ex.Message, "#D4");
 						Assert.IsTrue (ex.Message.IndexOf ("'dataIndex'") != -1, "#D5:" + ex.Message);
 					}
-#else
-					long totalsize = reader.GetBytes (0, -1L, null, 0, 0);
-					Assert.AreEqual (5, totalsize, "#C");
-
-					byte [] val = new byte [totalsize];
-					long read = reader.GetBytes (0, -1L, val, 0, 3);
-					Assert.AreEqual (0, read, "#D");
-#endif
 				}
 
 				using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SingleResult)) {
 					Assert.IsTrue (reader.Read ());
 
 					byte [] val = new byte [5];
-#if NET_2_0
 					try {
 						reader.GetBytes (0, -1L, val, 0, 3);
 						Assert.Fail ("#E1");
@@ -716,10 +688,6 @@ namespace MonoTests.System.Data.SqlClient
 						Assert.IsNotNull (ex.Message, "#E4");
 						Assert.IsTrue (ex.Message.IndexOf ("'dataIndex'") != -1, "#E5:" + ex.Message);
 					}
-#else
-					long read = reader.GetBytes (0, -1L, val, 0, 3);
-					Assert.AreEqual (0, read, "#E");
-#endif
 				}
 
 				using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
@@ -732,7 +700,6 @@ namespace MonoTests.System.Data.SqlClient
 				using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SingleResult)) {
 					Assert.IsTrue (reader.Read ());
 
-#if NET_2_0
 					try {
 						reader.GetBytes (0, -1L, null, 4, 8);
 						Assert.Fail ("#G1");
@@ -744,10 +711,6 @@ namespace MonoTests.System.Data.SqlClient
 						Assert.IsNotNull (ex.Message, "#G4");
 						Assert.IsTrue (ex.Message.IndexOf ("'dataIndex'") != -1, "#G5:" + ex.Message);
 					}
-#else
-					long totalsize = reader.GetBytes (0, -1L, null, 4, 8);
-					Assert.AreEqual (5, totalsize, "#G");
-#endif
 				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
@@ -797,7 +760,6 @@ namespace MonoTests.System.Data.SqlClient
 				try {
 					reader.GetBytes (0, 0, val, 0, (int) totalsize);
 					Assert.Fail ("#A1");
-#if NET_2_0
 				} catch (IndexOutOfRangeException ex) {
 					// Buffer offset '0' plus the bytes available
 					// '275' is greater than the length of the
@@ -808,17 +770,6 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.IsTrue (ex.Message.IndexOf ("'0'") != -1, "#A5:" + ex.Message);
 					Assert.IsTrue (ex.Message.IndexOf ("'" + totalsize + "'") != -1, "#A6:" + ex.Message);
 				}
-#else
-				} catch (ArgumentException ex) {
-					// Destination array was not long enough.
-					// Check destIndex and length, and the
-					// array's lower bounds
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-					Assert.IsNull (ex.InnerException, "#A3");
-					Assert.IsNotNull (ex.Message, "#A4");
-					Assert.IsNull (ex.ParamName, "#A5");
-				}
-#endif
 			}
 
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SingleResult | CommandBehavior.SequentialAccess)) {
@@ -830,7 +781,6 @@ namespace MonoTests.System.Data.SqlClient
 				try {
 					reader.GetBytes (0, 0, val, 1, (int) totalsize);
 					Assert.Fail ("#B1");
-#if NET_2_0
 				} catch (IndexOutOfRangeException ex) {
 					// Buffer offset '1' plus the bytes available
 					// '275' is greater than the length of the
@@ -841,17 +791,6 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.IsTrue (ex.Message.IndexOf ("'1'") != -1, "#B5:" + ex.Message);
 					Assert.IsTrue (ex.Message.IndexOf ("'" + totalsize + "'") != -1, "#B6:" + ex.Message);
 				}
-#else
-				} catch (ArgumentException ex) {
-					// Destination array was not long enough.
-					// Check destIndex and length, and the
-					// array's lower bounds
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-					Assert.IsNull (ex.InnerException, "#B3");
-					Assert.IsNotNull (ex.Message, "#B4");
-					Assert.IsNull (ex.ParamName, "#B5");
-				}
-#endif
 			}
 
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SingleResult | CommandBehavior.SequentialAccess)) {
@@ -860,7 +799,6 @@ namespace MonoTests.System.Data.SqlClient
 				long totalsize = reader.GetBytes (0, 0, null, 0, 0);
 				byte [] val = new byte [totalsize];
 
-#if NET_2_0
 				try {
 					reader.GetBytes (0, 0, val, 0, (int) (totalsize + 1));
 					Assert.Fail ("#C1");
@@ -874,10 +812,6 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.IsTrue (ex.Message.IndexOf ("'0'") != -1, "#C5:" + ex.Message);
 					Assert.IsTrue (ex.Message.IndexOf ("'" + (totalsize + 1) + "'") != -1, "#C6:" + ex.Message);
 				}
-#else
-				long ret = reader.GetBytes (0, 0, val, 0, (int) (totalsize + 1));
-				Assert.AreEqual (totalsize, ret, "#C1");
-#endif
 			}
 		}
 
@@ -1104,16 +1038,11 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (expected, buffer, "#C4");
 
 				Assert.IsTrue (reader.Read (), "#D1");
-#if NET_2_0
 				try {
 					reader.GetBytes (0, 0, null, 0, 0);
 					Assert.Fail ("#D2");
 				} catch (SqlNullValueException) {
 				}
-#else
-				len = reader.GetBytes (0, 0, null, 0, 0);
-				Assert.AreEqual (0, len, "#D2");
-#endif
 			}
 
 			using (IDataReader reader = cmd.ExecuteReader ()) {
@@ -1121,69 +1050,35 @@ namespace MonoTests.System.Data.SqlClient
 					0x74 };
 
 				Assert.IsTrue (reader.Read (), "#E1");
-#if NET_2_0
 				len = reader.GetBytes (0, 0, null, 0, 0);
 				Assert.AreEqual (4, len, "#E2");
 				buffer = new byte [len];
 				len = reader.GetBytes (0, 0, buffer, 0, (int) len);
 				Assert.AreEqual (4, len, "#E3");
 				Assert.AreEqual (expected, buffer, "#E4");
-#else
-				try {
-					reader.GetBytes (0, 0, null, 0, 0);
-					Assert.Fail ("#E2");
-				} catch (InvalidCastException ex) {
-					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#E3");
-					Assert.IsNull (ex.InnerException, "#E4");
-					Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#E5");
-				}
-#endif
 
 				expected = new byte [] { 0x00, 0x00, 0x6f, 0x6e,
 					0x67, 0x00 };
 
 				Assert.IsTrue (reader.Read (), "#F1");
-#if NET_2_0
 				len = reader.GetBytes (0, 0, null, 0, 0);
 				Assert.AreEqual (270, len, "#F2");
 				buffer = new byte [6];
 				len = reader.GetBytes (0, 1, buffer, 2, 3);
 				Assert.AreEqual (3, len, "#F3");
 				Assert.AreEqual (expected, buffer, "#F4");
-#else
-				try {
-					reader.GetBytes (0, 0, null, 0, 0);
-					Assert.Fail ("#F2");
-				} catch (InvalidCastException ex) {
-					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#F3");
-					Assert.IsNull (ex.InnerException, "#F4");
-					Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#F5");
-				}
-#endif
 
 				expected = new byte [0];
 
 				Assert.IsTrue (reader.Read (), "#G1");
-#if NET_2_0
 				len = reader.GetBytes (0, 0, null, 0, 0);
 				Assert.AreEqual (0, len, "#G2");
 				buffer = new byte [len];
 				len = reader.GetBytes (0, 0, buffer, 0, 0);
 				Assert.AreEqual (0, len, "#G3");
 				Assert.AreEqual (expected, buffer, "#G4");
-#else
-				try {
-					reader.GetBytes (0, 0, null, 0, 0);
-					Assert.Fail ("#G2");
-				} catch (InvalidCastException ex) {
-					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#G3");
-					Assert.IsNull (ex.InnerException, "#G4");
-					Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#G5");
-				}
-#endif
 
 				Assert.IsTrue (reader.Read (), "#H1");
-#if NET_2_0
 				try {
 					reader.GetBytes (0, 0, new byte [0], 0, 0);
 					Assert.Fail ("#H2");
@@ -1194,16 +1089,6 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.Fail ("#H3");
 				} catch (NullReferenceException) {
 				}
-#else
-				try {
-					reader.GetBytes (0, 0, null, 0, 3);
-					Assert.Fail ("#H2");
-				} catch (InvalidCastException ex) {
-					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#H3");
-					Assert.IsNull (ex.InnerException, "#H4");
-					Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#H5");
-				}
-#endif
 			}
 		}
 
@@ -2909,7 +2794,6 @@ namespace MonoTests.System.Data.SqlClient
 				datetimeDataTable);
 		}
 
-#if NET_2_0
 		string connectionString = ConnectionManager.Singleton.ConnectionString;
 
 		//FIXME : Add more test cases
@@ -3133,7 +3017,6 @@ namespace MonoTests.System.Data.SqlClient
 			
 		}
 
-#endif // NET_2_0
 
 		static void AssertSchemaTableStructure (DataTable schemaTable, string prefix)
 		{
@@ -3150,11 +3033,7 @@ namespace MonoTests.System.Data.SqlClient
 				new object [] { "BaseColumnName", typeof (string) },
 				new object [] { "BaseSchemaName", typeof (string) },
 				new object [] { "BaseTableName", typeof (string) },
-#if NET_2_0
 				new object [] { "DataType", typeof (Type) },
-#else
-				new object [] { "DataType", typeof (object) },
-#endif
 				new object [] { "AllowDBNull", typeof (bool) },
 				new object [] { "ProviderType", typeof (int) },
 				new object [] { "IsAliased", typeof (bool) },
@@ -3165,7 +3044,6 @@ namespace MonoTests.System.Data.SqlClient
 				new object [] { "IsHidden", typeof (bool) },
 				new object [] { "IsLong", typeof (bool) },
 				new object [] { "IsReadOnly", typeof (bool) },
-#if NET_2_0
 				new object [] { "ProviderSpecificDataType", typeof (Type) },
 				new object [] { "DataTypeName", typeof (string) },
 				new object [] { "XmlSchemaCollectionDatabase", typeof (string) },
@@ -3174,7 +3052,6 @@ namespace MonoTests.System.Data.SqlClient
 				new object [] { "UdtAssemblyQualifiedName", typeof (string) },
 				new object [] { "NonVersionedProviderType", typeof (int) },
 				new object [] { "IsColumnSet", typeof (bool) }
-#endif
 				};
 
 			Assert.AreEqual (columns.Length, schemaTable.Columns.Count, prefix);

@@ -57,6 +57,7 @@ BASE_TEST_CS_SRC=		\
 	arraylist.cs		\
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
+	assemblyresolve_event4.cs	\
 	checked.cs		\
 	char-isnumber.cs	\
 	create-instance.cs	\
@@ -109,6 +110,7 @@ BASE_TEST_CS_SRC=		\
 	array.cs		\
 	enum.cs			\
 	enum2.cs		\
+	enum-intrins.cs		\
 	property.cs		\
 	enumcast.cs		\
 	assignable-tests.cs	\
@@ -214,6 +216,7 @@ BASE_TEST_CS_SRC=		\
 	array3.cs		\
 	classinit.cs		\
 	classinit2.cs		\
+	classinit3.cs		\
 	synchronized.cs		\
 	async_read.cs		\
 	threadpool.cs		\
@@ -380,6 +383,7 @@ BASE_TEST_CS_SRC=		\
 	bug-599469.cs	\
 	bug-389886-3.cs \
 	monitor.cs	\
+	monitor-resurrection.cs	\
 	dynamic-method-resurrection.cs	\
 	bug-666008.cs	\
 	bug-685908.cs	\
@@ -401,7 +405,8 @@ BASE_TEST_CS_SRC=		\
 	unload-appdomain-on-shutdown.cs	\
 	block_guard_restore_aligment_on_exit.cs	\
 	thread_static_gc_layout.cs \
-	sleep.cs
+	sleep.cs \
+	bug-17537.cs
 
 TEST_CS_SRC_DIST=	\
 	$(BASE_TEST_CS_SRC)	\
@@ -697,7 +702,7 @@ tests: $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_
 #
 # Test that no symbols are missed in eglib-remap.h
 #
-OK_G_SYMBOLS='g_list\|g_slist\|g_concat_dir_and_file\|g_Ctoc'
+OK_G_SYMBOLS='g_list\|g_slist\|g_concat_dir_and_file\|g_Ctoc\'
 if NACL_CODEGEN
 test-eglib-remap:
 else
@@ -835,7 +840,7 @@ runtest-managed: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la 
 	$(RUNTIME) ./test-runner.exe -j a --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
 
 testjit:
-	@if test x$(M) != x; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
+	@if test x$(M) != x0; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
 
 testaot:
 	@$(MAKE) AOT=1 runtest
@@ -899,12 +904,11 @@ test-cattr-type-load: TestDriver.dll custom-attr-errors.cs custom-attr-errors-li
 	@$(RUNTIME) custom-attr-errors.exe > custom-attr-errors.exe.stdout 2> custom-attr-errors.exe.stderr
 
 EXTRA_DIST += reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.cs
-test-reflection-load-with-context: TestDriver.dll reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.cs
+test-reflection-load-with-context: reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.exe
 	rm -rf reflection-load-dir
 	mkdir reflection-load-dir
 	$(MCS) /t:library $(srcdir)/reflection-load-with-context-second-lib.cs -out:reflection-load-dir/reflection-load-with-context-second-lib.dll
 	$(MCS) /t:library -r:reflection-load-dir/reflection-load-with-context-second-lib.dll $(srcdir)/reflection-load-with-context-lib.cs -out:reflection-load-dir/reflection-load-with-context-lib.dll
-	$(MCS) reflection-load-with-context.cs
 	@echo "Testing reflection-load-with-context.cs.exe..."
 	@$(RUNTIME) reflection-load-with-context.exe > reflection-load-with-context.exe.stdout 2> reflection-load-with-context.exe.stderr
 
@@ -1188,6 +1192,14 @@ bug-382986-lib.dll: bug-382986-lib.cs
 bug-382986.exe: bug-382986.cs bug-382986-lib.dll
 	$(MCS) -out:$@ -r:bug-382986-lib.dll $(srcdir)/bug-382986.cs
 
+EXTRA_DIST += bug-17537-helper.cs
+bug-17537-helper.exe: bug-17537-helper.cs
+	$(MCS) -out:$@ $(srcdir)/bug-17537-helper.cs
+	chmod -x $@
+
+bug-17537.exe: bug-17537.cs bug-17537-helper.exe
+	$(MCS) -out:$@ $(srcdir)/bug-17537.cs
+
 EXTRA_DIST += coreclr-security.cs
 
 coreclr-security.exe : coreclr-security.cs
@@ -1299,12 +1311,8 @@ patch-libtool:
 if NACL_CODEGEN
 test-process-exit:
 else
-EXTRA_DIST += bug-438454.cs bug-438454.exe.stdout.expected threadpool-in-processexit.cs threadpool-in-processexit.exe.stdout.expected
+EXTRA_DIST += threadpool-in-processexit.cs threadpool-in-processexit.exe.stdout.expected
 test-process-exit:
-	@$(MCS) $(srcdir)/bug-438454.cs -out:bug-438454.exe
-	@echo "Testing bug-438454.exe..."
-	@$(RUNTIME) bug-438454.exe > bug-438454.exe.stdout
-	@diff -w bug-438454.exe.stdout $(srcdir)/bug-438454.exe.stdout.expected
 	@$(MCS) $(srcdir)/threadpool-in-processexit.cs -out:threadpool-in-processexit.exe
 	@echo "Testing threadpool-in-processexit.exe..."
 	@$(RUNTIME) threadpool-in-processexit.exe > threadpool-in-processexit.exe.stdout

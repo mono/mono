@@ -58,22 +58,15 @@ namespace MonoCasTests.System.Diagnostics {
 				Assert.IsNotNull (st.GetFrame (0), "GetFrame");
 			else
 				Assert.IsNull (st.GetFrame (0), "GetFrame");
-#if NET_2_0
 			if (st.FrameCount > 0)
 				Assert.IsNotNull (st.GetFrames (), "GetFrames");
 			else
 				Assert.IsNull (st.GetFrames (), "GetFrames");
-#endif
 			Assert.IsNotNull (st.ToString (), "ToString");
 		}
 
 		[Test]
-#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#else
-		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void StackTrace_DefaultConstructor ()
 		{
 			StackTrace st = new StackTrace ();
@@ -81,12 +74,7 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
-#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#else
-		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void StackTrace_BoolConstructor ()
 		{
 			StackTrace st = new StackTrace (true);
@@ -94,12 +82,7 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
-#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#else
-		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void StackTrace_IntConstructor ()
 		{
 			StackTrace st = new StackTrace (1);
@@ -107,12 +90,7 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
-#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#else
-		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void StackTrace_IntBoolConstructor ()
 		{
 			StackTrace st = new StackTrace (1, true);
@@ -152,12 +130,7 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
-#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#else
-		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void StackTrace_StackFrameConstructor ()
 		{
 			StackTrace st = new StackTrace (new StackFrame ());
@@ -165,12 +138,7 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
-#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#else
-		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
-		[ExpectedException (typeof (SecurityException))]
-#endif
 		[Category ("NotWorking")]
 		public void StackTrace_ThreadBoolConstructor ()
 		{

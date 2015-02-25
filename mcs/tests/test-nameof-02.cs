@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using SCG = System.Collections.Generic;
-//using SCGL = System.Collections.Generic.List<>;
+using SCGL = System.Collections.Generic.List<string>;
 
 class A<T>
 {
@@ -75,7 +75,7 @@ class X
 		if (nameof (Action) != "Action")
 			return 10;
 
-		if (nameof (List) != "List")
+		if (nameof (List<bool>) != "List")
 			return 11;
 
 		if (nameof (GenMethod) != "GenMethod")
@@ -95,7 +95,7 @@ class X
 		if (nameof (Console.WriteLine) != "WriteLine")
 			return 3;
 
-		if (nameof (System.Collections.Generic.List) != "List")
+		if (nameof (System.Collections.Generic.List<long>) != "List")
 			return 4;
 
 		if (nameof (System.Collections) != "Collections")
@@ -104,10 +104,10 @@ class X
 		if (nameof (X.GenMethod) != "GenMethod")
 			return 6;
 
-		if (nameof (A<>.B) != "B")
+		if (nameof (A<char>.B) != "B")
 			return 7;
 
-		if (nameof (A<>.B.Foo) != "Foo")
+		if (nameof (A<ushort>.B.Foo) != "Foo")
 			return 7;
 
 		return 0;
@@ -118,11 +118,11 @@ class X
 		if (nameof (global::System.Int32) != "Int32")
 			return 1;
 
-		if (nameof (SCG.List) != "List")
+		if (nameof (SCG.List<short>) != "List")
 			return 2;
 
-//		if (nameof (SCGL.Contains) != "Contains")
-//			return 3;
+		if (nameof (SCGL.Contains) != "Contains")
+			return 3;
 
 		return 0;
 	}

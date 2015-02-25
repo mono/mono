@@ -110,16 +110,12 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			Toolsets.Add (new Toolset ("2.0",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20)));
-#if NET_3_5
 			Toolsets.Add (new Toolset ("3.0",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version30)));
 			Toolsets.Add (new Toolset ("3.5",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35)));
-#endif
-#if NET_4_0
 			Toolsets.Add (new Toolset ("4.0",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
-#endif
 #if XBUILD_12
 			Toolsets.Add (new Toolset ("12.0", ToolLocationHelper.GetPathToBuildTools ("12.0")));
 #endif
@@ -560,11 +556,9 @@ namespace Microsoft.Build.BuildEngine {
 			get {
 				// This is used as the fall back version if the
 				// project can't find a version to use
-				// Hard-coded to 2.0, so it allows even vs2005 projects
-				// to build correctly, as they won't have a ToolsVersion
-				// set!
 				return String.IsNullOrEmpty (defaultToolsVersion)
-						? "2.0"
+						?
+						 "4.0"
 						: defaultToolsVersion;
 			}
 			set {

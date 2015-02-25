@@ -9,8 +9,4 @@ LIB_MCS_FLAGS = /r:$(corlib) -keyfile:$(LIBRARY_SNK) -r:System.Core.dll -d:NET_3
 
 NO_TEST = yes
 
-ifneq (net_2_0, $(PROFILE))
-NO_INSTALL = yes
-endif
-
 include ../../build/library.make

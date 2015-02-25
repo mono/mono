@@ -7,7 +7,6 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-#if NET_2_0
 
 #pragma warning disable 1591
 
@@ -492,4 +491,3 @@ namespace MonoTests.System.Data {
 
 #pragma warning restore 1591
 
-#endif

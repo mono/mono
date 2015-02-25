@@ -28,9 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.Web.Security {
 	public delegate void AnonymousIdentificationEventHandler (object sender, AnonymousIdentificationEventArgs e);
 }
-#endif
 

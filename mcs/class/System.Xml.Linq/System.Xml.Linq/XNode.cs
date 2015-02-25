@@ -243,7 +243,6 @@ namespace System.Xml.Linq
 			return new XNodeReader (this);
 		}
 
-#if NET_4_0
 		public XmlReader CreateReader (ReaderOptions readerOptions)
 		{
 			var r = new XNodeReader (this);
@@ -252,7 +251,6 @@ namespace System.Xml.Linq
 			
 			return r;
 		}
-#endif
 
 		public IEnumerable<XElement> ElementsAfterSelf ()
 		{

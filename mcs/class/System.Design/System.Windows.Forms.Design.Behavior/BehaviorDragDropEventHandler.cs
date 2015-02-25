@@ -28,11 +28,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 namespace System.Windows.Forms.Design.Behavior
 {
 	public delegate void BehaviorDragDropEventHandler (object sender, BehaviorDragDropEventArgs e);
 }
 
-#endif

@@ -28,7 +28,6 @@
 using System;
 using System.Text;
 
-#if NET_4_0
 namespace System.Runtime.Versioning
 {
 	[Serializable]
@@ -230,4 +229,3 @@ namespace System.Runtime.Versioning
 		}
 	}
 }
-#endif

@@ -69,6 +69,7 @@ config.status
 config.sub
 configure
 configure.scan
+cygconfig.h
 depcomp
 install-sh
 libtool
@@ -107,6 +108,10 @@ GPATH
 GRTAGS
 GSYMS
 GTAGS
+
+# Doxygen
+docs/doxygen*
+docs/perlmod*
 
 
 ##############################################################################

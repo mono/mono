@@ -62,7 +62,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		class PokerRadioButtonList : RadioButtonList
 		{
 			public StateBag StateBag
@@ -133,7 +132,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 				base.VerifyMultiSelect();
 			}
 		}
-#endif
 		#endregion
 
 		[Test]
@@ -160,12 +158,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (5, r.CellPadding, "setting");
 
 			string s = r.Render ();	
-#if NET_2_0
 			// FIXME: missing some info to start rendering ?
 			Assert.AreEqual (String.Empty, s, "htmloutput");
-#else
-			Assert.IsTrue (s.ToLower ().IndexOf ("cellpadding=\"5\"") !=  -1, "htmloutput");
-#endif
 		}	
 
 		[Test]
@@ -176,15 +170,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (5, r.CellSpacing, "setting");
 
 			string s = r.Render ();	
-#if NET_2_0
 			// FIXME: missing some info to start rendering ?
 			Assert.AreEqual (String.Empty, s, "htmloutput");
-#else
-			Assert.IsTrue (s.ToLower ().IndexOf ("cellspacing=\"5\"") !=  -1, "htmloutput");
-#endif
 		}	
 
-#if NET_2_0
 		[Test]
 		[Category ("NunitWeb")]
 		public void Render ()
@@ -209,21 +198,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			p.Form.Controls.Add (lce);
 			c.Items.Add (new ListItem ("text2", "value1"));
 		}
-#else
-		[Test]
-		public void Render ()
-		{
-			TestRadioButtonList c = new TestRadioButtonList ();
-
-			c.Items.Add (new ListItem ("text2", "value1"));
-
-			string s = c.Render ();
-
-			Assert.IsTrue (s.ToLower ().IndexOf (" type=\"radio\"") !=  -1, "type");
-			Assert.IsTrue (s.ToLower ().IndexOf ("value1") !=  -1, "value");
-			Assert.IsTrue (s.ToLower ().IndexOf ("text2") !=  -1, "text");
-		}
-#endif
 
 		// Exceptions
 		[Test]
@@ -271,20 +245,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			nvc ["XXX"] = "3";
 
 			IPostBackDataHandler handler = (IPostBackDataHandler) rbl;
-#if NET_2_0
 			Assert.IsFalse (handler.LoadPostData ("XXX", nvc), "#01");
-#else
-			Assert.IsTrue (handler.LoadPostData ("XXX", nvc), "#01");
-#endif
 			rbl.SelectedIndexChanged += new EventHandler (OnSelected);
 			event_called = false;
 			handler.RaisePostDataChangedEvent ();
-#if NET_2_0
 			Assert.IsTrue (event_called, "#02");
-#else
-			// Not called. Value is the same as the selected previously
-			Assert.IsFalse (event_called, "#02");
-#endif
 			Assert.AreEqual ("3", rbl.SelectedValue, "#03");
 		}
 
@@ -324,7 +289,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		
-#if NET_2_0
 		[Test]
 		[ExpectedException(typeof(HttpException))]
 		public void VerifyMultiSelectTest()
@@ -525,7 +489,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest.Unload ();
 		}
-#endif
 	}
 }
 

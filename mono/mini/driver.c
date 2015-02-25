@@ -10,7 +10,9 @@
  */
 
 #include <config.h>
+#ifdef HAVE_SIGNAL_H
 #include <signal.h>
+#endif
 #if HAVE_SCHED_SETAFFINITY
 #include <sched.h>
 #endif
@@ -140,7 +142,7 @@ extern char *nacl_mono_path;
 	MONO_OPT_ALIAS_ANALYSIS	| \
 	MONO_OPT_AOT)
 
-#define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE | MONO_OPT_GSHAREDVT)
+#define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE | MONO_OPT_GSHAREDVT | MONO_OPT_FLOAT32)
 
 static guint32
 parse_optimizations (const char* p)
@@ -408,8 +410,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 
 			} else {
 				cfailed++;
-				if (verbose)
-					g_print ("Test '%s' failed compilation.\n", method->name);
+				g_print ("Test '%s' failed compilation.\n", method->name);
 			}
 			if (mini_stats_fd)
 				fprintf (mini_stats_fd, "%f, ",
@@ -1859,8 +1860,11 @@ mono_main (int argc, char* argv[])
 		   fprintf (stderr, "This mono runtime is compiled for cross-compiling. Only the --aot option is supported.\n");
 		   exit (1);
        }
-#if SIZEOF_VOID_P == 8 && defined(TARGET_ARM)
-       fprintf (stderr, "Can't cross-compile on 64 bit platforms to arm.\n");
+#if SIZEOF_VOID_P == 8 && (defined(TARGET_ARM) || defined(TARGET_X86))
+       fprintf (stderr, "Can't cross-compile on 64-bit platforms to 32-bit architecture.\n");
+       exit (1);
+#elif SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64))
+       fprintf (stderr, "Can't cross-compile on 32-bit platforms to 64-bit architecture.\n");
        exit (1);
 #endif
 #endif
@@ -1868,6 +1872,8 @@ mono_main (int argc, char* argv[])
 	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER) {
 		g_set_prgname (argv[i]);
 	}
+
+	mono_counters_init ();
 
 	if (enable_profile)
 		mono_profiler_load (profile_options);
@@ -2001,7 +2007,7 @@ mono_main (int argc, char* argv[])
 			fprintf (stderr, "Corlib not in sync with this runtime: %s\n", error);
 			fprintf (stderr, "Loaded from: %s\n",
 				mono_defaults.corlib? mono_image_get_filename (mono_defaults.corlib): "unknown");
-			fprintf (stderr, "Download a newer corlib or a newer runtime at http://www.go-mono.com/daily.\n");
+			fprintf (stderr, "Download a newer corlib or a newer runtime at http://www.mono-project.com/download.\n");
 			exit (1);
 		}
 

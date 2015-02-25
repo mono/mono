@@ -30,13 +30,33 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Permissions;
 
 namespace System.Threading {
+
+	// Extracted from ../../../../external/referencesource/mscorlib/system/threading/threadpool.cs
+	//
+	// Interface to something that can be queued to the TP.  This is implemented by 
+	// QueueUserWorkItemCallback, Task, and potentially other internal types.
+	// For example, SemaphoreSlim represents callbacks using its own type that
+	// implements IThreadPoolWorkItem.
+	//
+	// If we decide to expose some of the workstealing
+	// stuff, this is NOT the thing we want to expose to the public.
+	//
+	internal interface IThreadPoolWorkItem
+	{
+		[SecurityCritical]
+		void ExecuteWorkItem();
+		[SecurityCritical]
+		void MarkAborted(ThreadAbortException tae);
+	}
 
 	public static class ThreadPool {
 		[Obsolete("This method is obsolete, use BindHandle(SafeHandle) instead")]
@@ -53,10 +73,9 @@ namespace System.Threading {
 			return true;
 		}
 
-#if !NET_2_1		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void GetAvailableThreads (out int workerThreads, out int completionPortThreads);
-#endif
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void GetMaxThreads (out int workerThreads, out int completionPortThreads);
 			
@@ -231,5 +250,27 @@ namespace System.Threading {
 		}
 
 #endif
+
+#region ReferenceSources
+		// Extracted from ../../../../external/referencesource/mscorlib/system/threading/threadpool.cs
+		internal static void UnsafeQueueCustomWorkItem(IThreadPoolWorkItem workItem, bool forceGlobal)
+		{
+			QueueWorkItem ((obj) => ((IThreadPoolWorkItem)obj).ExecuteWorkItem (), workItem);
+		}
+
+		internal static IEnumerable<IThreadPoolWorkItem> GetQueuedWorkItems()
+		{
+			yield break;
+		}
+		
+		internal static bool TryPopCustomWorkItem(IThreadPoolWorkItem workItem)
+		{
+			return false;
+		}
+		
+		internal static void NotifyWorkItemProgress()
+		{
+		}
+#endregion
 	}
 }

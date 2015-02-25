@@ -39,9 +39,7 @@ using System.Web.UI.WebControls;
 
 namespace System.Web.Handlers
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	class TraceNotAvailableException : HttpException
 	{
 		bool notLocal;
@@ -74,16 +72,12 @@ namespace System.Web.Handlers
 			// but doesn't specify which one it is (tests shows it's UnmanagedCode)
 		}
 
-#if NET_2_0
 		void IHttpHandler.ProcessRequest (HttpContext context)
 		{
 			ProcessRequest (context);
 		}
 
 		protected void ProcessRequest (HttpContext context)
-#else
-		void IHttpHandler.ProcessRequest (HttpContext context)
-#endif
 		{
 			TraceManager manager = HttpRuntime.TraceManager;
 
@@ -111,15 +105,11 @@ namespace System.Web.Handlers
 				
 		}
 
-#if NET_2_0
 		bool IHttpHandler.IsReusable {
 			get { return IsReusable; }
 		}
 
 		protected bool IsReusable {
-#else
-		bool IHttpHandler.IsReusable {
-#endif
 			get {
 				return false;
 			}
@@ -204,7 +194,6 @@ namespace System.Web.Handlers
 		protected void ShowDetails (DataSet data)
 		{
 		}
-#if NET_2_0
 		[MonoLimitation ("Not implemented, does nothing")]
 		protected void ShowRequests (IList data)
 		{
@@ -214,11 +203,5 @@ namespace System.Web.Handlers
 		protected void ShowVersionDetails ()
 		{
 		}
-#else
-		[MonoTODO ("Not implemented, does nothing")]
-		protected void ShowRequests (ArrayList list)
-		{
-		}
-#endif
 	}
 }

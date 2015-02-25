@@ -45,15 +45,9 @@ namespace System.Data.OleDb
 	/// </summary>
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OleDbCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
-#if NET_2_0
 	[DefaultEvent( "RecordsAffected")]
-#endif
 	public sealed class OleDbCommand : 
-#if NET_2_0
 	DbCommand
-#else
-	Component
-#endif
 	, ICloneable, IDbCommand
 	{
 		#region Fields
@@ -112,15 +106,10 @@ namespace System.Data.OleDb
 	
 		[DataCategory ("Data")]
 		[DefaultValue ("")]
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("Command text to execute.")]
-#endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing)]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public 
-#if NET_2_0
 		override
-#endif
 		string CommandText {
 			get {
 				if (commandText == null)
@@ -132,14 +121,8 @@ namespace System.Data.OleDb
 			}
 		}
 
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("Time to wait for command to execute.")]
-		[DefaultValue (DEFAULT_COMMAND_TIMEOUT)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		int CommandTimeout {
 			get {
 				return timeout;
@@ -151,14 +134,9 @@ namespace System.Data.OleDb
 
 		[DataCategory ("Data")]
 		[DefaultValue ("Text")]
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("How to interpret the CommandText.")]
-#endif
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public
-#if NET_2_0
 		override
-#endif
 		CommandType CommandType {
 			get {
 				return commandType;
@@ -169,9 +147,6 @@ namespace System.Data.OleDb
 		}
 
 		[DataCategory ("Behavior")]
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("Connection used by the command.")]
-#endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public new OleDbConnection Connection {
@@ -186,13 +161,9 @@ namespace System.Data.OleDb
 		[BrowsableAttribute (false)]
 		[DesignOnlyAttribute (true)]
 		[DefaultValue (true)]
-#if NET_2_0
 		[EditorBrowsable(EditorBrowsableState.Never)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		bool DesignTimeVisible {
 			get {
 				return designTimeVisible;
@@ -203,9 +174,6 @@ namespace System.Data.OleDb
 		}
 
 		[DataCategory ("Data")]
-#if ONLY_1_1
-		[DataSysDescriptionAttribute ("The parameters collection.")]
-#endif
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public new OleDbParameterCollection Parameters {
 			get { return parameters; }
@@ -213,9 +181,6 @@ namespace System.Data.OleDb
 		}
 
 		[BrowsableAttribute (false)]
-#if ONLY_1_1
-		[DataSysDescriptionAttribute ("The transaction used by the command.")]
-#endif
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public new OleDbTransaction Transaction {
 			get {
@@ -228,14 +193,9 @@ namespace System.Data.OleDb
 
 		[DataCategory ("Behavior")]
 		[DefaultValue (UpdateRowSource.Both)]
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
-#endif
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif
 		UpdateRowSource UpdatedRowSource {
 			get { return updatedRowSource; }
 			set {
@@ -274,9 +234,7 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		public 
-#if NET_2_0
 		override 
-#endif
 		void Cancel () 
 		{
 			throw new NotImplementedException ();
@@ -287,12 +245,6 @@ namespace System.Data.OleDb
 			return new OleDbParameter ();
 		}
 
-#if !NET_2_0
-		IDbDataParameter IDbCommand.CreateParameter ()
-		{
-			return CreateParameter ();
-		}
-#endif
 		
 		protected override void Dispose (bool disposing)
 		{
@@ -332,9 +284,7 @@ namespace System.Data.OleDb
 		}
 
 		public 
-#if NET_2_0
 		override
-#endif
 		int ExecuteNonQuery ()
 		{
 			if (connection == null)
@@ -406,9 +356,7 @@ namespace System.Data.OleDb
 		}
 		
 		public
-#if NET_2_0
 		override
-#endif
 		object ExecuteScalar ()
 		{
 			SetupGdaCommand ();
@@ -425,11 +373,7 @@ namespace System.Data.OleDb
 			return o;
 		}
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		OleDbCommand Clone ()
 		{
 			OleDbCommand command = new OleDbCommand ();
@@ -450,9 +394,7 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		public 
-#if NET_2_0
 		override
-#endif
 		void Prepare ()
 		{
 			throw new NotImplementedException ();
@@ -463,7 +405,6 @@ namespace System.Data.OleDb
 			timeout = DEFAULT_COMMAND_TIMEOUT;
 		}
 		
-#if NET_2_0
 		protected override DbParameter CreateDbParameter ()
 		{
 			return (DbParameter) CreateParameter ();
@@ -487,7 +428,6 @@ namespace System.Data.OleDb
 			get { return Transaction; }
 			set { Transaction = (OleDbTransaction) value; }
 		}
-#endif
 
 		#endregion
 	}

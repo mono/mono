@@ -53,16 +53,9 @@
 	binary_protocol_scan_vtype_begin (start + sizeof (MonoObject), size);
 #endif
 #endif
-	switch (desc & 0x7) {
+	switch (desc & DESC_TYPE_MASK) {
 	case DESC_TYPE_RUN_LENGTH:
 #define SCAN OBJ_RUN_LEN_FOREACH_PTR (desc, start)
-#ifndef SCAN_OBJECT_NOSCAN
-		SCAN;
-#endif
-#undef SCAN
-		break;
-	case DESC_TYPE_SMALL_BITMAP:
-#define SCAN OBJ_BITMAP_FOREACH_PTR (desc, start)
 #ifndef SCAN_OBJECT_NOSCAN
 		SCAN;
 #endif
@@ -75,8 +68,8 @@
 #endif
 #undef SCAN
 		break;
-	case DESC_TYPE_LARGE_BITMAP:
-#define SCAN OBJ_LARGE_BITMAP_FOREACH_PTR (desc, start)
+	case DESC_TYPE_BITMAP:
+#define SCAN OBJ_BITMAP_FOREACH_PTR (desc, start)
 #ifndef SCAN_OBJECT_NOSCAN
 		SCAN;
 #endif
@@ -100,6 +93,7 @@
 #undef SCAN
 		break;
 #endif
+	case DESC_TYPE_SMALL_PTRFREE:
 	case DESC_TYPE_COMPLEX_PTRFREE:
 		/*Nothing to do*/
 		break;

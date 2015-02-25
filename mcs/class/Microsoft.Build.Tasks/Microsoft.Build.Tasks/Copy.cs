@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -41,7 +42,10 @@ namespace Microsoft.Build.Tasks {
 		bool		skipUnchangedFiles;
 		ITaskItem[]	sourceFiles;
 		bool		overwriteReadOnlyFiles;
-		
+		int			retries;
+		int			retryDelayMilliseconds;
+		bool		useHardlinksIfPossible;
+
 		public Copy ()
 		{
 		}
@@ -79,7 +83,7 @@ namespace Microsoft.Build.Tasks {
 						}
 
 						if (!skipUnchangedFiles || HasFileChanged (sourceFile, destinationFile))
-							CopyFile (sourceFile, destinationFile, true);
+							CopyFileWithRetries (sourceFile, destinationFile, true);
 
 						sourceItem.CopyMetadataTo (destinationItem);
 						temporaryCopiedFiles.Add (destinationItem);
@@ -102,7 +106,7 @@ namespace Microsoft.Build.Tasks {
 
 						if (!skipUnchangedFiles || directoryCreated ||
 							HasFileChanged (sourceFile, destinationFile))
-							CopyFile (sourceFile, destinationFile, false);
+							CopyFileWithRetries (sourceFile, destinationFile, false);
 
 						temporaryCopiedFiles.Add (new TaskItem (
 								Path.Combine (destinationFolder.GetMetadata ("Identity"), filename),
@@ -163,7 +167,6 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-#if NET_3_5
 		public bool OverwriteReadOnlyFiles {
 			get {
 				return overwriteReadOnlyFiles;
@@ -172,7 +175,34 @@ namespace Microsoft.Build.Tasks {
 				overwriteReadOnlyFiles = value;
 			}
 		}
-#endif
+
+		public int Retries {
+			get {
+				return retries;
+			}
+			set {
+				retries = value;
+			}
+		}
+
+		public int RetryDelayMilliseconds {
+			get {
+				return retryDelayMilliseconds;
+			}
+			set {
+				retryDelayMilliseconds = value;
+			}
+		}
+
+		[MonoTODO ("Not implemented yet.")]
+		public bool UseHardlinksIfPossible {
+			get {
+				return useHardlinksIfPossible;
+			}
+			set {
+				useHardlinksIfPossible = value;
+			}
+		}
 
 		[Required]
 		public ITaskItem[] SourceFiles {
@@ -193,6 +223,23 @@ namespace Microsoft.Build.Tasks {
 			Log.LogMessage ("Creating directory '{0}'", name);
 			Directory.CreateDirectory (name);
 			return true;
+		}
+
+		void CopyFileWithRetries (string source, string dest, bool create_dir)
+		{
+			for (int i = retries; i >= 0; i--) {
+				try {
+					CopyFile (source, dest, create_dir);
+				}
+				catch (Exception ex) {
+					Log.LogMessage ("Copying failed. Retries left: {0}.", i);
+
+					if (i == 0)
+						throw;
+
+					Thread.Sleep (retryDelayMilliseconds);
+				}
+			}
 		}
 
 		void CopyFile (string source, string dest, bool create_dir)

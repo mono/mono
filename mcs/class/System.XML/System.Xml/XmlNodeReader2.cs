@@ -31,9 +31,7 @@
 //
 
 using System;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.Xml;
 using System.Xml.Schema;
 using System.Text;
@@ -41,11 +39,7 @@ using Mono.Xml;
 
 namespace System.Xml
 {
-#if NET_2_0
 	public class XmlNodeReader : XmlReader, IHasXmlParserContext, IXmlNamespaceResolver
-#else
-	public class XmlNodeReader : XmlReader, IHasXmlParserContext
-#endif
 	{
 		XmlReader entity;
 		XmlNodeReaderImpl source;
@@ -81,7 +75,6 @@ namespace System.Xml
 			get { return Current.BaseURI; }
 		}
 
-#if NET_2_0
 		public override bool CanReadBinaryContent {
 			get { return true; }
 		}
@@ -91,17 +84,6 @@ namespace System.Xml
 			get { return true; }
 		}
 */
-#else
-		internal override bool CanReadBinaryContent {
-			get { return true; }
-		}
-
-/*
-		internal override bool CanReadValueChunk {
-			get { return true; }
-		}
-*/
-#endif
 
 		public override bool CanResolveEntity {
 			get { return true; }
@@ -138,20 +120,6 @@ namespace System.Xml
 			get { return Current.IsEmptyElement; }
 		}
 
-#if NET_2_0
-#else
-		public override string this [int i] {
-			get { return GetAttribute (i); }
-		}
-
-		public override string this [string name] {
-			get { return GetAttribute (name); }
-		}
-
-		public override string this [string name, string namespaceURI] {
-			get { return GetAttribute (name, namespaceURI); }
-		}
-#endif
 
 		public override string LocalName {
 			get { return Current.LocalName; }
@@ -189,22 +157,14 @@ namespace System.Xml
 			get { return Current.Prefix; }
 		}
 
-#if NET_2_0
-#else
-		public override char QuoteChar {
-			get { return '"'; }
-		}
-#endif
 
 		public override ReadState ReadState {
 			get { return entity != null ? ReadState.Interactive : source.ReadState; }
 		}
 
-#if NET_2_0
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return entity != null ? entity.SchemaInfo : source.SchemaInfo; }
 		}
-#endif
 
 		public override string Value {
 			get { return Current.Value; }
@@ -250,24 +210,20 @@ namespace System.Xml
 			return Current.GetAttribute (name, namespaceURI);
 		}
 
-#if NET_2_0
 		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			return ((IXmlNamespaceResolver) Current).GetNamespacesInScope (scope);
 		}
-#endif
 
 		public override string LookupNamespace (string prefix)
 		{
 			return Current.LookupNamespace (prefix);
 		}
 
-#if NET_2_0
 		string IXmlNamespaceResolver.LookupPrefix (string ns)
 		{
 			return ((IXmlNamespaceResolver) Current).LookupPrefix (ns);
 		}
-#endif
 
 		public override void MoveToAttribute (int attributeIndex)
 		{
@@ -371,7 +327,6 @@ namespace System.Xml
 			return Current.ReadAttributeValue ();
 		}
 
-#if NET_2_0
 		public override int ReadContentAsBase64 (byte [] buffer, int index, int count)
 		{
 //			return base.ReadContentAsBase64 (
@@ -424,7 +379,6 @@ namespace System.Xml
 				return source.ReadElementContentAsBinHex (
 					buffer, index, count);
 		}
-#endif
 
 		public override string ReadString ()
 		{

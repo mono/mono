@@ -34,11 +34,7 @@ using System.Globalization;
 
 namespace System.Data.Odbc
 {
-#if NET_2_0
 	public sealed class OdbcTransaction : DbTransaction, IDisposable
-#else
-	public sealed class OdbcTransaction : MarshalByRefObject, IDbTransaction
-#endif
 	{
 		private bool disposed;
 		private OdbcConnection connection;
@@ -65,7 +61,6 @@ namespace System.Data.Odbc
 			case IsolationLevel.Serializable:
 				lev = OdbcIsolationLevel.Serializable;
 				break;
-#if NET_2_0
 			case IsolationLevel.Snapshot:
 				// badly broken on MS:
 				// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=305736
@@ -81,13 +76,11 @@ namespace System.Data.Odbc
 				// http://msdn2.microsoft.com/en-us/library/ms131709.aspx
 				attr = OdbcConnectionAttribute.CoptTransactionIsolation;
 				break;
-#endif
 			case IsolationLevel.Unspecified:
 				// when isolationlevel is not specified, then use
 				// default isolation level of the driver and
 				// lazy initialize it in the IsolationLevel property
 				break;
-#if NET_2_0
 			case IsolationLevel.Chaos:
 				throw new ArgumentOutOfRangeException ("IsolationLevel",
 					string.Format (CultureInfo.CurrentCulture,
@@ -95,19 +88,11 @@ namespace System.Data.Odbc
 						"value, {0}, is not supported by " +
 						"the .Net Framework Odbc Data " +
 						"Provider.", (int) isolationlevel));
-#endif
 			default:
-#if NET_2_0
 				throw new ArgumentOutOfRangeException ("IsolationLevel",
 					string.Format (CultureInfo.CurrentCulture,
 						"The IsolationLevel enumeration value, {0}, is invalid.",
 						(int) isolationlevel));
-#else
-				throw new ArgumentException (string.Format (
-					CultureInfo.InvariantCulture,
-					"Not supported isolationlevel - {0}",
-					isolationlevel));
-#endif
 			}
 
 			// only change isolation level if it was explictly set
@@ -163,26 +148,16 @@ namespace System.Data.Odbc
 			case OdbcIsolationLevel.Serializable:
 				isoLevel = IsolationLevel.Serializable;
 				break;
-#if NET_2_0
 			case OdbcIsolationLevel.Snapshot:
 				isoLevel = IsolationLevel.Snapshot;
 				break;
-#else
-			default:
-				throw new NotSupportedException (string.Format (
-					CultureInfo.InvariantCulture,
-					"Isolation level {0} is not supported.",
-					odbcLevel));
-#endif
 			}
 			return isoLevel;
 		}
 
 		#region Implementation of IDisposable
 
-#if NET_2_0
 		protected override
-#endif
 		void Dispose (bool disposing)
 		{
 			if (!disposed) {
@@ -203,9 +178,7 @@ namespace System.Data.Odbc
 		#region Implementation of IDbTransaction
 
 		public
-#if NET_2_0
 		override
-#endif //NET_2_0
 		void Commit ()
 		{
 			if (!isOpen)
@@ -224,9 +197,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif //NET_2_0
 		void Rollback()
 		{
 			if (!isOpen)
@@ -244,25 +215,14 @@ namespace System.Data.Odbc
 				throw new InvalidOperationException ();
 		}
 
-#if NET_2_0
 		protected override DbConnection DbConnection {
 			get {
 				return Connection;
 			}
 		}
-#else
-		IDbConnection IDbTransaction.Connection {
-			get {
-				return Connection;
-			}
-		}
-
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		IsolationLevel IsolationLevel {
 			get {
 				if (!isOpen)

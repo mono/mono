@@ -49,6 +49,7 @@ namespace System.Diagnostics {
 		#region Keep in sync with object-internals.h
 		private int ilOffset = OFFSET_UNKNOWN;
 		private int nativeOffset = OFFSET_UNKNOWN;
+		private long methodAddress;
 		private MethodBase methodBase;
 		private string fileName;
 		private int lineNumber;
@@ -164,6 +165,11 @@ namespace System.Diagnostics {
                 {
                         return nativeOffset;                        
                 }
+
+		internal long GetMethodAddress ()
+		{
+			return methodAddress;
+		}
 
 		internal string GetInternalMethodName ()
 		{

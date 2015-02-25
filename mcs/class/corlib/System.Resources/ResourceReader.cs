@@ -96,6 +96,26 @@ namespace System.Resources
 				ResourceValue = value;
 			}
 		}
+
+		unsafe class HGlobalUnmanagedMemoryStream : UnmanagedMemoryStream
+		{
+			IntPtr ptr;
+
+			public HGlobalUnmanagedMemoryStream (byte* pointer, long length, IntPtr ptr)
+				: base (pointer, length, length, FileAccess.ReadWrite)
+			{
+				this.ptr = ptr;
+			}
+
+			protected override void Dispose (bool disposing)
+			{
+				if (!closed) {
+					Marshal.FreeHGlobal (ptr);
+				}
+
+				base.Dispose (disposing);
+			}
+		}
 		
 		BinaryReader reader;
 		object readerLock = new object ();
@@ -448,12 +468,7 @@ namespace System.Resources
 					} else {
 						IntPtr ptr = Marshal.AllocHGlobal ((int) slen);
 						byte* addr = (byte*) ptr.ToPointer ();
-						UnmanagedMemoryStream ms = new UnmanagedMemoryStream (addr, slen, slen, FileAccess.ReadWrite);
-						// The memory resource must be freed
-						// when the stream is disposed.
-						ms.Closed += delegate (object o, EventArgs e) {
-							Marshal.FreeHGlobal (ptr);
-						};
+						UnmanagedMemoryStream ms = new HGlobalUnmanagedMemoryStream (addr, slen, ptr);
 
 						byte [] bytes = new byte [slen < 1024 ? slen : 1024];
 						while (slen > 0 ) {
@@ -477,11 +492,7 @@ namespace System.Resources
 			Dispose(true);
 		}
 
-#if NET_4_0
 		public void Dispose ()
-#else
-		void IDisposable.Dispose ()
-#endif
 		{
 			Dispose(true);
 		}

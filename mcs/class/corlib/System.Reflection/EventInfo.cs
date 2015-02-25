@@ -47,9 +47,7 @@ namespace System.Reflection {
 		public abstract EventAttributes Attributes {get;}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		Type EventHandlerType {
 			get {
 				ParameterInfo[] p;
@@ -68,9 +66,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		bool IsMulticast {get {return true;}}
 		public bool IsSpecialName {get {return (Attributes & EventAttributes.SpecialName ) != 0;}}
 		public override MemberTypes MemberType {
@@ -84,9 +80,7 @@ namespace System.Reflection {
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public
-#if NET_4_0
 		virtual
-#endif
 		void AddEventHandler (object target, Delegate handler)
 		{
 // this optimization cause problems with full AOT
@@ -142,9 +136,7 @@ namespace System.Reflection {
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public
-#if NET_4_0
 		virtual
-#endif
 		void RemoveEventHandler (object target, Delegate handler)
 		{
 			MethodInfo remove = GetRemoveMethod ();
@@ -154,7 +146,6 @@ namespace System.Reflection {
 			remove.Invoke (target, new object [] {handler});
 		}
 
-#if NET_4_0
 		public override bool Equals (object obj)
 		{
 			return obj == (object) this;
@@ -182,7 +173,6 @@ namespace System.Reflection {
 				return true;
 			return !left.Equals (right);
 		}
-#endif
 
 #if !MOBILE
 		void _EventInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
@@ -278,7 +268,6 @@ namespace System.Reflection {
 		}
 #endif
 
-#if NET_4_5
 		public virtual MethodInfo AddMethod {
 			get { return GetAddMethod (true); }
 		}
@@ -288,6 +277,5 @@ namespace System.Reflection {
 		public virtual MethodInfo RemoveMethod {
 			get { return GetRemoveMethod (true); }
 		}
-#endif
 	}
 }

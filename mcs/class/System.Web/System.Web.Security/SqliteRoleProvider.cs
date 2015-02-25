@@ -28,7 +28,6 @@
 // Adapted to Sqlite by Marek Habersack <mhabersack@novell.com>
 //
 
-#if NET_2_0
 using System;
 using System.Data;
 using System.Data.Common;
@@ -699,4 +698,3 @@ namespace System.Web.Security
 		#endregion	
 	}
 }
-#endif

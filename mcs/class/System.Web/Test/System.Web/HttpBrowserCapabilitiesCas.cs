@@ -98,9 +98,7 @@ namespace MonoCasTests.System.Web {
 		{
 			HttpBrowserCapabilities cap = new StringHttpBrowserCapabilities ();
 			Assert.IsNotNull (cap.Browser, "Browser");
-#if NET_2_0
 			Assert.IsNull (cap.Browsers, "Browsers");
-#endif
 			Assert.IsNotNull (cap.Platform, "Platform");
 			Assert.IsNotNull (cap.Type, "Type");
 			Assert.IsNotNull (cap.Version, "Version");
@@ -143,13 +141,7 @@ namespace MonoCasTests.System.Web {
 		public void GetClrVersions_Deny_Unrestricted ()
 		{
 			HttpBrowserCapabilities cap = new StringHttpBrowserCapabilities ();
-#if NET_2_0
 			Assert.IsNull (cap.GetClrVersions (), "GetClrVersions");
-#else
-			Version[] versions = cap.GetClrVersions ();
-			Assert.AreEqual (1, versions.Length, "GetClrVersions");
-			Assert.AreEqual ("0.0", versions [0].ToString (), "Version[0]");
-#endif
 		}
 
 		// LinkDemand

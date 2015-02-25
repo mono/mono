@@ -35,9 +35,7 @@ using System.Data;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Reflection;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 using NUnit.Framework;
 
@@ -559,7 +557,6 @@ namespace MonoTests.System.XmlSerialization
 		[Test]
 		public void TestSerializeEnumDefaultValue_InvalidValue2 ()
 		{
-#if NET_2_0
 			try {
 				Serialize (5, typeof (EnumDefaultValue));
 				Assert.Fail ("#1");
@@ -571,16 +568,11 @@ namespace MonoTests.System.XmlSerialization
 				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'5'") != -1, "#6");
 				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValue).FullName) != -1, "#7");
 			}
-#else
-			Serialize (5, typeof (EnumDefaultValue));
-			Assert.AreEqual (Infoset ("<EnumDefaultValue>5</EnumDefaultValue>"), WriterText);
-#endif
 		}
 
 		[Test]
 		public void TestSerializeEnumDefaultValueNF_InvalidValue1 ()
 		{
-#if NET_2_0
 			try {
 				Serialize (new EnumDefaultValueNF ());
 				Assert.Fail ("#1");
@@ -592,16 +584,11 @@ namespace MonoTests.System.XmlSerialization
 				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'0'") != -1, "#6");
 				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).FullName) != -1, "#7");
 			}
-#else
-			Serialize (new EnumDefaultValueNF ());
-			Assert.AreEqual (Infoset ("<EnumDefaultValueNF>0</EnumDefaultValueNF>"), WriterText);
-#endif
 		}
 
 		[Test]
 		public void TestSerializeEnumDefaultValueNF_InvalidValue2 ()
 		{
-#if NET_2_0
 			try {
 				Serialize (15, typeof (EnumDefaultValueNF));
 				Assert.Fail ("#1");
@@ -613,10 +600,6 @@ namespace MonoTests.System.XmlSerialization
 				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'15'") != -1, "#6");
 				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).FullName) != -1, "#7");
 			}
-#else
-			Serialize (15, typeof (EnumDefaultValueNF));
-			Assert.AreEqual (Infoset ("<EnumDefaultValueNF>15</EnumDefaultValueNF>"), WriterText);
-#endif
 		}
 
 		[Test]
@@ -726,7 +709,6 @@ namespace MonoTests.System.XmlSerialization
 			f.Modifiers3 = (MapModifiers) 0;
 			f.Modifiers4 = (MapModifiers) 888;
 			f.Modifiers5 = (MapModifiers) 999;
-#if NET_2_0
 			try {
 				Serialize (f, typeof (Field));
 				Assert.Fail ("#E1");
@@ -744,14 +726,6 @@ namespace MonoTests.System.XmlSerialization
 				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#E8");
 				Assert.IsNull (ex.InnerException.InnerException, "#E9");
 			}
-#else
-			Serialize (f, typeof (Field));
-			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
-				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag1='one two' flag2='444'" +
-				" flag3='555' flag4='one two four' modifiers='666' modifiers2='777'" +
-				" modifiers4='888' modifiers5='999' names='a b' />",
-				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText, "#E");
-#endif
 		}
 
 		[Test]
@@ -762,15 +736,9 @@ namespace MonoTests.System.XmlSerialization
 			SerializeEncoded (f, typeof (Field_Encoded));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
-#if NET_2_0
 				"<q1:field xmlns:xsi='{1}' xmlns:xsd='{0}' id='id1' flag1=''" +
 				" flag2='' flag3='' flag4='' modifiers='PuBlIc'" +
 				" modifiers2='PuBlIc' modifiers4='PuBlIc' xmlns:q1='some:urn' />",
-#else
-				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1=''" +
-				" flag2='' flag3='' flag4='' modifiers='PuBlIc'" +
-				" modifiers2='PuBlIc' modifiers4='PuBlIc' xmlns:q1='some:urn' />",
-#endif
 				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
 				sw.GetStringBuilder ().ToString (), "#A");
 
@@ -785,15 +753,9 @@ namespace MonoTests.System.XmlSerialization
 			SerializeEncoded (f, typeof (Field_Encoded));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
-#if NET_2_0
 				"<q1:field xmlns:xsi='{1}' xmlns:xsd='{0}' id='id1' flag3='two'" +
 				" flag4='' modifiers='Protected' modifiers2='PuBlIc'" +
 				" xmlns:q1='some:urn' />",
-#else
-				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag3='two'" +
-				" flag4='' modifiers='Protected' modifiers2='PuBlIc'" +
-				" xmlns:q1='some:urn' />",
-#endif
 				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
 				sw.GetStringBuilder ().ToString (), "#B");
 
@@ -808,17 +770,10 @@ namespace MonoTests.System.XmlSerialization
 			SerializeEncoded (f, typeof (Field_Encoded));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
-#if NET_2_0
 				"<q1:field xmlns:xsi='{1}' xmlns:xsd='{0}' id='id1' flag1='two'" +
 				" flag2='two' flag4='' modifiers='PuBlIc' modifiers2='Protected'" +
 				" modifiers3='Protected' modifiers4='PuBlIc' modifiers5='Protected'" +
 				" xmlns:q1='some:urn' />",
-#else
-				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1='two'" +
-				" flag2='two' flag4='' modifiers='PuBlIc' modifiers2='Protected'" +
-				" modifiers3='Protected' modifiers4='PuBlIc' modifiers5='Protected'" +
-				" xmlns:q1='some:urn' />",
-#endif
 				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
 				sw.GetStringBuilder ().ToString (), "#C");
 
@@ -830,11 +785,8 @@ namespace MonoTests.System.XmlSerialization
 			f.Modifiers3 = (MapModifiers) 0;
 			f.Modifiers4 = (MapModifiers) 888;
 			f.Modifiers5 = (MapModifiers) 999;
-#if NET_2_0
 			try {
-#endif
 			SerializeEncoded (f, typeof (Field_Encoded));
-#if NET_2_0
 				Assert.Fail ("#D1");
 			} catch (InvalidOperationException ex) {
 				// There was an error generating the XML document
@@ -850,15 +802,6 @@ namespace MonoTests.System.XmlSerialization
 				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum_Encoded).FullName) != -1, "#D8");
 				Assert.IsNull (ex.InnerException.InnerException, "#D9");
 			}
-#else
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"<?xml version='1.0' encoding='utf-16'?>" +
-				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag2='444'" +
-				" flag3='555' flag4='' modifiers='666' modifiers2='777'" +
-				" modifiers4='888' modifiers5='999' xmlns:q1='some:urn' />",
-				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
-				sw.GetStringBuilder ().ToString (), "#D");
-#endif
 		}
 
 		[Test]
@@ -930,7 +873,6 @@ namespace MonoTests.System.XmlSerialization
 		[Test]
 		public void TestSerializeZeroFlagEnum_InvalidValue ()
 		{
-#if NET_2_0
 			try {
 				Serialize (4, typeof (ZeroFlagEnum)); // corresponding enum field is marked XmlIgnore
 				Assert.Fail ("#1");
@@ -942,10 +884,6 @@ namespace MonoTests.System.XmlSerialization
 				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'4'") != -1, "#6");
 				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (ZeroFlagEnum).FullName) != -1, "#7");
 			}
-#else
-			Serialize (4, typeof (ZeroFlagEnum)); // corresponding enum field is marked XmlIgnore
-			Assert.AreEqual (Infoset ("<ZeroFlagEnum>4</ZeroFlagEnum>"), WriterText);
-#endif
 		}
 
 		[Test]
@@ -984,11 +922,7 @@ namespace MonoTests.System.XmlSerialization
 			TimeZone tz = TimeZone.CurrentTimeZone;
 			TimeSpan off = tz.GetUtcOffset (d);
 			string sp = string.Format ("{0}{1:00}:{2:00}", off.Ticks >= 0 ? "+" : "", off.Hours, off.Minutes);
-#if NET_2_0
 			Assert.AreEqual (Infoset ("<dateTime>0001-01-01T00:00:00</dateTime>"), WriterText);
-#else
-			Assert.AreEqual (Infoset ("<dateTime>0001-01-01T00:00:00.0000000" + sp + "</dateTime>"), WriterText);
-#endif
 		}
 
 		/*
@@ -1042,11 +976,7 @@ namespace MonoTests.System.XmlSerialization
 			Serialize (optionalValue);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
-#if NET_2_0
 				"<optionalValue xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='{2}' />",
-#else
-				"<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}' />",
-#endif
 				XmlSchema.Namespace, XmlSchema.InstanceNamespace, AnotherNamespace),
 				sw.ToString (), "#1");
 
@@ -1060,11 +990,7 @@ namespace MonoTests.System.XmlSerialization
 			Serialize (optionalValue, overrides);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
-#if NET_2_0
 				"<optionalValue xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='{2}'>" +
-#else
-				"<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}'>" +
-#endif
 				"<Attributes xmlns='{3}'>one four</Attributes>" +
 				"</optionalValue>", XmlSchema.Namespace, XmlSchema.InstanceNamespace,
 				AnotherNamespace, ANamespace), sw.ToString (), "#2");
@@ -1073,11 +999,7 @@ namespace MonoTests.System.XmlSerialization
 			Serialize (optionalValue, overrides);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
-#if NET_2_0
 				"<optionalValue xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='{2}'>" +
-#else
-				"<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}'>" +
-#endif
 				"<Attributes xmlns='{3}'>one four</Attributes>" +
 				"<Flags xmlns='{3}'>one</Flags>" +
 				"</optionalValue>",
@@ -1780,7 +1702,6 @@ namespace MonoTests.System.XmlSerialization
 			// technically XmlSchemaForm.None has an XmlIgnore attribute,
 			// but it is not being serialized as a member.
 
-#if NET_2_0
 			try {
 				Serialize (XmlSchemaForm.None);
 				Assert.Fail ("#1");
@@ -1792,10 +1713,6 @@ namespace MonoTests.System.XmlSerialization
 				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'0'") != -1, "#6");
 				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (XmlSchemaForm).FullName) != -1, "#7");
 			}
-#else
-			Serialize (XmlSchemaForm.None);
-			Assert.AreEqual (Infoset ("<XmlSchemaForm>0</XmlSchemaForm>"), WriterText);
-#endif
 		}
 
 		[Test]
@@ -1831,7 +1748,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset ("<anyType><elem1/><elem2/></anyType>"), WriterText);
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))] // List<XmlNode> is not supported
 		public void TestSerializeGenericListOfNode ()
@@ -1849,7 +1765,6 @@ namespace MonoTests.System.XmlSerialization
 			Serialize (new List<XmlElement> (new XmlElement [] { doc.CreateElement ("elem1"), doc.CreateElement ("elem2") }), typeof (object));
 			Assert.AreEqual (Infoset ("<anyType><elem1/><elem2/></anyType>"), WriterText);
 		}
-#endif
 		[Test]
 		public void TestSerializeXmlDocument ()
 		{
@@ -2020,11 +1935,7 @@ namespace MonoTests.System.XmlSerialization
 			Serialize (new PrimitiveTypesContainer ());
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
-#if NET_2_0
 				"<PrimitiveTypesContainer xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='some:urn'>" +
-#else
-				"<PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='some:urn'>" +
-#endif
 				"<Number>2004</Number>" +
 				"<Name>some name</Name>" +
 				"<Index>56</Index>" +
@@ -2036,11 +1947,7 @@ namespace MonoTests.System.XmlSerialization
 			SerializeEncoded (new PrimitiveTypesContainer ());
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
-#if NET_2_0
 				"<q1:PrimitiveTypesContainer xmlns:xsi='{1}' xmlns:xsd='{0}' id='id1' xmlns:q1='{2}'>" +
-#else
-				"<q1:PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' xmlns:q1='{2}'>" +
-#endif
 				"<Number xsi:type='xsd:int'>2004</Number>" +
 				"<Name xsi:type='xsd:string'>some name</Name>" +
 				"<Index xsi:type='xsd:unsignedByte'>56</Index>" +
@@ -2381,16 +2288,12 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ApplicationException))]
-#endif
 		public void SerializeErrorneousIXmlSerializable ()
 		{
 			Serialize (new ErrorneousGetSchema ());
 			Assert.AreEqual ("<:ErrorneousGetSchema></>", Infoset (sw.ToString ()));
 		}
 
-#if NET_2_0
 		public void DateTimeRoundtrip ()
 		{
 			// bug #337729
@@ -2400,7 +2303,6 @@ namespace MonoTests.System.XmlSerialization
 			DateTime d = (DateTime) ser.Deserialize (new StringReader (sw.ToString ()));
 			Assert.AreEqual (DateTimeKind.Utc, d.Kind);
 		}
-#endif
 
 		[Test]
 		public void SupportIXmlSerializableImplicitlyConvertible ()
@@ -2449,7 +2351,6 @@ namespace MonoTests.System.XmlSerialization
 
 		#region GenericsSeralizationTests
 
-#if NET_2_0
 		[Test]
 		public void TestSerializeGenSimpleClassString ()
 		{
@@ -2959,7 +2860,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual(WriterText, expected_text, WriterText);
 		}
 
-#endif
 
 		#endregion //GenericsSeralizationTests
 
@@ -3058,7 +2958,6 @@ namespace MonoTests.System.XmlSerialization
 			public TimeSpan StringDuration = TimeSpan.FromSeconds (1);
 		}
 
-#if NET_2_0
 		public class Bug80759
 		{
 			public string Test;
@@ -3144,7 +3043,6 @@ namespace MonoTests.System.XmlSerialization
 			}
 		}
 
-#endif
 
 		void CDataTextNodes_BadNode (object s, XmlNodeEventArgs e)
 		{

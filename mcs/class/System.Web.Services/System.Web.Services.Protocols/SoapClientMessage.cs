@@ -59,10 +59,8 @@ namespace System.Web.Services.Protocols {
 			this.client = client;
 			this.url = url;
 			Parameters = parameters;
-#if NET_2_0
 			if (SoapVersion == SoapProtocolVersion.Soap12)
 				ContentType = "application/soap+xml";
-#endif
 		}
 
 		#endregion 
@@ -89,12 +87,10 @@ namespace System.Web.Services.Protocols {
 			get { return url; }
 		}
 		
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public override SoapProtocolVersion SoapVersion {
 			get { return client.SoapVersion; }
 		}
-#endif
 
 		#endregion // Properties
 

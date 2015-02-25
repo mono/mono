@@ -29,7 +29,6 @@ namespace MonoTests.System.Windows.Forms
 		
 		[TearDown]
 		protected virtual void TearDown () {
-#if NET_2_0
 			int c = Application.OpenForms.Count;
 			if (c > 0) {
 				Console.WriteLine ("HEY! You created " + c.ToString () + " form(s) and you didn't dispose of them!");
@@ -38,7 +37,6 @@ namespace MonoTests.System.Windows.Forms
 			for (int i = Application.OpenForms.Count - 1; i >= 0; i--) {
 				Application.OpenForms[i].Dispose ();
 			}
-#endif			
 		}		
 		
 		

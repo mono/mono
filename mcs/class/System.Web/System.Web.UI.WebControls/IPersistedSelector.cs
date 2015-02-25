@@ -33,10 +33,6 @@ using System.Web;
 
 namespace System.Web.UI.WebControls
 {
-#if !NET_4_0
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
 	public interface IPersistedSelector
 	{
 		DataKey DataKey { get; set; }

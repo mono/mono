@@ -45,7 +45,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			c2.DataBindings.Add ("Text", c1, "Text");
 		}
 
-#if NET_2_0
 		[Test]
 		public void CtorTest ()
 		{
@@ -77,7 +76,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (b3.DataSourceUpdateMode, DataSourceUpdateMode.Never, "#B3");
 			Assert.AreEqual (b4.DataSourceUpdateMode, DataSourceUpdateMode.Never, "#B4");
 		}
-#endif
 	}
 
 }

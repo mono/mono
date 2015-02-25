@@ -34,9 +34,7 @@ using System.Collections.Generic;
 namespace Microsoft.Build.Construction
 {
 	[Serializable]
-#if NET_4_5
 	public
-#endif
 	abstract class ElementLocation
 	{
 		public abstract int Column { get; }

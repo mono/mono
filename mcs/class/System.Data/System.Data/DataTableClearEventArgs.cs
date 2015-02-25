@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.Data 
 {
         public sealed class DataTableClearEventArgs : EventArgs
@@ -54,4 +53,3 @@ namespace System.Data
                 #endregion // Properties
         }
 }
-#endif // NET_2_0

@@ -200,12 +200,13 @@ namespace System.Net
 			set { allowBuffering = value; }
 		}
 		
-#if NET_4_5
 		public virtual bool AllowReadStreamBuffering {
-			get { return allowBuffering; }
-			set { allowBuffering = value; }
+			get { return false; }
+			set {
+				if (value)
+					throw new InvalidOperationException ();
+			}
 		}
-#endif
 
 		static Exception GetMustImplement ()
 		{
@@ -304,9 +305,7 @@ namespace System.Net
 			set { continueDelegate = value; }
 		}
 		
-#if NET_4_5
 		virtual
-#endif
 		public CookieContainer CookieContainer {
 			get { return cookieContainer; }
 			set { cookieContainer = value; }
@@ -316,7 +315,6 @@ namespace System.Net
 			get { return credentials; }
 			set { credentials = value; }
 		}
-#if NET_4_0
 		public DateTime Date {
 			get {
 				string date = webHeaders ["Date"];
@@ -331,7 +329,6 @@ namespace System.Net
 					webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
 			}
 		}
-#endif
 
 #if !NET_2_1
 		[MonoTODO]
@@ -377,9 +374,7 @@ namespace System.Net
 			}
 		}
 		
-#if NET_4_5
 		virtual
-#endif
 		public bool HaveResponse {
 			get { return haveResponse; }
 		}
@@ -397,11 +392,7 @@ namespace System.Net
 			}
 		}
 		
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		string Host {
 			get {
 				if (host == null)
@@ -503,13 +494,11 @@ namespace System.Net
 			}
 		}
 		
-#if NET_4_5
 		[MonoTODO]
 		public int ContinueTimeout {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 		
 		public string MediaType {
 			get { return mediaType; }
@@ -594,7 +583,6 @@ namespace System.Net
 		internal ServicePoint ServicePointNoLock {
 			get { return servicePoint; }
 		}
-#if NET_4_0
 		public virtual bool SupportsCookieContainer { 
 			get {
 				// The managed implementation supports the cookie container
@@ -602,7 +590,6 @@ namespace System.Net
 				return true;
 			}
 		}
-#endif
 		public override int Timeout { 
 			get { return timeout; }
 			set {
@@ -704,31 +691,19 @@ namespace System.Net
 		{
 			AddRange (rangeSpecifier, (long) from, (long) to);
 		}
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		void AddRange (long range)
 		{
 			AddRange ("bytes", (long) range);
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		void AddRange (long from, long to)
 		{
 			AddRange ("bytes", from, to);
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		void AddRange (string rangeSpecifier, long range)
 		{
 			if (rangeSpecifier == null)
@@ -754,11 +729,7 @@ namespace System.Net
 			webHeaders.RemoveAndAdd ("Range", r);
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		void AddRange (string rangeSpecifier, long from, long to)
 		{
 			if (rangeSpecifier == null)
@@ -869,16 +840,11 @@ namespace System.Net
 		{
 			if (writeStream == null || writeStream.RequestWritten || !InternalAllowBuffering)
 				return false;
-			#if NET_4_0
 			if (contentLength < 0 && writeStream.CanWrite == true && writeStream.WriteBufferLength < 0)
 				return false;
 
 			if (contentLength < 0 && writeStream.WriteBufferLength >= 0)
 				InternalContentLength = writeStream.WriteBufferLength;
-			#else
-			if (contentLength < 0 && writeStream.CanWrite == true)
-				return false;
-			#endif
 
 			// This will write the POST/PUT if the write stream already has the expected
 			// amount of bytes in it (ContentLength) (bug #77753) or if the write stream
@@ -971,13 +937,11 @@ namespace System.Net
 			return result.Response;
 		}
 		
-#if NET_3_5
 		public Stream EndGetRequestStream (IAsyncResult asyncResult, out TransportContext transportContext)
 		{
 			transportContext = null;
 			return EndGetRequestStream (asyncResult);
 		}
-#endif
 
 		public override WebResponse GetResponse()
 		{
@@ -1131,13 +1095,15 @@ namespace System.Net
 				break;
 			}
 
-			if (method != "GET" && !InternalAllowBuffering)
+			if (method != "GET" && !InternalAllowBuffering && writeStream.WriteBufferLength > 0)
 				e = new WebException ("The request requires buffering data to succeed.", null, WebExceptionStatus.ProtocolError, webResponse);
 
 			if (e != null)
 				throw e;
 
-			contentLength = -1;
+			if (AllowWriteStreamBuffering)
+				contentLength = -1;
+
 			uriString = webResponse.Headers ["Location"];
 
 			if (uriString == null)

@@ -50,9 +50,7 @@ namespace System
 	[ComVisible (true)]
 	// FIXME: We are doing way to many double/triple exception checks for the overloaded functions"
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
-#if NET_4_0
 		, IStructuralComparable, IStructuralEquatable
-#endif
 	{
 		// Constructor
 		private Array ()
@@ -142,7 +140,6 @@ namespace System
 			Copy (this, this.GetLowerBound (0), array, index, this.GetLength (0));
 		}
 
-#if NET_4_5
 		internal T InternalArray__IReadOnlyList_get_Item<T> (int index)
 		{
 			if (unchecked ((uint) index) >= unchecked ((uint) Length))
@@ -157,7 +154,6 @@ namespace System
 		{
 			return Length;
 		}
-#endif
 
 		internal void InternalArray__Insert<T> (int index, T item)
 		{
@@ -455,7 +451,6 @@ namespace System
 			return new SimpleEnumerator (this);
 		}
 
-#if NET_4_0
 		int IStructuralComparable.CompareTo (object other, IComparer comparer)
 		{
 			if (other == null)
@@ -514,7 +509,6 @@ namespace System
 				hash = ((hash << 7) + hash) ^ comparer.GetHashCode (GetValueImpl (i));
 			return hash;
 		}
-#endif
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public int GetUpperBound (int dimension)
@@ -652,6 +646,11 @@ namespace System
 		{
 			int[] ind = {index1, index2, index3};
 			SetValue (value, ind);
+		}
+
+		internal static Array UnsafeCreateInstance (Type elementType, int length)
+		{
+			return CreateInstance (elementType, length);
 		}
 
 		public static Array CreateInstance (Type elementType, int length)
@@ -934,6 +933,9 @@ namespace System
 			int source_pos = sourceIndex - sourceArray.GetLowerBound (0);
 			int dest_pos = destinationIndex - destinationArray.GetLowerBound (0);
 
+			if (dest_pos < 0)
+				throw new ArgumentOutOfRangeException ("destinationIndex", "Index was less than the array's lower bound in the first dimension.");
+
 			// re-ordered to avoid possible integer overflow
 			if (source_pos > sourceArray.Length - length)
 				throw new ArgumentException ("length");
@@ -1005,7 +1007,7 @@ namespace System
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Copy (Array sourceArray, long sourceIndex, Array destinationArray,
-		                         long destinationIndex, long length)
+								 long destinationIndex, long length)
 		{
 			if (sourceArray == null)
 				throw new ArgumentNullException ("sourceArray");
@@ -2727,7 +2729,7 @@ namespace System
 
 			public object Current {
 				get {
-			 		// Exception messages based on MS implementation
+					// Exception messages based on MS implementation
 					if (currentpos < 0 )
 						throw new InvalidOperationException (Locale.GetText (
 							"Enumeration has not started."));
@@ -3171,5 +3173,17 @@ namespace System
 		}
 
 		#endregion
+
+		internal sealed class FunctorComparer<T> : IComparer<T> {
+			Comparison<T> comparison;
+
+			public FunctorComparer(Comparison<T> comparison) {
+				this.comparison = comparison;
+			}
+
+			public int Compare(T x, T y) {
+				return comparison(x, y);
+			}
+		}
 	}
 }

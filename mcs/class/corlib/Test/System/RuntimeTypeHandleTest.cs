@@ -46,7 +46,6 @@ namespace MonoTests.System
 			new BinaryFormatter ().Serialize (Stream.Null, handle);
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		[Category ("NotDotNet")] // it crashes the runtime on MS.NET
@@ -55,6 +54,5 @@ namespace MonoTests.System
 			RuntimeTypeHandle handle = new RuntimeTypeHandle ();
 			handle.GetModuleHandle ();
 		}
-#endif
 	}
 }

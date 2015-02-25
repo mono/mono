@@ -232,7 +232,6 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if NET_2_0
 		[Test] // GetFieldFromHandle (RuntimeFieldHandle, RuntimeTypeHandle)
 		public void GetFieldFromHandle2_DeclaringType_Zero ()
 		{
@@ -315,7 +314,6 @@ namespace MonoTests.System.Reflection
 
 			FieldInfo fi2 = FieldInfo.GetFieldFromHandle (fh, th);
 		}
-#endif
 
 		[Test]
 		public void PseudoCustomAttributes ()
@@ -519,6 +517,10 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public unsafe void GetSetValuePointers ()
 		{
+			Pointer p0 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
+			int *p0i = (int*)Pointer.Unbox (p0);
+			Assert.AreEqual (IntPtr.Zero, new IntPtr (p0i));
+
 			int i = 5;
 			void *p = &i;
 			typeof (FieldInfoTest).GetField ("ip").SetValue (null, (IntPtr)p);

@@ -43,9 +43,6 @@ namespace System.Data.Common
 	/// Represents a set of data commands and a database connection that are used to fill the DataSet and update the data source.
 	/// </summary>
 	public
-#if ONLY_1_1
-	abstract
-#endif
 	class DataAdapter : Component, IDataAdapter
 	{
 		#region Fields
@@ -58,11 +55,9 @@ namespace System.Data.Common
 		private const string DefaultSourceTableName = "Table";
 		private const string DefaultSourceColumnName = "Column";
 
-#if NET_2_0
 		private bool acceptChangesDuringUpdate;
 		private LoadOption fillLoadOption;
 		private bool returnProviderSpecificTypes;
-#endif
 		#endregion
 
 		#region Constructors
@@ -74,11 +69,9 @@ namespace System.Data.Common
 			missingMappingAction = MissingMappingAction.Passthrough;
 			missingSchemaAction = MissingSchemaAction.Add;
 			tableMappings = new DataTableMappingCollection ();
-#if NET_2_0
 			acceptChangesDuringUpdate = true;
 			fillLoadOption = LoadOption.OverwriteChanges;
 			returnProviderSpecificTypes = false;
-#endif 
 		}
 
 		protected DataAdapter (DataAdapter from)
@@ -91,11 +84,9 @@ namespace System.Data.Common
 			if (from.tableMappings != null)
 				foreach (ICloneable cloneable in from.TableMappings)
 					TableMappings.Add (cloneable.Clone ());
-#if NET_2_0
 			acceptChangesDuringUpdate = from.AcceptChangesDuringUpdate;
 			fillLoadOption = from.FillLoadOption;
 			returnProviderSpecificTypes = from.ReturnProviderSpecificTypes;
-#endif 
 		}
 
 		#endregion
@@ -103,34 +94,25 @@ namespace System.Data.Common
 		#region Properties
 
 		[DataCategory ("Fill")]
-#if !NET_2_0
-		[DataSysDescription ("Whether or not Fill will call DataRow.AcceptChanges.")]
-#endif
 		[DefaultValue (true)]
 		public bool AcceptChangesDuringFill {
 			get { return acceptChangesDuringFill; }
 			set { acceptChangesDuringFill = value; }
 		}
 
-#if NET_2_0
 		[DefaultValue (true)]
 		public bool AcceptChangesDuringUpdate {
 			get { return acceptChangesDuringUpdate; }
 			set { acceptChangesDuringUpdate = value; }
 		}
-#endif
 
 		[DataCategory ("Update")]
-#if !NET_2_0
-		[DataSysDescription ("Whether or not to continue to the next DataRow when the Update events, RowUpdating and RowUpdated, Status is UpdateStatus.ErrorsOccurred.")]
-#endif
 		[DefaultValue (false)]
 		public bool ContinueUpdateOnError {
 			get { return continueUpdateOnError; }
 			set { continueUpdateOnError = value; }
 		}
 
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.All)]
 		public LoadOption FillLoadOption {
 			get { return fillLoadOption; }
@@ -139,16 +121,12 @@ namespace System.Data.Common
 				fillLoadOption = value;
 		}
 		}
-#endif
 
 		ITableMappingCollection IDataAdapter.TableMappings {
 			get { return TableMappings; }
 		}
 
 		[DataCategory ("Mapping")]
-#if !NET_2_0
-		[DataSysDescription ("The action taken when a table or column in the TableMappings is missing.")]
-#endif
 		[DefaultValue (MissingMappingAction.Passthrough)]
 		public MissingMappingAction MissingMappingAction {
 			get { return missingMappingAction; }
@@ -159,9 +137,6 @@ namespace System.Data.Common
 		}
 
 		[DataCategory ("Mapping")]
-#if !NET_2_0
-		[DataSysDescription ("The action taken when a table or column in the DataSet is missing.")]
-#endif
 		[DefaultValue (MissingSchemaAction.Add)]
 		public MissingSchemaAction MissingSchemaAction {
 			get { return missingSchemaAction; }
@@ -171,18 +146,13 @@ namespace System.Data.Common
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		public virtual bool ReturnProviderSpecificTypes {
 			get { return returnProviderSpecificTypes; }
 			set { returnProviderSpecificTypes = value; }
 		}
-#endif
 
 		[DataCategory ("Mapping")]
-#if !NET_2_0
-		[DataSysDescription ("How to map source table to DataSet table.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataTableMappingCollection TableMappings {
 			get { return tableMappings; }
@@ -192,9 +162,7 @@ namespace System.Data.Common
 
 		#region Events
 
-#if NET_2_0
 		public event FillErrorEventHandler FillError;
-#endif
 
 		#endregion
 
@@ -312,7 +280,7 @@ namespace System.Data.Common
 				//FIXME : The sourcetable name shud get passed as a parameter.. 
 				int index = dtMapping.IndexOfDataSetTable (table.TableName);
 				string srcTable = (index != -1 ? dtMapping[index].SourceTable : table.TableName);
-				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, srcTable, table.TableName, missingMapAction); 
+				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, ADP.IsEmpty (srcTable) ? " " : srcTable, table.TableName, missingMapAction); 
 				if (tableMapping != null) {
 					table.TableName = tableMapping.DataSetTable;
 					// check to see if the column mapping exists
@@ -468,9 +436,7 @@ namespace System.Data.Common
 
 		internal virtual void OnFillErrorInternal (FillErrorEventArgs value)
 		{
-#if NET_2_0
 			OnFillError (value);
-#endif
 		}
 
 		internal FillErrorEventArgs CreateFillErrorEvent (DataTable dataTable, object[] values, Exception e)
@@ -544,7 +510,6 @@ namespace System.Data.Common
 			return count;
 		}
 
-#if NET_2_0
 		public virtual int Fill (DataSet dataSet)
 		{
 			throw new NotSupportedException();
@@ -645,12 +610,6 @@ namespace System.Data.Common
 		{
 			throw new NotImplementedException ();
 		}
-#else
-		public abstract int Fill (DataSet dataSet);
-		public abstract DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType);
-		public abstract IDataParameter[] GetFillParameters ();
-		public abstract int Update (DataSet dataSet);
-#endif
 
 		#endregion
 		

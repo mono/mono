@@ -75,11 +75,7 @@ namespace System.Data
 		{
 			dataSetName = dataset.DataSetName;
 			dataSetNamespace = dataset.Namespace;
-#if NET_2_0
 			dataSetLocale = dataset.LocaleSpecified ? dataset.Locale : null;
-#else
-			dataSetLocale = dataset.Locale;
-#endif
 			dataSetProperties = dataset.ExtendedProperties;
 			w = writer;
 			if (tables != null) {
@@ -108,14 +104,8 @@ namespace System.Data
 			this.dataSetProperties = new PropertyCollection();
 			if (tables[0].DataSet != null) {
 				dataSetNamespace = tables[0].DataSet.Namespace;
-#if !NET_2_0
-				dataSetLocale = tables[0].DataSet.Locale;
-#endif
 			} else {
 				dataSetNamespace = tables[0].Namespace;
-#if !NET_2_0
-				dataSetLocale = tables[0].Locale;
-#endif
 			}
 		}
 
@@ -228,11 +218,9 @@ namespace System.Data
 				"IsDataSet", XmlConstants.MsdataNamespace,
 				"true");
 
-#if NET_2_0
 			bool useCurrentLocale = (dataSetLocale == null);
 
 			if (!useCurrentLocale)
-#endif
 			{
 				w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
@@ -241,7 +229,6 @@ namespace System.Data
 					dataSetLocale.Name);
 			}
 
-#if NET_2_0
 			if(mainDataTable != null && mainDataTable != "")
 				w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
@@ -256,7 +243,6 @@ namespace System.Data
 					XmlConstants.MsdataNamespace,
 					"true");
 			}
-#endif
 
 			AddExtendedPropertyAttributes (dataSetProperties);
 

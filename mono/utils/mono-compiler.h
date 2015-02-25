@@ -7,13 +7,19 @@
  */
 #include <config.h>
 
+#ifdef __GNUC__
+#define MONO_ATTR_USED __attribute__ ((used))
+#else
+#define MONO_ATTR_USED
+#endif
+
 #ifdef HAVE_KW_THREAD
 
 #define MONO_HAVE_FAST_TLS
 #define MONO_FAST_TLS_SET(x,y) x = y
 #define MONO_FAST_TLS_GET(x) x
 #define MONO_FAST_TLS_INIT(x)
-#define MONO_FAST_TLS_DECLARE(x) static __thread gpointer x MONO_TLS_FAST;
+#define MONO_FAST_TLS_DECLARE(x) static __thread gpointer x MONO_TLS_FAST MONO_ATTR_USED;
 
 #if HAVE_TLS_MODEL_ATTR
 
@@ -171,7 +177,7 @@
 #define MONO_FAST_TLS_DECLARE(x) static pthread_key_t x;
 
 #define MONO_THREAD_VAR_OFFSET(x,y) ({	\
-	typeof(x) _x = (x);			\
+	__typeof__(x) _x = (x);			\
 	pthread_key_t _y;	\
 	(void) (&_x == &_y);		\
 	y = (gint32) x; })
@@ -219,12 +225,26 @@
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
 
+/*
+ * SSIZE_MAX is not defined in MSVC, so define it here.
+ *
+ * These values come from MinGW64, and are public domain.
+ *
+ */
+#ifndef SSIZE_MAX
+#ifdef _WIN64
+#define SSIZE_MAX _I64_MAX
+#else
+#define SSIZE_MAX INT_MAX
+#endif
+#endif
+
 #endif /* _MSC_VER */
 
 #if !defined(_MSC_VER) && !defined(PLATFORM_SOLARIS) && !defined(_WIN32) && !defined(__CYGWIN__) && !defined(MONOTOUCH) && HAVE_VISIBILITY_HIDDEN
 #define MONO_INTERNAL __attribute__ ((visibility ("hidden")))
 #if MONO_LLVM_LOADED
-#define MONO_LLVM_INTERNAL 
+#define MONO_LLVM_INTERNAL MONO_API
 #else
 #define MONO_LLVM_INTERNAL MONO_INTERNAL
 #endif

@@ -70,7 +70,6 @@ namespace MonoTests.System.Reflection
 			Assert.IsNotNull (pub.GetRemoveMethod (), "#B3");
 		}
 
-#if NET_2_0
 		[Test]
 		public void AddHandlerToNullInstanceEventRaisesTargetException ()
 		{
@@ -114,7 +113,6 @@ namespace MonoTests.System.Reflection
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException) {}			
 		}
-#endif
 
 #pragma warning disable 67
 		public class PrivateEvent

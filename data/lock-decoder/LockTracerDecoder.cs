@@ -143,6 +143,8 @@ public enum Lock {
 	IcallLock,
 	AssemblyBindingLock,
 	MarshalLock,
+	ClassesLock,
+	LoaderGlobalDataLock
 }
 
 public class SimLock

@@ -47,7 +47,6 @@ namespace System.Collections.Generic {
 			}
 		}
 
-#if NET_4_5
 		public static Comparer<T> Create (Comparison<T> comparison)
 		{
 			if (comparison == null)
@@ -55,7 +54,6 @@ namespace System.Collections.Generic {
 
 			return new ComparisonComparer<T> (comparison);
 		}
-#endif
 
 		int IComparer.Compare (object x, object y)
 		{
@@ -110,7 +108,6 @@ namespace System.Collections.Generic {
 			return x.CompareTo (y);
 		}
 	}
-#if NET_4_5
 	[Serializable]
 	sealed class ComparisonComparer<T> : Comparer<T>
 	{
@@ -126,5 +123,4 @@ namespace System.Collections.Generic {
 			return comparison (x, y);
 		}
 	}
-#endif
 }

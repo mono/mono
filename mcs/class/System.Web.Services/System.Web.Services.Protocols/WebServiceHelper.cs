@@ -187,9 +187,7 @@ namespace System.Web.Services.Protocols
 			xmlReader.MoveToContent ();
 			string ns = xmlReader.NamespaceURI;
 			switch (ns) {
-#if NET_2_0
 			case WebServiceHelper.Soap12EnvelopeNamespace:
-#endif
 			case WebServiceHelper.SoapEnvelopeNamespace:
 				break;
 			default:
@@ -268,7 +266,6 @@ namespace System.Web.Services.Protocols
 			}
 		}
 
-#if NET_2_0
 		public static SoapException Soap12FaultToSoapException (Soap12Fault fault)
 		{
 			Soap12FaultReasonText text =
@@ -290,42 +287,25 @@ namespace System.Web.Services.Protocols
 				text != null ? text.XmlLang : null,
 				detail, subcode, null);
 		}
-#endif
 
 		public static XmlQualifiedName ClientFaultCode (bool soap12)
 		{
-#if NET_2_0
 			return soap12 ? Soap12FaultCodes.SenderFaultCode : SoapException.ClientFaultCode;
-#else
-			return SoapException.ClientFaultCode;
-#endif
 		}
 
 		public static XmlQualifiedName ServerFaultCode (bool soap12)
 		{
-#if NET_2_0
 			return soap12 ? Soap12FaultCodes.ReceiverFaultCode : SoapException.ServerFaultCode;
-#else
-			return SoapException.ServerFaultCode;
-#endif
 		}
 
 		public static XmlQualifiedName MustUnderstandFaultCode (bool soap12)
 		{
-#if NET_2_0
 			return soap12 ? Soap12FaultCodes.ReceiverFaultCode : SoapException.MustUnderstandFaultCode;
-#else
-			return SoapException.MustUnderstandFaultCode;
-#endif
 		}
 
 		public static XmlQualifiedName VersionMismatchFaultCode (bool soap12)
 		{
-#if NET_2_0
 			return soap12 ? Soap12FaultCodes.VersionMismatchFaultCode : SoapException.VersionMismatchFaultCode;
-#else
-			return SoapException.VersionMismatchFaultCode;
-#endif
 		}
 
 		public static void InvalidOperation (string message, WebResponse response, Encoding enc)

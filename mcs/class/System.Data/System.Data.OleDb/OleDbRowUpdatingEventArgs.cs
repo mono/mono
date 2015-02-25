@@ -55,7 +55,6 @@ namespace System.Data.OleDb
 			set { base.Command = value; }
 		}
 
-#if NET_2_0
 		protected override IDbCommand BaseCommand {
 			get {
 				return base.BaseCommand;
@@ -64,7 +63,6 @@ namespace System.Data.OleDb
 				base.BaseCommand = value;
 			}
 		}
-#endif
 
 		#endregion
 	}

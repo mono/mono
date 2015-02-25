@@ -631,11 +631,7 @@ namespace MonoTests.System.Web {
 
 		static void UrlPathEncodeChar (char c, Stream result)
 		{
-#if NET_2_0
 			if (c < 33 || c > 126) {
-#else
-			if (c > 127) {
-#endif
 				byte [] bIn = Encoding.UTF8.GetBytes (c.ToString ());
 				for (int i = 0; i < bIn.Length; i++) {
 					result.WriteByte ((byte) '%');

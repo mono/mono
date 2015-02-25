@@ -64,27 +64,19 @@ TODOs:
 
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 
-#if NET_2_0
 using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
-#else
-using XmlTextReaderImpl = System.Xml.XmlTextReader;
-#endif
 
 
 namespace Mono.Xml
 {
 	internal class DTDValidatingReader : XmlReader, IXmlLineInfo, 
-#if NET_2_0
 		IXmlNamespaceResolver,
-#endif
 		IHasXmlParserContext, IHasXmlSchemaInfo
 	{
 		public DTDValidatingReader (XmlReader reader)
@@ -257,13 +249,11 @@ namespace Mono.Xml
 			return i < 0 ? null : attributes [i].Value;
 		}
 
-#if NET_2_0
 		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
 			return res != null ? res.GetNamespacesInScope (scope) : new Dictionary<string, string> ();
 		}
-#endif
 
 		bool IXmlLineInfo.HasLineInfo ()
 		{
@@ -280,13 +270,11 @@ namespace Mono.Xml
 			return s == String.Empty ? null : s;
 		}
 
-#if NET_2_0
 		string IXmlNamespaceResolver.LookupPrefix (string ns)
 		{
 			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
 			return res != null ? res.LookupPrefix (ns) : null;
 		}
-#endif
 
 		public override void MoveToAttribute (int i)
 		{
@@ -395,9 +383,7 @@ namespace Mono.Xml
 
 			bool b = ReadContent () || currentTextValue != null;
 			if (!b &&
-#if NET_2_0
 			    (Settings == null || (Settings.ValidationFlags & XmlSchemaValidationFlags.ProcessIdentityConstraints) == 0) &&
-#endif
 			    this.missingIDReferences.Count > 0) {
 				this.HandleError ("Missing ID reference was found: " +
 					String.Join (",", missingIDReferences.ToArray (typeof (string)) as string []),

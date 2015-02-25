@@ -44,11 +44,7 @@ namespace System.Reflection
 		{
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		ManifestResourceInfo (Assembly containingAssembly, string containingFileName, ResourceLocation resourceLocation)
 		{
 			_assembly = containingAssembly;

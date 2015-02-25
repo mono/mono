@@ -62,11 +62,7 @@ namespace System.Xml.XPath
 		}
 	}
 
-#if NET_2_0
 	internal class XPathNavigatorComparer : IComparer, IEqualityComparer
-#else
-	internal class XPathNavigatorComparer : IComparer
-#endif
 	{
 		public static XPathNavigatorComparer Instance = new XPathNavigatorComparer ();
 		private XPathNavigatorComparer ()
@@ -91,7 +87,6 @@ namespace System.Xml.XPath
 			}
 		}
 
-#if NET_2_0
 		bool IEqualityComparer.Equals (object o1, object o2)
 		{
 			XPathNavigator nav1 = o1 as XPathNavigator;
@@ -103,6 +98,5 @@ namespace System.Xml.XPath
 		{
 			return obj.GetHashCode ();
 		}
-#endif
 	}
 }

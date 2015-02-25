@@ -40,7 +40,6 @@ namespace System.Web.UI.Design
 		protected string CreatePlaceHolderDesignTimeHtml (string instruction) { throw new NotImplementedException (); }
 		[MonoTODO]
 		public virtual string GetDesignTimeHtml () { throw new NotImplementedException (); }
-#if NET_2_0
 		[MonoNotSupported ("")]
 		public static DesignTimeResourceProviderFactory GetDesignTimeResourceProviderFactory (IServiceProvider serviceProvider)
 		{ throw new NotImplementedException (); }
@@ -156,7 +155,6 @@ namespace System.Web.UI.Design
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		protected virtual string GetEmptyDesignTimeHtml () { throw new NotImplementedException (); }
@@ -165,52 +163,36 @@ namespace System.Web.UI.Design
 		protected virtual string GetErrorDesignTimeHtml (Exception e) { throw new NotImplementedException (); }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use GetPersistenceContent() instead")]
-#endif
 		public virtual string GetPersistInnerHtml () { throw new NotImplementedException (); }
 
 		[MonoTODO]
 		public override void Initialize (IComponent component) { throw new NotImplementedException (); }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use DataBindings.Contains(string) instead")]
-#endif
 		public bool IsPropertyBound (string propName) { throw new NotImplementedException (); }
 
-#if !NET_2_0
-		[MonoTODO]
-		protected override void OnBehaviorAttached () { throw new NotImplementedException (); }
-#endif
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use DataBindings.Changed event instead")]
-#endif
 		protected override void OnBindingsCollectionChanged (string propName) { throw new NotImplementedException (); }
 
-#if NET_2_0
 		[MonoTODO]
 		protected virtual void OnClick (DesignerRegionMouseEventArgs e) { throw new NotImplementedException (); }
-#endif
 
 		[MonoTODO]
 		public virtual void OnComponentChanged (object sender, ComponentChangedEventArgs ce) { throw new NotImplementedException (); }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use OnComponentChanged() instead")]
-#endif
 		protected virtual void OnControlResize () { throw new NotImplementedException (); }
 
 		[MonoTODO]
 		protected override void PreFilterProperties (IDictionary properties) { throw new NotImplementedException (); }
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use OnComponentChanged() instead")]
-#endif
 		public void RaiseResizeEvent () { throw new NotImplementedException (); }
 
 		[MonoTODO]
@@ -219,29 +201,20 @@ namespace System.Web.UI.Design
 		[MonoTODO]
 		public virtual bool AllowResize { get { throw new NotImplementedException (); } }
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("It is documented as not in use anymore", true)]
-#endif
 		protected object DesignTimeElementView { get { throw new NotImplementedException (); } }
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use SetViewFlags(ViewFlags.DesignTimeHtmlRequiresLoadComplete, true)")]
-#endif
 		public virtual bool DesignTimeHtmlRequiresLoadComplete { get { throw new NotImplementedException (); } }
 		[MonoTODO]
 		public virtual string ID { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use Tag.SetDirty() and Tag.IsDirty instead.")]
-#endif
 		public bool IsDirty { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use ContainerControlDesigner and EditableDesignerRegion")]
-#endif
 		public bool ReadOnly { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 
-#if NET_2_0
 		[MonoNotSupported ("")]
 		public override DesignerActionListCollection ActionLists {
 			get { throw new NotImplementedException (); }
@@ -331,6 +304,5 @@ namespace System.Web.UI.Design
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 	}
 }

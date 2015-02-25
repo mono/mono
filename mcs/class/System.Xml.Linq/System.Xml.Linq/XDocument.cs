@@ -196,10 +196,8 @@ namespace System.Xml.Linq
 			XmlWriterSettings s = new XmlWriterSettings ();
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
 				s.Indent = true;
-#if NET_4_0
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
-#endif
 			
 			using (XmlWriter w = XmlWriter.Create (fileName, s)) {
 				Save (w);
@@ -216,10 +214,8 @@ namespace System.Xml.Linq
 			XmlWriterSettings s = new XmlWriterSettings ();
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
 				s.Indent = true;
-#if NET_4_0
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
-#endif
 			using (XmlWriter w = XmlWriter.Create (textWriter, s)) {
 				Save (w);
 			}
@@ -268,7 +264,6 @@ namespace System.Xml.Linq
 					throw new InvalidOperationException ("An element cannot be added before the document type declaration");
 			}
 		}
-#if NET_4_0
 		public void Save (Stream stream)
 		{
 			Save (stream, SaveOptions.None);
@@ -287,6 +282,5 @@ namespace System.Xml.Linq
 			}
 		}
 
-#endif
 	}
 }

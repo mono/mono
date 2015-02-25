@@ -48,11 +48,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (pd.AllowSelection, "#2");
 			Assert.IsFalse (pd.AllowSomePages, "#3");
 			Assert.IsNull (pd.Document, "#4");
-#if NET_2_0
 			Assert.IsNotNull (pd.PrinterSettings, "#5");
-#else
-			Assert.IsNull (pd.PrinterSettings, "#5");
-#endif
 			Assert.IsFalse (pd.PrintToFile, "#6");
 			Assert.IsFalse (pd.ShowHelp, "#7");
 			Assert.IsTrue (pd.ShowNetwork, "#8");

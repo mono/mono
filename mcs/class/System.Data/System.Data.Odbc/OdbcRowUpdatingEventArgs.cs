@@ -56,13 +56,11 @@ namespace System.Data.Odbc {
 			set { base.Command = value; }
 		}
 
-#if NET_2_0
 		protected override IDbCommand BaseCommand {
 			get { return base.Command; }	
 			set { base.Command = value; }
 		}
 
-#endif
 
 		#endregion // Properties
 	}

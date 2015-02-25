@@ -34,13 +34,9 @@
 using System;
 using System.Data;
 using System.Data.SqlTypes;
-#if NET_2_0
 using System.IO;
-#endif
 using System.Xml;
-#if NET_2_0
 using System.Xml.Serialization;
-#endif 
 
 using NUnit.Framework;
 
@@ -292,7 +288,6 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (z.Value, a % b, "Modulus function does not work correctly");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Modulus ()
 		{
@@ -305,7 +300,6 @@ namespace MonoTests.System.Data.SqlTypes
 			z = SqlInt32.Modulus (x, y);
 			Assert.AreEqual (z.Value, a % b, "Modulus function does not work correctly");
 		}
-#endif
 
 		[Test]
 		public void Multiply ()
@@ -463,7 +457,6 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (z.Value, a ^ b, "Xor function does not work correctly");
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
 		{
@@ -519,6 +512,5 @@ namespace MonoTests.System.Data.SqlTypes
 				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
 			}
 		}
-#endif
 	}
 }

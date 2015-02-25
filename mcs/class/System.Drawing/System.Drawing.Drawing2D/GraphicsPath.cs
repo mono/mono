@@ -279,11 +279,7 @@ namespace System.Drawing.Drawing2D
                 //
                 // AddBeziers
                 //
-#if NET_2_0
                 public void AddBeziers (params Point [] pts)
-#else
-                public void AddBeziers (Point [] pts)
-#endif
                 {
 			if (pts == null)
 				throw new ArgumentNullException ("pts");
@@ -889,10 +885,8 @@ namespace System.Drawing.Drawing2D
                 {
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-#if NET_2_0
 			if (PointCount == 0)
 				return;
-#endif
                 	IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
 
 			Status s = GDIPlus.GdipWidenPath (nativePath, pen.nativeObject, m, flatness);

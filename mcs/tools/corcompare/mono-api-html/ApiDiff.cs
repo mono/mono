@@ -74,7 +74,12 @@ namespace Xamarin.ApiDiff {
 			get { return ignoreRemoved; }
 		}
 
+		public  static  bool    IgnoreParameterNameChanges  { get; set; }
+		public  static  bool    IgnoreVirtualChanges        { get; set; }
+		public  static  bool    IgnoreAddedPropertySetters  { get; set; }
+
 		public static bool Lax;
+		public static bool Colorize = true;
 	}
 
 	class Program {
@@ -105,6 +110,16 @@ namespace Xamarin.ApiDiff {
 				{ "n|ignore-new=", "Ignore new namespaces and types whose description matches a given C# regular expression (see below).",
 					v => State.IgnoreNew.Add (new Regex (v))
 				},
+				{ "ignore-changes-parameter-names", "Ignore changes to parameter names for identically prototyped methods.",
+					v => State.IgnoreParameterNameChanges   = v != null
+				},
+				{ "ignore-changes-property-setters", "Ignore adding setters to properties.",
+					v => State.IgnoreAddedPropertySetters = v != null
+				},
+				{ "ignore-changes-virtual", "Ignore changing non-`virtual` to `virtual` or adding `override`.",
+					v => State.IgnoreVirtualChanges = v != null
+				},
+				{ "c|colorize:", "Colorize HTML output", v => State.Colorize = string.IsNullOrEmpty (v) ? true : bool.Parse (v) },
 				{ "x|lax", "Ignore duplicate XML entries", v => State.Lax = true }
 			};
 

@@ -91,12 +91,8 @@ namespace MonoTests.System.Web {
 			Assert.IsTrue (anhp.IsUnrestricted (), "IsUnrestricted");
 
 			SecurityElement se = anhp.ToXml ();
-#if NET_2_0
 			// fixed in 2.0 RC
 			Assert.IsNotNull (se.Attribute ("Unrestricted"), "Xml-Unrestricted");
-#else
-			Assert.IsNull (se.Attribute ("Unrestricted"), "Xml-Unrestricted");
-#endif
 			Assert.AreEqual ("Unrestricted", se.Attribute ("Level"), "Xml-Level");
 			Assert.IsNull (se.Children, "Xml-Children");
 
@@ -149,10 +145,6 @@ namespace MonoTests.System.Web {
 			foreach (AspNetHostingPermissionLevel ppl in AllLevel) {
 				anhp.Level = ppl;
 				IPermission p = anhp.Intersect (null);
-#if ! NET_2_0
-				if (p != null)
-					Assert.Ignore ("Behaviour changed in FX 1.1 SP1");
-#endif
 				Assert.IsNull (p, ppl.ToString ());
 			}
 		}

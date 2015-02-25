@@ -33,9 +33,7 @@ using System;
 
 namespace System.Xml
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	public class XmlQualifiedName
 	{
 		// Constructors		

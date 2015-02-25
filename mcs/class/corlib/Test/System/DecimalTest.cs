@@ -1563,6 +1563,53 @@ namespace MonoTests.System
 			Assert.AreEqual ("3", Math.Round (3M, 5).ToString (CultureInfo.InvariantCulture), "#1");
 			Assert.AreEqual ("3.01", Math.Round (3.01M, 5).ToString (CultureInfo.InvariantCulture), "#2");
 			Assert.AreEqual ("-3.01", Math.Round (-3.01M, 5).ToString (CultureInfo.InvariantCulture), "#3");
+			Assert.AreEqual ("128", Math.Round (127.5M, 0).ToString (CultureInfo.InvariantCulture), "#4");
+		}
+
+		[Test] // Bug Xamarin#14822
+		public void RoundToString_Bug14822 ()
+		{
+			decimal value = 1.600000m;
+			var roundedValue = Math.Round (value, 3);
+			Assert.AreEqual ("1.600", roundedValue.ToString (), "#1");
+		}
+
+		[Test] // Bug Xamarin#17538
+		public void BankerRounding ()
+		{
+			decimal dcm3 = 987654321098765432109876543.2m;
+			decimal dcm4 = 0.05m;
+			decimal dcm5 = dcm3 + dcm4;
+
+			Assert.AreEqual (987654321098765432109876543.2m, dcm5);
+		}
+
+		[Test] // Bug Xamarin #24411
+		public void DecimalDivision_24411  ()
+		{
+			decimal dd = 45m;
+			var x = dd / 100;
+			var bits = decimal.GetBits (x);
+			var flags = (uint) bits[3];
+			byte scale2 = (byte)(flags >> 16);
+			
+			Assert.AreEqual (2, scale2);
+
+			// The side effect is that 45m/100 should render as 0.45, not 0.4500000000000000000000000000
+			// Just for completeness:
+
+			Assert.AreEqual ("0.45", (45m/100).ToString ());
+		}
+
+		[Test] // Bug SUSE #655780
+		public void TrailingZerosBug ()
+		{
+			decimal d;
+			Assert.AreEqual ("0", (0m/5).ToString ());
+			Assert.AreEqual ("0.2", (1m/5).ToString ());
+			Assert.AreEqual ("0.4", (2m/5).ToString ());
+			Assert.AreEqual ("0.6", (3m/5).ToString ());
+			Assert.AreEqual ("0.8", (4m/5).ToString ());
 		}
 	}
 }

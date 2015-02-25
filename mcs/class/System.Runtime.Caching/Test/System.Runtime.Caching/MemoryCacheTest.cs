@@ -133,7 +133,6 @@ namespace MonoTests.System.Runtime.Caching
 		{
 			var mc = new MemoryCache ("MyCache");
 			Assert.AreEqual ("MyCache", mc.Name, "#A1");
-			Assert.AreEqual (98, mc.PhysicalMemoryLimit, "#A2");
 			// Value of this property is different from system to system
 			//Assert.AreEqual (0, mc.CacheMemoryLimit, "#A3");
 			Assert.AreEqual (TimeSpan.FromMinutes (2), mc.PollingInterval, "#A4");
@@ -152,7 +151,6 @@ namespace MonoTests.System.Runtime.Caching
 		{
 			var mc = MemoryCache.Default;
 			Assert.AreEqual ("Default", mc.Name, "#A1");
-			Assert.AreEqual (98, mc.PhysicalMemoryLimit, "#A2");
 			// Value of this property is different from system to system
 			//Assert.AreEqual (0, mc.CacheMemoryLimit, "#A3");
 			Assert.AreEqual (TimeSpan.FromMinutes (2), mc.PollingInterval, "#A4");
@@ -170,12 +168,10 @@ namespace MonoTests.System.Runtime.Caching
 		public void ConstructorValues ()
 		{
 			var config = new NameValueCollection ();
-			config.Add ("PhysicalMemoryLimitPercentage", "0");
 			config.Add ("CacheMemoryLimitMegabytes", "1");
 			config.Add ("pollingInterval", "00:10:00");
 
 			var mc = new MemoryCache ("MyCache", config);
-			Assert.AreEqual (98, mc.PhysicalMemoryLimit, "#A1");
 			Assert.AreEqual (1048576, mc.CacheMemoryLimit, "#A2");
 			Assert.AreEqual (TimeSpan.FromMinutes (10), mc.PollingInterval, "#A3");
 
@@ -1225,12 +1221,8 @@ namespace MonoTests.System.Runtime.Caching
 			Assert.AreEqual (25, trimmed, "#A4-2");
 			Assert.AreEqual (25, removed.Count, "#A4-3");
 
-			// OK, this is odd... The list is correct in terms of entries removed but the entries
-			// are removed in the _MOST_ frequently used order, within the group selected for removal.
-			for (int i = 24; i >= 0; i--) {
-				int idx = 24 - i;
-				Assert.AreEqual ("key" + i.ToString (), removed [idx], "#A5-" + idx.ToString ());
-			}
+			for (int i = 0; i < 25; i++)
+				Assert.AreEqual ("key" + i.ToString (), removed [i], "#A5-" + i.ToString ());
 		}
 		
 		[Test]
@@ -1377,7 +1369,10 @@ namespace MonoTests.System.Runtime.Caching
 				Assert.AreEqual (0, mc.GetCount (), "#CSL1");
 
 				var cip = new CacheItemPolicy();
-				cip.SlidingExpiration = new TimeSpan (0, 0, 1);
+				// The sliding expiration timeout has to be greater than 1 second because
+				// .NET implementation ignores timeouts updates smaller than
+				// CacheExpires.MIN_UPDATE_DELTA which is equal to 1.
+				cip.SlidingExpiration = new TimeSpan (0, 0, 2);
 				mc.Add("slidingtest", "42", cip);
 
 				mc.Add("expire1", "1", cip);

@@ -14,7 +14,7 @@ $(DRAWING_TEST_HELPER):
 	cp ../DrawingTestHelper/*.dll .
 
 run-test: Test.dll
-	MONO_PATH="../../../../../class/lib/net_1_1::$(MONO_PATH)" /home/andrews/monobuild/mono/runtime/mono-wrapper --debug ../../../../../class/lib/net_1_1/nunit-console.exe Test.dll $(NUNIT_FLAGS)
+	MONO_PATH="../../../../../class/lib/net_4_5::$(MONO_PATH)" /home/andrews/monobuild/mono/runtime/mono-wrapper --debug ../../../../../class/lib/net_4_5/nunit-console.exe Test.dll $(NUNIT_FLAGS)
 
 clean:
 	rm *dll

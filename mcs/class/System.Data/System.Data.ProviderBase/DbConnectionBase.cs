@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Transactions;
 using System.Data.Common;
 using System.EnterpriseServices;
@@ -225,4 +224,3 @@ namespace System.Data.ProviderBase {
 	}
 }
 
-#endif

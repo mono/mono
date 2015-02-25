@@ -46,7 +46,7 @@
     <ClCompile Include="..\mono\metadata\coree.c" />
     <ClCompile Include="..\mono\metadata\debug-helpers.c" />
     <ClCompile Include="..\mono\metadata\debug-mono-symfile.c" />
-    <ClCompile Include="..\mono\metadata\decimal.c" />
+    <ClCompile Include="..\mono\metadata\decimal-ms.c" />
     <ClCompile Include="..\mono\metadata\domain.c" />
     <ClCompile Include="..\mono\metadata\environment.c" />
     <ClCompile Include="..\mono\metadata\exception.c" />
@@ -70,7 +70,6 @@
     <ClCompile Include="..\mono\metadata\mono-basic-block.c" />
     <ClCompile Include="..\mono\metadata\mono-config.c" />
     <ClCompile Include="..\mono\metadata\mono-cq.c" />
-    <ClCompile Include="..\mono\metadata\mono-debug-debugger.c" />
     <ClCompile Include="..\mono\metadata\mono-debug.c" />
     <ClCompile Include="..\mono\metadata\mono-endian.c" />
     <ClCompile Include="..\mono\metadata\mono-hash.c" />
@@ -88,7 +87,7 @@
     <ClCompile Include="..\mono\metadata\runtime.c" />
     <ClCompile Include="..\mono\metadata\security-core-clr.c" />
     <ClCompile Include="..\mono\metadata\security-manager.c" />
-    <ClCompile Include="..\mono\metadata\security.c" />
+    <ClCompile Include="..\mono\metadata\mono-security.c" />
     <ClCompile Include="..\mono\metadata\sgen-alloc.c" />
     <ClCompile Include="..\mono\metadata\sgen-bridge.c" />
     <ClCompile Include="..\mono\metadata\sgen-cardtable.c" />
@@ -109,7 +108,9 @@
     <ClCompile Include="..\mono\metadata\sgen-os-win32.c" />
     <ClCompile Include="..\mono\metadata\sgen-pinning-stats.c" />
     <ClCompile Include="..\mono\metadata\sgen-pinning.c" />
+    <ClCompile Include="..\mono\metadata\sgen-pointer-queue.c" />
     <ClCompile Include="..\mono\metadata\sgen-protocol.c" />
+    <ClCompile Include="..\mono\metadata\sgen-qsort.c" />
     <ClCompile Include="..\mono\metadata\sgen-simple-nursery.c" />
     <ClCompile Include="..\mono\metadata\sgen-split-nursery.c" />
     <ClCompile Include="..\mono\metadata\sgen-tarjan-bridge.c" />
@@ -121,6 +122,7 @@
     <ClCompile Include="..\mono\metadata\string-icalls.c" />
     <ClCompile Include="..\mono\metadata\sysmath.c" />
     <ClCompile Include="..\mono\metadata\threadpool.c" />
+    <ClCompile Include="..\mono\metadata\tpool-poll.c" />
     <ClCompile Include="..\mono\metadata\threads.c" />
     <ClCompile Include="..\mono\metadata\verify.c" />
     <ClCompile Include="..\mono\mini\mini-cross-helpers.c" />
@@ -224,49 +226,49 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">

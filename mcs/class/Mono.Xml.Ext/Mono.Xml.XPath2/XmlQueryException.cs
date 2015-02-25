@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Runtime.Serialization;
@@ -109,4 +108,3 @@ namespace System.Xml.Query
 	}
 }
 
-#endif // NET_2_0

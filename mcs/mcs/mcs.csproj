@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.20506</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>.</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_4_0;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_4_5;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>

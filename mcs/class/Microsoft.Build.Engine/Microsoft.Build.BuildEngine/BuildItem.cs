@@ -315,7 +315,7 @@ namespace Microsoft.Build.BuildEngine {
 					return;
 				}
 			}
-			
+
 			DirectoryScanner directoryScanner;
 			Expression includeExpr, excludeExpr;
 			ITaskItem[] includes, excludes;
@@ -341,8 +341,10 @@ namespace Microsoft.Build.BuildEngine {
 			directoryScanner.Includes = includes;
 			directoryScanner.Excludes = excludes;
 
-			if (project.FullFileName != String.Empty)
+			if (project.FullFileName != String.Empty) {
+				directoryScanner.ProjectFile = project.ThisFileFullPath;
 				directoryScanner.BaseDirectory = new DirectoryInfo (Path.GetDirectoryName (project.FullFileName));
+			}
 			else
 				directoryScanner.BaseDirectory = new DirectoryInfo (Directory.GetCurrentDirectory ());
 			

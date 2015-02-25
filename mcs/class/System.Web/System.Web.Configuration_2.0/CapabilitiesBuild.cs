@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
 Used to determine Browser Capabilities by the Browsers UserAgent String and related
 Browser supplied Headers.
@@ -76,4 +75,3 @@ namespace System.Web.Configuration
 		public abstract System.Web.Configuration.CapabilitiesResult Process(System.Collections.Specialized.NameValueCollection header, System.Collections.IDictionary initialCapabilities);
 	}
 }
-#endif

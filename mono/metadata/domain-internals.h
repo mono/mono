@@ -219,13 +219,11 @@ struct _MonoJitInfo {
 	gboolean    has_arch_eh_info:1;
 	gboolean    from_aot:1;
 	gboolean    from_llvm:1;
-	gboolean    dbg_hidden_inited:1;
+	gboolean    dbg_attrs_inited:1;
 	gboolean    dbg_hidden:1;
 	/* Whenever this jit info was loaded in async context */
 	gboolean    async:1;
-	gboolean    dbg_step_through_inited:1;
 	gboolean    dbg_step_through:1;
-	gboolean    dbg_non_user_code_inited:1;
 	gboolean    dbg_non_user_code:1;
 
 	/* FIXME: Embed this after the structure later*/
@@ -663,7 +661,10 @@ MONO_API void
 mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap);
 
 MonoReflectionAssembly *
-mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, gboolean refonly) MONO_INTERNAL;
+mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, MonoAssembly *requesting, gboolean refonly) MONO_INTERNAL;
+
+MonoAssembly *
+mono_domain_assembly_postload_search (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly) MONO_INTERNAL;
 
 MonoAssembly* mono_assembly_load_full_nosearch (MonoAssemblyName *aname, 
 						const char       *basedir, 

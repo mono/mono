@@ -42,15 +42,9 @@ namespace MonoTests.System.Data
 			DBConcurrencyException dbce = new DBConcurrencyException ();
 			Assert.IsNull (dbce.InnerException, "InnerException");
 			Assert.IsNotNull (dbce.Message, "Message1");
-#if NET_2_0
 			Assert.IsNotNull (dbce.Message, "Message2:" + dbce.Message);
-#else
-			Assert.AreEqual (new SystemException ().Message, dbce.Message, "Message2:" + dbce.Message);
-#endif
 			Assert.IsNull (dbce.Row, "Row");
-#if NET_2_0
 			Assert.AreEqual (0, dbce.RowCount, "RowCount");
-#endif
 		}
 
 		[Test] // .ctor (String)
@@ -63,9 +57,7 @@ namespace MonoTests.System.Data
 			Assert.IsNull (dbce.InnerException, "#A:InnerException");
 			Assert.AreSame (msg, dbce.Message, "#A:Message:" + dbce.Message);
 			Assert.IsNull (dbce.Row, "#A:Row");
-#if NET_2_0
 			Assert.AreEqual (0, dbce.RowCount, "#A:RowCount");
-#endif
 
 			dbce = new DBConcurrencyException ((string) null);
 			Assert.IsNull (dbce.InnerException, "#B:InnerException");
@@ -73,17 +65,13 @@ namespace MonoTests.System.Data
 			Assert.IsTrue (dbce.Message.IndexOf (typeof (DBConcurrencyException).FullName) != -1, "#B:Message2:" + dbce.Message);
 			Assert.IsNull (dbce.Row, "#B:Row");
 
-#if NET_2_0
 			Assert.AreEqual (0, dbce.RowCount, "#B:RowCount");
-#endif
 
 			dbce = new DBConcurrencyException (string.Empty);
 			Assert.IsNull (dbce.InnerException, "#C:InnerException");
 			Assert.AreEqual (string.Empty, dbce.Message, "#C:Message");
 			Assert.IsNull (dbce.Row, "#C:Row");
-#if NET_2_0
 			Assert.AreEqual (0, dbce.RowCount, "#C:RowCount");
-#endif
 		}
 
 		[Test] // .ctor (String, Exception)
@@ -97,44 +85,33 @@ namespace MonoTests.System.Data
 			Assert.AreSame (inner, dbce.InnerException, "#A:InnerException");
 			Assert.AreSame (msg, dbce.Message, "#A:Message:" + dbce.Message);
 			Assert.IsNull (dbce.Row, "#A:Row");
-#if NET_2_0
 			Assert.AreEqual (0, dbce.RowCount, "#A:RowCount");
-#endif
 
 			dbce = new DBConcurrencyException ((string) null, inner);
 			Assert.AreSame (inner, dbce.InnerException, "#B:InnerException");
 			Assert.IsTrue (dbce.Message.IndexOf (typeof (DBConcurrencyException).FullName) != -1, "#B:Message:" + dbce.Message);
 			Assert.IsNull (dbce.Row, "#B:Row");
-#if NET_2_0
 			Assert.AreEqual (0, dbce.RowCount, "#B:RowCount");
-#endif
 
 			dbce = new DBConcurrencyException (string.Empty, inner);
 			Assert.AreSame (inner, dbce.InnerException, "#C:InnerException");
 			Assert.AreEqual (string.Empty, dbce.Message, "#C:Message");
 			Assert.IsNull (dbce.Row, "#C:Row");
-#if NET_2_0
 			Assert.AreEqual (0, dbce.RowCount, "#C:RowCount");
-#endif
 
 			dbce = new DBConcurrencyException (msg, (Exception) null);
 			Assert.IsNull (dbce.InnerException, "#D:InnerException");
 			Assert.AreSame (msg, dbce.Message, "#D:Message:" + dbce.Message);
 			Assert.IsNull (dbce.Row, "#D:Row");
-#if NET_2_0
 			Assert.AreEqual (0, dbce.RowCount, "#D:RowCount");
-#endif
 
 			dbce = new DBConcurrencyException ((string) null, (Exception) null);
 			Assert.IsNull (dbce.InnerException, "#E:InnerException");
 			Assert.IsTrue (dbce.Message.IndexOf (typeof (DBConcurrencyException).FullName) != -1, "#E:Message:" + dbce.Message);
 			Assert.IsNull (dbce.Row, "#E:Row");
-#if NET_2_0
 			Assert.AreEqual (0, dbce.RowCount, "#E:RowCount");
-#endif
 		}
 
-#if NET_2_0
 		[Test] // .ctor (String, Exception, DataRow [])
 		public void Constructor4 ()
 		{
@@ -188,7 +165,6 @@ namespace MonoTests.System.Data
 			Assert.IsNull (dbce.Row, "#F:Row");
 			Assert.AreEqual (0, dbce.RowCount, "#F:RowCount");
 		}
-#endif
 
 		[Test]
 		public void Row ()
@@ -200,19 +176,13 @@ namespace MonoTests.System.Data
 			DBConcurrencyException dbce = new DBConcurrencyException ();
 			dbce.Row = rowA;
 			Assert.AreSame (rowA, dbce.Row, "#A:Row");
-#if NET_2_0
 			Assert.AreEqual (1, dbce.RowCount, "#A:RowCount");
-#endif
 			dbce.Row = rowB;
 			Assert.AreSame (rowB, dbce.Row, "#B:Row");
-#if NET_2_0
 			Assert.AreEqual (1, dbce.RowCount, "#B:RowCount");
-#endif
 			dbce.Row = null;
 			Assert.IsNull (dbce.Row, "#C:Row");
-#if NET_2_0
 			Assert.AreEqual (1, dbce.RowCount, "#C:RowCount");
-#endif
 		}
 	}
 }

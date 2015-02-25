@@ -12,8 +12,11 @@
 
 #include <config.h>
 #include <glib.h>
-#include <signal.h>
 #include <string.h>
+
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
 
 #ifdef HAVE_EXECINFO_H
 #include <execinfo.h>
@@ -52,6 +55,11 @@
 #include "mini.h"
 #include "trace.h"
 #include "debugger-agent.h"
+#include "seq-points.h"
+
+#ifdef ENABLE_EXTENSION_MODULE
+#include "../../../mono-extensions/mono/mini/mini-exceptions.c"
+#endif
 
 #ifndef MONO_ARCH_CONTEXT_DEF
 #define MONO_ARCH_CONTEXT_DEF
@@ -546,6 +554,7 @@ get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 static MonoMethod*
 get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 {
+	MonoError error;
 	MonoGenericContext context;
 	MonoMethod *method;
 	
@@ -555,7 +564,8 @@ get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 
 	method = jinfo_get_method (ji);
 	method = mono_method_get_declaring_generic_method (method);
-	method = mono_class_inflate_generic_method (method, &context);
+	method = mono_class_inflate_generic_method_checked (method, &context, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 
 	return method;
 }
@@ -690,6 +700,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		}
 		else
 			MONO_OBJECT_SETREF (sf, method, mono_method_get_object (domain, method, NULL));
+		sf->method_address = (gsize) ji->code_start;
 		sf->native_offset = (char *)ip - (char *)ji->code_start;
 
 		/*
@@ -698,10 +709,15 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 		 * operation, so we shouldn't call this method twice.
 		 */
 		location = mono_debug_lookup_source_location (jinfo_get_method (ji), sf->native_offset, domain);
-		if (location)
+		if (location) {
 			sf->il_offset = location->il_offset;
-		else
-			sf->il_offset = 0;
+		} else {
+			SeqPoint sp;
+			if (find_prev_seq_point_for_native_offset (domain, jinfo_get_method (ji), sf->native_offset, NULL, &sp))
+				sf->il_offset = sp.il_offset;
+			else
+				sf->il_offset = 0;
+		}
 
 		if (need_file_info) {
 			if (location && location->source_file) {
@@ -852,7 +868,15 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 			MonoDebugSourceLocation *source;
 
 			source = mono_debug_lookup_source_location (jinfo_get_method (frame.ji), frame.native_offset, domain);
-			il_offset = source ? source->il_offset : -1;
+			if (source) {
+				il_offset = source->il_offset;
+			} else {
+				SeqPoint sp;
+				if (find_prev_seq_point_for_native_offset (domain, jinfo_get_method (frame.ji), frame.native_offset, NULL, &sp))
+					il_offset = sp.il_offset;
+				else
+					il_offset = -1;
+			}
 			mono_debug_free_source_location (source);
 		} else
 			il_offset = -1;
@@ -2076,7 +2100,7 @@ mono_altstack_restore_prot (mgreg_t *regs, guint8 *code, gpointer *tramp_data, g
 }
 
 gboolean
-mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, guint8* fault_addr)
+mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, guint8* fault_addr)
 {
 	/* we got a stack overflow in the soft-guard pages
 	 * There are two cases:
@@ -2104,7 +2128,7 @@ mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 		mono_mprotect ((char*)jit_tls->stack_ovf_guard_base + jit_tls->stack_ovf_guard_size - guard_size, guard_size, MONO_MMAP_READ|MONO_MMAP_WRITE);
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 		if (ji) {
-			mono_arch_handle_altstack_exception (ctx, fault_addr, TRUE);
+			mono_arch_handle_altstack_exception (ctx, siginfo, fault_addr, TRUE);
 			handled = TRUE;
 		}
 #endif
@@ -2183,7 +2207,7 @@ mono_handle_hard_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 	mono_runtime_printf_err ("Stack overflow: IP: %p, fault addr: %p", mono_arch_ip_from_context (ctx), fault_addr);
 
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
-	mono_arch_sigctx_to_monoctx (ctx, &mctx);
+	mono_sigctx_to_monoctx (ctx, &mctx);
 			
 	mono_runtime_printf_err ("Stacktrace:");
 
@@ -2248,7 +2272,7 @@ static gboolean handling_sigsegv = FALSE;
  * information and aborting.
  */
 void
-mono_handle_native_sigsegv (int signal, void *ctx)
+mono_handle_native_sigsegv (int signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
 #ifdef MONO_ARCH_USE_SIGACTION
 	struct sigaction sa;
@@ -2324,6 +2348,8 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 	}
 #endif
  }
+#elif defined (ENABLE_EXTENSION_MODULE)
+	mono_extension_handle_native_sigsegv (ctx, info);
 #endif
 
 	/*
@@ -2365,7 +2391,7 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 #else
 
 void
-mono_handle_native_sigsegv (int signal, void *ctx)
+mono_handle_native_sigsegv (int signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
 	g_assert_not_reached ();
 }
@@ -2379,13 +2405,17 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 	MonoContext ctx;
 #endif
-	GString* text = g_string_new (0);
+	GString* text;
 	char *name;
 #ifndef HOST_WIN32
 	char *wapi_desc;
 #endif
 	GError *error = NULL;
 
+	if (!thread)
+		return;
+
+	text = g_string_new (0);
 	if (thread->name) {
 		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &error);
 		g_assert (!error);
@@ -2409,7 +2439,7 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 	} else if (!sigctx)
 		MONO_INIT_CONTEXT_FROM_FUNC (&ctx, mono_print_thread_dump);
 	else
-		mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+		mono_sigctx_to_monoctx (sigctx, &ctx);
 
 	mono_walk_stack_with_ctx (print_stack_frame_to_string, &ctx, MONO_UNWIND_LOOKUP_ALL, text);
 #else
@@ -2606,7 +2636,7 @@ mono_thread_state_init_from_sigctx (MonoThreadUnwindState *ctx, void *sigctx)
 	}
 
 	if (sigctx)
-		mono_arch_sigctx_to_monoctx (sigctx, &ctx->ctx);
+		mono_sigctx_to_monoctx (sigctx, &ctx->ctx);
 	else
 #if MONO_ARCH_HAS_MONO_CONTEXT && !defined(MONO_CROSS_COMPILE)
 		MONO_CONTEXT_GET_CURRENT (ctx->ctx);

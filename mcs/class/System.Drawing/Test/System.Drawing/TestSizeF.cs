@@ -209,7 +209,6 @@ namespace MonoTests.System.Drawing
 				size.Height.ToString (culture));
 		}
 
-#if NET_2_0
 		[Test]
 		public void AddTest ()
 		{
@@ -223,7 +222,6 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (sz11_0, SizeF.Subtract (sz11_99, new SizeF (0.0F, 9.9F)), "SUB#1");
 			Assert.AreEqual (sz0_11, SizeF.Subtract (new SizeF (1.1F, 1.1F), new SizeF (1.1F, 0.0F)), "SUB#2");
 		}
-#endif
 
 	}
 }

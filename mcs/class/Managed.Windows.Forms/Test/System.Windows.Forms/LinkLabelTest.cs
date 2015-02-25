@@ -61,12 +61,8 @@ namespace MonoTests.System.Windows.Forms
 			l.Text = "linkLabel1";
 			form.Controls.Add (l);
 
-#if NET_2_0
 			LinkLabel.Link link = new LinkLabel.Link (2, 5);
 			l.Links.Add (link);
-#else
-			l.Links.Add (2, 5);
-#endif
 
 			form.Show ();
 			form.Dispose ();
@@ -98,7 +94,6 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 
-#if NET_2_0
 	[TestFixture]
 	public class LinkTest : TestHelper
 	{
@@ -139,7 +134,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, l.Visited, "A24");
 		}
 	}
-#endif
 
 	[TestFixture]
 	public class LinkCollectionTest : TestHelper
@@ -157,32 +151,22 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (1, links1.Count, "#A1");
 			Assert.IsFalse (links1.IsReadOnly, "#A2");
-#if NET_2_0
 			Assert.IsFalse (links1.LinksAdded, "#A3");
-#endif
 
 			LinkLabel.Link link = links1 [0];
-#if NET_2_0
 			Assert.IsNull (link.Description, "#B1");
-#endif
 			Assert.IsTrue (link.Enabled, "#B2");
 			Assert.AreEqual (21, link.Length, "#B3");
 			Assert.IsNull (link.LinkData, "#B4");
-#if NET_2_0
 			Assert.IsNotNull (link.Name, "#B5");
 			Assert.AreEqual (string.Empty, link.Name, "#B6");
-#endif
 			Assert.AreEqual (0, link.Start, "#B7");
-#if NET_2_0
 			Assert.IsNull (link.Tag, "#B8");
-#endif
 			Assert.IsFalse (link.Visited, "#B9");
 
 			Assert.AreEqual (1, links2.Count, "#C1");
 			Assert.IsFalse (links2.IsReadOnly, "#C2");
-#if NET_2_0
 			Assert.IsFalse (links2.LinksAdded, "#C3");
-#endif
 			Assert.AreSame (link, links2 [0], "#C4");
 		}
 
@@ -201,7 +185,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-#if NET_2_0
 		[Test] // Add (LinkLabel.Link)
 		public void Add1 ()
 		{
@@ -314,7 +297,6 @@ namespace MonoTests.System.Windows.Forms
 			} catch (NullReferenceException) {
 			}
 		}
-#endif
 
 		[Test] // Add (int, int)
 		public void Add2 ()
@@ -330,20 +312,16 @@ namespace MonoTests.System.Windows.Forms
 			LinkLabel.Link linkA = links1.Add (0, 7);
 			Assert.AreEqual (1, links1.Count, "#A1");
 			Assert.AreEqual (1, links2.Count, "#A2");
-#if NET_2_0
 			Assert.IsTrue (links1.LinksAdded, "#A3");
 			Assert.IsFalse (links2.LinksAdded, "#A4");
-#endif
 			Assert.AreSame (linkA, links1 [0], "#A5");
 			Assert.AreSame (linkA, links2 [0], "#A6");
 
 			LinkLabel.Link linkB = links1.Add (8, 7);
 			Assert.AreEqual (2, links1.Count, "#B1");
 			Assert.AreEqual (2, links2.Count, "#B2");
-#if NET_2_0
 			Assert.IsTrue (links1.LinksAdded, "#B3");
 			Assert.IsFalse (links2.LinksAdded, "#B4");
-#endif
 			Assert.AreSame (linkA, links1 [0], "#B5");
 			Assert.AreSame (linkA, links2 [0], "#B6");
 			Assert.AreSame (linkB, links1 [1], "#B7");
@@ -352,9 +330,7 @@ namespace MonoTests.System.Windows.Forms
 			LinkLabel.LinkCollection links3 = new LinkLabel.LinkCollection (
 				l);
 			Assert.AreEqual (2, links3.Count, "#C1");
-#if NET_2_0
 			Assert.IsFalse (links3.LinksAdded, "#C2");
-#endif
 			Assert.AreSame (linkA, links3 [0], "#C3");
 			Assert.AreSame (linkB, links3 [1], "#C4");
 		}
@@ -370,9 +346,7 @@ namespace MonoTests.System.Windows.Forms
 
 			LinkLabel.Link linkA = links.Add (0, 7);
 			Assert.AreEqual (1, links.Count, "#A1");
-#if NET_2_0
 			Assert.IsTrue (links.LinksAdded, "#A2");
-#endif
 			Assert.AreSame (linkA, links [0], "#A3");
 
 			try {
@@ -386,9 +360,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 
 			Assert.AreEqual (2, links.Count, "#B5");
-#if NET_2_0
 			Assert.IsTrue (links.LinksAdded, "#B6");
-#endif
 			Assert.AreSame (linkA, links [0], "#B7");
 			Assert.IsNotNull (links [1], "#B8");
 			Assert.AreEqual (0, linkA.Start, "#B9");
@@ -407,9 +379,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 
 			Assert.AreEqual (3, links.Count, "#C5");
-#if NET_2_0
 			Assert.IsTrue (links.LinksAdded, "#C6");
-#endif
 			Assert.AreSame (linkA, links [0], "#C7");
 			Assert.IsNotNull (links [1], "#C8");
 			Assert.IsNotNull (links [2], "#C9");

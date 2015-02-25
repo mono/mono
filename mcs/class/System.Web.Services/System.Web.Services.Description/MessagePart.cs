@@ -34,28 +34,17 @@ using System.Web.Services.Configuration;
 
 namespace System.Web.Services.Description 
 {
-#if NET_2_0
 	[XmlFormatExtensionPoint ("Extensions")]
-#endif
 	public sealed class MessagePart :
-#if NET_2_0
 		NamedItem
-#else
-		DocumentableItem 
-#endif
 	{
 
 		#region Fields
 
 		XmlQualifiedName element;
 		Message message;
-#if !NET_2_0
-		string name;
-#endif
 		XmlQualifiedName type;
-#if NET_2_0
 		ServiceDescriptionFormatExtensionCollection extensions;
-#endif
 
 		#endregion // Fields
 
@@ -65,13 +54,8 @@ namespace System.Web.Services.Description
 		{
 			element = XmlQualifiedName.Empty;
 			message = null;
-#if !NET_2_0
-			name = String.Empty;
-#endif
 			type = XmlQualifiedName.Empty;
-#if NET_2_0
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
-#endif
 		}
 		
 		#endregion // Constructors
@@ -89,13 +73,6 @@ namespace System.Web.Services.Description
 			get { return message; }
 		}
 	
-#if !NET_2_0
-		[XmlAttribute ("name", DataType = "NMTOKEN")]
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
 
 		[XmlAttribute ("type")]
 		public XmlQualifiedName Type {
@@ -111,12 +88,10 @@ namespace System.Web.Services.Description
 			get { return element != null && element != XmlQualifiedName.Empty; }
 		}
 
-#if NET_2_0
 		[XmlIgnore]
 		public override ServiceDescriptionFormatExtensionCollection Extensions {
 			get { return extensions; }
 		}
-#endif
 
 		#endregion // Properties
 

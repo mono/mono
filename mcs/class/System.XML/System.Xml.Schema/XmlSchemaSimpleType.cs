@@ -47,7 +47,6 @@ namespace System.Xml.Schema
 		private bool recursed;
 		private XmlSchemaDerivationMethod variety;
 
-#if NET_2_0
 		// predefined simple types
 		internal static readonly XmlSchemaSimpleType XsAnySimpleType;
 		internal static readonly XmlSchemaSimpleType XsString;
@@ -99,7 +98,6 @@ namespace System.Xml.Schema
 		internal static readonly XmlSchemaSimpleType XdtAnyAtomicType;
 		internal static readonly XmlSchemaSimpleType XdtYearMonthDuration;
 		internal static readonly XmlSchemaSimpleType XdtDayTimeDuration;
-#endif
 
 		static XmlSchemaSimpleType ()
 		{
@@ -112,7 +110,6 @@ namespace System.Xml.Schema
 			st.variety = XmlSchemaDerivationMethod.List;
 			schemaLocationType = st;
 
-#if NET_2_0
 			// Built-In schema types
 			XsAnySimpleType = BuildSchemaType ("anySimpleType", null);
 			XsString = BuildSchemaType ("string", "anySimpleType");
@@ -179,10 +176,8 @@ namespace System.Xml.Schema
 			sl = new XmlSchemaSimpleTypeList ();
 			sl.ItemType = XsNMToken;
 			XsNMTokens.Content = sl;
-#endif
 		}
 
-#if NET_2_0
 		private static XmlSchemaSimpleType BuildSchemaType (string name, string baseName)
 		{
 			return BuildSchemaType (name, baseName, false, false);
@@ -199,7 +194,6 @@ namespace System.Xml.Schema
 			st.DatatypeInternal = XmlSchemaDatatype.FromName (st.QualifiedName);
 			return st;
 		}
-#endif
 
 		internal static XsdAnySimpleType AnySimpleType {
 			get { return XsdAnySimpleType.Instance; }

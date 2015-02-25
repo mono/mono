@@ -26,8 +26,8 @@ namespace A.C
 
 namespace C
 {
-	using A.B.X;
-	using A.C.X;
+	using static A.B.X;
+	using static A.C.X;
 
 	class M
 	{

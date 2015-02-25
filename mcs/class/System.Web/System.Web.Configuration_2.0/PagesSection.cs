@@ -61,10 +61,8 @@ namespace System.Web.Configuration
 		static ConfigurationProperty userControlBaseTypeProp;
 		static ConfigurationProperty validateRequestProp;
 		static ConfigurationProperty viewStateEncryptionModeProp;
-#if NET_4_0
 		static ConfigurationProperty clientIDModeProp;
 		static ConfigurationProperty controlRenderingCompatibilityVersionProp;
-#endif
 		static PagesSection ()
 		{
 			asyncTimeoutProp = new ConfigurationProperty ("asyncTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (45.0),
@@ -99,7 +97,6 @@ namespace System.Web.Configuration
 			viewStateEncryptionModeProp = new ConfigurationProperty ("viewStateEncryptionMode", typeof (ViewStateEncryptionMode), ViewStateEncryptionMode.Auto,
 										 new GenericEnumConverter (typeof (ViewStateEncryptionMode)), PropertyHelper.DefaultValidator,
 										 ConfigurationPropertyOptions.None);
-#if NET_4_0
 			clientIDModeProp = new ConfigurationProperty ("clientIDMode", typeof (ClientIDMode), ClientIDMode.Predictable,
 								      new GenericEnumConverter (typeof (ClientIDMode)), PropertyHelper.DefaultValidator,
 								      ConfigurationPropertyOptions.None);
@@ -107,7 +104,6 @@ namespace System.Web.Configuration
 											      new VersionConverter (3, 5, "The value for the property 'controlRenderingCompatibilityVersion' is not valid. The error is: The control rendering compatibility version must not be less than {1}."),
 											      PropertyHelper.DefaultValidator,
 											      ConfigurationPropertyOptions.None);
-#endif
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (asyncTimeoutProp);
 			properties.Add (autoEventWireupProp);
@@ -131,10 +127,8 @@ namespace System.Web.Configuration
 			properties.Add (userControlBaseTypeProp);
 			properties.Add (validateRequestProp);
 			properties.Add (viewStateEncryptionModeProp);
-#if NET_4_0
 			properties.Add (clientIDModeProp);
 			properties.Add (controlRenderingCompatibilityVersionProp);
-#endif
 		}
 
 		public PagesSection ()
@@ -297,7 +291,6 @@ namespace System.Web.Configuration
 			get { return (ViewStateEncryptionMode) base [viewStateEncryptionModeProp]; }
 			set { base [viewStateEncryptionModeProp] = value; }
 		}
-#if NET_4_0
 		[ConfigurationProperty ("clientIDMode", DefaultValue = ClientIDMode.Predictable)]
 		public ClientIDMode ClientIDMode {
 			get { return (ClientIDMode) base [clientIDModeProp]; }
@@ -314,7 +307,6 @@ namespace System.Web.Configuration
 				base [controlRenderingCompatibilityVersionProp] = value;
 			}
 		}
-#endif
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}

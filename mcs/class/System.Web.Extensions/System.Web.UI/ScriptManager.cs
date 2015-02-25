@@ -65,9 +65,7 @@ namespace System.Web.UI
 		const string hiddenField = "hiddenField";
 		const string arrayDeclaration = "arrayDeclaration";
 		const string scriptBlock = "scriptBlock";
-#if NET_3_5
 		const string scriptStartupBlock = "scriptStartupBlock";
-#endif
 		const string expando = "expando";
 		const string onSubmit = "onSubmit";
 		const string asyncPostBackControlIDs = "asyncPostBackControlIDs";
@@ -97,9 +95,7 @@ namespace System.Web.UI
 		List<UpdatePanel> _panelsToRefresh;
 		List<UpdatePanel> _updatePanels;
 		ScriptReferenceCollection _scripts;
-#if NET_3_5
 		CompositeScriptReference _compositeScript;
-#endif
 		ServiceReferenceCollection _services;
 		bool _isInAsyncPostBack;
 		bool _isInPartialRendering;
@@ -253,12 +249,8 @@ namespace System.Web.UI
 
 		internal bool IsDeploymentRetail {
 			get {
-#if TARGET_J2EE
-				return false;
-#else
 				DeploymentSection deployment = (DeploymentSection) WebConfigurationManager.GetSection ("system.web/deployment");
 				return deployment.Retail;
-#endif
 			}
 		}
 
@@ -303,9 +295,6 @@ namespace System.Web.UI
 		}
 
 		[Category ("Behavior")]
-#if TARGET_J2EE
-		[MonoLimitation ("The 'Auto' value is the same as 'Debug'.")]
-#endif
 		public ScriptMode ScriptMode {
 			get {
 				return _scriptMode;
@@ -342,7 +331,6 @@ namespace System.Web.UI
 				return _scripts;
 			}
 		}
-#if NET_3_5
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Category ("Behavior")]
 		[DefaultValue (null)]
@@ -355,7 +343,6 @@ namespace System.Web.UI
 				return _compositeScript;
 			}
 		}
-#endif
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DefaultValue ("")]
 		[MergableProperty (false)]
@@ -411,10 +398,8 @@ namespace System.Web.UI
 
 		[Category ("Action")]
 		public event EventHandler<ScriptReferenceEventArgs> ResolveScriptReference;
-#if NET_3_5
 		[Category ("Action")]
 		public event EventHandler<CompositeScriptReferenceEventArgs> ResolveCompositeScriptReference;
-#endif
 		public static ScriptManager GetCurrent (Page page) {
 			if (page == null)
 				throw new ArgumentNullException ("page");
@@ -601,12 +586,10 @@ namespace System.Web.UI
 				if (IsMultiForm)
 					RegisterScriptReference (this, ajaxWebFormsExtensionScript, true);
 			}
-#if NET_3_5
 			if (_compositeScript != null && _compositeScript.HaveScripts ()) {
 				OnResolveCompositeScriptReference (new CompositeScriptReferenceEventArgs (_compositeScript));
 				RegisterScriptReference (this, _compositeScript, true);
 			}
-#endif			
 			// Register Scripts
 			if (_scriptToRegister != null)
 				for (int i = 0; i < _scriptToRegister.Count; i++)
@@ -706,26 +689,9 @@ namespace System.Web.UI
 			return new ReadOnlyCollection<RegisteredScript> (_startupScriptBlocks);
 		}
 
-#if TARGET_J2EE
-		bool _isMultiForm = false;
-		bool _isMultiFormInited = false;
-
-		bool IsMultiForm {
-			get {
-				if (!_isMultiFormInited) {
-					string isMultiForm = WebConfigurationManager.AppSettings ["mainsoft.use.portlet.namespace"];
-					_isMultiForm = isMultiForm != null ? Boolean.Parse (isMultiForm) : false;
-
-					_isMultiFormInited = true;
-				}
-				return _isMultiForm;
-			}
-		}
-#else
 		bool IsMultiForm {
 			get { return false; }
 		}
-#endif
 
 		bool PanelRequiresUpdate (UpdatePanel panel)
 		{
@@ -780,14 +746,12 @@ namespace System.Web.UI
 				}
 			}
 		}
-#if NET_3_5
 		protected virtual void OnResolveCompositeScriptReference (CompositeScriptReferenceEventArgs e)
 		{
 			EventHandler <CompositeScriptReferenceEventArgs> evt = ResolveCompositeScriptReference;
 			if (evt != null)
 				evt (this, e);
 		}
-#endif
 		protected virtual void OnResolveScriptReference (ScriptReferenceEventArgs e) {
 			if (ResolveScriptReference != null)
 				ResolveScriptReference (this, e);
@@ -904,13 +868,9 @@ namespace System.Web.UI
 				RegisterClientScriptBlock (control, typeof (ScriptManager), url, logicalTypeInfo.Proxy, true);
 			}
 			else {
-#if TARGET_J2EE
-				string pathInfo = "/js.invoke";
-#else
 				string pathInfo = "/js";
 				if (IsDebuggingEnabled)
 					pathInfo += "debug";
-#endif
 				string url = String.Concat (control.ResolveClientUrl (serviceReference.Path), pathInfo);
 				RegisterClientScriptInclude (control, typeof (ScriptManager), url, url);
 			}
@@ -1456,14 +1416,12 @@ namespace System.Web.UI
 							else
 								WriteCallbackOutput (output, scriptBlock, scriptContentWithTags, SerializeScriptBlock (scriptEntry));
 							break;
-#if NET_3_5
 						case RegisteredScriptType.ClientStartupScript:
 							if (scriptEntry.AddScriptTags)
 								WriteCallbackOutput (output, scriptStartupBlock, scriptContentNoTags, scriptEntry.Script);
 							else
 								WriteCallbackOutput (output, scriptStartupBlock, scriptContentWithTags, SerializeScriptBlock (scriptEntry));
 							break;
-#endif
 						case RegisteredScriptType.ClientScriptInclude:
 							WriteCallbackOutput (output, scriptBlock, scriptPath, scriptEntry.Url);
 							break;

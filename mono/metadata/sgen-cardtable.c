@@ -52,23 +52,23 @@ guint8 *sgen_cardtable;
 static gboolean need_mod_union;
 
 #ifdef HEAVY_STATISTICS
-long long marked_cards;
-long long scanned_cards;
-long long scanned_objects;
-long long remarked_cards;
+guint64 marked_cards;
+guint64 scanned_cards;
+guint64 scanned_objects;
+guint64 remarked_cards;
 
-static long long los_marked_cards;
-static long long large_objects;
-static long long bloby_objects;
-static long long los_array_cards;
-static long long los_array_remsets;
+static guint64 los_marked_cards;
+static guint64 large_objects;
+static guint64 bloby_objects;
+static guint64 los_array_cards;
+static guint64 los_array_remsets;
 
 #endif
-static long long major_card_scan_time;
-static long long los_card_scan_time;
+static guint64 major_card_scan_time;
+static guint64 los_card_scan_time;
 
-static long long last_major_scan_time;
-static long long last_los_scan_time;
+static guint64 last_major_scan_time;
+static guint64 last_los_scan_time;
 
 static void sgen_card_tables_collect_stats (gboolean begin);
 
@@ -113,7 +113,7 @@ sgen_card_table_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int
 
 		for (; dest >= start; --src, --dest) {
 			gpointer value = *src;
-			*dest = value;
+			SGEN_UPDATE_REFERENCE_ALLOW_NULL (dest, value);
 			if (need_mod_union || sgen_ptr_in_nursery (value))
 				sgen_card_table_mark_address ((mword)dest);
 			sgen_dummy_use (value);
@@ -122,7 +122,7 @@ sgen_card_table_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int
 		gpointer *end = dest + count;
 		for (; dest < end; ++src, ++dest) {
 			gpointer value = *src;
-			*dest = value;
+			SGEN_UPDATE_REFERENCE_ALLOW_NULL (dest, value);
 			if (need_mod_union || sgen_ptr_in_nursery (value))
 				sgen_card_table_mark_address ((mword)dest);
 			sgen_dummy_use (value);
@@ -479,22 +479,6 @@ mono_gc_card_table_nursery_check (void)
 }
 
 #if 0
-static void
-collect_faulted_cards (void)
-{
-#define CARD_PAGES (CARD_COUNT_IN_BYTES / 4096)
-	int i, count = 0;
-	unsigned char faulted [CARD_PAGES] = { 0 };
-	mincore (sgen_cardtable, CARD_COUNT_IN_BYTES, faulted);
-
-	for (i = 0; i < CARD_PAGES; ++i) {
-		if (faulted [i])
-			++count;
-	}
-
-	printf ("TOTAL card pages %d faulted %d\n", CARD_PAGES, count);
-}
-
 void
 sgen_card_table_dump_obj_card (char *object, size_t size, void *dummy)
 {
@@ -769,19 +753,19 @@ sgen_card_table_init (SgenRemeberedSet *remset)
 #endif
 
 #ifdef HEAVY_STATISTICS
-	mono_counters_register ("marked cards", MONO_COUNTER_GC | MONO_COUNTER_LONG, &marked_cards);
-	mono_counters_register ("scanned cards", MONO_COUNTER_GC | MONO_COUNTER_LONG, &scanned_cards);
-	mono_counters_register ("remarked cards", MONO_COUNTER_GC | MONO_COUNTER_LONG, &remarked_cards);
+	mono_counters_register ("marked cards", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &marked_cards);
+	mono_counters_register ("scanned cards", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &scanned_cards);
+	mono_counters_register ("remarked cards", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &remarked_cards);
 
-	mono_counters_register ("los marked cards", MONO_COUNTER_GC | MONO_COUNTER_LONG, &los_marked_cards);
-	mono_counters_register ("los array cards scanned ", MONO_COUNTER_GC | MONO_COUNTER_LONG, &los_array_cards);
-	mono_counters_register ("los array remsets", MONO_COUNTER_GC | MONO_COUNTER_LONG, &los_array_remsets);
-	mono_counters_register ("cardtable scanned objects", MONO_COUNTER_GC | MONO_COUNTER_LONG, &scanned_objects);
-	mono_counters_register ("cardtable large objects", MONO_COUNTER_GC | MONO_COUNTER_LONG, &large_objects);
-	mono_counters_register ("cardtable bloby objects", MONO_COUNTER_GC | MONO_COUNTER_LONG, &bloby_objects);
+	mono_counters_register ("los marked cards", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &los_marked_cards);
+	mono_counters_register ("los array cards scanned ", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &los_array_cards);
+	mono_counters_register ("los array remsets", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &los_array_remsets);
+	mono_counters_register ("cardtable scanned objects", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &scanned_objects);
+	mono_counters_register ("cardtable large objects", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &large_objects);
+	mono_counters_register ("cardtable bloby objects", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &bloby_objects);
 #endif
-	mono_counters_register ("cardtable major scan time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &major_card_scan_time);
-	mono_counters_register ("cardtable los scan time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &los_card_scan_time);
+	mono_counters_register ("cardtable major scan time", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &major_card_scan_time);
+	mono_counters_register ("cardtable los scan time", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &los_card_scan_time);
 
 
 	remset->wbarrier_set_field = sgen_card_table_wbarrier_set_field;

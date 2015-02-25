@@ -81,9 +81,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (String.Empty, td.Text, "Text");
 			Assert.AreEqual (VerticalAlign.NotSet, td.VerticalAlign, "VerticalAlign");
 			Assert.IsTrue (td.Wrap, "Wrap");
-#if NET_2_0
 			Assert.AreEqual (0, td.AssociatedHeaderCellID.Length, "AssociatedHeaderCellID");
-#endif
 			Assert.AreEqual ("td", td.Tag, "TagName");
 			Assert.AreEqual (0, td.Attributes.Count, "Attributes.Count-2");
 			Assert.AreEqual (0, td.StateBag.Count, "ViewState.Count-2");
@@ -105,17 +103,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (VerticalAlign.NotSet, td.VerticalAlign, "VerticalAlign");
 			td.Wrap = true;
 			Assert.IsTrue (td.Wrap, "Wrap");
-#if NET_2_0
 			td.AssociatedHeaderCellID = new string[0];
 			Assert.AreEqual (0, td.AssociatedHeaderCellID.Length, "AssociatedHeaderCellID");
 			Assert.AreEqual (6, td.StateBag.Count, "ViewState.Count-1");
-#else
-			Assert.AreEqual (5, td.StateBag.Count, "ViewState.Count-1");
-#endif
 			Assert.AreEqual (0, td.Attributes.Count, "Attributes.Count");
 			// note: nothing is removed (no need for CleanProperties test)
 		}
-#if NET_2_0
 		[Test]
 		public void AssociatedHeaderCellID ()
 		{
@@ -130,7 +123,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			td.AssociatedHeaderCellID = null;
 			Assert.AreEqual (0, td.AssociatedHeaderCellID.Length, "2");
 		}
-#endif
 		[Test]
 		// LAMESPEC: undocumented exception but similar to integer properties of Table
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
@@ -199,16 +191,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			td.Wrap = false;
 			s = td.Render ();
-#if NET_2_0
 			Assert.AreEqual ("<td style=\"white-space:nowrap;\"></td>", s, "Wrap");
 
 			// it seems that rendering with AssociatedHeaderCellID property set
 			// isn't (at least easyly) possible even if we build a whole table
 			// with a page... it keeps throwing NullReferenceException. Even in a
 			// web page using that property makes it easy to throw exceptions :(
-#else
-			Assert.AreEqual ("<td nowrap=\"nowrap\"></td>", s, "Wrap");
-#endif
 			td.Wrap = true;
 		}
 
@@ -242,11 +230,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// this replace the current Text property
 			td.Add (new LiteralControl ("Go Mono"));
 			Assert.IsFalse (td.HasControls (), "!HasControls-2");
-#if NET_2_0
 			Assert.AreEqual ("MonoGo Mono", td.Text, "Text-2");
-#else
-			Assert.AreEqual ("Go Mono", td.Text, "Text-2");
-#endif
 		}
 
 		[Test]
@@ -287,11 +271,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("Mono", td.Text, "Text");
 			td.Add (new LiteralControl ("Mono2"));
 			Assert.IsFalse (td.HasControls (), "HasControls-2");
-#if NET_2_0
 			Assert.AreEqual ("MonoMono2", td.Text, "Text");
-#else
-			Assert.AreEqual ("Mono2", td.Text, "Text");
-#endif
 			Assert.AreEqual (0, td.Controls.Count, "NControls");
 		}
 

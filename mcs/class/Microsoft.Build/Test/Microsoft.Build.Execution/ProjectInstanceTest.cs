@@ -66,7 +66,7 @@ namespace MonoTests.Microsoft.Build.Execution
 			var prop = proj.Properties.First (p => p.Name=="P");
 			Assert.AreEqual ("valid", prop.EvaluatedValue, "#2");
 			Assert.IsNotNull (proj.GetProperty ("MSBuildProjectDirectory"), "#3");
-			Assert.AreEqual ("2.0", proj.ToolsVersion, "#4");
+			Assert.AreEqual ("4.0", proj.ToolsVersion, "#4");
 		}
 		
 		[Test]

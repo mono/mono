@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,649</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,649</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -45,9 +45,54 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\referencesource\System.Data\Misc\HResults.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\AdapterUtil.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DataColumnMapping.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DataColumnMappingCollection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DataRecordInternal.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DataTableMapping.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DataTableMappingCollection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DbConnectionOptions.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DBConnectionString.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DbConnectionStringBuilder.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DbConnectionStringCommon.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DBDataPermission.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\DBDataPermissionAttribute.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\dbdatarecord.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\dbenumerator.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\FieldNameLookup.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\NameValuePair.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Common\NameValuePermission.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Odbc\Odbc32.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Odbc\OdbcConnectionString.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Odbc\OdbcConnectionStringbuilder.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Odbc\OdbcError.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\Odbc\OdbcPermission.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\ProviderBase\DbConnectionPoolProviderInfo.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SqlClient\ApplicationIntent.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\INullable.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLBinary.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLBoolean.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLByte.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLBytes.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLChars.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SqlCharStream.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLDateTime.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLDecimal.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLDouble.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLGuid.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLInt16.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLInt32.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLInt64.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLMoney.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLResource.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLSingle.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLString.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data\System\Data\SQLTypes\SQLUtility.cs" />
     <Compile Include="..\..\build\common\Consts.cs.in" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.SqlServer.Server\DataAccessKind.cs" />
     <Compile Include="Microsoft.SqlServer.Server\Format.cs" />
@@ -77,30 +122,28 @@
     <Compile Include="Mono.Data.SqlExpressions\Numeric.cs" />
     <Compile Include="Mono.Data.SqlExpressions\StringFunctions.cs" />
     <Compile Include="Mono.Data.SqlExpressions\Tokenizer.cs" />
+    <Compile Include="ReferenceSources\Bid.cs" />
+    <Compile Include="ReferenceSources\BidArgumentTypeAttribute.cs" />
+    <Compile Include="ReferenceSources\BidMethodAttribute.cs" />
+    <Compile Include="ReferenceSources\DataStorage.cs" />
+    <Compile Include="ReferenceSources\InOutOfProcHelper.cs" />
+    <Compile Include="ReferenceSources\ODB.cs" />
+    <Compile Include="ReferenceSources\OdbcHandle.cs" />
+    <Compile Include="ReferenceSources\Res.cs" />
+    <Compile Include="ReferenceSources\ResCategoryAttribute.cs" />
+    <Compile Include="ReferenceSources\SafeNativeMethods.cs" />
+    <Compile Include="ReferenceSources\ThisAssembly.cs" />
     <Compile Include="System.Data.Common\CatalogLocation.cs" />
     <Compile Include="System.Data.Common\ComparerFactory.cs" />
     <Compile Include="System.Data.Common\DataAdapter.cs" />
-    <Compile Include="System.Data.Common\DataColumnMapping.cs" />
-    <Compile Include="System.Data.Common\DataColumnMappingCollection.cs" />
-    <Compile Include="System.Data.Common\DataColumnMappingConverter.cs" />
     <Compile Include="System.Data.Common\DataContainer.cs" />
-    <Compile Include="System.Data.Common\DataTableMapping.cs" />
-    <Compile Include="System.Data.Common\DataTableMappingCollection.cs" />
-    <Compile Include="System.Data.Common\DataTableMappingConverter.cs" />
     <Compile Include="System.Data.Common\DbCommand.cs" />
     <Compile Include="System.Data.Common\DbCommandBuilder.cs" />
     <Compile Include="System.Data.Common\DbConnection.cs" />
-    <Compile Include="System.Data.Common\DbConnectionOptions.cs" />
-    <Compile Include="System.Data.Common\DbConnectionString.cs" />
-    <Compile Include="System.Data.Common\DbConnectionStringBuilder.cs" />
     <Compile Include="System.Data.Common\DbConnectionStringBuilderHelper.cs" />
     <Compile Include="System.Data.Common\DbDataAdapter.cs" />
-    <Compile Include="System.Data.Common\DbDataPermission.cs" />
-    <Compile Include="System.Data.Common\DbDataPermissionAttribute.cs" />
     <Compile Include="System.Data.Common\DbDataReader.cs" />
-    <Compile Include="System.Data.Common\DbDataRecord.cs" />
     <Compile Include="System.Data.Common\DbDataSourceEnumerator.cs" />
-    <Compile Include="System.Data.Common\DbEnumerator.cs" />
     <Compile Include="System.Data.Common\DbException.cs" />
     <Compile Include="System.Data.Common\DbMetaDataCollectionNames.cs" />
     <Compile Include="System.Data.Common\DbMetaDataColumnNames.cs" />
@@ -115,7 +158,6 @@
     <Compile Include="System.Data.Common\DbTransaction.cs" />
     <Compile Include="System.Data.Common\DbTypes.cs" />
     <Compile Include="System.Data.Common\ExceptionHelper.cs" />
-    <Compile Include="System.Data.Common\FieldNameLookup.cs" />
     <Compile Include="System.Data.Common\GroupByBehavior.cs" />
     <Compile Include="System.Data.Common\IdentifierCase.cs" />
     <Compile Include="System.Data.Common\Index.cs" />
@@ -124,7 +166,6 @@
     <Compile Include="System.Data.Common\RecordCache.cs" />
     <Compile Include="System.Data.Common\RowUpdatedEventArgs.cs" />
     <Compile Include="System.Data.Common\RowUpdatingEventArgs.cs" />
-    <Compile Include="System.Data.Common\SchemaInfo.cs" />
     <Compile Include="System.Data.Common\SchemaTableColumn.cs" />
     <Compile Include="System.Data.Common\SchemaTableOptionalColumn.cs" />
     <Compile Include="System.Data.Common\SupportedJoinOperators.cs" />
@@ -136,11 +177,9 @@
     <Compile Include="System.Data.Odbc\OdbcCommand.cs" />
     <Compile Include="System.Data.Odbc\OdbcCommandBuilder.cs" />
     <Compile Include="System.Data.Odbc\OdbcConnection.cs" />
-    <Compile Include="System.Data.Odbc\OdbcConnectionStringBuilder.cs" />
     <Compile Include="System.Data.Odbc\OdbcDataAdapter.cs" />
     <Compile Include="System.Data.Odbc\OdbcDataReader.cs" />
     <Compile Include="System.Data.Odbc\OdbcDescriptionAttribute.cs" />
-    <Compile Include="System.Data.Odbc\OdbcError.cs" />
     <Compile Include="System.Data.Odbc\OdbcErrorCollection.cs" />
     <Compile Include="System.Data.Odbc\OdbcException.cs" />
     <Compile Include="System.Data.Odbc\OdbcFactory.cs" />
@@ -151,8 +190,6 @@
     <Compile Include="System.Data.Odbc\OdbcParameter.cs" />
     <Compile Include="System.Data.Odbc\OdbcParameterCollection.cs" />
     <Compile Include="System.Data.Odbc\OdbcParameterConverter.cs" />
-    <Compile Include="System.Data.Odbc\OdbcPermission.cs" />
-    <Compile Include="System.Data.Odbc\OdbcPermissionAttribute.cs" />
     <Compile Include="System.Data.Odbc\OdbcRowUpdatedEventArgs.cs" />
     <Compile Include="System.Data.Odbc\OdbcRowUpdatedEventHandler.cs" />
     <Compile Include="System.Data.Odbc\OdbcRowUpdatingEventArgs.cs" />
@@ -211,6 +248,7 @@
     <Compile Include="System.Data.SqlClient\SqlDataReader.cs" />
     <Compile Include="System.Data.SqlClient\SqlDataSourceConverter.cs" />
     <Compile Include="System.Data.SqlClient\SQLDebugging.cs" />
+    <Compile Include="System.Data.SqlClient\SqlDecimalExtensions.cs" />
     <Compile Include="System.Data.SqlClient\SqlDependency.cs" />
     <Compile Include="System.Data.SqlClient\SqlError.cs" />
     <Compile Include="System.Data.SqlClient\SqlErrorCollection.cs" />
@@ -233,30 +271,7 @@
     <Compile Include="System.Data.SqlClient\SqlRowUpdatingEventHandler.cs" />
     <Compile Include="System.Data.SqlClient\SqlTransaction.cs" />
     <Compile Include="System.Data.SqlClient\SqlXmlTextReader.cs" />
-    <Compile Include="System.Data.SqlTypes\INullable.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlAlreadyFilledException.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlBinary.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlBoolean.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlByte.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlBytes.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlChars.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlCompareOptions.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlDateTime.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlDecimal.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlDouble.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlGuid.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlInt16.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlInt32.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlInt64.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlMoney.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlNotFilledException.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlNullValueException.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlSingle.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlString.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlTruncateException.cs" />
-    <Compile Include="System.Data.SqlTypes\SqlTypeException.cs" />
     <Compile Include="System.Data.SqlTypes\SqlXml.cs" />
-    <Compile Include="System.Data.SqlTypes\StorageState.cs" />
     <Compile Include="System.Data\AcceptRejectRule.cs" />
     <Compile Include="System.Data\ColumnTypeConverter.cs" />
     <Compile Include="System.Data\CommandBehavior.cs" />
@@ -334,7 +349,6 @@
     <Compile Include="System.Data\IsolationLevel.cs" />
     <Compile Include="System.Data\ITableMapping.cs" />
     <Compile Include="System.Data\ITableMappingCollection.cs" />
-    <Compile Include="System.Data\KeyRestrictionBehavior.cs" />
     <Compile Include="System.Data\LoadOption.cs" />
     <Compile Include="System.Data\MappingType.cs" />
     <Compile Include="System.Data\MergeFailedEventArgs.cs" />
@@ -420,6 +434,10 @@
     <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
       <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
       <Name>System.Xml-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Core/System.Core-net_4_5.csproj">
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
+      <Name>System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.EnterpriseServices/System.EnterpriseServices-net_4_5.csproj">
       <Project>{773D8BA7-9A88-49AC-81C9-740436270588}</Project>

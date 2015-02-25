@@ -44,9 +44,13 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
                     <Choose>
                         <When Condition=""'$(Configuration)' == ''"">
+                            
+                            <!-- A user comment is allowed here -->
+
 					        <ItemGroup>
 						        <A Include='a' />
 					        </ItemGroup>
+                            
                         </When>
                     </Choose>
 				</Project>

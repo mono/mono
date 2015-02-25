@@ -86,7 +86,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				sb.Length = 0;
 				Assert.AreEqual (typeof (void).FullName, Generate (new CodeTypeReferenceExpression (""), sw), "#14");
 				sb.Length = 0;
-#if NET_2_0
 				Assert.AreEqual ("SByte", Generate (new CodeTypeReferenceExpression (typeof (sbyte)), sw), "#15");
 				sb.Length = 0;
 				Assert.AreEqual ("UShort", Generate (new CodeTypeReferenceExpression (typeof (ushort)), sw), "#16");
@@ -95,16 +94,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				sb.Length = 0;
 				Assert.AreEqual ("ULong", Generate (new CodeTypeReferenceExpression (typeof (ulong)), sw), "#18");
 				sb.Length = 0;
-#else
-				Assert.AreEqual (typeof (sbyte).FullName, Generate (new CodeTypeReferenceExpression (typeof (sbyte)), sw), "#19");
-				sb.Length = 0;
-				Assert.AreEqual (typeof(ushort).FullName, Generate (new CodeTypeReferenceExpression (typeof (ushort)), sw), "#20");
-				sb.Length = 0;
-				Assert.AreEqual (typeof(uint).FullName, Generate (new CodeTypeReferenceExpression (typeof (uint)), sw), "#21");
-				sb.Length = 0;
-				Assert.AreEqual (typeof(ulong).FullName, Generate (new CodeTypeReferenceExpression (typeof (ulong)), sw), "#22");
-				sb.Length = 0;
-#endif
 				sw.Close ();
 			}
 		}
@@ -153,11 +142,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		[Test]
 		public void PrimitiveExpressionTest_Char ()
 		{
-#if NET_2_0
 			string vbNs = "Global.Microsoft.VisualBasic";
-#else
-			string vbNs = "Microsoft.VisualBasic";
-#endif
 			StringBuilder sb = new StringBuilder ();
 
 			using (StringWriter sw = new StringWriter (sb)) {
@@ -251,9 +236,6 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_SByte ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -265,9 +247,6 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_UInt16 ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -279,9 +258,6 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_UInt32 ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -293,9 +269,6 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PrimitiveExpressionTest_UInt64 ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -315,28 +288,16 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			using (StringWriter sw = new StringWriter (sb)) {
 				cpde = new CodeParameterDeclarationExpression ();
-#if NET_2_0
 				Assert.AreEqual ("ByVal __exception As System.Void", Generate (cpde, sw), "#1");
-#else
-				Assert.AreEqual ("ByVal  As System.Void", Generate (cpde, sw), "#1");
-#endif
 				sb.Length = 0;
 
 				cpde = new CodeParameterDeclarationExpression ((string) null,
 					(string) null);
-#if NET_2_0
 				Assert.AreEqual ("ByVal __exception As System.Void", Generate (cpde, sw), "#2");
-#else
-				Assert.AreEqual ("ByVal  As System.Void", Generate (cpde, sw), "#2");
-#endif
 				sb.Length = 0;
 
 				cpde = new CodeParameterDeclarationExpression ("A", (string) null);
-#if NET_2_0
 				Assert.AreEqual ("ByVal __exception As A", Generate (cpde, sw), "#3");
-#else
-				Assert.AreEqual ("ByVal  As A", Generate (cpde, sw), "#3");
-#endif
 				sb.Length = 0;
 
 				cpde = new CodeParameterDeclarationExpression ((string) null, "B");
@@ -507,31 +468,19 @@ namespace MonoTests.Microsoft.VisualBasic
 			sb = new StringBuilder ();
 			using (StringWriter sw = new StringWriter (sb)) {
 				code = Generate (new CodeDelegateInvokeExpression (null, new CodePrimitiveExpression ("abc")), sw);
-#if NET_2_0
 				Assert.AreEqual ("(\"abc\")", code, "#01");
-#else
-				Assert.AreEqual ("RaiseEvent (\"abc\")", code, "#01");
-#endif
 			}
 
 			sb = new StringBuilder ();
 			using (StringWriter sw = new StringWriter (sb)) {
 				code = Generate (new CodeDelegateInvokeExpression (new CodeThisReferenceExpression (), new CodePrimitiveExpression ("abc")), sw);
-#if NET_2_0
 				Assert.AreEqual ("Me(\"abc\")", code, "#02");
-#else
-				Assert.AreEqual ("RaiseEvent Me(\"abc\")", code, "#02");
-#endif
 			}
 
 			sb = new StringBuilder ();
 			using (StringWriter sw = new StringWriter (sb)) {
 				code = Generate (new CodeDelegateInvokeExpression (new CodePrimitiveExpression ("primitive"), new CodePrimitiveExpression ("abc")), sw);
-#if NET_2_0
 				Assert.AreEqual ("\"primitive\"(\"abc\")", code, "#03");
-#else
-				Assert.AreEqual ("RaiseEvent \"primitive\"(\"abc\")", code, "#03");
-#endif
 			}
 
 			sb = new StringBuilder ();

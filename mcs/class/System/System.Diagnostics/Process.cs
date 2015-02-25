@@ -346,23 +346,21 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		[Obsolete ("Use PagedMemorySize64")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are paged.")]
 		public int PagedMemorySize {
 			get {
-				return(0);
+				return(int)PagedMemorySize64;
 			}
 		}
 
-		[MonoTODO]
 		[Obsolete ("Use PagedSystemMemorySize64")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of paged system memory in bytes.")]
 		public int PagedSystemMemorySize {
 			get {
-				return(0);
+				return(int)PagedMemorySize64;
 			}
 		}
 
@@ -406,23 +404,22 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are paged.")]
 		[ComVisible (false)]
 		public long PagedMemorySize64 {
 			get {
-				return(0);
+				int error;
+				return GetProcessData (pid, 12, out error);
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of paged system memory in bytes.")]
 		[ComVisible (false)]
 		public long PagedSystemMemorySize64 {
 			get {
-				return(0);
+				return PagedMemorySize64;
 			}
 		}
 
@@ -1136,7 +1133,7 @@ namespace System.Diagnostics {
 		// Note that ProcInfo.Password must be freed.
 		private static void FillUserInfo (ProcessStartInfo startInfo, ref ProcInfo proc_info)
 		{
-			if (startInfo.UserName != null) {
+			if (startInfo.UserName.Length != 0) {
 				proc_info.UserName = startInfo.UserName;
 				proc_info.Domain = startInfo.Domain;
 				if (startInfo.Password != null)
@@ -1150,7 +1147,7 @@ namespace System.Diagnostics {
 		private static bool Start_common (ProcessStartInfo startInfo,
 						  Process process)
 		{
-			if (startInfo.FileName == null || startInfo.FileName.Length == 0)
+			if (startInfo.FileName.Length == 0)
 				throw new InvalidOperationException("File name has not been set");
 			
 			if (startInfo.StandardErrorEncoding != null && !startInfo.RedirectStandardError)
@@ -1159,7 +1156,7 @@ namespace System.Diagnostics {
 				throw new InvalidOperationException ("StandardOutputEncoding is only supported when standard output is redirected");
 			
 			if (startInfo.UseShellExecute) {
-				if (!String.IsNullOrEmpty (startInfo.UserName))
+				if (startInfo.UserName.Length != 0)
 					throw new InvalidOperationException ("UseShellExecute must be false if an explicit UserName is specified when starting a process");
 				return (Start_shell (startInfo, process));
 			} else {

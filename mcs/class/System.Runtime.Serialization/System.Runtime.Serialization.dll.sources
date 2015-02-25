@@ -10,9 +10,9 @@ System.Runtime.Serialization.Configuration/ParameterElementCollection.cs
 System.Runtime.Serialization.Configuration/SerializationSectionGroup.cs
 System.Runtime.Serialization.Configuration/TypeElement.cs
 System.Runtime.Serialization.Configuration/TypeElementCollection.cs
-System.Runtime.Serialization/CollectionDataContractAttribute.cs
-System.Runtime.Serialization/ContractNamespaceAttribute.cs
-System.Runtime.Serialization/DataContractAttribute.cs
+../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/CollectionDataContractAttribute.cs
+../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ContractNamespaceAttribute.cs
+../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/DataContractAttribute.cs
 System.Runtime.Serialization/DataContractResolver.cs
 System.Runtime.Serialization/DataContractSerializer.cs
 System.Runtime.Serialization/DataMemberAttribute.cs

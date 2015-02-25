@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 namespace System.ServiceProcess
 {
@@ -78,4 +77,3 @@ namespace System.ServiceProcess
 	}
 }
 
-#endif

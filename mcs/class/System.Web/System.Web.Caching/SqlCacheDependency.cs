@@ -56,7 +56,6 @@ namespace System.Web.Caching
 				throw new ArgumentNullException ("tableName");
 		}
 
-#if NET_4_0
 		[MonoTODO ("Needs more testing - especially the return value and database+table lookup.")]
 		public static CacheDependency CreateOutputCacheDependency (string dependency)
 		{
@@ -100,7 +99,6 @@ For SQL Server 7.0 and SQL Server 2000, the valid format is ""database:tablename
 
 For dependencies that use SQL Server 9.0 notifications, specify the value 'CommandNotification'.", dependency);
 		}
-#endif
 		
 		protected override void DependencyDispose ()
 		{

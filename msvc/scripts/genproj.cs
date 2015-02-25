@@ -38,7 +38,7 @@ class SlnGenerator {
 	const string project_start = "Project(\"{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}\") = \"{0}\", \"{1}\", \"{2}\""; // Note: No need to double up on {} around {2}
 	const string project_end = "EndProject";
 
-	List<MsbuildGenerator.VsCsproj> libraries = new List<MsbuildGenerator.VsCsproj> ();
+	public List<MsbuildGenerator.VsCsproj> libraries = new List<MsbuildGenerator.VsCsproj> ();
 	string header;
 
 	string MakeHeader (string formatVersion, string yearTag)
@@ -123,7 +123,7 @@ class MsbuildGenerator {
 	}
 
 	// The directory as specified in order.xml
-	string dir;
+	public string dir;
 	string library;
 	string projectGuid;
 	string fx_version;
@@ -153,7 +153,8 @@ class MsbuildGenerator {
 			projectGuid = this.projectGuid,
 			library_output = this.LibraryOutput,
 			fx_version = double.Parse (fx_version),
-			library = this.library
+			library = this.library,
+			MsbuildGenerator = this
 		};
 
 		if (dir == "mcs") {
@@ -621,6 +622,7 @@ class MsbuildGenerator {
 		public double fx_version;
 		public List<VsCsproj> projReferences = new List<VsCsproj> ();
 		public string library;
+		public MsbuildGenerator MsbuildGenerator;
 	}
 
 	public VsCsproj Csproj;
@@ -686,8 +688,8 @@ class MsbuildGenerator {
 		const string condition_unix    = "Condition=\" '$(OS)' != 'Windows_NT' \"";
 		const string condition_windows = "Condition=\" '$(OS)' == 'Windows_NT' \"";
 		prebuild =
-			"    <PreBuildEvent " + condition_unix + ">\n" + prebuild_unix + "\n    </PreBuildEvent>\n" +
-			"    <PreBuildEvent " + condition_windows + ">\n" + prebuild_windows + "\n    </PreBuildEvent>\n";
+			"    <PreBuildEvent " + condition_unix + ">" + NewLine + prebuild_unix + NewLine + "    </PreBuildEvent>" + NewLine +
+			"    <PreBuildEvent " + condition_windows + ">" + NewLine + prebuild_windows + NewLine + "    </PreBuildEvent>" + NewLine;
 
 		var all_args = new Queue<string []> ();
 		all_args.Enqueue (flags.Split ());
@@ -851,8 +853,8 @@ class MsbuildGenerator {
 		string postbuild_windows = string.Empty;
 
 		var postbuild =  
-			"    <PostBuildEvent " + condition_unix + ">\n" + postbuild_unix + "\n    </PostBuildEvent>\n" +
-			"    <PostBuildEvent " + condition_windows + ">\n" + postbuild_windows + "\n    </PostBuildEvent>";
+			"    <PostBuildEvent " + condition_unix + ">" + NewLine + postbuild_unix + NewLine + "    </PostBuildEvent>" + NewLine +
+			"    <PostBuildEvent " + condition_windows + ">" + NewLine + postbuild_windows + NewLine + "    </PostBuildEvent>";
 			
 
 		bool basic_or_build = (library.Contains ("-basic") || library.Contains ("-build"));
@@ -864,13 +866,13 @@ class MsbuildGenerator {
 		string strongNameSection = "";
 		if (StrongNameKeyFile != null){
 			strongNameSection = String.Format (
-				"  <PropertyGroup>\n" +
-				"    <SignAssembly>true</SignAssembly>\n" +
+				"  <PropertyGroup>" + NewLine +
+				"    <SignAssembly>true</SignAssembly>" + NewLine +
 				"{1}" +
-				"  </PropertyGroup>\n" + 
-				"  <PropertyGroup>\n" + 
-				"    <AssemblyOriginatorKeyFile>{0}</AssemblyOriginatorKeyFile>\n" +
-				"  </PropertyGroup>", StrongNameKeyFile, StrongNameDelaySign ? "    <DelaySign>true</DelaySign>\n" : "");
+				"  </PropertyGroup>" + NewLine +
+				"  <PropertyGroup>" + NewLine +
+				"    <AssemblyOriginatorKeyFile>{0}</AssemblyOriginatorKeyFile>" + NewLine +
+				"  </PropertyGroup>", StrongNameKeyFile, StrongNameDelaySign ? "    <DelaySign>true</DelaySign>" + NewLine : "");
 		}
 		Csproj.output = template.
 			Replace ("@SIGNATURE@", strongNameSection).
@@ -908,7 +910,7 @@ class MsbuildGenerator {
 	{
 		refs.AppendFormat ("    <ProjectReference Include=\"{0}\">{1}", GetRelativePath (result.csProjFilename, match.CsprojFilename), NewLine);
 		refs.Append ("      <Project>" + match.projectGuid + "</Project>" + NewLine);
-		refs.Append ("      <Name>" + Path.GetFileNameWithoutExtension (match.CsprojFilename) + "</Name>" + NewLine);
+		refs.Append ("      <Name>" + Path.GetFileNameWithoutExtension (match.CsprojFilename.Replace ('\\', Path.DirectorySeparatorChar)) + "</Name>" + NewLine);
 		if (alias != null)
 			refs.Append ("      <Aliases>" + alias + "</Aliases>");
 		refs.Append ("    </ProjectReference>" + NewLine);
@@ -916,7 +918,7 @@ class MsbuildGenerator {
 			result.projReferences.Add (match.Csproj);
 	}
 
-	static string GetRelativePath (string from, string to)
+	public static string GetRelativePath (string from, string to)
 	{
 		from = from.Replace ("\\", "/");
 		to = to.Replace ("\\", "/");
@@ -964,7 +966,7 @@ class MsbuildGenerator {
 
 public class Driver {
 
-	static IEnumerable<XElement> GetProjects ()
+	static IEnumerable<XElement> GetProjects (bool full = false)
 	{
 		XDocument doc = XDocument.Load ("order.xml");
 		foreach (XElement project in doc.Root.Elements ()) {
@@ -978,6 +980,12 @@ public class Driver {
 			if (!(dir.StartsWith ("class") || dir.StartsWith ("mcs") || dir.StartsWith ("basic")))
 				continue;
 
+			if (full){
+				if (!library.Contains ("tests"))
+					yield return project;
+				continue;
+			}
+			
 			//
 			// Do not do 2.1, it is not working yet
 			// Do not do basic, as there is no point (requires a system mcs to be installed).
@@ -1009,11 +1017,17 @@ public class Driver {
 			Console.WriteLine (" assemblies (and dependencies) is included in the solution.");
 			Console.WriteLine ("Example:");
 			Console.WriteLine ("genproj.exe 2012 false");
-			Console.WriteLine ("genproj.exe with no arguments is equivalent to 'genproj.exe 2012 true'");
+			Console.WriteLine ("genproj.exe with no arguments is equivalent to 'genproj.exe 2012 true'\n\n");
+			Console.WriteLine ("genproj.exe deps");
+			Console.WriteLine ("Generates a Makefile dependency file from the projects input");
 			Environment.Exit (0);
 		}
+
 		var slnVersion = (args.Length > 0) ? args [0] : "2012";
 		bool fullSolutions = (args.Length > 1) ? bool.Parse (args [1]) : true;
+
+		// To generate makefile depenedencies
+		var makefileDeps =  (args.Length > 0 && args [0] == "deps");
 
 		var sln_gen = new SlnGenerator (slnVersion);
 		var two_sln_gen = new SlnGenerator (slnVersion);
@@ -1023,11 +1037,11 @@ public class Driver {
 		var projects = new Dictionary<string,MsbuildGenerator> ();
 
 		var duplicates = new List<string> ();
-		foreach (var project in GetProjects ()) {
+		foreach (var project in GetProjects (makefileDeps)) {
 			var library_output = project.Element ("library_output").Value;
 			projects [library_output] = new MsbuildGenerator (project);
 		}
-		foreach (var project in GetProjects ()){
+		foreach (var project in GetProjects (makefileDeps)){
 			var library_output = project.Element ("library_output").Value;
 			var gen = projects [library_output];
 			try {
@@ -1038,7 +1052,7 @@ public class Driver {
 				} else {
 					duplicates.Add (csprojFilename);
 				}
-
+				
 			} catch (Exception e) {
 				Console.WriteLine ("Error in {0}\n{1}", project, e);
 			}
@@ -1063,6 +1077,26 @@ public class Driver {
 		WriteSolution (three_five_sln_gen, MakeSolutionName (MsbuildGenerator.profile_3_5));
 		WriteSolution (four_sln_gen, MakeSolutionName (MsbuildGenerator.profile_4_0));
 		WriteSolution (four_five_sln_gen, MakeSolutionName (MsbuildGenerator.profile_4_5));
+
+		if (makefileDeps){
+			const string classDirPrefix = "./../../";
+			Console.WriteLine ("here {0}", sln_gen.libraries.Count);
+			foreach (var p in sln_gen.libraries){
+				string rebasedOutput = RebaseToClassDirectory (MsbuildGenerator.GetRelativePath ("../../mcs/class", p.library_output));
+				
+				Console.Write ("{0}: ", rebasedOutput);
+				foreach (var r in p.projReferences){
+					var lo = r.library_output;
+					if (lo.StartsWith (classDirPrefix))
+						lo = lo.Substring (classDirPrefix.Length);
+					else
+						lo = "<<ERROR-dependency is not a class library>>";
+					Console.Write ("{0} ", lo);
+				}
+				Console.Write ("\n\t(cd {0}; make {1})", p.MsbuildGenerator.dir, p.library_output);
+				Console.WriteLine ("\n");
+			}
+		}
 		
 		// A few other optional solutions
 		// Solutions with 'everything' and the most common libraries used in development may be of interest
@@ -1073,6 +1107,18 @@ public class Driver {
 		//WriteSolution (build_sln_gen, "mcs_build.sln");
 	}
 
+	// Rebases a path, assuming that execution is taking place in the "class" subdirectory,
+	// so it strips ../class/ from a path, which is a no-op
+	static string RebaseToClassDirectory (string path)
+	{
+		const string prefix = "../class/";
+		int p = path.IndexOf (prefix);
+		if (p == -1)
+			return path;
+		return path.Substring (0, p) + path.Substring (p+prefix.Length);
+		return path;
+	}
+	
 	static string MakeSolutionName (string profileTag)
 	{
 		return "net" + profileTag + ".sln";

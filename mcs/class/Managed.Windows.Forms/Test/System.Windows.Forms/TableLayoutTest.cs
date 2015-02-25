@@ -26,7 +26,6 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System;
 using System.Drawing;
 using System.IO;
@@ -1672,6 +1671,54 @@ namespace MonoTests.System.Windows.Forms
 				tlp.LayoutSettings = tls; // Should not throw an exception
 			}
 		}
+
+		[Test]
+		public void XamarinBug18638 ()
+		{
+			// Spanning items should not have their entire width assigned to the first column in the span.
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.SuspendLayout ();
+			tlp.Size = new Size(291, 100);
+			tlp.AutoSize = true;
+			tlp.ColumnStyles.Add (new ColumnStyle (SizeType.Absolute, 60));
+			tlp.ColumnStyles.Add (new ColumnStyle (SizeType.Percent, 100));
+			tlp.ColumnStyles.Add (new ColumnStyle (SizeType.Absolute, 45));
+			tlp.ColumnCount = 3;
+			tlp.RowStyles.Add (new RowStyle (SizeType.AutoSize));
+			var label1 = new Label {AutoSize = true, Text = @"This line spans all three columns in the table!"};
+			tlp.Controls.Add (label1, 0, 0);
+			tlp.SetColumnSpan (label1, 3);
+			tlp.RowStyles.Add (new RowStyle (SizeType.AutoSize));
+			tlp.RowCount = 1;
+			var label2 = new Label {AutoSize = true, Text = @"This line spans columns two and three."};
+			tlp.Controls.Add (label2, 1, 1);
+			tlp.SetColumnSpan (label2, 2);
+			tlp.RowCount = 2;
+			AddTableRow (tlp, "First Row", "This is a test");
+			AddTableRow (tlp, "Row 2", "This is another test");
+			tlp.ResumeLayout ();
+
+			var widths = tlp.GetColumnWidths ();
+			Assert.AreEqual (4, tlp.RowCount, "X18638-1");
+			Assert.AreEqual (3, tlp.ColumnCount, "X18638-2");
+			Assert.AreEqual (60, widths[0], "X18638-3");
+			Assert.Greater (label2.Width, widths[1], "X18638-5");
+			Assert.AreEqual (45, widths[2], "X18638-4");
+		}
+
+		private void AddTableRow(TableLayoutPanel tlp, string label, string text)
+		{
+			tlp.SuspendLayout ();
+			int row = tlp.RowCount;
+			tlp.RowStyles.Add (new RowStyle (SizeType.AutoSize));
+			var first = new Label {AutoSize = true, Dock = DockStyle.Fill, Text = label};
+			tlp.Controls.Add (first, 0, row);
+			var second = new TextBox {AutoSize = true, Text = text, Dock = DockStyle.Fill, Multiline = true};
+			tlp.Controls.Add (second, 1, row);
+			var third = new Button {Text = @"DEL", Dock = DockStyle.Fill};
+			tlp.Controls.Add (third, 2, row);
+			tlp.RowCount = row + 1;
+			tlp.ResumeLayout ();
+		}
 	}
 }
-#endif

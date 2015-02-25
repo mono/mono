@@ -33,14 +33,10 @@
 using System;
 using System.Data.SqlTypes;
 using System.Globalization;
-#if NET_2_0
 using System.IO;
-#endif
 using System.Threading;
 using System.Xml;
-#if NET_2_0
 using System.Xml.Serialization;
-#endif
 
 using NUnit.Framework;
 
@@ -699,7 +695,6 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual ("Test String", ((SqlString)TestString).Value, "#AD01");
 		}
 
-#if NET_2_0
 		[Test]
 		public void AddSqlString()
 		{
@@ -754,6 +749,5 @@ namespace MonoTests.System.Data.SqlTypes
 			ReadWriteXmlTestInternal (xml1, strtest1, "BA01");
 			ReadWriteXmlTestInternal (xml2, strtest2.ToString (), "BA02");
 		}
-#endif
 	}
 }

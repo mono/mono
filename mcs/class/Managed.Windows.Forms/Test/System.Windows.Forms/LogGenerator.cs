@@ -16,7 +16,6 @@ namespace Logger
 		{
 			Type type = null;
 			System.Text.StringBuilder code = new StringBuilder ();
-			bool is_2_0 = false;
 			
 			try {
 				//if (args.Length >= 1 && args [0].ToLower () == "all") {
@@ -39,20 +38,13 @@ namespace Logger
 				
 				Assembly a = typeof(System.Windows.Forms.Control).Assembly;
 				type = a.GetType (args [0]);
-				is_2_0 = a.FullName.IndexOf ("2.0") >= 0;
 				
 				if (type == null)
 					throw new Exception (String.Format("Type '{0}' not found.", args[0]));
 
 				code.Append ("// Automatically generated for assembly: " + a.FullName + Environment.NewLine);
 				code.Append ("// To regenerate:" + Environment.NewLine);
-				code.Append ("// " + (is_2_0 ? "gmcs" : "mcs") + " -r:System.Windows.Forms.dll LogGenerator.cs && mono LogGenerator.exe " + type.FullName + " " + args [1] + " " + (args.Length > 2 ? args [2] : " outfile.cs") + Environment.NewLine);
-
-				if (is_2_0) {
-					code.Append ("#if NET_2_0" + Environment.NewLine);
-				} else {
-					code.Append ("#if !NET_2_0" + Environment.NewLine);
-				}
+				code.Append ("// mcs -r:System.Windows.Forms.dll LogGenerator.cs && mono LogGenerator.exe " + type.FullName + " " + args [1] + " " + (args.Length > 2 ? args [2] : " outfile.cs") + Environment.NewLine);
 					
 				if (args[1] == "overrides" || args[1] == "overridesevents")
 				{
@@ -62,8 +54,6 @@ namespace Logger
 				{
 					code.Append (event_logger.GenerateLog (type));
 				}
-
-				code.Append ("#endif" + Environment.NewLine);
 
 				if (args.Length > 2) {
 					using (System.IO.StreamWriter writer = new System.IO.StreamWriter(args[2], false))
@@ -99,9 +89,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Runtime.Remoting;
-#if NET_2_0
-using System.Windows.Forms.Layout;
-#endif
 using System.Text;
 
 namespace MonoTests.System.Windows.Forms 

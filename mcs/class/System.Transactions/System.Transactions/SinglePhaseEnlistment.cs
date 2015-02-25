@@ -9,7 +9,6 @@
 // (C)2006 Novell Inc,
 //
 
-#if NET_2_0
 
 namespace System.Transactions
 {
@@ -63,4 +62,3 @@ namespace System.Transactions
 	}
 }
 
-#endif

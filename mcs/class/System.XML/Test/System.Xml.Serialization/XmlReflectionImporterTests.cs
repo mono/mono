@@ -18,9 +18,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 using NUnit.Framework;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 using MonoTests.System.Xml.TestClasses;
 
@@ -123,39 +121,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestIntTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map(typeof(int[]));
 			Assert.AreEqual ("ArrayOfInt", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfInt32", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("Int32[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("System.Int32[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (int[][]));
 			Assert.AreEqual ("ArrayOfArrayOfInt", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfInt32", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("Int32[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("System.Int32[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (int[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfInt", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfInt32", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("Int32[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("System.Int32[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -170,39 +154,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestStringTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (string[]));
 			Assert.AreEqual ("ArrayOfString", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfString", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("String[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("System.String[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (string[][]));
 			Assert.AreEqual ("ArrayOfArrayOfString", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfString", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("String[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("System.String[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (string[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfString", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfString", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("String[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("System.String[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -217,39 +187,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestObjectTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (object[]));
 			Assert.AreEqual ("ArrayOfAnyType", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfObject", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("Object[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("System.Object[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (object[][]));
 			Assert.AreEqual ("ArrayOfArrayOfAnyType", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfObject", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("Object[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("System.Object[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (object[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfAnyType", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfObject", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("Object[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("System.Object[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -264,9 +220,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestByteTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map(typeof(byte[]));
@@ -278,21 +232,13 @@ namespace MonoTests.System.XmlSerialization
 			tm = Map (typeof (byte[][]));
 			Assert.AreEqual ("ArrayOfBase64Binary", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfByte", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("Byte[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("System.Byte[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (byte[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfBase64Binary", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfByte", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("Byte[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("System.Byte[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -387,39 +333,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestDateTimeTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (DateTime[]));
 			Assert.AreEqual ("ArrayOfDateTime", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfDateTime", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("DateTime[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("System.DateTime[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (DateTime[][]));
 			Assert.AreEqual ("ArrayOfArrayOfDateTime", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfDateTime", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("DateTime[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("System.DateTime[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (DateTime[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfDateTime", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfDateTime", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("DateTime[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("System.DateTime[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -434,39 +366,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestGuidTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (Guid[]));
 			Assert.AreEqual ("ArrayOfGuid", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfGuid", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("Guid[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("System.Guid[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (Guid[][]));
 			Assert.AreEqual ("ArrayOfArrayOfGuid", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfGuid", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("Guid[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("System.Guid[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (Guid[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfGuid", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfGuid", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("Guid[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("System.Guid[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -512,39 +430,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestCharTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (char[]));
 			Assert.AreEqual ("ArrayOfChar", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfChar", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("Char[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("System.Char[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (char[][]));
 			Assert.AreEqual ("ArrayOfArrayOfChar", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfChar", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("Char[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("System.Char[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (char[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfChar", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfChar", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("Char[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("System.Char[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -697,39 +601,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestXmlSerializableTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (Employee[]));
 			Assert.AreEqual ("ArrayOfEmployee", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfEmployee", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("Employee[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.Employee[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (Employee[][]));
 			Assert.AreEqual ("ArrayOfArrayOfEmployee", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfEmployee", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("Employee[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.Employee[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (Employee[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfEmployee", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfEmployee", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("Employee[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.Employee[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -778,31 +668,19 @@ namespace MonoTests.System.XmlSerialization
 			XmlTypeMapping tm = Map (typeof (TimeSpan[]));
 			Assert.AreEqual ("ArrayOfTimeSpan", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfTimeSpan", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("TimeSpan[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("System.TimeSpan[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (TimeSpan[][]));
 			Assert.AreEqual ("ArrayOfArrayOfTimeSpan", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfTimeSpan", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("TimeSpan[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("System.TimeSpan[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (TimeSpan[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfTimeSpan", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfTimeSpan", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("TimeSpan[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("System.TimeSpan[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -817,39 +695,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestEnumTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (AttributeTargets[]));
 			Assert.AreEqual ("ArrayOfAttributeTargets", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfAttributeTargets", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("AttributeTargets[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("System.AttributeTargets[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (AttributeTargets[][]));
 			Assert.AreEqual ("ArrayOfArrayOfAttributeTargets", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfAttributeTargets", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("AttributeTargets[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("System.AttributeTargets[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (AttributeTargets[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfAttributeTargets", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfAttributeTargets", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("AttributeTargets[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("System.AttributeTargets[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -864,39 +728,25 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TestClassTypeMapping_Array ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClass[]));
 			Assert.AreEqual ("ArrayOfSimpleClass", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfSimpleClass", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("SimpleClass[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("MonoTests.System.Xml.TestClasses.SimpleClass[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (SimpleClass[][]));
 			Assert.AreEqual ("ArrayOfArrayOfSimpleClass", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfSimpleClass", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("SimpleClass[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("MonoTests.System.Xml.TestClasses.SimpleClass[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (SimpleClass[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfSimpleClass", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfSimpleClass", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("SimpleClass[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("MonoTests.System.Xml.TestClasses.SimpleClass[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -910,9 +760,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TypeMapping_IEnumerable_SimpleClass ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassEnumerable));
@@ -924,38 +772,24 @@ namespace MonoTests.System.XmlSerialization
 			tm = Map (typeof (SimpleClassEnumerable[]));
 			Assert.AreEqual ("ArrayOfArrayOfSimpleClass", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfSimpleClassEnumerable", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("SimpleClassEnumerable[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassEnumerable[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (SimpleClassEnumerable[][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfSimpleClass", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfSimpleClassEnumerable", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("SimpleClassEnumerable[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassEnumerable[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (SimpleClassEnumerable[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfArrayOfSimpleClass", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfSimpleClassEnumerable", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("SimpleClassEnumerable[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassEnumerable[][][]", tm.TypeFullName, "#C4");
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TypeMapping_IEnumerable_Object ()
 		{
 			XmlTypeMapping tm = Map (typeof (ObjectEnumerable));
@@ -967,31 +801,19 @@ namespace MonoTests.System.XmlSerialization
 			tm = Map (typeof (ObjectEnumerable[]));
 			Assert.AreEqual ("ArrayOfArrayOfAnyType", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfObjectEnumerable", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("ObjectEnumerable[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.ObjectEnumerable[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (ObjectEnumerable[][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfAnyType", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfObjectEnumerable", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("ObjectEnumerable[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.ObjectEnumerable[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (ObjectEnumerable[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfArrayOfAnyType", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfObjectEnumerable", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("ObjectEnumerable[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.ObjectEnumerable[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -1010,9 +832,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TypeMapping_IEnumerable_SimpleClass_PrivateCurrent ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassEnumerablePrivateCurrent));
@@ -1024,41 +844,24 @@ namespace MonoTests.System.XmlSerialization
 			tm = Map (typeof (SimpleClassEnumerablePrivateCurrent[]));
 			Assert.AreEqual ("ArrayOfArrayOfAnyType", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfSimpleClassEnumerablePrivateCurrent", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("SimpleClassEnumerablePrivateCurrent[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassEnumerablePrivateCurrent[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (SimpleClassEnumerablePrivateCurrent[][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfAnyType", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfSimpleClassEnumerablePrivateCurrent", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("SimpleClassEnumerablePrivateCurrent[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassEnumerablePrivateCurrent[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (SimpleClassEnumerablePrivateCurrent[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfArrayOfAnyType", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfSimpleClassEnumerablePrivateCurrent", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("SimpleClassEnumerablePrivateCurrent[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassEnumerablePrivateCurrent[][][]", tm.TypeFullName, "#C4");
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
-#if ONLY_1_1
-		[Category ("NotDotNet")] // results in NullReferenceException in .NET 1.1 (SP1)
-#endif
 		public void TypeMapping_IEnumerable_SimpleClass_PrivateGetEnumerator ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassEnumerablePrivateGetEnumerator));
@@ -1070,31 +873,19 @@ namespace MonoTests.System.XmlSerialization
 			tm = Map (typeof (SimpleClassEnumerablePrivateGetEnumerator[]));
 			Assert.AreEqual ("ArrayOfArrayOfAnyType", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfSimpleClassEnumerablePrivateGetEnumerator", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("SimpleClassEnumerablePrivateGetEnumerator[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassEnumerablePrivateGetEnumerator[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (SimpleClassEnumerablePrivateGetEnumerator[][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfAnyType", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfSimpleClassEnumerablePrivateGetEnumerator", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("SimpleClassEnumerablePrivateGetEnumerator[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassEnumerablePrivateGetEnumerator[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (SimpleClassEnumerablePrivateGetEnumerator[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfArrayOfAnyType", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfSimpleClassEnumerablePrivateGetEnumerator", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("SimpleClassEnumerablePrivateGetEnumerator[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassEnumerablePrivateGetEnumerator[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -1127,9 +918,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TypeMapping_ICollection_SimpleClass ()
 		{
 			XmlTypeMapping tm = Map (typeof (SimpleClassCollection));
@@ -1141,38 +930,24 @@ namespace MonoTests.System.XmlSerialization
 			tm = Map (typeof (SimpleClassCollection[]));
 			Assert.AreEqual ("ArrayOfArrayOfSimpleClass", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfSimpleClassCollection", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("SimpleClassCollection[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassCollection[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (SimpleClassCollection[][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfSimpleClass", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfSimpleClassCollection", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("SimpleClassCollection[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassCollection[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (SimpleClassCollection[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfArrayOfSimpleClass", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfSimpleClassCollection", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("SimpleClassCollection[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.SimpleClassCollection[][][]", tm.TypeFullName, "#C4");
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
-#endif
 		public void TypeMapping_ICollection_Object ()
 		{
 			XmlTypeMapping tm = Map (typeof (ObjectCollection));
@@ -1184,31 +959,19 @@ namespace MonoTests.System.XmlSerialization
 			tm = Map (typeof (ObjectCollection[]));
 			Assert.AreEqual ("ArrayOfArrayOfAnyType", tm.ElementName, "#A1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#A2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfObjectCollection", tm.TypeName, "#A3");
-#else
-			Assert.AreEqual ("ObjectCollection[]", tm.TypeName, "#A3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.ObjectCollection[]", tm.TypeFullName, "#A4");
 
 			tm = Map (typeof (ObjectCollection[][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfAnyType", tm.ElementName, "#B1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#B2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfObjectCollection", tm.TypeName, "#B3");
-#else
-			Assert.AreEqual ("ObjectCollection[][]", tm.TypeName, "#B3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.ObjectCollection[][]", tm.TypeFullName, "#B4");
 
 			tm = Map (typeof (ObjectCollection[][][]));
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfArrayOfAnyType", tm.ElementName, "#C1");
 			Assert.AreEqual (string.Empty, tm.Namespace, "#C2");
-#if NET_2_0
 			Assert.AreEqual ("ArrayOfArrayOfArrayOfObjectCollection", tm.TypeName, "#C3");
-#else
-			Assert.AreEqual ("ObjectCollection[][][]", tm.TypeName, "#C3");
-#endif
 			Assert.AreEqual ("MonoTests.System.XmlSerialization.XmlReflectionImporterTests.ObjectCollection[][][]", tm.TypeFullName, "#C4");
 		}
 
@@ -1501,11 +1264,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.IsNull (smm.Namespace, "#4");
 			Assert.AreEqual ("System.String", smm.TypeFullName, "#5");
 			Assert.AreEqual ("string", smm.TypeName, "#6");
-#if NET_2_0
 			Assert.AreEqual (XmlSchemaNamespace, smm.TypeNamespace, "#7");
-#else
-			Assert.IsNull (smm.TypeNamespace, "#7");
-#endif
 
 			rm = new XmlReflectionMember();
 			rm.IsReturnValue = false;
@@ -1545,7 +1304,6 @@ namespace MonoTests.System.XmlSerialization
 			new XmlSerializer (typeof (XmlArrayOnByteArrayType));
 		}
 
-#if NET_2_0
 
 		[Test]
 		public void ImportNullableInt ()
@@ -1657,7 +1415,6 @@ namespace MonoTests.System.XmlSerialization
 			//should have deserialized the relationship
 			Assert.AreEqual(1, bugTypeReload.Foo.Count);
 	       }
-#endif
 
 		public class Employee : IXmlSerializable
 		{
@@ -2132,7 +1889,6 @@ namespace MonoTests.System.XmlSerialization
 			public byte [] Args;
 		}
 
-#if NET_2_0
 		public class NullableContainer
 		{
 			[XmlElement (IsNullable = true)]
@@ -2276,7 +2032,6 @@ namespace MonoTests.System.XmlSerialization
 				return false;
 			}
 		}
-#endif
 
 		public class Bug594490Class
 		{

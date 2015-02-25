@@ -24,9 +24,7 @@ using System.ComponentModel.Design;
 using System.Web.UI.WebControls;
 
 namespace System.Web.UI.Design {
-#if NET_2_0
 	[Obsolete ("Use IControlDesignerTag and IControlDesignerView instead")]
-#endif
 	public interface IHtmlControlDesignerBehavior {
 		object GetAttribute (string attribute, bool ignoreCase);
 		object GetStyleAttribute (string attribute, bool designTimeOnly, bool ignoreCase);

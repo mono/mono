@@ -30,7 +30,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -334,41 +333,30 @@ namespace System.Web.SessionState
 
 		string Serialize (SessionStateItemCollection items)
 		{
-#if NET_4_0
 			GZipStream gzip = null;
-#endif
 			Stream output;
 			MemoryStream ms = null;
 			BinaryWriter writer = null;
 			
 			try {
 				ms = new MemoryStream ();
-#if NET_4_0
 				if (sessionConfig.CompressionEnabled)
 					output = gzip = new GZipStream (ms, CompressionMode.Compress, true);
 				else
-#endif
 					output = ms;
 				writer = new BinaryWriter (output);
 
 				if (items != null)
 					items.Serialize (writer);
-#if NET_4_0
 				if (gzip != null)
 					gzip.Close ();
-#endif
 				writer.Close ();
 				return Convert.ToBase64String (ms.ToArray ());
 			} finally {
-#if NET_4_0
 				if (writer != null)
 					writer.Dispose ();
 				if (gzip != null)
 					gzip.Dispose ();
-#else
-				if (writer != null)
-					((IDisposable)writer).Dispose ();
-#endif
 				if (ms != null)
 					ms.Dispose ();
 			}
@@ -379,41 +367,30 @@ namespace System.Web.SessionState
 			MemoryStream ms = null;
 			Stream input;
 			BinaryReader reader = null;
-#if NET_4_0
 			GZipStream gzip = null;
-#endif
 			try {
 				ms = new MemoryStream (Convert.FromBase64String (serializedItems));
 				var sessionItems = new SessionStateItemCollection ();
 
 				if (ms.Length > 0) {
-#if NET_4_0
 					if (sessionConfig.CompressionEnabled)
 						input = gzip = new GZipStream (ms, CompressionMode.Decompress, true);
 					else
-#endif
 						input = ms;
 					
 					reader = new BinaryReader (input);
 					sessionItems = SessionStateItemCollection.Deserialize (reader);
-#if NET_4_0
 					if (gzip != null)
 						gzip.Close ();
-#endif
 					reader.Close ();
 				}
 
 				return new SessionStateStoreData (sessionItems, SessionStateUtility.GetSessionStaticObjects (context), timeout);
 			} finally {
-#if NET_4_0
 				if (reader != null)
 					reader.Dispose ();
 				if (gzip != null)
 					gzip.Dispose ();
-#else
-				if (reader != null)
-					((IDisposable)reader).Dispose ();
-#endif
 				if (ms != null)
 					ms.Dispose ();
 			}
@@ -578,4 +555,3 @@ namespace System.Web.SessionState
 		
 	}
 }
-#endif

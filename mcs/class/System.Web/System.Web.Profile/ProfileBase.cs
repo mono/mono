@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.Configuration;
 using System.Configuration.Provider;
@@ -47,22 +46,7 @@ namespace System.Web.Profile
 		SettingsPropertyValueCollection _propertiyValues = null;
 		const string Profiles_SettingsPropertyCollection = "Profiles.SettingsPropertyCollection";
 
-#if TARGET_J2EE
-		static SettingsPropertyCollection _properties
-		{
-			get
-			{
-				object o = AppDomain.CurrentDomain.GetData (Profiles_SettingsPropertyCollection);
-				return (SettingsPropertyCollection) o;
-			}
-			set
-			{
-				AppDomain.CurrentDomain.SetData (Profiles_SettingsPropertyCollection, value);
-			}
-		}
-#else
 		static SettingsPropertyCollection _properties = null;
-#endif
 
 		static void InitProperties ()
 		{
@@ -381,4 +365,3 @@ namespace System.Web.Profile
 
 }
 
-#endif

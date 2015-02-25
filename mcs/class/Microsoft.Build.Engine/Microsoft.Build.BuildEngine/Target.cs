@@ -77,7 +77,6 @@ namespace Microsoft.Build.BuildEngine {
 					} else if (onErrorFound)
 						throw new InvalidProjectFileException (
 							"The element <OnError> must be last under element <Target>. Found element <Error> instead.");
-#if NET_3_5
 					else if (xe.Name == "ItemGroup") {
 						var group = new BuildTaskItemGroup (xe, this);
 						buildTasks.AddRange (group.Items);
@@ -86,7 +85,6 @@ namespace Microsoft.Build.BuildEngine {
 						buildTasks.Add (new BuildTaskPropertyGroup (xe, this));
 						continue;
 					}
-#endif
 					else
 						buildTasks.Add (new BuildTask (xe, this));
 				}
@@ -176,14 +174,10 @@ namespace Microsoft.Build.BuildEngine {
 			try {
 				buildState = BuildState.Started;
 
-#if NET_4_0
 				result = BuildDependencies (out executeOnErrors) &&
 						BuildBeforeThisTargets (out executeOnErrors) &&
 						DoBuild (out executeOnErrors) && // deps & Before targets built fine, do main build
 						BuildAfterThisTargets (out executeOnErrors);
-#else
-				result = BuildDependencies (out executeOnErrors) && DoBuild (out executeOnErrors);
-#endif
 
 				buildState = BuildState.Finished;
 			} catch (Exception e) {
@@ -224,7 +218,6 @@ namespace Microsoft.Build.BuildEngine {
 			return result;
 		}
 
-#if NET_4_0
 		bool BuildBeforeThisTargets (out bool executeOnErrors)
 		{
 			executeOnErrors = false;
@@ -246,7 +239,6 @@ namespace Microsoft.Build.BuildEngine {
 
 			return result;
 		}
-#endif
 
 		bool BuildOtherTargets (IEnumerable<string> targetNames, Action<string> missing_target, out bool executeOnErrors)
 		{
@@ -379,7 +371,6 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-#if NET_4_0
 		internal string BeforeTargets {
 			get { return targetElement.GetAttribute ("BeforeTargets"); }
 		}
@@ -390,7 +381,6 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal List<string> BeforeThisTargets { get; set; }
 		internal List<string> AfterThisTargets { get; set; }
-#endif
 
 		internal List<IBuildTask> BuildTasks {
 			get { return buildTasks; }

@@ -40,9 +40,7 @@ namespace Mono.Security.Protocol.Tls
 		Ssl2	= 12,
 		Ssl3	= 48,
 		Tls		= 192,
-#if NET_4_5
 		Tls11	= 768,
 		Tls12	= 3072,
-#endif
 	}
 }

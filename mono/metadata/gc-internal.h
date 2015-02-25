@@ -16,11 +16,11 @@
 #include <mono/utils/gc_wrapper.h>
 
 typedef struct {
-	int minor_gc_count;
-	int major_gc_count;
-	long long minor_gc_time;
-	long long major_gc_time;
-	long long major_gc_time_concurrent;
+	guint minor_gc_count;
+	guint major_gc_count;
+	guint64 minor_gc_time;
+	guint64 major_gc_time;
+	guint64 major_gc_time_concurrent;
 } GCStats;
 
 #define mono_domain_finalizers_lock(domain) mono_mutex_lock (&(domain)->finalizable_objects_hash_lock);
@@ -220,7 +220,8 @@ typedef struct {
 	int alloc_type;
 } AllocatorWrapperInfo;
 
-MonoMethod* mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box) MONO_INTERNAL;
+int mono_gc_get_aligned_size_for_allocator (int size) MONO_INTERNAL;
+MonoMethod* mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size) MONO_INTERNAL;
 MonoMethod* mono_gc_get_managed_array_allocator (MonoClass *klass) MONO_INTERNAL;
 MonoMethod *mono_gc_get_managed_allocator_by_type (int atype) MONO_INTERNAL;
 
@@ -369,7 +370,7 @@ typedef struct {
 	void (*object_queued_for_finalization) (MonoObject *object);
 } MonoGCFinalizerCallbacks;
 
-void mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks);
+MONO_API void mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks);
 
 
 #ifdef HOST_WIN32

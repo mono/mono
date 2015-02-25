@@ -51,7 +51,6 @@
 
 #define ALIGN_UP		SGEN_ALIGN_UP
 #define ALLOC_ALIGN		SGEN_ALLOC_ALIGN
-#define ALLOC_ALIGN_BITS	SGEN_ALLOC_ALIGN_BITS
 #define MAX_SMALL_OBJ_SIZE	SGEN_MAX_SMALL_OBJ_SIZE
 #define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
@@ -68,9 +67,9 @@ enum {
 static gboolean use_managed_allocator = TRUE;
 
 #ifdef HEAVY_STATISTICS
-static long long stat_objects_alloced = 0;
-static long long stat_bytes_alloced = 0;
-static long long stat_bytes_alloced_los = 0;
+static guint64 stat_objects_alloced = 0;
+static guint64 stat_bytes_alloced = 0;
+static guint64 stat_bytes_alloced_los = 0;
 
 #endif
 
@@ -94,7 +93,7 @@ static __thread char *tlab_next;
 static __thread char *tlab_temp_end;
 static __thread char *tlab_real_end;
 /* Used by the managed allocator/wbarrier */
-static __thread char **tlab_next_addr;
+static __thread char **tlab_next_addr MONO_ATTR_USED;
 #endif
 
 #ifdef HAVE_KW_THREAD
@@ -188,8 +187,8 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 	/* FIXME: handle OOM */
 	void **p;
 	char *new_next;
-	TLAB_ACCESS_INIT;
 	size_t real_size = size;
+	TLAB_ACCESS_INIT;
 	
 	CANARIFY_SIZE(size);
 
@@ -291,20 +290,31 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 			available_in_tlab = (int)(TLAB_REAL_END - TLAB_NEXT);//We'll never have tlabs > 2Gb
 			if (size > tlab_size || available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
 				/* Allocate directly from the nursery */
-				do {
-					p = sgen_nursery_alloc (size);
-					if (!p) {
-						sgen_ensure_free_space (real_size);
-						if (degraded_mode)
-							return alloc_degraded (vtable, size, FALSE);
-						else
-							p = sgen_nursery_alloc (size);
-					}
-				} while (!p);
+				p = sgen_nursery_alloc (size);
 				if (!p) {
-					// no space left
-					g_assert (0);
+					/*
+					 * We couldn't allocate from the nursery, so we try
+					 * collecting.  Even after the collection, we might
+					 * still not have enough memory to allocate the
+					 * object.  The reason will most likely be that we've
+					 * run out of memory, but there is the theoretical
+					 * possibility that other threads might have consumed
+					 * the freed up memory ahead of us.
+					 *
+					 * What we do in this case is allocate degraded, i.e.,
+					 * from the major heap.
+					 *
+					 * Ideally we'd like to detect the case of other
+					 * threads allocating ahead of us and loop (if we
+					 * always loop we will loop endlessly in the case of
+					 * OOM).
+					 */
+					sgen_ensure_free_space (real_size);
+					if (!degraded_mode)
+						p = sgen_nursery_alloc (size);
 				}
+				if (!p)
+					return alloc_degraded (vtable, size, FALSE);
 
 				zero_tlab_if_necessary (p, size);
 			} else {
@@ -313,21 +323,15 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 					SGEN_LOG (3, "Retire TLAB: %p-%p [%ld]", TLAB_START, TLAB_REAL_END, (long)(TLAB_REAL_END - TLAB_NEXT - size));
 				sgen_nursery_retire_region (p, available_in_tlab);
 
-				do {
-					p = sgen_nursery_alloc_range (tlab_size, size, &alloc_size);
-					if (!p) {
-						sgen_ensure_free_space (tlab_size);
-						if (degraded_mode)
-							return alloc_degraded (vtable, size, FALSE);
-						else
-							p = sgen_nursery_alloc_range (tlab_size, size, &alloc_size);
-					}
-				} while (!p);
-					
+				p = sgen_nursery_alloc_range (tlab_size, size, &alloc_size);
 				if (!p) {
-					// no space left
-					g_assert (0);
+					/* See comment above in similar case. */
+					sgen_ensure_free_space (tlab_size);
+					if (!degraded_mode)
+						p = sgen_nursery_alloc_range (tlab_size, size, &alloc_size);
 				}
+				if (!p)
+					return alloc_degraded (vtable, size, FALSE);
 
 				/* Allocate a new TLAB from the current nursery fragment */
 				TLAB_START = (char*)p;
@@ -374,8 +378,8 @@ mono_gc_try_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 {
 	void **p;
 	char *new_next;
-	TLAB_ACCESS_INIT;
 	size_t real_size = size;
+	TLAB_ACCESS_INIT;
 
 	CANARIFY_SIZE(size);
 
@@ -520,7 +524,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 		/*This doesn't require fencing since EXIT_CRITICAL_REGION already does it for us*/
 		arr->max_length = (mono_array_size_t)max_length;
 		EXIT_CRITICAL_REGION;
-		return arr;
+		goto done;
 	}
 	EXIT_CRITICAL_REGION;
 #endif
@@ -535,8 +539,11 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 
 	arr->max_length = (mono_array_size_t)max_length;
 
+
 	UNLOCK_GC;
 
+ done:
+	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_par_object_get_size (vtable, (MonoObject*)arr)), "Vector has incorrect size.");
 	return arr;
 }
 
@@ -560,7 +567,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 		bounds = (MonoArrayBounds*)((char*)arr + size - bounds_size);
 		arr->bounds = bounds;
 		EXIT_CRITICAL_REGION;
-		return arr;
+		goto done;
 	}
 	EXIT_CRITICAL_REGION;
 #endif
@@ -580,6 +587,8 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 
 	UNLOCK_GC;
 
+ done:
+	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_par_object_get_size (vtable, (MonoObject*)arr)), "Array has incorrect size.");
 	return arr;
 }
 
@@ -774,7 +783,7 @@ create_allocator (int atype)
 	}
 
 	if (atype == ATYPE_SMALL) {
-		num_params = 1;
+		num_params = 2;
 		name = "AllocSmall";
 	} else if (atype == ATYPE_NORMAL) {
 		num_params = 1;
@@ -804,7 +813,11 @@ create_allocator (int atype)
 
 #ifndef DISABLE_JIT
 	size_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-	if (atype == ATYPE_NORMAL || atype == ATYPE_SMALL) {
+	if (atype == ATYPE_SMALL) {
+		/* size_var = size_arg */
+		mono_mb_emit_ldarg (mb, 1);
+		mono_mb_emit_stloc (mb, size_var);
+	} else if (atype == ATYPE_NORMAL) {
 		/* size = vtable->klass->instance_size; */
 		mono_mb_emit_ldarg (mb, 0);
 		mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoVTable, klass));
@@ -927,14 +940,16 @@ create_allocator (int atype)
 		g_assert_not_reached ();
 	}
 
-	/* size += ALLOC_ALIGN - 1; */
-	mono_mb_emit_ldloc (mb, size_var);
-	mono_mb_emit_icon (mb, ALLOC_ALIGN - 1);
-	mono_mb_emit_byte (mb, CEE_ADD);
-	/* size &= ~(ALLOC_ALIGN - 1); */
-	mono_mb_emit_icon (mb, ~(ALLOC_ALIGN - 1));
-	mono_mb_emit_byte (mb, CEE_AND);
-	mono_mb_emit_stloc (mb, size_var);
+	if (atype != ATYPE_SMALL) {
+		/* size += ALLOC_ALIGN - 1; */
+		mono_mb_emit_ldloc (mb, size_var);
+		mono_mb_emit_icon (mb, ALLOC_ALIGN - 1);
+		mono_mb_emit_byte (mb, CEE_ADD);
+		/* size &= ~(ALLOC_ALIGN - 1); */
+		mono_mb_emit_icon (mb, ~(ALLOC_ALIGN - 1));
+		mono_mb_emit_byte (mb, CEE_AND);
+		mono_mb_emit_stloc (mb, size_var);
+	}
 
 	/* if (size > MAX_SMALL_OBJ_SIZE) goto slowpath */
 	if (atype != ATYPE_SMALL) {
@@ -1006,8 +1021,9 @@ create_allocator (int atype)
 	mono_mb_emit_byte (mb, CEE_STIND_I);
 
 	/*The tlab store must be visible before the the vtable store. This could be replaced with a DDS but doing it with IL would be tricky. */
-	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_MEMORY_BARRIER, (gpointer)StoreStoreBarrier);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_MEMORY_BARRIER);
+	mono_mb_emit_i4 (mb, MONO_MEMORY_BARRIER_REL);
 
 	/* *p = vtable; */
 	mono_mb_emit_ldloc (mb, p_var);
@@ -1045,8 +1061,9 @@ create_allocator (int atype)
 	/*
 	We must make sure both vtable and max_length are globaly visible before returning to managed land.
 	*/
-	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_MEMORY_BARRIER, (gpointer)StoreStoreBarrier);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_MEMORY_BARRIER);
+	mono_mb_emit_i4 (mb, MONO_MEMORY_BARRIER_REL);
 
 	/* return p */
 	mono_mb_emit_ldloc (mb, p_var);
@@ -1066,13 +1083,22 @@ create_allocator (int atype)
 }
 #endif
 
+int
+mono_gc_get_aligned_size_for_allocator (int size)
+{
+	int aligned_size = size;
+	aligned_size += ALLOC_ALIGN - 1;
+	aligned_size &= ~(ALLOC_ALIGN - 1);
+	return aligned_size;
+}
+
 /*
  * Generate an allocator method implementing the fast path of mono_gc_alloc_obj ().
  * The signature of the called method is:
  * 	object allocate (MonoVTable *vtable)
  */
 MonoMethod*
-mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box)
+mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size)
 {
 #ifdef MANAGED_ALLOCATION
 
@@ -1091,6 +1117,8 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box)
 		return NULL;
 	if (klass->instance_size > tlab_size)
 		return NULL;
+	if (known_instance_size && ALIGN_TO (klass->instance_size, ALLOC_ALIGN) >= MAX_SMALL_OBJ_SIZE)
+		return NULL;
 
 	if (klass->has_finalize || mono_class_is_marshalbyref (klass) || (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
 		return NULL;
@@ -1099,7 +1127,7 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box)
 	if (klass->byval_arg.type == MONO_TYPE_STRING)
 		return mono_gc_get_managed_allocator_by_type (ATYPE_STRING);
 	/* Generic classes have dynamic field and can go above MAX_SMALL_OBJ_SIZE. */
-	if (ALIGN_TO (klass->instance_size, ALLOC_ALIGN) < MAX_SMALL_OBJ_SIZE && !mono_class_is_open_constructed_type (&klass->byval_arg))
+	if (known_instance_size)
 		return mono_gc_get_managed_allocator_by_type (ATYPE_SMALL);
 	else
 		return mono_gc_get_managed_allocator_by_type (ATYPE_NORMAL);
@@ -1209,9 +1237,9 @@ sgen_has_managed_allocator (void)
 void
 sgen_alloc_init_heavy_stats (void)
 {
-	mono_counters_register ("# objects allocated", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_objects_alloced);	
-	mono_counters_register ("bytes allocated", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_bytes_alloced);
-	mono_counters_register ("bytes allocated in LOS", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_bytes_alloced_los);
+	mono_counters_register ("# objects allocated", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_objects_alloced);	
+	mono_counters_register ("bytes allocated", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_bytes_alloced);
+	mono_counters_register ("bytes allocated in LOS", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_bytes_alloced_los);
 }
 #endif
 

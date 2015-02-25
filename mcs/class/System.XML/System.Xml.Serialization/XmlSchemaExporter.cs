@@ -69,24 +69,18 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoNotSupported("")]
 		public string ExportAnyType (XmlMembersMapping members)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
 		{
 			ExportMembersMapping (xmlMembersMapping, true);
 		}
 
-#if NET_2_0
 		public
-#else
-		internal 
-#endif
 		void ExportMembersMapping (XmlMembersMapping xmlMembersMapping, bool exportEnclosingType)
 		{
 			ClassMap cmap = (ClassMap) xmlMembersMapping.ObjectMap;
@@ -609,7 +603,6 @@ namespace System.Xml.Serialization {
 
 		void SetSchemaXmlSerializableType (XmlSerializableMapping map, XmlSchemaElement elem)
 		{
-#if NET_2_0
 			if (map.SchemaType != null && map.Schema != null) {
 				elem.SchemaType = map.SchemaType;
 				return;
@@ -620,7 +613,6 @@ namespace System.Xml.Serialization {
 				elem.Name = map.SchemaTypeName.Name;
 				return;
 			}
-#endif
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
 			XmlSchemaSequence seq = new XmlSchemaSequence ();
 			if (map.Schema == null) {

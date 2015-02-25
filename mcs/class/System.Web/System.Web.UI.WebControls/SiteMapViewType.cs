@@ -25,7 +25,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.UI.WebControls
 {
         enum SiteMapViewType
@@ -36,4 +35,3 @@ namespace System.Web.UI.WebControls
 		Tree = 3				
         }
 }
-#endif

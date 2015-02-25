@@ -26,7 +26,6 @@
 //	Gert Driesen (drieseng@users.sourceforge.net)
 //
 
-#if NET_2_0
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -484,4 +483,3 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 }
-#endif

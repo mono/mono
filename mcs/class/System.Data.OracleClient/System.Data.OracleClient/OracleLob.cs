@@ -234,24 +234,8 @@ namespace System.Data.OracleClient
 			throw new NotImplementedException ();
 		}
 
-#if !NET_2_0
-		[MonoTODO]
-		public override void Close ()
-		{
-			Dispose (true);
-		}
 
-		[MonoTODO]
-		public void Dispose ()
-		{
-			this.Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-#endif
-
-#if NET_2_0
 		protected override
-#endif
 		void Dispose (bool disposing)
 		{
 			if (disposing) {

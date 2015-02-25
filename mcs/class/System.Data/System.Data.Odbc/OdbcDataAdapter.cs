@@ -47,9 +47,6 @@ namespace System.Data.Odbc
 	{
 		#region Fields
 
-#if ONLY_1_1
-		bool disposed;
-#endif
 		OdbcCommand deleteCommand;
 		OdbcCommand insertCommand;
 		OdbcCommand selectCommand;
@@ -153,19 +150,6 @@ namespace System.Data.Odbc
 			return new OdbcRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
-#if ONLY_1_1
-		protected override void Dispose (bool disposing)
-		{
-			if (!disposed) {
-				if (disposing) {
-					// Release managed resources
-				}
-				// Release unmanaged resources
-				disposed = true;
-			}
-			base.Dispose (true);
-		}
-#endif
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value)
 		{

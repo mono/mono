@@ -41,7 +41,6 @@ namespace MonoTests.System.Diagnostics
 	[TestFixture]
 	public class DelimitedListTraceListenerTest
 	{
-#if NET_2_0
 		string sample1 = "sample\n";
 
 		string sample2 = ";Error;4;;;;;;;;\n";
@@ -134,7 +133,6 @@ namespace MonoTests.System.Diagnostics
 			x.Close ();
 			Assert.AreEqual (sample7, sw.ToString ().Replace ("\r\n", "\n"));
 		}
-#endif
 	}
 }
 

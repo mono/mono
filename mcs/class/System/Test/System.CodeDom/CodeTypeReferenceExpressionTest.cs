@@ -37,7 +37,6 @@ namespace MonoTests.System.CodeDom
 	[TestFixture]
 	public class CodeTypeReferenceExpressionTest
 	{
-#if NET_2_0
 		[Test]
 		public void Constructor0 ()
 		{
@@ -45,7 +44,6 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (ctre.Type, "#1");
 			Assert.AreEqual (typeof (void).FullName, ctre.Type.BaseType, "#2");
 		}
-#endif
 
 		[Test]
 		public void Constructor1 ()
@@ -95,11 +93,7 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Constructor3_NullType ()
 		{
 			CodeTypeReferenceExpression ctre = new CodeTypeReferenceExpression ((Type) null);

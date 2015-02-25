@@ -37,9 +37,6 @@ namespace System.Data
 	/// <summary>
 	/// Specifies how to read XML data and a relational schema into a DataSet.
 	/// </summary>
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum XmlReadMode
 	{
 		Auto = 0,
@@ -47,9 +44,7 @@ namespace System.Data
 		IgnoreSchema = 2,
 		InferSchema = 3,
 		DiffGram = 4,
-#if NET_2_0
 		InferTypedSchema=6,
-#endif
 		Fragment =5
 	}
 }

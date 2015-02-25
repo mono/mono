@@ -34,9 +34,7 @@ using System.Globalization;
 namespace System.Xml.Serialization {
 	public class CodeIdentifier {
 
-#if NET_2_0
 		[Obsolete ("Design mistake. It only contains static methods.")]
-#endif
 		public
 		CodeIdentifier ()
 		{

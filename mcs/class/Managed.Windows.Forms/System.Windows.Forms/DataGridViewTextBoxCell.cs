@@ -33,13 +33,14 @@ namespace System.Windows.Forms {
 	public class DataGridViewTextBoxCell : DataGridViewCell {
 
 		private int maxInputLength = 32767;
-		private static DataGridViewTextBoxEditingControl editingControl;
+		private DataGridViewTextBoxEditingControl editingControl;
 
-		static DataGridViewTextBoxCell ()
+		void CreateEditingControl ()
 		{
-			editingControl = new DataGridViewTextBoxEditingControl();
-			editingControl.Multiline = false;
-			editingControl.BorderStyle = BorderStyle.None;
+			editingControl = new DataGridViewTextBoxEditingControl() {
+				Multiline = false,
+				BorderStyle = BorderStyle.None
+			};
 		}
 
 		public DataGridViewTextBoxCell ()
@@ -88,9 +89,12 @@ namespace System.Windows.Forms {
 			if (DataGridView == null) {
 				throw new InvalidOperationException("There is no associated DataGridView.");
 			}
-			
+
+			if (editingControl == null)
+				CreateEditingControl ();
+
 			DataGridView.EditingControlInternal = editingControl;
-			
+
 			editingControl.EditingControlDataGridView = DataGridView;
 			editingControl.MaxLength = maxInputLength;
 			
@@ -125,6 +129,9 @@ namespace System.Windows.Forms {
 
 		public override void PositionEditingControl (bool setLocation, bool setSize, Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow)
 		{
+			if (editingControl == null)
+				CreateEditingControl ();
+
 			cellBounds.Size = new Size (cellBounds.Width - 5, cellBounds.Height + 2);
 			cellBounds.Location = new Point (cellBounds.X + 3, ((cellBounds.Height - editingControl.Height) / 2) + cellBounds.Y - 1);
 

@@ -51,29 +51,17 @@ namespace Microsoft.Build.Execution
 			get { return condition; }
 		}
 
-		#if NET_4_5
 		public
-		#else
-		internal
-		#endif
 		override ElementLocation ConditionLocation {
 			get { return condition_location; }
 		}
 
-		#if NET_4_5
 		public
-		#else
-		internal
-		#endif
 		override ElementLocation Location {
 			get { return location; }
 		}
 
-		#if NET_4_5
 		public
-		#else
-		internal
-		#endif
 		ElementLocation ExecuteTargetsLocation { get; private set; }
 		
 		public ICollection<ProjectPropertyGroupTaskPropertyInstance> Properties { get; private set; }

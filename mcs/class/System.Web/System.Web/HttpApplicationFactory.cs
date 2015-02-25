@@ -38,11 +38,7 @@ using System.Threading;
 using System.Web.Util;
 
 using System.Web.Compilation;
-#if TARGET_J2EE
-using vmw.common;
-#else
 using System.CodeDom.Compiler;
-#endif
 
 namespace System.Web
 {
@@ -51,27 +47,7 @@ namespace System.Web
 		object this_lock = new object ();
 		
 		// Initialized in InitType
-#if TARGET_J2EE
-		static HttpApplicationFactory theFactory {
-			get
-			{
-				HttpApplicationFactory factory = (HttpApplicationFactory)AppDomain.CurrentDomain.GetData("HttpApplicationFactory");
-				if (factory == null) {
-					lock(typeof(HttpApplicationFactory)) {
-						factory = (HttpApplicationFactory)AppDomain.CurrentDomain.GetData("HttpApplicationFactory");
-						if (factory == null) {
-							factory = new HttpApplicationFactory();
-							System.Threading.Thread.Sleep(1);
-							AppDomain.CurrentDomain.SetData("HttpApplicationFactory", factory);
-						}
-					}
-				}
-				return factory;
-			}
-		}
-#else
 		static HttpApplicationFactory theFactory = new HttpApplicationFactory();
-#endif
 		object session_end; // This is a MethodInfo
 		bool needs_init = true;
 		bool app_start_needed = true;
@@ -362,14 +338,6 @@ namespace System.Web
 		}
 		
 		internal static HttpApplicationState ApplicationState {
-#if TARGET_J2EE
-			get {
-				HttpApplicationFactory factory = theFactory;
-				if (factory.app_state == null)
-					factory.app_state = new HttpApplicationState (null, null);
-				return factory.app_state;
-			}
-#else
 			get {
 				if (theFactory.app_state == null) {
 					HttpStaticObjectsCollection app = MakeStaticCollection (GlobalAsaxCompiler.ApplicationObjects);
@@ -379,7 +347,6 @@ namespace System.Web
 				}
 				return theFactory.app_state;
 			}
-#endif
 		}
 
 		internal static Type AppType {
@@ -404,11 +371,8 @@ namespace System.Web
 						if (!File.Exists (app_file))
 							app_file = null;
 					}
-#if NET_4_0
 					BuildManager.CallPreStartMethods ();
 					BuildManager.CompilingTopLevelAssemblies = true;
-#endif
-#if !TARGET_J2EE
 					AppResourcesCompiler ac = new AppResourcesCompiler (context);
 					ac.Compile ();
 
@@ -447,18 +411,10 @@ namespace System.Web
 					if (Directory.Exists (app_browsers_path)) {
 						app_browsers_files = Directory.GetFiles (app_browsers_path, "*.browser");
 					}
-#endif
-#if NET_4_0
 					BuildManager.CompilingTopLevelAssemblies = false;
-#endif
 					app_type = BuildManager.GetPrecompiledApplicationType ();
 					if (app_type == null && app_file != null) {
-#if TARGET_J2EE
-						app_file = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute("~/" + Path.GetFileName(app_file));
-						app_type = System.Web.J2EE.PageMapper.GetObjectType(context, app_file);
-#else
 						app_type = BuildManager.GetCompiledType ("~/" + Path.GetFileName (app_file));
-#endif
 						if (app_type == null) {
 							string msg = String.Format ("Error compiling application file ({0}).", app_file);
 							throw new ApplicationException (msg);
@@ -507,10 +463,6 @@ namespace System.Web
 		//
 		internal static HttpApplication GetApplication (HttpContext context)
 		{
-#if TARGET_J2EE
-			if (context.ApplicationInstance!=null)
-				return context.ApplicationInstance;
-#endif
 			HttpApplicationFactory factory = theFactory;
 			HttpApplication app = null;
 			if (factory.app_start_needed){

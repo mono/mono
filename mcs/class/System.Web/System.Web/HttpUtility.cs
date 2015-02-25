@@ -77,22 +77,13 @@ namespace System.Web {
 		public static void HtmlAttributeEncode (string s, TextWriter output) 
 		{
 			if (output == null) {
-#if NET_4_0
 				throw new ArgumentNullException ("output");
-#else
-				throw new NullReferenceException (".NET emulation");
-#endif
 			}
-#if NET_4_0
 			HttpEncoder.Current.HtmlAttributeEncode (s, output);
-#else
-			output.Write (HttpEncoder.HtmlAttributeEncode (s));
-#endif
 		}
 	
 		public static string HtmlAttributeEncode (string s) 
 		{
-#if NET_4_0
 			if (s == null)
 				return null;
 			
@@ -100,9 +91,6 @@ namespace System.Web {
 				HttpEncoder.Current.HtmlAttributeEncode (s, sw);
 				return sw.ToString ();
 			}
-#else
-			return HttpEncoder.HtmlAttributeEncode (s);
-#endif
 		}
 	
 		public static string UrlDecode (string str) 
@@ -434,11 +422,7 @@ namespace System.Web {
 		{
 			if (bytes == null)
 				return null;
-#if NET_4_0
 			return HttpEncoder.Current.UrlEncode (bytes, offset, count);
-#else
-			return HttpEncoder.UrlEncodeToBytes (bytes, offset, count);
-#endif
 		}
 
 		public static string UrlEncodeUnicode (string str)
@@ -471,7 +455,6 @@ namespace System.Web {
 		/// <returns>The decoded text.</returns>
 		public static string HtmlDecode (string s) 
 		{
-#if NET_4_0
 			if (s == null)
 				return null;
 			
@@ -479,9 +462,6 @@ namespace System.Web {
 				HttpEncoder.Current.HtmlDecode (s, sw);
 				return sw.ToString ();
 			}
-#else
-			return HttpEncoder.HtmlDecode (s);
-#endif
 		}
 	
 		/// <summary>
@@ -492,25 +472,16 @@ namespace System.Web {
 		public static void HtmlDecode(string s, TextWriter output) 
 		{
 			if (output == null) {
-#if NET_4_0
 				throw new ArgumentNullException ("output");
-#else
-				throw new NullReferenceException (".NET emulation");
-#endif
 			}
 				
 			if (!String.IsNullOrEmpty (s)) {
-#if NET_4_0
 				HttpEncoder.Current.HtmlDecode (s, output);
-#else
-				output.Write (HttpEncoder.HtmlDecode (s));
-#endif
 			}
 		}
 
 		public static string HtmlEncode (string s)
 		{
-#if NET_4_0
 			if (s == null)
 				return null;
 			
@@ -518,9 +489,6 @@ namespace System.Web {
 				HttpEncoder.Current.HtmlEncode (s, sw);
 				return sw.ToString ();
 			}
-#else
-			return HttpEncoder.HtmlEncode (s);
-#endif
 		}
 		
 		/// <summary>
@@ -531,22 +499,13 @@ namespace System.Web {
 		public static void HtmlEncode(string s, TextWriter output) 
 		{
 			if (output == null) {
-#if NET_4_0
 				throw new ArgumentNullException ("output");
-#else
-				throw new NullReferenceException (".NET emulation");
-#endif
 			}
 				
 			if (!String.IsNullOrEmpty (s)) {
-#if NET_4_0
 				HttpEncoder.Current.HtmlEncode (s, output);
-#else
-				output.Write (HttpEncoder.HtmlEncode (s));
-#endif
 			}
 		}
-#if NET_4_0
 		public static string HtmlEncode (object value)
 		{
 			if (value == null)
@@ -634,14 +593,9 @@ namespace System.Web {
 
 			return sb.ToString ();
 		}
-#endif
 		public static string UrlPathEncode (string s)
 		{
-#if NET_4_0
 			return HttpEncoder.Current.UrlPathEncode (s);
-#else
-			return HttpEncoder.UrlPathEncode (s);
-#endif
 		}
 
 		public static NameValueCollection ParseQueryString (string query)

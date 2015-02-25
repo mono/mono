@@ -42,11 +42,7 @@ using System.Runtime.Serialization;
 namespace System.Data.OleDb
 {
 	[Serializable]
-#if NET_2_0
 	public sealed class OleDbException : DbException
-#else
-	public sealed class OleDbException : ExternalException
-#endif
 	{
 		private OleDbConnection connection;
 

@@ -65,7 +65,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.Render (writer);
 			return writer.InnerWriter.ToString ();
 		}
-#if NET_2_0
 		public new string Text
 		{
 			get
@@ -88,7 +87,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			base.RaisePostDataChangedEvent ();
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -102,7 +100,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, b.CausesValidation, "CausesValidation");
 			Assert.AreEqual (string.Empty, b.CommandArgument, "CommandArgument");
 			Assert.AreEqual (string.Empty, b.CommandName, "CommandName");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, b.ValidationGroup, "ValidationGroup");
 			Assert.AreEqual (string.Empty, b.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory");
 			Assert.AreEqual (string.Empty, b.DescriptionUrl, "DescriptionUrl");
@@ -110,14 +107,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (false, b.GenerateEmptyAlternateText, "GenerateEmptyAlternateText");
 			Assert.AreEqual (string.Empty, b.PostBackUrl, "PostBackUrl");
 			Assert.AreEqual (string.Empty, b.OnClientClick, "OnClientClick");
-#endif
 		}
 
 		[Test]
 		public void ImageButton_AssignedValues ()
 		{
 			ImageButton b = new ImageButton ();
-#if NET_2_0
 			Assert.AreEqual (string.Empty, b.ValidationGroup, "ValidationGroup#1");
 			b.ValidationGroup = "test";
 			Assert.AreEqual ("test", b.ValidationGroup, "ValidationGroup#2");
@@ -131,11 +126,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, b.EnableTheming, "EnableTheming#1");
 			b.EnableTheming  = false;
 			Assert.AreEqual (false, b.EnableTheming, "EnableTheming#2");
-#endif
 		}
 
 
-#if NET_2_0
 		[Test]
 		[Category ("NunitWeb")]
 		public void AppRelativeTemplateSourceDirectory ()
@@ -312,7 +305,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 
-#endif
 
 		[Test]
 		public void ImageButton_Render ()
@@ -336,10 +328,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (p.CommandArgument, "arg", "A1");
 			p.CommandName = "cmd";
 			Assert.AreEqual (p.CommandName, "cmd", "A2");
-#if NET_2_0
 			p.ValidationGroup = "VG1";
 			Assert.AreEqual (p.ValidationGroup, "VG1", "A3");
-#endif
 
 			object state = p.SaveState ();
 
@@ -348,9 +338,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual (copy.CommandArgument, "arg", "A4");
 			Assert.AreEqual (copy.CommandName, "cmd", "A5");
-#if NET_2_0
 			Assert.AreEqual (copy.ValidationGroup, "VG1", "A6");
-#endif
 
 		}
 
@@ -361,9 +349,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 
 			Page page = new Page ();
-#if NET_2_0
 			page.EnableEventValidation = false;
-#endif
 			ImageButton b = new ImageButton ();			
 			page.Controls.Add (b);
 			page.RenderControl (tw);
@@ -371,7 +357,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, sw.ToString().IndexOf ("type=\"image\"") != -1, "A2");
 			Assert.AreEqual (true, sw.ToString().IndexOf ("name=\"") != -1, "A3");
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void GenerateEmptyAlternateText_Exception ()
@@ -385,7 +370,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest.Unload ();
 		}
-#endif
 
 	}
 }

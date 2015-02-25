@@ -620,10 +620,8 @@ namespace System.Xml.Schema
 					error (h, "Particle whose term is -all- and consists of complex type content particle must have maxOccurs = 1.");
 			}
 
-#if NET_2_0
 			if (schema.Schemas.CompilationSettings != null &&
 				schema.Schemas.CompilationSettings.EnableUpaCheck)
-#endif
 			// This check is optional only after 2.0
 			contentTypeParticle.ValidateUniqueParticleAttribution (new XmlSchemaObjectTable (),
 				new ArrayList (), h, schema);

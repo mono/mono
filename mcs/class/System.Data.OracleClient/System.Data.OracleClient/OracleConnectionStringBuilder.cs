@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.Text;
 using System.Collections;
@@ -497,6 +496,5 @@ namespace System.Data.OracleClient
  
 	
 }
-#endif // NET_2_0
 
 

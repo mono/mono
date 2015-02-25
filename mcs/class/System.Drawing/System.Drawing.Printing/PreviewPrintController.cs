@@ -45,11 +45,9 @@ namespace System.Drawing.Printing
 		{
 			pageInfoList = new ArrayList ();
 		}
-#if NET_2_0
 		public override bool IsPreview { 
 			get { return true; }
 		}
-#endif		
 
 		[MonoTODO]
 		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e)

@@ -167,14 +167,12 @@ namespace System.Web.UI
 
 			return url;
 		}
-#if NET_4_0
 		protected internal override bool IsAjaxFrameworkScript (ScriptManager scriptManager)
 		{
 			return false;
 		}
 		
 		[Obsolete ("Use IsAjaxFrameworkScript(ScriptManager)")]
-#endif		
 		protected internal override bool IsFromSystemWebExtensions ()
 		{
 			return ResolvedAssembly == ThisAssembly;

@@ -40,11 +40,7 @@ namespace System.Web.Security {
 
 	[Serializable]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_4_0
 	public
-#else
-	public sealed
-#endif
 	class RolePrincipal : IPrincipal {
 
 		IIdentity _identity;

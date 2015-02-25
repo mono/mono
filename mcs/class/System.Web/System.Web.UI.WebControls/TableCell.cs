@@ -42,12 +42,8 @@ namespace System.Web.UI.WebControls {
 	[DefaultProperty ("Text")]
 	[ParseChildren (false)]
 	[ToolboxItem ("")]
-#if NET_2_0
 	[Bindable (false)]
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#else
-	[PersistChildren (true)]
-#endif
 	public class TableCell : WebControl {
 
 		public TableCell ()
@@ -65,7 +61,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 
-#if NET_2_0
 		[DefaultValue (null)]
 		[TypeConverter (typeof (StringArrayConverter))]
 		public virtual string[] AssociatedHeaderCellID {
@@ -80,11 +75,7 @@ namespace System.Web.UI.WebControls {
 					ViewState ["AssociatedHeaderCellID"] = value;
 			}
 		}
-#endif
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (0)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -101,9 +92,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -116,9 +104,6 @@ namespace System.Web.UI.WebControls {
 			set { TableItemStyle.HorizontalAlign = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (0)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -135,12 +120,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[Localizable (true)]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
-#else
-		[Bindable (true)]
-#endif
 		[DefaultValue ("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -160,9 +141,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (VerticalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -175,9 +153,6 @@ namespace System.Web.UI.WebControls {
 			set { TableItemStyle.VerticalAlign = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -189,11 +164,9 @@ namespace System.Web.UI.WebControls {
 			}
 			set { TableItemStyle.Wrap = value; }
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 		TableItemStyle TableItemStyle {
 			get { return (ControlStyle as TableItemStyle); }
 		}
@@ -211,7 +184,6 @@ namespace System.Web.UI.WebControls {
 			i = RowSpan;
 			if (i > 0)
 				writer.AddAttribute (HtmlTextWriterAttribute.Rowspan, i.ToString (Helpers.InvariantCulture), false);
-#if NET_2_0
 			string[] ahci = AssociatedHeaderCellID;
 			if (ahci.Length > 1) {
 				StringBuilder sb = new StringBuilder ();
@@ -225,7 +197,6 @@ namespace System.Web.UI.WebControls {
 				// most common case (without a StringBuilder)
 				writer.AddAttribute (HtmlTextWriterAttribute.Headers, ahci [0]);
 			}
-#endif
 		}
 
 		protected override void AddParsedSubObject (object obj)
@@ -255,11 +226,7 @@ namespace System.Web.UI.WebControls {
 			return new TableItemStyle (ViewState);
 		}
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
 			if (HasControls () || HasRenderMethodDelegate ())

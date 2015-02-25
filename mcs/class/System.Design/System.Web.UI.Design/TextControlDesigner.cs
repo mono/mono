@@ -44,18 +44,5 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
-#if !NET_2_0
-		[MonoTODO]
-		public override string GetPersistInnerHtml ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override void Initialize (IComponent component)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 	}
 }

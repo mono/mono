@@ -50,7 +50,6 @@ namespace System.Drawing {
 			}
 		}
 
-#if NET_2_0
 		protected Brush ()
 		{
 		}		
@@ -59,11 +58,6 @@ namespace System.Drawing {
 		{
 			nativeObject = brush;
 		}
-#else
-                internal Brush ()
-                { 
-		}
-#endif
 
 		public void Dispose ()
 		{

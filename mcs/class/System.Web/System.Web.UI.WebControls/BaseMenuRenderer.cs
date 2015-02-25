@@ -345,11 +345,7 @@ namespace System.Web.UI.WebControls
 				writer.AddStyleAttribute ("cursor", "text");
 			} else if (item.NavigateUrl != String.Empty) {
 				string target = item.Target != String.Empty ? item.Target : owner.Target;
-#if TARGET_J2EE
-				string navUrl = owner.ResolveClientUrl (item.NavigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
-#else
 				string navUrl = owner.ResolveClientUrl (item.NavigateUrl);
-#endif
 				writer.AddAttribute ("href", navUrl);
 				if (target != String.Empty)
 					writer.AddAttribute ("target", target);

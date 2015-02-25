@@ -83,18 +83,6 @@ enum {
 	MONITOR_STATE_SLEEPING
 };
 
-typedef struct {
-	mono_mutex_t io_lock; /* access to sock_to_state */
-	int inited; // 0 -> not initialized , 1->initializing, 2->initialized, 3->cleaned up
-	MonoGHashTable *sock_to_state;
-
-	gint event_system;
-	gpointer event_data;
-	void (*modify) (gpointer p, int fd, int operation, int events, gboolean is_new);
-	void (*wait) (gpointer sock_data);
-	void (*shutdown) (gpointer event_data);
-} SocketIOData;
-
 static SocketIOData socket_io_data;
 
 /* Keep in sync with the System.MonoAsyncCall class which provides GC tracking */
@@ -148,16 +136,14 @@ static void threadpool_kill_idle_threads (ThreadPool *tp);
 static gboolean threadpool_start_thread (ThreadPool *tp);
 static void threadpool_kill_thread (ThreadPool *tp);
 static void monitor_thread (gpointer data);
-static void socket_io_cleanup (SocketIOData *data);
-static MonoObject *get_io_event (MonoMList **list, gint event);
-static int get_events_from_list (MonoMList *list);
 static int get_event_from_state (MonoSocketAsyncResult *state);
-static void check_for_interruption_critical (void);
 
 static MonoClass *async_call_klass;
 static MonoClass *socket_async_call_klass;
 static MonoClass *process_async_call_klass;
 
+static GPtrArray *threads;
+mono_mutex_t threads_lock;
 static GPtrArray *wsqs;
 mono_mutex_t wsqs_lock;
 static gboolean suspended;
@@ -194,7 +180,7 @@ enum {
 	AIO_OP_LAST
 };
 
-#include <mono/metadata/tpool-poll.c>
+// #include <mono/metadata/tpool-poll.c>
 #ifdef HAVE_EPOLL
 #include <mono/metadata/tpool-epoll.c>
 #elif defined(USE_KQUEUE_FOR_THREADPOOL)
@@ -298,7 +284,10 @@ is_sdp_asyncreadhandler (MonoDomain *domain, MonoClass *klass)
 
 #ifdef DISABLE_SOCKETS
 
-#define socket_io_cleanup(x)
+void
+socket_io_cleanup (SocketIOData *data)
+{
+}
 
 static int
 get_event_from_state (MonoSocketAsyncResult *state)
@@ -307,7 +296,7 @@ get_event_from_state (MonoSocketAsyncResult *state)
 	return -1;
 }
 
-static int
+int
 get_events_from_list (MonoMList *list)
 {
 	return 0;
@@ -315,7 +304,7 @@ get_events_from_list (MonoMList *list)
 
 #else
 
-static void
+void
 socket_io_cleanup (SocketIOData *data)
 {
 	mono_mutex_lock (&data->io_lock);
@@ -353,7 +342,7 @@ get_event_from_state (MonoSocketAsyncResult *state)
 	}
 }
 
-static int
+int
 get_events_from_list (MonoMList *list)
 {
 	MonoSocketAsyncResult *state;
@@ -402,7 +391,7 @@ threadpool_jobs_dec (MonoObject *obj)
 	return FALSE;
 }
 
-static MonoObject *
+MonoObject *
 get_io_event (MonoMList **list, gint event)
 {
 	MonoObject *state;
@@ -783,12 +772,21 @@ typedef struct {
 	gint8 nthreads_diff;
 } SamplesHistory;
 
+/*
+ * returns :
+ *  -  1 if the number of threads should increase
+ *  -  0 if it should not change
+ *  - -1 if it should decrease
+ *  - -2 in case of error
+ */
 static gint8
 monitor_heuristic (gint16 *current, gint16 *history_size, SamplesHistory *history, ThreadPool *tp)
 {
 	int i;
 	gint8 decision;
 	gint16 cur, max = 0;
+	gboolean all_waitsleepjoin;
+	MonoInternalThread *thread;
 
 	/*
 	 * The following heuristic tries to approach the optimal number of threads to maximize jobs throughput. To
@@ -824,22 +822,43 @@ monitor_heuristic (gint16 *current, gint16 *history_size, SamplesHistory *histor
 		history [cur].nthreads_diff = 1;
 		decision = 2;
 	} else {
-		max = cur == 0 ? 1 : 0;
-		for (i = 0; i < *history_size; i++) {
-			if (i == cur)
-				continue;
-			if (history [i].nexecuted > history [max].nexecuted)
-				max = i;
+		mono_mutex_lock (&threads_lock);
+		if (threads == NULL) {
+			mono_mutex_unlock (&threads_lock);
+			return -2;
 		}
+		all_waitsleepjoin = TRUE;
+		for (i = 0; i < threads->len; ++i) {
+			thread = g_ptr_array_index (threads, i);
+			if (!(thread->state & ThreadState_WaitSleepJoin)) {
+				all_waitsleepjoin = FALSE;
+				break;
+			}
+		}
+		mono_mutex_unlock (&threads_lock);
 
-		if (history [cur].nexecuted >= history [max].nexecuted) {
-			/* we improved the situation, let's continue ! */
-			history [cur].nthreads_diff = history [cur].nthreads >= history [max].nthreads ? 1 : -1;
-			decision = 3;
+		if (all_waitsleepjoin) {
+			/* we might be in a condition of starvation/deadlock with tasks waiting for each others */
+			history [cur].nthreads_diff = 1;
+			decision = 5;
 		} else {
-			/* we made it worse, let's return to previous situation */
-			history [cur].nthreads_diff = history [cur].nthreads >= history [max].nthreads ? -1 : 1;
-			decision = 4;
+			max = cur == 0 ? 1 : 0;
+			for (i = 0; i < *history_size; i++) {
+				if (i == cur)
+					continue;
+				if (history [i].nexecuted > history [max].nexecuted)
+					max = i;
+			}
+
+			if (history [cur].nexecuted >= history [max].nexecuted) {
+				/* we improved the situation, let's continue ! */
+				history [cur].nthreads_diff = history [cur].nthreads >= history [max].nthreads ? 1 : -1;
+				decision = 3;
+			} else {
+				/* we made it worse, let's return to previous situation */
+				history [cur].nthreads_diff = history [cur].nthreads >= history [max].nthreads ? -1 : 1;
+				decision = 4;
+			}
 		}
 	}
 
@@ -889,6 +908,10 @@ monitor_thread (gpointer unused)
 		if (suspended)
 			continue;
 
+		/* threadpool is cleaning up */
+		if (async_tp.pool_status == 2 || async_io_tp.pool_status == 2)
+			break;
+
 		switch (monitor_state) {
 		case MONITOR_STATE_AWAKE:
 			num_waiting_iterations = 0;
@@ -918,9 +941,9 @@ monitor_thread (gpointer unused)
 			} else {
 				gint8 nthreads_diff = monitor_heuristic (&current, &history_size, history, tp);
 
-				if (nthreads_diff > 0)
+				if (nthreads_diff == 1)
 					threadpool_start_thread (tp);
-				else if (nthreads_diff < 0)
+				else if (nthreads_diff == -1)
 					threadpool_kill_thread (tp);
 			}
 		}
@@ -968,6 +991,10 @@ mono_thread_pool_init (void)
 
 	async_call_klass = mono_class_from_name (mono_defaults.corlib, "System", "MonoAsyncCall");
 	g_assert (async_call_klass);
+
+	mono_mutex_init (&threads_lock);
+	threads = g_ptr_array_sized_new (thread_count);
+	g_assert (threads);
 
 	mono_mutex_init_recursive (&wsqs_lock);
 	wsqs = g_ptr_array_sized_new (MAX (100 * cpu_count, thread_count));
@@ -1120,6 +1147,14 @@ mono_thread_pool_cleanup (void)
 		threadpool_kill_idle_threads (&async_tp);
 		threadpool_free_queue (&async_tp);
 	}
+	
+	if (threads) {
+		mono_mutex_lock (&threads_lock);
+		if (threads)
+			g_ptr_array_free (threads, FALSE);
+		threads = NULL;
+		mono_mutex_unlock (&threads_lock);
+	}
 
 	if (wsqs) {
 		mono_mutex_lock (&wsqs_lock);
@@ -1139,6 +1174,7 @@ threadpool_start_thread (ThreadPool *tp)
 {
 	gint n;
 	guint32 stack_size;
+	MonoInternalThread *thread;
 
 	stack_size = (!tp->is_io) ? 0 : SMALL_STACK;
 	while (!mono_runtime_is_shutting_down () && (n = tp->nthreads) < tp->max_threads) {
@@ -1146,7 +1182,15 @@ threadpool_start_thread (ThreadPool *tp)
 #ifndef DISABLE_PERFCOUNTERS
 			mono_perfcounter_update_value (tp->pc_nthreads, TRUE, 1);
 #endif
-			mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE, stack_size);
+			if (tp->is_io) {
+				thread = mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE, stack_size);
+			} else {
+				mono_mutex_lock (&threads_lock);
+				thread = mono_thread_create_internal (mono_get_root_domain (), tp->async_invoke, tp, TRUE, stack_size);
+				g_assert (threads != NULL);
+				g_ptr_array_add (threads, thread);
+				mono_mutex_unlock (&threads_lock);
+			}
 			return TRUE;
 		}
 	}
@@ -1178,6 +1222,12 @@ static void
 threadpool_append_job (ThreadPool *tp, MonoObject *ar)
 {
 	threadpool_append_jobs (tp, &ar, 1);
+}
+
+void
+threadpool_append_async_io_jobs (MonoObject **jobs, gint njobs)
+{
+	threadpool_append_jobs (&async_io_tp, jobs, njobs);
 }
 
 static void
@@ -1472,7 +1522,7 @@ clear_thread_state (void)
 		ves_icall_System_Threading_Thread_SetState (thread, ThreadState_Background);
 }
 
-static void
+void
 check_for_interruption_critical (void)
 {
 	MonoInternalThread *thread;
@@ -1665,6 +1715,16 @@ async_invoke_thread (gpointer data)
 
 					if (tp_finish_func)
 						tp_finish_func (tp_hooks_user_data);
+
+					if (!tp->is_io) {
+						if (threads) {
+							mono_mutex_lock (&threads_lock);
+							if (threads)
+								g_ptr_array_remove_fast (threads, mono_thread_current ()->internal_thread);
+							mono_mutex_unlock (&threads_lock);
+						}
+					}
+
 					return;
 				}
 			}

@@ -85,12 +85,10 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		[MonoTODO]
 		public int GetTokenFor (RuntimeFieldHandle field, RuntimeTypeHandle contextType) {
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public void SetCode (byte[] code, int maxStackSize) {
 			if (code == null)

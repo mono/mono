@@ -98,7 +98,6 @@ namespace MonoTests.System.Reflection
 			methods = property.GetAccessors ();
 			Assert.AreEqual (0, methods.Length, "#H");
 
-#if NET_2_0
 			property = typeof (TestClass).GetProperty ("PrivateSetter");
 
 			methods = property.GetAccessors (true);
@@ -117,7 +116,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (1, methods.Length, "#J1");
 			Assert.IsNotNull (methods [0], "#J2");
 			Assert.AreEqual ("get_PrivateSetter", methods [0].Name, "#J3");
-#endif
 		}
 
 		[Test]
@@ -480,12 +478,10 @@ namespace MonoTests.System.Reflection
 				set { }
 			}
 
-#if NET_2_0
 			public string PrivateSetter {
 				get { return null; }
 				private set { }
 			}
-#endif
 		}
 
 		[Test] // bug #633671

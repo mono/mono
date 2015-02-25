@@ -43,7 +43,7 @@ namespace System.IO.Compression
 			CompressionLevel compressionLevel, bool includeBaseDirectory)
 		{
 			CreateFromDirectory (sourceDirectoryName, destinationArchiveFileName,
-				CompressionLevel.Fastest, includeBaseDirectory, Encoding.UTF8);
+				compressionLevel, includeBaseDirectory, Encoding.UTF8);
 		}
 
 		public static void CreateFromDirectory (
@@ -135,7 +135,7 @@ namespace System.IO.Compression
 		public static ZipArchive Open (
 			string archiveFileName, ZipArchiveMode mode)
 		{
-			return Open (archiveFileName, mode);
+			return Open (archiveFileName, mode, entryNameEncoding: null);
 		}
 
 		public static ZipArchive Open (

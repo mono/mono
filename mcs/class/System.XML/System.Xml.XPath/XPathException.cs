@@ -37,22 +37,16 @@ namespace System.Xml.XPath
 	{
 #region Constructors
 
-#if NET_2_0
 		public XPathException ()
 			: base ("")
 		{
 		}
-#endif
 
 		protected XPathException (SerializationInfo info, StreamingContext context) : base (info, context) {}
 
 		public XPathException (string message, Exception innerException) : base (message, innerException) {}
 
-#if NET_2_0
 		public XPathException (string message)
-#else
-		internal XPathException (string message)
-#endif
 			: base (message, null)
 		{
 		}

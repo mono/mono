@@ -29,16 +29,11 @@ using System;
 
 namespace System.Web.UI.WebControls {
 
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum RepeatLayout
 	{
 		Table,
 		Flow,
-#if NET_4_0
 		UnorderedList,
 		OrderedList
-#endif
 	}
 }

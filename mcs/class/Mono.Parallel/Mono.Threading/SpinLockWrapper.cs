@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0
 
 using System;
 using System.Threading;
@@ -48,4 +47,3 @@ namespace Mono.Threading
 		}
 	}
 }
-#endif

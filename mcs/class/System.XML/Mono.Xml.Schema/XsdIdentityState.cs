@@ -38,13 +38,8 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 
-#if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
 using ValException = System.Xml.Schema.XmlSchemaValidationException;
-#else
-using NSResolver = System.Xml.XmlNamespaceManager;
-using ValException = System.Xml.Schema.XmlSchemaException;
-#endif
 
 namespace Mono.Xml.Schema
 {

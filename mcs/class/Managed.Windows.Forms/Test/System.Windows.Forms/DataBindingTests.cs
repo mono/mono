@@ -66,7 +66,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: MetaDataChanged\n", event_num++);
 		}
-#if NET_2_0
 		protected void BindingComplete (object sender, BindingCompleteEventArgs args)
 		{
 			//Console.WriteLine (Environment.StackTrace);
@@ -82,7 +81,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: DataError\n", event_num++);
 		}
-#endif
 		protected void Format (object sender, ConvertEventArgs args)
 		{
 			//Console.WriteLine (Environment.StackTrace);
@@ -106,22 +104,18 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			cm.PositionChanged += new EventHandler (PositionChanged);
 			cm.ItemChanged += new ItemChangedEventHandler (ItemChanged);
 			cm.MetaDataChanged += new EventHandler (MetaDataChanged);
-#if NET_2_0
 			cm.BindingComplete += new BindingCompleteEventHandler (BindingComplete);
 			cm.CurrentItemChanged += new EventHandler (CurrentItemChanged);
 			cm.DataError += new BindingManagerDataErrorEventHandler (DataError);
-#endif
 		}
 
 		protected void HookupPropertyManager (PropertyManager pm)
 		{
 			pm.CurrentChanged += new EventHandler (CurrentChanged);
 			pm.PositionChanged += new EventHandler (PositionChanged);
-#if NET_2_0
 			pm.BindingComplete += new BindingCompleteEventHandler (BindingComplete);
 			pm.CurrentItemChanged += new EventHandler (CurrentItemChanged);
 			pm.DataError += new BindingManagerDataErrorEventHandler (DataError);
-#endif
 		}
 
 		protected void HookupBinding (Binding b)
@@ -334,18 +328,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Console.WriteLine (event_log);
 
 			Assert.AreEqual (
-#if NET_2_0
 #if WITH_BINDINGS
 				 "0: CurrentChanged\n1: CurrentItemChanged\n2: ItemChanged (index = -1)\n3: Binding.Format\n"
 #else
 				 "0: CurrentChanged\n1: CurrentItemChanged\n2: ItemChanged (index = -1)\n"
-#endif
-#else
-#if WITH_BINDINGS
-				 "0: CurrentChanged\n1: ItemChanged (index = -1)\n2: Binding.Format\n"
-#else
-				 "0: CurrentChanged\n1: ItemChanged (index = -1)\n"
-#endif
 #endif
 				 , event_log, "2");
 
@@ -392,18 +378,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Console.WriteLine (event_log);
 
 			Assert.AreEqual (
-#if NET_2_0
 #if WITH_BINDINGS
 				 "0: PositionChanged (to 0)\n1: CurrentChanged\n2: CurrentItemChanged\n3: ItemChanged (index = -1)\n4: ItemChanged (index = -1)\n5: Binding.Format\n6: Binding.Format\n7: Binding.Format\n"
 #else
 				 "0: PositionChanged (to 0)\n1: CurrentChanged\n2: CurrentItemChanged\n3: ItemChanged (index = -1)\n4: ItemChanged (index = -1)\n"
-#endif
-#else
-#if WITH_BINDINGS
-				 "0: PositionChanged (to 0)\n1: CurrentChanged\n2: ItemChanged (index = -1)\n3: ItemChanged (index = -1)\n4: Binding.Format\n5: Binding.Format\n6: Binding.Format\n"
-#else
-				 "0: PositionChanged (to 0)\n1: CurrentChanged\n2: ItemChanged (index = -1)\n3: ItemChanged (index = -1)\n"
-#endif
 #endif
 				 , event_log, "2");
 
@@ -460,12 +438,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		[Test]
 		public void TestInsertRowBeforeCurrent ()
 		{
-#if NET_2_0
 #if WITH_BINDINGS
 			if (TestHelper.RunningOnUnix) {
 				Assert.Ignore ("Too many Binding.Format events here");
 			}
-#endif
 #endif
 			Control c = new Control ();
 			c.CreateControl ();
@@ -506,18 +482,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Console.WriteLine (event_log);
 
 			Assert.AreEqual (
-#if NET_2_0
 #if WITH_BINDINGS
 				 "0: CurrentChanged\n1: CurrentItemChanged\n2: ItemChanged (index = -1)\n3: PositionChanged (to 2)\n4: Binding.Format\n"
 #else
 				 "0: CurrentChanged\n1: CurrentItemChanged\n2: ItemChanged (index = -1)\n3: PositionChanged (to 2)\n"
-#endif
-#else
-#if WITH_BINDINGS
-				 "0: ItemChanged (index = -1)\n1: Binding.Format\n"
-#else
-				 "0: ItemChanged (index = -1)\n"
-#endif
 #endif
 				 , event_log, "2");
 
@@ -566,18 +534,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Console.WriteLine (event_log);
 
 			Assert.AreEqual (
-#if NET_2_0
 #if WITH_BINDINGS
 				 "0: CurrentChanged\n1: CurrentItemChanged\n2: ItemChanged (index = -1)\n3: PositionChanged (to 2)\n4: Binding.Format\n"
 #else
 				 "0: CurrentChanged\n1: CurrentItemChanged\n2: ItemChanged (index = -1)\n3: PositionChanged (to 2)\n"
-#endif
-#else
-#if WITH_BINDINGS
-				 "0: ItemChanged (index = -1)\n1: Binding.Format\n"
-#else
-				 "0: ItemChanged (index = -1)\n"
-#endif
 #endif
 				 , event_log, "2");
 
@@ -616,11 +576,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			Console.WriteLine (event_log);
 
-#if NET_2_0			
 			Assert.AreEqual ("0: MetaDataChanged\n", event_log, "2");
-#else
-			Assert.AreEqual ("0: MetaDataChanged\n1: MetaDataChanged\n", event_log, "2");
-#endif
 			Assert.AreEqual (0, cm.Count, "3");
 		}
 
@@ -804,18 +760,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Console.WriteLine (event_log);
 
 			Assert.AreEqual (
-#if NET_2_0
 #if WITH_BINDINGS
 					 "0: CurrentItemChanged\n1: ItemChanged (index = 0)\n2: Binding.Format\n"
 #else
 					 "0: CurrentItemChanged\n1: ItemChanged (index = 0)\n"
-#endif
-#else
-#if WITH_BINDINGS
-					 "0: ItemChanged (index = 0)\n1: Binding.Format\n"
-#else
-					 "0: ItemChanged (index = 0)\n"
-#endif
 #endif
 					 , event_log, "2");
 
@@ -908,11 +856,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Console.WriteLine (event_log);
 
 			Assert.AreEqual (
-#if NET_2_0
 				 "0: PositionChanged (to -1)\n1: ItemChanged (index = -1)\n2: PositionChanged (to -1)\n3: CurrentChanged\n4: CurrentItemChanged\n5: ItemChanged (index = -1)\n"
-#else
-				 "0: PositionChanged (to -1)\n1: ItemChanged (index = -1)\n2: ItemChanged (index = -1)\n"
-#endif
 				 , event_log, "1");
 
 			Assert.AreEqual (0, cm.Count, "2");
@@ -959,11 +903,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			dt.Rows.Add(new object[]{"A1", "B1"});
 			Console.WriteLine ("<3");
 
-#if NET_2_0
 			Assert.AreEqual ("0: PositionChanged (to 0)\n1: CurrentChanged\n2: CurrentItemChanged\n3: ItemChanged (index = -1)\n4: ItemChanged (index = -1)\n", event_log, "3");
-#else
-			Assert.AreEqual ("0: PositionChanged (to 0)\n1: CurrentChanged\n2: ItemChanged (index = -1)\n3: ItemChanged (index = -1)\n", event_log, "3");
-#endif
 
 			event_log = ""; event_num = 0;
 			Console.WriteLine (">4");
@@ -1011,11 +951,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Console.WriteLine (event_log);
 
 			Assert.AreEqual (
-#if NET_2_0
 				 "0: PositionChanged (to 0)\n1: CurrentChanged\n2: CurrentItemChanged\n3: ItemChanged (index = -1)\n4: ItemChanged (index = -1)\n5: PositionChanged (to -1)\n6: ItemChanged (index = -1)\n7: PositionChanged (to -1)\n8: CurrentChanged\n9: CurrentItemChanged\n10: ItemChanged (index = -1)\n11: ItemChanged (index = -1)\n",
-#else
-				 "0: PositionChanged (to 0)\n1: CurrentChanged\n2: ItemChanged (index = -1)\n3: ItemChanged (index = -1)\n4: CurrentChanged\n5: PositionChanged (to -1)\n6: ItemChanged (index = -1)\n7: ItemChanged (index = -1)\n8: ItemChanged (index = -1)\n",
-#endif
 				 event_log, "1");
 
 		}
@@ -1061,11 +997,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			Console.WriteLine (event_log);
 
-#if NET_2_0
 			Assert.AreEqual ("0: CurrentChanged\n1: CurrentItemChanged\n2: Binding.Format\n3: CurrentChanged\n4: CurrentItemChanged\n", event_log, "1");
-#else
-			Assert.AreEqual ("0: CurrentChanged\n1: Binding.Format\n2: CurrentChanged\n", event_log, "1");
-#endif
 		}
 	}
 }

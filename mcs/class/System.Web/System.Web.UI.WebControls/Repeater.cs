@@ -55,21 +55,15 @@ namespace System.Web.UI.WebControls {
 	public class Repeater : Control, INamingContainer
 	{
 		object dataSource;
-#if NET_2_0
 		IDataSource boundDataSource;
 		bool initialized;
 		bool preRendered = false;
 		bool requiresDataBinding;
 		DataSourceSelectArguments selectArguments;
 		IEnumerable data;
-#endif
 
 		// See Kothari, listing 20-3
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void CreateChildControls ()
 		{
 			// We are recreating the children from viewstate
@@ -163,9 +157,7 @@ namespace System.Web.UI.WebControls {
 			// windows, this doesn't seem to be the case here.
 			OnDataBinding (EventArgs.Empty);
 
-#if NET_2_0
 			RequiresDataBinding = false;
-#endif
 		}
 		
 		protected virtual RepeaterItem CreateItem (int itemIndex, ListItemType itemType)
@@ -252,10 +244,8 @@ namespace System.Web.UI.WebControls {
 				else
 					ViewState ["DataMember"] = value;
 
-#if NET_2_0
 				if (!Initialized)
 					OnDataPropertyChanged ();
-#endif
 			}
 		}
 
@@ -271,7 +261,6 @@ namespace System.Web.UI.WebControls {
 			
 			set {
 				if (value == null || value is IListSource || value is IEnumerable) {
-#if NET_2_0
 // FIXME - can't duplicate in a test case ? LAMESPEC ?
 // can't duplicate in a test case
 //					if ((dataSourceId != null) && (dataSourceId.Length != 0))
@@ -281,9 +270,6 @@ namespace System.Web.UI.WebControls {
 
 					if (!Initialized)
 						OnDataPropertyChanged ();
-#else
-					dataSource = value;
-#endif
 				} else
 					throw new ArgumentException (String.Format (
 					    "An invalid data source is being used for {0}. A valid data source must implement either IListSource or IEnumerable",
@@ -291,7 +277,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("")]
 		[IDReferenceProperty (typeof (DataSourceControl))]
 		public virtual string DataSourceID
@@ -314,7 +299,6 @@ namespace System.Web.UI.WebControls {
 			get { return base.EnableTheming; }
 			set { base.EnableTheming = value; }
 		}
-#endif		
 
 		ITemplate alt_itm_tmpl;
 		[Browsable(false)]
@@ -441,7 +425,6 @@ namespace System.Web.UI.WebControls {
 			remove { Events.RemoveHandler (ItemDataBoundEvent, value); }
 		}
 
-#if NET_2_0
 		protected bool Initialized {
 			get { return initialized; }
 		}
@@ -489,14 +472,10 @@ namespace System.Web.UI.WebControls {
 			this.data = data;
 		}
 
-#endif
-#if NET_2_0
 		protected virtual 
-#endif
 		IEnumerable GetData ()
 		{
 			IEnumerable result;
-#if NET_2_0
 			if (IsBoundUsingDataSourceID) {
 				if (DataSourceID.Length == 0)
 					return null;
@@ -511,13 +490,11 @@ namespace System.Web.UI.WebControls {
 				data = null;
 			}
 			else
-#endif
 				result = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 
 			return result;
 		}
 
-#if NET_2_0
 		protected virtual void OnDataPropertyChanged ()
 		{
 			if (Initialized)
@@ -596,6 +573,5 @@ namespace System.Web.UI.WebControls {
 			boundDataSource = (IDataSource)ctrl;
 			boundDataSource.GetView (String.Empty).DataSourceViewChanged += new EventHandler(OnDataSourceViewChanged);
 		}
-#endif
 	}
 }

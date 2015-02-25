@@ -74,8 +74,12 @@ namespace Xamarin.ApiDiff {
 				return;
 			Output.WriteLine ("<h3>New Type {0}.{1}</h3>", State.Namespace, name);
 			Output.WriteLine ("<pre>");
+			if (State.Colorize)
+				Output.WriteLine ("<font color='green'>");
 			State.Indent = 0;
 			AddedInner (target);
+			if (State.Colorize)
+				Output.WriteLine ("</font>");
 			Output.WriteLine ("</pre>");
 		}
 
@@ -196,7 +200,7 @@ namespace Xamarin.ApiDiff {
 			Indent ().WriteLine ("}");
 		}
 
-		public override void Modified (XElement source, XElement target)
+		public override void Modified (XElement source, XElement target, ApiChanges diff)
 		{
 			// hack - there could be changes that we're not monitoring (e.g. attributes properties)
 			var output = Output;

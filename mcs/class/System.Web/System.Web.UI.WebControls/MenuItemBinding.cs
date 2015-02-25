@@ -198,7 +198,6 @@ namespace System.Web.UI.WebControls
 			get { return ViewState.GetString ("SeparatorImageUrlField", String.Empty); }
 			set { ViewState ["SeparatorImageUrlField"] = value; }
 		}
-#if NET_4_0
 		public override string ToString ()
 		{
 			string dm = DataMember;
@@ -207,7 +206,6 @@ namespace System.Web.UI.WebControls
 
 			return dm;
 		}
-#endif
 		void IStateManager.LoadViewState (object savedState)
 		{
 			ViewState.LoadViewState (savedState);

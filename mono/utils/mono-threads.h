@@ -94,6 +94,13 @@ enum {
 	SUSPEND_STATE_MASK		= 0xF0,
 };
 
+/*
+ * This enum tells which async thread service corresponds to which bit.
+ */
+typedef enum {
+	MONO_SERVICE_REQUEST_SAMPLE = 1,
+} MonoAsyncJob;
+
 #define mono_thread_info_run_state(info) (((MonoThreadInfo*)info)->thread_state & RUN_STATE_MASK)
 #define mono_thread_info_suspend_state(info) (((MonoThreadInfo*)info)->thread_state & SUSPEND_STATE_MASK)
 
@@ -105,6 +112,9 @@ typedef struct {
 
 	/*Tells if this thread was created by the runtime or not.*/
 	gboolean runtime_thread;
+
+	/* Tells if this thread should be ignored or not by runtime services such as GC and profiling */
+	gboolean tools_thread;
 
 	/* suspend machinery, fields protected by suspend_semaphore */
 	MonoSemType suspend_semaphore;
@@ -155,6 +165,12 @@ typedef struct {
 	/* IO layer handle for this thread */
 	/* Set when the thread is started, or in _wapi_thread_duplicate () */
 	HANDLE handle;
+
+	/* Asynchronous service request. This flag is meant to be consumed by the multiplexing signal handlers to discover what sort of work they need to do.
+	 * Use the mono_threads_add_async_job and mono_threads_consume_async_jobs APIs to modify this flag.
+	 * In the future the signaling should be part of the API, but for now, it's only for massaging the bits.
+	 */
+	volatile gint32 service_requests;
 } MonoThreadInfo;
 
 typedef struct {
@@ -187,16 +203,22 @@ typedef struct {
 	gboolean (*thread_state_init_from_handle) (MonoThreadUnwindState *tctx, MonoThreadInfo *info);
 } MonoThreadInfoRuntimeCallbacks;
 
+static inline gboolean
+mono_threads_filter_tools_threads (THREAD_INFO_TYPE *info)
+{
+	return !((MonoThreadInfo*)info)->tools_thread;
+}
+
 /*
 Requires the world to be stoped
 */
-#define FOREACH_THREAD(thread) MONO_LLS_FOREACH (mono_thread_info_list_head (), thread, THREAD_INFO_TYPE*)
+#define FOREACH_THREAD(thread) MONO_LLS_FOREACH_FILTERED (mono_thread_info_list_head (), thread, mono_threads_filter_tools_threads, THREAD_INFO_TYPE*)
 #define END_FOREACH_THREAD MONO_LLS_END_FOREACH
 
 /*
 Snapshot iteration.
 */
-#define FOREACH_THREAD_SAFE(thread) MONO_LLS_FOREACH_SAFE (mono_thread_info_list_head (), thread, THREAD_INFO_TYPE*)
+#define FOREACH_THREAD_SAFE(thread) MONO_LLS_FOREACH_FILTERED_SAFE (mono_thread_info_list_head (), thread, mono_threads_filter_tools_threads, THREAD_INFO_TYPE*)
 #define END_FOREACH_THREAD_SAFE MONO_LLS_END_FOREACH_SAFE
 
 #define mono_thread_info_get_tid(info) ((MonoNativeThreadId)((MonoThreadInfo*)info)->node.key)
@@ -326,19 +348,32 @@ mono_threads_get_max_stack_size (void) MONO_INTERNAL;
 HANDLE
 mono_threads_open_thread_handle (HANDLE handle, MonoNativeThreadId tid) MONO_INTERNAL;
 
+/*
+This is the async job submission/consumption API.
+XXX: This is a PROVISIONAL API only meant to be used by the statistical profiler.
+If you want to use/extend it anywhere else, understand that you'll have to do some API design work to better fit this puppy.
+*/
+gboolean
+mono_threads_add_async_job (THREAD_INFO_TYPE *info, MonoAsyncJob job) MONO_INTERNAL;
+
+MonoAsyncJob
+mono_threads_consume_async_jobs (void) MONO_INTERNAL;
+
+MONO_API void
+mono_threads_attach_tools_thread (void);
+
+
 #if !defined(HOST_WIN32)
 
-#if !defined(__MACH__)
 /*Use this instead of pthread_kill */
 int
 mono_threads_pthread_kill (THREAD_INFO_TYPE *info, int signum) MONO_INTERNAL;
-#endif
 
 #endif /* !defined(HOST_WIN32) */
 
 /* Plartform specific functions DON'T use them */
 void mono_threads_init_platform (void) MONO_INTERNAL; //ok
-gboolean mono_threads_core_suspend (THREAD_INFO_TYPE *info) MONO_INTERNAL;
+gboolean mono_threads_core_suspend (THREAD_INFO_TYPE *info, gboolean interrupt_kernel) MONO_INTERNAL;
 gboolean mono_threads_core_resume (THREAD_INFO_TYPE *info) MONO_INTERNAL;
 void mono_threads_platform_register (THREAD_INFO_TYPE *info) MONO_INTERNAL; //ok
 void mono_threads_platform_free (THREAD_INFO_TYPE *info) MONO_INTERNAL;

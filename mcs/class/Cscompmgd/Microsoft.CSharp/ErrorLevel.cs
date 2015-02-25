@@ -29,9 +29,7 @@
 
 namespace Microsoft.CSharp {
 
-#if NET_2_0
 	[System.Obsolete]
-#endif 
 	public enum ErrorLevel {
 		None,
 		Warning,

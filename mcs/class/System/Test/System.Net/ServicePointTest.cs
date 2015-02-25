@@ -146,7 +146,6 @@ public class ServicePointTest
 		}
 	}
 
-#if NET_2_0
 	[Test]
 	[Category ("InetAccess")]
 	public void EndPointBind ()
@@ -177,7 +176,6 @@ public class ServicePointTest
 
 		Assert.IsTrue (called);
 	}
-#endif
 
 // Debug code not used now, but could be useful later
 /*

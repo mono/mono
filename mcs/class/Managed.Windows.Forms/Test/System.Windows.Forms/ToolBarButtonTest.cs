@@ -78,7 +78,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("", tbb.Text, "A3");
 		}
 		
-#if NET_2_0
 		[Test]
 		public void Name ()
 		{
@@ -110,7 +109,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, b.ImageIndex, "D5");
 			Assert.AreEqual ("test", b.ImageKey, "D6");
 		}
-#endif
 	}
 
 }

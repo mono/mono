@@ -34,15 +34,11 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Design;
 using System.Collections;
-#if NET_2_0
 using System.Windows.Forms.Design.Behavior;
-#endif
 
 namespace System.Windows.Forms.Design
 {
-#if NET_2_0
 	[ToolboxItemFilter ("System.Windows.Forms")]
-#endif
 	public class DocumentDesigner : ScrollableControlDesigner, IRootDesigner, IToolboxUser
 	{
 
@@ -299,14 +295,6 @@ namespace System.Windows.Forms.Design
 			selectionService.SetSelectedComponents (new IComponent[] { this.Component });
 		}
 
-#if !NET_2_0
-		// MSDN says overriden
-		// 
-		public override void OnSetComponentDefaults ()
-		{
-			base.OnSetComponentDefaults ();
-		}
-#endif
 
 		protected override void Dispose (bool disposing)
 		{
@@ -329,12 +317,10 @@ namespace System.Windows.Forms.Design
 
 #region MSDN says overriden
 
-#if NET_2_0
 		public override GlyphCollection GetGlyphs (GlyphSelectionType selectionType)
 		{
 			return base.GetGlyphs (selectionType);
 		}
-#endif
 
 		protected override void WndProc (ref Message m)
 		{
@@ -384,23 +370,14 @@ namespace System.Windows.Forms.Design
 
 		object IRootDesigner.GetView (ViewTechnology technology)
 		{
-#if NET_2_0
 			if (technology != ViewTechnology.Default)
 				throw new ArgumentException ("Only ViewTechnology.WindowsForms is supported.");
-#else
-			if (technology != ViewTechnology.WindowsForms)
-				throw new ArgumentException ("Only ViewTechnology.WindowsForms is supported.");
-#endif
 			return _designerViewFrame;
 		}
 
 		ViewTechnology[] IRootDesigner.SupportedTechnologies {
 			get {
-#if NET_2_0
 				return new ViewTechnology[] { ViewTechnology.Default };
-#else
-				return new ViewTechnology[] { ViewTechnology.WindowsForms };
-#endif	
 			}
 		}
 #endregion

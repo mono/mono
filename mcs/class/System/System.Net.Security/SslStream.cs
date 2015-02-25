@@ -71,9 +71,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Security.Cryptography;
 
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net.Security 
 {
@@ -597,7 +595,6 @@ namespace System.Net.Security
 				throw new InvalidOperationException ("This operation is invalid until it is successfully authenticated");
 		}
 
-#if NET_4_5
 		public virtual Task AuthenticateAsClientAsync (string targetHost)
 		{
 			return Task.Factory.FromAsync (BeginAuthenticateAsClient, EndAuthenticateAsClient, targetHost, null);
@@ -627,7 +624,6 @@ namespace System.Net.Security
 				return d.Item5.BeginAuthenticateAsServer (d.Item1, d.Item2, d.Item3, d.Item4, callback, null);
 			}, EndAuthenticateAsServer, t);
 		}
-#endif
 
 		#endregion // Methods
 	}

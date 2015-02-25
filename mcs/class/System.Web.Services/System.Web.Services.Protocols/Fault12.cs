@@ -63,13 +63,8 @@ namespace System.Web.Services.Protocols
 		}
 
 		public static XmlSerializer Serializer =
-#if NET_2_0
 			new Fault12Serializer ();
-#else
-			null;
-#endif
 
-#if NET_2_0
 
 		public Soap12Fault (SoapException ex) 
 		{
@@ -114,7 +109,6 @@ namespace System.Web.Services.Protocols
 			return (src == null) ? null :
 				new SoapFaultSubCode (src.Value, GetSoapFaultSubCode (src.Subcode));
 		}
-#endif
 
 		public Soap12FaultCode Code;
 

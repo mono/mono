@@ -20,6 +20,8 @@
 #ifndef __MONO_SGEN_GRAY_H__
 #define __MONO_SGEN_GRAY_H__
 
+#include "metadata/sgen-protocol.h"
+
 /*
  * This gray queue has to be as optimized as possible, because it is in the core of
  * the mark/copy phase of the garbage collector. The memory access has then to be as
@@ -72,6 +74,8 @@ struct _GrayQueueEntry {
 	mword desc;
 };
 
+#define SGEN_GRAY_QUEUE_ENTRY(obj,desc)	{ (obj), (desc) }
+
 /*
  * This is a stack now instead of a queue, so the most recently added items are removed
  * first, improving cache locality, and keeping the stack size manageable.
@@ -122,12 +126,12 @@ struct _SgenSectionGrayQueue {
 #define GRAY_FIRST_CURSOR_POSITION(s) ((s)->entries)
 
 #ifdef HEAVY_STATISTICS
-extern unsigned long long stat_gray_queue_section_alloc;
-extern unsigned long long stat_gray_queue_section_free;
-extern unsigned long long stat_gray_queue_enqueue_fast_path;
-extern unsigned long long stat_gray_queue_dequeue_fast_path;
-extern unsigned long long stat_gray_queue_enqueue_slow_path;
-extern unsigned long long stat_gray_queue_dequeue_slow_path;
+extern guint64 stat_gray_queue_section_alloc;
+extern guint64 stat_gray_queue_section_free;
+extern guint64 stat_gray_queue_enqueue_fast_path;
+extern guint64 stat_gray_queue_dequeue_fast_path;
+extern guint64 stat_gray_queue_enqueue_slow_path;
+extern guint64 stat_gray_queue_dequeue_slow_path;
 #endif
 
 void sgen_init_gray_queues (void) MONO_INTERNAL;
@@ -139,6 +143,7 @@ void sgen_gray_object_enqueue_section (SgenGrayQueue *queue, GrayQueueSection *s
 void sgen_gray_object_queue_trim_free_list (SgenGrayQueue *queue) MONO_INTERNAL;
 void sgen_gray_object_queue_init (SgenGrayQueue *queue, GrayQueueEnqueueCheckFunc enqueue_check_func) MONO_INTERNAL;
 void sgen_gray_object_queue_init_invalid (SgenGrayQueue *queue) MONO_INTERNAL;
+void sgen_gray_queue_set_alloc_prepare (SgenGrayQueue *queue, GrayQueueAllocPrepareFunc alloc_prepare_func, void *data) MONO_INTERNAL;
 void sgen_gray_object_queue_init_with_alloc_prepare (SgenGrayQueue *queue, GrayQueueEnqueueCheckFunc enqueue_check_func,
 		GrayQueueAllocPrepareFunc func, void *data) MONO_INTERNAL;
 void sgen_gray_object_queue_deinit (SgenGrayQueue *queue) MONO_INTERNAL;
@@ -151,6 +156,8 @@ void sgen_section_gray_queue_init (SgenSectionGrayQueue *queue, gboolean locked,
 gboolean sgen_section_gray_queue_is_empty (SgenSectionGrayQueue *queue) MONO_INTERNAL;
 GrayQueueSection* sgen_section_gray_queue_dequeue (SgenSectionGrayQueue *queue) MONO_INTERNAL;
 void sgen_section_gray_queue_enqueue (SgenSectionGrayQueue *queue, GrayQueueSection *section) MONO_INTERNAL;
+
+gboolean sgen_gray_object_fill_prefetch (SgenGrayQueue *queue);
 
 static inline gboolean
 sgen_gray_object_queue_is_empty (SgenGrayQueue *queue)
@@ -167,7 +174,7 @@ GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, char* obj, mword desc)
 	if (G_UNLIKELY (!queue->first || queue->cursor == GRAY_LAST_CURSOR_POSITION (queue->first))) {
 		sgen_gray_object_enqueue (queue, obj, desc);
 	} else {
-		GrayQueueEntry entry = { obj, desc };
+		GrayQueueEntry entry = SGEN_GRAY_QUEUE_ENTRY (obj, desc);
 
 		HEAVY_STAT (stat_gray_queue_enqueue_fast_path ++);
 
@@ -184,7 +191,7 @@ GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, char** obj, mword *desc)
 {
 	GrayQueueEntry entry;
 #if SGEN_MAX_DEBUG_LEVEL >= 9
-	entry = sgen_gray_object_enqueue (queue);
+	entry = sgen_gray_object_dequeue (queue);
 	*obj = entry.obj;
 	*desc = entry.desc;
 #else
@@ -192,9 +199,6 @@ GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, char** obj, mword *desc)
 		HEAVY_STAT (stat_gray_queue_dequeue_fast_path ++);
 
 		*obj = NULL;
-#ifdef SGEN_HEAVY_BINARY_PROTOCOL
-		binary_protocol_gray_dequeue (queue, queue->cursor, *obj);
-#endif
 	} else if (G_UNLIKELY (queue->cursor == GRAY_FIRST_CURSOR_POSITION (queue->first))) {
 		entry = sgen_gray_object_dequeue (queue);
 		*obj = entry.obj;

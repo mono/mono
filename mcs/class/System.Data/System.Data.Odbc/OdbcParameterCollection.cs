@@ -42,12 +42,7 @@ namespace System.Data.Odbc
 {
 	[ListBindable (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-#if NET_2_0
 	public sealed class OdbcParameterCollection : DbParameterCollection
-#else
-	public sealed class OdbcParameterCollection : MarshalByRefObject,
-		IDataParameterCollection, IList, ICollection, IEnumerable
-#endif // NET_2_0
 	{
 		#region Fields
 
@@ -66,14 +61,8 @@ namespace System.Data.Odbc
 	
 		#region Properties
 
-#if ONLY_1_1
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		int Count {
 			get { return list.Count; }
 		}
@@ -101,66 +90,30 @@ namespace System.Data.Odbc
 			}
 		}
 
-#if ONLY_1_1
-		bool IList.IsFixedSize {
-#else
 		public override bool IsFixedSize {
-#endif
 			get { return false; }
 		}
 
-#if ONLY_1_1
-		bool IList.IsReadOnly {
-#else
 		public override bool IsReadOnly {
-#endif
 			get { return false; }
 		}
 
-#if ONLY_1_1
-		bool ICollection.IsSynchronized {
-#else
 		public override bool IsSynchronized {
-#endif
 			get { return list.IsSynchronized; }
 		}
 
-#if ONLY_1_1
-		object ICollection.SyncRoot {
-#else
 		public override object SyncRoot {
-#endif
 			get { return list.SyncRoot; }
 		}
 		
-#if ONLY_1_1
-		object IList.this [int index] {
-			get { return list [index]; }
-			set { list [index] = value; }
-		}
-
-		object IDataParameterCollection.this [string index]
-		{
-			get { return this [index]; }
-			set {
-				if (!(value is OdbcParameter))
-					throw new InvalidCastException ("Only OdbcParameter objects can be used.");
-				this [index] = (OdbcParameter) value;
-			}
-		}
-#endif // ONLY_1_1
 
 		#endregion // Properties
 
 		#region Methods
 
-#if NET_2_0
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		int Add (object value)
 		{
 			if (!(value is OdbcParameter))
@@ -184,10 +137,8 @@ namespace System.Data.Odbc
 			return value;
 		}
 
-#if NET_2_0
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		[Obsolete ("Add(String parameterName, Object value) has been deprecated.  Use AddWithValue(String parameterName, Object value).")]
-#endif
 		public OdbcParameter Add (string parameterName, object value)
 		{
 			return Add (new OdbcParameter (parameterName, value));
@@ -211,9 +162,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Clear()
 		{
 			foreach (OdbcParameter p in list)
@@ -222,9 +171,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool Contains (object value)
 		{
 			if (value == null)
@@ -236,9 +183,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool Contains (string value)
 		{
 			if (value == null || value.Length == 0)
@@ -252,27 +197,21 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void CopyTo (Array array, int index)
 		{
 			list.CopyTo (array, index);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		IEnumerator GetEnumerator()
 		{
 			return list.GetEnumerator ();
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int IndexOf (object value)
 		{
 			if (value == null)
@@ -283,9 +222,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int IndexOf (string parameterName)
 		{
 			if (parameterName == null || parameterName.Length == 0)
@@ -298,9 +235,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Insert (int index, object value)
 		{
 			if (value == null)
@@ -311,9 +246,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Remove (object value)
 		{
 			if (value == null)
@@ -324,9 +257,7 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void RemoveAt (int index)
 		{
 			if (index >= list.Count || index < 0)
@@ -336,15 +267,12 @@ namespace System.Data.Odbc
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void RemoveAt (string parameterName)
 		{
 			RemoveAt (IndexOf (parameterName));
 		}
 
-#if NET_2_0
 		protected override DbParameter GetParameter (string parameterName)
 		{
 			return this [parameterName];
@@ -438,7 +366,6 @@ namespace System.Data.Odbc
 		{
 			list.CopyTo (array, index);
 		}
-#endif
 
 		#endregion // Methods
 	}

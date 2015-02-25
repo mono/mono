@@ -61,11 +61,9 @@ namespace System.Data.OleDb {
 
 		#region Properties
 
-#if NET_2_0
 		[Obsolete ()]
 		[BrowsableAttribute (false)]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-#endif
 		public string Provider {
 			get {
 				if (_provider == null)
@@ -82,9 +80,6 @@ namespace System.Data.OleDb {
 		public override IPermission CreatePermission () 
 		{
 			OleDbPermission p = new OleDbPermission (this);
-#if !NET_2_0
-			p.Provider = _provider;
-#endif
 			return p;
 		}
 

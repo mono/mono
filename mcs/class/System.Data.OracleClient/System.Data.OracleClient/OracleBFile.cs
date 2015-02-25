@@ -169,18 +169,10 @@ namespace System.Data.OracleClient
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		protected override void Dispose (bool disposing)
 		{
 			throw new NotImplementedException ();
 		}
-#else
-		[MonoTODO]
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		[MonoTODO]
 		public override void Flush ()

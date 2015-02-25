@@ -45,6 +45,7 @@
 // Other than that this is totally ECMA compliant.
 //
 
+using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
 
 namespace System.Globalization {
@@ -100,7 +101,7 @@ namespace System.Globalization {
 #pragma warning restore 649
 		
 #pragma warning disable 169
-		string ansiCurrencySymbol;	// TODO, MS.NET serializes this.
+		internal string ansiCurrencySymbol;	// TODO, MS.NET serializes this.
 		int m_dataItem;	// Unused, but MS.NET serializes this.
 		bool m_useUserOverride; // Unused, but MS.NET serializes this.
 		bool validForParseAsNumber; // Unused, but MS.NET serializes this.
@@ -961,12 +962,43 @@ namespace System.Globalization {
 		{
 			if (formatProvider != null) {
 				NumberFormatInfo nfi;
-				nfi = (NumberFormatInfo)formatProvider.GetFormat(typeof(NumberFormatInfo));
+				nfi = formatProvider.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo;
 				if (nfi != null)
 					return nfi;
 			}
 			
 			return CurrentInfo;
 		}
+
+        // private const NumberStyles InvalidNumberStyles = unchecked((NumberStyles) 0xFFFFFC00);
+        private const NumberStyles InvalidNumberStyles = ~(NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite
+                                                           | NumberStyles.AllowLeadingSign | NumberStyles.AllowTrailingSign
+                                                           | NumberStyles.AllowParentheses | NumberStyles.AllowDecimalPoint
+                                                           | NumberStyles.AllowThousands | NumberStyles.AllowExponent
+                                                           | NumberStyles.AllowCurrencySymbol | NumberStyles.AllowHexSpecifier);
+
+        internal static void ValidateParseStyleInteger(NumberStyles style) {
+            // Check for undefined flags
+            if ((style & InvalidNumberStyles) != 0) {
+                throw new ArgumentException(Environment.GetResourceString("Argument_InvalidNumberStyles"), "style");
+            }
+            Contract.EndContractBlock();
+            if ((style & NumberStyles.AllowHexSpecifier) != 0) { // Check for hex number
+                if ((style & ~NumberStyles.HexNumber) != 0) {
+                    throw new ArgumentException(Environment.GetResourceString("Arg_InvalidHexStyle"));
+                }
+            }
+        }
+
+        internal static void ValidateParseStyleFloatingPoint(NumberStyles style) {
+            // Check for undefined flags
+            if ((style & InvalidNumberStyles) != 0) {
+                throw new ArgumentException(Environment.GetResourceString("Argument_InvalidNumberStyles"), "style");
+            }
+            Contract.EndContractBlock();
+            if ((style & NumberStyles.AllowHexSpecifier) != 0) { // Check for hex number
+                throw new ArgumentException(Environment.GetResourceString("Arg_HexStyleNotSupported"));
+            }
+        }
 	}
 }

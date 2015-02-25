@@ -41,8 +41,9 @@ namespace Mono.Tools.LocaleBuilder
 		public const int NUM_CALENDARS = 4;
 
 		public const int NUM_SHORT_DATE_PATTERNS = 14;
-		public const int NUM_LONG_DATE_PATTERNS = 8;
+		public const int NUM_LONG_DATE_PATTERNS = 10;
 		public const int NUM_SHORT_TIME_PATTERNS = 12;
 		public const int NUM_LONG_TIME_PATTERNS = 9;
+		public const int NUM_YEAR_MONTH_PATTERNS = 8;
 	}
 }

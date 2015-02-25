@@ -20,6 +20,7 @@
 #endif
 
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+#include <sys/errno.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -61,17 +62,19 @@ mono_process_list (int *size)
 	struct kinfo_proc2 *processes = malloc (data_len);
 #else
 	int mib [4];
-	size_t data_len = sizeof (struct kinfo_proc) * 400;
-	struct kinfo_proc *processes = malloc (data_len);
+	size_t data_len = sizeof (struct kinfo_proc) * 16;
+	struct kinfo_proc *processes;
+	int limit = 8;
 #endif /* KERN_PROC2 */
 	void **buf = NULL;
 
 	if (size)
 		*size = 0;
+
+#ifdef KERN_PROC2
 	if (!processes)
 		return NULL;
 
-#ifdef KERN_PROC2
 	mib [0] = CTL_KERN;
 	mib [1] = KERN_PROC2;
 	mib [2] = KERN_PROC_ALL;
@@ -80,19 +83,34 @@ mono_process_list (int *size)
 	mib [5] = 400; /* XXX */
 
 	res = sysctl (mib, 6, processes, &data_len, NULL, 0);
-#else
-	mib [0] = CTL_KERN;
-	mib [1] = KERN_PROC;
-	mib [2] = KERN_PROC_ALL;
-	mib [3] = 0;
-	
-	res = sysctl (mib, 4, processes, &data_len, NULL, 0);
-#endif /* KERN_PROC2 */
-
 	if (res < 0) {
 		free (processes);
 		return NULL;
 	}
+#else
+	processes = NULL;
+	while (limit) {
+		mib [0] = CTL_KERN;
+		mib [1] = KERN_PROC;
+		mib [2] = KERN_PROC_ALL;
+		mib [3] = 0;
+
+		res = sysctl (mib, 4, NULL, &data_len, NULL, 0);
+		if (res)
+			return NULL;
+		processes = malloc (data_len);
+		res = sysctl (mib, 4, NULL, &data_len, NULL, 0);
+		if (res < 0) {
+			free (processes);
+			if (errno != ENOMEM)
+				return NULL;
+			limit --;
+		} else {
+			break;
+		}
+	}
+#endif /* KERN_PROC2 */
+
 #ifdef KERN_PROC2
 	res = data_len/sizeof (struct kinfo_proc2);
 #else
@@ -498,6 +516,8 @@ mono_process_get_data_with_error (gpointer pid, MonoProcessData data, MonoProces
 		return get_process_stat_item (rpid, 18, FALSE, error) / get_user_hz ();
 	case MONO_PROCESS_PPID:
 		return get_process_stat_time (rpid, 0, FALSE, error);
+	case MONO_PROCESS_PAGED_BYTES:
+		return get_pid_status_item (rpid, "VmSwap", error, 1024);
 
 		/* Nothing yet */
 	case MONO_PROCESS_END:
@@ -664,3 +684,13 @@ mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *error)
 	return value;
 }
 
+int
+mono_atexit (void (*func)(void))
+{
+#ifdef PLATFORM_ANDROID
+	/* Some versions of android libc doesn't define atexit () */
+	return 0;
+#else
+	return atexit (func);
+#endif
+}

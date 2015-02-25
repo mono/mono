@@ -247,6 +247,22 @@ namespace MonoTests.System.Collections.Concurrent
 		{
 			CollectionStressTestHelper.RemoveStressTest (bag, CheckOrderingType.DontCare);
 		}
+
+		[Test]
+		public void Bug24213 ()
+		{
+			var size = 2049;
+			var bag = new ConcurrentBag<int> ();
+			for (int i = 0; i < size; i++)
+				bag.Add (i);
+
+			var array = bag.ToArray ();
+
+			Assert.AreEqual (size, array.Length, "#1");
+
+			for (int i = 0; i < size; i++)
+				Assert.AreEqual (size - 1 - i, array [i], "#C" + i);
+		}
 	}
 }
 #endif

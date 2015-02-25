@@ -744,11 +744,9 @@ namespace System.Linq
 			if (list != null)
 				return list [index];
 
-#if NET_4_5
 			var readOnlyList = source as IReadOnlyList<TSource>;
 			if (readOnlyList != null)
 				return readOnlyList[index];
-#endif
 
 			return source.ElementAt (index, Fallback.Throw);
 		}
@@ -768,11 +766,9 @@ namespace System.Linq
 			if (list != null)
 				return index < list.Count ? list [index] : default (TSource);
 
-#if NET_4_5
 			var readOnlyList = source as IReadOnlyList<TSource>;
 			if (readOnlyList != null)
 				return index < readOnlyList.Count ? readOnlyList [index] : default (TSource);
-#endif
 
 			return source.ElementAt (index, Fallback.Default);
 		}
@@ -2765,14 +2761,14 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			if (count <= 0)
+				return EmptyOf<TSource>.Instance;
+
 			return CreateTakeIterator (source, count);
 		}
 
 		static IEnumerable<TSource> CreateTakeIterator<TSource> (IEnumerable<TSource> source, int count)
 		{
-			if (count <= 0)
-				yield break;
-
 			int counter = 0;
 			foreach (TSource element in source) {
 				yield return element;
@@ -3073,7 +3069,6 @@ namespace System.Linq
 
 		#endregion
 		
-#if NET_4_0
 		#region Zip
 		
 		public static IEnumerable<TResult> Zip<TFirst, TSecond, TResult> (this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)
@@ -3098,7 +3093,6 @@ namespace System.Linq
 		}
 		
 		#endregion
-#endif		
 
 		#region Where
 

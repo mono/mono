@@ -66,11 +66,7 @@ namespace System.Web.Script.Serialization
 
 			ScriptingJsonSerializationSection section = (ScriptingJsonSerializationSection) ConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/jsonSerialization");
 			if (section == null) {
-#if NET_3_5
 				_maxJsonLength = 2097152;
-#else
-				_maxJsonLength = 102400;
-#endif
 				_recursionLimit = 100;
 			} else {
 				_maxJsonLength = section.MaxJsonLength;
@@ -133,11 +129,7 @@ namespace System.Web.Script.Serialization
 			return (T) ConvertToType (obj, typeof (T));
 		}
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		object ConvertToType (object obj, Type targetType)
 		{
 			if (obj == null)
@@ -204,7 +196,11 @@ namespace System.Web.Script.Serialization
 		}
 
 		public object Deserialize (string input, Type targetType) {
-			return DeserializeObjectInternal (input);
+			object obj = DeserializeObjectInternal (input);
+
+			if (obj == null) return null;
+
+			return ConvertToType (obj, targetType);
 		}
 
 		static object Evaluate (object value) {

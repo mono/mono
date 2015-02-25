@@ -20,8 +20,9 @@ typedef enum {
 	MONO_PROCESS_VIRTUAL_BYTES,
 	MONO_PROCESS_VIRTUAL_BYTES_PEAK,
 	MONO_PROCESS_FAULTS,
-	MONO_PROCESS_ELAPSED,
+	MONO_PROCESS_ELAPSED, /* 10 */
 	MONO_PROCESS_PPID,
+	MONO_PROCESS_PAGED_BYTES,
 	MONO_PROCESS_END
 } MonoProcessData;
 
@@ -51,6 +52,8 @@ int       mono_process_current_pid (void) MONO_INTERNAL;
 
 int       mono_cpu_count    (void) MONO_INTERNAL;
 gint64    mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *error) MONO_INTERNAL;
+
+int       mono_atexit (void (*func)(void)) MONO_INTERNAL;
 
 #endif /* __MONO_PROC_LIB_H__ */
 

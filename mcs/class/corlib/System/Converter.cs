@@ -29,9 +29,5 @@
 
 namespace System
 {
-#if NET_4_0
 	public delegate TOutput Converter <in TInput, out TOutput> (TInput input);
-#else
-	public delegate TOutput Converter <TInput, TOutput> (TInput input);
-#endif
 }

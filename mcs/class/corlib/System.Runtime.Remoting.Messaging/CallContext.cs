@@ -71,8 +71,9 @@ namespace System.Runtime.Remoting.Messaging
 			if (data is ILogicalThreadAffinative) {
 				LogicalSetData (name, data);
 			} else {
-				LogicalContext.FreeNamedDataSlot (name);
-				Datastore [name] = data;
+				var ec = ExecutionContext.GetCurrentWritable ();
+				ec.LogicalCallContext.FreeNamedDataSlot (name);
+				ec.DataStore [name] = data;
 			}
 		}
 		
@@ -83,8 +84,9 @@ namespace System.Runtime.Remoting.Messaging
 
 		public static void LogicalSetData (string name, object data) 
 		{
-			Datastore.Remove (name);
-			LogicalContext.SetData (name, data);
+			var ec = ExecutionContext.GetCurrentWritable ();
+			ec.DataStore.Remove (name);
+			ec.LogicalCallContext.SetData (name, data);
 		}
 
 		public static Header[] GetHeaders () 

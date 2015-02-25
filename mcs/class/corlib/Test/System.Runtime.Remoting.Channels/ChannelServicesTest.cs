@@ -39,7 +39,6 @@ namespace MonoTests.System.Runtime.Remoting.Channels
 	[TestFixture]
 	public class ChannelServicesTest
 	{
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (RemotingException))]
 		public void ConstructorEnsureSecurity ()
@@ -82,6 +81,5 @@ namespace MonoTests.System.Runtime.Remoting.Channels
 				set { }
 			}
 		}
-#endif
 	}
 }

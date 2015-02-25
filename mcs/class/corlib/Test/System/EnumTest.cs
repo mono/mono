@@ -295,6 +295,13 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void GetNameIdenticalToGetEnumName ()
+		{
+			Assert.AreEqual (typeof (EnumOverlap).GetEnumName (0), Enum.GetName (typeof(EnumOverlap), 0), "#1");
+			Assert.AreEqual ("First", Enum.GetName (typeof(EnumOverlap), 0), "#2");
+		}
+
+		[Test]
 		public void TestGetNames ()
 		{
 			try {
@@ -628,11 +635,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#G2");
 				Assert.IsNull (ex.InnerException, "#G3");
 				Assert.IsNotNull (ex.Message, "#G4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'huh?'") != -1, "#G5");
-#else
-				Assert.IsTrue (ex.Message.IndexOf ("huh?") != -1, "#G5");
-#endif
 				Assert.IsNull (ex.ParamName, "#G6");
 			}
 
@@ -646,11 +649,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#H2");
 				Assert.IsNull (ex.InnerException, "#H3");
 				Assert.IsNotNull (ex.Message, "#H4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'test'") != -1, "#H5");
-#else
-				Assert.IsTrue (ex.Message.IndexOf ("test") != -1, "#H5");
-#endif
 				Assert.IsNull (ex.ParamName, "#H6");
 			}
 
@@ -749,9 +748,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")]
-#endif
 		public void ToObject_EnumType_UInt64 ()
 		{
 			object value = Enum.ToObject (typeof (TestingEnum3), 0);
@@ -778,6 +774,20 @@ namespace MonoTests.System
 			Assert.AreEqual (TestingEnum5.This, value, "#1");
 			value = Enum.ToObject (typeof (TestingEnum5), short.MaxValue);
 			Assert.AreEqual (TestingEnum5.Test, value, "#2");
+		}
+
+		[Test]
+		public void ToObject_EnumType_Bool ()
+		{
+			object value = Enum.ToObject (typeof (TestingEnum5), true);
+			Assert.AreEqual (TestingEnum5.Is, value, "#1");
+		}
+
+		[Test]
+		public void ToObject_EnumType_Char ()
+		{
+			object value = Enum.ToObject (typeof (TestingEnum3), (object) '\0');
+			Assert.AreEqual (TestingEnum3.This, value, "#1");
 		}
 
 		[Test]
@@ -1139,6 +1149,24 @@ namespace MonoTests.System
 		}
 #endif
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void HasFlagNull ()
+		{
+			SomeEnum x = SomeEnum.a;
+
+			x.HasFlag (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void HasFlagWrongType ()
+		{
+			SomeEnum x = SomeEnum.a;
+
+			x.HasFlag (SomeByteEnum.a);
+		}
+
 		[Flags]
 		enum SomeEnum
 		{
@@ -1394,6 +1422,12 @@ namespace MonoTests.System
 		  ulong_Ee = 0x7FFFFFFFffffffff,
 		  ulong_Ff = 100
 		}
-		
+
+		enum EnumOverlap
+		{
+			Unknown = 0,
+			First = 0,
+			System_Math = First,
+		}	
 	}
 }

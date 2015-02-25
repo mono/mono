@@ -370,19 +370,11 @@ namespace MonoTests.System.Reflection
 			MethodInfo mi_run = type.GetMethod ("Run", flags, binder,
 				new Type [] { typeof (int) }, null);
 			Assert.IsFalse (mi_run.GetParameters () [0].ParameterType.IsByRef, "#A1");
-#if NET_2_0
 			MethodInfo mi_run_ref = type.GetMethod ("Run", flags, binder,
 				new Type [] { typeof (int).MakeByRefType () }, null);
-#else
-			MethodInfo mi_run_ref = type.GetMethod ("RunV1", flags);
-#endif
 			Assert.IsTrue (mi_run_ref.GetParameters () [0].ParameterType.IsByRef, "#A2");
 
-#if NET_2_0
 			ref_int = typeof (int).MakeByRefType ();
-#else
-			ref_int = mi_run_ref.GetParameters () [0].ParameterType;
-#endif
 
 			match = new MethodBase [] { mi_run_ref };
 			types = new Type [] { typeof (int) };
@@ -568,12 +560,8 @@ namespace MonoTests.System.Reflection
 			MethodInfo mi_run = type.GetMethod ("Run", flags, binder,
 				new Type [] { typeof (int) }, null);
 			Assert.IsFalse (mi_run.GetParameters () [0].ParameterType.IsByRef, "#A1");
-#if NET_2_0
 			MethodInfo mi_run_ref = type.GetMethod ("Run", flags, binder,
 				new Type [] { typeof (int).MakeByRefType () }, null);
-#else
-			MethodInfo mi_run_ref = type.GetMethod ("RunV1", flags);
-#endif
 			Assert.IsTrue (mi_run_ref.GetParameters () [0].ParameterType.IsByRef, "#A2");
 
 			match = new MethodBase [] { mi_run };
@@ -1048,7 +1036,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (3, bug42457_2, "#6");
 		}
 
-#if NET_2_0
 		[Test]
 		public void NullableArg () {
 			MethodInfo method = (typeof (BinderTest)).GetMethod("SetA", new [] {typeof (Int32)});
@@ -1058,7 +1045,6 @@ namespace MonoTests.System.Reflection
 		public int SetA(Int32? a) {
 			return (int)a;
 		}
-#endif
 
 		static void MethodWithLongParam(long param)
 		{
@@ -1355,11 +1341,7 @@ namespace MonoTests.System.Reflection
 			{
 			}
 
-#if NET_2_0
 			public void Run (out int i)
-#else
-			public void RunV1 (out int i)
-#endif
 			{
 				i = 0;
 			}

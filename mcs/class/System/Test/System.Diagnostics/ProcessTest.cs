@@ -593,7 +593,6 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
-#if NET_2_0		
 		[Test]
 		public void Start_UseShellExecuteWithEmptyUserName ()
 		{
@@ -629,7 +628,6 @@ namespace MonoTests.System.Diagnostics
 			} catch (Win32Exception) {
 			}
 		}
-#endif
 		
 		[Test] // Start (string, string)
 		public void Start4_FileName_Null ()
@@ -724,7 +722,6 @@ namespace MonoTests.System.Diagnostics
 
 		public int bytesRead = -1;
 
-#if NET_2_0
 // Not technically a 2.0 only test, but I use lambdas, so I need gmcs
 
 		[Test]
@@ -827,7 +824,6 @@ namespace MonoTests.System.Diagnostics
 			
 			Assert.IsNull (e.InnerException, "IOE inner exception should be null");
 		}
-#endif
 
 		[Test]
 		public void Handle_ThrowsOnNotStarted ()
@@ -838,6 +834,11 @@ namespace MonoTests.System.Diagnostics
 				Assert.Fail ("Handle should throw for unstated procs, but returned " + x);
 			} catch (InvalidOperationException) {
 			}
+		}
+
+		[Test]
+		public void HasExitedCurrent () {
+			Assert.IsFalse (Process.GetCurrentProcess ().HasExited);
 		}
 	}
 }

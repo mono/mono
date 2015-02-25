@@ -26,7 +26,6 @@
 //
 //
 
-#if NET_2_0
 
 using System.ComponentModel;
 
@@ -39,5 +38,4 @@ namespace System.Drawing
 	}
 }
 
-#endif
 

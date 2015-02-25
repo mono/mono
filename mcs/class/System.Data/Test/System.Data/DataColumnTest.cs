@@ -167,7 +167,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (string.Empty, col.Caption, "#3");
 		}
 
-#if NET_2_0
 		[Test]
 		public void DateTimeMode_Valid ()
 		{
@@ -215,7 +214,6 @@ namespace MonoTests.System.Data
 				Assert.IsNull (ex.ParamName, "#7");
 			}
 		}
-#endif
 
 		[Test]
 		public void ForColumnNameException()
@@ -332,7 +330,6 @@ namespace MonoTests.System.Data
 		public void Defaults3 ()
 		{
 			DataColumn col = new DataColumn ("foo", typeof (SqlBoolean));
-#if NET_2_0
 			Assert.AreEqual (SqlBoolean.Null, col.DefaultValue, "#1");
 			col.DefaultValue = SqlBoolean.True;
 			// FIXME: not working yet
@@ -340,19 +337,10 @@ namespace MonoTests.System.Data
 			//Assert.AreEqual (SqlBoolean.True, col.DefaultValue, "#2"); // not bool but SqlBoolean
 			col.DefaultValue = DBNull.Value;
 			Assert.AreEqual (SqlBoolean.Null, col.DefaultValue, "#3"); // not DBNull
-#else
-			Assert.AreEqual (DBNull.Value, col.DefaultValue, "#1");
-			col.DefaultValue = SqlBoolean.True;
-			col.DefaultValue = DBNull.Value;
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (DataException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void ChangeTypeAfterSettingDefaultValue ()
 		{
 			DataColumn col = new DataColumn ("foo", typeof (SqlBoolean));

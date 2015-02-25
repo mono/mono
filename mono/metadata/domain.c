@@ -130,7 +130,7 @@ static const MonoRuntimeInfo supported_runtimes[] = {
 
 
 /* The stable runtime version */
-#define DEFAULT_RUNTIME_VERSION "v2.0.50727"
+#define DEFAULT_RUNTIME_VERSION "v4.0.30319"
 
 /* Callbacks installed by the JIT */
 static MonoCreateDomainFunc create_domain_hook;
@@ -138,9 +138,6 @@ static MonoFreeDomainFunc free_domain_hook;
 
 /* AOT cache configuration */
 static MonoAotCacheConfig aot_cache_config;
-
-/* This is intentionally not in the header file, so people don't misuse it. */
-extern void _mono_debug_init_corlib (MonoDomain *domain);
 
 static void
 get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRuntimeInfo** runtimes);
@@ -512,6 +509,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 #ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters_init ();
 #endif
+	mono_counters_init ();
 
 	mono_counters_register ("Max native code in a domain", MONO_COUNTER_INT|MONO_COUNTER_JIT, &max_domain_code_size);
 	mono_counters_register ("Max code space allocated in a domain", MONO_COUNTER_INT|MONO_COUNTER_JIT, &max_domain_code_alloc);
@@ -835,8 +833,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.customattribute_data_class = mono_class_from_name (
 		mono_defaults.corlib, "System.Reflection", "CustomAttributeData");
 
-	/* these are initialized lazily when COM features are used */
-
 	mono_class_init (mono_defaults.array_class);
 	mono_defaults.generic_nullable_class = mono_class_from_name (
 		mono_defaults.corlib, "System", "Nullable`1");
@@ -846,8 +842,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	        mono_defaults.corlib, "System.Collections.Generic", "IReadOnlyList`1");
 
 	domain->friendly_name = g_path_get_basename (filename);
-
-	_mono_debug_init_corlib (domain);
 
 	return domain;
 }

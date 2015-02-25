@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.Web;
 using System.Web.Configuration;
@@ -37,39 +36,6 @@ namespace System.Web.Profile
 {
 	public static class ProfileManager
 	{
-#if TARGET_J2EE
-		const string Profiles_config = "Profiles.config";
-		const string Profiles_ProfileProviderCollection = "Profiles.ProfileProviderCollection";
-		static ProfileSection config
-		{
-			get
-			{
-				object o = AppDomain.CurrentDomain.GetData (Profiles_config);
-				if (o == null) {
-					config = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
-					return (ProfileSection) config;
-				}
-
-				return (ProfileSection) o;
-			}
-			set
-			{
-				AppDomain.CurrentDomain.SetData (Profiles_config, value);
-			}
-		}
-		static ProfileProviderCollection providersCollection
-		{
-			get
-			{
-				object o = AppDomain.CurrentDomain.GetData (Profiles_ProfileProviderCollection);
-				return (ProfileProviderCollection) o;
-			}
-			set
-			{
-				AppDomain.CurrentDomain.SetData (Profiles_ProfileProviderCollection, value);
-			}
-		}
-#else
 		static ProfileSection config;
 		static ProfileProviderCollection providersCollection;
 
@@ -77,7 +43,6 @@ namespace System.Web.Profile
 		{
 			config = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
 		}
-#endif
 
 		public static int DeleteInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
 		{
@@ -212,4 +177,3 @@ namespace System.Web.Profile
 	}
 }
 
-#endif

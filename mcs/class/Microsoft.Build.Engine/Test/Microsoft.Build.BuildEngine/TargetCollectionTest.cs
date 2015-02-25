@@ -180,7 +180,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void TestCopyTo4 ()
 		{
                         string documentString = @"

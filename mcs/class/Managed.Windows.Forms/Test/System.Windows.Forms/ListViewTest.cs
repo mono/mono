@@ -57,10 +57,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (View.LargeIcon, mylistview.View, "#29");
 			mylistview.View = View.List;
 			Assert.AreEqual (false, mylistview.TopItem.Checked, "#30");
-#if NET_2_0
 			Assert.AreEqual (false, mylistview.ShowItemToolTips, "#31");
 			Assert.AreEqual (false, mylistview.HotTracking, "#31");
-#endif
 		}
 
 		[Test]
@@ -351,7 +349,6 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void TopItem ()
 		{
@@ -408,7 +405,6 @@ namespace MonoTests.System.Windows.Forms
 			} catch (InvalidOperationException) {
 			}
 		}
-#endif
 
 		[Test]
 		public void Selected ()
@@ -435,7 +431,6 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void FindItemWithText ()
 		{
@@ -772,7 +767,6 @@ namespace MonoTests.System.Windows.Forms
 			} catch (ArgumentException) {
 			}
 		}
-#endif
 
 		[Test]
 		public void Sort_Details_Checked ()
@@ -870,7 +864,6 @@ namespace MonoTests.System.Windows.Forms
 			AssertSort_Selected (View.SmallIcon);
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void Sort_Tile_Checked ()
@@ -895,7 +888,6 @@ namespace MonoTests.System.Windows.Forms
 		{
 			AssertSort_Selected (View.Tile);
 		}
-#endif
 
 		private void AssertSortIcon_Created (View view)
 		{
@@ -928,45 +920,21 @@ namespace MonoTests.System.Windows.Forms
 
 			lvw.Sorting = SortOrder.Ascending;
 			Assert.IsNotNull (lvw.ListViewItemSorter, "#E1");
-#if NET_2_0
 			Assert.AreEqual ("A", lvw.Items [0].Text, "#E2");
 			Assert.AreEqual ("B", lvw.Items [1].Text, "#E3");
 			Assert.AreEqual ("C", lvw.Items [2].Text, "#E4");
-#else
-			// in .NET 1.1, changing Sorting does not have any effect for
-			// SmallIcon and LargeIcon view if no custom comparer is used
-			Assert.AreEqual ("C", lvw.Items [0].Text, "#E2");
-			Assert.AreEqual ("B", lvw.Items [1].Text, "#E3");
-			Assert.AreEqual ("A", lvw.Items [2].Text, "#E4");
-#endif
 
 			lvw.Sorting = SortOrder.None;
 			Assert.IsNotNull (lvw.ListViewItemSorter, "#F1");
-#if NET_2_0
 			Assert.AreEqual ("A", lvw.Items [0].Text, "#F2");
 			Assert.AreEqual ("B", lvw.Items [1].Text, "#F3");
 			Assert.AreEqual ("C", lvw.Items [2].Text, "#F4");
-#else
-			// in .NET 1.1, changing Sorting does not have any effect for
-			// SmallIcon and LargeIcon view if no custom comparer is used
-			Assert.AreEqual ("C", lvw.Items [0].Text, "#E2");
-			Assert.AreEqual ("B", lvw.Items [1].Text, "#E3");
-			Assert.AreEqual ("A", lvw.Items [2].Text, "#E4");
-#endif
 
 			lvw.Sorting = SortOrder.Ascending;
 			Assert.IsNotNull (lvw.ListViewItemSorter, "#G1");
-#if NET_2_0
 			Assert.AreEqual ("A", lvw.Items [0].Text, "#G2");
 			Assert.AreEqual ("B", lvw.Items [1].Text, "#G3");
 			Assert.AreEqual ("C", lvw.Items [2].Text, "#G4");
-#else
-			// in .NET 1.1, changing Sorting does not have any effect for
-			// SmallIcon and LargeIcon view if no custom comparer is used
-			Assert.AreEqual ("C", lvw.Items [0].Text, "#G2");
-			Assert.AreEqual ("B", lvw.Items [1].Text, "#G3");
-			Assert.AreEqual ("A", lvw.Items [2].Text, "#G4");
-#endif
 
 			lvw.Sorting = SortOrder.Descending;
 			Assert.IsNotNull (lvw.ListViewItemSorter, "#G1");
@@ -991,39 +959,20 @@ namespace MonoTests.System.Windows.Forms
 
 			lvw.Sorting = SortOrder.Ascending;
 			Assert.IsNotNull (lvw.ListViewItemSorter, "#J1");
-#if NET_2_0
 			Assert.AreEqual ("A", lvw.Items [0].Text, "#J2");
 			Assert.AreEqual ("B", lvw.Items [1].Text, "#J3");
 			Assert.AreEqual ("BB", lvw.Items [2].Text, "#J4");
 			Assert.AreEqual ("C", lvw.Items [3].Text, "#J5");
-#else
-			// in .NET 1.1, changing Sorting does not have any effect for
-			// SmallIcon and LargeIcon view if no custom comparer is used
-			Assert.AreEqual ("C", lvw.Items [0].Text, "#J2");
-			Assert.AreEqual ("BB", lvw.Items [1].Text, "#J3");
-			Assert.AreEqual ("B", lvw.Items [2].Text, "#J4");
-			Assert.AreEqual ("A", lvw.Items [3].Text, "#J5");
-#endif
 
 			// when Sorting is not None and a new item is added, the
 			// collection is re-sorted automatically
 			lvw.Items.Add ("BA");
 			Assert.IsNotNull (lvw.ListViewItemSorter, "#K1");
-#if NET_2_0
 			Assert.AreEqual ("A", lvw.Items [0].Text, "#K2");
 			Assert.AreEqual ("B", lvw.Items [1].Text, "#K3");
 			Assert.AreEqual ("BA", lvw.Items [2].Text, "#K4");
 			Assert.AreEqual ("BB", lvw.Items [3].Text, "#K5");
 			Assert.AreEqual ("C", lvw.Items [4].Text, "#K6");
-#else
-			// in .NET 1.1, changing Sorting does not have any effect for
-			// SmallIcon and LargeIcon view if no custom comparer is used
-			Assert.AreEqual ("C", lvw.Items [0].Text, "#K2");
-			Assert.AreEqual ("BB", lvw.Items [1].Text, "#K3");
-			Assert.AreEqual ("BA", lvw.Items [2].Text, "#K4");
-			Assert.AreEqual ("B", lvw.Items [3].Text, "#K5");
-			Assert.AreEqual ("A", lvw.Items [4].Text, "#K6");
-#endif
 
 			// assign a custom comparer
 			MockComparer mc = new MockComparer (false);
@@ -1505,12 +1454,7 @@ namespace MonoTests.System.Windows.Forms
 			// the ListViewItemSorter
 			lvw.Sorting = SortOrder.None;
 			Assert.AreEqual (compareCount, mc.CompareCount, "#P1");
-#if NET_2_0
 			Assert.IsNull (lvw.ListViewItemSorter, "#P2");
-#else
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#P2a");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#P2b");
-#endif
 			Assert.AreEqual ("C", lvw.Items [0].Text, "#P3");
 			Assert.AreEqual ("BC", lvw.Items [1].Text, "#P4");
 			Assert.AreEqual ("BB", lvw.Items [2].Text, "#P5");
@@ -1520,7 +1464,6 @@ namespace MonoTests.System.Windows.Forms
 
 
 			lvw.ListViewItemSorter = mc;
-#if NET_2_0
 			// assigning the previous custom IComparer again results in a
 			// re-sort
 			Assert.IsTrue (mc.CompareCount > compareCount, "#Q1");
@@ -1532,17 +1475,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("BB", lvw.Items [3].Text, "#Q7");
 			Assert.AreEqual ("BC", lvw.Items [4].Text, "#Q8");
 			Assert.AreEqual ("C", lvw.Items [5].Text, "#Q9");
-#else
-			Assert.AreEqual (compareCount, mc.CompareCount, "#Q1");
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#Q2");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#Q3");
-			Assert.AreEqual ("C", lvw.Items [0].Text, "#Q4");
-			Assert.AreEqual ("BC", lvw.Items [1].Text, "#Q5");
-			Assert.AreEqual ("BB", lvw.Items [2].Text, "#Q6");
-			Assert.AreEqual ("BA", lvw.Items [3].Text, "#Q7");
-			Assert.AreEqual ("B", lvw.Items [4].Text, "#Q8");
-			Assert.AreEqual ("A", lvw.Items [5].Text, "#Q9");
-#endif
 
 			// record compare count
 			compareCount = mc.CompareCount;
@@ -1566,12 +1498,7 @@ namespace MonoTests.System.Windows.Forms
 
 			lvw.Sorting = SortOrder.None;
 			Assert.AreEqual (compareCount, mc.CompareCount, "#S1");
-#if NET_2_0
 			Assert.IsNull (lvw.ListViewItemSorter, "#S2");
-#else
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#S2a");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#S2b");
-#endif
 			Assert.AreEqual ("C", lvw.Items [0].Text, "#S3");
 			Assert.AreEqual ("BC", lvw.Items [1].Text, "#S4");
 			Assert.AreEqual ("BB", lvw.Items [2].Text, "#S5");
@@ -1583,7 +1510,6 @@ namespace MonoTests.System.Windows.Forms
 			compareCount = mc.CompareCount;
 
 			lvw.Items.Add ("BD");
-#if NET_2_0
 			// adding an item when Sorting is None does not cause a re-sort
 			Assert.AreEqual (compareCount, mc.CompareCount, "#T1");
 			Assert.IsNull (lvw.ListViewItemSorter, "#T2");
@@ -1594,25 +1520,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("B", lvw.Items [4].Text, "#T7");
 			Assert.AreEqual ("A", lvw.Items [5].Text, "#T8");
 			Assert.AreEqual ("BD", lvw.Items [6].Text, "#T9");
-#else
-			// adding an item when Sorting is None results in a re-sort
-			Assert.IsTrue (mc.CompareCount > compareCount, "#T1");
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#T2");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#T3");
-			Assert.AreEqual ("A", lvw.Items [0].Text, "#T4");
-			Assert.AreEqual ("B", lvw.Items [1].Text, "#T5");
-			Assert.AreEqual ("BA", lvw.Items [2].Text, "#T6");
-			Assert.AreEqual ("BB", lvw.Items [3].Text, "#T7");
-			Assert.AreEqual ("BC", lvw.Items [4].Text, "#T8");
-			Assert.AreEqual ("BD", lvw.Items [5].Text, "#T9");
-			Assert.AreEqual ("C", lvw.Items [6].Text, "#T10");
-#endif
 
 			// record compare count
 			compareCount = mc.CompareCount;
 
 			lvw.Sort ();
-#if NET_2_0
 			// explicitly calling Sort when Sorting is None does nothing
 			Assert.AreEqual (compareCount, mc.CompareCount, "#U1");
 			Assert.IsNull (lvw.ListViewItemSorter, "#U2");
@@ -1623,25 +1535,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("B", lvw.Items [4].Text, "#U7");
 			Assert.AreEqual ("A", lvw.Items [5].Text, "#U8");
 			Assert.AreEqual ("BD", lvw.Items [6].Text, "#U9");
-#else
-			// explicitly calling Sort when Sorting is None results in a re-sort
-			Assert.IsTrue (mc.CompareCount > compareCount, "#U1");
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#U2");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#U3");
-			Assert.AreEqual ("A", lvw.Items [0].Text, "#U4");
-			Assert.AreEqual ("B", lvw.Items [1].Text, "#U5");
-			Assert.AreEqual ("BA", lvw.Items [2].Text, "#U6");
-			Assert.AreEqual ("BB", lvw.Items [3].Text, "#U7");
-			Assert.AreEqual ("BC", lvw.Items [4].Text, "#U8");
-			Assert.AreEqual ("BD", lvw.Items [5].Text, "#U9");
-			Assert.AreEqual ("C", lvw.Items [6].Text, "#U10");
-#endif
 
 			// record compare count
 			compareCount = mc.CompareCount;
 
 			lvw.Sorting = SortOrder.Ascending;
-#if NET_2_0
 			// setting Sorting again, does not reinstate the custom IComparer
 			// but sorting is actually performed using an internal non-visible
 			// comparer
@@ -1654,25 +1552,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("BC", lvw.Items [4].Text, "#V7");
 			Assert.AreEqual ("BD", lvw.Items [5].Text, "#V8");
 			Assert.AreEqual ("C", lvw.Items [6].Text, "#V9");
-#else
-			// setting Sorting again, uses the custom IComparer to sort the items
-			Assert.IsTrue (mc.CompareCount > compareCount, "#V1");
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#V2");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#V3");
-			Assert.AreEqual ("C", lvw.Items [0].Text, "#V4");
-			Assert.AreEqual ("BD", lvw.Items [1].Text, "#V5");
-			Assert.AreEqual ("BC", lvw.Items [2].Text, "#V6");
-			Assert.AreEqual ("BB", lvw.Items [3].Text, "#V7");
-			Assert.AreEqual ("BA", lvw.Items [4].Text, "#V8");
-			Assert.AreEqual ("B", lvw.Items [5].Text, "#V9");
-			Assert.AreEqual ("A", lvw.Items [6].Text, "#V10");
-#endif
 
 			// record compare count
 			compareCount = mc.CompareCount;
 
 			lvw.Sort ();
-#if NET_2_0
 			// explicitly calling Sort, does not reinstate the custom IComparer
 			// but sorting is actually performed using an internal non-visible
 			// comparer
@@ -1685,19 +1569,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("BC", lvw.Items [4].Text, "#W7");
 			Assert.AreEqual ("BD", lvw.Items [5].Text, "#W8");
 			Assert.AreEqual ("C", lvw.Items [6].Text, "#W9");
-#else
-			// setting Sorting again, uses the custom IComparer to sort the items
-			Assert.IsTrue (mc.CompareCount > compareCount, "#W1");
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#W2");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#W3");
-			Assert.AreEqual ("C", lvw.Items [0].Text, "#W4");
-			Assert.AreEqual ("BD", lvw.Items [1].Text, "#W5");
-			Assert.AreEqual ("BC", lvw.Items [2].Text, "#W6");
-			Assert.AreEqual ("BB", lvw.Items [3].Text, "#W7");
-			Assert.AreEqual ("BA", lvw.Items [4].Text, "#W8");
-			Assert.AreEqual ("B", lvw.Items [5].Text, "#W9");
-			Assert.AreEqual ("A", lvw.Items [6].Text, "#W10");
-#endif
 
 			// record compare count
 			compareCount = mc.CompareCount;
@@ -1803,15 +1674,9 @@ namespace MonoTests.System.Windows.Forms
 
 			lvw.Sorting = SortOrder.None;
 			Assert.AreEqual (0, mc.CompareCount, "#L1");
-#if NET_2_0
 			// setting Sorting to None does not perform a sort and resets the
 			// ListViewItemSorter
 			Assert.IsNull (lvw.ListViewItemSorter, "#L2");
-#else
-			// setting Sorting to None does not perform a sort
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#L2a");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#L2b");
-#endif
 			Assert.AreEqual ("B", lvw.Items [0].Text, "#L3");
 			Assert.AreEqual ("A", lvw.Items [1].Text, "#L4");
 			Assert.AreEqual ("C", lvw.Items [2].Text, "#L5");
@@ -1820,12 +1685,7 @@ namespace MonoTests.System.Windows.Forms
 			// explicitly calling Sort when Sorting is None does nothing
 			lvw.Sort ();
 			Assert.AreEqual (0, mc.CompareCount, "#M1");
-#if NET_2_0
 			Assert.IsNull (lvw.ListViewItemSorter, "#M2");
-#else
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#M2a");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#M2b");
-#endif
 			Assert.AreEqual ("B", lvw.Items [0].Text, "#M3");
 			Assert.AreEqual ("A", lvw.Items [1].Text, "#M4");
 			Assert.AreEqual ("C", lvw.Items [2].Text, "#M5");
@@ -1833,12 +1693,7 @@ namespace MonoTests.System.Windows.Forms
 
 			lvw.Sorting = SortOrder.Ascending;
 			Assert.AreEqual (0, mc.CompareCount, "#N1");
-#if NET_2_0
 			Assert.IsNull (lvw.ListViewItemSorter, "#N2");
-#else
-			Assert.IsNotNull (lvw.ListViewItemSorter, "#N2a");
-			Assert.AreSame (mc, lvw.ListViewItemSorter, "#N2b");
-#endif
 			Assert.AreEqual ("B", lvw.Items [0].Text, "#N3");
 			Assert.AreEqual ("A", lvw.Items [1].Text, "#N4");
 			Assert.AreEqual ("C", lvw.Items [2].Text, "#N5");

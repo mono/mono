@@ -35,6 +35,7 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/threadpool.h>
 #include <mono/utils/mono-signal-handler.h>
+#include <mono/utils/mono-proclib.h>
 
 /* On solaris, curses.h must come before both termios.h and term.h */
 #ifdef HAVE_CURSES_H
@@ -93,8 +94,6 @@ static struct termios initial_attr;
 MonoBoolean
 ves_icall_System_ConsoleDriver_Isatty (HANDLE handle)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return isatty (GPOINTER_TO_INT (handle));
 }
 
@@ -105,8 +104,6 @@ set_property (gint property, gboolean value)
 	gboolean callset = FALSE;
 	gboolean check;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	if (tcgetattr (STDIN_FILENO, &attr) == -1)
 		return FALSE;
 
@@ -150,8 +147,6 @@ ves_icall_System_ConsoleDriver_InternalKeyAvailable (gint32 timeout)
 	struct timeval *tvptr;
 	div_t divvy;
 	int ret, nbytes;
-
-	MONO_ARCH_SAVE_REGS;
 
 	do {
 		FD_ZERO (&rfds);
@@ -206,8 +201,6 @@ static void
 tty_teardown (void)
 {
 	int unused;
-
-	MONO_ARCH_SAVE_REGS;
 
 	if (!setup_finished)
 		return;
@@ -277,10 +270,9 @@ mono_console_handle_async_ops (void)
 
 static gboolean in_sigint;
 
-MONO_SIGNAL_HANDLER_FUNC (static, sigint_handler, (int signo))
+MONO_SIG_HANDLER_FUNC (static, sigint_handler)
 {
 	int save_errno;
-	MONO_ARCH_SAVE_REGS;
 
 	if (in_sigint)
 		return;
@@ -295,7 +287,7 @@ MONO_SIGNAL_HANDLER_FUNC (static, sigint_handler, (int signo))
 
 static struct sigaction save_sigcont, save_sigint, save_sigwinch;
 
-MONO_SIGNAL_HANDLER_FUNC (static, sigcont_handler, (int signo, void *the_siginfo, void *data))
+MONO_SIG_HANDLER_FUNC (static, sigcont_handler)
 {
 	int unused;
 	// Ignore error, there is not much we can do in the sigcont handler.
@@ -308,10 +300,10 @@ MONO_SIGNAL_HANDLER_FUNC (static, sigcont_handler, (int signo, void *the_siginfo
 	if (save_sigcont.sa_sigaction != NULL &&
 	    save_sigcont.sa_sigaction != (void *)SIG_DFL &&
 	    save_sigcont.sa_sigaction != (void *)SIG_IGN)
-		(*save_sigcont.sa_sigaction) (signo, the_siginfo, data);
+		(*save_sigcont.sa_sigaction) (MONO_SIG_HANDLER_PARAMS);
 }
 
-MONO_SIGNAL_HANDLER_FUNC (static, sigwinch_handler, (int signo, void *the_siginfo, void *data))
+MONO_SIG_HANDLER_FUNC (static, sigwinch_handler)
 {
 	int dims = terminal_get_dimensions ();
 	if (dims != -1)
@@ -321,7 +313,7 @@ MONO_SIGNAL_HANDLER_FUNC (static, sigwinch_handler, (int signo, void *the_siginf
 	if (save_sigwinch.sa_sigaction != NULL &&
 	    save_sigwinch.sa_sigaction != (void *)SIG_DFL &&
 	    save_sigwinch.sa_sigaction != (void *)SIG_IGN)
-		(*save_sigwinch.sa_sigaction) (signo, the_siginfo, data);
+		(*save_sigwinch.sa_sigaction) (MONO_SIG_HANDLER_PARAMS);
 }
 
 /*
@@ -448,8 +440,6 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardow
 {
 	int dims;
 
-	MONO_ARCH_SAVE_REGS;
-
 	dims = terminal_get_dimensions ();
 	if (dims == -1){
 		int cols = 0, rows = 0;
@@ -502,7 +492,7 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardow
 		if (teardown != NULL)
 			teardown_str = mono_string_to_utf8 (teardown);
 
-		atexit (tty_teardown);
+		mono_atexit (tty_teardown);
 	}
 
 	return TRUE;

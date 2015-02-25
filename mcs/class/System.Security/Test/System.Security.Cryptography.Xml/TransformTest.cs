@@ -74,13 +74,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	[TestFixture]
 	public class TransformTest {
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void GetDigestedOutput_Null ()
 		{
 			new ConcreteTransform ().GetDigestedOutput (null);
 		}
-#endif
 	}
 }

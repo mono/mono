@@ -80,6 +80,17 @@ namespace System {
 				catch (Exception) {
 				}
 			}
+
+			/* Called from TextWriter:WriteLine(string) */
+			public override void Write(char[] buffer, int index, int count) {
+				try {
+					sb.Append (buffer);
+					if (buffer != null && buffer.Length >= CoreNewLine.Length && EndsWithNewLine (buffer))
+						Flush ();
+				}
+				catch (Exception) {
+				}
+			}
 			
 			bool EndsWithNewLine (string value)
 			{
@@ -88,6 +99,16 @@ namespace System {
 						return false;
 				}
 				
+				return true;
+			}
+
+			bool EndsWithNewLine (char[] value)
+			{
+				for (int i = 0, v = value.Length - CoreNewLine.Length; i < CoreNewLine.Length; ++i, ++v) {
+					if (value [v] != CoreNewLine [i])
+						return false;
+				}
+
 				return true;
 			}
 			

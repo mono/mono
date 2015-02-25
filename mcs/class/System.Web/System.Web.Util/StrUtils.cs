@@ -98,36 +98,12 @@ namespace System.Web.Util {
 
 		public static bool IsNullOrEmpty (string value)
 		{
-#if NET_2_0
 			return String.IsNullOrEmpty (value);
-#else
-			return value == null || value.Length == 0;
-#endif
 		}
 
 		public static string [] SplitRemoveEmptyEntries (string value, char [] separator)
 		{
-#if NET_2_0
 			return value.Split (separator, StringSplitOptions.RemoveEmptyEntries);
-#else
-			string [] parts = value.Split (separator);
-			int delta = 0;
-			for (int i = 0; i < parts.Length; i++) {
-				if (IsNullOrEmpty (parts [i])) {
-					delta++;
-				}
-				else {
-					if (delta > 0)
-						parts [i - delta] = parts [i];
-				}
-			}
-			if (delta == 0)
-				return parts;
-
-			string [] parts_copy = new string [parts.Length - delta];
-			Array.Copy (parts, parts_copy, parts_copy.Length);
-			return parts_copy;
-#endif
 		}
 	}
 }

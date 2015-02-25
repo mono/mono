@@ -46,9 +46,6 @@ namespace System.Data {
 	internal delegate void DelegateConstraintNameChange (object sender, string newName);
 
 	[DefaultProperty ("ConstraintName")]
-#if !NET_2_0
-	[Serializable]
-#endif
 	[TypeConverterAttribute (typeof (ConstraintConverter))]
 	public abstract class Constraint {
 		static readonly object beforeConstraintNameChange = new object ();
@@ -87,9 +84,6 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("Indicates the name of this constraint.")]
-#endif
 		[DefaultValue ("")]
 		public virtual string ConstraintName {
 			get { return _constraintName == null ? "" : _constraintName; }
@@ -105,16 +99,10 @@ namespace System.Data {
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
-#if !NET_2_0
-		[DataSysDescription ("The collection that holds custom user information.")]
-#endif
 		public PropertyCollection ExtendedProperties {
 			get { return _properties; }
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Indicates the table of this constraint.")]
-#endif
 		public abstract DataTable Table {
 			get;
 		}

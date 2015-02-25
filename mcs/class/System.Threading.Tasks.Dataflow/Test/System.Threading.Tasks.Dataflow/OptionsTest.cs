@@ -215,10 +215,10 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsTrue (action.Post (1));
 
-			Assert.AreEqual (0, Thread.VolatileRead (ref n));
+			Assert.AreEqual (0, Volatile.Read (ref n));
 
 			Assert.AreEqual (1, scheduler.ExecuteAll ());
-			Assert.AreEqual (1, Thread.VolatileRead (ref n));
+			Assert.AreEqual (1, Volatile.Read (ref n));
 		}
 
 		[Test]

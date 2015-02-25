@@ -26,12 +26,12 @@
 #include "sgen-protocol.h"
 
 #ifdef HEAVY_STATISTICS
-unsigned long long stat_gray_queue_section_alloc;
-unsigned long long stat_gray_queue_section_free;
-unsigned long long stat_gray_queue_enqueue_fast_path;
-unsigned long long stat_gray_queue_dequeue_fast_path;
-unsigned long long stat_gray_queue_enqueue_slow_path;
-unsigned long long stat_gray_queue_dequeue_slow_path;
+guint64 stat_gray_queue_section_alloc;
+guint64 stat_gray_queue_section_free;
+guint64 stat_gray_queue_enqueue_fast_path;
+guint64 stat_gray_queue_dequeue_fast_path;
+guint64 stat_gray_queue_enqueue_slow_path;
+guint64 stat_gray_queue_dequeue_slow_path;
 #endif
 
 #define GRAY_QUEUE_LENGTH_LIMIT	64
@@ -99,7 +99,7 @@ sgen_gray_object_free_queue_section (GrayQueueSection *section)
 void
 sgen_gray_object_enqueue (SgenGrayQueue *queue, char *obj, mword desc)
 {
-	GrayQueueEntry entry = { obj, desc };
+	GrayQueueEntry entry = SGEN_GRAY_QUEUE_ENTRY (obj, desc);
 
 	HEAVY_STAT (stat_gray_queue_enqueue_slow_path ++);
 
@@ -146,7 +146,7 @@ sgen_gray_object_dequeue (SgenGrayQueue *queue)
 	entry = *queue->cursor--;
 
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	binary_protocol_gray_dequeue (queue, queue->cursor + 1, obj);
+	binary_protocol_gray_dequeue (queue, queue->cursor + 1, entry.obj);
 #endif
 
 	if (G_UNLIKELY (queue->cursor < GRAY_FIRST_CURSOR_POSITION (queue->first))) {
@@ -253,12 +253,19 @@ sgen_gray_object_queue_init_invalid (SgenGrayQueue *queue)
 }
 
 void
+sgen_gray_queue_set_alloc_prepare (SgenGrayQueue *queue, GrayQueueAllocPrepareFunc alloc_prepare_func, void *data)
+{
+	SGEN_ASSERT (0, !queue->alloc_prepare_func && !queue->alloc_prepare_data, "Can't set gray queue alloc-prepare twice");
+	queue->alloc_prepare_func = alloc_prepare_func;
+	queue->alloc_prepare_data = data;
+}
+
+void
 sgen_gray_object_queue_init_with_alloc_prepare (SgenGrayQueue *queue, GrayQueueEnqueueCheckFunc enqueue_check_func,
 		GrayQueueAllocPrepareFunc alloc_prepare_func, void *data)
 {
 	sgen_gray_object_queue_init (queue, enqueue_check_func);
-	queue->alloc_prepare_func = alloc_prepare_func;
-	queue->alloc_prepare_data = data;
+	sgen_gray_queue_set_alloc_prepare (queue, alloc_prepare_func, data);
 }
 
 void

@@ -5,12 +5,11 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
-LIB_MCS_FLAGS = $(RESOURCE_FILES:%=-resource:%)
+
+REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,PFX_LEGACY_3_5 -d:MONO -d:MONO_HYBRID_ENCODING_SUPPORT,PLATFORM_UNIX
+LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%)
+
 #LIBRARY_USE_INTERMEDIATE_FILE = yes
-
-ifeq (basic, $(PROFILE))
-
-else
 
 ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += --runtime:v2
@@ -22,12 +21,13 @@ $(error Unknown framework version)
 endif
 endif
 
-endif
+RESOURCE_STRINGS = ../../../external/referencesource/mscorlib/mscorlib.txt
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 RESOURCE_FILES = \
+	resources/charinfo.nlp \
 	resources/collation.core.bin \
 	resources/collation.tailoring.bin \
 	resources/collation.cjkCHS.bin \
@@ -36,7 +36,15 @@ RESOURCE_FILES = \
 	resources/collation.cjkKO.bin \
 	resources/collation.cjkKOlv2.bin
 
-LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
+REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32
+
+MOBILE_STATIC := $(filter mobile_static monotouch monotouch_runtime, $(PROFILE))
+
+ifndef MOBILE_STATIC
+REFERENCE_SOURCES_FLAGS += -d:FEATURE_REMOTING
+endif
+
+LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS)
 DEFAULT_REFERENCES =
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
@@ -160,3 +168,21 @@ EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
 	$(vtsdir)/BinarySerializationOverVersions.cs
+
+#
+# Android TimeZoneInfo testing....
+#
+
+tzi.exe: System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/common/Consts.cs ../../build/common/Locale.cs ../Mono.Options/Mono.Options/Options.cs ReferenceSources/TimeZoneInfoOptions.cs
+	mcs /debug+ /out:$@ /unsafe "/d:INSIDE_CORLIB;MONODROID;MOBILE;NET_4_5;NET_4_0;LIBC;SELF_TEST" $^
+
+android-pull-tzdb:
+	mkdir -p android/tzdb/usr/share/zoneinfo
+	mkdir -p android/tzdb/misc/zoneinfo/zoneinfo
+	android_root=`adb shell echo '$$ANDROID_ROOT' | tr -d "\r"` ; \
+	android_data=`adb shell echo '$$ANDROID_DATA' | tr -d "\r"` ; \
+	adb $(ADB_TARGET) pull $$android_root/usr/share/zoneinfo    android/tzdb/usr/share/zoneinfo ; \
+	adb $(ADB_TARGET) pull $$android_data/misc/zoneinfo/tzdata  android/tzdb/misc/zoneinfo
+
+android-dump-tzdata: tzi.exe android-pull-tzdb
+	__XA_OVERRIDE_TIMEZONE_ID__=America/New_York ANDROID_ROOT="`pwd`/android/tzdb" ANDROID_DATA="`pwd`/android/tzdb" mono --debug tzi.exe -o android/tzdata

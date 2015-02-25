@@ -20,10 +20,6 @@
 // THE SOFTWARE.
 // 
 
-#if !MONOTOUCH
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.CompressionFormat))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Dispatcher.ClientOperation))]
-#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.ActionNotSupportedException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.ChannelFactory))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.ChannelFactory<>))]
@@ -44,6 +40,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.ChannelManagerBase))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.ChannelParameterCollection))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.CommunicationObject))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.CompressionFormat))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.CustomBinding))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.FaultConverter))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.IChannel))]
@@ -105,6 +102,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Description.OperationDescription))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Description.OperationDescriptionCollection))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Description.ServiceEndpoint))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Dispatcher.ClientOperation))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Dispatcher.ClientRuntime))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Dispatcher.DispatchOperation))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Dispatcher.DispatchRuntime))]

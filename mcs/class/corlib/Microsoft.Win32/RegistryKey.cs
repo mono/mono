@@ -55,9 +55,7 @@ namespace Microsoft.Win32
 		// RegistryKey object
 		//
 		object handle;
-#if NET_4_0
 		SafeRegistryHandle safe_handle;
-#endif
 
 		object hive; // the RegistryHive if the key represents a base key
 		readonly string qname;	// the fully qualified registry key name
@@ -110,11 +108,7 @@ namespace Microsoft.Win32
 		///	Dispose of registry key object. Close the 
 		///	key if it's still open.
 		/// </summary>
-#if NET_4_0
 		public void Dispose ()
-#else
-		void IDisposable.Dispose ()
-#endif
 		{
 			GC.SuppressFinalize (this);
 			Close ();
@@ -163,9 +157,7 @@ namespace Microsoft.Win32
 			
 			RegistryApi.Close (this);
 			handle = null;
-#if NET_4_0
 			safe_handle = null;
-#endif
 		}
 		
 		
@@ -192,7 +184,6 @@ namespace Microsoft.Win32
 			}
 		}
 
-#if NET_4_0
 		[ComVisible (false)]
 		[MonoTODO ("Not implemented in Unix")]
 		public SafeRegistryHandle Handle {
@@ -215,7 +206,6 @@ namespace Microsoft.Win32
 				return RegistryView.Default;
 			}
 		}
-#endif
 
 		
 		/// <summary>
@@ -341,7 +331,6 @@ namespace Microsoft.Win32
 			return CreateSubKey (subkey);
 		}
 
-#if NET_4_0
 		[ComVisible (false)]
 		[MonoLimitation ("permissionCheck is ignored in Mono")]
 		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions options)
@@ -363,7 +352,6 @@ namespace Microsoft.Win32
 		{
 			return CreateSubKey (subkey, permissionCheck, registryOptions);
 		}
-#endif
 
 		
 		/// <summary>
@@ -415,9 +403,7 @@ namespace Microsoft.Win32
 			DeleteSubKeyTree (subkey, true);
 		}
 
-#if NET_4_0
 		public
-#endif
 		void DeleteSubKeyTree (string subkey, bool throwOnMissingSubKey)
 		{
 			// Note: this is done by deleting sub-nodes recursively.
@@ -501,7 +487,6 @@ namespace Microsoft.Win32
 			return RegistryApi.GetValueNames (this);
 		}
 
-#if NET_4_0
 		[ComVisible (false)]
 		[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 		[MonoTODO ("Not implemented on unix")]
@@ -520,7 +505,6 @@ namespace Microsoft.Win32
 		{
 			return FromHandle (handle);
 		}
-#endif
 		
 		
 		[MonoTODO ("Not implemented on unix")]
@@ -531,7 +515,6 @@ namespace Microsoft.Win32
 			return RegistryApi.OpenRemoteBaseKey (hKey, machineName);
 		}
 
-#if NET_4_0
 		[ComVisible (false)]
 		[MonoTODO ("Not implemented on unix")]
 		public static RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName, RegistryView view)
@@ -564,7 +547,6 @@ namespace Microsoft.Win32
 
 			throw new ArgumentException ("hKey");
 		}
-#endif
 
 		[ComVisible (false)]
 		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck)

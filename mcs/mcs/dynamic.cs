@@ -787,7 +787,7 @@ namespace Mono.CSharp
 
 			if (member != null && member.HasTypeArguments) {
 				TypeArguments ta = member.TypeArguments;
-				if (ta.Resolve (ec)) {
+				if (ta.Resolve (ec, false)) {
 					var targs = new ArrayInitializer (ta.Count, loc);
 					foreach (TypeSpec t in ta.Arguments)
 						targs.Add (new TypeOf (t, loc));

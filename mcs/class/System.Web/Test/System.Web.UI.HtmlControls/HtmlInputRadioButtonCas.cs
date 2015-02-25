@@ -56,11 +56,9 @@ namespace MonoCasTests.System.Web.UI.HtmlControls {
 			unit.IPostBackDataHandler_RaisePostBackEvent ();
 			unit.IPostBackDataHandler_LoadPostData_WrongId ();
 			unit.IPostBackDataHandler_LoadPostData ();
-#if NET_2_0
 			unit.RaisePostBackEvent ();
 			unit.LoadPostData_WrongId ();
 			unit.LoadPostData ();
-#endif
 		}
 
 		public override Type Type {

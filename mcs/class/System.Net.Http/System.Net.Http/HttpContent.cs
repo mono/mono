@@ -176,10 +176,21 @@ namespace System.Net.Http
 				encoding = Encoding.GetEncoding (headers.ContentType.CharSet);
 				preambleLength = StartsWith (buf, buf_length, encoding.GetPreamble ());
 			} else {
-				encoding = WebClient.GetEncodingFromBuffer (buf, buf_length, ref preambleLength) ?? Encoding.UTF8;
+				encoding = GetEncodingFromBuffer (buf, buf_length, ref preambleLength) ?? Encoding.UTF8;
 			}
 
 			return encoding.GetString (buf, preambleLength, buf_length - preambleLength);
+		}
+
+		static Encoding GetEncodingFromBuffer (byte[] buffer, int length, ref int preambleLength)
+		{
+			var encodings_with_preamble = new [] { Encoding.UTF8, Encoding.UTF32, Encoding.Unicode };
+			foreach (var enc in encodings_with_preamble) {
+				if ((preambleLength = StartsWith (buffer, length, enc.GetPreamble ())) != 0)
+					return enc;
+			}
+
+			return null;
 		}
 
 		static int StartsWith (byte[] array, int length, byte[] value)

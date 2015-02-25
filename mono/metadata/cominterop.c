@@ -524,8 +524,6 @@ cominterop_type_from_handle (MonoType *handle)
 	MonoDomain *domain = mono_domain_get (); 
 	MonoClass *klass = mono_class_from_mono_type (handle);
 
-	MONO_ARCH_SAVE_REGS;
-
 	mono_class_init (klass);
 	return mono_type_get_object (domain, handle);
 }
@@ -1588,8 +1586,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoO
 guint32
 ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal (MonoReflectionMethod *m)
 {
-	MONO_ARCH_SAVE_REGS;
-
 #ifndef DISABLE_COM
 	return cominterop_get_com_slot_for_method (m->method);
 #else
@@ -1605,8 +1601,6 @@ ves_icall_System_ComObject_CreateRCW (MonoReflectionType *type)
 	MonoDomain *domain;
 	MonoObject *obj;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	domain = mono_object_domain (type);
 	klass = mono_class_from_mono_type (type->type);
 
@@ -2097,13 +2091,14 @@ mono_marshal_free_ccw (MonoObject* object)
 			g_free (ccw_iter);
 		}
 		else
-			ccw_list_item = g_list_next(ccw_list_item);
+			ccw_list_item = g_list_next (ccw_list_item);
 	}
 
 	/* if list is empty remove original address from hash */
 	if (g_list_length (ccw_list) == 0)
 		g_hash_table_remove (ccw_hash, GINT_TO_POINTER (mono_object_hash (object)));
-
+	else if (ccw_list != ccw_list_orig)
+		g_hash_table_insert (ccw_hash, GINT_TO_POINTER (mono_object_hash (object)), ccw_list);
 
 	return TRUE;
 }
@@ -3308,23 +3303,17 @@ ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointe
 MonoString *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (gpointer ptr)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return mono_string_from_bstr(ptr);
 }
 
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR (MonoString* ptr)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return mono_string_to_bstr(ptr);
 }
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (gpointer ptr)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	mono_free_bstr (ptr);
 }

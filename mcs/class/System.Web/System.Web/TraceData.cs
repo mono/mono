@@ -333,12 +333,8 @@ namespace System.Web
 			table.Rows.Add (AltRow ("Control Tree"));
 			table.Rows.Add (SubHeadRow ("Control Id", "Type",
 						"Render Size Bytes (including children)",
-#if TARGET_J2EE
-						"ViewState Size (excluding children)"
-#else
 						String.Format ("ViewState Size (total: {0} bytes)(excluding children)",
 								page_vs_size)
-#endif
 						,"ControlState Size (excluding children)"
 							));
 			
@@ -437,11 +433,9 @@ namespace System.Web
 			}
 
 			string t1, t2;
-#if !TARGET_J2EE
 			if (i.TimeSinceFirst == 0) {
 				t1 = t2 = String.Empty;
 			} else
-#endif
 			{
 				t1 = i.TimeSinceFirst.ToString ("0.000000");
 				if (i.TimeSinceLast >= 0.1)

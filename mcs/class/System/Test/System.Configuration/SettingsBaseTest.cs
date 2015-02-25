@@ -28,7 +28,6 @@
 
 //#define SPEW
 
-#if NET_2_0
 
 using System;
 using System.Text;
@@ -329,4 +328,3 @@ namespace MonoTests.System.Configuration
 	}
 }
 
-#endif

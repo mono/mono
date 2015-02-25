@@ -569,6 +569,29 @@ public class BinaryWriterTest {
 	}
 
 	[Test]
+	public void AsynchronousModeWrites ()
+	{
+		string filename = Path.Combine (TempFolder, "myfilename");
+
+		using (var file = new FileStream (filename, FileMode.CreateNew,
+			                  FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous))
+		using (var writer = new BinaryWriter (file)) {
+			writer.Write (new byte[] { 0xCC, 0xDD } );
+			writer.Write (new byte[] { 0xAA } );
+		}
+
+		using (var inputStream = new FileStream (filename, FileMode.Open))
+		{
+			using (var reader = new BinaryReader (inputStream)) {
+				var l = reader.ReadByte ();
+				Assert.AreEqual (0xCC, l);
+
+				Assert.AreEqual (3, inputStream.Length);
+			}
+		}
+	}
+
+	[Test]
 	public void BaseStreamCallsFlush ()
 	{
 		FlushStream stream = new FlushStream ();

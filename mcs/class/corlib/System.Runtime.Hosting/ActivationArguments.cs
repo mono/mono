@@ -34,9 +34,7 @@ namespace System.Runtime.Hosting {
 	[Serializable]
 	[ComVisible (true)]
 	public sealed class ActivationArguments
-#if NET_4_0
 		: EvidenceBase
-#endif
 	{
 
 		private ActivationContext _context;

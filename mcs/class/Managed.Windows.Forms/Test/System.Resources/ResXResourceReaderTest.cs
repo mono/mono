@@ -218,13 +218,8 @@ namespace MonoTests.System.Resources {
 				Assert.AreEqual ("foo", enumerator.Key, "#A2");
 				Bitmap bitmap = enumerator.Value as Bitmap;
 				Assert.IsNotNull (bitmap, "#A3");
-#if NET_2_0
 				Assert.AreEqual (32, bitmap.Height, "#A4");
 				Assert.AreEqual (32, bitmap.Width, "#A5");
-#else
-				Assert.AreEqual (96, bitmap.Height, "#A4");
-				Assert.AreEqual (96, bitmap.Width, "#A5");
-#endif
 			}
 
 			File.Delete (refFile);
@@ -283,7 +278,6 @@ namespace MonoTests.System.Resources {
 					Assert.IsNotNull (ex.Message, "#A4");
 					Assert.IsNull (ex.ParamName, "#A5");
 
-#if NET_2_0
 					// Could not find a part of the path "<current dir>\in\string.txt".
 					// Line 1, position 821
 					XmlException inner = ex.InnerException as XmlException;
@@ -303,19 +297,8 @@ namespace MonoTests.System.Resources {
 					Assert.IsNotNull (inner2.Message, "#A15");
 					Assert.IsTrue (inner2.Message.IndexOf (Path.Combine (
 						Directory.GetCurrentDirectory (), relRefFile)) != -1, "#A16");
-#else
-					// Could not find a part of the path "<current dir>\in\string.txt"
-					Exception inner = ex.InnerException;
-					Assert.AreEqual (typeof (DirectoryNotFoundException), inner.GetType (), "#A6");
-					Assert.IsNull (inner.InnerException, "#A7");
-					Assert.IsNotNull (inner.Message, "#A8");
-					Assert.IsTrue (inner.Message.IndexOf (Path.Combine (
-						Directory.GetCurrentDirectory (), relRefFile)) != -1, "#A9");
-#endif
 				}
-#if NET_2_0
 				Assert.IsNull (r.BasePath, "#A17");
-#endif
 			}
 
 			string originalCurrentDir = Directory.GetCurrentDirectory ();
@@ -330,16 +313,13 @@ namespace MonoTests.System.Resources {
 						Assert.IsNotNull (sr, "#B3");
 						Assert.AreEqual ("hello", sr.ReadToEnd (), "#B4");
 					}
-#if NET_2_0
 					Assert.IsNull (r.BasePath, "#B5");
-#endif
 				}
 			} finally {
 				// restore original current directory
 				Directory.SetCurrentDirectory (originalCurrentDir);
 			}
 
-#if NET_2_0
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
 				r.BasePath = _tempDirectory;
 				IDictionaryEnumerator enumerator = r.GetEnumerator ();
@@ -387,7 +367,6 @@ namespace MonoTests.System.Resources {
 				}
 				Assert.AreEqual (Path.GetTempPath (), r.BasePath, "#D17");
 			}
-#endif
 		}
 
 		[Test]
@@ -408,25 +387,11 @@ namespace MonoTests.System.Resources {
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
-#if NET_2_0
 				IDictionaryEnumerator enumerator = r.GetEnumerator ();
 				enumerator.MoveNext ();
 				Assert.IsNotNull (enumerator.Current, "#A1");
 				Assert.AreEqual ("foo", enumerator.Key, "#A2");
 				Assert.IsFalse ("\u0021\u0026\u002A\u003B" == (string) enumerator.Value, "#A3");
-#else
-				try {
-					r.GetEnumerator ();
-					Assert.Fail ("#A1");
-				} catch (ArgumentException ex) {
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-					Assert.IsNotNull (ex.InnerException, "#A3");
-					Assert.IsNotNull (ex.Message, "#A4");
-					Assert.IsNull (ex.ParamName, "#A5");
-
-					Assert.AreEqual (typeof (MissingMethodException), ex.InnerException.GetType (), "#A6");
-				}
-#endif
 			}
 
 			resxFile = Path.Combine (_tempDirectory, "resources.resx");
@@ -439,25 +404,11 @@ namespace MonoTests.System.Resources {
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
-#if NET_2_0
 				IDictionaryEnumerator enumerator = r.GetEnumerator ();
 				enumerator.MoveNext ();
 				Assert.IsNotNull (enumerator.Current, "#B1");
 				Assert.AreEqual ("foo", enumerator.Key, "#B2");
 				Assert.AreEqual ("\u0021\u0026\u002A\u003B", (string) enumerator.Value, "#B3");
-#else
-				try {
-					r.GetEnumerator ();
-					Assert.Fail ("#B1");
-				} catch (ArgumentException ex) {
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-					Assert.IsNotNull (ex.InnerException, "#B3");
-					Assert.IsNotNull (ex.Message, "#B4");
-					Assert.IsNull (ex.ParamName, "#B5");
-
-					Assert.AreEqual (typeof (MissingMethodException), ex.InnerException.GetType (), "#B6");
-				}
-#endif
 			}
 		}
 
@@ -479,25 +430,11 @@ namespace MonoTests.System.Resources {
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
-#if NET_2_0
 				IDictionaryEnumerator enumerator = r.GetEnumerator ();
 				enumerator.MoveNext ();
 				Assert.IsNotNull (enumerator.Current, "#A1");
 				Assert.AreEqual ("foo", enumerator.Key, "#A2");
 				Assert.AreEqual ("\u0041\u2262\u0391\u002E", (string) enumerator.Value, "#A3");
-#else
-				try {
-					r.GetEnumerator ();
-					Assert.Fail ("#A1");
-				} catch (ArgumentException ex) {
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-					Assert.IsNotNull (ex.InnerException, "#A3");
-					Assert.IsNotNull (ex.Message, "#A4");
-					Assert.IsNull (ex.ParamName, "#A5");
-
-					Assert.AreEqual (typeof (MissingMethodException), ex.InnerException.GetType (), "#A6");
-				}
-#endif
 			}
 
 			resxFile = Path.Combine (_tempDirectory, "resources.resx");
@@ -510,25 +447,11 @@ namespace MonoTests.System.Resources {
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
-#if NET_2_0
 				IDictionaryEnumerator enumerator = r.GetEnumerator ();
 				enumerator.MoveNext ();
 				Assert.IsNotNull (enumerator.Current, "#B1");
 				Assert.AreEqual ("foo", enumerator.Key, "#B2");
 				Assert.AreEqual ("\u0041\u2262\u0391\u002E", (string) enumerator.Value, "#B3");
-#else
-				try {
-					r.GetEnumerator ();
-					Assert.Fail ("#B1");
-				} catch (ArgumentException ex) {
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-					Assert.IsNotNull (ex.InnerException, "#B3");
-					Assert.IsNotNull (ex.Message, "#B4");
-					Assert.IsNull (ex.ParamName, "#B5");
-
-					Assert.AreEqual (typeof (MissingMethodException), ex.InnerException.GetType (), "#B6");
-				}
-#endif
 			}
 		}
 
@@ -601,27 +524,14 @@ namespace MonoTests.System.Resources {
 							break;
 						case "Address":
 							Assert.IsNotNull (enumerator.Value, "#B1");
-#if NET_2_0
 							Assert.AreEqual (string.Empty, enumerator.Value, "#B2");
-#else
-							Assert.AreEqual ("Boston ", enumerator.Value, "#B2");
-#endif
 							break;
 						case "country":
 							Assert.IsNotNull (enumerator.Value, "#C1");
-#if NET_2_0
 							Assert.AreEqual (string.Empty, enumerator.Value, "#C2");
-#else
-							Assert.AreEqual ("Belgium", enumerator.Value, "#C2");
-#endif
 							break;
 						case "firstName":
-#if NET_2_0
 							Assert.IsNull (enumerator.Value, "#D");
-#else
-							Assert.IsNotNull (enumerator.Value, "#D1");
-							Assert.AreEqual (string.Empty, enumerator.Value, "#D2");
-#endif
 							break;
 						case "zip":
 							Assert.IsNotNull (enumerator.Value, "#E1");
@@ -1262,7 +1172,6 @@ namespace MonoTests.System.Resources {
 						Assert.IsNotNull (ex.Message, "#4");
 						Assert.IsNull (ex.ParamName, "#5");
 
-#if NET_2_0
 						// Could not find a name for a resource. The resource
 						// value was 'whatever'. Line 1, position 200
 						XmlException inner = ex.InnerException as XmlException;
@@ -1285,17 +1194,6 @@ namespace MonoTests.System.Resources {
 						Assert.IsNotNull (inner2.Message, "#18");
 						Assert.IsTrue (inner2.Message.IndexOf ("'whatever'") != -1, "#19");
 						Assert.IsNull (inner2.ParamName, "#20");
-#else
-						// Could not find a name for a resource. The resource
-						// value was 'whatever'
-						ArgumentException inner = ex.InnerException as ArgumentException;
-						Assert.IsNotNull (inner, "#6");
-						Assert.AreEqual (typeof (ArgumentException), inner.GetType (), "#7");
-						Assert.IsNull (inner.InnerException, "#8");
-						Assert.IsNotNull (inner.Message, "#9");
-						Assert.IsTrue (inner.Message.IndexOf ("'whatever'") != -1, "#10");
-						Assert.IsNull (inner.ParamName, "#11");
-#endif
 					}
  				}
 			}
@@ -1462,59 +1360,31 @@ namespace MonoTests.System.Resources {
 							break;
 						case "name5":
 							Assert.IsNotNull (enumerator.Value, "#E1");
-#if NET_2_0
 							Assert.AreEqual ("value5", enumerator.Value, "#E2");
-#else
-							Assert.AreEqual ("test", enumerator.Value, "#E2");
-#endif
 							break;
 						case "name6":
 							Assert.IsNotNull (enumerator.Value, "#F1");
-#if NET_2_0
 							Assert.AreEqual ("test2", enumerator.Value, "#F2");
-#else
-							Assert.AreEqual ("test1", enumerator.Value, "#F2");
-#endif
 							break;
 						case "name7":
 							Assert.IsNotNull (enumerator.Value, "#G1");
-#if NET_2_0
 							Assert.AreEqual (string.Empty, enumerator.Value, "#G2");
-#else
-							Assert.AreEqual ("value7a", enumerator.Value, "#G2");
-#endif
 							break;
 						case "name8":
 							Assert.IsNotNull (enumerator.Value, "#H1");
-#if NET_2_0
 							Assert.AreEqual (string.Empty, enumerator.Value, "#H2");
-#else
-							Assert.AreEqual ("value8", enumerator.Value, "#H2");
-#endif
 							break;
 						case "name9":
 							Assert.IsNotNull (enumerator.Value, "#I1");
-#if NET_2_0
 							Assert.AreEqual (string.Empty, enumerator.Value, "#I2");
-#else
-							Assert.AreEqual ("value9a", enumerator.Value, "#I2");
-#endif
 							break;
 						case "name10":
 							Assert.IsNotNull (enumerator.Value, "#J1");
-#if NET_2_0
 							Assert.AreEqual (string.Empty, enumerator.Value, "#J2");
-#else
-							Assert.AreEqual ("test", enumerator.Value, "#J2");
-#endif
 							break;
 						case "name11":
 							Assert.IsNotNull (enumerator.Value, "#K1");
-#if NET_2_0
 							Assert.AreEqual ("test2", enumerator.Value, "#K2");
-#else
-							Assert.AreEqual ("test1", enumerator.Value, "#K2");
-#endif
 							break;
 						case "name12":
 							Assert.IsNotNull (enumerator.Value, "#L1");
@@ -1522,26 +1392,15 @@ namespace MonoTests.System.Resources {
 							break;
 						case "name13":
 							Assert.IsNotNull (enumerator.Value, "#M1");
-#if NET_2_0
 							Assert.AreEqual ("<value13>", enumerator.Value, "#M2");
-#else
-							Assert.AreEqual ("test", enumerator.Value, "#M2");
-#endif
 							break;
 						case "name14":
-#if NET_2_0
 							Assert.IsNull (enumerator.Value, "#N1");
-#else
-							Assert.IsNotNull (enumerator.Value, "#N1");
-							Assert.AreEqual (string.Empty, enumerator.Value, "#N2");
-#endif
 							break;
-#if NET_2_0
 						case "name16":
 							Assert.IsNotNull (enumerator.Value, "#O1");
 							Assert.AreEqual ("value16", enumerator.Value, "#O2");
 							break;
-#endif
 						case "name17":
 							Assert.IsNotNull (enumerator.Value, "#P1");
 							Assert.AreEqual ("value17", enumerator.Value, "#P2");
@@ -1555,16 +1414,11 @@ namespace MonoTests.System.Resources {
 							break;
 						}
 					}
-#if NET_2_0
 					Assert.AreEqual (17, entries, "#Q");
-#else
-					Assert.AreEqual (16, entries, "#Q");
-#endif
 				}
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void UseResXDataNodes ()
 		{
@@ -1668,7 +1522,6 @@ namespace MonoTests.System.Resources {
 				Assert.IsFalse (enumerator.MoveNext (), "#B1");
 			}
 		}
-#endif
 
 		[Test]
 		public void TypeConversion ()
@@ -1764,56 +1617,26 @@ namespace MonoTests.System.Resources {
 							Assert.AreEqual (new byte [] { 5, 2, 7 }, enumerator.Value, "#C2");
 							break;
 						case "Data":
-#if NET_2_0
 							Assert.IsNull (enumerator.Value, "#D1");
-#else
-							Assert.IsNotNull (enumerator.Value, "#D1");
-							Assert.AreEqual ("Random Thoughts", enumerator.Value, "#D2");
-#endif
 							break;
 						case "Foo":
-#if NET_2_0
 							Assert.IsNull (enumerator.Value, "#E1");
-#else
-							Assert.IsNotNull (enumerator.Value, "#E1");
-							Assert.AreEqual ("A B C", enumerator.Value, "#E2");
-#endif
 							break;
 						case "Image":
-#if NET_2_0
 							Assert.IsNull (enumerator.Value, "#F1");
-#else
-							Assert.IsNotNull (enumerator.Value, "#F1");
-							Assert.AreEqual ("Summer.jpg", enumerator.Value, "#F2");
-#endif
 							break;
 						case "Text":
 							Assert.IsNotNull (enumerator.Value, "#G1");
 							Assert.AreEqual ("OK", enumerator.Value, "#G2");
 							break;
 						case "Unknown":
-#if NET_2_0
 							Assert.IsNull (enumerator.Value, "#H1");
-#else
-							Assert.IsNotNull (enumerator.Value, "#H1");
-							Assert.AreEqual ("MIA", enumerator.Value, "#H2");
-#endif
 							break;
 						case "Wrong":
-#if NET_2_0
 							Assert.IsNull (enumerator.Value, "#I1");
-#else
-							Assert.IsNotNull (enumerator.Value, "#I1");
-							Assert.AreEqual ("SuperUnknown", enumerator.Value, "#I2");
-#endif
 							break;
 						case "Xtra":
-#if NET_2_0
 							Assert.IsNull (enumerator.Value, "#J1");
-#else
-							Assert.IsNotNull (enumerator.Value, "#J1");
-							Assert.AreEqual ("LeftRight", enumerator.Value, "#J2");
-#endif
 							break;
 						default:
 							Assert.Fail ("#J:" + enumerator.Key);
@@ -2030,11 +1853,9 @@ namespace MonoTests.System.Resources {
 			"	<resheader name=\"writer\">" +
 			"		<value>System.Resources.ResXResourceWriter, {2}</value>" +
 			"	</resheader>" +
-#if NET_2_0
 			"	<metadata name=\"panel_label.Locked\" type=\"System.Boolean, {6}\">" +
 			"		<value>True</value>" +
 			" 	</metadata>" +
-#endif
 			"	<data name=\"foo\" type=\"System.Resources.ResXFileRef, {2}\">" +
 			"		<value>{3};{4}{5}</value>" +
 			"	</data>" +

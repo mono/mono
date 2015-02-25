@@ -920,6 +920,102 @@ TextWriter sw = Console.Out;
 		}
 
 		[Test]
+		public void LocalFile ()
+		{
+			Uri uri = new Uri ("file:///c:/subdir/file");
+
+			Assert.AreEqual ("c:/subdir/file", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("file:///c:/subdir/file", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("c:\\subdir\\file", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("c:/subdir/file", uri.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("file", uri.Segments [3], "Segments [3]");
+
+			Assert.AreEqual (String.Empty, uri.Authority, "Authority");
+			Assert.AreEqual (String.Empty, uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
+			Assert.AreEqual (String.Empty, uri.Host, "Host");
+			Assert.AreEqual (UriHostNameType.Basic, uri.HostNameType, "HostNameType");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsTrue (uri.IsDefaultPort, "IsDefaultPort");
+			Assert.IsTrue (uri.IsFile, "IsFile");
+			Assert.IsTrue (uri.IsLoopback, "IsLoopback");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("file:///c:/subdir/file", uri.OriginalString, "OriginalString");
+			Assert.AreEqual (-1, uri.Port, "Port");
+			Assert.AreEqual ("file", uri.Scheme, "Scheme");
+			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
+			Assert.AreEqual ("c:/", uri.Segments [1], "Segments [1]");
+			Assert.AreEqual ("subdir/", uri.Segments [2], "Segments [2]");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+		}
+
+		[Test]
+		public void LocalhostWinFile ()
+		{
+			Uri uri = new Uri ("file://localhost/c:/subdir/file");
+
+			Assert.AreEqual ("/c:/subdir/file", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("file://localhost/c:/subdir/file", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual (isWin32 ? "\\\\localhost\\c:\\subdir\\file" : "/c:/subdir/file", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("/c:/subdir/file", uri.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("file", uri.Segments [3], "Segments [3]");
+
+			Assert.AreEqual ("localhost", uri.Authority, "Authority");
+			Assert.AreEqual ("localhost", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
+			Assert.AreEqual ("localhost", uri.Host, "Host");
+			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "HostNameType");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsTrue (uri.IsDefaultPort, "IsDefaultPort");
+			Assert.IsTrue (uri.IsFile, "IsFile");
+			Assert.IsTrue (uri.IsLoopback, "IsLoopback");
+			Assert.AreEqual (isWin32, uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("file://localhost/c:/subdir/file", uri.OriginalString, "OriginalString");
+			Assert.AreEqual (-1, uri.Port, "Port");
+			Assert.AreEqual ("file", uri.Scheme, "Scheme");
+			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
+			Assert.AreEqual ("c:/", uri.Segments [1], "Segments [1]");
+			Assert.AreEqual ("subdir/", uri.Segments [2], "Segments [2]");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+		}
+
+		[Test]
+		public void LocalhostFile ()
+		{
+			Uri uri = new Uri ("file://localhost/dir/subdir/file");
+
+			Assert.AreEqual ("/dir/subdir/file", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("file://localhost/dir/subdir/file", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual (isWin32 ? "\\\\localhost\\dir\\subdir\\file" : "/dir/subdir/file", uri.LocalPath, "LocalPath");
+			Assert.AreEqual ("/dir/subdir/file", uri.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("file", uri.Segments [3], "Segments [3]");
+
+			Assert.AreEqual ("localhost", uri.Authority, "Authority");
+			Assert.AreEqual ("localhost", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
+			Assert.AreEqual ("localhost", uri.Host, "Host");
+			Assert.AreEqual (UriHostNameType.Dns, uri.HostNameType, "HostNameType");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsTrue (uri.IsDefaultPort, "IsDefaultPort");
+			Assert.IsTrue (uri.IsFile, "IsFile");
+			Assert.IsTrue (uri.IsLoopback, "IsLoopback");
+			Assert.AreEqual (isWin32, uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("file://localhost/dir/subdir/file", uri.OriginalString, "OriginalString");
+			Assert.AreEqual (-1, uri.Port, "Port");
+			Assert.AreEqual ("file", uri.Scheme, "Scheme");
+			Assert.AreEqual ("/", uri.Segments [0], "Segments [0]");
+			Assert.AreEqual ("dir/", uri.Segments [1], "Segments [1]");
+			Assert.AreEqual ("subdir/", uri.Segments [2], "Segments [2]");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+		}
+
+		[Test]
 		public void PathReduction_2e ()
 		{
 			Uri uri = new Uri ("http://host/dir/%2e%2E/file");

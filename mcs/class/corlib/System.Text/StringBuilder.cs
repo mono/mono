@@ -54,7 +54,7 @@ namespace System.Text {
 		private string _cached_str;
 		
 		private int _maxCapacity;
-		private const int constDefaultCapacity = 16;
+        	internal const int DefaultCapacity = 16;
 
 		public StringBuilder(string value, int startIndex, int length, int capacity) 
 			: this (value, startIndex, length, capacity, Int32.MaxValue)
@@ -89,8 +89,8 @@ namespace System.Text {
 				throw new System.ArgumentOutOfRangeException ("startIndex", startIndex, "StartIndex and length must refer to a location within the string.");
 
 			if (capacity == 0) {
-				if (maxCapacity > constDefaultCapacity)
-					capacity = constDefaultCapacity;
+				if (maxCapacity > DefaultCapacity)
+					capacity = DefaultCapacity;
 				else
 					_str = _cached_str = String.Empty;
 			}
@@ -136,7 +136,7 @@ namespace System.Text {
 		public int Capacity {
 			get {
 				if (_str.Length == 0)
-					return Math.Min (_maxCapacity, constDefaultCapacity);
+					return Math.Min (_maxCapacity, DefaultCapacity);
 				
 				return _str.Length;
 			}
@@ -505,13 +505,24 @@ namespace System.Text {
 			return this;
 		}
 
-#if NET_4_0
+		internal unsafe StringBuilder Append (char* value, int valueCount)
+		{
+			int needed_cap = _length + valueCount;
+			InternalEnsureCapacity (needed_cap);
+
+			fixed (char* src = _str) {
+				String.CharCopy (src + _length, value, valueCount);
+			}
+			_length = needed_cap;
+
+			return this;
+		}
+
 		public StringBuilder Clear ()
 		{
 			Length = 0;
 			return this;
 		}
-#endif
 
 		[ComVisible (false)]
 		public StringBuilder AppendLine ()
@@ -696,8 +707,8 @@ namespace System.Text {
 					// The first time a string is appended, we just set _cached_str
 					// and _str to it. This allows us to do some optimizations.
 					// Below, we take this into account.
-					if ((object) _cached_str == (object) _str && capacity < constDefaultCapacity)
-						capacity = constDefaultCapacity;
+					if ((object) _cached_str == (object) _str && capacity < DefaultCapacity)
+						capacity = DefaultCapacity;
 					
 					capacity = capacity << 1;
 					if (size > capacity)

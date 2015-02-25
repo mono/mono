@@ -20,14 +20,19 @@ namespace MonoTests.System.Diagnostics
 	public class ProcessStartInfoTest
 	{
 		[Test]
-		public void NullWorkingDirectory ()
+		public void NotNullCommonProperties ()
 		{
-			ProcessStartInfo info = new ProcessStartInfo ();
-			info.WorkingDirectory = null;
-			Assert.AreEqual (info.WorkingDirectory, String.Empty, "#1");
+			// Force FileName and Arguments to null. The others are null by default.
+			ProcessStartInfo info = new ProcessStartInfo (null, null);
+
+			Assert.AreEqual (info.Arguments, String.Empty, "#1");
+			Assert.AreEqual (info.Domain, String.Empty, "#2");
+			Assert.AreEqual (info.FileName, String.Empty, "#3");
+			Assert.AreEqual (info.UserName, String.Empty, "#4");
+			Assert.AreEqual (info.Verb, String.Empty, "#5");
+			Assert.AreEqual (info.WorkingDirectory, String.Empty, "#6");
 		}
 
-#if NET_2_0
 		[Test]
 		public void StandardErrorOutputEncoding ()
 		{
@@ -55,6 +60,5 @@ namespace MonoTests.System.Diagnostics
 			info.StandardOutputEncoding = Encoding.UTF8;
 			Process.Start (info);
 		}
-#endif
 	}
 }

@@ -54,9 +54,7 @@ using System.Web.UI.Adapters;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Reflection;
-#if NET_4_0
 using System.Web.Routing;
-#endif
 
 namespace System.Web.UI
 {
@@ -146,13 +144,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	string _title;
 	string _theme;
 	string _styleSheetTheme;
-#if NET_4_0
 	string _metaDescription;
 	string _metaKeywords;
 	Control _autoPostBackControl;
 	
 	bool frameworkInitialized;
-#endif
 	Hashtable items;
 
 	bool _maintainScrollPositionOnPostBack;
@@ -183,9 +179,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			viewStateEncryptionMode = ViewStateEncryptionMode.Auto;
 			_viewState = true;
 		}
-#if NET_4_0
 		this.ViewStateMode = ViewStateMode.Enabled;
-#endif
 	}
 
 	#endregion		
@@ -442,7 +436,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	internal IScriptManager ScriptManager {
 		get { return (IScriptManager) Items [typeof (IScriptManager)]; }
 	}
-#if !TARGET_J2EE
 	internal string theForm {
 		get {
 			return "theForm";
@@ -452,7 +445,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	internal bool IsMultiForm {
 		get { return false; }
 	}
-#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -566,7 +558,6 @@ public partial class Page : TemplateControl, IHttpHandler
 				_pageTheme.SetPage (this);
 		}
 	}
-#if NET_4_0
 	public Control AutoPostBackControl {
 		get { return _autoPostBackControl; }
 		set { _autoPostBackControl = value; }
@@ -640,7 +631,6 @@ public partial class Page : TemplateControl, IHttpHandler
 				htmlHeader.Keywords = value;
 		}
 	}
-#endif
 	[Localizable (true)] 
 	[Bindable (true)] 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -737,10 +727,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			return deflt;
 		CultureInfo ret = null;
 		if (culture.StartsWith ("auto", StringComparison.InvariantCultureIgnoreCase)) {
-#if TARGET_J2EE
-			if (!Context.IsServletRequest)
-				return deflt;
-#endif
 			string[] languages = Request.UserLanguages;
 			try {
 				if (languages != null && languages.Length > 0)
@@ -798,11 +784,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			return null;
 
 		NameValueCollection coll = null;
-		if (0 == String.Compare (Request.HttpMethod, "POST", true, Helpers.InvariantCulture)
-#if TARGET_J2EE
-			|| !_context.IsServletRequest
-#endif
-			)
+		if (0 == String.Compare (Request.HttpMethod, "POST", true, Helpers.InvariantCulture))
 			coll = req.Form;
 		else {
 			string query = Request.QueryStringRaw;
@@ -821,17 +803,6 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
-#if TARGET_J2EE
-		if (getFacesContext () != null && _context.Handler != _context.CurrentHandler) {
-			// check if it is PreviousPage
-			string prevViewId = coll [PreviousPageID];
-			if (!String.IsNullOrEmpty (prevViewId)) {
-				string appPath = VirtualPathUtility.RemoveTrailingSlash (Request.ApplicationPath);
-				prevViewId = prevViewId.Substring (appPath.Length);
-				isCrossPagePostBack = String.Compare (prevViewId, getFacesContext ().getExternalContext ().getRequestPathInfo (), StringComparison.OrdinalIgnoreCase) == 0;
-			}
-		}
-#endif
 		return coll;
 	}
 
@@ -843,10 +814,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	Control FindControl (string id, bool decode) {
-#if TARGET_J2EE
-		if (decode)
-			id = DecodeNamespace (id);
-#endif
 		return FindControl (id);
 	}
 
@@ -1050,17 +1017,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			
 			ClientScript.RegisterStartupScript (typeof (Page), "MaintainScrollPositionOnPostBackStartup", script.ToString());
 		}
-#if TARGET_J2EE
-		if (bool.Parse (WebConfigurationManager.AppSettings [RenderBodyContentOnlyKey] ?? "false")) {
-			for (Control c = this.Form; c != null; c = c.Parent) {
-				HtmlGenericControl ch = (c as HtmlGenericControl);
-				if (ch != null && ch.TagName == "body") {
-					ch.RenderChildren (writer);
-					return;
-				}
-			}
-		}
-#endif
 		base.Render (writer);
 	}
 
@@ -1090,13 +1046,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
 			writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
 		}
-#if TARGET_J2EE
-		// TODO implement callback on portlet
-		string serverUrl = Request.RawUrl;
-		writer.WriteLine ("\t{0}.serverURL = {1};", theForm, ClientScriptManager.GetScriptLiteral (serverUrl));
-		writer.WriteLine ("\twindow.TARGET_J2EE = true;");
-		writer.WriteLine ("\twindow.IsMultiForm = {0};", IsMultiForm ? "true" : "false");
-#endif
 		formScriptDeclarationRendered = true;
 	}
 
@@ -1115,19 +1064,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 
 		if (handleViewState)
-#if TARGET_J2EE
-			if (getFacesContext () != null) {
-				javax.faces.application.ViewHandler viewHandler = getFacesContext ().getApplication ().getViewHandler ();
-				javax.faces.context.ResponseWriter oldFacesWriter = SetupResponseWriter (writer);
-				try {
-					viewHandler.writeState (getFacesContext ());
-				}
-				finally {
-					getFacesContext ().setResponseWriter (oldFacesWriter);
-				}
-			} else
-#endif
-				scriptManager.RegisterHiddenField ("__VIEWSTATE", _savedViewState);
+			scriptManager.RegisterHiddenField ("__VIEWSTATE", _savedViewState);
 
 		scriptManager.WriteHiddenFields (writer);
 		if (requiresPostBackScript) {
@@ -1235,10 +1172,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	public virtual void ProcessRequest (HttpContext context)
 	{
 		SetContext (context);
-#if TARGET_J2EE
-		bool wasException = false;
-		IHttpHandler jsfHandler = getFacesContext () != null ? EnterThread () : null;
-#endif
 		
 		if (clientTarget != null)
 			Request.ClientTarget = clientTarget;
@@ -1250,18 +1183,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		_appCulture = Thread.CurrentThread.CurrentCulture;
 		_appUICulture = Thread.CurrentThread.CurrentUICulture;
 		FrameworkInitialize ();
-#if NET_4_0
 		frameworkInitialized = true;
-#endif
 		context.ErrorPage = _errorPage;
 
 		try {
 			InternalProcessRequest ();
-#if TARGET_J2EE
-		} catch (Exception ex) {
-			wasException = true;
-			HandleException (ex);
-#else
 		} catch (ThreadAbortException taex) {
 			if (FlagEnd.Value == taex.ExceptionState)
 				Thread.ResetAbort ();
@@ -1269,13 +1195,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				throw;
 		} catch (Exception e) {
 			ProcessException (e);
-#endif
 		} finally {
-#if TARGET_J2EE
-			if (getFacesContext () != null)
-				ExitThread (jsfHandler);
-			else if (!wasException)
-#endif
 			ProcessUnload ();
 		}
 	}
@@ -1297,12 +1217,6 @@ public partial class Page : TemplateControl, IHttpHandler
 				RenderTrace ();
 				UnloadRecursive (true);
 			} catch {}
-#if TARGET_J2EE
-			if (getFacesContext () != null) {
-				if(IsCrossPagePostBack)
-					_context.Items [CrossPagePostBack] = this;
-			}
-#endif
 			if (Thread.CurrentThread.CurrentCulture.Equals (_appCulture) == false)
 				Thread.CurrentThread.CurrentCulture = _appCulture;
 
@@ -1418,23 +1332,12 @@ public partial class Page : TemplateControl, IHttpHandler
 			
 		renderingForm = false;	
 
-#if TARGET_J2EE
-		if (getFacesContext () != null)
-			if (IsPostBack || IsCallback)
-				return;
-#endif
 
 		RestorePageState ();
 		ProcessPostData ();
 		ProcessRaiseEvents ();
 		if (ProcessLoadComplete ())
 			return;
-#if TARGET_J2EE
-		if (getFacesContext () != null) {
-			getFacesContext ().renderResponse ();
-			return;
-		}
-#endif
 		RenderPage ();
 	}
 
@@ -1499,13 +1402,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			return true;
 
 		if (IsCallback) {
-#if TARGET_J2EE
-			if (getFacesContext () != null) {
-				_callbackTarget = GetCallbackTarget ();
-				ProcessRaiseCallbackEvent (_callbackTarget, ref _callbackEventError);
-				return true;
-			}
-#endif
 			string result = ProcessCallbackData ();
 			HtmlTextWriter callbackOutput = new HtmlTextWriter (Response.Output);
 			callbackOutput.Write (result);
@@ -1591,12 +1487,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		string eventTarget = postdata [postEventSourceID];
 		IPostBackEventHandler target;
 		if (String.IsNullOrEmpty (eventTarget)) {
-#if NET_4_0
 			target = AutoPostBackControl as IPostBackEventHandler;
 			if (target != null)
 				RaisePostBackEvent (target, null);
 			else
-#endif
 			if (formPostedRequiresRaiseEvent != null)
 				RaisePostBackEvent (formPostedRequiresRaiseEvent, null);
 			else
@@ -1605,10 +1499,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 
 		target = FindControl (eventTarget, true) as IPostBackEventHandler;
-#if NET_4_0
 		if (target == null)
 			target = AutoPostBackControl as IPostBackEventHandler;
-#endif
 		if (target == null)
 			return;
 
@@ -1784,9 +1676,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		object viewState = null;
 		
 		if (EnableViewState
-#if NET_4_0
 		    && this.ViewStateMode == ViewStateMode.Enabled
-#endif
 		)
 			viewState = SaveViewStateRecursive ();
 		
@@ -2141,7 +2031,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			htmlHeader.Title = _title;
 			_title = null;
 		}
-#if NET_4_0
 		if (_metaDescription != null) {
 			htmlHeader.Description = _metaDescription;
 			_metaDescription = null;
@@ -2151,7 +2040,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			htmlHeader.Keywords = _metaKeywords;
 			_metaKeywords = null;
 		}
-#endif
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -2548,23 +2436,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (_requestValueCollection != null) {
 			string prevPage = _requestValueCollection [PreviousPageID];
 			if (prevPage != null) {
-#if TARGET_J2EE
-				if (getFacesContext () != null) {
-					IHttpHandler handler = Context.ApplicationInstance.GetHandler (Context, prevPage);
-					Server.Execute (handler, null, true, _context.Request.CurrentExecutionFilePath, null, false, false);
-					if (_context.Items.Contains (CrossPagePostBack)) {
-						previousPage = (Page) _context.Items [CrossPagePostBack];
-						_context.Items.Remove (CrossPagePostBack);
-					}
-					return;
-				}
-#else
 				IHttpHandler handler;
 				handler = BuildManager.CreateInstanceFromVirtualPath (prevPage, typeof (IHttpHandler)) as IHttpHandler;
 				previousPage = (Page) handler;
 				previousPage.isCrossPagePostBack = true;
 				Server.Execute (handler, null, true, _context.Request.CurrentExecutionFilePath, null, false, false);
-#endif
 			} 
 		}
 	}

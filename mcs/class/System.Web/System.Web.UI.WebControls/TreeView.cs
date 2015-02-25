@@ -28,7 +28,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 
 using System.Collections;
 using System.Text;
@@ -1390,12 +1389,6 @@ namespace System.Web.UI.WebControls
 			writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0");
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 
-#if !NET_4_0
-			Unit nodeSpacing = GetNodeSpacing (node);
-
-			if (nodeSpacing != Unit.Empty && (node.Depth > 0 || node.Index > 0))
-				RenderMenuItemSpacing (writer, nodeSpacing);
-#endif
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			
 			// Vertical lines from previous levels
@@ -1494,9 +1487,7 @@ namespace System.Web.UI.WebControls
 			
 			if (!String.IsNullOrEmpty (imageUrl)) {
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
-#if NET_4_0
 				writer.AddAttribute (HtmlTextWriterAttribute.Tabindex, "-1");
-#endif
 				BeginNodeTag (writer, node, clientExpand);
 				writer.AddAttribute (HtmlTextWriterAttribute.Src, imageUrl);
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0");
@@ -1528,13 +1519,9 @@ namespace System.Web.UI.WebControls
 			if (node.ShowCheckBoxInternal) {
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID + "_cs_" + node.Path);
 				writer.AddAttribute (HtmlTextWriterAttribute.Type, "checkbox", false);
-#if NET_4_0
 				string str = node.ToolTip;
 				if (!String.IsNullOrEmpty (str))
 					writer.AddAttribute (HtmlTextWriterAttribute.Title, str);
-#else
-				writer.AddAttribute (HtmlTextWriterAttribute.Title, node.Text);
-#endif
 				if (node.Checked)
 					writer.AddAttribute (HtmlTextWriterAttribute.Checked, "checked", false);
 				writer.RenderBeginTag (HtmlTextWriterTag.Input);	// INPUT
@@ -1557,10 +1544,6 @@ namespace System.Web.UI.WebControls
 			writer.RenderEndTag ();	// TD
 			
 			writer.RenderEndTag ();	// TR
-#if !NET_4_0
-			if (nodeSpacing != Unit.Empty)
-				RenderMenuItemSpacing (writer, nodeSpacing);
-#endif
 			
 			writer.RenderEndTag ();	// TABLE
 			
@@ -1632,9 +1615,6 @@ namespace System.Web.UI.WebControls
 		
 		void RenderMenuItemSpacing (HtmlTextWriter writer, Unit itemSpacing)
 		{
-#if !NET_4_0
-			writer.AddStyleAttribute (HtmlTextWriterStyle.Height, itemSpacing.ToString ());
-#endif
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);
 			writer.RenderEndTag ();
@@ -1672,64 +1652,34 @@ namespace System.Web.UI.WebControls
 			if (Page.Header != null) {
 				// styles are registered
 				if (nodeStyle != null) {
-#if NET_4_0
  					style.PrependCssClass (nodeStyle.RegisteredCssClass);
  					style.PrependCssClass (nodeStyle.CssClass);
-#else
-					style.AddCssClass (nodeStyle.CssClass);
-					style.AddCssClass (nodeStyle.RegisteredCssClass);
-#endif
 				}
 				if (node.IsLeafNode) {
 					if (leafNodeStyle != null) {
-#if NET_4_0
 						style.PrependCssClass (leafNodeStyle.RegisteredCssClass);
 						style.PrependCssClass (leafNodeStyle.CssClass);
-#else
-						style.AddCssClass (leafNodeStyle.CssClass);
-						style.AddCssClass (leafNodeStyle.RegisteredCssClass);
-#endif
 					}
 				} else if (node.IsRootNode) {
 					if (rootNodeStyle != null) {
-#if NET_4_0
 						style.PrependCssClass (rootNodeStyle.RegisteredCssClass);
 						style.PrependCssClass (rootNodeStyle.CssClass);
-#else
-						style.AddCssClass (rootNodeStyle.CssClass);
-						style.AddCssClass (rootNodeStyle.RegisteredCssClass);
-#endif
 					}
 				} else if (node.IsParentNode) {
 					if (parentNodeStyle != null) {
-#if NET_4_0
 						style.AddCssClass (parentNodeStyle.RegisteredCssClass);
 						style.AddCssClass (parentNodeStyle.CssClass);
-#else
-						style.AddCssClass (parentNodeStyle.CssClass);
-						style.AddCssClass (parentNodeStyle.RegisteredCssClass);
-#endif
 					}
 				}
 				
 				if (levelStyles != null && levelStyles.Count > level) {
-#if NET_4_0
  					style.PrependCssClass (levelStyles [level].RegisteredCssClass);
  					style.PrependCssClass (levelStyles [level].CssClass);
-#else
-					style.AddCssClass (levelStyles [level].CssClass);
-					style.AddCssClass (levelStyles [level].RegisteredCssClass);
-#endif
 				}
 				
 				if (nodeIsSelected) {
-#if NET_4_0
 					style.AddCssClass (selectedNodeStyle.RegisteredCssClass);
 					style.AddCssClass (selectedNodeStyle.CssClass);
-#else
-					style.AddCssClass (selectedNodeStyle.CssClass);
-					style.AddCssClass (selectedNodeStyle.RegisteredCssClass);
-#endif
 				}
 			} else {
 				// styles are not registered
@@ -1761,9 +1711,7 @@ namespace System.Web.UI.WebControls
 		void AddNodeLinkStyle (HtmlTextWriter writer, TreeNode node, int level, bool nodeIsSelected)
 		{
 			Style style = new Style ();
-#if NET_4_0
 			bool addBorderStyle = false;
-#endif
 			if (Page.Header != null) {
 				// styles are registered
 				style.AddCssClass (ControlLinkStyle.RegisteredCssClass);
@@ -1776,9 +1724,7 @@ namespace System.Web.UI.WebControls
 				if (levelLinkStyles != null && levelLinkStyles.Count > level) {
 					style.AddCssClass (levelLinkStyles [level].CssClass);
 					style.AddCssClass (levelLinkStyles [level].RegisteredCssClass);
-#if NET_4_0
 					addBorderStyle = true;
-#endif
 				}
 				
 				if (node.IsLeafNode) {
@@ -1810,9 +1756,7 @@ namespace System.Web.UI.WebControls
 				
 				if (levelLinkStyles != null && levelLinkStyles.Count > level) {
 					style.CopyFrom (levelLinkStyles [level]);
-#if NET_4_0
 					addBorderStyle = true;
-#endif
 				}
 				
 				if (node.IsLeafNode) {
@@ -1831,14 +1775,12 @@ namespace System.Web.UI.WebControls
 				
 				style.AlwaysRenderTextDecoration = true;
 			}
-#if NET_4_0
 			if (addBorderStyle) {
 				// This appears not to come from any style. Instead, it's added
 				// whenever a level style is present.
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "none");
 				writer.AddStyleAttribute (HtmlTextWriterStyle.FontSize, "1em");
 			}		
-#endif
 			style.AddAttributesToRender (writer);
 		}
 
@@ -1850,11 +1792,7 @@ namespace System.Web.UI.WebControls
 			string navigateUrl = node.NavigateUrl;
 			if (!String.IsNullOrEmpty (navigateUrl)) {
 				string target = node.Target.Length > 0 ? node.Target : Target;
-#if TARGET_J2EE
-				string navUrl = ResolveClientUrl (navigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
-#else
 				string navUrl = ResolveClientUrl (navigateUrl);
-#endif
 				writer.AddAttribute (HtmlTextWriterAttribute.Href, navUrl);
 				if (target.Length > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Target, target);
@@ -2044,4 +1982,3 @@ namespace System.Web.UI.WebControls
 		}
 	}
 }
-#endif

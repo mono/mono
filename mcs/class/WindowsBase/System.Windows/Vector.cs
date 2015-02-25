@@ -60,8 +60,9 @@ namespace System.Windows {
 			throw new NotImplementedException ();
 		}
 
-		string IFormattable.ToString(string format, IFormatProvider formatProvider) {
-			throw new NotImplementedException ();
+		string IFormattable.ToString (string format, IFormatProvider provider)
+		{
+			return string.Format (provider, "{0:" + format + "},{1:" + format + "}", x, y);
 		}
 
 		public static bool Equals (Vector vector1, Vector vector2)

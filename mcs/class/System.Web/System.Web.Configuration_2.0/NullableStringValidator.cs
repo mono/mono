@@ -30,7 +30,6 @@
 // copied StringValidator.cs and changed class name and just one line 
 // in Validate() (see there).
 
-#if NET_2_0
 
 namespace System.Configuration
 {
@@ -86,4 +85,3 @@ namespace System.Configuration
 	}
 }
 
-#endif

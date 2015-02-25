@@ -472,7 +472,6 @@ namespace MonoTests.System.Data
 			ds.Tables.RemoveAt(0); //Parent table
 		}
 
-#if NET_2_0
 		[Test]
 		public void AddTable_DiffNamespaceTest ()
 		{
@@ -550,6 +549,5 @@ namespace MonoTests.System.Data
 				Assert.Fail ("#5");
 			} catch (ArgumentException e) { }
 		}
-#endif
 	}
 }

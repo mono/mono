@@ -31,9 +31,7 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls {
 	[ToolboxItem ("")]
 	public class RepeaterItem : Control, INamingContainer
-#if NET_2_0
 		, IDataItemContainer
-#endif
 	{
 	
 		public RepeaterItem (int itemIndex, ListItemType itemType)
@@ -84,7 +82,6 @@ namespace System.Web.UI.WebControls {
 		int idx;
 		ListItemType type;
 
-#if NET_2_0
 
 		int IDataItemContainer.DataItemIndex {
 			get { return ItemIndex; }
@@ -94,6 +91,5 @@ namespace System.Web.UI.WebControls {
 			get { return ItemIndex; }
 		}
 
-#endif
 	}
 }

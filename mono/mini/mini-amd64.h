@@ -122,14 +122,23 @@ struct sigcontext {
 
 #define MONO_ARCH_FP_RETURN_REG AMD64_XMM0
 
-/* xmm15 is reserved for use by some opcodes */
+#ifdef TARGET_WIN32
+/* xmm5 is used as a scratch register */
+#define MONO_ARCH_CALLEE_FREGS 0x1f
+/* xmm6:xmm15 */
+#define MONO_ARCH_CALLEE_SAVED_FREGS (0xffff - 0x3f)
+#define MONO_ARCH_FP_SCRATCH_REG AMD64_XMM5
+#else
+/* xmm15 is used as a scratch register */
 #define MONO_ARCH_CALLEE_FREGS 0x7fff
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0
+#define MONO_ARCH_FP_SCRATCH_REG AMD64_XMM15
+#endif
 
 #define MONO_MAX_XREGS MONO_MAX_FREGS
 
-#define MONO_ARCH_CALLEE_XREGS 0x7fff
-#define MONO_ARCH_CALLEE_SAVED_XREGS 0
+#define MONO_ARCH_CALLEE_XREGS MONO_ARCH_CALLEE_FREGS
+#define MONO_ARCH_CALLEE_SAVED_XREGS MONO_ARCH_CALLEE_SAVED_FREGS
 
 
 #define MONO_ARCH_CALLEE_REGS AMD64_CALLEE_REGS
@@ -151,9 +160,6 @@ struct sigcontext {
 /* fixme: align to 16byte instead of 32byte (we align to 32byte to get 
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
-
-#define MONO_ARCH_RETREG1 X86_EAX
-#define MONO_ARCH_RETREG2 X86_EDX
 
 /*This is the max size of the locals area of a given frame. I think 1MB is a safe default for now*/
 #define MONO_ARCH_MAX_FRAME_SIZE 0x100000
@@ -264,7 +270,7 @@ typedef struct {
  */
 #define MONO_ARCH_VARARG_ICALLS 1
 
-#if !defined( HOST_WIN32 ) && !defined(__native_client__) && !defined(__native_client_codegen__)
+#if (!defined( HOST_WIN32 ) && !defined(__native_client__) && !defined(__native_client_codegen__)) && defined (HAVE_SIGACTION)
 
 #define MONO_ARCH_USE_SIGACTION 1
 
@@ -284,10 +290,12 @@ typedef struct {
 #define MONO_AMD64_ARG_REG1 AMD64_RCX
 #define MONO_AMD64_ARG_REG2 AMD64_RDX
 #define MONO_AMD64_ARG_REG3 AMD64_R8
+#define MONO_AMD64_ARG_REG4 AMD64_R9
 #else
 #define MONO_AMD64_ARG_REG1 AMD64_RDI
 #define MONO_AMD64_ARG_REG2 AMD64_RSI
 #define MONO_AMD64_ARG_REG3 AMD64_RDX
+#define MONO_AMD64_ARG_REG4 AMD64_RCX
 #endif
 
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
@@ -319,14 +327,13 @@ typedef struct {
 #define MONO_ARCH_HAVE_LIVERANGE_OPS 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define MONO_ARCH_MONITOR_OBJECT_REG MONO_AMD64_ARG_REG1
+#define MONO_ARCH_MONITOR_LOCK_TAKEN_REG MONO_AMD64_ARG_REG2
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
 
 #define MONO_ARCH_AOT_SUPPORTED 1
 #if !defined( __native_client__ )
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #endif
-
-#define MONO_ARCH_ENABLE_MONITOR_IL_FASTPATH 1
 
 #define MONO_ARCH_SUPPORT_TASKLETS 1
 

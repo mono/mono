@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 #region Using Directives
 using System;
@@ -116,4 +115,3 @@ namespace System.Data.Odbc
                 #endregion //Methods
         }
 }
-#endif // NET_2_0

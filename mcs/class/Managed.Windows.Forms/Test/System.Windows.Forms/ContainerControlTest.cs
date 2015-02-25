@@ -320,7 +320,6 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		[NUnit.Framework.Category ("NotWorking")]  // Depends on fonts *AND* DPI, how useless is that? (Values are Vista/96DPI)
 		public void AutoScaling ()
@@ -448,6 +447,5 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual ("t;t1;t4;", validated, "A11b");
 			validating = string.Empty; validated = string.Empty;
 		}
-#endif
 	}
 }

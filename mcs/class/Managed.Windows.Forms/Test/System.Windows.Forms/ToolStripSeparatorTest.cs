@@ -25,7 +25,6 @@
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
 //
-#if NET_2_0
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -105,4 +104,3 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 }
-#endif

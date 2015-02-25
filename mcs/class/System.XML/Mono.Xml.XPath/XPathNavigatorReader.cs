@@ -218,12 +218,8 @@ namespace Mono.Xml.XPath
 
 		public override bool IsDefault {
 			get {
-#if NET_2_0
 				IXmlSchemaInfo si = current as IXmlSchemaInfo;
 				return si != null && si.IsDefault;
-#else
-				return false; // no way to check this.
-#endif
 			}
 		}
 
@@ -232,11 +228,9 @@ namespace Mono.Xml.XPath
 			get { return '\"'; }
 		}
 
-#if NET_2_0
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return current.SchemaInfo; }
 		}
-#endif
 
 		public override string XmlLang {
 			get { return current.XmlLang; }
@@ -498,10 +492,8 @@ namespace Mono.Xml.XPath
 		{
 			if (eof)
 				return false;
-#if NET_2_0
 			if (Binary != null)
 				Binary.Reset ();
-#endif
 
 			switch (ReadState) {
 			case ReadState.Interactive:

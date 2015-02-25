@@ -59,7 +59,7 @@ LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	}
 #endif
 
-	mono_handle_native_sigsegv (SIGSEGV, NULL);
+	mono_handle_native_sigsegv (SIGSEGV, NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -96,7 +96,7 @@ mono_win32_get_handle_stackoverflow (void)
 	x86_call_code (code, mono_domain_get);
 
 	/* get stack overflow exception from domain object */
-	x86_mov_reg_membase (code, X86_EAX, X86_EAX, MONO_STRUCT_OFFSET (MonoDomain, stack_overflow_ex), 4);
+	x86_mov_reg_membase (code, X86_EAX, X86_EAX, G_STRUCT_OFFSET (MonoDomain, stack_overflow_ex), 4);
 
 	/* call mono_arch_handle_exception (sctx, stack_overflow_exception_obj) */
 	x86_push_reg (code, X86_EAX);
@@ -139,8 +139,7 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
 	guint32 free_stack = 0;
 	StackFrameInfo frame;
 
-	/* convert sigcontext to MonoContext (due to reuse of stack walking helpers */
-	mono_arch_sigctx_to_monoctx (sctx, &ctx);
+	mono_sigctx_to_monoctx (sctx, &ctx);
 	
 	/* get our os page size */
 	GetSystemInfo(&si);
@@ -172,8 +171,7 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
 		ctx = new_ctx;
 	} while (free_stack < 64 * 1024 && frame.ji != (gpointer) -1);
 
-	/* convert into sigcontext to be used in mono_arch_handle_exception */
-	mono_arch_monoctx_to_sigctx (&ctx, sctx);
+	mono_monoctx_to_sigctx (&ctx, sctx);
 
 	/* todo: install new stack-guard page */
 
@@ -828,14 +826,12 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 			return TRUE;
 		}
-		
+
 		if ((ji = mini_jit_info_table_find (domain, (gpointer)(*lmf)->eip, NULL))) {
+			frame->ji = ji;
 		} else {
-			if (!((guint32)((*lmf)->previous_lmf) & 1))
-				/* Top LMF entry */
+			if (!(*lmf)->method)
 				return FALSE;
-			g_assert_not_reached ();
-			/* Trampoline lmf frame */
 			frame->method = (*lmf)->method;
 		}
 
@@ -848,28 +844,12 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		/* Adjust IP */
 		new_ctx->eip --;
 
-		frame->ji = ji;
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 
 		/* Check if we are in a trampoline LMF frame */
 		if ((guint32)((*lmf)->previous_lmf) & 1) {
 			/* lmf->esp is set by the trampoline code */
 			new_ctx->esp = (*lmf)->esp;
-
-			/* Pop arguments off the stack */
-			/* FIXME: Handle the delegate case too ((*lmf)->method == NULL) */
-			/* FIXME: Handle the IMT/vtable case too */
-#if 0
-#ifndef ENABLE_LLVM
-			if ((*lmf)->method) {
-				MonoMethod *method = (*lmf)->method;
-				MonoJitArgumentInfo *arg_info = g_newa (MonoJitArgumentInfo, mono_method_signature (method)->param_count + 1);
-
-				guint32 stack_to_pop = mono_arch_get_argument_info (NULL, mono_method_signature (method), mono_method_signature (method)->param_count, arg_info);
-				new_ctx->esp += stack_to_pop;
-			}
-#endif
-#endif
 		}
 		else
 			/* the lmf is always stored on the stack, so the following
@@ -882,18 +862,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	}
 
 	return FALSE;
-}
-
-void
-mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
-{
-	mono_sigctx_to_monoctx (sigctx, mctx);
-}
-
-void
-mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
-{
-	mono_monoctx_to_sigctx (mctx, sigctx);
 }
 
 gpointer
@@ -1012,7 +980,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 
 	/* Pass the ctx parameter in TLS */
-	mono_arch_sigctx_to_monoctx (ctx, &jit_tls->ex_ctx);
+	mono_sigctx_to_monoctx (ctx, &jit_tls->ex_ctx);
 
 	mctx = jit_tls->ex_ctx;
 	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
@@ -1024,7 +992,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	struct sigcontext *ctx = (struct sigcontext *)sigctx;
 
-	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
+	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 
 	mctx = jit_tls->ex_ctx;
 	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
@@ -1034,11 +1002,11 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 #else
 	MonoContext mctx;
 
-	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
+	mono_sigctx_to_monoctx (sigctx, &mctx);
 
 	mono_handle_exception (&mctx, obj);
 
-	mono_arch_monoctx_to_sigctx (&mctx, sigctx);
+	mono_monoctx_to_sigctx (&mctx, sigctx);
 
 	return TRUE;
 #endif
@@ -1084,7 +1052,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 }
 
 void
-mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean stack_ovf)
+mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
 {
 #ifdef MONO_ARCH_USE_SIGACTION
 	MonoException *exc = NULL;
@@ -1106,7 +1074,7 @@ mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean
 	if (stack_ovf)
 		exc = mono_domain_get ()->stack_overflow_ex;
 	if (!ji)
-		mono_handle_native_sigsegv (SIGSEGV, sigctx);
+		mono_handle_native_sigsegv (SIGSEGV, sigctx, siginfo);
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.
 	 * If this was a stack overflow the caller already ensured the stack pages

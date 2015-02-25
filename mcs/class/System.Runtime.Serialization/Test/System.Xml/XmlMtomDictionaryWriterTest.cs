@@ -47,6 +47,7 @@ namespace MonoTests.System.Xml
 		{
 			MemoryStream ms = new MemoryStream ();
 			var w = XmlDictionaryWriter.CreateMtomWriter (ms, Encoding.UTF8, 10000, "sTaRt", "myboundary", "urn:foo", false, false);
+			w.WriteStartDocument ();
 			w.WriteStartElement ("root");
 			w.WriteRaw ("RAW");
 			w.WriteStartElement ("foo");

@@ -120,9 +120,7 @@ namespace MonoTests.System.Data.OracleClient
 			Assert.AreEqual ((byte) 0, param.Scale, "#7");
 			Assert.AreEqual (0, param.Size, "#8");
 			Assert.AreEqual (string.Empty, param.SourceColumn, "#9");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, "#10");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, "#11");
 			Assert.IsNull (param.Value, "#12");
 		}
@@ -140,15 +138,9 @@ namespace MonoTests.System.Data.OracleClient
 			Assert.AreEqual ("firstName", param.ParameterName, "#A5");
 			Assert.AreEqual ((byte) 0, param.Precision, "#A6");
 			Assert.AreEqual ((byte) 0, param.Scale, "#A7");
-#if NET_2_0
 			Assert.AreEqual (6, param.Size, "#A8");
-#else
-			Assert.AreEqual (0, param.Size, "#A8");
-#endif
 			Assert.AreEqual (string.Empty, param.SourceColumn, "#A9");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, "#A10");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, "#A11");
 			Assert.AreEqual ("Miguel", param.Value, "#A12");
 
@@ -160,15 +152,9 @@ namespace MonoTests.System.Data.OracleClient
 			Assert.AreEqual (string.Empty, param.ParameterName, "#B5");
 			Assert.AreEqual ((byte) 0, param.Precision, "#B6");
 			Assert.AreEqual ((byte) 0, param.Scale, "#B7");
-#if NET_2_0
 			Assert.AreEqual (7, param.Size, "#B8");
-#else
-			Assert.AreEqual (0, param.Size, "#B8");
-#endif
 			Assert.AreEqual (string.Empty, param.SourceColumn, "#B9");
-#if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, "#B10");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, param.SourceVersion, "#B11");
 			Assert.AreEqual (new DateTime (2006, 1, 5), param.Value, "#B12");
 		}

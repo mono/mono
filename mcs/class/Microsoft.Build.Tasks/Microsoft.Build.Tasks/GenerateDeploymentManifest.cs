@@ -27,7 +27,6 @@
 /////
 ///
 
-#if NET_2_0
 
 using System;
 using Microsoft.Build.Framework;
@@ -196,4 +195,3 @@ namespace Microsoft.Build.Tasks
 	}
 }
 
-#endif

@@ -34,11 +34,7 @@ using System.IO;
 using System.Xml;
 using Commons.Xml.Relaxng;
 
-#if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
-#else
-using NSResolver = System.Xml.XmlNamespaceManager;
-#endif
 
 namespace Commons.Xml.Relaxng.Rnc
 {
@@ -217,11 +213,6 @@ namespace Commons.Xml.Relaxng.Rnc
 		{
 			string prefix = String.Empty;
 			if (ns != null && ns != String.Empty) {
-#if NET_2_0
-#else
-				// XmlNamespaceManager sucks.
-				ns = nss.NameTable.Add (ns);
-#endif
 				prefix = nss.LookupPrefix (ns);
 			}
 			if (prefix == null)
@@ -278,12 +269,8 @@ namespace Commons.Xml.Relaxng.Rnc
 					defaultNamespace);
 
 			if (nsmgr != null) {
-#if NET_2_0
 				foreach (string s in nsmgr.GetNamespacesInScope (
 					XmlNamespaceScope.All).Keys) {
-#else
-				foreach (string s in nsmgr) {
-#endif
 					switch (s) {
 					case "xml":
 					case "xmlns":

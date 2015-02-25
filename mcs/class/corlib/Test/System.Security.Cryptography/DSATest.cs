@@ -33,7 +33,6 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
 
-#if NET_2_0
 
 	public class NonAbstractDSAForUnitTests : DSA {
 		protected DSAParameters dsa;
@@ -89,7 +88,6 @@ namespace MonoTests.System.Security.Cryptography {
 
 		protected override void Dispose (bool disposing) { }
 	}
-#endif
 
 	[TestFixture]
 	public class DSATest {
@@ -103,11 +101,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[SetUp]
 		public void SetUp ()
 		{
-#if NET_2_0
 			dsa = new NonAbstractDSAForUnitTests ();
-#else
-			dsa = new DSACryptoServiceProvider ();
-#endif
 		}
 
 		public void AssertEquals (string msg, byte [] array1, byte [] array2)
@@ -158,11 +152,7 @@ namespace MonoTests.System.Security.Cryptography {
 
 		// importing and exporting a DSA key (including private key)
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void DSAImportPublicExportPrivate ()
 		{
 			DSAParameters input = AllTests.GetKey (false);

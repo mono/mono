@@ -30,11 +30,7 @@ using System.Xml.Serialization;
 using Mono.Xml.Schema;
 using System.Globalization;
 
-#if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
-#else
-using NSResolver = System.Xml.XmlNamespaceManager;
-#endif
 
 namespace System.Xml.Schema
 {

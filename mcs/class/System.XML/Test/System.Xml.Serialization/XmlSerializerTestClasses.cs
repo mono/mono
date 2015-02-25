@@ -13,9 +13,7 @@
 
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.ComponentModel;
 using System.Xml;
 using System.Xml.Schema;
@@ -68,7 +66,6 @@ namespace MonoTests.System.Xml.TestClasses
 
 	#region GenericsTestClasses
 
-#if NET_2_0
 	public class GenSimpleClass<T>
 	{
 		public T something = default (T);
@@ -166,7 +163,6 @@ namespace MonoTests.System.Xml.TestClasses
 		bb
 	}
 	
-#endif
 
 	#endregion // GenericsTestClasses
 

@@ -128,11 +128,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void IsSemiWeakKey_Null () 
 		{
 			TripleDES.IsWeakKey (null);
