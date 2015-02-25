@@ -330,6 +330,7 @@ namespace MonoTests.System.Net.Http
 			};
 
 			Assert.AreEqual (response, client.GetAsync ("relative").Result, "#1");
+			Assert.AreEqual (response, client.GetAsync ("/relative").Result, "#2");
 		}
 
 		[Test]

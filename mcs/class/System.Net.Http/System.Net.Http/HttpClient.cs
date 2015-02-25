@@ -242,16 +242,17 @@ namespace System.Net.Http
 			if (request.SetIsUsed ())
 				throw new InvalidOperationException ("Cannot send the same request message multiple times");
 
-			if (request.RequestUri == null) {
+			var uri = request.RequestUri;
+			if (uri == null) {
 				if (base_address == null)
 					throw new InvalidOperationException ("The request URI must either be an absolute URI or BaseAddress must be set");
 
 				request.RequestUri = base_address;
-			} else if (!request.RequestUri.IsAbsoluteUri) {
+			} else if (!uri.IsAbsoluteUri || uri.Scheme == Uri.UriSchemeFile && uri.OriginalString.StartsWith ("/", StringComparison.Ordinal)) {
 				if (base_address == null)
 					throw new InvalidOperationException ("The request URI must either be an absolute URI or BaseAddress must be set");
 
-				request.RequestUri = new Uri (base_address, request.RequestUri);
+				request.RequestUri = new Uri (base_address, uri);
 			}
 
 			if (headers != null) {
