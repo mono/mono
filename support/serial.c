@@ -22,6 +22,10 @@
 #endif
 #include <sys/ioctl.h>
 
+#if defined(__linux__)
+#include <stdint.h>
+#endif
+
 #include <glib.h>
 
 /* This is for FIONREAD on solaris */
@@ -175,7 +179,11 @@ get_bytes_in_buffer (int fd, gboolean input)
 gboolean
 is_baud_rate_legal (int baud_rate)
 {
+#if defined(__linux__)
+	return 1;
+#else
 	return setup_baud_rate (baud_rate) != -1;
+#endif
 }
 
 int
@@ -258,6 +266,7 @@ gboolean
 set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake)
 {
 	struct termios newtio;
+	int std_baud_rate;
 
 	if (tcgetattr (fd, &newtio) == -1)
 		return FALSE;
@@ -268,7 +277,7 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	newtio.c_iflag = IGNBRK;
 
 	/* setup baudrate */
-	baud_rate = setup_baud_rate (baud_rate);
+	std_baud_rate = setup_baud_rate (baud_rate);
 
 	/* char lenght */
 	newtio.c_cflag &= ~CSIZE;
@@ -358,17 +367,53 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 		break;
 	}
 	
-	if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0 ||
-	    tcsetattr (fd, TCSANOW, &newtio) < 0)
+	if (std_baud_rate == -1) 
+	{
+		if (cfsetospeed (&newtio, B38400) < 0 || cfsetispeed (&newtio, B38400) < 0)
+		{
+			return FALSE;
+		}
+	} else {
+		if (cfsetospeed (&newtio, std_baud_rate) < 0 || cfsetispeed (&newtio, std_baud_rate) < 0) 
+		{
+			return FALSE;
+		}
+	}
+
+	if (tcsetattr (fd, TCSANOW, &newtio) < 0)
 	{
 		return FALSE;
 	}
-	else
-	{
-	return TRUE;
-	}
-}
 
+	if (std_baud_rate == -1)
+	{
+#if defined(__linux__)
+		unsigned int to[12];
+
+#define XTCGETS2 0x802C542A
+#define XTCSETS2 0x402C542B
+#define XCBAUD  0010017
+#define XBOTHER 0010000
+
+		if (ioctl (fd, XTCGETS2, &to) < 0)
+		{
+			return FALSE;
+		}
+		to[2] &= ~XCBAUD;
+		to[2] |= XBOTHER;
+		to[9] = to[10] = baud_rate;
+
+		if (ioctl (fd, XTCSETS2, &to) < 0)
+		{
+			return FALSE;
+		}
+#else
+		/* Don't know how to set custom baud rate on this platform. */
+		return FALSE;
+#endif
+	}
+	return TRUE;
+}
 
 static gint32
 get_signal_code (MonoSerialSignal signal)
