@@ -13,14 +13,17 @@
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
-#if defined(__APPLE__)
-#include "fakepoll.h"
-#elif defined(HAVE_POLL_H)
+#if defined(HAVE_POLL_H)
 #include <poll.h>
 #elif defined(HAVE_SYS_POLL_H)
 #include <sys/poll.h>
 #endif
 #include <sys/ioctl.h>
+
+/* This is for ASYNC_*, serial_struct on linux */
+#if defined(__linux__)
+#include <linux/serial.h>
+#endif
 
 #include <glib.h>
 
@@ -81,7 +84,7 @@ int              write_serial (int fd, guchar *buffer, int offset, int count, in
 int              discard_buffer (int fd, gboolean input);
 gint32           get_bytes_in_buffer (int fd, gboolean input);
 gboolean         is_baud_rate_legal (int baud_rate);
-int              setup_baud_rate (int baud_rate);
+int              setup_baud_rate (int baud_rate, gboolean *custom_baud_rate);
 gboolean         set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake);
 MonoSerialSignal get_signals (int fd, gint32 *error);
 gint32           set_signal (int fd, MonoSerialSignal signal, gboolean value);
@@ -175,11 +178,12 @@ get_bytes_in_buffer (int fd, gboolean input)
 gboolean
 is_baud_rate_legal (int baud_rate)
 {
-	return setup_baud_rate (baud_rate) != -1;
+	gboolean ignore = FALSE;
+	return setup_baud_rate (baud_rate, &ignore) != -1;
 }
 
 int
-setup_baud_rate (int baud_rate)
+setup_baud_rate (int baud_rate, gboolean *custom_baud_rate)
 {
 	switch (baud_rate)
 	{
@@ -246,9 +250,21 @@ setup_baud_rate (int baud_rate)
 	    baud_rate = B75;
 	    break;
 	case 50:
-	case 0:
-	default:
+#ifdef B50
+	    baud_rate = B50;
+#else
 	    baud_rate = -1;
+	    break;
+#endif
+	case 0:
+#ifdef B0
+	    baud_rate = B0;
+#else
+	    baud_rate = -1;
+#endif
+	    break;
+	default:
+		*custom_baud_rate = TRUE;
 		break;
 	}
 	return baud_rate;
@@ -258,6 +274,7 @@ gboolean
 set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake)
 {
 	struct termios newtio;
+	gboolean custom_baud_rate = FALSE;
 
 	if (tcgetattr (fd, &newtio) == -1)
 		return FALSE;
@@ -268,7 +285,7 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	newtio.c_iflag = IGNBRK;
 
 	/* setup baudrate */
-	baud_rate = setup_baud_rate (baud_rate);
+	baud_rate = setup_baud_rate (baud_rate, &custom_baud_rate);
 
 	/* char lenght */
 	newtio.c_cflag &= ~CSIZE;
@@ -357,16 +374,45 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	    newtio.c_iflag |= IXOFF | IXON;
 		break;
 	}
-	
-	if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0 ||
-	    tcsetattr (fd, TCSANOW, &newtio) < 0)
-	{
+
+	if (custom_baud_rate == FALSE) {
+		if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0)
+			return FALSE;
+	} else {
+		/* On Linux, to set a custom baud rate, we must set the "standard" baud_rate
+		 * to 38400.
+		 */
+		if (cfsetospeed (&newtio, B38400) < 0 || cfsetispeed (&newtio, B38400) < 0)
+			return FALSE;
+	}
+
+	if (tcsetattr (fd, TCSANOW, &newtio) < 0)
 		return FALSE;
+
+	if (custom_baud_rate == TRUE){
+#if defined(__linux__)
+		struct serial_struct ser;
+
+		if (ioctl (fd, TIOCGSERIAL, &ser) < 0)
+		{
+			return FALSE;
+		}
+
+		ser.custom_divisor = ser.baud_base / baud_rate;
+		ser.flags &= ~ASYNC_SPD_MASK;
+		ser.flags |= ASYNC_SPD_CUST;
+
+		if (ioctl (fd, TIOCSSERIAL, &ser) < 0)
+		{
+			return FALSE;
+		}
+#else
+		/* Don't know how to set custom baud rate on this platform. */
+		return FALSE;
+#endif
 	}
-	else
-	{
+
 	return TRUE;
-	}
 }
 
 
