@@ -240,7 +240,7 @@ namespace System.Web
 			foreach (UrlMapping u in urlMappings) {
 				if (u == null)
 					continue;
-				if (String.Compare (relUrl, u.Url, StringComparison.Ordinal) == 0) {
+				if (String.Compare (relUrl, u.Url, StringComparison.OrdinalIgnoreCase) == 0) {
 					um = u;
 					break;
 				}
