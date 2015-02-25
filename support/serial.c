@@ -35,6 +35,10 @@
 /* sys/time.h (for timeval) is required when using osx 10.3 (but not 10.4) */
 #ifdef __APPLE__
 #include <sys/time.h>
+#include <IOKit/IOKitLib.h>
+#include <IOKit/serial/IOSerialKeys.h>
+#include <IOKit/serial/ioss.h>
+#include <IOKit/IOBSD.h>
 #endif
 
 /* This is a copy of System.IO.Ports.Handshake */
@@ -379,11 +383,17 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 		if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0)
 			return FALSE;
 	} else {
-		/* On Linux, to set a custom baud rate, we must set the "standard" baud_rate
-		 * to 38400.
+#if __linux__ || __APPLE__
+
+		/* On Linux to set a custom baud rate, we must set the
+		 * "standard" baud_rate to 38400.   On Apple we set it purely
+		 * so that tcsetattr has something to use (and report back later), but
+		 * the Apple specific API is still opaque to these APIs, see:
+		 * https://developer.apple.com/library/mac/samplecode/SerialPortSample/Listings/SerialPortSample_SerialPortSample_c.html#//apple_ref/doc/uid/DTS10000454-SerialPortSample_SerialPortSample_c-DontLinkElementID_4
 		 */
 		if (cfsetospeed (&newtio, B38400) < 0 || cfsetispeed (&newtio, B38400) < 0)
 			return FALSE;
+#endif
 	}
 
 	if (tcsetattr (fd, TCSANOW, &newtio) < 0)
@@ -406,6 +416,10 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 		{
 			return FALSE;
 		}
+#elif __APPLE__
+		speed_t speed = baud_rate;
+		if (ioctl(fd, IOSSIOSPEED, &speed) == -1)
+			return FALSE;
 #else
 		/* Don't know how to set custom baud rate on this platform. */
 		return FALSE;
