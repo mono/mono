@@ -925,7 +925,8 @@ namespace Mono.CSharp
 
 		static bool is_identifier_start_character (int c)
 		{
-			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Char.IsLetter ((char)c);
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Char.IsLetter ((char)c) || 
+				Char.GetUnicodeCategory ((char)c) == UnicodeCategory.LetterNumber;
 		}
 
 		static bool is_identifier_part_character (char c)
@@ -959,6 +960,12 @@ namespace Mono.CSharp
 
 				// decimal-digit-character: A Unicode character of the class Nd 
 				case UnicodeCategory.DecimalDigitNumber:
+
+				// letter-number: A Unicode character of the class Nl
+				case UnicodeCategory.LetterNumber:
+
+				// format: A Unicode character of the class Cf
+				case UnicodeCategory.Format:
 				return true;
 			}
 
@@ -3153,6 +3160,11 @@ namespace Mono.CSharp
 			if (c == '\\') {
 				int surrogate;
 				c = escape (c, out surrogate);
+
+				if (!is_identifier_start_character (c)) {
+					report_unexpected_character_error (c);
+				}
+
 				if (surrogate != 0) {
 					id_builder [pos++] = (char) c;
 					c = surrogate;
@@ -3174,8 +3186,11 @@ namespace Mono.CSharp
 						if (c == '\\') {
 							int surrogate;
 							c = escape (c, out surrogate);
-							if (is_identifier_part_character ((char) c))
+							if (is_identifier_part_character ((char) c)) {
 								id_builder[pos++] = (char) c;
+							} else {
+								report_unexpected_character_error (c);
+							}
 
 							if (surrogate != 0) {
 								c = surrogate;
@@ -3186,6 +3201,8 @@ namespace Mono.CSharp
 					} else if (is_identifier_part_character_slow_part ((char) c)) {
 						id_builder [pos++] = (char) c;
 						continue;
+					} else {
+						report_unexpected_character_error (c);
 					}
 
 					putback_char = c;
@@ -3217,6 +3234,11 @@ namespace Mono.CSharp
 				AddEscapedIdentifier (((LocatedToken) val).Location);
 
 			return Token.IDENTIFIER;
+		}
+
+		void report_unexpected_character_error (int c)
+		{
+			Report.Error (1056, Location, "Unexpected character `{0}'", ((char)c).ToString ());
 		}
 
 		string InternIdentifier (char[] charBuffer, int length)
@@ -3285,7 +3307,6 @@ namespace Mono.CSharp
 				case '\\':
 					tokens_seen = true;
 					return consume_identifier (c);
-
 				case '{':
 					val = ltb.Create (current_source, ref_line, col);
 					return Token.OPEN_BRACE;
@@ -3742,7 +3763,7 @@ namespace Mono.CSharp
 				if (char.IsWhiteSpace ((char) c))
 					continue;
 
-				Report.Error (1056, Location, "Unexpected character `{0}'", ((char) c).ToString ());
+				report_unexpected_character_error (c);
 			}
 
 			if (CompleteOnEOF){
