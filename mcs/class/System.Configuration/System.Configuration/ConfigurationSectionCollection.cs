@@ -61,17 +61,17 @@ namespace System.Configuration
 		public ConfigurationSection this [string name]
 		{
 			get {
-				lock(lockObject) {
-					ConfigurationSection sec = BaseGet (name) as ConfigurationSection;
-					if (sec == null) {
-						SectionInfo secData = group.Sections [name] as SectionInfo;
-						if (secData == null) return null;
-						sec = config.GetSectionInstance (secData, true);
-						if (sec == null) return null;
+				ConfigurationSection sec = BaseGet (name) as ConfigurationSection;
+				if (sec == null) {
+					SectionInfo secData = group.Sections [name] as SectionInfo;
+					if (secData == null) return null;
+					sec = config.GetSectionInstance (secData, true);
+					if (sec == null) return null;
+					lock(lockObject) {
 						BaseSet (name, sec);
 					}
-					return sec;
 				}
+				return sec;
 			}
 		}
 	
