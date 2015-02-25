@@ -11,7 +11,11 @@ using System.Globalization;
 
 namespace System.Diagnostics {
     internal class TypedElement : ConfigurationElement {
+#if BOOTSTRAP
+        protected static readonly ConfigurationProperty _propTypeName = new ConfigurationProperty("type", typeof(string), String.Empty, ConfigurationPropertyOptions.IsRequired);
+#else
         protected static readonly ConfigurationProperty _propTypeName = new ConfigurationProperty("type", typeof(string), String.Empty, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsTypeStringTransformationRequired);
+#endif
         protected static readonly ConfigurationProperty _propInitData = new ConfigurationProperty("initializeData", typeof(string), String.Empty, ConfigurationPropertyOptions.None);
 
         protected ConfigurationPropertyCollection _properties;
