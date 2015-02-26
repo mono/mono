@@ -226,18 +226,14 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/HtmlTitleCodeRender_Bug662918.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
-ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 RESX_RES = $(RESX_DIST:.resx=.resources)
-endif
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 NUNIT_APP_CODE_FILES = $(TEST_APP_CODE_FILES)
 NUNIT_APP_GLOBALRESOURCES_FILES = $(TEST_APP_GLOBALRESOURCES_FILES)
 
-ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_RES += $(RESOURCE_FILES_2)
 OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:618 -r:System.Configuration.dll -r:Mono.Data.Sqlite.dll
-endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
