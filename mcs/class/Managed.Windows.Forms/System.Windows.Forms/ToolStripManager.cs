@@ -354,8 +354,8 @@ namespace System.Windows.Forms
 		
 		public static bool RevertMerge (ToolStrip targetToolStrip)
 		{
-            if (targetToolStrip == null)
-                return false;
+			if (targetToolStrip == null)
+				return false;
 
 			return RevertMerge (targetToolStrip, targetToolStrip.CurrentlyMergedWith);			
 		}
@@ -363,7 +363,7 @@ namespace System.Windows.Forms
 		public static bool RevertMerge (ToolStrip targetToolStrip, ToolStrip sourceToolStrip)
 		{
 			if (sourceToolStrip == null)
-                return false;
+				return false;
 				
 			List<ToolStripItem> items_to_move = new List<ToolStripItem> ();
 			

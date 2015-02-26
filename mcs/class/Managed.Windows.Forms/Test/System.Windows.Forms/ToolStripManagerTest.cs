@@ -580,7 +580,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void MethodRevertMergeNullArgument1 ()
 		{
-            String ts = null;
+			String ts = null;
 
 			Assert.AreEqual (false, ToolStripManager.RevertMerge (ts), "C1");
 		}
