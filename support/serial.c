@@ -21,7 +21,7 @@
 #include <sys/ioctl.h>
 
 /* This is for ASYNC_*, serial_struct on linux */
-#if defined(__linux__)
+#if defined(HAVE_LINUX_SERIAL_H)
 #include <linux/serial.h>
 #endif
 
@@ -400,7 +400,7 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 		return FALSE;
 
 	if (custom_baud_rate == TRUE){
-#if defined(__linux__)
+#if defined(HAVE_LINUX_SERIAL_H)
 		struct serial_struct ser;
 
 		if (ioctl (fd, TIOCGSERIAL, &ser) < 0)
