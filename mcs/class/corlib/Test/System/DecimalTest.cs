@@ -1585,6 +1585,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // Bug Xamarin #24411
+		[Category ("MobileNotWorking")] // Bug Xamarin #27269
 		public void DecimalDivision_24411  ()
 		{
 			decimal dd = 45m;
@@ -1602,6 +1603,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // Bug SUSE #655780
+		[Category ("MobileNotWorking")] // Bug Xamarin #27269
 		public void TrailingZerosBug ()
 		{
 			decimal d;
