@@ -354,13 +354,16 @@ namespace System.Windows.Forms
 		
 		public static bool RevertMerge (ToolStrip targetToolStrip)
 		{
+            if (targetToolStrip == null)
+                return false;
+
 			return RevertMerge (targetToolStrip, targetToolStrip.CurrentlyMergedWith);			
 		}
 		
 		public static bool RevertMerge (ToolStrip targetToolStrip, ToolStrip sourceToolStrip)
 		{
 			if (sourceToolStrip == null)
-				throw new ArgumentNullException ("sourceToolStrip");
+                return false;
 				
 			List<ToolStripItem> items_to_move = new List<ToolStripItem> ();
 			
