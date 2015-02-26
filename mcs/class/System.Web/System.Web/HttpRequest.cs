@@ -203,20 +203,14 @@ namespace System.Web
 		internal UriBuilder UrlComponents {
 			get {
 				if (url_components == null) {
-					string query;
-					byte[] queryStringRaw = worker_request.GetQueryStringRawBytes();
-					if(queryStringRaw != null)
-						query = ContentEncoding.GetString(queryStringRaw);
-					else
-						query = worker_request.GetQueryString();
-					
-					BuildUrlComponents (ApplyUrlMapping (worker_request.GetUriPath ()), query);
+					BuildUrlComponents ();
+					ApplyUrlMapping (url_components.Path);
 				}
 				return url_components;
 			}
 		}
 
-		void BuildUrlComponents (string path, string query)
+		void BuildUrlComponents ()
 		{
 			if (url_components != null)
 				return;
@@ -224,7 +218,15 @@ namespace System.Web
 			url_components.Scheme = worker_request.GetProtocol ();
 			url_components.Host = worker_request.GetServerName ();
 			url_components.Port = worker_request.GetLocalPort ();
-			url_components.Path = path;
+			url_components.Path = worker_request.GetUriPath ();
+
+			string query;
+			byte[] queryStringRaw = worker_request.GetQueryStringRawBytes();
+			if(queryStringRaw != null)
+				query = ContentEncoding.GetString(queryStringRaw);
+			else
+				query = worker_request.GetQueryString();
+
 			if (query != null && query.Length > 0)
 				url_components.Query = query.TrimStart (queryTrimChars);
 		}
@@ -252,14 +254,16 @@ namespace System.Web
 			string rawUrl = VirtualPathUtility.ToAbsolute (um.MappedUrl.Trim ());
 			Uri newUrl = new Uri ("http://host.com" + rawUrl);
 
-			if (url_components != null) {
-				url_components.Path = newUrl.AbsolutePath;
+			BuildUrlComponents();
+
+			url_components.Path = newUrl.AbsolutePath;
+
+			if (!string.IsNullOrEmpty(newUrl.Query)) {
 				url_components.Query = newUrl.Query.TrimStart (queryTrimChars);
 				query_string_nvc = new WebROCollection ();
 				HttpUtility.ParseQueryString (newUrl.Query, Encoding.Default, query_string_nvc);
 				query_string_nvc.Protect ();
-			} else
-				BuildUrlComponents (newUrl.AbsolutePath, newUrl.Query);
+			}
 
 			return url_components.Path;
 		}
