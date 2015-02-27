@@ -34,16 +34,19 @@ CHECK_DIFF = @\
 		exit 1; \
 	fi
 
-clean-test:
-	rm -rf $(OUT_DIR)
+BUILD_TEST_EXE = @\
+	rm -rf $(OUT_DIR); \
+	mkdir -p $(OUT_DIR); \
+	$(MCS) -debug $(TEST_CS) -out:$(TEST_EXE)
 
-build-test: clean-test
-	@mkdir -p $(OUT_DIR)
-	@$(MCS) -debug $(TEST_CS) -out:$(TEST_EXE)
-
-check: all build-test
+check: all
+	$(BUILD_TEST_EXE)
 	@echo "Checking $(PROGRAM) without AOT"
 	$(CHECK_DIFF)
 	@echo "Checking $(PROGRAM) with AOT"
 	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot $(TEST_EXE) > /dev/null
+	$(CHECK_DIFF)
+	@echo "Checking $(PROGRAM) with AOT (using .msym)"
+	$(BUILD_TEST_EXE)
+	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot=gen-seq-points-file $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
