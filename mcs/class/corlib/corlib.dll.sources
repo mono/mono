@@ -397,7 +397,6 @@ System.Reflection/AssemblySignatureKeyAttribute.cs
 System.Reflection/AssemblyTitleAttribute.cs
 System.Reflection/AssemblyTradeMarkAttribute.cs
 System.Reflection/AssemblyVersionAttribute.cs
-System.Reflection/Binder.cs
 System.Reflection/BindingFlags.cs
 System.Reflection/CallingConventions.cs
 System.Reflection/ConstructorInfo.cs
@@ -1388,6 +1387,7 @@ ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
 ReferenceSources/CompatibilitySwitches.cs
 ReferenceSources/CultureData.cs
+ReferenceSources/DefaultBinder.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
@@ -1412,6 +1412,7 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/datetimeoffset.cs
 ../../../external/referencesource/mscorlib/system/dayofweek.cs
 ../../../external/referencesource/mscorlib/system/decimal.cs
+../../../external/referencesource/mscorlib/system/defaultbinder.cs
 ../../../external/referencesource/mscorlib/system/dbnull.cs
 ../../../external/referencesource/mscorlib/system/empty.cs
 ../../../external/referencesource/mscorlib/system/guid.cs
@@ -1549,6 +1550,8 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/io/textreader.cs
 ../../../external/referencesource/mscorlib/system/io/textwriter.cs
 ../../../external/referencesource/mscorlib/system/io/unmanagedmemorystream.cs
+
+../../../external/referencesource/mscorlib/system/reflection/binder.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs

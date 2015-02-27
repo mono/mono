@@ -318,7 +318,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SelectMethod_AmbiguousMatch ()
 		{
 			Type type = typeof (BinderTest);
@@ -402,7 +401,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SelectMethod_Params ()
 		{
 			Type type = typeof (BinderTest);
@@ -542,8 +540,11 @@ namespace MonoTests.System.Reflection
 								    BindingFlags.Public |
 								    BindingFlags.Instance);
 
-			PropertyInfo prop = binder.SelectProperty (0, props, null, new Type [] {null}, null);
-			Assert.IsNotNull (prop);
+			try {
+				binder.SelectProperty (0, props, null, new Type [] {null}, null);
+				Assert.Fail ();
+			} catch (ArgumentNullException) {
+			}
 		}
 
 		[Test]
@@ -586,7 +587,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BindToMethod_AmbiguousMatch ()
 		{
 			Type type = typeof (BinderTest);
@@ -651,7 +651,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BindToMethod_Params ()
 		{
 			Type type = typeof (BinderTest);
@@ -811,8 +810,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		[Category ("NotWorking")]
 		public void BindToMethod_Params_Mono ()
 		{
 			Type type = typeof (BinderTest);
@@ -872,7 +869,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BindToMethod_Params_MS ()
 		{
 			Type type = typeof (BinderTest);
@@ -908,26 +904,11 @@ namespace MonoTests.System.Reflection
 				null, out state);
 			Assert.AreSame (mi_params, selected, "#D1");
 			args = new object [] { new object (), new object () };
-			try {
-				binder.BindToMethod (flags, match, ref args, null, culture,
-					null, out state);
-				Assert.Fail ("#D2");
-			} catch (AmbiguousMatchException) {
-			}
+			binder.BindToMethod (flags, match, ref args, null, culture, null, out state);
 			args = new object [] { new object (), new object [0] };
-			try {
-				binder.BindToMethod (flags, match, ref args, null, culture,
-					null, out state);
-				Assert.Fail ("#D3");
-			} catch (AmbiguousMatchException) {
-			}
+			binder.BindToMethod (flags, match, ref args, null, culture, null, out state);
 			args = new object [] { new object (), new object (), new object () };
-			try {
-				binder.BindToMethod (flags, match, ref args, null, culture,
-					null, out state);
-				Assert.Fail ("#D4");
-			} catch (IndexOutOfRangeException) {
-			}
+			binder.BindToMethod (flags, match, ref args, null, culture, null, out state);
 
 			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
 			args = new object [] { new object () };
@@ -937,7 +918,7 @@ namespace MonoTests.System.Reflection
 			args = new object [] { new object (), new object () };
 			selected = binder.BindToMethod (flags, match, ref args, null, culture,
 				null, out state);
-			Assert.AreSame (mi_params, selected, "#E2");
+			Assert.AreNotSame (mi_params, selected, "#E2");
 		}
 
 		[Test] // bug #41691
@@ -1461,7 +1442,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #636939
-		[Category ("NotWorking")]
 		public void SelectMethodWithParamArrayAndNonEqualTypeArguments ()
 		{
             const BindingFlags flags =

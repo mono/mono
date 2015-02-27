@@ -1693,21 +1693,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category("NotDotNet")]
-		// Depends on the GAC working, which it doesn't durring make distcheck.
-		[Category ("NotWorking")]
-		public void GetTypeWithWhitespace ()
-		{
-			Assert.IsNotNull (Type.GetType
-						   (@"System.Configuration.NameValueSectionHandler,
-			System,
-Version=1.0.5000.0,
-Culture=neutral
-,
-PublicKeyToken=b77a5c561934e089"));
-		}
-
-		[Test]
 		public void GetTypeNonVectorArray ()
 		{
 			Type t = Type.GetType ("System.String[*]");

@@ -221,7 +221,7 @@ namespace System
 
 		public static object CreateInstance (Type type, object [] args, object [] activationAttributes)
 		{
-			return CreateInstance (type, BindingFlags.Default, Binder.DefaultBinder, args, null, activationAttributes);
+			return CreateInstance (type, BindingFlags.Default, Type.DefaultBinder, args, null, activationAttributes);
 		}
 
 		public static object CreateInstance (Type type, BindingFlags bindingAttr, Binder binder, object [] args,
@@ -243,18 +243,24 @@ namespace System
 			if ((bindingAttr & _accessFlags) == 0)
 				bindingAttr |= BindingFlags.Public | BindingFlags.Instance;
 
+			if (args == null)
+				args = EmptyArray<object>.Value;
+
+			if (args.Length == 0 && (bindingAttr & (BindingFlags.Public | BindingFlags.Instance)) == (BindingFlags.Public | BindingFlags.Instance) && type.IsValueType) {
+				return CreateInstanceInternal (type);
+			}
+
+			var methods = type.GetConstructors (bindingAttr);
+			if (methods.Length == 0)
+				throw new MissingMethodException (Environment.GetResourceString("MissingConstructor_Name", type.FullName));
+
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = Type.DefaultBinder;
 
 			object state;
-			ConstructorInfo ctor = (ConstructorInfo) binder.BindToMethod (bindingAttr, type.GetConstructors (bindingAttr), ref args, null, null, null, out state);
+			ConstructorInfo ctor = (ConstructorInfo) binder.BindToMethod (bindingAttr, methods, ref args, null, null, null, out state);
 
 			if (ctor == null) {
-				// Not sure about this
-				if (type.IsValueType && (args == null || args.Length == 0)) {
-					return CreateInstanceInternal (type);
-				}
-
 				var sb = new StringBuilder ();
 				if (args != null) {
 					for (int i = 0; i < args.Length; i++) {

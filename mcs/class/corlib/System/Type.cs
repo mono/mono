@@ -159,9 +159,14 @@ namespace System {
 		/// </summary>
 		public static Binder DefaultBinder {
 			get {
-				return Binder.DefaultBinder;
+				if (defaultBinder == null)
+					Interlocked.CompareExchange<Binder> (ref defaultBinder, new DefaultBinder (), null);
+
+				return defaultBinder;
 			}
 		}
+
+		static Binder defaultBinder;
 
 		/// <summary>
 		///    The full name of the type including its namespace

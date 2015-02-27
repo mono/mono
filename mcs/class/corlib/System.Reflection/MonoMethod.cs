@@ -202,11 +202,11 @@ namespace System.Reflection {
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = Type.DefaultBinder;
 
 			/*Avoid allocating an array every time*/
 			ParameterInfo[] pinfo = GetParametersInternal ();
-			binder.ConvertValues (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
+			ConvertValues (binder, parameters, pinfo, culture, invokeAttr);
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
@@ -241,6 +241,31 @@ namespace System.Reflection {
 			if (exc != null)
 				throw exc;
 			return o;
+		}
+
+		internal static void ConvertValues (Binder binder, object[] args, ParameterInfo[] pinfo, CultureInfo culture, BindingFlags invokeAttr)
+		{
+			if (args == null) {
+				if (pinfo.Length == 0)
+					return;
+
+				throw new TargetParameterCountException ();
+			}
+
+			if (pinfo.Length != args.Length)
+				throw new TargetParameterCountException ();
+
+			for (int i = 0; i < args.Length; ++i) {
+				var arg = args [i];
+				var pi = pinfo [i];
+				if (arg == Type.Missing) {
+					args [i] = pi.DefaultValue;
+					continue;
+				}
+
+				var rt = (RuntimeType) pi.ParameterType;
+				args [i] = rt.CheckValue (arg, binder, culture, invokeAttr);
+			}
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
@@ -501,11 +526,11 @@ namespace System.Reflection {
 		object DoInvoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) 
 		{
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = Type.DefaultBinder;
 
 			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
 
-			binder.ConvertValues (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
+			MonoMethod.ConvertValues (binder, parameters, pinfo, culture, invokeAttr);
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
