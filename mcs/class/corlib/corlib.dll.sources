@@ -607,6 +607,8 @@ System.Runtime.InteropServices/CONNECTDATA.cs
 System.Runtime.InteropServices/CriticalHandle.cs
 System.Runtime.InteropServices/CurrencyWrapper.cs
 System.Runtime.InteropServices/DefaultCharSetAttribute.cs
+System.Runtime.InteropServices/DllImportSearchPath.cs
+System.Runtime.InteropServices/DefaultDllImportSearchPathsAttribute.cs
 System.Runtime.InteropServices/DESCKIND.cs
 System.Runtime.InteropServices/DispatchWrapper.cs
 System.Runtime.InteropServices/DISPPARAMS.cs
