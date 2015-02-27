@@ -29,6 +29,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 #if !INSIDE_CORLIB && NET_4_0
@@ -108,6 +109,34 @@ namespace System
 		*/
 		private List<KeyValuePair<DateTime, TimeType>> transitions;
 
+		[StructLayout(LayoutKind.Sequential)]
+		private struct SYSTEMTIME {
+			short wYear;
+			short wMonth;
+			short wDayOfWeek;
+			short wDay;
+			short wHour;
+			short wMinute;
+			short wSecond;
+			short wMilliseconds;
+		}
+
+		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+		private struct TIME_ZONE_INFORMATION {
+			internal int Bias;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
+			internal string StandardName;
+			internal SYSTEMTIME StandardDate;
+			internal int StandardBias;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
+			internal string DaylightName;
+			internal SYSTEMTIME DaylightDate;
+			internal int DaylightBias;
+		}
+
+		[DllImport ("kernel32.dll", CallingConvention=CallingConvention.StdCall)]
+		private extern static uint GetTimeZoneInformation(out TIME_ZONE_INFORMATION tzi);
+
 		static TimeZoneInfo CreateLocal ()
 		{
 #if MONODROID
@@ -118,10 +147,17 @@ namespace System
 			}
 #else
 			if (IsWindows && LocalZoneKey != null) {
+				/* Wine Mono hack: Wine doesn't set TimeZoneKeyName, so use
+				GetTimeZoneInformation to get the name. This may not quite be
+				correct because StandardName isn't the same as TimeZoneKeyName,
+				but it is for all builtin Wine timezones at least.
+
 				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
 				name = TrimSpecial (name);
-				if (name != null)
-					return TimeZoneInfo.FindSystemTimeZoneById (name);
+				if (name != null) */
+				TIME_ZONE_INFORMATION tzi;
+				if (GetTimeZoneInformation(out tzi) <= 2)
+					return TimeZoneInfo.FindSystemTimeZoneById (tzi.StandardName);
 			}
 
 			var tz = Environment.GetEnvironmentVariable ("TZ");
