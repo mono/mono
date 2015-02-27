@@ -3153,9 +3153,14 @@ namespace Mono.CSharp
 			if (c == '\\') {
 				int surrogate;
 				c = escape (c, out surrogate);
-				if (surrogate != 0) {
-					id_builder [pos++] = (char) c;
+				if (quoted || is_identifier_start_character (c)) {
+					// it's added bellow
+				} else if (surrogate != 0) {
+					id_builder [pos++] = (char)c;
 					c = surrogate;
+				} else {
+					Report.Error (1056, Location, "Unexpected character `\\{0}'", c.ToString ("x4"));
+					return Token.ERROR;
 				}
 			}
 
@@ -3176,9 +3181,18 @@ namespace Mono.CSharp
 							c = escape (c, out surrogate);
 							if (is_identifier_part_character ((char) c))
 								id_builder[pos++] = (char) c;
-
-							if (surrogate != 0) {
+							else if (surrogate != 0) {
 								c = surrogate;
+							} else {
+								switch (c) {
+								// TODO: Probably need more whitespace characters
+								case 0xFEFF:
+									putback_char = c;
+									break;
+								default:
+									Report.Error (1056, Location, "Unexpected character `\\{0}'", c.ToString ("x4"));
+									return Token.ERROR;
+								}
 							}
 
 							continue;
