@@ -105,7 +105,7 @@ namespace Microsoft.Build.BuildEngine
 			object value;
 			try {
 				value = type.InvokeMember (member_name, flags, null, target, args, CultureInfo.InvariantCulture);
-			} catch (MissingFieldException) {
+			} catch (MissingMethodException) {
 				//
 				// It can be field/constant instead of a property
 				//
