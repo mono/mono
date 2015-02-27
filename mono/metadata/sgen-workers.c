@@ -43,6 +43,8 @@ typedef gint32 State;
 
 static volatile State workers_state;
 
+static SgenObjectOperations * volatile idle_func_object_ops;
+
 static guint64 stat_workers_num_finished;
 
 static gboolean
@@ -231,7 +233,6 @@ static gboolean
 marker_idle_func (void *data_untyped)
 {
 	WorkerData *data = data_untyped;
-	SgenMajorCollector *major = sgen_get_major_collector ();
 
 	if (workers_state != STATE_WORKING)
 		return FALSE;
@@ -240,8 +241,7 @@ marker_idle_func (void *data_untyped)
 	SGEN_ASSERT (0, sgen_get_current_collection_generation () != GENERATION_NURSERY, "Why are we doing work while there's a nursery collection happening?");
 
 	if (!sgen_gray_object_queue_is_empty (&data->private_gray_queue) || workers_get_work (data)) {
-		SgenObjectOperations *ops = &major->major_ops_concurrent;
-		ScanCopyContext ctx = CONTEXT_FROM_OBJECT_OPERATIONS (ops, &data->private_gray_queue);
+		ScanCopyContext ctx = CONTEXT_FROM_OBJECT_OPERATIONS (idle_func_object_ops, &data->private_gray_queue);
 
 		SGEN_ASSERT (0, !sgen_gray_object_queue_is_empty (&data->private_gray_queue), "How is our gray queue empty if we just got work?");
 
@@ -306,10 +306,13 @@ sgen_workers_init (int num_workers)
 }
 
 void
-sgen_workers_start_all_workers (void)
+sgen_workers_start_all_workers (SgenObjectOperations *object_ops)
 {
 	if (!collection_needs_workers ())
 		return;
+
+	idle_func_object_ops = object_ops;
+	mono_memory_write_barrier ();
 
 	workers_signal_enqueue_work (FALSE);
 }
