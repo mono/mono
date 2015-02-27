@@ -19,7 +19,7 @@ namespace System {
     using CultureInfo = System.Globalization.CultureInfo;
     //Marked serializable even though it has no state.
     [Serializable]
-    internal class DefaultBinder : Binder
+    internal partial class DefaultBinder : Binder
     {
         // This method is passed a set of methods and must choose the best
         // fit.  The methods all have the same number of arguments and the object
@@ -1097,7 +1097,7 @@ namespace System {
 
             return methWithDeepestHierarchy;
         }
-
+#if !MONO
         // CanConvertPrimitive
         // This will determine if the source can be converted to the target type
         [System.Security.SecurityCritical]  // auto-generated
@@ -1112,7 +1112,7 @@ namespace System {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         static internal extern bool CanConvertPrimitiveObjectToType(Object source,RuntimeType type);
-        
+#endif
         // This method will sort the vars array into the mapping order stored
         //  in the paramOrder array.
         private static void ReorderParams(int[] paramOrder,Object[] vars)
