@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Numerics.dll
+LIB_REFS = System
 LIB_MCS_FLAGS = -r:System.dll /unsafe -d:MONO
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

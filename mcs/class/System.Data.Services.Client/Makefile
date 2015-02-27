@@ -7,6 +7,7 @@ LIBRARY = System.Data.Services.Client.dll
 Client/System.Data.Services.Client.resources: Client/System.Data.Services.Client.txt
 	$(RESGEN) "$<" "$@"
 
+LIB_REFS = System System.Core System.Xml.Linq System.Data System.Xml
 LIB_MCS_FLAGS = \
 	-d:NET_3_5	\
 	-r:System.dll \
@@ -18,6 +19,7 @@ LIB_MCS_FLAGS = \
 	-warn:2
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += WindowsBase
 LIB_MCS_FLAGS += -r:WindowsBase
 endif
 

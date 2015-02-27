@@ -7,6 +7,7 @@ RESOURCE_FILES = resources/relaxng.rng
 OTHER_RES = $(RESOURCE_FILES)
 
 LIBRARY = Commons.Xml.Relaxng.dll
+LIB_REFS = System System.Xml
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
 	$(foreach r, $(OTHER_RES), /resource:$(r),$(notdir $(r)))
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169

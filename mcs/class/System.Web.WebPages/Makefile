@@ -11,6 +11,7 @@ System.Web.WebPages.Common.CommonResources.resources: ../../../external/aspnetwe
 System.Web.WebPages.Resources.WebPageResources.resources: ../../../external/aspnetwebstack/src/System.Web.WebPages/Resources/WebPageResources.resx
 	$(RESGEN) "$<" "$@"
 
+LIB_REFS = Microsoft.CSharp Microsoft.Web.Infrastructure System System.ComponentModel.DataAnnotations System.Configuration System.Core System.Data.Linq System.Web System.Web.WebPages.Deployment System.Web.Razor System.Xml System.Xml.Linq
 LIB_MCS_FLAGS = \
 		/warn:1 \
 		/keyfile:../winfx.pub \

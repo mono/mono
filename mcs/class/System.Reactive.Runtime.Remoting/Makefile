@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Reactive.Runtime.Remoting.dll
+LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq
 LIB_MCS_FLAGS = \
 		@more_build_args \
 	        -r:System.dll \

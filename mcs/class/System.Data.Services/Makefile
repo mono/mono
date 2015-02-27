@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.Services.dll
 
+LIB_REFS = System System.Core System.ServiceModel System.ServiceModel.Web System.Data.Services.Client
 LIB_MCS_FLAGS = \
 	-d:NET_3_5	\
 	-r:System.dll \
@@ -13,6 +14,7 @@ LIB_MCS_FLAGS = \
 	-r:System.Data.Services.Client.dll
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+LIB_REFS += System.ServiceModel.Activation
 LIB_MCS_FLAGS += -r:System.ServiceModel.Activation.dll
 endif
 

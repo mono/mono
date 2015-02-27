@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Net.Http.WebRequest.dll
 
+LIB_REFS = System.Net.Http System
 LIB_MCS_FLAGS = -r:System.Net.Http.dll -r:System.dll
 
 TEST_MCS_FLAGS = -r:System.Net.Http.dll

@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Abstractions.dll
+LIB_REFS = System System.Core System.Web
 LIB_MCS_FLAGS = \
 	        /r:System.dll \
 	        /r:System.Core.dll \

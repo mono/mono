@@ -11,6 +11,7 @@ System.Web.WebPages.Deployment.Common.CommonResources.resources: ../../../extern
 System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources: ../../../external/aspnetwebstack/src/System.Web.WebPages.Deployment/Resources/ConfigurationResources.resx
 	$(RESGEN) "$<" "$@"
 
+LIB_REFS = System System.Core System.Configuration System.Web Microsoft.Web.Infrastructure
 LIB_MCS_FLAGS = \
 		/warn:1 \
 		/keyfile:../winfx.pub -delaysign \

@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Runtime.Caching.dll
+LIB_REFS = System System.Data System.Configuration System.Core
 LIB_MCS_FLAGS = -r:System.dll \
 	        -r:System.Data.dll \
 		-r:System.Configuration.dll \

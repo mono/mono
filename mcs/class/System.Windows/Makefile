@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Windows.dll
+LIB_REFS = System
 LIB_MCS_FLAGS = /r:System
 
 PLATFORM_DEBUG_FLAGS =

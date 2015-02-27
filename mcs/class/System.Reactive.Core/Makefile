@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Reactive.Core.dll
+LIB_REFS = System System.Core System.Reactive.Interfaces
 LIB_MCS_FLAGS = \
 		@more_build_args \
 	        -r:System.dll \

@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Novell.Directory.Ldap.dll
 
+LIB_REFS = System Mono.Security
 LIB_MCS_FLAGS = \
 	-warn:1 -nowarn:612 \
 	-r:$(corlib)				\

@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.EnterpriseServices.dll
+LIB_REFS = System.Transactions
 LIB_MCS_FLAGS = /nowarn:0168 /nowarn:0162 /r:$(corlib) /r:System.Transactions.dll
 NO_TEST = yes
 

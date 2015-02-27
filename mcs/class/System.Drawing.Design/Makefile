@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Drawing.Design.dll
+LIB_REFS = System System.Drawing System.Windows.Forms
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll
 NO_TEST = yes
 

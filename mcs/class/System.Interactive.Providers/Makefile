@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Interactive.Providers.dll
+LIB_REFS = System System.Core System.Interactive
 LIB_MCS_FLAGS = \
 		@more_build_args \
 	        -r:System.dll \

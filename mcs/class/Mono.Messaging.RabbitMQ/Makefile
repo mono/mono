@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Messaging.RabbitMQ.dll
+LIB_REFS = System System.Messaging Mono.Messaging RabbitMQ.Client
 LIB_MCS_FLAGS = /r:System.dll \
 		/r:System.Messaging.dll \
 		/r:Mono.Messaging.dll \

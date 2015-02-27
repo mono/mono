@@ -3,13 +3,16 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.ServiceModel.Web.Extensions.dll
+LIB_REFS = System System.Xml System.Runtime.Serialization System.ServiceModel System.Core System.ServiceModel.Web
 LIB_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.dll -r:System.ServiceModel.dll -r:System.Core.dll -r:System.ServiceModel.Web.dll
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += System.Xml.Serialization System.Net
 LIB_MCS_FLAGS += /r:System.Xml.Serialization.dll /r:System.Net.dll
 endif
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += System.Configuration
 LIB_MCS_FLAGS += /r:System.Configuration.dll
 endif
 

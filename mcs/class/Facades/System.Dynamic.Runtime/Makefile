@@ -11,6 +11,7 @@ LIBRARY = System.Dynamic.Runtime.dll
 
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
+LIB_REFS = System.Core System
 LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib /r:System.Core /r:System
 
 PLATFORM_DEBUG_FLAGS =

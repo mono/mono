@@ -8,6 +8,7 @@ include $(XBUILD_DIR)/xbuild.make
 LIBRARY = Microsoft.Build.Utilities.dll
 LIBRARY_NAME = Microsoft.Build.Utilities$(NAME_SUFFIX).dll
 
+LIB_REFS = System System.Core System.Xml
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll				\

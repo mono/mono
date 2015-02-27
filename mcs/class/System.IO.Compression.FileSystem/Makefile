@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.IO.Compression.FileSystem.dll
+LIB_REFS = System System.IO.Compression
 LIB_MCS_FLAGS = /r:System /r:System.IO.Compression.dll
 TEST_MCS_FLAGS = /r:System /r:System.Core /r:System.IO.Compression.dll
 

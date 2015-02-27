@@ -3,6 +3,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Windows.Forms.dll
 
+LIB_REFS = System System.Xml System.Drawing Accessibility System.Data Mono.Posix Mono.WebBrowser System.Configuration System.Runtime.Serialization.Formatters.Soap
 LIB_MCS_FLAGS = /unsafe \
 	/r:$(corlib) /r:System.dll /r:System.Xml.dll \
 	/r:System.Drawing.dll /r:Accessibility.dll \

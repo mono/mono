@@ -11,6 +11,7 @@ System.Web.Http.Properties.SRResources.resources: ../../../external/aspnetwebsta
 	$(RESGEN) "$<" "$@"
 
 
+LIB_REFS = System.Core System System.Xml System.Net.Http System.ComponentModel.DataAnnotations System.Net.Http.Formatting System.Runtime.Caching System.Runtime.Serialization System.Data.Linq
 LIB_MCS_FLAGS = -r:System.Core.dll -r:System.dll -r:System.Xml.dll -r:System.Net.Http.dll -r:System.ComponentModel.DataAnnotations.dll \
 		-r:System.Net.Http.Formatting.dll -r:System.Runtime.Caching.dll -r:System.Runtime.Serialization.dll -r:System.Data.Linq.dll \
 		-d:ASPNETMVC -keyfile:../winfx.pub -delaysign \

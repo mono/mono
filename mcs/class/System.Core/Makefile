@@ -5,6 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Core.dll
 
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,PFX_LEGACY_3_5,FEATURE_NETCORE
+LIB_REFS = System
 LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) -d:INSIDE_SYSCORE -d:LIBC /r:System.dll -unsafe
 RESOURCE_STRINGS = ../../../external/referencesource/System.Core/System.Core.txt
 
@@ -27,6 +28,7 @@ system_core_library_deps = $(the_libdir_base)Mono.Dynamic.Interpreter.dll $(syst
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR
 
 ifneq (plaincore/,$(intermediate))
+LIB_REFS += Mono.Dynamic.Interpreter
 LIB_MCS_FLAGS += -d:MONO_INTERPRETER -r:Mono.Dynamic.Interpreter.dll
 endif
 
@@ -45,6 +47,7 @@ CLR_PROFILE := $(filter 2.0 4.0 4.5, $(FRAMEWORK_VERSION))
 endif
 
 ifdef CLR_PROFILE
+LIB_REFS += Mono.Posix
 LIB_MCS_FLAGS += -r:Mono.Posix.dll
 endif
 

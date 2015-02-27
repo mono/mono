@@ -11,6 +11,7 @@ System.Web.Http.SelfHost.Properties.SRResources.resources: ../../../external/asp
 	$(RESGEN) "$<" "$@"
 
 
+LIB_REFS = System.Core System System.Xml System.Configuration System.Net.Http System.Runtime.Serialization System.ServiceModel System.IdentityModel System.Web.Http System.Net.Http.Formatting
 LIB_MCS_FLAGS = -r:System.Core.dll -r:System.dll -r:System.Xml.dll -r:System.Configuration.dll -r:System.Net.Http.dll \
 		-r:System.Runtime.Serialization.dll -r:System.ServiceModel.dll -r:System.IdentityModel.dll \
 		-r:System.Web.Http.dll -r:System.Net.Http.Formatting.dll \

@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Messaging.dll
+LIB_REFS = System System.Configuration.Install System.Drawing System.Windows.Forms System.Xml Mono.Messaging
 LIB_MCS_FLAGS = /resource:System.Messaging/MessageQueue.resx \
 		/r:System.dll \
 		/r:System.Configuration.Install.dll \

@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = IBM.Data.DB2.dll
+LIB_REFS = System System.Xml System.Data
 LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll \
 	/r:System.Xml.dll /r:System.Data.dll -warn:1
 NO_TEST = yes

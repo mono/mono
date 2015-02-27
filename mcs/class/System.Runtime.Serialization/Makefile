@@ -6,6 +6,7 @@ RESOURCE_FILES = \
 	resources/mstypes.schema
 
 LIBRARY = System.Runtime.Serialization.dll
+LIB_REFS = System System.Xml System.Core
 LIB_MCS_FLAGS = \
 		-unsafe \
 		/nowarn:168,169,219,414 \
@@ -17,6 +18,7 @@ LIB_MCS_FLAGS = \
 RESOURCE_STRINGS = ../../../external/referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += System.Data System.Configuration
 LIB_MCS_FLAGS += /d:NET_3_0 /r:System.Data.dll /r:System.Configuration.dll
 endif
 

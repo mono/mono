@@ -11,6 +11,7 @@ System.Web.WebPages.Razor.Common.CommonResources.resources: ../../../external/as
 System.Web.WebPages.Razor.Resources.RazorWebResources.resources: ../../../external/aspnetwebstack/src/System.Web.WebPages.Razor/Resources/RazorWebResources.resx
 	$(RESGEN) "$<" "$@"
 
+LIB_REFS = System System.Core System.Configuration System.Web System.Web.WebPages System.Web.Razor
 LIB_MCS_FLAGS = \
 		/warn:1 \
 		/keyfile:../winfx.pub \

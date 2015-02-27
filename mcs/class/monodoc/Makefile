@@ -87,6 +87,7 @@ EXTRA_DISTFILES = \
 	Test/monodoc_test/trees/tree-from-3-0-old.tree \
 	Test/monodoc_test/trees/tree-from-3-0.tree
 
+LIB_REFS = ICSharpCode.SharpZipLib System System.Core System.Xml System.Xml.Linq System.Configuration
 LIB_MCS_FLAGS = \
 	/unsafe                                                           \
 	/codepage:utf8                                                    \

@@ -11,6 +11,7 @@ LIBRARY = System.Runtime.Serialization.Primitives.dll
 
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
+LIB_REFS = System.Runtime.Serialization
 LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib /r:System.Runtime.Serialization
 
 PLATFORM_DEBUG_FLAGS =

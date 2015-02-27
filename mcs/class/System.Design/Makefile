@@ -5,6 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Design.dll
 
 
+LIB_REFS = System System.Xml System.Web System.Windows.Forms System.Drawing Accessibility System.Data System.Configuration
 LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Web.dll \
 	-r:System.Windows.Forms.dll -r:System.Drawing.dll \
 	-r:Accessibility.dll -r:System.Data.dll \

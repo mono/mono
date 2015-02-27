@@ -7,6 +7,7 @@ OTHER_LIB_MCS_FLAGS = -r:System.Web.ApplicationServices.dll
 endif
 
 LIBRARY = System.IdentityModel.dll
+LIB_REFS = System System.Xml System.Security System.Web System.Configuration Mono.Security System.Runtime.Serialization
 LIB_MCS_FLAGS = \
 		/d:NET_3_0	\
 	        /r:System.dll \

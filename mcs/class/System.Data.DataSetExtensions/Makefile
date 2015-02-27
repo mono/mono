@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.DataSetExtensions.dll
 
+LIB_REFS = System.Core System System.Data System.Xml System.Web
 LIB_MCS_FLAGS = \
 	-r:$(corlib)	 		\
 	-r:System.Core.dll 		\

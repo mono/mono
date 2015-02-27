@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Messaging.dll
 
+LIB_REFS = System System.Configuration
 LIB_MCS_FLAGS = /r:System.dll /r:System.Configuration
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 /r:System.Messaging.dll /r:nunit.mocks.dll

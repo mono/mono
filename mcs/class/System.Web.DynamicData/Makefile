@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.DynamicData.dll
+LIB_REFS = System System.Core System.ComponentModel.DataAnnotations System.Data System.Data.Linq System.Drawing System.Web System.Web.Extensions System.Web.Abstractions System.Web.Routing
 LIB_MCS_FLAGS = \
 	        /r:System.dll \
 	        /r:System.Core.dll \
@@ -16,6 +17,7 @@ LIB_MCS_FLAGS = \
 		/r:System.Web.Routing.dll
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+LIB_REFS += System.Web.ApplicationServices
 LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 endif
 

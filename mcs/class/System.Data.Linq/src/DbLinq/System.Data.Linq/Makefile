@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Data.Linq.dll
+LIB_REFS = System System.Core System.Data System.Transactions System.Xml
 LIB_MCS_FLAGS = \
                 /r:System.dll \
                 /r:System.Core.dll \

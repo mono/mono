@@ -5,6 +5,7 @@ include ../../build/rules.make
 RESOURCE_FILES = 
 
 LIBRARY = System.Xaml.dll
+LIB_REFS = System System.Xml System.Core
 LIB_MCS_FLAGS = \
 	        /r:System.dll \
 	        /r:System.Xml.dll \

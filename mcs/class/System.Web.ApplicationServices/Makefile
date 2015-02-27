@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.ApplicationServices.dll
+LIB_REFS = System System.Configuration
 LIB_MCS_FLAGS = -r:System.dll \
 		-r:System.Configuration.dll \
 		-d:SYSTEM_WEB_APPLICATIONSERVICES

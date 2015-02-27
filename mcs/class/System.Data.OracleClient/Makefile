@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Data.OracleClient.dll
+LIB_REFS = System System.Xml System.Data System.EnterpriseServices System.Drawing
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll \
 	/r:System.Xml.dll /r:System.Data.dll \
 	/r:System.EnterpriseServices.dll \

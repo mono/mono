@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Runtime.DurableInstancing.dll
+LIB_REFS = System System.Xml System.Runtime.Serialization System.Core System.Xml.Linq
 LIB_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.dll -r:System.Core.dll -r:System.Xml.Linq.dll
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

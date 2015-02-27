@@ -10,6 +10,7 @@ else
 SCARY_LIB=/lib:$(prefix)/lib
 endif
 
+LIB_REFS = System System.Xml
 LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib) /r:System.dll /r:System.Xml.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

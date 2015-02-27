@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Microsoft.VisualC.dll
+LIB_REFS = System
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll
 NO_TEST = yes
 
