@@ -1871,6 +1871,20 @@ namespace MonoTests.System
 			typeof(B).InvokeMember ("", BindingFlags.CreateInstance, null, null, new object [] { 1 });
 		}
 
+		[Test]
+		[ExpectedException (typeof (MissingMethodException))]
+		public void InvokeGetPropertyMissing ()
+		{
+			typeof(B).InvokeMember ("", BindingFlags.GetProperty, null, null, new object [] { 1 });
+		}
+
+		[Test]
+		[ExpectedException (typeof (MissingMethodException))]
+		public void InvokeSetPropertyMissing ()
+		{
+			typeof(B).InvokeMember ("", BindingFlags.SetProperty, null, null, new object [] { 1 });
+		}
+
 		internal static string bug336841 (string param1, params string [] param2)
 		{
 			StringBuilder sb = new StringBuilder ();

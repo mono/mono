@@ -929,9 +929,9 @@ namespace System
 					if (mb != null)
 						smethods [count++] = mb;
 				}
-				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
+				MethodBase m = count > 0 ? binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state) : null;
 				if (m == null) {
-					throwMissingFieldException = true;
+					throwMissingMethodDescription = "Cannot find method `" + name + "'.";
 				} else {
 					object result = m.Invoke (target, invokeAttr, binder, args, culture);
 					if (state != null)
@@ -953,9 +953,9 @@ namespace System
 					if (mb != null)
 						smethods [count++] = mb;
 				}
-				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
+				MethodBase m = count > 0 ? binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state) : null;
 				if (m == null) {
-					throwMissingFieldException = true;
+					throwMissingMethodDescription = "Cannot find method `" + name + "'.";
 				} else {
 					object result = m.Invoke (target, invokeAttr, binder, args, culture);
 					if (state != null)
