@@ -287,7 +287,7 @@ namespace System.IO.Ports
         // Clearly not designable.
         [Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        MonitoringDescription(SR.Encoding)]
+        MonitoringDescription(SR.EncodingMonitoringDescription)]
         public Encoding Encoding
         {
             get { 
