@@ -68,7 +68,7 @@ endif
 
 ifdef RESOURCE_STRINGS
 ifdef BOOTSTRAP_PROFILE
-MCS_FLAGS_INTERNAL += $(RESOURCE_STRINGS:%=--getresourcestrings:%)
+MCS_FLAGS_RESOURCE_STRINGS += $(RESOURCE_STRINGS:%=--getresourcestrings:%)
 endif
 endif
 
@@ -267,7 +267,7 @@ endif
 $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(MCS_FLAGS_RESOURCE_STRINGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
