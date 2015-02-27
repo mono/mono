@@ -666,5 +666,19 @@ namespace MonoTests.System {
 			Assert.AreEqual (null, a.X);
 			Assert.AreEqual (null, a.Y);
 		}
+
+		class ParamsConstructorWithObjectConversion
+		{
+			public ParamsConstructorWithObjectConversion (params int[] x)
+			{
+			}
+		}
+
+		[Test]
+		public void CreateInstanceParamsConstructorWithObjectConversion ()
+		{
+			var a = Activator.CreateInstance (typeof(ParamsConstructorWithObjectConversion), new object[] { (object) 2 });
+			Assert.IsNotNull (a);
+		}
 	}
 }

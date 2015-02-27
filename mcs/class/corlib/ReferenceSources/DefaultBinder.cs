@@ -139,7 +139,11 @@ namespace System
 
 		static bool CanConvertPrimitiveObjectToType (Object source, RuntimeType type)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				return true;
+
+			var st = source.GetType ();
+			return st == type || CanConvertPrimitive ((RuntimeType) st, type);
 		}
 	}
 }
