@@ -256,6 +256,7 @@ namespace System.Windows.Forms {
 				
 				Location = loc;
 				Visible = true;
+				BringToFront ();
 			}
 
 
