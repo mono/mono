@@ -169,6 +169,7 @@ namespace MonoTests.System.Xml.Linq
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		[Category ("NotDotNet")]
+		[Ignore ("see inline comment")]
 		public void AddXDeclarationToElement ()
 		{
 			XElement el = new XElement (XName.Get ("foo"));
@@ -273,7 +274,7 @@ namespace MonoTests.System.Xml.Linq
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		[Category ("NotDotNet")]
-		[Category ("NotWorking")]
+		[Ignore ("see code comment")]
 		// LAMESPEC: there is no reason to not reject XDeclaration while it rejects XDocument.
 		public void AddAfterSelfXDeclaration ()
 		{
@@ -1658,6 +1659,7 @@ namespace MonoTests.System.Xml.Linq
 		// LAMESPEC: there is no reason to not reject XDeclaration while it rejects XDocument.
 		[ExpectedException (typeof (ArgumentException))]
 		[Category ("NotDotNet")]
+		[Ignore ("see code comment")]
 		public void SetValueXDeclaration ()
 		{
 			var el = new XElement ("foo");
