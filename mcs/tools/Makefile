@@ -48,7 +48,8 @@ net_4_5_dirs := \
 	symbolicate
 
 build_SUBDIRS = gacutil security culevel
-net_4_5_SUBDIRS := $(net_4_5_dirs)
+net_4_5_SUBDIRS = gacutil
+net_4_5_PARALLEL_SUBDIRS = $(net_4_5_dirs)
 
 SUBDIRS = $(basic_SUBDIRS) $(net_4_5_dirs)
 

@@ -40,10 +40,11 @@ LIB_MCS_FLAGS += /r:System.Web.ApplicationServices.dll
 activation = $(the_libdir_base)System.ServiceModel.Activation.dll
 servicemodel_deps = $(activation)
 
-ifneq (plainservice/,$(intermediate))
 LIB_REFS += System.ServiceModel.Activation
-LIB_MCS_FLAGS += -define:HAS_ACTIVATION -r:System.ServiceModel.Activation.dll
 LIB_REFS += System.Web.ApplicationServices
+
+ifneq (plainservice/,$(intermediate))
+LIB_MCS_FLAGS += -define:HAS_ACTIVATION -r:System.ServiceModel.Activation.dll
 LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 endif
 endif

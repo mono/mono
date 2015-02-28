@@ -8,6 +8,10 @@
 # All the dep files now land in the same directory so we
 # munge in the library name to keep the files from clashing.
 
+# All dependent libs become dependent dirs for parallel builds
+# Have to rename to handle differences between assembly/directory names
+DEP_LIBS=$(subst System.Xml,System.XML,$(subst System.Windows.Forms,Managed.Windows.Forms,$(LIB_REFS)))
+
 sourcefile = $(LIBRARY).sources
 
 # If the directory contains the per profile include file, generate list file.
@@ -345,3 +349,6 @@ $(the_libdir)/.doc-stamp: $(the_lib)
 	$(MDOC_UP)
 	@echo "doc-stamp" > $@
 
+# Need to be here so it comes after the definition of DEP_DIRS/DEP_LIBS
+gen-deps:
+	@echo "$(DEPS_TARGET_DIR): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)
