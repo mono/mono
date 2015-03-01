@@ -270,20 +270,19 @@ namespace Microsoft.Build.BuildEngine {
 				newProject = true;
 			}
 
-			BuildPropertyGroup engine_old_grp = null;
-			BuildPropertyGroup project_old_grp = null;
+			BuildPropertyGroup engine_old_grp = GlobalProperties.Clone (true);
+			BuildPropertyGroup project_old_grp = project.GlobalProperties.Clone (true);
+			foreach (BuildProperty bp in GlobalProperties)
+				project.GlobalProperties.AddProperty (bp);
 			if (globalProperties != null) {
-				engine_old_grp = GlobalProperties.Clone (true);
-				project_old_grp = project.GlobalProperties.Clone (true);
 
 				// Override project's global properties with the
 				// ones explicitlcur_y specified here
 				foreach (BuildProperty bp in globalProperties)
 					project.GlobalProperties.AddProperty (bp);
-
-				if (!newProject)
-					project.NeedToReevaluate ();
 			}
+			if (!newProject)
+				project.NeedToReevaluate ();
 
 			if (newProject)
 				project.Load (projectFile);
@@ -305,10 +304,8 @@ namespace Microsoft.Build.BuildEngine {
 					project.ToolsVersion = oldProjectToolsVersion;
 				}
 			} finally {
-				if (globalProperties != null) {
-					GlobalProperties = engine_old_grp;
-					project.GlobalProperties = project_old_grp;
-				}
+				GlobalProperties = engine_old_grp;
+				project.GlobalProperties = project_old_grp;
 			}
 		}
 
