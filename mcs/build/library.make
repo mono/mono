@@ -10,7 +10,7 @@
 
 # All dependent libs become dependent dirs for parallel builds
 # Have to rename to handle differences between assembly/directory names
-DEP_LIBS=$(subst System.Xml,System.XML,$(subst System.Windows.Forms,Managed.Windows.Forms,$(LIB_REFS)))
+DEP_LIBS=$(patsubst System.Xml,System.XML,$(patsubst System.Windows.Forms,Managed.Windows.Forms,$(LIB_REFS)))
 
 sourcefile = $(LIBRARY).sources
 
