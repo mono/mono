@@ -1,4 +1,4 @@
-// CS1589: Unable to include XML fragment `/root/@attr' of file `cs1589.inc'. Cannot insert specified type of node as a child of this node
+// CS1589: Unable to include XML fragment `/root/@attr' of file `cs1589.inc'. The specified node cannot be inserted as the valid child of this node, because the specified node is the wrong type
 // Line: 15
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 
