@@ -66656,6 +66656,13 @@
       </method>
     </type>
   </test>
+  <test name="test-interpolation-04.cs">
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>88</size>
+      </method>
+    </type>
+  </test>
   <test name="test-iter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
