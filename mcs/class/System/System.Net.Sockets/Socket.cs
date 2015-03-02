@@ -142,7 +142,7 @@ namespace System.Net.Sockets
 		// private constructor used by Accept, which already
 		// has a socket handle to use
 		internal Socket(AddressFamily family, SocketType type,
-			       ProtocolType proto, IntPtr sock)
+			       ProtocolType proto, SafeSocketHandle sock)
 		{
 			address_family=family;
 			socket_type=type;
@@ -193,7 +193,7 @@ namespace System.Net.Sockets
 			socket_type = (SocketType) (int) result [1];
 			protocol_type = (ProtocolType) (int) result [2];
 			isbound = (ProtocolType) (int) result [3] != 0;
-			socket = (IntPtr) (long) result [4];
+			socket = new SafeSocketHandle ((IntPtr) (long) result [4], true);
 			SocketDefaults ();
 		}
 #endif
@@ -408,7 +408,7 @@ namespace System.Net.Sockets
 
 		public IntPtr Handle {
 			get {
-				return(socket);
+				return(socket.DangerousGetHandle ());
 			}
 		}
 
@@ -571,7 +571,7 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error = 0;
-			IntPtr sock = (IntPtr) (-1);
+			SafeSocketHandle sock = null;
 			try {
 				RegisterForBlockingSyscall ();
 				sock = Accept_internal(socket, out error, blocking);
@@ -599,7 +599,7 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 			
 			int error = 0;
-			IntPtr sock = (IntPtr)(-1);
+			SafeSocketHandle sock = null;
 			
 			try {
 				RegisterForBlockingSyscall ();
@@ -1285,8 +1285,8 @@ namespace System.Net.Sockets
 				(blocking ? 0 : SocketInformationOptions.NonBlocking) |
 				(useoverlappedIO ? SocketInformationOptions.UseOnlyOverlappedIO : 0);
 
-			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)address_family, (int)socket_type, (int)protocol_type, isbound ? 1 : 0, (long)socket);
-			socket = (IntPtr) (-1);
+			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)address_family, (int)socket_type, (int)protocol_type, isbound ? 1 : 0, (long)Handle);
+			socket = null;
 
 			return si;
 		}

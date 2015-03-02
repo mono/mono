@@ -130,7 +130,7 @@ namespace System.Net.Sockets {
 				this.Sock = sock;
 				if (sock != null) {
 					this.blocking = sock.blocking;
-					this.handle = sock.socket;
+					this.handle = sock.Handle;
 				} else {
 					this.blocking = true;
 					this.handle = IntPtr.Zero;
@@ -187,7 +187,7 @@ namespace System.Net.Sockets {
 			{
 				this.Sock = sock;
 				this.blocking = sock.blocking;
-				this.handle = sock.socket;
+				this.handle = sock.Handle;
 				this.state = state;
 				this.callback = callback;
 				GC.KeepAlive (this.callback);
@@ -838,7 +838,7 @@ namespace System.Net.Sockets {
 #endif
 
 		/* the field "socket" is looked up by name by the runtime */
-		private IntPtr socket;
+		private SafeSocketHandle socket;
 		private AddressFamily address_family;
 		private SocketType socket_type;
 		private ProtocolType protocol_type;
@@ -944,7 +944,9 @@ namespace System.Net.Sockets {
 			
 			int error;
 			
-			socket = Socket_internal (addressFamily, socketType, protocolType, out error);
+			var handle = Socket_internal (addressFamily, socketType, protocolType, out error);
+			socket = new SafeSocketHandle (handle, true);
+
 			if (error != 0)
 				throw new SocketException (error);
 #if !NET_2_1 || MOBILE
@@ -1194,11 +1196,11 @@ namespace System.Net.Sockets {
 			disposed = true;
 			bool was_connected = connected;
 			connected = false;
-			if ((int) socket != -1) {
+			
+			if (socket != null) {
 				int error;
 				closed = true;
-				IntPtr x = socket;
-				socket = (IntPtr) (-1);
+				IntPtr x = Handle;
 				
 				AbortRegisteredThreads ();
 
@@ -1209,6 +1211,8 @@ namespace System.Net.Sockets {
 				//Console.WriteLine ("Time spent in Close_internal: {0}ms", (DateTime.UtcNow - start).TotalMilliseconds);
 				if (error != 0)
 					throw new SocketException (error);
+
+				socket.Dispose ();
 			}
 		}
 
@@ -1612,8 +1616,9 @@ namespace System.Net.Sockets {
 				// Calling connect() again will reset the connection attempt and cause
 				// an error. Better to just close the socket and move on.
 				connect_in_progress = false;
-				Close_internal (socket, out error);
-				socket = Socket_internal (address_family, socket_type, protocol_type, out error);
+				socket.Dispose ();
+				var handle = Socket_internal (address_family, socket_type, protocol_type, out error);
+				socket = new SafeSocketHandle (handle, true);
 				if (error != 0)
 					throw new SocketException (error);
 			}
