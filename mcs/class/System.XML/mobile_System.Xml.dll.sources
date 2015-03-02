@@ -2,9 +2,12 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+../../build/common/SR.cs
 Dummy.cs
 System.Xml.Res.cs
 System.Xml.Utils.Res.cs
+ReferenceSources/TypeScope.cs
+ReferenceSources/Wsdl.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/Assembly.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/ISourceLineInfo.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/ListBase.cs

@@ -2,10 +2,14 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+../../build/common/SR.cs
 ../../../external/referencesource/System.Xml/System/Xml/Assembly/System.Xml.Assembly.cs
 Dummy.cs
 System.Xml.Res.cs
 System.Xml.Utils.Res.cs
+ReferenceSources/Wsdl.cs
+ReferenceSources/TypeScope.cs
+ReferenceSources/SpecifiedAccessor.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/Assembly.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/GenerateHelper.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/IteratorDescriptor.cs
