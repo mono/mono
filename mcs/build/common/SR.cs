@@ -19,11 +19,6 @@ static class AssemblyRef
 	public const string SystemWindowsForms = Consts.AssemblySystem_Windows_Forms;
 }
 
-static class ThisAssembly
-{
-	public const string Version = Consts.FxVersion;
-}
-
 static partial class SR
 {
 	internal static string GetString(string name, params object[] args)

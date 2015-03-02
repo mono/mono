@@ -6,6 +6,7 @@ Assembly/AssemblyInfo.cs
 Dummy.cs
 System.Xml.Res.cs
 System.Xml.Utils.Res.cs
+ReferenceSources/ThisAssembly.cs
 ReferenceSources/TypeScope.cs
 ReferenceSources/Wsdl.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/Assembly.cs
