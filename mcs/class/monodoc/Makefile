@@ -112,13 +112,7 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/mono-ecma.xsl,mono-ecma.xsl                   \
 	/resource:Resources/toc-html.xsl,toc-html.xsl                     \
 	$(IMAGE_RESOURCE_COMMAND)					                      \
-	/r:ICSharpCode.SharpZipLib                                        \
-	/r:$(corlib)                                                      \
-	/r:System.dll                                                     \
-	/r:System.Core.dll                                                \
-	/r:System.Xml.dll                                                 \
-	/r:System.Xml.Linq.dll                                            \
-	/r:System.Configuration.dll
+	/r:$(corlib)
 
 CLEAN_FILES += $(the_lib).config
 

@@ -13,22 +13,6 @@ LIB_MCS_FLAGS = \
 		/keyfile:../winfx.pub \
 		/d:MONO \
 		/delaysign \
-		/r:Microsoft.Web.Infrastructure.dll \
-	        /r:System.dll \
-	        /r:System.Core.dll \
-	        /r:System.Configuration.dll \
-	        /r:System.Data.dll \
-	        /r:System.Xml.dll \
-	        /r:System.Web.dll \
-	        /r:System.Web.Abstractions.dll \
-	        /r:System.Web.Routing.dll \
-	        /r:System.Web.Extensions.dll \
-		/r:System.ComponentModel.DataAnnotations.dll \
-		/r:System.Data.Linq.dll \
-		/r:System.Runtime.Caching.dll \
-		/r:System.Web.Razor.dll \
-		/r:System.Web.WebPages.Razor.dll \
-		/r:System.Web.WebPages.dll \
 		$(foreach r, $(RESOURCES), /resource:$(r),System.Web.Mvc.Resources.$(notdir $(r)))
 
 EXTRA_DISTFILES = $(RESX_DIST)

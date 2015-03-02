@@ -15,8 +15,6 @@ LIB_REFS = System System.Core
 LIB_MCS_FLAGS = \
 		/warn:1 \
 		/keyfile:../winfx.pub -delaysign \
-	        /r:System.dll \
-	        /r:System.Core.dll \
 	        /d:ASPNETWEBPAGES \
 		/resource:System.Web.Razor.Resources.RazorResources.resources \
 		/resource:System.Web.Razor.Common.CommonResources.resources

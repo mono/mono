@@ -8,9 +8,17 @@
 # All the dep files now land in the same directory so we
 # munge in the library name to keep the files from clashing.
 
+# The including makefile can set the following variables:
+# LIB_MCS_FLAGS - Command line flags passed to mcs.
+# LIB_REFS      - This should be a space separated list of assembly names which are added to the mcs
+#                 command line.
+#
+
 # All dependent libs become dependent dirs for parallel builds
 # Have to rename to handle differences between assembly/directory names
 DEP_LIBS=$(patsubst System.Xml,System.XML,$(patsubst System.Windows.Forms,Managed.Windows.Forms,$(LIB_REFS)))
+
+LIB_MCS_FLAGS += $(patsubst %,-r:%,$(LIB_REFS))
 
 sourcefile = $(LIBRARY).sources
 

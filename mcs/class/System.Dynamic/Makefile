@@ -5,7 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Dynamic.dll
 
 LIB_REFS = System.Core System
-LIB_MCS_FLAGS = -unsafe -d:CODEPLEX_40 -r:System.Core.dll -r:System.dll -nowarn:414,169
+LIB_MCS_FLAGS = -unsafe -d:CODEPLEX_40 -nowarn:414,169
 
 # This is a .NET 4.0+ only assembly
 VALID_PROFILE := $(filter 4, $(FRAMEWORK_VERSION_MAJOR))

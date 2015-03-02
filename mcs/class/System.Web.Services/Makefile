@@ -32,7 +32,6 @@ system_web_services_deps = $(plainweb)
 
 LIB_REFS += System.Configuration
 LIB_MCS_FLAGS += \
-	-r:System.Configuration.dll \
 	-resource:System.Web.Services.Description/wsdl-1.1.xsd,wsdl-1.1.xsd \
 	-resource:System.Web.Services.Description/wsdl-1.1-soap.xsd,wsdl-1.1-soap.xsd \
 	-resource:System.Web.Services.Description/web-reference.xsd,web-reference.xsd

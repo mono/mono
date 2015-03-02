@@ -4,16 +4,14 @@ include ../../build/rules.make
 
 LIBRARY = System.ServiceModel.Syndication.dll
 LIB_REFS = System System.Xml System.Runtime.Serialization System.ServiceModel System.Core
-LIB_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.dll -r:System.ServiceModel.dll -r:System.Core.dll
+LIB_MCS_FLAGS =
 
 ifeq (moonlight_raw, $(PROFILE))
 LIB_REFS += System.Xml.Serialization
-LIB_MCS_FLAGS += /r:System.Xml.Serialization.dll
 endif
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Configuration
-LIB_MCS_FLAGS += /r:System.Configuration.dll
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

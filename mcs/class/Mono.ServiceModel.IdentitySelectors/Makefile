@@ -10,18 +10,6 @@ LIB_REFS = System System.Xml System.Configuration System.Security System.Transac
 LIB_MCS_FLAGS = \
 		/nowarn:414,169,67,3005,436 \
 		/unsafe \
-	        /r:System.dll \
-	        /r:System.Xml.dll \
-	        /r:System.Configuration.dll \
-	        /r:../lib/net_3_0/System.Runtime.Serialization.dll \
-	        /r:System.Security.dll \
-	        /r:../lib/net_3_0/System.IdentityModel.dll \
-		/r:../lib/net_3_0/System.IdentityModel.Selectors.dll \
-	        /r:../lib/net_3_0/System.ServiceModel.dll \
-	        /r:System.Transactions.dll \
-	        /r:System.Web.dll \
-		/r:System.Web.Services.dll \
-		/r:Mono.Security.dll \
 		$(RESOURCE_FILES:%=/resource:%)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Windows.Forms.DataVisualization.dll
 LIB_REFS = System System.Drawing System.Windows.Forms System.Core System.Data System.Xml
-LIB_MCS_FLAGS = -r:System -r:System.Drawing -r:System.Windows.Forms -r:System.Core -r:System.Data -r:System.Xml
+LIB_MCS_FLAGS =
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =

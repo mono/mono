@@ -6,7 +6,7 @@ LIBRARY = System.Core.dll
 
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,PFX_LEGACY_3_5,FEATURE_NETCORE
 LIB_REFS = System
-LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) -d:INSIDE_SYSCORE -d:LIBC /r:System.dll -unsafe
+LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) -d:INSIDE_SYSCORE -d:LIBC -unsafe
 RESOURCE_STRINGS = ../../../external/referencesource/System.Core/System.Core.txt
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
@@ -29,7 +29,7 @@ LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR
 
 ifneq (plaincore/,$(intermediate))
 LIB_REFS += Mono.Dynamic.Interpreter
-LIB_MCS_FLAGS += -d:MONO_INTERPRETER -r:Mono.Dynamic.Interpreter.dll
+LIB_MCS_FLAGS += -d:MONO_INTERPRETER
 endif
 
 endif
@@ -48,7 +48,6 @@ endif
 
 ifdef CLR_PROFILE
 LIB_REFS += Mono.Posix
-LIB_MCS_FLAGS += -r:Mono.Posix.dll
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

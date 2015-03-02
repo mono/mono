@@ -4,10 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Web.Abstractions.dll
 LIB_REFS = System System.Core System.Web
-LIB_MCS_FLAGS = \
-	        /r:System.dll \
-	        /r:System.Core.dll \
-	        /r:System.Web.dll
+LIB_MCS_FLAGS =
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

@@ -15,11 +15,6 @@ LIB_REFS = System System.Core System.Configuration System.Web Microsoft.Web.Infr
 LIB_MCS_FLAGS = \
 		/warn:1 \
 		/keyfile:../winfx.pub -delaysign \
-	        /r:System.dll \
-	        /r:System.Core.dll \
-	        /r:System.Configuration.dll \
-	        /r:System.Web.dll \
-	        /r:Microsoft.Web.Infrastructure.dll \
 	        /d:ASPNETWEBPAGES \
 		/resource:System.Web.WebPages.Deployment.Common.CommonResources.resources \
 		/resource:System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources
