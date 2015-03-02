@@ -26,7 +26,7 @@
 [submodule "external/referencesource"]
 	path = external/referencesource
 	url = git://github.com/mono/referencesource
-	branch = mono
+	branch = mono-4.0.0-branch
 [submodule "external/reference-assemblies"]
 	path = external/binary-reference-assemblies
 	url = git://github.com/mono/reference-assemblies.git
