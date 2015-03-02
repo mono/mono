@@ -5,12 +5,7 @@ LIBRARY = System.Windows.Forms.dll
 
 LIB_REFS = System System.Xml System.Drawing Accessibility System.Data Mono.Posix Mono.WebBrowser System.Configuration System.Runtime.Serialization.Formatters.Soap
 LIB_MCS_FLAGS = /unsafe \
-	/r:$(corlib) /r:System.dll /r:System.Xml.dll \
-	/r:System.Drawing.dll /r:Accessibility.dll \
-	/r:System.Data.dll /r:Mono.Posix.dll \
-	/r:Mono.WebBrowser \
-	/r:System.Configuration.dll \
-	/r:System.Runtime.Serialization.Formatters.Soap \
+	/r:$(corlib) \
 	@System.Windows.Forms.dll.resources \
 	-nowarn:618,612,809
 

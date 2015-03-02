@@ -6,11 +6,7 @@ RESOURCE_FILES =
 
 LIBRARY = System.Xaml.dll
 LIB_REFS = System System.Xml System.Core
-LIB_MCS_FLAGS = \
-	        /r:System.dll \
-	        /r:System.Xml.dll \
-		/r:System.Core.dll \
-	        $(RESOURCE_FILES:%=/resource:%)
+LIB_MCS_FLAGS = $(RESOURCE_FILES:%=/resource:%)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

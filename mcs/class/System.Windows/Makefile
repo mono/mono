@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Windows.dll
 LIB_REFS = System
-LIB_MCS_FLAGS = /r:System
+LIB_MCS_FLAGS =
 
 PLATFORM_DEBUG_FLAGS =
 

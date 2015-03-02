@@ -4,11 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Web.Routing.dll
 LIB_REFS = System System.Core System.Web System.Web.Abstractions
-LIB_MCS_FLAGS = \
-	        /r:System.dll \
-	        /r:System.Core.dll \
-	        /r:System.Web.dll \
-	        /r:System.Web.Abstractions.dll
+LIB_MCS_FLAGS = 
 
 ifdef DEBUG
 LIB_MCS_FLAGS += -define:DEBUG

@@ -245,21 +245,13 @@ LIB_MCS_FLAGS = \
 	-unsafe \
 	-nowarn:612,618	\
 	-r:$(corlib)	 		\
-	-r:System.dll 			\
-	-r:System.Core.dll		\
-	-r:System.Drawing.dll 		\
-	-r:System.Data.dll		\
-	-r:System.Xml.dll		\
-	-r:System.EnterpriseServices.dll \
-	-r:System.Runtime.Serialization.Formatters.Soap \
-	-r:System.ComponentModel.DataAnnotations.dll \
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)
 
 ifneq (plainweb/,$(intermediate))
 LIB_REFS += System.Web.Services
-LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:System.Web.Services.dll
+LIB_MCS_FLAGS += -define:WEBSERVICES_DEP
 
 all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources 
 

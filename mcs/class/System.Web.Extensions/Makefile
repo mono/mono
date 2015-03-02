@@ -61,17 +61,6 @@ LIB_MCS_FLAGS = \
 	-define:NET_3_5			\
 	-define:SYSTEM_WEB_EXTENSIONS	\
 	-r:$(corlib)	 		\
-	-r:System.dll 			\
-	-r:System.Core.dll		\
-	-r:System.Drawing.dll 		\
-	-r:System.Data.dll		\
-	-r:System.Data.Linq.dll		\
-	-r:System.Xml.dll		\
-	-r:System.Web.dll		\
-	-r:System.Web.Services.dll	\
-	-r:System.Configuration.dll	\
-	-r:System.EnterpriseServices.dll \
-	-r:System.ServiceModel.dll	\
 	$(OTHER_LIB_MCS_FLAGS) 		\
 	$(RESOURCE_FILES:%=/resource:%)
 

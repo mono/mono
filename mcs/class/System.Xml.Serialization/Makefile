@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Xml.Serialization.dll
 LIB_REFS = System.Xml System.ServiceModel
-LIB_MCS_FLAGS = /r:System.Xml /r:System.ServiceModel
+LIB_MCS_FLAGS =
 
 PLATFORM_DEBUG_FLAGS =
 

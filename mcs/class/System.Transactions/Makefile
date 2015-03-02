@@ -7,10 +7,10 @@ MOBILE_PROFILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PR
 LIBRARY = System.Transactions.dll
 ifdef MOBILE_PROFILE
 LIB_REFS = System
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /define:MOBILE
+LIB_MCS_FLAGS = /r:$(corlib) /define:MOBILE
 else
 LIB_REFS = System System.Configuration
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Configuration.dll
+LIB_MCS_FLAGS = /r:$(corlib)
 endif
 
 TEST_MCS_FLAGS = /nowarn:1595 $(LIB_MCS_FLAGS)

@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = PEAPI.dll
 LIB_REFS = System
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll -nowarn:414,618
+LIB_MCS_FLAGS = /r:$(corlib) -nowarn:414,618
 NO_TEST = yes
 
 EXTRA_DISTFILES = README.txt

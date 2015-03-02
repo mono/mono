@@ -10,16 +10,13 @@ LIB_REFS = System System.Xml System.Core
 LIB_MCS_FLAGS = \
 		-unsafe \
 		/nowarn:168,169,219,414 \
-		/r:System.dll \
-		/r:System.Xml.dll \
-		/r:System.Core.dll \
 		$(RESOURCE_FILES:%=/resource:%)
 
 RESOURCE_STRINGS = ../../../external/referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Data System.Configuration
-LIB_MCS_FLAGS += /d:NET_3_0 /r:System.Data.dll /r:System.Configuration.dll
+LIB_MCS_FLAGS += /d:NET_3_0
 endif
 
 TEST_RESOURCE_FILES = \
