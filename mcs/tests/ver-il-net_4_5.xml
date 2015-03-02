@@ -66643,6 +66643,19 @@
       </method>
     </type>
   </test>
+  <test name="test-interpolation-03.cs">
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>36</size>
+      </method>
+      <method name="Void RunTest(System.Action)" attrs="145">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0()" attrs="145">
+        <size>22</size>
+      </method>
+    </type>
+  </test>
   <test name="test-iter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
