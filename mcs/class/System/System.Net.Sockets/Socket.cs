@@ -555,14 +555,12 @@ namespace System.Net.Sockets
 
 		private static SafeSocketHandle Accept_internal(SafeSocketHandle safeHandle, out int error, bool blocking)
 		{
-			bool release = false;
 			try {
-				safeHandle.DangerousAddRef (ref release);
+				safeHandle.RegisterForBlockingSyscall ();
 				var ret = Accept_internal (safeHandle.DangerousGetHandle (), out error, blocking);
 				return new SafeSocketHandle (ret, true);
 			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
+				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
@@ -571,13 +569,7 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error = 0;
-			SafeSocketHandle sock = null;
-			try {
-				RegisterForBlockingSyscall ();
-				sock = Accept_internal(socket, out error, blocking);
-			} finally {
-				UnRegisterForBlockingSyscall ();
-			}
+			var sock = Accept_internal(socket, out error, blocking);
 
 			if (error != 0) {
 				if (closed)
@@ -599,14 +591,7 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 			
 			int error = 0;
-			SafeSocketHandle sock = null;
-			
-			try {
-				RegisterForBlockingSyscall ();
-				sock = Accept_internal (socket, out error, blocking);
-			} finally {
-				UnRegisterForBlockingSyscall ();
-			}
+			var sock = Accept_internal (socket, out error, blocking);
 			
 			if (error != 0) {
 				if (closed)
@@ -1766,13 +1751,11 @@ namespace System.Net.Sockets
 							    ref SocketAddress sockaddr,
 							    out int error)
 		{
-			bool release = false;
 			try {
-				safeHandle.DangerousAddRef (ref release);
+				safeHandle.RegisterForBlockingSyscall ();
 				return RecvFrom_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, ref sockaddr, out error);
 			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
+				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
@@ -1979,13 +1962,11 @@ namespace System.Net.Sockets
 
 		private static bool SendFile (SafeSocketHandle safeHandle, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags)
 		{
-			bool release = false;
 			try {
-				safeHandle.DangerousAddRef (ref release);
+				safeHandle.RegisterForBlockingSyscall ();
 				return SendFile (safeHandle.DangerousGetHandle (), filename, pre_buffer, post_buffer, flags);
 			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
+				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
@@ -2112,13 +2093,11 @@ namespace System.Net.Sockets
 							  SocketAddress sa,
 							  out int error)
 		{
-			bool release = false;
 			try {
-				safeHandle.DangerousAddRef (ref release);
+				safeHandle.RegisterForBlockingSyscall ();
 				return SendTo_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, sa, out error);
 			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
+				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 

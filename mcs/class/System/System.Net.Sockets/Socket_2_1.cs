@@ -843,7 +843,6 @@ namespace System.Net.Sockets {
 		private SocketType socket_type;
 		private ProtocolType protocol_type;
 		internal bool blocking=true;
-		List<Thread> blocking_threads;
 		private bool isbound;
 		/* When true, the socket was connected at the time of
 		 * the last IO operation
@@ -862,44 +861,6 @@ namespace System.Net.Sockets {
 		 * Connect, etc.
  		 */
 		internal EndPoint seed_endpoint = null;
-
-		void RegisterForBlockingSyscall ()
-		{
-			while (blocking_threads == null) {
-				//In the rare event this CAS fail, there's a good chance other thread won, so we're kosher.
-				//In the VERY rare event of all CAS fail together, we pay the full price of of failure.
-				Interlocked.CompareExchange (ref blocking_threads, new List<Thread> (), null);
-			}
-
-			try {
-				
-			} finally {
-				/* We must use a finally block here to make this atomic. */
-				lock (blocking_threads) {
-					blocking_threads.Add (Thread.CurrentThread);
-				}
-			}
-		}
-
-		/* This must be called from a finally block! */
-		void UnRegisterForBlockingSyscall ()
-		{
-			//If this NRE, we're in deep problems because Register Must have
-			lock (blocking_threads) {
-				blocking_threads.Remove (Thread.CurrentThread);
-			}
-		}
-
-		void AbortRegisteredThreads () {
-			if (blocking_threads == null)
-				return;
-
-			lock (blocking_threads) {
-				foreach (var t in blocking_threads)
-					cancel_blocking_socket_operation (t);
-				blocking_threads.Clear ();
-			}
-		}
 
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -971,11 +932,11 @@ namespace System.Net.Sockets {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Blocking_internal(IntPtr socket,
+		internal extern static void Blocking_internal(IntPtr socket,
 							     bool block,
 							     out int error);
 
-		internal static void Blocking_internal (SafeSocketHandle safeHandle,
+		private static void Blocking_internal (SafeSocketHandle safeHandle,
 							     bool block,
 							     out int error)
 		{
@@ -1186,7 +1147,7 @@ namespace System.Net.Sockets {
 			}
 		}
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern void cancel_blocking_socket_operation (Thread thread);
+		internal static extern void cancel_blocking_socket_operation (Thread thread);
 
 		protected virtual void Dispose (bool disposing)
 		{
@@ -1198,19 +1159,11 @@ namespace System.Net.Sockets {
 			connected = false;
 			
 			if (socket != null) {
-				int error;
 				closed = true;
 				IntPtr x = Handle;
-				
-				AbortRegisteredThreads ();
 
 				if (was_connected)
 					Linger (x);
-				//DateTime start = DateTime.UtcNow;
-				Close_internal (x, out error);
-				//Console.WriteLine ("Time spent in Close_internal: {0}ms", (DateTime.UtcNow - start).TotalMilliseconds);
-				if (error != 0)
-					throw new SocketException (error);
 
 				socket.Dispose ();
 			}
@@ -1248,13 +1201,11 @@ namespace System.Net.Sockets {
 							    SocketAddress sa,
 							    out int error)
 		{
-			bool release = false;
 			try {
-				safeHandle.DangerousAddRef (ref release);
+				safeHandle.RegisterForBlockingSyscall ();
 				Connect_internal (safeHandle.DangerousGetHandle (), sa, out error);
 			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
+				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
@@ -1279,12 +1230,7 @@ namespace System.Net.Sockets {
 
 			int error = 0;
 
-			try {
-				RegisterForBlockingSyscall ();
-				Connect_internal (socket, serial, out error);
-			} finally {
-				UnRegisterForBlockingSyscall ();
-			}
+			Connect_internal (socket, serial, out error);
 
 			if (error == 0 || error == 10035)
 				seed_endpoint = remoteEP; // Keep the ep around for non-blocking sockets
@@ -1401,13 +1347,11 @@ namespace System.Net.Sockets {
 							   SocketFlags flags,
 							   out int error)
 		{
-			bool release = false;
 			try {
-				safeHandle.DangerousAddRef (ref release);
+				safeHandle.RegisterForBlockingSyscall ();
 				return Receive_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, out error);
 			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
+				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
@@ -1458,13 +1402,11 @@ namespace System.Net.Sockets {
 							SocketFlags flags,
 							out int error)
 		{
-			bool release = false;
 			try {
-				safeHandle.DangerousAddRef (ref release);
+				safeHandle.RegisterForBlockingSyscall ();
 				return Send_internal (safeHandle.DangerousGetHandle (), buf, offset, count, flags, out error);
 			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
+				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
@@ -1779,13 +1721,11 @@ namespace System.Net.Sockets {
 
 		private static int Receive_internal (SafeSocketHandle safeHandle, WSABUF[] bufarray, SocketFlags flags, out int error)
 		{
-			bool release = false;
 			try {
-				safeHandle.DangerousAddRef (ref release);
+				safeHandle.RegisterForBlockingSyscall ();
 				return Receive_internal (safeHandle.DangerousGetHandle (), bufarray, flags, out error);
 			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
+				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
