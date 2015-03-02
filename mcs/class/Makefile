@@ -229,7 +229,7 @@ xbuild_14_SUBDIRS := $(xbuild_4_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(mobile_static_dirs) $(mobile_dynamic_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_5_dirs)
+SUBDIRS = $(mobile_static_dirs) $(mobile_dynamic_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_5_dirs) $(net_4_5_parallel_dirs)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs)
 
