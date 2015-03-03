@@ -33,7 +33,7 @@
 
 /* Returns whether the object is still in the nursery. */
 static inline MONO_ALWAYS_INLINE gboolean
-COPY_OR_MARK_FUNCTION_NAME (void **ptr, void *obj, SgenGrayQueue *queue)
+COPY_OR_MARK_FUNCTION_NAME (void **ptr, void *obj, SgenGrayQueue *queue, gboolean high_priority)
 {
 	MSBlockInfo *block;
 
@@ -97,7 +97,7 @@ COPY_OR_MARK_FUNCTION_NAME (void **ptr, void *obj, SgenGrayQueue *queue)
 				block = MS_BLOCK_FOR_OBJ (obj);
 				size_index = block->obj_size_index;
 				evacuate_block_obj_sizes [size_index] = FALSE;
-				MS_MARK_OBJECT_AND_ENQUEUE (obj, sgen_obj_get_descriptor (obj), block, queue);
+				MS_MARK_OBJECT_AND_ENQUEUE (obj, sgen_obj_get_descriptor (obj), block, queue, FALSE);
 				return FALSE;
 			}
 			return TRUE;
@@ -175,7 +175,7 @@ COPY_OR_MARK_FUNCTION_NAME (void **ptr, void *obj, SgenGrayQueue *queue)
 			}
 #endif
 
-			MS_MARK_OBJECT_AND_ENQUEUE (obj, desc, block, queue);
+			MS_MARK_OBJECT_AND_ENQUEUE (obj, desc, block, queue, high_priority);
 		} else {
 			HEAVY_STAT (++stat_optimized_copy_major_large);
 
@@ -211,16 +211,18 @@ SCAN_OBJECT_FUNCTION_NAME (char *obj, mword desc, SgenGrayQueue *queue)
 	/* Now scan the object. */
 
 #undef HANDLE_PTR
-#define HANDLE_PTR(ptr,obj)	do {					\
-		void *__old = *(ptr);					\
+#define HANDLE_PTR(ptr,obj)	do { \
+		void *__old = *(ptr); \
 		binary_protocol_scan_process_reference ((obj), (ptr), __old); \
-		if (__old) {						\
-			gboolean __still_in_nursery = COPY_OR_MARK_FUNCTION_NAME ((ptr), __old, queue); \
+		if (__old) { \
+			gboolean __local = ((size_t)(__old) ^ (size_t)obj) > (MS_BLOCK_SIZE * CHAR_BIT); \
+			gboolean __still_in_nursery = COPY_OR_MARK_FUNCTION_NAME ((ptr), __old, queue, __local); \
+			HEAVY_STAT (__local ? ++stat_optimized_major_scan_local : ++stat_optimized_major_scan_nonlocal); \
 			if (G_UNLIKELY (__still_in_nursery && !sgen_ptr_in_nursery ((ptr)) && !SGEN_OBJECT_IS_CEMENTED (*(ptr)))) { \
-				void *__copy = *(ptr);			\
+				void *__copy = *(ptr); \
 				sgen_add_to_global_remset ((ptr), __copy); \
-			}						\
-		}							\
+			} \
+		} \
 	} while (0)
 
 #define SCAN_OBJECT_PROTOCOL
