@@ -1283,14 +1283,13 @@ work, Mono needs to be compiled with the BINARY_PROTOCOL define on
 sgen-gc.c.   You can then use this command to explore the output
 .nf
                 sgen-grep-binprot 0x1234 0x5678 < file
+.fi
 .TP
 \fBnursery-canaries\fR
 If set, objects allocated in the nursery are suffixed with a canary (guard)
 word, which is checked on each minor collection. Can be used to detect/debug
 heap corruption issues.
-.fi
-.ne
-.RE
+
 .TP
 \fBdo-not-finalize\fR
 If enabled, finalizers will not be run.  Everything else will be
@@ -1298,7 +1297,10 @@ unaffected: finalizable objects will still be put into the
 finalization queue where they survive until they're scheduled to
 finalize.  Once they're not in the queue anymore they will be
 collected regularly.
-.fi
+
+.TP
+\fBlog-finalizers\fR
+Log verbosely around the finalization process to aid debugging.
 .ne
 .RE
 .TP
