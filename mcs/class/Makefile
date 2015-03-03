@@ -277,3 +277,5 @@ dist-local: dist-default
 
 csproj-local:
 
+clean-local:
+	$(RM) -rf $(topdir)/class/lib/$(PROFILE)
