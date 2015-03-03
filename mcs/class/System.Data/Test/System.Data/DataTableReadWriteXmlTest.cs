@@ -35,6 +35,8 @@ namespace MonoTests.System.Data
     [TestFixture]
     public class DataTableReadWriteXmlTest
     {
+        public static readonly string EOL = Environment.NewLine;
+
         void StandardizeXmlFormat(ref string xml)
         {
             XmlDocument doc = new XmlDocument();
@@ -124,11 +126,11 @@ namespace MonoTests.System.Data
             // Get XML for DataSet writes.
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw);
-            string xmlDSNone = sw.ToString().Replace ("\n", "\r\n");
+            string xmlDSNone = sw.ToString().Replace ("\n", EOL);
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.DiffGram);
-            string xmlDSDiffGram = sw.ToString().Replace ("\n", "\r\n");
+            string xmlDSDiffGram = sw.ToString().Replace ("\n", EOL);
 
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.WriteSchema);
@@ -186,11 +188,11 @@ namespace MonoTests.System.Data
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw);
-            xmlDSNone = sw.ToString().Replace ("\n", "\r\n");
+            xmlDSNone = sw.ToString().Replace ("\n", EOL);
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.DiffGram);
-            xmlDSDiffGram = sw.ToString().Replace ("\n", "\r\n");;
+            xmlDSDiffGram = sw.ToString().Replace ("\n", EOL);
 
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.WriteSchema);

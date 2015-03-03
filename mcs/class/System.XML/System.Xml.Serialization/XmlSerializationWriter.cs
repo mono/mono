@@ -493,10 +493,9 @@ namespace System.Xml.Serialization
 		{
 			if (xmlns == null)
 				return;
-			ICollection namespaces = xmlns.Namespaces.Values;
-			foreach (XmlQualifiedName qn in namespaces) {
-				if (qn.Namespace != String.Empty && Writer.LookupPrefix (qn.Namespace) != qn.Name)
-					WriteAttribute ("xmlns", qn.Name, xmlNamespace, qn.Namespace);
+			foreach (DictionaryEntry qn in xmlns.Namespaces) {
+				if ((string) qn.Value != String.Empty && Writer.LookupPrefix ((string) qn.Value) != (string) qn.Key)
+					WriteAttribute ("xmlns", (string) qn.Key, xmlNamespace, (string) qn.Value);
 			}
 		}
 

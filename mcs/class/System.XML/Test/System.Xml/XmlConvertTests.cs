@@ -71,7 +71,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlException))]
 		public void EncodeNmTokenError ()
 		{
 			XmlConvert.EncodeNmToken (String.Empty);

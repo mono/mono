@@ -111,6 +111,7 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[Category ("NotDotNet")] // enbugged in 2.0
+		[Ignore ("Bug in Microsoft referencesource")]
 		[ExpectedException (typeof (XmlException))]
 		public void WriteNodeError ()
 		{
@@ -375,7 +376,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void CreateWriter_AttributeNamespacesXmlnsXmlns ()
 		{
 			// Unlike XmlTextWriter, null namespace is not ignored.

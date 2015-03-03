@@ -47,6 +47,7 @@ MDOC_RESOURCES = \
 	Resources/stylesheet.xsl
 
 MDOC_TEST_FILES = \
+	Test/CLILibraryTypes.dtd				  \
 	Test/DocTest-v1.cs                                        \
 	Test/DocTest-v2.patch                                     \
 	Test/msxdoc-expected.importslashdoc.xml                   \

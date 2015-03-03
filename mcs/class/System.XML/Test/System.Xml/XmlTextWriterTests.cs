@@ -1517,14 +1517,14 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		//[ExpectedException (typeof (ArgumentException))]
 		public void WriteWhitespace_Null ()
 		{
 			xtw.WriteWhitespace ((string) null);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		//[ExpectedException (typeof (ArgumentException))]
 		public void WriteWhitespace_Empty ()
 		{
 			xtw.WriteWhitespace (string.Empty);

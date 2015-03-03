@@ -225,8 +225,10 @@ namespace MonoTests.System.Xml
 			node = document.CreateNode("documentfragment", null, null);
 			Assert.AreEqual (XmlNodeType.DocumentFragment, node.NodeType);
 
-			node = document.CreateNode("documenttype", null, null);
-			Assert.AreEqual (XmlNodeType.DocumentType, node.NodeType);
+			try {
+				node = document.CreateNode("documenttype", null, null);
+				Assert.Fail ("Expected an ArgumentNullException to be thrown.");
+			} catch (ArgumentNullException) {}
 
 			node = document.CreateNode("element", "foo", null);
 			Assert.AreEqual (XmlNodeType.Element, node.NodeType);

@@ -36,7 +36,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
 		public void FileUri2 ()
 		{
 			Assert.AreEqual (resolver.ResolveUri (new Uri ("file://usr/local/src"), null).ToString (), "file://usr/local/src");
@@ -59,6 +58,8 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // It should throw ArgumentNullException.
+		[Ignore(".NET implementation does not throw ArgumentNullException.")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ResolveUriWithNullArgs ()
 		{
@@ -74,7 +75,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetEntityWithRelativeFileUri ()
 		{
 			resolver.GetEntity (new Uri ("file.txt", UriKind.Relative), null, typeof (Stream));

@@ -421,7 +421,7 @@ namespace MonoTests.System.Xml
 
 #if NET_4_5
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
+		[ExpectedException (typeof (XmlException))]
 		public void ReadonlyAsync ()
 		{
 			var s = new XmlReaderSettings ();
