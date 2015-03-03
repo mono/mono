@@ -19,7 +19,7 @@ namespace System {
     using System.Runtime.Remoting;
 #if FEATURE_REMOTING    
     using System.Runtime.Remoting.Activation;
-    using Message = System.Runtime.Remoting.Messaging.Message;
+//    using Message = System.Runtime.Remoting.Messaging.Message;
 #endif
     using System.Security;
     using CultureInfo = System.Globalization.CultureInfo;
@@ -110,7 +110,7 @@ namespace System {
 
         static public Object CreateInstance(Type type, params Object[] args)
         {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && type != null)
             {
                 FrameworkEventSource.Log.ActivatorCreateInstance(type.GetFullNameForEtw());
@@ -138,7 +138,7 @@ namespace System {
         
         static public Object CreateInstance(Type type)
         {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && type != null)
             {
                 FrameworkEventSource.Log.ActivatorCreateInstance(type.GetFullNameForEtw());
@@ -157,6 +157,10 @@ namespace System {
         static public ObjectHandle CreateInstance(String assemblyName,
                                                   String typeName)
         {
+#if MONO
+            if(assemblyName == null)
+              assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
+#endif
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
             return CreateInstance(assemblyName,
                                   typeName, 
@@ -177,6 +181,10 @@ namespace System {
                                                   Object[] activationAttributes)
                                                   
         {
+#if MONO
+            if(assemblyName == null)
+              assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
+#endif
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
             return CreateInstance(assemblyName,
                                   typeName, 
@@ -210,7 +218,7 @@ namespace System {
         static public T CreateInstance<T>()
         {
             RuntimeType rt = typeof(T) as RuntimeType;
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && rt != null)
             {
                 FrameworkEventSource.Log.ActivatorCreateInstanceT(rt.GetFullNameForEtw());
@@ -280,6 +288,10 @@ namespace System {
                                                   Object[] activationAttributes,
                                                   Evidence securityInfo)
         {
+#if MONO
+            if(assemblyName == null)
+              assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
+#endif
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
             return CreateInstance(assemblyName,
                                   typeName,
@@ -304,6 +316,10 @@ namespace System {
                                                   CultureInfo culture,
                                                   object[] activationAttributes)
         {
+#if MONO
+            if(assemblyName == null)
+              assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
+#endif
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
             return CreateInstance(assemblyName,
                                   typeName,
@@ -335,7 +351,6 @@ namespace System {
                 throw new NotSupportedException(Environment.GetResourceString("NotSupported_RequiresCasPolicyImplicit"));
             }
 #endif // FEATURE_CAS_POLICY
-
             Type type = null;
             Assembly assembly = null;
             if (assemblyString == null) {
@@ -611,7 +626,7 @@ namespace System {
                                                                    activationAttributes,
                                                                    null);
         }
-#if FEATURE_COMINTEROP
+#if FEATURE_COMINTEROP || MONO_COM
 
 #if FEATURE_CLICKONCE
         [System.Security.SecuritySafeCritical]  // auto-generated
