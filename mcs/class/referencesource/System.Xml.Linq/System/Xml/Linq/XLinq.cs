@@ -3432,6 +3432,9 @@ namespace System.Xml.Linq
     ///     <item><see cref="XProcessingInstruction"/></item>
     ///   </list>
     /// </remarks>
+#if MONO
+    [XmlTypeConvertor ("ConvertForAssignment")]
+#endif
     [XmlSchemaProvider(null, IsAny=true)]
 #if !SILVERLIGHT // Serialization
     [System.ComponentModel.TypeDescriptionProvider(typeof(MS.Internal.Xml.Linq.ComponentModel.XTypeDescriptionProvider<XElement>))]
@@ -3536,6 +3539,19 @@ namespace System.Xml.Linq
         internal XElement(XmlReader r, LoadOptions o) {
             ReadElementFrom(r, o);
         }
+
+
+#if MONO
+	static object ConvertForAssignment (object value)
+	{
+		var node = value as XmlNode;
+		if (node == null)
+			return value;
+		var doc = new XmlDocument ();
+		doc.AppendChild (doc.ImportNode (node, true));
+		return XElement.Parse (doc.InnerXml);
+	}
+#endif
 
         /// <summary>
         /// Gets the first attribute of an element.
