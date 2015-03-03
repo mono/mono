@@ -105,7 +105,6 @@ System/AssemblyLoadEventHandler.cs
 System/AsyncCallback.cs
 System/Attribute.cs
 System/AttributeTargets.cs
-System/AttributeUsageAttribute.cs
 System/BadImageFormatException.cs
 System/Buffer.cs
 System/CannotUnloadAppDomainException.cs
@@ -1405,6 +1404,7 @@ ReferenceSources/ReflectionOnlyType.cs
 ../../../external/referencesource/mscorlib/system/activator.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
 ../../../external/referencesource/mscorlib/system/arraysegment.cs
+../../../external/referencesource/mscorlib/system/attributeusageattribute.cs
 ../../../external/referencesource/mscorlib/system/bitconverter.cs
 ../../../external/referencesource/mscorlib/system/boolean.cs
 ../../../external/referencesource/mscorlib/system/byte.cs

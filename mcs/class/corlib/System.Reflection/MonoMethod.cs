@@ -109,13 +109,17 @@ namespace System.Reflection {
 		}
 	};
 	
+	abstract class RuntimeMethodInfo : MethodInfo
+	{
+	}
+
 	/*
 	 * Note: most of this class needs to be duplicated for the contructor, since
 	 * the .NET reflection class hierarchy is so broken.
 	 */
 	[Serializable()]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoMethod : MethodInfo, ISerializable
+	internal class MonoMethod : RuntimeMethodInfo, ISerializable
 	{
 #pragma warning disable 649
 		internal IntPtr mhandle;

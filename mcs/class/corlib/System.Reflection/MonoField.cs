@@ -41,9 +41,15 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
+	abstract class RtFieldInfo : FieldInfo
+	{
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern object UnsafeGetValue (object obj);
+	}
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoField : FieldInfo, ISerializable {
+	internal class MonoField : RtFieldInfo, ISerializable {
 		internal IntPtr klass;
 		internal RuntimeFieldHandle fhandle;
 		string name;
