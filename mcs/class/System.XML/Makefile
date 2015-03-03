@@ -49,11 +49,8 @@ xmlfiles_files = \
 	xsd/ChangeLog xsd/1.xsd xsd/2.xsd xsd/3.xsd xsd/4.xsd xsd/5.xsd xsd/6.xsd xsd/xml.xsd xsd/81360.xsd xsd/81360inc1.xsd xsd/81360inc2.xsd
 
 EXTRA_DISTFILES = \
-	System.Xml.Schema/BUGS-MS.txt	\
-	System.Xml.Schema/BUGS.txt	\
 	$(wildcard System.Xml.Serialization/standalone_tests/*.cs) \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.output) \
-	System.Xml.XPath/Parser.jay	\
 	Test/ChangeLog			\
 	Test/Microsoft.Test.csproj	\
 	Test/Mono.Test.csproj		\
