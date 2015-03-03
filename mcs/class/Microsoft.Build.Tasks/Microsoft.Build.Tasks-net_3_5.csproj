@@ -198,9 +198,9 @@
       <Project>{080698DE-8AF0-496E-9AD7-58B6C605328A}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_2_0.csproj">
+    <ProjectReference Include="..\System.Windows.Forms\System.Windows.Forms-net_2_0.csproj">
       <Project>{EC4EB1AA-1E23-4F9A-832A-FED2E5EA9630}</Project>
-      <Name>Managed.Windows.Forms\System.Windows.Forms-net_2_0</Name>
+      <Name>System.Windows.Forms\System.Windows.Forms-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_3_5.csproj">
       <Project>{C3F8A358-9DA1-423C-8466-58AB30893EB0}</Project>

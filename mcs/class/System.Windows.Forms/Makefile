@@ -1,4 +1,4 @@
-thisdir = class/Managed.Windows.Forms
+thisdir = class/System.Windows.Forms
 include ../../build/rules.make
 
 LIBRARY = System.Windows.Forms.dll
@@ -15,7 +15,7 @@ endif
 
 RESX_RESOURCES = \
 	resources/keyboards.resources
-	
+
 CLEAN_FILES += $(RESX_RESOURCES)
 
 CUR_RESOURCES = resources/NWSE.cur resources/NESW.cur \

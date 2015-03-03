@@ -410,7 +410,7 @@
       <Project>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</Project>
       <Name>System.Web-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="../Managed.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
+    <ProjectReference Include="../System.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
       <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
       <Name>System.Windows.Forms-net_4_5</Name>
     </ProjectReference>

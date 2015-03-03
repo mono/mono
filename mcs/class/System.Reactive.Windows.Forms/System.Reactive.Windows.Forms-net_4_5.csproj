@@ -103,7 +103,7 @@
       <Project>{EE831E49-3F84-4A05-9417-A9C8BD36E164}</Project>
       <Name>System.Reactive.Linq-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="../Managed.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
+    <ProjectReference Include="../System.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
       <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
       <Name>System.Windows.Forms-net_4_5</Name>
     </ProjectReference>

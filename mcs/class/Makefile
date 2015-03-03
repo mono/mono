@@ -95,7 +95,7 @@ net_4_5_dirs := \
 	Accessibility			\
 	Mono.WebBrowser			\
 	System.Runtime.Serialization.Formatters.Soap \
-	Managed.Windows.Forms		\
+	System.Windows.Forms		\
 	Mono.Data.Sqlite		\
 	System.Web.ApplicationServices	\
 	System.Web			\

@@ -16,7 +16,7 @@
 
 # All dependent libs become dependent dirs for parallel builds
 # Have to rename to handle differences between assembly/directory names
-DEP_LIBS=$(patsubst System.Xml,System.XML,$(patsubst System.Windows.Forms,Managed.Windows.Forms,$(LIB_REFS)))
+DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
 
 LIB_MCS_FLAGS += $(patsubst %,-r:%,$(LIB_REFS))
 

@@ -75,7 +75,7 @@ doc_en   = Documentation/en
 
 NETDOCS_DIRS = \
 	$(classdir)/corlib/$(doc_en)                                        \
-	$(classdir)/Managed.Windows.Forms/$(doc_en)			    \
+	$(classdir)/System.Windows.Forms/$(doc_en)			    \
 	$(classdir)/Microsoft.Build.Engine/$(doc_en)                        \
 	$(classdir)/Microsoft.Build.Framework/$(doc_en)                     \
 	$(classdir)/Microsoft.Build.Utilities/$(doc_en)                     \
