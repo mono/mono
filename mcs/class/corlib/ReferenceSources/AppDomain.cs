@@ -20,5 +20,13 @@ namespace System {
 		{
 			return false;
 		}
+
+		internal static void CheckReflectionOnlyLoadSupported()
+		{
+		}
+
+		internal static void CheckLoadFromSupported()
+		{
+		}
 	}
 }

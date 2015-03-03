@@ -40,6 +40,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Diagnostics.Contracts;
+using System.Threading;
+using System.Diagnostics;
+using System.Security.Permissions;
+using System.Runtime.Remoting.Activation;
 
 namespace System
 {
@@ -52,6 +56,8 @@ namespace System
 		
 	abstract class RuntimeType : TypeInfo
 	{
+		private static readonly RuntimeType DelegateType = (RuntimeType)typeof(System.Delegate);
+
 		internal RuntimeAssembly GetRuntimeAssembly ()
 		{
 			return (RuntimeAssembly) Assembly;
@@ -61,6 +67,11 @@ namespace System
 			get {
 				return IsArrayImpl () && GetArrayRank () == 1;
 			}
+		}
+
+		bool IsGenericCOMObjectImpl ()
+		{
+			return false;
 		}
 
 		internal Object CheckValue (Object value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)
@@ -277,6 +288,13 @@ namespace System
 			return candidates;
 		}
 
+        private static bool FilterApplyConstructorInfo(
+            RuntimeConstructorInfo constructor, BindingFlags bindingFlags, CallingConventions callConv, Type[] argumentTypes)
+        {
+            // Optimization: Pre-Calculate the method binding flags to avoid casting.
+            return FilterApplyMethodBase(constructor, /*constructor.BindingFlags,*/ bindingFlags, callConv, argumentTypes);
+        }
+
         private static bool FilterApplyMethodBase(
             MethodBase methodBase, /*BindingFlags methodFlags,*/ BindingFlags bindingFlags, CallingConventions callConv, Type[] argumentTypes)
         {
@@ -406,6 +424,298 @@ namespace System
             return true;
         }
 
+        [System.Security.SecurityCritical]  // auto-generated
+        internal Object CreateInstanceImpl(
+            BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, ref StackCrawlMark stackMark)
+        {            
+            CreateInstanceCheckThis();
+            
+            Object server = null;
+
+            try
+            {
+                try
+                {
+                    // Store the activation attributes in thread local storage.
+                    // These attributes are later picked up by specialized 
+                    // activation services like remote activation services to
+                    // influence the activation.
+#if FEATURE_REMOTING
+                    if(null != activationAttributes)
+                    {
+                        ActivationServices.PushActivationAttributes(this, activationAttributes);
+                    }
+#endif                    
+                    
+                    if (args == null)
+                        args = EmptyArray<Object>.Value;
+
+                    int argCnt = args.Length;
+
+                    // Without a binder we need to do use the default binder...
+                    if (binder == null)
+                        binder = DefaultBinder;
+
+                    // deal with the __COMObject case first. It is very special because from a reflection point of view it has no ctors
+                    // so a call to GetMemberCons would fail
+                    if (argCnt == 0 && (bindingAttr & BindingFlags.Public) != 0 && (bindingAttr & BindingFlags.Instance) != 0
+                        && (IsGenericCOMObjectImpl() || IsValueType)) 
+                    {
+                        server = CreateInstanceDefaultCtor((bindingAttr & BindingFlags.NonPublic) == 0 , false, true, ref stackMark);
+                    }
+                    else 
+                    {
+                        ConstructorInfo[] candidates = GetConstructors(bindingAttr);
+                        List<MethodBase> matches = new List<MethodBase>(candidates.Length);
+
+                        // We cannot use Type.GetTypeArray here because some of the args might be null
+                        Type[] argsType = new Type[argCnt];
+                        for (int i = 0; i < argCnt; i++)
+                        {
+                            if (args[i] != null)
+                            {
+                                argsType[i] = args[i].GetType();
+                            }
+                        }
+
+                        for(int i = 0; i < candidates.Length; i ++)
+                        {
+                            if (FilterApplyConstructorInfo((RuntimeConstructorInfo)candidates[i], bindingAttr, CallingConventions.Any, argsType))
+                                matches.Add(candidates[i]);
+                        }
+
+                        MethodBase[] cons = new MethodBase[matches.Count];
+                        matches.CopyTo(cons);
+                        if (cons != null && cons.Length == 0)
+                            cons = null;
+
+                        if (cons == null) 
+                        {
+                            // Null out activation attributes before throwing exception
+#if FEATURE_REMOTING                                            
+                            if(null != activationAttributes)
+                            {
+                                ActivationServices.PopActivationAttributes(this);
+                                activationAttributes = null;
+                            }
+#endif                            
+                            throw new MissingMethodException(Environment.GetResourceString("MissingConstructor_Name", FullName));
+                        }
+
+                        MethodBase invokeMethod;
+                        Object state = null;
+
+                        try
+                        {
+                            invokeMethod = binder.BindToMethod(bindingAttr, cons, ref args, null, culture, null, out state);
+                        }
+                        catch (MissingMethodException) { invokeMethod = null; }
+
+                        if (invokeMethod == null)
+                        {
+#if FEATURE_REMOTING                                            
+                            // Null out activation attributes before throwing exception
+                            if(null != activationAttributes)
+                            {
+                                ActivationServices.PopActivationAttributes(this);
+                                activationAttributes = null;
+                            }                  
+#endif                                
+                            throw new MissingMethodException(Environment.GetResourceString("MissingConstructor_Name", FullName));
+                        }
+
+                        // If we're creating a delegate, we're about to call a
+                        // constructor taking an integer to represent a target
+                        // method. Since this is very difficult (and expensive)
+                        // to verify, we're just going to demand UnmanagedCode
+                        // permission before allowing this. Partially trusted
+                        // clients can instead use Delegate.CreateDelegate,
+                        // which allows specification of the target method via
+                        // name or MethodInfo.
+                        //if (isDelegate)
+                        if (RuntimeType.DelegateType.IsAssignableFrom(invokeMethod.DeclaringType))
+                        {
+#if FEATURE_CORECLR
+                            // In CoreCLR, CAS is not exposed externally. So what we really are looking
+                            // for is to see if the external caller of this API is transparent or not.
+                            // We get that information from the fact that a Demand will succeed only if
+                            // the external caller is not transparent. 
+                            try
+                            {
+#pragma warning disable 618
+                                new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
+#pragma warning restore 618
+                            }
+                            catch
+                            {
+                                throw new NotSupportedException(String.Format(CultureInfo.CurrentCulture, Environment.GetResourceString("NotSupported_DelegateCreationFromPT")));
+                            }
+#else // FEATURE_CORECLR
+                            new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
+#endif // FEATURE_CORECLR
+                        }
+
+                        if (invokeMethod.GetParametersNoCopy().Length == 0)
+                        {
+                            if (args.Length != 0)
+                            {
+
+                                Contract.Assert((invokeMethod.CallingConvention & CallingConventions.VarArgs) == 
+                                                 CallingConventions.VarArgs); 
+                                throw new NotSupportedException(String.Format(CultureInfo.CurrentCulture, 
+                                    Environment.GetResourceString("NotSupported_CallToVarArg")));
+                            }
+
+                            // fast path??
+                            server = Activator.CreateInstance(this, true);
+                        }
+                        else
+                        {
+                            server = ((ConstructorInfo)invokeMethod).Invoke(bindingAttr, binder, args, culture);
+                            if (state != null)
+                                binder.ReorderArgumentArray(ref args, state);
+                        }
+                    }
+                }                    
+                finally
+                {
+#if FEATURE_REMOTING                
+                    // Reset the TLS to null
+                    if(null != activationAttributes)
+                    {
+                          ActivationServices.PopActivationAttributes(this);
+                          activationAttributes = null;
+                    }
+#endif                    
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
+            //Console.WriteLine(server);
+            return server;                                
+        }
+
+        // Helper to invoke the default (parameterless) ctor.
+        // fillCache is set in the SL2/3 compat mode or when called from Marshal.PtrToStructure.
+        [System.Security.SecuritySafeCritical]  // auto-generated
+        [DebuggerStepThroughAttribute]
+        [Diagnostics.DebuggerHidden]
+        internal Object CreateInstanceDefaultCtor(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+        {
+            if (GetType() == typeof(ReflectionOnlyType))
+                throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_NotAllowedInReflectionOnly"));
+
+/*
+            ActivatorCache activatorCache = s_ActivatorCache;
+            if (activatorCache != null)
+            {
+                ActivatorCacheEntry ace = activatorCache.GetEntry(this);
+                if (ace != null)
+                {
+                    if (publicOnly)
+                    {
+                        if (ace.m_ctor != null && 
+                            (ace.m_ctorAttributes & MethodAttributes.MemberAccessMask) != MethodAttributes.Public)
+                        {
+                            throw new MissingMethodException(Environment.GetResourceString("Arg_NoDefCTor"));
+                        }
+                    }
+                            
+                    // Allocate empty object
+                    Object instance = RuntimeTypeHandle.Allocate(this);
+                    
+                    // if m_ctor is null, this type doesn't have a default ctor
+                    Contract.Assert(ace.m_ctor != null || this.IsValueType);
+
+                    if (ace.m_ctor != null)
+                    {
+                        // Perform security checks if needed
+                        if (ace.m_bNeedSecurityCheck)
+                            RuntimeMethodHandle.PerformSecurityCheck(instance, ace.m_hCtorMethodHandle, this, (uint)INVOCATION_FLAGS.INVOCATION_FLAGS_CONSTRUCTOR_INVOKE);
+
+                        // Call ctor (value types wont have any)
+                        try
+                        {
+                            ace.m_ctor(instance);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new TargetInvocationException(e);
+                        }
+                    }
+                    return instance;
+                }
+            }
+*/
+            return CreateInstanceSlow(publicOnly, skipCheckThis, fillCache, ref stackMark);
+        }
+
+        // the slow path of CreateInstanceDefaultCtor
+        internal Object CreateInstanceSlow(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+        {
+            bool bNeedSecurityCheck = true;
+            bool bCanBeCached = false;
+            bool bSecurityCheckOff = false;
+
+            if (!skipCheckThis)
+                CreateInstanceCheckThis();
+
+            if (!fillCache)
+                bSecurityCheckOff = true;
+
+            return CreateInstanceMono (!publicOnly);
+        }
+
+        private void CreateInstanceCheckThis()
+        {
+            if (this is ReflectionOnlyType)
+                throw new ArgumentException(Environment.GetResourceString("Arg_ReflectionOnlyInvoke"));
+
+            if (ContainsGenericParameters)
+                throw new ArgumentException(
+                    Environment.GetResourceString("Acc_CreateGenericEx", this));
+            Contract.EndContractBlock();
+
+            Type elementType = this.GetRootElementType();
+
+            if (Object.ReferenceEquals(elementType, typeof(ArgIterator)))
+                throw new NotSupportedException(Environment.GetResourceString("Acc_CreateArgIterator"));
+
+            if (Object.ReferenceEquals(elementType, typeof(void)))
+                throw new NotSupportedException(Environment.GetResourceString("Acc_CreateVoid"));
+        }
+
+		object CreateInstanceMono (bool nonPublic)
+		{
+			var ctor = GetDefaultConstructor ();
+			if (!nonPublic && ctor != null && !ctor.IsPublic) {
+				ctor = null;
+			}
+
+			if (ctor == null) {
+	            Type elementType = this.GetRootElementType();
+	            if (ReferenceEquals (elementType, typeof (TypedReference)) || ReferenceEquals (elementType, typeof (RuntimeArgumentHandle)))
+    	            throw new NotSupportedException (Environment.GetResourceString ("NotSupported_ContainsStackPtr"));
+
+				if (IsValueType)
+					return CreateInstanceInternal (this);
+
+				throw new MissingMethodException (Locale.GetText ("Default constructor not found for type " + FullName));
+			}
+
+			// TODO: .net does more checks in unmanaged land in RuntimeTypeHandle::CreateInstance
+			if (IsAbstract) {
+				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class '{0}'.", FullName));
+			}
+
+			return ctor.InternalInvoke (null, null);
+		}        
+
+		internal abstract MonoCMethod GetDefaultConstructor ();
+
         // Helper to build lists of MemberInfos. Special cased to avoid allocations for lists of one element.
         protected struct ListBuilder<T> where T : class
         {
@@ -504,11 +814,14 @@ namespace System
                 _count++;
             }
         }
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern object CreateInstanceInternal (Type type);
 	}
 
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	sealed class MonoType : RuntimeType, ISerializable
+	class MonoType : RuntimeType, ISerializable
 	{
 		[NonSerialized]
 		MonoTypeInfo type_info;
@@ -527,7 +840,7 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern TypeAttributes get_attributes (Type type);
 
-		public MonoCMethod GetDefaultConstructor ()
+		internal override MonoCMethod GetDefaultConstructor ()
 		{
 			MonoCMethod ctor = null;
 			

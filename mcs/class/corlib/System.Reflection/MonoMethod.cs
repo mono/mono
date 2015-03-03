@@ -471,9 +471,14 @@ namespace System.Reflection {
 		}
 	}
 	
+
+	abstract class RuntimeConstructorInfo : ConstructorInfo
+	{
+	}
+
 	[Serializable()]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoCMethod : ConstructorInfo, ISerializable
+	internal class MonoCMethod : RuntimeConstructorInfo, ISerializable
 	{
 #pragma warning disable 649		
 		internal IntPtr mhandle;

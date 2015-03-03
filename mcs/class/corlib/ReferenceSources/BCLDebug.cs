@@ -41,5 +41,10 @@ namespace System
 		internal static void Perf (bool expr, string msg)
 		{
 		}
+
+		[Conditional("_LOGGING")]
+		public static void Trace (string switchName, params object[]messages)
+		{
+		}
 	}
 }

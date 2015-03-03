@@ -84,7 +84,6 @@ Mono.Xml/SmallXmlParser.cs
 Mono.Xml/SecurityParser.cs
 System/AccessViolationException.cs
 System/ActivationContext.cs
-System/Activator.cs
 System/AndroidPlatform.cs
 System/AppDomain.cs
 System/AppDomainInitializer.cs
@@ -1400,8 +1399,10 @@ ReferenceSources/CLRConfig.cs
 ReferenceSources/JitHelpers.cs
 ReferenceSources/EncodingDataItem.cs
 ReferenceSources/EncodingTable.cs
+ReferenceSources/ReflectionOnlyType.cs
 
 ../../../external/referencesource/mscorlib/system/__hresults.cs
+../../../external/referencesource/mscorlib/system/activator.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
 ../../../external/referencesource/mscorlib/system/arraysegment.cs
 ../../../external/referencesource/mscorlib/system/bitconverter.cs
