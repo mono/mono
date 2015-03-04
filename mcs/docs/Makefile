@@ -75,7 +75,7 @@ doc_en   = Documentation/en
 
 NETDOCS_DIRS = \
 	$(classdir)/corlib/$(doc_en)                                        \
-	$(classdir)/Managed.Windows.Forms/$(doc_en)			    \
+	$(classdir)/System.Windows.Forms/$(doc_en)			    \
 	$(classdir)/Microsoft.Build.Engine/$(doc_en)                        \
 	$(classdir)/Microsoft.Build.Framework/$(doc_en)                     \
 	$(classdir)/Microsoft.Build.Utilities/$(doc_en)                     \
@@ -104,8 +104,7 @@ MONO_DIRS = \
 	$(classdir)/Mono.Posix/$(doc_en)                   \
 	$(classdir)/Mono.Security.Win32/$(doc_en)          \
 	$(classdir)/Mono.Security/$(doc_en)                \
-	$(classdir)/Mono.Simd/$(doc_en)                    \
-	$(classdir)/Npgsql/$(doc_en)
+	$(classdir)/Mono.Simd/$(doc_en)
 
 NOVELL_DIRS = \
 	$(topdir)/class/Novell.Directory.Ldap/Documentation/en

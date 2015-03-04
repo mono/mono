@@ -324,6 +324,46 @@ namespace System {
 		}
 #endif
 
+		internal ObjectHandle InternalCreateInstanceWithNoSecurity (string assemblyName, string typeName)
+		{
+			return CreateInstance(assemblyName, typeName);
+		}
+
+		internal ObjectHandle InternalCreateInstanceWithNoSecurity (string assemblyName, 
+                                                                    string typeName,
+                                                                    bool ignoreCase,
+                                                                    BindingFlags bindingAttr,
+                                                                    Binder binder,
+                                                                    Object[] args,
+                                                                    CultureInfo culture,
+                                                                    Object[] activationAttributes,
+                                                                    Evidence securityAttributes)
+		{
+#pragma warning disable 618
+		return CreateInstance(assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
+#pragma warning restore 618
+		}
+
+		internal ObjectHandle InternalCreateInstanceFromWithNoSecurity (string assemblyName, string typeName)
+		{
+			return CreateInstanceFrom(assemblyName, typeName);
+		}
+
+		internal ObjectHandle InternalCreateInstanceFromWithNoSecurity (string assemblyName, 
+                                                                        string typeName,
+                                                                        bool ignoreCase,
+                                                                        BindingFlags bindingAttr,
+                                                                        Binder binder,
+                                                                        Object[] args,
+                                                                        CultureInfo culture,
+                                                                        Object[] activationAttributes,
+                                                                        Evidence securityAttributes)
+		{
+#pragma warning disable 618
+			return CreateInstanceFrom(assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
+#pragma warning restore 618
+		}
+
 		public ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{
 			if (assemblyName == null)

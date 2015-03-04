@@ -205,9 +205,9 @@
       <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
       <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="../Managed.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
+    <ProjectReference Include="..\System.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
       <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
-      <Name>System.Windows.Forms-net_4_5</Name>
+      <Name>System.Windows.Forms\System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../Microsoft.Build.Utilities/Microsoft.Build.Utilities-xbuild_12.csproj">
       <Project>{4AEF77E9-BB34-44F2-9F35-64D11ECDE2A7}</Project>

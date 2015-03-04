@@ -4,8 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = System.Runtime.Remoting.dll
 
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Web.dll \
-	/r:System.Xml.dll /r:System.Runtime.Serialization.Formatters.Soap.dll
+LIB_REFS = System System.Web System.Xml System.Runtime.Serialization.Formatters.Soap
+LIB_MCS_FLAGS = /r:$(corlib)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618 /r:System.Runtime.Remoting.dll
 

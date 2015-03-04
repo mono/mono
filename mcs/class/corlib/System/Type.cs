@@ -42,6 +42,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Globalization;
+using System.Diagnostics.Contracts;
 
 namespace System {
 
@@ -159,9 +160,14 @@ namespace System {
 		/// </summary>
 		public static Binder DefaultBinder {
 			get {
-				return Binder.DefaultBinder;
+				if (defaultBinder == null)
+					Interlocked.CompareExchange<Binder> (ref defaultBinder, new DefaultBinder (), null);
+
+				return defaultBinder;
 			}
 		}
+
+		static Binder defaultBinder;
 
 		/// <summary>
 		///    The full name of the type including its namespace
@@ -1087,6 +1093,16 @@ namespace System {
 			}
 
 			return GetPropertyImpl (name, bindingAttr, binder, returnType, types, modifiers);
+		}
+
+		internal PropertyInfo GetProperty(String name, BindingFlags bindingAttr, Type returnType)
+		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+			if (returnType == null)
+				throw new ArgumentNullException("returnType");
+			Contract.EndContractBlock();
+			return GetPropertyImpl(name, bindingAttr, null, returnType, null, null);
 		}
 
 		protected abstract PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder,

@@ -3,7 +3,8 @@ include ../../build/rules.make
 
 LIBRARY = SystemWebTestShim.dll
 
-LIB_MCS_FLAGS = -r:System.Web.dll -r:System.dll
+LIB_REFS = System.Web System
+LIB_MCS_FLAGS =
 
 NO_INSTALL = yes
 NO_SIGN_ASSEMBLY = yes

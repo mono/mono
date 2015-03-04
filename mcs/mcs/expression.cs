@@ -12355,7 +12355,7 @@ namespace Mono.CSharp
 	public class InterpolatedString : Expression
 	{
 		readonly StringLiteral start, end;
-		readonly List<Expression> interpolations;
+		List<Expression> interpolations;
 		Arguments arguments;
 
 		public InterpolatedString (StringLiteral start, List<Expression> interpolations, StringLiteral end)
@@ -12364,6 +12364,18 @@ namespace Mono.CSharp
 			this.end = end;
 			this.interpolations = interpolations;
 			loc = start.Location;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			InterpolatedString target = (InterpolatedString) t;
+
+			if (interpolations != null) {
+				target.interpolations = new List<Expression> ();
+				foreach (var interpolation in interpolations) {
+					target.interpolations.Add (interpolation.Clone (clonectx));
+				}
+			}
 		}
 
 		public Expression ConvertTo (ResolveContext rc, TypeSpec type)
@@ -12492,6 +12504,13 @@ namespace Mono.CSharp
 
 		public Expression Alignment { get; set; }
 		public string Format { get; set; }
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			var target = (InterpolatedStringInsert)t;
+			if (Alignment != null)
+				target.Alignment = Alignment.Clone (clonectx);
+		}
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{

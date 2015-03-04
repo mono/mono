@@ -353,7 +353,7 @@ namespace System.Reflection.Emit
 					}
 				}
 				if (binder == null)
-					binder = Binder.DefaultBinder;
+					binder = DefaultBinder;
 				return (ConstructorInfo) binder.SelectMethod (bindingAttr, match,
 															  types, modifiers);
 			}
@@ -1192,46 +1192,10 @@ namespace System.Reflection.Emit
 		{
 			check_created ();
 
-			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
-			MethodInfo[] methods = GetMethodsByName (name, bindingAttr, ignoreCase, this);
-			MethodInfo found = null;
-			MethodBase[] match;
-			int typesLen = (types != null) ? types.Length : 0;
-			int count = 0;
-			
-			foreach (MethodInfo m in methods) {
-				// Under MS.NET, Standard|HasThis matches Standard...
-				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
-					continue;
-				found = m;
-				count++;
-			}
+			if (types == null)
+				return created.GetMethod (name, bindingAttr);
 
-			if (count == 0)
-				return null;
-			
-			if (count == 1 && typesLen == 0) 
-				return found;
-
-			match = new MethodBase [count];
-			if (count == 1)
-				match [0] = found;
-			else {
-				count = 0;
-				foreach (MethodInfo m in methods) {
-					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
-						continue;
-					match [count++] = m;
-				}
-			}
-			
-			if (types == null) 
-				return (MethodInfo) Binder.FindMostDerivedMatch (match);
-
-			if (binder == null)
-				binder = Binder.DefaultBinder;
-			
-			return (MethodInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
+			return created.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 
 		public override Type GetNestedType (string name, BindingFlags bindingAttr)

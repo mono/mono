@@ -96,7 +96,7 @@ namespace System.Resources
 				ResourceValue = value;
 			}
 		}
-		
+
 		BinaryReader reader;
 		object readerLock = new object ();
 		IFormatter formatter;
@@ -448,12 +448,7 @@ namespace System.Resources
 					} else {
 						IntPtr ptr = Marshal.AllocHGlobal ((int) slen);
 						byte* addr = (byte*) ptr.ToPointer ();
-						UnmanagedMemoryStream ms = new UnmanagedMemoryStream (addr, slen, slen, FileAccess.ReadWrite);
-						// The memory resource must be freed
-						// when the stream is disposed.
-						ms.Closed += delegate (object o, EventArgs e) {
-							Marshal.FreeHGlobal (ptr);
-						};
+						UnmanagedMemoryStream ms = new HGlobalUnmanagedMemoryStream (addr, slen, ptr);
 
 						byte [] bytes = new byte [slen < 1024 ? slen : 1024];
 						while (slen > 0 ) {

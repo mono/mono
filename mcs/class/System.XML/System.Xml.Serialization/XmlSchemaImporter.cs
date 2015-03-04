@@ -443,6 +443,8 @@ namespace System.Xml.Serialization
 			XmlQualifiedName qname;
 			XmlSchemaType stype;
 
+			if (!schemas.IsCompiled)
+				schemas.Compile (null, true);
 			XmlSchemaElement elem = (XmlSchemaElement) schemas.Find (name, typeof (XmlSchemaElement));
 			if (!LocateElement (elem, out qname, out stype))
 				throw new InvalidOperationException (String.Format ("'{0}' is missing.", name));
@@ -504,7 +506,7 @@ namespace System.Xml.Serialization
 				stype = elem.SchemaType;
 				qname = elem.QualifiedName;
 			}
-			else if (elem.ElementType == XmlSchemaComplexType.AnyType)
+			else if (elem.ElementSchemaType == XmlSchemaComplexType.AnyType)
 			{
 				qname = anyType;
 				return true;
@@ -729,7 +731,7 @@ namespace System.Xml.Serialization
 					if (refAttr.DefaultValue != null) 
 						member.DefaultValue = ImportDefaultValue (member.TypeData, refAttr.DefaultValue);
 					else if (member.TypeData.IsValueType)
-						member.IsOptionalValueType = (refAttr.ValidatedUse != XmlSchemaUse.Required);
+						member.IsOptionalValueType = (refAttr.Use != XmlSchemaUse.Required);
 						
 					if (member.TypeData.IsComplexType)
 						member.MappedType = GetTypeMapping (member.TypeData);
@@ -1690,7 +1692,7 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				ns = attr.ParentIsSchema ? typeQName.Namespace : String.Empty;
+				ns = attr.Parent is XmlSchema ? typeQName.Namespace : String.Empty;
 				return attr;
 			}
 		}

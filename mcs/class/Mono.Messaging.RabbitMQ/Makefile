@@ -3,11 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Messaging.RabbitMQ.dll
-LIB_MCS_FLAGS = /r:System.dll \
-		/r:System.Messaging.dll \
-		/r:Mono.Messaging.dll \
-		/r:RabbitMQ.Client \
-		-nowarn:618
+LIB_REFS = System System.Messaging Mono.Messaging RabbitMQ.Client
+LIB_MCS_FLAGS = -nowarn:618
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 \
 	/r:nunit.mocks.dll

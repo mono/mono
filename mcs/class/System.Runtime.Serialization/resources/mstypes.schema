@@ -37,4 +37,6 @@
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:attribute name="FactoryType" type="xs:QName" />
+	<xs:attribute name="Id" type="xs:ID" />
+	<xs:attribute name="Ref" type="xs:IDREF" />
 </xs:schema>

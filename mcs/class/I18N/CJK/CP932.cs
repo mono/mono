@@ -712,6 +712,14 @@ namespace I18N.CJK
 		public override int WindowsCodePage {
 			get { return SHIFTJIS_CODE_PAGE; }
 		}
+		
+		// FIXME: This doesn't make sense, but without declaring this override
+		// System.XML regresses at Encoder.Convert() in
+		// MonoTests.System.Xml.XmlWriterSettingsTests.EncodingTest.
+		public override Encoder GetEncoder ()
+		{
+			return new MonoEncodingDefaultEncoder (this);
+		}
 
 	}; // class CP932
 

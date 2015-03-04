@@ -33,6 +33,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Diagnostics.Contracts;
 
 namespace System {
 	[ComVisible (true)]
@@ -114,5 +115,46 @@ namespace System {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static bool BlockCopyInternal (Array src, int src_offset, Array dest, int dest_offset, int count);
+
+		internal static bool InternalBlockCopy (Array src, int src_offset, Array dest, int dest_offset, int count)
+		{
+			return BlockCopyInternal (src, src_offset, dest, dest_offset, count);
+		}
+
+		internal unsafe static void ZeroMemory (byte* src, long len)
+		{
+			while(len-- > 0)
+				*(src + len) = 0;
+		}
+
+        internal unsafe static void Memcpy (byte* pDest, int destIndex, byte[] src, int srcIndex, int len)
+        {
+            Contract.Assert( (srcIndex >= 0) && (destIndex >= 0) && (len >= 0), "Index and length must be non-negative!");        
+            Contract.Assert(src.Length - srcIndex >= len, "not enough bytes in src");
+            // If dest has 0 elements, the fixed statement will throw an 
+            // IndexOutOfRangeException.  Special-case 0-byte copies.
+            if (len==0)
+                return;
+            fixed(byte* pSrc = src) {
+                Memcpy(pDest + destIndex, pSrc + srcIndex, len);
+            }
+        }
+
+        internal unsafe static void Memcpy(byte[] dest, int destIndex, byte* src, int srcIndex, int len) {
+            Contract.Assert( (srcIndex >= 0) && (destIndex >= 0) && (len >= 0), "Index and length must be non-negative!");
+            Contract.Assert(dest.Length - destIndex >= len, "not enough bytes in dest");
+            // If dest has 0 elements, the fixed statement will throw an 
+            // IndexOutOfRangeException.  Special-case 0-byte copies.
+            if (len==0)
+                return;
+            fixed(byte* pDest = dest) {
+                Memcpy(pDest + destIndex, src + srcIndex, len);
+            }
+        }
+
+		internal unsafe static void Memcpy (byte* dest, byte* src, int len)
+		{
+			string.memcpy (dest, src, len);
+		}
 	}
 }

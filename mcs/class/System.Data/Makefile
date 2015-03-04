@@ -4,25 +4,19 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.dll
 
+LIB_REFS = System System.Xml System.Core
 LIB_MCS_FLAGS = \
 	-nowarn:649 \
-	-unsafe \
-	-r:System			 	\
-	-r:System.Xml.dll \
-	-r:System.Core.dll
+	-unsafe
 
 MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE
-LIB_MCS_FLAGS += \
-	-r:Mono.Data.Tds.dll \
-	-r:System.Transactions.dll
+LIB_REFS += Mono.Data.Tds System.Transactions
 else
-LIB_MCS_FLAGS += \
-	-r:System.EnterpriseServices.dll 	\
-	-r:Mono.Data.Tds.dll \
-	-r:System.Configuration.dll \
-	-r:System.Transactions.dll
+LIB_REFS += System.EnterpriseServices Mono.Data.Tds System.Configuration System.Transactions
 endif
+
+RESOURCE_STRINGS = ../../../external/referencesource/System.Data/system.data.txt
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.Core.dll -r:Mono.Data.Sqlite.dll -nowarn:618,169,612,219,168
 

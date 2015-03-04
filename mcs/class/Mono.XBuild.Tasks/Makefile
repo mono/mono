@@ -7,6 +7,7 @@ include $(XBUILD_DIR)/xbuild.make
 
 LIBRARY = Mono.XBuild.Tasks.dll
 
+LIB_REFS = System System.Xml
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll				\

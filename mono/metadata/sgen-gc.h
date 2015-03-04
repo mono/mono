@@ -81,7 +81,7 @@ struct _SgenThreadInfo {
 	This is set to TRUE when STW fails to suspend a thread, most probably because the
 	underlying thread is dead.
 	*/
-	int skip;
+	gboolean skip, suspend_done;
 	volatile int in_critical_region;
 
 	/*
@@ -823,7 +823,11 @@ sgen_par_object_get_size (MonoVTable *vtable, MonoObject* o)
 		MonoArray *array = (MonoArray*)o;
 		size_t size = sizeof (MonoArray) + element_size * mono_array_length_fast (array);
 
-		if (descr & VECTOR_KIND_ARRAY) {
+		/*
+		 * Non-vector arrays with a single dimension whose lower bound is zero are
+		 * allocated without bounds.
+		 */
+		if ((descr & VECTOR_KIND_ARRAY) && array->bounds) {
 			size += sizeof (mono_array_size_t) - 1;
 			size &= ~(sizeof (mono_array_size_t) - 1);
 			size += sizeof (MonoArrayBounds) * vtable->klass->rank;

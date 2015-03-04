@@ -2405,6 +2405,34 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		bool ScanClosingInterpolationBrace ()
+		{
+			PushPosition ();
+
+			bool? res = null;
+			int str_quote = 0;
+			do {
+				var c = reader.Read ();
+				switch (c) {
+				case '\"':
+					++str_quote;
+					break;
+				case -1:
+					res = false;
+					break;
+				case '}':
+					if (str_quote % 2 == 1) {
+						res = true;
+					}
+
+					break;
+				}
+			} while (res == null);
+
+			PopPosition ();
+			return res.Value;
+		}
+
 		int TokenizeNumber (int value)
 		{
 			number_pos = 0;
@@ -3153,9 +3181,14 @@ namespace Mono.CSharp
 			if (c == '\\') {
 				int surrogate;
 				c = escape (c, out surrogate);
-				if (surrogate != 0) {
-					id_builder [pos++] = (char) c;
+				if (quoted || is_identifier_start_character (c)) {
+					// it's added bellow
+				} else if (surrogate != 0) {
+					id_builder [pos++] = (char)c;
 					c = surrogate;
+				} else {
+					Report.Error (1056, Location, "Unexpected character `\\{0}'", c.ToString ("x4"));
+					return Token.ERROR;
 				}
 			}
 
@@ -3176,9 +3209,18 @@ namespace Mono.CSharp
 							c = escape (c, out surrogate);
 							if (is_identifier_part_character ((char) c))
 								id_builder[pos++] = (char) c;
-
-							if (surrogate != 0) {
+							else if (surrogate != 0) {
 								c = surrogate;
+							} else {
+								switch (c) {
+								// TODO: Probably need more whitespace characters
+								case 0xFEFF:
+									putback_char = c;
+									break;
+								default:
+									Report.Error (1056, Location, "Unexpected character `\\{0}'", c.ToString ("x4"));
+									return Token.ERROR;
+								}
 							}
 
 							continue;
@@ -3691,10 +3733,10 @@ namespace Mono.CSharp
 					return Token.EOF;
 				
 				case '"':
-					if (parsing_string_interpolation > 0) {
+					if (parsing_string_interpolation > 0 && !ScanClosingInterpolationBrace ()) {
 						parsing_string_interpolation = 0;
 						Report.Error (8076, Location, "Missing close delimiter `}' for interpolated expression");
-						val = null;
+						val = new StringLiteral (context.BuiltinTypes, "", Location);
 						return Token.INTERPOLATED_STRING_END;
 					}
 

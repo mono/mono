@@ -84,7 +84,6 @@ Mono.Xml/SmallXmlParser.cs
 Mono.Xml/SecurityParser.cs
 System/AccessViolationException.cs
 System/ActivationContext.cs
-System/Activator.cs
 System/AndroidPlatform.cs
 System/AppDomain.cs
 System/AppDomainInitializer.cs
@@ -106,7 +105,6 @@ System/AssemblyLoadEventHandler.cs
 System/AsyncCallback.cs
 System/Attribute.cs
 System/AttributeTargets.cs
-System/AttributeUsageAttribute.cs
 System/BadImageFormatException.cs
 System/Buffer.cs
 System/CannotUnloadAppDomainException.cs
@@ -329,9 +327,6 @@ System.Globalization/StringInfo.cs
 System.Globalization/TextElementEnumerator.cs
 System.Globalization/TextInfo.cs
 System.Globalization/UnicodeCategory.cs
-System.IO/BinaryReader.cs
-System.IO/BinaryWriter.cs
-System.IO/BufferedStream.cs
 System.IO/Directory.cs
 System.IO/DirectoryInfo.cs
 System.IO/DirectoryNotFoundException.cs
@@ -351,9 +346,9 @@ System.IO/FileShare.cs
 System.IO/FileStream.cs
 System.IO/FileStreamAsyncResult.cs
 System.IO/FileSystemInfo.cs
+System.IO/HGlobalUnmanagedMemoryStream.cs
 System.IO/IOException.cs
 System.IO/LogcatTextWriter.cs
-System.IO/MemoryStream.cs
 System.IO/MonoIO.cs
 System.IO/MonoIOError.cs
 System.IO/MonoFileType.cs
@@ -363,17 +358,9 @@ System.IO/PathTooLongException.cs
 System.IO/SearchOption.cs
 System.IO/SearchPattern.cs
 System.IO/SeekOrigin.cs
-System.IO/Stream.cs
-System.IO/StreamReader.cs
-System.IO/StreamWriter.cs
-System.IO/StringReader.cs
-System.IO/StringWriter.cs
-System.IO/TextReader.cs
-System.IO/TextWriter.cs
 System.IO/UnexceptionalStreamReader.cs
 System.IO/UnexceptionalStreamWriter.cs
 System.IO/UnmanagedMemoryAccessor.cs
-System.IO/UnmanagedMemoryStream.cs
 System.IO.IsolatedStorage/INormalizeForIsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorageException.cs
@@ -408,7 +395,6 @@ System.Reflection/AssemblySignatureKeyAttribute.cs
 System.Reflection/AssemblyTitleAttribute.cs
 System.Reflection/AssemblyTradeMarkAttribute.cs
 System.Reflection/AssemblyVersionAttribute.cs
-System.Reflection/Binder.cs
 System.Reflection/BindingFlags.cs
 System.Reflection/CallingConventions.cs
 System.Reflection/ConstructorInfo.cs
@@ -616,6 +602,8 @@ System.Runtime.InteropServices/CONNECTDATA.cs
 System.Runtime.InteropServices/CriticalHandle.cs
 System.Runtime.InteropServices/CurrencyWrapper.cs
 System.Runtime.InteropServices/DefaultCharSetAttribute.cs
+System.Runtime.InteropServices/DllImportSearchPath.cs
+System.Runtime.InteropServices/DefaultDllImportSearchPathsAttribute.cs
 System.Runtime.InteropServices/DESCKIND.cs
 System.Runtime.InteropServices/DispatchWrapper.cs
 System.Runtime.InteropServices/DISPPARAMS.cs
@@ -1347,28 +1335,6 @@ System.Text/EncodingHelper.cs
 System.Text/NormalizationForm.cs
 System.Text/StringBuilder.cs
 System.Text/Latin1Encoding.cs
-../../../external/referencesource/mscorlib/system/text/asciiencoding.cs
-../../../external/referencesource/mscorlib/system/text/codepageencoding.cs
-../../../external/referencesource/mscorlib/system/text/decoderbestfitfallback.cs
-../../../external/referencesource/mscorlib/system/text/decoder.cs
-../../../external/referencesource/mscorlib/system/text/decodernls.cs
-../../../external/referencesource/mscorlib/system/text/decoderexceptionfallback.cs
-../../../external/referencesource/mscorlib/system/text/decoderfallback.cs
-../../../external/referencesource/mscorlib/system/text/decoderreplacementfallback.cs
-../../../external/referencesource/mscorlib/system/text/encoderbestfitfallback.cs
-../../../external/referencesource/mscorlib/system/text/encoder.cs
-../../../external/referencesource/mscorlib/system/text/encodernls.cs
-../../../external/referencesource/mscorlib/system/text/encoderexceptionfallback.cs
-../../../external/referencesource/mscorlib/system/text/encoderfallback.cs
-../../../external/referencesource/mscorlib/system/text/encoderreplacementfallback.cs
-../../../external/referencesource/mscorlib/system/text/encoding.cs
-../../../external/referencesource/mscorlib/system/text/encodinginfo.cs
-../../../external/referencesource/mscorlib/system/text/mlangcodepageencoding.cs
-../../../external/referencesource/mscorlib/system/text/surrogateencoder.cs
-../../../external/referencesource/mscorlib/system/text/unicodeencoding.cs
-../../../external/referencesource/mscorlib/system/text/utf32encoding.cs
-../../../external/referencesource/mscorlib/system/text/utf7encoding.cs
-../../../external/referencesource/mscorlib/system/text/utf8encoding.cs
 System.Threading/AsyncFlowControl.cs
 System.Threading/CompressedStack.cs
 System.Threading/ContextCallback.cs
@@ -1415,11 +1381,13 @@ System.Collections.Concurrent/ConcurrentOrderedList.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 System.Threading/ThreadLocal.cs
 
+ReferenceSources/__ConsoleStream.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
 ReferenceSources/CompatibilitySwitches.cs
 ReferenceSources/CultureData.cs
+ReferenceSources/DefaultBinder.cs
 ReferenceSources/Environment.cs
 ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
@@ -1430,10 +1398,13 @@ ReferenceSources/CLRConfig.cs
 ReferenceSources/JitHelpers.cs
 ReferenceSources/EncodingDataItem.cs
 ReferenceSources/EncodingTable.cs
+ReferenceSources/ReflectionOnlyType.cs
 
 ../../../external/referencesource/mscorlib/system/__hresults.cs
+../../../external/referencesource/mscorlib/system/activator.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
 ../../../external/referencesource/mscorlib/system/arraysegment.cs
+../../../external/referencesource/mscorlib/system/attributeusageattribute.cs
 ../../../external/referencesource/mscorlib/system/bitconverter.cs
 ../../../external/referencesource/mscorlib/system/boolean.cs
 ../../../external/referencesource/mscorlib/system/byte.cs
@@ -1444,6 +1415,7 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/datetimeoffset.cs
 ../../../external/referencesource/mscorlib/system/dayofweek.cs
 ../../../external/referencesource/mscorlib/system/decimal.cs
+../../../external/referencesource/mscorlib/system/defaultbinder.cs
 ../../../external/referencesource/mscorlib/system/dbnull.cs
 ../../../external/referencesource/mscorlib/system/empty.cs
 ../../../external/referencesource/mscorlib/system/guid.cs
@@ -1568,6 +1540,22 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/globalization/thaibuddhistcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/umalquracalendar.cs
 
+../../../external/referencesource/mscorlib/system/io/__error.cs
+../../../external/referencesource/mscorlib/system/io/binaryreader.cs
+../../../external/referencesource/mscorlib/system/io/binarywriter.cs
+../../../external/referencesource/mscorlib/system/io/bufferedstream.cs
+../../../external/referencesource/mscorlib/system/io/memorystream.cs
+../../../external/referencesource/mscorlib/system/io/stream.cs
+../../../external/referencesource/mscorlib/system/io/streamreader.cs
+../../../external/referencesource/mscorlib/system/io/streamwriter.cs
+../../../external/referencesource/mscorlib/system/io/stringreader.cs
+../../../external/referencesource/mscorlib/system/io/stringwriter.cs
+../../../external/referencesource/mscorlib/system/io/textreader.cs
+../../../external/referencesource/mscorlib/system/io/textwriter.cs
+../../../external/referencesource/mscorlib/system/io/unmanagedmemorystream.cs
+
+../../../external/referencesource/mscorlib/system/reflection/binder.cs
+
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
 
@@ -1629,6 +1617,29 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/unsafevaluetypeattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
 
+../../../external/referencesource/mscorlib/system/text/asciiencoding.cs
+../../../external/referencesource/mscorlib/system/text/codepageencoding.cs
+../../../external/referencesource/mscorlib/system/text/decoderbestfitfallback.cs
+../../../external/referencesource/mscorlib/system/text/decoder.cs
+../../../external/referencesource/mscorlib/system/text/decodernls.cs
+../../../external/referencesource/mscorlib/system/text/decoderexceptionfallback.cs
+../../../external/referencesource/mscorlib/system/text/decoderfallback.cs
+../../../external/referencesource/mscorlib/system/text/decoderreplacementfallback.cs
+../../../external/referencesource/mscorlib/system/text/encoderbestfitfallback.cs
+../../../external/referencesource/mscorlib/system/text/encoder.cs
+../../../external/referencesource/mscorlib/system/text/encodernls.cs
+../../../external/referencesource/mscorlib/system/text/encoderexceptionfallback.cs
+../../../external/referencesource/mscorlib/system/text/encoderfallback.cs
+../../../external/referencesource/mscorlib/system/text/encoderreplacementfallback.cs
+../../../external/referencesource/mscorlib/system/text/encoding.cs
+../../../external/referencesource/mscorlib/system/text/encodinginfo.cs
+../../../external/referencesource/mscorlib/system/text/mlangcodepageencoding.cs
+../../../external/referencesource/mscorlib/system/text/surrogateencoder.cs
+../../../external/referencesource/mscorlib/system/text/unicodeencoding.cs
+../../../external/referencesource/mscorlib/system/text/utf32encoding.cs
+../../../external/referencesource/mscorlib/system/text/utf7encoding.cs
+../../../external/referencesource/mscorlib/system/text/utf8encoding.cs
+
 ../../../external/referencesource/mscorlib/system/text/stringbuildercache.cs
 
 ../../../external/referencesource/mscorlib/system/threading/abandonedmutexexception.cs
@@ -1656,6 +1667,7 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/threading/timeout.cs
 ../../../external/referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
 
+../../../external/referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskFactory.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/FutureFactory.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskScheduler.cs
@@ -1672,4 +1684,6 @@ ReferenceSources/EncodingTable.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskExceptionHolder.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
+../../../external/referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
+
 

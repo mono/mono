@@ -3,23 +3,9 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Reactive.Testing.dll
+LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq System.Reactive.PlatformServices System.Reactive.Providers System.Reactive.Runtime.Remoting System.Reactive.Experimental System.Reactive.Windows.Forms System.Reactive.Windows.Threading System.Reactive.Observable.Aliases System.Windows.Forms WindowsBase nunit.framework
 LIB_MCS_FLAGS = \
 		@more_build_args \
-	        -r:System.dll \
-	        -r:System.Core.dll \
-		-r:System.Reactive.Interfaces.dll \
-		-r:System.Reactive.Core.dll \
-		-r:System.Reactive.Linq.dll \
-		-r:System.Reactive.PlatformServices.dll \
-		-r:System.Reactive.Providers.dll \
-		-r:System.Reactive.Runtime.Remoting.dll \
-		-r:System.Reactive.Experimental.dll \
-		-r:System.Reactive.Windows.Forms.dll \
-		-r:System.Reactive.Windows.Threading.dll \
-		-r:System.Reactive.Observable.Aliases.dll \
-		-r:System.Windows.Forms.dll \
-		-r:WindowsBase.dll \
-		-r:nunit.framework.dll \
 		-d:NUNIT -d:MONO -d:DESKTOPCLR
 		# NO_PERF is required to disable ObservableMultipleTest.Catch_TailRecursive2 which blocked test execution.
 		# disabled -d:HAS_WINFORMS

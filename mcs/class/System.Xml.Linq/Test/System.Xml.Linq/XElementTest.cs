@@ -169,6 +169,7 @@ namespace MonoTests.System.Xml.Linq
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		[Category ("NotDotNet")]
+		[Ignore ("see inline comment")]
 		public void AddXDeclarationToElement ()
 		{
 			XElement el = new XElement (XName.Get ("foo"));
@@ -273,7 +274,7 @@ namespace MonoTests.System.Xml.Linq
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		[Category ("NotDotNet")]
-		[Category ("NotWorking")]
+		[Ignore ("see code comment")]
 		// LAMESPEC: there is no reason to not reject XDeclaration while it rejects XDocument.
 		public void AddAfterSelfXDeclaration ()
 		{
@@ -805,7 +806,7 @@ namespace MonoTests.System.Xml.Linq
 		{
 			XElement a = new XElement ("a", "7");
 			XElement b = new XElement ("b", new XCData ("  42 "));
-			XElement c = new XElement ("c", " \r\n   13 \t  ");
+			XElement c = new XElement ("c", " \r\n   13 \t  ".Replace ("\r\n", Environment.NewLine));
 			XElement d = new XElement ("d", -101);
 			XElement o = new XElement ("o", "0");
 			XElement l = new XElement ("l", "1");
@@ -818,13 +819,13 @@ namespace MonoTests.System.Xml.Linq
 			// Verify expected "cloning" and basic conversion behaviour as prerequisites
 			Assert.IsFalse (a.IsEmpty, "#1-1");
 			Assert.IsFalse (new XElement (b).IsEmpty, "#1-2");
-			Assert.AreEqual (" \r\n   13 \t  ", c.Value, "#2-1");
+			Assert.AreEqual (" \r\n   13 \t  ".Replace ("\r\n", Environment.NewLine), c.Value, "#2-1");
 			Assert.AreEqual ("-101", new XElement (d).Value, "#2-2");
 			Assert.AreNotSame (o, new XElement (o), "#3-1");
 			Assert.AreEqual (l.ToString (), new XElement (l).ToString (), "#3-2");
 			Assert.AreEqual ("<a>7</a>", a.ToString (), "#3-3a");
 			Assert.AreEqual ("<b><![CDATA[  42 ]]></b>", b.ToString (), "#3-3b");
-			Assert.AreEqual ("<c> \r\n   13 \t  </c>", c.ToString (), "#3-3c");
+			Assert.AreEqual ("<c> \r\n   13 \t  </c>".Replace ("\r\n", Environment.NewLine), c.ToString (), "#3-3c");
 			Assert.AreEqual ("<d>-101</d>", d.ToString (), "#3-3d");
 			Assert.AreEqual ("<o>0</o>", new XElement ("o", 0.0).ToString (), "#3-3o");
 			Assert.AreEqual ("<l>1</l>", new XElement ("l", 1.0f).ToString (), "#3-3l");
@@ -1023,7 +1024,7 @@ namespace MonoTests.System.Xml.Linq
 			AssertThrows<FormatException> (() => { TimeSpan? z = (TimeSpan?) new XElement (n); }, "n:TimeSpan?");
 			Assert.AreEqual ("7", (string) new XElement (a), "a:string");
 			Assert.AreEqual ("  42 ", (string) new XElement (b), "b:string");
-			Assert.AreEqual (" \r\n   13 \t  ", (string) new XElement (c), "c:string");
+			Assert.AreEqual (" \r\n   13 \t  ".Replace ("\r\n", Environment.NewLine), (string) new XElement (c), "c:string");
 			Assert.AreEqual ("-101", (string) new XElement (d), "d:string");
 			Assert.AreEqual ("0", (string) new XElement (o), "o:string");
 			Assert.AreEqual ("1", (string) new XElement (l), "l:string");
@@ -1658,6 +1659,7 @@ namespace MonoTests.System.Xml.Linq
 		// LAMESPEC: there is no reason to not reject XDeclaration while it rejects XDocument.
 		[ExpectedException (typeof (ArgumentException))]
 		[Category ("NotDotNet")]
+		[Ignore ("see code comment")]
 		public void SetValueXDeclaration ()
 		{
 			var el = new XElement ("foo");

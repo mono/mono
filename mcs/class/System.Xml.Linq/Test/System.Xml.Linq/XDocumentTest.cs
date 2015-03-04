@@ -96,6 +96,7 @@ namespace MonoTests.System.Xml.Linq
 
 		[Test]
 		[Category ("NotDotNet")]
+		[Ignore ("see inline comment")]
 		//[ExpectedException (typeof (ArgumentException))]
 		public void AddXDeclarationToDocument ()
 		{

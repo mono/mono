@@ -17,6 +17,8 @@ using System.Runtime.InteropServices;
 using Mono.CompilerServices.SymbolWriter;
 using System.Linq;
 using System.IO;
+using System.Security.Cryptography;
+using Mono.Security.Cryptography;
 
 #if STATIC
 using IKVM.Reflection;
@@ -40,13 +42,14 @@ namespace Mono.CSharp
 		sealed class StaticDataContainer : CompilerGeneratedContainer
 		{
 			readonly Dictionary<int, Struct> size_types;
-			int fields;
+			readonly Dictionary<string, FieldSpec> data_hashes;
 
 			public StaticDataContainer (ModuleContainer module)
-				: base (module, new MemberName ("<PrivateImplementationDetails>" + module.builder.ModuleVersionId.ToString ("B"), Location.Null),
+				: base (module, new MemberName ("<PrivateImplementationDetails>", Location.Null),
 					Modifiers.STATIC | Modifiers.INTERNAL)
 			{
 				size_types = new Dictionary<int, Struct> ();
+				data_hashes = new Dictionary<string, FieldSpec> (StringComparer.Ordinal);
 			}
 
 			public override void CloseContainer ()
@@ -77,13 +80,27 @@ namespace Mono.CSharp
 					size_type.TypeBuilder.__SetLayout (1, data.Length);
 				}
 
-				var name = "$field-" + fields.ToString ("X");
-				++fields;
-				const Modifiers fmod = Modifiers.STATIC | Modifiers.INTERNAL;
-				var fbuilder = TypeBuilder.DefineField (name, size_type.CurrentType.GetMetaInfo (), ModifiersExtensions.FieldAttr (fmod) | FieldAttributes.HasFieldRVA);
-				fbuilder.__SetDataAndRVA (data);
+				FieldSpec fs;
+				var data_hash = GenerateDataFieldName (data);
+				if (!data_hashes.TryGetValue (data_hash, out fs)) {
+					var name = "$field-" + data_hash;
+					const Modifiers fmod = Modifiers.STATIC | Modifiers.INTERNAL | Modifiers.READONLY;
+					var fbuilder = TypeBuilder.DefineField (name, size_type.CurrentType.GetMetaInfo (), ModifiersExtensions.FieldAttr (fmod) | FieldAttributes.HasFieldRVA);
+					fbuilder.__SetDataAndRVA (data);
 
-				return new FieldSpec (CurrentType, null, size_type.CurrentType, fbuilder, fmod);
+					fs = new FieldSpec (CurrentType, null, size_type.CurrentType, fbuilder, fmod);
+					data_hashes.Add (data_hash, fs);
+				}
+
+				return fs;
+			}
+
+			static string GenerateDataFieldName (byte[] bytes)
+			{
+				using (var hashProvider = new SHA1CryptoServiceProvider ())
+				{
+					return CryptoConvert.ToHex (hashProvider.ComputeHash (bytes));
+				}
 			}
 		}
 

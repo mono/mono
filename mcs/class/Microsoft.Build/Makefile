@@ -7,6 +7,7 @@ include $(XBUILD_DIR)/xbuild.make
 
 LIBRARY = Microsoft.Build.dll
 
+LIB_REFS = System System.Core System.Xml Microsoft.Build.Engine Microsoft.Build.Framework
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll				\

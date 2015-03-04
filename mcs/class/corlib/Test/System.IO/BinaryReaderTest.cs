@@ -1062,7 +1062,7 @@ namespace MonoTests.System.IO
 	}
 	
 	[Test]
-	[ExpectedException(typeof(EndOfStreamException))]
+	[ExpectedException(typeof(IOException))]
 	public void ReadDecimalException ()
 	{
 		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0, 0});

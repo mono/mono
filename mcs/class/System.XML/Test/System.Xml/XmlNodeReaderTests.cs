@@ -36,8 +36,8 @@ namespace MonoTests.System.Xml
 			XmlNodeReader nrdr;
 			try {
 				nrdr = new XmlNodeReader (null);
-				Assert.Fail ("null reference exception is preferable.");
-			} catch (NullReferenceException) {
+				Assert.Fail ("ArgumentNullException is expected.");
+			} catch (ArgumentNullException) {
 			}
 			nrdr = new XmlNodeReader (new XmlDocument ());
 			nrdr.Read ();
@@ -195,7 +195,7 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<ul test='xxx'></ul>");
 			XmlNodeReader nr = new XmlNodeReader (document);
 			nr.Read ();
-			nr.Read ();
+			//nr.Read (); // why twice?
 			Assert.IsTrue (nr.MoveToFirstAttribute (), "#1");
 			Assert.IsTrue (nr.ReadAttributeValue (), "#2");
 			Assert.IsFalse (nr.MoveToNextAttribute (), "#3");

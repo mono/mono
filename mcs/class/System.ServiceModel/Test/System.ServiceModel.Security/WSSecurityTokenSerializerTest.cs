@@ -251,8 +251,8 @@ namespace MonoTests.System.ServiceModel.Security
 			sw = new StringWriter ();
 			using (XmlWriter w = XmlWriter.Create (sw, GetWriterSettings ())) {
 				new WSSecurityTokenSerializer (SecurityVersion.WSSecurity10).WriteKeyIdentifierClause (w, ic);
-			Assert.AreEqual (expected, sw.ToString (), "WSS1.0");
 			}
+			Assert.AreEqual (expected, sw.ToString (), "WSS1.0");
 		}
 
 		[Test]

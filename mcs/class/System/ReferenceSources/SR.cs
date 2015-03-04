@@ -12,12 +12,6 @@ partial class SR
 {
 	public static object GetObject (string name)
 	{
-		// The PropertyGrid code in WinForms and the corresponding tests
-		// rely on PropertyCategoryDefault returning the correct value.
-		// Handle this special case until we have proper resource lookup. 
-		if (name == "PropertyCategoryDefault")
-			return "Misc";
-
 		return name;
 	}
 
@@ -885,4 +879,29 @@ partial class SR
 	public const string net_wrongversion = "net_wrongversion";
 	public const string security_ExtendedProtection_NoOSSupport = "security_ExtendedProtection_NoOSSupport";
 
+public const string DebugAssertBanner = @"---- DEBUG ASSERTION FAILED ----";
+public const string ExceptionOccurred = @"An exception occurred writing trace output to log file '{0}'. {1}";
+public const string TraceSwitchLevelTooHigh = @"Attempted to set {0} to a value that is too high.  Setting level to TraceLevel.Verbose";
+public const string TraceSwitchLevelTooLow = @"Attempted to set {0} to a value that is too low.  Setting level to TraceLevel.Off";
+public const string TraceSwitchInvalidLevel = @"The Level must be set to a value in the enumeration TraceLevel.";
+public const string TraceListenerIndentSize = @"The IndentSize property must be non-negative.";
+public const string TraceListenerFail = @"Fail:";
+public const string TraceAsTraceSource = @"Trace";
+public const string MustAddListener = @"Only TraceListeners can be added to a TraceListenerCollection.";
+public const string DebugAssertShortMessage = @"---- Assert Short Message ----";
+public const string DebugAssertLongMessage = @"---- Assert Long Message ----";
+
+public const string BadConfigSwitchValue = @"The config value for Switch '{0}' was invalid.";
+public const string AttributeNotSupported = @"'{0}' is not a valid configuration attribute for type '{1}'.";
+
+public const string Could_not_create_listener = @"Couldn't create listener '{0}'.";
+public const string TL_InitializeData_NotSpecified = @"initializeData needs to be valid for this TraceListener.";
+public const string Could_not_create_type_instance = @"Could not create {0}.";
+public const string Could_not_find_type = @"Couldn't find type for class {0}.";
+public const string Could_not_get_constructor = @"Couldn't find constructor for class {0}.";
+public const string EmptyTypeName_NotAllowed = @"switchType needs to be a valid class name. It can't be empty.";
+public const string Incorrect_base_type = @"The specified type, '{0}' is not derived from the appropriate base type, '{1}'.";
+public const string Only_specify_one = @"'switchValue' and 'switchName' cannot both be specified on source '{0}'.";
+public const string Reference_listener_cant_have_properties = @"A listener with no type name specified references the sharedListeners section and cannot have any attributes other than 'Name'.  Listener: '{0}'.";
+public const string Reference_to_nonexistent_listener = @"Listener '{0}' does not exist in the sharedListeners section.";
 }

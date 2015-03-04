@@ -6,4 +6,5 @@ Handlers.cs
 Manager.cs
 MonoEncoding.cs
 MonoSafeEncoding.cs
+DefaultEncoder.cs
 Strings.cs

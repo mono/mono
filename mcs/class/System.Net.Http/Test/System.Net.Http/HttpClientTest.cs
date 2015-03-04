@@ -316,6 +316,24 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Send_BaseAddress ()
+		{
+			var mh = new HttpMessageHandlerMock ();
+
+			var client = new HttpClient (mh);
+			client.BaseAddress = new Uri ("http://localhost/");
+			var response = new HttpResponseMessage ();
+
+			mh.OnSend = l => {
+				Assert.AreEqual ("http://localhost/relative", l.RequestUri.ToString (), "#2");
+				return Task.FromResult (response);
+			};
+
+			Assert.AreEqual (response, client.GetAsync ("relative").Result, "#1");
+			Assert.AreEqual (response, client.GetAsync ("/relative").Result, "#2");
+		}
+
+		[Test]
 		public void Send_DefaultRequestHeaders ()
 		{
 			var mh = new HttpMessageHandlerMock ();
@@ -848,17 +866,6 @@ namespace MonoTests.System.Net.Http
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException) {
 			}
-		}
-
-		[Test]
-		public void GetString_RelativeUri ()
-		{
-			var client = new HttpClient ();
-			client.BaseAddress = new Uri ("http://en.wikipedia.org/wiki/");
-			var uri = new Uri ("Computer", UriKind.Relative);
-
-			Assert.That (client.GetStringAsync (uri).Result != null);
-			Assert.That (client.GetStringAsync ("Computer").Result != null);
 		}
 
 		[Test]

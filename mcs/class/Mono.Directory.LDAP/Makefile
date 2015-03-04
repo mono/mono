@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Directory.LDAP.dll
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Data.dll
+LIB_REFS = System System.Data
+LIB_MCS_FLAGS = /r:$(corlib)
 
 include ../../build/library.make

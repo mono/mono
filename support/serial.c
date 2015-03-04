@@ -13,14 +13,17 @@
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
-#if defined(__APPLE__)
-#include "fakepoll.h"
-#elif defined(HAVE_POLL_H)
+#if defined(HAVE_POLL_H)
 #include <poll.h>
 #elif defined(HAVE_SYS_POLL_H)
 #include <sys/poll.h>
 #endif
 #include <sys/ioctl.h>
+
+/* This is for ASYNC_*, serial_struct on linux */
+#if defined(HAVE_LINUX_SERIAL_H)
+#include <linux/serial.h>
+#endif
 
 #include <glib.h>
 
@@ -30,8 +33,13 @@
 #endif
 
 /* sys/time.h (for timeval) is required when using osx 10.3 (but not 10.4) */
-#ifdef __APPLE__
+/* IOKit is a private framework in iOS, so exclude there */
+#if defined(__APPLE__) && !defined(HOST_IOS)
 #include <sys/time.h>
+#include <IOKit/IOKitLib.h>
+#include <IOKit/serial/IOSerialKeys.h>
+#include <IOKit/serial/ioss.h>
+#include <IOKit/IOBSD.h>
 #endif
 
 /* This is a copy of System.IO.Ports.Handshake */
@@ -81,7 +89,7 @@ int              write_serial (int fd, guchar *buffer, int offset, int count, in
 int              discard_buffer (int fd, gboolean input);
 gint32           get_bytes_in_buffer (int fd, gboolean input);
 gboolean         is_baud_rate_legal (int baud_rate);
-int              setup_baud_rate (int baud_rate);
+int              setup_baud_rate (int baud_rate, gboolean *custom_baud_rate);
 gboolean         set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake);
 MonoSerialSignal get_signals (int fd, gint32 *error);
 gint32           set_signal (int fd, MonoSerialSignal signal, gboolean value);
@@ -175,11 +183,12 @@ get_bytes_in_buffer (int fd, gboolean input)
 gboolean
 is_baud_rate_legal (int baud_rate)
 {
-	return setup_baud_rate (baud_rate) != -1;
+	gboolean ignore = FALSE;
+	return setup_baud_rate (baud_rate, &ignore) != -1;
 }
 
 int
-setup_baud_rate (int baud_rate)
+setup_baud_rate (int baud_rate, gboolean *custom_baud_rate)
 {
 	switch (baud_rate)
 	{
@@ -246,9 +255,21 @@ setup_baud_rate (int baud_rate)
 	    baud_rate = B75;
 	    break;
 	case 50:
-	case 0:
-	default:
+#ifdef B50
+	    baud_rate = B50;
+#else
 	    baud_rate = -1;
+	    break;
+#endif
+	case 0:
+#ifdef B0
+	    baud_rate = B0;
+#else
+	    baud_rate = -1;
+#endif
+	    break;
+	default:
+		*custom_baud_rate = TRUE;
 		break;
 	}
 	return baud_rate;
@@ -258,6 +279,7 @@ gboolean
 set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake)
 {
 	struct termios newtio;
+	gboolean custom_baud_rate = FALSE;
 
 	if (tcgetattr (fd, &newtio) == -1)
 		return FALSE;
@@ -268,7 +290,7 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	newtio.c_iflag = IGNBRK;
 
 	/* setup baudrate */
-	baud_rate = setup_baud_rate (baud_rate);
+	baud_rate = setup_baud_rate (baud_rate, &custom_baud_rate);
 
 	/* char lenght */
 	newtio.c_cflag &= ~CSIZE;
@@ -357,16 +379,55 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	    newtio.c_iflag |= IXOFF | IXON;
 		break;
 	}
-	
-	if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0 ||
-	    tcsetattr (fd, TCSANOW, &newtio) < 0)
-	{
+
+	if (custom_baud_rate == FALSE) {
+		if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0)
+			return FALSE;
+	} else {
+#if __linux__ || (defined(__APPLE__) && !defined(HOST_IOS))
+
+		/* On Linux to set a custom baud rate, we must set the
+		 * "standard" baud_rate to 38400.   On Apple we set it purely
+		 * so that tcsetattr has something to use (and report back later), but
+		 * the Apple specific API is still opaque to these APIs, see:
+		 * https://developer.apple.com/library/mac/samplecode/SerialPortSample/Listings/SerialPortSample_SerialPortSample_c.html#//apple_ref/doc/uid/DTS10000454-SerialPortSample_SerialPortSample_c-DontLinkElementID_4
+		 */
+		if (cfsetospeed (&newtio, B38400) < 0 || cfsetispeed (&newtio, B38400) < 0)
+			return FALSE;
+#endif
+	}
+
+	if (tcsetattr (fd, TCSANOW, &newtio) < 0)
 		return FALSE;
+
+	if (custom_baud_rate == TRUE){
+#if defined(HAVE_LINUX_SERIAL_H)
+		struct serial_struct ser;
+
+		if (ioctl (fd, TIOCGSERIAL, &ser) < 0)
+		{
+			return FALSE;
+		}
+
+		ser.custom_divisor = ser.baud_base / baud_rate;
+		ser.flags &= ~ASYNC_SPD_MASK;
+		ser.flags |= ASYNC_SPD_CUST;
+
+		if (ioctl (fd, TIOCSSERIAL, &ser) < 0)
+		{
+			return FALSE;
+		}
+#elif defined(__APPLE__) && !defined(HOST_IOS)
+		speed_t speed = baud_rate;
+		if (ioctl(fd, IOSSIOSPEED, &speed) == -1)
+			return FALSE;
+#else
+		/* Don't know how to set custom baud rate on this platform. */
+		return FALSE;
+#endif
 	}
-	else
-	{
+
 	return TRUE;
-	}
 }
 
 

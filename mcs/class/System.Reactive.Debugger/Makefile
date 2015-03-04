@@ -3,13 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Reactive.Debugger.dll
-LIB_MCS_FLAGS = \
-		@more_build_args \
-	        -r:System.dll \
-	        -r:System.Core.dll \
-		-r:System.Reactive.Interfaces.dll \
-		-r:System.Reactive.Core.dll \
-		-r:System.Reactive.Linq.dll
+LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq
+LIB_MCS_FLAGS = @more_build_args
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NO_TASK_DELAY -d:HAS_AWAIT

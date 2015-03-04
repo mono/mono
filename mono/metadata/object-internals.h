@@ -13,26 +13,6 @@
 #include "mono/utils/mono-stack-unwinding.h"
 #include "mono/utils/mono-tls.h"
 
-/* 
- * We should find a better place for this stuff. We can't put it in mono-compiler.h,
- * since that is included by libgc.
- */
-#ifndef G_LIKELY
-#define G_LIKELY(a) (a)
-#define G_UNLIKELY(a) (a)
-#endif
-
-/*
- * glib defines this macro and uses it in the definition of G_LIKELY, and thus,
- * g_assert (). The macro expands to a complex piece of code, preventing some
- * gcc versions like 4.3.0 from handling the __builtin_expect construct properly,
- * causing the generation of the unlikely branch into the middle of the code.
- */
-#ifdef _G_BOOLEAN_EXPR
-#undef _G_BOOLEAN_EXPR
-#define _G_BOOLEAN_EXPR(expr) ((gsize)(expr) != 0)
-#endif
-
 #if 1
 #ifdef __GNUC__
 #define mono_assert(expr)		   G_STMT_START{		  \
@@ -82,7 +62,8 @@
 #define mono_assert_not_reached() g_assert_not_reached() 
 #endif
 
-#define MONO_CHECK_ARG(arg, expr)		G_STMT_START{		  \
+/* Use this as MONO_CHECK_ARG_NULL (arg,expr,) in functions returning void */
+#define MONO_CHECK_ARG(arg, expr, retval)		G_STMT_START{		  \
 		if (G_UNLIKELY (!(expr)))							  \
        {								  \
 		MonoException *ex;					  \
@@ -91,16 +72,19 @@
 		if (arg) {} /* check if the name exists */		  \
 		ex = mono_get_exception_argument (#arg, msg);		  \
 		g_free (msg);						  \
-		mono_raise_exception (ex);				  \
+		mono_set_pending_exception (ex);					  \
+		return retval;										  \
        };				}G_STMT_END
 
-#define MONO_CHECK_ARG_NULL(arg)	    G_STMT_START{		  \
+/* Use this as MONO_CHECK_ARG_NULL (arg,) in functions returning void */
+#define MONO_CHECK_ARG_NULL(arg, retval)	    G_STMT_START{		  \
 		if (G_UNLIKELY (arg == NULL))						  \
        {								  \
 		MonoException *ex;					  \
 		if (arg) {} /* check if the name exists */		  \
 		ex = mono_get_exception_argument_null (#arg);		  \
-		mono_raise_exception (ex);				  \
+		mono_set_pending_exception (ex);					  \
+		return retval;										  \
        };				}G_STMT_END
 
 /* 16 == default capacity */
@@ -645,7 +629,7 @@ typedef void        (*MonoFreeMethodFunc)	 (MonoDomain *domain, MonoMethod *meth
 /* Used to initialize the method pointers inside vtables */
 typedef gboolean    (*MonoInitVTableFunc)    (MonoVTable *vtable);
 
-void mono_set_pending_exception (MonoException *exc) MONO_INTERNAL;
+MONO_COLD void mono_set_pending_exception (MonoException *exc) MONO_INTERNAL;
 
 /* remoting and async support */
 

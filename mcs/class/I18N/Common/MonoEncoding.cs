@@ -210,6 +210,11 @@ namespace I18N.Common
 		//[CLSCompliant (false)]
 		public unsafe abstract int GetBytesImpl (char* chars, int charCount,
 			byte* bytes, int byteCount);
+		
+		public override Encoder GetEncoder ()
+		{
+			return new MonoEncodingDefaultEncoder (this);
+		}
 	}
 
 		public abstract class MonoEncoder : Encoder
@@ -304,4 +309,76 @@ namespace I18N.Common
 					bytes, ref byteIndex, ref byteCount, null);
 			}*/
 		}
+
+	public class MonoEncodingDefaultEncoder : ReferenceSourceDefaultEncoder
+	{
+		public MonoEncodingDefaultEncoder (Encoding encoding)
+			: base (encoding)
+		{
+		}
+
+		[CLSCompliant (false)]
+		[ComVisible (false)]
+		public unsafe override void Convert (
+			char* chars, int charCount,
+			byte* bytes, int byteCount, bool flush,
+			out int charsUsed, out int bytesUsed, out bool completed)
+		{
+			CheckArguments (chars, charCount, bytes, byteCount);
+
+			charsUsed = charCount;
+			while (true) {
+				bytesUsed = GetByteCount (chars, charsUsed, flush);
+				if (bytesUsed <= byteCount)
+					break;
+				flush = false;
+				charsUsed >>= 1;
+			}
+			completed = charsUsed == charCount;
+			bytesUsed = GetBytes (chars, charsUsed, bytes, byteCount, flush);
+		}
+
+		[ComVisible (false)]
+		public override void Convert (
+			char [] chars, int charIndex, int charCount,
+			byte [] bytes, int byteIndex, int byteCount, bool flush,
+			out int charsUsed, out int bytesUsed, out bool completed)
+		{
+			if (chars == null)
+				throw new ArgumentNullException ("chars");
+			if (bytes == null)
+				throw new ArgumentNullException ("bytes");
+			if (charIndex < 0)
+				throw new ArgumentOutOfRangeException ("charIndex");
+			if (charCount < 0 || chars.Length < charIndex + charCount)
+				throw new ArgumentOutOfRangeException ("charCount");
+			if (byteIndex < 0)
+				throw new ArgumentOutOfRangeException ("byteIndex");
+			if (byteCount < 0 || bytes.Length < byteIndex + byteCount)
+				throw new ArgumentOutOfRangeException ("byteCount");
+
+			charsUsed = charCount;
+			while (true) {
+				bytesUsed = GetByteCount (chars, charIndex, charsUsed, flush);
+				if (bytesUsed <= byteCount)
+					break;
+				flush = false;
+				charsUsed >>= 1;
+			}
+			completed = charsUsed == charCount;
+			bytesUsed = GetBytes (chars, charIndex, charsUsed, bytes, byteIndex, flush);
+		}
+
+		unsafe void CheckArguments (char* chars, int charCount, byte* bytes, int byteCount)
+		{
+			if (chars == null)
+				throw new ArgumentNullException ("chars");
+			if (bytes == null)
+				throw new ArgumentNullException ("bytes");
+			if (charCount < 0)
+				throw new ArgumentOutOfRangeException ("charCount");
+			if (byteCount < 0)
+				throw new ArgumentOutOfRangeException ("byteCount");
+		}
+	}
 }

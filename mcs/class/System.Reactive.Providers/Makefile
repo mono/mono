@@ -3,12 +3,9 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Reactive.Providers.dll
+LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq
 LIB_MCS_FLAGS = \
 		@more_build_args \
-	        -r:System.dll \
-	        -r:System.Core.dll \
-		-r:System.Reactive.Interfaces.dll \
-		-r:System.Reactive.Core.dll \
 		-r:System.Reactive.Linq.dll
 
 ifeq (true, $(GENERATE_RESOURCES))

@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [3.99.0],
+AC_INIT(mono, [4.1.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -454,6 +454,8 @@ AC_CHECK_HEADERS(sys/user.h, [], [],
 #endif
 ])
 
+AC_CHECK_HEADERS(linux/serial.h)
+
 AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
 if test x$have_zlib = xyes; then
    AC_TRY_COMPILE([#include <zlib.h>], [
@@ -526,6 +528,10 @@ AC_CACHE_CHECK([for clang],
 	[])
 ])
 
+AC_ARG_ENABLE(visiblity-hidden,
+[  --disable-visibility-hidden    disable usage of -fvisiblity=hidden]
+   disable_visibility_hidden=no, disable_visibility_hidden=yes)
+
 WARN=''
 if test x"$GCC" = xyes; then
         WARN='-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes  -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value'
@@ -539,25 +545,13 @@ if test x"$GCC" = xyes; then
 		# We rely on signed overflow to behave
 		CFLAGS="$CFLAGS -fwrapv"
 
-		# Don't export any symbols by default
-		CFLAGS="$CFLAGS -fvisibility=hidden"
-		CFLAGS_FOR_EGLIB="$CFLAGS_FOR_EGLIB -fvisibility=hidden"
-		CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
-
-		# Export symbols marked by MONO_API
 		CFLAGS="$CFLAGS -DMONO_DLL_EXPORT"
-
-		ORIG_CFLAGS=$CFLAGS
-		CFLAGS="$CFLAGS -Wdeclaration-after-statement"
-		AC_MSG_CHECKING(for -Wdeclaration-after-statement option to gcc)
-		AC_TRY_COMPILE([],[
-				return 0;
-		], [
-		   AC_MSG_RESULT(yes)
-		], [
-		   AC_MSG_RESULT(no)
-		   CFLAGS=$ORIG_CFLAGS
-		])
+		if test x"$disable_visibility_hidden" = xno; then
+		   # Don't export any symbols by default
+		   SHARED_CFLAGS="-fvisibility=hidden"
+		   CFLAGS_FOR_EGLIB="$CFLAGS_FOR_EGLIB -fvisibility=hidden"
+		   CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+		fi
 
 		ORIG_CFLAGS=$CFLAGS
 		# Check for the normal version, since gcc ignores unknown -Wno options
@@ -689,6 +683,7 @@ if test x$werror_flag = xyes; then
 	WERROR_CFLAGS="-Werror"
 fi
 AC_SUBST([WERROR_CFLAGS])
+AC_SUBST([SHARED_CFLAGS])
 
 ac_configure_args="$ac_configure_args \"CPPFLAGS_FOR_EGLIB=$EGLIB_CPPFLAGS\" \"CFLAGS_FOR_EGLIB=$CFLAGS_FOR_EGLIB\""
 AC_CONFIG_SUBDIRS(eglib)

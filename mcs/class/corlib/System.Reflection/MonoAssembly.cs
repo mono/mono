@@ -35,6 +35,10 @@ using System.Reflection.Emit;
 #endif
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Diagnostics.Contracts;
+using System.Security.Policy;
+using System.Security.Permissions;
 
 namespace System.Reflection {
 
@@ -49,6 +53,88 @@ namespace System.Reflection {
                                                                UnitySerializationHolder.AssemblyUnity,
                                                                this.FullName,
                                                                this);
+		}
+
+		internal static RuntimeAssembly GetExecutingAssembly (ref StackCrawlMark stackMark)
+		{
+			// Mono runtime does not support StackCrawlMark, The easiest workaround is to replace use
+			// of StackCrawlMark.LookForMyCaller with GetCallingAssembly
+			throw new NotSupportedException ();
+		}
+
+        // Creates AssemblyName. Fills assembly if AssemblyResolve event has been raised.
+        [System.Security.SecurityCritical]  // auto-generated
+        internal static AssemblyName CreateAssemblyName(
+            String assemblyString, 
+            bool forIntrospection, 
+            out RuntimeAssembly assemblyFromResolveEvent)
+        {
+            if (assemblyString == null)
+                throw new ArgumentNullException("assemblyString");
+            Contract.EndContractBlock();
+
+            if ((assemblyString.Length == 0) ||
+                (assemblyString[0] == '\0'))
+                throw new ArgumentException(Environment.GetResourceString("Format_StringZeroLength"));
+
+            if (forIntrospection)
+                AppDomain.CheckReflectionOnlyLoadSupported();
+
+            AssemblyName an = new AssemblyName();
+
+            an.Name = assemblyString;
+            assemblyFromResolveEvent = null; // instead of an.nInit(out assemblyFromResolveEvent, forIntrospection, true);
+            return an;
+        }
+
+        internal static RuntimeAssembly InternalLoadAssemblyName(
+            AssemblyName assemblyRef, 
+            Evidence assemblySecurity,
+            RuntimeAssembly reqAssembly,
+            ref StackCrawlMark stackMark,
+#if FEATURE_HOSTED_BINDER
+            IntPtr pPrivHostBinder,
+#endif
+            bool throwOnFileNotFound, 
+            bool forIntrospection,
+            bool suppressSecurityChecks)
+        {
+            if (assemblyRef == null)
+                throw new ArgumentNullException("assemblyRef");
+            Contract.EndContractBlock();
+
+            if (assemblyRef.CodeBase != null)
+            {
+                AppDomain.CheckLoadFromSupported();
+            }
+
+            assemblyRef = (AssemblyName)assemblyRef.Clone();
+#if FEATURE_VERSIONING
+            if (!forIntrospection &&
+                (assemblyRef.ProcessorArchitecture != ProcessorArchitecture.None)) {
+                // PA does not have a semantics for by-name binds for execution
+                assemblyRef.ProcessorArchitecture = ProcessorArchitecture.None;
+            }
+#endif
+
+            if (assemblySecurity != null)
+            {
+#if FEATURE_CAS_POLICY
+                if (!AppDomain.CurrentDomain.IsLegacyCasPolicyEnabled)
+                {
+                    throw new NotSupportedException(Environment.GetResourceString("NotSupported_RequiresCasPolicyImplicit"));
+                }
+#endif // FEATURE_CAS_POLICY
+
+                if (!suppressSecurityChecks)
+                {
+#pragma warning disable 618
+                    new SecurityPermission(SecurityPermissionFlag.ControlEvidence).Demand();
+#pragma warning restore 618
+                }
+            }
+
+			return (RuntimeAssembly) Assembly.Load (assemblyRef);
 		}
 	}
 

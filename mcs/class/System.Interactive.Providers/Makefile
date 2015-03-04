@@ -3,11 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Interactive.Providers.dll
-LIB_MCS_FLAGS = \
-		@more_build_args \
-	        -r:System.dll \
-	        -r:System.Core.dll \
-		-r:System.Interactive.dll
+LIB_REFS = System System.Core System.Interactive
+LIB_MCS_FLAGS = @more_build_args
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NO_TASK_DELAY -d:HAS_AWAIT

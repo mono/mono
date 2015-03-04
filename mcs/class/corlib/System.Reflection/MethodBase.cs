@@ -98,6 +98,11 @@ namespace System.Reflection {
 			return GetParameters ();
 		}
 
+		internal ParameterInfo[] GetParametersNoCopy ()
+		{
+			return GetParametersInternal ();
+		}
+
 		internal virtual int GetParametersCount ()
 		{
 			// Override me

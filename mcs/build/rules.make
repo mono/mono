@@ -156,6 +156,12 @@ ifndef PROFILE_SUBDIRS
 PROFILE_SUBDIRS = $(SUBDIRS)
 endif
 
+# These subdirs can be built in parallel
+PROFILE_PARALLEL_SUBDIRS := $($(PROFILE)_PARALLEL_SUBDIRS)
+ifndef PROFILE_PARALLEL_SUBDIRS
+PROFILE_PARALLEL_SUBDIRS = $(PARALLEL_SUBDIRS)
+endif
+
 ifndef FRAMEWORK_VERSION_MAJOR
 FRAMEWORK_VERSION_MAJOR = $(basename $(FRAMEWORK_VERSION))
 endif
@@ -167,7 +173,56 @@ endif
 	list='$(PROFILE_SUBDIRS)'; for d in $$list ; do \
 	    (cd $$d && $(MAKE) $*) || { final_exit="exit 1"; $$dk; } ; \
 	done; \
+	if [ $* = "all" -a -n "$(PROFILE_PARALLEL_SUBDIRS)" ]; then \
+		$(MAKE) do-all-parallel ENABLE_PARALLEL_SUBDIR_BUILD=1 || { final_exit="exit 1"; $$dk; } ; \
+	else \
+		list='$(PROFILE_PARALLEL_SUBDIRS)'; for d in $$list ; do \
+		    (cd $$d && $(MAKE) $*) || { final_exit="exit 1"; $$dk; } ; \
+		done; \
+	fi; \
 	$$final_exit
+
+#
+# Parallel build support
+#
+# The variable $(PROFILE)_PARALLEL_SUBDIRS should be set to the list of directories
+# which could be built in parallel. These directories are built after the directories in
+# $(PROFILE)_SUBDIRS.
+# Parallel building is currently only supported for the 'all' target.
+#
+# Each directory's Makefile may define DEP_LIBS and DEP_DIRS to specify the libraries and
+# directories it depends on.
+#
+ifneq ($(PROFILE_PARALLEL_SUBDIRS),)
+dep_dirs = .dep_dirs-$(PROFILE)
+$(dep_dirs):
+	@echo "Creating $@..."
+	list='$(PROFILE_PARALLEL_SUBDIRS)'; \
+	echo > $@; \
+	for d in $$list; do \
+		$(MAKE) -C $$d gen-deps DEPS_TARGET_DIR=$$d DEPS_FILE=$(abspath $@); \
+	done
+-include $(dep_dirs)
+endif
+
+.PHONY: gen-deps
+# The gen-deps target is in library.make/executable.make so it can pick up
+# DEP_LIBS/DEP_DIRS
+
+clean-dep-dir:
+	$(RM) $(dep_dirs)
+
+clean-local: clean-dep-dir
+
+ifdef ENABLE_PARALLEL_SUBDIR_BUILD
+.PHONY: do-all-parallel $(PROFILE_PARALLEL_SUBDIRS)
+
+do-all-parallel: $(PROFILE_PARALLEL_SUBDIRS)
+
+$(PROFILE_PARALLEL_SUBDIRS):
+	@set . $$MAKEFLAGS; \
+	cd $@ && $(MAKE)
+endif
 
 ifndef DIST_SUBDIRS
 DIST_SUBDIRS = $(SUBDIRS) $(DIST_ONLY_SUBDIRS)

@@ -3,13 +3,9 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Reactive.Windows.Forms.dll
+LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq System.Windows.Forms
 LIB_MCS_FLAGS = \
 		@more_build_args \
-	        -r:System.dll \
-	        -r:System.Core.dll \
-		-r:System.Reactive.Interfaces.dll \
-		-r:System.Reactive.Core.dll \
-		-r:System.Reactive.Linq.dll \
 		-r:System.Windows.Forms.dll
 
 ifeq (2.1, $(FRAMEWORK_VERSION))

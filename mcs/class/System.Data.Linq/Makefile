@@ -3,12 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Data.Linq.dll
+LIB_REFS = System System.Core System.Xml System.Data System.Runtime.Serialization
 LIB_MCS_FLAGS = \
-	        /r:System.dll \
-	        /r:System.Core.dll \
-	        /r:System.Xml.dll \
-	        /r:System.Data.dll \
-	        /r:System.Runtime.Serialization.dll \
 	        /resource:./src/DbLinq/Schema/Dbml/DbmlSchema.xsd,DbLinq.Schema.Dbml.DbmlSchema.xsd \
 		/d:MONO_STRICT /d:MONO_DEPLOY -warn:1
 

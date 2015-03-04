@@ -400,19 +400,19 @@ namespace MonoTests.System.Configuration {
 			var holder = new Bug8592ConfHolder ();
 			holder.Reset ();
 			holder.Save ();
-			Assert.AreEqual ("", holder.TestKey1OnHolder);
+			Assert.AreEqual ("", holder.TestKey1OnHolder, "#1");
 			holder.TestKey1OnHolder = "candy";
-			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder, "#2");
 			holder.Reload ();
-			Assert.AreEqual ("", holder.TestKey1OnHolder);
+			Assert.AreEqual ("", holder.TestKey1OnHolder, "#3");
 			holder.TestKey1OnHolder = "candy";
-			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder, "#4");
 			holder.Save ();
-			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder, "#5");
 			holder.Reload ();
-			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder, "#6");
 			holder.Reset ();
-			Assert.AreEqual ("", holder.TestKey1OnHolder);
+			Assert.AreEqual ("", holder.TestKey1OnHolder, "#7");
 		}
 
 		class Bug8533ConfHolder1 : ApplicationSettingsBase {
@@ -453,19 +453,22 @@ namespace MonoTests.System.Configuration {
 		public void TestBug8533ConfHandlerWronglyMixedUp ()
 		{
 			var holder1 = new Bug8533ConfHolder1 ();
-			var holder2 = new Bug8533ConfHolder2 ();
 			holder1.TestKey1OnHolder1 = "candy";
-			holder2.TestKey1OnHolder2 = "donut";
 			holder1.TestKey = "eclair";
+			Assert.AreEqual ("", holder1.TestKey1OnHolder2, "#-1");
 			holder1.Save ();
-			holder2.Save ();
+			Assert.AreEqual ("", holder1.TestKey1OnHolder2, "#0");
 			holder1.Reload ();
+			
+			var holder2 = new Bug8533ConfHolder2 ();
+			holder2.TestKey1OnHolder2 = "donut";
+			Assert.AreEqual ("", holder1.TestKey1OnHolder2, "#1");
+			holder2.Save ();
 			holder2.Reload();
-			Assert.AreEqual ("", holder1.TestKey1OnHolder2);
-			Assert.AreEqual ("candy", holder1.TestKey1OnHolder1);
-			Assert.AreEqual ("donut", holder2.TestKey1OnHolder2);
-			Assert.AreEqual ("eclair", holder1.TestKey);
-			Assert.AreEqual ("", holder2.TestKey);
+			Assert.AreEqual ("candy", holder1.TestKey1OnHolder1, "#2");
+			Assert.AreEqual ("donut", holder2.TestKey1OnHolder2, "#3");
+			Assert.AreEqual ("eclair", holder1.TestKey, "#4");
+			Assert.AreEqual ("", holder2.TestKey, "#5");
 		}
 	}
 }

@@ -41,9 +41,15 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
+	abstract class RtFieldInfo : FieldInfo
+	{
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern object UnsafeGetValue (object obj);
+	}
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoField : FieldInfo, ISerializable {
+	internal class MonoField : RtFieldInfo, ISerializable {
 		internal IntPtr klass;
 		internal RuntimeFieldHandle fhandle;
 		string name;
@@ -146,10 +152,11 @@ namespace System.Reflection {
 			if (IsLiteral)
 				throw new FieldAccessException ("Cannot set a constant field");
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = Type.DefaultBinder;
 			CheckGeneric ();
 			if (val != null) {
-				val = binder.ConvertValue (val, FieldType, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
+				RuntimeType fieldType = (RuntimeType) FieldType;
+				val = fieldType.CheckValue (val, binder, culture, invokeAttr);
 			}
 			SetValueInternal (this, obj, val);
 		}

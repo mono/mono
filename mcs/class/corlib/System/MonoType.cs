@@ -39,6 +39,11 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Security;
+using System.Diagnostics.Contracts;
+using System.Threading;
+using System.Diagnostics;
+using System.Security.Permissions;
+using System.Runtime.Remoting.Activation;
 
 namespace System
 {
@@ -51,6 +56,8 @@ namespace System
 		
 	abstract class RuntimeType : TypeInfo
 	{
+		private static readonly RuntimeType DelegateType = (RuntimeType)typeof(System.Delegate);
+
 		internal RuntimeAssembly GetRuntimeAssembly ()
 		{
 			return (RuntimeAssembly) Assembly;
@@ -61,11 +68,760 @@ namespace System
 				return IsArrayImpl () && GetArrayRank () == 1;
 			}
 		}
+
+		bool IsGenericCOMObjectImpl ()
+		{
+			return false;
+		}
+
+		internal Object CheckValue (Object value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)
+		{
+			bool failed = false;
+			var res = TryConvertToType (value, ref failed);
+			if (!failed)
+				return res;
+
+			if ((invokeAttr & BindingFlags.ExactBinding) == BindingFlags.ExactBinding)
+				throw new ArgumentException(String.Format(CultureInfo.CurrentUICulture, Environment.GetResourceString("Arg_ObjObjEx"), value.GetType(), this));
+
+			if (binder != null && binder != Type.DefaultBinder)
+				return binder.ChangeType (value, this, culture);
+
+			throw new ArgumentException(String.Format(CultureInfo.CurrentUICulture, Environment.GetResourceString("Arg_ObjObjEx"), value.GetType(), this));
+		}
+
+		object TryConvertToType (object value, ref bool failed)
+		{
+			if (IsInstanceOfType (value)) {
+				return value;
+			}
+
+			if (IsByRef) {
+				var elementType = GetElementType ();
+				if (value == null || elementType.IsInstanceOfType (value)) {
+					return value;
+				}
+			}
+
+			if (value == null)
+				return value;
+
+			if (IsEnum) {
+				var type = Enum.GetUnderlyingType (this);
+				if (type == value.GetType ())
+					return value;
+				var res = IsConvertibleToPrimitiveType (value, this);
+				if (res != null)
+					return res;
+			} else if (IsPrimitive) {
+				var res = IsConvertibleToPrimitiveType (value, this);
+				if (res != null)
+					return res;
+			} else if (IsPointer) {
+				var vtype = value.GetType ();
+				if (vtype == typeof (IntPtr) || vtype == typeof (UIntPtr))
+					return value;
+			}
+
+			failed = true;
+			return null;
+		}
+
+		// Binder uses some incompatible conversion rules. For example
+		// int value cannot be used with decimal parameter but in other
+		// ways it's more flexible than normal convertor, for example
+		// long value can be used with int based enum
+		static object IsConvertibleToPrimitiveType (object value, Type targetType)
+		{
+			var type = value.GetType ();
+			if (type.IsEnum) {
+				type = Enum.GetUnderlyingType (type);
+				if (type == targetType)
+					return value;
+			}
+
+			var from = Type.GetTypeCode (type);
+			var to = Type.GetTypeCode (targetType);
+
+			switch (to) {
+				case TypeCode.Char:
+					switch (from) {
+						case TypeCode.Byte:
+							return (Char) (Byte) value;
+						case TypeCode.UInt16:
+							return value;
+					}
+					break;
+				case TypeCode.Int16:
+					switch (from) {
+						case TypeCode.Byte:
+							return (Int16) (Byte) value;
+						case TypeCode.SByte:
+							return (Int16) (SByte) value;
+					}
+					break;
+				case TypeCode.UInt16:
+					switch (from) {
+						case TypeCode.Byte:
+							return (UInt16) (Byte) value;
+						case TypeCode.Char:
+							return value;
+					}
+					break;
+				case TypeCode.Int32:
+					switch (from) {
+						case TypeCode.Byte:
+							return (Int32) (Byte) value;
+						case TypeCode.SByte:
+							return (Int32) (SByte) value;
+						case TypeCode.Char:
+							return (Int32) (Char) value;
+						case TypeCode.Int16:
+							return (Int32) (Int16) value;
+						case TypeCode.UInt16:
+							return (Int32) (UInt16) value;
+					}
+					break;
+				case TypeCode.UInt32:
+					switch (from) {
+						case TypeCode.Byte:
+							return (UInt32) (Byte) value;
+						case TypeCode.Char:
+							return (UInt32) (Char) value;
+						case TypeCode.UInt16:
+							return (UInt32) (UInt16) value;
+					}
+					break;
+				case TypeCode.Int64:
+					switch (from) {
+						case TypeCode.Byte:
+							return (Int64) (Byte) value;
+						case TypeCode.SByte:
+							return (Int64) (SByte) value;
+						case TypeCode.Int16:
+							return (Int64) (Int16) value;
+						case TypeCode.Char:
+							return (Int64) (Char) value;
+						case TypeCode.UInt16:
+							return (Int64) (UInt16) value;
+						case TypeCode.Int32:
+							return (Int64) (Int32) value;
+						case TypeCode.UInt32:
+							return (Int64) (UInt32) value;
+					}
+					break;
+				case TypeCode.UInt64:
+					switch (from) {
+						case TypeCode.Byte:
+							return (UInt64) (Byte) value;
+						case TypeCode.Char:
+							return (UInt64) (Char) value;
+						case TypeCode.UInt16:
+							return (UInt64) (UInt16) value;
+						case TypeCode.UInt32:
+							return (UInt64) (UInt32) value;
+					}
+					break;
+				case TypeCode.Single:
+					switch (from) {
+						case TypeCode.Byte:
+							return (Single) (Byte) value;
+						case TypeCode.SByte:
+							return (Single) (SByte) value;
+						case TypeCode.Int16:
+							return (Single) (Int16) value;
+						case TypeCode.Char:
+							return (Single) (Char) value;
+						case TypeCode.UInt16:
+							return (Single) (UInt16) value;
+						case TypeCode.Int32:
+							return (Single) (Int32) value;
+						case TypeCode.UInt32:
+							return (Single) (UInt32) value;
+						case TypeCode.Int64:
+							return (Single) (Int64) value;
+						case TypeCode.UInt64:
+							return (Single) (UInt64) value;
+					}
+					break;
+				case TypeCode.Double:
+					switch (from) {
+						case TypeCode.Byte:
+							return (Double) (Byte) value;
+						case TypeCode.SByte:
+							return (Double) (SByte) value;
+						case TypeCode.Char:
+							return (Double) (Char) value;
+						case TypeCode.Int16:
+							return (Double) (Int16) value;
+						case TypeCode.UInt16:
+							return (Double) (UInt16) value;
+						case TypeCode.Int32:
+							return (Double) (Int32) value;
+						case TypeCode.UInt32:
+							return (Double) (UInt32) value;
+						case TypeCode.Int64:
+							return (Double) (Int64) value;
+						case TypeCode.UInt64:
+							return (Double) (UInt64) value;
+						case TypeCode.Single:
+							return (Double) (Single) value;
+					}
+					break;
+			}
+
+			// Everything else is rejected
+			return null;
+		}
+
+        protected ListBuilder<MethodInfo> GetMethodCandidates (MethodInfo[] cache, BindingFlags bindingAttr, CallingConventions callConv, Type[] types)
+        {
+        	var candidates = new ListBuilder<MethodInfo> ();
+
+            for (int i = 0; i < cache.Length; i++) {
+				var methodInfo = cache[i];
+				if (FilterApplyMethodBase(methodInfo, /*methodInfo.BindingFlags,*/ bindingAttr, callConv, types)) {
+					candidates.Add (methodInfo);
+				}
+			}
+
+			return candidates;
+		}
+
+        private static bool FilterApplyConstructorInfo(
+            RuntimeConstructorInfo constructor, BindingFlags bindingFlags, CallingConventions callConv, Type[] argumentTypes)
+        {
+            // Optimization: Pre-Calculate the method binding flags to avoid casting.
+            return FilterApplyMethodBase(constructor, /*constructor.BindingFlags,*/ bindingFlags, callConv, argumentTypes);
+        }
+
+        private static bool FilterApplyMethodBase(
+            MethodBase methodBase, /*BindingFlags methodFlags,*/ BindingFlags bindingFlags, CallingConventions callConv, Type[] argumentTypes)
+        {
+            Contract.Requires(methodBase != null);
+
+            bindingFlags ^= BindingFlags.DeclaredOnly;
+/*
+            #region Apply Base Filter
+            if ((bindingFlags & methodFlags) != methodFlags)
+                return false;
+            #endregion
+*/
+            #region Check CallingConvention
+            if ((callConv & CallingConventions.Any) == 0)
+            {
+                if ((callConv & CallingConventions.VarArgs) != 0 && 
+                    (methodBase.CallingConvention & CallingConventions.VarArgs) == 0)
+                    return false;
+
+                if ((callConv & CallingConventions.Standard) != 0 && 
+                    (methodBase.CallingConvention & CallingConventions.Standard) == 0)
+                    return false;
+            }
+            #endregion
+
+            #region If argumentTypes supplied
+            if (argumentTypes != null)
+            {
+                ParameterInfo[] parameterInfos = methodBase.GetParametersNoCopy();
+
+                if (argumentTypes.Length != parameterInfos.Length)
+                {
+                    #region Invoke Member, Get\Set & Create Instance specific case
+                    // If the number of supplied arguments differs than the number in the signature AND
+                    // we are not filtering for a dynamic call -- InvokeMethod or CreateInstance -- filter out the method.
+                    if ((bindingFlags & 
+                        (BindingFlags.InvokeMethod | BindingFlags.CreateInstance | BindingFlags.GetProperty | BindingFlags.SetProperty)) == 0)
+                        return false;
+                    
+                    bool testForParamArray = false;
+                    bool excessSuppliedArguments = argumentTypes.Length > parameterInfos.Length;
+
+                    if (excessSuppliedArguments) 
+                    { // more supplied arguments than parameters, additional arguments could be vararg
+                        #region Varargs
+                        // If method is not vararg, additional arguments can not be passed as vararg
+                        if ((methodBase.CallingConvention & CallingConventions.VarArgs) == 0)
+                        {
+                            testForParamArray = true;
+                        }
+                        else 
+                        {
+                            // If Binding flags did not include varargs we would have filtered this vararg method.
+                            // This Invariant established during callConv check.
+                            Contract.Assert((callConv & CallingConventions.VarArgs) != 0);
+                        }
+                        #endregion
+                    }
+                    else 
+                    {// fewer supplied arguments than parameters, missing arguments could be optional
+                        #region OptionalParamBinding
+                        if ((bindingFlags & BindingFlags.OptionalParamBinding) == 0)
+                        {
+                            testForParamArray = true;
+                        }
+                        else
+                        {
+                            // From our existing code, our policy here is that if a parameterInfo 
+                            // is optional then all subsequent parameterInfos shall be optional. 
+
+                            // Thus, iff the first parameterInfo is not optional then this MethodInfo is no longer a canidate.
+                            if (!parameterInfos[argumentTypes.Length].IsOptional)
+                                testForParamArray = true;
+                        }
+                        #endregion
+                    }
+
+                    #region ParamArray
+                    if (testForParamArray)
+                    {
+                        if  (parameterInfos.Length == 0)
+                            return false;
+
+                        // The last argument of the signature could be a param array. 
+                        bool shortByMoreThanOneSuppliedArgument = argumentTypes.Length < parameterInfos.Length - 1;
+
+                        if (shortByMoreThanOneSuppliedArgument)
+                            return false;
+
+                        ParameterInfo lastParameter = parameterInfos[parameterInfos.Length - 1];
+
+                        if (!lastParameter.ParameterType.IsArray)
+                            return false;
+
+                        if (!lastParameter.IsDefined(typeof(ParamArrayAttribute), false))
+                            return false;
+                    }
+                    #endregion
+
+                    #endregion
+                }
+                else
+                {
+                    #region Exact Binding
+                    if ((bindingFlags & BindingFlags.ExactBinding) != 0)
+                    {
+                        // Legacy behavior is to ignore ExactBinding when InvokeMember is specified.
+                        // Why filter by InvokeMember? If the answer is we leave this to the binder then why not leave
+                        // all the rest of this  to the binder too? Further, what other semanitc would the binder
+                        // use for BindingFlags.ExactBinding besides this one? Further, why not include CreateInstance 
+                        // in this if statement? That's just InvokeMethod with a constructor, right?
+                        if ((bindingFlags & (BindingFlags.InvokeMethod)) == 0)
+                        {
+                            for(int i = 0; i < parameterInfos.Length; i ++)
+                            {
+                                // a null argument type implies a null arg which is always a perfect match
+                                if ((object)argumentTypes[i] != null && !Object.ReferenceEquals(parameterInfos[i].ParameterType, argumentTypes[i]))
+                                    return false;
+                            }
+                        }
+                    }
+                    #endregion
+                }
+            }
+            #endregion
+        
+            return true;
+        }
+
+        [System.Security.SecurityCritical]  // auto-generated
+        internal Object CreateInstanceImpl(
+            BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, ref StackCrawlMark stackMark)
+        {            
+            CreateInstanceCheckThis();
+            
+            Object server = null;
+
+            try
+            {
+                try
+                {
+                    // Store the activation attributes in thread local storage.
+                    // These attributes are later picked up by specialized 
+                    // activation services like remote activation services to
+                    // influence the activation.
+#if FEATURE_REMOTING
+                    if(null != activationAttributes)
+                    {
+                        ActivationServices.PushActivationAttributes(this, activationAttributes);
+                    }
+#endif                    
+                    
+                    if (args == null)
+                        args = EmptyArray<Object>.Value;
+
+                    int argCnt = args.Length;
+
+                    // Without a binder we need to do use the default binder...
+                    if (binder == null)
+                        binder = DefaultBinder;
+
+                    // deal with the __COMObject case first. It is very special because from a reflection point of view it has no ctors
+                    // so a call to GetMemberCons would fail
+                    if (argCnt == 0 && (bindingAttr & BindingFlags.Public) != 0 && (bindingAttr & BindingFlags.Instance) != 0
+                        && (IsGenericCOMObjectImpl() || IsValueType)) 
+                    {
+                        server = CreateInstanceDefaultCtor((bindingAttr & BindingFlags.NonPublic) == 0 , false, true, ref stackMark);
+                    }
+                    else 
+                    {
+                        ConstructorInfo[] candidates = GetConstructors(bindingAttr);
+                        List<MethodBase> matches = new List<MethodBase>(candidates.Length);
+
+                        // We cannot use Type.GetTypeArray here because some of the args might be null
+                        Type[] argsType = new Type[argCnt];
+                        for (int i = 0; i < argCnt; i++)
+                        {
+                            if (args[i] != null)
+                            {
+                                argsType[i] = args[i].GetType();
+                            }
+                        }
+
+                        for(int i = 0; i < candidates.Length; i ++)
+                        {
+                            if (FilterApplyConstructorInfo((RuntimeConstructorInfo)candidates[i], bindingAttr, CallingConventions.Any, argsType))
+                                matches.Add(candidates[i]);
+                        }
+
+                        MethodBase[] cons = new MethodBase[matches.Count];
+                        matches.CopyTo(cons);
+                        if (cons != null && cons.Length == 0)
+                            cons = null;
+
+                        if (cons == null) 
+                        {
+                            // Null out activation attributes before throwing exception
+#if FEATURE_REMOTING                                            
+                            if(null != activationAttributes)
+                            {
+                                ActivationServices.PopActivationAttributes(this);
+                                activationAttributes = null;
+                            }
+#endif                            
+                            throw new MissingMethodException(Environment.GetResourceString("MissingConstructor_Name", FullName));
+                        }
+
+                        MethodBase invokeMethod;
+                        Object state = null;
+
+                        try
+                        {
+                            invokeMethod = binder.BindToMethod(bindingAttr, cons, ref args, null, culture, null, out state);
+                        }
+                        catch (MissingMethodException) { invokeMethod = null; }
+
+                        if (invokeMethod == null)
+                        {
+#if FEATURE_REMOTING                                            
+                            // Null out activation attributes before throwing exception
+                            if(null != activationAttributes)
+                            {
+                                ActivationServices.PopActivationAttributes(this);
+                                activationAttributes = null;
+                            }                  
+#endif                                
+                            throw new MissingMethodException(Environment.GetResourceString("MissingConstructor_Name", FullName));
+                        }
+
+                        // If we're creating a delegate, we're about to call a
+                        // constructor taking an integer to represent a target
+                        // method. Since this is very difficult (and expensive)
+                        // to verify, we're just going to demand UnmanagedCode
+                        // permission before allowing this. Partially trusted
+                        // clients can instead use Delegate.CreateDelegate,
+                        // which allows specification of the target method via
+                        // name or MethodInfo.
+                        //if (isDelegate)
+                        if (RuntimeType.DelegateType.IsAssignableFrom(invokeMethod.DeclaringType))
+                        {
+#if FEATURE_CORECLR
+                            // In CoreCLR, CAS is not exposed externally. So what we really are looking
+                            // for is to see if the external caller of this API is transparent or not.
+                            // We get that information from the fact that a Demand will succeed only if
+                            // the external caller is not transparent. 
+                            try
+                            {
+#pragma warning disable 618
+                                new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
+#pragma warning restore 618
+                            }
+                            catch
+                            {
+                                throw new NotSupportedException(String.Format(CultureInfo.CurrentCulture, Environment.GetResourceString("NotSupported_DelegateCreationFromPT")));
+                            }
+#else // FEATURE_CORECLR
+                            new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
+#endif // FEATURE_CORECLR
+                        }
+
+                        if (invokeMethod.GetParametersNoCopy().Length == 0)
+                        {
+                            if (args.Length != 0)
+                            {
+
+                                Contract.Assert((invokeMethod.CallingConvention & CallingConventions.VarArgs) == 
+                                                 CallingConventions.VarArgs); 
+                                throw new NotSupportedException(String.Format(CultureInfo.CurrentCulture, 
+                                    Environment.GetResourceString("NotSupported_CallToVarArg")));
+                            }
+
+                            // fast path??
+                            server = Activator.CreateInstance(this, true);
+                        }
+                        else
+                        {
+                            server = ((ConstructorInfo)invokeMethod).Invoke(bindingAttr, binder, args, culture);
+                            if (state != null)
+                                binder.ReorderArgumentArray(ref args, state);
+                        }
+                    }
+                }                    
+                finally
+                {
+#if FEATURE_REMOTING                
+                    // Reset the TLS to null
+                    if(null != activationAttributes)
+                    {
+                          ActivationServices.PopActivationAttributes(this);
+                          activationAttributes = null;
+                    }
+#endif                    
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
+            //Console.WriteLine(server);
+            return server;                                
+        }
+
+        // Helper to invoke the default (parameterless) ctor.
+        // fillCache is set in the SL2/3 compat mode or when called from Marshal.PtrToStructure.
+        [System.Security.SecuritySafeCritical]  // auto-generated
+        [DebuggerStepThroughAttribute]
+        [Diagnostics.DebuggerHidden]
+        internal Object CreateInstanceDefaultCtor(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+        {
+            if (GetType() == typeof(ReflectionOnlyType))
+                throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_NotAllowedInReflectionOnly"));
+
+/*
+            ActivatorCache activatorCache = s_ActivatorCache;
+            if (activatorCache != null)
+            {
+                ActivatorCacheEntry ace = activatorCache.GetEntry(this);
+                if (ace != null)
+                {
+                    if (publicOnly)
+                    {
+                        if (ace.m_ctor != null && 
+                            (ace.m_ctorAttributes & MethodAttributes.MemberAccessMask) != MethodAttributes.Public)
+                        {
+                            throw new MissingMethodException(Environment.GetResourceString("Arg_NoDefCTor"));
+                        }
+                    }
+                            
+                    // Allocate empty object
+                    Object instance = RuntimeTypeHandle.Allocate(this);
+                    
+                    // if m_ctor is null, this type doesn't have a default ctor
+                    Contract.Assert(ace.m_ctor != null || this.IsValueType);
+
+                    if (ace.m_ctor != null)
+                    {
+                        // Perform security checks if needed
+                        if (ace.m_bNeedSecurityCheck)
+                            RuntimeMethodHandle.PerformSecurityCheck(instance, ace.m_hCtorMethodHandle, this, (uint)INVOCATION_FLAGS.INVOCATION_FLAGS_CONSTRUCTOR_INVOKE);
+
+                        // Call ctor (value types wont have any)
+                        try
+                        {
+                            ace.m_ctor(instance);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new TargetInvocationException(e);
+                        }
+                    }
+                    return instance;
+                }
+            }
+*/
+            return CreateInstanceSlow(publicOnly, skipCheckThis, fillCache, ref stackMark);
+        }
+
+        // the slow path of CreateInstanceDefaultCtor
+        internal Object CreateInstanceSlow(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+        {
+            bool bNeedSecurityCheck = true;
+            bool bCanBeCached = false;
+            bool bSecurityCheckOff = false;
+
+            if (!skipCheckThis)
+                CreateInstanceCheckThis();
+
+            if (!fillCache)
+                bSecurityCheckOff = true;
+
+            return CreateInstanceMono (!publicOnly);
+        }
+
+        private void CreateInstanceCheckThis()
+        {
+            if (this is ReflectionOnlyType)
+                throw new ArgumentException(Environment.GetResourceString("Arg_ReflectionOnlyInvoke"));
+
+            if (ContainsGenericParameters)
+                throw new ArgumentException(
+                    Environment.GetResourceString("Acc_CreateGenericEx", this));
+            Contract.EndContractBlock();
+
+            Type elementType = this.GetRootElementType();
+
+            if (Object.ReferenceEquals(elementType, typeof(ArgIterator)))
+                throw new NotSupportedException(Environment.GetResourceString("Acc_CreateArgIterator"));
+
+            if (Object.ReferenceEquals(elementType, typeof(void)))
+                throw new NotSupportedException(Environment.GetResourceString("Acc_CreateVoid"));
+        }
+
+		object CreateInstanceMono (bool nonPublic)
+		{
+			var ctor = GetDefaultConstructor ();
+			if (!nonPublic && ctor != null && !ctor.IsPublic) {
+				ctor = null;
+			}
+
+			if (ctor == null) {
+	            Type elementType = this.GetRootElementType();
+	            if (ReferenceEquals (elementType, typeof (TypedReference)) || ReferenceEquals (elementType, typeof (RuntimeArgumentHandle)))
+    	            throw new NotSupportedException (Environment.GetResourceString ("NotSupported_ContainsStackPtr"));
+
+				if (IsValueType)
+					return CreateInstanceInternal (this);
+
+				throw new MissingMethodException (Locale.GetText ("Default constructor not found for type " + FullName));
+			}
+
+			// TODO: .net does more checks in unmanaged land in RuntimeTypeHandle::CreateInstance
+			if (IsAbstract) {
+				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class '{0}'.", FullName));
+			}
+
+			return ctor.InternalInvoke (null, null);
+		}        
+
+		internal abstract MonoCMethod GetDefaultConstructor ();
+
+        // Helper to build lists of MemberInfos. Special cased to avoid allocations for lists of one element.
+        protected struct ListBuilder<T> where T : class
+        {
+            T[] _items;
+            T _item;
+            int _count;
+            int _capacity;
+
+            public ListBuilder(int capacity)
+            {
+                _items = null;
+                _item = null;
+                _count = 0;
+                _capacity = capacity;
+            }
+
+            public T this[int index]
+            {
+                get
+                {
+                    Contract.Requires(index < Count);
+                    return (_items != null) ? _items[index] : _item;
+                }
+#if FEATURE_LEGACYNETCF
+                // added for Dev11 466969 quirk
+                set
+                {
+                    Contract.Requires(index < Count);
+                    if (_items != null)
+                        _items[index] = value;
+                    else
+                        _item = value;
+                }
+#endif
+            }
+
+            public T[] ToArray()
+            {
+                if (_count == 0)
+                    return EmptyArray<T>.Value;
+                if (_count == 1)
+                    return new T[1] { _item };
+
+                Array.Resize(ref _items, _count);
+                _capacity = _count;
+                return _items;
+            }
+
+            public void CopyTo(Object[] array, int index)
+            {
+                if (_count == 0)
+                    return;
+
+                if (_count == 1)
+                {
+                    array[index] = _item;
+                    return;
+                }
+
+                Array.Copy(_items, 0, array, index, _count);
+            }
+
+            public int Count
+            {
+                get
+                {
+                    return _count;
+                }
+            }
+
+            public void Add(T item)
+            {
+                if (_count == 0)
+                {
+                    _item = item;
+                }
+                else                
+                {
+                    if (_count == 1)
+                    {
+                        if (_capacity < 2)
+                            _capacity = 4;
+                        _items = new T[_capacity];
+                        _items[0] = _item;
+                    }
+                    else
+                    if (_capacity == _count)
+                    {
+                        int newCapacity = 2 * _capacity;
+                        Array.Resize(ref _items, newCapacity);
+                        _capacity = newCapacity;
+                    }
+
+                    _items[_count] = item;
+                }
+                _count++;
+            }
+        }
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern object CreateInstanceInternal (Type type);
 	}
 
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	sealed class MonoType : RuntimeType, ISerializable
+	class MonoType : RuntimeType, ISerializable
 	{
 		[NonSerialized]
 		MonoTypeInfo type_info;
@@ -84,7 +840,7 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern TypeAttributes get_attributes (Type type);
 
-		public MonoCMethod GetDefaultConstructor ()
+		internal override MonoCMethod GetDefaultConstructor ()
 		{
 			MonoCMethod ctor = null;
 			
@@ -118,50 +874,25 @@ namespace System
 								       Type[] types,
 								       ParameterModifier[] modifiers)
 		{
-			ConstructorInfo[] methods = GetConstructors (bindingAttr);
-			return GetConstructorImpl (methods, bindingAttr, binder, callConvention, types, modifiers);
-		}
+			ConstructorInfo[] candidates = GetConstructors (bindingAttr);
 
-		internal static ConstructorInfo GetConstructorImpl (ConstructorInfo[] methods, BindingFlags bindingAttr,
-								       Binder binder,
-								       CallingConventions callConvention,
-								       Type[] types,
-								       ParameterModifier[] modifiers)
-		{
-			if (bindingAttr == BindingFlags.Default)
-				bindingAttr = BindingFlags.Public | BindingFlags.Instance;
-
-			ConstructorInfo found = null;
-			MethodBase[] match;
-			int count = 0;
-			foreach (ConstructorInfo m in methods) {
-				// Under MS.NET, Standard|HasThis matches Standard...
-				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
-					continue;
-				found = m;
-				count++;
-			}
-			if (count == 0)
+			if (candidates.Length == 0)
 				return null;
-			if (types == null) {
-				if (count > 1)
-					throw new AmbiguousMatchException ();
-				return (ConstructorInfo) CheckMethodSecurity (found);
+
+			if (types.Length == 0 && candidates.Length == 1) {
+				ConstructorInfo firstCandidate = candidates [0];
+				var parameters = firstCandidate.GetParametersNoCopy ();
+				if (parameters == null || parameters.Length == 0)
+					return firstCandidate;
 			}
-			match = new MethodBase [count];
-			if (count == 1)
-				match [0] = found;
-			else {
-				count = 0;
-				foreach (ConstructorInfo m in methods) {
-					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
-						continue;
-					match [count++] = m;
-				}
-			}
-			if (binder == null)
-				binder = Binder.DefaultBinder;
-			return (ConstructorInfo) CheckMethodSecurity (binder.SelectMethod (bindingAttr, match, types, modifiers));
+
+			if ((bindingAttr & BindingFlags.ExactBinding) != 0)
+				return (ConstructorInfo) System.DefaultBinder.ExactBinding (candidates, types, modifiers);
+
+ 			if (binder == null)
+				binder = DefaultBinder;
+
+			return (ConstructorInfo) CheckMethodSecurity (binder.SelectMethod (bindingAttr, candidates, types, modifiers));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -266,44 +997,32 @@ namespace System
 							     Type[] types, ParameterModifier[] modifiers)
 		{
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
-			MethodInfo[] methods = GetMethodsByName (name, bindingAttr, ignoreCase, this);
-			MethodInfo found = null;
-			MethodBase[] match;
-			int count = 0;
-			
-			foreach (MethodInfo m in methods) {
-				// Under MS.NET, Standard|HasThis matches Standard...
-				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
-					continue;
-				found = m;
-				count++;
-			}
+			var candidates = GetMethodCandidates (GetMethodsByName (name, bindingAttr, ignoreCase, this), bindingAttr, callConvention, types);
 
-			if (count == 0)
+			if (candidates.Count == 0)
 				return null;
 			
-			if (count == 1 && types == null) 
-				return (MethodInfo) CheckMethodSecurity (found);
+			if (types == null || types.Length == 0) {
+				var firstCandidate = candidates [0];
+				if (candidates.Count == 1)
+					return firstCandidate;
 
-			match = new MethodBase [count];
-			if (count == 1)
-				match [0] = found;
-			else {
-				count = 0;
-				foreach (MethodInfo m in methods) {
-					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
-						continue;
-					match [count++] = m;
+				if (types == null) {
+					for (int j = 1; j < candidates.Count; j++) {
+						MethodInfo methodInfo = candidates [j];
+						if (!System.DefaultBinder.CompareMethodSigAndName (methodInfo, firstCandidate))
+							throw new AmbiguousMatchException(Environment.GetResourceString("Arg_AmbiguousMatchException"));
+					}
+
+					// All the methods have the exact same name and sig so return the most derived one.
+					return (MethodInfo) System.DefaultBinder.FindMostDerivedNewSlotMeth (candidates.ToArray (), candidates.Count);
 				}
 			}
 
-			if (types == null) 
-				return (MethodInfo) CheckMethodSecurity (Binder.FindMostDerivedMatch (match));
-
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = DefaultBinder;
 			
-			return (MethodInfo) CheckMethodSecurity (binder.SelectMethod (bindingAttr, match, types, modifiers));
+			return (MethodInfo) CheckMethodSecurity (binder.SelectMethod (bindingAttr, candidates.ToArray (), types, modifiers));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -359,12 +1078,24 @@ namespace System
 			if (count == 0)
 				return null;
 			
-			if (count == 1 && (types == null || types.Length == 0) && 
-			    (returnType == null || returnType == props[0].PropertyType))
-				return props [0];
+			if (types == null || types.Length == 0) {
+				if (count == 1) {
+					var firstCandidate = props [0];
+
+					if ((object)returnType != null && !returnType.IsEquivalentTo (firstCandidate.PropertyType))
+						return null;
+
+					return firstCandidate;
+				}
+
+				throw new AmbiguousMatchException (Environment.GetResourceString("Arg_AmbiguousMatchException"));
+			}
+
+			if ((bindingAttr & BindingFlags.ExactBinding) != 0)
+				return System.DefaultBinder.ExactPropertyBinding (props, returnType, types, modifiers);
 
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = DefaultBinder;
 
 			return binder.SelectProperty (bindingAttr, props, returnType, types, modifiers);
 		}
@@ -467,7 +1198,8 @@ namespace System
 							throw new ArgumentException ("Used Missing.Value for argument without default value", "parameters");
 					}
 					object result = m.Invoke (target, invokeAttr, binder, args, culture);
-					binder.ReorderArgumentArray (ref args, state);
+					if (state != null)
+						binder.ReorderArgumentArray (ref args, state);
 					return result;
 				}
 			}
@@ -496,6 +1228,8 @@ namespace System
 			if ((invokeAttr & BindingFlags.GetProperty) != 0) {
 				PropertyInfo[] properties = GetPropertiesByName (name, invokeAttr, ignoreCase, this);
 				object state = null;
+				if (args == null)
+					args = EmptyArray<object>.Value;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
 					if ((properties [i].GetGetMethod (true) != null))
@@ -508,12 +1242,13 @@ namespace System
 					if (mb != null)
 						smethods [count++] = mb;
 				}
-				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
+				MethodBase m = count > 0 ? binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state) : null;
 				if (m == null) {
-					throwMissingFieldException = true;
+					throwMissingMethodDescription = "Cannot find method `" + name + "'.";
 				} else {
 					object result = m.Invoke (target, invokeAttr, binder, args, culture);
-					binder.ReorderArgumentArray (ref args, state);
+					if (state != null)
+						binder.ReorderArgumentArray (ref args, state);
 					return result;
 				}
 			} else if ((invokeAttr & BindingFlags.SetProperty) != 0) {
@@ -531,12 +1266,13 @@ namespace System
 					if (mb != null)
 						smethods [count++] = mb;
 				}
-				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
+				MethodBase m = count > 0 ? binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state) : null;
 				if (m == null) {
-					throwMissingFieldException = true;
+					throwMissingMethodDescription = "Cannot find method `" + name + "'.";
 				} else {
 					object result = m.Invoke (target, invokeAttr, binder, args, culture);
-					binder.ReorderArgumentArray (ref args, state);
+					if (state != null)
+						binder.ReorderArgumentArray (ref args, state);
 					return result;
 				}
 			}

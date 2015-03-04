@@ -500,6 +500,28 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_AcceptMulti ()
+		{
+			var request = new HttpRequestMessage();
+			var headers = request.Headers;
+
+			headers.Add("Accept", "application/vnd.github.moondragon+json; charset=utf-8,application/vnd.github.v3+json; charset=utf-8");
+
+			var se = headers.Accept.SequenceEqual (
+				new[] {
+					new MediaTypeHeaderValue ("application/vnd.github.moondragon+json") {
+						CharSet = "utf-8"
+					},
+					new MediaTypeHeaderValue ("application/vnd.github.v3+json") {
+						CharSet = "utf-8"
+					}
+				});
+
+			Assert.IsTrue (se, "#1");
+			Assert.AreEqual ("application/vnd.github.moondragon+json; charset=utf-8, application/vnd.github.v3+json; charset=utf-8", headers.Accept.ToString (), "#2");
+		}
+
+		[Test]
 		public void Header_BaseImplementation ()
 		{
 			HttpRequestMessage message = new HttpRequestMessage ();

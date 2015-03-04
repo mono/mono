@@ -4,7 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.CSharp.dll
 
-LIB_MCS_FLAGS = -r:System.Core.dll -r:Mono.CSharp.dll
+LIB_REFS = System.Core Mono.CSharp
+LIB_MCS_FLAGS =
 
 include ../../build/library.make
 

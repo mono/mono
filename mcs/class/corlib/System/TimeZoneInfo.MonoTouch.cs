@@ -75,11 +75,7 @@ namespace System {
 			}
 
 			unsafe {
-				var s = new UnmanagedMemoryStream ((byte*) data, size);
-				s.Closed += delegate {
-					Marshal.FreeHGlobal (data);
-				};
-				return s;
+				return new HGlobalUnmanagedMemoryStream ((byte*) data, size, data);
 			}
 		}
 	}

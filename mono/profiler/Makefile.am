@@ -21,6 +21,7 @@ lib_LTLIBRARIES = libmono-profiler-cov.la libmono-profiler-aot.la libmono-profil
 
 if PLATFORM_DARWIN
 libmono_profiler_log_la_LDFLAGS = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
+libmono_profiler_cov_la_LDFLAGS = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 endif
 if PLATFORM_ANDROID
 libmono_profiler_log_la_LDFLAGS = -avoid-version
@@ -67,10 +68,6 @@ if HAVE_VTUNE
 libmono_profiler_vtune_la_SOURCES = mono-profiler-vtune.c
 libmono_profiler_vtune_la_CFLAGS = $(VTUNE_CFLAGS)
 libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS) $(LIBMONO) $(GLIB_LIBS) $(LIBICONV)
-endif
-
-if PLATFORM_ANDROID
-libmono_profiler_log_la_LIBADD += $(GLIB_LIBS)
 endif
 
 mprof_report_SOURCES = decode.c

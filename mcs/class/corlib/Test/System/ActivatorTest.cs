@@ -618,6 +618,16 @@ namespace MonoTests.System {
 			Assert.AreEqual (42, a.A);
 			Assert.AreEqual (null, a.X);
 			Assert.AreEqual (null, a.Y);
+
+			var b = Activator.CreateInstance (typeof (SimpleParamsObjectConstructor), 1, 2, 3, 4, 5);
+			Assert.IsNotNull (b);
+		}
+
+		class SimpleParamsObjectConstructor
+		{
+			public SimpleParamsObjectConstructor (params object[] parameters)
+			{
+			}
 		}
 
 		class SimpleParamsConstructor {
@@ -655,6 +665,20 @@ namespace MonoTests.System {
 
 			Assert.AreEqual (null, a.X);
 			Assert.AreEqual (null, a.Y);
+		}
+
+		class ParamsConstructorWithObjectConversion
+		{
+			public ParamsConstructorWithObjectConversion (params int[] x)
+			{
+			}
+		}
+
+		[Test]
+		public void CreateInstanceParamsConstructorWithObjectConversion ()
+		{
+			var a = Activator.CreateInstance (typeof(ParamsConstructorWithObjectConversion), new object[] { (object) 2 });
+			Assert.IsNotNull (a);
 		}
 	}
 }

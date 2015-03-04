@@ -3,10 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Json.dll
-LIB_MCS_FLAGS = \
-	        /r:System.dll \
-	        /r:System.Xml.dll \
-	        /r:System.Core.dll
+LIB_REFS = System System.Xml System.Core
+LIB_MCS_FLAGS =
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

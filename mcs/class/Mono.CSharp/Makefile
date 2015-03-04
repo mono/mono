@@ -4,7 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = Mono.CSharp.dll
 
-LIB_MCS_FLAGS = -r:System.Core.dll -r:System.Xml.dll -r:System.dll
+LIB_REFS = System.Core System.Xml System
+LIB_MCS_FLAGS =
 
 MOBILE_STATIC := $(filter mobile_static monotouch, $(PROFILE))
 

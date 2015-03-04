@@ -125,6 +125,7 @@ typedef struct MonoAotOptions {
 	gboolean print_skipped_methods;
 	gboolean stats;
 	char *tool_prefix;
+	char *ld_flags;
 	gboolean autoreg;
 	char *mtriple;
 	char *llvm_path;
@@ -640,7 +641,7 @@ emit_code_bytes (MonoAotCompile *acfg, const guint8* buf, int size)
 
 /* ARCHITECTURE SPECIFIC CODE */
 
-#if defined(TARGET_X86) || defined(TARGET_AMD64) || defined(TARGET_ARM) || defined(TARGET_POWERPC)
+#if defined(TARGET_X86) || defined(TARGET_AMD64) || defined(TARGET_ARM) || defined(TARGET_POWERPC) || defined(TARGET_ARM64)
 #define EMIT_DWARF_INFO 1
 #endif
 
@@ -5011,6 +5012,7 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		 * - it allows the setting of breakpoints of aot-ed methods.
 		 */
 		debug_sym = get_debug_sym (method, "", acfg->method_label_hash);
+		cfg->asm_debug_symbol = g_strdup (debug_sym);
 
 		if (acfg->need_no_dead_strip)
 			fprintf (acfg->fp, "	.no_dead_strip %s\n", debug_sym);
@@ -5859,7 +5861,7 @@ emit_plt (MonoAotCompile *acfg)
 		if (acfg->llvm && !acfg->thumb_mixed) {
 			emit_label (acfg, plt_entry->llvm_symbol);
 			if (acfg->llvm_separate) {
-				emit_global (acfg, plt_entry->llvm_symbol, TRUE);
+				emit_global_inner (acfg, plt_entry->llvm_symbol, TRUE);
 #if defined(TARGET_MACH)
 				fprintf (acfg->fp, ".private_extern %s\n", plt_entry->llvm_symbol);
 #endif
@@ -5922,6 +5924,9 @@ emit_plt (MonoAotCompile *acfg)
 			fprintf (acfg->fp, "\n.thumb_func\n");
 
 			emit_label (acfg, plt_entry->llvm_symbol);
+
+			if (acfg->llvm_separate)
+				emit_global_inner (acfg, plt_entry->llvm_symbol, TRUE);
 
 			arch_emit_llvm_plt_entry (acfg, i);
 
@@ -6430,6 +6435,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->autoreg = TRUE;
 		} else if (str_begins_with (arg, "tool-prefix=")) {
 			opts->tool_prefix = g_strdup (arg + strlen ("tool-prefix="));
+		} else if (str_begins_with (arg, "ld-flags=")) {
+			opts->ld_flags = g_strdup (arg + strlen ("ld-flags="));			
 		} else if (str_begins_with (arg, "soft-debug")) {
 			opts->soft_debug = TRUE;
 		} else if (str_begins_with (arg, "direct-pinvoke")) {
@@ -7191,7 +7198,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	 * return OverwriteComplete;
 	 * Here, if 'Earlier' refers to a memset, and Later has no size info, it mistakenly thinks the memset is redundant.
 	 */
-	opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify");
+	opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify");
 #if 1
 	command = g_strdup_printf ("%sopt -f %s -o \"%s.opt.bc\" \"%s.bc\"", acfg->aot_opts.llvm_path, opts, acfg->tmpbasename, acfg->tmpbasename);
 	aot_printf (acfg, "Executing opt: %s\n", command);
@@ -7338,11 +7345,8 @@ emit_code (MonoAotCompile *acfg)
 			emit_method_code (acfg, cfg);
 	}
 
-	sprintf (symbol, "methods_end");
 	emit_section_change (acfg, ".text", 0);
 	emit_alignment_code (acfg, 8);
-	emit_label (acfg, symbol);
-
 	emit_label (acfg, "jit_code_end");
 
 	/* To distinguish it from the next symbol */
@@ -7450,6 +7454,7 @@ emit_code (MonoAotCompile *acfg)
 #endif
 		}
 	}
+	emit_int32 (acfg, 0);
 }
 
 static void
@@ -8317,7 +8322,6 @@ emit_file_info (MonoAotCompile *acfg)
 		emit_pointer (acfg, "llvm_got_info_offsets");
 	else
 		emit_pointer (acfg, NULL);
-	emit_pointer (acfg, "methods_end");
 	emit_pointer (acfg, "unwind_info");
 	emit_pointer (acfg, "mem_end");
 	emit_pointer (acfg, "image_table");
@@ -8489,7 +8493,7 @@ emit_dwarf_info (MonoAotCompile *acfg)
 
 		sprintf (symbol2, "%sme_%x", acfg->temp_prefix, i);
 
-		mono_dwarf_writer_emit_method (acfg->dwarf, cfg, cfg->method, cfg->asm_symbol, symbol2, cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, mono_debug_find_method (cfg->jit_info->d.method, mono_domain_get ()));
+		mono_dwarf_writer_emit_method (acfg->dwarf, cfg, cfg->method, cfg->asm_symbol, symbol2, cfg->asm_debug_symbol, cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, mono_debug_find_method (cfg->jit_info->d.method, mono_domain_get ()));
 	}
 #endif
 }
@@ -8644,6 +8648,7 @@ compile_asm (MonoAotCompile *acfg)
 	char *command, *objfile;
 	char *outfile_name, *tmp_outfile_name, *llvm_ofile;
 	const char *tool_prefix = acfg->aot_opts.tool_prefix ? acfg->aot_opts.tool_prefix : "";
+	char *ld_flags = acfg->aot_opts.ld_flags ? acfg->aot_opts.ld_flags : g_strdup("");
 
 #if defined(TARGET_AMD64) && !defined(TARGET_MACH)
 #define AS_OPTIONS "--64"
@@ -8743,10 +8748,14 @@ compile_asm (MonoAotCompile *acfg)
 		llvm_ofile = g_strdup ("");
 	}
 
+	/* replace the ; flags separators with spaces */
+	g_strdelimit (ld_flags, ";", ' ');
+
 #ifdef LD_NAME
-	command = g_strdup_printf ("%s -o %s %s %s.o", LD_NAME, tmp_outfile_name, llvm_ofile, acfg->tmpfname);
+	command = g_strdup_printf ("%s -o %s %s %s.o %s", LD_NAME, tmp_outfile_name, llvm_ofile, acfg->tmpfname, ld_flags);
 #else
-	command = g_strdup_printf ("%sld %s -shared -o %s %s %s.o", tool_prefix, LD_OPTIONS, tmp_outfile_name, llvm_ofile, acfg->tmpfname);
+	command = g_strdup_printf ("%sld %s -shared -o %s %s %s.o %s", tool_prefix, LD_OPTIONS, tmp_outfile_name, llvm_ofile,
+		acfg->tmpfname, ld_flags);
 #endif
 	aot_printf (acfg, "Executing the native linker: %s\n", command);
 	if (system (command) != 0) {
@@ -8754,6 +8763,7 @@ compile_asm (MonoAotCompile *acfg)
 		g_free (outfile_name);
 		g_free (command);
 		g_free (objfile);
+		g_free (ld_flags);
 		return 1;
 	}
 
@@ -9219,6 +9229,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		mono_set_partial_sharing_supported (TRUE);
 	*/
 
+	mono_set_partial_sharing_supported (FALSE);
+
 	res = collect_methods (acfg);
 	if (!res)
 		return 1;
@@ -9363,6 +9375,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 				cfg->asm_symbol = get_debug_sym (cfg->orig_method, "", acfg->method_label_hash);
 			else
 				cfg->asm_symbol = g_strdup_printf ("%s%sm_%x", acfg->temp_prefix, acfg->llvm_label_prefix, method_index);
+			cfg->asm_debug_symbol = cfg->asm_symbol;
 		}
 	}
 

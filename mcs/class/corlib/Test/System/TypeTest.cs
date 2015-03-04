@@ -1693,21 +1693,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category("NotDotNet")]
-		// Depends on the GAC working, which it doesn't durring make distcheck.
-		[Category ("NotWorking")]
-		public void GetTypeWithWhitespace ()
-		{
-			Assert.IsNotNull (Type.GetType
-						   (@"System.Configuration.NameValueSectionHandler,
-			System,
-Version=1.0.5000.0,
-Culture=neutral
-,
-PublicKeyToken=b77a5c561934e089"));
-		}
-
-		[Test]
 		public void GetTypeNonVectorArray ()
 		{
 			Type t = Type.GetType ("System.String[*]");
@@ -1884,6 +1869,20 @@ PublicKeyToken=b77a5c561934e089"));
 		public void CreateValueTypeNoCtorArgs ()
 		{
 			typeof(B).InvokeMember ("", BindingFlags.CreateInstance, null, null, new object [] { 1 });
+		}
+
+		[Test]
+		[ExpectedException (typeof (MissingMethodException))]
+		public void InvokeGetPropertyMissing ()
+		{
+			typeof(B).InvokeMember ("", BindingFlags.GetProperty, null, null, new object [] { 1 });
+		}
+
+		[Test]
+		[ExpectedException (typeof (MissingMethodException))]
+		public void InvokeSetPropertyMissing ()
+		{
+			typeof(B).InvokeMember ("", BindingFlags.SetProperty, null, null, new object [] { 1 });
 		}
 
 		internal static string bug336841 (string param1, params string [] param2)

@@ -84,9 +84,9 @@
       <Project>{E6E1740E-37DD-487C-8947-F1C0612D4738}</Project>
       <Name>System.Configuration.Install\System.Configuration.Install-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
+    <ProjectReference Include="..\System.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
       <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
-      <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
+      <Name>System.Windows.Forms\System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

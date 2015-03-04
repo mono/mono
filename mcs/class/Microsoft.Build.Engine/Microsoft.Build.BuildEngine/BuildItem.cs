@@ -472,7 +472,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			BuildItemGroup big;			
 			BuildItem bi = new BuildItem (this);
-			bi.finalItemSpec = taskitem.ItemSpec;
+			bi.finalItemSpec = ((ITaskItem2)taskitem).EvaluatedIncludeEscaped;
 
 			foreach (DictionaryEntry de in taskitem.CloneCustomMetadata ()) {
 				bi.unevaluatedMetadata.Add ((string) de.Key, (string) de.Value);

@@ -58,6 +58,31 @@ namespace System.Reflection {
 			public event ModuleResolveEventHandler ModuleResolve;
 		}
 
+		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
+		{
+			Module module;
+
+			public unsafe UnmanagedMemoryStreamForModule (byte* pointer, long length, Module module)
+				: base (pointer, length)
+			{
+				this.module = module;
+			}
+
+			protected override void Dispose (bool disposing)
+			{
+				if (_isOpen) {
+					/* 
+					 * The returned pointer points inside metadata, so
+					 * we have to increase the refcount of the module, and decrease
+					 * it when the stream is finalized.
+					 */
+					module = null;
+				}
+
+				base.Dispose (disposing);
+			}
+		}
+
 		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
 #pragma warning disable 649
 		private IntPtr _mono_assembly;
@@ -304,14 +329,8 @@ namespace System.Reflection {
 			else {
 				UnmanagedMemoryStream stream;
 				unsafe {
-					stream = new UnmanagedMemoryStream ((byte*) data, size);
+					stream = new UnmanagedMemoryStreamForModule ((byte*) data, size, module);
 				}
-				/* 
-				 * The returned pointer points inside metadata, so
-				 * we have to increase the refcount of the module, and decrease
-				 * it when the stream is finalized.
-				 */
-				stream.Closed += new EventHandler (new ResourceCloseHandler (module).OnClose);
 				return stream;
 			}
 		}
@@ -703,21 +722,6 @@ namespace System.Reflection {
 				return result;
 			else
 				return null;
-		}
-
-		private class ResourceCloseHandler {
-#pragma warning disable 169, 414
-			Module module;
-#pragma warning restore 169, 414			
-
-			public ResourceCloseHandler (Module module) {
-				this.module = module;
-			}
-
-			public void OnClose (object sender, EventArgs e) {
-				// The module dtor will take care of things
-				module = null;
-			}
 		}
 
 		[MonoTODO ("Currently it always returns zero")]

@@ -6,21 +6,10 @@ RESOURCE_FILES = \
 		resources/schemas-xmlsoap-or-ws-2005-05-identity.rnc
 
 LIBRARY = Mono.ServiceModel.IdentitySelectors.dll
+LIB_REFS = System System.Xml System.Configuration System.Security System.Transactions System.Web System.Web.Services Mono.Security
 LIB_MCS_FLAGS = \
 		/nowarn:414,169,67,3005,436 \
 		/unsafe \
-	        /r:System.dll \
-	        /r:System.Xml.dll \
-	        /r:System.Configuration.dll \
-	        /r:../lib/net_3_0/System.Runtime.Serialization.dll \
-	        /r:System.Security.dll \
-	        /r:../lib/net_3_0/System.IdentityModel.dll \
-		/r:../lib/net_3_0/System.IdentityModel.Selectors.dll \
-	        /r:../lib/net_3_0/System.ServiceModel.dll \
-	        /r:System.Transactions.dll \
-	        /r:System.Web.dll \
-		/r:System.Web.Services.dll \
-		/r:Mono.Security.dll \
 		$(RESOURCE_FILES:%=/resource:%)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

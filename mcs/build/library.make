@@ -8,6 +8,18 @@
 # All the dep files now land in the same directory so we
 # munge in the library name to keep the files from clashing.
 
+# The including makefile can set the following variables:
+# LIB_MCS_FLAGS - Command line flags passed to mcs.
+# LIB_REFS      - This should be a space separated list of assembly names which are added to the mcs
+#                 command line.
+#
+
+# All dependent libs become dependent dirs for parallel builds
+# Have to rename to handle differences between assembly/directory names
+DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
+
+LIB_MCS_FLAGS += $(patsubst %,-r:%,$(LIB_REFS))
+
 sourcefile = $(LIBRARY).sources
 
 # If the directory contains the per profile include file, generate list file.
@@ -64,6 +76,12 @@ ifdef LIBRARY_SUBDIR
 the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_SUBDIR)/
 else
 the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE)/
+endif
+
+ifdef RESOURCE_STRINGS
+ifdef BOOTSTRAP_PROFILE
+MCS_FLAGS_RESOURCE_STRINGS += $(RESOURCE_STRINGS:%=--getresourcestrings:%)
+endif
 endif
 
 #
@@ -261,7 +279,7 @@ endif
 $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(MCS_FLAGS_RESOURCE_STRINGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
@@ -339,3 +357,6 @@ $(the_libdir)/.doc-stamp: $(the_lib)
 	$(MDOC_UP)
 	@echo "doc-stamp" > $@
 
+# Need to be here so it comes after the definition of DEP_DIRS/DEP_LIBS
+gen-deps:
+	@echo "$(DEPS_TARGET_DIR): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)

@@ -8,4 +8,5 @@ include ../../build/library.make
 
 TEST_MCS_FLAGS = /r:System.Core.dll
 
-LIB_MCS_FLAGS += -d:INSIDE_MONO_PARALLEL -r:$(corlib) -r:System.Core.dll -r:System.dll
+LIB_REFS += System.Core System
+LIB_MCS_FLAGS += -d:INSIDE_MONO_PARALLEL -r:$(corlib)

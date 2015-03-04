@@ -763,9 +763,8 @@ namespace MonoTests.System.Data
 			DataTable table = new DataTable("TABLE1");
 			table.ExtendedProperties.Add("T1", "extended1");
 			table.Columns.Add("C1", typeof(int));
-			table.Columns[0].MaxLength = 10;
 			table.Columns.Add("C2", typeof(string));
-			table.Columns[0].MaxLength = 20;
+			table.Columns[1].MaxLength = 20;
 			table.Columns[0].ExtendedProperties.Add("C1Ext1", "extended2");
 			table.Columns[1].ExtendedProperties.Add("C2Ext1", "extended3");
 			dataSet1.Tables.Add(table);

@@ -171,11 +171,11 @@ class Example {
                 <c>M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})</c>.</remarks>
             <exception cref="T:System.ArgumentException">To be added; from:
           <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" />,
-          <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
+          <see cref="M:System.Linq.Error.ArgumentNull(System.String)" /></exception>
             <exception cref="T:System.ArgumentNullException">To be added; from:
           <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})" />,
           <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" />,
-          <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
+          <see cref="M:System.Linq.Error.ArgumentNull(System.String)" /></exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})">
             <typeparam name="T">Something Else</typeparam>
@@ -186,7 +186,7 @@ class Example {
             <exception cref="T:System.ArgumentException">To be added; from:
           <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
             <exception cref="T:System.ArgumentNullException">To be added; from:
-          <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
+          <see cref="M:System.Linq.Error.ArgumentNull(System.String)" /></exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.UseHelper``3(Mono.DocTest.Generic.MyList{``0}+Helper{``1,``2})">
             <typeparam name="T">

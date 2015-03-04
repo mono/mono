@@ -10,20 +10,32 @@ It is an open source implementation of Microsoft's .NET Framework based on the E
 
 **Build Status**
 
-|      debian-amd64       |      debian-i386       |      debian-ppc64el       |      centos-s390x       |       windows-amd64       |
-|:-----------------------:|:----------------------:|:-------------------------:|:-----------------------:|:-------------------------:|
-| [![debian-amd64][1]][2] | [![debian-i386][3]][4] | [![debian-ppc64el][5]][6] | [![centos-s390x][7]][8] | [![windows-amd64][9]][10] |
+Officially supported architectures:
+
+| debian-amd64            | debian-i386            | debian-armel            | debian-armhf            | windows-amd64             |
+|-------------------------|------------------------|-------------------------|-------------------------|---------------------------|
+| [![debian-amd64][1]][2] | [![debian-i386][3]][4] | [![debian-armel][5]][6] | [![debian-armhf][7]][8] | [![windows-amd64][9]][10] |
+
+Community supported architectures:
+
+| debian-ppc64el              | centos-s390x              |
+|-----------------------------|---------------------------|
+| [![debian-ppc64el][11]][12] | [![centos-s390x][13]][14] |
 
 [1]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/badge/icon
 [2]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/
 [3]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/badge/icon
 [4]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-i386/
-[5]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=debian-ppc64el/badge/icon
-[6]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=debian-ppc64el/
-[7]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=centos-s390x/badge/icon
-[8]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=centos-s390x/
+[5]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armel/badge/icon
+[6]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armel/
+[7]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armhf/badge/icon
+[8]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armhf/
 [9]: https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true
 [10]: https://ci.appveyor.com/project/ajlennon/mono-817/branch/master
+[11]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=debian-ppc64el/badge/icon
+[12]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=debian-ppc64el/
+[13]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=centos-s390x/badge/icon
+[14]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=centos-s390x/
 
 Compilation and Installation
 ============================

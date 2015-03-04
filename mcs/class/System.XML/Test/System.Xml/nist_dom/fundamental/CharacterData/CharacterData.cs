@@ -1155,7 +1155,7 @@ namespace nist_dom.fundamental
 		//----------------------------------------------------------------------------
 
 		[Test]
-		[Category ("NotDotNet")] // MS DOM is buggy
+		[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 		public void core0021C()
 		{
 			string computedValue = "";
@@ -1218,7 +1218,7 @@ namespace nist_dom.fundamental
 		//----------------------------------------------------------------------------
 
 		[Test]
-		[Category ("NotDotNet")] // MS DOM is buggy
+		[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 		public void core0022C()
 		{
 			string computedValue = "";
@@ -1281,7 +1281,7 @@ namespace nist_dom.fundamental
 		//----------------------------------------------------------------------------
 
 		[Test]
-		[Category ("NotDotNet")] // MS DOM is buggy
+		[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 		public void core0023C()
 		{
 			string computedValue = "";
@@ -1344,7 +1344,7 @@ namespace nist_dom.fundamental
 		//----------------------------------------------------------------------------
 
 		[Test]
-		[Category ("NotDotNet")] // MS DOM is buggy
+		[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 		public void core0024C()
 		{
 			string computedValue = "";
@@ -1408,7 +1408,7 @@ namespace nist_dom.fundamental
 		//----------------------------------------------------------------------------
 
 		[Test]
-		[Category ("NotDotNet")] // MS DOM is buggy
+		[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 		public void core0025C()
 		{
 			string computedValue = "";

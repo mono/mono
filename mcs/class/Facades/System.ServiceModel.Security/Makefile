@@ -11,7 +11,8 @@ LIBRARY = System.ServiceModel.Security.dll
 
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
-LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib /r:System.ServiceModel
+LIB_REFS = System.ServiceModel
+LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib
 
 PLATFORM_DEBUG_FLAGS =
 

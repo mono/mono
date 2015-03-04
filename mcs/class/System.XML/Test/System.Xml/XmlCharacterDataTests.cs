@@ -87,6 +87,7 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[Category ("NotDotNet")] // enbug in 2.0
+		[Ignore ("bug in Microsoft sources")]
 		public void InsertData ()
 		{
 			comment.Value = "foobaz";
@@ -128,6 +129,7 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[Category ("NotDotNet")] // enbug in 2.0
+		[Ignore ("bug in Microsoft sources")]
 		public void ReplaceData ()
 		{
 			changed = false;

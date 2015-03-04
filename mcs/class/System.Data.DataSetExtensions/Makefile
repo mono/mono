@@ -4,14 +4,13 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.DataSetExtensions.dll
 
+LIB_REFS = System.Core System System.Data System.Xml System.Web
 LIB_MCS_FLAGS = \
 	-r:$(corlib)	 		\
-	-r:System.Core.dll 		\
-	-r:System.dll 			\
 	-r:System.Data.dll		\
 	-r:System.Xml.dll		\
 	-r:System.Web.dll		\
-	$(OTHER_LIB_MCS_FLAGS) 
+	$(OTHER_LIB_MCS_FLAGS)
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
 # This is a .NET 3.5 only assembly, but built during the 2.0 build

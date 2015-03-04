@@ -3,9 +3,11 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.ServiceModel.Routing.dll
-LIB_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.dll -r:System.ServiceModel.dll -r:System.Core.dll
+LIB_REFS = System System.Xml System.Runtime.Serialization System.ServiceModel System.Core
+LIB_MCS_FLAGS =
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += System.Configuration
 LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0 	\
 			-r:System.Configuration.dll
 endif
