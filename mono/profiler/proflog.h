@@ -26,6 +26,7 @@ enum {
 	TYPE_HEAP,
 	TYPE_SAMPLE,
 	TYPE_RUNTIME,
+	TYPE_COVERAGE,
 	/* extended type for TYPE_HEAP */
 	TYPE_HEAP_START  = 0 << 4,
 	TYPE_HEAP_END    = 1 << 4,
@@ -69,6 +70,10 @@ enum {
 	TYPE_SAMPLE_COUNTERS      = 4 << 4,
 	/* extended type for TYPE_RUNTIME */
 	TYPE_JITHELPER = 1 << 4,
+	/* extended type for TYPE_COVERAGE */
+	TYPE_COVERAGE_ASSEMBLY = 0 << 4,
+	TYPE_COVERAGE_METHOD   = 1 << 4,
+	TYPE_COVERAGE_STATEMENT = 2 << 4,
 	TYPE_END
 };
 
@@ -83,4 +88,3 @@ enum {
 };
 
 #endif /* __MONO_PROFLOG_H__ */
-

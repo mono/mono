@@ -14,6 +14,9 @@
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-perfcounters.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/tokentype.h>
+#include <mono/metadata/tabledefs.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-counters.h>
@@ -92,6 +95,7 @@ static int do_mono_sample = 0;
 static int in_shutdown = 0;
 static int do_debug = 0;
 static int do_counters = 0;
+static int do_coverage = 0;
 static MonoProfileSamplingMode sampling_mode = MONO_PROFILER_STAT_MODE_PROCESS;
 
 /* For linux compile with:
@@ -338,6 +342,33 @@ typedef struct _LogBuffer LogBuffer;
  * 		else:
  * 			[value: uleb128/sleb128/double] counter value, can be sleb128, uleb128 or double (determined by using type)
  *
+ * type coverage format
+ * type: TYPE_COVERAGE
+ * exinfo: one of TYPE_COVERAGE_METHOD, TYPE_COVERAGE_STATEMENT, TYPE_COVERAGE_ASSEMBLY
+ * if exinfo == TYPE_COVERAGE_METHOD
+ *  [assembly: string] name of assembly
+ *  [class: string] name of the class
+ *  [name: string] name of the method
+ *  [signature: string] the signature of the method
+ *  [token: uleb128] the method token
+ *  [method_id: uleb128] an ID for this data to associate with the buffers of TYPE_COVERAGE_STATEMENTS
+ *  [len: uleb128] the number of TYPE_COVERAGE_BUFFERS associated with this method
+ * if exinfo == TYPE_COVERAGE_STATEMENTS
+ *  [method_id: uleb128] an the TYPE_COVERAGE_METHOD buffer to associate this with
+ *  [offset: uleb128] the il offset relative to the previous offset
+ *  [counter: uleb128] the counter for this instruction
+ *  [filename: string] the filename containing this instruction
+ *  [line: uleb128] the line of filename containing this instruction
+ *  [column: uleb128] the column containing this instruction
+ * if exinfo == TYPE_COVERAGE_ASSEMBLY
+ *  [name: string] assembly name
+ *  [guid: string] assembly GUID
+ *  [filename: string] assembly filename
+ *  [number_of_methods: uleb128] the number of methods in this assembly
+ *  [fully_covered: uleb128] the number of fully covered methods
+ *  [partially_covered: uleb128] the number of partially covered methods
+ *    currently partially_covered will always be 0, and fully_covered is the
+ *    number of methods that are fully and partially covered.
  */
 struct _LogBuffer {
 	LogBuffer *next;
@@ -398,6 +429,7 @@ struct _MonoProfiler {
 	pthread_t helper_thread;
 #endif
 	BinaryObject *binary_objects;
+	GPtrArray *coverage_filters;
 };
 
 #ifdef HOST_WIN32
@@ -1048,6 +1080,10 @@ class_loaded (MonoProfiler *prof, MonoClass *klass, int result)
 	process_requests (prof);
 }
 
+#ifndef DISABLE_HELPER_THREAD
+static void process_method_enter (MonoProfiler *prof, MonoMethod *method);
+#endif /* DISABLE_HELPER_THREAD */
+
 static void
 method_enter (MonoProfiler *prof, MonoMethod *method)
 {
@@ -1061,6 +1097,11 @@ method_enter (MonoProfiler *prof, MonoMethod *method)
 	emit_time (logbuffer, now);
 	emit_method (logbuffer, method);
 	EXIT_LOG (logbuffer);
+
+#ifndef DISABLE_HELPER_THREAD
+	process_method_enter (prof, method);
+#endif /* DISABLE_HELPER_THREAD */
+
 	process_requests (prof);
 }
 
@@ -2415,6 +2456,377 @@ counters_and_perfcounters_sample (MonoProfiler *prof)
 	perfcounters_sample (prof, (now - start) / 1000/ 1000);
 }
 
+static GHashTable *coverage_methods = NULL;
+static GHashTable *coverage_assemblies = NULL;
+static GHashTable *filtered_classes = NULL;
+static GHashTable *entered_methods = NULL;
+static gboolean coverage_initialized = FALSE;
+static mono_mutex_t coverage_mutex;
+static GPtrArray *coverage_data = NULL;
+static int previous_offset = 0;
+
+typedef struct _CoverageEntry CoverageEntry;
+struct _CoverageEntry {
+	int offset;
+	int counter;
+	char *filename;
+	int line;
+	int column;
+};
+
+static void
+free_coverage_entry (gpointer data, gpointer userdata)
+{
+	CoverageEntry *entry = (CoverageEntry *)data;
+	g_free (entry->filename);
+	g_free (entry);
+}
+
+static void
+obtain_coverage_for_method (MonoProfiler *prof, const MonoProfileCoverageEntry *entry)
+{
+	int offset = entry->iloffset - previous_offset;
+	CoverageEntry *e = g_new (CoverageEntry, 1);
+
+	previous_offset = entry->iloffset;
+
+	e->offset = offset;
+	e->counter = entry->counter;
+	e->filename = g_strdup(entry->filename ? entry->filename : "");
+	e->line = entry->line;
+	e->column = entry->col;
+
+	g_ptr_array_add (coverage_data, e);
+}
+
+static char *
+parse_generic_type_names(char *name)
+{
+	char *new_name,*ret;
+	int within_generic_declaration=0, generic_members=1;
+	if( !(ret = new_name = calloc(strlen(name) * 4 + 1, sizeof(char))) )
+		return NULL;
+
+	do
+	{
+		switch(*name)
+		{
+			case '<':
+				within_generic_declaration = 1;
+				break;
+			case '>':
+				within_generic_declaration = 0;
+				if( *(name-1) != '<')
+				{
+					*new_name++ = '`';
+					*new_name++ = '0' + generic_members;
+				}
+				else
+				{
+					memcpy(new_name,"&lt;&gt;",8);
+					new_name+=8;
+				}
+				generic_members = 0;
+				break;
+			case ',':
+				generic_members++;
+				break;
+			default:
+				if(!within_generic_declaration)
+					*new_name++ = *name;
+				break;
+		}
+	}while(*name++);
+	return ret;
+}
+
+static int method_id;
+static void
+build_method_buffer (gpointer key, gpointer value, gpointer userdata)
+{
+	MonoMethod *method = (MonoMethod *)value;
+	MonoProfiler *prof = (MonoProfiler *)userdata;
+	MonoClass *klass;
+	MonoImage *image;
+	char *class_name, *sig;
+	const char *image_name, *method_name;
+	LogBuffer *logbuffer;
+	int size = 1;
+	int i;
+
+	previous_offset = 0;
+	coverage_data = g_ptr_array_new ();
+
+	mono_profiler_coverage_get (prof, method, obtain_coverage_for_method);
+
+	klass = mono_method_get_class (method);
+	image = mono_class_get_image (klass);
+	image_name = mono_image_get_name (image);
+
+	sig = mono_signature_get_desc (mono_method_signature (method), TRUE);
+	class_name = parse_generic_type_names (mono_type_get_name (mono_class_get_type (klass)));
+	method_name = mono_method_get_name (method);
+
+	size += strlen (image_name) + 1;
+	size += strlen (class_name) + 1;
+	size += strlen (method_name) + 1;
+	size += strlen (sig) + 1;
+
+	size += 10 + 10 + 5; /* token + method_id + n_entries*/
+
+	logbuffer = ensure_logbuf (size);
+	ENTER_LOG (logbuffer, "coverage-methods");
+
+	emit_byte (logbuffer, TYPE_COVERAGE_METHOD | TYPE_COVERAGE);
+	emit_string (logbuffer, image_name, strlen (image_name) + 1);
+	emit_string (logbuffer, class_name, strlen (class_name) + 1);
+	emit_string (logbuffer, method_name, strlen (method_name) + 1);
+	emit_string (logbuffer, sig, strlen (sig) + 1);
+
+	emit_uvalue (logbuffer, mono_method_get_token (method));
+	emit_uvalue (logbuffer, method_id);
+	emit_value (logbuffer, coverage_data->len);
+
+	EXIT_LOG (logbuffer);
+	safe_dump (prof, ensure_logbuf (0));
+
+	for (i = 0; i < coverage_data->len; i++) {
+		CoverageEntry *entry = coverage_data->pdata[i];
+
+		size = 1;
+		size += strlen (entry->filename) + 1;
+		size += 10 * 5; /* method_id, offset, count, line, column */
+
+		logbuffer = ensure_logbuf (size);
+		ENTER_LOG (logbuffer, "coverage-statement");
+
+		emit_byte (logbuffer, TYPE_COVERAGE_STATEMENT | TYPE_COVERAGE);
+		emit_uvalue (logbuffer, method_id);
+		emit_uvalue (logbuffer, entry->offset);
+		emit_uvalue (logbuffer, entry->counter);
+		emit_string (logbuffer, entry->filename, strlen (entry->filename) + 1);
+		emit_uvalue (logbuffer, entry->line);
+		emit_uvalue (logbuffer, entry->column);
+
+		EXIT_LOG (logbuffer);
+		safe_dump (prof, ensure_logbuf (0));
+	}
+
+	method_id++;
+
+	g_free (class_name);
+
+	g_ptr_array_foreach (coverage_data, free_coverage_entry, NULL);
+	g_ptr_array_free (coverage_data, TRUE);
+	coverage_data = NULL;
+}
+
+static gboolean
+check_partial_coverage (MonoMethod *method)
+{
+	/* FIXME: Implement partial coverage checking */
+	return FALSE;
+}
+
+static void
+get_coverage_for_image (MonoImage *image, int *number_of_methods, int *fully_covered, int *partially_covered)
+{
+	int i;
+
+	for (i = 1; i <= mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
+		MonoMethod *method = mono_get_method (image, i | MONO_TOKEN_METHOD_DEF, NULL);
+		if (!method)
+			continue;
+
+		if ((mono_method_get_flags (method, NULL) & METHOD_ATTRIBUTE_ABSTRACT))
+			continue;
+
+		/* FIXME: handle icalls, runtime calls and synchronized methods */
+
+		*number_of_methods += 1;
+
+		if (g_hash_table_lookup (entered_methods, method)) {
+			/* the method was executed: check it was fully covered */
+			if (check_partial_coverage (method)) {
+				*partially_covered += 1;
+			} else {
+				*fully_covered += 1;
+			}
+
+			continue;
+		}
+	}
+}
+
+static void
+build_assembly_buffer (gpointer key, gpointer value, gpointer userdata)
+{
+	MonoAssembly *assembly = (MonoAssembly *)value;
+	MonoProfiler *prof = (MonoProfiler *)userdata;
+	MonoImage *image = mono_assembly_get_image (assembly);
+	LogBuffer *logbuffer;
+	const char *name, *guid, *filename;
+	int size = 1;
+	int number_of_methods = 0, fully_covered = 0, partially_covered = 0;
+
+	name = mono_image_get_name (image);
+	guid = mono_image_get_guid (image);
+	filename = mono_image_get_filename (image);
+
+	get_coverage_for_image (image, &number_of_methods, &fully_covered, &partially_covered);
+
+	size += strlen (name) + 1;
+	size += strlen (guid) + 1;
+	size += strlen (filename) + 1;
+	size += 30; /* number_of_methods, fully_covered, partially_covered */
+	logbuffer = ensure_logbuf (size);
+
+	ENTER_LOG (logbuffer, "coverage-assemblies");
+	emit_byte (logbuffer, TYPE_COVERAGE_ASSEMBLY | TYPE_COVERAGE);
+	emit_string (logbuffer, name, strlen (name) + 1);
+	emit_string (logbuffer, guid, strlen (guid) + 1);
+	emit_string (logbuffer, filename, strlen (filename) + 1);
+	emit_uvalue (logbuffer, number_of_methods);
+	emit_uvalue (logbuffer, fully_covered);
+	emit_uvalue (logbuffer, partially_covered);
+	EXIT_LOG (logbuffer);
+
+	safe_dump (prof, ensure_logbuf (0));
+}
+
+static void
+dump_coverage (MonoProfiler *prof)
+{
+	if (!coverage_initialized)
+		return;
+
+	mono_mutex_lock (&coverage_mutex);
+	method_id = 0;
+	g_hash_table_foreach (coverage_assemblies, build_assembly_buffer, prof);
+	g_hash_table_foreach (coverage_methods, build_method_buffer, prof);
+	mono_mutex_unlock (&coverage_mutex);
+}
+
+static void
+process_method_enter (MonoProfiler *prof, MonoMethod *method)
+{
+	if (!coverage_initialized)
+		return;
+
+	mono_mutex_lock (&coverage_mutex);
+	g_hash_table_insert (entered_methods, method, method);
+	mono_mutex_unlock (&coverage_mutex);
+}
+
+static gboolean
+coverage_filter (MonoProfiler *prof, MonoMethod *method)
+{
+	MonoClass *klass;
+	MonoImage *image;
+	MonoAssembly *assembly;
+	MonoMethodHeader *header;
+	guint32 iflags, flags, code_size;
+	char *fqn, *classname;
+	gboolean has_positive, found;
+
+	flags = mono_method_get_flags (method, &iflags);
+	if ((iflags & 0x1000 /*METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL*/) ||
+	    (flags & 0x2000 /*METHOD_ATTRIBUTE_PINVOKE_IMPL*/))
+		return FALSE;
+
+	mono_mutex_lock (&coverage_mutex);
+
+	// Don't need to do anything else if we're already tracking this method
+	if (g_hash_table_lookup (coverage_methods, method)) {
+		mono_mutex_unlock (&coverage_mutex);
+		return TRUE;
+	}
+
+	klass = mono_method_get_class (method);
+	image = mono_class_get_image (klass);
+
+	if (prof->coverage_filters) {
+		/* Check already filtered classes first */
+		if (g_hash_table_lookup (filtered_classes, klass)) {
+			mono_mutex_unlock (&coverage_mutex);
+			return FALSE;
+		}
+
+		classname = mono_type_get_name (mono_class_get_type (klass));
+
+		fqn = g_strdup_printf ("[%s]%s", mono_image_get_name (image), classname);
+
+		// Check positive filters first
+		has_positive = FALSE;
+		found = FALSE;
+		for (int i = 0; i < prof->coverage_filters->len; ++i) {
+			char *filter = g_ptr_array_index (prof->coverage_filters, i);
+			if (filter [0] == '+') {
+				filter = &filter [1];
+				if (strstr (fqn, filter) != NULL) {
+					found = TRUE;
+				}
+				has_positive = TRUE;
+			}
+		}
+		if (has_positive && !found) {
+			mono_mutex_unlock (&coverage_mutex);
+			g_free (fqn);
+			g_free (classname);
+			return FALSE;
+		}
+
+		for (int i = 0; i < prof->coverage_filters->len; ++i) {
+			// Is substring search suffices ???
+			char *filter = g_ptr_array_index (prof->coverage_filters, i);
+			if (filter [0] == '+')
+				continue;
+
+			// Skip '-'
+			filter = &filter [1];
+			if (strstr (fqn, filter) != NULL) {
+				g_hash_table_insert (filtered_classes, klass, klass);
+				mono_mutex_unlock (&coverage_mutex);
+				g_free (fqn);
+				g_free (classname);
+				return FALSE;
+			}
+		}
+		g_free (fqn);
+		g_free (classname);
+	}
+
+	header = mono_method_get_header (method);
+
+	mono_method_header_get_code (header, &code_size, NULL);
+	if (code_size > 20000) {
+		g_warning ("Unable to instrument method %s:%s since it is too complex.", mono_class_get_name (klass), mono_method_get_name (method));
+		mono_mutex_unlock (&coverage_mutex);
+		return FALSE;
+	}
+
+	assembly = mono_image_get_assembly (image);
+
+	g_hash_table_insert (coverage_methods, method, method);
+	g_hash_table_insert (coverage_assemblies, assembly, assembly);
+
+	mono_mutex_unlock (&coverage_mutex);
+	return TRUE;
+}
+
+static void
+coverage_init (MonoProfiler *prof)
+{
+	assert (!coverage_initialized);
+
+	mono_mutex_init (&coverage_mutex);
+	coverage_methods = g_hash_table_new (NULL, NULL);
+	coverage_assemblies = g_hash_table_new (NULL, NULL);
+	filtered_classes = g_hash_table_new (NULL, NULL);
+	entered_methods = g_hash_table_new (NULL, NULL);
+	coverage_initialized = TRUE;
+}
+
 #endif /* DISABLE_HELPER_THREAD */
 
 static void
@@ -2423,6 +2835,8 @@ log_shutdown (MonoProfiler *prof)
 	in_shutdown = 1;
 #ifndef DISABLE_HELPER_THREAD
 	counters_and_perfcounters_sample (prof);
+
+	dump_coverage (prof);
 
 	if (prof->command_port) {
 		char c = 1;
@@ -2705,7 +3119,7 @@ start_helper_thread (MonoProfiler* prof)
 #endif
 
 static MonoProfiler*
-create_profiler (const char *filename)
+create_profiler (const char *filename, GPtrArray *filters)
 {
 	MonoProfiler *prof;
 	char *nf;
@@ -2774,10 +3188,20 @@ create_profiler (const char *filename)
 		if (!start_helper_thread (prof))
 			prof->command_port = 0;
 	}
+
+	if (do_coverage) {
+		coverage_init (prof);
+	}
 #else
 	if (hs_mode_ondemand)
 		fprintf (stderr, "Ondemand heapshot unavailable on this arch.\n");
+
+	if (do_coverage)
+		fprintf (stderr, "Coverage unavailable on this arch.\n");
+
 #endif
+	prof->coverage_filters = filters;
+
 	prof->startup_time = current_time ();
 	dump_header (prof);
 	return prof;
@@ -2807,6 +3231,10 @@ usage (int do_exit)
 	printf ("\treport           create a report instead of writing the raw data to a file\n");
 	printf ("\tzip              compress the output data\n");
 	printf ("\tport=PORTNUM     use PORTNUM for the listening command server\n");
+	printf ("\tcoverage         enable collection of code coverage data\n");
+	printf ("\tfilter=ASSEMBLY  add an assembly to the code coverage filters\n");
+	printf ("\t                 add a + to include the assembly or a - to exclude it\n");
+	printf ("\t                 filter=-mscorlib\n");
 	if (do_exit)
 		exit (1);
 }
@@ -2955,6 +3383,7 @@ void
 mono_profiler_startup (const char *desc)
 {
 	MonoProfiler *prof;
+	GPtrArray *filters = NULL;
 	char *filename = NULL;
 	const char *p;
 	const char *opt;
@@ -2965,7 +3394,8 @@ mono_profiler_startup (const char *desc)
 	int events = MONO_PROFILE_GC|MONO_PROFILE_ALLOCATIONS|
 		MONO_PROFILE_GC_MOVES|MONO_PROFILE_CLASS_EVENTS|MONO_PROFILE_THREADS|
 		MONO_PROFILE_ENTER_LEAVE|MONO_PROFILE_JIT_COMPILATION|MONO_PROFILE_EXCEPTIONS|
-		MONO_PROFILE_MONITOR_EVENTS|MONO_PROFILE_MODULE_EVENTS|MONO_PROFILE_GC_ROOTS;
+		MONO_PROFILE_MONITOR_EVENTS|MONO_PROFILE_MODULE_EVENTS|MONO_PROFILE_GC_ROOTS|
+		MONO_PROFILE_INS_COVERAGE;
 
 	p = desc;
 	if (strncmp (p, "log", 3))
@@ -3083,6 +3513,17 @@ mono_profiler_startup (const char *desc)
 			only_counters = 1;
 			continue;
 		}
+		if ((opt = match_option (p, "coverage", NULL)) != p) {
+			do_coverage = 1;
+			events |= MONO_PROFILE_ENTER_LEAVE;
+			continue;
+		}
+		if ((opt = match_option (p, "filter", &val)) != p) {
+			if (filters == NULL) {
+				filters = g_ptr_array_new ();
+			}
+			g_ptr_array_add (filters, val);
+		}
 		if (opt == p) {
 			usage (0);
 			exit (0);
@@ -3098,7 +3539,7 @@ mono_profiler_startup (const char *desc)
 		events = 0;
 	utils_init (fast_time);
 
-	prof = create_profiler (filename);
+	prof = create_profiler (filename, filters);
 	if (!prof)
 		return;
 	init_thread ();
@@ -3118,8 +3559,8 @@ mono_profiler_startup (const char *desc)
 	mono_profiler_install_exception (throw_exc, method_exc_leave, clause_exc);
 	mono_profiler_install_monitor (monitor_event);
 	mono_profiler_install_runtime_initialized (runtime_initialized);
+	mono_profiler_install_coverage_filter (coverage_filter);
 
-	
 	if (do_mono_sample && sample_type == SAMPLE_CYCLES && !only_counters) {
 		events |= MONO_PROFILE_STATISTICAL;
 		mono_profiler_set_statistical_mode (sampling_mode, 1000000 / sample_freq);

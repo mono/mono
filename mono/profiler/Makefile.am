@@ -71,7 +71,7 @@ libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS) $(LIBMONO) $(GLIB_LIBS) $(LIBIC
 endif
 
 mprof_report_SOURCES = decode.c
-mprof_report_LDADD = $(Z_LIBS)
+mprof_report_LDADD = $(Z_LIBS) $(GLIB_LIBS)
 
 PLOG_TESTS_SRC=test-alloc.cs test-busy.cs test-monitor.cs test-excleave.cs \
 	test-heapshot.cs test-traces.cs

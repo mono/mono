@@ -1926,6 +1926,87 @@ code_buffer_desc (int type)
 	}
 }
 
+typedef struct _CoverageAssembly CoverageAssembly;
+struct _CoverageAssembly {
+	char *name;
+	char *guid;
+	char *filename;
+	int number_of_methods;
+	int fully_covered;
+	int partially_covered;
+};
+
+typedef struct _CoverageCoverage CoverageCoverage;
+struct _CoverageCoverage {
+	int method_id;
+	int offset;
+	int count;
+	char *filename;
+	int line;
+	int column;
+};
+
+typedef struct _CoverageMethod CoverageMethod;
+struct _CoverageMethod {
+	char *assembly_name;
+	char *class_name;
+	char *method_name;
+	char *method_signature;
+	int token;
+	int n_statements;
+	int method_id;
+	GPtrArray *coverage;
+};
+static GPtrArray *coverage_assemblies = NULL;
+static GPtrArray *coverage_methods = NULL;
+static GPtrArray *coverage_statements = NULL;
+static GHashTable *coverage_methods_hash = NULL;
+
+static void
+gather_coverage_statements (void)
+{
+	for (int i = 0; i < coverage_statements->len; i++) {
+		CoverageCoverage *coverage = coverage_statements->pdata[i];
+		CoverageMethod *method = g_hash_table_lookup (coverage_methods_hash, GINT_TO_POINTER (coverage->method_id));
+		if (method == NULL) {
+			fprintf (outfile, "Cannot find method with ID: %d\n", coverage->method_id);
+			continue;
+		}
+
+		g_ptr_array_add (method->coverage, coverage);
+	}
+}
+
+static void
+coverage_add_assembly (CoverageAssembly *assembly)
+{
+	if (coverage_assemblies == NULL)
+		coverage_assemblies = g_ptr_array_new ();
+
+	g_ptr_array_add (coverage_assemblies, assembly);
+}
+
+static void
+coverage_add_method (CoverageMethod *method)
+{
+	if (coverage_methods == NULL) {
+		coverage_methods = g_ptr_array_new ();
+		coverage_methods_hash = g_hash_table_new (NULL, NULL);
+	}
+
+	g_ptr_array_add (coverage_methods, method);
+	g_hash_table_insert (coverage_methods_hash, GINT_TO_POINTER (method->method_id), method);
+}
+
+static void
+coverage_add_coverage (CoverageCoverage *coverage)
+{
+	if (coverage_statements == NULL)
+		coverage_statements = g_ptr_array_new ();
+
+	g_ptr_array_add (coverage_statements, coverage);
+}
+
 #define OBJ_ADDR(diff) ((obj_base + diff) << 3)
 #define LOG_TIME(base,diff) /*fprintf("outfile, time %llu + %llu near offset %d\n", base, diff, p - ctx->buf)*/
 
@@ -2554,6 +2635,88 @@ decode_buffer (ProfContext *ctx)
 			}
 			break;
 		}
+		case TYPE_COVERAGE:{
+			int subtype = *p & 0xf0;
+			switch (subtype) {
+			case TYPE_COVERAGE_METHOD: {
+				CoverageMethod *method = g_new0(CoverageMethod, 1);
+				const char *assembly, *klass, *name, *sig;
+				int token, n_offsets, method_id;
+
+				p++;
+				assembly = (void *)p; while (*p) p++; p++;
+				klass = (void *)p; while (*p) p++; p++;
+				name = (void *)p; while (*p) p++; p++;
+				sig = (void *)p; while (*p) p++; p++;
+				token = decode_uleb128 (p, &p);
+				method_id = decode_uleb128 (p, &p);
+				n_offsets = decode_uleb128 (p, &p);
+
+				method->assembly_name = g_strdup (assembly);
+				method->class_name = g_strdup (klass);
+				method->method_name = g_strdup (name);
+				method->method_signature = g_strdup (sig);
+				method->token = token;
+				method->n_statements = n_offsets;
+				method->coverage = g_ptr_array_new ();
+				method->method_id = method_id;
+
+				coverage_add_method (method);
+
+				break;
+			}
+			case TYPE_COVERAGE_STATEMENT: {
+				CoverageCoverage *coverage = g_new0 (CoverageCoverage, 1);
+				char *filename;
+				int offset, count, line, column, method_id;
+
+				p++;
+				method_id = decode_uleb128 (p, &p);
+				offset = decode_uleb128 (p, &p);
+				count = decode_uleb128 (p, &p);
+				filename = (void *)p; while (*p) p++; p++;
+				line = decode_uleb128 (p, &p);
+				column = decode_uleb128 (p, &p);
+
+				coverage->method_id = method_id;
+				coverage->offset = offset;
+				coverage->count = count;
+				coverage->filename = g_strdup (filename);
+				coverage->line = line;
+				coverage->column = column;
+
+				coverage_add_coverage (coverage);
+				break;
+			}
+			case TYPE_COVERAGE_ASSEMBLY: {
+				CoverageAssembly *assembly = g_new0 (CoverageAssembly, 1);
+				char *name, *guid, *filename;
+				int number_of_methods, fully_covered, partially_covered;
+				p++;
+
+				name = (void *)p; while (*p) p++; p++;
+				guid = (void *)p; while (*p) p++; p++;
+				filename = (void *)p; while (*p) p++; p++;
+				number_of_methods = decode_uleb128 (p, &p);
+				fully_covered = decode_uleb128 (p, &p);
+				partially_covered = decode_uleb128 (p, &p);
+
+				assembly->name = g_strdup (name);
+				assembly->guid = g_strdup (guid);
+				assembly->filename = g_strdup (filename);
+				assembly->number_of_methods = number_of_methods;
+				assembly->fully_covered = fully_covered;
+				assembly->partially_covered = partially_covered;
+
+				coverage_add_assembly (assembly);
+				break;
+			}
+
+			default:
+				break;
+			}
+			break;
+		}
 		default:
 			fprintf (outfile, "unhandled profiler event: 0x%x at file offset: %llu + %lld (len: %d\n)\n", *p, (unsigned long long) file_offset, (long long) (p - ctx->buf), len);
 			exit (1);
@@ -3064,6 +3227,30 @@ dump_heap_shots (void)
 }
 
 static void
+dump_coverage (void)
+{
+	if (!coverage_methods && !coverage_assemblies)
+		return;
+
+	gather_coverage_statements ();
+	fprintf (outfile, "\nCoverage Summary:\n");
+	for (int i = 0; i < coverage_assemblies->len; i++) {
+		CoverageAssembly *assembly = coverage_assemblies->pdata[i];
+		int percentage = ((assembly->fully_covered + assembly->partially_covered) * 100) / assembly->number_of_methods;
+		fprintf (outfile, "\t%s (%s) %d%% covered (%d methods - %d covered)\n", assembly->name, assembly->filename, percentage, assembly->number_of_methods, assembly->fully_covered);
+	}
+
+	for (int i = 0; i < coverage_methods->len; i++) {
+		CoverageMethod *method = coverage_methods->pdata[i];
+
+		/* Sanity check */
+		if (method->n_statements != method->coverage->len) {
+			fprintf(outfile, "Incorrect number of statements for %s:%s (%d expected, have %d)\n", method->class_name, method->method_name, method->n_statements, method->coverage->len);
+		}
+	}
+}
+
+static void
 flush_context (ProfContext *ctx)
 {
 	ThreadContext *thread;
@@ -3077,7 +3264,7 @@ flush_context (ProfContext *ctx)
 	}
 }
 
-static const char *reports = "header,jit,gc,sample,alloc,call,metadata,exception,monitor,thread,heapshot,counters";
+static const char *reports = "header,jit,gc,sample,alloc,call,metadata,exception,monitor,thread,heapshot,counters,coverage";
 
 static const char*
 match_option (const char *p, const char *opt)
@@ -3156,6 +3343,11 @@ print_reports (ProfContext *ctx, const char *reps, int parse_only)
 			if (!parse_only)
 				dump_counters ();
 			continue;
+		}
+		if ((opt = match_option (p, "coverage")) != p) {
+			if (!parse_only)
+				dump_coverage ();
+				continue;
 		}
 		return 0;
 	}
