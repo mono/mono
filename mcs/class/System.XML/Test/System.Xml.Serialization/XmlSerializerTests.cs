@@ -2864,21 +2864,21 @@ namespace MonoTests.System.XmlSerialization
 		#endregion //GenericsSeralizationTests
 		#region XmlInclude on abstract class tests (Bug #18558)
 		[Test]
-		public void TestSerializeIntermediateType()
+		public void TestSerializeIntermediateType ()
 		{
 			string expectedXml = "<ContainerTypeForTest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><XmlIntermediateType intermediate=\"false\"/></ContainerTypeForTest>";
 			var obj = new ContainerTypeForTest();
-			obj.MemberToUseInclude = new IntermediateTypeForTest();
+			obj.MemberToUseInclude = new IntermediateTypeForTest ();
 			Serialize (obj);
 			Assert.AreEqual (Infoset (expectedXml), WriterText, "Serialized Output : " + WriterText);
 		}
 
 		[Test]
-		public void TestSerializeSecondType()
+		public void TestSerializeSecondType ()
 		{
 			string expectedXml = "<ContainerTypeForTest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><XmlSecondType intermediate=\"false\"/></ContainerTypeForTest>";
 			var obj = new ContainerTypeForTest();
-			obj.MemberToUseInclude = new SecondDerivedTypeForTest();
+			obj.MemberToUseInclude = new SecondDerivedTypeForTest ();
 			Serialize (obj);
 			Assert.AreEqual (Infoset (expectedXml), WriterText, "Serialized Output : " + WriterText);
 		}

@@ -83,9 +83,23 @@ namespace System.Xml.Serialization
 			else
 			{
 				if (memberValue == null)
-					return (XmlTypeMapElementInfo) _elementInfo[0];
-				foreach (XmlTypeMapElementInfo elem in _elementInfo)
-					if (elem.TypeData.Type.IsInstanceOfType (memberValue)) return elem;
+					return (XmlTypeMapElementInfo) _elementInfo [0];
+				else
+				{
+					XmlTypeMapElementInfo bestTypeElem = null;
+					// Select the most-specific type for the given memberValue
+					foreach (XmlTypeMapElementInfo elem in _elementInfo)
+					{
+						if (elem.TypeData.Type.IsInstanceOfType (memberValue))
+						{
+							if (bestTypeElem == null || elem.TypeData.Type.IsSubclassOf (bestTypeElem.TypeData.Type))
+							{
+								bestTypeElem = elem;
+							}
+						}
+					}
+					return bestTypeElem;
+				}
 			}
 			return null;
 		}
