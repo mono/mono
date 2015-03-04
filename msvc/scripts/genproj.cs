@@ -955,7 +955,7 @@ class MsbuildGenerator {
 					return project.Value;
 			}
 		}
-		Console.WriteLine ("Did not find referenced {0} with libs={1}", dllReferenceName, String.Join (", ", libs));
+		Console.WriteLine ("Did not find referenced {0} with libs={1} {2}", dllReferenceName, String.Join (", ", libs), Environment.StackTrace);
 		foreach (var p in projects) {
 			Console.WriteLine ("    => {0}", p.Value.AbsoluteLibraryOutput);
 		}
@@ -981,6 +981,8 @@ public class Driver {
 				continue;
 
 			if (full){
+				if (library.Contains ("-basic") || library.Contains ("build"))
+					continue;
 				if (!library.Contains ("tests"))
 					yield return project;
 				continue;

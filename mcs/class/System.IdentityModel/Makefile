@@ -16,6 +16,7 @@ LIB_MCS_FLAGS = \
 		/r:System.Configuration.dll \
 		/r:Mono.Security.dll \
 	        /r:System.Runtime.Serialization.dll \
+		/r:System.ServiceModel.Internals \
 	        $(OTHER_LIB_MCS_FLAGS)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

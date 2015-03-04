@@ -8,8 +8,11 @@ RESOURCE_FILES = \
 
 LIBRARY = System.ServiceModel.dll
 
+TEMPORARY_PORTING_FLAGS = /nowarn:1634,1635,1030
+
 LIB_MCS_FLAGS = \
 		/nowarn:414,169,67,3005,436,219,618 \
+		$(TEMPORARY_PORTING_FLAGS) \
 		/unsafe \
 		/d:TRACE \
 	        /r:System.dll \

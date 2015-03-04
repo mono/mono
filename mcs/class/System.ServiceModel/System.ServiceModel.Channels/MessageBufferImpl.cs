@@ -33,6 +33,7 @@ using System.Xml.XPath;
 
 namespace System.ServiceModel.Channels
 {
+#if false
 	internal class DefaultMessageBuffer : MessageBuffer
 	{
 		MessageHeaders headers;
@@ -88,7 +89,7 @@ namespace System.ServiceModel.Channels
 			get { return 0; }
 		}
 	}
-
+#endif
 #if !NET_2_1
 	internal class XPathMessageBuffer : MessageBuffer
 	{

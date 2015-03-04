@@ -16,15 +16,16 @@
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System.Xml</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,618,612,642</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618,612,642</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -434,7 +435,7 @@
     <Compile Include="System.Xml\XQueryConvert.cs" />
     <Compile Include="Mono.Xml.Xsl\build_PatternParser.cs" />
     <Compile Include="Mono.Xml.Xsl\build_PatternTokenizer.cs" />
-    <Compile Include="System.Xml.XPath\Parser.cs" />  </ItemGroup>
+    <Compile Include="System.Xml.XPath\build_Parser.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -471,12 +472,12 @@ type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\P
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../corlib/corlib-build.csproj">
-      <Project>{0CAF787F-F70B-4556-987A-67E036CD71C1}</Project>
-      <Name>corlib\corlib-build</Name>
+      <Project>{2BDF80D1-6F06-4908-B351-835292B7A9B9}</Project>
+      <Name>corlib-build</Name>
     </ProjectReference>
     <ProjectReference Include="../System/System-bare-build.csproj">
-      <Project>{6E4F4BFB-2900-4663-B922-F176B2358C12}</Project>
-      <Name>System\System-bare-build</Name>
+      <Project>{E474AE8F-9163-4A93-A5E7-D93B56468E32}</Project>
+      <Name>System-bare-build</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

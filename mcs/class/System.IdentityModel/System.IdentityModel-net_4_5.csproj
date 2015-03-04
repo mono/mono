@@ -45,6 +45,15 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\referencesource\System.IdentityModel\System\IdentityModel\Diagnostics\ClaimsPrincipalTraceRecord.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.IdentityModel\System\IdentityModel\DiagnosticUtilityExtensions.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.IdentityModel\System\IdentityModel\DictionaryManager.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.IdentityModel\System\IdentityModel\IdentityModelDictionary.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.IdentityModel\System\IdentityModel\IdentityModelStrings.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.IdentityModel\System\IdentityModel\IdentityModelStringsVersion1.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.IdentityModel\System\IdentityModel\ISecurityElement.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.IdentityModel\System\IdentityModel\ISignatureValueSecurityElement.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.IdentityModel\System\IdentityModel\XD.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />

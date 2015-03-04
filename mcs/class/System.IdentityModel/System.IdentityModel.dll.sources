@@ -4,6 +4,14 @@ Assembly/AssemblyInfo.cs
 System.IdentityModel/CookieTransform.cs
 System.IdentityModel/OpenObject.cs
 System.IdentityModel/SignatureVerificationFailedException.cs
+../../../external/referencesource/System.IdentityModel/System/IdentityModel/DiagnosticUtilityExtensions.cs
+../../../external/referencesource/System.IdentityModel/System/IdentityModel/DictionaryManager.cs
+../../../external/referencesource/System.IdentityModel/System/IdentityModel/IdentityModelDictionary.cs
+../../../external/referencesource/System.IdentityModel/System/IdentityModel/IdentityModelStrings.cs
+../../../external/referencesource/System.IdentityModel/System/IdentityModel/IdentityModelStringsVersion1.cs
+../../../external/referencesource/System.IdentityModel/System/IdentityModel/ISecurityElement.cs
+../../../external/referencesource/System.IdentityModel/System/IdentityModel/ISignatureValueSecurityElement.cs
+../../../external/referencesource/System.IdentityModel/System/IdentityModel/XD.cs
 System.IdentityModel.Claims/Claim.cs
 System.IdentityModel.Claims/ClaimSet.cs
 System.IdentityModel.Claims/ClaimTypes.cs
@@ -13,6 +21,7 @@ System.IdentityModel.Claims/WindowsClaimSet.cs
 System.IdentityModel.Claims/X509CertificateClaimSet.cs
 System.IdentityModel.Configuration/ICustomIdentityConfiguration.cs
 System.IdentityModel.Configuration/IdentityModelCaches.cs
+../../../external/referencesource/System.IdentityModel/System/IdentityModel/Diagnostics/ClaimsPrincipalTraceRecord.cs
 System.IdentityModel.Policy/AuthorizationContext.cs
 System.IdentityModel.Policy/EvaluationContext.cs
 System.IdentityModel.Policy/IAuthorizationComponent.cs

@@ -43,6 +43,7 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Dispatcher
 {
+#if OVERWRITTEN
 	// This type is introduced for moonlight compatibility.
 	internal class OperationFormatter
 		: IDispatchMessageFormatter, IClientMessageFormatter
@@ -106,7 +107,7 @@ namespace System.ServiceModel.Dispatcher
 			return impl.SerializeReply (messageVersion, parameters, result);
 		}
 	}
-
+#endif
 	internal abstract class BaseMessagesFormatter
 		: IDispatchMessageFormatter, IClientMessageFormatter
 	{

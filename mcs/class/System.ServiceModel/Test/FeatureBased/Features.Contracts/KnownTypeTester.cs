@@ -19,6 +19,7 @@ namespace MonoTests.Features.Contracts
 		BaseContract [] foo ();
 	}
 
+	
 	public class KnownTypeTester : IKnownTypeTesterContract
 	{
 		public Point2D Move (Point2D point, Point2D delta)
@@ -98,5 +99,6 @@ namespace MonoTests.Features.Contracts
 		bool blah;
 	}
 
+	
 
 }
