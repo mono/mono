@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Xml.Linq.dll
-LIB_REFS = System System.Core System.Xml
+LIB_REFS = System System.Core System.Xml System.Runtime.Serialization
 LIB_MCS_FLAGS =
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
