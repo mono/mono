@@ -61,11 +61,8 @@ namespace System.Net.Sockets {
 
 		public void RegisterForBlockingSyscall ()
 		{
-			while (blocking_threads == null) {
-				//In the rare event this CAS fail, there's a good chance other thread won, so we're kosher.
-				//In the VERY rare event of all CAS fail together, we pay the full price of of failure.
+			if (blocking_threads == null)
 				Interlocked.CompareExchange (ref blocking_threads, new List<Thread> (), null);
-			}
 			
 			bool release = false;
 			try {
