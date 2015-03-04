@@ -193,9 +193,6 @@ endif
 # Each directory's Makefile may define DEP_LIBS and DEP_DIRS to specify the libraries and
 # directories it depends on.
 #
-# It would be nice to reduce the duplication between DEP_LIBS and LIB_MCS_FLAGS, but
-# there are too many special cases
-# (System.Windows.Forms/Managed.Windows.Forms,System.Xml/System.XML) etc.
 ifneq ($(PROFILE_PARALLEL_SUBDIRS),)
 dep_dirs = .dep_dirs-$(PROFILE)
 $(dep_dirs):
