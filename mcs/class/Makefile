@@ -26,8 +26,8 @@ mobile_common_dirs := \
 	Mono.Security	\
 	System	\
 	I18N		\
-	System.Xml.Linq	\
 	System.Runtime.Serialization	\
+	System.Xml.Linq	\
 	System.ServiceModel	\
 	System.ServiceModel.Web	\
 	System.Json	\
@@ -115,8 +115,8 @@ net_4_5_dirs := \
 	IBM.Data.DB2			\
 	CustomMarshalers		\
 	SystemWebTestShim			\
-	System.Xml.Linq			\
 	System.Runtime.Serialization	\
+	System.Xml.Linq			\
 	System.Data.Linq		\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
