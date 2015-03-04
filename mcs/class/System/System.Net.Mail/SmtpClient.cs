@@ -503,7 +503,13 @@ namespace System.Net.Mail {
 			CheckCancellation ();
 
 			try {
-				client = new TcpClient (host, port);
+				client = new TcpClient ();
+				var asyncResult = client.BeginConnect(host, port, null, null);
+				using(var waitHandle = asyncResult.AsyncWaitHandle)
+					if(!waitHandle.WaitOne(this.Timeout, false))
+						throw new TimeoutException();
+				client.EndConnect(asyncResult);
+
 				stream = client.GetStream ();
 				// FIXME: this StreamWriter creation is bogus.
 				// It expects as if a Stream were able to switch to SSL
