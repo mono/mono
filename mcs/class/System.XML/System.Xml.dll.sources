@@ -3,7 +3,6 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 ../../build/common/SR.cs
-../../../external/referencesource/System.Xml/System/Xml/Assembly/System.Xml.Assembly.cs
 Dummy.cs
 System.Xml.Res.cs
 System.Xml.Utils.Res.cs
