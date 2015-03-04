@@ -109,6 +109,54 @@ namespace System.Globalization {
             internal sbyte digit;
         }
 
+        unsafe private static int EndianSwap(int value)
+        {
+            if (!BitConverter.IsLittleEndian) {
+                byte *ptr = (byte *) &value;
+                int res;
+                byte *buf = (byte *) &res;
+                int t = sizeof(int) - 1;
+
+                for (int i = 0; i < sizeof(int); i++) 
+                    buf[t-i] = ptr[i];
+                
+                return(res);
+            } else
+                return(value);
+        }
+
+        unsafe private static uint EndianSwap(uint value)
+        {
+            if (!BitConverter.IsLittleEndian) {
+                byte *ptr = (byte *) &value;
+                uint res;
+                byte *buf = (byte *) &res;
+                uint t = sizeof(uint) - 1;
+
+                for (uint i = 0; i < sizeof(uint); i++) 
+                    buf[t-i] = ptr[i];
+                
+                return(res);
+            } else
+                return(value);
+        }
+
+        unsafe private static ushort EndianSwap(ushort value)
+        {
+            if (!BitConverter.IsLittleEndian) {
+                byte *ptr = (byte *) &value;
+                ushort res;
+                byte *buf = (byte *) &res;
+                ushort t = sizeof(ushort) - 1;
+
+                for (ushort i = 0; i < sizeof(ushort); i++) 
+                    buf[t-i] = ptr[i];
+                
+                return(res);
+            } else
+                return(value);
+        }
+
 
         //We need to allocate the underlying table that provides us with the information that we
         //use.  We allocate this once in the class initializer and then we don't need to worry
@@ -125,11 +173,11 @@ namespace System.Globalization {
             UnicodeDataHeader* mainHeader = (UnicodeDataHeader*)pDataTable;
 
             // Set up the native pointer to different part of the tables.
-            s_pCategoryLevel1Index = (ushort*) (pDataTable + mainHeader->OffsetToCategoriesIndex);
-            s_pCategoriesValue = (byte*) (pDataTable + mainHeader->OffsetToCategoriesValue);
-            s_pNumericLevel1Index = (ushort*) (pDataTable + mainHeader->OffsetToNumbericIndex);
-            s_pNumericValues = (byte*) (pDataTable + mainHeader->OffsetToNumbericValue);
-            s_pDigitValues = (DigitValues*) (pDataTable + mainHeader->OffsetToDigitValue);
+            s_pCategoryLevel1Index = (ushort*) (pDataTable + EndianSwap(mainHeader->OffsetToCategoriesIndex));
+            s_pCategoriesValue = (byte*) (pDataTable + EndianSwap(mainHeader->OffsetToCategoriesValue));
+            s_pNumericLevel1Index = (ushort*) (pDataTable + EndianSwap(mainHeader->OffsetToNumbericIndex));
+            s_pNumericValues = (byte*) (pDataTable + EndianSwap(mainHeader->OffsetToNumbericValue));
+            s_pDigitValues = (DigitValues*) (pDataTable + EndianSwap(mainHeader->OffsetToDigitValue));
 
             return true;
         }
@@ -254,11 +302,11 @@ namespace System.Globalization {
         internal unsafe static double InternalGetNumericValue(int ch) {
             Contract.Assert(ch >= 0 && ch <= 0x10ffff, "ch is not in valid Unicode range.");
             // Get the level 2 item from the highest 12 bit (8 - 19) of ch.
-            ushort index = s_pNumericLevel1Index[ch >> 8];
+            ushort index = EndianSwap(s_pNumericLevel1Index[ch >> 8]);
             // Get the level 2 WORD offset from the 4 - 7 bit of ch.  This provides the base offset of the level 3 table.
             // The offset is referred to an float item in m_pNumericFloatData.
             // Note that & has the lower precedence than addition, so don't forget the parathesis.
-            index = s_pNumericLevel1Index[index + ((ch >> 4) & 0x000f)];
+            index = EndianSwap(s_pNumericLevel1Index[index + ((ch >> 4) & 0x000f)]);
             byte* pBytePtr = (byte*)&(s_pNumericLevel1Index[index]);
             // Get the result from the 0 -3 bit of ch.
 #if WIN64
@@ -448,12 +496,13 @@ namespace System.Globalization {
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         internal unsafe static byte InternalGetCategoryValue(int ch, int offset) {
+
             Contract.Assert(ch >= 0 && ch <= 0x10ffff, "ch is not in valid Unicode range.");
             // Get the level 2 item from the highest 12 bit (8 - 19) of ch.
-            ushort index = s_pCategoryLevel1Index[ch >> 8];
+            ushort index = EndianSwap(s_pCategoryLevel1Index[ch >> 8]);
             // Get the level 2 WORD offset from the 4 - 7 bit of ch.  This provides the base offset of the level 3 table.
             // Note that & has the lower precedence than addition, so don't forget the parathesis.
-            index = s_pCategoryLevel1Index[index + ((ch >> 4) & 0x000f)];
+            index = EndianSwap(s_pCategoryLevel1Index[index + ((ch >> 4) & 0x000f)]);
             byte* pBytePtr = (byte*)&(s_pCategoryLevel1Index[index]);
             // Get the result from the 0 -3 bit of ch.
             byte valueIndex = pBytePtr[(ch & 0x000f)];
