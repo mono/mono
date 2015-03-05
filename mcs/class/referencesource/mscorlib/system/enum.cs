@@ -66,13 +66,17 @@ namespace System
 
             if (getValues || getNames)
             {
+#if MONO
+                if (!GetEnumValuesAndNames (enumType, out values, out names))
+                    Array.Sort (values, names, System.Collections.Generic.Comparer<ulong>.Default);
+#else
                 GetEnumValuesAndNames(
                     enumType.GetTypeHandleInternal(),
                     JitHelpers.GetObjectHandleOnStack(ref values),
                     JitHelpers.GetObjectHandleOnStack(ref names),
                     getValues,
                     getNames);
-
+#endif
                 if (getValues)
                     hashEntry.values = values;
 
@@ -283,12 +287,16 @@ namespace System
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern RuntimeType InternalGetUnderlyingType(RuntimeType enumType);
 
+#if MONO
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private static extern bool GetEnumValuesAndNames (RuntimeType enumType, out ulong[] values, out string[] names);
+#else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [System.Security.SuppressUnmanagedCodeSecurity]
         private static extern void GetEnumValuesAndNames(RuntimeTypeHandle enumType, ObjectHandleOnStack values, ObjectHandleOnStack names, bool getValues, bool getNames);
-
+#endif
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -421,7 +429,7 @@ namespace System
                 parseResult.SetFailure(ParseFailureKind.Argument, "Arg_MustContainEnumInfo", null);
                 return false;
             }
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumTryParseEnum(rtType.GetFullNameForEtw(), value);
@@ -525,7 +533,7 @@ namespace System
                 throw new ArgumentNullException("enumType");
             Contract.Ensures(Contract.Result<Type>() != null);
             Contract.EndContractBlock();
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumGetUnderlyingType(enumType.GetFullNameForEtw());
@@ -542,7 +550,7 @@ namespace System
                 throw new ArgumentNullException("enumType");
             Contract.Ensures(Contract.Result<Array>() != null);
             Contract.EndContractBlock();
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumGetValues(enumType.GetFullNameForEtw());
@@ -569,7 +577,7 @@ namespace System
                 throw new ArgumentNullException("enumType");
             Contract.EndContractBlock();
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumGetName(enumType.GetFullNameForEtw());
@@ -586,7 +594,7 @@ namespace System
             Contract.Ensures(Contract.Result<String[]>() != null);
             Contract.EndContractBlock();
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumGetNames(enumType.GetFullNameForEtw());
@@ -668,7 +676,7 @@ namespace System
             if (enumType == null)
                 throw new ArgumentNullException("enumType");
             Contract.EndContractBlock();
-#if !FEATURE_CORECLR            
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumIsDefined(enumType.GetFullNameForEtw());
@@ -696,7 +704,7 @@ namespace System
             RuntimeType rtType = enumType as RuntimeType;
             if (rtType == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "enumType");
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.BeginEnumFormat(rtType.GetFullNameForEtw());
@@ -726,7 +734,7 @@ namespace System
                 // all acceptable format string are of length 1
                 throw new FormatException(Environment.GetResourceString("Format_InvalidEnumFormatSpecification"));
             }
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EndEnumFormat(rtType.GetFullNameForEtw());
@@ -771,10 +779,18 @@ namespace System
         }
         #endregion
 
+#if MONO
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        extern object get_value ();
+#endif
+
         #region Private Methods
         [System.Security.SecuritySafeCritical]
         internal unsafe Object GetValue()
         {
+#if MONO
+            return get_value ();
+#else
             fixed (void* pValue = &JitHelpers.GetPinningHelper(this).m_data)
             {
                 switch (InternalGetCorElementType())
@@ -812,6 +828,7 @@ namespace System
                         return null;
                 }
             }
+#endif
         }
 
         [System.Security.SecurityCritical]  // auto-generated
@@ -822,19 +839,31 @@ namespace System
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+#if MONO
+        private extern int get_hashcode ();
+#else
         private extern CorElementType InternalGetCorElementType();
-
+#endif
         #endregion
 
         #region Object Overrides
+#if MONO
+        public override bool Equals (object obj)
+        {
+            return DefaultEquals (this, obj);
+        }
+#else
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public extern override bool Equals(Object obj);
-
+#endif
         [System.Security.SecuritySafeCritical]
         public override unsafe int GetHashCode()
         {
+#if MONO
+            return get_hashcode ();
+#else
             // Avoid boxing by inlining GetValue()
             // return GetValue().GetHashCode();
 
@@ -875,6 +904,7 @@ namespace System
                         return 0;
                 }
             }
+#endif
         }
 
         public override String ToString()
@@ -1138,7 +1168,7 @@ namespace System
             RuntimeType rtType = enumType as RuntimeType;
             if (rtType == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "enumType");
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumToObject(enumType.GetFullNameForEtw());
@@ -1159,7 +1189,7 @@ namespace System
             RuntimeType rtType = enumType as RuntimeType;
             if (rtType == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "enumType");
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumToObject(enumType.GetFullNameForEtw());
@@ -1180,7 +1210,7 @@ namespace System
             RuntimeType rtType = enumType as RuntimeType;
             if (rtType == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "enumType");
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumToObject(enumType.GetFullNameForEtw());
@@ -1201,7 +1231,7 @@ namespace System
             RuntimeType rtType = enumType as RuntimeType;
             if (rtType == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "enumType");
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumToObject(enumType.GetFullNameForEtw());
@@ -1223,7 +1253,7 @@ namespace System
             RuntimeType rtType = enumType as RuntimeType;
             if (rtType == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "enumType");
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumToObject(enumType.GetFullNameForEtw());
@@ -1245,7 +1275,7 @@ namespace System
             RuntimeType rtType = enumType as RuntimeType;
             if (rtType == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "enumType");
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumToObject(enumType.GetFullNameForEtw());
@@ -1266,7 +1296,7 @@ namespace System
             RuntimeType rtType = enumType as RuntimeType;
             if (rtType == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "enumType");
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumToObject(enumType.GetFullNameForEtw());
@@ -1288,7 +1318,7 @@ namespace System
             RuntimeType rtType = enumType as RuntimeType;
             if (rtType == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "enumType");
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.EnumToObject(enumType.GetFullNameForEtw());
