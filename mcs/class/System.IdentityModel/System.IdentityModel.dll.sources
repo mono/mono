@@ -1,9 +1,14 @@
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+../../build/common/SR.cs
 Assembly/AssemblyInfo.cs
 System.IdentityModel/CookieTransform.cs
 System.IdentityModel/OpenObject.cs
 System.IdentityModel/SignatureVerificationFailedException.cs
+System.IdentityModel.Res.cs
+ReferenceSources/DiagnosticStrings.cs
+ReferenceSources/DiagnosticUtility.cs
+ReferenceSources/TraceUtility.cs
 ../../../external/referencesource/System.IdentityModel/System/IdentityModel/DiagnosticUtilityExtensions.cs
 ../../../external/referencesource/System.IdentityModel/System/IdentityModel/DictionaryManager.cs
 ../../../external/referencesource/System.IdentityModel/System/IdentityModel/IdentityModelDictionary.cs
