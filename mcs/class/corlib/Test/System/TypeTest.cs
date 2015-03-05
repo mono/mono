@@ -3758,7 +3758,7 @@ namespace MonoTests.System
 			try {
 				typeof (MyRealEnum).IsEnumDefined (typeof (MyRealEnum));
 				Assert.Fail ("#8");
-			} catch (ArgumentException) { }
+			} catch (InvalidOperationException) { }
 
 			Assert.IsTrue (typeof (MyRealEnum).IsEnumDefined ((short)0), "#9");
 			Assert.IsFalse (typeof (MyRealEnum).IsEnumDefined ((short)88), "#10");

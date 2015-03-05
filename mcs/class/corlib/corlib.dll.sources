@@ -137,7 +137,6 @@ System/Double.cs
 System/DuplicateWaitObjectException.cs
 System/EmptyArray.cs
 System/EntryPointNotFoundException.cs
-System/Enum.cs
 System/Environment.cs
 System/EnvironmentVariableTarget.cs
 System/EventArgs.cs
@@ -1418,6 +1417,7 @@ ReferenceSources/ReflectionOnlyType.cs
 ../../../external/referencesource/mscorlib/system/defaultbinder.cs
 ../../../external/referencesource/mscorlib/system/dbnull.cs
 ../../../external/referencesource/mscorlib/system/empty.cs
+../../../external/referencesource/mscorlib/system/enum.cs
 ../../../external/referencesource/mscorlib/system/guid.cs
 ../../../external/referencesource/mscorlib/system/int16.cs
 ../../../external/referencesource/mscorlib/system/int32.cs

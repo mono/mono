@@ -56,6 +56,8 @@ namespace System
 		
 	abstract class RuntimeType : TypeInfo
 	{
+		private static readonly RuntimeType StringType = (RuntimeType)typeof(System.String);
+
 		private static readonly RuntimeType DelegateType = (RuntimeType)typeof(System.Delegate);
 
 		internal RuntimeAssembly GetRuntimeAssembly ()
@@ -712,7 +714,133 @@ namespace System
 			}
 
 			return ctor.InternalInvoke (null, null);
-		}        
+		}
+
+        #region Enums
+        public override string[] GetEnumNames()
+        {
+            if (!IsEnum)
+                throw new ArgumentException(Environment.GetResourceString("Arg_MustBeEnum"), "enumType");
+            Contract.EndContractBlock();
+
+            String[] ret = Enum.InternalGetNames(this);
+
+            // Make a copy since we can't hand out the same array since users can modify them
+            String[] retVal = new String[ret.Length];
+
+            Array.Copy(ret, retVal, ret.Length);
+
+            return retVal;
+        }
+
+        [SecuritySafeCritical]
+        public override Array GetEnumValues()
+        {
+            if (!IsEnum)
+                throw new ArgumentException(Environment.GetResourceString("Arg_MustBeEnum"), "enumType");
+            Contract.EndContractBlock();
+
+            // Get all of the values
+            ulong[] values = Enum.InternalGetValues(this);
+
+            // Create a generic Array
+            Array ret = Array.UnsafeCreateInstance(this, values.Length);
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                Object val = Enum.ToObject(this, values[i]);
+                ret.SetValue(val, i);
+            }
+
+            return ret;
+        }
+
+        public override Type GetEnumUnderlyingType()
+        {
+            if (!IsEnum)
+                throw new ArgumentException(Environment.GetResourceString("Arg_MustBeEnum"), "enumType");
+            Contract.EndContractBlock();
+
+            return Enum.InternalGetUnderlyingType(this);
+        }
+
+        public override bool IsEnumDefined(object value)
+        {
+            if (value == null)
+                throw new ArgumentNullException("value");
+            Contract.EndContractBlock();
+
+            // Check if both of them are of the same type
+            RuntimeType valueType = (RuntimeType)value.GetType();
+
+            // If the value is an Enum then we need to extract the underlying value from it
+            if (valueType.IsEnum)
+            {
+                if (!valueType.IsEquivalentTo(this))
+                    throw new ArgumentException(Environment.GetResourceString("Arg_EnumAndObjectMustBeSameType", valueType.ToString(), this.ToString()));
+
+                valueType = (RuntimeType)valueType.GetEnumUnderlyingType();
+            }
+
+            // If a string is passed in
+            if (valueType == RuntimeType.StringType)
+            {
+                // Get all of the Fields, calling GetHashEntry directly to avoid copying
+                string[] names = Enum.InternalGetNames(this);
+                if (Array.IndexOf(names, value) >= 0)
+                    return true;
+                else
+                    return false;
+            }
+
+            // If an enum or integer value is passed in
+            if (Type.IsIntegerType(valueType))
+            {
+                RuntimeType underlyingType = Enum.InternalGetUnderlyingType(this);
+                if (underlyingType != valueType)
+                    throw new ArgumentException(Environment.GetResourceString("Arg_EnumUnderlyingTypeAndObjectMustBeSameType", valueType.ToString(), underlyingType.ToString()));
+
+                ulong[] ulValues = Enum.InternalGetValues(this);
+                ulong ulValue = Enum.ToUInt64(value);
+
+                return (Array.BinarySearch(ulValues, ulValue) >= 0);
+            }
+            else if (CompatibilitySwitches.IsAppEarlierThanWindowsPhone8)
+            {
+                // if at this point the value type is not an integer type, then its type doesn't match the enum type
+                // NetCF used to throw an argument exception in this case
+                throw new ArgumentException(Environment.GetResourceString("Arg_EnumUnderlyingTypeAndObjectMustBeSameType", valueType.ToString(), GetEnumUnderlyingType()));
+            }
+            else
+            {
+                throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_UnknownEnumType"));
+            }
+        }
+
+        public override string GetEnumName(object value)
+        {
+            if (value == null)
+                throw new ArgumentNullException("value");
+            Contract.EndContractBlock();
+
+            Type valueType = value.GetType();
+
+            if (!(valueType.IsEnum || IsIntegerType(valueType)))
+                throw new ArgumentException(Environment.GetResourceString("Arg_MustBeEnumBaseTypeOrEnum"), "value");
+
+            ulong[] ulValues = Enum.InternalGetValues(this);
+            ulong ulValue = Enum.ToUInt64(value);
+            int index = Array.BinarySearch(ulValues, ulValue);
+
+            if (index >= 0)
+            {
+                string[] names = Enum.InternalGetNames(this);
+                return names[index];
+            }
+
+            return null;
+        }
+        #endregion	
 
 		internal abstract MonoCMethod GetDefaultConstructor ();
 
@@ -1453,11 +1581,25 @@ namespace System
 		}
 
 
-		public override Array GetEnumValues () {
-			if (!IsEnum)
-				throw new ArgumentException ("Type is not an enumeration", "enumType");
+		public override Array GetEnumValues ()
+		{
+            if (!IsEnum)
+                throw new ArgumentException(Environment.GetResourceString("Arg_MustBeEnum"), "enumType");
+            Contract.EndContractBlock();
 
-			return Enum.GetValues (this);
+            // Get all of the values
+            ulong[] values = Enum.InternalGetValues(this);
+
+            // Create a generic Array
+            Array ret = Array.UnsafeCreateInstance(this, values.Length);
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                Object val = Enum.ToObject(this, values[i]);
+                ret.SetValue(val, i);
+            }
+
+            return ret;
 		}
 
 		static MethodBase CheckMethodSecurity (MethodBase mb)
