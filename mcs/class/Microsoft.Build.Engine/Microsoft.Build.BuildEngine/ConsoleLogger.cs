@@ -28,6 +28,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -277,7 +278,7 @@ namespace Microsoft.Build.BuildEngine
 				ParseParameters ();
 		}
 		
-		Dictionary<object,BuildRecord> build_records = new Dictionary<object, BuildRecord> ();
+		ConcurrentDictionary<object,BuildRecord> build_records = new ConcurrentDictionary<object, BuildRecord> ();
 		
 		object dummy_key = new object ();
 		
@@ -292,11 +293,7 @@ namespace Microsoft.Build.BuildEngine
 			// only Microsoft.Build.Internal.BuildEngine4 implements it so far. 
 			// (Used IBuildEngine3 because it needs to build for NET_4_0).
 			var key = sender as IBuildEngine3 ?? dummy_key;
-			if (!build_records.TryGetValue (key, out r)) {
-				r = new BuildRecord (this);
-				build_records.Add (key, r);
-			}
-			return r;
+			return build_records.GetOrAdd (key, _ => new BuildRecord (this));
 		}
 
 		public void BuildStartedHandler (object sender, BuildStartedEventArgs args)
@@ -307,7 +304,7 @@ namespace Microsoft.Build.BuildEngine
 		public void BuildFinishedHandler (object sender, BuildFinishedEventArgs args)
 		{
 			GetBuildRecord (sender).BuildFinishedHandler (args);
-			build_records.Remove (sender);
+			((IDictionary) build_records).Remove (sender);
 		}
 		
 		void PushEvent<T> (object sender, T args) where T: BuildStatusEventArgs
