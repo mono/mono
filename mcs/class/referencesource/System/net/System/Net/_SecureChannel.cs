@@ -385,7 +385,9 @@ namespace System.Net.Security {
                 // demand the same permissions, then we should remove our
                 // demand here.
                 //
+                #if !DISABLE_CAS_USE
                 ExceptionHelper.KeyContainerPermissionOpen.Demand(); 
+                #endif
                 
                 X509Certificate2Collection collectionEx;
 
