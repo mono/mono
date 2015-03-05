@@ -367,9 +367,10 @@ namespace MonoTests.System
 
 			// Tests for byref types
 			Type paramType = typeof (TypeTest).GetMethod ("ByrefMethod", BindingFlags.Instance|BindingFlags.NonPublic).GetParameters () [0].ParameterType;
-			Assert.IsTrue (!paramType.IsSubclassOf (typeof (ValueType)), "#02");
-			//Assert.IsTrue (paramType.IsSubclassOf (typeof (Object)), "#03");
-			Assert.IsTrue (!paramType.IsSubclassOf (paramType), "#04");
+			Assert.IsFalse (paramType.IsSubclassOf (typeof(ValueType)), "#02");
+			Assert.IsNull (paramType.BaseType, "#02-b");
+			Assert.IsTrue (paramType.IsSubclassOf (typeof (Object)), "#03");
+			Assert.IsFalse (paramType.IsSubclassOf (paramType), "#04");
 		}
 
 		[Test]
@@ -3197,7 +3198,7 @@ namespace MonoTests.System
 				obj = GetType ().GetMember ("DummyMember", memtype,
 						BindingFlags.Public | BindingFlags.Instance);
 				Assert.AreEqual (testtype.GetHashCode (), obj.GetType ().GetHashCode (),
-						"Expected " + testtype.FullName);
+						"Expected #" + i + " " + testtype.FullName);
 			}
 
 		}
