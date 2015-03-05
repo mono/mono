@@ -472,6 +472,7 @@ namespace System.ServiceModel.Dispatcher
 
 			void WriteObject (XmlObjectSerializer serializer, XmlDictionaryWriter writer, object value)
 			{
+				if (serializer != null){
 #if NET_2_1
 					if (serializer is DataContractJsonSerializer)
 						((DataContractJsonSerializer) serializer).WriteObject (writer, value);
@@ -480,6 +481,7 @@ namespace System.ServiceModel.Dispatcher
 #else
 					serializer.WriteObject (writer, value);
 #endif
+				}
 			}
 		}
 
