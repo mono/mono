@@ -35,6 +35,7 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.Net;
 
 namespace MonoTests.System.ServiceModel.Web
 {
@@ -134,6 +135,37 @@ namespace MonoTests.System.ServiceModel.Web
 			}
 		}
 
+		[Test]
+		public void Connect ()
+		{
+			var host = new WebServiceHost (typeof (DemoService), new Uri
+						       ("http://localhost:30158/"));
+			try {
+				host.Open ();
+				var wc = new WebClient();
+				wc.DownloadString("http://localhost:30158/testData");
+				Console.WriteLine();
+			} finally {
+				host.Close();
+			}
+		}
+		
+		[ServiceContract]
+		interface IDemoService {
+			[OperationContract]
+			[WebInvoke(UriTemplate = "/{testData}",
+				   Method = "GET",
+				   RequestFormat = WebMessageFormat.Json,
+				   ResponseFormat = WebMessageFormat.Json)]
+			void UpdateAttribute(string testData);
+		}
+
+		public class DemoService : IDemoService {
+			public void UpdateAttribute(string testData)
+			{
+				Console.WriteLine ("got it: "+testData);
+			}
+		}
 	}
 }
 #endif
