@@ -49,6 +49,7 @@ static uint64_t time_to = 0xffffffffffffffffULL;
 static int use_time_filter = 0;
 static uint64_t startup_time = 0;
 static FILE* outfile = NULL;
+static FILE* coverage_outfile = NULL;
 
 static int32_t
 read_int16 (unsigned char *p)
@@ -1204,7 +1205,7 @@ heap_shot_obj_add_refs (HeapShot *hs, uintptr_t objaddr, uintptr_t num, uintptr_
 	/* should not happen */
 	printf ("failed heap obj update\n");
 	return NULL;
-	
+
 }
 
 static uintptr_t
@@ -1489,7 +1490,7 @@ load_data (ProfContext *ctx, int size)
 		if (r == 0)
 			return size == 0? 1: 0;
 		return r == size;
-	} else 
+	} else
 #endif
 	{
 		int r = fread (ctx->buf, size, 1, ctx->file);
@@ -1883,7 +1884,7 @@ track_obj_reference (uintptr_t obj, uintptr_t parent, ClassDesc *cd)
 {
 	int i;
 	for (i = 0; i < num_tracked_objects; ++i) {
-		if (tracked_objects [i] == obj) 
+		if (tracked_objects [i] == obj)
 			fprintf (outfile, "Object %p referenced from %p (%s).\n", (void*)obj, (void*)parent, cd->name);
 	}
 }
@@ -3226,6 +3227,52 @@ dump_heap_shots (void)
 	}
 }
 
+/* This is a very basic escape function that escapes < > and &
+   Ideally we'd use g_markup_escape_string but that function isn't
+	 available in Mono's eglib. This was written without looking at the
+	 source of that function in glib. */
+static char *
+escape_string_for_xml (const char *string)
+{
+	GString *string_builder = g_string_new (NULL);
+	const char *start, *p;
+
+	start = p = string;
+	while (*p) {
+		while (*p && *p != '&' && *p != '<' && *p != '>') {
+			p++;
+		}
+
+		g_string_append_len (string_builder, start, p - start);
+
+		if (*p == '\0') {
+			break;
+		}
+
+		switch (*p) {
+		case '<':
+			g_string_append (string_builder, "&lt;");
+			break;
+
+		case '>':
+			g_string_append (string_builder, "&gt;");
+			break;
+
+		case '&':
+			g_string_append (string_builder, "&amp;");
+			break;
+
+		default:
+			break;
+		}
+
+		p++;
+		start = p;
+	}
+
+	return g_string_free (string_builder, FALSE);
+}
+
 static void
 dump_coverage (void)
 {
@@ -3234,10 +3281,27 @@ dump_coverage (void)
 
 	gather_coverage_statements ();
 	fprintf (outfile, "\nCoverage Summary:\n");
+
+	if (coverage_outfile) {
+		fprintf (coverage_outfile, "<?xml version=\"1.0\"?>\n");
+		fprintf (coverage_outfile, "<coverage version=\"0.3\">\n");
+	}
+
 	for (int i = 0; i < coverage_assemblies->len; i++) {
 		CoverageAssembly *assembly = coverage_assemblies->pdata[i];
 		int percentage = ((assembly->fully_covered + assembly->partially_covered) * 100) / assembly->number_of_methods;
 		fprintf (outfile, "\t%s (%s) %d%% covered (%d methods - %d covered)\n", assembly->name, assembly->filename, percentage, assembly->number_of_methods, assembly->fully_covered);
+
+		if (coverage_outfile) {
+			char *escaped_name, *escaped_filename;
+			escaped_name = escape_string_for_xml (assembly->name);
+			escaped_filename = escape_string_for_xml (assembly->filename);
+
+			fprintf (coverage_outfile, "\t<assembly name=\"%s\" guid=\"%s\" filename=\"%s\" method-count=\"%d\" full=\"%d\" partial=\"%d\"/>\n", escaped_name, assembly->guid, escaped_filename, assembly->number_of_methods, assembly->fully_covered, assembly->partially_covered);
+
+			g_free (escaped_name);
+			g_free (escaped_filename);
+		}
 	}
 
 	for (int i = 0; i < coverage_methods->len; i++) {
@@ -3245,8 +3309,39 @@ dump_coverage (void)
 
 		/* Sanity check */
 		if (method->n_statements != method->coverage->len) {
-			fprintf(outfile, "Incorrect number of statements for %s:%s (%d expected, have %d)\n", method->class_name, method->method_name, method->n_statements, method->coverage->len);
+			fprintf (outfile, "Incorrect number of statements for %s:%s (%d expected, have %d)\n", method->class_name, method->method_name, method->n_statements, method->coverage->len);
 		}
+
+		if (coverage_outfile) {
+			char *escaped_assembly, *escaped_class, *escaped_method, *escaped_sig;
+
+			escaped_assembly = escape_string_for_xml (method->assembly_name);
+			escaped_class = escape_string_for_xml (method->class_name);
+			escaped_method = escape_string_for_xml (method->method_name);
+			escaped_sig = escape_string_for_xml (method->method_signature);
+
+			fprintf (coverage_outfile, "\t<method assembly=\"%s\" class=\"%s\" name=\"%s (%s)\" token=\"%d\">\n", escaped_assembly, escaped_class, escaped_method, escaped_sig, method->token);
+
+			g_free (escaped_assembly);
+			g_free (escaped_class);
+			g_free (escaped_method);
+			g_free (escaped_sig);
+
+			for (int j = 0; j < method->coverage->len; j++) {
+				CoverageCoverage *coverage = method->coverage->pdata[j];
+				char *escaped_filename = escape_string_for_xml (coverage->filename ? coverage->filename : "");
+				fprintf (coverage_outfile, "\t\t<statement offset=\"%d\" counter=\"%d\" filename=\"%s\" line=\"%d\" column=\"%d\"/>\n", coverage->offset, coverage->count, escaped_filename, coverage->line, coverage->column);
+
+				g_free (escaped_filename);
+			}
+			fprintf (coverage_outfile, "\t</method>\n");
+		}
+	}
+
+	if (coverage_outfile) {
+		fprintf (coverage_outfile, "</coverage>\n");
+		fclose (coverage_outfile);
+		coverage_outfile = NULL;
 	}
 }
 
@@ -3377,7 +3472,7 @@ usage (void)
 	printf ("Options:\n");
 	printf ("\t--help               display this help\n");
 	printf ("\t--out=FILE           write to FILE instead of stdout\n");
-	printf ("\t--traces             collect and show backtraces\n"); 
+	printf ("\t--traces             collect and show backtraces\n");
 	printf ("\t--maxframes=NUM      limit backtraces to NUM entries\n");
 	printf ("\t--reports=R1[,R2...] print the specified reports. Defaults are:\n");
 	printf ("\t                     %s\n", reports);
@@ -3392,6 +3487,7 @@ usage (void)
 	printf ("\t--time=FROM-TO       consider data FROM seconds from startup up to TO seconds\n");
 	printf ("\t--verbose            increase verbosity level\n");
 	printf ("\t--debug              display decoding debug info for mprof-report devs\n");
+	printf ("\t--coverage-out=FILE  write the coverage info to FILE as XML\n");
 }
 
 int
@@ -3503,6 +3599,13 @@ main (int argc, char *argv[])
 		} else if (strcmp ("--traces", argv [i]) == 0) {
 			show_traces = 1;
 			collect_traces = 1;
+		} else if (strncmp ("--coverage-out=", argv [i], 15) == 0) {
+			const char *val = argv [i] + 15;
+			coverage_outfile = fopen (val, "w");
+			if (!coverage_outfile) {
+				printf ("Cannot open output file: %s\n", val);
+				return 1;
+			}
 		} else {
 			break;
 		}
@@ -3523,4 +3626,3 @@ main (int argc, char *argv[])
 	print_reports (ctx, reports, 0);
 	return 0;
 }
-
