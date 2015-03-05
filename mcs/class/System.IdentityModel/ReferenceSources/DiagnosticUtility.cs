@@ -19,7 +19,26 @@ namespace System.IdentityModel
 
     static partial class DiagnosticUtility
     {
+	public static class Utility
+	{
+		public static byte[] AllocateByteArray(int size)
+		{
+			return System.Runtime.Fx.AllocateByteArray (size);
+		}
+	}
+
+	// FIXME: implement?
+	public static SomeTraceType DiagnosticTrace { get; set; }
+
+	public class SomeTraceType
+	{
+		public bool ShouldLogPii { get; set; }
+		public TraceSource TraceSource { get; set; }
+	}
+
         public static bool ShouldTraceError { get; set; }
+        public static bool ShouldTraceInformation { get; set; }
+        public static bool ShouldTraceVerbose { get; set; }
 
 	public static void DebugAssert(bool condition, string format, params object[] parameters)
 	{
@@ -45,6 +64,11 @@ namespace System.IdentityModel
 
     public static class ExceptionUtility
     {
+        internal static Exception ThrowHelperWarning(Exception exception)
+        {
+	    return exception;
+        }
+
 	internal static Exception ThrowHelperError(Exception exception)
 	{
 	    return exception;
@@ -78,7 +102,13 @@ namespace System.IdentityModel
         {
 		throw new ArgumentNullException (paramName);
         }
+
     }
+
+        public static void TraceHandledException(Exception exception, TraceEventType traceEventType)
+        {
+		throw new NotImplementedException ();
+        }
 
     }
 }

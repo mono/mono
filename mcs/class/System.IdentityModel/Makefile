@@ -7,8 +7,9 @@ OTHER_LIB_MCS_FLAGS = -r:System.Web.ApplicationServices.dll
 endif
 
 LIBRARY = System.IdentityModel.dll
-LIB_REFS = System System.Xml System.Security System.Web System.Configuration Mono.Security System.Runtime.Serialization System.ServiceModel.Internals
+LIB_REFS = System System.Core System.Xml System.Security System.Web System.Configuration Mono.Security System.Runtime.Serialization System.ServiceModel.Internals
 LIB_MCS_FLAGS = \
+		/unsafe		\
 		/d:NET_3_0	\
 	        $(OTHER_LIB_MCS_FLAGS)
 

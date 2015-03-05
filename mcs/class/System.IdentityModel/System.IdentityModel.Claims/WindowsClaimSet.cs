@@ -88,6 +88,11 @@ namespace System.IdentityModel.Claims
 
 		// Methods
 
+		public WindowsClaimSet Clone ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public void Dispose ()
 		{
