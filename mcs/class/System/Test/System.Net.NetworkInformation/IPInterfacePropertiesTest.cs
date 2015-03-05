@@ -66,7 +66,11 @@ namespace MonoTests.System.Net.NetworkInformation
 				IPAddressCollection dnsAddresses = adapterProperties.DnsAddresses;
 				numDnsAddresses += dnsAddresses.Count;
 			}
+			// reading /etc/resolve.conf does not work on iOS devices (but works on simulator)
+			// ref: https://bugzilla.xamarin.com/show_bug.cgi?id=27707
+#if !MONOTOUCH
 			Assert.IsTrue (numDnsAddresses > 0);
+#endif
 		}
 	
 	}
