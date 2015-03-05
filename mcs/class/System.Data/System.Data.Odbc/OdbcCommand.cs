@@ -337,7 +337,7 @@ namespace System.Data.Odbc
 
 			BindParameters ();
 			ret = libodbc.SQLExecute (hstmt);
-			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo && ret != OdbcReturn.NoData)
 				throw connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 		}
 
