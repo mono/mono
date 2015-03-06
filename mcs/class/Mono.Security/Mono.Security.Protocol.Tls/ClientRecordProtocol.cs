@@ -160,13 +160,6 @@ namespace Mono.Security.Protocol.Tls
 					return new TlsServerCertificate(this.context, buffer);
 
 					// Optional
-				case HandshakeType.ServerKeyExchange:
-					// only for RSA_EXPORT
-					if (last == HandshakeType.Certificate && context.Current.Cipher.IsExportable)
-						return new TlsServerKeyExchange(this.context, buffer);
-					break;
-
-					// Optional
 				case HandshakeType.CertificateRequest:
 					if (last == HandshakeType.ServerKeyExchange || last == HandshakeType.Certificate)
 						return new TlsServerCertificateRequest(this.context, buffer);
