@@ -3238,6 +3238,7 @@ usage (int do_exit)
 	printf ("\tfilter=ASSEMBLY  add an assembly to the code coverage filters\n");
 	printf ("\t                 add a + to include the assembly or a - to exclude it\n");
 	printf ("\t                 filter=-mscorlib\n");
+	printf ("\tffile=FILE       use FILE to generate the list of assemblies to be filtered\n");
 	if (do_exit)
 		exit (1);
 }
@@ -3526,6 +3527,33 @@ mono_profiler_startup (const char *desc)
 				filters = g_ptr_array_new ();
 			}
 			g_ptr_array_add (filters, val);
+			continue;
+		}
+		if ((opt = match_option (p, "ffile", &val)) != p) {
+			FILE *filter_file;
+			char *line;
+			size_t n;
+
+			if (filters == NULL) {
+				filters = g_ptr_array_new ();
+			}
+
+			filter_file = fopen (val, "r");
+			if (filter_file == NULL) {
+				fprintf (stderr, "Unable to open %s\n", val);
+				exit (0);
+			}
+
+			n = 0;
+			line = NULL;
+			while (getline (&line, &n, filter_file) > -1) {
+				g_ptr_array_add (filters, g_strchug (g_strchomp (line)));
+				n = 0;
+				line = NULL;
+			}
+
+			fclose (filter_file);
+			continue;
 		}
 		if (opt == p) {
 			usage (0);
