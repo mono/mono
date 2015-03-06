@@ -123,45 +123,15 @@ namespace Mono.Security.Protocol.Tls
 			this.Context.ClientWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
 			this.Context.ServerWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
 
-			if (!this.IsExportable)
+			if (this.IvSize != 0)
 			{
-				if (this.IvSize != 0)
-				{
-					this.Context.ClientWriteIV = keyBlock.ReadBytes(this.IvSize);
-					this.Context.ServerWriteIV = keyBlock.ReadBytes(this.IvSize);
-				}
-				else
-				{
-					this.Context.ClientWriteIV = CipherSuite.EmptyArray;
-					this.Context.ServerWriteIV = CipherSuite.EmptyArray;
-				}
+				this.Context.ClientWriteIV = keyBlock.ReadBytes(this.IvSize);
+				this.Context.ServerWriteIV = keyBlock.ReadBytes(this.IvSize);
 			}
 			else
 			{
-				// Generate final write keys
-				byte[] finalClientWriteKey	= PRF(this.Context.ClientWriteKey, "client write key", this.Context.RandomCS, this.ExpandedKeyMaterialSize);
-				byte[] finalServerWriteKey	= PRF(this.Context.ServerWriteKey, "server write key", this.Context.RandomCS, this.ExpandedKeyMaterialSize);
-				
-				this.Context.ClientWriteKey	= finalClientWriteKey;
-				this.Context.ServerWriteKey	= finalServerWriteKey;
-
-				if (this.IvSize > 0) 
-				{
-					// Generate IV block
-					byte[] ivBlock = PRF(CipherSuite.EmptyArray, "IV block", this.Context.RandomCS, this.IvSize*2);
-
-					// Generate IV keys
-					this.Context.ClientWriteIV = new byte[this.IvSize];				
-					Buffer.BlockCopy(ivBlock, 0, this.Context.ClientWriteIV, 0, this.Context.ClientWriteIV.Length);
-
-					this.Context.ServerWriteIV = new byte[this.IvSize];
-					Buffer.BlockCopy(ivBlock, this.IvSize, this.Context.ServerWriteIV, 0, this.Context.ServerWriteIV.Length);
-				}
-				else 
-				{
-					this.Context.ClientWriteIV = CipherSuite.EmptyArray;
-					this.Context.ServerWriteIV = CipherSuite.EmptyArray;
-				}
+				this.Context.ClientWriteIV = CipherSuite.EmptyArray;
+				this.Context.ServerWriteIV = CipherSuite.EmptyArray;
 			}
 
 			DebugHelper.WriteLine(">>>> KeyBlock", keyBlock.ToArray());
