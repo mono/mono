@@ -164,9 +164,7 @@ namespace System.Runtime.Serialization.Json
 		{
 			var sb = new StringBuilder ();
 			
-			bool negative = false;
 			if (PeekChar () == '-') {
-				negative = true;
 				sb.Append ((char) ReadChar ());
 			}
 
