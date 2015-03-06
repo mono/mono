@@ -2729,6 +2729,9 @@ coverage_filter (MonoProfiler *prof, MonoMethod *method)
 	char *fqn, *classname;
 	gboolean has_positive, found;
 
+	if (!coverage_initialized)
+		return FALSE;
+
 	flags = mono_method_get_flags (method, &iflags);
 	if ((iflags & 0x1000 /*METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL*/) ||
 	    (flags & 0x2000 /*METHOD_ATTRIBUTE_PINVOKE_IMPL*/))
@@ -3559,7 +3562,8 @@ mono_profiler_startup (const char *desc)
 	mono_profiler_install_exception (throw_exc, method_exc_leave, clause_exc);
 	mono_profiler_install_monitor (monitor_event);
 	mono_profiler_install_runtime_initialized (runtime_initialized);
-	mono_profiler_install_coverage_filter (coverage_filter);
+	if (do_coverage)
+		mono_profiler_install_coverage_filter (coverage_filter);
 
 	if (do_mono_sample && sample_type == SAMPLE_CYCLES && !only_counters) {
 		events |= MONO_PROFILE_STATISTICAL;
