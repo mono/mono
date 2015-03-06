@@ -88,6 +88,8 @@ namespace Mono.Security.Protocol.Tls
 			} else {
 				ctx.StartSwitchingSecurityParameters (false);
 			}
+
+			ctx.ChangeCipherSpecDone = true;
 		}
 
 		public virtual HandshakeMessage GetMessage(HandshakeType type)
@@ -347,9 +349,6 @@ namespace Mono.Security.Protocol.Tls
 
 				// Try to read the Record Content Type
 				int type = internalResult.InitialBuffer[0];
-
-				// Set last handshake message received to None
-				this.context.LastHandshakeMsg = HandshakeType.ClientHello;
 
 				ContentType	contentType	= (ContentType)type;
 				byte[] buffer = this.ReadRecordBuffer(type, record);
