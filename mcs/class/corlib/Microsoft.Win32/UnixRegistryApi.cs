@@ -93,9 +93,25 @@ namespace Microsoft.Win32 {
 		}
 	}
 
+	class RegistryKeyComparer : IEqualityComparer {
+		public new bool Equals(object x, object y)
+		{
+			return RegistryKey.IsEquals ((RegistryKey) x, (RegistryKey) y);
+			
+		}
+
+		public int GetHashCode(object obj)
+		{
+			var n = ((RegistryKey) obj).Name;
+			if (n == null)
+				return 0;
+			return n.GetHashCode ();
+		}
+	}
+	
 	class KeyHandler
 	{
-		static Hashtable key_to_handler = new Hashtable ();
+		static Hashtable key_to_handler = new Hashtable (new RegistryKeyComparer ());
 		static Hashtable dir_to_handler = new Hashtable (
 			new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
 		const string VolatileDirectoryName = "volatile-keys";
@@ -487,7 +503,11 @@ namespace Microsoft.Win32 {
 		{
 			if (name == null)
 				return RegistryValueKind.Unknown;
-			object value = values [name];
+			object value;
+			
+			lock (values)
+				value = values [name];
+			
 			if (value == null)
 				return RegistryValueKind.Unknown;
 
@@ -513,7 +533,9 @@ namespace Microsoft.Win32 {
 
 			if (name == null)
 				name = string.Empty;
-			object value = values [name];
+			object value;
+			lock (values)
+				value = values [name];
 			ExpandString exp = value as ExpandString;
 			if (exp == null)
 				return value;
@@ -530,12 +552,14 @@ namespace Microsoft.Win32 {
 			if (name == null)
 				name = string.Empty;
 
-			// immediately convert non-native registry values to string to avoid
-			// returning it unmodified in calls to UnixRegistryApi.GetValue
-			if (value is int || value is string || value is byte[] || value is string[])
-				values[name] = value;
-			else
-				values[name] = value.ToString ();
+			lock (values){
+				// immediately convert non-native registry values to string to avoid
+				// returning it unmodified in calls to UnixRegistryApi.GetValue
+				if (value is int || value is string || value is byte[] || value is string[])
+					values[name] = value;
+				else
+					values[name] = value.ToString ();
+			}
 			SetDirty ();
 		}
 
@@ -543,11 +567,13 @@ namespace Microsoft.Win32 {
 		{
 			AssertNotMarkedForDeletion ();
 
-			ICollection keys = values.Keys;
-
-			string [] vals = new string [keys.Count];
-			keys.CopyTo (vals, 0);
-			return vals;
+			lock (values){
+				ICollection keys = values.Keys;
+				
+				string [] vals = new string [keys.Count];
+				keys.CopyTo (vals, 0);
+				return vals;
+			}
 		}
 
 		public int GetSubKeyCount ()
@@ -600,52 +626,54 @@ namespace Microsoft.Win32 {
 			if (name == null)
 				name = string.Empty;
 
-			switch (valueKind){
-			case RegistryValueKind.String:
-				if (value is string){
-					values [name] = value;
-					return;
-				}
-				break;
-			case RegistryValueKind.ExpandString:
-				if (value is string){
-					values [name] = new ExpandString ((string)value);
-					return;
-				}
-				break;
-				
-			case RegistryValueKind.Binary:
-				if (value is byte []){
-					values [name] = value;
-					return;
-				}
-				break;
-				
-			case RegistryValueKind.DWord:
-				try {
-					values [name] = Convert.ToInt32 (value);
-					return;
-				} catch (OverflowException) {
+			lock (values){
+				switch (valueKind){
+				case RegistryValueKind.String:
+					if (value is string){
+						values [name] = value;
+						return;
+					}
 					break;
-				}
-				
-			case RegistryValueKind.MultiString:
-				if (value is string []){
-					values [name] = value;
-					return;
-				}
-				break;
-				
-			case RegistryValueKind.QWord:
-				try {
-					values [name] = Convert.ToInt64 (value);
-					return;
-				} catch (OverflowException) {
+				case RegistryValueKind.ExpandString:
+					if (value is string){
+						values [name] = new ExpandString ((string)value);
+						return;
+					}
 					break;
+					
+				case RegistryValueKind.Binary:
+					if (value is byte []){
+						values [name] = value;
+						return;
+					}
+					break;
+					
+				case RegistryValueKind.DWord:
+					try {
+						values [name] = Convert.ToInt32 (value);
+						return;
+					} catch (OverflowException) {
+						break;
+					}
+					
+				case RegistryValueKind.MultiString:
+					if (value is string []){
+						values [name] = value;
+						return;
+					}
+					break;
+					
+				case RegistryValueKind.QWord:
+					try {
+						values [name] = Convert.ToInt64 (value);
+						return;
+					} catch (OverflowException) {
+						break;
+					}
+					
+				default:
+					throw new ArgumentException ("unknown value", "valueKind");
 				}
-				
-			default:
-				throw new ArgumentException ("unknown value", "valueKind");
 			}
 			throw new ArgumentException ("Value could not be converted to specified type", "valueKind");
 		}
@@ -680,12 +708,14 @@ namespace Microsoft.Win32 {
 			if (name == null)
 				name = string.Empty;
 
-			return values.Contains (name);
+			lock (values)
+				return values.Contains (name);
 		}
 
 		public int ValueCount {
 			get {
-				return values.Keys.Count;
+				lock (values)
+					return values.Keys.Count;
 			}
 		}
 
@@ -699,7 +729,8 @@ namespace Microsoft.Win32 {
 		{
 			AssertNotMarkedForDeletion ();
 
-			values.Remove (name);
+			lock (values)
+				values.Remove (name);
 			SetDirty ();
 		}
 
@@ -713,45 +744,47 @@ namespace Microsoft.Win32 {
 			if (IsMarkedForDeletion)
 				return;
 
-			if (!File.Exists (file) && values.Count == 0)
-				return;
-
 			SecurityElement se = new SecurityElement ("values");
-			
-			// With SecurityElement.Text = value, and SecurityElement.AddAttribute(key, value)
-			// the values must be escaped prior to being assigned. 
-			foreach (DictionaryEntry de in values){
-				object val = de.Value;
-				SecurityElement value = new SecurityElement ("value");
-				value.AddAttribute ("name", SecurityElement.Escape ((string) de.Key));
 				
-				if (val is string){
-					value.AddAttribute ("type", "string");
-					value.Text = SecurityElement.Escape ((string) val);
-				} else if (val is int){
-					value.AddAttribute ("type", "int");
-					value.Text = val.ToString ();
-				} else if (val is long) {
-					value.AddAttribute ("type", "qword");
-					value.Text = val.ToString ();
-				} else if (val is byte []){
-					value.AddAttribute ("type", "bytearray");
-					value.Text = Convert.ToBase64String ((byte[]) val);
-				} else if (val is ExpandString){
-					value.AddAttribute ("type", "expand");
-					value.Text = SecurityElement.Escape (val.ToString ());
-				} else if (val is string []){
-					value.AddAttribute ("type", "string-array");
-
-					foreach (string ss in (string[]) val){
-						SecurityElement str = new SecurityElement ("string");
-						str.Text = SecurityElement.Escape (ss); 
-						value.AddChild (str);
+			lock (values){
+				if (!File.Exists (file) && values.Count == 0)
+					return;
+	
+				// With SecurityElement.Text = value, and SecurityElement.AddAttribute(key, value)
+				// the values must be escaped prior to being assigned. 
+				foreach (DictionaryEntry de in values){
+					object val = de.Value;
+					SecurityElement value = new SecurityElement ("value");
+					value.AddAttribute ("name", SecurityElement.Escape ((string) de.Key));
+					
+					if (val is string){
+						value.AddAttribute ("type", "string");
+						value.Text = SecurityElement.Escape ((string) val);
+					} else if (val is int){
+						value.AddAttribute ("type", "int");
+						value.Text = val.ToString ();
+					} else if (val is long) {
+						value.AddAttribute ("type", "qword");
+						value.Text = val.ToString ();
+					} else if (val is byte []){
+						value.AddAttribute ("type", "bytearray");
+						value.Text = Convert.ToBase64String ((byte[]) val);
+					} else if (val is ExpandString){
+						value.AddAttribute ("type", "expand");
+						value.Text = SecurityElement.Escape (val.ToString ());
+					} else if (val is string []){
+						value.AddAttribute ("type", "string-array");
+	
+						foreach (string ss in (string[]) val){
+							SecurityElement str = new SecurityElement ("string");
+							str.Text = SecurityElement.Escape (ss); 
+							value.AddChild (str);
+						}
 					}
+					se.AddChild (value);
 				}
-				se.AddChild (value);
 			}
-
+			
 			using (FileStream fs = File.Create (file)){
 				StreamWriter sw = new StreamWriter (fs);
 
@@ -969,8 +1002,9 @@ namespace Microsoft.Win32 {
 		private RegistryKey CreateSubKey (RegistryKey rkey, string keyname, bool writable, bool is_volatile)
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey, true);
-			if (self == null)
+			if (self == null){
 				throw RegistryKey.CreateMarkedForDeletionException ();
+			}
 			if (KeyHandler.VolatileKeyExists (self.Dir) && !is_volatile)
 				throw new IOException ("Cannot create a non volatile subkey under a volatile key.");
 

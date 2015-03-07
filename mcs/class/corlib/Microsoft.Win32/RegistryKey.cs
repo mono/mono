@@ -102,6 +102,11 @@ namespace Microsoft.Win32
 			isWritable = writable;
 		}
 
+		static internal bool IsEquals (RegistryKey a, RegistryKey b)
+		{
+			return a.hive == b.hive && a.handle == b.handle && a.qname == b.qname  && a.isRemoteRoot == b.isRemoteRoot && a.isWritable == b.isWritable;
+		}
+
 		#region PublicAPI
 
 		/// <summary>
@@ -114,17 +119,6 @@ namespace Microsoft.Win32
 			Close ();
 		}
 
-		
-		/// <summary>
-		///	Final cleanup of registry key object. Close the 
-		///	key if it's still open.
-		/// </summary>
-		~RegistryKey ()
-		{
-			Close ();
-		}
-
-		
 		/// <summary>
 		///	Get the fully qualified registry key name.
 		/// </summary>
