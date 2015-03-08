@@ -226,7 +226,7 @@ namespace System.Web.Script.Serialization
 			/*colon    CO*/ {CO,CO,__,__,__,__,CA,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__},
 			/*value    VA*/ {VA,VA,OS,__,AB,__,__,__,SB,__,__,PX,MX,__,ZX,IX,__,__,__,__,__,FA,__,NU,__,__,TR,__,__,__,__,__,I1,__,__,V1},
 			/*array    AR*/ {AR,AR,OS,__,AB,AE,__,__,SB,__,__,PX,MX,__,ZX,IX,__,__,__,__,__,FA,__,NU,__,__,TR,__,__,__,__,__,I1,__,__,V1},
-			/*string   ST*/ {ST,__,ST,ST,ST,ST,ST,ST,SE,EX,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST},
+			/*string   ST*/ {ST,ST,ST,ST,ST,ST,ST,ST,SE,EX,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST},
 			/*escape   ES*/ {__,__,__,__,__,__,__,__,ST,ST,ST,__,__,__,__,__,__,ST,__,__,__,ST,__,ST,ST,__,ST,U1,__,__,__,__,__,__,__,__},
 			/*u1       U1*/ {__,__,__,__,__,__,__,__,__,__,__,__,__,__,U2,U2,U2,U2,U2,U2,U2,U2,__,__,__,__,__,__,U2,U2,__,__,__,__,__,__},
 			/*u2       U2*/ {__,__,__,__,__,__,__,__,__,__,__,__,__,__,U3,U3,U3,U3,U3,U3,U3,U3,__,__,__,__,__,__,U3,U3,__,__,__,__,__,__},
