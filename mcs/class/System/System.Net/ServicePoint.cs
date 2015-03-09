@@ -404,6 +404,7 @@ namespace System.Net
 				WebConnectionGroup cncGroup = GetConnectionGroup (connectionGroupName);
 				if (cncGroup != null) {
 					cncGroup.Close ();
+					RemoveConnectionGroup (cncGroup);
 					return true;
 				}
 			}
