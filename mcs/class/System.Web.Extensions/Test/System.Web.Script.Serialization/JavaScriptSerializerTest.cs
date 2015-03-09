@@ -1400,5 +1400,21 @@ namespace MonoTests.System.Web.Script.Serialization
 				Assert.AreEqual (kv.Value, obj.Value);
 			}
 		}
+
+		[Test]
+		public void DeserializeStringWithNewline ()
+		{
+			JavaScriptSerializer serializer = new JavaScriptSerializer ();
+			string json_with_newline = @"
+	[
+	  {
+	  content:""      
+<div id=\""calendar\""><div>   
+	""   
+	  }
+	]
+    ";
+			serializer.DeserializeObject (json_with_newline);
+		}
 	}
 }
