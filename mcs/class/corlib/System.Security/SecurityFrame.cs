@@ -172,6 +172,9 @@ namespace System.Security {
 
 		static public ArrayList GetStack (int skipFrames)
 		{
+			/* _GetSecurityFrame () creates cross-domain references, leading to gc crashes */
+			return new ArrayList ();
+			/*
 			Array stack = _GetSecurityStack (skipFrames+2);
 			ArrayList al = new ArrayList ();
 			for (int i = 0; i < stack.Length; i++) {
@@ -182,6 +185,7 @@ namespace System.Security {
 				al.Add (new SecurityFrame ((RuntimeSecurityFrame)o));
 			}
 			return al;
+			*/
 		}
 	}
 }
