@@ -241,7 +241,7 @@ namespace System.Runtime.Remoting.Messaging {
 			return new CADArgHolder(args.Count - 1);
 		}
 
-		protected object UnmarshalArgument (object arg, ArrayList args) {
+		protected object UnmarshalArgument (object arg, ArrayList args, Type argType) {
 			if (arg == null) return null;
 			
 			// Check if argument is an holder (then we know that it's a serialized argument)
@@ -252,7 +252,14 @@ namespace System.Runtime.Remoting.Messaging {
 
 			CADObjRef objref = arg as CADObjRef;
 			if (null != objref) {
-				string typeName = string.Copy (objref.TypeName);
+				string typeName;
+
+				if (argType != null) {
+					typeName = string.Copy (argType.AssemblyQualifiedName);
+				} else {
+					typeName = string.Copy (objref.TypeName);
+				}
+
 				string uri = string.Copy (objref.URI);
 				int domid = objref.SourceDomain;
 				
@@ -327,16 +334,16 @@ namespace System.Runtime.Remoting.Messaging {
 			return marshalledArgs;
 		}
 
-		internal object [] UnmarshalArguments (object [] arguments, ArrayList args) {
+		internal object [] UnmarshalArguments (object [] arguments, ArrayList args, Type [] sig) {
 			object [] unmarshalledArgs = new object [arguments.Length];
 
 			int total = arguments.Length;
 			for (int i = 0; i < total; i++)
-				unmarshalledArgs [i] = UnmarshalArgument (arguments [i], args);
+				unmarshalledArgs [i] = UnmarshalArgument (arguments [i], args, sig [i]);
 
 			return unmarshalledArgs;
 		}
-		
+
 		protected void SaveLogicalCallContext (IMethodMessage msg, ref ArrayList serializeList)
 		{
 			if (msg.LogicalCallContext != null && msg.LogicalCallContext.HasInfo) 
@@ -409,7 +416,8 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		internal object [] GetArgs (ArrayList args) {
-			return UnmarshalArguments (_args, args);
+			Type [] sigs = GetSignature (method, true);
+			return UnmarshalArguments (_args, args, sigs);
 		}
 
 		internal int PropertiesCount {
@@ -424,6 +432,7 @@ namespace System.Runtime.Remoting.Messaging {
 	internal class CADMethodReturnMessage : CADMessageBase {
 		object _returnValue;
 		CADArgHolder _exception = null;
+		Type [] _sig;
 
 		static internal CADMethodReturnMessage Create (IMessage callMsg) {
 			IMethodReturnMessage msg = callMsg as IMethodReturnMessage;
@@ -440,6 +449,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 			_returnValue = MarshalArgument ( retMsg.ReturnValue, ref serializeList);
 			_args = MarshalArguments ( retMsg.Args, ref serializeList);
+
+			_sig = GetSignature (method, true);
 
 			if (null != retMsg.Exception) {
 				if (null == serializeList)
@@ -471,11 +482,17 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		internal object [] GetArgs (ArrayList args) {
-			return UnmarshalArguments (_args, args);
+			return UnmarshalArguments (_args, args, _sig);
 		}
-			
+
 		internal object GetReturnValue (ArrayList args) {
-			return UnmarshalArgument (_returnValue, args);
+			MethodInfo minfo = method as MethodInfo;
+
+			Type returnType = null;
+			if (minfo != null)
+				returnType = minfo.ReturnType;
+
+			return UnmarshalArgument (_returnValue, args, returnType);
 		}
 
 		internal Exception GetException(ArrayList args) {
