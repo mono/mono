@@ -353,8 +353,7 @@ namespace System.Runtime.Serialization.Json
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 					if (!reader.IsStartElement ("item"))
 						throw SerializationError (String.Format ("Expected element 'item', but found '{0}' in namespace '{1}'", reader.LocalName, reader.NamespaceURI));
-					Type et = elementType == typeof (object) || elementType.IsAbstract ? null : elementType;
-					object elem = ReadObject (et ?? typeof (object));
+					object elem = ReadObject (elementType);
 					c.Add (elem);
 				}
 #if NET_2_1
