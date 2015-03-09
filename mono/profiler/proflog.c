@@ -2805,6 +2805,7 @@ coverage_filter (MonoProfiler *prof, MonoMethod *method)
 		}
 		if (has_positive && !found) {
 			COVERAGE_DEBUG(fprintf (stderr, "   Positive match was not found\n");)
+			g_hash_table_insert (filtered_classes, klass, klass);
 			mono_mutex_unlock (&coverage_mutex);
 			g_free (fqn);
 			g_free (classname);
