@@ -74,7 +74,88 @@ namespace System.Runtime.Remoting.Messaging {
 		protected byte [] _serializedArgs = null;
 		protected int _propertyCount = 0;
 		protected CADArgHolder _callContext;
-		
+		internal RuntimeMethodHandle MethodHandle;
+		internal string FullTypeName;
+		internal MethodBase _method;
+
+		public CADMessageBase (IMethodMessage msg) {
+			MethodHandle = msg.MethodBase.MethodHandle;
+			FullTypeName = msg.MethodBase.DeclaringType.AssemblyQualifiedName;
+		}
+
+		internal MethodBase method {
+			get {
+				if (_method == null) {
+					_method = GetMethod();
+				}
+				return _method;
+			}
+		}
+
+		internal MethodBase GetMethod ()
+		{
+			Type tt = Type.GetType (FullTypeName, true);
+			if (tt.IsGenericType || tt.IsGenericTypeDefinition) {
+				_method = MethodBase.GetMethodFromHandleNoGenericCheck (MethodHandle);
+			} else {
+				_method = MethodBase.GetMethodFromHandle (MethodHandle);
+			}
+
+			if (tt != _method.DeclaringType) {
+				// The target domain has loaded the type from a different assembly.
+				// We need to locate the correct type and get the method from it
+				Type [] signature = GetSignature (_method, true);
+				if (_method.IsGenericMethod) {
+					MethodBase [] methods = tt.GetMethods (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
+					Type [] base_args = _method.GetGenericArguments ();
+					foreach (MethodBase method in methods) {
+						if (!method.IsGenericMethod || method.Name != _method.Name)
+							continue;
+						Type [] method_args = method.GetGenericArguments ();
+						if (base_args.Length != method_args.Length)
+							continue;
+
+						MethodInfo method_instance = ((MethodInfo) method).MakeGenericMethod (base_args);
+						Type [] base_sig = GetSignature (method_instance, false);
+						if (base_sig.Length != signature.Length) {
+							continue;
+						}
+						bool dont = false;
+						for (int i = base_sig.Length - 1; i >= 0; i--) {
+							if (base_sig [i] != signature [i]) {
+								dont = true;
+								break;
+							}
+						}
+						if (dont)
+							continue;
+						return method_instance;
+					}
+					return _method;
+				}
+
+				MethodBase mb = tt.GetMethod (_method.Name, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, signature, null);
+				if (mb == null)
+					throw new RemotingException ("Method '" + _method.Name + "' not found in type '" + tt + "'");
+				return mb;
+			}
+			return _method;
+		}
+
+		static protected Type [] GetSignature (MethodBase methodBase, bool load)
+		{
+			ParameterInfo[] pars = methodBase.GetParameters ();
+			Type[] signature = new Type [pars.Length];
+			for (int n=0; n<pars.Length; n++) {
+				// The parameter types may also be loaded from a different assembly, so we need
+				// to load them again
+				if (load)
+					signature [n] = Type.GetType (pars [n].ParameterType.AssemblyQualifiedName, true);
+				else
+					signature [n] = pars [n].ParameterType;
+			}
+			return signature;
+		}
 		// Helper to marshal properties
 		internal static int MarshalProperties (IDictionary dict, ref ArrayList args) {
 			IDictionary serDict = dict;
@@ -280,10 +361,7 @@ namespace System.Runtime.Remoting.Messaging {
 	// Used when passing a IMethodCallMessage between appdomains
 	internal class CADMethodCallMessage : CADMessageBase {
 		string _uri;
-		
-		internal RuntimeMethodHandle MethodHandle;
-		internal string FullTypeName;
-		
+
 		internal string Uri {
 			get {
 				return _uri;
@@ -298,10 +376,8 @@ namespace System.Runtime.Remoting.Messaging {
 			return new CADMethodCallMessage (msg);
 		}
 
-		internal CADMethodCallMessage (IMethodCallMessage callMsg) {
+		internal CADMethodCallMessage (IMethodCallMessage callMsg): base (callMsg) {
 			_uri = callMsg.Uri;
-			MethodHandle = callMsg.MethodBase.MethodHandle;
-			FullTypeName = callMsg.MethodBase.DeclaringType.AssemblyQualifiedName;
 
 			ArrayList serializeList = null; 
 			
@@ -342,71 +418,6 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 		}
 		
-		static Type [] GetSignature (MethodBase methodBase, bool load)
-		{
-			ParameterInfo[] pars = methodBase.GetParameters ();
-			Type[] signature = new Type [pars.Length];
-			for (int n=0; n<pars.Length; n++) {
-				// The parameter types may also be loaded from a different assembly, so we need
-				// to load them again
-				if (load)
-					signature [n] = Type.GetType (pars [n].ParameterType.AssemblyQualifiedName, true);
-				else
-					signature [n] = pars [n].ParameterType;
-			}
-			return signature;
-		}
-
-		internal MethodBase GetMethod ()
-		{
-			MethodBase methodBase = null;
-			Type tt = Type.GetType (FullTypeName, true);
-			if (tt.IsGenericType || tt.IsGenericTypeDefinition) {
-				methodBase = MethodBase.GetMethodFromHandleNoGenericCheck (MethodHandle);
-			} else {
-				methodBase = MethodBase.GetMethodFromHandle (MethodHandle);
-			}
-			
-			if (tt != methodBase.DeclaringType) {
-				// The target domain has loaded the type from a different assembly.
-				// We need to locate the correct type and get the method from it
-				Type [] signature = GetSignature (methodBase, true);
-				if (methodBase.IsGenericMethod) {
-					MethodBase [] methods = tt.GetMethods (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
-					Type [] base_args = methodBase.GetGenericArguments ();
-					foreach (MethodBase method in methods) {
-						if (!method.IsGenericMethod || method.Name != methodBase.Name)
-							continue;
-						Type [] method_args = method.GetGenericArguments ();
-						if (base_args.Length != method_args.Length)
-							continue;
-
-						MethodInfo method_instance = ((MethodInfo) method).MakeGenericMethod (base_args);
-						Type [] base_sig = GetSignature (method_instance, false);
-						if (base_sig.Length != signature.Length) {
-							continue;
-						}
-						bool dont = false;
-						for (int i = base_sig.Length - 1; i >= 0; i--) {
-							if (base_sig [i] != signature [i]) {
-								dont = true;
-								break;
-							}
-						}
-						if (dont)
-							continue;
-						return method_instance;
-					}
-					return methodBase;
-				}
-
-				MethodBase mb = tt.GetMethod (methodBase.Name, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, signature, null);
-				if (mb == null)
-					throw new RemotingException ("Method '" + methodBase.Name + "' not found in type '" + tt + "'");
-				return mb;
-			}
-			return methodBase;
-		}
 	}
 	
 	// Used when passing a IMethodReturnMessage between appdomains
@@ -422,7 +433,7 @@ namespace System.Runtime.Remoting.Messaging {
 			return new CADMethodReturnMessage (msg);
 		}
 
-		internal CADMethodReturnMessage(IMethodReturnMessage retMsg) {
+		internal CADMethodReturnMessage(IMethodReturnMessage retMsg): base (retMsg) {
 			ArrayList serializeList = null; 
 			
 			_propertyCount = MarshalProperties (retMsg.Properties, ref serializeList);
