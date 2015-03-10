@@ -505,9 +505,8 @@ namespace System.Net.Mail {
 			try {
 				client = new TcpClient ();
 				var asyncResult = client.BeginConnect(host, port, null, null);
-				using(var waitHandle = asyncResult.AsyncWaitHandle)
-					if(!waitHandle.WaitOne(this.Timeout, false))
-						throw new TimeoutException();
+				if(!asyncResult.AsyncWaitHandle.WaitOne(this.Timeout, false))
+					throw new TimeoutException();
 				client.EndConnect(asyncResult);
 
 				stream = client.GetStream ();
