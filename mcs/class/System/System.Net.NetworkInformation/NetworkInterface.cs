@@ -272,6 +272,7 @@ namespace System.Net.NetworkInformation {
 							if (((int)sockaddrll.sll_halen) > sockaddrll.sll_addr.Length){
 								Console.Error.WriteLine ("Got a bad hardware address length for an AF_PACKET {0} {1}",
 											 sockaddrll.sll_halen, sockaddrll.sll_addr.Length);
+								next = addr.ifa_next;
 								continue;
 							}
 							
