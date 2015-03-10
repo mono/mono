@@ -2462,6 +2462,7 @@ static GHashTable *coverage_methods = NULL;
 static GHashTable *coverage_assemblies = NULL;
 static GHashTable *filtered_classes = NULL;
 static GHashTable *entered_methods = NULL;
+static GHashTable *image_to_methods = NULL;
 static gboolean coverage_initialized = FALSE;
 static mono_mutex_t coverage_mutex;
 static GPtrArray *coverage_data = NULL;
@@ -2623,50 +2624,20 @@ build_method_buffer (gpointer key, gpointer value, gpointer userdata)
 	coverage_data = NULL;
 }
 
-static gboolean
-check_partial_coverage (MonoMethod *method)
-{
-	/* FIXME: Implement partial coverage checking */
-	return FALSE;
-}
-
 static void
 get_coverage_for_image (MonoImage *image, int *number_of_methods, int *fully_covered, int *partially_covered)
 {
-	int i;
+	GPtrArray *image_methods = g_hash_table_lookup (image_to_methods, image);
 
-	COVERAGE_DEBUG(fprintf (stderr, "Obtaining coverage for %s - %d methods\n", mono_image_get_name (image), mono_image_get_table_rows (image, MONO_TABLE_METHOD));)
-
-	for (i = 1; i <= mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
-		MonoMethod *method = mono_get_method (image, i | MONO_TOKEN_METHOD_DEF, NULL);
-		if (!method) {
-			COVERAGE_DEBUG(fprintf (stderr, "   (%d) - NULL\n", i);)
-			continue;
-		}
-
-		if ((mono_method_get_flags (method, NULL) & METHOD_ATTRIBUTE_ABSTRACT)) {
-			COVERAGE_DEBUG(fprintf (stderr, "   (%d) - %s - abstract\n", i, mono_method_get_name (method));)
-			continue;
-		}
-
-		/* FIXME: handle icalls, runtime calls and synchronized methods */
-
-		*number_of_methods += 1;
-
-		if (g_hash_table_lookup (entered_methods, method)) {
-			COVERAGE_DEBUG(fprintf (stderr, "   (%d) - %s covered\n", i, mono_method_get_name (method));)
-			/* the method was executed: check it was fully covered */
-			if (check_partial_coverage (method)) {
-				*partially_covered += 1;
-			} else {
-				*fully_covered += 1;
-			}
-
-			continue;
-		}
-
-		COVERAGE_DEBUG(fprintf (stderr, "   (%d) - %s - not covered\n", i, mono_method_get_name (method));)
+	*number_of_methods = mono_image_get_table_rows (image, MONO_TABLE_METHOD);
+	if (image_methods) {
+		*fully_covered = image_methods->len;
+	} else {
+		*fully_covered = 0;
 	}
+
+	// FIXME: We don't handle partially covered yet.
+	*partially_covered = 0;
 }
 
 static void
@@ -2748,6 +2719,7 @@ coverage_filter (MonoProfiler *prof, MonoMethod *method)
 	guint32 iflags, flags, code_size;
 	char *fqn, *classname;
 	gboolean has_positive, found;
+	GPtrArray *image_methods;
 
 	if (!coverage_initialized)
 		return FALSE;
@@ -2851,6 +2823,13 @@ coverage_filter (MonoProfiler *prof, MonoMethod *method)
 	g_hash_table_insert (coverage_methods, method, method);
 	g_hash_table_insert (coverage_assemblies, assembly, assembly);
 
+	image_methods = g_hash_table_lookup (image_to_methods, image);
+	if (image_methods == NULL) {
+		image_methods = g_ptr_array_new ();
+		g_hash_table_insert (image_to_methods, image, image_methods);
+	}
+	g_ptr_array_add (image_methods, method);
+
 	mono_mutex_unlock (&coverage_mutex);
 	return TRUE;
 }
@@ -2867,6 +2846,7 @@ coverage_init (MonoProfiler *prof)
 	coverage_assemblies = g_hash_table_new (NULL, NULL);
 	filtered_classes = g_hash_table_new (NULL, NULL);
 	entered_methods = g_hash_table_new (NULL, NULL);
+	image_to_methods = g_hash_table_new (NULL, NULL);
 	coverage_initialized = TRUE;
 }
 
