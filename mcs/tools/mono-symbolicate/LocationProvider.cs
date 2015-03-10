@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Mono.Cecil;
@@ -17,14 +18,16 @@ namespace Symbolicate
 		class AssemblyLocationProvider {
 			AssemblyDefinition assembly;
 			MonoSymbolFile symbolFile;
+			string seqPointDataPath;
 
-			public AssemblyLocationProvider (AssemblyDefinition assembly, MonoSymbolFile symbolFile)
+			public AssemblyLocationProvider (AssemblyDefinition assembly, MonoSymbolFile symbolFile, string seqPointDataPath)
 			{
 				this.assembly = assembly;
 				this.symbolFile = symbolFile;
+				this.seqPointDataPath = seqPointDataPath;
 			}
 
-			public bool TryGetLocation (string methodFullName, string[] methodParamsTypes, int ilOffset, out Location location)
+			public bool TryGetLocation (string methodFullName, string[] methodParamsTypes, int offset, bool isOffsetIL, out Location location)
 			{
 				location = default (Location);
 				if (symbolFile == null)
@@ -57,6 +60,10 @@ namespace Symbolicate
 				if (method == null)
 					return false;
 
+				int ilOffset = (isOffsetIL)? offset : GetILOffsetFromFile (method.MetadataToken.ToInt32 (), offset);
+				if (ilOffset < 0)
+					return false;
+
 				var methodSymbol = symbolFile.Methods [method.MetadataToken.RID-1];
 
 				foreach (var lineNumber in methodSymbol.GetLineNumberTable ().LineNumbers) {
@@ -69,6 +76,21 @@ namespace Symbolicate
 				}
 
 				return false;
+			}
+
+			static MethodInfo methodGetIL;
+			private int GetILOffsetFromFile (int methodToken, int nativeOffset)
+			{
+				if (string.IsNullOrEmpty (seqPointDataPath))
+					return -1;
+
+				if (methodGetIL == null)
+					methodGetIL = typeof (StackFrame).GetMethod ("GetILOffsetFromFile", BindingFlags.NonPublic | BindingFlags.Static);
+
+				if (methodGetIL == null)
+					throw new Exception ("System.Diagnostics.StackFrame.GetILOffsetFromFile could not be found, make sure you have an updated mono installed.");
+
+				return (int) methodGetIL.Invoke (null, new object[] {seqPointDataPath, methodToken, nativeOffset});
 			}
 		}
 
@@ -98,7 +120,11 @@ namespace Symbolicate
 			else
 				symbolFile = MonoSymbolFile.ReadSymbolFile (assemblyPath + ".mdb");
 
-			assemblies.Add (assemblyPath, new AssemblyLocationProvider (assembly, symbolFile));
+			var seqPointDataPath = assemblyPath + ".msym";
+			if (!File.Exists (seqPointDataPath))
+				seqPointDataPath = null;
+
+			assemblies.Add (assemblyPath, new AssemblyLocationProvider (assembly, symbolFile, seqPointDataPath));
 
 			directories.Add (Path.GetDirectoryName (assemblyPath));
 
@@ -123,17 +149,20 @@ namespace Symbolicate
 
 		public void AddDirectory (string directory)
 		{
-			if (Directory.Exists (directory))
-				throw new ArgumentException ("Directory " + directory + " does not exist.");
+			directory = Path.GetFullPath (directory);
+			if (!Directory.Exists (directory)) {
+				Console.Error.WriteLine ("Directory " + directory + " does not exist.");
+				return;
+			}
 
 			directories.Add (directory);
 		}
 
-		public bool TryGetLocation (string methodName, string[] methodParams, int ilOffset, out Location location)
+		public bool TryGetLocation (string methodName, string[] methodParams, int offset, bool isOffsetIL, out Location location)
 		{
 			location = default (Location);
 			foreach (var assembly in assemblies.Values) {
-				if (assembly.TryGetLocation (methodName, methodParams, ilOffset, out location))
+				if (assembly.TryGetLocation (methodName, methodParams, offset, isOffsetIL, out location))
 					return true;
 			}
 
