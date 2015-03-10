@@ -2704,7 +2704,6 @@ process_method_enter (MonoProfiler *prof, MonoMethod *method)
 		return;
 
 	mono_mutex_lock (&coverage_mutex);
-	COVERAGE_DEBUG(fprintf (stderr, "Entered %s\n", mono_method_get_name (method));)
 	g_hash_table_insert (entered_methods, method, method);
 	mono_mutex_unlock (&coverage_mutex);
 }
