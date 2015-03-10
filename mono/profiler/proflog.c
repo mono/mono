@@ -2507,6 +2507,9 @@ parse_generic_type_names(char *name)
 {
 	char *new_name,*ret;
 	int within_generic_declaration=0, generic_members=1;
+
+	name = name ? name : "";
+
 	if( !(ret = new_name = calloc(strlen(name) * 4 + 1, sizeof(char))) )
 		return NULL;
 
@@ -2569,6 +2572,10 @@ build_method_buffer (gpointer key, gpointer value, gpointer userdata)
 	sig = mono_signature_get_desc (mono_method_signature (method), TRUE);
 	class_name = parse_generic_type_names (mono_type_get_name (mono_class_get_type (klass)));
 	method_name = mono_method_get_name (method);
+
+	image_name = image_name ? image_name : "";
+	sig = sig ? sig : "";
+	method_name = method_name ? method_name : "";
 
 	size += strlen (image_name) + 1;
 	size += strlen (class_name) + 1;
@@ -2654,6 +2661,10 @@ build_assembly_buffer (gpointer key, gpointer value, gpointer userdata)
 	name = mono_image_get_name (image);
 	guid = mono_image_get_guid (image);
 	filename = mono_image_get_filename (image);
+
+	name = name ? name : "";
+	guid = guid ? guid : "";
+	filename = filename ? filename : "";
 
 	get_coverage_for_image (image, &number_of_methods, &fully_covered, &partially_covered);
 
