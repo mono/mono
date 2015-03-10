@@ -3488,41 +3488,41 @@ namespace MonoTests.System.XmlSerialization
 			generationThreshold.SetValue (null, generationThresholdOld);
 			generatorFallback.SetValue (null, generatorFallbackOld);
 		}
+	}
 
 #region XmlInclude on abstract class test classes
 
-		[XmlType]
-		public class ContainerTypeForTest
-		{
-			[XmlElement ("XmlFirstType", typeof (FirstDerivedTypeForTest))]
-			[XmlElement ("XmlIntermediateType", typeof (IntermediateTypeForTest))]
-			[XmlElement ("XmlSecondType", typeof (SecondDerivedTypeForTest))]
-			public AbstractTypeForTest MemberToUseInclude { get; set; }
-		}
+	[XmlType]
+	public class ContainerTypeForTest
+	{
+		[XmlElement ("XmlFirstType", typeof (FirstDerivedTypeForTest))]
+		[XmlElement ("XmlIntermediateType", typeof (IntermediateTypeForTest))]
+		[XmlElement ("XmlSecondType", typeof (SecondDerivedTypeForTest))]
+		public AbstractTypeForTest MemberToUseInclude { get; set; }
+	}
 
-		[XmlInclude (typeof (FirstDerivedTypeForTest))]
-		[XmlInclude (typeof (IntermediateTypeForTest))]
-		[XmlInclude (typeof (SecondDerivedTypeForTest))]
-		public abstract class AbstractTypeForTest
-		{
-		}
+	[XmlInclude (typeof (FirstDerivedTypeForTest))]
+	[XmlInclude (typeof (IntermediateTypeForTest))]
+	[XmlInclude (typeof (SecondDerivedTypeForTest))]
+	public abstract class AbstractTypeForTest
+	{
+	}
 
-		public class IntermediateTypeForTest : AbstractTypeForTest
-		{
-			[XmlAttribute (AttributeName = "intermediate")]
-			public bool IntermediateMember { get; set; }
-		}
+	public class IntermediateTypeForTest : AbstractTypeForTest
+	{
+		[XmlAttribute (AttributeName = "intermediate")]
+		public bool IntermediateMember { get; set; }
+	}
 
-		public class FirstDerivedTypeForTest : AbstractTypeForTest
-		{
-			public string FirstMember { get; set; }
-		}
+	public class FirstDerivedTypeForTest : AbstractTypeForTest
+	{
+		public string FirstMember { get; set; }
+	}
 
-		public class SecondDerivedTypeForTest : IntermediateTypeForTest
-		{
-			public string SecondMember { get; set; }
-		}
+	public class SecondDerivedTypeForTest : IntermediateTypeForTest
+	{
+		public string SecondMember { get; set; }
+	}
 #endregion
 
-	}
 }
