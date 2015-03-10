@@ -286,7 +286,7 @@ namespace System.Net.Sockets
 				SocketError = SocketError.OperationAborted;
 			} finally {
 				if (AcceptSocket == null)
-					AcceptSocket = new Socket (curSocket.AddressFamily, curSocket.SocketType, curSocket.ProtocolType, (IntPtr)(-1));
+					AcceptSocket = new Socket (curSocket.AddressFamily, curSocket.SocketType, curSocket.ProtocolType, null);
 				OnCompleted (this);
 			}
 		}

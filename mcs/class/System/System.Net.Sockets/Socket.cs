@@ -142,7 +142,7 @@ namespace System.Net.Sockets
 		// private constructor used by Accept, which already
 		// has a socket handle to use
 		internal Socket(AddressFamily family, SocketType type,
-			       ProtocolType proto, IntPtr sock)
+			       ProtocolType proto, SafeSocketHandle sock)
 		{
 			address_family=family;
 			socket_type=type;
@@ -193,7 +193,7 @@ namespace System.Net.Sockets
 			socket_type = (SocketType) (int) result [1];
 			protocol_type = (ProtocolType) (int) result [2];
 			isbound = (ProtocolType) (int) result [3] != 0;
-			socket = (IntPtr) (long) result [4];
+			socket = new SafeSocketHandle ((IntPtr) (long) result [4], true);
 			SocketDefaults ();
 		}
 #endif
@@ -201,6 +201,18 @@ namespace System.Net.Sockets
 		// Returns the amount of data waiting to be read on socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int Available_internal(IntPtr socket, out int error);
+
+		private static int Available_internal (SafeSocketHandle safeHandle, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Available_internal (safeHandle.DangerousGetHandle (), out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		public int Available {
 			get {
@@ -396,13 +408,25 @@ namespace System.Net.Sockets
 
 		public IntPtr Handle {
 			get {
-				return(socket);
+				return(socket.DangerousGetHandle ());
 			}
 		}
 
 		// Returns the local endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, int family, out int error);
+
+		private static SocketAddress LocalEndPoint_internal(SafeSocketHandle safeHandle, int family, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return LocalEndPoint_internal (safeHandle.DangerousGetHandle (), family, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		// Wish:  support non-IP endpoints.
 		public EndPoint LocalEndPoint {
@@ -529,18 +553,23 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr Accept_internal(IntPtr sock, out int error, bool blocking);
 
+		private static SafeSocketHandle Accept_internal(SafeSocketHandle safeHandle, out int error, bool blocking)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				var ret = Accept_internal (safeHandle.DangerousGetHandle (), out error, blocking);
+				return new SafeSocketHandle (ret, true);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
 		public Socket Accept() {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error = 0;
-			IntPtr sock = (IntPtr) (-1);
-			try {
-				RegisterForBlockingSyscall ();
-				sock = Accept_internal(socket, out error, blocking);
-			} finally {
-				UnRegisterForBlockingSyscall ();
-			}
+			var sock = Accept_internal(socket, out error, blocking);
 
 			if (error != 0) {
 				if (closed)
@@ -562,14 +591,7 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 			
 			int error = 0;
-			IntPtr sock = (IntPtr)(-1);
-			
-			try {
-				RegisterForBlockingSyscall ();
-				sock = Accept_internal (socket, out error, blocking);
-			} finally {
-				UnRegisterForBlockingSyscall ();
-			}
+			var sock = Accept_internal (socket, out error, blocking);
 			
 			if (error != 0) {
 				if (closed)
@@ -1091,6 +1113,20 @@ namespace System.Net.Sockets
 							 SocketAddress sa,
 							 out int error);
 
+		private static void Bind_internal (SafeSocketHandle safeHandle,
+							 SocketAddress sa,
+							 out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Bind_internal (safeHandle.DangerousGetHandle (), sa, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		public void Bind(EndPoint local_end) {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -1182,6 +1218,18 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void Disconnect_internal(IntPtr sock, bool reuse, out int error);
 
+		private static void Disconnect_internal(SafeSocketHandle safeHandle, bool reuse, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Disconnect_internal (safeHandle.DangerousGetHandle (), reuse, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		/* According to the docs, the MS runtime will throw
 		 * PlatformNotSupportedException if the platform is
 		 * newer than w2k.  We should be able to cope...
@@ -1222,8 +1270,8 @@ namespace System.Net.Sockets
 				(blocking ? 0 : SocketInformationOptions.NonBlocking) |
 				(useoverlappedIO ? SocketInformationOptions.UseOnlyOverlappedIO : 0);
 
-			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)address_family, (int)socket_type, (int)protocol_type, isbound ? 1 : 0, (long)socket);
-			socket = (IntPtr) (-1);
+			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)address_family, (int)socket_type, (int)protocol_type, isbound ? 1 : 0, (long)Handle);
+			socket = null;
 
 			return si;
 		}
@@ -1373,6 +1421,20 @@ namespace System.Net.Sockets
 			SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val,
 			out int error);
 
+		private static void GetSocketOption_arr_internal (SafeSocketHandle safeHandle,
+			SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val,
+			out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				GetSocketOption_arr_internal (safeHandle.DangerousGetHandle (), level, name, ref byte_val, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		public void GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
 		{
 			if (disposed && closed)
@@ -1415,6 +1477,19 @@ namespace System.Net.Sockets
 		extern static int WSAIoctl (IntPtr sock, int ioctl_code, byte [] input,
 			byte [] output, out int error);
 
+		private static int WSAIoctl (SafeSocketHandle safeHandle, int ioctl_code, byte [] input,
+			byte [] output, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return WSAIoctl (safeHandle.DangerousGetHandle (), ioctl_code, input, output, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		public int IOControl (int ioctl_code, byte [] in_value, byte [] out_value)
 		{
 			if (disposed)
@@ -1440,6 +1515,18 @@ namespace System.Net.Sockets
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Listen_internal(IntPtr sock, int backlog, out int error);
+
+		private static void Listen_internal (SafeSocketHandle safeHandle, int backlog, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Listen_internal (safeHandle.DangerousGetHandle (), backlog, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		public void Listen (int backlog)
 		{
@@ -1656,6 +1743,22 @@ namespace System.Net.Sockets
 							    ref SocketAddress sockaddr,
 							    out int error);
 
+		private static int RecvFrom_internal (SafeSocketHandle safeHandle,
+							    byte[] buffer,
+							    int offset,
+							    int count,
+							    SocketFlags flags,
+							    ref SocketAddress sockaddr,
+							    out int error)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				return RecvFrom_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, ref sockaddr, out error);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
 		public int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags flags,
 					ref EndPoint remoteEP)
 		{
@@ -1857,6 +1960,16 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool SendFile (IntPtr sock, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags);
 
+		private static bool SendFile (SafeSocketHandle safeHandle, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				return SendFile (safeHandle.DangerousGetHandle (), filename, pre_buffer, post_buffer, flags);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
 		public void SendFile (string fileName)
 		{
 			if (disposed && closed)
@@ -1971,6 +2084,22 @@ namespace System.Net.Sockets
 							  SocketFlags flags,
 							  SocketAddress sa,
 							  out int error);
+
+		private static int SendTo_internal (SafeSocketHandle safeHandle,
+							  byte[] buffer,
+							  int offset,
+							  int count,
+							  SocketFlags flags,
+							  SocketAddress sa,
+							  out int error)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				return SendTo_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, sa, out error);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
 
 		public int SendTo (byte [] buffer, int offset, int size, SocketFlags flags,
 				   EndPoint remote_end)

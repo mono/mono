@@ -365,7 +365,9 @@ namespace System.Net.NetworkInformation {
 				if (fd.ToInt64 () == -1)
 					return false;
 
-				nl_sock = new Socket (0, SocketType.Raw, ProtocolType.Udp, fd);
+				var safeHandle = new SafeSocketHandle (fd, true);
+
+				nl_sock = new Socket (0, SocketType.Raw, ProtocolType.Udp, safeHandle);
 				nl_args = new SocketAsyncEventArgs ();
 				nl_args.SetBuffer (new byte [8192], 0, 8192);
 				nl_args.Completed += OnDataAvailable;
