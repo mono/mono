@@ -3153,6 +3153,11 @@ namespace System
 			memcpy4 ((byte*)dest, (byte*)src, count * 2);
 		}
 
+		internal static unsafe void wstrcpy (char *dmem, char *smem, int charCount)
+		{
+			CharCopy (dmem, smem, charCount);
+		}
+
 		internal static unsafe void CharCopyReverse (char *dest, char *src, int count)
 		{
 			dest += count;
