@@ -34,7 +34,6 @@ using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
-#if NET_4_0
 	[TestFixture]
 	public class CustomValidationAttributeTest
 	{
@@ -275,6 +274,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				attr.IsValid ("test");
 			}, "#A12");
 		}
+	}
 
 		class PrivateValidatorMethodContainer
 		{
@@ -327,6 +327,4 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				throw new ApplicationException ("SNAFU");
 			}
 		}
-	}
-#endif
 }
