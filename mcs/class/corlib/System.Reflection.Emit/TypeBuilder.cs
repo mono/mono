@@ -914,6 +914,7 @@ namespace System.Reflection.Emit
 		/* Needed to keep signature compatibility with MS.NET */
 		public override EventInfo[] GetEvents ()
 		{
+			const BindingFlags DefaultBindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 			return GetEvents (DefaultBindingFlags);
 		}
 
@@ -1861,19 +1862,6 @@ namespace System.Reflection.Emit
 				throw new System.Exception ("field not found");
 			else
 				return res;
-		}
-
-		internal TypeCode GetTypeCodeInternal () {
-			if (parent == pmodule.assemblyb.corlib_enum_type) {
-				for (int i = 0; i < num_fields; ++i) {
-					FieldBuilder f = fields [i];
-					if (!f.IsStatic)
-						return Type.GetTypeCode (f.FieldType);
-				}
-				throw new InvalidOperationException ("Enum basetype field not defined");
-			} else {
-				return Type.GetTypeCodeInternal (this);
-			}
 		}
 
 

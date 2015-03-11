@@ -73,9 +73,18 @@ namespace System.Reflection {
 	internal delegate object GetterAdapter (object _this);
 	internal delegate R Getter<T,R> (T _this);
 
+	abstract class RuntimePropertyInfo : PropertyInfo
+	{
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
+	}
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoProperty : PropertyInfo, ISerializable {
+	internal class MonoProperty : RuntimePropertyInfo, ISerializable {
 #pragma warning disable 649
 		internal IntPtr klass;
 		internal IntPtr prop;

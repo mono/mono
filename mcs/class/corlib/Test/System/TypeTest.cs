@@ -3048,8 +3048,7 @@ namespace MonoTests.System
 			Assert.AreEqual (ut, arg, "#B3");
 		}
 
-		[Category ("NotWorking")]
-		//We dont support instantiating a user type 
+		[Test]
 		public void MakeGenericType_NestedUserDefinedType ()
 		{
 			Type ut = new UserType (new UserType (typeof (int)));
@@ -3064,7 +3063,6 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void TestMakeGenericType_UserDefinedType_DotNet20SP1 () 
 		{
 			Type ut = new UserType(typeof(int));
@@ -3526,10 +3524,10 @@ namespace MonoTests.System
 
 			a.Equals (a);
 			Assert.AreEqual (1, ta.eq, "#1");
-			Assert.AreEqual (0, ta.ust, "#2");
+			Assert.AreEqual (2, ta.ust, "#2");
 			a.Equals (b);
 			Assert.AreEqual (2, ta.eq, "#3");
-			Assert.AreEqual (1, ta.ust, "#4");
+			Assert.AreEqual (3, ta.ust, "#4");
 			Assert.AreEqual (0, tb.eq, "#5");
 			Assert.AreEqual (1, tb.ust, "#6");
 		}

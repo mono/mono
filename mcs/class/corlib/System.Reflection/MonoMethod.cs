@@ -111,6 +111,11 @@ namespace System.Reflection {
 	
 	abstract class RuntimeMethodInfo : MethodInfo
 	{
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
 	}
 
 	/*
@@ -263,6 +268,9 @@ namespace System.Reflection {
 				var arg = args [i];
 				var pi = pinfo [i];
 				if (arg == Type.Missing) {
+					if (pi.DefaultValue == System.DBNull.Value)
+						throw new ArgumentException(Environment.GetResourceString("Arg_VarMissNull"),"parameters");
+
 					args [i] = pi.DefaultValue;
 					continue;
 				}
@@ -478,6 +486,11 @@ namespace System.Reflection {
 
 	abstract class RuntimeConstructorInfo : ConstructorInfo
 	{
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
 	}
 
 	[Serializable()]

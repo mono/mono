@@ -686,8 +686,8 @@ namespace System
 
 			int[] bounds = null;
 
-			elementType = elementType.UnderlyingSystemType;
-			if (!elementType.IsSystemType)
+			elementType = elementType.UnderlyingSystemType as RuntimeType;
+			if (elementType == null)
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
@@ -710,8 +710,8 @@ namespace System
 			if (lowerBounds == null)
 				throw new ArgumentNullException ("lowerBounds");
 
-			elementType = elementType.UnderlyingSystemType;
-			if (!elementType.IsSystemType)
+			elementType = elementType.UnderlyingSystemType as RuntimeType;
+			if (elementType == null)
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");

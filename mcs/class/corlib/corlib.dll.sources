@@ -240,7 +240,6 @@ System/TimeZoneInfo.TransitionTime.cs
 System/TimeZoneNotFoundException.cs
 System/TimeoutException.cs
 ../../build/common/MonoTODOAttribute.cs
-System/Type.cs
 System/TypeSpec.cs
 System/TypeAccessException.cs
 System/TypeCode.cs
@@ -1397,8 +1396,10 @@ ReferenceSources/CLRConfig.cs
 ReferenceSources/JitHelpers.cs
 ReferenceSources/EncodingDataItem.cs
 ReferenceSources/EncodingTable.cs
-ReferenceSources/ReflectionOnlyType.cs
+ReferenceSources/TypeNameParser.cs
+ReferenceSources/RuntimeType.cs
 
+../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
 ../../../external/referencesource/mscorlib/system/activator.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
@@ -1436,15 +1437,16 @@ ReferenceSources/ReflectionOnlyType.cs
 ../../../external/referencesource/mscorlib/system/sbyte.cs
 ../../../external/referencesource/mscorlib/system/stringcomparer.cs
 ../../../external/referencesource/mscorlib/system/stringfreezingattribute.cs
+../../../external/referencesource/mscorlib/system/rttype.cs
 ../../../external/referencesource/mscorlib/system/timespan.cs
 ../../../external/referencesource/mscorlib/system/throwhelper.cs
 ../../../external/referencesource/mscorlib/system/tuple.cs
+../../../external/referencesource/mscorlib/system/type.cs
 ../../../external/referencesource/mscorlib/system/uint16.cs
 ../../../external/referencesource/mscorlib/system/uint32.cs
 ../../../external/referencesource/mscorlib/system/uint64.cs
 ../../../external/referencesource/mscorlib/system/unityserializationholder.cs
 ../../../external/referencesource/mscorlib/system/version.cs
-
 ../../../external/referencesource/mscorlib/system/collections/arraylist.cs
 ../../../external/referencesource/mscorlib/system/collections/bitarray.cs
 ../../../external/referencesource/mscorlib/system/collections/caseinsensitivecomparer.cs
@@ -1686,4 +1688,4 @@ ReferenceSources/ReflectionOnlyType.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
 
-
+ReferenceSources/Type.cs

@@ -60,9 +60,18 @@ namespace System.Reflection {
 		}
 	}
 
+	abstract class RuntimeEventInfo : EventInfo
+	{
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
+	}
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal sealed class MonoEvent: EventInfo, ISerializable
+	internal sealed class MonoEvent: RuntimeEventInfo, ISerializable
 	{
 #pragma warning disable 169
 		IntPtr klass;

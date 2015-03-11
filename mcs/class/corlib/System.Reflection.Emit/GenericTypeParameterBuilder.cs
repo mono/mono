@@ -436,10 +436,9 @@ namespace System.Reflection.Emit
 			return new ByRefType (this);
 		}
 
-		[MonoTODO]
-		public override Type MakeGenericType (params Type [] typeArguments)
+		public override Type MakeGenericType (params Type[] typeArguments)
 		{
-			return base.MakeGenericType (typeArguments);
+			throw new InvalidOperationException (Environment.GetResourceString ("Arg_NotGenericTypeDefinition"));
 		}
 
 		public override Type MakePointerType ()

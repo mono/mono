@@ -8968,7 +8968,7 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (tb.IsAssignableFrom (typeof (FileStream)), "#C6");
 			Assert.IsTrue (typeof (object).IsAssignableFrom (tb), "#C7");
 			Assert.IsFalse (tb.IsAssignableFrom (typeof (object)), "#C8");
-			Assert.IsFalse (typeof (IDisposable).IsAssignableFrom (tb), "#C9");
+			Assert.IsTrue (typeof (IDisposable).IsAssignableFrom (tb), "#C9");
 			Assert.IsFalse (tb.IsAssignableFrom (typeof (IDisposable)), "#C10");
 
 			Assert.IsTrue (tb.IsAssignableFrom (tb), "#D1");
@@ -8976,13 +8976,13 @@ namespace MonoTests.System.Reflection.Emit
 
 			TypeBuilder tb2 = module.DefineType (genTypeName (),
 				TypeAttributes.Public, tb,
-				new Type [] { typeof (IAir) });
+				new Type[] { typeof (IAir) });
 
-			Assert.IsFalse (typeof (IThrowable).IsAssignableFrom (tb2), "#E1");
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (tb2), "#E1");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IThrowable)), "#E2");
-			Assert.IsFalse (typeof (IMoveable).IsAssignableFrom (tb2), "#E3");
+			Assert.IsTrue (typeof (IMoveable).IsAssignableFrom (tb2), "#E3");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IMoveable)), "#E4");
-			Assert.IsFalse (typeof (IComparable).IsAssignableFrom (tb2), "#E5");
+			Assert.IsTrue (typeof (IComparable).IsAssignableFrom (tb2), "#E5");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IComparable)), "#E6");
 			Assert.IsTrue (typeof (IAir).IsAssignableFrom (tb2), "#E7");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IAir)), "#E8");
@@ -8991,9 +8991,9 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (typeof (ILiquid).IsAssignableFrom (tb2), "#E11");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (ILiquid)), "#E12");
 
-			Assert.IsFalse (typeof (Foo).IsAssignableFrom (tb2), "#F1");
+			Assert.IsTrue (typeof (Foo).IsAssignableFrom (tb2), "#F1");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Foo)), "#F2");
-			Assert.IsFalse (typeof (Bar).IsAssignableFrom (tb2), "#F3");
+			Assert.IsTrue (typeof (Bar).IsAssignableFrom (tb2), "#F3");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Bar)), "#F4");
 			Assert.IsFalse (typeof (Baz).IsAssignableFrom (tb2), "#F5");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Baz)), "#F6");
@@ -9006,7 +9006,7 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (FileStream)), "#G6");
 			Assert.IsTrue (typeof (object).IsAssignableFrom (tb2), "#G7");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (object)), "#G8");
-			Assert.IsFalse (typeof (IDisposable).IsAssignableFrom (tb2), "#G9");
+			Assert.IsTrue (typeof (IDisposable).IsAssignableFrom (tb2), "#G9");
 			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IDisposable)), "#G10");
 
 			Assert.IsTrue (tb2.IsAssignableFrom (tb2), "#H1");
@@ -9015,24 +9015,24 @@ namespace MonoTests.System.Reflection.Emit
 
 			TypeBuilder tb3 = module.DefineType (genTypeName (),
 				TypeAttributes.Public, tb2,
-				new Type [] { typeof (IWater) });
+				new Type[] { typeof (IWater) });
 
-			Assert.IsFalse (typeof (IThrowable).IsAssignableFrom (tb3), "#I1");
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (tb3), "#I1");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IThrowable)), "#I2");
-			Assert.IsFalse (typeof (IMoveable).IsAssignableFrom (tb3), "#I3");
+			Assert.IsTrue (typeof (IMoveable).IsAssignableFrom (tb3), "#I3");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IMoveable)), "#I4");
-			Assert.IsFalse (typeof (IComparable).IsAssignableFrom (tb3), "#I5");
+			Assert.IsTrue (typeof (IComparable).IsAssignableFrom (tb3), "#I5");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IComparable)), "#I6");
-			Assert.IsFalse (typeof (IAir).IsAssignableFrom (tb3), "#I7");
+			Assert.IsTrue (typeof (IAir).IsAssignableFrom (tb3), "#I7");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IAir)), "#I8");
 			Assert.IsTrue (typeof (IWater).IsAssignableFrom (tb3), "#I9");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IWater)), "#I10");
 			//Assert.IsFalse (typeof (ILiquid).IsAssignableFrom (tb3), "#I11");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (ILiquid)), "#I12");
 
-			Assert.IsFalse (typeof (Foo).IsAssignableFrom (tb3), "#J1");
+			Assert.IsTrue (typeof (Foo).IsAssignableFrom (tb3), "#J1");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Foo)), "#J2");
-			Assert.IsFalse (typeof (Bar).IsAssignableFrom (tb3), "#J3");
+			Assert.IsTrue (typeof (Bar).IsAssignableFrom (tb3), "#J3");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Bar)), "#J4");
 			Assert.IsFalse (typeof (Baz).IsAssignableFrom (tb3), "#J5");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Baz)), "#J6");
@@ -9045,7 +9045,7 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (FileStream)), "#K6");
 			Assert.IsTrue (typeof (object).IsAssignableFrom (tb3), "#K7");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (object)), "#K8");
-			Assert.IsFalse (typeof (IDisposable).IsAssignableFrom (tb3), "#K9");
+			Assert.IsTrue (typeof (IDisposable).IsAssignableFrom (tb3), "#K9");
 			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IDisposable)), "#K10");
 
 			Assert.IsTrue (tb3.IsAssignableFrom (tb3), "#L1");
@@ -9789,13 +9789,13 @@ namespace MonoTests.System.Reflection.Emit
             TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (EmptyIfaceImpl));
 			TypeBuilder tb2 = module.DefineType (genTypeName (), TypeAttributes.Public, tb);
 
-			Assert.IsFalse (typeof (EmptyInterface).IsAssignableFrom (tb));
+			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (tb));
 			Type t = tb.CreateType ();
 			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (tb));
 			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (t));
 			
 			
-			Assert.IsFalse (typeof (EmptyInterface).IsAssignableFrom (tb2));
+			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (tb2));
 			Type t2 = tb2.CreateType ();
 			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (tb2));
 			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (t2));

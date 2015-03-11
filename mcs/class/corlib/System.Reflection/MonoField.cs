@@ -41,7 +41,16 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
-	abstract class RtFieldInfo : FieldInfo
+	abstract class RuntimeFieldInfo : FieldInfo
+	{
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
+	}
+
+	abstract class RtFieldInfo : RuntimeFieldInfo
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern object UnsafeGetValue (object obj);

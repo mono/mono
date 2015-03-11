@@ -119,6 +119,10 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
+		internal static IList<CustomAttributeData> GetCustomAttributesInternal (RuntimeType target) {
+			return MonoCustomAttrs.GetCustomAttributesData (target);
+		}
+
 		public static IList<CustomAttributeData> GetCustomAttributes (Module target) {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
