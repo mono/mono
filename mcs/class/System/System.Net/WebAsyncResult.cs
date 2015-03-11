@@ -44,6 +44,7 @@ namespace System.Net
 		int size;
 		public bool EndCalled;
 		public bool AsyncWriteAll;
+		public HttpWebRequest AsyncObject;
 
 		public WebAsyncResult (AsyncCallback cb, object state)
 			: base (cb, state)
@@ -53,6 +54,7 @@ namespace System.Net
 		public WebAsyncResult (HttpWebRequest request, AsyncCallback cb, object state)
 			: base (cb, state)
 		{
+			this.AsyncObject = request;
 		}
 
 		public WebAsyncResult (AsyncCallback cb, object state, byte [] buffer, int offset, int size)
