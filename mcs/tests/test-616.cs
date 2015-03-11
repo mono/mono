@@ -31,7 +31,7 @@ namespace System
 	public class MulticastDelegate {}
 	public class Array {}
 	public class Exception {}
-	public class Type {}
+	public partial class Type {}
 	public class ValueType {}
 	public class Enum {}
 	public class Attribute {}
@@ -42,6 +42,19 @@ namespace System
 	public struct RuntimeFieldHandle {}
 		
 	public interface IDisposable {}
+
+	partial class Type
+	{
+		public static bool operator == (Type left, Type right)
+		{
+			return false;
+		}
+
+		public static bool operator != (Type left, Type right)
+		{
+			return true;
+		}
+	}	
 }
 	
 namespace System.Runtime.InteropServices

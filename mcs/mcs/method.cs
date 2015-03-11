@@ -2658,7 +2658,7 @@ namespace Mono.CSharp {
 			else if (OperatorType == OpType.Implicit)
 				Parent.MemberCache.CheckExistingMembersOverloads (this, GetMetadataName (OpType.Explicit), parameters);
 
-			TypeSpec declaring_type = Parent.CurrentType;
+			TypeSpec declaring_type = Parent.PartialContainer.CurrentType;
 			TypeSpec return_type = MemberType;
 			TypeSpec first_arg_type = ParameterTypes [0];
 			
