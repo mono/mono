@@ -459,7 +459,6 @@ System.Reflection/TargetException.cs
 System.Reflection/TargetInvocationException.cs
 System.Reflection/TargetParameterCountException.cs
 System.Reflection/TypeAttributes.cs
-System.Reflection/TypeDelegator.cs
 System.Reflection/TypeFilter.cs
 System.Reflection/TypeInfo.cs
 System.Reflection.Emit/AssemblyBuilder.cs
@@ -1557,6 +1556,7 @@ ReferenceSources/RuntimeType.cs
 ../../../external/referencesource/mscorlib/system/io/unmanagedmemorystream.cs
 
 ../../../external/referencesource/mscorlib/system/reflection/binder.cs
+../../../external/referencesource/mscorlib/system/reflection/typedelegator.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs

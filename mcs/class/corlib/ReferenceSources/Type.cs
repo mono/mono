@@ -145,21 +145,6 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern Type internal_from_handle (IntPtr handle);		
-
-		// TODO: Remove after TypeDelegator
-		internal PropertyInfo GetPropertyImplInternal (string name, BindingFlags bindingAttr, Binder binder,
-													   Type returnType, Type[] types, ParameterModifier[] modifiers)
-		{
-			return GetPropertyImpl (name, bindingAttr, binder, returnType, types, modifiers);
-		}
-
-		// TODO: Remove after TypeDelegator
-		internal MethodInfo GetMethodImplInternal (string name, BindingFlags bindingAttr, Binder binder,
-															CallingConventions callConvention, Type[] types,
-															ParameterModifier[] modifiers)
-		{
-			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
-		}
+		static extern Type internal_from_handle (IntPtr handle);
 	}
 }
