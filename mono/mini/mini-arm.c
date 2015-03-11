@@ -545,6 +545,10 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	iphone_abi = TRUE;
 #elif __QNXNTO__
 	thumb_supported = TRUE;
+#elif defined(PLATFORM_ANDROID)
+	thumb_supported = TRUE;
+	v5_supported = __ARM_ARCH >= 5;
+	v7_supported = __ARM_ARCH >= 7;
 #else
 	char buf [512];
 	char *line;
