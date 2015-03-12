@@ -2565,6 +2565,9 @@ namespace Mono.CSharp {
 		//
 		public bool CheckAll (MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
+			if (targs == null)
+				return true;
+
 			for (int i = 0; i < tparams.Length; i++) {
 				var targ = targs[i];
 				if (!CheckConstraint (context, targ, tparams [i], loc))
