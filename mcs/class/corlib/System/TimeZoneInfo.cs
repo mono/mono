@@ -1050,14 +1050,20 @@ namespace System
 			//Transitions are in UTC
 			DateTime date = dateTime;
 
-			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Local)
-				date = date.ToUniversalTime () + BaseUtcOffset;
+			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Local) {
+				var ticks = date.ToUniversalTime ().Ticks + BaseUtcOffset.Ticks;
+				if (ticks < DateTime.MinValue.Ticks || ticks > DateTime.MaxValue.Ticks)
+					return false;
+
+				date = new DateTime (ticks, DateTimeKind.Utc);
+			}
 
 			if (dateTime.Kind != DateTimeKind.Utc) {
 				var ticks = date.Ticks - BaseUtcOffset.Ticks;
-				if (ticks < DateTime.MinValue.Ticks)
+				if (ticks < DateTime.MinValue.Ticks || ticks > DateTime.MaxValue.Ticks)
 					return false;
-				date = date - BaseUtcOffset;
+
+				date = new DateTime (ticks, DateTimeKind.Utc);
 			}
 
 			for (var i =  transitions.Count - 1; i >= 0; i--) {
