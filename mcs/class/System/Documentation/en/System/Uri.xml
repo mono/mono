@@ -140,6 +140,17 @@ ftp://myUrl/%2E%2E/%2E%2E
         <h2>Performance Considerations</h2>
       </format>
       <para>If you use a Web.config file that contains URIs to initialize your application, additional time is required to process the URIs if their scheme identifiers are nonstandard. In such a case, initialize the affected parts of your application when the URIs are needed, not at start time.</para>
+      <para>Starting with Mono 3.10, Mono adopted the International Resource Identifier ("IRI") for parsing urls, just like .NET 4.5 does (https://msdn.microsoft.com/en-us/library/bb968786%28v=vs.110%29.aspx).</para>
+      <para>It is possible to disable IRI-based parsing by setting the MONO_URI_IRIPARSING environment variable to the string "false"</para>
+      <para>To help compatibility with third party software that disabled this behavior, we used the same internal field to turn this feature on or off by poking at the Uri internals.</para>
+      <example>
+	<code lang="c#">
+FieldInfo iriParsingField = typeof (Uri).GetField ("s_IriParsing",
+    BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+if (iriParsingField != null)
+    iriParsingField.SetValue (null, false);
+	</code>
+      </example>
     </remarks>
     <summary>
       <attribution license="cc4" from="Microsoft" modified="false" />
