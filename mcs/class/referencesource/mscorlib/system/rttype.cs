@@ -3764,7 +3764,7 @@ namespace System
                 // both this and c (or their underlying system types) are runtime types
                 return RuntimeTypeHandle.CanCastTo(fromType, this);
             }
-
+#if !FULL_AOT_RUNTIME
             // Special case for TypeBuilder to be backward-compatible.
             if (c is System.Reflection.Emit.TypeBuilder)
             {
@@ -3786,7 +3786,7 @@ namespace System
                     return true;
                 }
             }
-
+#endif
             // For anything else we return false.
             return false;
         }

@@ -74,10 +74,10 @@ namespace System {
             if ((object)type == null)
                 throw new ArgumentNullException("type");
             Contract.EndContractBlock();
-
+#if !FULL_AOT_RUNTIME
             if (type is System.Reflection.Emit.TypeBuilder)
                 throw new NotSupportedException(Environment.GetResourceString("NotSupported_CreateInstanceWithTypeBuilder"));
-
+#endif
             // If they didn't specify a lookup, then we will provide the default lookup.
             if ((bindingAttr & (BindingFlags) LookupMask) == 0)
                 bindingAttr |= Activator.ConstructorDefault;
