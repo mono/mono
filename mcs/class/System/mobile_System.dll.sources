@@ -125,6 +125,7 @@ System.Net.Sockets/MulticastOption.cs
 System.Net.Sockets/NetworkStream.cs
 System.Net.Sockets/ProtocolFamily.cs
 System.Net.Sockets/ProtocolType.cs
+System.Net.Sockets/SafeSocketHandle.cs
 System.Net.Sockets/SelectMode.cs
 System.Net.Sockets/SendPacketsElement.cs
 System.Net.Sockets/Socket.cs
