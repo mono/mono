@@ -16,7 +16,14 @@ namespace System.Net.Sockets {
 	sealed class SafeSocketHandle : SafeHandleZeroOrMinusOneIsInvalid {
 
 		List<Thread> blocking_threads;
+
 		const int ABORT_RETRIES = 10;
+		static bool THROW_ON_ABORT_RETRIES;
+
+		static SafeSocketHandle ()
+		{
+			THROW_ON_ABORT_RETRIES = Environment.GetEnvironmentVariable("MONO_TESTS_IN_PROGRESS") == "yes";
+		}
 
 		public SafeSocketHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
 		{
@@ -28,24 +35,41 @@ namespace System.Net.Sockets {
 		{
 		}
 
+		bool closii;
+
+		/*protected override void Dispose (bool disposing)
+		{
+			lock (this) {
+				if (!closii) {
+
+					closii = true;
+					int error = 0;
+					Socket.Blocking_internal (handle, false, out error);
+					//AbortRegisteredThreads ();
+					Socket.Close_internal (handle, out error);
+					//Console.Error.WriteLine ("Closed "+ handle);
+				}
+			}
+			base.Dispose (disposing);
+		}*/
+
 		protected override bool ReleaseHandle ()
 		{
 			int error = 0;
-			
+
 			Socket.Blocking_internal (handle, false, out error);
-	
+
 			if (blocking_threads != null) {
 				int abort_attempts = 0;
 				while (blocking_threads.Count > 0) {
 					if (abort_attempts++ >= ABORT_RETRIES) {
-#if DEBUG
-						throw new Exception ("Could not abort registered blocking threads before closing socket.");
-#else
+						if (THROW_ON_ABORT_RETRIES)
+							throw new Exception ("Could not abort registered blocking threads before closing socket.");
+
 						// Attempts to close the socket safely failed.
 						// We give up, and close the socket with pending blocking system calls.
 						// This should not occur, nonetheless if it does this avoids an endless loop.
 						break;
-#endif
 					}
 
 					AbortRegisteredThreads ();
