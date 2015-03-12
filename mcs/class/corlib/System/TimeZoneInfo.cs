@@ -1054,7 +1054,8 @@ namespace System
 				date = date.ToUniversalTime () + BaseUtcOffset;
 
 			if (dateTime.Kind != DateTimeKind.Utc) {
-				if (date.Ticks < BaseUtcOffset.Ticks)
+				var ticks = date.Ticks - BaseUtcOffset.Ticks;
+				if (ticks < DateTime.MinValue.Ticks)
 					return false;
 				date = date - BaseUtcOffset;
 			}
