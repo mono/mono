@@ -231,6 +231,23 @@ namespace Xamarin.ApiDiff {
 			Output.WriteLine ("</pre>");
 		}
 
+		string RenderGenericParameter (XElement gp)
+		{
+			var sb = new StringBuilder ();
+			sb.Append (gp.GetTypeName ("name"));
+
+			var constraints = gp.DescendantList ("generic-parameter-constraints", "generic-parameter-constraint");
+			if (constraints != null && constraints.Count > 0) {
+				sb.Append (" : ");
+				for (int i = 0; i < constraints.Count; i++) {
+					if (i > 0)
+						sb.Append (", ");
+					sb.Append (constraints [i].GetTypeName ("name"));
+				}
+			}
+			return sb.ToString ();
+		}
+
 		protected void RenderGenericParameters (XElement source, XElement target, ApiChange change)
 		{
 			var src = source.DescendantList ("generic-parameters", "generic-parameter");
@@ -246,12 +263,12 @@ namespace Xamarin.ApiDiff {
 				if (i > 0)
 					change.Append (", ");
 				if (i >= srcCount) {
-					change.AppendAdded (tgt [i].GetTypeName ("name"), true);
+					change.AppendAdded (RenderGenericParameter (tgt [i]), true);
 				} else if (i >= tgtCount) {
-					change.AppendRemoved (src [i].GetTypeName ("name"), true);
+					change.AppendRemoved (RenderGenericParameter (src [i]), true);
 				} else {
-					var srcName = src [i].GetTypeName ("name");
-					var tgtName = tgt [i].GetTypeName ("name");
+					var srcName = RenderGenericParameter (src [i]);
+					var tgtName = RenderGenericParameter (tgt [i]);
 
 					if (srcName != tgtName) {
 						change.AppendModified (srcName, tgtName, true);
