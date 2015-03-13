@@ -65,7 +65,7 @@ CFLAGS="\
 CXXFLAGS=$CFLAGS
 CPPFLAGS=$CFLAGS
 LDFLAGS="\
--Wl,--no-undefined \
+-Wl,--no-undefined -Wl,--gc-sections \
 -ldl -lm -llog -lc -lgcc"
 
 CONFIG_OPTS="\
