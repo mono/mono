@@ -18,12 +18,7 @@ namespace System.Net.Sockets {
 		List<Thread> blocking_threads;
 
 		const int ABORT_RETRIES = 10;
-		static bool THROW_ON_ABORT_RETRIES;
-
-		static SafeSocketHandle ()
-		{
-			THROW_ON_ABORT_RETRIES = Environment.GetEnvironmentVariable("MONO_TESTS_IN_PROGRESS") == "yes";
-		}
+		static bool THROW_ON_ABORT_RETRIES = Environment.GetEnvironmentVariable("MONO_TESTS_IN_PROGRESS") == "yes";
 
 		public SafeSocketHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
 		{
