@@ -370,27 +370,6 @@ mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_hand
 	if (flags & MONO_MMAP_32BIT)
 		mflags |= MAP_32BIT;
 
-#if defined(TARGET_IOS) && defined(TARGET_ARM64)
-	/*
-	 * On arm64, where page size is 16k,  if trying to map after the file end
-	 * mmap doesn't map us the full page but only 4kb. This bug is present on
-	 * iOS 8.2. As a workaround, we forcefully extend the file to the desired
-	 * size to make sure than we can map the full page.
-	 *
-	 * https://bugzilla.xamarin.com/show_bug.cgi?id=27667
-	 */
-	if (mflags & MAP_SHARED) {
-		off_t saved_pos = lseek (fd, 0, SEEK_CUR);
-		off_t file_size = lseek (fd, 0, SEEK_END);
-
-		if (file_size < (offset + length)) {
-			if (ftruncate (fd, offset + length) == -1)
-				return NULL;
-		}
-		lseek (fd, saved_pos, SEEK_SET);
-	}
-#endif
-
 	ptr = mmap (0, length, prot, mflags, fd, offset);
 	if (ptr == MAP_FAILED)
 		return NULL;
