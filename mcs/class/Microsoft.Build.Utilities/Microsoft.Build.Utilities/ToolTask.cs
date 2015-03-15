@@ -512,7 +512,6 @@ namespace Microsoft.Build.Utilities
 			canceled.Set ();
 		}
 
-#if XBUILD_12
 		protected MessageImportance StandardErrorImportanceToUse {
 			get {
 				return MessageImportance.Normal;
@@ -527,6 +526,5 @@ namespace Microsoft.Build.Utilities
 
 		public bool LogStandardErrorAsError { get; set; }
 		public string StandardOutputImportance { get; set; }
-#endif
 	}
 }
