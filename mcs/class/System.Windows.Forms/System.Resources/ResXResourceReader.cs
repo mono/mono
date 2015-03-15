@@ -55,13 +55,13 @@ namespace System.Resources
 		private string fileName;
 		private Stream stream;
 		private TextReader reader;
-		private Hashtable hasht;
+		private OrderedDictionary hasht;
 		private ITypeResolutionService typeresolver;
 		private XmlTextReader xmlReader;
 		private string basepath;
 		private bool useResXDataNodes;
 		private AssemblyName [] assemblyNames;
-		private Hashtable hashtm;
+		private OrderedDictionary hashtm;
 		#endregion	// Local Variables
 
 		#region Constructors & Destructor
@@ -145,8 +145,8 @@ namespace System.Resources
 		#region Private Methods
 		private void LoadData ()
 		{
-			hasht = new Hashtable ();
-			hashtm = new Hashtable ();
+			hasht = new OrderedDictionary ();
+			hashtm = new OrderedDictionary ();
 			if (fileName != null) {
 				stream = File.OpenRead (fileName);
 			}
@@ -278,7 +278,7 @@ namespace System.Resources
 
 		private void ParseDataNode (bool meta)
 		{
-			Hashtable hashtable = ((meta && ! useResXDataNodes) ? hashtm : hasht);
+			OrderedDictionary hashtable = ((meta && ! useResXDataNodes) ? hashtm : hasht);
 			Point pos = new Point (xmlReader.LineNumber, xmlReader.LinePosition);
 			string name = GetAttribute ("name");
 			string type_name = GetAttribute ("type");

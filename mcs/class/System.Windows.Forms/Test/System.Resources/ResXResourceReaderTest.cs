@@ -1420,6 +1420,57 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
+		public void EnumeratorOrderSameAsResx ()
+		{
+			string resXContent = string.Format (CultureInfo.CurrentCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+				"<root>" +
+				"	<resheader name=\"resmimetype\">" +
+				"		<value>{0}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"reader\">" +
+				"		<value>System.Resources.ResXResourceReader, {1}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"writer\">" +
+				"		<value>System.Resources.ResXResourceWriter, {1}</value>" +
+				"	</resheader>" +
+				"	<data name=\"name2\">" +
+				"		<value> value5 </value>" +
+				"	</data>" +
+				"	<data name=\"name1\">" +
+				"		<value> value4 </value>" +
+				"	</data>" +
+				"	<data name=\"aaa\">" +
+				"		<value> value3 </value>" +
+				"	</data>" +
+				"	<data name=\"zzzz\">" +
+				"		<value> value2 </value>" +
+				"	</data>" +
+				"	<data name=\"bbbbbb\">" +
+				"		<value> value1 </value>" +
+				"	</data>" +
+				"</root>",
+				ResXResourceWriter.ResMimeType, Consts.AssemblySystem_Windows_Forms);
+
+			using (StringReader sr = new StringReader (resXContent)) {
+				using (ResXResourceReader r = new ResXResourceReader (sr)) {
+
+					IDictionaryEnumerator enumerator = r.GetEnumerator ();
+					enumerator.MoveNext ();
+					Assert.AreEqual ("name2", enumerator.Key, "#1");
+					enumerator.MoveNext ();
+					Assert.AreEqual ("name1", enumerator.Key, "#2");
+					enumerator.MoveNext ();
+					Assert.AreEqual ("aaa", enumerator.Key, "#3");
+					enumerator.MoveNext ();
+					Assert.AreEqual ("zzzz", enumerator.Key, "#4");
+					enumerator.MoveNext ();
+					Assert.AreEqual ("bbbbbb", enumerator.Key, "#5");
+				}
+			}
+		}
+
+		[Test]
 		public void UseResXDataNodes ()
 		{
 			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
