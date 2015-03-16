@@ -53,7 +53,9 @@ namespace System.Runtime.Serialization {
         [System.Security.SecurityCritical]  // auto-generated
         internal ObjectManager(ISurrogateSelector selector, StreamingContext context, bool checkSecurity, bool isCrossAppDomain) {
             if (checkSecurity) {
+#if !MONO
                 CodeAccessPermission.Demand(PermissionType.SecuritySerialization);          
+#endif
             }
             m_objects = new ObjectHolder[DefaultInitialSize];
             m_selector = selector;

@@ -294,6 +294,17 @@ namespace System.Runtime.Serialization {
             }                                        
         }
 
+#if MONO
+        private static Object nativeGetUninitializedObject(RuntimeType type)
+        {
+            return System.Runtime.Remoting.Activation.ActivationServices.AllocateUninitializedClassInstance (type);
+        }
+
+        private static Object nativeGetSafeUninitializedObject(RuntimeType type)
+        {
+            return System.Runtime.Remoting.Activation.ActivationServices.AllocateUninitializedClassInstance (type);
+        }
+#else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -303,11 +314,19 @@ namespace System.Runtime.Serialization {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern Object nativeGetUninitializedObject(RuntimeType type);
+#endif
 #if FEATURE_SERIALIZATION
+#if MONO
+        static bool GetEnableUnsafeTypeForwarders ()
+        {
+            return false;
+        }
+#else
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern bool GetEnableUnsafeTypeForwarders();
+#endif
 
         [SecuritySafeCritical]
         internal static bool UnsafeTypeForwardersIsEnabled()

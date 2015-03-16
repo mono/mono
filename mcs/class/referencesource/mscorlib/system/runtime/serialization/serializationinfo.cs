@@ -184,7 +184,9 @@ namespace System.Runtime.Serialization
         {
             if (!IsAssemblyNameAssignmentSafe(originalAssemblyName, newAssemblyName))
             {
+#if !MONO
                 CodeAccessPermission.Demand(PermissionType.SecuritySerialization);
+#endif
             }
         }
 

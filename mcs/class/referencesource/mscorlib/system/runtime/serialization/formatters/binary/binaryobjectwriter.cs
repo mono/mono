@@ -85,12 +85,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
             Contract.EndContractBlock();
 
             SerTrace.Log(this, "Serialize Entry 2 ", graph, ((headers == null) ? " no headers " : "headers "));
-
+#if !MONO
             if (fCheck)
             {
                 CodeAccessPermission.Demand(PermissionType.SecuritySerialization);          
             }
-
+#endif
             this.serWriter = serWriter;
             this.headers = inHeaders;
 
