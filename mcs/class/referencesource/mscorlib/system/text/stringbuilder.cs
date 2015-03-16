@@ -16,6 +16,7 @@ namespace System.Text {
     using System.Text;
     using System.Runtime;
     using System.Runtime.Serialization;
+    using System.Runtime.InteropServices;
     using System;
     using System.Runtime.CompilerServices;
     using System.Runtime.Versioning;
@@ -43,6 +44,7 @@ namespace System.Text {
     // 
     [System.Runtime.InteropServices.ComVisible(true)]
     [Serializable]
+    [StructLayout (LayoutKind.Sequential)]
     public sealed class StringBuilder : ISerializable {
         // A StringBuilder is internally represented as a linked list of blocks each of which holds
         // a chunk of the string.  It turns out string as a whole can also be represented as just a chunk, 
