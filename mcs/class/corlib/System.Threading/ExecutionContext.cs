@@ -34,6 +34,7 @@ using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Permissions;
 using System.Runtime.Remoting.Messaging;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace System.Threading {
@@ -255,14 +256,17 @@ namespace System.Threading {
 		internal static LogicalCallContext CreateLogicalCallContext (bool createEmpty)
 		{
 			var lcc = Current._lcc;
-			if (lcc == null) {
-				if (createEmpty)
-					lcc = new LogicalCallContext ();
+			LogicalCallContext ctx = null;
 
-				return lcc;
-			}
+			if (lcc != null && lcc.HasInfo) {
+				ctx = new LogicalCallContext ();
+				foreach (DictionaryEntry entry in lcc.Datastore) {
+					ctx.SetData ((string)entry.Key, entry.Value);
+				}
+			} else if (createEmpty)
+				ctx = new LogicalCallContext ();
 
-			return (LogicalCallContext) lcc.Clone ();
+			return ctx;
 		}
 
 		internal void FreeNamedDataSlot (string name)
