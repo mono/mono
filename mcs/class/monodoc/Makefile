@@ -66,6 +66,8 @@ RESOURCE_FILES = \
 	Resources/Lminus.gif              \
 	Resources/Lplus.gif               \
 	Resources/creativecommons.png     \
+	Resources/owner-ios-32.png        \
+	Resources/owner-mac-32.png        \
 	Resources/mdoc-html-format.xsl    \
 	Resources/mdoc-html-utils.xsl     \
 	Resources/mdoc-sections-css.xsl   \
@@ -102,6 +104,8 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/Lminus.gif,Lminus.gif                         \
 	/resource:Resources/Lplus.gif,Lplus.gif                           \
 	/resource:Resources/creativecommons.png,creativecommons.png       \
+	/resource:Resources/owner-mac-32.png,owner-mac-32.png             \
+	/resource:Resources/owner-ios-32.png,owner-ios-32.png             \
 	/resource:Resources/mdoc-html-format.xsl,mdoc-html-format.xsl     \
 	/resource:Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl       \
 	/resource:Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl   \

@@ -98,7 +98,7 @@ namespace Monodoc.Ecma
 		 */
 		public bool GenericTypeArgumentsIsNumeric {
 			get {
-				return GenericTypeArguments != null && GenericTypeArguments.FirstOrDefault () == null;
+				return GenericTypeArguments != null && GenericTypeArguments.Any (t => t == null);
 			}
 		}
 
@@ -116,7 +116,7 @@ namespace Monodoc.Ecma
 
 		public bool GenericMemberArgumentsIsNumeric {
 			get {
-				return GenericMemberArguments != null && GenericMemberArguments.FirstOrDefault () == null;
+				return GenericMemberArguments != null && GenericMemberArguments.Any (t => t == null);
 			}
 		}
 
@@ -232,20 +232,27 @@ namespace Monodoc.Ecma
 			if (DescKind == Kind.Namespace)
 				return;
 
-			sb.Append ('.');
+			if (!string.IsNullOrEmpty (Namespace))
+				sb.Append ('.');
+
 			sb.Append (TypeName);
 			if (GenericTypeArguments != null) {
-				sb.Append ('<');
-				int i=0;
-				foreach (var t in GenericTypeArguments) {
-					if (i > 0) {
-						sb.Append (",");
-					}
-					t.ConstructCRef (sb);
-
-					i++;
+				if (GenericTypeArgumentsIsNumeric) {
+					sb.AppendFormat ("`{0}", GenericTypeArgumentsCount);
 				}
-				sb.Append ('>');
+				else {
+					sb.Append ('<');
+					int i=0;
+					foreach (var t in GenericTypeArguments) {
+						if (i > 0) {
+							sb.Append (",");
+						}
+						t.ConstructCRef (sb);
+						
+						i++;
+					}
+					sb.Append ('>');
+				}
 			}
 			if (NestedType != null) {
 				sb.Append ('+');

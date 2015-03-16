@@ -31,7 +31,8 @@ namespace Monodoc.Providers
 		                                              IDocStorage storage,
 		                                              Dictionary<string, XElement> nsSummaries,
 		                                              Func<XElement, string> indexGenerator = null,
-		                                              IEcmaProviderFileSource fileSource = null)
+		                                              IEcmaProviderFileSource fileSource = null,
+		                                              List<string> ownerList = null)
 		{
 			fileSource = fileSource ?? DefaultEcmaProviderFileSource.Default;
 			var root = tree.RootNode;
@@ -45,107 +46,130 @@ namespace Monodoc.Providers
 			indexGenerator = indexGenerator ?? (_ => resID++.ToString ());
 
 			using (var reader = fileSource.GetIndexReader (indexFilePath)) {
-				reader.ReadToFollowing ("Types");
-				var types = XElement.Load (reader.ReadSubtree ());
-
-				foreach (var ns in types.Elements ("Namespace")) {
-					var nsName = (string)ns.Attribute ("Name");
-					nsName = !string.IsNullOrEmpty (nsName) ? nsName : "global";
-					var nsNode = root.GetOrCreateNode (nsName, "N:" + nsName);
-
-					XElement nsElements;
-					if (!nsSummaries.TryGetValue (nsName, out nsElements))
-						nsSummaries[nsName] = nsElements = new XElement ("elements",
-						                                                 new XElement ("summary"),
-						                                                 new XElement ("remarks"));
-			        //Add namespace summary and remarks data from file, if available
-					var nsFileName = fileSource.GetNamespaceXmlPath(asm, nsName);
-					
-					if(File.Exists(nsFileName)){
-						var nsEl = fileSource.GetNamespaceElement (nsFileName);
-
-						nsElements.Element ("summary").ReplaceWith (nsEl.Descendants ("summary").First ());
-						nsElements.Element ("remarks").ReplaceWith (nsEl.Descendants ("remarks").First ());
-					}else{
-						Console.WriteLine ("Error reading namespace XML for {0} at {1}", nsName, nsFileName);
-					}
-			       
-					foreach (var type in ns.Elements ("Type")) {
-						// Add the XML file corresponding to the type to our storage
-						var id = indexGenerator (type);
-						string typeFilePath;
-						var typeDocument = EcmaDoc.LoadTypeDocument (asm, nsName, type.Attribute ("Name").Value, out typeFilePath, fileSource);
-						if (typeDocument == null)
-							continue;
-
-						// write the document (which may have been modified by the fileSource) to the storage
-						MemoryStream io = new MemoryStream ();
-						using (var writer = XmlWriter.Create (io)) {
-							typeDocument.WriteTo (writer);
-						}
-						io.Seek (0, SeekOrigin.Begin);
-						storage.Store (id, io);
-
-						nsElements.Add (ExtractClassSummary (typeDocument));
-
-						var typeCaption = EcmaDoc.GetTypeCaptionFromIndex (type);
-						var url = idPrefix + id + '#' + typeCaption + '/';
-						typeCaption = EcmaDoc.GetTypeCaptionFromIndex (type, true);
-						var typeNode = nsNode.CreateNode (typeCaption, url);
-
-						// Add meta "Members" node
-						typeNode.CreateNode ("Members", "*");
-						var membersNode = typeDocument.Root.Element ("Members");
-						if (membersNode == null || !membersNode.Elements ().Any ())
-							continue;
-						var members = membersNode
-							.Elements ("Member")
-							.ToLookup (EcmaDoc.GetMemberType);
-
-						foreach (var memberType in members) {
-							// We pluralize the member type to get the caption and take the first letter as URL
-							var node = typeNode.CreateNode (EcmaDoc.PluralizeMemberType (memberType.Key), memberType.Key[0].ToString ());
-							var memberIndex = 0;
-
-							var isCtors = memberType.Key[0] == 'C';
-
-							// We do not escape much member name here
-							foreach (var memberGroup in memberType.GroupBy (m => MakeMemberCaption (m, isCtors))) {
-								if (memberGroup.Count () > 1) {
-									// Generate overload
-									var overloadCaption = MakeMemberCaption (memberGroup.First (), false);
-									var overloadNode = node.CreateNode (overloadCaption, overloadCaption);
-									foreach (var member in memberGroup)
-										overloadNode.CreateNode (MakeMemberCaption (member, true), (memberIndex++).ToString ());
-									overloadNode.Sort ();
-								} else {
-									// We treat constructor differently by showing their argument list in all cases
-									node.CreateNode (MakeMemberCaption (memberGroup.First (), isCtors), (memberIndex++).ToString ());
+				reader.MoveToContent ();
+				while (reader.Read ()) {
+					if (reader.NodeType == XmlNodeType.Element) {
+						if (reader.Name == "Owner") {
+							try {
+								var owners = XElement.Load (reader.ReadSubtree ());
+								foreach (var owner in owners.Elements ("Owner")) {
+									var ownerValue = owner.Value;
+									ownerList.Add (ownerValue);
 								}
 							}
-							node.Sort ();
+							catch (InvalidOperationException ex) {
+								Console.WriteLine ("Unable to read Owner element from {0}: {1}", indexFilePath, ex);
+							}
+						}
+						else if (reader.Name == "Types") {
+
+							XElement types = XElement.Load (reader.ReadSubtree ());
+
+							foreach (var ns in types.Elements ("Namespace")) {
+								var nsName = (string)ns.Attribute ("Name");
+								var nsPath = (string)ns.Attribute ("Path");
+								nsName = !string.IsNullOrEmpty (nsName) ? nsName : "global";
+								nsPath = !string.IsNullOrEmpty (nsPath) ? nsPath : nsName;
+								var nsNode = root.GetOrCreateNode (nsName, "N:" + nsName);
+
+								XElement nsElements;
+								if (!nsSummaries.TryGetValue (nsName, out nsElements))
+									nsSummaries[nsName] = nsElements = new XElement ("elements",
+									                                                 new XElement ("summary"),
+									                                                 new XElement ("remarks"));
+						        //Add namespace summary and remarks data from file, if available
+								var nsFileName = fileSource.GetNamespaceXmlPath(asm, nsPath);
+								
+								if(File.Exists(nsFileName)){
+									var nsEl = fileSource.GetNamespaceElement (nsFileName);
+
+									nsElements.Element ("summary").ReplaceWith (nsEl.Descendants ("summary").First ());
+									nsElements.Element ("remarks").ReplaceWith (nsEl.Descendants ("remarks").First ());
+								}else{
+									Console.WriteLine ("Error reading namespace XML for {0} at {1}", nsName, nsFileName);
+								}
+						       
+								foreach (var type in ns.Elements ("Type")) {
+									// Add the XML file corresponding to the type to our storage
+									var id = indexGenerator (type);
+
+									string typeFilePath;
+									var typeDocument = EcmaDoc.LoadTypeDocument (asm, nsName, nsPath, type.Attribute ("Name").Value, out typeFilePath, fileSource);
+									if (typeDocument == null)
+										continue;
+
+									// write the document (which may have been modified by the fileSource) to the storage
+									MemoryStream io = new MemoryStream ();
+									using (var writer = XmlWriter.Create (io)) {
+										typeDocument.WriteTo (writer);
+									}
+									io.Seek (0, SeekOrigin.Begin);
+									storage.Store (id, io);
+
+									nsElements.Add (ExtractClassSummary (typeDocument));
+
+									var typeCaption = EcmaDoc.GetTypeCaptionFromIndex (type);
+									var url = idPrefix + id + '#' + typeCaption + '/';
+									typeCaption = EcmaDoc.GetTypeCaptionFromIndex (type, true);
+									var typeNode = nsNode.CreateNode (typeCaption, url);
+
+									// Add meta "Members" node
+									typeNode.CreateNode ("Members", "*");
+									var membersNode = typeDocument.Root.Element ("Members");
+									if (membersNode == null || !membersNode.Elements ().Any ())
+										continue;
+									var members = membersNode
+										.Elements ("Member")
+										.ToLookup (EcmaDoc.GetMemberType);
+
+									foreach (var memberType in members) {
+										// We pluralize the member type to get the caption and take the first letter as URL
+										var node = typeNode.CreateNode (EcmaDoc.PluralizeMemberType (memberType.Key), memberType.Key[0].ToString ());
+										var memberIndex = 0;
+
+										var isCtors = memberType.Key[0] == 'C';
+
+										// We do not escape much member name here
+										foreach (var memberGroup in memberType.GroupBy (m => MakeMemberCaption (m, isCtors))) {
+											if (memberGroup.Count () > 1) {
+												// Generate overload
+												var overloadCaption = MakeMemberCaption (memberGroup.First (), false);
+												var overloadNode = node.CreateNode (overloadCaption, overloadCaption);
+												foreach (var member in memberGroup)
+													overloadNode.CreateNode (MakeMemberCaption (member, true), (memberIndex++).ToString ());
+												overloadNode.Sort ();
+											} else {
+												// We treat constructor differently by showing their argument list in all cases
+												node.CreateNode (MakeMemberCaption (memberGroup.First (), isCtors), (memberIndex++).ToString ());
+											}
+										}
+										node.Sort ();
+									}
+								}
+
+
+								nsNode.Sort ();
+							}
+							root.Sort ();
 						}
 					}
-
-					nsNode.Sort ();
 				}
-				root.Sort ();
 			}
 		}
 
 		// Utility methods
 
-		public static XDocument LoadTypeDocument (string basePath, string nsName, string typeName, IEcmaProviderFileSource fileSource = null)
+		public static XDocument LoadTypeDocument (string basePath, string nsName, string nsPath, string typeName, IEcmaProviderFileSource fileSource = null)
 		{
 			string dummy;
-			return LoadTypeDocument (basePath, nsName, typeName, out dummy, fileSource ?? DefaultEcmaProviderFileSource.Default);
+			return LoadTypeDocument (basePath, nsName, nsPath, typeName, out dummy, fileSource ?? DefaultEcmaProviderFileSource.Default);
 		}
 
-		public static XDocument LoadTypeDocument (string basePath, string nsName, string typeName, out string finalPath, IEcmaProviderFileSource fileSource = null)
+		public static XDocument LoadTypeDocument (string basePath, string nsName, string nsPath, string typeName, out string finalPath, IEcmaProviderFileSource fileSource = null)
 		{
 			fileSource = fileSource ?? DefaultEcmaProviderFileSource.Default;
 
-			finalPath = fileSource.GetTypeXmlPath (basePath, nsName, typeName);
+			finalPath = fileSource.GetTypeXmlPath (basePath, nsPath, typeName);
 			if (!File.Exists (finalPath)) {
 				Console.Error.WriteLine ("Warning: couldn't process type file `{0}' as it doesn't exist", finalPath);
 				return null;
@@ -153,7 +177,7 @@ namespace Monodoc.Providers
 
 			XDocument doc = null;
 			try {
-				doc = fileSource.GetTypeDocument(finalPath);
+				doc = fileSource.GetTypeDocument (finalPath, nsName);
 			} catch (Exception e) {
 				Console.WriteLine ("Document `{0}' is unparsable, {1}", finalPath, e.ToString ());
 			}
@@ -578,16 +602,19 @@ namespace Monodoc.Providers
 
 		static XElement ExtractClassSummary (XDocument typeDoc)
 		{
-			string name = typeDoc.Root.Attribute("Name").Value;
-			string fullName = typeDoc.Root.Attribute("FullName").Value;
-			string assemblyName = typeDoc.Root.Element("AssemblyInfo") != null ? typeDoc.Root.Element("AssemblyInfo").Element("AssemblyName").Value : string.Empty;
-			var docs = typeDoc.Root.Element("Docs");
-			var summary = docs.Element("summary") ?? new XElement("summary");
-			var remarks = docs.Element("remarks") ?? new XElement("remarks");
+			string name = typeDoc.Root.Attribute ("Name").Value;
+			string fullName = typeDoc.Root.Attribute ("FullName").Value;
+			string assemblyName = typeDoc.Root.Element ("AssemblyInfo") != null ? typeDoc.Root.Element("AssemblyInfo").Element("AssemblyName").Value : string.Empty;
+			string owners = typeDoc.Root.Attribute ("owner") != null ? typeDoc.Root.Attribute ("owner").Value : string.Empty;
+			var docs = typeDoc.Root.Element ("Docs");
+			var summary = docs.Element ("summary") ?? new XElement ("summary");
+			var remarks = docs.Element ("remarks") ?? new XElement ("remarks");
+
 			return new XElement ("class",
 				 new XAttribute ("name", name ?? string.Empty),
 				 new XAttribute ("fullname", fullName ?? string.Empty),
 				 new XAttribute ("assembly", assemblyName ?? string.Empty),
+				 new XAttribute ("owner", owners),
 				 summary,
 				 remarks);
 		}

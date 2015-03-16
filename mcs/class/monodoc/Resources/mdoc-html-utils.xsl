@@ -840,6 +840,10 @@
 			<xsl:with-param name="content">
 			  <div class="related">
 				<xsl:call-template name="CreateRelatedSection">
+				  <xsl:with-param name="section" select="'Platform Docs'" />
+				  <xsl:with-param name="type" select="'PlatformDocAPI'" />
+				</xsl:call-template>
+				<xsl:call-template name="CreateRelatedSection">
 				  <xsl:with-param name="section" select="'Articles'" />
 				  <xsl:with-param name="type" select="'article'" />
 				</xsl:call-template>
@@ -1470,6 +1474,45 @@
 		</p>
 	</xsl:template>
 
+	<xsl:template name="owner-images">
+		<xsl:param name="ownerString" />
+		<xsl:param name="right-align" select="''" />
+		<xsl:if test="string-length($ownerString)">
+			<div class="owner-container">
+				<xsl:if test="string-length($right-align)">
+					<xsl:attribute name="style">float:right</xsl:attribute>
+				</xsl:if>
+				<xsl:call-template name="owner-images-core">
+					<xsl:with-param name="ownerString" select="$ownerString"/>
+				</xsl:call-template>
+	 		</div>
+ 		</xsl:if>
+	</xsl:template>
+
+	<xsl:template name="owner-images-core">
+		<xsl:param name="ownerString" />
+		<xsl:if test="string-length($ownerString)">
+			<xsl:variable name="currentItem" select="substring-before(concat($ownerString,','),',')" />
+			<xsl:variable name="nextItem" select="substring-after($ownerString, ',')" />
+
+			<!-- the template for each item -->
+			<img class="owner-icon">
+				<xsl:attribute name="title">
+					<xsl:value-of select="concat('Available on ', $currentItem)"/>
+				</xsl:attribute>
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat('mdocimages/owner-', $currentItem, '-32.png')"/>
+				</xsl:attribute>
+			</img>
+			<!-- / -->
+			<xsl:call-template name="owner-images-core">
+				<xsl:with-param name="ownerString" select=
+			"$nextItem"/>
+			</xsl:call-template>
+
+		</xsl:if>
+	</xsl:template>
+
 	<xsl:template match="attribution">
 		<a href="http://creativecommons.org/licenses/by/4.0/" class="attributionlogo">
 			<xsl:attribute name="title">
@@ -1697,6 +1740,9 @@
 								<xsl:with-param name="member" select="." />
 							</xsl:call-template>
 						</xsl:attribute>
+						<xsl:attribute name="owner">
+							<xsl:value-of select="@owner" />
+						</xsl:attribute>
 						<xsl:copy-of select="./*" />
 					</Member>
 				</Members>
@@ -1731,6 +1777,10 @@
 								<xsl:with-param name="member" select="." />
 							</xsl:call-template>
 						</xsl:attribute>
+
+						<xsl:attribute name="owner">
+							<xsl:value-of select="@owner" />
+						</xsl:attribute>
 						<xsl:copy-of select="./*" />
 					</Member>
 				</xsl:for-each>
@@ -1762,6 +1812,9 @@
 							<xsl:call-template name="GetParameterTypes">
 								<xsl:with-param name="member" select="." />
 							</xsl:call-template>
+						</xsl:attribute>
+						<xsl:attribute name="owner">
+							<xsl:value-of select="@owner" />
 						</xsl:attribute>
 						<xsl:copy-of select="./*" />
 					</Member>
@@ -2064,6 +2117,11 @@
 								<xsl:with-param name="extra" select="false()"/>
 							</xsl:call-template>
 							</div>
+							
+							<xsl:call-template name="owner-images">
+								<xsl:with-param name="ownerString" select="@owner" />
+								<xsl:with-param name="right-align" select="'true'" />
+							</xsl:call-template>
 						</td>
 
 					<xsl:choose>

@@ -61,7 +61,14 @@
 
 		<xsl:call-template name="CreateHeader">
 			<xsl:with-param name="content">
-			  <ul class="breadcrumb">
+			<xsl:if test="@owner">
+				<div class="owner-container" style="float:right">Type available on: 
+					<xsl:call-template name="owner-images">
+						<xsl:with-param name="ownerString" select="@owner" />
+					</xsl:call-template>
+				</div>
+			</xsl:if>
+			<ul class="breadcrumb">
 				<xsl:choose>
 					<xsl:when test="$show='masteroverview'">
 						<li class="namespace">
@@ -235,7 +242,6 @@
 				<xsl:with-param name="implemented" select="$implemented" />
 				<xsl:with-param name="show-members-link" select="true()" />
 			</xsl:call-template>
-			
 
 			<!-- signature -->
 			<xsl:call-template name="CreateTypeSignature" />
@@ -388,6 +394,14 @@
 					<xsl:with-param name="linkid" select="concat ('T:', @FullName)" />
 				</xsl:call-template>
 
+				<xsl:if test="@owner">
+					<div>Member available on: 
+						<xsl:call-template name="owner-images">
+							<xsl:with-param name="ownerString" select="@owner" />
+						</xsl:call-template>
+					</div>
+				</xsl:if>
+				
 				<div class="MemberBox">
 					<xsl:call-template name="DisplayDocsInformation">
 						<xsl:with-param name="linkid" select="concat ('T:', @FullName)" />
@@ -503,6 +517,13 @@
 							</xsl:attribute>
 							<xsl:value-of select="@name"/>
 						</a>
+
+						<xsl:if test="@owner">
+							<xsl:call-template name="owner-images">
+								<xsl:with-param name="ownerString" select="@owner" />
+								<xsl:with-param name="right-align" select="'true'" />
+							</xsl:call-template>
+						</xsl:if>
 
 						<xsl:variable name="containingtype" select="substring-before(@fullname, concat('+',@name))"/>
 						<xsl:if test="$containingtype">
