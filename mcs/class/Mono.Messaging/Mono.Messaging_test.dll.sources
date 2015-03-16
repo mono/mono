@@ -1,3 +1,5 @@
 Mono.Messaging/ConcurrentLinkedQueueTest.cs
 Mono.Messaging/QueueReferenceTest.cs
-
+../../../build/common/Consts.cs
+../../../build/common/Locale.cs
+AssemblyInfo.cs

@@ -44,8 +44,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Test\Mono.Messaging\ConcurrentLinkedQueueTest.cs" />
-    <Compile Include="Test\Mono.Messaging\QueueReferenceTest.cs" />  </ItemGroup>
+    <Compile Include="Test\Mono.Messaging\QueueReferenceTest.cs" />
+    <Compile Include="Test\Mono.Messaging\MessagingProviderLocatorTests.cs" />
+    <Compile Include="Test\Mono.Messaging\DummyMessagingProvider.cs" />
+    <Compile Include="Test\AssemblyInfo.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
