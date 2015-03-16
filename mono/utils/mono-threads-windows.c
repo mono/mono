@@ -40,12 +40,6 @@ mono_threads_core_abort_syscall (MonoThreadInfo *info)
 	CloseHandle (handle);
 }
 
-void
-mono_threads_core_abort_syscall (MonoThreadInfo *info)
-{
-	mono_threads_core_interrupt (info);
-}
-
 gboolean
 mono_threads_core_needs_abort_syscall (void)
 {
