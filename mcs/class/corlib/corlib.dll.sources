@@ -103,7 +103,6 @@ System/ArrayTypeMismatchException.cs
 System/AssemblyLoadEventArgs.cs
 System/AssemblyLoadEventHandler.cs
 System/AsyncCallback.cs
-System/Attribute.cs
 System/AttributeTargets.cs
 System/BadImageFormatException.cs
 System/Buffer.cs
@@ -1403,6 +1402,7 @@ ReferenceSources/RuntimeType.cs
 ../../../external/referencesource/mscorlib/system/activator.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
 ../../../external/referencesource/mscorlib/system/arraysegment.cs
+../../../external/referencesource/mscorlib/system/attribute.cs
 ../../../external/referencesource/mscorlib/system/attributeusageattribute.cs
 ../../../external/referencesource/mscorlib/system/bitconverter.cs
 ../../../external/referencesource/mscorlib/system/boolean.cs

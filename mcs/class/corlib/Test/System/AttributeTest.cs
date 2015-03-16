@@ -1013,6 +1013,25 @@ namespace MonoTests.System
 			AttributeWithTypeId a = new AttributeWithTypeId ();
 			a.GetHashCode ();
 		}
+
+		class ArrayAttribute : Attribute
+		{
+#pragma warning disable 414
+			int[] array;
+#pragma warning restore
+
+			public ArrayAttribute (int[] array)
+			{
+				this.array = array;
+			}
+		}
+
+		[Test]
+		public void ArrayFieldsEquality ()
+		{
+			Assert.IsTrue (new ArrayAttribute (new int[] { 1, 2 }).Equals (new ArrayAttribute (new int[] { 1, 2 })));
+			Assert.IsFalse (new ArrayAttribute (new int[] { 1, 2 }).Equals (new ArrayAttribute (new int[] { 1, 1 })));
+		}
 	}
 
 	namespace ParamNamespace {
