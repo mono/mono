@@ -20,10 +20,10 @@ namespace System {
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_Attribute))]
     [System.Runtime.InteropServices.ComVisible(true)]
-    public abstract class Attribute : _Attribute
+    public abstract partial class Attribute : _Attribute
     {
         #region Private Statics
-
+#if !MONO
         #region PropertyInfo
         private static Attribute[] InternalGetCustomAttributes(PropertyInfo element, Type type, bool inherit)
         {
@@ -414,7 +414,7 @@ namespace System {
             return (Attribute[])Array.UnsafeCreateInstance(elementType, elementCount);
         }
         #endregion
-
+#endif
         #endregion
 
         #region Public Statics
