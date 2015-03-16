@@ -62,7 +62,7 @@ namespace System.Timers {
             if (interval <= 0)
                 throw new ArgumentException(SR.GetString(SR.InvalidParameter, "interval", interval));
                         
-            this.interval = CalculateRoundedInterval(interval);
+            this.interval = CalculateRoundedInterval(interval, true);
         }
 
         /// <devdoc>
@@ -136,10 +136,13 @@ namespace System.Timers {
           }
         }
 
-        private static int CalculateRoundedInterval(double interval) {
+        private static int CalculateRoundedInterval(double interval, bool argumentCheck = false) {
             double roundedInterval = Math.Ceiling(interval);
             if (roundedInterval > Int32.MaxValue || roundedInterval <= 0) {
-                throw new ArgumentException(SR.GetString(SR.InvalidParameter, "interval", interval));
+                if (argumentCheck)
+                    throw new ArgumentException(SR.GetString(SR.InvalidParameter, "interval", interval));
+
+                throw new ArgumentOutOfRangeException(SR.GetString(SR.InvalidParameter, "interval", interval));
             }
             return (int)roundedInterval;
         }
