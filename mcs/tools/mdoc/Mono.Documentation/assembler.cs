@@ -3,9 +3,11 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@gnome.org)
+//   Joel Martinez (joel.martinez@xamarin.com)
 //
 // (C) 2003 Ximian, Inc.
-//
+// (C) 2014 Xamarin
+// 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +33,7 @@ public class MDocAssembler : MDocCommand {
 		"xhtml"
 	};
 
-	string droppedNamespace = null;
+	List<string> droppedNamespaces = new List<string> ();
 
 	public static Option[] CreateFormatOptions (MDocCommand self, Dictionary<string, List<string>> formats)
 	{
@@ -66,7 +68,11 @@ public class MDocAssembler : MDocCommand {
 					"If not specified, `tree' is the default PREFIX.",
 				v => prefix = v },
 			formatOptions [1],
-			{"dropns=","The namespace that has been dropped from this version of the assembly.", v => droppedNamespace = v },
+			{"droppedns=", "The namespace(s) that have been dropped in the documentation from this version of the assembly.", 
+				v => {
+					var split = v.Split (' ');
+					droppedNamespaces.AddRange (split);
+				}},
 			{"ntypes","Replace references to native types with their original types.", v => replaceNTypes=true },
 		};
 		List<string> extra = Parse (options, args, "assemble", 
@@ -83,15 +89,20 @@ public class MDocAssembler : MDocCommand {
 			switch (format) {
 			case "ecma":
 				if (ecma == null) {
+					
 					ecma = new EcmaProvider ();
+					ecma.FileSource = new MDocFileSource (droppedNamespaces, droppedNamespaces.Any () ? ApiStyle.Unified : ApiStyle.Classic) {
+						ReplaceNativeTypes = replaceNTypes
+					};
+				
 					list.Add (ecma);
+						
 					sort = true;
 				}
-				ecma.FileSource = new MDocFileSource(droppedNamespace, string.IsNullOrWhiteSpace(droppedNamespace) ? ApiStyle.Unified : ApiStyle.Classic) {
-					ReplaceNativeTypes = replaceNTypes
-				};
+				
 				foreach (string dir in formats [format])
 					ecma.AddDirectory (dir);
+				
 				break;
 
 			case "xhtml":
@@ -154,6 +165,8 @@ public class MDocAssembler : MDocCommand {
 	/// </summary>
 	internal class MDocFileSource : IEcmaProviderFileSource {
 		private string droppedNamespace;
+		private List<string> droppedNamespaces;
+		private List<string> indexNamespaces = new List<string> ();
 		private bool shouldDropNamespace = false;
 		private ApiStyle styleToDrop;
 
@@ -161,10 +174,11 @@ public class MDocAssembler : MDocCommand {
 
 		/// <param name="ns">The namespace that is being dropped.</param>
 		/// <param name="style">The style that is being dropped.</param>
-		public MDocFileSource(string ns, ApiStyle style) 
+		public MDocFileSource(List<string> droppednamespaces, ApiStyle style) 
 		{
-			droppedNamespace = ns;
-			shouldDropNamespace = !string.IsNullOrWhiteSpace (ns);
+			droppedNamespaces = droppednamespaces;
+
+			shouldDropNamespace = droppednamespaces.Any ();
 			styleToDrop = style;
 		}
 
@@ -173,13 +187,20 @@ public class MDocAssembler : MDocCommand {
 			XDocument doc = XDocument.Load (path);
 
 			DropApiStyle (doc, path);
-			DropNSFromDocument (doc);
+
+			if (doc.Root.Element ("Types") != null) {
+				indexNamespaces.AddRange (doc.Root
+					.Element ("Types")
+					.Elements ("Namespace")
+					.Select (n => n.Attribute ("Name").Value));
+			}
 
 			// now put the modified contents into a stream for the XmlReader that monodoc will use.
 			MemoryStream io = new MemoryStream ();
 			using (var writer = XmlWriter.Create (io)) {
 				doc.WriteTo (writer);
 			}
+
 			io.Seek (0, SeekOrigin.Begin);
 
 			return XmlReader.Create (io);
@@ -188,11 +209,6 @@ public class MDocAssembler : MDocCommand {
 		public XElement GetNamespaceElement(string path) 
 		{
 			var element = XElement.Load (path);
-
-			var attributes = element.Descendants ().Concat(new XElement[] { element }).SelectMany (n => n.Attributes ());
-			var textNodes = element.Nodes ().OfType<XText> ();
-
-			DropNS (attributes, textNodes);
 
 			return element;
 		}
@@ -298,15 +314,133 @@ public class MDocAssembler : MDocCommand {
 			return XDocument.Load (supposedPath);
 		}
 
-		void DropNSFromDocument (XDocument doc)
+		void AddNSToDocument (XDocument doc, string nsPrefix)
 		{
-			var attributes = doc.Descendants ().SelectMany (n => n.Attributes ());
-			var textNodes = doc.DescendantNodes().OfType<XText> ().ToArray();
+			if (!this.shouldDropNamespace)
+				return;
 
-			DropNS (attributes, textNodes);
+			droppedNamespace = nsPrefix;
+
+			var fullname = doc.Root.Attribute ("FullName").Value;
+			doc.Root.SetAttributeValue ("FullName", string.Format ("{0}.{1}", nsPrefix, fullname));
+
+			// rewrite all the crefs
+			var sees = doc
+				.Descendants ()
+				.Where (d => d.Name.LocalName == "see" && d.Attribute("cref") != null)
+				.Select (see =>  {
+					EcmaUrlParser parser = new EcmaUrlParser ();
+					EcmaDesc reference;
+					string cref = see.Attribute ("cref").Value;
+
+					bool parseResult = parser.TryParse (cref.Trim (), out reference);
+					return new {
+
+						ParseResult = parseResult,
+		
+						Reference = reference,
+						See = see
+					};
+				})
+				.Where (r => r.ParseResult)
+				.ToArray ();
+			foreach (var see in sees) {
+				// add the namespace back in
+
+				var ecma = see.Reference;
+
+				string newCref = AddNSToCref (ecma);
+
+
+				see.See.Attribute ("cref").Value = newCref;
+			}
+
+			var nonCurrentNamespaces = droppedNamespaces.Where (n => !string.IsNullOrWhiteSpace(n) && n != droppedNamespace).ToArray ();
+
+			if (doc.Root.Element ("Members") != null) {
+				foreach (var member in doc.Root.Element ("Members").Elements ("Member")) {
+					var sigs = member.Elements ("MemberSignature").Select (s => new { Value = s.Attribute ("Value").Value, Signature = s }).ToArray ();
+
+					foreach (var sig in sigs) {
+						UpdateErrantNamespaces (
+							nsPrefix, 
+							nonCurrentNamespaces, 
+							sig.Value, 
+							v => sig.Signature.Attribute ("Value").Value = v);
+					}
+
+
+					// ReturnType
+					var rv = member.Element ("ReturnValue");
+					if (rv != null) {
+						var returnType = rv.Element ("ReturnType");
+						if (returnType != null) {
+							UpdateErrantNamespaces (
+								nsPrefix,
+								nonCurrentNamespaces,
+								returnType.Value,
+
+								v => returnType.Value = v);
+						}
+					}
+
+					// Parameter
+					var parameterContainer = member.Element ("Parameters");
+					if (parameterContainer != null) {
+						var parameters = parameterContainer.Elements ("Parameter").Select (s => new { Value = s.Attribute ("Type").Value, Parameter = s }).ToArray ();
+						foreach (var p in parameters) {
+							UpdateErrantNamespaces (
+								nsPrefix, 
+								nonCurrentNamespaces, 
+								p.Value, 
+								v => p.Parameter.Attribute ("Type").Value = v);
+						}
+					}
+				}
+			}
 		}
 
-		void DropNS(IEnumerable<XAttribute> attributes, IEnumerable<XText> textNodes) 
+		static void UpdateErrantNamespaces (string nsPrefix, IEnumerable<string> nonCurrentNamespaces, string valueToCheck, Action<string> updateAction)
+		{
+			var originalValue = valueToCheck;
+			var namespacesFound = nonCurrentNamespaces.Where (n => valueToCheck.Contains (n)).ToArray ();
+			if (namespacesFound.Any ()) {
+				// this value contains a value that we need to replace with teh current namespace
+				foreach (var ns in namespacesFound) {
+					valueToCheck = valueToCheck.Replace (ns, nsPrefix);
+				}
+			}
+
+			if (valueToCheck != originalValue) {
+				updateAction (valueToCheck);
+			}
+		}
+
+		string AddNSToCref (EcmaDesc ecma) 
+		{
+			string potentialNS = string.Format ("{0}.{1}", droppedNamespace, ecma.Namespace);
+			bool shouldBeAdded = indexNamespaces.Contains (potentialNS);
+			if (shouldBeAdded) {
+
+				ecma.Namespace = potentialNS;
+
+				if (ecma.MemberArguments != null) {
+					foreach (var arg in ecma.MemberArguments) {
+						AddNSToCref (arg);
+					}
+				}
+
+				if (ecma.GenericTypeArguments != null) {
+					foreach (var arg in ecma.GenericTypeArguments) {
+						AddNSToCref (arg);
+					}
+				}
+			}
+
+			return ecma.ToEcmaCref ();
+		}
+
+		void AddNS(IEnumerable<XAttribute> attributes, IEnumerable<XText> textNodes, string nsPrefix) 
 		{
 			if (!shouldDropNamespace) {
 				return;
@@ -321,7 +455,7 @@ public class MDocAssembler : MDocCommand {
 
 			foreach (var textNode in textNodes) {
 				if (textNode.Value.Contains (nsString)) {
- 					textNode.Value = textNode.Value.Replace (nsString, string.Empty);
+					textNode.Value = textNode.Value.Replace (nsString, string.Empty);
 				}
 			}
 		}
@@ -370,6 +504,7 @@ public class MDocAssembler : MDocCommand {
 		/// <param name="ns">This namespace will already have "dropped" the namespace.</param>
 		public string GetNamespaceXmlPath(string basePath, string ns) 
 		{
+
 			string nsNameToUse = ns;
 			if (shouldDropNamespace) {
 				nsNameToUse = string.Format ("{0}.{1}", droppedNamespace, ns);
@@ -388,11 +523,17 @@ public class MDocAssembler : MDocCommand {
 			}
 		}
 
-		public XDocument GetTypeDocument(string path) 
+		public XDocument GetTypeDocument(string path, string nsName) 
 		{
 			var doc = XDocument.Load (path);
+
 			DropApiStyle (doc, path);
-			DropNSFromDocument (doc);
+			//DropNSFromDocument (doc);
+
+			var dir = Path.GetDirectoryName (path);
+			var nsFromPath = Path.GetFileName (dir);
+			var theNamespace = nsName.Replace ("." + nsFromPath, string.Empty);
+			AddNSToDocument (doc, theNamespace);
 
 			return doc;
 		}
