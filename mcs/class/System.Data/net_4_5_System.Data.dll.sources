@@ -1,0 +1,16 @@
+Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs.in
+../../build/common/Locale.cs
+../../build/common/SR.cs
+
+ReferenceSources/NativeOledbWrapper.cs
+ReferenceSources/Res.cs
+ReferenceSources/ResCategoryAttribute.cs
+ReferenceSources/ResDescriptionAttribute.cs
+ReferenceSources/SNINativeMethodWrapper.cs
+ReferenceSources/ThisAssembly.cs
+ReferenceSources/Win32NativeMethods.cs
+
+#include referencesource.sources
+
+

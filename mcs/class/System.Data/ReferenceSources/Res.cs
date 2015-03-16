@@ -1091,6 +1091,7 @@ static class Res
 	public const string Xml_MissingSQL = "Xml_MissingSQL";
 	public const string Xml_MissingTable = "Xml_MissingTable";
 	public const string Xml_MultipleParentRows = "Xml_MultipleParentRows";
+	public const string Xml_MultipleTargetConverterError = "An error occurred with the multiple target converter while writing an Xml Schema.  See the inner exception for details.";
 	public const string Xml_MultipleTargetConverterEmpty = "Xml_MultipleTargetConverterEmpty";
 	public const string Xml_NestedCircular = "Xml_NestedCircular";
 	public const string Xml_PolymorphismNotSupported = "Xml_PolymorphismNotSupported";
