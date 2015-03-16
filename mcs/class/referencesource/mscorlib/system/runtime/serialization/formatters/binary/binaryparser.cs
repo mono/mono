@@ -1031,7 +1031,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                     int numArrayItems = Math.Min(chunkSize/typeLength, array.Length-arrayOffset);
                     int bufferUsed = numArrayItems*typeLength;
                     ReadBytes(byteBuffer, 0, bufferUsed);
-#if BIGENDIAN
+if (!BitConverter.IsLittleEndian) {
                     // we know that we are reading a primitive type, so just do a simple swap
                     for (int i = 0; i < bufferUsed; i += typeLength) 
                     {
@@ -1042,7 +1042,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                             byteBuffer[i + typeLength - 1 - j] = tmp;
                         }
                     }
-#endif
+}
                     Buffer.InternalBlockCopy(byteBuffer, 0, array, arrayOffset*typeLength, bufferUsed);
                     arrayOffset += numArrayItems;
                 }
