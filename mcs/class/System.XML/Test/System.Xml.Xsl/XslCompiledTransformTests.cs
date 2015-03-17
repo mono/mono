@@ -141,5 +141,25 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			t.Transform (new XPathDocument (new XmlTextReader (new StringReader (source))), null, sw);
 			Assert.AreEqual (expected, sw.ToString ());
 		}
+		
+		[Test] // bug 2917
+		public void XslOutputSettings ()
+		{
+			XslCompiledTransform xslCompiledTransform = new XslCompiledTransform();
+
+			string xsl =
+				@"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+				<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns:extensions=""urn:extensions"" exclude-result-prefixes=""extensions"">
+					<xsl:output method=""xml"" indent=""yes""/>
+					<xsl:template match="" / ""></xsl:template>
+				</xsl:stylesheet>";
+			
+
+			var xmlReader = XmlReader.Create(new StringReader(xsl));
+			xslCompiledTransform.Load(xmlReader);
+
+			// Returns true on .NET and False on mono 2.10.2
+			Assert.IsTrue (xslCompiledTransform.OutputSettings.Indent, "#1");
+		}
 	}
 }
