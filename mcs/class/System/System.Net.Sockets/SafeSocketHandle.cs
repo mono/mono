@@ -17,6 +17,8 @@ namespace System.Net.Sockets {
 
 		List<Thread> blocking_threads;
 
+		const int SOCKET_CLOSED = 10004;
+
 		const int ABORT_RETRIES = 10;
 		static bool THROW_ON_ABORT_RETRIES = Environment.GetEnvironmentVariable("MONO_TESTS_IN_PROGRESS") == "yes";
 
@@ -67,6 +69,15 @@ namespace System.Net.Sockets {
 						break;
 					}
 
+					/*
+					 * This method can be called by the DangerousRelease inside RegisterForBlockingSyscall
+					 * When this happens blocking_threads contains the current thread.
+					 * We can safely close the socket and throw SocketException in RegisterForBlockingSyscall
+					 * before the blocking system call.
+					 */
+					if (blocking_threads.Count == 1 && blocking_threads[0] == Thread.CurrentThread)
+						break;
+
 					AbortRegisteredThreads ();
 					// Sleep so other threads can resume
 					Thread.Sleep (1);
@@ -93,6 +104,10 @@ namespace System.Net.Sockets {
 				}
 				if (release)
 					DangerousRelease ();
+
+				// Handle can be closed by DangerousRelease
+				if (IsClosed)
+					throw new SocketException (SOCKET_CLOSED);
 			}
 		}
 
