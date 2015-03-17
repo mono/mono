@@ -112,7 +112,8 @@ namespace System.Runtime.Remoting
 
 		internal static bool ProxyCheckCast (RealProxy rp, RuntimeType castType)
 		{
-			throw new NotImplementedException ("ProxyCheckCast");
+			// TODO: What should it do?
+			return true;
 		}
 #endif
 
