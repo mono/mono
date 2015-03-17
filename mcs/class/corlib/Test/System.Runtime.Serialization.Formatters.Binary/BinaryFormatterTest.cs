@@ -62,6 +62,45 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		}
 	}
 
+	namespace NestedA
+	{
+		[Serializable]
+		public class QualifiedFieldTest
+		{
+			int value = 0;
+
+			public int ValueA {
+				get { return value; }
+				set { this.value = value; }
+			}
+		}
+	}
+
+	namespace NestedB
+	{
+		[Serializable]
+		public class QualifiedFieldTest : NestedA.QualifiedFieldTest
+		{
+			int value = 0;
+
+			public int ValueB {
+				get { return value; }
+				set { this.value = value; }
+			}
+		}
+	}
+
+	[Serializable]
+	public class QualifiedFieldTest : NestedB.QualifiedFieldTest
+	{
+		int value = 0;
+
+		public int Value {
+			get { return value; }
+			set { this.value = value; }
+		}
+	}
+
 	class SurrogateSelector: ISurrogateSelector
 	{
 		public void ChainSelector (ISurrogateSelector selector)
@@ -450,6 +489,23 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			bf.Serialize (ms, test);
 			ms.Position = 0;
 			return ms;
+		}
+
+		[Test]
+		public void QualifiedField()
+		{
+			QualifiedFieldTest a = new QualifiedFieldTest ();
+			a.ValueA = 1;
+			a.ValueB = 2;
+			a.Value = 3;
+			Stream ms = new MemoryStream ();
+			BinaryFormatter bf = new BinaryFormatter ();
+			bf.Serialize(ms, a);
+			ms.Position = 0;
+			QualifiedFieldTest b = (QualifiedFieldTest)bf.Deserialize (ms);
+			Assert.AreEqual (a.ValueA, b.ValueA, "#1");
+			Assert.AreEqual (a.ValueB, b.ValueB, "#2");
+			Assert.AreEqual (a.Value, b.Value, "#3");
 		}
 
 #if NET_4_0

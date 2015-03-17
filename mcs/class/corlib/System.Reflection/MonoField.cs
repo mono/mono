@@ -38,6 +38,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace System.Reflection {
 
@@ -54,6 +55,40 @@ namespace System.Reflection {
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern object UnsafeGetValue (object obj);
+
+        internal void CheckConsistency(Object target)
+        {
+            // only test instance fields
+            if ((Attributes & FieldAttributes.Static) != FieldAttributes.Static)
+            {
+                if (!DeclaringType.IsInstanceOfType(target))
+                {
+                    if (target == null)
+                    {
+#if FEATURE_LEGACYNETCF
+                        if (CompatibilitySwitches.IsAppEarlierThanWindowsPhone8)
+                            throw new ArgumentNullException(Environment.GetResourceString("RFLCT.Targ_StatFldReqTarg"));
+                        else
+#endif
+                        throw new TargetException(Environment.GetResourceString("RFLCT.Targ_StatFldReqTarg"));
+                    }
+                    else
+                    {
+                        throw new ArgumentException(
+                            String.Format(CultureInfo.CurrentUICulture, Environment.GetResourceString("Arg_FieldDeclTarget"),
+                                Name, DeclaringType, target.GetType()));
+                    }
+                }
+            }
+        }
+
+		[DebuggerStepThroughAttribute]
+		[Diagnostics.DebuggerHidden]
+		internal void UnsafeSetValue (Object obj, Object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
+		{
+			bool domainInitialized = false;
+			RuntimeFieldHandle.SetValue (this, obj, value, null, Attributes, null, ref domainInitialized);
+		}
 	}
 
 	[Serializable]

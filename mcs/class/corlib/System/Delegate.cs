@@ -609,5 +609,10 @@ namespace System
 			return RemotingServices.IsTransparentProxy (m_target);
 #endif
 		}
+
+		internal static Delegate CreateDelegateNoSecurityCheck (RuntimeType type, Object firstArgument, MethodInfo method)
+		{
+			return CreateDelegate_internal (type, firstArgument, method, true);
+		}
 	}
 }

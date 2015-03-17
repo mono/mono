@@ -165,10 +165,10 @@ namespace System.Runtime.Remoting.Messaging
 				case "__OutArgs":
 				case "__Return": return;
 
-				case "__MethodName" : 
-				case "__TypeName" : 
-				case "__MethodSignature" : 
-				case "__Args" : throw new ArgumentException ("key was invalid");
+				case "__MethodName" :
+				case "__TypeName" :
+				case "__MethodSignature" :
+				case "__Args" : return; //throw new ArgumentException ("key was invalid " + key);
 				case "__Uri": ((IInternalMessage)_message).Uri = (string) value; return;
 			}
 		}
@@ -297,7 +297,7 @@ namespace System.Runtime.Remoting.Messaging
 
 			public object Current 
 			{
-				get {return Entry.Value; }
+				get {return Entry; }
 			}
 
 			public bool MoveNext()

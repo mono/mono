@@ -35,6 +35,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.CompilerServices;
 
 namespace System
 {
@@ -105,6 +106,14 @@ namespace System
 		public static bool operator != (RuntimeFieldHandle left, RuntimeFieldHandle right)
 		{
 			return !left.Equals (right);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void SetValueInternal (FieldInfo fi, object obj, object value);
+
+		internal static void SetValue (RtFieldInfo field, Object obj, Object value, RuntimeType fieldType, FieldAttributes fieldAttr, RuntimeType declaringType, ref bool domainInitialized)
+		{
+			SetValueInternal (field, obj, value);
 		}
 	}
 }

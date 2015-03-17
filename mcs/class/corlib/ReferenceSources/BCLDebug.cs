@@ -46,5 +46,10 @@ namespace System
 		public static void Trace (string switchName, params object[]messages)
 		{
 		}
+
+		internal static bool CheckEnabled (string switchName)
+		{
+			return false;
+		}
 	}
 }

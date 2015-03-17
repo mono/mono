@@ -109,6 +109,11 @@ namespace System.Runtime.Remoting
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static bool IsTransparentProxy (object proxy);
+
+		internal static bool ProxyCheckCast (RealProxy rp, RuntimeType castType)
+		{
+			throw new NotImplementedException ("ProxyCheckCast");
+		}
 #endif
 
 		internal static IMethodReturnMessage InternalExecuteMessage (

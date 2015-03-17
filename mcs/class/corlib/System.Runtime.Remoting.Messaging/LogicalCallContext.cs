@@ -105,6 +105,12 @@ namespace System.Runtime.Remoting.Messaging
 			get { return _data; }
 			set { _data = value; }
 		}
+
+		internal CallContextRemotingData RemotingData {
+			get {
+				return _remotingData;
+			}
+		}
 	}
 
 	[Serializable]

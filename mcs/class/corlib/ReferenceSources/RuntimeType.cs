@@ -37,6 +37,7 @@ using System.Reflection.Emit;
 #endif
 using System.Diagnostics.Contracts;
 using System.Security;
+using System.Runtime.Serialization;
 
 namespace System
 {
@@ -52,6 +53,23 @@ namespace System
 		{
 			object [] att = GetCustomAttributes (typeof (DefaultMemberAttribute), true);
 			return att.Length != 0 ? ((DefaultMemberAttribute) att [0]).MemberName : null;
+		}
+
+		RuntimeConstructorInfo m_serializationCtor;
+		internal RuntimeConstructorInfo GetSerializationCtor()
+		{
+			if (m_serializationCtor == null) {
+				var s_SICtorParamTypes = new Type[] { typeof(SerializationInfo), typeof(StreamingContext) };
+
+				m_serializationCtor = GetConstructor(
+					BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+					null,
+					CallingConventions.Any,
+					s_SICtorParamTypes,
+					null) as RuntimeConstructorInfo;
+			}
+
+			return m_serializationCtor;
 		}
 
 		internal Object CreateInstanceSlow(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)

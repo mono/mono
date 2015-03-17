@@ -225,5 +225,14 @@ namespace System.Runtime.Remoting.Messaging
 			set { _targetIdentity = value; }
 		}
 
+		bool IInternalMessage.HasProperties ()
+		{
+			return _properties != null;
+		}
+
+		internal bool HasProperties ()
+		{
+			return _properties != null;
+		}
 	}
 }

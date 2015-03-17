@@ -260,5 +260,9 @@ namespace System.Runtime.Remoting {
 				return _serverType;
 			}
 		}
+
+		internal void SetDomainID (int id)
+		{
+		}
 	}
 }

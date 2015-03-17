@@ -136,6 +136,17 @@ namespace System.Reflection {
 
 			return (RuntimeAssembly) Assembly.Load (assemblyRef);
 		}
+
+		internal static RuntimeAssembly LoadWithPartialNameInternal (String partialName, Evidence securityEvidence, ref StackCrawlMark stackMark)
+		{
+			AssemblyName an = new AssemblyName(partialName);
+			return LoadWithPartialNameInternal (an, securityEvidence, ref stackMark);
+		}
+
+		internal static RuntimeAssembly LoadWithPartialNameInternal (AssemblyName an, Evidence securityEvidence, ref StackCrawlMark stackMark)
+		{
+			throw new NotImplementedException ("LoadWithPartialNameInternal");
+		}
 	}
 
 	[ComVisible (true)]

@@ -34,6 +34,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Runtime.Remoting.Messaging {
 
@@ -117,6 +118,40 @@ namespace System.Runtime.Remoting.Messaging {
 			Init();
 			ResolveMethod();
 		}
+
+        internal MethodCall (Object handlerObject, BinaryMethodCallMessage smuggledMsg)
+        {
+            if (handlerObject != null)
+            {
+                _uri = handlerObject as String;
+                if (_uri == null)
+                {
+                    // This must be the tranparent proxy
+                    MarshalByRefObject mbr = handlerObject as MarshalByRefObject;
+                    if (mbr != null)
+                    {
+                    	throw new NotImplementedException ("MarshalByRefObject.GetIdentity");
+/*
+                        bool fServer;
+                        srvID = MarshalByRefObject.GetIdentity(mbr, out fServer) as ServerIdentity; 
+                        uri = srvID.URI;
+*/
+                    }
+                }
+            }
+
+            _typeName = smuggledMsg.TypeName;
+            _methodName = smuggledMsg.MethodName;
+            _methodSignature = (Type[])smuggledMsg.MethodSignature;
+            _args = smuggledMsg.Args;
+            _genericArguments = smuggledMsg.InstantiationArgs;
+            _callContext = smuggledMsg.LogicalCallContext;
+
+            ResolveMethod();
+
+            if (smuggledMsg.HasProperties)
+                smuggledMsg.PopulateMessageProperties(Properties);
+        }
 
 		internal MethodCall ()
 		{
@@ -384,6 +419,11 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			get { return _targetIdentity; }
 			set { _targetIdentity = value; }
+		}
+
+		bool IInternalMessage.HasProperties()
+		{
+			return (ExternalProperties != null) || (InternalProperties != null);
 		}
 
 		Type[] GenericArguments {

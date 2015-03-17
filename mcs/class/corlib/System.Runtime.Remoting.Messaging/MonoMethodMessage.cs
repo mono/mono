@@ -65,6 +65,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		Identity identity;
 
+		internal static String CallContextKey = "__CallContext";
+		internal static String UriKey           = "__Uri";
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void InitMessage (MonoMethod method, object [] out_args);
@@ -329,6 +331,11 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			get { return identity; }
 			set { identity = value; }
+		}
+
+		bool IInternalMessage.HasProperties()
+		{
+			return properties != null;
 		}
 
 		public bool IsAsync

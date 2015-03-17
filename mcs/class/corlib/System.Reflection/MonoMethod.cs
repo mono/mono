@@ -491,6 +491,11 @@ namespace System.Reflection {
 				return 0;
 			}
 		}
+
+		internal void SerializationInvoke (Object target, SerializationInfo info, StreamingContext context)
+		{
+			Invoke (target, new object[] { info, context });
+		}
 	}
 
 	[Serializable()]
