@@ -147,7 +147,7 @@ namespace System.Runtime.Remoting.Messaging {
             }
            
             _returnValue = smuggledMrm.ReturnValue;
-            _outArgs = smuggledMrm.Args;
+            _args = smuggledMrm.Args;
             _exception = smuggledMrm.Exception;
 
             _callContext = smuggledMrm.LogicalCallContext;
