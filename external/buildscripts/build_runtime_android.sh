@@ -71,6 +71,7 @@ LDFLAGS="\
 -Wl,--wrap,sigaction \
 -L${KRAIT_PATCH_PATH}/obj/local/armeabi -lkrait-signal-handler \
 -Wl,--no-undefined \
+-Wl,--gc-sections \
 -Wl,-rpath-link=$PLATFORM_ROOT/usr/lib \
 -ldl -lm -llog -lc"
 
