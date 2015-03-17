@@ -1590,6 +1590,7 @@ ReferenceSources/MessageDictionary.cs
 ../../../external/referencesource/mscorlib/system/text/stringbuildercache.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/serialization/deserializationeventhandler.cs
+../../../external/referencesource/mscorlib/system/runtime/serialization/formatter.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/formatterconverter.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/formatterservices.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/ideserializationcallback.cs
