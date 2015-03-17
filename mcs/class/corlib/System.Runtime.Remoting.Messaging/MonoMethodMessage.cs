@@ -59,7 +59,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		string uri;
 
-		MethodCallDictionary properties;
+		MCMDictionary properties;
 
 		Type[] methodSignature;
 
@@ -94,7 +94,7 @@ namespace System.Runtime.Remoting.Messaging {
 		
 		public IDictionary Properties {
 			get {
-				if (properties == null) properties = new MethodCallDictionary (this);
+				if (properties == null) properties = new MCMDictionary (this);
 				return properties;
 			}
 		}

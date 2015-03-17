@@ -161,10 +161,10 @@ namespace System.Runtime.Remoting.Messaging {
 			IDictionary serDict = dict;
 			int count = 0;
 
-			MethodDictionary msgDict = dict as MethodDictionary;
+			MessageDictionary msgDict = dict as MessageDictionary;
 			if (null != msgDict) {
-				if (msgDict.HasInternalProperties) {
-					serDict = msgDict.InternalProperties;
+				if (msgDict.HasUserData ()) {
+					serDict = msgDict.InternalDictionary;
 					if (null != serDict) {
 						foreach (DictionaryEntry e in serDict) {
 							if (null == args)

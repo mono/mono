@@ -1340,7 +1340,6 @@ ReferenceSources/EncodingTable.cs
 ReferenceSources/TypeNameParser.cs
 ReferenceSources/RuntimeType.cs
 ReferenceSources/RemotingFieldCachedData.cs
-ReferenceSources/MessageDictionary.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs

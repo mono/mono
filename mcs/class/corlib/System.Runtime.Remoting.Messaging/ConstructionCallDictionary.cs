@@ -34,7 +34,7 @@ using System.Runtime.Remoting.Activation;
 
 namespace System.Runtime.Remoting.Messaging
 {
-	class ConstructionCallDictionary : MethodDictionary
+	class ConstructionCallDictionary : MessageDictionary
 	{
 		public static string[] InternalKeys = new string[] {"__Uri", "__MethodName", "__TypeName", "__MethodSignature", "__Args", "__CallContext", "__CallSiteActivationAttributes", "__ActivationType", "__ContextProperties", "__Activator", "__ActivationTypeName"};
 

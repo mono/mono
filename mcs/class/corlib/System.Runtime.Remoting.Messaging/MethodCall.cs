@@ -279,7 +279,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		internal virtual void InitDictionary()
 		{
-			MethodCallDictionary props = new MethodCallDictionary (this);
+			var props = new MCMDictionary (this);
 			ExternalProperties = props;
 			InternalProperties = props.GetInternalProperties();
 		}
