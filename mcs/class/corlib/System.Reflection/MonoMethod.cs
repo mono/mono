@@ -481,6 +481,22 @@ namespace System.Reflection {
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
+
+		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern int get_core_clr_security_level ();
+
+		public override bool IsSecurityTransparent {
+			get { return get_core_clr_security_level () == 0; }
+		}
+
+		public override bool IsSecurityCritical {
+			get { return get_core_clr_security_level () > 0; }
+		}
+
+		public override bool IsSecuritySafeCritical {
+			get { return get_core_clr_security_level () == 1; }
+		}
 	}
 	
 
