@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,612,618,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;INSIDE_SYSTEM_WEB</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;INSIDE_SYSTEM_WEB</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,612,618,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;INSIDE_SYSTEM_WEB</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;INSIDE_SYSTEM_WEB</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -48,19 +48,6 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\ByteArrayFromResXHandler.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\FileRefHandler.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\InMemoryHandler.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\NullRefHandler.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\ResXDataNode.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\ResXDataNodeHandler.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\ResXFileRef.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\ResXNullRef.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\ResXResourceReader.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\ResXResourceSet.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\ResXResourceWriter.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\SerializedFromResXHandler.cs" />
-    <Compile Include="..\System.Windows.Forms\System.Resources\TypeConverterFromResXHandler.cs" />
     <Compile Include="..\System.Design\System.Data.Design\TypedDataSetGenerator.cs" />
     <Compile Include="..\System.Web.Abstractions\System.Web\HttpApplicationStateBase.cs" />
     <Compile Include="..\System.Web.Abstractions\System.Web\HttpApplicationStateWrapper.cs" />
@@ -103,6 +90,19 @@
     <Compile Include="..\System.Web.Routing\System.Web.Routing\UrlRoutingHandler.cs" />
     <Compile Include="..\System.Web.Routing\System.Web.Routing\UrlRoutingModule.cs" />
     <Compile Include="..\System.Web.Routing\System.Web.Routing\VirtualPathData.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\ByteArrayFromResXHandler.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\FileRefHandler.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\InMemoryHandler.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\NullRefHandler.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\ResXDataNode.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\ResXDataNodeHandler.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\ResXFileRef.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\ResXNullRef.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\ResXResourceReader.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\ResXResourceSet.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\ResXResourceWriter.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\SerializedFromResXHandler.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\TypeConverterFromResXHandler.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.Web.Util\ISectionSettingsMapper.cs" />
     <Compile Include="Mono.Web.Util\MembershipSectionMapper.cs" />
@@ -1384,6 +1384,18 @@
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib-net_4_5</Name>
     </ProjectReference>
+    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_5.csproj">
+      <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
+      <Name>System.Configuration-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../Mono.Data.Sqlite/Mono.Data.Sqlite-net_4_5.csproj">
+      <Project>{41476FBD-C1CB-4B3C-8078-3281EB1E0EAB}</Project>
+      <Name>Mono.Data.Sqlite-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Web.ApplicationServices/System.Web.ApplicationServices-net_4_5.csproj">
+      <Project>{B4E6806D-1B38-4CEE-8ADB-2D0A4D1AF25F}</Project>
+      <Name>System.Web.ApplicationServices-net_4_5</Name>
+    </ProjectReference>
     <ProjectReference Include="../System/System-net_4_5.csproj">
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
       <Name>System-net_4_5</Name>
@@ -1415,18 +1427,6 @@
     <ProjectReference Include="../System.ComponentModel.DataAnnotations/System.ComponentModel.DataAnnotations-net_4_5.csproj">
       <Project>{63EC4158-FFAC-4867-8003-CF6054C8DF0B}</Project>
       <Name>System.ComponentModel.DataAnnotations-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_5.csproj">
-      <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
-      <Name>System.Configuration-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../Mono.Data.Sqlite/Mono.Data.Sqlite-net_4_5.csproj">
-      <Project>{41476FBD-C1CB-4B3C-8078-3281EB1E0EAB}</Project>
-      <Name>Mono.Data.Sqlite-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Web.ApplicationServices/System.Web.ApplicationServices-net_4_5.csproj">
-      <Project>{B4E6806D-1B38-4CEE-8ADB-2D0A4D1AF25F}</Project>
-      <Name>System.Web.ApplicationServices-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

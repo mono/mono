@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;TRACE;NET_3_0;HAS_ACTIVATION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -1084,6 +1084,10 @@
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib-net_4_5</Name>
     </ProjectReference>
+    <ProjectReference Include="../System.ServiceModel.Activation/System.ServiceModel.Activation-net_4_5.csproj">
+      <Project>{E537F31B-BCB7-4935-ABF3-DF2FAC48DCB3}</Project>
+      <Name>System.ServiceModel.Activation-net_4_5</Name>
+    </ProjectReference>
     <ProjectReference Include="../System/System-net_4_5.csproj">
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
       <Name>System-net_4_5</Name>
@@ -1143,10 +1147,6 @@
     <ProjectReference Include="../System.Web.ApplicationServices/System.Web.ApplicationServices-net_4_5.csproj">
       <Project>{B4E6806D-1B38-4CEE-8ADB-2D0A4D1AF25F}</Project>
       <Name>System.Web.ApplicationServices-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.ServiceModel.Activation/System.ServiceModel.Activation-net_4_5.csproj">
-      <Project>{E537F31B-BCB7-4935-ABF3-DF2FAC48DCB3}</Project>
-      <Name>System.ServiceModel.Activation-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

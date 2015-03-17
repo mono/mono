@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_5</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_5</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -45,40 +45,14 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\referencesource\System.Xml.Linq\System\Xml\Linq\XComponentModel.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Xml.Linq\System\Xml\Linq\XLinq.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Xml.Linq\System\Xml\Linq\XNodeNavigator.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Xml.Linq\System\Xml\Linq\XNodeValidator.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="System.Xml.Linq\Extensions.cs" />
-    <Compile Include="System.Xml.Linq\LoadOptions.cs" />
-    <Compile Include="System.Xml.Linq\ReaderOptions.cs" />
-    <Compile Include="System.Xml.Linq\SaveOptions.cs" />
-    <Compile Include="System.Xml.Linq\XAttribute.cs" />
-    <Compile Include="System.Xml.Linq\XCData.cs" />
-    <Compile Include="System.Xml.Linq\XComment.cs" />
-    <Compile Include="System.Xml.Linq\XContainer.cs" />
-    <Compile Include="System.Xml.Linq\XDeclaration.cs" />
-    <Compile Include="System.Xml.Linq\XDocument.cs" />
-    <Compile Include="System.Xml.Linq\XDocumentType.cs" />
-    <Compile Include="System.Xml.Linq\XElement.cs" />
-    <Compile Include="System.Xml.Linq\XIterators.cs" />
-    <Compile Include="System.Xml.Linq\XName.cs" />
-    <Compile Include="System.Xml.Linq\XNamespace.cs" />
-    <Compile Include="System.Xml.Linq\XNode.cs" />
-    <Compile Include="System.Xml.Linq\XNodeDocumentOrderComparer.cs" />
-    <Compile Include="System.Xml.Linq\XNodeEqualityComparer.cs" />
-    <Compile Include="System.Xml.Linq\XNodeNavigator.cs" />
-    <Compile Include="System.Xml.Linq\XNodeReader.cs" />
-    <Compile Include="System.Xml.Linq\XNodeWriter.cs" />
-    <Compile Include="System.Xml.Linq\XObject.cs" />
-    <Compile Include="System.Xml.Linq\XObjectChange.cs" />
-    <Compile Include="System.Xml.Linq\XObjectChangeEventArgs.cs" />
-    <Compile Include="System.Xml.Linq\XProcessingInstruction.cs" />
-    <Compile Include="System.Xml.Linq\XStreamingElement.cs" />
-    <Compile Include="System.Xml.Linq\XText.cs" />
-    <Compile Include="System.Xml.Linq\XUtil.cs" />
-    <Compile Include="System.Xml.Schema\Extensions.cs" />
-    <Compile Include="System.Xml.XPath\Extensions.cs" />  </ItemGroup>
+    <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -117,6 +91,10 @@
     <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
       <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
       <Name>System.Xml-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Runtime.Serialization/System.Runtime.Serialization-net_4_5.csproj">
+      <Project>{08FF4C26-9C12-433D-AE90-43370046387A}</Project>
+      <Name>System.Runtime.Serialization-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

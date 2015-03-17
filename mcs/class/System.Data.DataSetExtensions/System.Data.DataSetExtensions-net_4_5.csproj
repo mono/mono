@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -86,6 +86,18 @@
     <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Data/System.Data-net_4_5.csproj">
+      <Project>{9A33954F-57A8-4D75-B1D8-0F81808A0DD4}</Project>
+      <Name>System.Data-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
+      <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
+      <Name>System.Xml-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Web/System.Web-net_4_5.csproj">
+      <Project>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</Project>
+      <Name>System.Web-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Core/System.Core-net_4_5.csproj">
       <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>

@@ -31,7 +31,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT;SIGNED</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT;SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -39,7 +39,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT;SIGNED</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT;SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -156,6 +156,10 @@
     <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Reactive.Interfaces/System.Reactive.Interfaces-net_4_5.csproj">
+      <Project>{EFA38650-CE13-4BF3-993D-70B238DB1C9E}</Project>
+      <Name>System.Reactive.Interfaces-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System/System-net_4_5.csproj">
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>

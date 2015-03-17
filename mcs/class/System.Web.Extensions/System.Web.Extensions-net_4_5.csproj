@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_5;SYSTEM_WEB_EXTENSIONS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_5;SYSTEM_WEB_EXTENSIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_5;SYSTEM_WEB_EXTENSIONS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;NET_3_5;SYSTEM_WEB_EXTENSIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -216,6 +216,10 @@
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib-net_4_5</Name>
     </ProjectReference>
+    <ProjectReference Include="../System.Web.ApplicationServices/System.Web.ApplicationServices-net_4_5.csproj">
+      <Project>{B4E6806D-1B38-4CEE-8ADB-2D0A4D1AF25F}</Project>
+      <Name>System.Web.ApplicationServices-net_4_5</Name>
+    </ProjectReference>
     <ProjectReference Include="../System/System-net_4_5.csproj">
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
       <Name>System-net_4_5</Name>
@@ -259,10 +263,6 @@
     <ProjectReference Include="../System.ServiceModel/System.ServiceModel-net_4_5.csproj">
       <Project>{F2156C09-C377-4945-A690-39CFBF3319B3}</Project>
       <Name>System.ServiceModel-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Web.ApplicationServices/System.Web.ApplicationServices-net_4_5.csproj">
-      <Project>{B4E6806D-1B38-4CEE-8ADB-2D0A4D1AF25F}</Project>
-      <Name>System.Web.ApplicationServices-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;DISABLE_UNSAFE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;DISABLE_UNSAFE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>DISABLE_UNSAFE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>DISABLE_UNSAFE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -49,6 +49,7 @@
     <Compile Include="..\Assembly\AssemblyInfo.cs" />
     <Compile Include="ByteEncoding.cs" />
     <Compile Include="ByteSafeEncoding.cs" />
+    <Compile Include="DefaultEncoder.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="MonoEncoding.cs" />

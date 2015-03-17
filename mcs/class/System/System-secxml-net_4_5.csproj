@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;SECURITY_DEP;XML_DEP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;SECURITY_DEP;XML_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;SECURITY_DEP;XML_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;SECURITY_DEP;XML_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -339,8 +339,45 @@
     <Compile Include="..\..\..\external\referencesource\System\compmod\system\componentmodel\UInt64Converter.cs" />
     <Compile Include="..\..\..\external\referencesource\System\compmod\system\componentmodel\WarningException.cs" />
     <Compile Include="..\..\..\external\referencesource\System\compmod\system\componentmodel\Win32Exception.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\AssertSection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\BooleanSwitch.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\ConsoleTraceListener.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\CorrelationManager.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\Debug.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\DelimitedListTraceListener.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\DiagnosticsConfiguration.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\FilterElement.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\ListenerElementsCollection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\PerfCounterSection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\SeverityFilter.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\SourceElementsCollection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\SourceFilter.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\SourceLevels.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\SourceSwitch.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\Switch.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\SwitchAttribute.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\SwitchElementsCollection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\SwitchLevelAttribute.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\SystemDiagnosticsSection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TextWriterTraceListener.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\Trace.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceEventCache.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceEventType.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceFilter.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceInternal.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceLevel.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceListener.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceListeners.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceOptions.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceSection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceSource.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TraceSwitch.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\traceutils.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\TypedElement.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\compmod\system\diagnostics\XmlWriterTraceListener.cs" />
     <Compile Include="..\..\..\external\referencesource\System\misc\hresults.cs" />
     <Compile Include="..\..\..\external\referencesource\System\misc\invariantcomparer.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\misc\PrivilegedConfigurationManager.cs" />
     <Compile Include="..\..\..\external\referencesource\System\misc\SecurityUtils.cs" />
     <Compile Include="..\..\..\external\referencesource\System\misc\WeakHashtable.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_BufferOffsetSize.cs" />
@@ -440,7 +477,9 @@
     <Compile Include="Mono.Net.Dns\ResolverError.cs" />
     <Compile Include="Mono.Net.Dns\SimpleResolver.cs" />
     <Compile Include="Mono.Net.Dns\SimpleResolverEventArgs.cs" />
+    <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
+    <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
     <Compile Include="ReferenceSources\Logging.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
     <Compile Include="ReferenceSources\SettingsSectionInternal.cs" />
@@ -623,18 +662,13 @@
     <Compile Include="System.Configuration\UserSettingsGroup.cs" />
     <Compile Include="System.Diagnostics.CodeAnalysis\ExcludeFromCodeCoverageAttribute.cs" />
     <Compile Include="System.Diagnostics\AlphabeticalEnumConverter.cs" />
-    <Compile Include="System.Diagnostics\BooleanSwitch.cs" />
-    <Compile Include="System.Diagnostics\ConsoleTraceListener.cs" />
-    <Compile Include="System.Diagnostics\CorrelationManager.cs" />
     <Compile Include="System.Diagnostics\CounterCreationData.cs" />
     <Compile Include="System.Diagnostics\CounterCreationDataCollection.cs" />
     <Compile Include="System.Diagnostics\CounterSample.cs" />
     <Compile Include="System.Diagnostics\CounterSampleCalculator.cs" />
     <Compile Include="System.Diagnostics\DataReceivedEventArgs.cs" />
     <Compile Include="System.Diagnostics\DataReceivedEventHandler.cs" />
-    <Compile Include="System.Diagnostics\Debug.cs" />
     <Compile Include="System.Diagnostics\DefaultTraceListener.cs" />
-    <Compile Include="System.Diagnostics\DelimitedListTraceListener.cs" />
     <Compile Include="System.Diagnostics\DiagnosticsConfigurationHandler.cs" />
     <Compile Include="System.Diagnostics\EntryWrittenEventArgs.cs" />
     <Compile Include="System.Diagnostics\EntryWrittenEventHandler.cs" />
@@ -652,7 +686,6 @@
     <Compile Include="System.Diagnostics\EventLogPermissionEntryCollection.cs" />
     <Compile Include="System.Diagnostics\EventLogTraceListener.cs" />
     <Compile Include="System.Diagnostics\EventSourceCreationData.cs" />
-    <Compile Include="System.Diagnostics\EventTypeFilter.cs" />
     <Compile Include="System.Diagnostics\FileVersionInfo.cs" />
     <Compile Include="System.Diagnostics\ICollectData.cs" />
     <Compile Include="System.Diagnostics\InstanceData.cs" />
@@ -682,31 +715,13 @@
     <Compile Include="System.Diagnostics\ProcessThread.cs" />
     <Compile Include="System.Diagnostics\ProcessThreadCollection.cs" />
     <Compile Include="System.Diagnostics\ProcessWindowStyle.cs" />
-    <Compile Include="System.Diagnostics\SourceFilter.cs" />
-    <Compile Include="System.Diagnostics\SourceLevels.cs" />
-    <Compile Include="System.Diagnostics\SourceSwitch.cs" />
     <Compile Include="System.Diagnostics\Stopwatch.cs" />
-    <Compile Include="System.Diagnostics\Switch.cs" />
-    <Compile Include="System.Diagnostics\SwitchAttribute.cs" />
-    <Compile Include="System.Diagnostics\SwitchLevelAttribute.cs" />
-    <Compile Include="System.Diagnostics\TextWriterTraceListener.cs" />
     <Compile Include="System.Diagnostics\ThreadPriorityLevel.cs" />
     <Compile Include="System.Diagnostics\ThreadState.cs" />
     <Compile Include="System.Diagnostics\ThreadWaitReason.cs" />
-    <Compile Include="System.Diagnostics\Trace.cs" />
-    <Compile Include="System.Diagnostics\TraceEventCache.cs" />
-    <Compile Include="System.Diagnostics\TraceEventType.cs" />
-    <Compile Include="System.Diagnostics\TraceFilter.cs" />
     <Compile Include="System.Diagnostics\TraceImpl.cs" />
-    <Compile Include="System.Diagnostics\TraceLevel.cs" />
-    <Compile Include="System.Diagnostics\TraceListener.cs" />
-    <Compile Include="System.Diagnostics\TraceListenerCollection.cs" />
-    <Compile Include="System.Diagnostics\TraceOptions.cs" />
-    <Compile Include="System.Diagnostics\TraceSource.cs" />
     <Compile Include="System.Diagnostics\TraceSourceInfo.cs" />
-    <Compile Include="System.Diagnostics\TraceSwitch.cs" />
     <Compile Include="System.Diagnostics\Win32EventLog.cs" />
-    <Compile Include="System.Diagnostics\XmlWriterTraceListener.cs" />
     <Compile Include="System.IO.Compression\CompressionLevel.cs" />
     <Compile Include="System.IO.Compression\CompressionMode.cs" />
     <Compile Include="System.IO.Compression\DeflateStream.cs" />
@@ -885,6 +900,7 @@
     <Compile Include="System.Net.Sockets\NetworkStream.cs" />
     <Compile Include="System.Net.Sockets\ProtocolFamily.cs" />
     <Compile Include="System.Net.Sockets\ProtocolType.cs" />
+    <Compile Include="System.Net.Sockets\SafeSocketHandle.cs" />
     <Compile Include="System.Net.Sockets\SelectMode.cs" />
     <Compile Include="System.Net.Sockets\SendPacketsElement.cs" />
     <Compile Include="System.Net.Sockets\Socket.cs" />

@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;MICROSOFT_BUILD_DLL</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;MICROSOFT_BUILD_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;MICROSOFT_BUILD_DLL</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;MICROSOFT_BUILD_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -181,6 +181,26 @@
     <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System/System-net_4_5.csproj">
+      <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
+      <Name>System-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Core/System.Core-net_4_5.csproj">
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
+      <Name>System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
+      <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
+      <Name>System.Xml-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../Microsoft.Build.Engine/Microsoft.Build.Engine-net_4_5.csproj">
+      <Project>{54DFC5A7-7C1D-4BA5-A0F7-F0B312E1E076}</Project>
+      <Name>Microsoft.Build.Engine-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../Microsoft.Build.Framework/Microsoft.Build.Framework-net_4_5.csproj">
+      <Project>{DA3B9FEE-8FBD-4587-B760-65420765256A}</Project>
+      <Name>Microsoft.Build.Framework-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System/System-net_4_5.csproj">
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
