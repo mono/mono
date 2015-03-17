@@ -42,7 +42,7 @@ namespace System.Runtime.Remoting.Channels
 
 		public BinaryClientFormatterSinkProvider ()
 		{
-			_binaryCore = BinaryCore.DefaultInstance;
+			_binaryCore = BinaryCore.DefaultClientInstance;
 		}
 
 		public BinaryClientFormatterSinkProvider (IDictionary properties,

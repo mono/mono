@@ -40,7 +40,7 @@ namespace System.Runtime.Remoting.Channels
 	public class BinaryClientFormatterSink : IClientFormatterSink,
 		IMessageSink, IClientChannelSink, IChannelSinkBase
 	{
-		BinaryCore _binaryCore = BinaryCore.DefaultInstance;
+		BinaryCore _binaryCore = BinaryCore.DefaultClientInstance;
 		IClientChannelSink _nextInChain;
 
 		public BinaryClientFormatterSink (IClientChannelSink nextSink)
