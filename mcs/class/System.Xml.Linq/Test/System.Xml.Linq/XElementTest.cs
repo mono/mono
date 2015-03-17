@@ -2140,5 +2140,16 @@ namespace MonoTests.System.Xml.Linq
                 }
             }
 		}
+
+		[Test]
+		public void ParseVsReadXml ()
+		{
+			var p = XElement.Parse ("<root xmlns='urn:foo'><foo><xxx /></foo><x:bar xmlns:x='urn:bar'><yyy /></x:bar><baz xmlns=''><zzz /></baz></root>");
+			var r = XElement.Parse ("<foo />");
+			XmlReader xr = XmlReader.Create (new StringReader ("<root xmlns='urn:foo'><foo><xxx /></foo><x:bar xmlns:x='urn:bar'><yyy /></x:bar><baz xmlns=''><zzz /></baz></root>"), new XmlReaderSettings ());
+			((IXmlSerializable)r).ReadXml (xr);
+
+			Assert.IsTrue (XNode.DeepEquals (p, r), "The XElements were not equal.\nParse() expected:\n{0}\n\nBut ReadXml() was:\n{1}\n", p, r);
+		}
 	}
 }
