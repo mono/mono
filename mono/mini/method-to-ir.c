@@ -8867,7 +8867,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod,
 																		   check_for_pending_exc, cfg->compile_aot);
 					fsig = mono_method_signature (wrapper);
-				} else if (constrained_class) {
+				} else if (constrained_call) {
 				} else {
 					fsig = mono_method_get_signature_checked (cmethod, image, token, generic_context, &cfg->error);
 					CHECK_CFG_ERROR;
