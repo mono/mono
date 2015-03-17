@@ -2578,7 +2578,7 @@ namespace System.Data {
 				info.AddValue ("DataTable.DataColumn_" + i + ".DataType",
 					       Columns[i].DataType, typeof (Type));
 				info.AddValue ("DataTable.DataColumn_" + i + ".DefaultValue",
-					       Columns[i].DefaultValue, typeof (DBNull));
+					       Columns[i].DefaultValue);
 				info.AddValue ("DataTable.DataColumn_" + i + ".AllowDBNull",
 					       Columns[i].AllowDBNull);
 				info.AddValue ("DataTable.DataColumn_" + i + ".AutoIncrement",
