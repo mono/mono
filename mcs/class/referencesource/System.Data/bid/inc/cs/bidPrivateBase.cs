@@ -877,7 +877,9 @@ internal static partial class Bid
     [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)] // getModulePath
     private static void initEntryPoint()
     {
+#if !MONO
         NativeMethods.DllBidInitialize();
+#endif
 
         //
         //  Multi-file assemblies are not supported by current model of the BID managed wrapper.
@@ -895,9 +897,11 @@ internal static partial class Bid
                                             friendlyName,
                                             hCookie.AddrOfPinnedObject());
 
+#if !MONO
         NativeMethods.DllBidEntryPoint( ref modID, BidVer, modIdentity,
                                         configFlags, ref modFlags, ctrlCallback,
                                         ref extInfo, IntPtr.Zero, IntPtr.Zero );
+#endif
 
         if( modID != NoData )
         {

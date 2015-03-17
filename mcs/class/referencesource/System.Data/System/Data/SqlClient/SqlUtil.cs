@@ -187,6 +187,7 @@ namespace System.Data.SqlClient {
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Process, ResourceScope.Process)]
         private InOutOfProcHelper() {
+#if !MONO
             // Don't need to close this handle...
             // SxS: we use this method to check if we are running inside the SQL Server process. This call should be safe in SxS environment.
             IntPtr handle = SafeNativeMethods.GetModuleHandle(null);
@@ -201,6 +202,7 @@ namespace System.Data.SqlClient {
                     _inProc = true;
                 }
             }
+#endif
         }
 
         internal static bool InProc {
