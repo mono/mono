@@ -275,7 +275,7 @@ namespace System.Net
 			groups.Remove (group.Name);
 		}
 
-		internal bool CheckAvailableForRecycling (out DateTime outIdleSince)
+		bool CheckAvailableForRecycling (out DateTime outIdleSince)
 		{
 			outIdleSince = DateTime.MinValue;
 
