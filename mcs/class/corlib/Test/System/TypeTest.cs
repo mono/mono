@@ -1700,10 +1700,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("System.String[*]", t.ToString ());
 		}
 
-#if MONOTOUCH
-		// feature not available when compiled under FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotImplementedException))]
-#endif
+#if MONO_COM
 		[Test]
 		public void TypeFromCLSID ()
 		{
@@ -1738,7 +1735,7 @@ namespace MonoTests.System
 			else
 				throw new COMException ();
 		}
-		
+#endif
 		[Test]
 		public void ExerciseFilterName ()
 		{

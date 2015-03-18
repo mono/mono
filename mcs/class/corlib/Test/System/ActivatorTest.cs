@@ -403,7 +403,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (typeof (int), Activator.CreateInstance (typeof (Nullable<int>), new object [] { null }).GetType ());
 			Assert.AreEqual (null, Activator.CreateInstance (typeof (Nullable<int>)));
 		}
-
+#if FEATURE_REMOTING
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetObject_TypeNull ()
@@ -411,7 +411,6 @@ namespace MonoTests.System {
 			Activator.GetObject (null, "tcp://localhost:1234/COMTestUri");
 		}
 
-#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetObject_UrlNull ()
@@ -420,26 +419,6 @@ namespace MonoTests.System {
 		}
 #endif
 
-/* This test is now executed in System.Runtime.Remoting unit tests 
-		[Test]
-		public void GetObject ()
-		{
-			// This will provide a COMTest object on  tcp://localhost:1234/COMTestUri
-			COMTest objCOMTest = new COMTest (8);
-			TcpChannel chnServer = new TcpChannel (1234);
-			ChannelServices.RegisterChannel (chnServer);
-			RemotingServices.SetObjectUriForMarshal (objCOMTest, "COMTestUri");
-			RemotingServices.Marshal (objCOMTest);
-
-			// This will get the remoting object
-			object objRem = Activator.GetObject (typeof (COMTest), "tcp://localhost:1234/COMTestUri");
-			Assert.IsNotNull (objRem, "#A07");
-			COMTest remCOMTest = (COMTest) objRem;
-			Assert.AreEqual (8, remCOMTest.Id, "#A08");
-
-			ChannelServices.UnregisterChannel(chnServer);
-		}
-*/
 		// TODO: Implemente the test methods for all the overriden function using activationAttribute
 
 		[Test]
