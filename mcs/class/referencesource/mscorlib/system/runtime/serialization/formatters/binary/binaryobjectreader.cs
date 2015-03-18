@@ -1504,9 +1504,10 @@ namespace System.Runtime.Serialization.Formatters.Binary {
             if ( !FormatterServices.UnsafeTypeForwardersIsEnabled() && sourceAssembly != destAssembly )
             {
                 // we have a type forward to attribute !
-
+#if !DISABLE_CAS_USE
                 // we can try to see if the dest assembly has less permissionSet
                 if (!destAssembly.PermissionSet.IsSubsetOf(sourceAssembly.PermissionSet))
+#endif
                 {
                     // let us try to see if typeforwardedfrom is there
 
@@ -1521,17 +1522,20 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                             typeFowardedFromAssembly = Assembly.Load(typeInfo.AssemblyString);
                         }
                         catch { }
-
+#if !DISABLE_CAS_USE
                         if (typeFowardedFromAssembly != sourceAssembly)
                         {
                             // throw security exception
                             throw new SecurityException() { Demanded = sourceAssembly.PermissionSet };
                         }
+#endif
                     }
                     else
                     {
+#if !DISABLE_CAS_USE
                         // throw security exception
                         throw new SecurityException() { Demanded = sourceAssembly.PermissionSet };
+#endif
                     }
                 }
             }         
