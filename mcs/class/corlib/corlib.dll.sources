@@ -1292,7 +1292,6 @@ System.Threading/NativeEventCalls.cs
 System.Threading/NativeOverlapped.cs
 System.Threading/Overlapped.cs
 System.Threading/ReaderWriterLock.cs
-System.Threading/RegisteredWaitHandle.cs
 ../System/System.Threading/SemaphoreFullException.cs
 System.Threading/SynchronizationContext.cs
 System.Threading/Thread.cs
