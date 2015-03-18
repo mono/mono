@@ -290,6 +290,7 @@ namespace System.Runtime.Remoting.Channels
 	{
 		internal static IMessage DeserializeMessage(MemoryStream mem, IMethodCallMessage msg)
 		{
+#if FEATURE_REMOTING
 			BinaryFormatter serializer = new BinaryFormatter();                
 
 			serializer.SurrogateSelector = null;
@@ -299,6 +300,9 @@ namespace System.Runtime.Remoting.Channels
 				return (IMessage) serializer.Deserialize(mem, null);
 			else
 				return (IMessage) serializer.DeserializeMethodResponse(mem, null, msg);
+#else
+			throw new NotSupportedException ();
+#endif
 		}
 		
 		internal static MemoryStream SerializeMessage(IMessage msg)

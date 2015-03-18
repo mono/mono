@@ -118,7 +118,7 @@ namespace System.Runtime.Remoting.Messaging {
 			Init();
 			ResolveMethod();
 		}
-
+#if FEATURE_REMOTING
         internal MethodCall (Object handlerObject, BinaryMethodCallMessage smuggledMsg)
         {
             if (handlerObject != null)
@@ -152,7 +152,7 @@ namespace System.Runtime.Remoting.Messaging {
             if (smuggledMsg.HasProperties)
                 smuggledMsg.PopulateMessageProperties(Properties);
         }
-
+#endif
 		internal MethodCall ()
 		{
 		}

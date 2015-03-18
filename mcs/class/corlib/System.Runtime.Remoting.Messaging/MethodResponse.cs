@@ -125,7 +125,7 @@ namespace System.Runtime.Remoting.Messaging {
 			if (retmsg.PropertiesCount > 0)
 				CADMessageBase.UnmarshalProperties (Properties, retmsg.PropertiesCount, args);
 		}
-
+#if FEATURE_REMOTING
         internal MethodResponse(IMethodCallMessage msg,
                                 Object handlerObject,
                                 BinaryMethodReturnMessage smuggledMrm)
@@ -155,7 +155,7 @@ namespace System.Runtime.Remoting.Messaging {
             if (smuggledMrm.HasProperties)
                 smuggledMrm.PopulateMessageProperties(Properties);
         }
-
+#endif
 		internal MethodResponse (SerializationInfo info, StreamingContext context) 
 		{
 			foreach (SerializationEntry entry in info)
