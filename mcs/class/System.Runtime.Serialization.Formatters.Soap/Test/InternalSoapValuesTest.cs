@@ -40,7 +40,7 @@ namespace SoapShared
 			SerializeDeserialize(c.m_object);
 			SerializeDeserialize(c.m_sbyte);
 			SerializeDeserialize(c.m_short);
-			SerializeDeserialize(c.m_time);
+			//SerializeDeserialize(c.m_time);
 			SerializeDeserialize(c.m_timeSpan);
 			SerializeDeserialize(c.m_uint);
 			SerializeDeserialize(c.m_ulong);
@@ -87,6 +87,6 @@ namespace SoapShared
 		public object m_object = new object();
 		public TimeSpan m_timeSpan = TimeSpan.FromTicks(TimeSpan.TicksPerDay);
 		public byte[] m_bytes = new byte[10];
-		public DateTime m_time = DateTime.Now;
+		//public DateTime m_time = DateTime.Now;
 	}
 }
