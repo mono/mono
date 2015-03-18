@@ -314,7 +314,8 @@ namespace System.Net
 
 				if (removeList != null) {
 					foreach (var group in removeList)
-						RemoveConnectionGroup (group);
+						if (groups.ContainsKey (group.Name))
+							RemoveConnectionGroup (group);
 				}
 
 				if (groups != null && groups.Count == 0)
