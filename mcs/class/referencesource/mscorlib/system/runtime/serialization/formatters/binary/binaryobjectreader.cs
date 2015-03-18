@@ -244,12 +244,12 @@ namespace System.Runtime.Serialization.Formatters.Binary {
             bIsCrossAppDomain = isCrossAppDomain;
 #endif
             bSimpleAssembly =  (formatterEnums.FEassemblyFormat == FormatterAssemblyStyle.Simple);
-
+#if !MONO
             if (fCheck)
             {
                 CodeAccessPermission.Demand(PermissionType.SecuritySerialization);
             }
-
+#endif
             this.handler = handler;
 
 
