@@ -33,6 +33,7 @@ namespace System.Data.SqlClient {
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         static internal void AliasRegistryLookup(ref string host, ref string protocol) {
+#if !MOBILE
             if (!ADP.IsEmpty(host)) {
                 const String folder = "SOFTWARE\\Microsoft\\MSSQLServer\\Client\\ConnectTo";
                 // Put a try...catch... around this so we don't abort ANY connection if we can't read the registry.
@@ -87,6 +88,7 @@ namespace System.Data.SqlClient {
                     }
                 }
             }
+#endif
         }
 
         // Encrypt password to be sent to SQL Server

@@ -290,7 +290,7 @@ internal static partial class Bid
         }
     }
 
-
+#if !NO_ODBC
     //
     //  Manually edited wrappers
     //
@@ -311,7 +311,9 @@ internal static partial class Bid
         if (((System.Data.Odbc.ODBC32.RetCode.SUCCESS != a1) ||  (modFlags & ApiGroup.StatusOk) != 0) &&  (modFlags & ApiGroup.Trace) != 0  &&  modID != NoData)
             NativeMethods.Trace (modID, UIntPtr.Zero, UIntPtr.Zero, fmtPrintfW, (int)(short)a1, a2);
     }
+#endif
 
+#if !NO_OLEDB
     [BidMethod]
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     internal static void Trace(string fmtPrintfW, System.Data.OleDb.OleDbHResult a1) { // 
@@ -336,7 +338,7 @@ internal static partial class Bid
         if ((modFlags & ApiGroup.Trace) != 0  &&  modID != NoData)
             NativeMethods.Trace (modID, UIntPtr.Zero, UIntPtr.Zero, fmtPrintfW, (int)a1,a2);
     }
-
+#endif
 
     [BidMethod]
     internal static void Trace(string fmtPrintfW, System.String a1, System.String a2) {

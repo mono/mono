@@ -304,6 +304,7 @@ namespace System.Data
                     if (s_configurableInstances == null)
                     {
                         Dictionary<string, InstanceInfo> tempConfigurableInstances = new Dictionary<string, InstanceInfo>(StringComparer.OrdinalIgnoreCase);
+#if !NO_CONFIGURATION
                         object section = PrivilegedConfigurationManager.GetSection("system.data.localdb");
                         if (section != null) // if no section just skip creation
                         {
@@ -318,6 +319,7 @@ namespace System.Data
                             }
                         }
                         else
+#endif
                             Bid.Trace( "<sc.LocalDBAPI.CreateLocalDBInstance> No system.data.localdb section found in configuration");
                         s_configurableInstances = tempConfigurableInstances;
                     }

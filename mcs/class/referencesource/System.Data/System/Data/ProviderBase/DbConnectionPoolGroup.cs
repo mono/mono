@@ -145,7 +145,9 @@ namespace System.Data.ProviderBase {
 
 
                         DbConnectionFactory connectionFactory = pool.ConnectionFactory;
+#if !MOBILE
                         connectionFactory.PerformanceCounters.NumberOfActiveConnectionPools.Decrement();
+#endif
                         connectionFactory.QueuePoolForRelease(pool, true);
                     }
                 }
@@ -198,7 +200,9 @@ namespace System.Data.ProviderBase {
                                     newPool.Startup(); // must start pool before usage
                                     bool addResult = _poolCollection.TryAdd(currentIdentity, newPool);
                                     Debug.Assert(addResult, "No other pool with current identity should exist at this point");
+#if !MOBILE
                                     connectionFactory.PerformanceCounters.NumberOfActiveConnectionPools.Increment();
+#endif
                                     pool = newPool;
                                     newPool = null;
                                 }
@@ -275,7 +279,9 @@ namespace System.Data.ProviderBase {
                                 // are completely empty.
                                 DbConnectionFactory connectionFactory = pool.ConnectionFactory;
 
+#if !MOBILE
                                 connectionFactory.PerformanceCounters.NumberOfActiveConnectionPools.Decrement();
+#endif
                                 connectionFactory.QueuePoolForRelease(pool, false);
                             }
                             else {

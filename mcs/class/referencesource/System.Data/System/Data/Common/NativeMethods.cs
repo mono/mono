@@ -15,6 +15,7 @@ namespace System.Data.Common {
 
     internal static class NativeMethods {
 
+#if !NO_OLEDB
         [Guid("0c733a1e-2a1c-11ce-ade5-00aa0044773d"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), ComImport]
         internal interface ISourcesRowset {
 
@@ -25,6 +26,7 @@ namespace System.Data.Common {
                 [In] IntPtr rgProperties,
                 [Out, MarshalAs(UnmanagedType.Interface)] out object ppRowset);
         }
+#endif
 
         [Guid("0C733A5E-2A1C-11CE-ADE5-00AA0044773D"), InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown), ComImport]
         internal interface ITransactionJoin {

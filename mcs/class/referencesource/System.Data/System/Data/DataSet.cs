@@ -19,7 +19,9 @@ namespace System.Data {
     using System.Collections.Specialized;
     using System.Xml;
     using System.Xml.Serialization;
+#if !NO_CONFIGURATION
     using System.Xml.Serialization.Advanced;
+#endif
     using System.Xml.Schema;
     using System.Runtime.Serialization.Formatters.Binary; //Binary Formatter
     using System.CodeDom;
@@ -3309,6 +3311,7 @@ namespace System.Data {
         private static bool PublishLegacyWSDL()
         {
             Single version = 1.0f; // Default is Version 1.0
+#if !NO_CONFIGURATION
             NameValueCollection settings = (NameValueCollection)PrivilegedConfigurationManager.GetSection(Keywords.WS_DATASETFULLQNAME);
             if (settings != null)
             {
@@ -3318,6 +3321,7 @@ namespace System.Data {
                     version = Single.Parse(values[0], CultureInfo.InvariantCulture);
                 }
             }
+#endif
             return (version < 2.0f); // if config does not exist, Default is Version 1.0
         }
 
@@ -3458,6 +3462,7 @@ namespace System.Data {
 
     }
 
+#if !NO_CODEDOM
  public class DataSetSchemaImporterExtension : SchemaImporterExtension {
         // DataSetSchemaImporterExtension is used for WebServices, it is used to recognize the schema of DataSet within wsdl
         // If a non 2.0 enabled DataSetSchemaImporterExtension, wsdl will generate a classes that you can't cast to dataset / datatable
@@ -3664,4 +3669,5 @@ namespace System.Data {
             return false;
         }
     }
+#endif
 }

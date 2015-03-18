@@ -8,7 +8,9 @@
 //------------------------------------------------------------------------------
 
 using System;
+#if !NO_ODBC
 using System.Data.Odbc;
+#endif
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -22,6 +24,7 @@ namespace System.Data.Common {
     [SuppressUnmanagedCodeSecurityAttribute()]
     internal static class UnsafeNativeMethods {
 
+#if !NO_ODBC
         //
         // ODBC32
         //
@@ -462,7 +465,9 @@ namespace System.Data.Common {
             [In, MarshalAs(UnmanagedType.LPWStr)]
             /*SQLCHAR* */string TableType,
             /*SQLSMALLINT*/Int16 NameLen4);
+#endif
 
+#if !NO_OLEDB
         //
         // Oleaut32
         //
@@ -1222,6 +1227,7 @@ namespace System.Data.Common {
                 IntPtr pUnkOuter,
                 ref Guid riid,
                 [MarshalAs(UnmanagedType.Interface)] ref object ppCommand);
+#endif
 
         //
         // Advapi32.dll Integrated security functions

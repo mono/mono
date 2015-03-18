@@ -785,7 +785,11 @@ namespace System.Data.SqlTypes
                     bRevertAssert = true;
                     
                     System.Diagnostics.Debug.Assert ( m_fs == null );
+#if MOBILE
+                    m_fs = new System.IO.FileStream ( hFile.DangerousGetHandle (), access, ( ( options & System.IO.FileOptions.Asynchronous ) != 0 ), DefaultBufferSize );
+#else
                     m_fs = new System.IO.FileStream ( hFile, access, DefaultBufferSize, ( ( options & System.IO.FileOptions.Asynchronous ) != 0 ) );
+#endif
                 }
                 finally
                 {

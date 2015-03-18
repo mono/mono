@@ -131,7 +131,9 @@ namespace System.Data.ProviderBase {
 
             DbConnectionInternal newConnection = CreateConnection(connectionOptions, poolKey, poolGroupProviderInfo, null, owningConnection, userOptions);
             if (null != newConnection) {
+#if !MOBILE
                 PerformanceCounters.HardConnectsPerSecond.Increment();
+#endif
                 newConnection.MakeNonPooledObject(owningConnection, PerformanceCounters);
             }
             Bid.Trace("<prov.DbConnectionFactory.CreateNonPooledConnection|RES|CPOOL> %d#, Non-pooled database connection created.\n", ObjectID);
@@ -144,7 +146,9 @@ namespace System.Data.ProviderBase {
 
             DbConnectionInternal newConnection = CreateConnection(options, poolKey, poolGroupProviderInfo, pool, owningObject, userOptions);
             if (null != newConnection) {
+#if !MOBILE
                 PerformanceCounters.HardConnectsPerSecond.Increment();
+#endif
                 newConnection.MakePooledConnection(pool);
             }
             Bid.Trace("<prov.DbConnectionFactory.CreatePooledConnection|RES|CPOOL> %d#, Pooled database connection created.\n", ObjectID);
@@ -277,7 +281,9 @@ namespace System.Data.ProviderBase {
                             }
                             else {
                                 if (retry.TrySetResult(task.Result)) {
+#if !MOBILE
                                     PerformanceCounters.NumberOfNonPooledConnections.Increment();
+#endif
                                 }
                                 else {
                                     // The outer TaskCompletionSource was already completed
@@ -293,7 +299,9 @@ namespace System.Data.ProviderBase {
                     }
 
                     connection = CreateNonPooledConnection(owningConnection, poolGroup, userOptions);
+#if !MOBILE
                     PerformanceCounters.NumberOfNonPooledConnections.Increment();
+#endif
                 }
                 else {
                     if (owningConnection.ForceNewConnection) {
@@ -425,7 +433,9 @@ namespace System.Data.ProviderBase {
 
                         // lock prevents race condition with PruneConnectionPoolGroups
                         newConnectionPoolGroups.Add(key, newConnectionPoolGroup);
+#if !MOBILE
                         PerformanceCounters.NumberOfActiveConnectionPoolGroups.Increment();
+#endif
                         connectionPoolGroup = newConnectionPoolGroup;
                         _connectionPoolGroups = newConnectionPoolGroups;
                     }
@@ -483,7 +493,9 @@ namespace System.Data.ProviderBase {
                                 if (Bid.AdvancedOn) {
                                     Bid.Trace("<prov.DbConnectionFactory.PruneConnectionPoolGroups|RES|INFO|CPOOL> %d#, ReleasePool=%d#\n", ObjectID, pool.ObjectID);
                                 }
+#if !MOBILE
                                 PerformanceCounters.NumberOfInactiveConnectionPools.Decrement();
+#endif
                             }
                         }
                     }
@@ -505,7 +517,9 @@ namespace System.Data.ProviderBase {
                                 if (Bid.AdvancedOn) {
                                     Bid.Trace("<prov.DbConnectionFactory.PruneConnectionPoolGroups|RES|INFO|CPOOL> %d#, ReleasePoolGroup=%d#\n", ObjectID, poolGroup.ObjectID);
                                 }
+#if !MOBILE
                                 PerformanceCounters.NumberOfInactiveConnectionPoolGroups.Decrement();
+#endif
                             }
                         }
                     }
@@ -527,7 +541,9 @@ namespace System.Data.ProviderBase {
                         // move idle entries from last prune pass to a queue for pending release
                         // otherwise process entry which may move it from active to idle
                         if (entry.Value.Prune()) { // may add entries to _poolsToRelease
+#if !MOBILE
                             PerformanceCounters.NumberOfActiveConnectionPoolGroups.Decrement();
+#endif
                             QueuePoolGroupForRelease(entry.Value);
                         }
                         else {
@@ -556,7 +572,9 @@ namespace System.Data.ProviderBase {
                 }
                 _poolsToRelease.Add(pool);
             }
+#if !MOBILE
             PerformanceCounters.NumberOfInactiveConnectionPools.Increment();
+#endif
         }
 
         internal void QueuePoolGroupForRelease(DbConnectionPoolGroup poolGroup) {
@@ -566,7 +584,9 @@ namespace System.Data.ProviderBase {
             lock (_poolGroupsToRelease) {
                 _poolGroupsToRelease.Add(poolGroup);
             }
+#if !MOBILE
             PerformanceCounters.NumberOfInactiveConnectionPoolGroups.Increment();
+#endif
         }
 
         virtual protected DbConnectionInternal CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions) {

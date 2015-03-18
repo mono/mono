@@ -180,14 +180,16 @@ namespace System.Data.SqlClient
                 throw SQL.NotAvailableOnContextConnection();
             }
 
-            NameValueCollection settings = (NameValueCollection)PrivilegedConfigurationManager.GetSection("system.data.sqlclient");
             Stream XMLStream =null;
+#if !NO_CONFIGURATION
+            NameValueCollection settings = (NameValueCollection)PrivilegedConfigurationManager.GetSection("system.data.sqlclient");
             if (settings != null){
                 string [] values = settings.GetValues(_metaDataXml);
                 if (values != null) {
                     XMLStream = ADP.GetXmlStreamFromValues(values, _metaDataXml);
                 }
             }
+#endif
 
             // if the xml was not obtained from machine.config use the embedded XML resource
             if (XMLStream == null){
@@ -306,9 +308,11 @@ namespace System.Data.SqlClient
 
         public static readonly SqlPerformanceCounters SingletonInstance = new SqlPerformanceCounters();
 
+#if !MOBILE
         [System.Diagnostics.PerformanceCounterPermissionAttribute(System.Security.Permissions.SecurityAction.Assert, PermissionAccess=PerformanceCounterPermissionAccess.Write, MachineName=".", CategoryName=CategoryName)]
         private SqlPerformanceCounters() : base (CategoryName, CategoryHelp) {
         }
+#endif
     }
 }
 

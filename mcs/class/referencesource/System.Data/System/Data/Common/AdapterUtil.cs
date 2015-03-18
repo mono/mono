@@ -18,8 +18,8 @@ namespace System.Data.Common {
     using System.Data.ProviderBase;
 #if !MOBILE
     using System.Data.Odbc;
-#endif
     using System.Data.OleDb;
+#endif
     using System.Data.Sql;
     using System.Data.SqlTypes;
     using System.Diagnostics;
@@ -2111,7 +2111,11 @@ namespace System.Data.Common {
                 FileIOPermission.RevertAssert();
             }
         }
-#if !MOBILE
+#if MOBILE
+        static internal object LocalMachineRegistryValue(string subkey, string queryvalue) {
+            return null;
+        }
+#else
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         static internal Stream GetXmlStreamFromValues(String[] values, String errorString) {

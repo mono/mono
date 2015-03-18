@@ -802,6 +802,7 @@ namespace System.Data.SqlClient
             }
         }
 
+#if !MOBILE
         public void EnlistDistributedTransaction(System.EnterpriseServices.ITransaction transaction) {
             if (IsContextConnection) {
                 throw SQL.NotAvailableOnContextConnection();
@@ -809,6 +810,7 @@ namespace System.Data.SqlClient
 
             EnlistDistributedTransactionHelper(transaction);
         }
+#endif
 
         override public void Open() {
             IntPtr hscp;
