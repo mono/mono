@@ -177,6 +177,28 @@ public class ServicePointTest
 		Assert.IsTrue (called);
 	}
 
+	public static void GetRequestStreamCallback (IAsyncResult asynchronousResult)
+	{
+	}
+
+	[Test] //Covers #19823
+	public void CloseConnectionGroupConcurency ()
+	{
+		// Try with multiple service points
+		for (var i = 0; i < 10; i++) {
+			Uri targetUri = new Uri ("http://" + i + ".mono-project.com");
+			var req = (HttpWebRequest) HttpWebRequest.Create (targetUri);
+			req.ContentType = "application/x-www-form-urlencoded";
+			req.Method = "POST";
+			req.ConnectionGroupName = "" + i;
+			req.ServicePoint.MaxIdleTime = 1;
+
+			req.BeginGetRequestStream (new AsyncCallback (GetRequestStreamCallback), req);
+			Thread.Sleep (1);
+			req.ServicePoint.CloseConnectionGroup (req.ConnectionGroupName);
+		}
+	}
+
 // Debug code not used now, but could be useful later
 /*
 	private void WriteServicePoint (string label, ServicePoint sp)
