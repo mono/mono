@@ -275,23 +275,7 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-#if MOBILE
-			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
-#elif NET_4_0
-			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
-#else
-			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
-#endif
-			if (substring.IndexOf ("<xs:element") < 0)
-				Assert.Fail ("test#16: " + substring);
-			if (substring.IndexOf ("name=\"second\"") < 0)
-				Assert.Fail ("test#16: " + substring);
-			if (substring.IndexOf ("msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=") < 0)
-				Assert.Fail ("test#16: " + substring);
-			if (substring.IndexOf ("type=\"xs:string\"") < 0)
-				Assert.Fail ("test#16: " + substring);
-			if (substring.IndexOf ("minOccurs=\"0\"") < 0)
-				Assert.Fail ("test#16: " + substring);
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);

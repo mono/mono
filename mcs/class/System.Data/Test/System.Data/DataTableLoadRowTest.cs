@@ -35,7 +35,7 @@ using System.Text;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.SqlClient
+namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class DataTableLoadRowTest
@@ -444,8 +444,8 @@ namespace MonoTests.System.Data.SqlClient
 
 			dt.LoadDataRow (new object [] { 2, null, "mono test" }, LoadOption.OverwriteChanges);
 			Assert.AreEqual (3, dt.Rows.Count, "#1 should not have added a row");
-			Assert.AreEqual (20, dt.Rows [1] [1], "#2 should be default value");
-			Assert.AreEqual (20, dt.Rows [1] [1, DataRowVersion.Original], "#3 should be default value");
+			Assert.AreEqual (25, dt.Rows [1] [1], "#2 should be default value");
+			Assert.AreEqual (25, dt.Rows [1] [1, DataRowVersion.Original], "#3 should be default value");
 
 		}
 

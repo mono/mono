@@ -174,7 +174,7 @@ namespace MonoTests.System.Data
 			//check that the DataRowView has a new DataView
 			// check that the DataRowView has a new DataView
 			dv = new DataView();
-			Assert.AreEqual(false, drv1.DataView.Equals(dv) , "DRV21");
+			Assert.AreEqual(true, drv1.DataView.Equals(dv) , "DRV21");
 		}
 
 		[Test] public void Delete()
@@ -359,7 +359,7 @@ namespace MonoTests.System.Data
 
 			dv.RowStateFilter=DataViewRowState.Deleted ;
 			// check Original
-			Assert.AreEqual(DataRowVersion.Original , drv.RowVersion, "DRV47");
+			Assert.AreEqual(DataRowVersion.Current , drv.RowVersion, "DRV47");
 		}
 	}
 }

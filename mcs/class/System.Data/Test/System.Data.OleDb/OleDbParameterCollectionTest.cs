@@ -38,6 +38,7 @@ namespace MonoTests.System.Data.OleDb {
 	public class OleDbParameterCollectionTest {
 
 		[Test]
+		[Category ("NotWorking")] // it tries to PInvoke LocalAlloc() and fails on non-Windows.
 		public void AddWithValueTest ()
 		{
 			OleDbCommand command = new OleDbCommand();

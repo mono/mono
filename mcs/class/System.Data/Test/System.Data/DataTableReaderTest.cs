@@ -199,7 +199,7 @@ namespace MonoTests.System.Data
                                 // Get by name
                                 Assert.AreEqual (1, (int) reader ["id"], "#1 should be able to get by name");
                                 Assert.AreEqual (333, reader.GetInt32 (ordinal), "#2 should get int32");
-                                Assert.AreEqual ("System.Int32", reader.GetDataTypeName (ordinal), "#3 data type should match");
+                                Assert.AreEqual ("Int32", reader.GetDataTypeName (ordinal), "#3 data type should match");
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();

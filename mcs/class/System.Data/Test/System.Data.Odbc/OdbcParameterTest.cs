@@ -52,7 +52,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.AreEqual (OdbcType.Int, param.OdbcType, "#2");
 
 			param = new OdbcParameter ("test", 10);
-			Assert.AreEqual (OdbcType.Int, param.OdbcType, "#3");
+			Assert.AreEqual (OdbcType.NVarChar, param.OdbcType, "#3");
 			param.OdbcType = OdbcType.Real;
 			Assert.AreEqual (OdbcType.Real, param.OdbcType, "#4");
 			Assert.AreEqual (10, param.Value, "#5");

@@ -430,49 +430,32 @@ namespace MonoTests.System.Data.SqlClient
 
 			// Text, without parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#A1");
-			} catch (NullReferenceException) {
-			}
+			cmd.Prepare ();
 
 			// Text, with parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			try {
 				cmd.Prepare ();
-				Assert.Fail ("#B1");
-			} catch (NullReferenceException) {
+			} catch (InvalidOperationException) {
 			}
 
 			// Text, without parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Parameters.Clear ();
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#C1");
-			} catch (NullReferenceException) {
-			}
+			cmd.Prepare ();
 
 			// StoredProcedure, without parameters
 			cmd = new SqlCommand ("FindCustomer");
 			cmd.CommandType = CommandType.StoredProcedure;
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#D1");
-			} catch (NullReferenceException) {
-			}
+			cmd.Prepare ();
 
 			// StoredProcedure, with parameters
 			cmd = new SqlCommand ("FindCustomer");
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#E1");
-			} catch (NullReferenceException) {
-			}
+			cmd.Prepare ();
 		}
 
 		[Test] // bug #412586

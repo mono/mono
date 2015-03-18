@@ -338,14 +338,10 @@ namespace MonoTests.System.Data
 			dt.Rows.Add (new object [] {"\t"});
 			dt.Rows.Add (new object [] {"\\"});
 			
-			Assert.AreEqual (1, dt.Select (@"SomeCol='\t'").Length, "test#01");
-			Assert.AreEqual (1, dt.Select (@"SomeCol='\\'").Length, "test#02");
+			Assert.AreEqual (0, dt.Select (@"SomeCol='\t'").Length, "test#01");
+			Assert.AreEqual (0, dt.Select (@"SomeCol='\\'").Length, "test#02");
 			
-			try {
-				dt.Select (@"SomeCol='\x'");
-				Assert.Fail ("test#03");
-			} catch (SyntaxErrorException) {
-			}
+			Assert.AreEqual (0, dt.Select (@"SomeCol='\x'").Length, "test#03");
 		}
 
 		[Test]
@@ -1999,11 +1995,11 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void ColumnObjectTypeTest() {
 			DataTable dt = new DataTable();
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
 			dt.Rows.Add(new object[] {"sss"});
-			Assert.AreEqual (1, dt.Rows.Count);
 		}
 
 		private bool tableInitialized;
@@ -2014,7 +2010,7 @@ namespace MonoTests.System.Data
 			tableInitialized = false;
 			dt.Initialized += new EventHandler (OnTableInitialized);
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
-			dt.Rows.Add(new object[] {"sss"});
+			dt.Rows.Add(new object[] {123});
 			Assert.IsFalse (tableInitialized, "TableInitialized #01");
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 		}
@@ -2027,7 +2023,7 @@ namespace MonoTests.System.Data
 			tableInitialized = false;
 			dt.Initialized += new EventHandler (OnTableInitialized);
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
-			dt.Rows.Add(new object[] {"sss"});
+			dt.Rows.Add(new object[] {123});
 			dt.EndInit ();
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 			Assert.IsTrue (tableInitialized, "TableInitialized #02");
@@ -2040,7 +2036,7 @@ namespace MonoTests.System.Data
 			tableInitialized = true;
 			dt.Initialized += new EventHandler (OnTableInitialized);
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
-			dt.Rows.Add(new object[] {"sss"});
+			dt.Rows.Add(new object[] {123});
 			Assert.AreEqual (tableInitialized, dt.IsInitialized, "TableInitialized #03");
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 		}
@@ -2054,7 +2050,7 @@ namespace MonoTests.System.Data
 			tableInitialized = false;
 			dt.Initialized += new EventHandler (OnTableInitialized);
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
-			dt.Rows.Add(new object[] {"sss"});
+			dt.Rows.Add(new object[] {123});
 			Assert.IsFalse (dt.IsInitialized, "TableInitialized #05");
 			dt.EndInit ();
 			Assert.IsTrue (dt.IsInitialized, "TableInitialized #06");
@@ -3245,7 +3241,8 @@ namespace MonoTests.System.Data
 
 			substring = TextString.Substring (0, TextString.IndexOf (EOL));
 			TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
-			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"en-US\" msdata:MainDataTable=\"Region\" name=\"Root\">", substring, "test#03");
+			// Looks like whoever added this test depended on English culture, which is wrong.
+			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:MainDataTable=\"Region\" msdata:UseCurrentLocale=\"true\" name=\"Root\">", substring, "test#03");
 
 			substring = TextString.Substring (0, TextString.IndexOf (EOL));
 			TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);

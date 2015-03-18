@@ -578,7 +578,7 @@ namespace MonoTests.System.Data
 
 			AssertReadXml (ds, "SimpleTable", xml6,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
-				"root", 1); // not NewDataSet unlike standalone load
+				"NewDataSet", 1);
 			AssertDataTable ("seq1", ds.Tables [0], "root", 1, 1, 0, 0, 0, 0);
 		}
 
@@ -594,7 +594,7 @@ namespace MonoTests.System.Data
 
 			AssertReadXml (ds, "SimpleTable2", xml7,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
-				"root", 1); // dataset name will not be overwritten
+				"NewDataSet", 1);
 			AssertDataTable ("#1", ds.Tables [0], "root", 2, 1, 0, 0, 0, 0);
 
 			// simple table -> simple dataset
