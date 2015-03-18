@@ -193,6 +193,17 @@ namespace MonoTests.Monodoc.Ecma
 		}
 
 		[Test]
+		public void GenericTypeArgsNumericToStringTest ()
+		{
+			string stringCref = "T:System.Collections.Generic.Dictionary`2";
+			var desc = parser.Parse (stringCref);
+			Assert.IsTrue (desc.GenericTypeArgumentsIsNumeric);
+			Assert.AreEqual (2, desc.GenericTypeArguments.Count);
+			string generatedEcmaCref = desc.ToEcmaCref ();
+			Assert.AreEqual (stringCref, generatedEcmaCref);
+		}
+
+		[Test]
 		public void MetaEtcNodeTest ()
 		{
 			var ast = new EcmaDesc () { DescKind = EcmaDesc.Kind.Type,
