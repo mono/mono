@@ -697,6 +697,8 @@ namespace System.Windows.Forms
 		
 		private void CleanupOnClose ()
 		{
+			mwfFileView.StopThumbnailCreation();
+
 			WriteConfigValues ();
 			
 			Mime.CleanFileCache ();
@@ -2219,6 +2221,9 @@ namespace System.Windows.Forms
 
 	internal class MWFFileView : ListView
 	{
+		public delegate void ThumbnailDelegate(FileViewListViewItem fi);
+		private ThumbnailCreator thumbCreator;
+
 		private ArrayList filterArrayList;
 		
 		private bool showHiddenFiles = false;
@@ -2632,9 +2637,19 @@ namespace System.Windows.Forms
 		{
 			UpdateFileView (null);
 		}
-		
+
+		internal void StopThumbnailCreation()
+		{
+			if (thumbCreator != null) {
+				thumbCreator.Stop();
+				thumbCreator = null;
+			}
+		}
+
 		public void UpdateFileView (string custom_filter)
 		{
+			StopThumbnailCreation();
+
 			if (custom_filter != null) {
 				StringCollection custom_filters = new StringCollection ();
 				custom_filters.Add (custom_filter);
@@ -2699,8 +2714,21 @@ namespace System.Windows.Forms
 			
 			directoriesArrayList.Clear ();
 			fileArrayList.Clear ();
+
+			// Create thumbnail images for Image type files.  This greatly facilitates
+			// choosing pictures whose names mean nothing.
+			// See https://bugzilla.xamarin.com/show_bug.cgi?id=28025 for details.
+			thumbCreator = new ThumbnailCreator(new ThumbnailDelegate(RedrawTheItem), this);
+			var makeThumbnails = new Thread(new ThreadStart(thumbCreator.MakeThumbnails));
+			makeThumbnails.IsBackground = true;
+			makeThumbnails.Start();
 		}
-		
+
+		private void RedrawTheItem(FileViewListViewItem fi)
+		{
+			this.RedrawItems(fi.Index, fi.Index, false);
+		}
+
 		public void AddControlToEnableDisableByDirStack (object control)
 		{
 			dirStackControlsOrComponents.Add (control);
@@ -3027,6 +3055,46 @@ namespace System.Windows.Forms
 		public event EventHandler ForceDialogEnd {
 			add { Events.AddHandler (MForceDialogEndEvent, value); }
 			remove { Events.RemoveHandler (MForceDialogEndEvent, value); }
+		}
+
+		internal class ThumbnailCreator
+		{
+			private ThumbnailDelegate thumbnailDelegate;
+			private ListView control;
+			private readonly object lockobject = new object();
+			private bool stopped = false;
+
+			public ThumbnailCreator(ThumbnailDelegate thumbnailDelegate, ListView listView)
+			{
+				this.thumbnailDelegate = thumbnailDelegate;
+				this.control = listView;
+			}
+
+			public void MakeThumbnails()
+			{
+				foreach (var item in control.Items) {
+					var fi = item as FileViewListViewItem;
+					if (fi == null || fi.FSEntry == null || !fi.FSEntry.IsImageFile())
+						continue;
+					fi.FSEntry.SetImage();
+					if (stopped)
+						return;
+					if (thumbnailDelegate != null) {
+						lock (lockobject) {
+							object[] objectArray = new object[1];
+							objectArray[0] = fi;
+							control.Invoke(thumbnailDelegate, objectArray);
+						}
+					}
+				}
+			}
+
+			public void Stop()
+			{
+				lock (lockobject) {
+					stopped = true;
+				}
+			}
 		}
 	}
 	#endregion
@@ -4323,7 +4391,7 @@ namespace System.Windows.Forms
 		private FSEntry mainTopNode = null;
 		
 		private int iconIndex;
-		
+
 		private string parent;
 		
 		public MasterMount.FsTypes FsType {
@@ -4506,6 +4574,38 @@ namespace System.Windows.Forms
 			}
 			
 			return null;
+		}
+
+		internal bool IsImageFile()
+		{
+			var fileExtension = Path.GetExtension(FullName);
+			if (String.IsNullOrEmpty(fileExtension))
+				return false;
+			var extension = fileExtension.ToLowerInvariant();
+			return extension == ".bmp" ||
+				extension == ".gif" ||
+				extension == ".jpg" || extension == ".jpeg" ||
+				extension == ".png" ||
+				extension == ".tif" || extension == ".tiff";
+		}
+
+		internal Image Image { get; set; }
+
+		internal void SetImage()
+		{
+			try {
+				Image.GetThumbnailImageAbort myCallback = new Image.GetThumbnailImageAbort(ThumbnailCallback);
+				Bitmap myBitmap = new Bitmap(FullName);
+				this.Image = myBitmap.GetThumbnailImage(48, 48, myCallback, IntPtr.Zero);
+			} catch (Exception) {
+				// cannot handle this image format?  not an image file?
+				this.Image = null;
+			}
+		}
+
+		private bool ThumbnailCallback()
+		{
+			return false;
 		}
 	}
 	#endregion
