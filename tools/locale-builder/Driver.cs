@@ -973,7 +973,7 @@ namespace Mono.Tools.LocaleBuilder
 
 			string calendar;
 			// Default calendar is for now always "gregorian"
-			switch (ci.Name) {
+			switch (ci.OriginalName) {
 			case "th": case "th-TH":
 				calendar = "buddhist";
 				ci.CalendarType = CalendarType.ThaiBuddhist; // typeof (ThaiBuddhistCalendar);
