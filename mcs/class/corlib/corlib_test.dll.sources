@@ -28,7 +28,7 @@ System/ObsoleteAttributeTest.cs
 System/IntegerTryParse.cs
 System/LazyTest.cs
 System/TupleTest.cs
-System/TypedReference.cs
+System/TypedReferenceTest.cs
 System.Collections/ArrayListTest.cs
 System.Collections/BitArrayTest.cs
 System.Collections/CaseInsensitiveComparerTest.cs
