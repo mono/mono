@@ -24,10 +24,10 @@ namespace Xamarin.ApiDiff
 			if (breaking)
 				Member.Append ("<u>");
 			if (State.Colorize)
-				Member.Append (breaking ? "<font color='green'>" : "<font color='green'>");
+				Member.Append ("<font color='green'>");
 			Member.Append (text);
 			if (State.Colorize)
-				Member.Append (breaking ? "</font>" : "</font>");
+				Member.Append ("</font>");
 			if (breaking)
 				Member.Append ("</u>");
 			Breaking |= breaking;
