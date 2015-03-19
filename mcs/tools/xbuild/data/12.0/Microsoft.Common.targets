@@ -229,6 +229,7 @@
 		</ResolveReferencesDependsOn>
 
 		<ResolveAssemblyReferencesDependsOn>
+			$(ResolveAssemblyReferencesDependsOn);
 			GetFrameworkPaths;
 			GetReferenceAssemblyPaths;
 			PrepareForBuild
