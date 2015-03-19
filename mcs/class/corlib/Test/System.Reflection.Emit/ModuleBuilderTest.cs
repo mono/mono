@@ -241,6 +241,17 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void DefineType_TypeSize ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+
+			TypeBuilder tb = mb.DefineType ("Foo", TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.SequentialLayout,
+				typeof (ValueType), 1);
+			Assert.AreEqual (1, tb.Size);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void DuplicateTypeName () {
 			AssemblyBuilder ab = genAssembly ();
