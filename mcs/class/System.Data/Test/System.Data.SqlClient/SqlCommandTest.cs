@@ -423,6 +423,7 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
+		// FIXME: this actually doesn't match .NET behavior. It shouldn't throw NRE.
 		[Test]
 		public void Prepare_Connection_Null ()
 		{
@@ -430,34 +431,51 @@ namespace MonoTests.System.Data.SqlClient
 
 			// Text, without parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
-			cmd.Prepare ();
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#A1");
+			} catch (NullReferenceException) {
+			}
 
 			// Text, with parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			try {
 				cmd.Prepare ();
-			} catch (InvalidOperationException) {
+				Assert.Fail ("#B1");
+			} catch (NullReferenceException) {
 			}
 
 			// Text, without parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Parameters.Clear ();
-			cmd.Prepare ();
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#C1");
+			} catch (NullReferenceException) {
+			}
 
 			// StoredProcedure, without parameters
 			cmd = new SqlCommand ("FindCustomer");
 			cmd.CommandType = CommandType.StoredProcedure;
-			cmd.Prepare ();
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#D1");
+			} catch (NullReferenceException) {
+			}
 
 			// StoredProcedure, with parameters
 			cmd = new SqlCommand ("FindCustomer");
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
-			cmd.Prepare ();
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#E1");
+			} catch (NullReferenceException) {
+			}
 		}
-
+		
 		[Test] // bug #412586
 		public void Prepare_Connection_Closed ()
 		{

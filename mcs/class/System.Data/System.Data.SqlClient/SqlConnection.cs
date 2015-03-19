@@ -254,7 +254,7 @@ namespace System.Data.SqlClient
 			set { statisticsEnabled = value; }
 		}
 
-		protected internal override DbProviderFactory DbProviderFactory {
+		protected override DbProviderFactory DbProviderFactory {
 			get {
 				return SqlClientFactory.Instance;
 			}

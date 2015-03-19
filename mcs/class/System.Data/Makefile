@@ -9,28 +9,22 @@ LIB_MCS_FLAGS = \
 	-nowarn:649 \
 	-d:PLATFORM_UNIX \
 	-d:USEOFFSET \
+	-d:MONO_PARTIAL_DATA_IMPORT \
 	-unsafe
 
 MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE
 LIB_REFS += Mono.Data.Tds System.Transactions
 LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION -nowarn:618
-BUILT_SOURCES = \
-	gen_SqlConnection.cs \
-	gen_SqlParameter.cs \
-	gen_SqlParameterCollection.cs
 else
 LIB_REFS += System.EnterpriseServices Mono.Data.Tds System.Configuration System.Transactions
 BUILT_SOURCES = \
 	gen_OdbcConnection.cs \
 	gen_OleDbConnection.cs \
-	gen_SqlConnection.cs \
 	gen_OdbcParameter.cs \
 	gen_OleDbParameter.cs \
-	gen_SqlParameter.cs \
 	gen_OdbcParameterCollection.cs \
-	gen_OleDbParameterCollection.cs \
-	gen_SqlParameterCollection.cs
+	gen_OleDbParameterCollection.cs
 endif
 
 RESOURCE_STRINGS = ../../../external/referencesource/System.Data/system.data.txt
