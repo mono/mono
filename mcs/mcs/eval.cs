@@ -521,6 +521,7 @@ namespace Mono.CSharp
 			// These are toplevels
 			case Token.EXTERN:
 			case Token.OPEN_BRACKET:
+			case Token.OPEN_BRACKET_EXPR:
 			case Token.ABSTRACT:
 			case Token.CLASS:
 			case Token.ENUM:
