@@ -1138,6 +1138,10 @@ public class DebuggerTests
 		Assert.IsTrue (t.IsEnum);
 		Assert.AreEqual ("Int32", t.EnumUnderlyingType.Name);
 
+		// TypedReferences
+		t = frame.Method.GetParameters ()[11].ParameterType;
+		Assert.AreEqual ("TypedReference", t.Name);
+
 		// properties
 		t = frame.Method.GetParameters ()[7].ParameterType;
 
@@ -1428,6 +1432,10 @@ public class DebuggerTests
 		s = obj as StructMirror;
 		AssertValue (2, s ["i"]);
 		AssertValue ("S2", s ["s"]);
+
+		// typedbyref
+		var typedref = frame.GetArgument (2) as StructMirror;
+		Assert.IsTrue (typedref is StructMirror);
 
 		// Argument checking
 		s = frame.GetArgument (0) as StructMirror;
@@ -3584,13 +3592,11 @@ public class DebuggerTests
 		var prev_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber - 3));
 		AssertValue (2, frames [0].GetValue (frames [0].Method.GetLocal ("i")));
 
-		Console.WriteLine ("X: " + frames [0].Location.LineNumber);
 		// Set back the ip to the first i ++; line
 		e.Thread.SetIP (prev_loc);
 
 		e = step_over ();
 		var f = e.Thread.GetFrames ()[0];
-		Console.WriteLine (f.GetValue (f.Method.GetLocal ("i")));
 		AssertValue (3, f.GetValue (f.Method.GetLocal ("i")));
 	}
 
