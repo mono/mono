@@ -179,17 +179,15 @@ namespace System.Reflection {
 		}
 
 		[CLSCompliant(false)]
-		[MonoTODO("Not implemented")]
 		public virtual object GetValueDirect (TypedReference obj)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException(Environment.GetResourceString("NotSupported_AbstractNonCLS"));
 		}
 
 		[CLSCompliant(false)]
-		[MonoTODO("Not implemented")]
 		public virtual void SetValueDirect (TypedReference obj, object value)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException(Environment.GetResourceString("NotSupported_AbstractNonCLS"));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

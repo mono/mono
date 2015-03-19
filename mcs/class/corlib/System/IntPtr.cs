@@ -45,6 +45,7 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.ConstrainedExecution;
+using System.Diagnostics.Contracts;
 
 namespace System
 {
@@ -222,6 +223,14 @@ namespace System
 		public static IntPtr operator - (IntPtr pointer, int offset)
 		{
 			return (IntPtr) (unchecked (((byte *) pointer) - offset));
+		}
+
+		// fast way to compare IntPtr to (IntPtr)0 while IntPtr.Zero doesn't work due to slow statics access
+		[Pure]
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+		internal unsafe bool IsNull()
+		{
+			return m_value == null;
 		}
 	}
 }

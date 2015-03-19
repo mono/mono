@@ -96,6 +96,12 @@ namespace System
 			return value.type;
 		}
 
+		internal bool IsNull {
+			get {
+				return value.IsNull () && klass.IsNull ();
+			}
+		}
+
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		public extern static object ToObject (TypedReference value);
 

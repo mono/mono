@@ -39,6 +39,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 
@@ -89,6 +90,36 @@ namespace System.Reflection {
 			bool domainInitialized = false;
 			RuntimeFieldHandle.SetValue (this, obj, value, null, Attributes, null, ref domainInitialized);
 		}
+
+        [DebuggerStepThroughAttribute]
+        [Diagnostics.DebuggerHidden]
+        public override void SetValueDirect(TypedReference obj, Object value)
+        {
+            if (obj.IsNull)
+                throw new ArgumentException(Environment.GetResourceString("Arg_TypedReference_Null"));
+            Contract.EndContractBlock();
+
+            unsafe
+            {
+                // Passing TypedReference by reference is easier to make correct in native code
+                RuntimeFieldHandle.SetValueDirect(this, (RuntimeType)FieldType, &obj, value, (RuntimeType)DeclaringType);
+            }
+        }
+
+        [DebuggerStepThroughAttribute]
+        [Diagnostics.DebuggerHidden]
+        public override Object GetValueDirect(TypedReference obj)
+        {
+            if (obj.IsNull)
+                throw new ArgumentException(Environment.GetResourceString("Arg_TypedReference_Null"));
+            Contract.EndContractBlock();
+
+            unsafe
+            {
+                // Passing TypedReference by reference is easier to make correct in native code
+                return RuntimeFieldHandle.GetValueDirect(this, (RuntimeType)FieldType, &obj, (RuntimeType)DeclaringType);
+            }
+        }
 	}
 
 	[Serializable]

@@ -115,5 +115,15 @@ namespace System
 		{
 			SetValueInternal (field, obj, value);
 		}
+
+		unsafe internal static Object GetValueDirect (RtFieldInfo field, RuntimeType fieldType, void *pTypedRef, RuntimeType contextType)
+		{
+			throw new NotImplementedException ("GetValueDirect");
+		}
+
+		unsafe internal static void SetValueDirect (RtFieldInfo field, RuntimeType fieldType, void* pTypedRef, Object value, RuntimeType contextType)
+		{
+			throw new NotImplementedException ("SetValueDirect");
+		}
 	}
 }
