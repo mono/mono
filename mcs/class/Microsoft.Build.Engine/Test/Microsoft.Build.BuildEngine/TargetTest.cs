@@ -907,6 +907,65 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
 		}
 
+		[Test]
+		public void TestPropertiesOnTarget ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<PropertyGroup>
+					<SimpleProperty>Test</SimpleProperty>
+				</PropertyGroup>
+
+				<Target Name='BeforeBuild'>
+					<Message Text='On BeforeBuild : $(SimpleProperty)'/>
+
+					<PropertyGroup>
+						<SimpleProperty>Test456</SimpleProperty>
+					</PropertyGroup>
+
+					<Message Text='End of BeforeBuild : $(SimpleProperty)'/>
+				</Target>
+
+				<Target Name='Build'>
+					<Message Text='Before set property : $(SimpleProperty)'/>
+
+					<PropertyGroup>
+						<SimpleProperty>Test123</SimpleProperty>
+					</PropertyGroup>
+
+					<Message Text='After set property : $(SimpleProperty)'/>
+
+					<CallTarget Targets='BeforeBuild'/>
+
+					<Message Text='After call target : $(SimpleProperty)'/>
+				</Target>
+			</Project>";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			bool result = project.Build ("Build");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("Before set property : Test", "A1");
+			logger.CheckLoggedMessageHead ("After set property : Test123", "A2");
+			logger.CheckLoggedMessageHead ("On BeforeBuild : Test123", "A3");
+			logger.CheckLoggedMessageHead ("End of BeforeBuild : Test456", "A4");
+			logger.CheckLoggedMessageHead ("After call target : Test456", "A5");
+
+			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+		}
+
 #if NET_4_0
 		[Test]
 		[Category ("NotDotNet")]
