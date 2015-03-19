@@ -288,7 +288,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, int typesize) {
-			return DefineType (name, attr, parent, null, PackingSize.Unspecified, TypeBuilder.UnspecifiedTypeSize);
+			return DefineType (name, attr, parent, null, PackingSize.Unspecified, typesize);
 		}
 
 		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, PackingSize packsize) {
