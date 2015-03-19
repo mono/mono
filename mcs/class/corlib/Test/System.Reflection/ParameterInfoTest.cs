@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Linq;
 
 using NUnit.Framework;
 
@@ -259,6 +260,26 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (info [0].HasDefaultValue);
 		}
 #endif
+
+		class TestAttribute : Attribute
+		{
+		}
+
+		public static int TestCustomAttribute_Method ([Test] string arg)
+		{
+			return arg.Length;
+		}
+
+		[Test]
+		public void TestCustomAttribute ()
+		{
+			var metInfo = GetType ().GetMethod ("TestCustomAttribute_Method", new Type[] { typeof(string) });
+			var paramInfos = metInfo.GetParameters ();
+			var argParamInfo = paramInfos[0];
+
+			var custAttrs = argParamInfo.GetCustomAttributes ();
+			Assert.AreEqual (1, custAttrs.Count ());
+		}
 
 		class MyParameterInfo2 : ParameterInfo
 		{
