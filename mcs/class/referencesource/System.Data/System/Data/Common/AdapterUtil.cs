@@ -1888,7 +1888,7 @@ namespace System.Data.Common {
         }
 
         static internal bool NeedManualEnlistment() {
-#if !MOBILE
+#if !MOBILE && !MONO_PARTIAL_DATA_IMPORT
             // We need to force a manual enlistment of transactions for ODBC and
             // OLEDB whenever the current SysTx transaction != the SysTx transaction
             // on the EnterpriseServices ContextUtil, or when ES.ContextUtil is

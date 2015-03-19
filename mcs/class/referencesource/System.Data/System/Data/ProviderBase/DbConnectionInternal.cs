@@ -467,6 +467,9 @@ namespace System.Data.ProviderBase {
                                 SetInStasis();                           
                             }
                             else {
+#if MONO_PARTIAL_DATA_IMPORT
+				Dispose();
+#else
 #if !MOBILE
                                 PerformanceCounters.NumberOfNonPooledConnections.Decrement();
 #endif
@@ -474,6 +477,7 @@ namespace System.Data.ProviderBase {
                                 {
                                     Dispose();
                                 }
+#endif
                             }
                         }
                     }
