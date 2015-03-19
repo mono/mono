@@ -134,7 +134,11 @@ namespace System {
         [CLSCompliant(false)]
         public unsafe static void SetTypedReference(TypedReference target, Object value)
         {
+#if MONO
+            throw new NotImplementedException ("SetTypedReference");
+#else
             InternalSetTypedReference(&target, value);
+#endif
         }
 
         [System.Security.SecurityCritical]  // auto-generated
