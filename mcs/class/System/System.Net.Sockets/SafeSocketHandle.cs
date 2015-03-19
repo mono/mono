@@ -75,8 +75,10 @@ namespace System.Net.Sockets {
 					 * We can safely close the socket and throw SocketException in RegisterForBlockingSyscall
 					 * before the blocking system call.
 					 */
-					if (blocking_threads.Count == 1 && blocking_threads[0] == Thread.CurrentThread)
-						break;
+					lock (blocking_threads) {
+						if (blocking_threads.Count == 1 && blocking_threads[0] == Thread.CurrentThread)
+							break;
+					}
 
 					AbortRegisteredThreads ();
 					// Sleep so other threads can resume
