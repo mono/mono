@@ -206,6 +206,13 @@ namespace Xamarin.ApiDiff {
 			var output = Output;
 			State.Output = new StringWriter ();
 
+			var sb = source.GetAttribute ("base");
+			var tb = target.GetAttribute ("base");
+			if (sb != tb) {
+				Output.Write ("Modified base type: ");
+				Output.WriteLine (new ApiChange ().AppendModified (sb, tb, true).Member.ToString ());
+			}
+
 			ccomparer.Compare (source, target);
 			icomparer.Compare (source, target);
 			fcomparer.Compare (source, target);
