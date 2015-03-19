@@ -1329,6 +1329,27 @@ namespace MonoTests.System.Reflection
 			Throws (field, instance, new int[] { 3 });
 		}
 
+		struct TestFields {
+			public int MaxValue;
+			public string str;
+		}
+
+		[Test]
+		public void SetValueDirect ()
+		{
+			TestFields fields = new TestFields { MaxValue = 1234, str = "A" };
+
+			FieldInfo info = fields.GetType ().GetField ("MaxValue");
+			TypedReference reference = __makeref(fields);
+			info.SetValueDirect (reference, 4096);
+			Assert.AreEqual (4096, fields.MaxValue);
+
+			info = fields.GetType ().GetField ("str");
+			reference = __makeref(fields);
+			info.SetValueDirect (reference, "B");
+			Assert.AreEqual ("B", fields.str);
+		}
+
 		public IntEnum PPP;
 
 		public class Foo<T>

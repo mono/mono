@@ -121,9 +121,7 @@ namespace System
 			throw new NotImplementedException ("GetValueDirect");
 		}
 
-		unsafe internal static void SetValueDirect (RtFieldInfo field, RuntimeType fieldType, void* pTypedRef, Object value, RuntimeType contextType)
-		{
-			throw new NotImplementedException ("SetValueDirect");
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static unsafe extern internal void SetValueDirect (RtFieldInfo field, RuntimeType fieldType, void* pTypedRef, Object value, RuntimeType contextType);
 	}
 }
