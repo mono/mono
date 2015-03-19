@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace MonoTests.System
@@ -46,6 +47,22 @@ namespace MonoTests.System
 
 			TypedReference ti = __makeref(fields);
 			Assert.AreEqual (typeof (TestFields), TypedReference.GetTargetType (ti));
+		}
+
+		struct AStruct {
+			public int b;
+		}
+
+		class CClass {
+			public AStruct a;
+		}
+
+		[Test]
+		public void MakeTypedReference ()
+		{
+			var o = new CClass () { a = new AStruct () { b = 5 }};
+			TypedReference r = TypedReference.MakeTypedReference (o, new FieldInfo[] { typeof (CClass).GetField ("a"), typeof (AStruct).GetField ("b") });
+			Assert.AreEqual (5, TypedReference.ToObject (r));
 		}
 	}
 }
