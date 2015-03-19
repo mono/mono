@@ -50,7 +50,7 @@ namespace MonoTests.System
 		}
 
 		struct AStruct {
-			public int b;
+			public string b;
 		}
 
 		class CClass {
@@ -60,9 +60,9 @@ namespace MonoTests.System
 		[Test]
 		public void MakeTypedReference ()
 		{
-			var o = new CClass () { a = new AStruct () { b = 5 }};
+			var o = new CClass () { a = new AStruct () { b = "5" }};
 			TypedReference r = TypedReference.MakeTypedReference (o, new FieldInfo[] { typeof (CClass).GetField ("a"), typeof (AStruct).GetField ("b") });
-			Assert.AreEqual (5, TypedReference.ToObject (r));
+			Assert.AreEqual ("5", TypedReference.ToObject (r));
 		}
 	}
 }

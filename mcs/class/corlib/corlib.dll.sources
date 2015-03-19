@@ -242,7 +242,6 @@ System/TimeoutException.cs
 System/TypeSpec.cs
 System/TypeAccessException.cs
 System/TypeCode.cs
-System/TypedReference.cs
 System/TypeInitializationException.cs
 System/TypeLoadException.cs
 System/TypeUnloadedException.cs
@@ -1383,6 +1382,7 @@ ReferenceSources/MonoRuntimeWorkItem.cs
 ../../../external/referencesource/mscorlib/system/throwhelper.cs
 ../../../external/referencesource/mscorlib/system/tuple.cs
 ../../../external/referencesource/mscorlib/system/type.cs
+../../../external/referencesource/mscorlib/system/typedreference.cs
 ../../../external/referencesource/mscorlib/system/uint16.cs
 ../../../external/referencesource/mscorlib/system/uint32.cs
 ../../../external/referencesource/mscorlib/system/uint64.cs

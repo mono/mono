@@ -50,6 +50,11 @@ namespace System.Reflection {
 				return 0;
 			}
 		}
+
+		internal RuntimeType GetDeclaringTypeInternal ()
+		{
+			return (RuntimeType) DeclaringType;
+		}
 	}
 
 	abstract class RtFieldInfo : RuntimeFieldInfo
