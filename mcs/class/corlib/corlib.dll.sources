@@ -395,7 +395,6 @@ System.Reflection/MonoModule.cs
 System.Reflection/MonoParameterInfo.cs
 System.Reflection/MonoProperty.cs
 System.Reflection/ParameterInfo.cs
-System.Reflection/Pointer.cs
 System.Reflection/PortableExecutableKinds.cs
 System.Reflection/PropertyInfo.cs
 System.Reflection/ReflectionTypeLoadException.cs
@@ -1471,6 +1470,7 @@ ReferenceSources/MonoRuntimeWorkItem.cs
 ../../../external/referencesource/mscorlib/system/reflection/obfuscationattribute.cs
 ../../../external/referencesource/mscorlib/system/reflection/parameterattributes.cs
 ../../../external/referencesource/mscorlib/system/reflection/parametermodifier.cs
+../../../external/referencesource/mscorlib/system/reflection/pointer.cs
 ../../../external/referencesource/mscorlib/system/reflection/propertyattributes.cs
 ../../../external/referencesource/mscorlib/system/reflection/reflectioncontext.cs
 ../../../external/referencesource/mscorlib/system/reflection/resourceattributes.cs
