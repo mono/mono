@@ -5233,7 +5233,7 @@ namespace System
 
             return fullName;
         }
-
+#endif
         // This is used by the ToString() overrides of all reflection types. The legacy behavior has the following problems:
         //  1. Use only Name for nested types, which can be confused with global types and generic parameters of the same name.
         //  2. Use only Name for generic parameters, which can be confused with nested types and global types of the same name.
@@ -5271,7 +5271,7 @@ namespace System
                 return typeName;
             }
         }
-
+#if !MONO
         private string GetCachedName(TypeNameKind kind)
         {
             return Cache.GetName(kind);
