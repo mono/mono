@@ -126,6 +126,12 @@ namespace System.Globalization
 			return cd;
 		}
 
+		internal static CultureData GetCultureData (int culture, bool bUseUserOverride)
+		{
+			// Legacy path which we should never hit
+			return null;
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern void fill_culture_data (int datetimeIndex);
 
@@ -230,6 +236,12 @@ namespace System.Globalization
 			return "";
 		}
 	}
+
+		internal int ILANGUAGE {
+			get {
+				return 0;
+			}
+		}
 
 #region from reference sources
 
