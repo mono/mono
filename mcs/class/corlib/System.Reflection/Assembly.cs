@@ -716,7 +716,7 @@ namespace System.Reflection {
 				throw new ArgumentNullException ("resourceName");
 			if (resourceName.Length == 0)
 				throw new ArgumentException ("String cannot have zero length.");
-			ManifestResourceInfo result = new ManifestResourceInfo ();
+			ManifestResourceInfo result = new ManifestResourceInfo (null, null, 0);
 			bool found = GetManifestResourceInfoInternal (resourceName, result);
 			if (found)
 				return result;

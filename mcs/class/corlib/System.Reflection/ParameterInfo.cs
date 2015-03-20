@@ -121,13 +121,13 @@ namespace System.Reflection
 				return (Attributes & ParameterAttributes.In) != 0;
 			}
 		}
-
+#if FEATURE_USE_LCID
 		public bool IsLcid {
 			get {
 				return (Attributes & ParameterAttributes.Lcid) != 0;
 			}
 		}
-
+#endif
 		public bool IsOptional {
 			get {
 				return (Attributes & ParameterAttributes.Optional) != 0;

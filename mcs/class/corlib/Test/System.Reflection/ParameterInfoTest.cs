@@ -353,7 +353,9 @@ namespace MonoTests.System.Reflection
 			}
 #endif
 			Assert.IsFalse (p.IsIn, "#7");
+#if FEATURE_USE_LCID
 			Assert.IsFalse (p.IsLcid, "#8");
+#endif
 			Assert.IsFalse (p.IsOptional, "#9");
 			Assert.IsFalse (p.IsOut, "#10");
 			Assert.IsFalse (p.IsRetval, "#10");
