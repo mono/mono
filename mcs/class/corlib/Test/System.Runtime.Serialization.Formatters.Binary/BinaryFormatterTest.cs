@@ -659,6 +659,68 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 				info.AddValue ("Id", Id);
 			}
 		}
+
+		[Serializable]
+		public class OtherClass
+		{
+		}
+
+		[Serializable]
+		public class BaseClass
+		{
+			public OtherClass Other { get; set; }
+		}
+
+		public class CustomSerBinder: SerializationBinder
+		{
+			public override void BindToName (Type serializedType, out string assemblyName, out string typeName)
+			{
+				assemblyName = null;
+				if (serializedType == typeof (BaseClass))
+					typeName = "base";
+				else if (serializedType == typeof (OtherClass))
+					typeName = "other";
+				else
+					throw new ArgumentException ("Unknown type", "serializedType");
+			}
+
+			public override Type BindToType (string assemblyName, string typeName)
+			{
+				switch (typeName) {
+				case "base":
+					return typeof (BaseClass);
+				case "other":
+					return typeof (OtherClass);
+				default:
+					throw new ArgumentException ("Unknown type name", "typeName");
+				}
+			}
+		}
+
+		[Test]
+		public void BinderShouldBeUsedForProperties ()
+		{
+			using (var serStream = new MemoryStream ()) {
+				var binder = new CustomSerBinder ();
+
+				// serialize
+				var original = new BaseClass () {
+					Other = new OtherClass ()
+				};
+				var formatter = new BinaryFormatter ();
+				formatter.Binder = binder;
+				formatter.Serialize (serStream, original);
+
+				// deserialize, making sure we're using a new formatter, just to be thorough
+				formatter = new BinaryFormatter ();
+				formatter.Binder = binder;
+				serStream.Seek (0, SeekOrigin.Begin);
+				var deserialized = formatter.Deserialize (serStream);
+
+				Assert.AreEqual (original.GetType (), deserialized.GetType ());
+				Assert.AreEqual (original.Other.GetType (), ((BaseClass)deserialized).Other.GetType ());
+			}
+		}
 #endif
 	}
 }
