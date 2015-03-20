@@ -19531,9 +19531,6 @@
   </test>
   <test name="gtest-628.cs">
     <type name="Impl`1[T]">
-      <method name="System.Object CompareExchangeImpl(System.TypedReference, System.Object, System.Object)" attrs="150">
-        <size>37</size>
-      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
@@ -19544,6 +19541,11 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="Impl`1[T]">
+      <method name="System.Object CompareExchangeImpl(TypedReference, System.Object, System.Object)" attrs="150">
+        <size>37</size>
       </method>
     </type>
   </test>
