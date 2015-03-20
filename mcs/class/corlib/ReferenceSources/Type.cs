@@ -123,17 +123,6 @@ namespace System
 			throw new System.InvalidOperationException ("can only be called in generic type");
 		}
 
-		internal static bool ShouldPrintFullName (Type type)
-		{
-			while (type.HasElementType)
-				type = type.GetElementType ();
-
-			if (type == typeof (void) || type.IsNested)
-				return false;
-
-			return !type.IsPrimitive;
-		}
-
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
 		{
 			if (handle.Value == IntPtr.Zero)

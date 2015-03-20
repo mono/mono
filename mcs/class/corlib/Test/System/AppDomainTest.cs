@@ -3097,7 +3097,6 @@ namespace MonoTests.System
 		}
 
 		[Test] //BXC #12611
-		[Category ("NotWorking")] // Serialization can't handle generic methods
 		public void GenericReflectionObjectsAreSerializableTest ()
 		{
 			ad = CreateTestDomain (tempDir, true);

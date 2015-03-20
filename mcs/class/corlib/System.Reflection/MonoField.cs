@@ -43,7 +43,7 @@ using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 
-	abstract class RuntimeFieldInfo : FieldInfo
+	abstract class RuntimeFieldInfo : FieldInfo, ISerializable
 	{
 		internal BindingFlags BindingFlags {
 			get {
@@ -55,6 +55,27 @@ namespace System.Reflection {
 		{
 			return (RuntimeType) DeclaringType;
 		}
+
+		RuntimeType ReflectedTypeInternal {
+			get {
+				return (RuntimeType) ReflectedType;
+			}
+		}
+
+        #region ISerializable Implementation
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new ArgumentNullException("info");
+            Contract.EndContractBlock();
+            MemberInfoSerializationHolder.GetSerializationInfo(
+                info,
+                Name,
+                ReflectedTypeInternal,
+                ToString(),
+                MemberTypes.Field);
+        }
+        #endregion
 	}
 
 	abstract class RtFieldInfo : RuntimeFieldInfo
@@ -129,7 +150,7 @@ namespace System.Reflection {
 
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoField : RtFieldInfo, ISerializable {
+	internal class MonoField : RtFieldInfo {
 		internal IntPtr klass;
 		internal RuntimeFieldHandle fhandle;
 		string name;
@@ -250,13 +271,6 @@ namespace System.Reflection {
 			field.klass = klass;
 			field.fhandle = fhandle;
 			return field;
-		}
-
-		// ISerializable
-		public void GetObjectData (SerializationInfo info, StreamingContext context) 
-		{
-			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
-				ToString(), MemberTypes.Field);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

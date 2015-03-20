@@ -41,6 +41,7 @@ using System.Security;
 using System.Threading;
 using System.Text;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 	
@@ -109,13 +110,66 @@ namespace System.Reflection {
 		}
 	};
 	
-	abstract class RuntimeMethodInfo : MethodInfo
+	abstract class RuntimeMethodInfo : MethodInfo, ISerializable
 	{
 		internal BindingFlags BindingFlags {
 			get {
 				return 0;
 			}
 		}
+
+		RuntimeType ReflectedTypeInternal {
+			get {
+				return (RuntimeType) ReflectedType;
+			}
+		}
+
+        internal override string FormatNameAndSig (bool serialization)
+        {
+            // Serialization uses ToString to resolve MethodInfo overloads.
+            StringBuilder sbName = new StringBuilder(Name);
+
+            // serialization == true: use unambiguous (except for assembly name) type names to distinguish between overloads.
+            // serialization == false: use basic format to maintain backward compatibility of MethodInfo.ToString().
+            TypeNameFormatFlags format = serialization ? TypeNameFormatFlags.FormatSerialization : TypeNameFormatFlags.FormatBasic;
+
+            if (IsGenericMethod)
+                sbName.Append(RuntimeMethodHandle.ConstructInstantiation(this, format));
+
+            sbName.Append("(");
+            ParameterInfo.FormatParameters (sbName, GetParametersNoCopy (), CallingConvention, serialization);
+            sbName.Append(")");
+
+            return sbName.ToString();
+        }
+
+        public override String ToString() 
+        {
+            return ReturnType.FormatTypeName() + " " + FormatNameAndSig(false);
+        }
+
+        #region ISerializable Implementation
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new ArgumentNullException("info");
+            Contract.EndContractBlock();
+
+            MemberInfoSerializationHolder.GetSerializationInfo(
+                info,
+                Name,
+                ReflectedTypeInternal,
+                ToString(),
+                SerializationToString(),
+                MemberTypes.Method,
+                IsGenericMethod & !IsGenericMethodDefinition ? GetGenericArguments() : null);
+        }
+
+        internal string SerializationToString()
+        {
+            return ReturnType.FormatTypeName(true) + " " + FormatNameAndSig(true);
+        }
+        #endregion
 	}
 
 	/*
@@ -124,7 +178,7 @@ namespace System.Reflection {
 	 */
 	[Serializable()]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoMethod : RuntimeMethodInfo, ISerializable
+	internal class MonoMethod : RuntimeMethodInfo
 	{
 #pragma warning disable 649
 		internal IntPtr mhandle;
@@ -359,49 +413,6 @@ namespace System.Reflection {
 			return attrs;
 		}
 
-		public override string ToString () {
-			StringBuilder sb = new StringBuilder ();
-			Type retType = ReturnType;
-			if (Type.ShouldPrintFullName (retType))
-				sb.Append (retType.ToString ());
-			else
-				sb.Append (retType.Name);
-			sb.Append (" ");
-			sb.Append (Name);
-			if (IsGenericMethod) {
-				Type[] gen_params = GetGenericArguments ();
-				sb.Append ("[");
-				for (int j = 0; j < gen_params.Length; j++) {
-					if (j > 0)
-						sb.Append (",");
-					sb.Append (gen_params [j].Name);
-				}
-				sb.Append ("]");
-			}
-			sb.Append ("(");
-
-			var p = GetParametersInternal ();
-			ParameterInfo.FormatParameters (sb, p);
-
-			if ((CallingConvention & CallingConventions.VarArgs) != 0) {
-				if (p.Length > 0)
-					sb.Append (", ");
-				sb.Append ("...");
-			}
-			
-			sb.Append (")");
-			return sb.ToString ();
-		}
-
-	
-		// ISerializable
-		public void GetObjectData(SerializationInfo info, StreamingContext context) 
-		{
-			Type[] genericArguments = IsGenericMethod && !IsGenericMethodDefinition
-				? GetGenericArguments () : null;
-			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method, genericArguments);
-		}
-
 		public override MethodInfo MakeGenericMethod (Type [] methodInstantiation)
 		{
 			if (methodInstantiation == null)
@@ -500,7 +511,7 @@ namespace System.Reflection {
 	}
 	
 
-	abstract class RuntimeConstructorInfo : ConstructorInfo
+	abstract class RuntimeConstructorInfo : ConstructorInfo, ISerializable
 	{
 		internal BindingFlags BindingFlags {
 			get {
@@ -508,15 +519,44 @@ namespace System.Reflection {
 			}
 		}
 
+		RuntimeType ReflectedTypeInternal {
+			get {
+				return (RuntimeType) ReflectedType;
+			}
+		}
+
+        #region ISerializable Implementation
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new ArgumentNullException("info");
+            Contract.EndContractBlock();
+            MemberInfoSerializationHolder.GetSerializationInfo(
+                info,
+                Name,
+                ReflectedTypeInternal,
+                ToString(),
+                SerializationToString(),
+                MemberTypes.Constructor,
+                null);
+        }
+
+        internal string SerializationToString()
+        {
+            // We don't need the return type for constructors.
+            return FormatNameAndSig(true);
+        }
+
 		internal void SerializationInvoke (Object target, SerializationInfo info, StreamingContext context)
 		{
 			Invoke (target, new object[] { info, context });
 		}
+       #endregion
 	}
 
 	[Serializable()]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoCMethod : RuntimeConstructorInfo, ISerializable
+	internal class MonoCMethod : RuntimeConstructorInfo
 	{
 #pragma warning disable 649		
 		internal IntPtr mhandle;
@@ -695,12 +735,6 @@ namespace System.Reflection {
 				sb.Append (", ...");
 			sb.Append (")");
 			return sb.ToString ();
-		}
-
-		// ISerializable
-		public void GetObjectData(SerializationInfo info, StreamingContext context) 
-		{
-			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Constructor);
 		}
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {

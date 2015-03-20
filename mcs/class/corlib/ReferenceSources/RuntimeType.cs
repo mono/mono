@@ -313,6 +313,16 @@ namespace System
 			return null;
 		}
 
+		string GetCachedName (TypeNameKind kind)
+		{
+			switch (kind) {
+			case TypeNameKind.SerializationName:
+				return ToString ();
+			default:
+				throw new NotImplementedException ();
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern Type make_array_type (int rank);
 

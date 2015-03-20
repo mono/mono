@@ -35,6 +35,7 @@ using System.Reflection.Emit;
 #endif
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Reflection {
 
@@ -111,6 +112,18 @@ namespace System.Reflection {
 
 		internal virtual Type GetParameterType (int pos) {
 			throw new NotImplementedException ();
+		}
+
+		internal virtual string FormatNameAndSig (bool serialization)
+		{
+			// Serialization uses ToString to resolve MethodInfo overloads.
+			StringBuilder sbName = new StringBuilder(Name);
+
+			sbName.Append("(");
+			ParameterInfo.FormatParameters (sbName, GetParametersNoCopy (), CallingConvention, serialization);
+			sbName.Append(")");
+
+			return sbName.ToString ();
 		}
 
 		[DebuggerHidden]
