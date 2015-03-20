@@ -435,6 +435,8 @@ namespace System
 #if !NET_2_1
 			if (TimeZoneKey != null)
 			{
+				if (id == "Coordinated Universal Time")
+					id = "UTC"; //windows xp exception for "StandardName" property
 				RegistryKey key = TimeZoneKey.OpenSubKey (id, false);
 				if (key == null)
 					throw new TimeZoneNotFoundException ();
