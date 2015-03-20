@@ -1015,10 +1015,13 @@ namespace System {
             [Pure]
             get 
             {
+#if !MONO
+                // .NET has unmanaged version of exactly same managed
+                // code bellow
                 RuntimeType rt = this as RuntimeType;
                 if (rt != null)
                     return RuntimeTypeHandle.IsVisible(rt);
-
+#endif
                 if (IsGenericParameter)
                     return true;
 
