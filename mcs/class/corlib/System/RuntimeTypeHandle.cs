@@ -210,11 +210,6 @@ namespace System
 			return IsArray (type) && type.GetArrayRank () == 1;
 		}
 
-		internal static bool IsVisible (RuntimeType type)
-		{
-			return type.IsPublic;
-		}
-
 		internal static bool IsInterface (RuntimeType type)
 		{
 			return (type.Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.Interface;

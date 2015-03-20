@@ -283,6 +283,11 @@ namespace MonoTests.System
 		{
 		}
 
+		public class Nested
+		{
+
+		}
+
 		[Test]
 		public void TestIsAssignableFrom ()
 		{
@@ -1691,6 +1696,13 @@ namespace MonoTests.System
 			Assert.IsTrue (typeof (AttributeTargets).IsValueType, "#4");
 			Assert.IsFalse (typeof (string).IsValueType, "#5");
 			Assert.IsTrue (typeof (TimeSpan).IsValueType, "#6");
+		}
+
+		[Test]
+		public void IsVisible ()
+		{
+			Assert.IsTrue (typeof (int).IsVisible, "#1");
+			Assert.IsTrue (typeof (Nested).IsVisible, "#2");
 		}
 
 		[Test]
