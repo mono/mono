@@ -194,6 +194,8 @@ namespace System
 		/// </summary>
 		private static string TrimSpecial (string str)
 		{
+			if (str == null)
+				return str;
 			var Istart = 0;
 			while (Istart < str.Length && !char.IsLetterOrDigit(str[Istart])) Istart++;
 			var Iend = str.Length - 1;
