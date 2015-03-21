@@ -26,36 +26,36 @@ using Mono.Utilities;
 namespace Monodoc.Providers
 {
 	public interface IEcmaProviderFileSource {
-		XmlReader GetIndexReader(string path);
-		XDocument GetTypeDocument(string path);
-		XElement GetNamespaceElement(string path);
-		string GetTypeXmlPath(string basePath, string nsName, string typeName);
-		string GetNamespaceXmlPath(string basePath, string ns);
+		XmlReader GetIndexReader (string path);
+		XDocument GetTypeDocument (string path, string nsName);
+		XElement GetNamespaceElement (string path);
+		string GetTypeXmlPath (string basePath, string nsName, string typeName);
+		string GetNamespaceXmlPath (string basePath, string ns);
 		XElement ExtractNamespaceSummary (string path);
 	}
 
 	internal class DefaultEcmaProviderFileSource : IEcmaProviderFileSource {
-		public static readonly IEcmaProviderFileSource Default = new DefaultEcmaProviderFileSource();
+		public static readonly IEcmaProviderFileSource Default = new DefaultEcmaProviderFileSource ();
 
-		public XmlReader GetIndexReader(string path) {
+		public XmlReader GetIndexReader (string path) {
 			return XmlReader.Create (File.OpenRead (path));
 		}
 
-		public XElement GetNamespaceElement(string path) {
+		public XElement GetNamespaceElement (string path) {
 			return XElement.Load (path);
 		}
 
-		public string GetTypeXmlPath(string basePath, string nsName, string typeName) {
+		public string GetTypeXmlPath (string basePath, string nsName, string typeName) {
 			string finalPath = Path.Combine (basePath, nsName, Path.ChangeExtension (typeName, ".xml"));
 			return finalPath;
 		}
 
-		public XDocument GetTypeDocument(string path) {
+		public XDocument GetTypeDocument (string path, string nsName) {
 			return XDocument.Load (path);
 		}
 
-		public string GetNamespaceXmlPath(string basePath, string ns) {
-			string finalPath = Path.Combine(basePath, String.Format("ns-{0}.xml", ns));
+		public string GetNamespaceXmlPath (string basePath, string ns) {
+			string finalPath = Path.Combine (basePath, String.Format ("ns-{0}.xml", ns));
 			return finalPath;
 		}
 
@@ -112,6 +112,7 @@ namespace Monodoc.Providers
 			var storage = tree.HelpSource.Storage;
 			var nsSummaries = new Dictionary<string, XElement> ();
 			int resID = 0;
+			List<string> ownerList = new List<string> ();
 
 			foreach (var asm in directories) {
 				var indexFilePath = Path.Combine (asm, "index.xml");
@@ -120,7 +121,7 @@ namespace Monodoc.Providers
 					continue;
 				}
 
-				EcmaDoc.PopulateTreeFromIndexFile (indexFilePath, EcmaHelpSource.EcmaPrefix, tree, storage, nsSummaries, _ => resID++.ToString (), FileSource);
+				EcmaDoc.PopulateTreeFromIndexFile (indexFilePath, EcmaHelpSource.EcmaPrefix, tree, storage, nsSummaries, _ => resID++.ToString (), FileSource, ownerList);
 			}
 
 			foreach (var summary in nsSummaries)
@@ -131,6 +132,11 @@ namespace Monodoc.Providers
 			                                  .SelectMany (d => Directory.EnumerateFiles (d, "ns-*.xml"))
 			                                  .Select (FileSource.ExtractNamespaceSummary));
 			storage.Store ("mastersummary.xml", masterSummary.ToString ());
+
+			IEnumerable<string> owners = ownerList;
+			var ownerSummary = new XElement ("owners",
+				owners.Select (o => new XElement("owner", o)));
+			storage.Store ("ownersummary.xml", ownerSummary.ToString ());
 		}
 
 

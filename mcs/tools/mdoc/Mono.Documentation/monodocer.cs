@@ -1,6 +1,8 @@
 // Updater program for syncing Mono's ECMA-style documentation files
 // with an assembly.
-// By Joshua Tauberer <tauberer@for.net>
+// By:
+//     - Joel Martinez <joel.martinez@xamarin.com>
+//     - Joshua Tauberer <tauberer@for.net>
 
 using System;
 using System.Collections;
@@ -12,10 +14,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.XPath;
 
 using Mono.Cecil;
 using Mono.Options;
+using Monodoc.Ecma;
 
 using MyXmlNodeList        = System.Collections.Generic.List<System.Xml.XmlNode>;
 using StringList           = System.Collections.Generic.List<string>;
@@ -121,7 +125,7 @@ namespace Mono.Documentation {
 
 			bool isInAssembly = MDocUpdater.IsInAssemblies (t.Module.Name);
 			if (isInAssembly && !typename.StartsWith ("System") && MDocUpdater.HasDroppedNamespace (t)) {
-				string nameWithDropped = string.Format ("{0}.{1}", MDocUpdater.droppedNamespace, typename);
+				string nameWithDropped = string.Format ("{0}.{1}", MDocUpdater.currentDroppedNamespace, typename);
 				return nameWithDropped;
 			}
 			return typename;
@@ -165,34 +169,72 @@ class MDocUpdater : MDocCommand
 
 	HashSet<string> forwardedTypes = new HashSet<string> ();
 
-	public static string droppedNamespace = string.Empty;
+	public static DroppedAssemblyInfo.List droppedAssemblyList = new DroppedAssemblyInfo.List ();
+	public static string currentDroppedNamespace = string.Empty;
+	public static List<string> droppedNamespaces = new List<string> ();
 
-	public static bool HasDroppedNamespace(TypeDefinition forType) 
+	static string GetUnifiedNamespace (AssemblyDefinition assembly, TypeDefinition type)
 	{
-		return HasDroppedNamespace(forType.Module);
+		string namespaceToUse = DocUtils.GetNamespace (type);
+		if (WillBeDroppingNamespace (assembly)) {
+			// classic
+			var droppedNS = ClassicNamespaceBeingDropped (assembly);
+			namespaceToUse = namespaceToUse.Replace (string.Format ("{0}.", droppedNS), string.Empty);
+		}
+		return namespaceToUse;
 	}
 
-	public static bool HasDroppedNamespace(MemberReference forMember) 
-	{
-		return HasDroppedNamespace(forMember.Module);
+	public static string ClassicNamespaceBeingDropped (AssemblyDefinition forAssembly) {
+		return ClassicNamespaceBeingDropped (forAssembly.MainModule);
 	}
 
-	public static bool HasDroppedNamespace(AssemblyDefinition forAssembly) 
-	{
-		return HasDroppedNamespace(forAssembly.MainModule);
+	public static string ClassicNamespaceBeingDropped (ModuleDefinition forModule) {
+		return droppedAssemblyList.GetDroppedNamespace (forModule.Name);
 	}
 
-	public static bool HasDroppedNamespace(ModuleDefinition forModule) 
+	public static bool WillBeDroppingNamespace (AssemblyDefinition forAssembly)
 	{
-		return !string.IsNullOrWhiteSpace (droppedNamespace) && droppedAssemblies.Any(da => da == forModule.Name);
+		return WillBeDroppingNamespace (forAssembly.MainModule);
+	}
+
+	public static bool WillBeDroppingNamespace (TypeDefinition forType)
+	{
+		return WillBeDroppingNamespace (forType.Module);
+	}
+
+	public static bool WillBeDroppingNamespace (ModuleDefinition forModule)
+	{
+		return droppedAssemblyList.IsClassic (forModule.Name);
+	}
+
+	public static bool HasDroppedNamespace (TypeDefinition forType) 
+	{
+		return HasDroppedNamespace (forType.Module);
+	}
+
+	public static bool HasDroppedNamespace (MemberReference forMember) 
+	{
+		return HasDroppedNamespace (forMember.Module);
+	}
+
+	public static bool HasDroppedNamespace (AssemblyDefinition forAssembly) 
+	{
+		return HasDroppedNamespace (forAssembly.MainModule);
+	}
+
+	public static bool HasDroppedNamespace (ModuleDefinition forModule) 
+	{
+		return !string.IsNullOrWhiteSpace (currentDroppedNamespace) && droppedAssemblies.Any (da => da == forModule.Name);
 	}
 
 	
 	static List<string> droppedAssemblies = new List<string>();
-
+	
 	public string PreserveTag { get; set; }
 	public static MDocUpdater Instance { get; private set; }
 	public static bool SwitchingToMagicTypes { get; private set; }
+
+	Dictionary<string, List<string>> assemblyOwners = new Dictionary<string, StringList> ();
 
 	public override void Run (IEnumerable<string> args)
 	{
@@ -258,15 +300,23 @@ class MDocUpdater : MDocCommand
 				v => types.Add (v) },
 			{ "dropns=",
 			  "When processing assembly {ASSEMBLY}, strip off leading namespace {PREFIX}:\n" +
-			  "  e.g. --dropns ASSEMBLY=PREFIX",
-			  v => {
-			    var parts = v.Split ('=');
-			    if (parts.Length != 2) { Console.Error.WriteLine ("Invalid dropns input"); return; }
-			    var assembly = Path.GetFileName (parts [0].Trim ());
-			    var prefix = parts [1].Trim();
-			    droppedAssemblies.Add (assembly);
-			    droppedNamespace = prefix;
-			} },
+			  "  e.g. --dropns=ASSEMBLY=PREFIX",
+				v => {
+					var allDropped = v
+						.Trim ()
+						.Split (' ')
+						.Select (n => n.Split ('='));
+
+					// now process the input
+					foreach(var dropped in allDropped) {
+						var ass = Path.GetFileName (dropped [0].Trim ());
+						var pref = dropped [1].Trim ();
+
+						droppedAssemblies.Add (ass);
+						droppedNamespaces.Add (pref);
+						currentDroppedNamespace = pref;
+					}
+				}},
 			{ "ntypes",
 				"If the new assembly is switching to 'magic types', then this switch should be defined.",
 				v => SwitchingToMagicTypes = true },
@@ -274,51 +324,136 @@ class MDocUpdater : MDocCommand
 				"Do not delete members that don't exist in the assembly, but rather mark them as preserved.",
 				v => PreserveTag = "true" },
 		};
-		var assemblies = Parse (p, args, "update", 
+		var assemblyNames = Parse (p, args, "update", 
 				"[OPTIONS]+ ASSEMBLIES",
 				"Create or update documentation from ASSEMBLIES.");
-		if (assemblies == null)
+		if (assemblyNames == null)
 			return;
-		if (assemblies.Count == 0)
+		if (assemblyNames.Count == 0)
 			Error ("No assemblies specified.");
 
-		foreach (var dir in assemblies
-				.Where (a => a.Contains (Path.DirectorySeparatorChar))
-				.Select (a => Path.GetDirectoryName (a)))
+		ProcessAssemblyOwners (ref assemblyNames);
+
+		// check to see if there are two dropns entries
+		if (droppedAssemblies.Count == 1) {
+
+			droppedAssemblyList.Add (new DroppedAssemblyInfo {
+				ClassicAssembly = Path.GetFileName (assemblyNames.First ()),
+				UnifiedAssembly = droppedAssemblies.First (),
+				DroppedNamespace = droppedNamespaces.First ()
+			});
+
+			UpdateRun (types, assemblyNames);
+		}
+		else if (droppedAssemblies.Count == 2) {
+			var first = droppedAssemblies.First ();
+			var second = droppedAssemblies.Last ();
+
+			var firstOwner = assemblyOwners[first].First ();
+			var secondOwner = assemblyOwners[second].First ();
+
+			var firstOther = assemblyOwners.Where (a => a.Key != first && a.Value.Any (o => o == firstOwner)).First ();
+			var secondOther = assemblyOwners.Where (a => a.Key != second && a.Value.Any (o => o == secondOwner)).First ();
+
+			// - split into two runs, one for first and one for second
+			// - modify assemblies list to contain first - firstOther + un-owned, and then second - secondOther + un-owned
+			var firstRunAssemblyNames = assemblyNames.Where(a => Path.GetFileName (a) != first && Path.GetFileName(a) != second).ToArray ();
+			var secondRunAssemblyNames = assemblyNames.Where(a => Path.GetFileName (a) != firstOther.Key && Path.GetFileName (a) != secondOther.Key).ToArray();
+
+			// first do the classic run
+			string prefixPlaceholder = currentDroppedNamespace;
+			bool magicTypesPlaceholder = SwitchingToMagicTypes;
+			string preservePlaceholder = PreserveTag;
+			currentDroppedNamespace = string.Empty;
+			SwitchingToMagicTypes = false;
+
+			// add to the dropped assembly list
+			droppedAssemblyList.Add (new DroppedAssemblyInfo {
+				ClassicAssembly = firstOther.Key,
+				UnifiedAssembly = first,
+				DroppedNamespace = droppedNamespaces.First ()
+			});
+			droppedAssemblyList.Add (new DroppedAssemblyInfo {
+				ClassicAssembly = secondOther.Key,
+				UnifiedAssembly = second,
+				DroppedNamespace = droppedNamespaces.Last ()
+			});
+
+			UpdateRun(types, firstRunAssemblyNames.ToList ());
+
+			// now do the unified run
+			currentDroppedNamespace = prefixPlaceholder;
+			SwitchingToMagicTypes = magicTypesPlaceholder;
+
+			UpdateRun(types, secondRunAssemblyNames.ToList ());
+		}
+		else {
+			UpdateRun (types, assemblyNames);
+		}
+
+		Console.WriteLine("Members Added: {0}, Members Deleted: {1}", additions, deletions);
+	}
+
+	void UpdateRun (StringList types, StringList assemblyNames)
+	{
+		foreach (var dir in assemblyNames.Where (a => a.Contains (Path.DirectorySeparatorChar)).Select (a => Path.GetDirectoryName (a)))
 			assemblyResolver.AddSearchDirectory (dir);
-
 		// PARSE BASIC OPTIONS AND LOAD THE ASSEMBLY TO DOCUMENT
-		
 		if (srcPath == null)
-			throw new InvalidOperationException("The --out option is required.");
-		
-		this.assemblies = assemblies.Select (a => LoadAssembly (a)).ToList ();
-
+			throw new InvalidOperationException ("The --out option is required.");
+		this.assemblies = assemblyNames.Select (a => LoadAssembly (a)).ToList ();
 		// Store types that have been forwarded to avoid duplicate generation
 		GatherForwardedTypes ();
-
 		docEnum = docEnum ?? new DocumentationEnumerator ();
-		
 		// PERFORM THE UPDATES
-		
 		if (types.Count > 0) {
 			types.Sort ();
 			DoUpdateTypes (srcPath, types, srcPath);
 		}
-#if false
-		else if (opts.@namespace != null)
-			DoUpdateNS (opts.@namespace, Path.Combine (opts.path, opts.@namespace),
-					Path.Combine (dest_dir, opts.@namespace));
+		#if false
+				else if (opts.@namespace != null)
+		DoUpdateNS (opts.@namespace, Path.Combine (opts.path, opts.@namespace),
+				Path.Combine (dest_dir, opts.@namespace));
 #endif
 		else
 			DoUpdateAssemblies (srcPath, srcPath);
-
-		Console.WriteLine("Members Added: {0}, Members Deleted: {1}", additions, deletions);
 	}
-		public static bool IsInAssemblies(string name) {
-			var query = Instance.assemblies.Where (a => a.MainModule.Name == name).ToArray ();
-			return query.Length > 0;
+
+	void ProcessAssemblyOwners (ref StringList assemblies)
+	{
+		// check to see if there's any "owner" data embedded in the assembly list.
+		var withOwnerData = assemblies.Where (a => a.Contains ("="));
+		if (withOwnerData.Any ()) {
+			PreserveTag = "preserve"; 
+
+			// ok, first pull out a dictionary of all the owners
+			var ownerData = withOwnerData.Select (a => a.Split ('=')).Select (a => new {
+				Assembly = a [0],
+				Owner = a [1]
+			});
+			var dict = ownerData.ToDictionary (a => a.Assembly, a => new List<string> (new string[] {
+				a.Owner
+			}));
+			// with the dictionary in hand, infer the rest of the assemblies 
+			var withoutOwnerData = assemblies.Where (a => !a.Contains ("=") && !dict.ContainsKey (a));
+
+			if (withoutOwnerData.Any ()) {
+				var uniqueOwners = ownerData.Select (o => o.Owner).Distinct ();
+				foreach (var a in withoutOwnerData) {
+					dict.Add (a, uniqueOwners.ToList ());
+				}
+			}
+			assemblyOwners = dict.ToDictionary(d => Path.GetFileName (d.Key), d => d.Value); // scrub the assembly name
+			assemblies = dict.Keys.ToList ();
+			// the dictionary keys is now a unique list of all the supplied assemblies
 		}
+	}
+
+	public static bool IsInAssemblies(string name) {
+		var query = Instance.assemblies.Where (a => a.MainModule.Name == name).ToArray ();
+		return query.Length > 0;
+	}
+
 	void AddImporter (string path)
 	{
 		try {
@@ -548,6 +683,12 @@ class MDocUpdater : MDocCommand
 
 			index_types = WriteElement (index.DocumentElement, "Types");
 			index_assemblies = WriteElement (index.DocumentElement, "Assemblies");
+
+			var owners = app.assemblyOwners.SelectMany (o => o.Value).Distinct ();
+			if (owners.Any ()) {
+				app.AddIndexOwners (owners.OrderBy (o => o).ToArray (), index.DocumentElement);
+			}
+
 		}
 
 		public void Add (AssemblyDefinition assembly)
@@ -566,6 +707,7 @@ class MDocUpdater : MDocCommand
 		public void Write ()
 		{
 			SortIndexEntries (index_types);
+
 			WriteFile (indexFile, FileMode.Create, 
 					writer => WriteXml (index.DocumentElement, writer));
 		}
@@ -609,15 +751,26 @@ class MDocUpdater : MDocCommand
 			nsname
 		};
 
-		if (MDocUpdater.HasDroppedNamespace (type)) {
-			// If dropping namespace, types may have moved into a couple of different places.
-			var newSearchLocations = searchLocations.Union (new string[] {
-				string.Format ("{0}.{1}", droppedNamespace, nsname),
-				nsname.Replace (droppedNamespace + ".", string.Empty),
-				MDocUpdater.droppedNamespace
-			});
+		if (MDocUpdater.WillBeDroppingNamespace (type)) {
+			// If dropping namespace for the unified version, we'll need to rename the classic if it's in the current
+			var unifiedNamespace = GetUnifiedNamespace (type.Module.Assembly, type);
 
-			searchLocations = newSearchLocations.ToArray ();
+			var dpath = Path.Combine (basepath, nsname);
+			var newdpath = Path.Combine (basepath, unifiedNamespace);
+
+			if (Directory.Exists (dpath)) {
+				if (!Directory.Exists (newdpath)) {
+					// move the existing directory to maintain documentation
+					Directory.Move (dpath, newdpath);
+				} else {
+					// if the target directory already exists, then it's already
+					// been created and as such possibly already contains documentation,
+					// so this directory needs to go. But first, copy over any files/directories
+					// that aren't already present in the target.
+					DocUtils.CopyAllIfNotPresent (dpath, newdpath);
+					Directory.Delete (dpath, true);
+				}
+			}
 		}
 
 		string reltypefile="", typefile="";
@@ -640,6 +793,7 @@ class MDocUpdater : MDocCommand
 			// we were not able to find a file, let's use the original type informatio.
 			// so that we create the stub in the right place.
 			Tuple<string, string, FileInfo> result;
+			nsname = GetUnifiedNamespace (type.Module.Assembly, type);
 			TryFindTypeFile (nsname, typename, basepath, out result);
 
 			reltypefile = result.Item1;
@@ -672,10 +826,11 @@ class MDocUpdater : MDocCommand
 			if (td == null)
 				return null;
 			
-			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo (DocUtils.PathCombine (dest, type.Namespace));
+			string nsToUse = GetUnifiedNamespace (type.Module.Assembly, type);
+			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo (DocUtils.PathCombine (dest, nsToUse));
 			if (!dir.Exists) {
 				dir.Create();
-				Console.WriteLine("Namespace Directory Created: " + type.Namespace);
+				Console.WriteLine("Namespace Directory Created: " + nsToUse);
 			}
 		}
 		return reltypefile;
@@ -700,8 +855,8 @@ class MDocUpdater : MDocCommand
 			TypeDefinition type = assembly.GetType(typename);
 			if (type == null) {
 					// --
-					if (!string.IsNullOrWhiteSpace (droppedNamespace)) {
-						string nameWithNs = string.Format ("{0}.{1}", droppedNamespace, typename);
+					if (!string.IsNullOrWhiteSpace (currentDroppedNamespace)) {
+						string nameWithNs = string.Format ("{0}.{1}", currentDroppedNamespace, typename);
 						type = assembly.GetType (nameWithNs);
 						if (type == null) {
 							Warning ("Type no longer in assembly: " + typename);
@@ -797,13 +952,33 @@ class MDocUpdater : MDocCommand
 		string typename = GetTypeFileName(type);
 
 		// Add namespace and type nodes into the index file as needed
+		var namespacePathOnDisk = GetUnifiedNamespace (type.Module.Assembly, type);
+
 		string ns = DocUtils.GetNamespace (type);
+
 		XmlElement nsnode = (XmlElement) index_types.SelectSingleNode ("Namespace[@Name='" + ns + "']");
 		if (nsnode == null) {
-			nsnode = index_types.OwnerDocument.CreateElement("Namespace");
+			nsnode = index_types.OwnerDocument.CreateElement ("Namespace");
 			nsnode.SetAttribute ("Name", ns);
+
 			index_types.AppendChild (nsnode);
 		}
+
+		if (!string.IsNullOrWhiteSpace(namespacePathOnDisk) && namespacePathOnDisk != ns) {
+			nsnode.SetAttribute ("Path", namespacePathOnDisk);
+		}
+		
+		bool isUnified = HasDroppedNamespace (type);
+		bool isClassic = WillBeDroppingNamespace (type);
+		bool shouldAddApiStyle = isUnified || isClassic;
+		if (shouldAddApiStyle) {
+			ApiStyle styleToAdd = isUnified ? ApiStyle.Unified : ApiStyle.Classic;
+			
+			if (!(styleToAdd == ApiStyle.Unified && nsnode.GetAttribute ("apistyle") == "classic")) {
+				nsnode.AddApiStyle (styleToAdd);
+			}
+		}
+
 		string doc_typename = GetDocTypeName (type);
 		XmlElement typenode = (XmlElement) nsnode.SelectSingleNode ("Type[@Name='" + typename + "']");
 		if (typenode == null) {
@@ -817,6 +992,45 @@ class MDocUpdater : MDocCommand
 			typenode.RemoveAttribute("DisplayName");
 
 		typenode.SetAttribute ("Kind", GetTypeKind (type));
+		AddOwner (typenode, type);
+	}
+
+	/// <summary>Adds the unique list of owners to the index file.</summary>
+	private void AddIndexOwners (XmlElement root)
+	{
+		var owners = assemblyOwners
+			.SelectMany (o => o.Value)
+			.Distinct ()
+			.OrderBy (o => o)
+			.ToArray ();
+
+		AddIndexOwners (owners, root);
+	}
+
+	/// <summary>Adds the unique list of owners to the index file.</summary>
+	private void AddIndexOwners (string[] owners, XmlElement root) 
+	{
+		var ownerNode = root.SelectSingleNode ("Owners");
+
+		if (!owners.Any ()) {
+			if (ownerNode != null) {
+				ownerNode.ParentNode.RemoveChild (ownerNode);
+			}
+			return;
+		}
+
+		if (ownerNode == null) {
+			ownerNode = root.OwnerDocument.CreateElement ("Owners");
+			root.InsertBefore (ownerNode, root.FirstChild);
+		}
+
+		ownerNode.RemoveAll ();
+
+		foreach (var owner in owners) {
+			var newNode = root.OwnerDocument.CreateElement ("Owner");
+			newNode.InnerText = owner;
+			ownerNode.AppendChild (newNode);
+		}
 	}
 
 	private void DoUpdateAssemblies (string source, string dest) 
@@ -830,6 +1044,11 @@ class MDocUpdater : MDocCommand
 			// Format change
 			ClearElement(index.DocumentElement, "Assembly");
 			ClearElement(index.DocumentElement, "Attributes");
+
+			// just rewrite the extension methods every time
+			ClearElement (index.DocumentElement, "ExtensionMethods");
+
+			AddIndexOwners (index.DocumentElement);
 		} else {
 			index = CreateIndexStub();
 		}
@@ -852,7 +1071,7 @@ class MDocUpdater : MDocCommand
 		}
 
 		SortIndexEntries (index_types);
-		
+
 		CleanupFiles (dest, goodfiles);
 		CleanupIndexTypes (index_types, goodfiles);
 		CleanupExtensions (index_types);
@@ -878,24 +1097,50 @@ class MDocUpdater : MDocCommand
 			AddIndexType (type, index_types);
 
 			// Ensure the namespace index file exists
-			string namespaceToUse = type.Namespace;
-			if (HasDroppedNamespace(assembly)) {
-				namespaceToUse = string.Format ("{0}.{1}", droppedNamespace, namespaceToUse);
-			}
+			var namespaceToUse = GetUnifiedNamespace (assembly, type);
+			var fullNs = DocUtils.GetNamespace (type);
+
 			string onsdoc = DocUtils.PathCombine (dest, namespaceToUse + ".xml");
 			string nsdoc  = DocUtils.PathCombine (dest, "ns-" + namespaceToUse + ".xml");
 			if (File.Exists (onsdoc)) {
 				File.Move (onsdoc, nsdoc);
 			}
 
+			if (WillBeDroppingNamespace (type)) {
+				//var classicNSBeingDropped = ClassicNamespaceBeingDropped (type.Module);
+				string fullnsdoc = DocUtils.PathCombine (dest, "ns-" + fullNs + ".xml");
+
+				if (File.Exists (fullnsdoc)) {				
+					if (!File.Exists (nsdoc)) {
+						Console.WriteLine ("Migrating namespace file, {0}, to the new unified namespace, {1}", fullnsdoc, nsdoc);
+						File.Move (fullnsdoc, nsdoc);
+
+						var xdoc = XDocument.Load (nsdoc);
+						xdoc.Root.SetAttributeValue ("Name", namespaceToUse);
+
+						DocUtils.SaveXDocument (nsdoc, xdoc);
+					} else {
+						Console.WriteLine ("Unified namespace file, {1}, already exists, deleting classic namespace file, {0}", fullnsdoc, nsdoc);
+						File.Delete (fullnsdoc);
+					}
+				}
+			}
+
 			if (!File.Exists (nsdoc)) {
-				Console.WriteLine("New Namespace File: " + type.Namespace);
-				WriteNamespaceStub(namespaceToUse, dest);
+				Console.WriteLine ("New Namespace File: " + namespaceToUse);
+				WriteNamespaceStub (namespaceToUse, dest);
+			} else if (HasDroppedNamespace (assembly)) {
+				// load the assembly doc ... we need to scrub crefs
+				var xdoc = XDocument.Load (nsdoc);
+				ScrubCrefsOfDroppedAssemblies (xdoc.Root);
+				DocUtils.SaveXDocument (nsdoc, xdoc);
 			}
 
 			goodfiles.Add (reltypepath);
 		}
 	}
+
+	
 
 	private static void SortIndexEntries (XmlElement indexTypes)
 	{
@@ -1045,7 +1290,10 @@ class MDocUpdater : MDocCommand
 		// Look for type nodes that no longer correspond to types
 		MyXmlNodeList remove = new MyXmlNodeList ();
 		foreach (XmlElement typenode in index_types.SelectNodes("Namespace/Type")) {
-			string fulltypename = Path.Combine (((XmlElement)typenode.ParentNode).GetAttribute("Name"), typenode.GetAttribute("Name") + ".xml");
+			string path = ((XmlElement)typenode.ParentNode).GetAttribute ("Path");
+			string nsname = ((XmlElement)typenode.ParentNode).GetAttribute ("Name");
+			path = !string.IsNullOrWhiteSpace (path) ? path : nsname;
+			string fulltypename = Path.Combine (path, typenode.GetAttribute("Name") + ".xml");
 			if (!goodfiles.Contains (fulltypename)) {
 				remove.Add (typenode);
 			}
@@ -1109,7 +1357,8 @@ class MDocUpdater : MDocCommand
 		
 		MyXmlNodeList todelete = new MyXmlNodeList ();
 		
-		foreach (DocsNodeInfo info in docEnum.GetDocumentationMembers (basefile, type)) {
+		var nodes = docEnum.GetDocumentationMembers (basefile, type);
+		foreach (DocsNodeInfo info in nodes) {
 			XmlElement oldmember  = info.Node;
 			MemberReference oldmember2 = info.Member;
 			string sig = oldmember2 != null ? memberFormatters [0].GetDeclaration (oldmember2) : null;
@@ -1145,8 +1394,9 @@ class MDocUpdater : MDocCommand
 
 			// get all apistyles of sig from info.Node
 			var styles = oldmember.GetElementsByTagName ("MemberSignature").Cast<XmlElement> ()
-				.Where (x => x.GetAttribute ("Language") == "C#" && !seenmembers.ContainsKey(x.GetAttribute("Value")))
-				.Select (x => x.GetAttribute ("Value"));
+			.Select (x => new { Language = x.GetAttribute ("Language"), Value = DropNamespaceFromTypeSig (x.GetAttribute ("Value")) })
+			.Where (x => x.Language == "C#" && !seenmembers.ContainsKey(x.Value))
+			.Select (x => x.Value);
 
 			foreach (var stylesig in styles) {
 				seenmembers.Add (stylesig, oldmember);
@@ -1161,8 +1411,16 @@ class MDocUpdater : MDocCommand
 			var typemembers = type.GetMembers()
 					.Where(m => {
 						if (m is TypeDefinition) return false;
+
+						if (m.Name.StartsWith("get_")) return false;
+						if (m.Name.StartsWith("set_")) return false;
+						if (m.Name.StartsWith("add_")) return false;
+						if (m.Name.StartsWith("remove_")) return false;
+						if (m.Name.StartsWith("raise_")) return false;
+
 						string sig = memberFormatters [0].GetDeclaration (m);
 						if (sig == null) return false;
+						sig = MDocUpdater.DropNamespaceFromTypeSig (sig);
 						if (seenmembers.ContainsKey(sig)) return false;
 
 						// Verify that the member isn't an explicitly implemented 
@@ -1184,7 +1442,6 @@ class MDocUpdater : MDocCommand
 								if (!IsPublic (iface.Resolve ())) return false;
 							}
 						}
-
 						return true;
 					})
 					.ToArray();
@@ -1192,10 +1449,13 @@ class MDocUpdater : MDocCommand
 				XmlElement mm = MakeMember(basefile, new DocsNodeInfo (null, m));
 				if (mm == null) continue;
 
-				if (MDocUpdater.SwitchingToMagicTypes) {
+				if (MDocUpdater.HasDroppedNamespace(m)) {
 					// this is a unified style API that obviously doesn't exist in the classic API. Let's mark
 					// it with apistyle="unified", so that it's not displayed for classic style APIs
-					mm.SetAttribute ("apistyle", "unified");
+					mm.AddApiStyle (ApiStyle.Unified);
+
+					// update extension members now that we've added this attribute
+					UpdateExtensionMethods (mm, new DocsNodeInfo (null, m));
 				}
 
 				members.AppendChild( mm );
@@ -1300,17 +1560,23 @@ class MDocUpdater : MDocCommand
 			if (!delete && MemberDocsHaveUserContent (member)) {
 				Warning ("Member deletions must be enabled with the --delete option.");
 			} else if (HasDroppedNamespace (type)) {
-				// if we're dropping the namespace, add the "classic style"
-				var existingAttribute = member.Attributes ["apistyle"];
-				if (existingAttribute != null) {
-					existingAttribute.Value = "classic";
-				} else {
-					// add the attribute and do not remove
-					XmlAttribute apistyleAttr = member.OwnerDocument.CreateAttribute ("apistyle");
+				// if we're dropping the namespace, add the "classic style" ... assuming the owner matches
+				var thisowner = member.Attributes ["owner"];
+				var thisassembly = type.Module.Name;
+				var hasSameOwner = assemblyOwners.Any (a => a.Key == thisassembly && a.Value.Any (ao => thisowner != null && ao == thisowner.Value));
 
-					apistyleAttr.Value = "classic";
+				if (hasSameOwner) {
+					var existingAttribute = member.Attributes ["apistyle"];
+					if (existingAttribute != null) {
+						existingAttribute.Value = "classic";
+					} else {
+						// add the attribute and do not remove
+						XmlAttribute apistyleAttr = member.OwnerDocument.CreateAttribute ("apistyle");
 
-					member.Attributes.Append (apistyleAttr);
+						apistyleAttr.Value = "classic";
+
+						member.Attributes.Append (apistyleAttr);
+					}
 				}
 			} else if (!HasDroppedNamespace (type) && member.Attributes ["apistyle"] != null && member.Attributes ["apistyle"].Value == "unified") {
 				// do nothing if there's an apistyle=new attribute and we haven't dropped the namespace
@@ -1434,6 +1700,35 @@ class MDocUpdater : MDocCommand
 		s.SetAttribute ("version", since);
 		return s;
 	}
+
+	void AddOwner (XmlElement element, string moduleName)
+	{
+		List<string> owners;
+		if (assemblyOwners.TryGetValue (moduleName, out owners)) {
+			var ownerAttr = element.GetAttributeNode ("owner");
+			if (ownerAttr == null) {
+				ownerAttr = element.OwnerDocument.CreateAttribute ("owner");
+				element.SetAttributeNode (ownerAttr);
+			}
+			var ownerValue = ownerAttr.Value ?? string.Empty;
+			List<string> existingOwnerList = new List<string> (ownerValue.Split (','));
+			existingOwnerList.AddRange (owners);
+			var sorted = existingOwnerList.Distinct ().OrderBy (o => o).Where (o => !string.IsNullOrWhiteSpace (o));
+
+			ownerValue = string.Join (",", sorted.ToArray ());
+
+			if (ownerAttr.Value != ownerValue) {
+				ownerAttr.Value = ownerValue;
+			}
+		}
+	}
+
+	void AddOwner (XmlElement element, TypeDefinition type) {
+		AddOwner (element, type.Module.Name);
+	}
+	void AddOwner (XmlElement element, MemberReference member) {
+		AddOwner (element, member.DeclaringType.Module.Name);
+	}
 	
 	// STUBBING/UPDATING FUNCTIONS
 	
@@ -1441,6 +1736,7 @@ class MDocUpdater : MDocCommand
 	{
 		root.SetAttribute("Name", GetDocTypeName (type));
 		root.SetAttribute("FullName", GetDocTypeFullName (type));
+		AddOwner (root, type);
 
 		foreach (MemberFormatter f in typeFormatters) {
 			string element = "TypeSignature[@Language='" + f.Language + "']";
@@ -1458,18 +1754,34 @@ class MDocUpdater : MDocCommand
 				type);
 		}
 		
-		string assemblyInfoNodeFilter = MDocUpdater.HasDroppedNamespace (type) ? "[@apistyle='unified']" : "[not(@apistyle) or @apistyle='classic']";
+		string assemblyInfoNodeFilter = MDocUpdater.HasDroppedNamespace (type) ? "@apistyle='unified'" : "not(@apistyle) or @apistyle='classic'";
+		assemblyInfoNodeFilter = string.Format ("[AssemblyName='{0}' and ({1})]", type.Module.Assembly.Name.Name, assemblyInfoNodeFilter);
+		var existingNodes = root
+			.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter)
+			.Cast<XmlElement> ()
+			.ToArray ();
 
 		AddXmlNode(
-			root.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement> ().ToArray (),
+			existingNodes,
 			x => x.SelectSingleNode("AssemblyName").InnerText == type.Module.Assembly.Name.Name,
-			x => WriteElementText(x, "AssemblyName", type.Module.Assembly.Name.Name),
+			x => {
+				WriteElementText(x, "AssemblyName", type.Module.Assembly.Name.Name);
+				bool hasDroppedNamespace = MDocUpdater.HasDroppedNamespace (type);
+				if (hasDroppedNamespace) 
+					x.AddApiStyle (ApiStyle.Unified);
+				else if (!hasDroppedNamespace && MDocUpdater.WillBeDroppingNamespace (type))
+					x.AddApiStyle (ApiStyle.Classic);
+			},
 			() => {
 				XmlElement ass = WriteElement(root, "AssemblyInfo", forceNewElement:true);
-				
-				if (MDocUpdater.HasDroppedNamespace (type)) ass.SetAttribute ("apistyle", "unified");
+				XmlElement assName = WriteElement(ass, "AssemblyName");
+				assName.InnerText = type.Module.Assembly.Name.Name;
 
-				
+				bool hasDroppedNamespace = MDocUpdater.HasDroppedNamespace (type);
+				if (hasDroppedNamespace) 
+					ass.AddApiStyle (ApiStyle.Unified);
+				else if (!hasDroppedNamespace && MDocUpdater.WillBeDroppingNamespace (type))
+					ass.AddApiStyle (ApiStyle.Classic);
 
 				return ass;
 			},
@@ -1504,7 +1816,7 @@ class MDocUpdater : MDocCommand
 		}
 		
 		if (type.IsGenericType ()) {
-				MakeTypeParameters (root, type.GenericParameters, type, MDocUpdater.HasDroppedNamespace(type));
+				MakeTypeParameters (root, type.GenericParameters, type, MDocUpdater.HasDroppedNamespace (type));
 		} else {
 			ClearElement(root, "TypeParameters");
 		}
@@ -1573,6 +1885,10 @@ class MDocUpdater : MDocCommand
 		if (!DocUtils.IsDelegate (type))
 			WriteElement (root, "Members");
 
+		if (HasDroppedNamespace (type)) {
+			ScrubCrefsOfDroppedAssemblies (root);
+		}
+
 		OrderTypeNodes (root, root.ChildNodes);
 		NormalizeWhitespace(root);
 	}
@@ -1611,6 +1927,8 @@ class MDocUpdater : MDocCommand
 		XmlElement me = (XmlElement) info.Node;
 		MemberReference mi = info.Member;
 
+		AddOwner (me, mi);
+
 		foreach (MemberFormatter f in memberFormatters) {
 			string element = "MemberSignature[@Language='" + f.Language + "']";
 
@@ -1644,7 +1962,7 @@ class MDocUpdater : MDocCommand
 		if (mi is MethodReference) {
 			MethodReference mb = (MethodReference) mi;
 			if (mb.IsGenericMethod ())
-					MakeTypeParameters (me, mb.GenericParameters, mi, MDocUpdater.HasDroppedNamespace(mi));
+				MakeTypeParameters (me, mb.GenericParameters, mi, MDocUpdater.HasDroppedNamespace(mi));
 		}
 		MakeParameters(me, mi, MDocUpdater.HasDroppedNamespace(mi));
 		
@@ -1656,7 +1974,136 @@ class MDocUpdater : MDocCommand
 		MakeDocNode (info);
 		OrderMemberNodes (me, me.ChildNodes);
 		UpdateExtensionMethods (me, info);
+
+		if (HasDroppedNamespace (mi)) {
+			ScrubCrefsOfDroppedAssemblies (me);
+		}
 	}
+
+	static void ScrubCrefsOfDroppedAssemblies (XElement me)
+	{
+		// we have an xelement, we need to convert it to an XmlElement for processing
+		var doc = new XmlDocument ();
+		doc.Load (me.CreateReader ());
+
+		ScrubCrefsOfDroppedAssemblies (doc.DocumentElement);
+
+		XElement x = XElement.Parse (doc.OuterXml);
+		me.RemoveNodes ();
+
+		// now move the convent back into the original XElement
+		foreach (var n in x.Nodes ())
+			me.Add (n);
+	}
+
+	static void ScrubCrefsOfDroppedAssemblies (XmlElement me)
+	{
+		// we need to scrub the docs to drop the namespace from any crefs
+
+		// pull and parse the crefs 
+		var results = me.SelectNodes (".//see[@cref]").Cast<XmlElement> ()
+		.Where (d => droppedNamespaces.Any (dn => d.GetAttribute("cref").Contains (dn)))
+		.Select (see =>  {
+			EcmaUrlParser parser = new EcmaUrlParser ();
+			EcmaDesc reference;
+			string cref = see.GetAttribute ("cref");
+			bool parseResult = parser.TryParse (cref.Trim (), out reference);
+				return new {
+					ParseResult = parseResult,
+					Reference = reference,
+					See = see
+				};
+			})
+		.Where (r => r.ParseResult)
+		.ToArray ();
+
+		// for each cref, drop the dropped namespace from the member and parameter list.
+		foreach (var item in results) {
+			item.See.SetAttribute ("cref", DropNamespaceFrom (item.Reference));
+		}
+	}
+
+	public static string DropNamespaceFromTypeSig (string typename) {
+		return ReplaceStringsWith (typename, droppedNamespaces, string.Empty, "{0}.");
+	}
+
+	public static string DropNamespaceFrom (string typename) 
+	{
+		string typeurl = typename;
+		string prefix = "T:";
+
+		if (!typename.Contains (":")) {
+			typeurl = prefix + typename;
+		} else {
+			// this is another kind of link
+			var split = typename.Split (':');
+			prefix = split.First () + ":";
+		}
+
+		string[] trailingChars = new string[] { "&*", "*&", "**", "&&", "&", "*" };
+		string trailing = trailingChars.FirstOrDefault (c => typeurl.EndsWith (c)) ?? string.Empty;
+		if (trailing.Length > 0) {
+			typeurl = typeurl.Substring (0, typeurl.Length - trailing.Length);
+		}
+
+		EcmaUrlParser parser = new EcmaUrlParser ();
+		EcmaDesc reference;
+		bool success = parser.TryParse (typeurl, out reference);
+
+		if (!success) {
+			return typename;
+		} else {
+			typeurl = DropNamespaceFrom (reference);
+			typename = typeurl.Substring (prefix.Length, typeurl.Length - prefix.Length);
+			if (typename.StartsWith ("."))
+				typename = typename.Substring (1, typename.Length - 1);
+
+			return typename + trailing;
+		}
+	}
+
+	public static string DropNamespaceFrom (EcmaDesc reference) 
+	{
+		if (reference == null)
+			return string.Empty;
+
+		reference.Namespace = ReplaceStringsWith (reference.Namespace, droppedNamespaces, string.Empty, "{0}.");
+
+		if (reference.MemberArguments != null) {
+			foreach (var arg in reference.MemberArguments) {
+				DropNamespaceFrom (arg);
+			}
+		}
+
+		if (reference.GenericTypeArguments != null) {
+			foreach (var arg in reference.GenericTypeArguments) {
+				DropNamespaceFrom (arg);
+			}
+		}
+
+		var cref = reference.ToEcmaCref ();
+		string[] edgeCases = new string[] { ":", "<", ",", "+", ")" };
+		if (edgeCases.Any (e => cref.Contains (e + ".")) || string.IsNullOrWhiteSpace(reference.Namespace)) {
+			// this is to work around a bug in EcmaDesc
+			foreach (var edge in edgeCases) {
+				cref = cref.Replace (edge + ".", edge);
+			}
+		}
+		return cref;
+	}
+
+	static string ReplaceStringsWith (string source, IEnumerable<string> toReplace, string replaceWith, string replaceFormat = null) 
+	{
+		if (string.IsNullOrWhiteSpace(source) || !toReplace.Any (r => source.Contains (r)))
+			return source;
+
+		foreach (var val in toReplace) {
+			string valueToUse = replaceFormat == null ? val : string.Format (replaceFormat, val);
+			source = source.Replace (valueToUse, replaceWith);
+		}
+		return source;
+	}
+
 
 	static void AddXmlNode (XmlElement[] relevant, Func<XmlElement, bool> valueMatches, Action<XmlElement> setValue, Func<XmlElement> makeNewNode, MemberReference member) {
 		AddXmlNode (relevant, valueMatches, setValue, makeNewNode, member.Module);
@@ -1843,6 +2290,28 @@ class MDocUpdater : MDocCommand
 		if (!DocUtils.IsExtensionMethod (me))
 			return;
 
+		// check to see if this extension method is already present
+		var declaration = slashdocFormatter.GetDeclaration (me);
+		var type = slashdocFormatter.GetName (me.DeclaringType);
+
+		bool dropNSFlag = WillBeDroppingNamespace (info.Member.Module) || HasDroppedNamespace (info.Member);
+		if (dropNSFlag) {
+			declaration = DropNamespaceFrom (declaration);
+			type = DropNamespaceFrom (type);
+
+			var existingExtensionEntries = extensionMethods
+				.Select (ex => new { Entry = ex, Link = ex.SelectSingleNode ("Member").SelectSingleNode ("Link") })
+				.Where (l => l.Link != null && l.Link.Attributes ["Member"].Value.Equals (declaration))
+				.ToArray ();
+			if (existingExtensionEntries.Any ()) {
+				// let's remove the prior one, because we'd prefer to have the unified version, which is processed later
+				int count = extensionMethods.Count ();
+				foreach (var entry in existingExtensionEntries) {
+					extensionMethods.Remove (entry.Entry);
+				}
+			}
+		}
+
 		XmlNode em = e.OwnerDocument.CreateElement ("ExtensionMethod");
 		XmlNode member = e.CloneNode (true);
 		em.AppendChild (member);
@@ -1850,8 +2319,8 @@ class MDocUpdater : MDocCommand
 		RemoveExcept (member.SelectSingleNode ("Docs"), ValidExtensionDocMembers);
 		WriteElementText (member, "MemberType", "ExtensionMethod");
 		XmlElement link = member.OwnerDocument.CreateElement ("Link");
-		link.SetAttribute ("Type", slashdocFormatter.GetName (me.DeclaringType));
-		link.SetAttribute ("Member", slashdocFormatter.GetDeclaration (me));
+		link.SetAttribute ("Type", type);
+		link.SetAttribute ("Member", declaration);
 		member.AppendChild (link);
 		AddTargets (em, info);
 
@@ -2246,27 +2715,36 @@ class MDocUpdater : MDocCommand
 				root.RemoveChild (av);
 		}
 
-		string oldNodeFilter = "AssemblyInfo[not(@apistyle) or @apistyle='classic']";
-		string newNodeFilter = "AssemblyInfo[@apistyle='unified']";
+		string oldNodeFilter = string.Format("AssemblyInfo[AssemblyName='{0}' and (not(@apistyle) or @apistyle='classic')]", assembly.Name.Name);
+		string newNodeFilter = string.Format("AssemblyInfo[AssemblyName='{0}' and @apistyle='unified']", assembly.Name.Name);
 		string thisNodeFilter = MDocUpdater.HasDroppedNamespace (assembly) ? newNodeFilter : oldNodeFilter;
 		string thatNodeFilter = MDocUpdater.HasDroppedNamespace (assembly) ? oldNodeFilter : newNodeFilter;
 
 		XmlElement e = (XmlElement) root.SelectSingleNode (thisNodeFilter);
 		if (e == null) {
-			e = root.OwnerDocument.CreateElement("AssemblyInfo");
+			// verify first that there are any assembly info nodes in the first place
+			oldNodeFilter = "AssemblyInfo[not(@apistyle) or @apistyle='classic']";
+			newNodeFilter = "AssemblyInfo[@apistyle='unified']";
+			thisNodeFilter = MDocUpdater.HasDroppedNamespace (assembly) ? newNodeFilter : oldNodeFilter;
+			thatNodeFilter = MDocUpdater.HasDroppedNamespace (assembly) ? oldNodeFilter : newNodeFilter;
 
-			if (MDocUpdater.HasDroppedNamespace (assembly)) {
-				e.SetAttribute ("apistyle", "unified");
+			e = (XmlElement) root.SelectSingleNode (thisNodeFilter);
+			if (e == null) {
+				e = root.OwnerDocument.CreateElement ("AssemblyInfo");
+
+				if (MDocUpdater.HasDroppedNamespace (assembly)) {
+					e.AddApiStyle (ApiStyle.Unified);
+				}
+
+				root.AppendChild (e);
 			}
-
-			root.AppendChild(e);
 		}
 
 		var thatNode = (XmlElement) root.SelectSingleNode (thatNodeFilter);
 		if (MDocUpdater.HasDroppedNamespace (assembly) && thatNode != null) {
 			// there's a classic node, we should add apistyles
-			e.SetAttribute ("apistyle", "unified");
-			thatNode.SetAttribute ("apistyle", "classic");
+			e.AddApiStyle (ApiStyle.Unified);
+			thatNode.AddApiStyle (ApiStyle.Classic);
 		}
 
 		List<XmlNode> matches = e.SelectNodes ("AssemblyVersion").Cast<XmlNode>()
@@ -2425,7 +2903,12 @@ class MDocUpdater : MDocCommand
 				nodes = root.SelectSingleNode ("Parameters").SelectNodes ("Parameter")
 					.Cast<XmlElement> ()
 					.Skip (i) // this makes sure we don't inadvertently "reuse" nodes when adding new ones
-					.Where (x => x.GetAttribute ("Name") != p.Name && (x.GetAttribute ("Type") == ptype || x.GetAttribute ("Type") == newPType))
+					.Where (x => {
+						var nodeType = MDocUpdater.DropNamespaceFrom(x.GetAttribute ("Type"));
+						var droppedptype = MDocUpdater.DropNamespaceFrom (ptype);
+						var droppednewPType = MDocUpdater.DropNamespaceFrom (newPType);
+						return x.GetAttribute ("Name") != p.Name && (nodeType == droppedptype || nodeType == droppednewPType);
+					})
 					.Take(1) // there might be more than one that meets this parameter ... only take the first.
 					.ToArray();
 			}
@@ -2439,7 +2922,12 @@ class MDocUpdater : MDocCommand
 
 					pe.SetAttribute ("Name", p.Name);
 					pe.SetAttribute ("Type", ptype);
-					if (p.ParameterType is ByReferenceType) {
+					
+					var md = member as MethodDefinition;
+					if (i == 0 && md != null && DocUtils.IsExtensionMethod (md)) {
+						pe.SetAttribute ("RefType", "this");
+					}
+					else if (p.ParameterType is ByReferenceType) {
 						if (p.IsOut)
 							pe.SetAttribute ("RefType", "out");
 						else
@@ -2893,7 +3381,53 @@ enum ApiStyle {
 }
 
 static class DocUtils {
+	public static void SaveXDocument (string path, XDocument xdoc)
+	{
+		var settings = new XmlWriterSettings {
+			OmitXmlDeclaration = true,
+			Indent = true,
+			NewLineHandling = NewLineHandling.None,
+			NewLineChars = Environment.NewLine,
+			Encoding = new UTF8Encoding (encoderShouldEmitUTF8Identifier: false)
+		};
+		using (var writer = XmlWriter.Create (path, settings)) {
+			xdoc.Save (writer);
+			writer.WriteRaw (Environment.NewLine);
+		}
+	}
+	public static void CopyAllIfNotPresent (string source, string target)
+	{
+		CopyAllIfNotPresent (new DirectoryInfo (source), new DirectoryInfo (target));
+	}
 
+	public static void CopyAllIfNotPresent (DirectoryInfo source, string target)
+	{
+		CopyAllIfNotPresent (source, new DirectoryInfo (target));
+	}
+
+	public static void CopyAllIfNotPresent (DirectoryInfo source, DirectoryInfo target)
+	{
+		if (!target.Exists) {
+			target.Create ();
+		}
+
+		var files = source.GetFiles ();
+		foreach (FileInfo file in files) {
+			string newFilePath = Path.Combine (target.FullName, file.Name);
+			var newFileInfo = new FileInfo (newFilePath);
+
+			if (!newFileInfo.Exists) {
+				file.CopyTo (newFilePath);
+			}
+		}
+
+		DirectoryInfo[] dirs = source.GetDirectories ();
+		foreach (DirectoryInfo dir in dirs) {
+			string destinationDir = Path.Combine (target.FullName, dir.Name);
+
+			CopyAllIfNotPresent(dir, new DirectoryInfo (destinationDir));
+		}
+	}
 	public static bool DoesNotHaveApiStyle(this XmlElement element, ApiStyle style) {
 		string styleString = style.ToString ().ToLower ();
 			string apistylevalue = element.GetAttribute ("apistyle");
@@ -2981,11 +3515,12 @@ static class DocUtils {
 
 			// first, make sure this isn't a type reference to another assembly/module
 
-			bool isInAssembly = MDocUpdater.IsInAssemblies(type.Module.Name);
+			/*bool isInAssembly = MDocUpdater.IsInAssemblies(type.Module.Name);
 			if (isInAssembly && !typeNS.StartsWith ("System") && MDocUpdater.HasDroppedNamespace (type)) {
-				typeNS = string.Format ("{0}.{1}", MDocUpdater.droppedNamespace, typeNS);
-			}
+				typeNS = string.Format ("{0}.{1}", MDocUpdater.currentDroppedNamespace, typeNS);
+			}*/
 			return typeNS;
+
 	}
 
 	public static string PathCombine (string dir, string path)
@@ -3183,6 +3718,7 @@ class DocumentationEnumerator {
 			foreach (TypeDefinition nested in type.NestedTypes)
 				yield return nested;
 		}
+
 	}
 
 	public virtual IEnumerable<DocsNodeInfo> GetDocumentationMembers (XmlDocument basefile, TypeDefinition type)
@@ -3197,12 +3733,24 @@ class DocumentationEnumerator {
 				yield return new DocsNodeInfo (oldmember);
 			}
 			else {
+				var isClassic = MDocUpdater.WillBeDroppingNamespace (type);
+				var isUnified = MDocUpdater.HasDroppedNamespace (type);
+				var currentapistyle = oldmember.GetAttribute ("apistyle");
+				if (!string.IsNullOrWhiteSpace (currentapistyle)) {
+					// let's make sure that we normalize the apistyle in case things change
+					if ((isClassic && oldmember.HasApiStyle (ApiStyle.Unified)) ||
+						(isUnified && oldmember.HasApiStyle (ApiStyle.Classic))) {
+						oldmember.RemoveAttribute ("apistyle");
+
+					}
+				}
+
 				yield return new DocsNodeInfo (oldmember, m);
 			}
 		}
 	}
 
-	protected static MemberReference GetMember (TypeDefinition type, DocumentationMember member)
+	internal static MemberReference GetMember (TypeDefinition type, DocumentationMember member)
 	{
 		string membertype = member.MemberType;
 		
@@ -3212,11 +3760,13 @@ class DocumentationEnumerator {
 
 		string[] docTypeParams = GetTypeParameters (docName);
 
+
 		// If we're using 'magic types', then we might get false positives ... in those cases, we keep searching
 		MemberReference likelyCandidate = null;
-		
+
 		// Loop through all members in this type with the same name
 		var reflectedMembers = GetReflectionMembers (type, docName).ToArray ();
+
 		foreach (MemberReference mi in reflectedMembers) {
 			bool matchedMagicType = false;
 			if (mi is TypeDefinition) continue;
@@ -3240,6 +3790,13 @@ class DocumentationEnumerator {
 			else if (mi is PropertyDefinition)
 				pis = ((PropertyDefinition)mi).Parameters;
 			
+			// check type parameters
+			int methodTcount = member.TypeParameters == null ? 0 : member.TypeParameters.Count;
+			int reflectionTcount = typeParams == null ? 0 : typeParams.Length;
+			if (methodTcount != reflectionTcount)
+				continue;
+
+			// check member parameters
 			int mcount = member.Parameters == null ? 0 : member.Parameters.Count;
 			int pcount = pis == null ? 0 : pis.Count;
 			if (mcount != pcount)
@@ -3254,7 +3811,15 @@ class DocumentationEnumerator {
 				string originalRType = rtype;
 				if (MDocUpdater.SwitchingToMagicTypes) {
 					rtype = NativeTypeManager.ConvertFromNativeType (rtype);
-					
+				}
+				if (MDocUpdater.HasDroppedNamespace (type)) {
+					// mod the type in the doc member so it'll match the unified member
+					returntype = MDocUpdater.DropNamespaceFrom (returntype);
+				} else if (MDocUpdater.WillBeDroppingNamespace (type)) {
+					// this needs to drop both of them in order to match
+					returntype = MDocUpdater.DropNamespaceFrom (returntype);
+					rtype = MDocUpdater.DropNamespaceFrom (rtype);
+					originalRType = MDocUpdater.DropNamespaceFrom (originalRType);
 				}
 				if ((returntype != rtype && originalRType == rtype) ||
 					(MDocUpdater.SwitchingToMagicTypes && returntype != originalRType && returntype != rtype && originalRType != rtype)) {
@@ -3268,7 +3833,8 @@ class DocumentationEnumerator {
 			if (pcount == 0)
 				return mi;
 			bool good = true;
-			for (int i = 0; i < pis.Count; i++) {
+
+				for (int i = 0; i < pis.Count; i++) {
 				string paramType = GetReplacedString (
 					MDocUpdater.GetDocParameterType (pis [i].ParameterType),
 					typeParams, docTypeParams);
@@ -3280,14 +3846,26 @@ class DocumentationEnumerator {
 				}
 
 				string xmlMemberType = member.Parameters [i];
-				if ((!paramType.Equals(xmlMemberType) && paramType.Equals(originalParamType)) || 
-					(MDocUpdater.SwitchingToMagicTypes && !originalParamType.Equals(xmlMemberType) && !paramType.Equals(xmlMemberType) && !paramType.Equals(originalParamType))) {
+
+				if (MDocUpdater.HasDroppedNamespace (type)) {
+					// mod the type in the doc member so it'll match the unified member
+					xmlMemberType = MDocUpdater.DropNamespaceFrom (xmlMemberType);
+				} else if (MDocUpdater.WillBeDroppingNamespace (type)) {
+					// this needs to drop both of them in order to match
+					xmlMemberType = MDocUpdater.DropNamespaceFrom (xmlMemberType);
+					paramType = MDocUpdater.DropNamespaceFrom (paramType);
+					originalParamType = MDocUpdater.DropNamespaceFrom (originalParamType);
+				}
+
+
+				if ((!paramType.Equals (xmlMemberType) && paramType.Equals (originalParamType)) || 
+					(MDocUpdater.SwitchingToMagicTypes && !originalParamType.Equals (xmlMemberType) && !paramType.Equals (xmlMemberType) && !paramType.Equals (originalParamType))) {
 
 					// did not match ... if we're dropping the namespace, and the paramType has the dropped
 					// namespace, we should see if it matches when added
 					bool stillDoesntMatch = true;
-					if (MDocUpdater.HasDroppedNamespace(type) && paramType.StartsWith (MDocUpdater.droppedNamespace)) {
-						string withDroppedNs = string.Format ("{0}.{1}", MDocUpdater.droppedNamespace, xmlMemberType);
+					if (MDocUpdater.HasDroppedNamespace (type) && paramType.StartsWith (MDocUpdater.currentDroppedNamespace)) {
+						string withDroppedNs = string.Format ("{0}.{1}", MDocUpdater.currentDroppedNamespace, xmlMemberType);
 
 						stillDoesntMatch = withDroppedNs != paramType;
 					}
@@ -3311,7 +3889,7 @@ class DocumentationEnumerator {
 
 			return mi;
 		}
-		
+
 		return likelyCandidate;
 	}
 
@@ -3339,8 +3917,8 @@ class DocumentationEnumerator {
 	{
 		// In case of dropping the namespace, we have to remove the dropped NS
 		// so that docName will match what's in the assembly/type
-		if (MDocUpdater.HasDroppedNamespace (type) && docName.StartsWith(MDocUpdater.droppedNamespace + ".")) {
-			int droppedNsLength = MDocUpdater.droppedNamespace.Length;
+		if (MDocUpdater.HasDroppedNamespace (type) && docName.StartsWith(MDocUpdater.currentDroppedNamespace + ".")) {
+			int droppedNsLength = MDocUpdater.currentDroppedNamespace.Length;
 			docName = docName.Substring (droppedNsLength + 1, docName.Length - droppedNsLength - 1);
 		}
 
@@ -3793,6 +4371,7 @@ class DocumentationMember {
 	public StringToStringMap MemberSignatures = new StringToStringMap ();
 	public string ReturnType;
 	public StringList Parameters;
+	public StringList TypeParameters;
 	public string MemberName;
 	public string MemberType;
 
@@ -3802,6 +4381,7 @@ class DocumentationMember {
 		int depth = reader.Depth;
 		bool go = true;
 		StringList p = new StringList ();
+		StringList tp = new StringList ();
 		do {
 			if (reader.NodeType != XmlNodeType.Element)
 				continue;
@@ -3829,6 +4409,10 @@ class DocumentationMember {
 					if (reader.Depth == depth + 2 && shouldUse)
 						p.Add (reader.GetAttribute ("Type"));
 					break;
+				case "TypeParameter":
+					if (reader.Depth == depth + 2 && shouldUse)
+						tp.Add (reader.GetAttribute ("Name"));
+					break;
 				case "Docs":
 					if (reader.Depth == depth + 1)
 						go = false;
@@ -3837,6 +4421,11 @@ class DocumentationMember {
 		} while (go && reader.Read () && reader.Depth >= depth);
 		if (p.Count > 0) {
 			Parameters = p;
+		}
+		if (tp.Count > 0) {
+			TypeParameters = tp;
+		} else {
+			DiscernTypeParameters ();
 		}
 	}
 
@@ -3860,6 +4449,28 @@ class DocumentationMember {
 			Parameters = new StringList (p.Count);
 			for (int i = 0; i < p.Count; ++i)
 				Parameters.Add (p [i].Attributes ["Type"].Value);
+		}
+		XmlNodeList tp = node.SelectNodes ("TypeParameters/TypeParameter[not(@apistyle) or @apistyle='classic']");
+		if (tp.Count > 0) {
+			TypeParameters = new StringList (tp.Count);
+			for (int i = 0; i < tp.Count; ++i)
+				TypeParameters.Add (tp [i].Attributes ["Name"].Value);
+		}
+		else {
+			DiscernTypeParameters ();
+		}
+	}
+
+	void DiscernTypeParameters ()
+	{
+		// see if we can discern the param list from the name
+		if (MemberName.Contains ("<") && MemberName.EndsWith (">")) {
+			var starti = MemberName.IndexOf ("<") + 1;
+			var endi = MemberName.LastIndexOf (">");
+			var paramlist = MemberName.Substring (starti, endi - starti);
+			Console.WriteLine ("extracted {0} for {1}", paramlist, MemberName);
+			var tparams = paramlist.Split (',');
+			TypeParameters = new StringList (tparams);
 		}
 	}
 }
@@ -5625,4 +6236,29 @@ class FileNameMemberFormatter : SlashDocMemberFormatter {
 	}
 }
 
+internal class DroppedAssemblyInfo {
+	public string DroppedNamespace { get; set; }
+	public string ClassicAssembly { get; set; }
+	public string UnifiedAssembly { get; set; }
+
+	internal class List : List<DroppedAssemblyInfo> {
+		public bool IsClassic (string assemblyName) 
+		{
+			return this.Any (m => m.ClassicAssembly == assemblyName);
+		}
+
+		public bool IsUnified (string assemblyname) 
+		{
+			return this.Any (m => m.UnifiedAssembly == assemblyname);
+		}
+
+		public string GetDroppedNamespace (string assemblyname)
+		{
+			return this
+				.Where (m => m.ClassicAssembly == assemblyname || m.UnifiedAssembly == assemblyname)
+				.Select  (m => m.DroppedNamespace)
+				.SingleOrDefault ();
+		}
+	}
+}
 }

@@ -432,7 +432,6 @@ div#title
     line-height: 25px;
     color: #454545;
     border-top: 0px;
-    width: 100%;
     overflow: hidden;
     margin-left: -2px;
     padding: 0px;
@@ -604,4 +603,11 @@ span.NotEntered /* Documentation for this section has not yet been entered */ {
 .SubsectionBox {
     margin-top: 0;
     margin-bottom: 0;
+}
+
+.owner-container {
+    display:inline;
+}
+.owner-container img {
+    vertical-align:middle;
 }

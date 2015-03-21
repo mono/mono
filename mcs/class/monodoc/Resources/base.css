@@ -39,6 +39,14 @@ div.title {
 	float:right;
 }
 
+.owner-container {
+	line-height:2;
+}
+.owner-icon {
+	height:20px;
+	width:20px;
+}
+
 div:hover > .attributionlogo,p:hover > .attributionlogo,td:hover > .attributionlogo,blockquote:hover > .attributionlogo { 
 	display:inline; 
 	float:right;

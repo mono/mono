@@ -102,6 +102,42 @@ Test/DocTest-DropNS-classic.dll:
 Test/DocTest-DropNS-unified.dll:
 	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs
 
+Test/DocTest-Owners.dll-A:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-A.dll Test/DocTest-Owners.cs /define:FRAMEWORK_A
+
+Test/DocTest-Owners.dll-B:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-B.dll Test/DocTest-Owners.cs /define:FRAMEWORK_B
+
+Test/DocTest-Owners.dll-A-Unified:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-A-Unified.dll Test/DocTest-Owners.cs /define:FRAMEWORK_A,UNIFIED
+
+Test/DocTest-Owners.dll-B-Unified:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-B-Unified.dll Test/DocTest-Owners.cs /define:FRAMEWORK_B,UNIFIED
+
+Test/DocTest-Owners.dll-A-CROSS:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-A.dll Test/DocTest-Owners.cs /define:FRAMEWORK_A,CROSSPROP
+
+Test/DocTest-Owners.dll-B-CROSS:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-B.dll Test/DocTest-Owners.cs /define:FRAMEWORK_B,CROSSPROP
+
+Test/DocTest-Owners.dll-A-Unified-CROSS:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-A-Unified.dll Test/DocTest-Owners.cs /define:FRAMEWORK_A,UNIFIED,CROSSPROP
+
+Test/DocTest-Owners.dll-B-Unified-CROSS:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-B-Unified.dll Test/DocTest-Owners.cs /define:FRAMEWORK_B,UNIFIED,CROSSPROP
+
+Test/DocTest-Owners.dll-A-EXTENSION:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-A.dll Test/DocTest-Owners.cs /define:FRAMEWORK_A,CROSSPROP,X10
+
+Test/DocTest-Owners.dll-B-EXTENSION:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-B.dll Test/DocTest-Owners.cs /define:FRAMEWORK_B,CROSSPROP,X10
+
+Test/DocTest-Owners.dll-A-Unified-EXTENSION:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-A-Unified.dll Test/DocTest-Owners.cs /define:FRAMEWORK_A,UNIFIED,CROSSPROP,X10
+
+Test/DocTest-Owners.dll-B-Unified-EXTENSION:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:Test/DocTest-Owners-B-Unified.dll Test/DocTest-Owners.cs /define:FRAMEWORK_B,UNIFIED,CROSSPROP,X10
+
 Test/DocTest.dll: 
 	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest.cs
 
@@ -121,12 +157,82 @@ Test/DocTest.dll-v2:
 	-rm -f Test/DocTest.dll
 	$(MAKE) TEST_CSCFLAGS=$(TEST_CSCFLAGS) Test/DocTest.dll
 
+
+check-monodocer-owner: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-Owners.dll-A
+	$(MAKE) Test/DocTest-Owners.dll-B
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-Owners-A.dll=frameworkA Test/DocTest-Owners-B.dll=frameworkB
+	diff --exclude=.svn -rup Test/en.expected-owners Test/en.actual
+
+check-monodocer-owner-dropns: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-Owners.dll-A
+	$(MAKE) Test/DocTest-Owners.dll-B
+	$(MAKE) Test/DocTest-Owners.dll-A-Unified
+	$(MAKE) Test/DocTest-Owners.dll-B-Unified
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-Owners-A.dll=frameworkA Test/DocTest-Owners-A-Unified.dll=frameworkA Test/DocTest-Owners-B.dll=frameworkB Test/DocTest-Owners-B-Unified.dll=frameworkB --dropns=DocTest-Owners-A-Unified.dll=MyNamespaceA --dropns=DocTest-Owners-B-Unified.dll=MyNamespaceB -ntypes -preserve
+	diff --exclude=.svn -rup Test/en.expected-owners-dropns Test/en.actual
+
+
+check-monodocer-owner-dropns-fromclassicstart: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-Owners.dll-A
+	$(MAKE) Test/DocTest-Owners.dll-B
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-Owners-A.dll Test/DocTest-Owners-B.dll
+	$(MAKE) Test/DocTest-Owners.dll-A-Unified
+	$(MAKE) Test/DocTest-Owners.dll-B-Unified
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-Owners-A.dll=frameworkA Test/DocTest-Owners-A-Unified.dll=frameworkA Test/DocTest-Owners-B.dll=frameworkB Test/DocTest-Owners-B-Unified.dll=frameworkB --dropns=DocTest-Owners-A-Unified.dll=MyNamespaceA --dropns=DocTest-Owners-B-Unified.dll=MyNamespaceB -ntypes -preserve
+	diff --exclude=.svn -rup Test/en.expected-owners-dropns Test/en.actual
+
+check-monodocer-owner-dropns-withexistingdocs: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	# start from a known starting point with some existing documentation
+	cp -r Test/en.expected-owners-dropns-withdocs-start Test/en.actual
+
+	# now build up the assemblies with the extra 
+	$(MAKE) Test/DocTest-Owners.dll-A-CROSS
+	$(MAKE) Test/DocTest-Owners.dll-B-CROSS
+	$(MAKE) Test/DocTest-Owners.dll-A-Unified-CROSS
+	$(MAKE) Test/DocTest-Owners.dll-B-Unified-CROSS
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-Owners-A.dll=frameworkA Test/DocTest-Owners-A-Unified.dll=frameworkA Test/DocTest-Owners-B.dll=frameworkB Test/DocTest-Owners-B-Unified.dll=frameworkB --dropns=DocTest-Owners-A-Unified.dll=MyNamespaceA --dropns=DocTest-Owners-B-Unified.dll=MyNamespaceB -ntypes -preserve
+	diff --exclude=.svn -rup Test/en.expected-owners-dropns-withdocs-end Test/en.actual
+
+check-monodocer-owner-dropns-withextensions-secondrun: $(PROGRAM)
+	-rm -Rf Test/en.actual
+
+	# start from a known starting point with some existing documentation
+	cp -r Test/en.expected-owners-dropns-withx10-end Test/en.actual
+
+	# now build up the assemblies with the extra 
+	$(MAKE) Test/DocTest-Owners.dll-A-EXTENSION
+	$(MAKE) Test/DocTest-Owners.dll-B-EXTENSION
+	$(MAKE) Test/DocTest-Owners.dll-A-Unified-EXTENSION
+	$(MAKE) Test/DocTest-Owners.dll-B-Unified-EXTENSION
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-Owners-A.dll=frameworkA Test/DocTest-Owners-A-Unified.dll=frameworkA Test/DocTest-Owners-B.dll=frameworkB Test/DocTest-Owners-B-Unified.dll=frameworkB --dropns=DocTest-Owners-A-Unified.dll=MyNamespaceA --dropns=DocTest-Owners-B-Unified.dll=MyNamespaceB -ntypes -preserve
+	diff --exclude=.svn -rup Test/en.expected-owners-dropns-withx10-end Test/en.actual
+
+check-monodocer-owner-dropns-withextensions: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	# start from a known starting point with some existing documentation
+	cp -r Test/en.expected-owners-dropns-withx10-start Test/en.actual
+
+	# now build up the assemblies with the extension method 
+	$(MAKE) Test/DocTest-Owners.dll-A-EXTENSION
+	$(MAKE) Test/DocTest-Owners.dll-B-EXTENSION
+	$(MAKE) Test/DocTest-Owners.dll-A-Unified-EXTENSION
+	$(MAKE) Test/DocTest-Owners.dll-B-Unified-EXTENSION
+
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-Owners-A.dll=frameworkA Test/DocTest-Owners-A-Unified.dll=frameworkA Test/DocTest-Owners-B.dll=frameworkB Test/DocTest-Owners-B-Unified.dll=frameworkB --dropns=DocTest-Owners-A-Unified.dll=MyNamespaceA --dropns=DocTest-Owners-B-Unified.dll=MyNamespaceB -ntypes -preserve
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-Owners-A.dll=frameworkA Test/DocTest-Owners-A-Unified.dll=frameworkA Test/DocTest-Owners-B.dll=frameworkB Test/DocTest-Owners-B-Unified.dll=frameworkB --dropns=DocTest-Owners-A-Unified.dll=MyNamespaceA --dropns=DocTest-Owners-B-Unified.dll=MyNamespaceB -ntypes -preserve
+	diff --exclude=.svn -rup Test/en.expected-owners-dropns-withx10-end Test/en.actual
+
 check-monodocer-dropns-classic: $(PROGRAM)
 	# tests the simplest --dropns case, a single class where the root namespace was dropped.
 	-rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest-DropNS-classic.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll
-	$(MAKE) update-monodocer-dropns-unified
+	$(MAKE) Test/DocTest-DropNS-unified.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll Test/DocTest-DropNS-unified.dll --dropns Test/DocTest-DropNS-unified.dll=MyFramework
 	diff --exclude=.svn -rup Test/en.expected-dropns-classic-v1 Test/en.actual
 
 check-monodocer-dropns-classic-withsecondary: $(PROGRAM)
@@ -134,13 +240,9 @@ check-monodocer-dropns-classic-withsecondary: $(PROGRAM)
 	-rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest-DropNS-classic.dll
 	$(MAKE) Test/DocTest-DropNS-classic-secondary.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll Test/DocTest-DropNS-classic-secondary.dll
-	$(MAKE) update-monodocer-dropns-unified-withsecondary
-	diff --exclude=.svn -rup Test/en.expected-dropns-classic-withsecondary Test/en.actual
-
-update-monodocer-dropns-unified: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-unified.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --dropns Test/DocTest-DropNS-unified.dll=MyFramework
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll Test/DocTest-DropNS-unified.dll Test/DocTest-DropNS-classic-secondary.dll --dropns Test/DocTest-DropNS-unified.dll=MyFramework
+	diff --exclude=.svn -rup Test/en.expected-dropns-classic-withsecondary Test/en.actual
 
 update-monodocer-dropns-unified-withsecondary: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-unified.dll
@@ -315,10 +417,16 @@ check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-update \
 	check-monodocer-dropns-classic \
 	check-monodocer-dropns-classic-withsecondary \
+	check-monodocer-owner-dropns-withexistingdocs \
+	check-monodocer-owner-dropns-withextensions \
 	check-monodocer-internal-interface \
 	check-monodocer-delete-update \
+	check-monodocer-owner \
+	check-monodocer-owner-dropns \
+	check-monodocer-owner-dropns-fromclassicstart \
 	check-mdoc-export-html-update \
 	check-mdoc-export-msxdoc-update \
 	check-mdoc-validate-update 
 
-
+check: check-doc-tools \
+	check-doc-tools-update
