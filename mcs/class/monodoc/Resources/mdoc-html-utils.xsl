@@ -840,6 +840,10 @@
 			<xsl:with-param name="content">
 			  <div class="related">
 				<xsl:call-template name="CreateRelatedSection">
+				  <xsl:with-param name="section" select="'Platform Docs'" />
+				  <xsl:with-param name="type" select="'PlatformDocAPI'" />
+				</xsl:call-template>
+				<xsl:call-template name="CreateRelatedSection">
 				  <xsl:with-param name="section" select="'Articles'" />
 				  <xsl:with-param name="type" select="'article'" />
 				</xsl:call-template>

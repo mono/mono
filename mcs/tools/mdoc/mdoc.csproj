@@ -9,13 +9,14 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>mdoc</RootNamespace>
     <AssemblyName>mdoc</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;NET_4_0</DefineConstants>
+    <DefineConstants>DEBUG;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
@@ -38,7 +39,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
     <Reference Include="monodoc">
-      <HintPath>..\..\class\lib\net_4_0\monodoc.dll</HintPath>
+      <HintPath>..\..\class\lib\net_4_5\monodoc.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -3230,16 +3230,21 @@ class DocumentationEnumerator {
 			if (mi is MethodDefinition) {
 				MethodDefinition mb = (MethodDefinition) mi;
 				pis = mb.Parameters;
-				if (docTypeParams != null && mb.IsGenericMethod ()) {
+				if (mb.IsGenericMethod ()) {
 					IList<GenericParameter> args = mb.GenericParameters;
-					if (args.Count == docTypeParams.Length) {
-						typeParams = args.Select (p => p.Name).ToArray ();
-					}
+					typeParams = args.Select (p => p.Name).ToArray ();
 				}
 			}
 			else if (mi is PropertyDefinition)
 				pis = ((PropertyDefinition)mi).Parameters;
-			
+				
+			// check type parameters
+			int methodTcount = member.TypeParameters == null ? 0 : member.TypeParameters.Count;
+			int reflectionTcount = typeParams == null ? 0 : typeParams.Length;
+			if (methodTcount != reflectionTcount) 
+				continue;
+
+			// check member parameters
 			int mcount = member.Parameters == null ? 0 : member.Parameters.Count;
 			int pcount = pis == null ? 0 : pis.Count;
 			if (mcount != pcount)
@@ -3793,6 +3798,7 @@ class DocumentationMember {
 	public StringToStringMap MemberSignatures = new StringToStringMap ();
 	public string ReturnType;
 	public StringList Parameters;
+	public StringList TypeParameters;
 	public string MemberName;
 	public string MemberType;
 
@@ -3802,6 +3808,7 @@ class DocumentationMember {
 		int depth = reader.Depth;
 		bool go = true;
 		StringList p = new StringList ();
+		StringList tp = new StringList ();
 		do {
 			if (reader.NodeType != XmlNodeType.Element)
 				continue;
@@ -3829,6 +3836,10 @@ class DocumentationMember {
 					if (reader.Depth == depth + 2 && shouldUse)
 						p.Add (reader.GetAttribute ("Type"));
 					break;
+				case "TypeParameter":
+					if (reader.Depth == depth + 2 && shouldUse)
+						tp.Add (reader.GetAttribute ("Name"));
+					break;
 				case "Docs":
 					if (reader.Depth == depth + 1)
 						go = false;
@@ -3837,6 +3848,11 @@ class DocumentationMember {
 		} while (go && reader.Read () && reader.Depth >= depth);
 		if (p.Count > 0) {
 			Parameters = p;
+		}
+		if (tp.Count > 0) {
+			TypeParameters = tp;
+		} else {
+			DiscernTypeParameters ();
 		}
 	}
 
@@ -3860,6 +3876,27 @@ class DocumentationMember {
 			Parameters = new StringList (p.Count);
 			for (int i = 0; i < p.Count; ++i)
 				Parameters.Add (p [i].Attributes ["Type"].Value);
+		}
+		XmlNodeList tp = node.SelectNodes ("TypeParameters/TypeParameter[not(@apistyle) or @apistyle='classic']");
+		if (tp.Count > 0) {
+			TypeParameters = new StringList (tp.Count);
+			for (int i = 0; i < tp.Count; ++i)
+				TypeParameters.Add (tp [i].Attributes ["Name"].Value);
+		}
+		else {
+			DiscernTypeParameters ();
+		}
+	}
+
+	void DiscernTypeParameters ()
+	{
+		// see if we can discern the param list from the name
+		if (MemberName.Contains ("<") && MemberName.EndsWith (">")) {
+			var starti = MemberName.IndexOf ("<") + 1;
+			var endi = MemberName.LastIndexOf (">");
+			var paramlist = MemberName.Substring (starti, endi - starti);
+			var tparams = paramlist.Split (new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
+			TypeParameters = new StringList (tparams);
 		}
 	}
 }
