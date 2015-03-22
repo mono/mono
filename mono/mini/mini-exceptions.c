@@ -847,6 +847,8 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 	gboolean async = mono_thread_info_is_async_context ();
 
 	g_assert (start_ctx);
+	if (!domain)
+		domain = mono_domain_get ();
 	g_assert (domain);
 	g_assert (jit_tls);
 	/*The LMF will be null if the target have no managed frames.*/
