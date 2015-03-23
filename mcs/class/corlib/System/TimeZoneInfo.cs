@@ -194,6 +194,8 @@ namespace System
 		/// </summary>
 		private static string TrimSpecial (string str)
 		{
+			if (str == null)
+				return str;
 			var Istart = 0;
 			while (Istart < str.Length && !char.IsLetterOrDigit(str[Istart])) Istart++;
 			var Iend = str.Length - 1;
@@ -433,6 +435,8 @@ namespace System
 #if !NET_2_1
 			if (TimeZoneKey != null)
 			{
+				if (id == "Coordinated Universal Time")
+					id = "UTC"; //windows xp exception for "StandardName" property
 				RegistryKey key = TimeZoneKey.OpenSubKey (id, false);
 				if (key == null)
 					throw new TimeZoneNotFoundException ();
