@@ -10,6 +10,7 @@ using System.Text;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
 
 namespace MonoTests.System.Net.WebSockets
 {
@@ -17,7 +18,7 @@ namespace MonoTests.System.Net.WebSockets
 	public class ClientWebSocketTest
 	{
 		const string EchoServerUrl = "ws://echo.websocket.org";
-		const int Port = 42123;
+		int Port = NetworkHelpers.FindFreePort ();
 		HttpListener listener;
 		ClientWebSocket socket;
 		MethodInfo headerSetMethod;
