@@ -594,6 +594,8 @@ main (int argc, char *argv[])
 	const char *input_path = NULL;
 	int input_file;
 	EntryStream stream;
+	unsigned long long entry_index;
+	unsigned long long first_entry_to_consider = 0;
 
 	for (i = 0; i < num_args; ++i) {
 		char *arg = argv [i + 1];
@@ -604,6 +606,9 @@ main (int argc, char *argv[])
 			pause_times = TRUE;
 		} else if (!strcmp (arg, "-v") || !strcmp (arg, "--vtable")) {
 			vtables [num_vtables++] = strtoul (next_arg, NULL, 16);
+			++i;
+		} else if (!strcmp (arg, "-s") || !strcmp (arg, "--start-at")) {
+			first_entry_to_consider = strtoull (next_arg, NULL, 10);
 			++i;
 		} else if (!strcmp (arg, "-c") || !strcmp (arg, "--color")) {
 			color_output = TRUE;
@@ -622,7 +627,10 @@ main (int argc, char *argv[])
 
 	input_file = input_path ? open (input_path, O_RDONLY) : STDIN_FILENO;
 	init_stream (&stream, input_file);
+	entry_index = 0;
 	while ((type = read_entry (&stream, data)) != SGEN_PROTOCOL_EOF) {
+		if (entry_index < first_entry_to_consider)
+			goto next_entry;
 		if (pause_times) {
 			switch (type) {
 			case PROTOCOL_ID (binary_protocol_world_stopping): {
@@ -670,11 +678,15 @@ main (int argc, char *argv[])
 					}
 				}
 			}
+			if (match || dump_all)
+				printf ("%12lld ", entry_index);
 			if (dump_all)
 				printf (match ? "* " : "  ");
 			if (match || dump_all)
 				print_entry (type, data, num_nums, match_indices, color_output);
 		}
+	next_entry:
+		++entry_index;
 	}
 	close_stream (&stream);
 	if (input_path)
