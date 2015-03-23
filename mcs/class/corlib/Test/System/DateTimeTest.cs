@@ -269,12 +269,18 @@ namespace MonoTests.System
 			Assert.AreEqual (13, t1.Second, "#C4");
 		}
 
+		const long MaxMillis = 315537897600000;
+
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void AddMillisecondsOutOfRangeException1 ()
 		{
 			DateTime t1 = new DateTime (myTicks [1]);
-			t1.AddMilliseconds (9E100);
+			// double to long conversion with overflow lead to "unspecified value", 
+			// ref: https://msdn.microsoft.com/en-us/library/yht2cx7b.aspx
+			// so we adapt the test to avoid this condition based on the real limit
+			// see https://github.com/Microsoft/referencesource/blob/master/mscorlib/system/datetime.cs#L90
+			t1.AddMilliseconds (MaxMillis + 1);
 		}
 
 		[Test]
@@ -282,7 +288,7 @@ namespace MonoTests.System
 		public void AddMillisecondsOutOfRangeException2 ()
 		{
 			DateTime t1 = new DateTime (myTicks [1]);
-			t1.AddMilliseconds (-9E100);
+			t1.AddMilliseconds (-MaxMillis-1);
 		}
 
 		[Test]
