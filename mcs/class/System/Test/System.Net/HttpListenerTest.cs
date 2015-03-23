@@ -31,6 +31,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using NUnit.Framework;
+using MonoTests.Helpers;
 
 namespace MonoTests.System.Net {
 	[TestFixture]
@@ -40,7 +41,7 @@ namespace MonoTests.System.Net {
 
 		[SetUp]
 		public void SetUp () {
-			port = new Random ().Next (7777, 8000);
+			port = NetworkHelpers.FindFreePort ();
 		}
 
 		[Test]
@@ -477,7 +478,7 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void ConnectionReuse ()
 		{
-			var uri = "http://localhost:1338/";
+			var uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
 
 			HttpListener listener = new HttpListener ();
 			listener.Prefixes.Add (uri);
