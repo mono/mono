@@ -57,7 +57,7 @@ namespace System.Reflection
     [PermissionSetAttribute(SecurityAction.InheritanceDemand, Name = "FullTrust")]
 #pragma warning restore 618
     [System.Runtime.InteropServices.ComVisible(true)]
-    public abstract class MethodBase : MemberInfo, _MethodBase
+    public abstract partial class MethodBase : MemberInfo, _MethodBase
     {
         #region Static Members
         public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle)
@@ -65,18 +65,24 @@ namespace System.Reflection
             if (handle.IsNullHandle())
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidHandle"));
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.BeginGetMethodFromHandle();
             }
 #endif
 
+#if MONO
+            MethodBase m = GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
+            if (m == null)
+                throw new ArgumentException ("The handle is invalid.");
+#else
             MethodBase m = RuntimeType.GetMethodBase(handle.GetMethodInfo());
+#endif
 
             Type declaringType = m.DeclaringType;
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage)  && declaringType != null)
             {
                 FrameworkEventSource.Log.EndGetMethodFromHandle(declaringType.GetFullNameForEtw(), m.GetFullNameForEtw());
@@ -97,16 +103,22 @@ namespace System.Reflection
             if (handle.IsNullHandle())
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidHandle"));
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
             {
                 FrameworkEventSource.Log.BeginGetMethodFromHandle();
             }
 #endif
             
+#if MONO
+            MethodBase m = GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
+            if (m == null)
+                throw new ArgumentException ("The handle is invalid.");
+#else
             MethodBase m = RuntimeType.GetMethodBase(declaringType.GetRuntimeType(), handle.GetMethodInfo());
+#endif
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && declaringType != null && m != null)
             {
                 FrameworkEventSource.Log.EndGetMethodFromHandle(declaringType.GetRuntimeType().GetFullNameForEtw(), m.GetFullNameForEtw());
@@ -116,6 +128,10 @@ namespace System.Reflection
             return m;
         }
 
+#if MONO
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        public extern static MethodBase GetCurrentMethod ();
+#else
         [System.Security.DynamicSecurityMethod] // Specify DynamicSecurityMethod attribute to prevent inlining of the caller.
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static MethodBase GetCurrentMethod()
@@ -123,6 +139,7 @@ namespace System.Reflection
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
             return RuntimeMethodInfo.InternalGetCurrentMethod(ref stackMark);
         }
+#endif
         #endregion
 
         #region Constructor
@@ -382,7 +399,7 @@ namespace System.Reflection
 
             return parameterTypes;
         }
-
+#if !MONO
         [System.Security.SecuritySafeCritical]
         internal Object[] CheckArguments(Object[] parameters, Binder binder, 
             BindingFlags invokeAttr, CultureInfo culture, Signature sig)
@@ -409,6 +426,7 @@ namespace System.Reflection
 
             return copyOfParameters;
         }
+#endif
         #endregion
 
         void _MethodBase.GetTypeInfoCount(out uint pcTInfo)
