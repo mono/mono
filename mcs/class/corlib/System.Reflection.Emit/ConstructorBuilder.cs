@@ -333,7 +333,7 @@ namespace System.Reflection.Emit {
 
 		public override Module Module {
 			get {
-				return base.Module;
+				return GetModule ();
 			}
 		}
 

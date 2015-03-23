@@ -513,6 +513,17 @@ namespace System.Reflection {
 
 	abstract class RuntimeConstructorInfo : ConstructorInfo, ISerializable
 	{
+		public override Module Module {
+			get {
+				return GetRuntimeModule ();
+			}
+		}
+
+		internal RuntimeModule GetRuntimeModule ()
+		{
+			return RuntimeTypeHandle.GetModule((RuntimeType)DeclaringType);
+		}
+
 		internal BindingFlags BindingFlags {
 			get {
 				return 0;

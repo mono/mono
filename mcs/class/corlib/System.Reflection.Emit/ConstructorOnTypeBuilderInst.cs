@@ -74,6 +74,12 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override Module Module {
+			get {
+				return cb.Module;
+			}
+		}
+
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
 			return cb.IsDefined (attributeType, inherit);

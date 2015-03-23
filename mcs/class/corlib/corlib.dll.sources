@@ -379,7 +379,6 @@ System.Reflection/ExceptionHandlingClauseOptions.cs
 System.Reflection/FieldInfo.cs
 System.Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
-System.Reflection/MemberInfo.cs
 System.Reflection/MethodBase.cs
 System.Reflection/MethodBody.cs
 System.Reflection/MethodInfo.cs
@@ -402,7 +401,6 @@ System.Reflection/StrongNameKeyPair.cs
 System.Reflection/TargetException.cs
 System.Reflection/TargetInvocationException.cs
 System.Reflection/TargetParameterCountException.cs
-System.Reflection/TypeInfo.cs
 System.Reflection.Emit/AssemblyBuilder.cs
 System.Reflection.Emit/AssemblyBuilderAccess.cs
 System.Reflection.Emit/ConstructorBuilder.cs
@@ -1461,6 +1459,7 @@ ReferenceSources/MonoRuntimeWorkItem.cs
 ../../../external/referencesource/mscorlib/system/reflection/ireflectabletype.cs
 ../../../external/referencesource/mscorlib/system/reflection/manifestresourceinfo.cs
 ../../../external/referencesource/mscorlib/system/reflection/memberfilter.cs
+../../../external/referencesource/mscorlib/system/reflection/memberinfo.cs
 ../../../external/referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../../../external/referencesource/mscorlib/system/reflection/membertypes.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodattributes.cs
@@ -1478,6 +1477,7 @@ ReferenceSources/MonoRuntimeWorkItem.cs
 ../../../external/referencesource/mscorlib/system/reflection/typeattributes.cs
 ../../../external/referencesource/mscorlib/system/reflection/typedelegator.cs
 ../../../external/referencesource/mscorlib/system/reflection/typefilter.cs
+../../../external/referencesource/mscorlib/system/reflection/typeinfo.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs

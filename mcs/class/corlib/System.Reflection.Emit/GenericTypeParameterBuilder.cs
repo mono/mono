@@ -211,6 +211,14 @@ namespace System.Reflection.Emit
 			throw not_supported ();
 		}
 
+		public override bool IsAssignableFrom (TypeInfo typeInfo)
+		{
+			if (typeInfo == null)
+				return false;
+
+			return IsAssignableFrom (typeInfo.AsType ());
+		}
+
 		public override bool IsInstanceOfType (object o)
 		{
 			throw not_supported ();
