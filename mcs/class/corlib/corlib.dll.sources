@@ -379,7 +379,6 @@ System.Reflection/ExceptionHandlingClauseOptions.cs
 System.Reflection/FieldInfo.cs
 System.Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
-System.Reflection/MethodBase.cs
 System.Reflection/MethodBody.cs
 System.Reflection/MethodInfo.cs
 System.Reflection/Module.cs
@@ -1279,6 +1278,8 @@ ReferenceSources/TypeNameParser.cs
 ReferenceSources/RuntimeType.cs
 ReferenceSources/RemotingFieldCachedData.cs
 ReferenceSources/MonoRuntimeWorkItem.cs
+ReferenceSources/MethodBase.cs
+ReferenceSources/RuntimeHandles.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
@@ -1463,6 +1464,7 @@ ReferenceSources/MonoRuntimeWorkItem.cs
 ../../../external/referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../../../external/referencesource/mscorlib/system/reflection/membertypes.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodattributes.cs
+../../../external/referencesource/mscorlib/system/reflection/methodbase.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodimplattributes.cs
 ../../../external/referencesource/mscorlib/system/reflection/missing.cs
 ../../../external/referencesource/mscorlib/system/reflection/obfuscateassemblyattribute.cs

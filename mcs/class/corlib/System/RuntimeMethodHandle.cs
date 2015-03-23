@@ -130,5 +130,10 @@ namespace System
 			sb.Append ("]");
 			return sb.ToString ();
 		}
+
+		internal bool IsNullHandle ()
+		{
+			return value == IntPtr.Zero;
+		}
 	}
 }
