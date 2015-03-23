@@ -68,37 +68,53 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 	}
 
+	[Serializable]
+	internal class CADMethodRef
+	{
+		internal string FullTypeName;
+		internal IntPtr MethodHandlePtr;
+
+		public RuntimeMethodHandle MethodHandle {
+			get {
+				return new RuntimeMethodHandle (MethodHandlePtr);
+			}
+		}
+
+		public CADMethodRef (IMethodMessage msg)
+		{
+			MethodHandlePtr = msg.MethodBase.MethodHandle.Value;
+			FullTypeName = msg.MethodBase.DeclaringType.AssemblyQualifiedName;
+		}
+	}
+
 	internal class CADMessageBase {
 
 		protected object [] _args;
 		protected byte [] _serializedArgs = null;
 		protected int _propertyCount = 0;
 		protected CADArgHolder _callContext;
-		internal RuntimeMethodHandle MethodHandle;
-		internal string FullTypeName;
-		internal MethodBase _method;
+		internal byte[] serializedMethod;
 
 		public CADMessageBase (IMethodMessage msg) {
-			MethodHandle = msg.MethodBase.MethodHandle;
-			FullTypeName = msg.MethodBase.DeclaringType.AssemblyQualifiedName;
+			CADMethodRef methodRef = new CADMethodRef (msg);
+			serializedMethod = CADSerializer.SerializeObject (methodRef).GetBuffer ();
 		}
 
 		internal MethodBase method {
-			get {
-				if (_method == null) {
-					_method = GetMethod();
-				}
-				return _method;
-			}
+			get { return GetMethod (); }
 		}
 
 		internal MethodBase GetMethod ()
 		{
-			Type tt = Type.GetType (FullTypeName, true);
+			CADMethodRef methRef = (CADMethodRef)CADSerializer.DeserializeObjectSafe (serializedMethod);
+
+			MethodBase _method;
+
+			Type tt = Type.GetType (methRef.FullTypeName, true);
 			if (tt.IsGenericType || tt.IsGenericTypeDefinition) {
-				_method = MethodBase.GetMethodFromHandleNoGenericCheck (MethodHandle);
+				_method = MethodBase.GetMethodFromHandleNoGenericCheck (methRef.MethodHandle);
 			} else {
-				_method = MethodBase.GetMethodFromHandle (MethodHandle);
+				_method = MethodBase.GetMethodFromHandle (methRef.MethodHandle);
 			}
 
 			if (tt != _method.DeclaringType) {
