@@ -255,9 +255,14 @@ namespace System.Resources {
             Contract.Assert(a != null, "assembly != null");
             string cultureName = null;
             short fallback = 0;
+
+#if MONO
+            if (GetNeutralResourcesLanguageAttribute(a, ref cultureName, ref fallback)) {
+#else
             if (GetNeutralResourcesLanguageAttribute(((RuntimeAssembly)a).GetNativeHandle(), 
                                                         JitHelpers.GetStringHandleOnStack(ref cultureName), 
                                                         out fallback)) {
+#endif
                 if ((UltimateResourceFallbackLocation)fallback < UltimateResourceFallbackLocation.MainAssembly || (UltimateResourceFallbackLocation)fallback > UltimateResourceFallbackLocation.Satellite) {
                     throw new ArgumentException(Environment.GetResourceString("Arg_InvalidNeutralResourcesLanguage_FallbackLoc", fallback));
                 }
@@ -718,11 +723,24 @@ namespace System.Resources {
             throw new MissingManifestResourceException(Environment.GetResourceString("MissingManifestResource_NoNeutralAsm", resName, _mediator.MainAssembly.GetSimpleName()));
         }
 
+#if MONO
+        static bool GetNeutralResourcesLanguageAttribute (Assembly assembly, ref string cultureName, ref short fallbackLocation)
+        {
+            var ca = assembly.GetCustomAttribute<NeutralResourcesLanguageAttribute> ();
+            if (ca == null)
+                return false;
+
+            cultureName = ca.CultureName;
+            fallbackLocation = (short) ca.Location;
+            return true;
+        }
+#else
             [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
             [System.Security.SecurityCritical]  // Our security team doesn't yet allow safe-critical P/Invoke methods.
             [ResourceExposure(ResourceScope.None)]
             [System.Security.SuppressUnmanagedCodeSecurity]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool GetNeutralResourcesLanguageAttribute(RuntimeAssembly assemblyHandle, StringHandleOnStack cultureName, out short fallbackLocation);
+#endif
     }
 }

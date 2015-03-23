@@ -94,7 +94,7 @@ namespace System.Resources {
         private const int AverageValueSize = 40;
 
         private Dictionary<String, Object> _resourceList;
-        private Stream _output;
+        internal Stream _output;
         private Dictionary<String, Object> _caseInsensitiveDups;
         private Dictionary<String, PrecannedResource> _preserializedData;
         private const int _DefaultBufferSize = 4096;

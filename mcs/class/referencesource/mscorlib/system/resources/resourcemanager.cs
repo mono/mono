@@ -516,9 +516,10 @@ namespace System.Resources {
 
             _neutralResourcesCulture = ManifestBasedResourceGroveler.GetNeutralResourcesLanguage(MainAssembly, ref _fallbackLoc);
 
-#if !FEATURE_CORECLR && !MONO   // PAL doesn't support eventing, and we don't compile event providers for coreclr
+#if !FEATURE_CORECLR   // PAL doesn't support eventing, and we don't compile event providers for coreclr
             if (_bUsingModernResourceManagement == false)
             {
+#if !MONO
                 if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled()) {
                     CultureInfo culture = CultureInfo.InvariantCulture;
                     String defaultResName = GetResourceFileName(culture);
@@ -533,7 +534,7 @@ namespace System.Resources {
                         FrameworkEventSource.Log.ResourceManagerNeutralResourcesNotFound(BaseNameField, MainAssembly, outputResName);
                     }
                 }
-
+#endif
 #pragma warning disable 618
                 ResourceSets = new Hashtable(); // for backward compatibility
 #pragma warning restore 618
