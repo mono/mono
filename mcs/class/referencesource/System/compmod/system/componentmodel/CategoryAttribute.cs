@@ -314,8 +314,10 @@ namespace System.ComponentModel {
             case "Config":
                 return "PropertyCategoryConfig";
             }
-#endif
+            return value;
+#else
             return (string)SR.GetObject("PropertyCategory" + value);
+#endif
 #else
             bool usedFallback;
             string localizedString = SR.GetString("PropertyCategory" + value, out usedFallback);
