@@ -39,6 +39,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Configuration.Assemblies;
+using System.Threading;
+using System.Text;
+using System.Diagnostics.Contracts;
 
 using Mono.Security;
 
@@ -337,19 +340,58 @@ namespace System.Reflection {
 
 		public virtual Stream GetManifestResourceStream (Type type, String name)
 		{
-			string ns;
-			if (type != null) {
-				ns = type.Namespace;
-			} else {
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetManifestResourceStream(type, name, false, ref stackMark);
+		}
+
+		internal Stream GetManifestResourceStream (Type type, String name, bool skipSecurityCheck, ref StackCrawlMark stackMark)
+		{
+			StringBuilder sb = new StringBuilder ();
+			if (type == null) {
 				if (name == null)
-					throw new ArgumentNullException ("type");
-				ns = null;
+						throw new ArgumentNullException ("type");
+			} else {
+				String nameSpace = type.Namespace;
+				if (nameSpace != null) {
+					sb.Append (nameSpace);
+					if (name != null)
+						sb.Append (Type.Delimiter);
+				}
 			}
 
-			if (ns == null || ns.Length == 0)
-				return GetManifestResourceStream (name);
-			else
-				return GetManifestResourceStream (ns + "." + name);
+			if (name != null)
+				sb.Append(name);
+
+			return GetManifestResourceStream (sb.ToString());
+		}
+
+		internal unsafe Stream GetManifestResourceStream(String name, ref StackCrawlMark stackMark, bool skipSecurityCheck)
+		{
+			return GetManifestResourceStream (null, name, skipSecurityCheck, ref stackMark);
+		}
+
+		internal String GetSimpleName()
+		{
+			AssemblyName aname = GetName (true);
+			return aname.Name;
+		}
+
+		internal byte[] GetPublicKey()
+		{
+			AssemblyName aname = GetName (true);
+			return aname.GetPublicKey ();
+		}
+
+		internal Version GetVersion()
+		{
+			AssemblyName aname = GetName (true);
+			return aname.Version;
+		}
+
+		private AssemblyNameFlags GetFlags()
+		{
+			AssemblyName aname = GetName (true);
+			return aname.Flags;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -435,28 +477,38 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetEntryAssembly();
 
-		internal Assembly GetSatelliteAssemblyNoThrow (CultureInfo culture, Version version)
-		{
-			return GetSatelliteAssembly (culture, version, false);
-		}
-
 		internal Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError)
 		{
 			if (culture == null)
-				throw new ArgumentException ("culture");
+				throw new ArgumentNullException("culture");
+			Contract.EndContractBlock();
 
-			AssemblyName aname = GetName (true);
-			if (version != null)
-				aname.Version = version;
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			String name = GetSimpleName() + ".resources";
+			return InternalGetSatelliteAssembly(name, culture, version, true, ref stackMark);
+		}
 
-			aname.CultureInfo = culture;
-			aname.Name = aname.Name + ".resources";
+		internal RuntimeAssembly InternalGetSatelliteAssembly (String name, CultureInfo culture, Version version, bool throwOnFileNotFound, ref StackCrawlMark stackMark)
+		{
+			AssemblyName an = new AssemblyName ();
+
+			an.SetPublicKey (GetPublicKey ());
+			an.Flags = GetFlags () | AssemblyNameFlags.PublicKey;
+
+			if (version == null)
+				an.Version = GetVersion ();
+			else
+				an.Version = version;
+
+			an.CultureInfo = culture;
+			an.Name = name;
+
 			Assembly assembly;
 
 			try {
-				assembly = AppDomain.CurrentDomain.LoadSatellite (aname, false);
+				assembly = AppDomain.CurrentDomain.LoadSatellite (an, false);
 				if (assembly != null)
-					return assembly;
+					return (RuntimeAssembly)assembly;
 			} catch (FileNotFoundException) {
 				assembly = null;
 				// ignore
@@ -464,11 +516,11 @@ namespace System.Reflection {
 
 			// Try the assembly directory
 			string location = Path.GetDirectoryName (Location);
-			string fullName = Path.Combine (location, Path.Combine (culture.Name, aname.Name + ".dll"));
-			if (!throwOnError && !File.Exists (fullName))
+			string fullName = Path.Combine (location, Path.Combine (culture.Name, an.Name + ".dll"));
+			if (!throwOnFileNotFound && !File.Exists (fullName))
 				return null;
 
-			return LoadFrom (fullName);
+			return (RuntimeAssembly)LoadFrom (fullName);
 		}
 
 #if !MOBILE

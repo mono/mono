@@ -1075,6 +1075,35 @@ namespace System.Globalization
             Contract.EndContractBlock();
         }
 
+        // For resource lookup, we consider a culture the invariant culture by name equality.
+        // We perform this check frequently during resource lookup, so adding a property for
+        // improved readability.
+        internal bool HasInvariantCultureName
+        {
+            get { return Name == CultureInfo.InvariantCulture.Name; }
+        }
+
+        internal static bool VerifyCultureName(String cultureName, bool throwException)
+        {
+            // This function is used by ResourceManager.GetResourceFileName(). 
+            // ResourceManager searches for resource using CultureInfo.Name,
+            // so we should check against CultureInfo.Name.
+
+            for (int i=0; i<cultureName.Length; i++) {
+                char c = cultureName[i];
+                // 
+
+                if (Char.IsLetterOrDigit(c) || c=='-' || c=='_') {
+                    continue;
+                }
+                if (throwException) {
+                    throw new ArgumentException(Environment.GetResourceString("Argument_InvalidResourceCultureName", cultureName));
+                }
+                return false;
+            }
+            return true;
+        }
+
 #endregion
 	}
 }

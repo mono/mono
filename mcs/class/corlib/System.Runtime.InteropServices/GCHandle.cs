@@ -53,7 +53,7 @@ namespace System.Runtime.InteropServices
 			: this(obj, GCHandleType.Normal)
 		{}
 
-		private GCHandle(object value, GCHandleType type)
+		internal GCHandle(object value, GCHandleType type)
 		{
 			// MS does not crash/throw on (most) invalid GCHandleType values (except -1)
 			if ((type < GCHandleType.Weak) || (type > GCHandleType.Pinned))

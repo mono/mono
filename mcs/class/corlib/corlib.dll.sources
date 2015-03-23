@@ -445,18 +445,6 @@ System.Reflection.Emit/StringToken.cs
 System.Reflection.Emit/TypeBuilder.cs
 System.Reflection.Emit/TypeToken.cs
 System.Reflection.Emit/UnmanagedMarshal.cs
-System.Resources/IResourceReader.cs
-System.Resources/IResourceWriter.cs
-System.Resources/MissingManifestResourceException.cs
-System.Resources/MissingSatelliteAssemblyException.cs
-System.Resources/NeutralResourcesLanguageAttribute.cs
-System.Resources/ResourceManager.cs
-System.Resources/ResourceReader.cs
-System.Resources/ResourceSet.cs
-System.Resources/ResourceWriter.cs
-System.Resources/RuntimeResourceSet.cs
-System.Resources/SatelliteContractVersionAttribute.cs
-System.Resources/UltimateResourceFallbackLocation.cs
 System.Resources/Win32Resources.cs
 System.Runtime/AssemblyTargetedPatchBandAttribute.cs
 System.Runtime/GCLargeObjectHeapCompactionMode.cs
@@ -1431,6 +1419,7 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/io/binarywriter.cs
 ../../../external/referencesource/mscorlib/system/io/bufferedstream.cs
 ../../../external/referencesource/mscorlib/system/io/memorystream.cs
+../../../external/referencesource/mscorlib/system/io/pinnedbuffermemorystream.cs
 ../../../external/referencesource/mscorlib/system/io/stream.cs
 ../../../external/referencesource/mscorlib/system/io/streamreader.cs
 ../../../external/referencesource/mscorlib/system/io/streamwriter.cs
@@ -1439,6 +1428,7 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/io/textreader.cs
 ../../../external/referencesource/mscorlib/system/io/textwriter.cs
 ../../../external/referencesource/mscorlib/system/io/unmanagedmemorystream.cs
+../../../external/referencesource/mscorlib/system/io/unmanagedmemorystreamwrapper.cs
 
 ../../../external/referencesource/mscorlib/system/reflection/ambiguousmatchexception.cs
 ../../../external/referencesource/mscorlib/system/reflection/assemblyattributes.cs
@@ -1481,7 +1471,29 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/reflection/typefilter.cs
 ../../../external/referencesource/mscorlib/system/reflection/typeinfo.cs
 
+../../../external/referencesource/mscorlib/system/resources/__fastresourcecomparer.cs
+../../../external/referencesource/mscorlib/system/resources/__hresults.cs
+../../../external/referencesource/mscorlib/system/resources/filebasedresourcegroveler.cs
+../../../external/referencesource/mscorlib/system/resources/iresourcegroveler.cs
+../../../external/referencesource/mscorlib/system/resources/iresourcereader.cs
+../../../external/referencesource/mscorlib/system/resources/iresourcewriter.cs
+../../../external/referencesource/mscorlib/system/resources/looselylinkedresourcereference.cs
+../../../external/referencesource/mscorlib/system/resources/manifestbasedresourcegroveler.cs
+../../../external/referencesource/mscorlib/system/resources/missingmanifestresourceexception.cs
+../../../external/referencesource/mscorlib/system/resources/missingsatelliteassemblyexception.cs
+../../../external/referencesource/mscorlib/system/resources/neutralresourceslanguageattribute.cs
+../../../external/referencesource/mscorlib/system/resources/resourcefallbackmanager.cs
+../../../external/referencesource/mscorlib/system/resources/resourcemanager.cs
+../../../external/referencesource/mscorlib/system/resources/resourcereader.cs
+../../../external/referencesource/mscorlib/system/resources/resourceset.cs
+../../../external/referencesource/mscorlib/system/resources/resourcetypecode.cs
+../../../external/referencesource/mscorlib/system/resources/resourcewriter.cs
+../../../external/referencesource/mscorlib/system/resources/runtimeresourceset.cs
+../../../external/referencesource/mscorlib/system/resources/satellitecontractversionattribute.cs
+../../../external/referencesource/mscorlib/system/resources/ultimateresourcefallbacklocation.cs
+
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/multitargetinghelpers.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/accessedthroughpropertyattribute.cs

@@ -43,24 +43,6 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Resources
 {
-	class ResourceManagerPoker : ResourceManager
-	{
-		public ResourceManagerPoker ()
-		{
-			BaseNameField = String.Format ("Test{0}resources{0}MyResources", Path.DirectorySeparatorChar);
-		}
-
-		public Hashtable GetResourceSets ()
-		{
-			return base.ResourceSets;
-		}
-
-		public void InitResourceSets ()
-		{
-			base.ResourceSets = new Hashtable ();
-		}
-	}
-
 	[TestFixture]
 	public class ResourceManagerTest
 	{
@@ -365,7 +347,6 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreateFileBasedResourceManager_BaseName_Resources ()
 		{
 			ResourceManager rm = ResourceManager.CreateFileBasedResourceManager (
@@ -622,26 +603,17 @@ namespace MonoTests.System.Resources
 
 		[Test]
 		[Category ("MobileNotWorking")]
+		[SetCulture ("de")]
 		public void GetString_ResourceSet_Disposed ()
 		{
-			Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de");
 			ResourceManager rm = ResourceManager.
 				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
 			ResourceSet rs = rm.GetResourceSet (new CultureInfo ("de"),
 				true, true);
 			rs.Dispose ();
 
-			try {
-				rm.GetString ("deHelloWorld");
-				Assert.Fail ("#1");
-			} catch (ObjectDisposedException ex) {
-				// Cannot access a closed resource set
-				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-			} finally {
-				rm.ReleaseAllResources ();
-			}
+			Assert.IsNull (rm.GetString ("deHelloWorld"));
+			rm.ReleaseAllResources ();
 		}
 
 		[Test]
@@ -810,112 +782,6 @@ namespace MonoTests.System.Resources
 			Assert.IsTrue (rm.IgnoreCase, "#B1");
 			Assert.AreEqual ("Hello World", rm.GetString ("HelloWorld"), "#B2");
 			rm.ReleaseAllResources ();
-		}
-
-		[Test]
-		public void InternalGetResourceSet_Culture_Null ()
-		{
-			MockResourceManager rm = new MockResourceManager (typeof (string));
-			try {
-				rm.InternalGetResourceSet ((CultureInfo) null, false, true);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException ex) {
-				// Key cannot be null
-				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("key", ex.ParamName, "#6");
-			}
-		}
-
-		[Test]
-		public void TestResourceManagerGetResourceSetEmpty ()
-		{
-			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-			ResourceManagerPoker rm = new ResourceManagerPoker ();
-			try {
-				rm.GetResourceSet (CultureInfo.InvariantCulture,
-					true, true);
-				Assert.Fail ("#1");
-			} catch (NullReferenceException) {
-			}
-		}
-
-		[Test]
-		public void TestResourceManagerReleaseAllResourcesEmpty ()
-		{
-			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-			ResourceManagerPoker rm = new ResourceManagerPoker ();
-			try {
-				rm.ReleaseAllResources ();
-				Assert.Fail ("#1");
-			} catch (NullReferenceException) {
-			}
-		}
-
-		[Test]
-		public void TestResourceManagerReleaseAllResources ()
-		{
-			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-			ResourceManagerPoker rm = new ResourceManagerPoker ();
-			rm.InitResourceSets ();
-			rm.ReleaseAllResources ();
-		}
-
-		[Test]
-		[Category ("MobileNotWorking")]
-		public void TestResourceManagerResourceSets ()
-		{
-			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-			ResourceManagerPoker rm = new ResourceManagerPoker ();
-
-			rm.InitResourceSets ();
-
-			ResourceSet rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
-							    true, true);
-
-			Assert.AreEqual (1, rm.GetResourceSets().Keys.Count, "#01");
-
-			rs.Close ();
-
-			Assert.AreEqual (1, rm.GetResourceSets().Keys.Count, "#02");
-			
-			rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
-						true, true);
-			
-			Assert.AreEqual (1, rm.GetResourceSets().Keys.Count, "#03");
-
-			rm.ReleaseAllResources ();
-		}
-		
-		[Test]
-		[Category ("MobileNotWorking")]
-		public void TestResourceManagerResourceSetClosedException ()
-		{
-			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-			ResourceManagerPoker rm = new ResourceManagerPoker ();
-			
-			rm.InitResourceSets ();
-			
-			ResourceSet rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
-							    true, true);
-			rs.Close ();
-			ResourceSet rs2 = rs;
-			rs = rm.GetResourceSet (CultureInfo.InvariantCulture, true, true);
-			Assert.IsTrue (Object.ReferenceEquals (rs2, rs), "#0");
-
-			try {
-				rm.GetString ("HelloWorld");
-				Assert.Fail ("#1");
-			} catch (ObjectDisposedException ex) {
-				// ResourceSet is closed
-				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-			} finally {
-				rm.ReleaseAllResources ();
-			}
 		}
 
 		[Test]

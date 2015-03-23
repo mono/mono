@@ -1024,5 +1024,10 @@ namespace System.Threading {
 			throw new NotImplementedException ();
 		}
 #endif
+
+		internal CultureInfo GetCurrentUICultureNoAppX ()
+		{
+			return CultureInfo.CurrentUICulture;
+		}
 	}
 }
