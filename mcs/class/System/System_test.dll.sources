@@ -120,6 +120,7 @@ System.ComponentModel/AttributeProviderAttributeTest.cs
 System.ComponentModel/BackgroundWorkerTest.cs
 System.ComponentModel/BindingListTest.cs
 System.ComponentModel/ByteConverterTests.cs
+System.ComponentModel/CategoryAttributeTests.cs
 System.ComponentModel/CharConverterTest.cs
 System.ComponentModel/CollectionConverterTest.cs
 System.ComponentModel/ComplexBindingPropertiesAttributeTest.cs

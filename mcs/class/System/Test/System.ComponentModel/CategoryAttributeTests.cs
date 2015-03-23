@@ -25,7 +25,7 @@
 //
 
 using System;
-using System.ComponentModel;
+using CM = System.ComponentModel;
 using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel {
@@ -34,28 +34,35 @@ namespace MonoTests.System.ComponentModel {
 	public class CategoryAttributeTest {
 
 		[Test]
-		public static void CategoryNamesTest()
+		public void CategoryNamesTest()
 		{
-		    Assert.AreEqual(CategoryAttribute.Action.Category, "Action", "#1");
-		    Assert.AreEqual(CategoryAttribute.Appearance.Category, "Appearance", "#2");
-		    Assert.AreEqual(CategoryAttribute.Asynchronous.Category, "Asynchronous", "#3");
-		    Assert.AreEqual(CategoryAttribute.Behavior.Category, "Behavior", "#4");
-		    Assert.AreEqual(CategoryAttribute.Data.Category, "Data", "#5");
-		    Assert.AreEqual(CategoryAttribute.Design.Category, "Design", "#6");
-		    Assert.AreEqual(CategoryAttribute.Focus.Category, "Focus", "#7");
-		    Assert.AreEqual(CategoryAttribute.Format.Category, "Format", "#8");
-		    Assert.AreEqual(CategoryAttribute.Key.Category, "Key", "#9");
-		    Assert.AreEqual(CategoryAttribute.Layout.Category, "Layout", "#10");
-		    Assert.AreEqual(CategoryAttribute.Mouse.Category, "Mouse", "#11");
+		    Assert.AreEqual(CM.CategoryAttribute.Action.Category, "Action", "#1");
+		    Assert.AreEqual(CM.CategoryAttribute.Appearance.Category, "Appearance", "#2");
+		    Assert.AreEqual(CM.CategoryAttribute.Asynchronous.Category, "Asynchronous", "#3");
+		    Assert.AreEqual(CM.CategoryAttribute.Behavior.Category, "Behavior", "#4");
+		    Assert.AreEqual(CM.CategoryAttribute.Data.Category, "Data", "#5");
+		    Assert.AreEqual(CM.CategoryAttribute.Design.Category, "Design", "#6");
+		    Assert.AreEqual(CM.CategoryAttribute.Focus.Category, "Focus", "#7");
+		    Assert.AreEqual(CM.CategoryAttribute.Format.Category, "Format", "#8");
+		    Assert.AreEqual(CM.CategoryAttribute.Key.Category, "Key", "#9");
+		    Assert.AreEqual(CM.CategoryAttribute.Layout.Category, "Layout", "#10");
+		    Assert.AreEqual(CM.CategoryAttribute.Mouse.Category, "Mouse", "#11");
 #if NET_2_1
-		    Assert.AreEqual(CategoryAttribute.Default.Category, "Default", "#12");
-		    Assert.AreEqual(CategoryAttribute.DragDrop.Category, "DragDrop", "#13");
-		    Assert.AreEqual(CategoryAttribute.WindowStyle.Category, "WindowStyle", "#14");
+		    Assert.AreEqual(CM.CategoryAttribute.Default.Category, "Default", "#12");
+		    Assert.AreEqual(CM.CategoryAttribute.DragDrop.Category, "DragDrop", "#13");
+		    Assert.AreEqual(CM.CategoryAttribute.WindowStyle.Category, "WindowStyle", "#14");
 #else
-		    Assert.AreEqual(CategoryAttribute.Default.Category, "Misc", "#12");
-		    Assert.AreEqual(CategoryAttribute.DragDrop.Category, "Drag Drop", "#13");
-		    Assert.AreEqual(CategoryAttribute.WindowStyle.Category, "Window Style", "#14");
+		    Assert.AreEqual(CM.CategoryAttribute.Default.Category, "Misc", "#12");
+		    Assert.AreEqual(CM.CategoryAttribute.DragDrop.Category, "Drag Drop", "#13");
+		    Assert.AreEqual(CM.CategoryAttribute.WindowStyle.Category, "Window Style", "#14");
 #endif
+		}
+
+		[Test]
+		public void CustomCategory ()
+		{
+			var ca = new CM.CategoryAttribute ("Foo Category");
+			Assert.AreEqual ("Foo Category", ca.Category);
 		}
 	}
 }
