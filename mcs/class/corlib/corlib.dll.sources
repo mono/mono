@@ -1200,7 +1200,6 @@ System.Security.Principal/WindowsImpersonationContext.cs
 System.Security.Principal/WindowsPrincipal.cs
 System.Text/EncodingHelper.cs
 System.Text/NormalizationForm.cs
-System.Text/StringBuilder.cs
 System.Text/Latin1Encoding.cs
 System.Threading/AsyncFlowControl.cs
 System.Threading/CompressedStack.cs
@@ -1577,6 +1576,7 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/text/utf7encoding.cs
 ../../../external/referencesource/mscorlib/system/text/utf8encoding.cs
 
+../../../external/referencesource/mscorlib/system/text/stringbuilder.cs
 ../../../external/referencesource/mscorlib/system/text/stringbuildercache.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/serialization/deserializationeventhandler.cs
