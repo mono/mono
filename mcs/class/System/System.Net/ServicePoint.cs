@@ -275,7 +275,7 @@ namespace System.Net
 			groups.Remove (group.Name);
 		}
 
-		internal bool CheckAvailableForRecycling (out DateTime outIdleSince)
+		bool CheckAvailableForRecycling (out DateTime outIdleSince)
 		{
 			outIdleSince = DateTime.MinValue;
 
@@ -314,7 +314,8 @@ namespace System.Net
 
 				if (removeList != null) {
 					foreach (var group in removeList)
-						RemoveConnectionGroup (group);
+						if (groups.ContainsKey (group.Name))
+							RemoveConnectionGroup (group);
 				}
 
 				if (groups != null && groups.Count == 0)
