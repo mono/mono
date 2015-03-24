@@ -42,6 +42,7 @@ namespace System.Runtime.ExceptionServices {
         {
             // Copy over the details we need to save.
             m_Exception = exception;
+#if !MONO
             m_remoteStackTrace = exception.RemoteStackTrace;
             
             // NOTE: don't be tempted to pass the fields for the out params; the containing object
@@ -54,6 +55,7 @@ namespace System.Runtime.ExceptionServices {
 
             m_IPForWatsonBuckets = exception.IPForWatsonBuckets;
             m_WatsonBuckets = exception.WatsonBuckets;                                                        
+#endif
         }
 
         internal UIntPtr IPForWatsonBuckets
