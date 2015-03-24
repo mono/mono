@@ -433,12 +433,10 @@ System.Reflection.Emit/TypeBuilder.cs
 System.Reflection.Emit/TypeToken.cs
 System.Reflection.Emit/UnmanagedMarshal.cs
 System.Resources/Win32Resources.cs
-System.Runtime/AssemblyTargetedPatchBandAttribute.cs
 System.Runtime/GCLargeObjectHeapCompactionMode.cs
 System.Runtime/GCLatencyMode.cs
 System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs
-System.Runtime/TargetedPatchingOptOutAttribute.cs
 System.Runtime.CompilerServices/ConditionalWeakTable.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
 System.Runtime.ConstrainedExecution/CriticialFinalizerObject.cs
@@ -1475,6 +1473,8 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/resources/runtimeresourceset.cs
 ../../../external/referencesource/mscorlib/system/resources/satellitecontractversionattribute.cs
 ../../../external/referencesource/mscorlib/system/resources/ultimateresourcefallbacklocation.cs
+
+../../../external/referencesource/mscorlib/system/runtime/NgenServicingAttributes.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/exceptionservices/corruptingexceptioncommon.cs
 ../../../external/referencesource/mscorlib/system/runtime/exceptionservices/exceptionnotification.cs
