@@ -141,7 +141,7 @@ namespace MonoTests.System.Resources {
 			Assert.AreEqual ("DummyAssembly.AnotherSerializable, DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", value.GetType ().AssemblyQualifiedName, "#A2");
 		}
 
-		[Test, ExpectedException (typeof (SerializationException))]
+		[Test, ExpectedException (typeof (ArgumentException))]
 		public void ErrorWhenAssemblyMissing ()
 		{
 			ResXDataNode node = GetNodeFromResXReader (missingSerializableFromMissingAssembly);
