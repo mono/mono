@@ -343,6 +343,10 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		}
 
 		[Test]
+#if MONOTOUCH
+		/* https://bugzilla.xamarin.com/show_bug.cgi?id=27667 */
+		[Ignore ("iOS mmap bug")]
+#endif
 		public void CreateViewStreamAlignToPageSize ()
 		{
 #if MONOTOUCH
