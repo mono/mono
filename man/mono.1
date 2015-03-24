@@ -146,6 +146,13 @@ Defaults to 128.
 .I nodebug
 Instructs the AOT compiler to not output any debugging information.
 .TP
+.I no-direct-calls
+This prevents the AOT compiler from generating a direct calls to a
+method.   The AOT compiler usually generates direct calls for certain
+methods that do not require going through the PLT (for example,
+methods that are known to not require a hook like a static
+constructor) or call into simple internal calls. 
+.TP
 .I dwarfdebug
 Instructs the AOT compiler to emit DWARF debugging information. When
 used together with the nodebug option, only DWARF debugging
