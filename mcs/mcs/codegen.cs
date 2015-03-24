@@ -896,6 +896,9 @@ namespace Mono.CSharp
 
 				ig.Emit (OpCodes.Stobj, type.GetMetaInfo ());
 				break;
+			case MemberKind.PointerType:
+				ig.Emit (OpCodes.Stind_I);
+				break;
 			default:
 				ig.Emit (OpCodes.Stind_Ref);
 				break;

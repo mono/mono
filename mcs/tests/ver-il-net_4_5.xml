@@ -51282,6 +51282,22 @@
       </method>
     </type>
   </test>
+  <test name="test-919.cs">
+    <type name="Test">
+      <method name="Void Main(System.String[])" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="Void Outer(System.String)" attrs="145">
+        <size>29</size>
+      </method>
+      <method name="Void Inner(Char* ByRef, Char*)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-92.cs">
     <type name="Outer">
       <method name="Void .ctor()" attrs="6278">
