@@ -257,7 +257,6 @@ System/WeakReference_T.cs
 System/WindowsConsoleDriver.cs
 System/_AppDomain.cs
 System/__ComObject.cs
-System.Collections/HashPrimeNumbers.cs
 System.Configuration.Assemblies/AssemblyHash.cs
 System.Configuration.Assemblies/AssemblyHashAlgorithm.cs
 System.Configuration.Assemblies/AssemblyVersionCompatibility.cs
@@ -1223,9 +1222,6 @@ System.Collections.Generic/Comparer.cs
 System.Collections.Generic/EqualityComparer.cs
 
 System.Threading.Tasks/DecoupledTask.cs
-System.Threading.Tasks/TaskConstants.cs
-System.Threading.Tasks/TaskConstants_T.cs
-System.Collections.Concurrent/ConcurrentOrderedList.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 System.Threading/ThreadLocal.cs
 
