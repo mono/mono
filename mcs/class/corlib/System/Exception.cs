@@ -383,7 +383,7 @@ namespace System
 		}
 
 		// For ExceptionDispatchInfo
-		internal void CaptureTrace ()
+		internal void RestoreExceptionDispatchInfo (System.Runtime.ExceptionServices.ExceptionDispatchInfo exceptionDispatchInfo)
 		{
 			if (captured_traces != null) {
 				Array.Resize (ref captured_traces, captured_traces.Length + 1);

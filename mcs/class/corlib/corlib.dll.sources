@@ -447,9 +447,6 @@ System.Runtime.ConstrainedExecution/CER.cs
 System.Runtime.ConstrainedExecution/Consistency.cs
 System.Runtime.ConstrainedExecution/PrePrepareMethodAttribute.cs
 System.Runtime.ConstrainedExecution/ReliabilityContractAttribute.cs
-System.Runtime.ExceptionServices/ExceptionDispatchInfo.cs
-System.Runtime.ExceptionServices/FirstChanceExceptionEventArgs.cs
-System.Runtime.ExceptionServices/HandleProcessCorruptedStateExceptionsAttribute.cs
 System.Runtime.Hosting/ActivationArguments.cs
 System.Runtime.Hosting/ApplicationActivator.cs
 System.Runtime.InteropServices/_Activator.cs
@@ -1482,6 +1479,10 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/resources/runtimeresourceset.cs
 ../../../external/referencesource/mscorlib/system/resources/satellitecontractversionattribute.cs
 ../../../external/referencesource/mscorlib/system/resources/ultimateresourcefallbacklocation.cs
+
+../../../external/referencesource/mscorlib/system/runtime/exceptionservices/corruptingexceptioncommon.cs
+../../../external/referencesource/mscorlib/system/runtime/exceptionservices/exceptionnotification.cs
+../../../external/referencesource/mscorlib/system/runtime/exceptionservices/exceptionservicescommon.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/multitargetinghelpers.cs
