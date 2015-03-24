@@ -7,7 +7,7 @@ namespace Symbolicate
 {
 	public class Program
 	{
-		static Regex regex = new Regex (@"\w*at (?<MethodName>.+) \((?<MethodParams>.*)\) *(\[0x(?<IL>.+)\]|<0x.* \+ 0x(?<NativeOffset>.+)>) in <filename unknown>:0");
+		static Regex regex = new Regex (@"\w*at (?<Method>.+) *(\[0x(?<IL>.+)\]|<0x.+ \+ 0x(?<NativeOffset>.+)>( (?<MethodIndex>\d+)|)) in <filename unknown>:0");
 
 		public static int Main (String[] args)
 		{
@@ -42,31 +42,48 @@ namespace Symbolicate
 			if (!match.Success)
 				return line;
 
-			var methodName = match.Groups ["MethodName"].Value;
-			var methodParams = ParseParametersTypes (match.Groups ["MethodParams"].Value);
+			string typeFullName;
+			var methodStr = match.Groups ["Method"].Value.Trim ();
+			if (!TryParseMethodType (methodStr, out typeFullName))
+				return line;
 
 			var isOffsetIL = !string.IsNullOrEmpty (match.Groups ["IL"].Value);
 			var offsetVarName = (isOffsetIL)? "IL" : "NativeOffset";
 			var offset = int.Parse (match.Groups [offsetVarName].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
+			uint methodIndex = 0xffffff;
+			if (!string.IsNullOrEmpty (match.Groups ["MethodIndex"].Value))
+				methodIndex = uint.Parse (match.Groups ["MethodIndex"].Value, CultureInfo.InvariantCulture);
+
 			Location location;
-			if (!locProvider.TryGetLocation (methodName, methodParams, offset, isOffsetIL, out location))
+			if (!locProvider.TryGetLocation (methodStr, typeFullName, offset, isOffsetIL, methodIndex, out location))
 				return line;
 
 			return line.Replace ("<filename unknown>:0", string.Format ("{0}:{1}", location.FileName, location.Line));
 		}
 
-		static string[] ParseParametersTypes (string parameters)
+		static bool TryParseMethodType (string str, out string typeFullName)
 		{
-			if (string.IsNullOrEmpty (parameters))
-				return new string [0];
+			typeFullName = null;
 
-			var paramsArray = parameters.Split (',');
-			var paramsTypes = new string [paramsArray.Length];
-			for (var i = 0; i < paramsArray.Length; i++)
-				paramsTypes [i] = paramsArray [i].Trim ().Split (new char[]{' '}, 2)[0];
+			var methodNameEnd = str.IndexOf ("(");
+			if (methodNameEnd == -1)
+				return false;
 
-			return paramsTypes;
+			// Remove parameters
+			str = str.Substring (0, methodNameEnd);
+
+			// Remove generic parameters
+			str = Regex.Replace (str, @"\[[^\[\]]*\]", "");
+
+			var typeNameEnd = str.LastIndexOf (".");
+			if (methodNameEnd == -1 || typeNameEnd == -1)
+				return false;
+
+			// Remove method name
+			typeFullName = str.Substring (0, typeNameEnd);
+
+			return true;
 		}
 	}
 }
