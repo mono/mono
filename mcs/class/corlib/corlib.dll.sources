@@ -264,21 +264,9 @@ System.Configuration.Assemblies/AssemblyVersionCompatibility.cs
 System.Configuration.Assemblies/ProcessorID.cs
 System.Deployment.Internal/InternalActivationContextHelper.cs
 System.Deployment.Internal/InternalApplicationIdentityHelper.cs
-System.Diagnostics/ConditionalAttribute.cs
-System.Diagnostics/DebuggableAttribute.cs
 System.Diagnostics/Debugger.cs
-System.Diagnostics/DebuggerBrowsableState.cs
-System.Diagnostics/DebuggerBrowsableAttribute.cs
-System.Diagnostics/DebuggerDisplayAttribute.cs
-System.Diagnostics/DebuggerHiddenAttribute.cs
-System.Diagnostics/DebuggerNonUserCodeAttribute.cs
-System.Diagnostics/DebuggerStepThroughAttribute.cs
-System.Diagnostics/DebuggerStepperBoundaryAttribute.cs
-System.Diagnostics/DebuggerTypeProxyAttribute.cs
-System.Diagnostics/DebuggerVisualizerAttribute.cs
 System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
-System.Diagnostics.CodeAnalysis/SuppressMessageAttribute.cs
 System.Diagnostics.Tracing/EventAttribute.cs
 System.Diagnostics.Tracing/EventCommand.cs
 System.Diagnostics.Tracing/EventKeywords.cs
@@ -1379,6 +1367,10 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/assert.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/assertfilter.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/assertfilters.cs
+../../../external/referencesource/mscorlib/system/diagnostics/conditionalattribute.cs
+../../../external/referencesource/mscorlib/system/diagnostics/debuggerattributes.cs
+
+../../../external/referencesource/mscorlib/system/diagnostics/codeanalysis/suppressmessageattribute.cs
 
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contracts.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
