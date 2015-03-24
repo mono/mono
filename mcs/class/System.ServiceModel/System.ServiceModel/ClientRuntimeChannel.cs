@@ -67,6 +67,8 @@ namespace System.ServiceModel.MonoInternal
 		TimeSpan default_open_timeout, default_close_timeout;
 		IChannel channel;
 		IChannelFactory factory;
+		TimeSpan? operation_timeout = null;
+
 
 		#region delegates
 		readonly ProcessDelegate _processDelegate;
@@ -108,7 +110,6 @@ namespace System.ServiceModel.MonoInternal
 
 			// default values
 			AllowInitializationUI = true;
-			OperationTimeout = TimeSpan.FromMinutes (1);
 
 			if (contextChannel != null)
 				channel = contextChannel;
@@ -322,8 +323,17 @@ namespace System.ServiceModel.MonoInternal
 			}
 		}
 
-		[MonoTODO]
-		public TimeSpan OperationTimeout { get; set; }
+		public TimeSpan OperationTimeout {
+			get {
+				if (!this.operation_timeout.HasValue) {
+					this.operation_timeout = DefaultCommunicationTimeouts.Instance.ReceiveTimeout;
+				}
+				return this.operation_timeout.Value;
+			}
+			set {
+				this.operation_timeout = value;
+			}
+		}
 
 		public IOutputSession OutputSession {
 			get {
