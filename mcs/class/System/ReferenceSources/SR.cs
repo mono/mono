@@ -879,6 +879,12 @@ partial class SR
 	public const string net_wrongversion = "net_wrongversion";
 	public const string security_ExtendedProtection_NoOSSupport = "security_ExtendedProtection_NoOSSupport";
 
+	public const string Argument_FrameworkNameInvalid = "Argument_FrameworkNameInvalid";
+	public const string Argument_FrameworkNameInvalidVersion = "Argument_FrameworkNameInvalidVersion";
+	public const string Argument_FrameworkNameMissingVersion = "Argument_FrameworkNameMissingVersion";
+	public const string Argument_FrameworkNameTooShort = "Argument_FrameworkNameTooShort";
+
+
 public const string DebugAssertBanner = @"---- DEBUG ASSERTION FAILED ----";
 public const string ExceptionOccurred = @"An exception occurred writing trace output to log file '{0}'. {1}";
 public const string TraceSwitchLevelTooHigh = @"Attempted to set {0} to a value that is too high.  Setting level to TraceLevel.Verbose";

@@ -1,7 +1,0 @@
-2010-04-08  Jb Evain  <jbevain@novell.com>
-
-	* FrameworkName.cs: add missing Equals override.
-
-2010-04-06  Jb Evain  <jbevain@novell.com>
-
-	* FrameworkName.cs: moved here from corlib where it was pre-RC.

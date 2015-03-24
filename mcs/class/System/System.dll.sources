@@ -578,7 +578,6 @@ System.Net.WebSockets/WebSocketMessageType.cs
 System.Net.WebSockets/WebSocketReceiveResult.cs
 System.Net.WebSockets/WebSocketState.cs
 System/NewsStyleUriParser.cs
-System.Runtime.Versioning/FrameworkName.cs
 System.Security.AccessControl/SemaphoreAccessRule.cs
 System.Security.AccessControl/SemaphoreAuditRule.cs
 System.Security.AccessControl/SemaphoreRights.cs
@@ -1103,6 +1102,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/net/System/Net/webclient.cs
 ../../../external/referencesource/System/net/System/Net/WebPermission.cs
 ../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
+
+../../../external/referencesource/System/sys/system/runtime/versioning/FrameworkName.cs
 
 ../../../external/referencesource/System/sys/system/threading/Barrier.cs
 
