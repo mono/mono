@@ -349,10 +349,23 @@ namespace System
 			return this;
 		}
 
-		internal void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
+		internal static void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
 		{
-			ParameterInfo[] p = mi.GetParametersInternal ();
-			sb.Append (mi.DeclaringType.ToString ());
+			var declaringType = mi.DeclaringType;
+			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
+				declaringType = declaringType.GetGenericTypeDefinition ();
+
+			// Get generic definition
+			var bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+			foreach (var m in declaringType.GetMethods (bindingflags)) {
+				if (m.MetadataToken == mi.MetadataToken) {
+					mi = m;
+					break;
+				}
+			}
+
+			sb.Append (declaringType.ToString ());
+
 			sb.Append (".");
 			sb.Append (mi.Name);
 
@@ -367,11 +380,17 @@ namespace System
 				sb.Append ("]");
 			}
 
+			ParameterInfo[] p = mi.GetParametersInternal ();
+
 			sb.Append (" (");
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					sb.Append (", ");
+
 				Type pt = p[i].ParameterType;
+				if (pt.IsGenericType && ! pt.IsGenericTypeDefinition)
+					pt = pt.GetGenericTypeDefinition ();
+
 				if (pt.IsClass && !String.IsNullOrEmpty (pt.Namespace)) {
 					sb.Append (pt.Namespace);
 					sb.Append (".");
