@@ -209,10 +209,13 @@ namespace System
 				} else {
 					GetFullNameForStackTrace (sb, frame.GetMethod ());
 
-					if (frame.GetILOffset () == -1)
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> ", frame.GetMethodAddress (), frame.GetNativeOffset ());
-					else
+					if (frame.GetILOffset () == -1) {
+						sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}> ", frame.GetMethodAddress (), frame.GetNativeOffset ());
+						if (frame.GetMethodIndex () != 0xffffff)
+							sb.AppendFormat ("{0} ", frame.GetMethodIndex ());
+					} else {
 						sb.AppendFormat (" [0x{0:x5}] ", frame.GetILOffset ());
+					}
 
 					sb.AppendFormat ("in {0}:{1} ", frame.GetSecureFileName (),
 									 frame.GetFileLineNumber ());
