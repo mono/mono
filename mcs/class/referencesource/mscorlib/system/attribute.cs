@@ -43,7 +43,7 @@ namespace System {
             var definition = method.GetBaseDefinition ();
 
             if (method == definition)
-				return (Attribute []) parameter.GetCustomAttributes (typeof(Attribute), inherit);
+		return (Attribute []) parameter.GetCustomAttributes (attributeType, inherit);
 
             var types = new List<Type> ();
             var custom_attributes = new List<Attribute> ();
