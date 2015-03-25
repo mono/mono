@@ -45,7 +45,7 @@ namespace System {
     //
     [ComVisible(true)]
     [Serializable] 
-    public sealed class String : IComparable, ICloneable, IConvertible, IEnumerable
+    public sealed partial class String : IComparable, ICloneable, IConvertible, IEnumerable
 #if GENERICS_WORK
         , IComparable<String>, IEnumerable<char>, IEquatable<String>
 #endif
@@ -68,7 +68,7 @@ namespace System {
         private const int TrimHead = 0;
         private const int TrimTail = 1;
         private const int TrimBoth = 2;
-    
+
         // The Empty constant holds the empty string value. It is initialized by the EE during startup.
         // It is treated as intrinsic by the JIT as so the static constructor would never run.
         // Leaving it uninitialized would confuse debuggers.
@@ -76,8 +76,11 @@ namespace System {
         //We need to call the String constructor so that the compiler doesn't mark this as a literal.
         //Marking this as a literal would mean that it doesn't show up as a field which we can access 
         //from native.
+#if MONO
+        public static readonly String Empty = "";
+#else
         public static readonly String Empty;
-
+#endif
         //
         //Native Static Methods
         //
@@ -304,7 +307,7 @@ namespace System {
                 return strA.Length - strB.Length;
             }
         }
-
+#if !MONO
         // native call to COMString::CompareOrdinalEx
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
@@ -318,6 +321,7 @@ namespace System {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         unsafe internal static extern int nativeCompareOrdinalIgnoreCaseWC(String strA, sbyte *strBBytes);
+#endif
         //
         // This is a helper method for the security team.  They need to uppercase some strings (guaranteed to be less 
         // than 0x80) before security is fully initialized.  Without security initialized, we can't grab resources (the nlp's)
@@ -680,18 +684,28 @@ namespace System {
         public static bool operator != (String a, String b) {
            return !String.Equals(a, b);
         }
-    
+
         // Gets the character at a specified position.
         //
         // Spec#: Apply the precondition here using a contract assembly.  Potential perf issue.
         [System.Runtime.CompilerServices.IndexerName("Chars")]
+#if MONO
+        public unsafe char this[int index] {
+            get {
+                if (index < 0 || index >= m_stringLength)
+                    throw new IndexOutOfRangeException ();
+                fixed (char* c = &m_firstChar)
+                    return c[index];
+            }
+        }
+#else
         public extern char this[int index] {
             [ResourceExposure(ResourceScope.None)]
             [MethodImpl(MethodImplOptions.InternalCall)]
             [System.Security.SecuritySafeCritical] // public member
             get;
         }
-
+#endif
         // Converts a substring of this string to an array of characters.  Copies the
         // characters of this string beginning at position startIndex and ending at
         // startIndex + length - 1 to the character array buffer, beginning
@@ -920,7 +934,7 @@ namespace System {
                 }
             }
         }
-
+#if !MONO
         // Gets the length of this string
         //
         /// This is a EE implemented function so that the JIT can recognise is specially
@@ -935,7 +949,7 @@ namespace System {
             [MethodImplAttribute(MethodImplOptions.InternalCall)]
             get;
         }
-
+#endif
         // Creates an array of strings by splitting this string at each
         // occurence of a separator.  The separator is searched for, and if found,
         // the substring preceding the occurence is stored as the first element in
@@ -1351,7 +1365,7 @@ namespace System {
         [ResourceExposure(ResourceScope.None)]
         [CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
         unsafe public extern String(sbyte *value, int startIndex, int length, Encoding enc);
-        
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         unsafe static private String CreateString(sbyte *value, int startIndex, int length, Encoding enc) {            
             if (enc == null)
@@ -1380,7 +1394,7 @@ namespace System {
 
             return enc.GetString(b);
         }
-        
+#endif
         // Helper for encodings so they can talk to our buffer directly
         // stringLength must be the exact size we'll expect
         [System.Security.SecurityCritical]  // auto-generated
@@ -1409,7 +1423,7 @@ namespace System {
 
             return s;
         }
-
+#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         unsafe internal int ConvertToAnsi(byte *pbNativeBuffer, int cbNativeBuffer, bool fBestFit, bool fThrowOnUnmappableChar)
         {
@@ -1444,7 +1458,7 @@ namespace System {
             pbNativeBuffer[nb] = 0;
             return nb;
         }
-
+#endif
         // Normalization Methods
         // These just wrap calls to Normalization class
         public bool IsNormalized()
@@ -2285,13 +2299,13 @@ namespace System {
         public int IndexOf(char value, int startIndex) {
             return IndexOf(value, startIndex, this.Length - startIndex);
         }
-
+#if !MONO
         [Pure]
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public extern int IndexOf(char value, int startIndex, int count);
-    
+#endif
         // Returns the index of the first occurance of any character in value in the current instance.
         // The search starts at startIndex and runs to endIndex-1. [startIndex,endIndex).
         //
@@ -2310,13 +2324,13 @@ namespace System {
         public int IndexOfAny(char [] anyOf, int startIndex) {
             return IndexOfAny(anyOf, startIndex, this.Length - startIndex);
         }
-    
+#if !MONO
         [Pure]
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public extern int IndexOfAny(char [] anyOf, int startIndex, int count);
-    
+#endif
         
         // Determines the position within this string of the first occurence of the specified
         // string, according to the specified search criteria.  The search begins at
@@ -2429,13 +2443,13 @@ namespace System {
         public int LastIndexOf(char value, int startIndex){
             return LastIndexOf(value,startIndex,startIndex + 1);
         }
-
+#if !MONO
         [Pure]
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public extern int LastIndexOf(char value, int startIndex, int count);
-    
+#endif
         // Returns the index of the last occurance of any character in value in the current instance.
         // The search starts at startIndex and runs to endIndex. [startIndex,endIndex].
         // The character at position startIndex is included in the search.  startIndex is the larger
@@ -2453,13 +2467,13 @@ namespace System {
         public int LastIndexOfAny(char [] anyOf, int startIndex) {
             return LastIndexOfAny(anyOf,startIndex,startIndex + 1);
         }
-
+#if !MONO
         [Pure]
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public extern int LastIndexOfAny(char [] anyOf, int startIndex, int count);
-    
+#endif
     
         // Returns the index of the last occurance of any character in value in the current instance.
         // The search starts at startIndex and runs to endIndex. [startIndex,endIndex].
@@ -2581,12 +2595,12 @@ namespace System {
             return PadHelper(totalWidth, paddingChar, true);
         }
     
-    
+#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern String PadHelper(int totalWidth, char paddingChar, bool isRightPadded);
-    
+#endif
         // Determines whether a specified string is a prefix of the current instance
         //
         [Pure]
@@ -2908,14 +2922,14 @@ namespace System {
             }
             return result;
         }
-
+#if !MONO
         // Replaces all instances of oldChar with newChar.
         //
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern String ReplaceInternal(char oldChar, char newChar);
-
+#endif
         public String Replace(char oldChar, char newChar)
         {
             Contract.Ensures(Contract.Result<String>() != null);
@@ -2924,14 +2938,14 @@ namespace System {
 
             return ReplaceInternal(oldChar, newChar);
         }
-
+#if !MONO
         // This method contains the same functionality as StringBuilder Replace. The only difference is that
         // a new String has to be allocated since Strings are immutable
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern String ReplaceInternal(String oldValue, String newValue);
-
+#endif
 #if !FEATURE_CORECLR
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
 #endif        
@@ -3379,7 +3393,11 @@ namespace System {
             Contract.Ensures(str.Equals(Contract.Result<String>()));
             Contract.EndContractBlock();
 
+#if MONO
+            return InternalIntern (str);
+#else
             return Thread.GetDomain().GetOrInternString(str);
+#endif
         }
 
         [Pure]
@@ -3391,7 +3409,11 @@ namespace System {
             Contract.Ensures(Contract.Result<String>() == null || Contract.Result<String>().Length == str.Length);
             Contract.EndContractBlock();
 
+#if MONO
+            return InternalIsInterned (str);
+#else
             return Thread.GetDomain().IsStringInterned(str);
+#endif
         }
 
 
@@ -3512,7 +3534,7 @@ namespace System {
             }
         }
 
-
+#if !MONO
         // Is this a string that can be compared quickly (that is it has only characters > 0x80 
         // and not a - or '
         [System.Security.SecurityCritical]  // auto-generated
@@ -3535,7 +3557,7 @@ namespace System {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern bool TryGetTrailByte(out byte data);
-
+#endif
 #if !FEATURE_CORECLR
         public CharEnumerator GetEnumerator() {
             Contract.Ensures(Contract.Result<CharEnumerator>() != null);
