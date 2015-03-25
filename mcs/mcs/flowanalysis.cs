@@ -262,7 +262,7 @@ namespace Mono.CSharp
 
 			public static StructInfo GetStructInfo (TypeSpec type, IMemberContext context)
 			{
-				if (type.BuiltinType > 0)
+				if (type.BuiltinType > 0 && type.MemberDefinition.IsImported)
 					return null;
 
 				StructInfo info;
