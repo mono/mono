@@ -36,8 +36,6 @@ using System.Xml;
 using System.Data;
 using System.Data.OracleClient;
 using System.Data.SqlClient;
-using ByteFX.Data.MySqlClient;
-using Npgsql;
 using System.Configuration;
 
 namespace MonoTests.System.Data {
@@ -312,12 +310,8 @@ namespace MonoTests.System.Data {
 			string connStr = ConfigClass.GetElement (node, "database", "connectionString");
 			if (database == "oracle") {
 				con = new OracleConnection (connStr);
-			} else if (database == "mysql") {
-				con = new MySqlConnection (connStr);
 			} else if (database == "mssql") {
 				con = new SqlConnection (connStr);
-			} else if (database == "postgres") {
-				con = new NpgsqlConnection (connStr);
 			}
 
 			return con;

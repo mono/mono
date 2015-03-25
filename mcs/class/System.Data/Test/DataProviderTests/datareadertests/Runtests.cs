@@ -22,12 +22,13 @@ class RunTest {
 
 			switch (str) {
 
+/*
 			case "mysql" :
 				Console.WriteLine ("\n ****** Running tests for MYSQL ***** \n");
 				dbRetrieve = new MySqlRetrieve ("mysql");
 				dbRetrieve.RunTest ();
 				break;
-
+*/
 			case "mssql" :
 				Console.WriteLine ("\n ****** Running tests for MS SQL ***** \n");
 				dbRetrieve = new MsSqlRetrieve ("mssql");
@@ -42,7 +43,7 @@ class RunTest {
 				dbRetrieve = new OraRetrieve ("oracle");
 				dbRetrieve.RunTest ();
 				break;
-
+/*
 			case "postgres" :
 				Console.WriteLine ("\n ****** Running tests for POSTGRE ***** \n");
 				dbRetrieve = new PostgresRetrieve ("postgres");
@@ -72,6 +73,7 @@ class RunTest {
 				dbRetrieve = new PostgreOdbcRetrieve ("postgres");
 				dbRetrieve.RunTest ();
 				break;
+*/
 			}
 		}
 	}
