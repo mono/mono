@@ -66692,6 +66692,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void Test2()" attrs="129">
+        <size>12</size>
+      </method>
     </type>
   </test>
   <test name="test-iter-01.cs">
