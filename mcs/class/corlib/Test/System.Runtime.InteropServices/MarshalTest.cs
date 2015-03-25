@@ -173,6 +173,14 @@ namespace MonoTests.System.Runtime.InteropServices
 			Marshal.FreeHGlobal (ptr);
 		}
 
+		[Test]
+		public void AllocCoTaskMemZeroSize ()
+		{
+			IntPtr ptr = Marshal.AllocCoTaskMem (0);
+			Assert.IsTrue (ptr != IntPtr.Zero);
+			Marshal.FreeCoTaskMem (ptr);
+		}
+
 		public struct Foo {
 			public int a;
 			public static int b;
