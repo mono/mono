@@ -25,6 +25,7 @@ namespace System
 	public struct UInt64 {}
 	public struct IntPtr {}
 	public struct UIntPtr {}
+	public struct Decimal { }
 	public class String { }
 	public class Delegate {}
 	public class MulticastDelegate {}
@@ -41,19 +42,6 @@ namespace System
 	public struct RuntimeFieldHandle {}
 		
 	public interface IDisposable {}
-
-	public struct Decimal {
-
-		private int flags;
-
-		public Decimal(int[] bits) {
-			flags = 0;
-			SetBits(bits);
-		}
-
-		private void SetBits(int[] bits) {
-		}
-	}
 
 	partial class Type
 	{
