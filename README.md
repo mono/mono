@@ -1,5 +1,7 @@
-Mono is a software platform designed to allow developers to easily create cross platform applications.
-It is an open source implementation of Microsoft's .NET Framework based on the ECMA standards for C# and the Common Language Runtime.
+Mono is a software platform designed to allow developers to easily
+create cross platform applications.  It is an open source
+implementation of Microsoft's .NET Framework based on the ECMA
+standards for C# and the Common Language Runtime.
 
 1. [Compilation and Installation](#compilation-and-installation)
 2. [Using Mono](#using-mono)
@@ -7,6 +9,7 @@ It is an open source implementation of Microsoft's .NET Framework based on the E
 4. [Contributing to Mono](#contributing-to-mono)
 5. [Reporting bugs](#reporting-bugs)
 6. [Configuration Options](#configuration-options)
+7. [Working with Submodles](#working-with-submodules)
 
 **Build Status**
 
@@ -152,44 +155,47 @@ same prefix than this module gets.
 Contributing to Mono
 ====================
 
-Before submitting changes to Mono, please review the [contribution guidelines](http://www.mono-project.com/community/contributing/).
-Please pay particular attention to the [Important Rules](http://www.mono-project.com/community/contributing/#important-rules) section.
+Before submitting changes to Mono, please review the [contribution
+guidelines](http://www.mono-project.com/community/contributing/).
+Please pay particular attention to the [Important
+Rules](http://www.mono-project.com/community/contributing/#important-rules)
+section.
 
 Reporting bugs
 ==============
 
-To submit bug reports, please use [Xamarin's Bugzilla](https://bugzilla.xamarin.com/)
+To submit bug reports, please use [Xamarin's
+Bugzilla](https://bugzilla.xamarin.com/)
 
 Please use the search facility to ensure the same bug hasn't already
-been submitted and follow our [guidelines](http://www.mono-project.com/community/bugs/make-a-good-bug-report/)
+been submitted and follow our
+[guidelines](http://www.mono-project.com/community/bugs/make-a-good-bug-report/)
 on how to make a good bug report.
 
 Configuration Options
 =====================
 
-The following are the configuration options that someone
-building Mono might want to use:
+The following are the configuration options that someone building Mono
+might want to use:
 
-* `--with-sgen=yes,no` - Generational GC support: Used to enable or disable the
-compilation of a Mono runtime with the SGen garbage collector.
+* `--with-sgen=yes,no` - Generational GC support: Used to enable or
+disable the compilation of a Mono runtime with the SGen garbage
+collector.
 
   * On platforms that support it, after building Mono, you will have
-both a `mono` binary and a `mono-sgen` binary. `mono` uses Boehm, while
-`mono-sgen` uses the Simple Generational GC.
+both a `mono` binary and a `mono-sgen` binary. `mono` uses Boehm,
+while `mono-sgen` uses the Simple Generational GC.
 
-* `--with-gc=[included, boehm,  none]` - Selects the default Boehm garbage
-collector engine to use.
+* `--with-gc=[included, boehm, none]` - Selects the default Boehm
+garbage collector engine to use.
 
-  * *included*: (*slighty modified Boehm GC*)
-This is the default value for the Boehm GC, and it's 
-the most feature complete, it will allow Mono 
-to use typed allocations and support the debugger. 
+  * *included*: (*slighty modified Boehm GC*) This is the default
+value for the Boehm GC, and it's the most feature complete, it will
+allow Mono to use typed allocations and support the debugger.
 
-  * *boehm*:
-This is used to use a system-install Boehm GC,
-it is useful to test new features available in
-Boehm GC, but we do not recommend that people
-use this, as it disables a few features.
+  * *boehm*: This is used to use a system-install Boehm GC, it is
+useful to test new features available in Boehm GC, but we do not
+recommend that people use this, as it disables a few features.
 
   * *none*:
 Disables the inclusion of a garbage collector.
@@ -448,3 +454,53 @@ http://code.google.com/p/nativeclient/
 
   * Currently this is used with Mono's AOT engine as
 Native Client does not support JIT engines yet.
+
+Working With Submodules
+=======================
+
+Mono references several external git submodules, for example
+a fork of Microsoft's reference source code that has been altered
+to be suitable for use with the Mono runtime.
+
+This section describes how to use it.
+
+An initial clone should be done recursively so all submodules will also be
+cloned in a single pass:
+
+        $ git clone --recursive git@github.com:mono/mono
+
+Once cloned, submodules can be updated to pull down the latest changes.
+This can also be done after an initial non-recursive clone:
+
+        $ git submodule update --init --recursive
+
+To pull external changes into a submodule:
+
+        $ cd <submodule>
+        $ git pull origin <branch>
+        $ cd <top-level>
+        $ git add <submodule>
+        $ git commit
+
+By default, submodules are detached because they point to a specific commit.
+Use `git checkout` to move back to a branch before making changes:
+
+        $ cd <submodule>
+        $ git checkout <branch>
+        # work as normal; the submodule is a normal repo
+        $ git commit/push new changes to the repo (submodule)
+
+        $ cd <top-level>
+        $ git add <submodule> # this will record the new commits to xamcore
+        $ git commit
+
+To switch the repo of a submodule (this should not be a common or normal thing
+to do at all), first edit `.gitmodules` to point to the new location, then:
+
+        $ git submodule sync -- <path of the submodule>
+        $ git submodule update --recursive
+        $ git checkout <desired new hash or branch>
+
+The desired output diff is a change in `.gitmodules` to reflect the
+change in the remote URL, and a change in /<submodule> where you see
+the desired change in the commit hash.
