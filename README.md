@@ -9,7 +9,7 @@ standards for C# and the Common Language Runtime.
 4. [Contributing to Mono](#contributing-to-mono)
 5. [Reporting bugs](#reporting-bugs)
 6. [Configuration Options](#configuration-options)
-7. [Working with Submodles](#working-with-submodules)
+7. [Working with Submodules](#working-with-submodules)
 
 **Build Status**
 
@@ -467,39 +467,39 @@ This section describes how to use it.
 An initial clone should be done recursively so all submodules will also be
 cloned in a single pass:
 
-        $ git clone --recursive git@github.com:mono/mono
+	$ git clone --recursive git@github.com:mono/mono
 
 Once cloned, submodules can be updated to pull down the latest changes.
 This can also be done after an initial non-recursive clone:
 
-        $ git submodule update --init --recursive
+	$ git submodule update --init --recursive
 
 To pull external changes into a submodule:
 
-        $ cd <submodule>
-        $ git pull origin <branch>
-        $ cd <top-level>
-        $ git add <submodule>
-        $ git commit
+	$ cd <submodule>
+	$ git pull origin <branch>
+	$ cd <top-level>
+	$ git add <submodule>
+	$ git commit
 
 By default, submodules are detached because they point to a specific commit.
 Use `git checkout` to move back to a branch before making changes:
 
-        $ cd <submodule>
-        $ git checkout <branch>
-        # work as normal; the submodule is a normal repo
-        $ git commit/push new changes to the repo (submodule)
+	$ cd <submodule>
+	$ git checkout <branch>
+	# work as normal; the submodule is a normal repo
+	$ git commit/push new changes to the repo (submodule)
 
-        $ cd <top-level>
-        $ git add <submodule> # this will record the new commits to xamcore
-        $ git commit
+	$ cd <top-level>
+	$ git add <submodule> # this will record the new commits to xamcore
+	$ git commit
 
 To switch the repo of a submodule (this should not be a common or normal thing
 to do at all), first edit `.gitmodules` to point to the new location, then:
 
-        $ git submodule sync -- <path of the submodule>
-        $ git submodule update --recursive
-        $ git checkout <desired new hash or branch>
+	$ git submodule sync -- <path of the submodule>
+	$ git submodule update --recursive
+	$ git checkout <desired new hash or branch>
 
 The desired output diff is a change in `.gitmodules` to reflect the
 change in the remote URL, and a change in /<submodule> where you see
