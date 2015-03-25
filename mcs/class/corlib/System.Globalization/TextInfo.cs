@@ -40,6 +40,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace System.Globalization {
 
@@ -473,7 +474,7 @@ namespace System.Globalization {
 			if (str.Length == 0)
 				return String.Empty;
 
-			string tmp = String.InternalAllocateStr (str.Length);
+			string tmp = String.FastAllocateString (str.Length);
 			fixed (char* source = str, dest = tmp) {
 
 				char* destPtr = (char*)dest;
@@ -501,7 +502,7 @@ namespace System.Globalization {
 			if (str.Length == 0)
 				return String.Empty;
 
-			string tmp = String.InternalAllocateStr (str.Length);
+			string tmp = String.FastAllocateString (str.Length);
 			fixed (char* source = str, dest = tmp) {
 
 				char* destPtr = (char*)dest;
@@ -546,9 +547,127 @@ namespace System.Globalization {
 			return StringComparer.CurrentCultureIgnoreCase.GetHashCode (str);
 		}
 
-		internal static int GetHashCodeOrdinalIgnoreCase (string s)
+		internal static unsafe int GetHashCodeOrdinalIgnoreCase (string s)
 		{
-			return s.GetCaseInsensitiveHashCode ();
+			var length = s.Length;
+			fixed (char * c = s) {
+				char * cc = c;
+				char * end = cc + length - 1;
+				int h = 0;
+				for (;cc < end; cc += 2) {
+					h = (h << 5) - h + Char.ToUpperInvariant (*cc);
+					h = (h << 5) - h + Char.ToUpperInvariant (cc [1]);
+				}
+				++end;
+				if (cc < end)
+					h = (h << 5) - h + Char.ToUpperInvariant (*cc);
+				return h;
+			}
+		}
+
+		internal static unsafe int CompareOrdinalIgnoreCase(String str1, String str2)
+		{
+			return CompareOrdinalIgnoreCaseEx (str1, 0, str2, 0, str1.Length, str2.Length);
+		}
+
+		internal static int CompareOrdinalIgnoreCaseEx (String strA, int indexA, String strB, int indexB, int lenA, int lenB)
+		{
+			return CompareOrdinalCaseInsensitiveUnchecked (strA, indexA, lenA, strB, indexB, lenB);
+		}
+
+		static unsafe int CompareOrdinalCaseInsensitiveUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)
+		{
+			if (strA == null) {
+				return strB == null ? 0 : -1;
+			}
+			if (strB == null) {
+				return 1;
+			}
+			int lengthA = Math.Min (lenA, strA.Length - indexA);
+			int lengthB = Math.Min (lenB, strB.Length - indexB);
+
+			if (lengthA == lengthB && Object.ReferenceEquals (strA, strB))
+				return 0;
+
+			fixed (char* aptr = strA, bptr = strB) {
+				char* ap = aptr + indexA;
+				char* end = ap + Math.Min (lengthA, lengthB);
+				char* bp = bptr + indexB;
+				while (ap < end) {
+					if (*ap != *bp) {
+						char c1 = Char.ToUpperInvariant (*ap);
+						char c2 = Char.ToUpperInvariant (*bp);
+						if (c1 != c2)
+							return c1 - c2;
+					}
+					ap++;
+					bp++;
+				}
+				return lengthA - lengthB;
+			}
+		}
+
+		internal static unsafe int LastIndexOfStringOrdinalIgnoreCase(String source, String value, int startIndex, int count)
+		{
+			int valueLen = value.Length;
+			if (count < valueLen)
+				return -1;
+
+			if (valueLen == 0)
+				return startIndex;
+
+			fixed (char* thisptr = source, valueptr = value) {
+				char* ap = thisptr + startIndex - valueLen + 1;
+				char* thisEnd = ap - count + valueLen - 1;
+				while (ap != thisEnd) {
+					for (int i = 0; i < valueLen; i++) {
+						if (Char.ToUpperInvariant (ap[i]) != Char.ToUpperInvariant (valueptr[i]))
+							goto NextVal;
+					}
+					return (int)(ap - thisptr);
+					NextVal:
+					ap--;
+				}
+			}
+			return -1;
+		}
+
+		internal static int IndexOfStringOrdinalIgnoreCase(String source, String value, int startIndex, int count)
+		{
+            Contract.Assert(source != null, "[TextInfo.IndexOfStringOrdinalIgnoreCase] Caller should've validated source != null");
+            Contract.Assert(value != null, "[TextInfo.IndexOfStringOrdinalIgnoreCase] Caller should've validated value != null");
+            Contract.Assert(startIndex + count <= source.Length, "[TextInfo.IndexOfStringOrdinalIgnoreCase] Caller should've validated startIndex + count <= source.Length");
+
+            // We return 0 if both inputs are empty strings
+            if (source.Length == 0 && value.Length == 0)
+            {
+                return 0;
+            }
+
+            // the search space within [source] starts at offset [startIndex] inclusive and includes
+            // [count] characters (thus the last included character is at index [startIndex + count -1]
+            // [end] is the index of the next character after the search space
+            // (it points past the end of the search space)
+            int end = startIndex + count;
+            
+            // maxStartIndex is the index beyond which we never *start* searching, inclusive; in other words;
+            // a search could include characters beyond maxStartIndex, but we'd never begin a search at an 
+            // index strictly greater than maxStartIndex. 
+            int maxStartIndex = end - value.Length;
+
+            for (; startIndex <= maxStartIndex; startIndex++)
+            {
+                // We should always have the same or more characters left to search than our actual pattern
+                Contract.Assert(end - startIndex >= value.Length);
+                // since this is an ordinal comparison, we can assume that the lengths must match
+                if (CompareOrdinalIgnoreCaseEx(source, startIndex, value, 0, value.Length, value.Length) == 0)
+                {
+                    return startIndex;
+                }
+            }
+            
+            // Not found
+            return -1;
 		}
 	}
 }

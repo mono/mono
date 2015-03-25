@@ -44,7 +44,7 @@ public class Test
 			return 9;
 
 		s = $"{200:{{X+Y}}}";
-		if (s != "{{X+Y}")
+		if (s != "{X+Y}")
 			return 10;
 
 		s = $"{ $"{ res }" }";

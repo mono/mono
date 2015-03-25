@@ -107,7 +107,6 @@ System/AttributeTargets.cs
 System/BadImageFormatException.cs
 System/Buffer.cs
 System/CannotUnloadAppDomainException.cs
-System/CharEnumerator.cs
 System/CLSCompliantAttribute.cs
 System/CStreamReader.cs
 System/CStreamWriter.cs
@@ -219,8 +218,6 @@ System/SerializableAttribute.cs
 System/Single.cs
 System/StackOverflowException.cs
 System/STAThreadAttribute.cs
-System/String.cs
-System/StringSplitOptions.cs
 System/StringComparison.cs
 System/SystemException.cs
 System/TermInfoBooleans.cs
@@ -1258,6 +1255,7 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/boolean.cs
 ../../../external/referencesource/mscorlib/system/byte.cs
 ../../../external/referencesource/mscorlib/system/char.cs
+../../../external/referencesource/mscorlib/system/charenumerator.cs
 ../../../external/referencesource/mscorlib/system/convert.cs
 ../../../external/referencesource/mscorlib/system/datetime.cs
 ../../../external/referencesource/mscorlib/system/datetimekind.cs
@@ -1284,6 +1282,7 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/random.cs
 ../../../external/referencesource/mscorlib/system/resid.cs
 ../../../external/referencesource/mscorlib/system/sbyte.cs
+../../../external/referencesource/mscorlib/system/string.cs
 ../../../external/referencesource/mscorlib/system/stringcomparer.cs
 ../../../external/referencesource/mscorlib/system/stringfreezingattribute.cs
 ../../../external/referencesource/mscorlib/system/rttype.cs
@@ -1296,7 +1295,9 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/uint32.cs
 ../../../external/referencesource/mscorlib/system/uint64.cs
 ../../../external/referencesource/mscorlib/system/unityserializationholder.cs
+../../../external/referencesource/mscorlib/system/unsafecharbuffer.cs
 ../../../external/referencesource/mscorlib/system/version.cs
+
 ../../../external/referencesource/mscorlib/system/collections/arraylist.cs
 ../../../external/referencesource/mscorlib/system/collections/bitarray.cs
 ../../../external/referencesource/mscorlib/system/collections/caseinsensitivecomparer.cs
@@ -1659,4 +1660,5 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
 
+ReferenceSources/String.cs
 ReferenceSources/Type.cs

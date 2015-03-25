@@ -172,9 +172,9 @@ namespace System.Globalization
 						CompareOptions options)
 		{
 			if (options == CompareOptions.Ordinal)
-				return string.CompareOrdinalUnchecked (str1, offset1, length1, str2, offset2, length2);
+				return String.CompareOrdinalUnchecked (str1, offset1, length1, str2, offset2, length2);
 			if (options == CompareOptions.OrdinalIgnoreCase)
-				return string.CompareOrdinalCaseInsensitiveUnchecked (str1, offset1, length1, str2, offset2, length2);
+				return TextInfo.CompareOrdinalIgnoreCaseEx (str1, offset1, str2, offset2, length1, length2);
 
 			return UseManagedCollation ?
 				internal_compare_managed (str1, offset1, length1,
@@ -531,19 +531,11 @@ namespace System.Globalization
 			}
 
 			if((options & CompareOptions.Ordinal)!=0) {
-				for(int pos=startIndex;
-				    pos < startIndex + count;
-				    pos++) {
-					if(source[pos]==value) {
-						return(pos);
-					}
-				}
-				return(-1);
-			} else {
+				return source.IndexOfUnchecked (value, startIndex, count);
+			}
 				return (internal_index_switch (source, startIndex,
 							count, value, options,
 							true));
-			}
 		}
 
 		private int internal_index_managed (string s1, int sindex,
