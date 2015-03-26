@@ -1030,6 +1030,8 @@ namespace Mono.Security {
 
 			// 4.a user info
 			pos = uriString.IndexOf ("@");
+			if (unixAbsPath)
+				pos = -1;
 			if (pos != -1) {
 				userinfo = uriString.Substring (0, pos);
 				uriString = uriString.Remove (0, pos + 1);
