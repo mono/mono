@@ -51323,6 +51323,32 @@
       </method>
     </type>
   </test>
+  <test name="test-920.cs">
+    <type name="A">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A+Adapter">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 get_Adapter()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Adapter(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-93.cs">
     <type name="N1.C">
       <method name="Void .ctor()" attrs="6278">
