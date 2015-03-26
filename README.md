@@ -491,7 +491,7 @@ Use `git checkout` to move back to a branch before making changes:
 	$ git commit/push new changes to the repo (submodule)
 
 	$ cd <top-level>
-	$ git add <submodule> # this will record the new commits to xamcore
+	$ git add <submodule> # this will record the new commits to the submodule
 	$ git commit
 
 To switch the repo of a submodule (this should not be a common or normal thing
