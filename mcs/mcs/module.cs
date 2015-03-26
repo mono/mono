@@ -267,6 +267,7 @@ namespace Mono.CSharp
 		readonly Dictionary<TypeSpec, ReferenceContainer> reference_types;
 		readonly Dictionary<TypeSpec, MethodSpec> attrs_cache;
 		readonly Dictionary<TypeSpec, AwaiterDefinition> awaiters;
+		readonly Dictionary<TypeSpec, TypeInfo> type_info_cache;
 
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
@@ -302,6 +303,7 @@ namespace Mono.CSharp
 			reference_types = new Dictionary<TypeSpec, ReferenceContainer> ();
 			attrs_cache = new Dictionary<TypeSpec, MethodSpec> ();
 			awaiters = new Dictionary<TypeSpec, AwaiterDefinition> ();
+			type_info_cache = new Dictionary<TypeSpec, TypeInfo> ();
 		}
 
 		#region Properties
@@ -422,6 +424,12 @@ namespace Mono.CSharp
 		internal Dictionary<TypeSpec, ReferenceContainer> ReferenceTypesCache {
 			get {
 				return reference_types;
+			}
+		}
+
+		internal Dictionary<TypeSpec, TypeInfo> TypeInfoCache {
+			get {
+				return type_info_cache;
 			}
 		}
 

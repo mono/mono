@@ -25,7 +25,6 @@ namespace System
 	public struct UInt64 {}
 	public struct IntPtr {}
 	public struct UIntPtr {}
-	public struct Decimal { }
 	public class String { }
 	public class Delegate {}
 	public class MulticastDelegate {}
@@ -43,6 +42,24 @@ namespace System
 		
 	public interface IDisposable {}
 
+	public struct Decimal {
+
+		private int flags;
+
+		public Decimal(int[] bits) {
+			flags = 0;
+			SetBits(bits);
+		}
+
+		public Decimal (int i)
+		{
+			flags = 0;
+		}
+
+		private void SetBits(int[] bits) {
+		}
+	}
+
 	partial class Type
 	{
 		public static bool operator == (Type left, Type right)
@@ -53,6 +70,12 @@ namespace System
 		public static bool operator != (Type left, Type right)
 		{
 			return true;
+		}
+
+		void Foo ()
+		{
+			Decimal d = 0;
+			var d2 = d;
 		}
 	}	
 }
@@ -73,4 +96,3 @@ namespace System.Reflection
 {
 	public class DefaultMemberAttribute {}
 }
-

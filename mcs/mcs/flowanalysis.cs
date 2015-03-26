@@ -59,10 +59,9 @@ namespace Mono.CSharp
 		public TypeInfo[] SubStructInfo;
 
 		readonly StructInfo struct_info;
-		private static Dictionary<TypeSpec, TypeInfo> type_hash;
 
 		static readonly TypeInfo simple_type = new TypeInfo (1);
-		
+
 		static TypeInfo ()
 		{
 			Reset ();
@@ -70,7 +69,6 @@ namespace Mono.CSharp
 		
 		public static void Reset ()
 		{
-			type_hash = new Dictionary<TypeSpec, TypeInfo> ();
 			StructInfo.field_type_hash = new Dictionary<TypeSpec, StructInfo> ();
 		}
 
@@ -111,8 +109,17 @@ namespace Mono.CSharp
 				return simple_type;
 
 			TypeInfo info;
-			if (type_hash.TryGetValue (type, out info))
-				return info;
+			Dictionary<TypeSpec, TypeInfo> type_hash;
+			if (type.BuiltinType > 0) {
+				// Don't cache built-in types, they are null in most cases except for
+				// corlib compilation when we need to distinguish between declaration
+				// and referencing
+				type_hash = null;
+			} else {
+				type_hash = context.Module.TypeInfoCache;
+				if (type_hash.TryGetValue (type, out info))
+					return info;
+			}
 
 			var struct_info = StructInfo.GetStructInfo (type, context);
 			if (struct_info != null) {
@@ -121,7 +128,9 @@ namespace Mono.CSharp
 				info = simple_type;
 			}
 
-			type_hash.Add (type, info);
+			if (type_hash != null)
+				type_hash.Add (type, info);
+
 			return info;
 		}
 
@@ -262,7 +271,7 @@ namespace Mono.CSharp
 
 			public static StructInfo GetStructInfo (TypeSpec type, IMemberContext context)
 			{
-				if (type.BuiltinType > 0)
+				if (type.BuiltinType > 0 && type != context.CurrentType)
 					return null;
 
 				StructInfo info;
