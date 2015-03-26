@@ -86,12 +86,12 @@ namespace System.Web
 			builder.Append ("=");
 			builder.Append (Value);
 
-			if (domain != null) {
+			if (!string.IsNullOrEmpty(domain)) {
 				builder.Append ("; domain=");
 				builder.Append (domain);
 			}
 	       
-			if (path != null) {
+			if (!string.IsNullOrEmpty(path)) {
 				builder.Append ("; path=");
 				builder.Append (path);
 			}
