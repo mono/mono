@@ -426,6 +426,7 @@
     <Compile Include="..\..\..\external\referencesource\System\sys\system\collections\concurrent\BlockingCollection.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\collections\concurrent\ConcurrentBag.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\threading\Barrier.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\sys\system\windows\markup\ValueSerializerAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeCompiler.cs" />
