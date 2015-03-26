@@ -40,6 +40,7 @@ namespace System.Data
 		EnumerableRowCollection source;
 		IEnumerator e;
 		int depth;
+		bool done;
 
 		public RowEnumerableDataReader (IEnumerable source, int depth)
 		{
@@ -58,7 +59,7 @@ namespace System.Data
 		}
 
 		public bool IsClosed {
-			get { return e == null; }
+			get { return done; }
 		}
 
 		public int RecordsAffected {
@@ -67,7 +68,7 @@ namespace System.Data
 
 		public void Close ()
 		{
-			e = null;
+			done = true;
 		}
 
 		public DataTable GetSchemaTable ()
