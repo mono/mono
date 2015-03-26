@@ -209,10 +209,13 @@ namespace System
 				} else {
 					GetFullNameForStackTrace (sb, frame.GetMethod ());
 
-					if (frame.GetILOffset () == -1)
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> ", frame.GetMethodAddress (), frame.GetNativeOffset ());
-					else
+					if (frame.GetILOffset () == -1) {
+						sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}> ", frame.GetMethodAddress (), frame.GetNativeOffset ());
+						if (frame.GetMethodIndex () != 0xffffff)
+							sb.AppendFormat ("{0} ", frame.GetMethodIndex ());
+					} else {
 						sb.AppendFormat (" [0x{0:x5}] ", frame.GetILOffset ());
+					}
 
 					sb.AppendFormat ("in {0}:{1} ", frame.GetSecureFileName (),
 									 frame.GetFileLineNumber ());
@@ -346,10 +349,23 @@ namespace System
 			return this;
 		}
 
-		internal void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
+		internal static void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
 		{
-			ParameterInfo[] p = mi.GetParametersInternal ();
-			sb.Append (mi.DeclaringType.ToString ());
+			var declaringType = mi.DeclaringType;
+			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
+				declaringType = declaringType.GetGenericTypeDefinition ();
+
+			// Get generic definition
+			var bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+			foreach (var m in declaringType.GetMethods (bindingflags)) {
+				if (m.MetadataToken == mi.MetadataToken) {
+					mi = m;
+					break;
+				}
+			}
+
+			sb.Append (declaringType.ToString ());
+
 			sb.Append (".");
 			sb.Append (mi.Name);
 
@@ -364,11 +380,17 @@ namespace System
 				sb.Append ("]");
 			}
 
+			ParameterInfo[] p = mi.GetParametersInternal ();
+
 			sb.Append (" (");
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					sb.Append (", ");
+
 				Type pt = p[i].ParameterType;
+				if (pt.IsGenericType && ! pt.IsGenericTypeDefinition)
+					pt = pt.GetGenericTypeDefinition ();
+
 				if (pt.IsClass && !String.IsNullOrEmpty (pt.Namespace)) {
 					sb.Append (pt.Namespace);
 					sb.Append (".");

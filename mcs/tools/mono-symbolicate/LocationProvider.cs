@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -16,70 +17,48 @@ namespace Symbolicate
 
 	class LocationProvider {
 		class AssemblyLocationProvider {
-			AssemblyDefinition assembly;
+			Assembly assembly;
 			MonoSymbolFile symbolFile;
 			string seqPointDataPath;
 
-			public AssemblyLocationProvider (AssemblyDefinition assembly, MonoSymbolFile symbolFile, string seqPointDataPath)
+			public AssemblyLocationProvider (Assembly assembly, MonoSymbolFile symbolFile, string seqPointDataPath)
 			{
 				this.assembly = assembly;
 				this.symbolFile = symbolFile;
 				this.seqPointDataPath = seqPointDataPath;
 			}
 
-			public bool TryGetLocation (string methodFullName, string[] methodParamsTypes, int offset, bool isOffsetIL, out Location location)
+			public bool TryGetLocation (string methodStr, string typeFullName, int offset, bool isOffsetIL, uint methodIndex, out Location location)
 			{
 				location = default (Location);
 				if (symbolFile == null)
 					return false;
 
-				var typeNameEnd = methodFullName.LastIndexOf (".");
-				var typeName = methodFullName.Substring (0, typeNameEnd);
-				var methodName = methodFullName.Substring (typeNameEnd + 1, methodFullName.Length - typeNameEnd - 1);
-
-				var type = assembly.MainModule.Types.FirstOrDefault (t => t.FullName == typeName);
+				var type = assembly.GetTypes().FirstOrDefault (t => t.FullName == typeFullName);
 				if (type == null)
 					return false;
 
-				var method = type.Methods.FirstOrDefault (m => {
-					if (m.Name != methodName)
-						return false;
-
-					if (m.Parameters.Count != methodParamsTypes.Length)
-						return false;
-
-					for (var i = 0; i < methodParamsTypes.Length; i++) {
-						var paramType = m.Parameters[i].ParameterType;
-						if (paramType.Name != methodParamsTypes[i])
-							return false;
-					}
-
-					return true;
-				});
-
+				var bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+				var method = type.GetMethods(bindingflags).FirstOrDefault (m => GetMethodFullName (m) == methodStr);
 				if (method == null)
 					return false;
 
-				int ilOffset = (isOffsetIL)? offset : GetILOffsetFromFile (method.MetadataToken.ToInt32 (), offset);
+				int ilOffset = (isOffsetIL)? offset : GetILOffsetFromFile (method.MetadataToken, methodIndex, offset);
 				if (ilOffset < 0)
 					return false;
 
-				var methodSymbol = symbolFile.Methods [method.MetadataToken.RID-1];
+				var methodSymbol = symbolFile.Methods [(method.MetadataToken & 0x00ffffff) - 1];
 
-				foreach (var lineNumber in methodSymbol.GetLineNumberTable ().LineNumbers) {
-					if (lineNumber.Offset < ilOffset)
-						continue;
+				var lineNumbers = methodSymbol.GetLineNumberTable ().LineNumbers;
+				var lineNumber = lineNumbers.FirstOrDefault (l => l.Offset >= ilOffset) ?? lineNumbers.Last ();
 
-					location.FileName = symbolFile.Sources [lineNumber.File-1].FileName;
-					location.Line = lineNumber.Row;
-					return true;
-				}
-
-				return false;
+				location.FileName = symbolFile.Sources [lineNumber.File-1].FileName;
+				location.Line = lineNumber.Row;
+				return true;
 			}
 
 			static MethodInfo methodGetIL;
-			private int GetILOffsetFromFile (int methodToken, int nativeOffset)
+			private int GetILOffsetFromFile (int methodToken, uint methodIndex, int nativeOffset)
 			{
 				if (string.IsNullOrEmpty (seqPointDataPath))
 					return -1;
@@ -90,7 +69,23 @@ namespace Symbolicate
 				if (methodGetIL == null)
 					throw new Exception ("System.Diagnostics.StackFrame.GetILOffsetFromFile could not be found, make sure you have an updated mono installed.");
 
-				return (int) methodGetIL.Invoke (null, new object[] {seqPointDataPath, methodToken, nativeOffset});
+				return (int) methodGetIL.Invoke (null, new object[] {seqPointDataPath, methodToken, methodIndex, nativeOffset});
+			}
+
+			static MethodInfo methodGetMethodFullName;
+			private string GetMethodFullName (MethodBase m)
+			{
+
+				if (methodGetMethodFullName == null)
+					methodGetMethodFullName = typeof (Exception).GetMethod ("GetFullNameForStackTrace", BindingFlags.NonPublic | BindingFlags.Static);
+
+				if (methodGetMethodFullName == null)
+					throw new Exception ("System.Exception.GetFullNameForStackTrace could not be found, make sure you have an updated mono installed.");
+
+				StringBuilder sb = new StringBuilder ();
+				methodGetMethodFullName.Invoke (null, new object[] {sb, m});
+
+				return sb.ToString ();
 			}
 		}
 
@@ -111,7 +106,7 @@ namespace Symbolicate
 			if (!File.Exists (assemblyPath))
 				throw new ArgumentException ("assemblyPath does not exist: "+ assemblyPath);
 
-			var assembly = AssemblyDefinition.ReadAssembly (assemblyPath);
+			var assembly = Assembly.LoadFrom (assemblyPath);
 			MonoSymbolFile symbolFile = null;
 
 			var symbolPath = assemblyPath + ".mdb";
@@ -128,7 +123,7 @@ namespace Symbolicate
 
 			directories.Add (Path.GetDirectoryName (assemblyPath));
 
-			foreach (var assemblyRef in assembly.MainModule.AssemblyReferences) {
+			foreach (var assemblyRef in assembly.GetReferencedAssemblies ()) {
 				string refPath = null;
 				foreach (var dir in directories) {
 					refPath = Path.Combine (dir, assemblyRef.Name);
@@ -158,11 +153,11 @@ namespace Symbolicate
 			directories.Add (directory);
 		}
 
-		public bool TryGetLocation (string methodName, string[] methodParams, int offset, bool isOffsetIL, out Location location)
+		public bool TryGetLocation (string method, string typeFullName, int offset, bool isOffsetIL, uint methodIndex, out Location location)
 		{
 			location = default (Location);
 			foreach (var assembly in assemblies.Values) {
-				if (assembly.TryGetLocation (methodName, methodParams, offset, isOffsetIL, out location))
+				if (assembly.TryGetLocation (method, typeFullName, offset, isOffsetIL, methodIndex, out location))
 					return true;
 			}
 
