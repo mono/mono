@@ -1025,6 +1025,11 @@ namespace Mono.CSharp {
 			rc.Report.Error (8072, loc, "An expression tree cannot contain a null propagating operator");
 		}
 
+		protected void Error_NullPropagatingLValue (ResolveContext rc)
+		{
+			rc.Report.Error (-1030, loc, "The left-hand side of an assignment cannot contain a null propagating operator");
+		}
+
 		public virtual void FlowAnalysis (FlowAnalysisContext fc)
 		{
 		}
@@ -6362,7 +6367,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			if (ConditionalAccess)
-				throw new NotSupportedException ("null propagating operator assignment");
+				Error_NullPropagatingLValue (ec);
 
 			if (spec is FixedFieldSpec) {
 				// It could be much better error message but we want to be error compatible
@@ -7098,7 +7103,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
 			if (ConditionalAccess)
-				throw new NotSupportedException ("null propagating operator assignment");
+				Error_NullPropagatingLValue (rc);
 
 			if (right_side == EmptyExpression.OutAccess) {
 				// TODO: best_candidate can be null at this point
@@ -7342,6 +7347,9 @@ namespace Mono.CSharp {
 				Error_AssignmentEventOnly (ec);
 				return null;
 			}
+
+			if (ConditionalAccess)
+				Error_NullPropagatingLValue (ec);
 
 			op = CandidateToBaseOverride (ec, op);
 			return this;
