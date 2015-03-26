@@ -1802,6 +1802,10 @@ namespace Mono.CSharp
 
 			this.spec = spec;
 			current_type = null;
+			if (class_partial_parts != null) {
+				foreach (var part in class_partial_parts)
+					part.spec = spec;
+			}
 		}
 
 		public override void RemoveContainer (TypeContainer cont)
@@ -3423,7 +3427,7 @@ namespace Mono.CSharp
 					ModFlags |= Modifiers.NEW;
 					if (!IsCompilerGenerated) {
 						Report.SymbolRelatedToPreviousError (base_member);
-						if (!IsInterface && (base_member.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) != 0) {
+						if ((base_member.Kind & MemberKind.NestedMask) == 0 && !IsInterface && (base_member.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) != 0) {
 							Report.Warning (114, 2, Location, "`{0}' hides inherited member `{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword",
 								GetSignatureForError (), base_member.GetSignatureForError ());
 						} else {
@@ -3434,9 +3438,16 @@ namespace Mono.CSharp
 				}
 
 				if (!IsInterface && base_member.IsAbstract && !overrides && !IsStatic) {
-					Report.SymbolRelatedToPreviousError (base_member);
-					Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
-						GetSignatureForError (), base_member.GetSignatureForError ());
+					switch (base_member.Kind) {
+					case MemberKind.Event:
+					case MemberKind.Indexer:
+					case MemberKind.Method:
+					case MemberKind.Property:
+						Report.SymbolRelatedToPreviousError (base_member);
+						Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
+							GetSignatureForError (), base_member.GetSignatureForError ());
+						break;
+					}
 				}
 			}
 

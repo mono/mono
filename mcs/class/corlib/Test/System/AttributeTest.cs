@@ -1069,6 +1069,12 @@ namespace MonoTests.System
 			{
 			}
 		}
+
+		class Multiple {
+			public void Bar ([Foo] [Bar] string multiple, [Bar] string bar)
+			{
+			}
+		}
 	}
 
 	[TestFixture]
@@ -1159,6 +1165,24 @@ namespace MonoTests.System
 			var attributes = (ParamNamespace.DataAttribute []) Attribute.GetCustomAttributes (parameter, typeof (ParamNamespace.DataAttribute), true);
 			Assert.AreEqual (1, attributes.Length);
 			Assert.AreEqual ("Derived.baz", attributes [0].Data);
+		}
+
+		[Test]
+		public void MultipleParameterAttributes ()
+		{
+			var parameter = GetParameter (typeof(ParamNamespace.Multiple), "Bar", "multiple");
+			var foo = parameter.GetCustomAttribute<ParamNamespace.FooAttribute> ();
+			Assert.AreEqual (typeof(ParamNamespace.FooAttribute), foo.GetType ());
+			var bar = parameter.GetCustomAttribute<ParamNamespace.BarAttribute> ();
+			Assert.AreEqual (typeof(ParamNamespace.BarAttribute), bar.GetType ());
+		}
+
+		[Test]
+		public void MultipleParameterAttributes2 ()
+		{
+			var parameter = GetParameter (typeof(ParamNamespace.Multiple), "Bar", "bar");
+			var foo = parameter.GetCustomAttribute<ParamNamespace.FooAttribute> ();
+			Assert.IsNull (foo);
 		}
 
 		[AttributeUsage(AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]

@@ -409,6 +409,7 @@ namespace Mono.CSharp
 			public int parsing_generic_less_than;
 			public int current_token;
 			public object val;
+			public int parsing_string_interpolation;
 
 			public Position (Tokenizer t)
 			{
@@ -427,6 +428,7 @@ namespace Mono.CSharp
 					ifstack = new Stack<int> (clone);
 				}
 				parsing_generic_less_than = t.parsing_generic_less_than;
+				parsing_string_interpolation = t.parsing_string_interpolation;
 				current_token = t.current_token;
 				val = t.val;
 			}
@@ -471,6 +473,7 @@ namespace Mono.CSharp
 			previous_col = p.previous_col;
 			ifstack = p.ifstack;
 			parsing_generic_less_than = p.parsing_generic_less_than;
+			parsing_string_interpolation = p.parsing_string_interpolation;
 			current_token = p.current_token;
 			val = p.val;
 		}
@@ -1296,6 +1299,7 @@ namespace Mono.CSharp
 			case Token.NULL:
 			case Token.THIS:
 			case Token.NEW:
+			case Token.INTERPOLATED_STRING:
 				next_token = Token.INTERR;
 				break;
 				
@@ -3927,6 +3931,9 @@ namespace Mono.CSharp
 						if (pos == value_builder.Length)
 							Array.Resize (ref value_builder, pos * 2);
 
+						if (pos == value_builder.Length)
+							Array.Resize (ref value_builder, pos * 2);
+
 						value_builder [pos++] = (char)ch;
 						ch = surrogate;
 					}
@@ -3937,6 +3944,9 @@ namespace Mono.CSharp
 				}
 
 				++col;
+				if (pos == value_builder.Length)
+					Array.Resize (ref value_builder, pos * 2);
+
 				value_builder[pos++] = (char) ch;
 			}
 		}

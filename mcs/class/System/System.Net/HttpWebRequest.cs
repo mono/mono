@@ -1095,7 +1095,7 @@ namespace System.Net
 				break;
 			}
 
-			if (method != "GET" && !InternalAllowBuffering && writeStream.WriteBufferLength > 0)
+			if (method != "GET" && !InternalAllowBuffering && (writeStream.WriteBufferLength > 0 || contentLength > 0))
 				e = new WebException ("The request requires buffering data to succeed.", null, WebExceptionStatus.ProtocolError, webResponse);
 
 			if (e != null)

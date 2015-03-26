@@ -411,9 +411,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				ts.WriteLine ();
 			}
 			ts.Close ();
+
+			string assembler = GetEnv ("AS", IsUnix ? "as" : "i686-pc-mingw32-as");
 			
 			Console.WriteLine ("Compiling:");
-			string cmd = String.Format ("{0} -o {1} {2} ", GetEnv ("AS", "as"), temp_o, temp_s);
+			string cmd = String.Format ("{0} -o {1} {2} ", assembler, temp_o, temp_s);
 			int ret = Execute (cmd);
 			if (ret != 0){
 				Error ("[Fail]");

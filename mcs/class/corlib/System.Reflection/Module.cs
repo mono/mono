@@ -221,9 +221,9 @@ namespace System.Reflection {
 		private static bool filter_by_type_name_ignore_case (Type m, object filterCriteria) {
 			string s = (string)filterCriteria;
 			if (s.Length > 0 && s [s.Length - 1] == '*')
-				return m.Name.StartsWithOrdinalCaseInsensitiveUnchecked (s.Substring (0, s.Length - 1));
+				return m.Name.StartsWith (s.Substring (0, s.Length - 1), StringComparison.OrdinalIgnoreCase);
 			
-			return string.CompareOrdinalCaseInsensitiveUnchecked (m.Name, s) == 0;
+			return string.Compare (m.Name, s, StringComparison.OrdinalIgnoreCase) == 0;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

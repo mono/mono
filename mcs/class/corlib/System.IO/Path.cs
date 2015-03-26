@@ -396,7 +396,7 @@ namespace System.IO {
 					if (current [1] == VolumeSeparatorChar)
 						path = current.Substring (0, 2) + path;
 					else
-						path = current.Substring (0, current.IndexOf ('\\', current.IndexOfOrdinalUnchecked ("\\\\") + 1));
+						path = current.Substring (0, current.IndexOf ('\\', current.IndexOfUnchecked ("\\\\", 0, current.Length) + 1));
 				}
 			}
 			
