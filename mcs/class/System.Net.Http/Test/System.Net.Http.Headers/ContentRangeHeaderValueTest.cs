@@ -84,11 +84,11 @@ namespace MonoTests.System.Net.Http.Headers
 		[Test]
 		public void Parse ()
 		{
-			var res = ContentRangeHeaderValue.Parse ("bytes  0 - 499/ 1234");
+			var res = ContentRangeHeaderValue.Parse ("bytes  0 - 499/ 9223372036854775807");
 			Assert.AreEqual (0, res.From, "#1");
 			Assert.AreEqual (499, res.To, "#2");
-			Assert.AreEqual (1234, res.Length, "#3");
-			Assert.AreEqual ("bytes 0-499/1234", res.ToString (), "#4");
+			Assert.AreEqual (9223372036854775807, res.Length, "#3");
+			Assert.AreEqual ("bytes 0-499/9223372036854775807", res.ToString (), "#4");
 
 			res = ContentRangeHeaderValue.Parse ("bytes  */ 8");
 			Assert.IsNull (res.From, "#11");
