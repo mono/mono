@@ -123,8 +123,8 @@ namespace System.Net.Http.Headers
 
 			bool token_read;
 			do {
-				int? from = null, to = null;
-				int number;
+				long? from = null, to = null;
+				long number;
 				token_read = false;
 
 				t = lexer.Scan (recognizeDash: true);
@@ -139,7 +139,7 @@ namespace System.Net.Http.Headers
 				case Token.Type.Token:
 					string s = lexer.GetStringValue (t);
 					var values = s.Split (new [] { '-' }, StringSplitOptions.RemoveEmptyEntries);
-					if (!int.TryParse (values[0], out number))
+					if (!Parser.Long.TryParse (values[0], out number))
 						return false;
 
 					switch (values.Length) {
@@ -178,7 +178,7 @@ namespace System.Net.Http.Headers
 					case 2:
 						from = number;
 
-						if (!int.TryParse (values[1], out number))
+						if (!Parser.Long.TryParse (values[1], out number))
 							return false;
 
 						to = number;

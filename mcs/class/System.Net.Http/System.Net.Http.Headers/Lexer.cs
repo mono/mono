@@ -153,6 +153,11 @@ namespace System.Net.Http.Headers
 			return int.TryParse (GetStringValue (token), NumberStyles.None, CultureInfo.InvariantCulture, out value);
 		}
 
+		public bool TryGetNumericValue (Token token, out long value)
+		{
+			return long.TryParse (GetStringValue (token), NumberStyles.None, CultureInfo.InvariantCulture, out value);
+		}
+
 		public TimeSpan? TryGetTimeSpanValue (Token token)
 		{
 			int seconds;
