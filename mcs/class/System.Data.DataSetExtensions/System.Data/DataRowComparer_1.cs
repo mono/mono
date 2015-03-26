@@ -72,7 +72,7 @@ namespace System.Data
 			if (leftCol == null || rightCol == null)
 				return false;
 
-			ValueType vt = leftCol as ValueType;
+			var vt = leftCol as System.ValueType;
 			if (vt != null && vt.Equals (rightCol))
 				return true;
 
