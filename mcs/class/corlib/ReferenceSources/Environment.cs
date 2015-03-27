@@ -18,5 +18,15 @@ namespace System
 		{
 			return string.Format (CultureInfo.InvariantCulture, key, values);
 		}
+
+		internal static String GetRuntimeResourceString (string key)
+		{
+			return key;
+		}
+
+		internal static String GetRuntimeResourceString (string key, params object[] values)
+		{
+			return string.Format (CultureInfo.InvariantCulture, key, values);
+		}
 	}
 }

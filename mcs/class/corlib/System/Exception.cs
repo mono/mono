@@ -124,7 +124,7 @@ namespace System
 			get { return hresult; }
 			protected set { hresult = value; }
 		}
-        
+		
 		internal void SetErrorCode(int hr)
 		{
 			HResult = hr;
@@ -426,6 +426,26 @@ namespace System
 		public new Type GetType ()
 		{
 			return base.GetType ();
+		}
+
+		internal enum ExceptionMessageKind
+		{
+			ThreadAbort = 1,
+			ThreadInterrupted = 2,
+			OutOfMemory = 3
+		}
+
+		internal static String GetMessageFromNativeResources (ExceptionMessageKind kind)
+		{
+			switch (kind) {
+			case ExceptionMessageKind.ThreadAbort:
+				return "";
+			case ExceptionMessageKind.ThreadInterrupted:
+				return "";
+			case ExceptionMessageKind.OutOfMemory:
+				return "Out of memory";
+			}
+			return "";
 		}
 	}
 }
