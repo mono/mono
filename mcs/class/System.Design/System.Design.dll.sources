@@ -102,7 +102,6 @@ System.ComponentModel.Design.Serialization/StatementContext.cs
 System.ComponentModel.Design.Serialization/TypeCodeDomSerializer.cs
 System.Data.Design/MethodSignatureGenerator.cs
 System.Data.Design/ParameterGenerationOption.cs
-System.Data.Design/TableAdapterSchemaInfo.cs
 System.Data.Design/TypedDataSetGenerator.cs
 System.Data.Design/TypedDataSetGeneratorException.cs
 System.Data.Design/TypedDataSetSchemaImporterExtension.cs
