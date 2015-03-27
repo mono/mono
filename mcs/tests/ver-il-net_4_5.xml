@@ -51349,6 +51349,19 @@
       </method>
     </type>
   </test>
+  <test name="test-921.cs">
+    <type name="A">
+      <method name="Void Foo(Reference.IA)" attrs="129">
+        <size>9</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-93.cs">
     <type name="N1.C">
       <method name="Void .ctor()" attrs="6278">
