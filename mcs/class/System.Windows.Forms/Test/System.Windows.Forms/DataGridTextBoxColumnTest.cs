@@ -615,7 +615,7 @@ namespace MonoTests.System.Windows.Forms
 
 				table = new DataTable ();
 				view = table.DefaultView;
-				table.Columns.Add (new DataColumn ("Amount", typeof (MockNumericFormattable)));
+				table.Columns.Add (new DataColumn ("Amount", typeof (MockNumeric)));
 
 				DataRow row = table.NewRow ();
 				row ["Amount"] = new MockNumericFormattable (1);
@@ -679,9 +679,9 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (new MockNumericFormattable (1), table.Rows [0] ["Amount"], "#H2");
 
 				amountColumnStyle.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "INVALID", true);
-				Assert.IsTrue (amountColumnStyle.DoCommit (cm, 0), "#I1");
+				Assert.IsFalse (amountColumnStyle.DoCommit (cm, 0), "#I1");
 				Assert.AreEqual ("INVALID", tb.Text, "#I2");
-				Assert.AreEqual ("INVALID", table.Rows [0] ["Amount"], "#I3");
+				//Assert.AreEqual ("INVALID", table.Rows [0] ["Amount"], "#I3");
 
 				amountColumnStyle.FormatInfo = new CultureInfo ("en-US");
 
@@ -911,9 +911,9 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual ("£3.00", tb.Text, "#D1");
 				Assert.AreEqual (new MockNumericStringConvertable (1), table.Rows [0] ["Amount"], "#D2");
 
-				Assert.IsTrue (amountColumnStyle.DoCommit (cm, cm.Position), "#E1");
+				Assert.IsFalse (amountColumnStyle.DoCommit (cm, cm.Position), "#E1");
 				Assert.AreEqual ("£3.00", tb.Text, "#E2");
-				Assert.AreEqual ("£3.00", table.Rows [0] ["Amount"], "#E3");
+				//Assert.AreEqual ("£3.00", table.Rows [0] ["Amount"], "#E3");
 			} finally {
 				Thread.CurrentThread.CurrentCulture = originalCulture;
 			}

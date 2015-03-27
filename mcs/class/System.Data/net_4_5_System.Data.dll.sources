@@ -11,8 +11,6 @@ ReferenceSources/ResDescriptionAttribute.cs
 ReferenceSources/ThisAssembly.cs
 ReferenceSources/Win32NativeMethods.cs
 
-ReferenceSources/mobile_DbConnectionPoolCounters.cs
-
 System.Data.Sql/SqlDataSourceEnumerator.cs
 System.Data.Sql/SqlNotificationRequest.cs
 Microsoft.SqlServer.Server/Format.cs
@@ -81,6 +79,4 @@ System.Data.Common/DbTypes.cs
 System.Data.Common/ExceptionHelper.cs
 System.Data.Common/DbConnectionStringBuilderHelper.cs
 
-#include mobile_referencesource.sources
-
-
+#include referencesource.sources

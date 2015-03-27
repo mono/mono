@@ -47,6 +47,15 @@ namespace System.Data.SqlClient
 	[Serializable]
 	public sealed class SqlException : DbException
 	{
+#region ReferenceSource
+        internal SqlException InternalClone() {
+		var ret = new SqlException ();
+		foreach (SqlError e in errors)
+			ret.errors.Add (e);
+		return ret;
+        }
+#endregion
+
 		#region Fields
 
 		private readonly SqlErrorCollection errors;

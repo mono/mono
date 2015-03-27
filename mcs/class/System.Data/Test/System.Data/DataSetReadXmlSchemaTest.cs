@@ -567,9 +567,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		// MS.NET has a bug on handling default value of referenced
-		// attribute.
+		[Ignore (".NET has a bug on handling default value of referenced attribute.")]
 		public void TestSampleFileValueConstraints ()
 		{
 			DataSet ds = new DataSet ();

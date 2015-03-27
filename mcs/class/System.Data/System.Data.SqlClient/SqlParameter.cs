@@ -54,6 +54,21 @@ namespace System.Data.SqlClient {
 	[TypeConverterAttribute ("System.Data.SqlClient.SqlParameter+SqlParameterConverter, " + Consts.AssemblySystem_Data)]
 	public sealed class SqlParameter : DbParameter, IDbDataParameter, IDataParameter, ICloneable
 	{
+#region Import from old DbParameter
+		static Hashtable dbTypeMapping = new Hashtable ();
+                internal static Hashtable DbTypeMapping {
+                        get { return dbTypeMapping;}
+                        set { dbTypeMapping = value;}
+                }
+
+                // LAMESPEC: Implementors should populate the dbTypeMapping accordingly
+                internal Type SystemType {
+                        get {
+                                return (Type) dbTypeMapping [DbType];
+                        }
+                }
+#endregion
+
 		#region Fields
 
 		TdsMetaParameter metaParameter;
@@ -483,6 +498,7 @@ namespace System.Data.SqlClient {
 			SetSqlDbType ((SqlDbType) t);
 		}
 
+/*
 		// Returns System.Type corresponding to the underlying SqlDbType
 		internal override Type SystemType {
 			get {
@@ -506,6 +522,7 @@ namespace System.Data.SqlClient {
 				}
 			}
 		}
+*/
 
 		DbType DbTypeFromName (string name)
 		{

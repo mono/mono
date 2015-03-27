@@ -128,9 +128,20 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[ExpectedException (typeof (DataException))]
+		public void TestSortWithoutTable ()
+		{
+			DataView dv = new DataView ();
+			dv.Table = new DataTable ();
+			dv.Sort = "abc";
+		}
+
+		[Test]
 		public void TestSort ()
 		{
 			DataView dv = new DataView ();
+			dv.Table = new DataTable ("dummy");
+			dv.Table.Columns.Add ("abc");
 			dv.Sort = "abc";
 			dv.Sort = string.Empty;
 			dv.Sort = "abc";
@@ -431,10 +442,11 @@ namespace MonoTests.System.Data
 			AssertNull ("#1", dv.Table);
 			dv.EndInit ();
 
-			AssertEquals ("#2", table, dv.Table);
+			AssertNull ("#2", dv.Table); // still.
 			AssertEquals ("#3", 0, table.Columns.Count);
 
 			table.EndInit ();
+			AssertEquals ("#5", table, dv.Table);
 			AssertEquals ("#4", 2, table.Columns.Count);
 		}
 
@@ -462,15 +474,17 @@ namespace MonoTests.System.Data
 			dv.Table = table;
 			AssertNull ("#1", dv.Table);
 			dv.EndInit ();
-
-			dv.Initialized -= new EventHandler (OnDataViewInitialized);
 			
-			AssertEquals ("#2", table, dv.Table);
+			AssertNull ("#2", dv.Table);
 			AssertEquals ("#3", 0, table.Columns.Count);
 
 			table.EndInit ();
+
+			dv.Initialized -= new EventHandler (OnDataViewInitialized); // this should not be unregistered before table.EndInit().
+			
 			AssertEquals ("#4", 2, table.Columns.Count);
-			AssertEquals("DataViewInitialized #5", dvInitialized, true);
+			AssertEquals ("#6", table, dv.Table);
+			AssertEquals ("DataViewInitialized #5", true, dvInitialized);
 		}
 
 		[Test]
@@ -649,12 +663,12 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (DataException))]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
 		public void TestDeleteClosed ()
 		{
 			DataView TestView = new DataView (dataTable);
 			TestView.Dispose (); // Close the table
-			TestView.Delete (0);
+			TestView.Delete (0); // cannot access to item at 0.
 		}
 
 		[Test] // based on bug #74631
@@ -706,7 +720,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void CancelEditAndEvents ()
 		{
-			string reference = " =====ItemAdded:3 ------4 =====ItemAdded:4 ------5 =====ItemAdded:5 ------6 =====ItemDeleted:5 ------5 =====ItemAdded:5";
+			string reference = " =====ItemAdded:3 ------4 =====ItemAdded:3 =====ItemAdded:4 ------5 =====ItemAdded:4 =====ItemAdded:5 ------6 =====ItemDeleted:5 ------5 =====ItemAdded:5";
 
 			eventWriter = new StringWriter ();
 
@@ -740,7 +754,6 @@ namespace MonoTests.System.Data
 		{
 			string result = @"setting table...
 ---- OnListChanged PropertyDescriptorChanged,0,0
------ UpdateIndex : True
 ---- OnListChanged Reset,-1,-1
 table was set.
 ---- OnListChanged PropertyDescriptorChanged,0,0
@@ -937,7 +950,6 @@ table changed.
 		{
 			string result = @"setting table...
 ---- OnListChanged PropertyDescriptorChanged,0,0
------ UpdateIndex : True
 ---- OnListChanged Reset,-1,-1
 table was set.
 ---- OnListChanged PropertyDescriptorAdded,0,0

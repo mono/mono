@@ -2578,7 +2578,7 @@ namespace MonoTests.System.Data
 				drChild.GetParentRows(drl,DataRowVersion.Current); 
 				Assert.Fail("DRW129: failed to throw ArgumentException");
 			}
-			catch (ArgumentException) {}
+			catch (InvalidConstraintException) {}
 			catch (AssertionException exc) {throw  exc;}
 			catch (Exception exc)
 			{

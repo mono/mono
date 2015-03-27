@@ -2990,9 +2990,9 @@ namespace MonoTests.System.Data
 			DataTable dt2 = DataProvider.CreateChildDataTable();
 			dt1.PrimaryKey  = new DataColumn[] {dt1.Columns[0]};
 			dt2.PrimaryKey  = new DataColumn[] {dt2.Columns[0],dt2.Columns[1]};
-			DataRelation rel = new DataRelation("Rel",dt1.Columns["ParentId"],dt2.Columns["ParentId"]);
 			DataSet ds = new DataSet();
 			ds.Tables.AddRange(new DataTable[] {dt1,dt2});
+			DataRelation rel = new DataRelation("Rel",dt1.Columns["ParentId"],dt2.Columns["ParentId"]);
 			ds.Relations.Add(rel);
 
 			ds.Reset();

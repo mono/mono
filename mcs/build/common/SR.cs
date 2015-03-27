@@ -7,6 +7,7 @@ static class AssemblyRef
 	internal const string System = "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 
 	public const string EcmaPublicKey = "b77a5c561934e089";
+	public const string EcmaPublicKeyFull = "00000000000000000400000000000000";
 	public const string MicrosoftPublicKey = "b03f5f7f11d50a3a";
  
  	public const string MicrosoftJScript = Consts.AssemblyMicrosoft_JScript;
