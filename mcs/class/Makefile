@@ -90,6 +90,7 @@ net_4_5_dirs := \
 	System.Transactions		\
 	System.EnterpriseServices	\
 	Mono.Data.Tds			\
+	System.Numerics		\
 	System.Data			\
 	System.ComponentModel.DataAnnotations	\
 	Accessibility			\
@@ -194,7 +195,6 @@ net_4_5_parallel_dirs := \
 	System.IO.Compression.FileSystem \
 	System.Windows \
 	System.Xml.Serialization \
-	System.Numerics		\
 	Novell.Directory.Ldap		\
 	System.DirectoryServices	\
 	System.DirectoryServices.Protocols	\
