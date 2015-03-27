@@ -26,6 +26,8 @@ mobile_common_dirs := \
 	Mono.Security	\
 	System	\
 	I18N		\
+	System.ServiceModel.Internals	\
+	SMDiagnostics	\
 	System.Runtime.Serialization	\
 	System.Xml.Linq	\
 	System.ServiceModel	\
