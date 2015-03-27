@@ -22,7 +22,7 @@ namespace System.Net {
     using Microsoft.Win32;
     
     // This turned to be a legacy type name that is simply forwarded to System.Security.Authentication.SslProtocols defined values.
-#if !FEATURE_PAL
+#if !MONO && !FEATURE_PAL
     [Flags]
     public enum SecurityProtocolType
     {
@@ -121,7 +121,7 @@ namespace System.Net {
             internal bool result;
         }
     }
-
+#elif MONO || !FEATURE_PAL
     internal class ServerCertValidationCallback
     {
         readonly RemoteCertificateValidationCallback m_ValidationCallback;
@@ -190,6 +190,7 @@ namespace System.Net {
     }
 #endif // !FEATURE_PAL
 
+#if MONO_FEATURE_WEB_STACK
     //
     // The ServicePointManager class hands out ServicePoints (may exist or be created
     // as needed) and makes sure they are garbage collected when they expire.
@@ -1073,4 +1074,5 @@ namespace System.Net {
             GlobalLog.Leave("ServicePointManager::SetTcpKeepAlive()");
         }
     }
+#endif
 }
