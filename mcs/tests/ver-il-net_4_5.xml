@@ -55480,6 +55480,25 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-176.cs">
+    <type name="TestDelegateFinallyOut.Test">
+      <method name="Void CallDelegate(System.Action)" attrs="145">
+        <size>12</size>
+      </method>
+      <method name="Boolean TestMethod(Int32 ByRef)" attrs="145">
+        <size>75</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>32</size>
+      </method>
+      <method name="Void &lt;TestMethod&gt;m__0()" attrs="145">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-anon-18.cs">
     <type name="A">
       <method name="Void Invoke()" attrs="454">
