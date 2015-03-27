@@ -1613,14 +1613,17 @@ namespace Mono.CSharp {
 			fc.ParametersBlock = Block;
 			var da_ontrue = fc.DefiniteAssignmentOnTrue;
 			var da_onfalse = fc.DefiniteAssignmentOnFalse;
+			var prev_tf = fc.TryFinally;
 
 			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
+			fc.TryFinally = null;
 			block.FlowAnalysis (fc);
 
 			fc.ParametersBlock = prev_pb;
 			fc.DefiniteAssignment = das;
 			fc.DefiniteAssignmentOnTrue = da_ontrue;
 			fc.DefiniteAssignmentOnFalse = da_onfalse;
+			fc.TryFinally = prev_tf;
 		}
 
 		public override void MarkReachable (Reachability rc)
