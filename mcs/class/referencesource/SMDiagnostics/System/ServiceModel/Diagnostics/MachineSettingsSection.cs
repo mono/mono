@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------------------------
 
+#if !NO_CONFIGURATION
 namespace System.ServiceModel.Configuration
 {
     using System.Configuration;
@@ -51,5 +52,7 @@ namespace System.ServiceModel.Configuration
         }
     }
 }
+#endif
+
 
 

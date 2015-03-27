@@ -4,11 +4,15 @@
 
 namespace System.ServiceModel.Diagnostics
 {
+#if !NO_CONFIGURATION
     using System.Configuration;
+#endif
     using System.Diagnostics;
     using System.Runtime;
     using System.Runtime.Diagnostics;
+#if !NO_CONFIGURATION
     using System.ServiceModel.Configuration;
+#endif
 
     class PiiTraceSource : TraceSource
     {
@@ -59,7 +63,11 @@ namespace System.ServiceModel.Diagnostics
 #pragma warning disable 618
                             System.Runtime.Diagnostics.EventLogger logger = new System.Runtime.Diagnostics.EventLogger(this.eventSourceName, null);
 #pragma warning restore 618
+#if !NO_CONFIGURATION
                             if (MachineSettingsSection.EnableLoggingKnownPii)
+#else
+                            if (false)
+#endif
                             {
                                 logger.LogEvent(TraceEventType.Information,
                                     (ushort)System.Runtime.Diagnostics.EventLogCategory.MessageLogging,

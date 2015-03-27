@@ -66,10 +66,12 @@ namespace System.ServiceModel.Diagnostics
                 this.CreateTraceSource();
                 this.AddDomainEventHandlersForCleanup();
             }
+#if !NO_CONFIGURATION
             catch (ConfigurationErrorsException)
             {
                 throw;
             }
+#endif
             catch (Exception e)
             {
                 if (Fx.IsFatal(e))
