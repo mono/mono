@@ -2355,6 +2355,10 @@ mono_method_get_index (MonoMethod *method) {
 	MonoClass *klass = method->klass;
 	int i;
 
+	if (klass->rank)
+		/* constructed array methods are not in the MethodDef table */
+		return 0;
+
 	if (method->token)
 		return mono_metadata_token_index (method->token);
 

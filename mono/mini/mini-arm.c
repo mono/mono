@@ -5262,7 +5262,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 			ARM_CMP_REG_REG (code, ARMREG_R0, ARMREG_R1);
 
 			item->jmp_code = (guint8*)code;
-			ARM_B_COND (code, ARMCOND_GE, 0);
+			ARM_B_COND (code, ARMCOND_HS, 0);
 			++extra_space;
 		}
 	}
