@@ -64,28 +64,9 @@ namespace Microsoft.Build.BuildEngine {
 		public bool BuildProjectFile (string projectFileName,
 				       string[] targetNames,
 				       IDictionary globalProperties,
-				       IDictionary targetOutputs,
-				       bool runEachTargetSeparately)
-		{
-			return BuildProjectFile (projectFileName, targetNames, globalProperties, targetOutputs, null, runEachTargetSeparately);
-		}
-
-		public bool BuildProjectFile (string projectFileName,
-				       string[] targetNames,
-				       IDictionary globalProperties,
 				       IDictionary targetOutputs, string toolsVersion)
 		{
-			return BuildProjectFile (projectFileName, targetNames, globalProperties, targetOutputs, null, false);
-		}
-
-		public bool BuildProjectFile (string projectFileName,
-				       string[] targetNames,
-				       IDictionary globalProperties,
-				       IDictionary targetOutputs,
-				       string toolsVersion,
-				       bool runEachTargetSeparately)
-		{
-			if (String.IsNullOrEmpty (projectFileName) || runEachTargetSeparately) {
+			if (String.IsNullOrEmpty (projectFileName)) {
 				string oldProjectToolsVersion = project.ToolsVersion;
 				project.ToolsVersion = toolsVersion;
 				try {
