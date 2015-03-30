@@ -49,11 +49,11 @@ using System.Runtime.InteropServices;
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
 #endif
 [assembly: InternalsVisibleTo ("SMDiagnostics, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
-[assembly: InternalsVisibleTo ("System.Runtime.Serialization, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
-[assembly: InternalsVisibleTo ("System.IdentityModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
-[assembly: InternalsVisibleTo ("System.IdentityModel.Selectors, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
-[assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
-[assembly: InternalsVisibleTo ("System.ServiceModel.Web, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
+[assembly: InternalsVisibleTo ("System.Runtime.Serialization, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.IdentityModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.IdentityModel.Selectors, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel.Web, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 
 [assembly: ComVisible (false)]
 
