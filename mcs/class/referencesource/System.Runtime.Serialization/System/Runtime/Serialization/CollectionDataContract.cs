@@ -12,7 +12,9 @@ namespace System.Runtime.Serialization
     using System.Reflection;
     using System.Threading;
     using System.Xml;
+#if !NO_CONFIGURATION
     using System.Runtime.Serialization.Configuration;
+#endif
     using DataContractDictionary = System.Collections.Generic.Dictionary<System.Xml.XmlQualifiedName, DataContract>;
     using System.Security;
     using System.Security.Permissions;
@@ -473,7 +475,9 @@ namespace System.Runtime.Serialization
         }
 
         [Fx.Tag.SecurityNote(Critical = "Holds all state used for (de)serializing collections. Since the data is cached statically, we lock down access to it.")]
+#if !NO_SECURITY_ATTRIBUTES
         [SecurityCritical(SecurityCriticalScope.Everything)]
+#endif
         class CollectionDataContractCriticalHelper : DataContract.DataContractCriticalHelper
         {
             static Type[] _knownInterfaces;

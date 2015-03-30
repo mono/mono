@@ -39,6 +39,7 @@ namespace System.Runtime.Serialization
                     if (!settingsInitalized)
                     {
                         NameValueCollection appSettingsSection = null;
+#if !NO_CONFIGURATION
                         try
                         {
                             appSettingsSection = ConfigurationManager.AppSettings;
@@ -48,13 +49,16 @@ namespace System.Runtime.Serialization
                         }
                         finally
                         {
+#endif
                             if ((appSettingsSection == null) || !int.TryParse(appSettingsSection[MaxMimePartsAppSettingsString], out maxMimeParts))
                             {
                                 maxMimeParts = DefaultMaxMimeParts;
                             }
 
                             settingsInitalized = true;
+#if !NO_CONFIGURATION
                         }
+#endif
                     }
                 }
             }

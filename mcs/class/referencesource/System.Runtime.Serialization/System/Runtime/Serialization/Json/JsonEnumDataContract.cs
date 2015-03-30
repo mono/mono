@@ -64,9 +64,11 @@ namespace System.Runtime.Serialization.Json
 
         [Fx.Tag.SecurityNote(Critical = "Holds all state used for (de)serializing types."
             + "Since the data is cached statically, we lock down access to it.")]
+#if !NO_SECURITY_ATTRIBUTES
 #pragma warning disable 618 // have not moved to the v4 security model yet
         [SecurityCritical(SecurityCriticalScope.Everything)]
 #pragma warning restore 618
+#endif
         class JsonEnumDataContractCriticalHelper : JsonDataContractCriticalHelper
         {
             bool isULong;

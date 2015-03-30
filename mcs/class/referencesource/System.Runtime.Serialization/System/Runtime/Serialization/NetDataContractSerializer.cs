@@ -13,7 +13,9 @@ namespace System.Runtime.Serialization
     using System.Runtime.CompilerServices;
     using System.Runtime.Serialization.Formatters;
     using System.Collections.Generic;
+#if !NO_CONFIGURATION
     using System.Runtime.Serialization.Configuration;
+#endif
     using System.Reflection;
 
     public sealed class NetDataContractSerializer : XmlObjectSerializer, IFormatter
@@ -115,6 +117,9 @@ namespace System.Runtime.Serialization
             {
                 if (unsafeTypeForwardingEnabled == null)
                 {
+#if NO_CONFIGURATION
+                    unsafeTypeForwardingEnabled = false;
+#else
                     NetDataContractSerializerSection section;
                     if (NetDataContractSerializerSection.TryUnsafeGetSection(out section))
                     {
@@ -124,6 +129,7 @@ namespace System.Runtime.Serialization
                     {
                         unsafeTypeForwardingEnabled = false;
                     }
+#endif
                 }
                 Fx.Assert(unsafeTypeForwardingEnabled != null, "unsafeTypeForwardingEnabled should not be null.");
                 return unsafeTypeForwardingEnabled.Value;

@@ -45,7 +45,9 @@ namespace System.Runtime.Serialization
 
         [Fx.Tag.SecurityNote(Critical = "Holds all state used for for (de)serializing known types like System.Enum, System.ValueType, etc."
             + " Since the data is cached statically, we lock down access to it.")]
+#if !NO_SECURITY_ATTRIBUTES
         [SecurityCritical(SecurityCriticalScope.Everything)]
+#endif
         class SpecialTypeDataContractCriticalHelper : DataContract.DataContractCriticalHelper
         {
             internal SpecialTypeDataContractCriticalHelper(Type type)

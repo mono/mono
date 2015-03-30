@@ -416,6 +416,7 @@ namespace System.Runtime.Serialization
         {
             if (sourceAssembly != destinationAssembly && !NetDataContractSerializer.UnsafeTypeForwardingEnabled && !sourceAssembly.IsFullyTrusted)
             {
+#if !NO_DESKTOP_SECURITY
                 // We have a TypeForwardedTo attribute
                 if (!destinationAssembly.PermissionSet.IsSubsetOf(sourceAssembly.PermissionSet))
                 {
@@ -438,6 +439,7 @@ namespace System.Runtime.Serialization
                     }
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(XmlObjectSerializer.CreateSerializationException(SR.GetString(SR.CannotDeserializeForwardedType, DataContract.GetClrTypeFullName(resolvedType))));
                 }
+#endif
             }
         }
 

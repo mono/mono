@@ -339,6 +339,7 @@ namespace System.Runtime.Serialization
             ProcessedContracts.Add(dataContract, dataContract);
         }
 
+#if !NO_CODEDOM
         internal ContractCodeDomInfo GetContractCodeDomInfo(DataContract dataContract)
         {
             object info;
@@ -351,6 +352,7 @@ namespace System.Runtime.Serialization
         {
             ProcessedContracts.Add(dataContract, info);
         }
+#endif
         Dictionary<XmlQualifiedName, object> GetReferencedTypes()
         {
             if (referencedTypesDictionary == null)

@@ -41,7 +41,9 @@ namespace System.Runtime.Serialization
 
         [Fx.Tag.SecurityNote(Critical = "Holds state used for deaing with generic parameters."
             + " Since the data is cached statically, we lock down access to it.")]
+#if !NO_SECURITY_ATTRIBUTES
         [SecurityCritical(SecurityCriticalScope.Everything)]
+#endif
         class GenericParameterDataContractCriticalHelper : DataContract.DataContractCriticalHelper
         {
             int parameterPosition;

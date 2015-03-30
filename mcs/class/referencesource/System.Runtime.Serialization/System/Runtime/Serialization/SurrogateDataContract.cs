@@ -101,7 +101,9 @@ namespace System.Runtime.Serialization
 
         [Fx.Tag.SecurityNote(Critical = "Holds all state used for for (de)serializing with ISerializationSurrogate."
             + " Since it accesses data on the base type that is cached statically, we lock down access to it.")]
+#if !NO_SECURITY_ATTRIBUTES
         [SecurityCritical(SecurityCriticalScope.Everything)]
+#endif
         class SurrogateDataContractCriticalHelper : DataContract.DataContractCriticalHelper
         {
             ISerializationSurrogate serializationSurrogate;

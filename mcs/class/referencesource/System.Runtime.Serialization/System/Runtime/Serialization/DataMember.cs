@@ -132,7 +132,9 @@ namespace System.Runtime.Serialization
         }
 
         [Fx.Tag.SecurityNote(Critical = "Critical.")]
+#if !NO_SECURITY_ATTRIBUTES
         [SecurityCritical(SecurityCriticalScope.Everything)]
+#endif
         class CriticalHelper
         {
             DataContract memberTypeContract;

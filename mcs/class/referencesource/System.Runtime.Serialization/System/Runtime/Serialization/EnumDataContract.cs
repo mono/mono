@@ -130,7 +130,9 @@ namespace System.Runtime.Serialization
 
         [Fx.Tag.SecurityNote(Critical = "Holds all state used for (de)serializing enums."
             + " Since the data is cached statically, we lock down access to it.")]
+#if !NO_SECURITY_ATTRIBUTES
         [SecurityCritical(SecurityCriticalScope.Everything)]
+#endif
         class EnumDataContractCriticalHelper : DataContract.DataContractCriticalHelper
         {
             static Dictionary<Type, XmlQualifiedName> typeToName;

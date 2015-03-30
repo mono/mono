@@ -11,7 +11,9 @@ namespace System.Runtime.Serialization
     using System.Globalization;
     using System.Reflection;
     using System.Runtime.CompilerServices;
+#if !NO_CONFIGURATION
     using System.Runtime.Serialization.Configuration;
+#endif
     using System.Runtime.Serialization.Diagnostics.Application;
     using System.Security;
     using System.Text;
@@ -388,7 +390,9 @@ namespace System.Runtime.Serialization
 
         [Fx.Tag.SecurityNote(Critical = "Holds all state used for (de)serializing types."
             + " Since the data is cached statically, we lock down access to it.")]
+#if !NO_SECURITY_ATTRIBUTES
         [SecurityCritical(SecurityCriticalScope.Everything)]
+#endif
 #if USE_REFEMIT
         public class DataContractCriticalHelper
 #else
@@ -1980,6 +1984,7 @@ namespace System.Runtime.Serialization
             ThrowInvalidDataContractException(SR.GetString(SR.TypeNotSerializable, type), type);
         }
 
+#if !NO_CONFIGURATION
         [Fx.Tag.SecurityNote(Critical = "configSection value is fetched under an elevation; need to protected access to it.")]
         [SecurityCritical]
         static DataContractSerializerSection configSection;
@@ -1995,6 +2000,7 @@ namespace System.Runtime.Serialization
                 return configSection;
             }
         }
+#endif
 
         internal static DataContractDictionary ImportKnownTypeAttributes(Type type)
         {
@@ -2095,6 +2101,7 @@ namespace System.Runtime.Serialization
         [SecuritySafeCritical]
         static void LoadKnownTypesFromConfig(Type type, Dictionary<Type, Type> typesChecked, ref DataContractDictionary knownDataContracts)
         {
+#if !NO_CONFIGURATION
             // Pull known types from config
             if (ConfigSection != null)
             {
@@ -2138,6 +2145,7 @@ namespace System.Runtime.Serialization
                     }
                 }
             }
+#endif
         }
 
         private static void CheckRootTypeInConfigIsGeneric(Type type, ref Type rootType, ref Type[] genArgs)
