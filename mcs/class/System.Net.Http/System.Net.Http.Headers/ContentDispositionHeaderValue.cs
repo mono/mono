@@ -79,17 +79,10 @@ namespace System.Net.Http.Headers
 
 		public string FileName {
 			get {
-				var value = FindParameter ("filename");
-				if (value == null)
-					return null;
-
-				return DecodeValue (value, false);
+				return GetQuotedStringValue (value, false);
 			}
 			set {
-				if (value != null)
-					value = EncodeBase64Value (value);
-
-				SetValue ("filename", value);
+				SetQuotedStringValue ("filename", value);
 			}
 		}
 
@@ -215,6 +208,18 @@ namespace System.Net.Http.Headers
 				return offset;
 
 			return null;
+		}
+
+		string GetQuotedStringValue (string name)
+		{
+			var value = FindParameter (name);
+			if (value == null || value == null)
+				return null;
+
+			if (value[0] == '\"')
+				value = value.Substring (1, value.Length - 2);
+
+			return value;
 		}
 
 		static string EncodeBase64Value (string value)
@@ -381,6 +386,14 @@ namespace System.Net.Http.Headers
 		{
 			SetValue (key, value == null ? null : ("\"" + value.Value.ToString ("r", CultureInfo.InvariantCulture)) + "\"");
 		}
+
+                void SetQuotedStringValue (string key, string value) 
+                {
+                	if (value != null)
+				value = EncodeBase64Value (value);
+                	
+			SetValue (key, value == null ? null : ("\"" + value.Value.ToString ("r", CultureInfo.InvariantCulture)) + "\"");
+                }
 
 		void SetValue (string key, string value)
 		{
