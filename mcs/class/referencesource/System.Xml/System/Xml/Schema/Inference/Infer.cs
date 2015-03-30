@@ -1737,6 +1737,7 @@ namespace System.Xml.Schema
                 bool bTime = false;
                 bool bMissingDay = false;
 
+#if !BOOTSTRAP_BASIC
                 if (s.Length==0) return TF_string;
                 int i = 0;
                 switch (s[i])
@@ -2337,6 +2338,9 @@ namespace System.Xml.Schema
                     default:
                         return TF_string;
                 }
+#else // BOOTSTRAP_BASIC
+		return TF_string;
+#endif
             }
 
             internal static int DateTime(string s, bool bDate, bool bTime)
