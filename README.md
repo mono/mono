@@ -70,7 +70,7 @@ which contains just enough to run the 'mcs' compiler. You do this with:
 This will download and place the files appropriately so that you can then
 just run:
 
-    make EXTERNAL_MCS=${PWD}/mcs/class/lib/monolite/basic.exe
+    make
 
 The build will then use the files downloaded by `make get-monolite-latest`.
 
