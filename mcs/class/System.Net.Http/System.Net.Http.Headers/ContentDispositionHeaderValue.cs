@@ -213,7 +213,7 @@ namespace System.Net.Http.Headers
 		string GetQuotedStringValue (string name)
 		{
 			var value = FindParameter (name);
-			if (value == null || value == null)
+			if (value == null)
 				return null;
 
 			if (value[0] == '\"')
