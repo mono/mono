@@ -709,7 +709,11 @@ namespace System.Text
         {
             get
             {
+#if MONO
+                return (Environment.GetResourceStringEncodingName(m_codePage));
+#else
                 return (Environment.GetResourceString("Globalization.cp_" + m_codePage));
+#endif
             }
         }
 

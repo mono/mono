@@ -118,7 +118,11 @@ namespace System.Globalization
             for (i = 0; i < lastCodePageItem; i++)
             {
                 arrayEncodingInfo[i] = new EncodingInfo(codePageDataPtr[i].codePage, CodePageDataItem.CreateString(codePageDataPtr[i].Names, 0),
+#if MONO
+                    Environment.GetResourceStringEncodingName(codePageDataPtr[i].codePage));
+#else
                     Environment.GetResourceString("Globalization.cp_" + codePageDataPtr[i].codePage));
+#endif
             }
             
             return arrayEncodingInfo;
