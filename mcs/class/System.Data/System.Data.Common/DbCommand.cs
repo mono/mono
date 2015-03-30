@@ -204,15 +204,7 @@ namespace System.Data.Common {
 		
 		public Task<DbDataReader> ExecuteReaderAsync (CancellationToken cancellationToken)
 		{
-			if (cancellationToken.IsCancellationRequested) {
-				return TaskHelper.CreateCanceledTask<DbDataReader> ();
-			}
-			
-			try {
-				return Task.FromResult (ExecuteReader ());
-			} catch (Exception e) {
-				return TaskHelper.CreateExceptionTask<DbDataReader> (e);
-			}
+			return ExecuteDbDataReaderAsync (CommandBehavior.Default, cancellationToken);
 		}
 		
 		public Task<DbDataReader> ExecuteReaderAsync (CommandBehavior behavior)
@@ -222,15 +214,7 @@ namespace System.Data.Common {
 		
 		public Task<DbDataReader> ExecuteReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
 		{
-			if (cancellationToken.IsCancellationRequested) {
-				return TaskHelper.CreateCanceledTask<DbDataReader> ();
-			}
-			
-			try {
-				return Task.FromResult (ExecuteReader (behavior));
-			} catch (Exception e) {
-				return TaskHelper.CreateExceptionTask<DbDataReader> (e);
-			}
+			return ExecuteDbDataReaderAsync (behavior, cancellationToken);
 		}
 
 		
