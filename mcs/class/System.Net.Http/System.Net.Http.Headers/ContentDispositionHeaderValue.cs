@@ -392,7 +392,7 @@ namespace System.Net.Http.Headers
                 	if (value != null)
 				value = EncodeBase64Value (value);
                 	
-			SetValue (key, value == null ? null : ("\"" + value.Value.ToString ("r", CultureInfo.InvariantCulture)) + "\"");
+			SetValue (key, value == null ? null : ("\"" + value + "\"");
                 }
 
 		void SetValue (string key, string value)
