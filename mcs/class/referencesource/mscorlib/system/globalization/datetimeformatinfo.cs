@@ -57,11 +57,7 @@ namespace System.Globalization {
 
     [Serializable]
 [System.Runtime.InteropServices.ComVisible(true)]
-#if MONO_CULTURE_DATA
-    partial class DateTimeFormatInfo
-#else
     public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider
-#endif
     {
         //
         // Note, some fields are derived so don't really need to be serialized, but we can't mark as
@@ -2164,7 +2160,7 @@ namespace System.Globalization {
                 ClearTokenHashTable();
             }
         }
-#if !MONO_CULTURE_DATA
+
         //
         // Positive TimeSpan Pattern
         //
@@ -2188,7 +2184,7 @@ namespace System.Globalization {
                 return m_fullTimeSpanPositivePattern;
             }
         }
-#endif
+
         //
         // Negative TimeSpan Pattern
         //
