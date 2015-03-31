@@ -33,8 +33,3 @@ static partial class TraceSR
 	}
 }
 
-namespace System.Runtime.CompilerServices
-{
-	class FriendAccessAllowedAttribute : Attribute
-	{ }
-}

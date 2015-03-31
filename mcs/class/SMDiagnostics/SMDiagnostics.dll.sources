@@ -1,4 +1,6 @@
 ../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/SR.cs
 
 Assembly/AssemblyInfo.cs
 ReferenceSources/TraceSR.cs
