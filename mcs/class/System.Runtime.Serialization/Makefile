@@ -9,6 +9,7 @@ LIB_REFS = System System.Xml System.Core System.ServiceModel.Internals SMDiagnos
 LIB_MCS_FLAGS = \
 		-unsafe \
 		/nowarn:168,169,219,414 \
+		-d:USE_REFEMIT \
 		$(RESOURCE_FILES:%=/resource:%)
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
