@@ -65,6 +65,8 @@ namespace System.Globalization
 		// TODO: should query runtime with culture name for a list of culture's calendars
 		int calendarId;
 
+		int numberIndex;
+
 		private CultureData (string name)
 		{
 			this.sRealName = name;
@@ -113,7 +115,7 @@ namespace System.Globalization
 			}
 		}
 
-		public static CultureData GetCultureData (string cultureName, bool useUserOverride, int datetimeIndex, int calendarId, string iso2lang)
+		public static CultureData GetCultureData (string cultureName, bool useUserOverride, int datetimeIndex, int calendarId, int numberIndex, string iso2lang)
 		{
 			if (string.IsNullOrEmpty (cultureName))
 				return Invariant;
@@ -122,6 +124,7 @@ namespace System.Globalization
 			cd.fill_culture_data (datetimeIndex);
 			cd.bUseOverrides = useUserOverride;
 			cd.calendarId = calendarId;
+			cd.numberIndex = numberIndex;
 			cd.sISO639Language = iso2lang;
 			return cd;
 		}
@@ -137,7 +140,7 @@ namespace System.Globalization
 
 		public CalendarData GetCalendar (int calendarId)
 		{
-            // arrays are 0 based, calendarIds are 1 based
+			// arrays are 0 based, calendarIds are 1 based
 			int calendarIndex = calendarId - 1;
 
 			// Have to have calendars
@@ -225,11 +228,17 @@ namespace System.Globalization
 			}
 		}
 
-        internal String CultureName {
-            get {
-                return sRealName;
-            }
-        }
+		internal bool IsInvariantCulture {
+			get {
+				return string.IsNullOrEmpty (sRealName);
+			}
+		}
+
+		internal String CultureName {
+			get {
+				return sRealName;
+			}
+		}
 
 	 internal String SCOMPAREINFO {
 		get {
@@ -522,5 +531,37 @@ namespace System.Globalization
 		{
 			return str;
 		}
+
+		internal void GetNFIValues (NumberFormatInfo nfi)
+		{
+			if (this.IsInvariantCulture)
+			{
+				// Same as default values
+			}
+			else
+			{
+				//
+				// We don't have information for the following four.  All cultures use
+				// the same value of the number formatting values.
+				//
+				// PercentDecimalDigits
+				// PercentDecimalSeparator
+				// PercentGroupSize
+				// PercentGroupSeparator
+				//
+				fill_number_data (nfi, numberIndex);
+			}
+
+			//
+			// We don't have percent values, so use the number values
+			//
+			nfi.percentDecimalDigits = nfi.numberDecimalDigits;
+			nfi.percentDecimalSeparator = nfi.numberDecimalSeparator;
+			nfi.percentGroupSizes = nfi.numberGroupSizes;
+			nfi.percentGroupSeparator = nfi.numberGroupSeparator;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static void fill_number_data (NumberFormatInfo nfi, int numberIndex);
 	}
 }

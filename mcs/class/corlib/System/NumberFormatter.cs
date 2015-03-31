@@ -1134,7 +1134,7 @@ namespace System
 				}
 			}
 
-			AppendIntegerStringWithGroupSeparator (nfi.RawCurrencyGroupSizes, nfi.CurrencyGroupSeparator);
+			AppendIntegerStringWithGroupSeparator (nfi.CurrencyGroupSizes, nfi.CurrencyGroupSeparator);
 
 			if (precision > 0) {
 				Append (nfi.CurrencyDecimalSeparator);
@@ -1343,7 +1343,7 @@ namespace System
 				}
 			}
 
-			AppendIntegerStringWithGroupSeparator (nfi.RawNumberGroupSizes, nfi.NumberGroupSeparator);
+			AppendIntegerStringWithGroupSeparator (nfi.NumberGroupSizes, nfi.NumberGroupSeparator);
 
 			if (precision > 0) {
 				Append (nfi.NumberDecimalSeparator);
@@ -1394,7 +1394,7 @@ namespace System
 				}
 			}
 
-			AppendIntegerStringWithGroupSeparator (nfi.RawPercentGroupSizes, nfi.PercentGroupSeparator);
+			AppendIntegerStringWithGroupSeparator (nfi.PercentGroupSizes, nfi.PercentGroupSeparator);
 
 			if (precision > 0) {
 				Append (nfi.PercentDecimalSeparator);
@@ -2168,7 +2168,7 @@ namespace System
 				int sb_int_index = 0;
 				int sb_dec_index = 0;
 
-				int[] groups = nfi.RawNumberGroupSizes;
+				int[] groups = nfi.NumberGroupSizes;
 				string groupSeparator = nfi.NumberGroupSeparator;
 				int intLen = 0, total = 0, groupIndex = 0, counter = 0, groupSize = 0;
 				if (UseGroup && groups.Length > 0) {

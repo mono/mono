@@ -89,8 +89,6 @@ namespace Mono.Tools.LocaleBuilder
 
 			builder.Append (EncodeStringIdx (CurrencyDecimalSeparator) + ", ");
 			builder.Append (EncodeStringIdx (CurrencyGroupSeparator) + ", ");
-			builder.Append (EncodeStringIdx (PercentDecimalSeparator) + ", ");
-			builder.Append (EncodeStringIdx (PercentGroupSeparator) + ", ");
 			builder.Append (EncodeStringIdx (NumberDecimalSeparator) + ", ");
 			builder.Append (EncodeStringIdx (NumberGroupSeparator) + ", ");
 
@@ -111,12 +109,9 @@ namespace Mono.Tools.LocaleBuilder
 			builder.Append (NumberNegativePattern + ", ");
 
 			builder.Append (CurrencyDecimalDigits + ", ");
-			builder.Append (PercentDecimalDigits + ", ");
 			builder.Append (NumberDecimalDigits + ", ");
 
 			AppendGroupSizes (builder, CurrencyGroupSizes);
-			builder.Append (", ");
-			AppendGroupSizes (builder, PercentGroupSizes);
 			builder.Append (", ");
 			AppendGroupSizes (builder, NumberGroupSizes);
 

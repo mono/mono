@@ -247,12 +247,10 @@ System.Globalization/CalendarWeekRule.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
 System.Globalization/CultureInfo.cs
-System.Globalization/DateTimeFormatInfo.cs
 System.Globalization/DateTimeStyles.cs
 System.Globalization/DigitShapes.cs
 System.Globalization/GregorianCalendarTypes.cs
 System.Globalization/IdnMapping.cs
-System.Globalization/NumberFormatInfo.cs
 System.Globalization/RegionInfo.cs
 System.Globalization/RegionInfo.MonoTouch.cs
 System.Globalization/TextInfo.cs
@@ -1385,6 +1383,7 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/globalization/koreancalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/koreanlunisolarcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/numberstyles.cs
+../../../external/referencesource/mscorlib/system/globalization/numberformatinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/Persiancalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/sortversion.cs
 ../../../external/referencesource/mscorlib/system/globalization/stringinfo.cs
