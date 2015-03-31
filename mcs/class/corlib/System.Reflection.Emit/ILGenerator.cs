@@ -65,9 +65,9 @@ namespace System.Reflection.Emit {
 	internal struct ILExceptionInfo {
 #pragma warning disable 169
 #pragma warning disable 414
-		ILExceptionBlock[] handlers;
+		internal ILExceptionBlock[] handlers;
 		internal int start;
-		int len;
+		internal int len;
 		internal Label end;
 #pragma warning restore 169
 #pragma warning restore 414
@@ -1006,7 +1006,17 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		// Used by DynamicILGenerator
+		// Used by MethodBuilder.SetMethodBody
+		internal void SetExceptionHandlers (ILExceptionInfo[] exHandlers) {
+			this.ex_handlers = exHandlers;
+		}
+
+		// Used by MethodBuilder.SetMethodBody
+		internal void SetTokenFixups (ILTokenInfo[] tokenFixups) {
+			this.token_fixups = tokenFixups;
+		}
+
+		// Used by DynamicILGenerator and MethodBuilder.SetMethodBody
 		internal void SetCode (byte[] code, int max_stack) {
 			// Make a copy to avoid possible security problems
 			this.code = (byte[])code.Clone ();

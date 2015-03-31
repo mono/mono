@@ -40,6 +40,7 @@ using System.Security.Permissions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
+using System.Collections.Generic;
 
 namespace System.Reflection.Emit
 {
@@ -265,6 +266,69 @@ namespace System.Reflection.Emit
 			else {
 				code = new byte [count];
 				System.Array.Copy(il, code, count);
+			}
+		}
+
+		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature,
+			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups)
+		{
+			var ilgen = GetILGenerator ();
+
+			ilgen.SetCode (il, maxStack);
+
+			// FIXME: Process local signature
+
+			// Process exception handlers
+			if (exceptionHandlers != null) {
+				// Group exception handlers by try blocks
+				var tryBlocks = new Dictionary <Tuple<int, int>, List<ExceptionHandler>> ();
+				foreach (var h in exceptionHandlers) {
+					List<ExceptionHandler> list;
+					var key = new Tuple <int, int> (h.TryOffset, h.TryLength);
+					if (!tryBlocks.TryGetValue (key, out list)) {
+						list = new List<ExceptionHandler> ();
+						tryBlocks.Add (key, list);
+					}
+					list.Add (h);
+				}
+
+				// Generate ILExceptionInfo from tryBlocks
+				var infos = new List<ILExceptionInfo> ();
+				foreach (var kv in tryBlocks) {
+					var info = new ILExceptionInfo () {
+						start = kv.Key.Item1,
+						len = kv.Key.Item2,
+						handlers = new ILExceptionBlock [kv.Value.Count],
+					};
+					infos.Add (info);
+					var i = 0;
+					foreach (var b in kv.Value) {
+						var exBlock = info.handlers [i++] = new ILExceptionBlock () {
+							start = b.HandlerOffset,
+							len = b.HandlerLength,
+							filter_offset = b.FilterOffset,
+							type = (int) b.Kind,
+							extype = Module.ResolveType (b.ExceptionTypeToken),
+						};
+					}
+				}
+
+				ilgen.SetExceptionHandlers (infos.ToArray ());
+			}
+
+			// Process token fixups
+			if (tokenFixups != null) {
+				var tokenInfos = new List<ILTokenInfo> ();
+				foreach (var pos in tokenFixups) {
+					var token = (il [pos] << 24) + (il [pos+1] << 16) + (il [pos+2] << 8) + il [pos+3];
+					var tokenInfo = new ILTokenInfo () {
+						code_pos = pos,
+						member = Module.ResolveMember (token),
+					};
+					tokenInfos.Add (tokenInfo);
+				}
+
+				ilgen.SetTokenFixups (tokenInfos.ToArray ());
 			}
 		}
 
